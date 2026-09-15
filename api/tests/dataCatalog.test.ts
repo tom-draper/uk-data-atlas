@@ -50,6 +50,60 @@ const carBreakdown = (noCar: number) => ({
 	total: noCar + 80,
 });
 
+/** Every qualification level, summing to the residents aged 16 and over. */
+const qualificationBreakdown = (level4Plus: number) => ({
+	noQualifications: 20,
+	level1: 10,
+	level2: 10,
+	apprenticeship: 5,
+	level3: 15,
+	level4Plus,
+	other: 5,
+	total: level4Plus + 65,
+});
+
+/** All nineteen census ethnic groups, as the compiled dataset nests them. */
+const ethnicGroups = (whiteBritish: number) => {
+	const group = (names: string[]) =>
+		Object.fromEntries(
+			names.map((name) => [name, { ethnicity: name, population: 1 }]),
+		);
+	return {
+		"Asian, Asian British or Asian Welsh": group([
+			"Bangladeshi",
+			"Chinese",
+			"Indian",
+			"Pakistani",
+			"Other Asian",
+		]),
+		"Black, Black British, Black Welsh, Caribbean or African": group([
+			"African",
+			"Caribbean",
+			"Other Black",
+		]),
+		"Mixed or Multiple ethnic groups": group([
+			"White and Asian",
+			"White and Black African",
+			"White and Black Caribbean",
+			"Other Mixed or Multiple ethnic groups",
+		]),
+		White: {
+			...group([
+				"Irish",
+				"Gypsy or Irish Traveller",
+				"Roma",
+				"Other White",
+			]),
+			"English, Welsh, Scottish, Northern Irish or British": {
+				ethnicity:
+					"English, Welsh, Scottish, Northern Irish or British",
+				population: whiteBritish,
+			},
+		},
+		"Other ethnic group": group(["Arab", "Any other ethnic group"]),
+	};
+};
+
 /** One authority-year of emissions, with a land-use sink that pulls it down. */
 const emissionsYear = (year: number) => ({
 	year,
@@ -102,6 +156,8 @@ const writeSources = (
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
+		qualification: join(directory, "qualification.json"),
+		ethnicity: join(directory, "ethnicity.json"),
 	};
 	writeFileSync(
 		manifest,
@@ -114,6 +170,8 @@ const writeSources = (
 				dataset("mobile-coverage", 2, 1, 2024),
 				dataset("travel-to-work", 2, 1, 2025),
 				dataset("car-availability", 2, 1, 2025),
+				dataset("qualification", 2, 1, 2025),
+				dataset("ethnicity", 2, 1, 2024),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -209,6 +267,34 @@ const writeSources = (
 				data: {
 					E06000001: { breakdown: carBreakdown(100) },
 					W06000001: { breakdown: carBreakdown(50) },
+				},
+			},
+		}),
+	);
+	writeFileSync(
+		censusPaths.qualification,
+		JSON.stringify({
+			"2021": {
+				year: 2021,
+				boundaryYear: 2025,
+				boundaryType: "localAuthority",
+				data: {
+					E06000001: { breakdown: qualificationBreakdown(35) },
+					W06000001: { breakdown: qualificationBreakdown(25) },
+				},
+			},
+		}),
+	);
+	writeFileSync(
+		censusPaths.ethnicity,
+		JSON.stringify({
+			"2021": {
+				year: 2021,
+				boundaryYear: 2024,
+				boundaryType: "localAuthority",
+				data: {
+					E06000001: ethnicGroups(900),
+					W06000001: ethnicGroups(700),
 				},
 			},
 		}),
@@ -452,6 +538,8 @@ const writeSources = (
 		mobileCoverage,
 		travelToWork: censusPaths["travel-to-work"],
 		carAvailability: censusPaths["car-availability"],
+		qualification: censusPaths.qualification,
+		ethnicity: censusPaths.ethnicity,
 		jobs,
 		landArea,
 		housePrice,
@@ -473,7 +561,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 17);
+		assert.equal(result.catalog.datasets.length, 19);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1099,4 +1187,55 @@ test("serves April 2023 authorities without the districts they replaced", () => 
 			),
 		/does not hold exactly the April 2023 authorities/,
 	);
+});
+
+test("publishes census qualifications and ethnic groups as counts on April 2023 codes", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const measure = (id: string) =>
+			result.catalog.measures.find((candidate) => candidate.id === id);
+		const values = (id: string) =>
+			result.censusObservations
+				.find((artifact) => artifact.measureId === id)
+				?.periods[0]?.records.map((record) => [
+					record.areaCode,
+					"value" in record ? record.value : undefined,
+				]);
+
+		assert.equal(
+			measure("qualification-level-4-plus")?.unit,
+			"usual residents aged 16 and over",
+		);
+		assert.deepEqual(values("qualification-level-4-plus"), [
+			["E06000001", 35],
+			["W06000001", 25],
+		]);
+		assert.deepEqual(values("qualification-total"), [
+			["E06000001", 100],
+			["W06000001", 90],
+		]);
+
+		// Nineteen ethnic groups, and no separate total: they are exhaustive.
+		const ethnicMeasures = result.catalog.measures.filter((candidate) =>
+			candidate.id.startsWith("ethnicity-"),
+		);
+		assert.equal(ethnicMeasures.length, 19);
+		assert.deepEqual(values("ethnicity-white-british"), [
+			["E06000001", 900],
+			["W06000001", 700],
+		]);
+		for (const candidate of [
+			...ethnicMeasures,
+			measure("qualification-total"),
+		])
+			assert.deepEqual(candidate?.sources[0]?.sourceGeography, {
+				type: "localAuthority",
+				boundaryYear: 2023,
+			});
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
 });

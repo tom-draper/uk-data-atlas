@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7b1e8e42b798a0d57f11709933dec36ff3d2b2d472aa0f008a94ef50455fee2b",
+	"contentHash": "sha256:0cb77da524cdc4e7d4e3fc6908cc0895718e357eeef8c9cb70b0d4d6a228ebe3",
 	"inputs": {
-		"dataCatalog": "sha256:ada02d0946574a8be7318195d502d1e43edeaeaefbeb8c6afecbaa513be7b4c7",
+		"dataCatalog": "sha256:87577e2fe8ae492a906a7652d36585f196ecb0d9303a46abd156b26d8cb3bbd0",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -12,6 +12,25 @@
 			"car-availability-three-or-more": "sha256:4bf1b294b5251efb90e55ad39bfd764e0e63b893791f6f47ed8acd4f98593a52",
 			"car-availability-total": "sha256:f6cb5f3a58a5a96affc099145407e6d68b8668d64571ef7953a8ed81545d9865",
 			"car-availability-two": "sha256:adad4e413f97ea41d283144d57c33266a18e21e09f5143178006223887910eb2",
+			"ethnicity-african": "sha256:07964ca593926c2115c3dc3a7225398408d5fbc58a0c3ae7b6a7ed88d0056f5d",
+			"ethnicity-any-other": "sha256:c40d0e872921cd345146547f30e51d0877227a0155338cb494f34e284cfb63c0",
+			"ethnicity-arab": "sha256:88f2da7f45a21b3db5f7c2d40054459f489f75d41782cacc9894ff5773a38f21",
+			"ethnicity-bangladeshi": "sha256:a015b2a093d77f7140726ab775984c059be976c9386052de46ede1ebca6d169a",
+			"ethnicity-caribbean": "sha256:64085f3829b6e85c8eb0df74e818671d99d3f72724351bac1ca6a50c1a79799b",
+			"ethnicity-chinese": "sha256:451a504d9df23960212aa70f95e3e40cf8f4ad9a58150f66e813398d55d6044d",
+			"ethnicity-gypsy-or-irish-traveller": "sha256:f730675198ffda1026d4a064265244d76fe74f5dce2bba15f03d4a749639fde9",
+			"ethnicity-indian": "sha256:1bdb8e70e202e9fa944a445616d41ef60f4dd836628991d3765654bd1346e10a",
+			"ethnicity-irish": "sha256:c46e22a38b85a789b9996644cf78b5e38e46dbbc049dc95c5ee7756577d92a55",
+			"ethnicity-other-asian": "sha256:e71b34e66193a3d59e1470ddc8dc8bce075312b3fae989a2681772e95f9d92a2",
+			"ethnicity-other-black": "sha256:a4cd6d6b4a0b4ef86e577bc52d72e023f49b1af6831bdc560a32ebba66c92f82",
+			"ethnicity-other-mixed": "sha256:93cfcf196eedfb79f22facdfa02d5cf314ab43ff36a0f8abf59d9f11f4c8d4d5",
+			"ethnicity-other-white": "sha256:e1ae3248e7a64512403100867e00b42b8298e08ac860baf4cc83742b1e47928b",
+			"ethnicity-pakistani": "sha256:1bd0457ff502fb827724728e773fa73e792b4635bd89edffc0a44bfdda4109bd",
+			"ethnicity-roma": "sha256:8d628fe237cd0506d9a4935592ce6e53116a339a60ac9dd1b2483bf49fc38bf6",
+			"ethnicity-white-and-asian": "sha256:8cf06f406e17d279c0a6a5fc2b600d0fce31f9bf7113f0c9d4d30cbbfbceb738",
+			"ethnicity-white-and-black-african": "sha256:32cabe32ad026e870129f97538e5590d5337595133e3b0b48ca43fd01b89bdd6",
+			"ethnicity-white-and-black-caribbean": "sha256:09706a2412aead537678970dfd9acc45324acac9a5887da01463bd025cc4813c",
+			"ethnicity-white-british": "sha256:6c2c4ff6d0be74a1f0317d8c8e05b5870f11da9d309722f41be1d33bd30413fa",
 			"general-election-apni-vote-share": "sha256:d4c437d02cb0b1c80da69b2cb0733500e6e42a0d0d0a611af16a66a9d3e8d92b",
 			"general-election-apni-votes": "sha256:05fbb02fa642e76052a382d111a80bbd53bbd0c88368c2fc5319ace2ac99b0dc",
 			"general-election-brx-vote-share": "sha256:16de8ad566644dab907bd5df5fc72770b02dd752ebd17a77b2292d8a55013ecf",
@@ -68,6 +87,14 @@
 			"nimdm-rank": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
 			"population-density": "sha256:1569578cb3bf9272e9e1e9e9dfe79854c2e792d46d35bb85caa0a51fe440e451",
 			"population-estimate": "sha256:a05515bb0a5c4cf148f534ae1bb1c1b9b7401506731c07627ac93dc356e43d0a",
+			"qualification-apprenticeship": "sha256:9eee5aea263f73c18773f7cded5c1e09b49420902a4e1175f47d19f2827037d1",
+			"qualification-level-1": "sha256:c9b8f14cd57b2ed0437fb51ddb4515007c60814560ea80c62d6d577d475ac427",
+			"qualification-level-2": "sha256:15004b2de78129b705ea16bfb28daa0885b9ac36c93fd3354df9ed4a54720a75",
+			"qualification-level-3": "sha256:fc4d25f533ddd4125b2fe71408cca2cf811455f3893c3851ca85289f982b313e",
+			"qualification-level-4-plus": "sha256:3da6cf579c58ef3da9896089667821813d1db4044b94abf7dd3a945071e217f5",
+			"qualification-none": "sha256:2fccb82d7d0829f1b0c583e70b1c47627a4b2183d6788d2bdf058ca3a06a4399",
+			"qualification-other": "sha256:b7c69d573d116344e331bf3be27fd7a352a5854a5e25f541f24dcd739c1b23c2",
+			"qualification-total": "sha256:4f43e906c768c6351ceb23db021824e66e7b9c028c1538fe03d88ac803244673",
 			"simd-decile": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
 			"simd-rank": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"total-jobs": "sha256:93c7a2dab643ea59c3923092836616eaaa379994cf3b3a802557d848ca75e02a",
@@ -12679,6 +12706,1572 @@
 			"sources": [
 				{
 					"datasetId": "car-availability",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-none",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-level-1",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-level-2",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-apprenticeship",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-level-3",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-level-4-plus",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-other",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "qualification-total",
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-bangladeshi",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-chinese",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-indian",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-pakistani",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-other-asian",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-african",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-caribbean",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-other-black",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-white-and-asian",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-white-and-black-african",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-white-and-black-caribbean",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-other-mixed",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-white-british",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-irish",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-gypsy-or-irish-traveller",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-roma",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-other-white",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-arab",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"periods": [
+						"2021"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2023-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "ethnicity-any-other",
+			"sources": [
+				{
+					"datasetId": "ethnicity",
 					"sourceGeography": {
 						"type": "localAuthority",
 						"boundaryYear": 2023
