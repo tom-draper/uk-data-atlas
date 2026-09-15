@@ -7,16 +7,16 @@
 		"crosswalkInventory": "sha256:5576446ba0b841f3cb756c0bd7485f50bf7181c45660c1f166608add82250c41",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 		"geographyInventory": "sha256:f3d75ca431c25041cbb9e07c39ccc694a89589db5a8958ede82b722b243120ed",
-		"dataCatalog": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
-		"exportManifest": "sha256:5a1f3a46ae840f6859d18477daa16934200fa468a235f0e2088e37ac33685503",
+		"dataCatalog": "sha256:fdc01fff0c7dd68e9fa6791f820b63a62b03c7cbb3a0dea7d09d749eadd73cd4",
+		"exportManifest": "sha256:835f10697b01938c319c432d4bf5f48889eb4ead7250918b936bbb97a797e51d",
 		"measureTotals": "sha256:9a8f9eb8c568e5a99a296ca4e509a098bde9669f186d41a881340de6209fb9de",
-		"waivers": "sha256:8ca0b0ed9a12c3a51b83a7e27fafe34d8da482e8317b6eab5db84883133e4ded"
+		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
 	},
 	"summary": {
-		"resourceCount": 537,
-		"checkCount": 1751,
-		"passedCount": 1671,
-		"waivedCount": 80,
+		"resourceCount": 504,
+		"checkCount": 1618,
+		"passedCount": 1571,
+		"waivedCount": 47,
 		"coverage": {
 			"boundaryReleases": 71,
 			"areaIdentities": 71,
@@ -25,7 +25,7 @@
 			"crosswalks": 15,
 			"weightedCrosswalks": 2,
 			"measures": 144,
-			"measureSources": 306
+			"measureSources": 273
 		}
 	},
 	"resources": [
@@ -3440,7 +3440,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3454,7 +3454,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3468,7 +3468,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3482,7 +3482,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3496,7 +3496,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3510,7 +3510,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3524,7 +3524,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3538,7 +3538,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3552,7 +3552,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3566,7 +3566,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3580,7 +3580,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3594,7 +3594,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3608,7 +3608,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3622,7 +3622,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3636,7 +3636,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3650,7 +3650,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3664,7 +3664,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3678,7 +3678,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3692,7 +3692,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3706,7 +3706,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3720,7 +3720,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3734,7 +3734,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3748,7 +3748,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3762,7 +3762,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3776,7 +3776,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3790,7 +3790,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3804,7 +3804,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3818,7 +3818,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3832,7 +3832,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3846,7 +3846,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3860,7 +3860,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3874,7 +3874,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -3888,7 +3888,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 3
+						"sourceCount": 2
 					}
 				}
 			]
@@ -6902,50 +6902,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-apni-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 37.22744142890281
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-apni-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -6954,8 +6910,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -6978,7 +6934,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 45.16890977536107
 					}
@@ -7026,50 +6982,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-apni-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 12839
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-apni-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7078,8 +6990,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7102,7 +7014,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 19055
 					}
@@ -7150,50 +7062,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-brx-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 0
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-brx-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7202,8 +7070,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7226,7 +7094,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 30.43925968078476
 					}
@@ -7274,50 +7142,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-brx-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 0
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-brx-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7326,8 +7150,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7350,7 +7174,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 11233
 					}
@@ -7398,50 +7222,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-con-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 62.796749794053774
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-con-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7450,8 +7230,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7474,7 +7254,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 76.72380694265645
 					}
@@ -7522,50 +7302,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-con-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 33973
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-con-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7574,8 +7310,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7598,7 +7334,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 44683
 					}
@@ -7646,50 +7382,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-dup-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 49.805692391899285
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-dup-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7698,8 +7390,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7722,7 +7414,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 62.02998787065473
 					}
@@ -7770,50 +7462,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-dup-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 19672
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-dup-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7822,8 +7470,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7846,7 +7494,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 28521
 					}
@@ -7894,50 +7542,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-green-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 31.32692827101902
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-green-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7946,8 +7550,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -7970,7 +7574,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 57.158867547156795
 					}
@@ -8018,50 +7622,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-green-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 16238
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-green-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8070,8 +7630,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8094,7 +7654,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 33151
 					}
@@ -8142,50 +7702,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-lab-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 71.96446774428426
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-lab-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8194,8 +7710,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8218,7 +7734,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 85.72884328269782
 					}
@@ -8266,50 +7782,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-lab-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 35471
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-lab-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8318,8 +7790,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8342,7 +7814,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 47351
 					}
@@ -8390,50 +7862,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-ld-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 61.971466969916264
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-ld-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8442,8 +7870,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8466,9 +7894,9 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
-						"maximum": 56.06870998248144
+						"maximum": 61.971466969916264
 					}
 				}
 			]
@@ -8514,50 +7942,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-ld-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 32483
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-ld-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8566,8 +7950,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8590,7 +7974,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 36166
 					}
@@ -8638,50 +8022,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-other-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 82.61922002689562
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-other-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8690,8 +8030,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8714,7 +8054,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 90.9706546275395
 					}
@@ -8762,50 +8102,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-other-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 39934
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-other-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8814,8 +8110,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8838,7 +8134,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 39937
 					}
@@ -8886,50 +8182,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-pc-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 44.329896907216494
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-pc-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -8938,8 +8190,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -8962,7 +8214,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 48.27252071638599
 					}
@@ -9010,50 +8262,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-pc-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 13546
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-pc-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9062,8 +8270,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9086,7 +8294,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 16127
 					}
@@ -9134,50 +8342,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-ruk-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 0
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-ruk-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9186,8 +8350,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9210,7 +8374,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 0
 					}
@@ -9258,50 +8422,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-ruk-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 0
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-ruk-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9310,8 +8430,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9334,7 +8454,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 0
 					}
@@ -9382,50 +8502,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-sdlp-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 48.48200239498462
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-sdlp-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9434,8 +8510,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9458,7 +8534,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 57.18660246663288
 					}
@@ -9506,50 +8582,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-sdlp-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 20648
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-sdlp-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9558,8 +8590,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9582,7 +8614,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 27079
 					}
@@ -9630,50 +8662,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-sf-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 71.07957551426883
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-sf-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9682,8 +8670,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9706,9 +8694,9 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
-						"maximum": 66.71178598675954
+						"maximum": 71.07957551426883
 					}
 				}
 			]
@@ -9754,50 +8742,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-sf-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 22840
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-sf-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9806,8 +8750,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9830,7 +8774,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 27107
 					}
@@ -9878,50 +8822,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-snp-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 45.68186451043012
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-snp-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -9930,8 +8830,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -9954,7 +8854,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 61.913494654917926
 					}
@@ -10002,50 +8902,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-snp-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 19118
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-snp-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10054,8 +8910,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10078,7 +8934,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 34831
 					}
@@ -10126,50 +8982,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-turnout-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 44.46232382643436,
-						"maximum": 77.37173391296473
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-turnout-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10178,8 +8990,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10202,8 +9014,8 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
-						"minimum": 49.50794737242376,
+						"recordCount": 2600,
+						"minimum": 44.46232382643436,
 						"maximum": 82.00878057521727
 					}
 				}
@@ -10250,50 +9062,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-ukip-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 17.380779973104374
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-ukip-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10302,8 +9070,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10326,7 +9094,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 44.43187730449929
 					}
@@ -10374,50 +9142,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-ukip-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 8401
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-ukip-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10426,8 +9150,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10450,7 +9174,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 19642
 					}
@@ -10498,50 +9222,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-uup-vote-share-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 30.44194183892499
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-uup-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10550,8 +9230,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10574,7 +9254,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 46.41396665618119
 					}
@@ -10622,50 +9302,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-uup-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 0,
-						"maximum": 10639
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-uup-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10674,8 +9310,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10698,7 +9334,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 0,
 						"maximum": 24355
 					}
@@ -10746,60 +9382,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-valid-votes-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"minimum": 14717,
-						"maximum": 70264
-					}
-				},
-				{
-					"id": "components-sum-to-total",
-					"status": "passed",
-					"measured": {
-						"components": "general-election-apni-votes, general-election-brx-votes, general-election-con-votes, general-election-dup-votes, general-election-green-votes, general-election-lab-votes, general-election-ld-votes, general-election-other-votes, general-election-pc-votes, general-election-ruk-votes, general-election-sdlp-votes, general-election-sf-votes, general-election-snp-votes, general-election-ukip-votes, general-election-uup-votes",
-						"comparedCount": 650,
-						"mismatchCount": 0,
-						"maxDifference": 0
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-valid-votes-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10808,8 +9390,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10832,7 +9414,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"minimum": 14477,
 						"maximum": 75528
 					}
@@ -10842,7 +9424,7 @@
 					"status": "passed",
 					"measured": {
 						"components": "general-election-apni-votes, general-election-brx-votes, general-election-con-votes, general-election-dup-votes, general-election-green-votes, general-election-lab-votes, general-election-ld-votes, general-election-other-votes, general-election-pc-votes, general-election-ruk-votes, general-election-sdlp-votes, general-election-sf-votes, general-election-snp-votes, general-election-ukip-votes, general-election-uup-votes",
-						"comparedCount": 1950,
+						"comparedCount": 2600,
 						"mismatchCount": 0,
 						"maxDifference": 0
 					}
@@ -10900,49 +9482,6 @@
 			]
 		},
 		{
-			"id": "exports/general-election-winning-party-constituency-2010-observations",
-			"kind": "measure-source",
-			"status": "waived",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 650
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "waived",
-					"detail": "No constituency boundary release for 2010 has compiled areas.",
-					"measured": {
-						"areaCodeCount": 650,
-						"boundaryRelease": null,
-						"unresolvedCount": 650
-					},
-					"waiver": {
-						"reason": "No constituency release is recorded as covering 2010. All 650 codes resolve against the December 2016 release, which still holds the constituencies first contested in 2010; the December 2015 release covers Great Britain only and also lacks 6 Scottish and Welsh codes. Results stay on the codes the source published."
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 650,
-						"categoryCount": 12
-					}
-				}
-			]
-		},
-		{
 			"id": "exports/general-election-winning-party-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10951,8 +9490,8 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 3,
-						"recordCount": 1950
+						"periodCount": 4,
+						"recordCount": 2600
 					}
 				},
 				{
@@ -10975,7 +9514,7 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 1950,
+						"recordCount": 2600,
 						"categoryCount": 14
 					}
 				}
@@ -17422,5 +15961,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:882953017619433c0a2c39841533f90042db1ec5cddc1de819f6bff260ac35cd"
+	"contentHash": "sha256:ada437e2a210c86b32cfb6f54436f42f781bc13140a7233fbee77e943b5d65ac"
 }

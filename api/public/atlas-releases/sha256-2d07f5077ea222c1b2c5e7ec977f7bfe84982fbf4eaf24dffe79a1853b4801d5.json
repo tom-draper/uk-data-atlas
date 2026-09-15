@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:5bb8bf7a1923f26051bddd8eab405dd631c1af47e831e64fa0e46f794776c8b7",
+	"releaseId": "sha256:2d07f5077ea222c1b2c5e7ec977f7bfe84982fbf4eaf24dffe79a1853b4801d5",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:8013ee6f28a0aa7b3aac61f616ec255d6d25007780b0ca5ed32a5ece1f1ea0b3"
+			"contentHash": "sha256:e0c015cfc522b5b10aa19e87447f0700bb07940eda85876852523d30e07ae935"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:21dafceb93e47781ea4b0d2d90bbc6da362bf30f4fb7efc4c8fe5cff74f44eae"
+			"contentHash": "sha256:7ab22339440caf21cef2268afeb874bef49e6d2bcb723b8e69e2766428a40164"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:2ec6fe99b310d2435f404e4d151af390374db1c6aa3f9c5a7df2c6017dabe0df"
+			"contentHash": "sha256:c27a5fd17576695cfac678e31708b2d3686a74df97b494a03eb5934d82787882"
 		},
 		{
 			"id": "population-observations",
@@ -70,7 +70,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:51777443b187fdf43680609ed737eb81cd99794ea737a4ba826e32a0755c7848"
+			"contentHash": "sha256:4930c9d58b9f08ae13d6a36e0770dbcb8071627851a50ee9f5f7d667618fdeca"
 		},
 		{
 			"id": "source-inventory",
@@ -348,9 +348,14 @@
 			"contentHash": "sha256:c2015e189ee7036d78dfd13ac0663d65066751485959311aeacab76ac0edaee6"
 		},
 		{
+			"id": "observations/general-election-apni-vote-share-constituency-2010-observations",
+			"path": "general-election-apni-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:c7f7203fe79fd08f0f383ce654deffdfb9218794d04cebcb0395e0aacd752415"
+		},
+		{
 			"id": "observations/general-election-apni-vote-share-constituency-2019-observations",
 			"path": "general-election-apni-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:e1d9b58b3ce2392abdadc1566f9c5a3c24f4a1ea54172e11b535a8b255691896"
+			"contentHash": "sha256:4ed3b5f3caab52acdaf54c7c7c5159366f6afe238a143f9136a436f77c5a74b7"
 		},
 		{
 			"id": "observations/general-election-apni-vote-share-constituency-2024-observations",
@@ -358,9 +363,14 @@
 			"contentHash": "sha256:455e5c952a4ed70f6e6e3355e09bf53c5b1d18947d2399d4b1a9622a5fd77c4a"
 		},
 		{
+			"id": "observations/general-election-apni-votes-constituency-2010-observations",
+			"path": "general-election-apni-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:5873acbe732499b741baeef5057b897379ce67fd552ae4e9b4e953ce4c678aa7"
+		},
+		{
 			"id": "observations/general-election-apni-votes-constituency-2019-observations",
 			"path": "general-election-apni-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:093f62732498b7548a514f31d1a9184f7cc6053d5173885af48236216f5c1154"
+			"contentHash": "sha256:132447cb25ceab53e16b03b3bb2169c542328c1c50b0e0a01268c9c0f79df0d9"
 		},
 		{
 			"id": "observations/general-election-apni-votes-constituency-2024-observations",
@@ -368,9 +378,14 @@
 			"contentHash": "sha256:41ad9bce9ddf8524924cc8b685279ad5ff352b3f880b9afd94e79653256ee107"
 		},
 		{
+			"id": "observations/general-election-brx-vote-share-constituency-2010-observations",
+			"path": "general-election-brx-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:8ae0f517f4abfc07d0b1b3f22522d52efff9ab74aaf961467b763caac33c7eda"
+		},
+		{
 			"id": "observations/general-election-brx-vote-share-constituency-2019-observations",
 			"path": "general-election-brx-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:e89f54344feecac8de0993f655c76f43b9290bcd1bd85c9adbd8be9095666648"
+			"contentHash": "sha256:66b02a139b366231cde58522d0bf25679b7d2f94cc26a9b82d5e02bcc6762eae"
 		},
 		{
 			"id": "observations/general-election-brx-vote-share-constituency-2024-observations",
@@ -378,9 +393,14 @@
 			"contentHash": "sha256:60c2fb701967206d0ae95c691e075693b3cd754b93d15c0160441a50aee44f17"
 		},
 		{
+			"id": "observations/general-election-brx-votes-constituency-2010-observations",
+			"path": "general-election-brx-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:040c4391a48ab6082bef22cfdfa346b8e448996ec73ae797c03ca6d06a3497ae"
+		},
+		{
 			"id": "observations/general-election-brx-votes-constituency-2019-observations",
 			"path": "general-election-brx-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:3e5820e658b10e57fc84584aec59a1d91aa68053ddf0700638b0b8477cf86214"
+			"contentHash": "sha256:f2d5d26b99d9bdc779244ff79d48bc2aadc69fb23ebbb192803e822ee333cfeb"
 		},
 		{
 			"id": "observations/general-election-brx-votes-constituency-2024-observations",
@@ -388,9 +408,14 @@
 			"contentHash": "sha256:6c60c09ef581bd2757198fda3fad4b1fa4794f7f6e4702692b1bd30e51d31055"
 		},
 		{
+			"id": "observations/general-election-con-vote-share-constituency-2010-observations",
+			"path": "general-election-con-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:aa2026a6a66e85f5ba4e26dba2bb46f46d1d6667e5a5973bff09d70084110c4d"
+		},
+		{
 			"id": "observations/general-election-con-vote-share-constituency-2019-observations",
 			"path": "general-election-con-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:b0a2aff4fa93bc5f7f0a8c7e1d725e84f2311e652050a10648d51aa281269504"
+			"contentHash": "sha256:2ef60d44c45b046afba946fcc836ab10f9b7d9157bf6993627647a7c84cb103a"
 		},
 		{
 			"id": "observations/general-election-con-vote-share-constituency-2024-observations",
@@ -398,9 +423,14 @@
 			"contentHash": "sha256:d6d822bb114ba0eb53d6f90a580f3a106960051e0079406735d400eab5175cac"
 		},
 		{
+			"id": "observations/general-election-con-votes-constituency-2010-observations",
+			"path": "general-election-con-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:62c3b7c6a5d2c9dbf4175d99c9279121f298247b7ea25b16ae3994497b5037e4"
+		},
+		{
 			"id": "observations/general-election-con-votes-constituency-2019-observations",
 			"path": "general-election-con-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:ce01471f584d7e74b7b564a85ecbfb0d87d07217753829ee543ce192315d3c68"
+			"contentHash": "sha256:44989a3a94d2be114fee5c9c0dc6a6a1621d9985a8245b4b2a31d10a9379feab"
 		},
 		{
 			"id": "observations/general-election-con-votes-constituency-2024-observations",
@@ -408,9 +438,14 @@
 			"contentHash": "sha256:10471cd3a4ddac01bd09542cc74ac3643beee3c9f13c4009cbcbe952de572ec8"
 		},
 		{
+			"id": "observations/general-election-dup-vote-share-constituency-2010-observations",
+			"path": "general-election-dup-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:02fa2c8cf53b219e1efc26899d80a30cdf18f7014d96fd8a729cd6e2d39ad63d"
+		},
+		{
 			"id": "observations/general-election-dup-vote-share-constituency-2019-observations",
 			"path": "general-election-dup-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:5f047782359e4a49946ba2ea556a7bd5116bf7829393722b13d780ab945c001b"
+			"contentHash": "sha256:82253f2964c595bca6f2622418e9e705d2ecf86ed81a3e9455806ea52ceeb0f7"
 		},
 		{
 			"id": "observations/general-election-dup-vote-share-constituency-2024-observations",
@@ -418,9 +453,14 @@
 			"contentHash": "sha256:e89167c4165158f977b7cff0fea95e18380477c867392d861035beb4f4179a48"
 		},
 		{
+			"id": "observations/general-election-dup-votes-constituency-2010-observations",
+			"path": "general-election-dup-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:e8a0ff68e0a4cda7435cefae577f5eb0952c6294d37741acffd2d5712c191c15"
+		},
+		{
 			"id": "observations/general-election-dup-votes-constituency-2019-observations",
 			"path": "general-election-dup-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:a0d3812ed09e06d98a58763e0d01f1d70cf8f8add6509345a8530676a2005c65"
+			"contentHash": "sha256:ca47305d776b8ca16a2a204ba6adda80d6244691930228942c554a0373179920"
 		},
 		{
 			"id": "observations/general-election-dup-votes-constituency-2024-observations",
@@ -428,9 +468,14 @@
 			"contentHash": "sha256:e0dfab11916881cd9440eb9562ed4129c45bab242bb38704bab5dc8c0ab8fc88"
 		},
 		{
+			"id": "observations/general-election-green-vote-share-constituency-2010-observations",
+			"path": "general-election-green-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:83085a66544edf6dbd2c98958b22652a16b6de25000445e488f7e07a96eda30b"
+		},
+		{
 			"id": "observations/general-election-green-vote-share-constituency-2019-observations",
 			"path": "general-election-green-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:389f22d63f0a1d58abd80649eea18db1f2c3d4a3bdc9567d34100687fcfab1cc"
+			"contentHash": "sha256:282944d1736749de3c2d73667e749cc693e1c1c2e975af11558519fa7376ae12"
 		},
 		{
 			"id": "observations/general-election-green-vote-share-constituency-2024-observations",
@@ -438,9 +483,14 @@
 			"contentHash": "sha256:5b305cfd122453e710bc43478964b933175cb37d2d78697cf60e85e1048febb4"
 		},
 		{
+			"id": "observations/general-election-green-votes-constituency-2010-observations",
+			"path": "general-election-green-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:4f67ec25dc70394ce7b659f5fbcd7a9067051e58327c8331c30f4958e6fef205"
+		},
+		{
 			"id": "observations/general-election-green-votes-constituency-2019-observations",
 			"path": "general-election-green-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:0bd598eff6001f4ba73dfffc61e9564538c20e6196051c50e0fcacebcf7776ae"
+			"contentHash": "sha256:01edb1e0a69975c34fc6d864776203693a2e9660c1095b642c10b3e82f4a69de"
 		},
 		{
 			"id": "observations/general-election-green-votes-constituency-2024-observations",
@@ -448,9 +498,14 @@
 			"contentHash": "sha256:a3a2554a665b0aedbd09d06b4b57468edee6c828962583fe981d47338c745985"
 		},
 		{
+			"id": "observations/general-election-lab-vote-share-constituency-2010-observations",
+			"path": "general-election-lab-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:0185a3b0af9a6a38b4ee661e18e2b71a96ba9e8619d78efc82e1024f59f60e02"
+		},
+		{
 			"id": "observations/general-election-lab-vote-share-constituency-2019-observations",
 			"path": "general-election-lab-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:dc13550d9f49dd871a85ce519830be3c36f21faf9ef1e95e3f974d0b768d7cb4"
+			"contentHash": "sha256:0ba5e112f57f037793c53fd5c5b2292da291ddb372477f5762f3db6be97579d6"
 		},
 		{
 			"id": "observations/general-election-lab-vote-share-constituency-2024-observations",
@@ -458,9 +513,14 @@
 			"contentHash": "sha256:eb381bdd03908dbdd017b0409465cbb7489bfaad89aba844905fa5bff0219b66"
 		},
 		{
+			"id": "observations/general-election-lab-votes-constituency-2010-observations",
+			"path": "general-election-lab-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:ec70e8e473e70de1ecf4b7978485d3d96698a4a339fb0db21e5e7264c6ca180c"
+		},
+		{
 			"id": "observations/general-election-lab-votes-constituency-2019-observations",
 			"path": "general-election-lab-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:b2f1d2b3188076682cb25ead1516054c51eac732199b8bedc0d4677e61db8990"
+			"contentHash": "sha256:68ccf85d60e0fd1c47aa6893a8bb4efa7a9240f4c2a3f12e14a85bc8891b27ac"
 		},
 		{
 			"id": "observations/general-election-lab-votes-constituency-2024-observations",
@@ -468,9 +528,14 @@
 			"contentHash": "sha256:82c21b4c4525bd5557ad8f6c33b56aa714740922d413ab058d688d0d2f9920a7"
 		},
 		{
+			"id": "observations/general-election-ld-vote-share-constituency-2010-observations",
+			"path": "general-election-ld-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:d6c272cdedd87a47d93c6f0d7dff32b7aea4a74940ce3b919f5e09fd072afa08"
+		},
+		{
 			"id": "observations/general-election-ld-vote-share-constituency-2019-observations",
 			"path": "general-election-ld-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:1a91ca90addba9f3976c8899e4313e0347b2f569404c4b5f4810d96b3079083d"
+			"contentHash": "sha256:10994e1d6d3ee7e55c13a11eef1c5ed55df08b7d18ce04843b6496f27963523c"
 		},
 		{
 			"id": "observations/general-election-ld-vote-share-constituency-2024-observations",
@@ -478,9 +543,14 @@
 			"contentHash": "sha256:2ba26e005439e4904eea8a67b4a88f30ff7b3bb2c5b18fa273ea4c08d89e9fb1"
 		},
 		{
+			"id": "observations/general-election-ld-votes-constituency-2010-observations",
+			"path": "general-election-ld-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:e9cfe6cbf4c29a49062b7c1798c2f56a399bbaba6130e2792aefdf38b11ac7d7"
+		},
+		{
 			"id": "observations/general-election-ld-votes-constituency-2019-observations",
 			"path": "general-election-ld-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:82a869bec119fc76bbd9d8ba1e3aa10f7eff60c3563c7e9d7bd09385986c725c"
+			"contentHash": "sha256:e75d5979b6d45fa5e5d64a6e7b22af0ea852c82b340f915a5ac3293d7df93948"
 		},
 		{
 			"id": "observations/general-election-ld-votes-constituency-2024-observations",
@@ -488,9 +558,14 @@
 			"contentHash": "sha256:01d1df3e7e4cddd01d0c6965d2b67691126fb7bedb7afecba58f20e035675503"
 		},
 		{
+			"id": "observations/general-election-other-vote-share-constituency-2010-observations",
+			"path": "general-election-other-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:a6fc925d06e9622d07f18d44cf2ab51da370e42ad52970e551955430360053b5"
+		},
+		{
 			"id": "observations/general-election-other-vote-share-constituency-2019-observations",
 			"path": "general-election-other-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:d4bf9acb4a7400dd7e3633a5f22ab1c3e005b60ae7d3321c29b4a9ce63001c4f"
+			"contentHash": "sha256:3b7157c5fec16c8ee1c1a7f66010136af126cb3814da802ecf4c47534ef81f50"
 		},
 		{
 			"id": "observations/general-election-other-vote-share-constituency-2024-observations",
@@ -498,9 +573,14 @@
 			"contentHash": "sha256:cf140b3c04c182d1a3d5ab6da15d99e55daef319cd71c8a49243382aef21f3fd"
 		},
 		{
+			"id": "observations/general-election-other-votes-constituency-2010-observations",
+			"path": "general-election-other-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:5415459b230f2869c86715a83a850ebecb535fb646e1c830e7ad529073a635c5"
+		},
+		{
 			"id": "observations/general-election-other-votes-constituency-2019-observations",
 			"path": "general-election-other-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:8cd6560790529509c6199622b916c289f2a202dae1551a108c77a24f1cc5e470"
+			"contentHash": "sha256:d91a7f5bc841f68f1cb61d7eab3f82560f4a6f656c923fbd655132868d2a7c89"
 		},
 		{
 			"id": "observations/general-election-other-votes-constituency-2024-observations",
@@ -508,9 +588,14 @@
 			"contentHash": "sha256:4e670bd7ab3f775ec72b5ef10c7c7c7daeefce3cdcfc2b84c566d88586b9fa47"
 		},
 		{
+			"id": "observations/general-election-pc-vote-share-constituency-2010-observations",
+			"path": "general-election-pc-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:f68130efaf944abbc6dcd1523dd3895b8481fdd55830692235da4630de89ce31"
+		},
+		{
 			"id": "observations/general-election-pc-vote-share-constituency-2019-observations",
 			"path": "general-election-pc-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:fa9dc7c83d74eccb17867c6b0c92d506d55b5d31304c168c3da1263f429f7651"
+			"contentHash": "sha256:2d6b85f94ef669d68a363f9cd35d95fe1dcc49ccd2e75cdb29b85f07d8b9488d"
 		},
 		{
 			"id": "observations/general-election-pc-vote-share-constituency-2024-observations",
@@ -518,9 +603,14 @@
 			"contentHash": "sha256:b6a2122ec37661c61a83acaf5cb1f056ae96c6debfb054766b9c2c9c46892730"
 		},
 		{
+			"id": "observations/general-election-pc-votes-constituency-2010-observations",
+			"path": "general-election-pc-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:49d89772086340ab24dc8917fb0cb36c467c0f1b5fc818855ae5575d6a921300"
+		},
+		{
 			"id": "observations/general-election-pc-votes-constituency-2019-observations",
 			"path": "general-election-pc-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:b89fcfbe081f6c6633fca758d98c7bb3b00f7f038bffac48795c866c9d99ea6f"
+			"contentHash": "sha256:9854d9ef27060e0997bfeda458e888652f51ba3d4a653e422941b65e9a7da7c6"
 		},
 		{
 			"id": "observations/general-election-pc-votes-constituency-2024-observations",
@@ -528,9 +618,14 @@
 			"contentHash": "sha256:9b2dbcd0f50a37d127eef416bae2d7113718fb38b883c6ad7398a4bfc9682e3a"
 		},
 		{
+			"id": "observations/general-election-ruk-vote-share-constituency-2010-observations",
+			"path": "general-election-ruk-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:c9ff4f7acf367d0efe946c36fd5a676ba58b07c3cd6201cee1486f4fe41b14f3"
+		},
+		{
 			"id": "observations/general-election-ruk-vote-share-constituency-2019-observations",
 			"path": "general-election-ruk-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:6ef2a004f128a3952b022ff38634eb3cc702e9ef1f863e249b9d0588cdc36121"
+			"contentHash": "sha256:c615a651672dcff3b06aed1d3ee8d66a0646a17474ad25754eae67d046873b3c"
 		},
 		{
 			"id": "observations/general-election-ruk-vote-share-constituency-2024-observations",
@@ -538,9 +633,14 @@
 			"contentHash": "sha256:77b9343b3f2cbceaf346b38807163ece0b4c1d66e8856b0846594898f2257c4e"
 		},
 		{
+			"id": "observations/general-election-ruk-votes-constituency-2010-observations",
+			"path": "general-election-ruk-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:47e7c98b6e04cab6820a015e391db4bf9a08f3e1b3f2b27c9e69be42ecb8015c"
+		},
+		{
 			"id": "observations/general-election-ruk-votes-constituency-2019-observations",
 			"path": "general-election-ruk-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:d6450052232f9b23032581e249ef875cf928eaee541fe3a6baa6b5c141b8d1a6"
+			"contentHash": "sha256:03784486427e54542dbd153d2266722550b303312b944781fbc445e7c2d05bad"
 		},
 		{
 			"id": "observations/general-election-ruk-votes-constituency-2024-observations",
@@ -548,9 +648,14 @@
 			"contentHash": "sha256:5c2a6c06b1586482961cee25a94e2d3e8e34da76bfdc721071e36495d55c5aac"
 		},
 		{
+			"id": "observations/general-election-sdlp-vote-share-constituency-2010-observations",
+			"path": "general-election-sdlp-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:1c7930526862110c1defddccc899894470988378fdb89770b5ed1a0307ef6451"
+		},
+		{
 			"id": "observations/general-election-sdlp-vote-share-constituency-2019-observations",
 			"path": "general-election-sdlp-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:429f3f57b24cbf77e00a6c34b911d09a259c4b3a8d549dac11f44299bf6d984e"
+			"contentHash": "sha256:4352736c210097a8b4420adea4adb9add4ecdaceb1e059725cd7aaa6e8df5d1b"
 		},
 		{
 			"id": "observations/general-election-sdlp-vote-share-constituency-2024-observations",
@@ -558,9 +663,14 @@
 			"contentHash": "sha256:da6627a982ff1bda011f2e09b4bf6f285c4769fc1f1a466d5749ccf824a80a99"
 		},
 		{
+			"id": "observations/general-election-sdlp-votes-constituency-2010-observations",
+			"path": "general-election-sdlp-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:9995c9ce8e6fb5cdbd54e755d93df2d7f01f3e8a963f034ef58bc673bc27c22c"
+		},
+		{
 			"id": "observations/general-election-sdlp-votes-constituency-2019-observations",
 			"path": "general-election-sdlp-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:a83211dc34a49a5b56e7a2da2dd27518f0f5959af1156287c6180b4b22849f7f"
+			"contentHash": "sha256:d357b92b4164f47695d0823e5ea9b572f9e826e5d1f6f88a4c85e9d87f32226e"
 		},
 		{
 			"id": "observations/general-election-sdlp-votes-constituency-2024-observations",
@@ -568,9 +678,14 @@
 			"contentHash": "sha256:f83fc63bdd90d4bc9bdf8d082392a99d1d7827c6be667d30354e9a5e3ad33d2b"
 		},
 		{
+			"id": "observations/general-election-sf-vote-share-constituency-2010-observations",
+			"path": "general-election-sf-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:745302ec1c066dd3d681d5db85b208a7b2b35cca1024a173001a7632896c5636"
+		},
+		{
 			"id": "observations/general-election-sf-vote-share-constituency-2019-observations",
 			"path": "general-election-sf-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:f63478fc62e7fbde0eeea7e08ebebe2223f507ec907639918a31488c1539f898"
+			"contentHash": "sha256:de19b97307ac5abc608bf2ae0c2082c7926743942239b59f12d6cd4bb435dc61"
 		},
 		{
 			"id": "observations/general-election-sf-vote-share-constituency-2024-observations",
@@ -578,9 +693,14 @@
 			"contentHash": "sha256:52992debf68c5f212ba62a3085aba0d50646ef71a4e03dbc4ff26246f4267829"
 		},
 		{
+			"id": "observations/general-election-sf-votes-constituency-2010-observations",
+			"path": "general-election-sf-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:ac6df94024bd532386b857a69b5b884f9c87aae51acb1ed486838823645aa3db"
+		},
+		{
 			"id": "observations/general-election-sf-votes-constituency-2019-observations",
 			"path": "general-election-sf-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:839f07bad48967de5d2b81b9b5039929589763b40fe0194e34c093ba8292e44e"
+			"contentHash": "sha256:7f61241f89a0e419c88c7ea913ca76911a27449aaec026c469de1aae743f39e7"
 		},
 		{
 			"id": "observations/general-election-sf-votes-constituency-2024-observations",
@@ -588,9 +708,14 @@
 			"contentHash": "sha256:c561ee701c8805bdafbce576121514b53abde1a0f30dd687c2b52a81e9c1c657"
 		},
 		{
+			"id": "observations/general-election-snp-vote-share-constituency-2010-observations",
+			"path": "general-election-snp-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:74129b8ac92d4dff6670c7c9a6cbe554341fdaeb778cd1bdcb5a6c20ae560cd8"
+		},
+		{
 			"id": "observations/general-election-snp-vote-share-constituency-2019-observations",
 			"path": "general-election-snp-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:a55f4e348b5e3f7238009c3d44c83c4d993c8db4997e4776434fd8525a358521"
+			"contentHash": "sha256:13957335db1be8e5ce84b5755e4d959944d8f0669251af8456e3f35b6f43aa8c"
 		},
 		{
 			"id": "observations/general-election-snp-vote-share-constituency-2024-observations",
@@ -598,9 +723,14 @@
 			"contentHash": "sha256:8a4dcc86f926c76e6619420755e7d7116a65e1ad71895f250d0047fbaa9f6bdf"
 		},
 		{
+			"id": "observations/general-election-snp-votes-constituency-2010-observations",
+			"path": "general-election-snp-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:6c3bfc78d58f0292054200232519e4415350dce3c8f5108ea76aa0abf93c7457"
+		},
+		{
 			"id": "observations/general-election-snp-votes-constituency-2019-observations",
 			"path": "general-election-snp-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:000f4fcc2029f71d928e0c57e155e208d34a83267f0d9e7a74a8de4b5e20c4d0"
+			"contentHash": "sha256:89c0438a8e573d585a1952a834c75eae7abbd56e67df90a7511d1e6b3fb7f883"
 		},
 		{
 			"id": "observations/general-election-snp-votes-constituency-2024-observations",
@@ -608,9 +738,14 @@
 			"contentHash": "sha256:9d28598c9dd5d3d3a203cbd284ed38c8b0411c631de24fb7bc7339e40538267e"
 		},
 		{
+			"id": "observations/general-election-turnout-constituency-2010-observations",
+			"path": "general-election-turnout-constituency-2010-observations.json",
+			"contentHash": "sha256:fc2a9dc6e2afac8fabc9ae382c04e502ba2ecbe5e1ca2ddf956a1ef2083a2baa"
+		},
+		{
 			"id": "observations/general-election-turnout-constituency-2019-observations",
 			"path": "general-election-turnout-constituency-2019-observations.json",
-			"contentHash": "sha256:5bc71bfbcbecbd5b99ff97bb93f07800328b834570b2b9f5f28c56c234d20a5b"
+			"contentHash": "sha256:fd64da6d9c7626de034e8a394dab1109aea3a7a7babc08ba384f64b2d11766bc"
 		},
 		{
 			"id": "observations/general-election-turnout-constituency-2024-observations",
@@ -618,9 +753,14 @@
 			"contentHash": "sha256:fdfb70c5a35e7776530b4439d8480e0c2f0bae3ba75daf45b3641cc1a26028da"
 		},
 		{
+			"id": "observations/general-election-ukip-vote-share-constituency-2010-observations",
+			"path": "general-election-ukip-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:2c26326390921e85a63258251511c90a82b99addd7b20ce024d3e8b0e7d1aecb"
+		},
+		{
 			"id": "observations/general-election-ukip-vote-share-constituency-2019-observations",
 			"path": "general-election-ukip-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:49e7c537ed06f3729c752f76669b07f6796d0cdd5d3723aec1712ecdbb764e74"
+			"contentHash": "sha256:f457fc5d6fedea5b266ffc8df774c03288ed4d825547d0af88e409370a53a950"
 		},
 		{
 			"id": "observations/general-election-ukip-vote-share-constituency-2024-observations",
@@ -628,9 +768,14 @@
 			"contentHash": "sha256:0945e85926a1179008fe872740d508722deaf8411c03b7a93c16f3c27f71d3b4"
 		},
 		{
+			"id": "observations/general-election-ukip-votes-constituency-2010-observations",
+			"path": "general-election-ukip-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:cb4c653b5650acd0ca9b85a8d4b12b1029234dcc1d2f3fc3b6d81e9b1e106059"
+		},
+		{
 			"id": "observations/general-election-ukip-votes-constituency-2019-observations",
 			"path": "general-election-ukip-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:7ad421cd4e709eee98662b91b868b24636e41c09c37a55238708ad05960d33fb"
+			"contentHash": "sha256:ab9a45557d2efcc3a4742644315abaf4c6a5597b33ffc25de8a7e71287669d21"
 		},
 		{
 			"id": "observations/general-election-ukip-votes-constituency-2024-observations",
@@ -638,9 +783,14 @@
 			"contentHash": "sha256:3e31bf1d8eb07196b98dc52de0fce0929aa1c84ea77156b31718adc9fdb86314"
 		},
 		{
+			"id": "observations/general-election-uup-vote-share-constituency-2010-observations",
+			"path": "general-election-uup-vote-share-constituency-2010-observations.json",
+			"contentHash": "sha256:01e0814bfc59a126362bcb6336c705a8b655911b3061afc67bf7530a59550eb2"
+		},
+		{
 			"id": "observations/general-election-uup-vote-share-constituency-2019-observations",
 			"path": "general-election-uup-vote-share-constituency-2019-observations.json",
-			"contentHash": "sha256:966ec0ba34be80ad93d53b4ea0f3f6aa0c3c3fd98e40db602c2af80d179a52bc"
+			"contentHash": "sha256:05aba723ca8cb677959a5ca934ccea7e98494dfc16d644d819a6921e1dce5416"
 		},
 		{
 			"id": "observations/general-election-uup-vote-share-constituency-2024-observations",
@@ -648,9 +798,14 @@
 			"contentHash": "sha256:837e043917b3af79114b07a406485dfecdf74b0b5728b46930d59ed2862ab571"
 		},
 		{
+			"id": "observations/general-election-uup-votes-constituency-2010-observations",
+			"path": "general-election-uup-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:7df0cf56b9ab9067206beba435896cfa1b21f5d08a084e2e71c30b80b66e2bc6"
+		},
+		{
 			"id": "observations/general-election-uup-votes-constituency-2019-observations",
 			"path": "general-election-uup-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:7ea7adf5207508a13ce94ca8eccae19798e1211ddee59d45cda368b560a74b7e"
+			"contentHash": "sha256:35fc56fc4f813bc968826be60322528a11508d2074b7e51572a2045f49f44d9d"
 		},
 		{
 			"id": "observations/general-election-uup-votes-constituency-2024-observations",
@@ -658,9 +813,14 @@
 			"contentHash": "sha256:cf24c37e6cb68025ea24581430ca0628a4ff60ca2d03b875f7c37b6159f67d73"
 		},
 		{
+			"id": "observations/general-election-valid-votes-constituency-2010-observations",
+			"path": "general-election-valid-votes-constituency-2010-observations.json",
+			"contentHash": "sha256:5d03f17663bcaabd351d3d03b93a34f85eff214dbe21dfd3d80acaa7d3a28843"
+		},
+		{
 			"id": "observations/general-election-valid-votes-constituency-2019-observations",
 			"path": "general-election-valid-votes-constituency-2019-observations.json",
-			"contentHash": "sha256:77686edf58840c12b6fa98b43ecda20c1dcf23210167a498bb8f28799dd5e4c7"
+			"contentHash": "sha256:bda75db46015b345d6c59104af7dc0e217ed95fb5eeb1bd2357fce6db4eceae5"
 		},
 		{
 			"id": "observations/general-election-valid-votes-constituency-2024-observations",
@@ -668,9 +828,14 @@
 			"contentHash": "sha256:af5595078f9cc58336387d43860adcc06338afc31ab8fea1fa12119df6b867c6"
 		},
 		{
+			"id": "observations/general-election-winning-party-constituency-2010-observations",
+			"path": "general-election-winning-party-constituency-2010-observations.json",
+			"contentHash": "sha256:a6477a6bdf5e7c9b7bcd08c5d41ee068b6101907d8148ebf9e3b368c39ddff75"
+		},
+		{
 			"id": "observations/general-election-winning-party-constituency-2019-observations",
 			"path": "general-election-winning-party-constituency-2019-observations.json",
-			"contentHash": "sha256:c76869c64a104bf6e36f3d9ae59463ab7523cf089dd07387a789abde32b4fbb2"
+			"contentHash": "sha256:983034b47bac20c052400f237b12689965527d3f059e7b720eaa0b7f0d9b3ba4"
 		},
 		{
 			"id": "observations/general-election-winning-party-constituency-2024-observations",
