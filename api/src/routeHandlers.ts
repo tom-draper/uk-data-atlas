@@ -23,6 +23,7 @@ import { handleDataRankingRoutes } from "./dataRankingRoutes";
 import { handleDataValueRoutes } from "./dataValueRoutes";
 import { handleDataChangeRoutes } from "./dataChangeRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
+import { handleDataRoutes } from "./dataRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -38,6 +39,14 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "data",
+		owns: (segments) =>
+			segments.length === 3 &&
+			segments[0] === "v1" &&
+			segments[1] === "data",
+		handle: handleDataRoutes,
+	},
 	{
 		name: "data-conversion",
 		owns: (segments) =>
