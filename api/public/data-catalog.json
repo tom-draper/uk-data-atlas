@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4d9d35dc4e1d6ce9e1cbe2d3009cabf6d59da9fc04fd6925c2543c777af8420d",
+	"contentHash": "sha256:d8e030957866da942c0a78d6de607aa257208e4fb2340ffce803c628ff7e1ba6",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -7913,6 +7913,138 @@
 				"Counts are rounded by the publisher to the nearest five, so a sum over areas carries that rounding from every member.",
 				"The published rates, claimants as a share of residents aged 16 to 64, are not served: a rate does not add over areas and would need the working-age population as a weight.",
 				"The compiled dataset holds the four authorities created in April 2023 beside the districts they replaced; the districts are dropped after checking each authority is their exact sum, so no claimant is counted twice."
+			]
+		},
+		{
+			"id": "temporary-accommodation-households",
+			"label": "Households in temporary accommodation",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "homelessness",
+					"periods": [
+						"2026-Q1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 284,
+						"note": "Published source records cover English authorities only; an authority that did not submit a return for the quarter has no value rather than zero. No value is published for 12 of the 296 authorities: E06000003, E06000012, E06000023, E06000039, E07000066, E07000069, E07000083, E07000105, E07000112, E07000124, E07000128, E07000194."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/temporary-accommodation-households"
+			},
+			"notes": [
+				"Every household in temporary accommodation, with or without children.",
+				"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
+				"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight."
+			]
+		},
+		{
+			"id": "temporary-accommodation-households-with-children",
+			"label": "Households with children in temporary accommodation",
+			"valueKind": "count",
+			"unit": "households",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "homelessness",
+					"periods": [
+						"2026-Q1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 284,
+						"note": "Published source records cover English authorities only; an authority that did not submit a return for the quarter has no value rather than zero. No value is published for 12 of the 296 authorities: E06000003, E06000012, E06000023, E06000039, E07000066, E07000069, E07000083, E07000105, E07000112, E07000124, E07000128, E07000194."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/temporary-accommodation-households-with-children"
+			},
+			"notes": [
+				"Households with dependent children, a subset of all households in temporary accommodation.",
+				"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
+				"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight."
+			]
+		},
+		{
+			"id": "temporary-accommodation-children",
+			"label": "Children in temporary accommodation",
+			"valueKind": "count",
+			"unit": "children",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "homelessness",
+					"periods": [
+						"2026-Q1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 284,
+						"note": "Published source records cover English authorities only; an authority that did not submit a return for the quarter has no value rather than zero. No value is published for 12 of the 296 authorities: E06000003, E06000012, E06000023, E06000039, E07000066, E07000069, E07000083, E07000105, E07000112, E07000124, E07000128, E07000194."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/temporary-accommodation-children"
+			},
+			"notes": [
+				"Dependent children living in those households, counted as people rather than households.",
+				"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
+				"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight."
 			]
 		},
 		{

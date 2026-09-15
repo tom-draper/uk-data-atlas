@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d13c9bfbc7343a90280b54aa7f01e7903c74b0b223d3cb49bee904e1053698df",
-	"dataCatalogHash": "sha256:4d9d35dc4e1d6ce9e1cbe2d3009cabf6d59da9fc04fd6925c2543c777af8420d",
+	"contentHash": "sha256:602cde4a6e550c28a82bce5449ec9994e76145a07d2d2215cb89589ff8ffdd74",
+	"dataCatalogHash": "sha256:d8e030957866da942c0a78d6de607aa257208e4fb2340ffce803c628ff7e1ba6",
 	"exports": [
 		{
 			"id": "broadband-full-fibre-availability-observations",
@@ -4531,6 +4531,57 @@
 			"contentHash": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"bytes": 403733,
 			"href": "/v1/exports/simd-rank-observations"
+		},
+		{
+			"id": "temporary-accommodation-children-observations",
+			"measureId": "temporary-accommodation-children",
+			"datasetId": "homelessness",
+			"periods": [
+				"2026-Q1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "temporary-accommodation-children-observations",
+			"contentHash": "sha256:16299aa97146b7337b7c8d7f762c50041a5fa3e1dca05a1e97a43970c9ef1cb1",
+			"bytes": 16347,
+			"href": "/v1/exports/temporary-accommodation-children-observations"
+		},
+		{
+			"id": "temporary-accommodation-households-observations",
+			"measureId": "temporary-accommodation-households",
+			"datasetId": "homelessness",
+			"periods": [
+				"2026-Q1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "temporary-accommodation-households-observations",
+			"contentHash": "sha256:5aa6c8b3db98800ec9a41c15667dba12007051beb863816661783f1f14e9dd5c",
+			"bytes": 16350,
+			"href": "/v1/exports/temporary-accommodation-households-observations"
+		},
+		{
+			"id": "temporary-accommodation-households-with-children-observations",
+			"measureId": "temporary-accommodation-households-with-children",
+			"datasetId": "homelessness",
+			"periods": [
+				"2026-Q1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "temporary-accommodation-households-with-children-observations",
+			"contentHash": "sha256:6027dc6bd5f79e7afdceca954fcbe6784f179d8841fbdba9dba8d7378e5acf15",
+			"bytes": 16279,
+			"href": "/v1/exports/temporary-accommodation-households-with-children-observations"
 		},
 		{
 			"id": "total-jobs-observations",

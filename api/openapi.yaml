@@ -469,6 +469,10 @@ paths:
         `claimant-count` and `claimant-count-16-to-24` cover April 2026 Local
         Authority 2024 codes across all four nations, as counts of Universal
         Credit and Jobseeker's Allowance claimants rounded to the nearest five.
+        `temporary-accommodation-households`, `-households-with-children` and
+        `-children` cover January to March 2026 Local Authority 2025 codes for
+        England; authorities that submitted no return have no record, so an
+        England total over them is reported with partial coverage.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the

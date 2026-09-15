@@ -510,6 +510,11 @@ only **available** when its endpoint, contract and provenance are published.
       set after the districts replaced that April are checked and dropped.
       Claimants are not unemployment, and the published rates are not served,
       because a rate needs the working-age population as a weight.
+- [x] Return households and children in temporary accommodation at the end of
+      January to March 2026 through `GET /v1/data/temporary-accommodation-*`:
+      counts for English authorities on 2025 codes. The twelve authorities
+      that submitted no return are named rather than summed as zero, so an
+      England total over the 284 that did is flagged partial.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1555,6 +1560,7 @@ pnpm start
 - `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/data/claimant-count/aggregate?period=2026-04&geography=localAuthority&boundaryYear=2024&areaCode=S92000003`
+- `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
