@@ -31,6 +31,7 @@ export * from "./fuelPoverty";
 export * from "./ghgEmissions";
 export * from "./mobileCoverage";
 export * from "./landArea";
+export * from "./roadCollisions";
 export * from "./jobs";
 export * from "./lifeExpectancySeries";
 export * from "./populationConstituency";

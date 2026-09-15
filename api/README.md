@@ -531,6 +531,18 @@ only **available** when its endpoint, contract and provenance are published.
       partnerships span several authorities. Partnership counts exclude fraud
       and offences unassigned to any partnership, so they do not sum to force
       or national totals.
+- [x] Return provisional reported road collisions for January to June 2025
+      through `GET /v1/data/road-collisions` and its fatal, serious and slight
+      subsets, for 349 of Great Britain's 350 local authorities on 2024 codes.
+      Each collision is counted in the authority the Department for Transport
+      assigns it to in the published record, not by placing its coordinates
+      in a boundary, so the counts are exact tallies of the source rows and
+      the three severities add up to the total in every authority. The period
+      is `2025-H1`, a provisional half year. Collisions assigned to Heathrow
+      Airport are counted in no authority, and North Somerset has no records
+      in the file, so it has no value rather than zero. Serious and slight
+      counts are as the police recorded them; the Department for Transport's
+      adjusted severities, and casualty counts, are not served.
 - [x] Return ONS's final model-based unemployment estimates through
       `GET /v1/data/unemployment-rate` and `GET /v1/data/unemployment-level`,
       with their 95% confidence intervals, from April 1996 to March 1997 to

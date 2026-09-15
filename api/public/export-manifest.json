@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d22aeef8d449207a90eca15b9ae9bf5e316d6de78db758a2290fd495e5c261f0",
-	"dataCatalogHash": "sha256:708f04397ddcc766ca53f31c43fa806b3e77d9698502932c7dcc19816e200ec4",
+	"contentHash": "sha256:12d556e79d6e5a45e4bde94ba81c21f45fffe6fefd104b51303e8a70d16689b4",
+	"dataCatalogHash": "sha256:ff7da31226d0266de4d0fea6a5cdf26f11afcd84cdf3da461e42737e8c31a041",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
@@ -431,6 +431,21 @@
 				}
 			],
 			"href": "/v1/datasets/qualification"
+		},
+		"road-collisions": {
+			"publisher": "Department for Transport",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/road-accidents-and-safety-statistics",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+					"sha256": "fc8b3eb17414318c8b1f39104f0f4516439ca2b51f942701e4f4c9eb3b34b366"
+				}
+			],
+			"href": "/v1/datasets/road-collisions"
 		},
 		"simd": {
 			"publisher": "Scottish Government",
@@ -14039,6 +14054,214 @@
 				"datasets": [
 					{
 						"id": "qualification",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "road-collisions-fatal-observations",
+			"measureId": "road-collisions-fatal",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "road-collisions-fatal-observations",
+			"contentHash": "sha256:a941910ee8ecf4d9df3b2922ee238711480a4d32fb9a1476fb4650d3c8305c5f",
+			"bytes": 19454,
+			"href": "/v1/exports/road-collisions-fatal-observations",
+			"recordCount": 349,
+			"recordCountByPeriod": {
+				"2025-H1": 349
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions-fatal",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "road-collisions-observations",
+			"measureId": "road-collisions",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "road-collisions-observations",
+			"contentHash": "sha256:cefc9f7823d55589f4cf86b2e91ba63e5638b2d02380465564b31bebf1a7e1fa",
+			"bytes": 19962,
+			"href": "/v1/exports/road-collisions-observations",
+			"recordCount": 349,
+			"recordCountByPeriod": {
+				"2025-H1": 349
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "road-collisions-serious-observations",
+			"measureId": "road-collisions-serious",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "road-collisions-serious-observations",
+			"contentHash": "sha256:3f7beab6622f0932b0d16562709f4d97f3e00898e443c3802c0f082dcc5746bc",
+			"bytes": 19787,
+			"href": "/v1/exports/road-collisions-serious-observations",
+			"recordCount": 349,
+			"recordCountByPeriod": {
+				"2025-H1": 349
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions-serious",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "road-collisions-slight-observations",
+			"measureId": "road-collisions-slight",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2024
+			},
+			"format": "json",
+			"artifact": "road-collisions-slight-observations",
+			"contentHash": "sha256:8b836bb96ecd1986c0710a87a4ea3d035ebfd186aaa951643512a930e66ea5ca",
+			"bytes": 19906,
+			"href": "/v1/exports/road-collisions-slight-observations",
+			"recordCount": 349,
+			"recordCountByPeriod": {
+				"2025-H1": 349
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions-slight",
+				"datasets": [
+					{
+						"id": "road-collisions",
 						"role": "source"
 					}
 				]
