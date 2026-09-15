@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d8e030957866da942c0a78d6de607aa257208e4fb2340ffce803c628ff7e1ba6",
+	"contentHash": "sha256:4c3ef9310033c0714629fcfed650d8548bf1929b32f1932d1a403aac34c615ee",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -8045,6 +8045,98 @@
 				"Dependent children living in those households, counted as people rather than households.",
 				"Households placed in temporary accommodation by the authority under homelessness legislation, at the end of January to March 2026. A household is counted by the authority that placed it, which may house it in another area.",
 				"The published rate per thousand households is not served: a rate does not add over areas and would need the number of households as a weight."
+			]
+		},
+		{
+			"id": "median-annual-pay",
+			"label": "Median gross annual pay",
+			"valueKind": "currency",
+			"unit": "£ per year",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "median",
+				"note": "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "income",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 294,
+						"note": "Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value. No value is published for 2 of the 296 authorities: E06000053, E09000001."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/median-annual-pay"
+			},
+			"notes": [
+				"Annual pay is estimated only for employees who have been in the same job for at least a year.",
+				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
+				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+				"Provisional results are revised when the following year's survey is published."
+			]
+		},
+		{
+			"id": "median-hourly-pay",
+			"label": "Median gross hourly pay",
+			"valueKind": "currency",
+			"unit": "£ per hour",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "median",
+				"note": "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "income",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 294,
+						"note": "Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value. No value is published for 2 of the 296 authorities: E06000053, E09000001."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/median-hourly-pay"
+			},
+			"notes": [
+				"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
+				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+				"Provisional results are revised when the following year's survey is published."
 			]
 		},
 		{

@@ -515,6 +515,11 @@ only **available** when its endpoint, contract and provenance are published.
       counts for English authorities on 2025 codes. The twelve authorities
       that submitted no return are named rather than summed as zero, so an
       England total over the 284 that did is flagged partial.
+- [x] Return 2025 provisional median gross pay by place of residence through
+      `GET /v1/data/median-annual-pay` and `GET /v1/data/median-hourly-pay`,
+      from ASHE Table 8 for English authorities. Region and county totals in
+      the same table are left out, the two estimates the publisher suppressed
+      are named, and a median is refused for aggregation.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1561,6 +1566,7 @@ pnpm start
 - `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/data/claimant-count/aggregate?period=2026-04&geography=localAuthority&boundaryYear=2024&areaCode=S92000003`
 - `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/median-annual-pay/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
