@@ -1,6 +1,5 @@
-import { explainAreaAbsence } from "./areaAbsence";
-import { createAreaRelationshipIndex } from "./areaRelationships";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { areaNotFound, findArea, relationshipsFor } from "./areaResources";
+import { envelope, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Published predecessor/successor links and explicitly qualified same-code continuity. */
@@ -21,25 +20,9 @@ export const handleAreaHistoryRoutes = ({
 		string,
 		string,
 	];
-	const {
-		areaInventory,
-		areaLookup,
-		areaRelationshipIndex,
-		boundaryRegistry,
-		crosswalkLookup,
-	} = context;
-	const area = areaLookup?.get(`${geography}/${boundaryRelease}`)?.get(code);
-	if (!area) {
-		const { detail, ...absence } = explainAreaAbsence(
-			boundaryRegistry,
-			areaInventory,
-			areaLookup,
-			geography,
-			boundaryRelease,
-			code,
-		);
-		return problem(404, "Not Found", detail, absence);
-	}
+	const { areaLookup, areaRelationshipIndex, crosswalkLookup } = context;
+	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const sameCodeReleases = [...(areaLookup?.entries() ?? [])]
 		.flatMap(([identity, areas]) => {
 			const [candidateGeography, candidateRelease] = identity.split(
@@ -64,13 +47,12 @@ export const handleAreaHistoryRoutes = ({
 		.sort((left, right) =>
 			left.boundaryRelease.localeCompare(right.boundaryRelease),
 		);
-	const index =
-		areaRelationshipIndex ??
-		(crosswalkLookup
-			? createAreaRelationshipIndex(crosswalkLookup.values())
-			: undefined);
-	const relationships = (
-		index?.get(`${geography}/${boundaryRelease}/${code}`) ?? []
+	const relationships = relationshipsFor(
+		areaRelationshipIndex,
+		crosswalkLookup,
+		geography,
+		boundaryRelease,
+		code,
 	).filter(
 		(relationship) =>
 			relationship.relation === "successor" ||

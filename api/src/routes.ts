@@ -1,15 +1,10 @@
 import type { AreaLookup } from "./areaInventory";
-import { explainAreaAbsence } from "./areaAbsence";
 import { areaMetrics } from "./areaMetrics";
 import {
 	GEOMETRY_TIERS,
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import {
-	createAreaRelationshipIndex,
-	type AreaRelationshipIndex,
-} from "./areaRelationships";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -70,8 +65,14 @@ import {
 	nextPageHref,
 	readPageSize,
 } from "./pagination";
+import {
+	areaMeasureSources,
+	areaNotFound,
+	findArea,
+	relationshipsFor,
+} from "./areaResources";
 import { handleRoute } from "./routeHandlers";
-import type { CrosswalkLookup, RouteContext } from "./routing";
+import type { RouteContext } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 export { type ApiResponse } from "./routeResponse";
@@ -218,79 +219,6 @@ const readRankingOrder = (value: string | null): RankingOrder | undefined =>
 			? "asc"
 			: undefined;
 
-const findArea = (
-	areaLookup: AreaLookup | undefined,
-	geography: string,
-	boundaryRelease: string,
-	code: string,
-) => areaLookup?.get(`${geography}/${boundaryRelease}`)?.get(code);
-
-/**
- * The source partitions of a measure assessed against one boundary release,
- * each period saying whether its artifact holds a value for the area. Only a
- * partition whose code set was assessed against this exact release is listed;
- * the assessment compares codes and does not assert equal geometry.
- */
-const areaMeasureSources = (
-	measure: DataCatalog["measures"][number],
-	coverage: ReturnType<typeof measureCoverage>,
-	boundaryRelease: string,
-	code: string,
-	artifacts: Parameters<typeof observationsFor>[3],
-) =>
-	coverage?.sources.flatMap((coveredSource, index) => {
-		const boundaryCoverage = coveredSource.boundaryCoverage.find(
-			(candidate) => candidate.boundaryRelease === boundaryRelease,
-		);
-		const source = measure.sources[index];
-		if (!boundaryCoverage || !source) return [];
-		return [
-			{
-				dataset: coveredSource.dataset,
-				sourceGeography: coveredSource.sourceGeography,
-				codeSetCompatibility: boundaryCoverage,
-				periods: source.periods.map((period) => {
-					const observations = observationsFor(
-						measure.id,
-						source,
-						period,
-						artifacts,
-					);
-					const record = observations?.records.find(
-						(candidate) => candidate.areaCode === code,
-					);
-					return observations
-						? {
-								period,
-								artifact: observations.artifact,
-								contentHash: observations.contentHash,
-								availability: record
-									? ("present" as const)
-									: ("absent" as const),
-								...(record
-									? { status: record.status ?? "unknown" }
-									: {}),
-							}
-						: { period, availability: "not-published" as const };
-				}),
-			},
-		];
-	}) ?? [];
-
-const relationshipsFor = (
-	areaRelationshipIndex: AreaRelationshipIndex | undefined,
-	crosswalkLookup: CrosswalkLookup | undefined,
-	geography: string,
-	boundaryRelease: string,
-	code: string,
-) =>
-	(
-		areaRelationshipIndex ??
-		(crosswalkLookup
-			? createAreaRelationshipIndex(crosswalkLookup.values())
-			: undefined)
-	)?.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
-
 /**
  * Route a request against named, independently-built catalogues. Keeping the
  * dependencies in one object prevents a newly added artifact from silently
@@ -373,27 +301,6 @@ export const route = (
 	if (method !== "GET") {
 		return problem(405, "Method Not Allowed", "This API is read-only.");
 	}
-
-	/**
-	 * A 404 for an area identity that says why it resolves to nothing: an
-	 * unpublished geography or release, identities not compiled, or a code the
-	 * release does not hold, with the releases that do.
-	 */
-	const areaNotFound = (
-		geography: string | undefined,
-		boundaryRelease: string | undefined,
-		code: string | undefined,
-	): ApiResponse => {
-		const { detail, ...absence } = explainAreaAbsence(
-			registry,
-			areaInventory,
-			areaLookup,
-			geography ?? "",
-			boundaryRelease ?? "",
-			code ?? "",
-		);
-		return problem(404, "Not Found", detail, absence);
-	};
 
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const pathname = parsedUrl.pathname;
@@ -2663,7 +2570,8 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		const otherArea = findArea(
 			areaLookup,
 			otherGeography,
@@ -2671,7 +2579,12 @@ export const route = (
 			otherCode,
 		);
 		if (!otherArea)
-			return areaNotFound(otherGeography, otherRelease, otherCode);
+			return areaNotFound(
+				context,
+				otherGeography,
+				otherRelease,
+				otherCode,
+			);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -2788,7 +2701,8 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -2900,7 +2814,8 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		if (!crosswalkLookup)
 			return problem(
 				503,
@@ -3058,7 +2973,8 @@ export const route = (
 			boundaryRelease as string,
 			code as string,
 		);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -3141,7 +3057,8 @@ export const route = (
 			boundaryRelease as string,
 			code as string,
 		);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		if (!areaGeometryCache)
 			return problem(
 				503,
@@ -3230,7 +3147,8 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		if (!dataCatalog || !crosswalkInventory) {
 			return problem(
 				503,
@@ -3571,7 +3489,8 @@ export const route = (
 			string,
 		];
 		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) return areaNotFound(geography, boundaryRelease, code);
+		if (!area)
+			return areaNotFound(context, geography, boundaryRelease, code);
 		const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 		const geometry = (() => {
 			if (!areaGeometryCache)

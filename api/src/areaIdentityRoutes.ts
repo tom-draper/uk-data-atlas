@@ -1,4 +1,4 @@
-import { explainAreaAbsence } from "./areaAbsence";
+import { areaNotFound, findArea } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -17,9 +17,7 @@ export const handleAreaIdentityRoutes = ({
 	const [geography, boundaryRelease, code] = segments.slice(2);
 	if (!geography || !boundaryRelease || !code)
 		return problem(400, "Invalid Path", "An area identity is incomplete.");
-	const area = context.areaLookup
-		?.get(`${geography}/${boundaryRelease}`)
-		?.get(code);
+	const area = findArea(context.areaLookup, geography, boundaryRelease, code);
 	if (area)
 		return {
 			status: 200,
@@ -30,13 +28,5 @@ export const handleAreaIdentityRoutes = ({
 				...area,
 			}),
 		};
-	const { detail, ...absence } = explainAreaAbsence(
-		context.boundaryRegistry,
-		context.areaInventory,
-		context.areaLookup,
-		geography,
-		boundaryRelease,
-		code,
-	);
-	return problem(404, "Not Found", detail, absence);
+	return areaNotFound(context, geography, boundaryRelease, code);
 };

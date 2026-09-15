@@ -1,4 +1,4 @@
-import { explainAreaAbsence } from "./areaAbsence";
+import { areaNotFound } from "./areaResources";
 import { selectReleaseForDate } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -10,8 +10,7 @@ export const handleBoundaryRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { areaInventory, areaLookup, boundaryRegistry, geographyInventory } =
-		context;
+	const { areaInventory, boundaryRegistry, geographyInventory } = context;
 
 	if (
 		segments.length === 2 &&
@@ -168,15 +167,7 @@ export const handleBoundaryRoutes = ({
 				candidate.id === segments[3],
 		);
 		if (release) return { status: 200, body: envelope(releaseId, release) };
-		const { detail, ...absence } = explainAreaAbsence(
-			boundaryRegistry,
-			areaInventory,
-			areaLookup,
-			segments[2] ?? "",
-			segments[3] ?? "",
-			"",
-		);
-		return problem(404, "Not Found", detail, absence);
+		return areaNotFound(context, segments[2], segments[3]);
 	}
 
 	return undefined;
