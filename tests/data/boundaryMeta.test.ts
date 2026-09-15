@@ -1,4 +1,11 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import {
+	closeSync,
+	openSync,
+	readdirSync,
+	readFileSync,
+	readSync,
+	statSync,
+} from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -127,11 +134,13 @@ describe("declared geometry corrections", () => {
 	it("is declared only on a British National Grid source", () => {
 		for (const { where, source, dir } of declaring) {
 			expect(source, `${where} has no GeoJSON source`).toBeDefined();
-			// The CRS is declared at the top of the file, before any feature.
-			const head = readFileSync(join(dir, source!.path), "utf8").slice(
-				0,
-				512,
-			);
+			// The CRS is declared at the top of the file, before any feature,
+			// so read only that much rather than sources of tens of megabytes.
+			const buffer = Buffer.alloc(512);
+			const file = openSync(join(dir, source!.path), "r");
+			const length = readSync(file, buffer, 0, buffer.length, 0);
+			closeSync(file);
+			const head = buffer.subarray(0, length).toString("utf8");
 			expect(head, where).toContain("27700");
 		}
 	});
