@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6deb26f05b9a9a2b20aa7d3cfa99f1a748542abb424ce144856d9cbbf2b0e6cf",
-	"boundaryRegistryHash": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
+	"contentHash": "sha256:50bf361ae94c9390f967c3afc440aac7d5e4011ce555cb545c787581a2e882ab",
+	"boundaryRegistryHash": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -352,6 +352,16 @@
 			"contentHash": "sha256:3fb8321da62654e2907bf72818a76cc46b201e9729019797d2051a0ed76b222f",
 			"codeProperty": "lpa19cd",
 			"nameProperty": "lpa19nm"
+		},
+		{
+			"id": "2021-12-ew-bgc-v5",
+			"geography": "lsoa",
+			"status": "available",
+			"recordCount": 35672,
+			"artifact": "areas/lsoa/2021-12-ew-bgc-v5.json",
+			"contentHash": "sha256:c6fa67b6497572a7d37d49265e2dedd86e18b195733f48b1adb52631e7c8bb3d",
+			"codeProperty": "LSOA21CD",
+			"nameProperty": "LSOA21NM"
 		},
 		{
 			"id": "2011-12-w-bgc",

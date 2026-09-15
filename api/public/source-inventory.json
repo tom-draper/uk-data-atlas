@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:66ca61a320d3e0e29ab921c5a9ac802918043f2393b2888d6f29105f34d21b0e",
+	"contentHash": "sha256:b0b11cce1edec91aa78c2451824b8015441a061b8ca14c0ac5fa88f1050a521d",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -629,6 +629,22 @@
 				}
 			],
 			"metadataHash": "sha256:6b0479a5e5066ba24a49ee22ccb7ced212e0c74d068c88b5db0aaaf2ee9cde9b"
+		},
+		{
+			"key": "boundaries/lsoa/2021-12-ew-bgc-v5",
+			"metadataId": "2021-12-ew-bgc-v5",
+			"kind": "boundary",
+			"title": "Lower layer super output areas, December 2021 (England and Wales, generalised, clipped, v5)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/datasets/68515293204e43ca8ab56fa13ae8a547",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:02001f06fee4a2ec2512c6e15430c81bc1a9248fa87b5faf30d81b8af803bd77"
 		},
 		{
 			"key": "boundaries/major-town-and-city/2015-12-ew-bgc",
@@ -2061,7 +2077,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:6fb250266a528ccda19623dbae2bb2c33808b2fa25ae3557e9347e7bb8313ac5"
+			"metadataHash": "sha256:a801b93d5d600b39a227f90bea5d6de116e1fff4ac9b3a15d1e0fdd03139136b"
 		},
 		{
 			"key": "politics/elections/local-elections/2024",

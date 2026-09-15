@@ -1,26 +1,26 @@
 {
 	"schemaVersion": 1,
 	"inputs": {
-		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
-		"areaInventory": "sha256:6deb26f05b9a9a2b20aa7d3cfa99f1a748542abb424ce144856d9cbbf2b0e6cf",
-		"geometrySources": "sha256:8a9df2fa7a6b8671d653e1864deb6c66528b04c8773c207b01d52d29ac4112c4",
+		"boundaryRegistry": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
+		"areaInventory": "sha256:50bf361ae94c9390f967c3afc440aac7d5e4011ce555cb545c787581a2e882ab",
+		"geometrySources": "sha256:57f1dcfd54ca6639d8ceea4acd9ec6df417ceb485245ef3d4b95026dc91a19a8",
 		"crosswalkInventory": "sha256:5576446ba0b841f3cb756c0bd7485f50bf7181c45660c1f166608add82250c41",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
-		"geographyInventory": "sha256:f3d75ca431c25041cbb9e07c39ccc694a89589db5a8958ede82b722b243120ed",
+		"geographyInventory": "sha256:c5d03f56b5cd3ee31e277ad4a0ee2cde2712c1c64fd373876c19e64c9be4ff0a",
 		"dataCatalog": "sha256:ff7da31226d0266de4d0fea6a5cdf26f11afcd84cdf3da461e42737e8c31a041",
 		"exportManifest": "sha256:12d556e79d6e5a45e4bde94ba81c21f45fffe6fefd104b51303e8a70d16689b4",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
 	},
 	"summary": {
-		"resourceCount": 512,
-		"checkCount": 1639,
-		"passedCount": 1592,
+		"resourceCount": 513,
+		"checkCount": 1643,
+		"passedCount": 1596,
 		"waivedCount": 47,
 		"coverage": {
-			"boundaryReleases": 71,
-			"areaIdentities": 71,
-			"servableGeometry": 71,
+			"boundaryReleases": 72,
+			"areaIdentities": 72,
+			"servableGeometry": 72,
 			"withRelationships": 23,
 			"crosswalks": 15,
 			"weightedCrosswalks": 2,
@@ -42,7 +42,7 @@
 					"id": "release-coverage",
 					"status": "passed",
 					"measured": {
-						"boundaryReleaseCount": 71
+						"boundaryReleaseCount": 72
 					}
 				}
 			]
@@ -1148,6 +1148,37 @@
 					"status": "passed",
 					"measured": {
 						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/lsoa/2021-12-ew-bgc-v5",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 35672
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2
 					}
 				},
 				{
@@ -16187,5 +16218,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:987805845fa83f44d30477b8efa62434d550af16d825123ded69f271355424a5"
+	"contentHash": "sha256:b38eeb427f2b386fb695e722aca424e42c76749db879b7b403674d772d533d55"
 }

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:8a9df2fa7a6b8671d653e1864deb6c66528b04c8773c207b01d52d29ac4112c4",
+	"contentHash": "sha256:57f1dcfd54ca6639d8ceea4acd9ec6df417ceb485245ef3d4b95026dc91a19a8",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -311,6 +311,14 @@
 			"corrections": [
 				"northern-ireland-offset"
 			]
+		},
+		{
+			"id": "lsoa/2021-12-ew-bgc-v5",
+			"status": "available",
+			"input": "boundaries/lsoa/2021-12-ew-bgc-v5/Lower_layer_Super_Output_Areas_December_2021_Boundaries_EW_BGC_V5_4841666696287652427.geojson",
+			"inputHash": "sha256:34d637634532b16824c576f0a297ee6ce07962b88d23aa0fd8e564c97a3d0f38",
+			"crs": "EPSG:27700",
+			"codeProperty": "LSOA21CD"
 		},
 		{
 			"id": "lsoa/2011-12-w-bgc",
