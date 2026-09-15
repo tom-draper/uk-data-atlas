@@ -137,7 +137,7 @@ only **available** when its endpoint, contract and provenance are published.
       and not-published states, and never upgrades code-set compatibility into
       a geometry-equivalence claim.
 - [x] Return an area-specific citation bundle through
-      `GET /v1/areas/{type}/{release}/{code}/citation`: the immutable Atlas
+      `GET /v1/areas/{geography}/{release}/{code}/citation`: the immutable Atlas
       release, the area identity artifact's hash, the boundary release's
       publisher, licence and metadata hash, geometry provenance, validation
       results and an attribution block. A named `measure` is cited through
@@ -288,7 +288,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Compare two boundary releases to identify recodes, membership changes and
       geometry changes.
 - [x] Report the overlap between two specified areas through
-      `GET /v1/areas/{type}/{release}/{code}/overlap?with=`, across geographies
+      `GET /v1/areas/{geography}/{release}/{code}/overlap?with=`, across geographies
       and releases: the shared area, each area's share, and a relation judged
       by the same sliver and coverage thresholds the area-overlap crosswalks
       are compiled with, so the two cannot disagree. Aldershot is 31.6% in
@@ -980,8 +980,8 @@ GET /v1/status
 Candidate read-only routes:
 
 ```text
-GET /v1/areas:validate?geography={type}&release={release}&value={value}
-GET /v1/translations?sourceGeography={type}&sourceRelease={release}&code={code}&targetGeography={type}&targetRelease={release}&purpose={purpose}
+GET /v1/areas:validate?geography={geography}&release={release}&value={value}
+GET /v1/translations?sourceGeography={geography}&sourceRelease={release}&code={code}&targetGeography={geography}&targetRelease={release}&purpose={purpose}
 GET /v1/areas/{geography}/{release}/{code}/conversion-paths?to={area-id}
 GET /v1/data/{measure-id}/aggregate?area={area-id}&area={area-id}
 GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}
@@ -1064,7 +1064,7 @@ not an arbitrary query language or an opaque AI score.
 Candidate read-only routes:
 
 ```text
-GET /v1/areas:select?geography={type}/{release}&criterion={measure}:{operator}:{value}&sort={measure}:{direction}
+GET /v1/areas:select?geography={geography}/{release}&criterion={measure}:{operator}:{value}&sort={measure}:{direction}
 GET /v1/areas/{geography}/{release}/{code}/peers?profile={profile-id}
 GET /v1/areas/{geography}/{release}/{code}/brief?template={template-id}&format={json|html|pdf}
 GET /v1/boundary-releases/compare?from={geography}/{release}&to={geography}/{release}
@@ -1187,8 +1187,8 @@ Candidate read-only routes:
 ```text
 GET /v1/licensing:assess?measure={measure-id}&boundaryRelease={geography}/{release}&use={map|export|embed|report}
 GET /v1/postcodes/{postcode}
-GET /v1/areas:contains?lng={longitude}&lat={latitude}&geography={type}&geography={type}
-GET /v1/areas:near?lng={longitude}&lat={latitude}&geography={type}
+GET /v1/areas:contains?lng={longitude}&lat={latitude}&geography={geography}&geography={geography}
+GET /v1/areas:near?lng={longitude}&lat={latitude}&geography={geography}
 ```
 
 #### Dataset priorities
@@ -1539,8 +1539,8 @@ GET /v1/areas/{area-id}/relations?type=constituency
 GET /v1/areas/{area-id}/history
 GET /v1/areas:contains?lng=-2.2426&lat=53.4808&types=ward,local-authority,constituency
 GET /v1/areas/{area-id}/geometry?format=geojson&simplification=standard
-GET /v1/boundaries/{type}/{release}/features?bbox=-2.7,53.3,-1.9,53.8
-GET /v1/boundaries/{type}/{release}/tiles/{z}/{x}/{y}.mvt
+GET /v1/boundaries/{geography}/{release}/features?bbox=-2.7,53.3,-1.9,53.8
+GET /v1/boundaries/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
 ```
 
 Name resolution is deliberately ambiguity-preserving: a search for
@@ -1789,7 +1789,7 @@ language that manufactures invalid figures.
 
 ```
 GET /v1/provenance/datasets/{dataset-release}
-GET /v1/provenance/boundaries/{type}/{release}
+GET /v1/provenance/boundaries/{geography}/{release}
 GET /v1/provenance/crosswalks/{crosswalk-id}
 GET /v1/validation/{resource-id}
 GET /v1/releases/{atlas-release}/manifest
@@ -2140,7 +2140,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    routes actually implemented. Add a test that every root link resolves to an
    OpenAPI operation and that every public operation is reachable from
    discovery or its documented task group. Resolve the current public template
-   drift too: OpenAPI uses `{geography}` where root discovery advertises
+   drift too: OpenAPI used `{geography}` where root discovery advertised
    `{type}`; publish one canonical placeholder vocabulary.
 2. **Remove documentation drift.** Keep the conceptual resource model clearly
    labelled as non-binding, and either generate the standalone endpoint list
@@ -2265,23 +2265,23 @@ pnpm start
 - `GET /v1/locations?q=york`
 - `GET /v1/locations/london`
 - `GET /v1/boundary-releases`
-- `GET /v1/boundary-releases:resolve?geography={type}&date={YYYY-MM-DD}`
-- `GET /v1/boundary-releases/{type}/{release}`
+- `GET /v1/boundary-releases:resolve?geography={geography}&date={YYYY-MM-DD}`
+- `GET /v1/boundary-releases/{geography}/{release}`
 - `GET /v1/areas`
-- `GET /v1/areas:validate?geography={type}&release={release}&value={code-or-name}`
+- `GET /v1/areas:validate?geography={geography}&release={release}&value={code-or-name}`
 - `GET /v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc`
 - `GET /v1/areas:intersects?bbox=-1.6,53.7,-1.4,53.9&geography=ward&release=2024-12-uk-bgc`
-- `GET /v1/areas/{type}/{release}/{code}`
+- `GET /v1/areas/{geography}/{release}/{code}`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/history`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/parents`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children/geometry`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/neighbours`
-- `GET /v1/areas/{type}/{release}/{code}/relationships`
-- `GET /v1/areas/{type}/{release}/{code}/capabilities`
-- `GET /v1/areas/{type}/{release}/{code}/citation`
-- `GET /v1/areas/{type}/{release}/{code}/overlap?with={type}/{release}/{code}`
-- `GET /v1/areas/{type}/{release}/{code}/geometry`
+- `GET /v1/areas/{geography}/{release}/{code}/relationships`
+- `GET /v1/areas/{geography}/{release}/{code}/capabilities`
+- `GET /v1/areas/{geography}/{release}/{code}/citation`
+- `GET /v1/areas/{geography}/{release}/{code}/overlap?with={geography}/{release}/{code}`
+- `GET /v1/areas/{geography}/{release}/{code}/geometry`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/geometry/metadata`
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`
@@ -2289,7 +2289,7 @@ pnpm start
 - `GET /v1/translations?sourceGeography=ward&sourceRelease=2024-12-uk-bgc&code=E05000932&targetGeography=localAuthority&targetRelease=2024-12-uk-bgc&purpose=membership`
 - `GET /v1/relationship-candidates`
 - `GET /v1/validation`
-- `GET /v1/validation/boundary-releases/{type}/{release}`
+- `GET /v1/validation/boundary-releases/{geography}/{release}`
 - `GET /v1/validation/crosswalks/{crosswalk-id}`
 - `GET /v1/validation/measures/{measure-id}`
 - `GET /v1/validation/exports/{export-id}`
@@ -2514,7 +2514,7 @@ empty.
 `public/geometry-sources.json` records, per compiled area release, where its
 raw GeoJSON lives, its CRS, and its code property, or an explicit
 `not-available` reason when no raw source is declared. `GET
-/v1/areas/{type}/{release}/{code}/geometry` serves that geometry directly as
+/v1/areas/{geography}/{release}/{code}/geometry` serves that geometry directly as
 a GeoJSON Feature, reading and caching the source file on first request
 rather than precompiling per-area geometry artifacts. A source code that maps
 to more than one feature fragment (an area split across islands, for

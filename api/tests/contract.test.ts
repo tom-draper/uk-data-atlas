@@ -32,7 +32,7 @@ const indexLinks = (
 	route("GET", "/v1", catalogues).body as { data: { links: string[] } }
 ).data.links;
 
-/** A path template such as `/v1/areas/{type}` as a pattern for concrete paths. */
+/** A path template such as `/v1/areas/{geography}` as a pattern for concrete paths. */
 const templatePattern = (template: string) =>
 	new RegExp(
 		`^${template
