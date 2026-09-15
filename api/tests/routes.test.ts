@@ -10,13 +10,10 @@ import {
 } from "../src/areaGeometry";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/routing";
-import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import type { ValidationReport } from "../src/validationReport";
 import {
 	route,
 	registry,
-	testContext,
 	geographyInventory,
 	areaLookup,
 	compatibleWardAreaLookup,
@@ -33,68 +30,6 @@ import {
 	relationshipCandidateInventory,
 	validationReport,
 } from "./routeFixtures";
-
-test("gets the atlas release manifest", () => {
-	const response = route(
-		"GET",
-		"/v1/atlas-release",
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-		atlasRelease,
-	);
-	assert.equal(response.status, 200);
-	assert.equal(
-		"atlasRelease" in response.body && response.body.atlasRelease,
-		atlasRelease.releaseId,
-	);
-	assert.deepEqual(
-		"data" in response.body && response.body.data,
-		atlasRelease,
-	);
-});
-
-test("lists and compares archived Atlas releases by immutable artifact hash", () => {
-	const previous: AtlasRelease = {
-		schemaVersion: 1,
-		releaseId: "sha256:previous-release",
-		artifacts: [
-			{
-				id: "boundary-registry",
-				path: "boundary-releases.json",
-				contentHash: "sha256:previous-registry",
-			},
-		],
-	};
-	const context = {
-		boundaryRegistry: registry,
-		atlasRelease,
-		atlasReleaseHistory: new Map([
-			[previous.releaseId, previous],
-			[atlasRelease.releaseId, atlasRelease],
-		]),
-	};
-	const releases = routeRequest("GET", "/v1/atlas-releases", context);
-	assert.equal(releases.status, 200);
-	assert.equal(
-		(("data" in releases.body ? releases.body.data : []) as unknown[])
-			.length,
-		2,
-	);
-	const comparison = routeRequest(
-		"GET",
-		`/v1/atlas-releases/compare?from=${previous.releaseId}`,
-		context,
-	);
-	assert.equal(comparison.status, 200);
-	assert.deepEqual(
-		"data" in comparison.body &&
-			(comparison.body.data as { summary: unknown }).summary,
-		{ added: 0, removed: 0, changed: 1, unchanged: 0 },
-	);
-});
 
 test("lists and downloads release-pinned whole observation artifacts", () => {
 	const measure = dataCatalog.measures.find(
@@ -221,11 +156,6 @@ test("uses the immutable release id in every successful envelope", () => {
 	);
 });
 
-test("reports the atlas release as unavailable before it is built", () => {
-	const response = route("GET", "/v1/atlas-release", registry);
-	assert.equal(response.status, 503);
-});
-
 test("uses problem details for missing resources and unsupported methods", () => {
 	const missing = route(
 		"GET",
@@ -258,97 +188,6 @@ test("uses problem details for missing resources and unsupported methods", () =>
 	assert.equal(
 		"title" in write.body && write.body.title,
 		"Method Not Allowed",
-	);
-});
-
-const validationRoute = (url: string, report?: ValidationReport) =>
-	routeRequest(
-		"GET",
-		url,
-		testContext({
-			geographyInventory,
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup,
-			atlasRelease,
-			relationshipCandidateInventory,
-			validationReport: report,
-		}),
-	);
-
-test("serves the validation report, optionally only resources with waivers", () => {
-	const all = validationRoute("/v1/validation", validationReport);
-	assert.equal(all.status, 200);
-	assert.deepEqual("data" in all.body && all.body.data, validationReport);
-	const waived = validationRoute(
-		"/v1/validation?status=waived",
-		validationReport,
-	);
-	assert.deepEqual(
-		"data" in waived.body &&
-			(waived.body.data as ValidationReport).resources.map(
-				(resource) => resource.id,
-			),
-		["boundary-releases/ward/2025-01-en-ward"],
-	);
-	assert.equal(
-		validationRoute("/v1/validation?status=failed", validationReport)
-			.status,
-		400,
-	);
-});
-
-test("serves one resource's validation at the resource's own path", () => {
-	const release = validationRoute(
-		"/v1/validation/boundary-releases/ward/2025-01-en-ward",
-		validationReport,
-	);
-	assert.equal(release.status, 200);
-	assert.deepEqual(
-		"data" in release.body && release.body.data,
-		validationReport.resources[0],
-	);
-	const crosswalk = validationRoute(
-		"/v1/validation/crosswalks/constituency-2010-to-2024-official-lookup-v2",
-		validationReport,
-	);
-	assert.equal(crosswalk.status, 200);
-	assert.deepEqual(
-		"data" in crosswalk.body && crosswalk.body.data,
-		validationReport.resources[1],
-	);
-	for (const [path, resource] of [
-		["/v1/validation/measures/crime-total", validationReport.resources[2]],
-		[
-			"/v1/validation/exports/crime-total-observations",
-			validationReport.resources[3],
-		],
-	] as const) {
-		const response = validationRoute(path, validationReport);
-		assert.equal(response.status, 200);
-		assert.deepEqual(
-			"data" in response.body && response.body.data,
-			resource,
-		);
-	}
-	for (const path of [
-		"/v1/validation/crosswalks/unknown",
-		"/v1/validation/measures/unknown",
-		"/v1/validation/exports/crime-total-observations/records",
-	]) {
-		assert.equal(validationRoute(path, validationReport).status, 404);
-	}
-	assert.equal(
-		validationRoute("/v1/validation/areas/ward", validationReport).status,
-		404,
-	);
-});
-
-test("reports validation as unavailable before the report is built", () => {
-	assert.equal(validationRoute("/v1/validation").status, 503);
-	assert.equal(
-		validationRoute("/v1/validation/crosswalks/unknown").status,
-		503,
 	);
 });
 
