@@ -61,6 +61,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RootEnvelope"
+              x-example-request: "/v1"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -118,6 +119,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeographySummaryListEnvelope"
+              x-example-request: "/v1/geographies"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -223,6 +225,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BoundaryReleaseEnvelope"
+              x-example-request: "/v1/boundary-releases/constituency/2024-07-uk-bgc"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -1037,6 +1040,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/places?q=Bristol"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -1126,6 +1130,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/value?place=North%20West&period=2022"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -1300,6 +1305,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&limit=1"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -1539,6 +1545,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaBoxSearchEnvelope"
+              x-example-request: "/v1/areas:intersects?bbox=-0.51,51.28,0.33,51.69&geography=localAuthority&release=2023-05-uk-bgc-v2"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -1709,6 +1716,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaEnvelope"
+              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001262"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -1982,6 +1990,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaChildrenGeometryEnvelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children/geometry?tier=low"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -2113,6 +2122,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaNeighboursEnvelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/neighbours"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -2275,6 +2285,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaGeometryEnvelope"
+              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001262/geometry"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -2369,6 +2380,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaGeometryMetadataEnvelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000046/geometry/metadata"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -2428,6 +2440,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CrosswalkSummaryListEnvelope"
+              x-example-request: "/v1/crosswalks"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -2484,6 +2497,7 @@ paths:
                 $ref: "#/components/schemas/CrosswalkMetadataEnvelope"
               examples:
                 officialLookup:
+                  x-example-request: "/v1/crosswalks/constituency-2010-to-2024-official-lookup-v2"
                   value:
                     apiVersion: v1
                     atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -2509,6 +2523,7 @@ paths:
                     meta:
                       nextCursor: null
                 areaOverlap:
+                  x-example-request: "/v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap"
                   value:
                     apiVersion: v1
                     atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
@@ -2597,6 +2612,7 @@ paths:
                 $ref: "#/components/schemas/CrosswalkRecordListEnvelope"
               examples:
                 officialLookup:
+                  x-example-request: "/v1/crosswalks/constituency-2010-to-2024-official-lookup-v2/records?source=N06000004"
                   value:
                     apiVersion: v1
                     atlasRelease: "sha256:9edc254c5d4cd0a90fc5d3b2544e5f64946d6d0e6a8b68860e3aa6f0ac8d0912"
@@ -2610,6 +2626,7 @@ paths:
                     meta:
                       nextCursor: null
                 areaOverlap:
+                  x-example-request: "/v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap/records?source=E14001067"
                   value:
                     apiVersion: v1
                     atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
@@ -2663,6 +2680,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RelationshipCandidateListEnvelope"
+              x-example-request: "/v1/relationship-candidates"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -2725,6 +2743,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationReportEnvelope"
+              x-example-request: "/v1/validation"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:7ae746ebc845f17dced61fe2e49edcd4d4c88a2517238535b32c11a4d1d3cbc0"
@@ -2780,6 +2799,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationResourceEnvelope"
+              x-example-request: "/v1/validation/boundary-releases/dataZone/2011-12-sc-bfc"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
@@ -2828,6 +2848,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationResourceEnvelope"
+              x-example-request: "/v1/validation/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
@@ -2893,6 +2914,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationResourceEnvelope"
+              x-example-request: "/v1/validation/measures/crime-total"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
@@ -2942,6 +2964,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidationResourceEnvelope"
+              x-example-request: "/v1/validation/exports/house-price-median-observations"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:c51e3f4ef14b77972061b9c8f08a838975d700adba9d2372c5d1bbbe8edd27a2"
@@ -2996,6 +3019,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ExportManifestEnvelope"
+              x-example-request: "/v1/exports"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d172621eff"
@@ -3098,6 +3122,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LookupManifestEnvelope"
+              x-example-request: "/v1/lookups"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d172621eff"
@@ -3277,6 +3302,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AtlasReleaseComparisonEnvelope"
+              x-example-request: "/v1/atlas-releases/compare?from=sha256:c581bb2adda2787dcb6984eeb8c63399b33380f02b9ef308bdbfb671cf8490d1&to=sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
