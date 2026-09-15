@@ -2,16 +2,20 @@ import { describe, expect, it } from "vitest";
 import { loadRoadSafety } from "@/lib/data/road-safety/loader";
 import { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "@/lib/data/gazetteer/types";
-import { getPointsInBounds } from "@/lib/helpers/locationPoints";
+import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 
-// Two collisions in Greater Manchester and one well outside it, so a summary
-// that ignored the bounding box would be visibly wrong.
+// Two collisions in Greater Manchester and one in London. A fourth sits on the
+// Mull of Kintyre, inside Northern Ireland's bounding box but assigned to
+// Argyll and Bute, and a fifth is at Heathrow, which DfT assigns to no
+// authority. The last has no coordinates.
 const csv = [
-	"longitude,latitude,collision_severity,date,time,number_of_casualties,number_of_vehicles,speed_limit,road_type,urban_or_rural_area",
-	"-2.24,53.48,1,2025-01-02,08:15,2,2,30,6,1",
-	"-2.30,53.50,3,2025-01-03,17:40,1,1,40,3,1",
-	"-0.12,51.50,2,2025-01-04,12:00,1,2,20,6,1",
-	",,3,2025-01-05,12:00,1,1,30,6,1",
+	"longitude,latitude,collision_severity,date,time,number_of_casualties,number_of_vehicles,speed_limit,road_type,urban_or_rural_area,local_authority_ons_district",
+	"-2.24,53.48,1,2025-01-02,08:15,2,2,30,6,1,E08000003",
+	"-2.30,53.50,3,2025-01-03,17:40,1,1,40,3,1,E08000003",
+	"-0.12,51.50,2,2025-01-04,12:00,1,2,20,6,1,E09000033",
+	"-5.64,55.35,3,2025-01-05,12:00,1,1,60,6,2,S12000035",
+	"-0.45,51.47,3,2025-01-06,12:00,1,1,30,6,1,EHEATHROW",
+	",,3,2025-01-07,12:00,1,1,30,6,1,E09000033",
 ].join("\n");
 
 const bbox = (
@@ -27,10 +31,18 @@ const core = {
 	nameIndex: {},
 	namedLocations: {
 		"Greater Manchester": {
-			memberCodes: [],
+			memberCodes: ["E08000003"],
 			bbox: bbox(-2.72, 53.32, -1.91, 53.68),
 		},
-		London: { memberCodes: [], bbox: bbox(-0.51, 51.28, 0.33, 51.69) },
+		London: {
+			memberCodes: ["E09000017", "E09000033"],
+			bbox: bbox(-0.51, 51.28, 0.33, 51.69),
+		},
+		"Northern Ireland": {
+			memberCodes: [],
+			bbox: bbox(-8.3, 53.9, -5.3, 55.4),
+		},
+		Scotland: { memberCodes: [], bbox: bbox(-8.6, 54.6, 1.8, 60.9) },
 		// No bbox, so it cannot be summarised and must be left out entirely.
 		Nowhere: { memberCodes: [] },
 	},
@@ -48,7 +60,7 @@ describe("loadRoadSafety", () => {
 		const dataset = datasets.roadSafety2025;
 		expect(dataset.points).toBeUndefined();
 		// Rows without coordinates are dropped, as before.
-		expect(points.roadSafety2025).toHaveLength(3);
+		expect(points.roadSafety2025).toHaveLength(5);
 		expect(dataset).toMatchObject({
 			id: "roadSafety2025",
 			type: "custom",
@@ -71,11 +83,15 @@ describe("loadRoadSafety", () => {
 				expect(summaries[name]).toBeUndefined();
 				continue;
 			}
-			const inBounds = getPointsInBounds(points.roadSafety2025, bounds);
-			const total = inBounds.reduce((sum, p) => sum + p.value, 0);
-			expect(summaries[name].count).toBe(inBounds.length);
+			const located = getPointsInLocation(
+				points.roadSafety2025,
+				name,
+				new Gazetteer(core),
+			);
+			const total = located.reduce((sum, p) => sum + p.value, 0);
+			expect(summaries[name].count).toBe(located.length);
 			expect(summaries[name].averageValue).toBeCloseTo(
-				inBounds.length > 0 ? total / inBounds.length : 0,
+				located.length > 0 ? total / located.length : 0,
 				3,
 			);
 		}
@@ -85,6 +101,13 @@ describe("loadRoadSafety", () => {
 			count: 2,
 			averageValue: 2,
 		});
-		expect(summaries.London).toEqual({ count: 1, averageValue: 2 });
+		// Heathrow's collision is placed in Hillingdon, so London counts it.
+		expect(summaries.London).toEqual({ count: 2, averageValue: 1.5 });
+		// Kintyre is inside Northern Ireland's box but belongs to Scotland.
+		expect(summaries["Northern Ireland"]).toEqual({
+			count: 0,
+			averageValue: 0,
+		});
+		expect(summaries.Scotland).toEqual({ count: 1, averageValue: 1 });
 	});
 });

@@ -1,6 +1,7 @@
 import { CustomDataset, CustomPoint, PointSummary } from "@/lib/types/custom";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import type { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
+import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;
@@ -58,47 +59,44 @@ const SEVERITY_STYLE = {
 const round5 = (n: number) => Math.round(n * 1e5) / 1e5;
 
 /**
+ * DfT assigns collisions at Heathrow to `EHEATHROW` rather than to a local
+ * authority. The airport lies wholly within Hillingdon, so for placing those
+ * collisions in named locations they are treated as Hillingdon's.
+ */
+const LOCATION_AREA_CODES: Record<string, string> = {
+	EHEATHROW: "E09000017",
+};
+
+/**
  * What the card shows for each named location, counted the same way the client
- * would: every point inside the location's bounding box, as `getPointsInBounds`
- * selects them. Precomputing it is what lets the 6 MB point file stay unfetched
- * until someone selects the dataset.
+ * does once the points load: by `getPointsInLocation`. Precomputing it is what
+ * lets the 6 MB point file stay unfetched until someone selects the dataset.
  */
 const summariseByLocation = (
-	points: readonly CustomPoint[],
+	points: CustomPoint[],
 	gazetteer: Gazetteer,
-): Record<string, PointSummary> => {
-	const locations = gazetteer.namedLocations().flatMap((name) => {
-		const bbox = gazetteer.boundsOf(name);
-		return bbox ? [{ name, bbox, count: 0, total: 0 }] : [];
-	});
-
-	for (const point of points) {
-		for (const location of locations) {
-			const [west, south, east, north] = location.bbox;
-			if (
-				point.lng >= west &&
-				point.lng <= east &&
-				point.lat >= south &&
-				point.lat <= north
-			) {
-				location.count++;
-				location.total += point.value;
-			}
-		}
-	}
-
-	return Object.fromEntries(
-		locations.map(({ name, count, total }) => [
-			name,
-			{
-				count,
-				// Three decimal places is well beyond the one the card renders.
-				averageValue:
-					count > 0 ? Math.round((total / count) * 1e3) / 1e3 : 0,
-			},
-		]),
+): Record<string, PointSummary> =>
+	Object.fromEntries(
+		gazetteer.namedLocations().flatMap((name) => {
+			if (!gazetteer.boundsOf(name)) return [];
+			const located = getPointsInLocation(points, name, gazetteer);
+			const total = located.reduce((sum, point) => sum + point.value, 0);
+			return [
+				[
+					name,
+					{
+						count: located.length,
+						// Three decimal places is well beyond the one the card renders.
+						averageValue:
+							located.length > 0
+								? Math.round((total / located.length) * 1e3) /
+									1e3
+								: 0,
+					},
+				],
+			];
+		}),
 	);
-};
 
 export interface RoadSafetyCompilation {
 	/** The card's dataset, small enough to fetch on every page load. */
@@ -125,7 +123,12 @@ export async function loadRoadSafety(
 		const severityCode = row["collision_severity"]?.trim() ?? "3";
 		const value = SEVERITY_WEIGHT[severityCode] ?? 1;
 		const speedLimit = row["speed_limit"]?.trim();
+		const assigned = row["local_authority_ons_district"]?.trim();
+		const areaCode = assigned
+			? (LOCATION_AREA_CODES[assigned] ?? assigned)
+			: undefined;
 		points.push({
+			...(areaCode ? { areaCode } : {}),
 			lng: round5(lng),
 			lat: round5(lat),
 			value,

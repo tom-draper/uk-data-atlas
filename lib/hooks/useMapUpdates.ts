@@ -3,7 +3,6 @@ import { ActiveViz, BoundaryGeojson, Dataset } from "@lib/types";
 import type { MapManager } from "../helpers/mapManager";
 import { MapOptions } from "../types/mapOptions";
 import { useIsDark } from "../context/ThemeContext";
-import { gazetteer } from "../data/gazetteer/static";
 import { getChartDatasetDefinition, isChartDataset } from "../datasets";
 import { categoryFilter } from "../helpers/mapManager/expressions";
 import {
@@ -121,7 +120,7 @@ export function useMapUpdates({
 				mapManager,
 				activeDataset,
 				mapOptions,
-				gazetteer.boundsOf(selectedLocation) ?? null,
+				selectedLocation,
 				isDark,
 			);
 		} else {

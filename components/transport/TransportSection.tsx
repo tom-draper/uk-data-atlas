@@ -7,7 +7,7 @@ import { CustomDataset } from "@/lib/types/custom";
 import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { gazetteer } from "@/lib/data/gazetteer/static";
-import { getPointsInBounds } from "@/lib/helpers/locationPoints";
+import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
@@ -97,9 +97,10 @@ function RoadSafetyCard({
 	const loadedPoints = dataset.points;
 	const points = useMemo(() => {
 		if (!loadedPoints) return null;
-		const locationPoints = getPointsInBounds(
+		const locationPoints = getPointsInLocation(
 			loadedPoints,
-			gazetteer.boundsOf(location),
+			location,
+			gazetteer,
 		);
 		if (!isActive) return locationPoints;
 		return locationPoints.filter(
@@ -118,7 +119,7 @@ function RoadSafetyCard({
 
 	// The points are only fetched once the dataset is selected, so until then
 	// the card reads the counts precompiled for each location. They agree: both
-	// count the collisions inside the location's bounding box.
+	// place collisions in the location with getPointsInLocation.
 	const summary = dataset.pointSummaries?.[location];
 	const collisions = points ? points.length : (summary?.count ?? 0);
 	const hasData = collisions > 0;
