@@ -3,15 +3,15 @@ info:
   title: UK Data Atlas API
   version: "0.1.0"
   description: |
-    This describes exactly the read-only routes implemented in `src/routes.ts`
-    and served by `pnpm start`. It is not the full public API proposed in
-    `README.md`: it does not yet cover geography conversion for measures. It
-    can sum an extensive measure over a named location only when every curated
-    member code occurs directly in the selected source partition. The
-    population route is intentionally
-    source-exact: it serves only published source code vintages and never
-    chooses a geometry release on a caller's behalf. A caller may explicitly
-    select a code-compatible release for a map join.
+    This describes exactly the read-only routes the server implements and
+    `pnpm start` serves. It is not the full public API proposed in
+    `README.md`. Every data route is source-exact by default: it serves the
+    published source code vintages and never chooses a geometry release on a
+    caller's behalf. A caller may explicitly select a code-compatible release
+    for a map join. Values are combined over areas only through
+    `/data/{measure-id}/aggregate`, and regrouped onto other areas only through
+    `/data/{measure-id}/convert` with a crosswalk the caller names, and each
+    refuses a measure whose declared semantics do not allow it.
 
     Every successful response is wrapped in the envelope described by
     `Envelope`. Its `atlasRelease` field is the immutable `releaseId` from
@@ -661,10 +661,16 @@ paths:
         mean for a measure that publishes an available weight measure. Supply
         exactly one of `locationId`, `areaCode`, or `regionCode`.
 
-        With `locationId`, every curated member code must occur in the
-        requested source partition; otherwise the request is rejected rather
-        than silently returning a partial total. Named locations are editorial
-        code groupings, not claims of official administrative geography.
+        With `locationId`, the location's member codes are matched in the
+        requested source partition. A location lists every code it has been
+        made of, so a code of another vintage, whose successor or predecessor
+        the partition holds instead, is passed over, as is a legacy code
+        naming no compiled area; both are listed in
+        `aggregation.memberCodesNotInPartition`. Any other missing member is
+        refused with `code: partial_coverage` rather than silently returning a
+        partial total, and a location none of whose codes is in the partition
+        is refused with its reason. Named locations are editorial code
+        groupings, not claims of official administrative geography.
 
         With `areaCode`, which currently accepts a country code such as
         `E92000001`, membership follows the first character of the GSS area
