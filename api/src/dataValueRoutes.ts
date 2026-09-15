@@ -5,7 +5,6 @@ import {
 	describeCandidate,
 	placeIndexFor,
 } from "./placeResponses";
-import { route } from "./routes";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -15,6 +14,7 @@ export const handleDataValueRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	dispatch,
 }: RouteRequest): ApiResponse | undefined => {
 	if (
 		segments.length !== 4 ||
@@ -66,9 +66,7 @@ export const handleDataValueRoutes = ({
 	// Each candidate goes to the route that already serves its kind of
 	// place, so the value and every refusal are exactly what that route
 	// gives when called directly.
-	const outcome = valueForPlace(measure, candidates, period, (url) =>
-		route("GET", url, context),
-	);
+	const outcome = valueForPlace(measure, candidates, period, dispatch);
 	if (outcome.outcome === "unmatched") {
 		return problem(
 			404,

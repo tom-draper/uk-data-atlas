@@ -22,6 +22,7 @@ import type {
 	NamedLocationLookup,
 } from "./namedLocations";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import type { ApiResponse } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
@@ -70,4 +71,9 @@ export type RouteRequest = {
 	releaseId: string;
 	parsedUrl: URL;
 	segments: string[];
+	/**
+	 * Serve another GET against the same catalogues, for a route whose answer is
+	 * exactly what a more specific route gives when called directly.
+	 */
+	dispatch: (url: string) => ApiResponse;
 };
