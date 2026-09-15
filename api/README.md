@@ -489,6 +489,14 @@ only **available** when its endpoint, contract and provenance are published.
       count; the districts they replaced are dropped, and the build refuses a
       partition that is not exactly the April 2023 code set, so no resident is
       counted twice.
+- [x] Return Census 2021 highest qualification and ethnic group through
+      `GET /v1/data/qualification-{level}` and
+      `GET /v1/data/ethnicity-{group}`, on the same April 2023 England and
+      Wales authorities and under the same double-counting check. Qualification
+      covers usual residents aged 16 and over, with its own `-total`; the
+      nineteen ethnic groups are exhaustive, so they sum to the resident
+      population without a separate total, give or take the few residents
+      ONS perturbation moves between tables.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1531,6 +1539,8 @@ pnpm start
 - `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`

@@ -936,6 +936,8 @@ export type DataCatalogInputs = {
 	mobileCoverage: string;
 	travelToWork: string;
 	carAvailability: string;
+	qualification: string;
+	ethnicity: string;
 	jobs: string;
 	landArea: string;
 	housePrice: string;
@@ -957,6 +959,8 @@ export const compileDataCatalog = ({
 	mobileCoverage: mobileCoveragePath,
 	travelToWork: travelToWorkPath,
 	carAvailability: carAvailabilityPath,
+	qualification: qualificationPath,
+	ethnicity: ethnicityPath,
 	jobs: jobsPath,
 	landArea: landAreaPath,
 	housePrice: housePricePath,
@@ -1404,6 +1408,7 @@ export const compileDataCatalog = ({
 		{
 			datasetId: "travel-to-work",
 			field: "breakdown",
+			sourceBoundaryYear: 2025,
 			unit: "people in employment",
 			universe:
 				"Usual residents aged 16 and over in employment in the week before the census. Those not in employment, and anyone aged under 16, are excluded.",
@@ -1430,6 +1435,7 @@ export const compileDataCatalog = ({
 		{
 			datasetId: "car-availability",
 			field: "breakdown",
+			sourceBoundaryYear: 2025,
 			unit: "households",
 			universe:
 				"Households, not people. A household with four residents and one car counts once.",
@@ -1448,11 +1454,150 @@ export const compileDataCatalog = ({
 				"The top category is open-ended, so the table gives no count of vehicles.",
 			],
 		},
+		{
+			datasetId: "qualification",
+			field: "breakdown",
+			sourceBoundaryYear: 2025,
+			unit: "usual residents aged 16 and over",
+			universe:
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+			categories: [
+				["none", "noQualifications", "No qualifications"],
+				[
+					"level-1",
+					"level1",
+					"Highest qualification: level 1 and entry level",
+				],
+				["level-2", "level2", "Highest qualification: level 2"],
+				[
+					"apprenticeship",
+					"apprenticeship",
+					"Highest qualification: apprenticeship",
+				],
+				["level-3", "level3", "Highest qualification: level 3"],
+				[
+					"level-4-plus",
+					"level4Plus",
+					"Highest qualification: level 4 or above",
+				],
+				["other", "other", "Highest qualification: other"],
+				["total", "total", "Usual residents aged 16 and over"],
+			],
+			notes: [
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+			],
+		},
+		{
+			datasetId: "ethnicity",
+			field: "",
+			sourceBoundaryYear: 2024,
+			unit: "usual residents",
+			universe:
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+			categories: [
+				[
+					"bangladeshi",
+					"Asian, Asian British or Asian Welsh.Bangladeshi.population",
+					"Ethnic group: Bangladeshi",
+				],
+				[
+					"chinese",
+					"Asian, Asian British or Asian Welsh.Chinese.population",
+					"Ethnic group: Chinese",
+				],
+				[
+					"indian",
+					"Asian, Asian British or Asian Welsh.Indian.population",
+					"Ethnic group: Indian",
+				],
+				[
+					"pakistani",
+					"Asian, Asian British or Asian Welsh.Pakistani.population",
+					"Ethnic group: Pakistani",
+				],
+				[
+					"other-asian",
+					"Asian, Asian British or Asian Welsh.Other Asian.population",
+					"Ethnic group: Other Asian",
+				],
+				[
+					"african",
+					"Black, Black British, Black Welsh, Caribbean or African.African.population",
+					"Ethnic group: African",
+				],
+				[
+					"caribbean",
+					"Black, Black British, Black Welsh, Caribbean or African.Caribbean.population",
+					"Ethnic group: Caribbean",
+				],
+				[
+					"other-black",
+					"Black, Black British, Black Welsh, Caribbean or African.Other Black.population",
+					"Ethnic group: Other Black",
+				],
+				[
+					"white-and-asian",
+					"Mixed or Multiple ethnic groups.White and Asian.population",
+					"Ethnic group: White and Asian",
+				],
+				[
+					"white-and-black-african",
+					"Mixed or Multiple ethnic groups.White and Black African.population",
+					"Ethnic group: White and Black African",
+				],
+				[
+					"white-and-black-caribbean",
+					"Mixed or Multiple ethnic groups.White and Black Caribbean.population",
+					"Ethnic group: White and Black Caribbean",
+				],
+				[
+					"other-mixed",
+					"Mixed or Multiple ethnic groups.Other Mixed or Multiple ethnic groups.population",
+					"Ethnic group: Other Mixed or Multiple ethnic groups",
+				],
+				[
+					"white-british",
+					"White.English, Welsh, Scottish, Northern Irish or British.population",
+					"Ethnic group: English, Welsh, Scottish, Northern Irish or British",
+				],
+				["irish", "White.Irish.population", "Ethnic group: Irish"],
+				[
+					"gypsy-or-irish-traveller",
+					"White.Gypsy or Irish Traveller.population",
+					"Ethnic group: Gypsy or Irish Traveller",
+				],
+				["roma", "White.Roma.population", "Ethnic group: Roma"],
+				[
+					"other-white",
+					"White.Other White.population",
+					"Ethnic group: Other White",
+				],
+				[
+					"arab",
+					"Other ethnic group.Arab.population",
+					"Ethnic group: Arab",
+				],
+				[
+					"any-other",
+					"Other ethnic group.Any other ethnic group.population",
+					"Ethnic group: Any other ethnic group",
+				],
+			],
+			notes: [
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				'The White category "English, Welsh, Scottish, Northern Irish or British" is one census tick-box, not a statement about nationality.',
+			],
+		},
 	] as const;
 
 	const censusPaths = {
 		"travel-to-work": travelToWorkPath,
 		"car-availability": carAvailabilityPath,
+		qualification: qualificationPath,
+		ethnicity: ethnicityPath,
 	};
 	const CENSUS_BOUNDARY_YEAR = 2023;
 	const englandAndWales2023 = [...populationCodes].filter(
@@ -1468,10 +1613,10 @@ export const compileDataCatalog = ({
 			);
 		if (
 			dataset.summary.boundaryYears.length !== 1 ||
-			dataset.summary.boundaryYears[0] !== 2025
+			dataset.summary.boundaryYears[0] !== breakdown.sourceBoundaryYear
 		) {
 			throw new Error(
-				`${manifestPath}: ${breakdown.datasetId} must declare boundary year 2025`,
+				`${manifestPath}: ${breakdown.datasetId} must declare boundary year ${breakdown.sourceBoundaryYear}`,
 			);
 		}
 		const path = censusPaths[breakdown.datasetId];
@@ -1479,8 +1624,8 @@ export const compileDataCatalog = ({
 			const measureId = `${breakdown.datasetId}-${suffix}`;
 			const periods = localAuthorityFieldPeriods(
 				path,
-				`${breakdown.field}.${field}`,
-				2025,
+				breakdown.field ? `${breakdown.field}.${field}` : field,
+				breakdown.sourceBoundaryYear,
 			).map((period) => {
 				try {
 					return onApril2023Authorities(period, englandAndWales2023);

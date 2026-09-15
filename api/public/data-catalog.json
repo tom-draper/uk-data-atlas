@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ada02d0946574a8be7318195d502d1e43edeaeaefbeb8c6afecbaa513be7b4c7",
+	"contentHash": "sha256:87577e2fe8ae492a906a7652d36585f196ecb0d9303a46abd156b26d8cb3bbd0",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -8245,6 +8245,1275 @@
 			"notes": [
 				"Households, not people. A household with four residents and one car counts once.",
 				"The top category is open-ended, so the table gives no count of vehicles.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-none",
+			"label": "No qualifications",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-none"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-level-1",
+			"label": "Highest qualification: level 1 and entry level",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-level-1"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-level-2",
+			"label": "Highest qualification: level 2",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-level-2"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-apprenticeship",
+			"label": "Highest qualification: apprenticeship",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-apprenticeship"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-level-3",
+			"label": "Highest qualification: level 3",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-level-3"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-level-4-plus",
+			"label": "Highest qualification: level 4 or above",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-level-4-plus"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-other",
+			"label": "Highest qualification: other",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-other"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "qualification-total",
+			"label": "Usual residents aged 16 and over",
+			"valueKind": "count",
+			"unit": "usual residents aged 16 and over",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "qualification",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/qualification-total"
+			},
+			"notes": [
+				"Usual residents aged 16 and over. Residents under 16, whom the table records as 'Does not apply', are excluded.",
+				"Each resident is counted once, at their highest qualification. Level 4 or above includes degrees and higher degrees; level 3 includes two or more A levels.",
+				"Apprenticeship is its own category, whatever level the apprenticeship was.",
+				"Other covers vocational or work-related qualifications, and qualifications achieved outside England or Wales whose level is not stated or known.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-bangladeshi",
+			"label": "Ethnic group: Bangladeshi",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-bangladeshi"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-chinese",
+			"label": "Ethnic group: Chinese",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-chinese"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-indian",
+			"label": "Ethnic group: Indian",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-indian"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-pakistani",
+			"label": "Ethnic group: Pakistani",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-pakistani"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-other-asian",
+			"label": "Ethnic group: Other Asian",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-other-asian"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-african",
+			"label": "Ethnic group: African",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-african"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-caribbean",
+			"label": "Ethnic group: Caribbean",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-caribbean"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-other-black",
+			"label": "Ethnic group: Other Black",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-other-black"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-white-and-asian",
+			"label": "Ethnic group: White and Asian",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-white-and-asian"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-white-and-black-african",
+			"label": "Ethnic group: White and Black African",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-white-and-black-african"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-white-and-black-caribbean",
+			"label": "Ethnic group: White and Black Caribbean",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-white-and-black-caribbean"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-other-mixed",
+			"label": "Ethnic group: Other Mixed or Multiple ethnic groups",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-other-mixed"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-white-british",
+			"label": "Ethnic group: English, Welsh, Scottish, Northern Irish or British",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-white-british"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-irish",
+			"label": "Ethnic group: Irish",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-irish"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-gypsy-or-irish-traveller",
+			"label": "Ethnic group: Gypsy or Irish Traveller",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-gypsy-or-irish-traveller"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-roma",
+			"label": "Ethnic group: Roma",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-roma"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-other-white",
+			"label": "Ethnic group: Other White",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-other-white"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-arab",
+			"label": "Ethnic group: Arab",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-arab"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
+				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
+			]
+		},
+		{
+			"id": "ethnicity-any-other",
+			"label": "Ethnic group: Any other ethnic group",
+			"valueKind": "count",
+			"unit": "usual residents",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "ethnicity",
+					"periods": [
+						"2021"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 318,
+						"note": "Published source records cover England and Wales only; this endpoint does not infer Scottish or Northern Irish values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/ethnicity-any-other"
+			},
+			"notes": [
+				"All usual residents, as they identified themselves. The nineteen categories are exhaustive, so they sum to the whole resident population.",
+				"The census's five high-level groups are not served separately; each is the sum of its categories, which is exact for a count.",
+				"ONS perturbs census cell counts to protect confidentiality, so a sum of these categories can differ by a few residents from a population total published in another table.",
+				"The White category \"English, Welsh, Scottish, Northern Irish or British\" is one census tick-box, not a statement about nationality.",
 				"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025."
 			]
 		}

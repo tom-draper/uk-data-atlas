@@ -18,6 +18,8 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		mobileCoverage: precompiled("mobile-coverage.json"),
 		travelToWork: precompiled("travel-to-work.json"),
 		carAvailability: precompiled("car-availability.json"),
+		qualification: precompiled("qualification.json"),
+		ethnicity: precompiled("ethnicity.json"),
 		jobs: precompiled("jobs.json"),
 		landArea: precompiled("land-area.json"),
 		housePrice: precompiled("house-price.json"),

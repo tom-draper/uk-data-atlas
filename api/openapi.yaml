@@ -458,6 +458,10 @@ paths:
         counted twice: a count of people or households adds over areas, and each
         breakdown publishes its own `-total` denominator so a caller can derive
         a share and know what it is a share of.
+        `qualification-*` covers the same authorities' usual residents aged 16
+        and over by highest qualification, with its own `-total`, and
+        `ethnicity-*` their usual residents in each of the nineteen census
+        ethnic groups, which are exhaustive and so need no separate total.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the
