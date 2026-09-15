@@ -71,12 +71,7 @@ import {
 	readPageSize,
 } from "./pagination";
 import { handleRoute } from "./routeHandlers";
-import type {
-	AreaSearchIndex,
-	AreaSearchResult,
-	CrosswalkLookup,
-	RouteContext,
-} from "./routing";
+import type { CrosswalkLookup, RouteContext } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 export { type ApiResponse } from "./routeResponse";
@@ -222,25 +217,6 @@ const readRankingOrder = (value: string | null): RankingOrder | undefined =>
 		: value === "asc"
 			? "asc"
 			: undefined;
-
-const searchableAreas = (areaLookup: AreaLookup): AreaSearchResult[] =>
-	[...areaLookup.entries()]
-		.flatMap(([identity, areas]) => {
-			const slash = identity.indexOf("/");
-			const geography = identity.slice(0, slash);
-			const boundaryRelease = identity.slice(slash + 1);
-			return [...areas.values()].map((area) => ({
-				id: [geography, boundaryRelease, area.code].join("/"),
-				geography,
-				boundaryRelease,
-				...area,
-			}));
-		})
-		.sort((left, right) => left.id.localeCompare(right.id));
-
-export const createAreaSearchIndex = (
-	areaLookup: AreaLookup,
-): AreaSearchIndex => searchableAreas(areaLookup);
 
 const findArea = (
 	areaLookup: AreaLookup | undefined,

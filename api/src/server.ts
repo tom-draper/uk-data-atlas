@@ -40,7 +40,8 @@ import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
 import { httpResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
-import { createAreaSearchIndex, route } from "./routes";
+import { createAreaSearchIndex } from "./areaSearchRoutes";
+import { route } from "./routes";
 import type { CrosswalkLookup, RouteContext } from "./routing";
 
 const registryPath = (apiRoot: string) =>
