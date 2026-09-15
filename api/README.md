@@ -72,7 +72,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Translate a code through a published directional crosswalk with an
       explicit purpose: official historical identity, clean membership, or
       area-overlap apportionment. Unsupported conversions return an error.
-- [x] Search and inspect all 155 curated named locations. Their definitions
+- [x] Search and inspect all 162 curated named locations. Their definitions
       are versioned in the Atlas release and explicitly labelled editorial
       groupings rather than silently presented as official geographies.
 - [x] Resolve a named location's direct member codes in one specified
@@ -80,8 +80,8 @@ only **available** when its endpoint, contract and provenance are published.
       an implicit historical conversion. Each unresolved code is classified
       against the compiled releases of its geography — superseded, not yet
       current, absent from the requested release, or unknown — so a caller can
-      tell an abolished district from a recode it has yet to adopt. Of the 155
-      curated locations, 14 are incomplete against the May 2023 local authority
+      tell an abolished district from a recode it has yet to adopt. Of the 162
+      curated locations, 26 are incomplete against the May 2023 local authority
       release.
 - [x] Find every area containing a WGS84 point in one specified geography and
       release. Points on exterior or hole rings are included and labelled
@@ -856,8 +856,15 @@ Implementation and documentation tasks:
       values, definitions, boundary releases, crosswalks, named locations and
       validation results affected by an Atlas release. A changed artifact hash
       alone does not tell a customer whether its analysis changed.
+      `GET /v1/atlas-releases/compare` now names the datasets, measures,
+      boundary releases, crosswalks, named locations, validation exceptions,
+      exports and lookups that changed between two releases; periods and
+      values are not yet compared, and there is no feed to subscribe to.
 - [ ] Expand release comparison from added/removed/changed artifacts to
       semantic diffs, with affected area and record counts where possible.
+      Comparison now reaches resource level, naming each resource added,
+      removed or changed by its recorded fingerprint; it does not yet say
+      which fields, areas or records within a changed resource differ.
 - [ ] Serve an archived Atlas release or its immutable resources on request,
       so an analysis can be reproduced as the Atlas published it at a stated
       time rather than merely inspecting its old manifest.
@@ -1019,7 +1026,11 @@ GET /v1/boundary-releases/compare?from={geography}/{release}&to={geography}/{rel
 
 - [ ] Publish whole source partitions and crosswalks as immutable CSV, NDJSON,
       Parquet and GeoParquet downloads, with a schema, row count, hashes,
-      licence/provenance block and Atlas release manifest.
+      licence/provenance block and Atlas release manifest. Source partitions
+      are whole JSON downloads through `GET /v1/exports`, and crosswalks and
+      area identities are CSV and NDJSON through `GET /v1/lookups`, each with
+      its schema, row count, hashes and provenance under a pinned release;
+      Parquet, GeoParquet and tabular source partitions remain.
 - [ ] Deliver boundaries and selected measure joins as cached vector tiles or
       PMTiles. This is the correct map-scale interface; nationwide GeoJSON is
       not.
