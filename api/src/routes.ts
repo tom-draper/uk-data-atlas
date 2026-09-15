@@ -30,6 +30,7 @@ import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "./namedLocations";
+import type { ProblemCode } from "./problemCodes";
 import type { ValidationReport } from "./validationReport";
 import {
 	areaIdentityTable,
@@ -134,7 +135,7 @@ type Problem = {
 	/** Extension member: the places a name matched, and why none was served. */
 	candidates?: unknown[];
 	/** Extension member: a stable, machine-readable reason for the problem. */
-	code?: string;
+	code?: ProblemCode;
 	/** Extension member: which kind of absence left an area or answer unresolved. */
 	absence?: string;
 	/** Extension member: how many source areas a refusal concerns. */

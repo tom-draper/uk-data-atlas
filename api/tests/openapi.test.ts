@@ -88,3 +88,35 @@ test("documents exactly the routes advertised by the API index", () => {
 		.sort();
 	assert.deepEqual(documented, advertised);
 });
+
+test("files every operation under exactly one declared task tag", () => {
+	const declared = sectionLines("tags").flatMap((line) => {
+		const match = /^ {2}- name: "([^"]+)"$/.exec(line);
+		return match ? [match[1]!] : [];
+	});
+	assert.deepEqual(declared, [
+		"Start here",
+		"Map",
+		"Trend",
+		"Sync",
+		"Geography",
+		"Data catalogue",
+		"Governance",
+	]);
+	// Each operation's tags sit on the line after its operationId.
+	const untagged: string[] = [];
+	const used = new Set<string>();
+	lines.forEach((line, index) => {
+		const operation = /^\s+operationId:\s*(\S+)\s*$/.exec(line)?.[1];
+		if (!operation) return;
+		const tags = /^\s+tags: \["([^"]+)"\]$/.exec(lines[index + 1] ?? "");
+		if (!tags || !declared.includes(tags[1]!)) untagged.push(operation);
+		else used.add(tags[1]!);
+	});
+	assert.deepEqual(untagged, []);
+	assert.deepEqual(
+		declared.filter((tag) => !used.has(tag)),
+		[],
+		"declared tags no operation uses",
+	);
+});
