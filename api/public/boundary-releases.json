@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
+	"contentHash": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -827,6 +827,28 @@
 				}
 			},
 			"metadataHash": "sha256:1abb4b9ce944b295eace86c46a80b3215fb9ff53ff34d155dd782f111a2c108b"
+		},
+		{
+			"id": "2021-12-ew-bgc-v5",
+			"geography": "lsoa",
+			"title": "Lower layer super output areas, December 2021 (England and Wales, generalised, clipped, v5)",
+			"description": "Lower layer super output areas as published for December 2021, covering England and Wales. Generalised to 20 m and clipped to the coastline. Version 5 of the release. The publisher's file gives the Welsh name of the 41 Isle of Anglesey areas as Ynys Mfn rather than Ynys Môn; names are kept as published.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/datasets/68515293204e43ca8ab56fa13ae8a547",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:02001f06fee4a2ec2512c6e15430c81bc1a9248fa87b5faf30d81b8af803bd77"
 		},
 		{
 			"id": "2011-12-w-bgc",

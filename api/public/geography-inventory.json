@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f3d75ca431c25041cbb9e07c39ccc694a89589db5a8958ede82b722b243120ed",
-	"boundaryRegistryHash": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
+	"contentHash": "sha256:c5d03f56b5cd3ee31e277ad4a0ee2cde2712c1c64fd373876c19e64c9be4ff0a",
+	"boundaryRegistryHash": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -990,6 +990,26 @@
 				"status": "available",
 				"recordCount": 400,
 				"artifact": "areas/localPlanningAuthority/2019-04-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "not-compiled",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2021-12-ew-bgc-v5",
+			"geography": "lsoa",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 35672,
+				"artifact": "areas/lsoa/2021-12-ew-bgc-v5.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -2067,7 +2087,7 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 2
+			"releaseCount": 3
 		},
 		{
 			"id": "majorTownAndCity",

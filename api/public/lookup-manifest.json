@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:67f2e1de51b89868fc95bac3156b1f1818b364b4db0977e737be475c9f7b69a3",
+	"contentHash": "sha256:e54f7dd00fc25ffb21cd928e81c9e38cd865edfe262d70e469b5d25ff55b5c51",
 	"lookups": [
 		{
 			"id": "areas-combinedAuthority-2025-12-en-bgc",
@@ -2071,6 +2071,62 @@
 					"bytes": 241325,
 					"contentHash": "sha256:8cd95494fc669079ee0efb7891704e50722543a0f65916ec661696c5c8d5de54",
 					"href": "/v1/lookups/areas-lsoa-2011-12-w-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-lsoa-2021-12-ew-bgc-v5",
+			"kind": "area-identities",
+			"title": "Area identities, lsoa 2021-12-ew-bgc-v5",
+			"source": {
+				"artifact": "areas/lsoa/2021-12-ew-bgc-v5.json",
+				"contentHash": "sha256:c6fa67b6497572a7d37d49265e2dedd86e18b195733f48b1adb52631e7c8bb3d"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 35672,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1837397,
+					"contentHash": "sha256:b7932d6cd1433698369e5f9bd19b00c4dfc2c96d9eec0c4c0eafede407e70035",
+					"href": "/v1/lookups/areas-lsoa-2021-12-ew-bgc-v5?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 4194129,
+					"contentHash": "sha256:76c883931763141b1ebf294a5c110734ea72a533a38662f2dfcfb9966db0547e",
+					"href": "/v1/lookups/areas-lsoa-2021-12-ew-bgc-v5?format=ndjson"
 				}
 			}
 		},

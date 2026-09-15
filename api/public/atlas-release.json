@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:23a5df928e64bf23052617514f15f1c4923dbf485fa5e1051b2180f44cb456f3",
+	"releaseId": "sha256:b48c519f214d4e9ee2d9f29db1c624425022dfbb7fb1b366a8b446e456cb101c",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
 			"path": "boundary-releases.json",
-			"contentHash": "sha256:07f06fd2970c65d03d11665dc7e2dcc4b791fc5d5d37afe08ebdb259ab1f279e"
+			"contentHash": "sha256:6516841abb2149d864316bde871efceafbedeb0e6b681bbab588def86e06e0f2"
 		},
 		{
 			"id": "derived-boundaries",
@@ -15,7 +15,7 @@
 		{
 			"id": "area-inventory",
 			"path": "area-inventory.json",
-			"contentHash": "sha256:6fca26591c2bfbc126aa0b9fe4272e644d2d1c75e13714ad7dc438a4cfa1fe1c"
+			"contentHash": "sha256:8a90692355fe6139e485ae6f2f9d3dfc5427f79c47143b4899e8a17ed95f73cf"
 		},
 		{
 			"id": "named-locations",
@@ -30,7 +30,7 @@
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:097ba5cadd1343740db771e9c9403a7ddac10dd5f343894803ffbd9c9a544ce5"
+			"contentHash": "sha256:5e94d4adb123ffc2606fdd2148dded276a6ce00891f415982aa74e4eb7836075"
 		},
 		{
 			"id": "export-manifest",
@@ -40,7 +40,7 @@
 		{
 			"id": "lookup-manifest",
 			"path": "lookup-manifest.json",
-			"contentHash": "sha256:c4c112851298c80fc47904e21dda22338a4bf0ddf86547d870bb8a9642fc64a3"
+			"contentHash": "sha256:88e36624466550bc26e7cf912d57a7aa5ea86588d57be70aec75edfb18948a35"
 		},
 		{
 			"id": "population-observations",
@@ -55,7 +55,7 @@
 		{
 			"id": "geometry-sources",
 			"path": "geometry-sources.json",
-			"contentHash": "sha256:95bbbf5151d66c61389842078e17ecb936484a63be47cb52b5e52506b01d9e53"
+			"contentHash": "sha256:8191f28c1de0ad6f36e1af56133f8d0142bb51c36e8b66b9bae0485eb757b457"
 		},
 		{
 			"id": "crosswalk-inventory",
@@ -70,17 +70,17 @@
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:60f7f181c719dd21a90e8991f91151c971074eb61d81ef2b2d988ec789b37927"
+			"contentHash": "sha256:b1f41d91aed01128b0f77cb90ee60e19de78b2fcdb416094477820a45fccbbb6"
 		},
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:995956f917da7bc234228cae9eb1d82909e379b0cfa7371b621cc05a08d80bcf"
+			"contentHash": "sha256:528cd7c43c5e075d94ce38b31bbd7d924e6b47ea0a5b80d0c7e36078911b5636"
 		},
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:b260c438945bc6b7ba0c881076bae7313cdfabb51cb87c395a3bfaff4f901ec2"
+			"contentHash": "sha256:5307e65903b4f1cb1ba9d2afdaacbe5062e85f721138c15726897928f80af4f0"
 		},
 		{
 			"id": "observations/air-quality-grid-cells-observations",
@@ -1686,6 +1686,7 @@
 			"localPlanningAuthority/2019-04-uk-bgc": "sha256:6520d10cd6dac4ca161b1da8b924871f6c9e7ff14f6580039367bfad1e7ef07d",
 			"lsoa/2011-12-ew-bgc-v3": "sha256:c070f5d151feabd43a438407dfbc8edf6a9947b390ab37b6f8b202f284055747",
 			"lsoa/2011-12-w-bgc": "sha256:0c57686b36c0177449b1bee5339d168ffc0767f0bce403d98bc4a0800b6d9cd6",
+			"lsoa/2021-12-ew-bgc-v5": "sha256:ddc187145bc5e0c7104404025bee008a095dce8dd58da0954cd5673b53d6abd2",
 			"majorTownAndCity/2015-12-ew-bgc": "sha256:12899a24b7251c9570be69594ae045998b3775076a18fe80a152604925656965",
 			"msoa/2021-12-ew-bgc-v3": "sha256:9cde99d4339743b23489d52ace272369899dcdd6168ac34610929df3fc41a846",
 			"nationalPark/2020-12-gb-bgc": "sha256:72c45d0a623ed94b5d97267f81a6c0bb2759b18f8bd4383a13f7a1f62e5ad427",
@@ -1759,6 +1760,7 @@
 			"localPlanningAuthority/2019-04-uk-bgc": "sha256:3fb8321da62654e2907bf72818a76cc46b201e9729019797d2051a0ed76b222f",
 			"lsoa/2011-12-ew-bgc-v3": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf",
 			"lsoa/2011-12-w-bgc": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a",
+			"lsoa/2021-12-ew-bgc-v5": "sha256:c6fa67b6497572a7d37d49265e2dedd86e18b195733f48b1adb52631e7c8bb3d",
 			"majorTownAndCity/2015-12-ew-bgc": "sha256:f6fc88fb2fd7e339347145da67b745cc86e9c55c8e6c097e247d1f43226382b5",
 			"msoa/2021-12-ew-bgc-v3": "sha256:0d4a26cead705fd1898991749b0b832e73dba1117a8e127fea3463884f51a6bd",
 			"nationalPark/2020-12-gb-bgc": "sha256:8cc59a5393d710f825367be5f0113fbf545681300ffb51042ba9477a6a0f1d5f",
@@ -1832,6 +1834,7 @@
 			"localPlanningAuthority/2019-04-uk-bgc": "sha256:7358ecad35e977054c54abaf525b9ff5f149867994d7d23f79a3afd574c3dc9b",
 			"lsoa/2011-12-ew-bgc-v3": "sha256:2b0d5eae5e6f33bd82eac45cc149496abfb1c503773187c4a61795ef3c38179a",
 			"lsoa/2011-12-w-bgc": "sha256:4c7ecf7e118adb2c1ede9a9088452d3e551410093f871af41e8085b3920234a8",
+			"lsoa/2021-12-ew-bgc-v5": "sha256:9f60a6e3eaab4229538bc71623bd3ca1d4e5f3e4b72cc539bdff67d60030f795",
 			"majorTownAndCity/2015-12-ew-bgc": "sha256:4cdbcfc789ebfa34ee0264b6305d6b33f35b9bf6a0ebd5d5f8afef2e7c1f47c2",
 			"msoa/2021-12-ew-bgc-v3": "sha256:09aa0382e7adbfa64dccb7ba9c750e49fde24d93ff5edf82ffb396cb0c35338d",
 			"nationalPark/2020-12-gb-bgc": "sha256:a86c594f469a4c860cc3edd55b4c749a581219138c5d87407d1024a9afad4465",
@@ -2414,6 +2417,7 @@
 			"areas-localPlanningAuthority-2019-04-uk-bgc": "sha256:096d2a9fa4ab4242ff015605b3d80dbce753ea8bc5a06a1536b4cf449a27ef8d",
 			"areas-lsoa-2011-12-ew-bgc-v3": "sha256:28b9180fa6618d969443f544022417af53c2cae7970cbf4bcd55ee0c4b95cd87",
 			"areas-lsoa-2011-12-w-bgc": "sha256:11eabd11999632c41b2947cdbe33a94a5d40cb8e908a82c7b1b75e0e6deaaff7",
+			"areas-lsoa-2021-12-ew-bgc-v5": "sha256:3610dfb2615f7e6aaade758718d4f389c9f98a2274ea4f93f5263bf1b40b2377",
 			"areas-majorTownAndCity-2015-12-ew-bgc": "sha256:ff8066c82c5094295c88bde734f1ca5016118b67b5077cae409653479625127f",
 			"areas-msoa-2021-12-ew-bgc-v3": "sha256:52b49671fff8348447fe5c7422cd83d854e2b4e07e3179bf8daec2abaefa2bd8",
 			"areas-nationalPark-2020-12-gb-bgc": "sha256:14bf73500aa7934e5ac73921580ff9ab5d6442715da4b6c7a619a75b5f596584",
