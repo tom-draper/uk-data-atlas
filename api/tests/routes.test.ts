@@ -100,6 +100,11 @@ const registry: BoundaryRegistry = {
 	],
 };
 
+const testContext = (overrides: Partial<RouteContext> = {}): RouteContext => ({
+	boundaryRegistry: registry,
+	...overrides,
+});
+
 const geographyInventory: GeographyInventory = {
 	schemaVersion: 1,
 	contentHash: "sha256:geography",
@@ -708,22 +713,17 @@ const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 };
 
 const routeWithNamedLocations = (url: string) =>
-	route(
+	routeRequest(
 		"GET",
 		url,
-		registry,
-		geographyInventory,
-		namedLocationAreaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		namedLocationInventory,
-		namedLocationLookup,
+		testContext({
+			geographyInventory,
+			areaLookup: namedLocationAreaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			namedLocationInventory,
+			namedLocationLookup,
+		}),
 	);
 
 const routeWithData = (url: string) =>
@@ -870,29 +870,23 @@ const routeWithCatalog = (
 		"crosswalkLookup" | "measureCompatibilityInventory" | "exportManifest"
 	> = {},
 ) =>
-	route(
+	routeRequest(
 		"GET",
 		url,
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		overrides.crosswalkLookup ?? crosswalkLookup,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		undefined,
-		catalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		overrides.measureCompatibilityInventory ??
-			measureCompatibilityInventory,
-		observations,
-		overrides.exportManifest,
+		testContext({
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup: overrides.crosswalkLookup ?? crosswalkLookup,
+			dataCatalog: catalog,
+			populationObservations,
+			populationLocalAuthorityObservations,
+			measureCompatibilityInventory:
+				overrides.measureCompatibilityInventory ??
+				measureCompatibilityInventory,
+			measureObservations: observations,
+			exportManifest: overrides.exportManifest,
+		}),
 	);
 
 const populationProvenance = (
@@ -3546,20 +3540,18 @@ const validationReport: ValidationReport = {
 };
 
 const validationRoute = (url: string, report?: ValidationReport) =>
-	route(
+	routeRequest(
 		"GET",
 		url,
-		registry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-		atlasRelease,
-		undefined,
-		undefined,
-		undefined,
-		relationshipCandidateInventory,
-		report,
+		testContext({
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			atlasRelease,
+			relationshipCandidateInventory,
+			validationReport: report,
+		}),
 	);
 
 test("serves the validation report, optionally only resources with waivers", () => {
