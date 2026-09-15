@@ -62,6 +62,11 @@ const sha256 = (content: string) =>
 
 const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 
+/**
+ * Every area code the source partition holds, in any of its periods. A code
+ * that appears only in a later period still has to resolve for a join to be
+ * safe, so no single period stands in for the partition.
+ */
 const sourceCodes = (
 	measureId: string,
 	source: MeasureSource,
@@ -69,33 +74,31 @@ const sourceCodes = (
 	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
 	measureObservations: AnyMeasureObservationArtifact[],
 ) => {
-	if (isLegacyPopulationSource(measureId, source)) {
-		if (source.sourceGeography.type === "ward") {
-			return new Set(
-				wardObservations.records.map((record) => record.areaCode),
-			);
-		}
-		const records = localAuthorityObservations.periods.find(
-			(period) => period.period === source.periods[0],
+	if (
+		isLegacyPopulationSource(measureId, source) &&
+		source.sourceGeography.type === "ward"
+	) {
+		return new Set(
+			wardObservations.records.map((record) => record.areaCode),
+		);
+	}
+	const periods = isLegacyPopulationSource(measureId, source)
+		? localAuthorityObservations.periods
+		: findMeasureObservations(measureObservations, measureId, source)
+				?.periods;
+	const codes = new Set<string>();
+	for (const period of source.periods) {
+		const records = periods?.find(
+			(candidate) => candidate.period === period,
 		)?.records;
 		if (!records) {
 			throw new Error(
-				`No local-authority observations exist for ${source.periods[0]}.`,
+				`No ${measureId} observations exist for ${source.sourceGeography.type} in ${period}.`,
 			);
 		}
-		return new Set(records.map((record) => record.areaCode));
+		for (const record of records) codes.add(record.areaCode);
 	}
-	const records = findMeasureObservations(
-		measureObservations,
-		measureId,
-		source,
-	)?.periods.find((period) => period.period === source.periods[0])?.records;
-	if (!records) {
-		throw new Error(
-			`No ${measureId} observations exist for ${source.sourceGeography.type} in ${source.periods[0]}.`,
-		);
-	}
-	return new Set(records.map((record) => record.areaCode));
+	return codes;
 };
 
 const candidateFor = (

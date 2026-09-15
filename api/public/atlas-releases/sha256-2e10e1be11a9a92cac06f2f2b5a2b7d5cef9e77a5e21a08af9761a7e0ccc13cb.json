@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:7b425c2a2d73884fa8fd2cbe77e52f9fb734d7c4d789db0355432f714c23cda0",
+	"releaseId": "sha256:2e10e1be11a9a92cac06f2f2b5a2b7d5cef9e77a5e21a08af9761a7e0ccc13cb",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -30,7 +30,7 @@
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:8f7b3a4d306c333ff5a0cfb2600f40183505ef9769372c2d85ee779d3cea4dfb"
+			"contentHash": "sha256:879f29c6ece0b7b25f0bc1d4f6d5bea51ed06a7dc67e8276a3a7b948ce08ab51"
 		},
 		{
 			"id": "export-manifest",
