@@ -824,11 +824,17 @@ Implementation and documentation tasks:
 - [ ] Make OpenAPI the tested route inventory: generate or verify root links,
       route examples and the short endpoint list from one source, and fail a
       contract test when an implemented route, OpenAPI operation or public
-      example disagrees.
+      example disagrees. `tests/contract.test.ts` now runs against the
+      compiled catalogues: every route the index advertises must be served,
+      the README endpoint list must name every advertised route and nothing
+      else, and every concrete README example must return 200. The OpenAPI
+      response examples are not yet checked against live responses.
 - [ ] Group every OpenAPI operation under task-oriented tags: **Start here**,
       **Map**, **Trend**, **Sync**, **Geography**, **Data catalogue** and
       **Governance**. Give each operation a plain-language summary, its
-      success shape and its most likely refusal.
+      success shape and its most likely refusal. Every operation now carries
+      exactly one of these tags, checked by test; each has a summary, but its
+      most likely refusal is not yet documented operation by operation.
 - [ ] Publish a glossary, endpoint chooser and three copy-paste quick starts
       (correct map, defensible trend, reliable sync) which use only current
       OpenAPI routes. Treat them as executable contract tests.
@@ -836,10 +842,15 @@ Implementation and documentation tasks:
       response example. Do not rename v1 parameters; decide clearer names such
       as `observationPeriod`, `sourceGeography`, `geometryRelease` and
       `atlasRelease` only when designing a versioned successor.
-- [ ] Define typed RFC 9457 problem schemas and examples for each advertised
+- [x] Define typed RFC 9457 problem schemas and examples for each advertised
       `code`, including machine-readable alternatives where useful. SDK users
       must be able to branch on a stable field rather than prose or unknown
-      extensions.
+      extensions. `src/problemCodes.ts` declares each code's statuses, the
+      extension members it always carries, the alternatives it may offer and
+      a request that produces it; a route cannot emit an undeclared code
+      without failing the type check. Each code has an OpenAPI schema with a
+      real example, and a contract test sends every example request and checks
+      the response and the schema against the declaration.
 - [ ] State representation and pagination rules once: supported `format=` and
       `Accept` combinations, JSON `meta.nextCursor`, tabular `Link` headers,
       content type, caching and conditional request behaviour. Test every
@@ -2185,7 +2196,9 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
 - `GET /v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023`
-- `GET /v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001`
+- `GET /v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039`
+- `GET /v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022`
+- `GET /v1/data/population-estimate/value?place=Cornwall&period=2022`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/measures/ghg-emissions/coverage`
@@ -2216,20 +2229,32 @@ pnpm start
 - `GET /v1/data/population-estimate?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
+- `GET /v1/places?q=Newport`
+- `GET /v1/locations?q=york`
+- `GET /v1/locations/london`
 - `GET /v1/boundary-releases`
 - `GET /v1/boundary-releases:resolve?geography={type}&date={YYYY-MM-DD}`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas`
 - `GET /v1/areas:validate?geography={type}&release={release}&value={code-or-name}`
+- `GET /v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc`
+- `GET /v1/areas:intersects?bbox=-1.6,53.7,-1.4,53.9&geography=ward&release=2024-12-uk-bgc`
 - `GET /v1/areas/{type}/{release}/{code}`
+- `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/history`
+- `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/parents`
+- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children`
+- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children/geometry`
+- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/neighbours`
 - `GET /v1/areas/{type}/{release}/{code}/relationships`
 - `GET /v1/areas/{type}/{release}/{code}/capabilities`
 - `GET /v1/areas/{type}/{release}/{code}/citation`
 - `GET /v1/areas/{type}/{release}/{code}/overlap?with={type}/{release}/{code}`
 - `GET /v1/areas/{type}/{release}/{code}/geometry`
+- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/geometry/metadata`
 - `GET /v1/crosswalks`
 - `GET /v1/crosswalks/{crosswalk-id}`
 - `GET /v1/crosswalks/{crosswalk-id}/records`
+- `GET /v1/translations?sourceGeography=ward&sourceRelease=2024-12-uk-bgc&code=E05000932&targetGeography=localAuthority&targetRelease=2024-12-uk-bgc&purpose=membership`
 - `GET /v1/relationship-candidates`
 - `GET /v1/validation`
 - `GET /v1/validation/boundary-releases/{type}/{release}`

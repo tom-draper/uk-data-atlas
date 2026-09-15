@@ -29,6 +29,21 @@ info:
     and its `ETag` then changes with it.
   license:
     name: Proposal; no licence has been assigned yet
+tags:
+  - name: "Start here"
+    description: "The first calls to make: what the API serves, which places a name could mean, a measure's answer for a named place, and what the Atlas can serve for one area."
+  - name: "Map"
+    description: "Draw a correct map: source-exact observations with an explicitly chosen boundary release, the geometry to join them to, and the areas at a point, in a box, beside or overlapping one another."
+  - name: "Trend"
+    description: "Analyse a measure within one source partition: an area's series, change between periods, rankings, comparisons, and aggregation or conversion only where they are declared valid."
+  - name: "Sync"
+    description: "Keep a copy in step: whole observation exports, bulk lookup tables, and the immutable Atlas releases that pin them, with comparisons between releases."
+  - name: "Geography"
+    description: "Resolve and relate areas: boundary releases, area identities and their history, parents and children, crosswalks, code translation and curated named locations."
+  - name: "Data catalogue"
+    description: "What data exists: source datasets with their input hashes, and measures with their semantics, code compatibility, coverage and quality."
+  - name: "Governance"
+    description: "Why a result can be trusted: release validation and waived exceptions, relationship candidates awaiting review, attribution and citation."
 servers:
   - url: http://127.0.0.1:3001/v1
     description: Local development server (pnpm start)
@@ -36,6 +51,7 @@ paths:
   /:
     get:
       operationId: getRoot
+      tags: ["Start here"]
       summary: API discovery
       description: Lists the currently implemented resource paths.
       responses:
@@ -93,6 +109,7 @@ paths:
   /geographies:
     get:
       operationId: listGeographies
+      tags: ["Geography"]
       summary: List geography types with their latest boundary release
       responses:
         "200":
@@ -114,6 +131,7 @@ paths:
   /boundary-releases:
     get:
       operationId: listBoundaryReleases
+      tags: ["Geography"]
       summary: List every compiled boundary release
       responses:
         "200":
@@ -126,6 +144,7 @@ paths:
   /boundary-releases:resolve:
     get:
       operationId: resolveBoundaryReleaseForDate
+      tags: ["Geography"]
       summary: Select the boundary release to use for a date
       description: >
         Returns the latest release of a geography dated on or before `date`
@@ -192,6 +211,7 @@ paths:
   /boundary-releases/{geography}/{release}:
     get:
       operationId: getBoundaryRelease
+      tags: ["Geography"]
       summary: Get one boundary release's metadata
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -229,6 +249,7 @@ paths:
   /geography-inventory:
     get:
       operationId: getGeographyInventory
+      tags: ["Geography"]
       summary: Report area identity and relationship (crosswalk) coverage per boundary release
       description: >
         For every boundary release, states whether an area identity artifact
@@ -249,6 +270,7 @@ paths:
   /datasets:
     get:
       operationId: listDatasets
+      tags: ["Data catalogue"]
       summary: List published source datasets and their lineage
       responses:
         "200":
@@ -263,6 +285,7 @@ paths:
   /datasets/{dataset-id}:
     get:
       operationId: getDataset
+      tags: ["Data catalogue"]
       summary: Get one published source dataset and its input hashes
       parameters:
         - name: dataset-id
@@ -285,6 +308,7 @@ paths:
   /measures:
     get:
       operationId: listMeasures
+      tags: ["Data catalogue"]
       summary: List measures currently available to query
       responses:
         "200":
@@ -299,6 +323,7 @@ paths:
   /measures/{measure-id}:
     get:
       operationId: getMeasure
+      tags: ["Data catalogue"]
       summary: Get one measure's semantics and availability
       parameters:
         - name: measure-id
@@ -321,6 +346,7 @@ paths:
   /measures/{measure-id}/compatibility:
     get:
       operationId: getMeasureCompatibility
+      tags: ["Data catalogue"]
       summary: Report source-code compatibility with compiled boundary releases
       description: >
         Compares every source partition's area-code set with compiled boundary
@@ -348,6 +374,7 @@ paths:
   /measures/{measure-id}/coverage:
     get:
       operationId: getMeasureCoverage
+      tags: ["Data catalogue"]
       summary: Report source and boundary code coverage for a measure
       description: >
         Summarises each source partition's published coverage and the proportion
@@ -375,6 +402,7 @@ paths:
   /measures/{measure-id}/quality:
     get:
       operationId: getMeasureQuality
+      tags: ["Data catalogue"]
       summary: Preflight source, status and boundary quality for a measure
       description: >
         Reports every source partition and period before a data request,
@@ -401,6 +429,7 @@ paths:
   /data/{measure-id}:
     get:
       operationId: getMeasureObservations
+      tags: ["Map"]
       summary: Retrieve a measure's source-exact observations
       description: >
         Serves observed values for one published measure and source partition.
@@ -622,6 +651,7 @@ paths:
   /data/{measure-id}/aggregate:
     get:
       operationId: aggregateSourceExactMeasure
+      tags: ["Trend"]
       summary: Aggregate an extensive or explicitly weighted measure
       description: >
         Returns a derived sum for a measure declared extensive, or a weighted
@@ -744,6 +774,7 @@ paths:
   /data/{measure-id}/convert:
     get:
       operationId: convertSourceExactMeasure
+      tags: ["Trend"]
       summary: Regroup an extensive measure onto a published crosswalk's target areas
       description: >
         Converts a source partition onto another geography or code vintage
@@ -832,6 +863,7 @@ paths:
   /data/{measure-id}/series:
     get:
       operationId: getSourceExactMeasureSeries
+      tags: ["Trend"]
       summary: Retrieve one area's source-exact time series
       description: >
         Returns all published observations for one area code within one source
@@ -887,6 +919,7 @@ paths:
   /data/{measure-id}/rankings:
     get:
       operationId: getSourceExactMeasureRankings
+      tags: ["Trend"]
       summary: Rank areas within one source-exact measure partition
       description: >
         Ranks only the observations published for one period, geography and
@@ -956,6 +989,7 @@ paths:
   /places:
     get:
       operationId: resolvePlaces
+      tags: ["Start here"]
       summary: Find every place a name could mean
       description: >
         Turns a name into candidate places, each saying what kind of place it
@@ -1033,6 +1067,7 @@ paths:
   /data/{measure-id}/value:
     get:
       operationId: getMeasureValueForPlace
+      tags: ["Start here"]
       summary: Answer a measure for a place given by name
       description: >
         Answers "what is the population of the North West?" in one call. The
@@ -1157,6 +1192,7 @@ paths:
   /data/{measure-id}/change:
     get:
       operationId: getSourceExactMeasureChange
+      tags: ["Trend"]
       summary: Rank areas by change between two periods of one measure partition
       description: >
         Returns how each area changed between two periods, ranked: the question
@@ -1311,6 +1347,7 @@ paths:
   /data/{measure-id}/compare:
     get:
       operationId: compareSourceExactMeasureAreas
+      tags: ["Trend"]
       summary: Compare two areas within one source-exact measure partition
       description: >
         Returns the comparison observation minus the baseline observation for
@@ -1372,6 +1409,7 @@ paths:
   /areas:
     get:
       operationId: listAreas
+      tags: ["Geography"]
       summary: List or search compiled area identities
       description: >
         Searches official codes, names and supplied aliases case-insensitively.
@@ -1426,6 +1464,7 @@ paths:
   /areas:intersects:
     get:
       operationId: findAreasIntersectingBox
+      tags: ["Map"]
       summary: Find the areas meeting a bounding box in one release
       description: >
         Returns every area of one geography and release that meets the given
@@ -1548,6 +1587,7 @@ paths:
   /areas:validate:
     get:
       operationId: validateAreaValues
+      tags: ["Geography"]
       summary: Validate a batch of area codes or names against one release
       description: >
         Checks each `value` against one exact boundary release before a caller
@@ -1606,6 +1646,7 @@ paths:
   /areas:contains:
     get:
       operationId: findContainingAreas
+      tags: ["Map"]
       summary: Find areas containing a WGS84 point in one boundary release
       description: >
         Uses a cached bounding-box prefilter followed by an exact polygon test.
@@ -1650,6 +1691,7 @@ paths:
   /areas/{geography}/{release}/{code}:
     get:
       operationId: getArea
+      tags: ["Geography"]
       summary: Get one compiled area by its full identity
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -1684,6 +1726,7 @@ paths:
   /areas/{geography}/{release}/{code}/relationships:
     get:
       operationId: getAreaRelationships
+      tags: ["Geography"]
       summary: Get published relationships for one compiled area
       description: >
         Returns only relationships from published crosswalks. A
@@ -1716,6 +1759,7 @@ paths:
   /areas/{geography}/{release}/{code}/capabilities:
     get:
       operationId: getAreaCapabilities
+      tags: ["Start here"]
       summary: Report what the Atlas can serve for one exact area identity
       description: >
         Reports geometry, published relationship and crosswalk edges,
@@ -1741,6 +1785,7 @@ paths:
   /areas/{geography}/{release}/{code}/citation:
     get:
       operationId: getAreaCitation
+      tags: ["Governance"]
       summary: Assemble a citation bundle for one exact area identity
       description: >
         Returns what a caller needs to cite an area as served by this Atlas
@@ -1805,6 +1850,7 @@ paths:
   /areas/{geography}/{release}/{code}/history:
     get:
       operationId: getAreaHistory
+      tags: ["Geography"]
       summary: Explain a code's published historical relationships and same-code continuity
       description: >
         Returns published predecessor and successor relationships plus every
@@ -1830,6 +1876,7 @@ paths:
   /areas/{geography}/{release}/{code}/parents:
     get:
       operationId: getAreaParents
+      tags: ["Geography"]
       summary: List published clean-containment parents for an area
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -1853,6 +1900,7 @@ paths:
   /areas/{geography}/{release}/{code}/children:
     get:
       operationId: getAreaChildren
+      tags: ["Geography"]
       summary: List published clean-containment children for an area
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -1876,6 +1924,7 @@ paths:
   /areas/{geography}/{release}/{code}/children/geometry:
     get:
       operationId: getAreaChildrenGeometry
+      tags: ["Map"]
       summary: Get every child of an area as one GeoJSON FeatureCollection
       description: >
         Returns the geometry of every area a published crosswalk names as
@@ -1997,6 +2046,7 @@ paths:
   /areas/{geography}/{release}/{code}/neighbours:
     get:
       operationId: getAreaNeighbours
+      tags: ["Map"]
       summary: List the areas whose boundary meets this one's
       description: >
         Returns the areas next to this one within the same geography and
@@ -2107,6 +2157,7 @@ paths:
   /areas/{geography}/{release}/{code}/overlap:
     get:
       operationId: getAreaOverlap
+      tags: ["Map"]
       summary: Measure how one area overlaps another
       description: >
         Intersects this area with the area named in `with`, which may be of
@@ -2159,6 +2210,7 @@ paths:
   /areas/{geography}/{release}/{code}/geometry:
     get:
       operationId: getAreaGeometry
+      tags: ["Map"]
       summary: Get one compiled area's raw geometry as a GeoJSON Feature
       description: >
         Serves the area's own geometry from its raw, cached source GeoJSON,
@@ -2268,6 +2320,7 @@ paths:
   /areas/{geography}/{release}/{code}/geometry/metadata:
     get:
       operationId: getAreaGeometryMetadata
+      tags: ["Map"]
       summary: Measure one area's geometry without transferring its coordinates
       description: >
         Returns the bounding box, centroid, label point, area and perimeter of
@@ -2364,6 +2417,7 @@ paths:
   /crosswalks:
     get:
       operationId: listCrosswalks
+      tags: ["Geography"]
       summary: List published crosswalks
       responses:
         "200":
@@ -2411,6 +2465,7 @@ paths:
   /crosswalks/{crosswalkId}:
     get:
       operationId: getCrosswalk
+      tags: ["Geography"]
       summary: Get one crosswalk's metadata
       description: >
         Returns the crosswalk's method, quality, weighting, endpoints,
@@ -2497,6 +2552,7 @@ paths:
   /crosswalks/{crosswalkId}/records:
     get:
       operationId: listCrosswalkRecords
+      tags: ["Geography"]
       summary: List (optionally filtered) records for one crosswalk
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
@@ -2588,6 +2644,7 @@ paths:
   /relationship-candidates:
     get:
       operationId: listRelationshipCandidates
+      tags: ["Governance"]
       summary: List discovered relationship candidates and their coverage gaps
       description: >
         Scans every compiled area release's raw source for extra code/name
@@ -2640,6 +2697,7 @@ paths:
   /validation:
     get:
       operationId: getValidationReport
+      tags: ["Governance"]
       summary: Report every release gate, including waived exceptions
       description: >
         The build checks each boundary release, each crosswalk, each measure,
@@ -2707,6 +2765,7 @@ paths:
   /validation/boundary-releases/{geography}/{release}:
     get:
       operationId: getBoundaryReleaseValidation
+      tags: ["Governance"]
       summary: Get one boundary release's checks
       parameters:
         - $ref: "#/components/parameters/Geography"
@@ -2749,6 +2808,7 @@ paths:
   /validation/crosswalks/{crosswalkId}:
     get:
       operationId: getCrosswalkValidation
+      tags: ["Governance"]
       summary: Get one crosswalk's checks
       description: >
         Every crosswalk is checked for artifact integrity, resolvable
@@ -2808,6 +2868,7 @@ paths:
   /validation/measures/{measure-id}:
     get:
       operationId: getMeasureValidation
+      tags: ["Governance"]
       summary: Get one measure's definition check
       description: >
         Checks that a measure's definition agrees with itself and with the
@@ -2850,6 +2911,7 @@ paths:
   /validation/exports/{export-id}:
     get:
       operationId: getMeasureSourceValidation
+      tags: ["Governance"]
       summary: Get one measure source partition's checks
       description: >
         Each export serves one source partition of a measure, and is checked
@@ -2915,6 +2977,7 @@ paths:
   /exports:
     get:
       operationId: listBulkExports
+      tags: ["Sync"]
       summary: List release-pinned whole observation artifacts
       description: >
         Returns immutable JSON downloads for each published measure-source
@@ -2986,6 +3049,7 @@ paths:
   /exports/{export-id}:
     get:
       operationId: downloadBulkExport
+      tags: ["Sync"]
       summary: Download one immutable source observation artifact
       description: >
         Returns the exact JSON artifact listed by `/exports`, after checking
@@ -3014,6 +3078,7 @@ paths:
   /lookups:
     get:
       operationId: listBulkLookups
+      tags: ["Sync"]
       summary: List whole lookup tables for download
       description: >
         Returns every bulk lookup: each boundary release's area identities
@@ -3085,6 +3150,7 @@ paths:
   /lookups/{lookup-id}:
     get:
       operationId: downloadBulkLookup
+      tags: ["Sync"]
       summary: Download one whole lookup table as CSV or NDJSON
       description: >
         Renders the lookup from its source artifact and returns it only if
@@ -3126,6 +3192,7 @@ paths:
   /atlas-release:
     get:
       operationId: getAtlasRelease
+      tags: ["Sync"]
       summary: Get the current immutable atlas release manifest
       description: >
         References the boundary registry, derived boundaries, area
@@ -3147,6 +3214,7 @@ paths:
   /atlas-releases:
     get:
       operationId: listAtlasReleases
+      tags: ["Sync"]
       summary: List the current and archived immutable Atlas releases
       responses:
         "200":
@@ -3159,6 +3227,7 @@ paths:
   /atlas-releases/{release-id}:
     get:
       operationId: getArchivedAtlasRelease
+      tags: ["Sync"]
       summary: Get one current or archived Atlas release manifest
       parameters:
         - name: release-id
@@ -3178,6 +3247,7 @@ paths:
   /atlas-releases/compare:
     get:
       operationId: compareAtlasReleases
+      tags: ["Sync"]
       summary: Compare two archived Atlas releases, artifact by artifact and resource by resource
       description: >
         Reports added, removed and changed published artifacts by content
@@ -3256,6 +3326,7 @@ paths:
   /translations:
     get:
       operationId: translateAreaCode
+      tags: ["Geography"]
       summary: Translate one code through a published crosswalk in either direction
       description: >
         `identity` permits publisher-supplied historical lookups only,
@@ -3311,6 +3382,7 @@ paths:
   /attribution:
     get:
       operationId: getAttribution
+      tags: ["Governance"]
       summary: Assemble the attribution and licence block for named resources
       description: >
         Collects the publisher, source and licence of every resource behind an
@@ -3379,6 +3451,7 @@ paths:
   /locations:
     get:
       operationId: listNamedLocations
+      tags: ["Geography"]
       summary: List curated Atlas named locations
       description: >
         Locations are editorial groupings of area codes, not automatically
@@ -3399,6 +3472,7 @@ paths:
   /locations/{location-id}:
     get:
       operationId: getNamedLocation
+      tags: ["Geography"]
       summary: Get one curated named-location definition
       parameters:
         - name: location-id
@@ -3417,6 +3491,7 @@ paths:
   /locations/{location-id}/members:
     get:
       operationId: getNamedLocationMembers
+      tags: ["Geography"]
       summary: Resolve a named location's members in one geography and release
       description: >
         `release` is required because location definitions may include legacy
@@ -3675,6 +3750,111 @@ components:
           description: >
             With `unknown-geography`, the geography list; with
             `release-not-compiled`, the boundary release.
+
+    UnsupportedGeographyProblem:
+      description: >
+        The geography or boundary release is not published, or its area identities are not compiled. A caller can act on `links` or `availableReleases` instead of reading the detail. Produced by `GET /v1/areas/nowhere/2024-12-uk-bgc/E05000932`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, absence]
+          properties:
+            status:
+              enum: [404]
+            code:
+              const: unsupported_geography
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"No boundary release is published for the geography nowhere.","code":"unsupported_geography","absence":"unknown-geography","links":{"geographies":"/v1/geographies"}}
+
+    AreaNotInReleaseProblem:
+      description: >
+        The release is published and compiled but does not hold the code; `presentIn` lists releases that do. A caller can act on `presentIn` instead of reading the detail. Produced by `GET /v1/areas/ward/2016-12-gb-bgc/E05013830`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, absence, presentIn]
+          properties:
+            status:
+              enum: [404]
+            code:
+              const: area_not_in_release
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"E05013830 is held only by newer releases of this geography, so it had not come into use by this release.","code":"area_not_in_release","absence":"not-yet-current","presentIn":[{"boundaryRelease":"2021-12-uk-bgc","name":"Garforth & Swillington","href":"/v1/areas/ward/2021-12-uk-bgc/E05013830"},{"boundaryRelease":"2022-12-uk-bgc","name":"Garforth & Swillington","href":"/v1/areas/ward/2022-12-uk-bgc/E05013830"}]}
+
+    AggregationNotSupportedProblem:
+      description: >
+        The measure's values do not add over areas, or its weights cannot be used. Produced by `GET /v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status:
+              enum: [422]
+            code:
+              const: aggregation_not_supported
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"This measure is a median and cannot be combined over areas. A median of ward medians is not the median of the underlying sales, and no weight recovers it. Combining areas needs the sales themselves, which this source does not publish.","code":"aggregation_not_supported"}
+
+    ConversionNotAvailableProblem:
+      description: >
+        The named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values. Produced by `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=constituency-2010-to-2024-official-lookup-v2`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status:
+              enum: [422]
+            code:
+              const: conversion_not_available
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"That crosswalk starts at constituency, but this source partition is published on ward areas.","code":"conversion_not_available","absence":"crosswalk-geography-mismatch"}
+
+    PartialCoverageProblem:
+      description: >
+        A named location or a weight partition leaves out areas the sum would need, so no partial sum is served. Produced by `GET /v1/data/population-estimate/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=carlisle`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status:
+              enum: [422]
+            code:
+              const: partial_coverage
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The named location does not cover this source partition by direct code match: . No conversion or partial sum was applied.","code":"partial_coverage"}
+
+    NoReleaseForDateProblem:
+      description: >
+        No release of the geography was in force on the date; `earliest` names the first there is. A caller can act on `earliest` or `undated` instead of reading the detail. Produced by `GET /v1/boundary-releases:resolve?geography=ward&date=1990-01-01`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, absence]
+          properties:
+            status:
+              enum: [404]
+            code:
+              const: no_release_for_date
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"The earliest ward boundary release is dated 2016-12, after 1990-01.","code":"no_release_for_date","absence":"before-first-release","earliest":{"id":"2016-12-gb-bgc","month":"2016-12","title":"Wards, December 2016 (Great Britain, generalised, clipped)","countries":["GB-ENG","GB-SCT"],"href":"/v1/boundary-releases/ward/2016-12-gb-bgc"}}
+
+    AmbiguousReleaseProblem:
+      description: >
+        More than one release of the geography is dated that month and they differ in more than coverage; `choices` lists them. A caller can act on `choices` instead of reading the detail. Produced by `GET /v1/boundary-releases:resolve?geography=dataZone&date=2011-12-15`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, choices]
+          properties:
+            status:
+              enum: [409]
+            code:
+              const: ambiguous_release
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/ambiguous-release","title":"Ambiguous Release","status":409,"detail":"2 dataZone boundary releases are dated 2011-12 and differ in more than coverage. Choose one by id; each is listed in choices.","code":"ambiguous_release","choices":[{"id":"2011-12-sc-bfc","month":"2011-12","title":"Data zones, December 2011 (Scotland, full resolution, clipped)","countries":["GB-SCT"],"href":"/v1/boundary-releases/dataZone/2011-12-sc-bfc"},{"id":"2011-12-sc-nc","month":"2011-12","title":"Data zones, December 2011 (Scotland, not clipped)","countries":["GB-SCT"],"href":"/v1/boundary-releases/dataZone/2011-12-sc-nc"}]}
 
     Envelope:
       type: object
