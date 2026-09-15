@@ -3102,60 +3102,6 @@ export const route = (
 		segments.length === 6 &&
 		segments[0] === "v1" &&
 		segments[1] === "areas" &&
-		segments[5] === "history"
-	) {
-		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-			string,
-			string,
-			string,
-		];
-		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area) {
-			return areaNotFound(geography, boundaryRelease, code);
-		}
-		const sameCodeReleases = searchableAreas(areaLookup ?? new Map())
-			.filter(
-				(candidate) =>
-					candidate.geography === geography &&
-					candidate.code === code &&
-					candidate.boundaryRelease !== boundaryRelease,
-			)
-			.map((candidate) => ({
-				...candidate,
-				status: "same-code-continuity" as const,
-			}))
-			.sort((left, right) =>
-				left.boundaryRelease.localeCompare(right.boundaryRelease),
-			);
-		const relationships = relationshipsFor(
-			areaRelationshipIndex,
-			crosswalkLookup,
-			geography,
-			boundaryRelease,
-			code,
-		).filter(
-			(relationship) =>
-				relationship.relation === "successor" ||
-				relationship.relation === "predecessor",
-		);
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				id: `${geography}/${boundaryRelease}/${code}`,
-				geography,
-				boundaryRelease,
-				...area,
-				relationships,
-				sameCodeReleases,
-				note: "Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.",
-			}),
-		};
-	}
-
-	if (
-		segments.length === 6 &&
-		segments[0] === "v1" &&
-		segments[1] === "areas" &&
 		(segments[5] === "parents" || segments[5] === "children")
 	) {
 		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
