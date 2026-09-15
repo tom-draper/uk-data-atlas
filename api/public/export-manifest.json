@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5a1f3a46ae840f6859d18477daa16934200fa468a235f0e2088e37ac33685503",
-	"dataCatalogHash": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
+	"contentHash": "sha256:835f10697b01938c319c432d4bf5f48889eb4ead7250918b936bbb97a797e51d",
+	"dataCatalogHash": "sha256:fdc01fff0c7dd68e9fa6791f820b63a62b03c7cbb3a0dea7d09d749eadd73cd4",
 	"exports": [
 		{
 			"id": "air-quality-grid-cells-observations",
@@ -922,27 +922,11 @@
 			"href": "/v1/exports/ethnicity-white-british-observations"
 		},
 		{
-			"id": "general-election-apni-vote-share-constituency-2010-observations",
-			"measureId": "general-election-apni-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-apni-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:f77676b6c16953202a77618cd20ac2a70ba4cfe3be7121ddea0dd34108601222",
-			"bytes": 36304,
-			"href": "/v1/exports/general-election-apni-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-apni-vote-share-constituency-2019-observations",
 			"measureId": "general-election-apni-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -953,8 +937,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-apni-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:02e073398e46d6e79dc944789551183561b216ede065cb68ee7534bd0d74812a",
-			"bytes": 108460,
+			"contentHash": "sha256:327b8ff9f6f3ff61d528119ad56338a947b1545ceabdf85dca9ce96e74c63c1f",
+			"bytes": 144535,
 			"href": "/v1/exports/general-election-apni-vote-share-constituency-2019-observations"
 		},
 		{
@@ -975,27 +959,11 @@
 			"href": "/v1/exports/general-election-apni-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-apni-votes-constituency-2010-observations",
-			"measureId": "general-election-apni-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-apni-votes-constituency-2010-observations",
-			"contentHash": "sha256:33120564455aeacac29dd96cc54fa4485230dda6e8dba9e2c523c0999ddfa344",
-			"bytes": 36052,
-			"href": "/v1/exports/general-election-apni-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-apni-votes-constituency-2019-observations",
 			"measureId": "general-election-apni-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1006,8 +974,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-apni-votes-constituency-2019-observations",
-			"contentHash": "sha256:b1a0bc7c67e0bd753e75d1dcf795a4ea1f665ac31c02360d03e4faaa94c1b1d0",
-			"bytes": 107724,
+			"contentHash": "sha256:a4e0872025bddd04045369038737fb8b5096ae08d8ac595320d9a61ccab52036",
+			"bytes": 143552,
 			"href": "/v1/exports/general-election-apni-votes-constituency-2019-observations"
 		},
 		{
@@ -1028,27 +996,11 @@
 			"href": "/v1/exports/general-election-apni-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-brx-vote-share-constituency-2010-observations",
-			"measureId": "general-election-brx-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-brx-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:5fd9df047e281adc1deb3b2edbed03e6119a2f50247382e1e336f965ddd33cfa",
-			"bytes": 36008,
-			"href": "/v1/exports/general-election-brx-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-brx-vote-share-constituency-2019-observations",
 			"measureId": "general-election-brx-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1059,8 +1011,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-brx-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:46f746d6e944a1739d6ae5fc892ea251c9e9ab91e475e08a9375a77e56bd0d29",
-			"bytes": 112085,
+			"contentHash": "sha256:2f913055dcabd2066c5b913ece79ad0e145c933f52bb2fc248d50bce03422162",
+			"bytes": 147865,
 			"href": "/v1/exports/general-election-brx-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1081,27 +1033,11 @@
 			"href": "/v1/exports/general-election-brx-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-brx-votes-constituency-2010-observations",
-			"measureId": "general-election-brx-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-brx-votes-constituency-2010-observations",
-			"contentHash": "sha256:86e8a8eb7a79f49dd7d47baeed04be3f05fa2936bafe6f954fc2a00e6a60a6d4",
-			"bytes": 36003,
-			"href": "/v1/exports/general-election-brx-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-brx-votes-constituency-2019-observations",
 			"measureId": "general-election-brx-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1112,8 +1048,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-brx-votes-constituency-2019-observations",
-			"contentHash": "sha256:5f5e94c13a04d452d365ba3fc8522553a48e988794e68be71da87bb9bebd2387",
-			"bytes": 108341,
+			"contentHash": "sha256:c5e5929b741b90b76693068e00ee27be59876ac3978d4c92e2089c7eb2d28fbe",
+			"bytes": 144121,
 			"href": "/v1/exports/general-election-brx-votes-constituency-2019-observations"
 		},
 		{
@@ -1134,27 +1070,11 @@
 			"href": "/v1/exports/general-election-brx-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-con-vote-share-constituency-2010-observations",
-			"measureId": "general-election-con-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-con-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:a0fc0aa69d99bd23767da181dc8f747915d8c89880abb76ebb2a3d6efbda8cc3",
-			"bytes": 46305,
-			"href": "/v1/exports/general-election-con-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-con-vote-share-constituency-2019-observations",
 			"measureId": "general-election-con-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1165,8 +1085,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-con-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:6434fb67048ec08e7f4526d03a33b39bfbb81c96e119c2163149eecf53893824",
-			"bytes": 138910,
+			"contentHash": "sha256:dd594ccdb8a8b31683bb3992a7446743651a63f8517e20dbeba89186c00b0144",
+			"bytes": 184987,
 			"href": "/v1/exports/general-election-con-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1187,27 +1107,11 @@
 			"href": "/v1/exports/general-election-con-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-con-votes-constituency-2010-observations",
-			"measureId": "general-election-con-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-con-votes-constituency-2010-observations",
-			"contentHash": "sha256:6c65cec9b75787ecb966acba0f029454db5b97935d6f2106d322b2bdfee32ec9",
-			"bytes": 38368,
-			"href": "/v1/exports/general-election-con-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-con-votes-constituency-2019-observations",
 			"measureId": "general-election-con-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1218,8 +1122,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-con-votes-constituency-2019-observations",
-			"contentHash": "sha256:07f86d3ff7d21bfaca419e7d7fc58209f1783e82654009c302ebe343acef6874",
-			"bytes": 114848,
+			"contentHash": "sha256:9dcc488ef7086b4a77d1006cd6a9aa28e2f18577463b3f3a542e718c0afcef7b",
+			"bytes": 152993,
 			"href": "/v1/exports/general-election-con-votes-constituency-2019-observations"
 		},
 		{
@@ -1240,27 +1144,11 @@
 			"href": "/v1/exports/general-election-con-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-dup-vote-share-constituency-2010-observations",
-			"measureId": "general-election-dup-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-dup-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:68f0c30215abee54aa64bb34a413c374a0b6690ebc1728bbde37061c60d249b9",
-			"bytes": 36272,
-			"href": "/v1/exports/general-election-dup-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-dup-vote-share-constituency-2019-observations",
 			"measureId": "general-election-dup-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1271,8 +1159,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-dup-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:53029a77214a9eed52c6c54d653a4ef89528ecb1f3752672de31f6b3b450e10f",
-			"bytes": 108383,
+			"contentHash": "sha256:18ffebae0675883460171592d834847246ff915b4b25c1cf86f7507d8e71adcb",
+			"bytes": 144427,
 			"href": "/v1/exports/general-election-dup-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1293,27 +1181,11 @@
 			"href": "/v1/exports/general-election-dup-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-dup-votes-constituency-2010-observations",
-			"measureId": "general-election-dup-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-dup-votes-constituency-2010-observations",
-			"contentHash": "sha256:b9e2a37f16b5063d0867075f8a0eaa9bc93ff7807284402df9968008abadc7d0",
-			"bytes": 36060,
-			"href": "/v1/exports/general-election-dup-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-dup-votes-constituency-2019-observations",
 			"measureId": "general-election-dup-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1324,8 +1196,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-dup-votes-constituency-2019-observations",
-			"contentHash": "sha256:671c4bf6fa043fc977c9b979378f52f909025dd81eedce0076ef58c837be2187",
-			"bytes": 107749,
+			"contentHash": "sha256:6eb443a505d31264530e79a9b195a8fdabb180e2292f14241386bf35f70433e7",
+			"bytes": 143586,
 			"href": "/v1/exports/general-election-dup-votes-constituency-2019-observations"
 		},
 		{
@@ -1346,27 +1218,11 @@
 			"href": "/v1/exports/general-election-dup-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-green-vote-share-constituency-2010-observations",
-			"measureId": "general-election-green-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-green-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:ad94e26c54e7744d9a1b8160675b4f09d07548b18d8f8b7ef018a4c3e728196c",
-			"bytes": 41600,
-			"href": "/v1/exports/general-election-green-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-green-vote-share-constituency-2019-observations",
 			"measureId": "general-election-green-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1377,8 +1233,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-green-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:4e990c511c7393433cdc2da4e7293bce525c3a7d117de99a85bbc50cfb9eb356",
-			"bytes": 132898,
+			"contentHash": "sha256:5a6e0087f7afbc12d155e1a100dbbc9e17cca029652b9c1f1b202ca9722f1781",
+			"bytes": 174268,
 			"href": "/v1/exports/general-election-green-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1399,27 +1255,11 @@
 			"href": "/v1/exports/general-election-green-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-green-votes-constituency-2010-observations",
-			"measureId": "general-election-green-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-green-votes-constituency-2010-observations",
-			"contentHash": "sha256:4b8338a98f96791fcec3d1970764016169be101de0be861643087e84c2c42184",
-			"bytes": 36739,
-			"href": "/v1/exports/general-election-green-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-green-votes-constituency-2019-observations",
 			"measureId": "general-election-green-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1430,8 +1270,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-green-votes-constituency-2019-observations",
-			"contentHash": "sha256:cc7f69d48242e4d318b172a1244a5f609fb28bb189cce78d526ddb30b2a521e6",
-			"bytes": 111719,
+			"contentHash": "sha256:394c051a18835ee816e9d99703bff4ed301464aa4f4fd265c59b68c789a6adb3",
+			"bytes": 148233,
 			"href": "/v1/exports/general-election-green-votes-constituency-2019-observations"
 		},
 		{
@@ -1452,27 +1292,11 @@
 			"href": "/v1/exports/general-election-green-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-lab-vote-share-constituency-2010-observations",
-			"measureId": "general-election-lab-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-lab-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:5df74b7f2ee8388337cfe1ed9b6d18de79e882f644b8f4cfab0e529680293347",
-			"bytes": 46306,
-			"href": "/v1/exports/general-election-lab-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-lab-vote-share-constituency-2019-observations",
 			"measureId": "general-election-lab-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1483,8 +1307,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-lab-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:503d38dba69e370b8f434281bfdee967a89172c3365f840e44fa89e4b17e7077",
-			"bytes": 138503,
+			"contentHash": "sha256:0680675f98d9af39a50527f6b8b1e8959675b4430b28da05c71451bbb86ebe5d",
+			"bytes": 184581,
 			"href": "/v1/exports/general-election-lab-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1505,27 +1329,11 @@
 			"href": "/v1/exports/general-election-lab-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-lab-votes-constituency-2010-observations",
-			"measureId": "general-election-lab-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-lab-votes-constituency-2010-observations",
-			"contentHash": "sha256:e5de7f1ade97ad4d488c2d0b1474de3a71dcd5334869757f864f890ca462650b",
-			"bytes": 38313,
-			"href": "/v1/exports/general-election-lab-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-lab-votes-constituency-2019-observations",
 			"measureId": "general-election-lab-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1536,8 +1344,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-lab-votes-constituency-2019-observations",
-			"contentHash": "sha256:204d2cb42dba23514e4d9bb111e55679e996c3c5487bbe4df5990681f3f9e063",
-			"bytes": 114748,
+			"contentHash": "sha256:82fcdc862aa1c20d35c7bfb36f0e633abe63928aa9e6b39561fd17dedc69d599",
+			"bytes": 152838,
 			"href": "/v1/exports/general-election-lab-votes-constituency-2019-observations"
 		},
 		{
@@ -1558,27 +1366,11 @@
 			"href": "/v1/exports/general-election-lab-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-ld-vote-share-constituency-2010-observations",
-			"measureId": "general-election-ld-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-ld-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:8183a5826902336a515b6b23ab1c46679d18d1faa2b10c4fd7f473bb0307271d",
-			"bytes": 46464,
-			"href": "/v1/exports/general-election-ld-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-ld-vote-share-constituency-2019-observations",
 			"measureId": "general-election-ld-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1589,8 +1381,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-ld-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:a873d21e9a2691d19d064fa1859c41f7e042e3abca5c020309862bbff51e1faf",
-			"bytes": 138127,
+			"contentHash": "sha256:cc9af23e083e46bc04a48415b38ca67e6faf4476f71c31aa9e8dd0004aa1e696",
+			"bytes": 184364,
 			"href": "/v1/exports/general-election-ld-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1611,27 +1403,11 @@
 			"href": "/v1/exports/general-election-ld-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-ld-votes-constituency-2010-observations",
-			"measureId": "general-election-ld-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-ld-votes-constituency-2010-observations",
-			"contentHash": "sha256:a74b23b2a21a833bfb46141cd6d20999de7bb183f4a67a9ffb1760ecae9a4627",
-			"bytes": 38182,
-			"href": "/v1/exports/general-election-ld-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-ld-votes-constituency-2019-observations",
 			"measureId": "general-election-ld-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1642,8 +1418,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-ld-votes-constituency-2019-observations",
-			"contentHash": "sha256:0818940ed2d97b1d9aa16ccf7916f60f15611a76701b1d5fab3f825ffece042a",
-			"bytes": 113187,
+			"contentHash": "sha256:be209d24903e95dddb356793fd739950906d0ab79ef4a50dd91cf9b35fe594e0",
+			"bytes": 151147,
 			"href": "/v1/exports/general-election-ld-votes-constituency-2019-observations"
 		},
 		{
@@ -1664,27 +1440,11 @@
 			"href": "/v1/exports/general-election-ld-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-other-vote-share-constituency-2010-observations",
-			"measureId": "general-election-other-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-other-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:276d68c89b98e46dac9b9b2490c7139b874d3486bf13902d3209a0dcca3ac1cd",
-			"bytes": 45078,
-			"href": "/v1/exports/general-election-other-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-other-vote-share-constituency-2019-observations",
 			"measureId": "general-election-other-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1695,8 +1455,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-other-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:aff78821e676a95950583e7f9117aea7eafd3965a542c7cb7e73788012272458",
-			"bytes": 124468,
+			"contentHash": "sha256:e9dc89b0b81d6abe4ec3518807f860175454f888b62826879f16acb8856fa4f7",
+			"bytes": 169316,
 			"href": "/v1/exports/general-election-other-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1717,27 +1477,11 @@
 			"href": "/v1/exports/general-election-other-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-other-votes-constituency-2010-observations",
-			"measureId": "general-election-other-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-other-votes-constituency-2010-observations",
-			"contentHash": "sha256:bad335c676a009af6815bbaa0e1bfe5f5d2af1540612ebd066b554741569a679",
-			"bytes": 37475,
-			"href": "/v1/exports/general-election-other-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-other-votes-constituency-2019-observations",
 			"measureId": "general-election-other-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1748,8 +1492,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-other-votes-constituency-2019-observations",
-			"contentHash": "sha256:d64c407c8d7e1d99856268029ec68bd06d2edeb6d9796f0c61656a6f41c11794",
-			"bytes": 109749,
+			"contentHash": "sha256:4152ac3fde4b78dd6d402a3643975ddcc290ffb4ba8229a331500ace8eea5914",
+			"bytes": 146999,
 			"href": "/v1/exports/general-election-other-votes-constituency-2019-observations"
 		},
 		{
@@ -1770,27 +1514,11 @@
 			"href": "/v1/exports/general-election-other-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-pc-vote-share-constituency-2010-observations",
-			"measureId": "general-election-pc-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-pc-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:1c0fb1cc3bf425cf80a5b6d0ab2249b5fb70f03b2150c330c15d19c73e2da2c8",
-			"bytes": 36656,
-			"href": "/v1/exports/general-election-pc-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-pc-vote-share-constituency-2019-observations",
 			"measureId": "general-election-pc-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1801,8 +1529,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-pc-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:4cd7162ca162892c25bc4a97a41e6fe6a595d168f4d71256703507eb61b8f13e",
-			"bytes": 109443,
+			"contentHash": "sha256:6ff741e1ea48d52cab44290c239158ed0bc3b1d5f9a285eaceca05692c9ca941",
+			"bytes": 145872,
 			"href": "/v1/exports/general-election-pc-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1823,27 +1551,11 @@
 			"href": "/v1/exports/general-election-pc-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-pc-votes-constituency-2010-observations",
-			"measureId": "general-election-pc-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-pc-votes-constituency-2010-observations",
-			"contentHash": "sha256:a9b2b4b9246c48f35da1387ad957de7417e74a2ec9752aa112535b713b06ee39",
-			"bytes": 36124,
-			"href": "/v1/exports/general-election-pc-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-pc-votes-constituency-2019-observations",
 			"measureId": "general-election-pc-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1854,8 +1566,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-pc-votes-constituency-2019-observations",
-			"contentHash": "sha256:f7f675f16c3781c976c05efc1a6687f2aeb8b3d341e056606686126d8e65d831",
-			"bytes": 107922,
+			"contentHash": "sha256:b2cd49209190396903d018f9f1064ff25f0511207e8e8ab23f7dd81ca5cf28cd",
+			"bytes": 143824,
 			"href": "/v1/exports/general-election-pc-votes-constituency-2019-observations"
 		},
 		{
@@ -1876,27 +1588,11 @@
 			"href": "/v1/exports/general-election-pc-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-ruk-vote-share-constituency-2010-observations",
-			"measureId": "general-election-ruk-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-ruk-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:60499901a432e777c8b8f9e51809197f1057d06a7307001d2c4bd1be109ce01a",
-			"bytes": 36008,
-			"href": "/v1/exports/general-election-ruk-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-ruk-vote-share-constituency-2019-observations",
 			"measureId": "general-election-ruk-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1907,8 +1603,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-ruk-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:c58522859d265c4825b644257d3e9b7470c2b50db8e4beb31d125f9298245436",
-			"bytes": 107568,
+			"contentHash": "sha256:a3d5581b48c9a9fdbeef2fcb7d7efe316dd5a5cf72ed021fce593b5b09b7238a",
+			"bytes": 143348,
 			"href": "/v1/exports/general-election-ruk-vote-share-constituency-2019-observations"
 		},
 		{
@@ -1929,27 +1625,11 @@
 			"href": "/v1/exports/general-election-ruk-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-ruk-votes-constituency-2010-observations",
-			"measureId": "general-election-ruk-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-ruk-votes-constituency-2010-observations",
-			"contentHash": "sha256:a3f405c63e24ce73aaecf82edabd30bc80e9ca5e7efe7bedb5627c8358e0f854",
-			"bytes": 36003,
-			"href": "/v1/exports/general-election-ruk-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-ruk-votes-constituency-2019-observations",
 			"measureId": "general-election-ruk-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -1960,8 +1640,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-ruk-votes-constituency-2019-observations",
-			"contentHash": "sha256:16a7a52b3f380d64d4bcbc271523a9a5591ee11a6a8cc8a680e5d8ab7f33564f",
-			"bytes": 107563,
+			"contentHash": "sha256:22f2f6a3da12e1f82290e48c23bc873103386c9de490465bfeff5e8fa69f54ca",
+			"bytes": 143343,
 			"href": "/v1/exports/general-election-ruk-votes-constituency-2019-observations"
 		},
 		{
@@ -1982,27 +1662,11 @@
 			"href": "/v1/exports/general-election-ruk-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-sdlp-vote-share-constituency-2010-observations",
-			"measureId": "general-election-sdlp-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-sdlp-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:f9a38275ce36d511946503f6545770f54fd3c7f813c3ec73b8d4d89a9c046042",
-			"bytes": 36306,
-			"href": "/v1/exports/general-election-sdlp-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-sdlp-vote-share-constituency-2019-observations",
 			"measureId": "general-election-sdlp-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2013,8 +1677,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-sdlp-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:3b37fcf758ddfe8928d8408f804c3eb0fd675fdee1627a63366bd9a7996143b2",
-			"bytes": 108400,
+			"contentHash": "sha256:745a134f03b121833209811937804b8a82e4a1f18fe15f6a77bc28192486e999",
+			"bytes": 144477,
 			"href": "/v1/exports/general-election-sdlp-vote-share-constituency-2019-observations"
 		},
 		{
@@ -2035,27 +1699,11 @@
 			"href": "/v1/exports/general-election-sdlp-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-sdlp-votes-constituency-2010-observations",
-			"measureId": "general-election-sdlp-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-sdlp-votes-constituency-2010-observations",
-			"contentHash": "sha256:379bcf487f75e4f1ff723e0af854a698320fdbe841dd59024041accd4cffa7d1",
-			"bytes": 36060,
-			"href": "/v1/exports/general-election-sdlp-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-sdlp-votes-constituency-2019-observations",
 			"measureId": "general-election-sdlp-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2066,8 +1714,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-sdlp-votes-constituency-2019-observations",
-			"contentHash": "sha256:9ec40039c6d4791842af6c927f92a24be317b47bb40f548ede3972b4f05e3800",
-			"bytes": 107721,
+			"contentHash": "sha256:4a67d72476a978c0bc188b3048c23591569a8c2e17f7290f4371391c6424ead3",
+			"bytes": 143557,
 			"href": "/v1/exports/general-election-sdlp-votes-constituency-2019-observations"
 		},
 		{
@@ -2088,27 +1736,11 @@
 			"href": "/v1/exports/general-election-sdlp-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-sf-vote-share-constituency-2010-observations",
-			"measureId": "general-election-sf-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-sf-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:307f8888b3c3e114b2d52cfc7c8fe4b0361562e2d0acdc35d65948f884474d97",
-			"bytes": 36287,
-			"href": "/v1/exports/general-election-sf-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-sf-vote-share-constituency-2019-observations",
 			"measureId": "general-election-sf-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2119,8 +1751,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-sf-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:196d4f4cfc3e2c43a5ceb73ea646726c263b1b6577fdb9a342a49a3ba1ce40fd",
-			"bytes": 108407,
+			"contentHash": "sha256:81f11d5f266229232a40fd6428b2fc26ab4ab88944cfdd69a6012be381f0f41e",
+			"bytes": 144467,
 			"href": "/v1/exports/general-election-sf-vote-share-constituency-2019-observations"
 		},
 		{
@@ -2141,27 +1773,11 @@
 			"href": "/v1/exports/general-election-sf-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-sf-votes-constituency-2010-observations",
-			"measureId": "general-election-sf-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-sf-votes-constituency-2010-observations",
-			"contentHash": "sha256:29d376f21a5e8c00f9beefb4bb30a59ddded67ec7a8ab6800ebd835edc803631",
-			"bytes": 36060,
-			"href": "/v1/exports/general-election-sf-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-sf-votes-constituency-2019-observations",
 			"measureId": "general-election-sf-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2172,8 +1788,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-sf-votes-constituency-2019-observations",
-			"contentHash": "sha256:ede8d64fd80a451854b1ace7888002b1a75061142f2439e7a93d1e5451103c6c",
-			"bytes": 107736,
+			"contentHash": "sha256:0cb6e6648f07c356b2702b647da42e4cb7c0f4711cec8977fa7f6e57179f06d0",
+			"bytes": 143574,
 			"href": "/v1/exports/general-election-sf-votes-constituency-2019-observations"
 		},
 		{
@@ -2194,27 +1810,11 @@
 			"href": "/v1/exports/general-election-sf-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-snp-vote-share-constituency-2010-observations",
-			"measureId": "general-election-snp-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-snp-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:9e3315a3a96da0af0765c3502c4f989803064b0a4bbebf70baeedd4eec09d25b",
-			"bytes": 36987,
-			"href": "/v1/exports/general-election-snp-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-snp-vote-share-constituency-2019-observations",
 			"measureId": "general-election-snp-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2225,8 +1825,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-snp-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:eefaafd38f245b48753ac7d9887cb8d56a680a7484b02b02f60f2ebeb268c33a",
-			"bytes": 110420,
+			"contentHash": "sha256:e9e1fe6752599d8153667054af1c2e7e1a9238a1498b3a0b26508a05cb1b5acd",
+			"bytes": 147179,
 			"href": "/v1/exports/general-election-snp-vote-share-constituency-2019-observations"
 		},
 		{
@@ -2247,27 +1847,11 @@
 			"href": "/v1/exports/general-election-snp-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-snp-votes-constituency-2010-observations",
-			"measureId": "general-election-snp-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-snp-votes-constituency-2010-observations",
-			"contentHash": "sha256:6de40ef0dc69265089eab84281af36ec888817a6ff755044c165480c6f98d8a1",
-			"bytes": 36194,
-			"href": "/v1/exports/general-election-snp-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-snp-votes-constituency-2019-observations",
 			"measureId": "general-election-snp-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2278,8 +1862,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-snp-votes-constituency-2019-observations",
-			"contentHash": "sha256:53b02a7492f2a3a5ba1bad61aa1c340d757b8ecd93a1a2fad57946ae9d2ba3a0",
-			"bytes": 108264,
+			"contentHash": "sha256:517f14d60ed71f55a7498768b9d2560243fcfd07dac0000420ee68c71e7c9081",
+			"bytes": 144235,
 			"href": "/v1/exports/general-election-snp-votes-constituency-2019-observations"
 		},
 		{
@@ -2300,27 +1884,11 @@
 			"href": "/v1/exports/general-election-snp-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-turnout-constituency-2010-observations",
-			"measureId": "general-election-turnout",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-turnout-constituency-2010-observations",
-			"contentHash": "sha256:a8e02411fa0a073495e5ca1e75fa09d54128184ec59e2c7b8a069b38bc9defa6",
-			"bytes": 46390,
-			"href": "/v1/exports/general-election-turnout-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-turnout-constituency-2019-observations",
 			"measureId": "general-election-turnout",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2331,8 +1899,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-turnout-constituency-2019-observations",
-			"contentHash": "sha256:6c629598d46dd9fd7cc598ab3a840666a5553e9c91a459d9bbcba50d255b1f49",
-			"bytes": 138657,
+			"contentHash": "sha256:2cbcc298efc09712434dcae05d83ecc30a7f055f14594109a409cea0f07ce350",
+			"bytes": 184826,
 			"href": "/v1/exports/general-election-turnout-constituency-2019-observations"
 		},
 		{
@@ -2353,27 +1921,11 @@
 			"href": "/v1/exports/general-election-turnout-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-ukip-vote-share-constituency-2010-observations",
-			"measureId": "general-election-ukip-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-ukip-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:3c245852561ecf30b6798c88ed3153db7e2b1a729c2429c8b8ef7216296dbabe",
-			"bytes": 45146,
-			"href": "/v1/exports/general-election-ukip-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-ukip-vote-share-constituency-2019-observations",
 			"measureId": "general-election-ukip-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2384,8 +1936,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-ukip-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:5d724c0637b47e1abe7591cf03645fbf93e4e6b2b3b814820fd1fa6ab267143b",
-			"bytes": 124092,
+			"contentHash": "sha256:8da34cdd49282413f90f6bf68e8b0973cd7ac48c8efefd140fb8b77b94f1eeb9",
+			"bytes": 169009,
 			"href": "/v1/exports/general-election-ukip-vote-share-constituency-2019-observations"
 		},
 		{
@@ -2406,27 +1958,11 @@
 			"href": "/v1/exports/general-election-ukip-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-ukip-votes-constituency-2010-observations",
-			"measureId": "general-election-ukip-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-ukip-votes-constituency-2010-observations",
-			"contentHash": "sha256:07a1456f4f5fe383a0f0cc5179ed029d5619498ea21af144d85a62212528a584",
-			"bytes": 37544,
-			"href": "/v1/exports/general-election-ukip-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-ukip-votes-constituency-2019-observations",
 			"measureId": "general-election-ukip-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2437,8 +1973,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-ukip-votes-constituency-2019-observations",
-			"contentHash": "sha256:2401386cf44e4f84c82b980b0d6d09168cadc254ec9569642e4b9b919844f271",
-			"bytes": 110522,
+			"contentHash": "sha256:5c2d5b1670066c5de2257d2e9670fa6172c71502c2e1be8e617eb4543edebf48",
+			"bytes": 147842,
 			"href": "/v1/exports/general-election-ukip-votes-constituency-2019-observations"
 		},
 		{
@@ -2459,27 +1995,11 @@
 			"href": "/v1/exports/general-election-ukip-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-uup-vote-share-constituency-2010-observations",
-			"measureId": "general-election-uup-vote-share",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-uup-vote-share-constituency-2010-observations",
-			"contentHash": "sha256:6658f4e326d0bcaf1421a885de9405676a2ab4f444752e8cb751a9f5033f8d85",
-			"bytes": 36285,
-			"href": "/v1/exports/general-election-uup-vote-share-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-uup-vote-share-constituency-2019-observations",
 			"measureId": "general-election-uup-vote-share",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2490,8 +2010,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-uup-vote-share-constituency-2019-observations",
-			"contentHash": "sha256:eb6f7b6bff446d48c63a6a1964c199bb531d8654aa1eaa3c1dbb641df1ab5a17",
-			"bytes": 108303,
+			"contentHash": "sha256:e35e275700c185e21275f9a7c1ad73a2a97663e8e02b12a7fee45b09749a6bf2",
+			"bytes": 144360,
 			"href": "/v1/exports/general-election-uup-vote-share-constituency-2019-observations"
 		},
 		{
@@ -2512,27 +2032,11 @@
 			"href": "/v1/exports/general-election-uup-vote-share-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-uup-votes-constituency-2010-observations",
-			"measureId": "general-election-uup-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-uup-votes-constituency-2010-observations",
-			"contentHash": "sha256:456e4bb85a11fff636bccf7599cabce7d0b09fce649ac86745dbb04bda00a831",
-			"bytes": 36056,
-			"href": "/v1/exports/general-election-uup-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-uup-votes-constituency-2019-observations",
 			"measureId": "general-election-uup-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2543,8 +2047,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-uup-votes-constituency-2019-observations",
-			"contentHash": "sha256:8c968ef1784bfdd4bfe84036ffa62de98362a5200f336dbe08a876752e6c773d",
-			"bytes": 107706,
+			"contentHash": "sha256:99ffe61569ebacb6dfab359f203720f1fba34fd2103c6892bd2867fb9c9f197c",
+			"bytes": 143539,
 			"href": "/v1/exports/general-election-uup-votes-constituency-2019-observations"
 		},
 		{
@@ -2565,27 +2069,11 @@
 			"href": "/v1/exports/general-election-uup-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-valid-votes-constituency-2010-observations",
-			"measureId": "general-election-valid-votes",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-valid-votes-constituency-2010-observations",
-			"contentHash": "sha256:c0593aca46690491128222f95fcc28c0e0489456261b2b9afff80855315eae85",
-			"bytes": 38605,
-			"href": "/v1/exports/general-election-valid-votes-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-valid-votes-constituency-2019-observations",
 			"measureId": "general-election-valid-votes",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2596,8 +2084,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-valid-votes-constituency-2019-observations",
-			"contentHash": "sha256:09aad74b06e512ce96059d51ae6da569379c220f28ac98c49da3c630dee55f6f",
-			"bytes": 115365,
+			"contentHash": "sha256:30955f312a1284e319da3dc01732c627cb72c3ff004840dc42c29a4945251265",
+			"bytes": 153745,
 			"href": "/v1/exports/general-election-valid-votes-constituency-2019-observations"
 		},
 		{
@@ -2618,27 +2106,11 @@
 			"href": "/v1/exports/general-election-valid-votes-constituency-2024-observations"
 		},
 		{
-			"id": "general-election-winning-party-constituency-2010-observations",
-			"measureId": "general-election-winning-party",
-			"datasetId": "general-election",
-			"periods": [
-				"2010"
-			],
-			"sourceGeography": {
-				"type": "constituency",
-				"boundaryYear": 2010
-			},
-			"format": "json",
-			"artifact": "general-election-winning-party-constituency-2010-observations",
-			"contentHash": "sha256:5f0f21e014753fb7cdf7cc65aa4de33ed1504737f93eac8a4a62e6a7ac1f71dc",
-			"bytes": 40498,
-			"href": "/v1/exports/general-election-winning-party-constituency-2010-observations"
-		},
-		{
 			"id": "general-election-winning-party-constituency-2019-observations",
 			"measureId": "general-election-winning-party",
 			"datasetId": "general-election",
 			"periods": [
+				"2010",
 				"2015",
 				"2017",
 				"2019"
@@ -2649,8 +2121,8 @@
 			},
 			"format": "json",
 			"artifact": "general-election-winning-party-constituency-2019-observations",
-			"contentHash": "sha256:6c30322746e08df3096f3958de5a117e551b709043888af2acd0d22bb184975d",
-			"bytes": 121170,
+			"contentHash": "sha256:77c3f4cf3e5051e60573ed69a6431008feaf6805cd34f0be04c609b98a5afc93",
+			"bytes": 161441,
 			"href": "/v1/exports/general-election-winning-party-constituency-2019-observations"
 		},
 		{

@@ -12,7 +12,7 @@ describe("2010 general-election source", () => {
 			GENERAL_ELECTION_SOURCES["general-election-2010"],
 		);
 
-		expect(dataset.boundaryYear).toBe(2010);
+		expect(dataset.boundaryYear).toBe(2019);
 		expect(dataset.results.N06000001).toBe("UUP");
 		expect(dataset.data.N06000001?.partyVotes).toEqual({ UUP: 35 });
 	});

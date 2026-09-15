@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
+	"contentHash": "sha256:fdc01fff0c7dd68e9fa6791f820b63a62b03c7cbb3a0dea7d09d749eadd73cd4",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -375,14 +375,13 @@
 				"datasetCount": 5,
 				"dataRecordCount": 3250,
 				"boundaryYears": [
-					2010,
 					2019,
 					2024
 				]
 			},
 			"compiled": {
 				"bytes": 1587376,
-				"sha256": "3c78483b3b0b0d55e5b79f06298ff5dc05be36dde1d34c8e208ebf8441daea65"
+				"sha256": "806e2a214275902484e8d9fc09f18c11c8b468411cfbd4d7fb1daf5ce52fc9e8"
 			}
 		},
 		{
@@ -1430,28 +1429,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-valid-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -1526,28 +1504,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-turnout-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -1618,28 +1575,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-apni-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -1710,28 +1646,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-brx-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -1802,28 +1717,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-con-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -1894,28 +1788,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-dup-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -1986,28 +1859,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-green-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2078,28 +1930,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-lab-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2170,28 +2001,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-ld-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2262,28 +2072,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-other-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2354,28 +2143,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-pc-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2446,28 +2214,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-ruk-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2538,28 +2285,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-sdlp-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2630,28 +2356,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-sf-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2722,28 +2427,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-snp-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2814,28 +2498,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-ukip-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -2906,28 +2569,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-uup-votes-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3003,28 +2645,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-apni-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3100,28 +2721,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-brx-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3197,28 +2797,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-con-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3294,28 +2873,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-dup-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3391,28 +2949,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-green-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3488,28 +3025,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-lab-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3585,28 +3101,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-ld-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3682,28 +3177,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-other-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3779,28 +3253,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-pc-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3876,28 +3329,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-ruk-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -3973,28 +3405,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-sdlp-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -4070,28 +3481,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-sf-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -4167,28 +3557,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-snp-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -4264,28 +3633,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-ukip-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -4361,28 +3709,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-uup-vote-share-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-exact general election records for the listed polling years. Record coverage varies with the areas that held an election."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"
@@ -4453,28 +3780,7 @@
 				{
 					"datasetId": "general-election",
 					"periods": [
-						"2010"
-					],
-					"sourceGeography": {
-						"type": "constituency",
-						"boundaryYear": 2010
-					},
-					"observationArtifact": "general-election-winning-party-constituency-2010-observations",
-					"coverage": {
-						"kind": "partial",
-						"countries": [
-							"GB-ENG",
-							"GB-NIR",
-							"GB-SCT",
-							"GB-WLS"
-						],
-						"recordCount": 650,
-						"note": "Source-reported general election winning-party labels for the listed polling years. This is categorical data, not a vote count or party ranking."
-					}
-				},
-				{
-					"datasetId": "general-election",
-					"periods": [
+						"2010",
 						"2015",
 						"2017",
 						"2019"

@@ -81,7 +81,9 @@ export const GENERAL_ELECTION_SOURCES: Record<
 		year: 2010,
 		path: "politics/elections/general-elections/2010/HoC-GE2010-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
-		constituencyBoundaryYear: 2010,
+		// The constituencies first contested in 2010 lasted until 2024, so like
+		// 2015 and 2017 its results carry the codes of the 2019 release.
+		constituencyBoundaryYear: 2019,
 		fields: {
 			onsId: "ONS ID",
 			constituencyName: "Constituency name",
