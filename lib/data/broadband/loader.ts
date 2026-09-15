@@ -33,6 +33,7 @@ export async function loadBroadband(
 			),
 			pctFullFibre: parseNum(row["Full Fibre availability (% premises)"]),
 			pctGigabit: parseNum(row["Gigabit availability (% premises)"]),
+			premisesCount: parseNum(row["All Premises"]),
 		};
 	}
 

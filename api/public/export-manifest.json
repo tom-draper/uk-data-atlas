@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:57550a125b584161c38b431eb297a7b8e4cb2fdc473bd06f66bf9a57a034fb22",
-	"dataCatalogHash": "sha256:4eed5a7f1ff14d6384ced20b2a3d1f7628f7f9a8165e3cead8cb8986a8bcac8b",
+	"contentHash": "sha256:e6445b949e35247a7719e4a3a474635d771094bffc1c47822f143f8152614944",
+	"dataCatalogHash": "sha256:bb74ed7f9fc98892754e3ec80f01ced497277057ff7097a898d49a7d5acebd65",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
