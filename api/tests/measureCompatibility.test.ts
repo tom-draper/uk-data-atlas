@@ -182,3 +182,53 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 	assert.match(sources?.[0]?.note ?? "", /code-set compatibility only/);
 	assert.match(inventory.contentHash, /^sha256:[a-f0-9]{64}$/);
 });
+
+test("assesses the codes of every period in a partition, not only the first", () => {
+	const catalogue: DataCatalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) => ({
+			...measure,
+			sources: measure.sources.map((source) =>
+				source.datasetId === "population-uk"
+					? { ...source, periods: ["2024", "2025"] }
+					: source,
+			),
+		})),
+	};
+	const inventory = compileMeasureCompatibility(
+		catalogue,
+		boundaryRegistry,
+		artifacts,
+		wardObservations,
+		{
+			...localAuthorityObservations,
+			periods: [
+				...localAuthorityObservations.periods,
+				{
+					period: "2025",
+					records: [
+						{ areaCode: "E06000001", value: 1, status: "observed" },
+						{ areaCode: "E06000099", value: 1, status: "observed" },
+					],
+				},
+			],
+		},
+		[emissionsObservations],
+	);
+	const candidate = inventory.measures[0]?.sources[1]?.candidates[0];
+	assert.equal(candidate?.status, "partial-code-overlap");
+	assert.equal(candidate?.sourceCodeCount, 3);
+	assert.deepEqual(candidate?.unmatchedSourceCodeSample, ["E06000099"]);
+	assert.throws(
+		() =>
+			compileMeasureCompatibility(
+				catalogue,
+				boundaryRegistry,
+				artifacts,
+				wardObservations,
+				localAuthorityObservations,
+				[emissionsObservations],
+			),
+		/No population-estimate observations exist for localAuthority in 2025\./,
+	);
+});

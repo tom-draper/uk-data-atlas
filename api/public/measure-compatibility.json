@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4520a465d997f50100f898d67bb68336ef017cfb22820d87c4643eab474e77cd",
+	"contentHash": "sha256:8d9bd4bd9ae6347b1a8223794486dba7514e3d5085015465cef3aa143183eba0",
 	"inputs": {
 		"dataCatalog": "sha256:e7f5e112520c377dfb98f364955ac983bbfe67300d10876aff2f714ffa5e251d",
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
@@ -10540,25 +10540,21 @@
 								"GB-WLS"
 							],
 							"status": "partial-code-overlap",
-							"sourceCodeCount": 8019,
+							"sourceCodeCount": 8049,
 							"candidateCodeCount": 8887,
-							"matchingCodeCount": 8017,
-							"matchedSourceShare": 0.999750592343185,
+							"matchingCodeCount": 8047,
+							"matchedSourceShare": 0.9997515219281898,
 							"unmatchedSourceCodeCount": 2,
 							"unmatchedSourceCodeSample": [
 								"E05013830",
 								"E05013831"
 							],
-							"candidateOnlyCodeCount": 870,
+							"candidateOnlyCodeCount": 840,
 							"candidateOnlyCodeSample": [
-								"E05002241",
-								"E05003230",
-								"E05006037",
 								"E05006554",
 								"E05009289",
 								"E05009290",
 								"E05009291",
-								"E05009292",
 								"E05009293",
 								"E05009294",
 								"E05009295",
@@ -10569,8 +10565,12 @@
 								"E05009300",
 								"E05009301",
 								"E05009303",
-								"E05009304",
-								"E05009306"
+								"E05009306",
+								"E05009307",
+								"E05009311",
+								"E05009312",
+								"E05011090",
+								"E05011091"
 							]
 						}
 					],
@@ -11348,27 +11348,15 @@
 								"GB-SCT",
 								"GB-WLS"
 							],
-							"status": "code-set-compatible",
-							"sourceCodeCount": 350,
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 350,
+							"matchingCodeCount": 361,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 11,
-							"candidateOnlyCodeSample": [
-								"N09000001",
-								"N09000002",
-								"N09000003",
-								"N09000004",
-								"N09000005",
-								"N09000006",
-								"N09000007",
-								"N09000008",
-								"N09000009",
-								"N09000010",
-								"N09000011"
-							]
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -13502,34 +13490,27 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 356,
+							"sourceCodeCount": 369,
 							"candidateCodeCount": 382,
-							"matchingCodeCount": 356,
+							"matchingCodeCount": 369,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 26,
+							"candidateOnlyCodeCount": 13,
 							"candidateOnlyCodeSample": [
-								"E06000047",
-								"E06000049",
-								"E06000050",
-								"E06000051",
-								"E06000052",
 								"E06000053",
-								"E06000054",
-								"E06000056",
-								"E06000057",
-								"E06000058",
-								"E06000059",
-								"E07000244",
-								"E07000245",
-								"E07000246",
 								"E09000001",
 								"N09000001",
 								"N09000002",
 								"N09000003",
 								"N09000004",
-								"N09000005"
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
 							]
 						}
 					],
@@ -13632,34 +13613,27 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 357,
+							"sourceCodeCount": 369,
 							"candidateCodeCount": 382,
-							"matchingCodeCount": 357,
+							"matchingCodeCount": 369,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 25,
+							"candidateOnlyCodeCount": 13,
 							"candidateOnlyCodeSample": [
-								"E06000047",
-								"E06000049",
-								"E06000050",
-								"E06000051",
-								"E06000052",
 								"E06000053",
-								"E06000054",
-								"E06000056",
-								"E06000057",
-								"E06000059",
-								"E07000244",
-								"E07000245",
-								"E07000246",
 								"E09000001",
 								"N09000001",
 								"N09000002",
 								"N09000003",
 								"N09000004",
 								"N09000005",
-								"N09000006"
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
 							]
 						}
 					],
