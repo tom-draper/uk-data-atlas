@@ -1,5 +1,4 @@
-import { explainAreaAbsence } from "./areaAbsence";
-import { createAreaRelationshipIndex } from "./areaRelationships";
+import { areaNotFound, findArea, relationshipsFor } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -21,36 +20,22 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 		string,
 	];
-	const {
-		areaInventory,
-		areaLookup,
-		areaRelationshipIndex,
-		boundaryRegistry,
-		crosswalkLookup,
-	} = context;
-	const area = areaLookup?.get(`${geography}/${boundaryRelease}`)?.get(code);
-	if (!area) {
-		const { detail, ...absence } = explainAreaAbsence(
-			boundaryRegistry,
-			areaInventory,
-			areaLookup,
-			geography,
-			boundaryRelease,
-			code,
-		);
-		return problem(404, "Not Found", detail, absence);
-	}
+	const { areaLookup, areaRelationshipIndex, crosswalkLookup } = context;
+	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!crosswalkLookup)
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the crosswalk inventory before looking up area membership.",
 		);
-	const index =
-		areaRelationshipIndex ??
-		createAreaRelationshipIndex(crosswalkLookup.values());
-	const allRelationships =
-		index.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
+	const allRelationships = relationshipsFor(
+		areaRelationshipIndex,
+		crosswalkLookup,
+		geography,
+		boundaryRelease,
+		code,
+	);
 	const relationships =
 		segments[5] === "relationships"
 			? allRelationships

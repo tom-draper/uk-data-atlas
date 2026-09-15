@@ -1,4 +1,4 @@
-import { explainAreaAbsence } from "./areaAbsence";
+import { areaNotFound } from "./areaResources";
 import {
 	MAX_BATCH_VALUES,
 	summariseBatch,
@@ -20,7 +20,7 @@ export const handleAreaValidationRoutes = ({
 		segments[1] !== "areas:validate"
 	)
 		return undefined;
-	const { areaInventory, areaLookup, boundaryRegistry } = context;
+	const { areaLookup } = context;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const values = parsedUrl.searchParams.getAll("value");
@@ -42,17 +42,8 @@ export const handleAreaValidationRoutes = ({
 			"Invalid Query",
 			`At most ${MAX_BATCH_VALUES} values can be validated in one request; this one has ${values.length}.`,
 		);
-	if (!areaLookup?.has(`${geography}/${boundaryRelease}`)) {
-		const { detail, ...absence } = explainAreaAbsence(
-			boundaryRegistry,
-			areaInventory,
-			areaLookup,
-			geography,
-			boundaryRelease,
-			"",
-		);
-		return problem(404, "Not Found", detail, absence);
-	}
+	if (!areaLookup?.has(`${geography}/${boundaryRelease}`))
+		return areaNotFound(context, geography, boundaryRelease);
 	const results = validateBatch(
 		areaLookup,
 		geography,
