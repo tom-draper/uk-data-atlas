@@ -4221,34 +4221,5 @@ export const route = (
 		};
 	}
 
-	if (
-		segments.length === 5 &&
-		segments[0] === "v1" &&
-		segments[1] === "areas"
-	) {
-		const [geography, boundaryRelease, code] = segments.slice(2);
-		if (!geography || !boundaryRelease || !code) {
-			return problem(
-				400,
-				"Invalid Path",
-				"An area identity is incomplete.",
-			);
-		}
-		const area = areaLookup
-			?.get(`${geography}/${boundaryRelease}`)
-			?.get(code);
-		return area
-			? {
-					status: 200,
-					body: envelope(releaseId, {
-						id: `${geography}/${boundaryRelease}/${area.code}`,
-						geography,
-						boundaryRelease,
-						...area,
-					}),
-				}
-			: areaNotFound(geography, boundaryRelease, code);
-	}
-
 	return problem(404, "Not Found", "No API resource matches that path.");
 };
