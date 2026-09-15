@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4c3ef9310033c0714629fcfed650d8548bf1929b32f1932d1a403aac34c615ee",
+	"contentHash": "sha256:f20a13c846fa02032c44f18918a5c003aecff16ef09a2efb6a72208c75d11204",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -250,14 +250,14 @@
 			],
 			"summary": {
 				"datasetCount": 1,
-				"dataRecordCount": 295,
+				"dataRecordCount": 294,
 				"boundaryYears": [
 					2025
 				]
 			},
 			"compiled": {
-				"bytes": 225277,
-				"sha256": "37069590664a1fea757e5e47f07e4a86de3126da777d573d92f65ef9d7ce5b91"
+				"bytes": 470530,
+				"sha256": "76404068ec1be77961a6e3c4ffc3c3dbd8aaeafea7a3e7a23f082df089b9a9eb"
 			}
 		},
 		{
