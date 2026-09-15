@@ -1874,6 +1874,10 @@ test("refuses to combine a median, and says why", () => {
 		"detail" in aggregate.body ? aggregate.body.detail : "",
 		/is a median and cannot be combined over areas\. A median of ward medians/,
 	);
+	assert.equal(
+		"code" in aggregate.body && aggregate.body.code,
+		"aggregation_not_supported",
+	);
 
 	const convert = routeWithData(
 		`/v1/data/house-price-median/convert?period=2022&geography=ward&boundaryYear=2020&crosswalk=${crosswalkArtifact.id}`,

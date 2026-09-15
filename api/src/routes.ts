@@ -983,6 +983,7 @@ export const route = (
 				measure.aggregation.kind === "non-aggregatable"
 					? `This measure is ${statisticPhrase(measure.aggregation.statistic)} and cannot be combined over areas. ${measure.aggregation.note}`
 					: "This measure is not available for aggregation.",
+				{ code: "aggregation_not_supported" },
 			);
 		}
 		if (
@@ -1088,6 +1089,7 @@ export const route = (
 					422,
 					"Operation Not Supported",
 					"The requested sourceRelease is not code-set compatible with this source partition.",
+					{ code: "conversion_not_available" },
 				);
 			}
 			const crosswalk = crosswalkLookup.get(crosswalkId);
@@ -1101,6 +1103,7 @@ export const route = (
 					422,
 					"Operation Not Supported",
 					"That crosswalk does not map the caller-selected compatible source release to regions.",
+					{ code: "conversion_not_available" },
 				);
 			}
 			const membership = fullRegionMembership(crosswalk, regionCode);
@@ -1109,6 +1112,7 @@ export const route = (
 					422,
 					"Operation Not Supported",
 					"The selected region is not represented by complete one-to-one source-area membership in that crosswalk.",
+					{ code: "conversion_not_available" },
 				);
 			}
 			return {
@@ -1205,6 +1209,7 @@ export const route = (
 				`The named location does not cover this source partition by direct code match: ${locationCoverage.unexplained
 					.map((member) => `${member.code} (${member.status})`)
 					.join(", ")}. No conversion or partial sum was applied.`,
+				{ code: "partial_coverage" },
 			);
 		}
 		if (byLocation && location && byLocation.members.length === 0) {
@@ -1339,6 +1344,7 @@ export const route = (
 					422,
 					"Operation Not Supported",
 					"This weighted measure does not publish a weight measure the API can aggregate with.",
+					{ code: "aggregation_not_supported" },
 				);
 			}
 			const weightMeasure = dataCatalog.measures.find(
@@ -1422,6 +1428,7 @@ export const route = (
 					422,
 					"Operation Not Supported",
 					"The published value and weight partitions do not cover the same source areas, so no partial weighted mean was calculated.",
+					{ code: "partial_coverage" },
 				);
 			}
 			const totalWeight = weightAggregate.members.reduce(
@@ -1440,6 +1447,7 @@ export const route = (
 					422,
 					"Operation Not Supported",
 					"The published weights must be finite, non-negative and sum to more than zero.",
+					{ code: "aggregation_not_supported" },
 				);
 			}
 			aggregateValue =

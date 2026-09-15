@@ -3225,16 +3225,21 @@ components:
             - area_not_in_release
             - aggregation_not_supported
             - conversion_not_available
+            - partial_coverage
             - no_release_for_date
             - ambiguous_release
           description: >
             On a 404 from an area route: `unsupported_geography` when the
             geography or release is not published or its area identities are
             not compiled, and `area_not_in_release` when the release does not
-            hold the code. On a 422 from a conversion:
+            hold the code. On a 422 from an aggregate or a conversion:
             `aggregation_not_supported` when the measure's values do not add
-            over areas, and `conversion_not_available` when the named crosswalk
-            cannot convert the partition without dropping or assuming values.
+            over areas or its weights cannot be used, `conversion_not_available`
+            when the named crosswalk or source release cannot carry the
+            partition without dropping, splitting or assuming values, and
+            `partial_coverage` when a named location or a weight partition
+            leaves out areas the sum would need. A partial country or region
+            total is not refused; it is a 200 whose coverage says so.
             From a release resolution: `no_release_for_date` and
             `ambiguous_release`.
         absence:
