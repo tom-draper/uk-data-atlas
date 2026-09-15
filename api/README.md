@@ -651,16 +651,487 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Product posture
 
-The initial goal is a useful, open and sustainable public product;
-commercialisation is deliberately deferred. The Atlas should earn trust through
-accurate geography handling, transparent provenance and stable public releases
-before considering how to monetise it.
+The initial goal is a useful, open and sustainable public product. The Atlas
+should earn trust through accurate geography handling, transparent provenance
+and stable public releases before asking users to depend on it for decisions.
+The commercial product is not access to a collection of openly licensed files:
+ONS, Nomis and the publishers remain the source for those. It is the managed,
+production-ready layer which keeps a customer's geography-safe workflow
+correct as data, boundaries, definitions and crosswalks change.
 
-Any future paid offering must add operational value rather than restrict access
-to openly licensed Atlas artifacts. Examples might include higher service
-limits, managed exports, release-change notifications, support, private data
-integration or managed deployments. This proposal therefore treats API keys as
-an operational control, not an early paywall.
+The first commercial phase keeps this API read-only. That retains the useful
+properties of static artifacts and `GET` requests: public cacheability, simple
+reproducibility, small operational and privacy surface, and an API that users
+can safely call from a build or analysis. API keys may control documented
+operational entitlements such as throughput, tile delivery, export size,
+freshness targets and support, but are not an early paywall on OGL data.
+
+The near-term paid promise is therefore:
+
+> A versioned UK geography and data service which reliably resolves,
+> converts, delivers and explains the data behind the places a customer cares
+> about, and tells them what has changed.
+
+"Projects" are a later product layer, not an initial API resource. A customer
+can retain a portable Atlas project manifest in its own repository, application
+or data warehouse: canonical areas and groups, selected measures, a pinned
+Atlas release and any customer-side assumptions. Atlas responses should accept
+or emit enough information to reproduce that manifest, without the API storing
+private customer data or exposing write endpoints. A future dashboard may
+store, schedule and collaborate on manifests once the read-only service has
+shown which workflows deserve that added state.
+
+### Commercial read-only roadmap
+
+These are product capabilities, not a reason to add endpoints indiscriminately.
+Each should make a recurring decision or production workflow safer, cheaper or
+faster. The initial target users are organisations that repeatedly assess or
+report on places: location-intelligence and planning consultancies, public
+sector analytics teams, and property or infrastructure analysts. Pick one
+before building an opinionated vertical profile. The detailed capability
+sections below are a backlog, not a build order; the delivery plan later in
+this document is authoritative.
+
+#### Initial customers and product boundary
+
+The API itself is the product for data engineers, GIS teams and other software
+builders. A non-technical end user is unlikely to pay for a measure catalogue
+or a raw crosswalk: they pay for a defensible answer about a place. A thin
+Atlas application, report template or customer integration should therefore
+turn the same read-only resources into this sequence:
+
+```text
+place, postcode or canonical area
+              |
+              v
+chosen profile and explicit peer group
+              |
+              v
+trend, comparison, map, quality and caveats
+              |
+              v
+shareable, cited, release-pinned evidence snapshot
+```
+
+- [ ] Start commercial discovery with planning, policy, location-intelligence
+      and public-affairs consultancies. The existing local-authority, ward and
+      constituency data, alongside deprivation, elections, environment,
+      connectivity, labour and population measures, already supports recurring
+      area evidence work for them.
+- [ ] Serve GIS and data-product companies as the infrastructure audience:
+      they need stable identifiers, tiles, crosswalks, columnar downloads,
+      change feeds and a support/reliability contract rather than a dashboard.
+- [ ] Treat public-sector analytics teams as a strong but slower procurement
+      audience: their needs include benchmarking, citations, accessibility,
+      reproducible reports and clear national-comparability caveats.
+- [ ] Treat property, planning and infrastructure intelligence as a later,
+      potentially higher-value vertical. It requires more precise place entry,
+      custom areas and additional property, planning, flood and transport data
+      before it is credible as a primary proposition.
+- [ ] Keep a useful free tier for researchers, journalists and civic users.
+      Their scrutiny, examples and citations strengthen the public trust the
+      paid operational service depends on.
+
+#### Three golden paths
+
+The first commercial beta serves three related jobs, in this order. A proposed
+capability must make at least one of them more correct, faster, cheaper or
+easier to defend; otherwise it remains deferred.
+
+| Path | Primary user | Promise |
+| --- | --- | --- |
+| Correct map | GIS/product engineer | Render release-pinned UK boundaries and values without a code/geometry mismatch, with attribution. |
+| Defensible trend | Analyst or consultant | Compare a small set of measures through time on an explicit analysis geography, with conversions and caveats visible. |
+| Reliable sync | Data engineer | Ingest release-pinned data into an existing stack and reprocess only meaningful changes. |
+
+A non-technical briefing interface may later compose these paths, but it is not
+the first API product. Reverse selection, peer groups, signals, custom areas
+and a broad profile catalogue do not enter the beta until a user of one of the
+three paths demonstrates the need.
+
+#### API UX and contract clarity
+
+The API should feel like a small number of jobs, not a catalogue of subtly
+different geography routes. `api/openapi.yaml` is the binding description of
+the implemented v1 HTTP contract. This README is the product proposal,
+roadmap and explanation of the resource model. A literal URI in this document
+that differs from OpenAPI is conceptual or superseded; it is not an endpoint a
+client should copy into production.
+
+Keep v1 paths stable rather than renaming routes for tidiness. Make the mental
+model explicit instead:
+
+| Term | Meaning |
+| --- | --- |
+| **Area** | One official, versioned identity: `{geography}/{release}/{code}`. |
+| **Place** | An ambiguous name-resolution result from `/places`; it is never silently chosen. |
+| **Curated area collection** | An editorial grouping served by `/locations`, not a generic geographic `location`. |
+| **Source geography** | The geography and code vintage on the publisher's observation. |
+| **Geometry release** | The caller-selected boundary release used only to join compatible geometry for a map. |
+| **Observation period** | The time period the measure describes. |
+| **Atlas release** | The immutable published Atlas artifact set that produced the response. |
+
+The route selector in the documentation should begin with the user’s job:
+
+| I need to… | Start here |
+| --- | --- |
+| resolve a name or inspect possible meanings | `/places` |
+| inspect one exact official identity | `/areas/{geography}/{release}/{code}` |
+| get its geometry, relationships or citation | the corresponding area subresource |
+| render values or download source-exact observations | `/data/{measure}` |
+| see a trend, ranking, comparison or change | `/series`, `/rankings`, `/compare` or `/change` under that measure |
+| translate an identifier through a published crosswalk | `/translations` |
+| convert values under a declared measure/method rule | `/data/{measure}/convert` |
+| validate a supplied code/name or discover releases | `/areas:validate`, `/geographies`, `/boundary-releases` |
+| cite, attribute or inspect the published release | area citation, `/attribution`, `/atlas-releases` and `/validation` |
+
+`/data/{measure}/value?place=` is a deliberately narrow convenience for a
+place-name question. It resolves a name and dispatches to an existing
+source-exact, series or aggregate result; it is not the primary way to fetch a
+single observation. Keep that behaviour and label it “by place” in the docs.
+A friendlier alias can be considered only in a future version, without making
+v1 clients migrate.
+
+Three related operations must never be conflated: `/translations` maps an
+identifier through a published crosswalk; `/data/{measure}/convert` transforms
+values only where the measure permits the declared method; the optional
+`release` on a data request selects a code-compatible **geometry release** for
+a map join and does not transform observations. Every data tutorial should
+show the source geography, geometry release when present, observation period
+and resulting `atlasRelease` together.
+
+Implementation and documentation tasks:
+
+- [ ] Make OpenAPI the tested route inventory: generate or verify root links,
+      route examples and the short endpoint list from one source, and fail a
+      contract test when an implemented route, OpenAPI operation or public
+      example disagrees.
+- [ ] Group every OpenAPI operation under task-oriented tags: **Start here**,
+      **Map**, **Trend**, **Sync**, **Geography**, **Data catalogue** and
+      **Governance**. Give each operation a plain-language summary, its
+      success shape and its most likely refusal.
+- [ ] Publish a glossary, endpoint chooser and three copy-paste quick starts
+      (correct map, defensible trend, reliable sync) which use only current
+      OpenAPI routes. Treat them as executable contract tests.
+- [ ] Document the four clocks/identities above beside every data endpoint and
+      response example. Do not rename v1 parameters; decide clearer names such
+      as `observationPeriod`, `sourceGeography`, `geometryRelease` and
+      `atlasRelease` only when designing a versioned successor.
+- [ ] Define typed RFC 9457 problem schemas and examples for each advertised
+      `code`, including machine-readable alternatives where useful. SDK users
+      must be able to branch on a stable field rather than prose or unknown
+      extensions.
+- [ ] State representation and pagination rules once: supported `format=` and
+      `Accept` combinations, JSON `meta.nextCursor`, tabular `Link` headers,
+      content type, caching and conditional request behaviour. Test every
+      published representation rather than documenting aspirational headers.
+- [ ] Preserve the existing colon convention and explain it: `:action` is a
+      collection-wide selection or spatial action (`areas:contains`,
+      `areas:validate`, `boundary-releases:resolve`); nested paths are resources
+      or analyses of one identified resource. Do not add near-duplicate routes
+      merely to make names sound more symmetrical.
+
+#### Trust, currency and change intelligence
+
+- [ ] Publish a machine-readable change feed, including the datasets, periods,
+      values, definitions, boundary releases, crosswalks, named locations and
+      validation results affected by an Atlas release. A changed artifact hash
+      alone does not tell a customer whether its analysis changed.
+- [ ] Expand release comparison from added/removed/changed artifacts to
+      semantic diffs, with affected area and record counts where possible.
+- [ ] Serve an archived Atlas release or its immutable resources on request,
+      so an analysis can be reproduced as the Atlas published it at a stated
+      time rather than merely inspecting its old manifest.
+- [ ] State a source's publisher release date, Atlas ingestion date, expected
+      refresh cadence and freshness status beside the measure metadata.
+- [ ] Monitor upstream sources for a changed file, schema, URL, licence or
+      expected publication date before a consumer discovers the difference.
+      Publish whether an Atlas resource is current, revised, delayed, or
+      awaiting review; the monitoring machinery itself remains internal.
+- [ ] Give each validation exception a severity, affected resources, owner and
+      remediation status, so a consumer can tell a qualified result from a
+      blocking quality concern.
+- [ ] Sign each Atlas release attestation, identifying the published manifest,
+      build software revision and inputs. Hashes establish change detection;
+      an attestation establishes who published the reproducible release.
+- [ ] Version response schemas and publish compatibility diffs for added,
+      removed or changed fields, units, enums and semantics. An integration
+      customer must not discover a breaking contract change in production.
+- [ ] Maintain a public correction register. The API remains read-only, while
+      an editorial process records accepted correction reports, disputed
+      mappings, resolutions and their effect on published resources.
+- [ ] Publish a deprecation policy, availability and freshness targets, and a
+      status endpoint before offering a paid reliability commitment.
+- [ ] Add conditional request support (`ETag`, `Last-Modified` and the matching
+      request headers), clear cache semantics and quota headers.
+
+Candidate read-only routes:
+
+```text
+GET /v1/changes?since={release-or-timestamp}
+GET /v1/atlas-releases/{release-id}/changes
+GET /v1/atlas-releases/{release-id}/availability
+GET /v1/atlas-releases/{release-id}/attestation
+GET /v1/api-versions/{version}/changes
+GET /v1/measures/{measure-id}/freshness
+GET /v1/corrections
+GET /v1/status
+```
+
+#### Geography-safe workflow primitives
+
+- [ ] Extend batch area validation to diagnose mixed or stale code systems,
+      duplicate values and ambiguous names, and to recommend only published
+      conversion paths. It must remain a diagnosis, not silently rewrite a
+      customer's data.
+- [ ] Find and rank declared conversion paths between two exact area identities,
+      exposing each intermediate release, method, coverage and quality.
+- [ ] Make a small, carefully selected set of extensive measures available for
+      fully validated conversion. Do not mark a measure convertible merely
+      because a crosswalk exists; conservation, coverage and uncertainty rules
+      must be declared and tested per measure/method pair.
+- [ ] Let a caller provide a bounded list of canonical area references and
+      receive a valid aggregate, comparison or profile, with every selected
+      input, aggregation rule and coverage caveat echoed in the response.
+- [ ] Add a read-only analysis preflight which selects no data. It states the
+      source partition, conversion, aggregation rule, coverage, expected size
+      and safer alternatives for a requested analysis before a caller builds a
+      map, trend or data pipeline around it.
+- [ ] Keep custom-geometry overlap as a design question, not a promised v1
+      route. If evidence from the three golden paths justifies it, first define
+      bounded input limits, caching, provenance, privacy/logging and a
+      read-only computation contract. Do not put encoded geometry in a GET
+      query string or turn the service into a general GIS endpoint.
+
+Candidate read-only routes:
+
+```text
+GET /v1/areas:validate?geography={type}&release={release}&value={value}
+GET /v1/translations?sourceGeography={type}&sourceRelease={release}&code={code}&targetGeography={type}&targetRelease={release}&purpose={purpose}
+GET /v1/areas/{geography}/{release}/{code}/conversion-paths?to={area-id}
+GET /v1/data/{measure-id}/aggregate?area={area-id}&area={area-id}
+GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}
+```
+
+#### Source evidence and explanation receipts
+
+- [ ] Preserve a release-pinned source snapshot reference, retrieval metadata,
+      original input hash and adapter version wherever the source licence
+      permits it. Publisher URLs decay; a reproducible evidence trail should
+      not depend on a live page remaining unchanged.
+- [ ] Return a compact explanation receipt for any significant result. It must
+      join the source and Atlas releases, input areas, conversion path,
+      aggregation/indicator formula, quality, licence and caveats into one
+      citable resource rather than leaving a consumer to reconstruct lineage
+      from several endpoints.
+
+Candidate read-only routes:
+
+```text
+GET /v1/datasets/{dataset-id}/source-snapshots
+GET /v1/results/{result-id}/explain
+```
+
+#### Boundary-stable analysis geographies
+
+This is the highest-value analytical capability. A caller should be able to
+ask for a trend on an explicitly chosen analysis geography, such as current
+local-authority boundaries, without pretending that a historic source row was
+originally observed on that geography. The result separates source-exact and
+derived observations and carries the chosen path, weights, coverage and
+quality at every period.
+
+- [ ] Define an `analysis geography`: an exact geography and boundary release
+      selected as the common frame for a series or comparison.
+- [ ] Publish supported historical-to-analysis conversion pairs only where an
+      official lookup or validated, measure-appropriate weighting method
+      exists. A crosswalk suitable for land area is not automatically suitable
+      for people, votes or rates.
+- [ ] Return `not-comparable` or separate source partitions where no defensible
+      conversion exists. Never fill a gap with a same-code assumption or an
+      unlabelled best fit.
+- [ ] Test conservation of extensive values, coverage thresholds, rounding and
+      uncertainty rules for each measure/crosswalk pair before publication.
+- [ ] Let a response state whether a change is observed on a common source
+      geography, derived onto an analysis geography, or unavailable.
+
+Candidate read-only routes:
+
+```text
+GET /v1/analysis-geographies
+GET /v1/data/{measure-id}/series?area={area-id}&analysisGeography={geography}/{release}
+GET /v1/data/{measure-id}/compare?baseline={area-id}&comparison={area-id}&analysisGeography={geography}/{release}
+GET /v1/measures/{measure-id}/conversion-support?analysisGeography={geography}/{release}
+```
+
+#### Place discovery, comparison and briefing
+
+The Atlas must also help a user find a place worth investigating, rather than
+only answer questions about a known code. These routes are deliberately
+constrained and explainable: they select over declared measures and profiles,
+not an arbitrary query language or an opaque AI score.
+
+- [ ] Support a bounded reverse query for areas meeting declared criteria, with
+      stable sorting and pagination. Each result must carry the values, periods,
+      geography and comparison caveats that made it match.
+- [ ] Support explainable peer groups. A peer set may be neighbours, a region,
+      a transparent similarity profile, or a caller-supplied canonical area
+      list; it must state every input, standardisation, weight and exclusion.
+- [ ] Publish a structured area brief/profile which answers: what changed,
+      how the place compares with its stated peers, which values are unusual,
+      whether the comparison is valid, and what source/caveat supports it.
+      Rendered HTML or PDF is a representation of that structured evidence, not
+      an uncitable black box.
+- [ ] Add a boundary-change explorer which reports added, abolished, recoded,
+      split, merged and redrawn areas, and supplies map-ready change resources.
+      It must distinguish an official historical event from a geometry-derived
+      comparison and never infer abolition from a missing code alone.
+
+Candidate read-only routes:
+
+```text
+GET /v1/areas:select?geography={type}/{release}&criterion={measure}:{operator}:{value}&sort={measure}:{direction}
+GET /v1/areas/{geography}/{release}/{code}/peers?profile={profile-id}
+GET /v1/areas/{geography}/{release}/{code}/brief?template={template-id}&format={json|html|pdf}
+GET /v1/boundary-releases/compare?from={geography}/{release}&to={geography}/{release}
+```
+
+#### Production delivery
+
+- [ ] Publish whole source partitions and crosswalks as immutable CSV, NDJSON,
+      Parquet and GeoParquet downloads, with a schema, row count, hashes,
+      licence/provenance block and Atlas release manifest.
+- [ ] Deliver boundaries and selected measure joins as cached vector tiles or
+      PMTiles. This is the correct map-scale interface; nationwide GeoJSON is
+      not.
+- [ ] Compile topology-preserving collection/tile geometries for map delivery.
+      The existing per-area simplification is appropriate for a feature query,
+      but a map must not show cracks or divergent shared borders between
+      neighbours.
+- [ ] Provide pre-joined, release-pinned thematic resources for common mapping
+      requests, rather than requiring every customer to repeat an area/value
+      join.
+- [ ] Publish examples and small reference clients for TypeScript, Python and
+      GIS tooling. The operational product must be easier to use correctly than
+      a direct publisher download.
+- [ ] Provide OGC API Features and Tiles representations where the underlying
+      resource fits those standards, alongside the Atlas REST contract. This
+      lowers adoption friction in GIS tooling and public-sector procurement.
+- [ ] Maintain reference implementations for a current-boundary time series,
+      an evidence pack and a DuckDB/dbt synchronisation, so the safe path is
+      also the shortest path for a consumer.
+- [ ] Provide warehouse and BI integration assets: stable Parquet/GeoParquet
+      URLs, a schema registry, a DuckDB catalogue, dbt source definitions and
+      incremental "changed since release" recipes. For many data-engineering
+      customers, the useful API is the one that fits directly into their
+      existing stack.
+- [ ] Add API-key plans only for operational benefits: higher documented
+      limits, high-volume tiles/downloads, support and reliability targets.
+
+Candidate read-only routes:
+
+```text
+GET /v1/exports/{export-id}?format=parquet
+GET /v1/crosswalks/{crosswalk-id}/records?format=geoparquet
+GET /v1/tiles/{resource-id}/{z}/{x}/{y}.mvt
+GET /v1/downloads/{resource-id}.pmtiles
+GET /ogc/features/collections/{collection-id}
+GET /ogc/tiles/{collection-id}/{z}/{x}/{y}
+```
+
+#### Decision-ready profiles and future projects
+
+- [ ] Define a small indicator registry for any area profile. Every indicator
+      must name its source measures, formula, period, geography, freshness,
+      comparability and caveats; do not market an opaque composite score.
+- [ ] Publish a first-class concept and definition registry. Terms such as
+      population, crime, households and broadband coverage have material
+      variants; their definition, exclusions, geography and available measures
+      must be discoverable instead of inferred from labels.
+- [ ] Offer safe standardised indicators—such as real-terms currency,
+      per-capita rates, ratios, percentiles and confidence-aware comparisons—
+      only as named, tested recipes with declared denominators, deflators and
+      comparability rules. Do not offer arbitrary server-side arithmetic.
+- [ ] Group measures into transparent, curated topic packs such as local
+      economy, housing pressure, connectivity or environmental context. A pack
+      is a discoverable set of measures and presentation rules, not a claim
+      that its members form one score.
+- [ ] Make a profile answer the end user's practical questions: what changed,
+      how the place compares with explicit peers, which values are unusual,
+      whether the comparison is valid, and what evidence/caveats support it.
+- [ ] Provide peer comparison only with an explicit peer definition: neighbours,
+      region, similar authorities or a caller-supplied canonical area list.
+- [ ] Return shareable, immutable evidence snapshots suitable for reports,
+      bids and models, even when the consumer stores the project manifest.
+- [ ] Publish qualified signals that draw attention to a threshold crossing,
+      unusual change versus stated peers, source revision, new boundary or
+      quality regression. A signal must expose its calculation and caveat; it
+      is not a prediction or an opaque recommendation.
+- [ ] Support Welsh/English names, locale-aware display metadata, accessible
+      tabular alternatives to maps, deterministic classification/colour rules
+      and plain-language caveats for public-sector and civic consumers.
+- [ ] Specify a portable project-manifest schema now, but defer API-backed
+      project creation, private uploads, saved matching rules, scheduled jobs,
+      notifications and collaboration until customer demand justifies their
+      state, authentication and privacy costs.
+
+Candidate read-only routes:
+
+```text
+GET /v1/indicators
+GET /v1/concepts/{concept-id}
+GET /v1/topics
+GET /v1/profiles/{profile-id}
+GET /v1/areas/{geography}/{release}/{code}/profile
+GET /v1/areas/{geography}/{release}/{code}/benchmarks?peer={area-id}
+GET /v1/signals?area={area-id}&profile={profile-id}
+GET /v1/snapshots/{snapshot-id}
+```
+
+#### Rights and location entry
+
+- [ ] Extend attribution into a machine-readable rights assessment for a
+      requested map, export, embed or commercial report. It should identify
+      applicable source licences, any redistribution constraint, and ready-to-
+      use attribution; it is an aid to compliance, not legal advice.
+- [ ] Add versioned postcode-to-geography resolution as soon as the relevant
+      ONS directory release is available, including the postcode release and
+      containment method in every response.
+- [ ] Extend coordinate lookup to multiple explicitly selected geographies and
+      add a nearest-area convenience route. Nearest must be labelled as a
+      distance result, never as containment.
+- [ ] Defer address/UPRN lookup, drive-time catchments, public-transport
+      catchments and parcel/site intelligence until the data licences, update
+      cadence and product vertical justify the greater cost and scope.
+
+Candidate read-only routes:
+
+```text
+GET /v1/licensing:assess?measure={measure-id}&boundaryRelease={geography}/{release}&use={map|export|embed|report}
+GET /v1/postcodes/{postcode}
+GET /v1/areas:contains?lng={longitude}&lat={latitude}&geography={type}&geography={type}
+GET /v1/areas:near?lng={longitude}&lat={latitude}&geography={type}
+```
+
+#### Dataset priorities
+
+- [ ] Add datasets when they improve a chosen recurring decision workflow, not
+      merely because they enlarge the catalogue.
+- [ ] Treat versioned ONS Postcode Directory mappings as the first practical
+      addition for postcode-to-geography workflows. Keep a full address/UPRN
+      product separate until its licensing, cost and permitted redistribution
+      are understood.
+- [ ] For a property, planning or infrastructure vertical, assess Land Registry
+      price-paid data, EPC data, flood and planning-constraint layers, transport
+      accessibility and business/labour-market indicators. Declare national
+      coverage and comparability rather than implying UK-wide equivalence.
+- [ ] Prefer a small number of timely feeds with a meaningful change cadence
+      over a large number of static, weakly maintained datasets.
+
+The test for a paid capability is not "can a user obtain this number from an
+AI-assisted script?" It is: "does this keep a repeated decision correct and
+defensible when the underlying data or geography changes?" If not, it is a
+useful open API feature or acquisition tool, not the paid core.
 
 ## The user problem
 
@@ -912,7 +1383,14 @@ they sum to one, the weighting denominator/date, topology/geometry inputs, and
 the expected error or limitations. A conversion from ward to LAD is not the
 same kind of claim as a 2024 constituency to 2019 constituency approximation.
 
-## Proposed endpoint surface
+## Conceptual resource model (not the v1 route contract)
+
+> **Contract status:** `api/openapi.yaml` is the concrete current v1 contract.
+> This section preserves the proposed resource model and product semantics.
+> Literal URIs here that differ from OpenAPI — for example `/v1/releases` or
+> `/v1/areas/{area-id}` — are not implemented v1 routes and must not be copied
+> into client code. When a roadmap capability becomes real, update OpenAPI,
+> route tests and executable examples first, then reconcile this section.
 
 All endpoints are under `/v1`. Collection endpoints paginate with opaque
 `cursor` values and return `Link` headers. Read endpoints accept `Accept` or
@@ -1053,24 +1531,14 @@ can obscure gaps and overlaps; its response must retain the member list.
 GET /v1/crosswalks
 GET /v1/crosswalks/{crosswalk-id}
 GET /v1/crosswalks/{crosswalk-id}/records?source=E05001234
-POST /v1/translate
+GET /v1/translations?sourceGeography=constituency&sourceRelease=2024-07-uk-bgc&code=E14001262&targetGeography=localAuthority&targetRelease=2025-05-uk-bgc-v2&purpose=membership
 ```
 
-`POST /translate` is for small interactive translations, rather than forcing
-callers to discover an opaque crosswalk identifier first:
-
-```json
-{
-  "source": {
-    "type": "constituency",
-    "release": "2024-07-uk-bgc",
-    "codes": ["E14001262"]
-  },
-  "target": { "type": "local-authority", "release": "2025-05-uk-bgc-v2" },
-  "purpose": "membership",
-  "methodPreference": ["official-lookup", "population-overlap", "area-overlap"]
-}
-```
+`GET /translations` is the read-only convenience route for one interactive
+translation, rather than forcing callers to discover an opaque crosswalk
+identifier first. Its query supplies the source geography, release and code,
+the target geography and release, and an explicit `purpose`. Bulk translation
+is an immutable crosswalk download, not a request which creates server state.
 
 ```json
 {
@@ -1174,14 +1642,12 @@ It answers, in order:
 5. Which representation should be returned?
 
 Default output is compact JSON rows. `format=geojson` joins a value to the
-requested geometry; `format=csv`, `ndjson`, and `parquet` are exports. Use
-asynchronous export jobs for results that exceed a documented row or byte
-limit:
-
-```
-POST /v1/exports
-GET  /v1/exports/{job-id}
-```
+requested geometry; `format=csv`, `ndjson`, and `parquet` are exports. The
+initial public service remains read-only: results beyond a documented row or
+byte limit return a release-pinned static bulk resource rather than creating an
+asynchronous export job. A later authenticated product may add managed export
+jobs only after the read-only API has demonstrated that the added state and
+privacy surface are justified.
 
 For a compatible source query, a row looks like:
 
@@ -1361,8 +1827,9 @@ publisher files + ONS/OS boundary releases + curated place definitions
 - A columnar query engine or object-store query layer serves filtered data;
   start with partitioned Parquet by dataset/measure/period/geography rather
   than a large operational database.
-- An asynchronous worker creates joins, unions and bulk extracts beyond safe
-  request limits.
+- A future asynchronous worker may create joins, unions and bulk extracts
+  beyond safe request limits, but it is deliberately outside the first
+  read-only API phase.
 - A spatial database/index is justified for point-in-polygon and complex bbox
   work, but should not be introduced merely to serve precomputed tiles.
 
@@ -1446,112 +1913,206 @@ Depth and traceability are more credible than breadth.
 
 ## Recommended delivery plan
 
-### Phase 0 — make the contract testable
+The API already has a substantial geography, provenance and source-exact data
+foundation. Do not restart that work or add every capability in the commercial
+backlog. Build the following phases in order, and do not begin the next phase
+until its exit criterion is met with external users.
 
-Before public endpoints, define JSON Schema/OpenAPI types for area identity,
-boundary release, dataset/measure, provenance, quality and crosswalk. Build an
-API-owned geography inventory that states which area releases, historical
-relations and conversion methods are actually available. Publish an internal
-`atlas-release` manifest and add compiler validation for identity uniqueness,
-relationship targets, weight sums and coverage.
+### Phase 0 — choose and instrument the beta
 
-**Exit criterion:** one immutable local release can be inspected without
-reading repository source code.
+Select a primary early audience: technical analysts at planning, policy,
+location-intelligence or public-affairs consultancies, alongside one GIS/data-
+product builder. These are design partners, not a claim that every public-
+sector or property workflow is already supported.
 
-### Phase 1 — publish geography first
+- [ ] Write one reference scenario for each golden path: a correct map, a
+      defensible trend and a reliable warehouse sync.
+- [ ] Name the one or two measures and one analysis geography used in the trend
+      scenario. Population is the natural starting point; choose a second only
+      when its source and conversion evidence is equally strong.
+- [ ] Reconcile the OpenAPI description, examples and capability checklist with
+      the current implementation so `available`, `next` and `later` are factual
+      product states.
+- [ ] Measure time-to-first-correct-map, time-to-defensible-trend and time-to-
+      release-pinned-sync in the reference clients. These are the activation
+      metrics, not raw request count or catalogue size.
 
-Publish `geographies`, `boundary-releases`, `areas:resolve`, area metadata,
-named locations, geometry links and the initial crosswalk catalogue. Do this
-even before a rich data query API: these utilities are the most distinctive and
-easiest to validate independently.
+**Exit criterion:** two design partners can describe a recurring workflow that
+the Atlas would remove or materially reduce, and the team can name the exact
+beta result that proves it.
 
-Initial products may reuse the present boundary catalogue, curated locations,
-inferred ward/LAD mappings and constituency/LAD overlap work as inputs. The
-API compiler must give each an explicit release identity and evidence label;
-do not upgrade the latter two's status in transit to the API.
+### Phase 1 — correct-map beta
 
-**Exit criterion:** an external user can locate an area, obtain an exact
-boundary release, inspect membership, and download a documented crosswalk.
+Make the existing boundary and measure foundation easy to use safely for a map.
+This is the shortest route to a useful external integration and validates the
+Atlas's core geography value without private state or universal conversion.
 
-### Phase 2 — a small, high-quality data beta
+- [ ] Publish release-pinned, topology-preserving boundary tiles/PMTiles and
+      the associated attribution and licence metadata.
+- [ ] Publish a small set of map-ready, source-exact value resources for the
+      chosen measures, rather than trying to tile every measure at once.
+- [ ] Provide GeoParquet/Parquet and a compact map join contract for the same
+      resources, so a customer may use its own renderer or warehouse.
+- [ ] Supply one MapLibre/TypeScript reference implementation showing place
+      resolution, explicit release choice, values, tiles and citation.
+- [ ] Add cache validators and immutable resource URLs before adding API-key
+      tiers; public correctness and inexpensive delivery come first.
 
-Choose three to five measures with clear ownership and complementary uses:
+**Exit criterion:** an external engineer can build a cited UK map from the
+reference guide without downloading publisher files, guessing a release or
+repairing a boundary join.
 
-- population count and population density;
-- a local-authority UK-wide measure with clean source metadata;
-- one small-area deprivation measure where coverage limits are explicit;
-- a constituency measure that demonstrates crosswalk disclosure.
+### Phase 2 — defensible-trend beta
 
-Serve source-exact data and simple named-location aggregation first. Add
-Parquet/CSV downloads and attribution. Avoid universal on-the-fly geographic
-conversion at this stage.
+Make one historical claim safe. The target is not universal geography
+conversion; it is a small, transparent demonstration that the Atlas can retain
+comparability when geography changes.
 
-**Exit criterion:** a user can reproduce a documented population-density map
-for a named location from one request sequence, with cited inputs.
+- [ ] Define the analysis-geography and analysis-preflight contracts.
+- [ ] Implement and validate one source-to-analysis conversion path for the
+      selected measure/geography pair, including coverage, conservation,
+      rounding and refusal behaviour.
+- [ ] Return source-exact, derived and not-comparable observations distinctly.
+- [ ] Add a compact explanation receipt and release-pinned source evidence for
+      this result.
+- [ ] Supply an analyst reference implementation that creates one trend and
+      one comparison, including a deliberately refused example.
 
-### Phase 3 — controlled conversion and exports
+**Exit criterion:** an analyst can reproduce and defend a historical conclusion
+on the chosen analysis geography, and can see why the API refuses an unsafe
+alternative.
 
-Add crosswalk-aware output geography, only for measures whose aggregation
-semantics have been declared and tested. Introduce asynchronous GeoJSON/Parquet
-exports, operational API keys and quotas where needed, release changelog and
-status monitoring.
+### Phase 3 — reliable-sync beta
 
-**Exit criterion:** conversions preserve extensive totals within documented
-tolerance and return honest quality metadata in every format.
+Turn the useful resources into production data infrastructure. This is the
+first plausible paid operational tier: service value comes from dependable
+delivery, change management and support, never from withholding OGL data.
 
-### Phase 4 — scale coverage, not endpoint complexity
+- [ ] Serve archived resources or an equivalent immutable release-pinned
+      download path, so a past result remains retrievable.
+- [ ] Publish semantic release changes, freshness states, schema compatibility
+      changes and a public correction register for the beta resources.
+- [ ] Provide stable Parquet/GeoParquet downloads and one DuckDB or dbt
+      synchronisation reference that ingests only affected resources.
+- [ ] Add documented API-key quotas, cache/conditional request behaviour and
+      support/freshness targets for high-volume or managed use.
 
-Add datasets through repeatable adapter/manifest templates. Prioritise the
-coverage gaps that unlock genuinely UK-wide workflows: nation-compatible
-population baselines, more complete small-area geography, and official or
-well-evidenced change crosswalks. Add postcodes or point lookups only after
-licensing, update cadence and privacy implications are settled.
+**Exit criterion:** a data engineer can pin an Atlas release, refresh only
+meaningful changes, and explain exactly why a downstream table changed.
 
-## Where to focus first
+### Phase 4 — choose one decision layer from evidence
 
-1. **Release and provenance model.** This is foundational. Without a pinned
-   release, hashes, licence lineage and changelog, a public API only makes the
-   existing work easier to misuse.
-2. **Boundary and crosswalk inventory.** Turn every current repair,
-   translation, inferred relationship and overlap into a versioned, typed
-   registry with an evidence level. This is the unique product.
-3. **Measure semantics.** Record what can be summed, recomputed, converted or
-   only displayed on its source geography. This protects users from plausible
-   but wrong outputs.
-4. **A deliberately narrow beta.** One excellent end-to-end population example
-   is more persuasive than forty undocumented CSV endpoints.
-5. **Validation and public exceptions.** Invest in tests and a visible quality
-   report before clever query capabilities. Boundary errors are expensive and
-   hard for downstream users to spot.
-6. **Licensing and stewardship.** Confirm redistribution rights, attribution,
-   update responsibility and deprecation policy before inviting dependency on
-   the service.
+Only after the three infrastructure paths have real users should the Atlas add
+a human-facing decision layer. Choose one, based on observed demand:
+
+- a structured area brief for consultancy evidence work; or
+- a constrained reverse-area selection/peer-comparison workflow for location
+  research; or
+- a property/planning workflow after postcode, licensing and site-level data
+  are sufficiently mature.
+
+Use the existing profile, indicator, concept, topic and signal ideas only as
+the backlog for this chosen layer. Do not build all of them as a generic
+dashboard.
+
+**Exit criterion:** a customer uses the selected decision layer repeatedly in a
+real report, shortlist or internal workflow and can identify a paid outcome it
+improves.
+
+### Deferred until a phase creates demand
+
+The following remain valuable ideas, but are explicitly out of the initial
+commercial beta: API-backed projects and private uploads; custom polygons and
+general spatial analysis; broad postcode/address/UPRN services; drive-time or
+transport catchments; arbitrary query languages or server-side arithmetic;
+opaque scores, forecasts or AI recommendations; a property/infrastructure
+vertical; all-measure conversion; asynchronous managed exports; and wholesale
+dataset expansion. OGC representations, extensive profile catalogues and
+signals are also deferred unless a Phase 1–3 design partner needs them.
+
+## Focus rules
+
+1. **Correctness before breadth.** One source, conversion or map resource that
+   travels with complete evidence is more valuable than ten weakly documented
+   additions.
+2. **Source-exact by default.** Conversion is opt-in, declared per measure and
+   refused when its quality cannot be defended.
+3. **Release-pinned by default.** A mutable `latest` is convenient discovery;
+   a downstream analysis, tile, export or receipt must identify its immutable
+   Atlas release.
+4. **No private state in the first API phase.** Customer project manifests stay
+   customer-owned; API keys represent operational entitlements, not a new data
+   store.
+5. **Build tutorials as product tests.** If the map, trend and sync examples
+   require hidden knowledge, the underlying API is not ready to sell.
+6. **A feature earns its place through a golden path.** Otherwise it stays in
+   the backlog until user evidence changes the priority.
 
 ## Concrete next repository work
 
-The first implementation tickets should be small and separable:
+The first tickets deliberately repair contract clarity before expanding the
+surface area. They follow Phase 0 and Phase 1 only.
 
-1. Define `api/openapi.yaml` and JSON examples for the Phase 1 resources.
-2. Build an API-owned geography inventory that serialises every available
-   boundary release and reports missing historical relations and conversions.
-3. Create versioned area, relationship and change-event artifacts keyed by
-   geography, boundary release and official code; do not expose browser URLs,
-   website TypeScript models or code-only identities as the contract.
-4. Extend crosswalk artifacts with direction, releases, method, weighting
-   basis, coverage, quality and provenance metadata; validate targets and
-   weight sums before publication.
-5. Create a build-time `atlas-release.json` that references the API's dataset,
-   geography, location and crosswalk artifacts by hash.
-6. Add schemas and validation tests for geography coverage, conversion absence
-   and measure aggregation semantics.
-7. Build read-only Phase 1 route handlers backed by static artifacts, then
-   host/cache those artifacts independently from the UI bundle.
-8. Publish one tutorial that builds a population-density map and cites the
-   exact Atlas release.
+### P0 — make the current API safe to discover and integrate
 
-This sequence turns the current, valuable internal geography knowledge into a
-public foundation without prematurely committing to an expensive general-purpose
-data platform.
+1. **Establish a contract source of truth.** Reconcile `api/openapi.yaml`,
+   `api/src/routes.ts`, root discovery links and README examples against the
+   routes actually implemented. Add a test that every root link resolves to an
+   OpenAPI operation and that every public operation is reachable from
+   discovery or its documented task group. Resolve the current public template
+   drift too: OpenAPI uses `{geography}` where root discovery advertises
+   `{type}`; publish one canonical placeholder vocabulary.
+2. **Remove documentation drift.** Keep the conceptual resource model clearly
+   labelled as non-binding, and either generate the standalone endpoint list
+   below from OpenAPI or replace it with an OpenAPI-derived task index. Do not
+   maintain a second hand-written inventory of several dozen URLs.
+3. **Make operations navigable.** Add the task tags, plain-language summaries,
+   parameter descriptions, response examples and error references described in
+   [API UX and contract clarity](#api-ux-and-contract-clarity). Link the root
+   response to the authoritative OpenAPI description and a human documentation
+   landing page.
+4. **Document the data identity model.** For `/data/{measure}` and every
+   derivative route, make source geography, `boundaryYear`, optional
+   code-compatible geometry `release`, observation `period` and immutable
+   `atlasRelease` unambiguous in OpenAPI and examples. Add negative tests that
+   prove a geometry selection cannot be mistaken for a value conversion.
+5. **Make errors usable by clients.** Replace loosely documented Problem
+   Details extensions with typed schemas, stable `code` values and examples for
+   ambiguous place, absence state, incompatible geometry, unsupported
+   conversion, partial coverage, invalid format and cursor failures. Test both
+   JSON and tabular error representation policy.
+6. **Make delivery semantics consistent.** Audit the implementation against
+   the documented `format`/`Accept`, pagination, `Link`, content type,
+   `Cache-Control`, provenance and content-hash rules. Implement or remove any
+   claim that does not hold. Add representation and pagination contract tests.
+7. **Clarify existing convenience resources.** In OpenAPI and docs, label
+   `/locations` as curated area collections and `/data/{measure}/value` as a
+   by-place convenience dispatcher. Add examples showing `/places` first when
+   ambiguity matters; do not rename either v1 path.
+8. **Turn tutorials into integration tests.** Write small, executable
+   TypeScript or shell examples for the three golden paths using only the
+   published OpenAPI contract. A broken example blocks release rather than
+   becoming a support burden.
+
+### P1 — prove the correct-map product
+
+9. **Specify the release-pinned map resource contract:** identity, value join,
+   simplification/topology tier, attribution, caching, content hashes and the
+   distinction between source and geometry release.
+10. **Build a topology-preserving tile or PMTiles compiler** for one boundary
+    release and test that neighbouring features share edges at every published
+    map tier.
+11. **Publish one source-exact measure** as a map-ready resource and as
+    Parquet/GeoParquet, with schema, manifest and provenance tests.
+12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
+    release gate for the first design partner.
+13. **Specify, but do not yet generalise,** the analysis-preflight and
+    analysis-geography response contracts required by Phase 2. No custom
+    geometry or broad analysis endpoint is in this phase.
+
+Phase 2 begins only after the correct-map tutorial succeeds with a design
+partner. This order fixes the present usability debt, then proves a valuable
+map workflow before committing to a general-purpose data or GIS platform.
 
 ## Initial standalone implementation
 
