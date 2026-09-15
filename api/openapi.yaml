@@ -3572,8 +3572,6 @@ paths:
           content:
             application/json:
               schema: { type: object }
-        "400":
-          $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
 
