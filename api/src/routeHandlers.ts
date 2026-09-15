@@ -31,6 +31,7 @@ import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
 import { handleAreaNeighbourRoutes } from "./areaNeighbourRoutes";
 import { handleAreaChildGeometryRoutes } from "./areaChildGeometryRoutes";
 import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
+import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -46,6 +47,15 @@ type RouteFamily = {
  * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
+	{
+		name: "area-geometry",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "geometry",
+		handle: handleAreaGeometryRoutes,
+	},
 	{
 		name: "area-geometry-metadata",
 		owns: (segments) =>
