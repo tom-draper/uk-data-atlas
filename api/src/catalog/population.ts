@@ -7,7 +7,7 @@ import type {
 	MeasureObservationArtifact,
 	PopulationLocalAuthorityObservationArtifact,
 } from "../dataCatalog";
-import { type PopulationFile, sha256, number, object } from "./values";
+import { type PrecompiledFile, sha256, number, object } from "./values";
 import { countriesFor } from "./countries";
 
 const recordsFromData = (
@@ -40,7 +40,7 @@ const recordsFromData = (
 		.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
 
 const populationRecords = (path: string): PopulationObservation[] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const period = object(source["2022"], `${path}.2022`);
 	if (period.boundaryYear !== 2023 || period.boundaryType !== "ward") {
 		throw new Error(
@@ -57,7 +57,7 @@ const populationRecords = (path: string): PopulationObservation[] => {
 const localAuthorityPopulationRecords = (
 	path: string,
 ): PopulationLocalAuthorityObservationArtifact["periods"] => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
 			if (!/^\d{4}$/.test(period)) {
@@ -144,7 +144,7 @@ export const compilePopulation = (
 	const constituencyPeriods = Object.entries(
 		JSON.parse(
 			readFileSync(populationConstituencyPath, "utf8"),
-		) as PopulationFile,
+		) as PrecompiledFile,
 	)
 		.map(([period, value]) => {
 			const entry = object(
