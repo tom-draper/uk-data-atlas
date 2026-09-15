@@ -628,10 +628,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Publish an export manifest for every asynchronous or bulk download with
       its schema, query, row count, content hashes, provenance and Atlas release.
       `GET /v1/exports` already records each whole-partition download's
-      measure, dataset, periods, source geography, content hash and size,
-      under the Atlas release its envelope names. A schema, row count and
-      provenance per download are still to add, and there are no asynchronous
-      exports yet.
+      measure, dataset, periods, source geography, content hash, size, record
+      counts, record schema and the datasets to attribute, under the Atlas
+      release its envelope names. There are no asynchronous exports or query
+      snapshots yet.
 - [x] Report a measure/geography/release quality matrix before large queries,
       including observed, derived, missing and suppressed-value coverage.
 
@@ -1780,9 +1780,24 @@ totals across a crosswalk, belong here once conversion is offered.
 
 `GET /v1/exports` lists every source partition as a whole, immutable JSON
 download. `GET /v1/exports/{export-id}` returns that exact observation
-artifact, not a reconstructed paginated query; its manifest entry records the
-source artifact hash and byte size. CSV, NDJSON and Parquet bulk products are
-still future work.
+artifact, not a reconstructed paginated query. Its manifest entry records the
+artifact's hash and byte size, and describes the artifact as read from it at
+build time rather than restating the catalogue: the number of records in all
+and in each period, the layout, whether records are numeric or categorical,
+and each record field with its type and whether every record carries it. The
+build fails on a record field the manifest has no description for, so every
+field a download can contain is documented in the manifest's `fields`.
+Provenance names the measure and each dataset to attribute, the source
+dataset and any a derived measure was computed from, described once in the
+manifest's `datasets` with publisher, licence and the hash of every input
+file. The validation gate recounts each artifact's records against its entry.
+
+An export's `schema.version` is the artifact's own `schemaVersion`. Adding an
+optional field to records, or a new field to a manifest entry, does not change
+it; removing or renaming a field, changing its type or meaning, or changing
+the layout increments it, and the old version stays readable from the Atlas
+release that published it. CSV, NDJSON and Parquet bulk products are still
+future work.
 
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary

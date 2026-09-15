@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:dfa67bf7df94ff5b655985b008aec8f28e235746fe0a15f4ca4853d172621eff",
+	"releaseId": "sha256:ddfd6b3f2add47ebaa421c09f283a295d98ac723fe7d20505e469dcbb3f79074",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -35,7 +35,7 @@
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:8a9cedfaf7399b3c7c7bc66aaa61984b93aa6b2e3c55b8de8c5958a23ca4a273"
+			"contentHash": "sha256:1a44c6b129e14ff117aa1acd42860c057286d9e824fc4416281449f4cd90ec58"
 		},
 		{
 			"id": "population-observations",
@@ -70,7 +70,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:6743a875e9d22a708709eccbaa81ef7aa4ec906b8069fb651bb869dfc2190fd5"
+			"contentHash": "sha256:3b3f7a517eee41089c65c1c567fa2074e0d13344b0847dbaf44df5275cb72746"
 		},
 		{
 			"id": "source-inventory",

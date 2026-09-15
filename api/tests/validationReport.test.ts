@@ -384,18 +384,42 @@ const inputs = (
 			schemaVersion: 1,
 			contentHash: "sha256:exports",
 			dataCatalogHash: overrides.catalogueHash ?? "sha256:catalogue",
-			exports: observationArtifacts.map((artifact) => ({
-				id: `${artifact.measureId}-observations`,
-				measureId: artifact.measureId,
-				datasetId: "census",
-				periods: ["2021"],
-				sourceGeography: censusGeography,
-				format: "json" as const,
-				artifact: `${artifact.measureId}-observations`,
-				contentHash: artifact.contentHash,
-				bytes: 1,
-				href: `/v1/exports/${artifact.measureId}-observations`,
-			})),
+			fields: {},
+			datasets: {},
+			exports: (observationArtifacts as MeasureObservationArtifact[]).map(
+				(artifact) => ({
+					id: `${artifact.measureId}-observations`,
+					measureId: artifact.measureId,
+					datasetId: "census",
+					periods: ["2021"],
+					sourceGeography: censusGeography,
+					format: "json" as const,
+					artifact: `${artifact.measureId}-observations`,
+					contentHash: artifact.contentHash,
+					bytes: 1,
+					href: `/v1/exports/${artifact.measureId}-observations`,
+					recordCount: artifact.periods.reduce(
+						(count, period) => count + period.records.length,
+						0,
+					),
+					recordCountByPeriod: Object.fromEntries(
+						artifact.periods.map((period) => [
+							period.period,
+							period.records.length,
+						]),
+					),
+					schema: {
+						version: 1,
+						layout: "periods" as const,
+						recordType: "numeric" as const,
+						fields: [],
+					},
+					provenance: {
+						measure: `/v1/measures/${artifact.measureId}`,
+						datasets: [],
+					},
+				}),
+			),
 		},
 		observationArtifacts: Object.fromEntries(
 			observationArtifacts.map((artifact) => [
