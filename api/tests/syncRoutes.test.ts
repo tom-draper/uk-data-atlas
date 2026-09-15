@@ -40,7 +40,7 @@ test("dispatches only the route family that owns a resource", () => {
 		handleRoute(request("/v1/atlas-release", { atlasRelease }))?.status,
 		200,
 	);
-	assert.equal(handleRoute(request("/v1/geographies")), undefined);
+	assert.equal(handleRoute(request("/v1/not-a-resource")), undefined);
 });
 
 test("serves the current immutable Atlas release", () => {
