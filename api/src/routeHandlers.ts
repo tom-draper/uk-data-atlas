@@ -340,7 +340,7 @@ const routeFamilies: RouteFamily[] = [
 	},
 ];
 
-/** The names of the families that claim a path; routing expects at most one. */
+/** The names of the families that claim a path; routing expects exactly one. */
 export const routeFamiliesOwning = (segments: string[]) =>
 	routeFamilies.filter(({ owns }) => owns(segments)).map(({ name }) => name);
 
