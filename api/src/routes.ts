@@ -5242,11 +5242,7 @@ export const route = (
 		);
 		return release
 			? { status: 200, body: envelope(releaseId, release) }
-			: problem(
-					404,
-					"Not Found",
-					"No boundary release matches that identity.",
-				);
+			: areaNotFound(segments[2], segments[3], "");
 	}
 
 	if (

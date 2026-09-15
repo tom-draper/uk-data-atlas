@@ -3446,6 +3446,24 @@ test("uses problem details for missing resources and unsupported methods", () =>
 	);
 	assert.equal(missing.status, 404);
 	assert.equal("title" in missing.body && missing.body.title, "Not Found");
+	// An unknown release lists the releases the geography does have.
+	assert.deepEqual(
+		"code" in missing.body && [
+			missing.body.code,
+			missing.body.absence,
+			missing.body.availableReleases,
+		],
+		[
+			"unsupported_geography",
+			"unknown-release",
+			[
+				{
+					id: "2025-01-en-ward",
+					href: "/v1/boundary-releases/ward/2025-01-en-ward",
+				},
+			],
+		],
+	);
 
 	const write = route("POST", "/v1/geographies", registry);
 	assert.equal(write.status, 405);
