@@ -293,9 +293,10 @@ only **available** when its endpoint, contract and provenance are published.
       `indeterminate` rather than guessed, and any published relationship
       between the two is listed beside the measurement.
 - [ ] Complete the geometry metadata above with the properties it does not yet
-      carry: a geometry hash, validity checks and a generalisation tier. Source
-      CRS, transformation, area and perimeter method, centroid and a
-      guaranteed-inside label point are already served.
+      carry: a per-area geometry hash, validity checks and a generalisation
+      tier. Source CRS, transformation, area and perimeter method, centroid, a
+      guaranteed-inside label point, and the source file with its SHA-256 are
+      already served.
 - [ ] Deliver vector tiles and cached exports for map-scale workloads.
 - [ ] Publish bulk, versioned CSV/NDJSON/Parquet downloads for area identities,
       aliases, hierarchy relations, named-location membership and crosswalks.

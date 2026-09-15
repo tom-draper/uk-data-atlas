@@ -15,7 +15,7 @@ export type GeometrySourceRegistry = {
 	contentHash: string;
 	releases: Array<Record<string, unknown>>;
 };
-const sha = (s: string) =>
+const sha = (s: string | Buffer) =>
 	"sha256:" + createHash("sha256").update(s).digest("hex");
 const kebab = (s: string) =>
 	s.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
@@ -78,6 +78,9 @@ export const createGeometrySourceRegistry = (
 			id: a.geography + "/" + a.boundaryRelease,
 			status: "available",
 			input: join("boundaries", kebab(g), r, path.slice(dir.length + 1)),
+			// The whole file, so a caller can confirm the exact input that any
+			// area in the release was read from.
+			inputHash: sha(readFileSync(path)),
 			crs: crs(path),
 			codeProperty: a.codeProperty,
 			...(corrections.length > 0 ? { corrections } : {}),

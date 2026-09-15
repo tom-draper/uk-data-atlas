@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import {
+	mkdirSync,
+	mkdtempSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
@@ -28,6 +35,12 @@ const writeBoundarySource = (
 	);
 };
 
+/** The hash the registry should record for a source file it reads. */
+const hashOf = (root: string, input: string) =>
+	`sha256:${createHash("sha256")
+		.update(readFileSync(join(root, "data", input)))
+		.digest("hex")}`;
+
 const artifact = (
 	overrides: Partial<AreaReleaseArtifact>,
 ): AreaReleaseArtifact => ({
@@ -55,6 +68,7 @@ test("marks a release available with its CRS and code property", () => {
 				id: "ward/2025",
 				status: "available",
 				input: "boundaries/ward/2025/wards.geojson",
+				inputHash: hashOf(root, "boundaries/ward/2025/wards.geojson"),
 				crs: "EPSG:4326",
 				codeProperty: "WD25CD",
 			},
@@ -121,6 +135,11 @@ test("uses the original raw source location for a derived boundary release", () 
 				id: "lsoa/2011-12-w-bgc",
 				status: "available",
 				input: "boundaries/lsoa/2011-12-ew-bgc-v3/lsoa.geojson",
+				// A derived release reads, and so hashes, its source's file.
+				inputHash: hashOf(
+					root,
+					"boundaries/lsoa/2011-12-ew-bgc-v3/lsoa.geojson",
+				),
 				crs: "EPSG:4326",
 				codeProperty: "LSOA11CD",
 				selection: { property: "LSOA11CD", startsWith: "W" },

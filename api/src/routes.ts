@@ -4738,33 +4738,48 @@ export const route = (
 				candidate.id === boundaryRelease,
 		);
 		const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
-		const geometryHash = {
-			status: "not-published" as const,
-			note: "Per-area geometry hashes are not compiled yet. The boundary release's metadataHash pins its metadata, which names the source file but does not hash its contents.",
-		};
+		const geometryHash = (inputHash?: string) =>
+			inputHash
+				? {
+						status: "available" as const,
+						scope: "source-file" as const,
+						value: inputHash,
+						note: "Hashes the whole source file this release's geometry is read from, not this area alone. Per-area geometry hashes are not compiled.",
+					}
+				: {
+						status: "not-published" as const,
+						note: "No hash of the geometry source is recorded for this release. The boundary release's metadataHash pins its metadata, which names the source file but does not hash its contents.",
+					};
 		const geometry = (() => {
 			if (!areaGeometryCache)
 				return {
 					status: "not-published" as const,
 					href: geometryHref,
-					hash: geometryHash,
+					hash: geometryHash(),
 				};
 			try {
-				return areaGeometryCache.get(geography, boundaryRelease, code)
+				const provenance = areaGeometryCache.get(
+					geography,
+					boundaryRelease,
+					code,
+				)
+					? areaGeometryCache.provenance(
+							geography,
+							boundaryRelease,
+							code,
+						)
+					: undefined;
+				return provenance
 					? {
 							status: "available" as const,
 							href: geometryHref,
-							provenance: areaGeometryCache.provenance(
-								geography,
-								boundaryRelease,
-								code,
-							),
-							hash: geometryHash,
+							provenance,
+							hash: geometryHash(provenance.inputHash),
 						}
 					: {
 							status: "not-found" as const,
 							href: geometryHref,
-							hash: geometryHash,
+							hash: geometryHash(),
 						};
 			} catch (error) {
 				return {
@@ -4774,7 +4789,7 @@ export const route = (
 						error instanceof Error
 							? error.message
 							: "Geometry could not be loaded.",
-					hash: geometryHash,
+					hash: geometryHash(),
 				};
 			}
 		})();
