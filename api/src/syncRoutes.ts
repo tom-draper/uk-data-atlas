@@ -1,6 +1,6 @@
 import { compareAtlasReleases } from "./atlasReleaseComparison";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routes";
+import type { RouteRequest } from "./routing";
 
 /**
  * Endpoints that let a caller synchronise an immutable Atlas release or

@@ -1,5 +1,5 @@
 import type { ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routes";
+import type { RouteRequest } from "./routing";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 

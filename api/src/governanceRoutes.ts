@@ -1,6 +1,6 @@
 import { attributionFor, attributionText } from "./attribution";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routes";
+import type { RouteRequest } from "./routing";
 
 /** Governance and evidence endpoints, separate from the data they describe. */
 export const handleGovernanceRoutes = ({

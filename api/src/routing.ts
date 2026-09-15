@@ -1,0 +1,73 @@
+import type { AreaGeometryCache } from "./areaGeometry";
+import type { AreaInventory, AreaLookup } from "./areaInventory";
+import type { AreaRelationshipIndex } from "./areaRelationships";
+import type { AtlasRelease } from "./atlasRelease";
+import type { BoundaryRegistry } from "./boundaryRegistry";
+import type {
+	CrosswalkArtifact,
+	CrosswalkInventory,
+} from "./crosswalkInventory";
+import type {
+	AnyMeasureObservationArtifact,
+	DataCatalog,
+	PopulationLocalAuthorityObservationArtifact,
+	PopulationObservationArtifact,
+} from "./dataCatalog";
+import type { ExportManifest } from "./exportManifest";
+import type { GeographyInventory } from "./geographyInventory";
+import type { LookupManifest } from "./lookupExports";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import type {
+	NamedLocationInventory,
+	NamedLocationLookup,
+} from "./namedLocations";
+import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import type { ValidationReport } from "./validationReport";
+
+export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
+
+export type AreaSearchResult = {
+	id: string;
+	geography: string;
+	boundaryRelease: string;
+	code: string;
+	name: string;
+	aliases?: string[];
+};
+
+export type AreaSearchIndex = AreaSearchResult[];
+
+/** The independently-built resources available to API route handlers. */
+export type RouteContext = {
+	boundaryRegistry: BoundaryRegistry;
+	geographyInventory?: GeographyInventory;
+	/** Each boundary release's identity artifact and its content hash. */
+	areaInventory?: AreaInventory;
+	areaLookup?: AreaLookup;
+	crosswalkInventory?: CrosswalkInventory;
+	crosswalkLookup?: CrosswalkLookup;
+	atlasRelease?: AtlasRelease;
+	atlasReleaseHistory?: Map<string, AtlasRelease>;
+	areaSearchIndex?: AreaSearchIndex;
+	areaRelationshipIndex?: AreaRelationshipIndex;
+	areaGeometryCache?: AreaGeometryCache;
+	relationshipCandidateInventory?: RelationshipCandidateInventory;
+	validationReport?: ValidationReport;
+	namedLocationInventory?: NamedLocationInventory;
+	namedLocationLookup?: NamedLocationLookup;
+	dataCatalog?: DataCatalog;
+	populationObservations?: PopulationObservationArtifact;
+	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
+	/** Every measure's observations bar the two population artifacts. */
+	measureObservations?: AnyMeasureObservationArtifact[];
+	measureCompatibilityInventory?: MeasureCompatibilityInventory;
+	exportManifest?: ExportManifest;
+	lookupManifest?: LookupManifest;
+};
+
+export type RouteRequest = {
+	context: RouteContext;
+	releaseId: string;
+	parsedUrl: URL;
+	segments: string[];
+};

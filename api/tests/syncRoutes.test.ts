@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { RouteContext, RouteRequest } from "../src/routes";
+import type { RouteContext, RouteRequest } from "../src/routing";
 import { handleSyncRoutes } from "../src/syncRoutes";
 
 const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({

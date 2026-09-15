@@ -14,7 +14,8 @@ import {
 	renderLookup,
 } from "../src/lookupExports";
 import type { NamedLocationInventory } from "../src/namedLocations";
-import { route, type RouteContext } from "../src/routes";
+import { route } from "../src/routes";
+import type { RouteContext } from "../src/routing";
 
 const wards = {
 	schemaVersion: 1 as const,
