@@ -520,6 +520,14 @@ only **available** when its endpoint, contract and provenance are published.
       from ASHE Table 8 for English authorities. Region and county totals in
       the same table are left out, the two estimates the publisher suppressed
       are named, and a median is refused for aggregation.
+- [x] Return police recorded crime for the year to June 2025 through
+      `GET /v1/data/crime-{offence}`: 23 offence counts for every community
+      safety partnership in England and Wales, the geography Table C2 is
+      published for, matching the December 2023 partnership boundaries code
+      for code. It is not served by local authority, because some
+      partnerships span several authorities. Partnership counts exclude fraud
+      and offences unassigned to any partnership, so they do not sum to force
+      or national totals.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1567,6 +1575,7 @@ pnpm start
 - `GET /v1/data/claimant-count/aggregate?period=2026-04&geography=localAuthority&boundaryYear=2024&areaCode=S92000003`
 - `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/median-annual-pay/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/crime-total?period=year-ending-2025-06&geography=communitySafetyPartnership&boundaryYear=2023&release=2023-12-ew-bgc`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`

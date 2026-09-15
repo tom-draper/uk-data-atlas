@@ -163,6 +163,7 @@ const writeSources = (
 	const claimantCount = join(directory, "claimant-count.json");
 	const homelessness = join(directory, "homelessness.json");
 	const income = join(directory, "income.json");
+	const crime = join(directory, "crime.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -180,6 +181,7 @@ const writeSources = (
 				dataset("claimant-count", 4, 1, 2024),
 				dataset("homelessness", 1, 1, 2025),
 				dataset("income", 2, 1, 2025),
+				dataset("crime", 1, 1, 2025),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -390,6 +392,58 @@ const writeSources = (
 					E06000001: {
 						annual: { median: 29000 },
 						hourly: { median: null },
+					},
+				},
+			},
+		}),
+	);
+	const offences = (total: number) => ({
+		totalRecordedCrime: total,
+		violenceAgainstPerson: 10,
+		homicide: 0,
+		deathSeriesInjuryUnlawfulDriving: 0,
+		violenceWithInjury: 4,
+		violenceWithoutInjury: 4,
+		stalkingHarassment: 2,
+		sexualOffences: 1,
+		robbery: 1,
+		theftOffences: 5,
+		burglary: 2,
+		residentialBurglary: 1,
+		nonResidentialBurglary: 1,
+		vehicleOffences: 1,
+		theftFromPerson: 0,
+		bicycleTheft: 0,
+		shoplifting: 1,
+		otherTheftOffences: 1,
+		criminalDamageArson: 2,
+		drugOffences: 1,
+		possessionWeapons: 0,
+		publicOrderOffences: -1,
+		miscellaneousCrimes: 1,
+	});
+	writeFileSync(
+		crime,
+		JSON.stringify({
+			"2025": {
+				year: 2025,
+				boundaryYear: 2025,
+				boundaryType: "localAuthority",
+				data: {
+					E06000026: { ladCode: "E06000026", ...offences(20000) },
+				},
+				partnerships: {
+					E22000100: {
+						communitySafetyPartnershipCode: "E22000100",
+						localAuthorityCode: "E06000026",
+						...offences(20000),
+					},
+					// One partnership over several authorities, with a count
+					// the force cancelled below zero.
+					E22000362: {
+						communitySafetyPartnershipCode: "E22000362",
+						localAuthorityCode: null,
+						...offences(10997),
 					},
 				},
 			},
@@ -640,6 +694,7 @@ const writeSources = (
 		claimantCount,
 		homelessness,
 		income,
+		crime,
 		jobs,
 		landArea,
 		housePrice,
@@ -661,7 +716,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 23);
+		assert.equal(result.catalog.datasets.length, 24);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1420,6 +1475,42 @@ test("publishes median pay for authorities only, naming suppressed estimates", (
 		assert.match(
 			hourly?.sources[0]?.coverage.note ?? "",
 			/No value is published for 1 of the 1 authorities: E06000001\./,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes recorded crime by community safety partnership", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const crimeMeasures = result.catalog.measures.filter((measure) =>
+			measure.id.startsWith("crime-"),
+		);
+		assert.equal(crimeMeasures.length, 23);
+		assert.deepEqual(crimeMeasures[0]?.sources[0]?.sourceGeography, {
+			type: "communitySafetyPartnership",
+			boundaryYear: 2023,
+		});
+		const records = (id: string) =>
+			result.indicatorObservations.find(
+				(artifact) => artifact.measureId === id,
+			)?.periods;
+		assert.deepEqual(records("crime-total"), [
+			{
+				period: "year-ending-2025-06",
+				records: [
+					{ areaCode: "E22000100", value: 20000, status: "observed" },
+					{ areaCode: "E22000362", value: 10997, status: "observed" },
+				],
+			},
+		]);
+		assert.equal(
+			records("crime-public-order-offences")?.[0]?.records[0]?.value,
+			-1,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

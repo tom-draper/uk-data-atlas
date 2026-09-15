@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f20a13c846fa02032c44f18918a5c003aecff16ef09a2efb6a72208c75d11204",
+	"contentHash": "sha256:534ac0e0789d4dc8402f8a4b760608132d6556b4a4e5c88f01a58609ff45ea73",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -8137,6 +8137,1083 @@
 				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
 				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
 				"Provisional results are revised when the following year's survey is published."
+			]
+		},
+		{
+			"id": "crime-total",
+			"label": "Total recorded crime, excluding fraud",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-total"
+			},
+			"notes": [
+				"Every police recorded crime except fraud and computer misuse, which are recorded nationally rather than by force.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-violence-against-the-person",
+			"label": "Violence against the person",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-violence-against-the-person"
+			},
+			"notes": [
+				"Includes homicide, death or serious injury caused by illegal driving, violence with and without injury, and stalking and harassment.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-homicide",
+			"label": "Homicide",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-homicide"
+			},
+			"notes": [
+				"A subset of violence against the person.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-death-or-serious-injury-by-illegal-driving",
+			"label": "Death or serious injury caused by illegal driving",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-death-or-serious-injury-by-illegal-driving"
+			},
+			"notes": [
+				"A subset of violence against the person.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-violence-with-injury",
+			"label": "Violence with injury",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-violence-with-injury"
+			},
+			"notes": [
+				"A subset of violence against the person.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-violence-without-injury",
+			"label": "Violence without injury",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-violence-without-injury"
+			},
+			"notes": [
+				"A subset of violence against the person.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-stalking-and-harassment",
+			"label": "Stalking and harassment",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-stalking-and-harassment"
+			},
+			"notes": [
+				"A subset of violence against the person.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-sexual-offences",
+			"label": "Sexual offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-sexual-offences"
+			},
+			"notes": [
+				"Recorded sexual offences, including rape.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-robbery",
+			"label": "Robbery",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-robbery"
+			},
+			"notes": [
+				"Theft with the use or threat of force.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-theft-offences",
+			"label": "Theft offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-theft-offences"
+			},
+			"notes": [
+				"Includes burglary, vehicle offences, theft from the person, bicycle theft, shoplifting and all other theft.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-burglary",
+			"label": "Burglary",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-burglary"
+			},
+			"notes": [
+				"A subset of theft offences, made up of residential and non-residential burglary.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-residential-burglary",
+			"label": "Residential burglary",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-residential-burglary"
+			},
+			"notes": [
+				"A subset of burglary.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-non-residential-burglary",
+			"label": "Non-residential burglary",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-non-residential-burglary"
+			},
+			"notes": [
+				"A subset of burglary.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-vehicle-offences",
+			"label": "Vehicle offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-vehicle-offences"
+			},
+			"notes": [
+				"A subset of theft offences.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-theft-from-the-person",
+			"label": "Theft from the person",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-theft-from-the-person"
+			},
+			"notes": [
+				"A subset of theft offences.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-bicycle-theft",
+			"label": "Bicycle theft",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-bicycle-theft"
+			},
+			"notes": [
+				"A subset of theft offences.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-shoplifting",
+			"label": "Shoplifting",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-shoplifting"
+			},
+			"notes": [
+				"A subset of theft offences.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-other-theft",
+			"label": "All other theft offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-other-theft"
+			},
+			"notes": [
+				"A subset of theft offences.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-criminal-damage-and-arson",
+			"label": "Criminal damage and arson",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-criminal-damage-and-arson"
+			},
+			"notes": [
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-drug-offences",
+			"label": "Drug offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-drug-offences"
+			},
+			"notes": [
+				"Drug offences are largely found through police activity, so their count reflects enforcement as much as prevalence.",
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-possession-of-weapons",
+			"label": "Possession of weapons offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-possession-of-weapons"
+			},
+			"notes": [
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-public-order-offences",
+			"label": "Public order offences",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-public-order-offences"
+			},
+			"notes": [
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
+			]
+		},
+		{
+			"id": "crime-miscellaneous-crimes-against-society",
+			"label": "Miscellaneous crimes against society",
+			"valueKind": "count",
+			"unit": "offences",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "crime",
+					"periods": [
+						"year-ending-2025-06"
+					],
+					"sourceGeography": {
+						"type": "communitySafetyPartnership",
+						"boundaryYear": 2023
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-WLS"
+						],
+						"recordCount": 314,
+						"note": "Published source records cover every community safety partnership in England and Wales."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/crime-miscellaneous-crimes-against-society"
+			},
+			"notes": [
+				"Offences recorded by the police in the twelve months to June 2025, by the community safety partnership where they were committed.",
+				"Partnership counts do not sum to force or national totals. Offences with no exact location are recorded as unassigned to any partnership, and some offences at airports are recorded only at force level; neither is served.",
+				"A partnership's count can be negative, where a force transferred or cancelled offences recorded in an earlier period.",
+				"Police recorded crime is published as official statistics, not accredited official statistics. It counts what is reported to and recorded by the police, so it moves with reporting and recording practice as well as with crime."
 			]
 		},
 		{

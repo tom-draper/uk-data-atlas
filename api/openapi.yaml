@@ -476,6 +476,10 @@ paths:
         `median-annual-pay` and `median-hourly-pay` cover 2025 provisional
         Local Authority 2025 codes for England, as median gross pay of employee
         jobs by where the employee lives; a median is not aggregatable.
+        The `crime-*` measures cover the year ending June 2025 on Community
+        Safety Partnership 2023 codes for England and Wales, as offence counts
+        excluding fraud; offences unassigned to a partnership are not included,
+        so partnership sums fall short of force and national totals.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the
