@@ -29,8 +29,8 @@ type RouteFamily = {
 
 /**
  * Each family declares the resources it owns before it handles a request.
- * This keeps dispatch independent of handler order and makes a new route's
- * home explicit while the legacy router is split into domain modules.
+ * No path may be owned by two families, which keeps dispatch independent of
+ * the order below and makes a new route's home explicit.
  */
 const routeFamilies: RouteFamily[] = [
 	{
@@ -43,7 +43,11 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "data-transforms",
-		owns: (segments) => segments[0] === "v1" && segments[3] === "compare",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "compare",
 		handle: handleDataTransformRoutes,
 	},
 	{
@@ -70,15 +74,19 @@ const routeFamilies: RouteFamily[] = [
 	{
 		name: "area-relationships",
 		owns: (segments) =>
+			segments.length === 6 &&
 			segments[0] === "v1" &&
-			["parents", "children", "relationships"].includes(
-				segments[5] ?? "",
-			),
+			segments[1] === "areas" &&
+			["parents", "children", "relationships"].includes(segments[5]!),
 		handle: handleAreaRelationshipRoutes,
 	},
 	{
 		name: "area-history",
-		owns: (segments) => segments[0] === "v1" && segments[5] === "history",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "history",
 		handle: handleAreaHistoryRoutes,
 	},
 	{
@@ -166,6 +174,10 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleGovernanceRoutes,
 	},
 ];
+
+/** The names of the families that claim a path; routing expects at most one. */
+export const routeFamiliesOwning = (segments: string[]) =>
+	routeFamilies.filter(({ owns }) => owns(segments)).map(({ name }) => name);
 
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 	const family = routeFamilies.find(({ owns }) => owns(request.segments));
