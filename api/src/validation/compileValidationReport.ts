@@ -8,6 +8,11 @@ import { crosswalkFindings } from "./crosswalkFindings";
 import { measureFindings } from "./measureFindings";
 import { measureSourceFindings } from "./measureSourceFindings";
 
+/**
+ * Check every published resource and apply the recorded waivers. The build is
+ * refused while any failure is unwaived or any waiver no longer applies, so a
+ * published report only ever holds passed and waived checks.
+ */
 export const compileValidationReport = (
 	inputs: ValidationInputs,
 ): ValidationReport => {
