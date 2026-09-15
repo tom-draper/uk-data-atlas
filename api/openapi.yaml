@@ -462,6 +462,10 @@ paths:
         and over by highest qualification, with its own `-total`, and
         `ethnicity-*` their usual residents in each of the nineteen census
         ethnic groups, which are exhaustive and so need no separate total.
+        `broadband-*-availability` covers July 2025 Local Authority 2024 codes
+        across all four nations, as the share of premises able to receive each
+        service; like mobile coverage it is weighted by premises and is not
+        offered for aggregation.
         This route never selects a May/December boundary release, converts
         values, or aggregates them. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the

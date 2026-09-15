@@ -822,6 +822,71 @@ const APRIL_2023_LAD_MERGERS: Record<string, string[]> = {
 const LAST_DECEMBER_PERIOD = 2022;
 
 /**
+ * The two English authorities whose codes changed in 2025, from their April
+ * 2023 code to the one a 2025 partition carries.
+ */
+const RECODED_2025: Record<string, string> = {
+	E08000016: "E08000038",
+	E08000019: "E08000039",
+};
+
+/**
+ * One field of a single-period local-authority dataset, keeping the gaps.
+ *
+ * Unlike `localAuthorityFieldPeriods`, a missing or null value is not an error
+ * but an absence the publisher chose, such as a survey estimate suppressed as
+ * unreliable; it is returned in `absent` so the caller can name it. Rows whose
+ * code is not an authority, such as a county or region total published in the
+ * same table, are left out when `isAuthority` says so.
+ */
+const localAuthorityFieldWithGaps = (
+	path: string,
+	field: string,
+	boundaryYear: number,
+	isAuthority: (code: string) => boolean = () => true,
+) => {
+	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
+	const entries = Object.entries(source);
+	if (entries.length !== 1)
+		throw new Error(`${path}: expected a single period`);
+	const [[period, value]] = entries as [[string, unknown]];
+	const entry = object(value, `${path}.${period}`);
+	if (
+		entry.boundaryYear !== boundaryYear ||
+		entry.boundaryType !== "localAuthority"
+	)
+		throw new Error(
+			`${path}.${period}: expected localAuthority data on the ${boundaryYear} code vintage`,
+		);
+	const records: PopulationObservation[] = [];
+	const absent: string[] = [];
+	for (const [areaCode, record] of Object.entries(
+		object(entry.data, `${path}.${period}.data`),
+	)) {
+		if (!isPublishedAreaCode(areaCode))
+			throw new Error(`${path}: unsupported area code ${areaCode}`);
+		if (!isAuthority(areaCode)) continue;
+		let observed: unknown = record;
+		for (const segment of field.split("."))
+			observed =
+				observed && typeof observed === "object"
+					? (observed as Record<string, unknown>)[segment]
+					: undefined;
+		if (observed === null || observed === undefined) {
+			absent.push(areaCode);
+			continue;
+		}
+		if (typeof observed !== "number" || !Number.isFinite(observed))
+			throw new Error(
+				`${path}.${period}.${areaCode}.${field} must be a finite number or absent`,
+			);
+		records.push({ areaCode, value: observed, status: "observed" });
+	}
+	records.sort((left, right) => left.areaCode.localeCompare(right.areaCode));
+	return { period, records, absent: absent.sort() };
+};
+
+/**
  * A period of a partition compiled onto April 2023 authorities, with the
  * districts they replaced removed.
  *
@@ -938,6 +1003,7 @@ export type DataCatalogInputs = {
 	carAvailability: string;
 	qualification: string;
 	ethnicity: string;
+	broadband: string;
 	jobs: string;
 	landArea: string;
 	housePrice: string;
@@ -961,6 +1027,7 @@ export const compileDataCatalog = ({
 	carAvailability: carAvailabilityPath,
 	qualification: qualificationPath,
 	ethnicity: ethnicityPath,
+	broadband: broadbandPath,
 	jobs: jobsPath,
 	landArea: landAreaPath,
 	housePrice: housePricePath,
@@ -979,6 +1046,7 @@ export const compileDataCatalog = ({
 	ghgEmissionsObservations: MeasureObservationArtifact;
 	jobsObservations: MeasureObservationArtifact;
 	mobileCoverageObservations: MeasureObservationArtifact[];
+	indicatorObservations: MeasureObservationArtifact[];
 	censusObservations: MeasureObservationArtifact[];
 	populationDensityObservations: MeasureObservationArtifact;
 	housePriceObservations: MeasureObservationArtifact;
@@ -1699,6 +1767,214 @@ export const compileDataCatalog = ({
 		});
 	});
 	const censusMeasures = censusObservations.map(({ measure }) => measure);
+
+	/**
+	 * Single-period local-authority indicators, each checked against the code
+	 * set it claims before it is published.
+	 *
+	 * Every value must name an authority of the expected set, and any authority
+	 * of that set without a value is listed in the coverage note by code rather
+	 * than left for a caller to discover as a short total. A dataset compiled
+	 * with the April 2023 authorities beside the districts they replaced is
+	 * reduced to the authorities first, as the census partitions are.
+	 */
+	const england2023 = [...populationCodes].filter((code) =>
+		code.startsWith("E"),
+	);
+	const england2025 = england2023.map((code) => RECODED_2025[code] ?? code);
+	type Indicator = {
+		id: string;
+		label: string;
+		field: string;
+		valueKind: Measure["valueKind"];
+		unit: string;
+		aggregation: MeasureAggregation;
+		notes: string[];
+	};
+	const indicatorObservations: Array<{
+		measure: Measure;
+		artifact: MeasureObservationArtifact;
+	}> = [];
+	const publishIndicators = (spec: {
+		datasetId: string;
+		path: string;
+		boundaryYear: number;
+		period: string;
+		expectedCodes: string[];
+		isAuthority?: (code: string) => boolean;
+		mergeApril2023?: boolean;
+		coverageNote: string;
+		notes: string[];
+		indicators: Indicator[];
+	}) => {
+		const dataset = datasets.find(
+			(candidate) => candidate.id === spec.datasetId,
+		);
+		if (!dataset)
+			throw new Error(`${manifestPath} has no ${spec.datasetId} dataset`);
+		if (
+			dataset.summary.boundaryYears.length !== 1 ||
+			dataset.summary.boundaryYears[0] !== spec.boundaryYear
+		)
+			throw new Error(
+				`${manifestPath}: ${spec.datasetId} must declare boundary year ${spec.boundaryYear}`,
+			);
+		const expected = new Set(spec.expectedCodes);
+		for (const indicator of spec.indicators) {
+			const read = localAuthorityFieldWithGaps(
+				spec.path,
+				indicator.field,
+				spec.boundaryYear,
+				spec.isAuthority,
+			);
+			let records = read.records;
+			if (spec.mergeApril2023) {
+				const present = new Set(
+					records.map((record) => record.areaCode),
+				);
+				records = onApril2023Authorities(
+					{ period: spec.period, records },
+					[...expected].filter((code) => present.has(code)),
+				).records;
+			}
+			const unexpected = records.filter(
+				(record) => !expected.has(record.areaCode),
+			);
+			if (unexpected.length > 0)
+				throw new Error(
+					`${spec.path}: ${indicator.id} has codes outside its ${spec.boundaryYear} authority set, starting with ${unexpected[0]!.areaCode}`,
+				);
+			const published = new Set(records.map((record) => record.areaCode));
+			const missing = spec.expectedCodes
+				.filter((code) => !published.has(code))
+				.sort();
+			const periods = [{ period: spec.period, records }];
+			const content = JSON.stringify({
+				schemaVersion: 1,
+				measureId: indicator.id,
+				sourceGeography: {
+					type: "localAuthority",
+					boundaryYear: spec.boundaryYear,
+				},
+				periods,
+			});
+			indicatorObservations.push({
+				measure: {
+					id: indicator.id,
+					label: indicator.label,
+					valueKind: indicator.valueKind,
+					unit: indicator.unit,
+					aggregation: indicator.aggregation,
+					sources: [
+						{
+							datasetId: spec.datasetId,
+							periods: [spec.period],
+							sourceGeography: {
+								type: "localAuthority",
+								boundaryYear: spec.boundaryYear,
+							},
+							coverage: {
+								kind:
+									missing.length === 0
+										? "source-reported"
+										: "partial",
+								countries: countriesFor(records),
+								recordCount: records.length,
+								note:
+									missing.length === 0
+										? spec.coverageNote
+										: `${spec.coverageNote} No value is published for ${missing.length} of the ${expected.size} authorities: ${missing.join(", ")}.`,
+							},
+						},
+					],
+					availability: {
+						sourceExact: true,
+						conversion: false,
+						aggregation: indicator.aggregation.available,
+					},
+					links: { data: `/v1/data/${indicator.id}` },
+					notes: [...indicator.notes, ...spec.notes],
+				},
+				artifact: {
+					schemaVersion: 1,
+					contentHash: sha256(content),
+					measureId: indicator.id,
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: spec.boundaryYear,
+					},
+					periods,
+				},
+			});
+		}
+	};
+
+	const premisesShare = (
+		id: string,
+		label: string,
+		field: string,
+		note: string,
+	): Indicator => ({
+		id,
+		label,
+		field,
+		valueKind: "ratio",
+		unit: "% of premises",
+		aggregation: {
+			kind: "intensive",
+			operation: "weighted-mean",
+			weight: {
+				description:
+					"The authority's count of all premises, which the published availability percentages are computed against.",
+				datasetField: "All Premises",
+			},
+			available: false,
+		},
+		notes: [note],
+	});
+	publishIndicators({
+		datasetId: "broadband",
+		path: broadbandPath,
+		boundaryYear: 2024,
+		period: "2025-07",
+		expectedCodes: [...populationCodes],
+		coverageNote:
+			"Published source records cover every authority in all four UK nations.",
+		notes: [
+			"Availability, not take-up: a premises counts where the service can be ordered, whether or not anyone there has it.",
+			"This is a share of premises, so it does not add over areas. Combining authorities needs a mean weighted by premises, which the source publishes but this measure does not serve; averaging the percentages flat would weigh a small authority as heavily as a city.",
+			"Ofcom's July 2025 Connected Nations snapshot, on local authority codes shared by every release from May 2023 to December 2024.",
+		],
+		indicators: [
+			premisesShare(
+				"broadband-superfast-availability",
+				"Superfast broadband availability",
+				"pctSuperfast",
+				"Premises able to receive download speeds of at least 30 Mbit/s.",
+			),
+			premisesShare(
+				"broadband-ultrafast-availability",
+				"Ultrafast broadband availability",
+				"pctUltrafast",
+				"Premises able to receive download speeds of at least 100 Mbit/s.",
+			),
+			premisesShare(
+				"broadband-full-fibre-availability",
+				"Full fibre availability",
+				"pctFullFibre",
+				"Premises where a full fibre connection, fibre all the way to the premises, is available.",
+			),
+			premisesShare(
+				"broadband-gigabit-availability",
+				"Gigabit broadband availability",
+				"pctGigabit",
+				"Premises able to receive download speeds of at least 1 Gbit/s, by any technology.",
+			),
+		],
+	});
+	const indicatorMeasures = indicatorObservations.map(
+		({ measure }) => measure,
+	);
 
 	/**
 	 * Population density, the first measure derived from two others.
@@ -2735,6 +3011,7 @@ export const compileDataCatalog = ({
 			emissionsMeasure,
 			jobsMeasure,
 			...mobileMeasures,
+			...indicatorMeasures,
 			...censusMeasures,
 		],
 	});
@@ -2777,6 +3054,7 @@ export const compileDataCatalog = ({
 				emissionsMeasure,
 				jobsMeasure,
 				...mobileMeasures,
+				...indicatorMeasures,
 				...censusMeasures,
 			],
 		},
@@ -2820,6 +3098,9 @@ export const compileDataCatalog = ({
 			({ artifact }) => artifact,
 		),
 		censusObservations: censusObservations.map(({ artifact }) => artifact),
+		indicatorObservations: indicatorObservations.map(
+			({ artifact }) => artifact,
+		),
 		imdObservations: imdObservations.map(({ artifact }) => artifact),
 		lifeExpectancyObservations: lifeExpectancyMeasures.map(
 			({ artifact }) => artifact,

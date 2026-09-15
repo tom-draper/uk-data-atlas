@@ -497,6 +497,13 @@ only **available** when its endpoint, contract and provenance are published.
       nineteen ethnic groups are exhaustive, so they sum to the resident
       population without a separate total, give or take the few residents
       ONS perturbation moves between tables.
+- [x] Return Ofcom's July 2025 fixed broadband availability through
+      `GET /v1/data/broadband-{superfast,ultrafast,full-fibre,gigabit}-availability`:
+      shares of premises for every authority in all four nations. A share is
+      declared intensive and weighted by premises, so it is not summed or
+      averaged flat over areas. Single-period indicators like this are checked
+      against the authority code set they claim at build, and any authority
+      without a value is named in the coverage note.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1540,6 +1547,7 @@ pnpm start
 - `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
