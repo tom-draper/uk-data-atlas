@@ -33,17 +33,11 @@ import {
 } from "./lookupExports";
 import {
 	type DataCatalog,
-	findMeasureObservations,
 	isNumericObservation,
-	isLegacyPopulationSource,
-	type AnyMeasureObservationArtifact,
-	type MeasureObservation,
 	type MeasureSource,
-	observationArtifactName,
 	type PopulationObservation,
-	type PopulationLocalAuthorityObservationArtifact,
-	type PopulationObservationArtifact,
 } from "./dataCatalog";
+import { observationsFor } from "./observationArtifacts";
 import { compareObservations } from "./comparison";
 import {
 	aggregateCountryMembers,
@@ -177,66 +171,6 @@ const decodePathSegment = (segment: string) => {
 
 const DEFAULT_PAGE_SIZE = 100;
 const MAX_PAGE_SIZE = 500;
-
-/**
- * The published observations behind one measure source, whichever artifact
- * holds them.
- *
- * The ward population artifact predates the per-period shape and carries a
- * single period at its top level, so it is adapted here rather than reshaped
- * on disk, which would change a published file.
- */
-const observationsFor = (
-	measureId: string,
-	source: MeasureSource,
-	period: string,
-	artifacts: {
-		populationObservations?: PopulationObservationArtifact;
-		populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
-		measureObservations?: AnyMeasureObservationArtifact[];
-	},
-):
-	| (ObservationArtifactReference & { records: MeasureObservation[] })
-	| undefined => {
-	if (isLegacyPopulationSource(measureId, source)) {
-		if (source.sourceGeography.type === "ward") {
-			const artifact = artifacts.populationObservations;
-			return artifact && artifact.period === period
-				? {
-						artifact: "population-observations",
-						contentHash: artifact.contentHash,
-						records: artifact.records,
-					}
-				: undefined;
-		}
-		const artifact = artifacts.populationLocalAuthorityObservations;
-		const records = artifact?.periods.find(
-			(candidate) => candidate.period === period,
-		)?.records;
-		return artifact && records
-			? {
-					artifact: "population-local-authority-observations",
-					contentHash: artifact.contentHash,
-					records,
-				}
-			: undefined;
-	}
-	const artifact = findMeasureObservations(
-		artifacts.measureObservations ?? [],
-		measureId,
-		source,
-	);
-	const records = artifact?.periods.find(
-		(candidate) => candidate.period === period,
-	)?.records;
-	return artifact && records
-		? {
-				artifact: observationArtifactName(measureId, source),
-				contentHash: artifact.contentHash,
-				records,
-			}
-		: undefined;
-};
 
 /**
  * The canonical identity of a country code, from the newest compiled country
