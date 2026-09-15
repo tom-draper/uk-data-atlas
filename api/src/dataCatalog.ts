@@ -444,7 +444,7 @@ const NI_SUPER_OUTPUT_AREA_CODE = /^95[A-Z]{2}\d{2}[A-Z]\d$/;
 const isPublishedAreaCode = (code: string) =>
 	/^[ENSW]\d{8}$/.test(code) || NI_SUPER_OUTPUT_AREA_CODE.test(code);
 
-const countryForCode = (code: string): Country => {
+export const countryForCode = (code: string): Country => {
 	if (NI_SUPER_OUTPUT_AREA_CODE.test(code)) return "GB-NIR";
 	const country = (
 		{

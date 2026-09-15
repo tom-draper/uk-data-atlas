@@ -594,6 +594,16 @@ only **available** when its endpoint, contract and provenance are published.
       partition through `GET /v1/measures/{measure-id}/coverage`. Geography
       and release integrity remains available from `GET /v1/validation`; a
       code-coverage result is explicitly not a claim of equal geometry.
+- [x] Gate every measure and source partition in the validation report. Each
+      observation artifact must reproduce its hash, hold codes that one
+      compiled boundary release of its declared year resolves, cover exactly
+      the nations its catalogue entry declares, and carry values its measure
+      allows. A declared total, such as recorded crime or households by car
+      availability, must equal the sum of its components in every area and
+      period. The first build found 95 exceptions, each now published with
+      its reason: 2016 to 2023 ward election codes from outside their year's
+      release, 2023 ward codes inferred from names, and party votes that do
+      not add up to 2021 to 2025 local election totals.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy.
 - [ ] Compare two Atlas releases, identifying changed datasets, boundary
@@ -1624,6 +1634,8 @@ pnpm start
 - `GET /v1/validation`
 - `GET /v1/validation/boundary-releases/{type}/{release}`
 - `GET /v1/validation/crosswalks/{crosswalk-id}`
+- `GET /v1/validation/measures/{measure-id}`
+- `GET /v1/validation/exports/{export-id}`
 - `GET /v1/exports`
 - `GET /v1/exports/{export-id}`
 - `GET /v1/atlas-release`
@@ -1731,15 +1743,34 @@ for area overlap). Where it can, it recomputes rather than restating a
 compiler's claim: artifact hashes, code resolution against compiled areas,
 weight sums, and coverage from the published shares.
 
+It also checks each measure and each of its source partitions, which are
+identified by the export that serves them. A measure's definition must agree
+with itself and the catalogue: availability matching aggregation, known
+datasets, an export for every source, and a summable weight on the same
+geography and periods for any weighted mean. Each partition is read from its
+observation artifact, not from the catalogue's summary of it: the artifact
+must reproduce its hash and match the export manifest and the catalogue's
+periods and latest-period record count, with no area code repeated in a
+period; one compiled boundary release of the declared geography and year must
+hold every code, in every period, which also stops a partition holding both a
+merged authority and its predecessors; the codes must cover exactly the
+declared nations; and every value must suit its measure (whole, non-negative
+counts, percentages from 0 to 100, ranks no higher than the areas ranked,
+deciles from 1 to 10, categories only on categorical measures, `derived`
+records on derived measures, and published intervals that contain their
+value). `config/measure-totals.json` declares measures that are the sum of
+others in the same partitions, and each such partition must match its
+components exactly in every area and period.
+
 A check either passes or is waived. Every exception must be listed in
 `config/validation-waivers.json` with its reason, and the build fails on one
 that is not, or on a waiver that no longer matches an exception, so the file
 stays an accurate list of known gaps. The report publishes each waived
 check's finding beside its reason. `GET /v1/validation` serves the report,
-with `?status=waived` for just the exceptions, and each boundary release and
-crosswalk's checks are also served at `/v1/validation` followed by the
-resource's own path. It covers geography only so far; measure checks such as
-unmatched records and preserved totals belong here once measures exist.
+with `?status=waived` for just the exceptions, and each boundary release,
+crosswalk, measure and export's checks are also served at `/v1/validation`
+followed by the resource's own path. Conversion checks, such as preserved
+totals across a crosswalk, belong here once conversion is offered.
 
 `GET /v1/exports` lists every source partition as a whole, immutable JSON
 download. `GET /v1/exports/{export-id}` returns that exact observation
