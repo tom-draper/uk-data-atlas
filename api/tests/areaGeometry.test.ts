@@ -124,7 +124,7 @@ test("throws when no geometry source is registered for the identity", () => {
 		const cache = new AreaGeometryCache(root, new Map());
 		assert.throws(
 			() => cache.get("ward", "2025", "E05000001"),
-			/No raw GeoJSON geometry source is available for ward\/2025/,
+			/No raw geometry source is available for ward\/2025/,
 		);
 	} finally {
 		rmSync(root, { recursive: true, force: true });

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:2d07f5077ea222c1b2c5e7ec977f7bfe84982fbf4eaf24dffe79a1853b4801d5",
+	"releaseId": "sha256:3cb371ce19a89dc092ec85687bd4bdac0f77759c6a0ef99693a07dc535448cba",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -50,7 +50,7 @@
 		{
 			"id": "geometry-sources",
 			"path": "geometry-sources.json",
-			"contentHash": "sha256:95bbbf5151d66c61389842078e17ecb936484a63be47cb52b5e52506b01d9e53"
+			"contentHash": "sha256:41ed68a1c7032f9bfc23aaf22ef4b59ff83fb706d856b374f8a85589c9cdcfec"
 		},
 		{
 			"id": "crosswalk-inventory",
@@ -70,7 +70,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:4930c9d58b9f08ae13d6a36e0770dbcb8071627851a50ee9f5f7d667618fdeca"
+			"contentHash": "sha256:5cb6316199f4fab3a4789be3334ae54b7761939c41fa642fe8ba2051650c3134"
 		},
 		{
 			"id": "source-inventory",

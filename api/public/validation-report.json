@@ -3,24 +3,24 @@
 	"inputs": {
 		"boundaryRegistry": "sha256:72a44d7410092600f56c22491e5a4391e7fe33a64762239e7ae0fd444ecdff44",
 		"areaInventory": "sha256:6deb26f05b9a9a2b20aa7d3cfa99f1a748542abb424ce144856d9cbbf2b0e6cf",
-		"geometrySources": "sha256:6b9878d6096a0a8d95444f9c50891d16f52349c2f743e53a7c2696a9bfbc59f5",
+		"geometrySources": "sha256:8a9df2fa7a6b8671d653e1864deb6c66528b04c8773c207b01d52d29ac4112c4",
 		"crosswalkInventory": "sha256:5576446ba0b841f3cb756c0bd7485f50bf7181c45660c1f166608add82250c41",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 		"geographyInventory": "sha256:f3d75ca431c25041cbb9e07c39ccc694a89589db5a8958ede82b722b243120ed",
 		"dataCatalog": "sha256:fc79fd926ec959a944d45022e618d3e77f32170fa59e880a9f54ecee68e8fb7e",
 		"exportManifest": "sha256:5a1f3a46ae840f6859d18477daa16934200fa468a235f0e2088e37ac33685503",
 		"measureTotals": "sha256:9a8f9eb8c568e5a99a296ca4e509a098bde9669f186d41a881340de6209fb9de",
-		"waivers": "sha256:076a0b4ff6727a3e37468a2403319c3ca07f0d7da0eed2d846ce155c9840df37"
+		"waivers": "sha256:8ca0b0ed9a12c3a51b83a7e27fafe34d8da482e8317b6eab5db84883133e4ded"
 	},
 	"summary": {
 		"resourceCount": 537,
 		"checkCount": 1751,
-		"passedCount": 1669,
-		"waivedCount": 82,
+		"passedCount": 1671,
+		"waivedCount": 80,
 		"coverage": {
 			"boundaryReleases": 71,
 			"areaIdentities": 71,
-			"servableGeometry": 69,
+			"servableGeometry": 71,
 			"withRelationships": 23,
 			"crosswalks": 15,
 			"weightedCrosswalks": 2,
@@ -505,7 +505,7 @@
 		{
 			"id": "boundary-releases/dataZone/2011-12-sc-bfc",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -520,10 +520,11 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "No declared raw GeoJSON source is available.",
-					"waiver": {
-						"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet."
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2
 					}
 				},
 				{
@@ -1690,7 +1691,7 @@
 		{
 			"id": "boundary-releases/superOutputArea/2011-ni",
 			"kind": "boundary-release",
-			"status": "waived",
+			"status": "passed",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -1705,10 +1706,11 @@
 				},
 				{
 					"id": "geometry-servable",
-					"status": "waived",
-					"detail": "No declared raw GeoJSON source is available.",
-					"waiver": {
-						"reason": "Held only as Shapefile and MapInfo sources. Identities are read from the Shapefile attribute table, but no compiler reads Shapefile geometry yet."
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:29902",
+						"transformation": "TM65 to WGS 84 (2)",
+						"transformationAccuracyM": 1
 					}
 				},
 				{
@@ -17420,5 +17422,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:6a7509b02df076313ed9c9fc9f2998f5a23b7e6f75a6161571b74b15e0642883"
+	"contentHash": "sha256:882953017619433c0a2c39841533f90042db1ec5cddc1de819f6bff260ac35cd"
 }
