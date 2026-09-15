@@ -128,7 +128,7 @@ export async function loadQualification(
 			metadata: {
 				source: "Office for National Statistics. Census 2021: Highest Level of Qualification, England and Wales. TS067.",
 				notes: [
-					"England and Wales only. Excludes those not applicable (full-time students).",
+					"England and Wales only. Covers usual residents aged 16 and over; residents under 16, whom the table records as 'Does not apply', are excluded.",
 				],
 			},
 		},

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:0553ffe094de93ecfdf17e8d1ab1f54f14a52ea2bd8ccbc8829583ca1828f859",
+	"contentHash": "sha256:a6fd435633b23bf7f9319d66912cf103dd3c4c2d14eaf25bcc52acd6e529eec4",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1786,7 +1786,7 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:37e2df6d1d556b07e8529c7d531aa70e0694e76584764287d3a20026bce85bfa"
+			"metadataHash": "sha256:a07daa388be7e03008aad46a6651989906a9f4ec27a44bf0459ac25ef1b590ca"
 		},
 		{
 			"key": "geography/land-area",

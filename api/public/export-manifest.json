@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4720c0a2c1a49eb45a3f8b42cd60cdb9b29b5d37a6628d4d3a70ba9b83f2e090",
-	"dataCatalogHash": "sha256:b916f4f91a2d42b6a7869be6a71cc512f2f63c77099134824320cf3990b3fef6",
+	"contentHash": "sha256:40f525dcfa1c1d5e7218a576341abb7338047c9410ffb73d8ed1dcde307daef2",
+	"dataCatalogHash": "sha256:dcbafd99ca37591ce2ff38fa407522bf20cb389b88f8fc5dc72d206bd92cffb2",
 	"exports": [
 		{
 			"id": "car-availability-none-observations",
