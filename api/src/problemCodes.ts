@@ -58,7 +58,7 @@ export const PROBLEM_CODES = {
 		meaning:
 			"A named location or a weight partition leaves out areas the sum would need, so no partial sum is served.",
 		example:
-			"/v1/data/population-estimate/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=carlisle",
+			"/v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=belfast",
 	},
 	no_release_for_date: {
 		statuses: [404],

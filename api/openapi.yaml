@@ -3813,7 +3813,7 @@ components:
 
     PartialCoverageProblem:
       description: >
-        A named location or a weight partition leaves out areas the sum would need, so no partial sum is served. Produced by `GET /v1/data/population-estimate/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=carlisle`.
+        A named location or a weight partition leaves out areas the sum would need, so no partial sum is served. Produced by `GET /v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=belfast`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -3824,7 +3824,7 @@ components:
             code:
               const: partial_coverage
       examples:
-        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The named location does not cover this source partition by direct code match: . No conversion or partial sum was applied.","code":"partial_coverage"}
+        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The named location does not cover this source partition by direct code match: N09000003 (absent-from-release). No conversion or partial sum was applied.","code":"partial_coverage"}
 
     NoReleaseForDateProblem:
       description: >
