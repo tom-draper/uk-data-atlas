@@ -98,7 +98,7 @@ only **available** when its endpoint, contract and provenance are published.
       Anglesey; an administrative title is set aside too, so "Bristol" finds
       the authority published as "Bristol, City of". Names that merely begin
       with the query follow equal ones. A place held in several releases comes
-      back once. Of some 83,000 places, "Manchester" is six geographies and a
+      back once. Of some 85,000 places, "Manchester" is six geographies and a
       curated location, and "Newport" thirteen codes.
 - [x] Answer a measure for a place given by name through
       `GET /v1/data/{measure-id}/value?place=`, so "what is the population of
@@ -170,8 +170,12 @@ only **available** when its endpoint, contract and provenance are published.
       refused conversion carries `code: conversion_not_available` and whether
       the crosswalk starts elsewhere, leaves source areas unmapped or splits
       them with no weight.
-- [ ] Publish compiler-discovered relationship candidates only after endpoint
+- [x] Publish compiler-discovered relationship candidates only after endpoint
       validation and an explicit decision to promote them to crosswalks.
+      A candidate is promoted by declaring a crosswalk adapter for it, and the
+      validation gate `candidates-reviewed` fails the build while an eligible
+      candidate has neither a published crosswalk nor a recorded waiver. Of
+      the 13 candidates, 12 are published and one is waived with its reason.
 
 ### Named locations — next
 
@@ -183,8 +187,9 @@ only **available** when its endpoint, contract and provenance are published.
       location is curated as local authority codes, so any other geography is
       reached through a published crosswalk the caller names; asking without
       `via` returns the crosswalks published for that geography and release
-      rather than choosing one. North Wales resolves to 232 wards, Greater
-      Manchester to 215, the North West to 829.
+      rather than choosing one. Through the May 2023 ward crosswalk, North
+      Wales resolves to 232 wards, Greater Manchester to 215 and the North
+      West to 829.
 
 
       The response states what membership means, because it depends on the
@@ -212,8 +217,8 @@ only **available** when its endpoint, contract and provenance are published.
       Visvalingam-Whyatt, measured in the same EPSG:6933 equal-area projection
       as everything else here so a tier means the same thing in Cornwall and
       Shetland, and a part or hole below the threshold is dropped whole rather
-      than left as a triangle. Highland goes from 45,124 vertices to 955 at
-      `low`, for 0.018% of its area. The response reports vertex and part
+      than left as a triangle. In the May 2023 release, Highland goes from
+      45,124 vertices to 955 at `low`, for 0.018% of its area. The response reports vertex and part
       counts before and after, and carries the method with it. Two caveats
       travel in that block: a tier bounds the size of feature dropped rather
       than how far a vertex may move, and each area is generalised alone, so
@@ -226,8 +231,8 @@ only **available** when its endpoint, contract and provenance are published.
       by this one, each member carrying the crosswalk that places it there, so
       membership stays a published claim rather than a point-in-polygon sweep
       run at request time. Takes the same `tier`, which is what makes it usable
-      at scale: Birmingham's 69 wards are 3,423 vertices at `full` and 314 at
-      `low`. A member published as a relationship but with no servable geometry
+      at scale: in May 2023, Birmingham's 69 wards are 3,423 vertices at
+      `full` and 314 at `low`. A member published as a relationship but with no servable geometry
       is listed in `withoutGeometry` with its reason rather than passed over,
       so `members` against `withGeometry` tells a partial collection from a
       complete one. An area with no published containment relationship is a
@@ -277,8 +282,8 @@ only **available** when its endpoint, contract and provenance are published.
       counts either way so their exclusion is visible. Corners are real: none
       occur between local authorities, while about 3% of ward adjacencies are
       one. The response also totals perimeter against shared border, which
-      names the coastline: Birmingham shares 100% of its perimeter over seven
-      neighbours, Belfast 94% with 4.1 km left on the lough, Highland 7% with
+      names the coastline. In the May 2023 release, Birmingham shares 100% of
+      its perimeter over seven neighbours, Belfast 94% with 4.1 km left on the lough, Highland 7% with
       4,445 km of coast, and the Isle of Wight has no neighbours at all.
 - [ ] Compare two boundary releases to identify recodes, membership changes and
       geometry changes.
@@ -403,12 +408,19 @@ only **available** when its endpoint, contract and provenance are published.
       each record says whether the start and end intervals overlap: no male
       life expectancy fell between 2001-2003 and 2020-2022, and the smallest
       gains, such as Ceredigion's 0.65 years, sit within overlapping intervals.
-- [x] Sum a published extensive measure through
-      `GET /v1/data/{measure-id}/aggregate` only when every member code in a
-      curated named location occurs directly in one requested source partition.
-      The response marks the value as derived and supplies its direct-code
-      membership evidence; non-additive measures, incomplete locations and all
-      conversions are rejected.
+- [x] Sum an extensive measure, or take the weighted mean of an intensive one
+      that names its weight, over a curated named location through
+      `GET /v1/data/{measure-id}/aggregate`. Members are matched by code in one
+      requested source partition. A location lists every code it has been
+      made of, so a code of another vintage, whose successor or predecessor
+      the partition holds instead, is passed over, as is a legacy code naming
+      no compiled area; both are listed in
+      `aggregation.memberCodesNotInPartition`. Any other missing member is
+      refused with `code: partial_coverage` rather than summed as a partial
+      total, and a location none of whose codes is in the partition is refused
+      with its reason. The response marks the value as derived and supplies
+      its membership evidence; non-aggregatable measures and all conversions
+      are rejected.
 - [x] Return uncertainty intervals where the source publication supports them.
       A measure whose publisher reports intervals declares `uncertainty` (kind
       and level), and each of its records carries `confidenceInterval` with the
@@ -571,9 +583,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Sum an extensive measure over a curated named location or a country
       through `GET /v1/data/{measure-id}/aggregate`. Country membership follows
       the GSS code prefix, which the coding scheme assigns by country, so it is
-      definitional rather than a geometric comparison. A location that is not a
-      complete code match, a country the partition does not reach, and any
-      non-additive measure are all rejected rather than summed.
+      definitional rather than a geometric comparison. A location with a missing
+      member its vintage does not explain, a country the partition does not
+      reach, and a measure that neither adds nor names a usable weight are all
+      rejected rather than summed.
 - [x] Aggregate an extensive or explicitly weighted local-authority measure
       over an English region through `GET /v1/data/{measure-id}/aggregate`.
       Callers must name the 2025 local-authority-to-region crosswalk and a
@@ -620,11 +633,14 @@ only **available** when its endpoint, contract and provenance are published.
       availability, must equal the sum of its components in every area and
       period. The first build found 95 exceptions. Fixing the local election
       loader cleared 17: 2023 ward codes inferred from other years' names, and
-      party votes that did not add up to 2021 to 2025 totals. The rest are
-      published with their reasons, such as 2016 to 2019 ward election codes
-      from outside their year's release.
+      party votes that did not add up to 2021 to 2025 totals. The exceptions
+      that remain are published with their reasons, 47 waived checks in the
+      current report, such as 2016 to 2019 ward election codes from outside
+      their year's release.
 - [ ] Machine-readable change log, release notifications and deprecation
-      policy.
+      policy. `GET /v1/atlas-releases/compare` is already a machine-readable
+      change log between any two releases; there are no release notifications
+      and no deprecation policy yet.
 - [x] Compare two Atlas releases, identifying changed datasets, boundary
       releases, crosswalks, validation exceptions and named-location definitions.
       `GET /v1/atlas-releases/compare` lists the artifacts added, removed and
@@ -641,7 +657,10 @@ only **available** when its endpoint, contract and provenance are published.
       Licence names are reproduced as the publisher states them and are not
       interpreted, because one source already carries two across its date
       range.
-- [ ] Cached bulk exports and reproducible query snapshots.
+- [ ] Cached bulk exports and reproducible query snapshots. Whole source
+      partitions and lookup tables are already immutable, cacheable downloads
+      through `GET /v1/exports` and `GET /v1/lookups`; a query's results
+      cannot yet be snapshotted.
 - [ ] Operational API keys, fair rate limits and managed services only when
       they add service value rather than restricting openly licensed data.
 - [ ] Publish an export manifest for every asynchronous or bulk download with
@@ -651,8 +670,13 @@ only **available** when its endpoint, contract and provenance are published.
       counts, record schema and the datasets to attribute, under the Atlas
       release its envelope names. There are no asynchronous exports or query
       snapshots yet.
-- [x] Report a measure/geography/release quality matrix before large queries,
-      including observed, derived, missing and suppressed-value coverage.
+- [x] Report a measure/geography/release quality matrix before large queries
+      through `GET /v1/measures/{measure-id}/quality`: observed and derived
+      record counts for every period, code coverage against each compatible
+      boundary release, and the source's coverage note naming any area with
+      no value. Suppressed values are named in that note rather than counted
+      separately, because the source partitions do not publish them as
+      records.
 
 ### Examples this checklist is intended to answer
 
@@ -821,14 +845,20 @@ and resulting `atlasRelease` together.
 
 Implementation and documentation tasks:
 
-- [ ] Make OpenAPI the tested route inventory: generate or verify root links,
+- [x] Make OpenAPI the tested route inventory: generate or verify root links,
       route examples and the short endpoint list from one source, and fail a
       contract test when an implemented route, OpenAPI operation or public
-      example disagrees. `tests/contract.test.ts` now runs against the
-      compiled catalogues: every route the index advertises must be served,
-      the README endpoint list must name every advertised route and nothing
-      else, and every concrete README example must return 200. The OpenAPI
-      response examples are not yet checked against live responses.
+      example disagrees. `tests/openapi.test.ts` checks the OpenAPI paths are
+      exactly the routes the index advertises, and `tests/contract.test.ts`
+      runs against the compiled catalogues: every advertised route must be
+      served, the README endpoint list must name every advertised route and
+      nothing else, and every concrete README example must return 200. Every
+      OpenAPI response example names the request that produces it in
+      `x-example-request` and must match that live response in structure,
+      identifiers and text; counts and hashes are compared by type, since
+      they change with every data build. Each problem code's schema example
+      must be its example request's live response. The document is parsed
+      strictly, so a repeated key fails the build.
 - [ ] Group every OpenAPI operation under task-oriented tags: **Start here**,
       **Map**, **Trend**, **Sync**, **Geography**, **Data catalogue** and
       **Governance**. Give each operation a plain-language summary, its
@@ -837,7 +867,9 @@ Implementation and documentation tasks:
       most likely refusal is not yet documented operation by operation.
 - [ ] Publish a glossary, endpoint chooser and three copy-paste quick starts
       (correct map, defensible trend, reliable sync) which use only current
-      OpenAPI routes. Treat them as executable contract tests.
+      OpenAPI routes. Treat them as executable contract tests. The glossary and
+      endpoint chooser are the two tables above; they are not yet published
+      with the OpenAPI description, and the quick starts are not written.
 - [ ] Document the four clocks/identities above beside every data endpoint and
       response example. Do not rename v1 parameters; decide clearer names such
       as `observationPeriod`, `sourceGeography`, `geometryRelease` and
@@ -899,13 +931,13 @@ Implementation and documentation tasks:
       mappings, resolutions and their effect on published resources.
 - [ ] Publish a deprecation policy, availability and freshness targets, and a
       status endpoint before offering a paid reliability commitment.
-- [ ] Add conditional request support (`ETag`, `Last-Modified` and the matching
-      request headers), clear cache semantics and quota headers. Every `200`
-      response now carries a strong `ETag`, the SHA-256 of its bytes, with
+- [x] Add conditional request support and clear cache semantics. Every `200`
+      response carries a strong `ETag`, the SHA-256 of its bytes, with
       `Cache-Control: public, max-age=300, must-revalidate`; `If-None-Match`
       returns `304`, `HEAD` is served, and errors are `no-store`. No
-      `Last-Modified` is sent, since a release records no build time, and
-      there are no quotas to report.
+      `Last-Modified` is sent, because a release records no build time and a
+      guessed date would be a weaker validator than the `ETag`. Quota headers
+      arrive with quotas, under the API-key work in Phase 3.
 
 Candidate read-only routes:
 
@@ -2443,8 +2475,8 @@ server renders a download from the artifact it has loaded and serves it only
 if the bytes match the manifest's hash, so every download of a lookup in a
 given Atlas release is byte-identical. The Atlas release pins the lookup
 manifest by hash, so a change in how any lookup renders makes a new release.
-All 87 lookups, 108 MB across both
-formats, were checked this way against a running server.
+All 88 lookups, 114 MB across both
+formats, pass that check.
 
 The build's final step writes `public/atlas-release.json`, an immutable
 manifest that references every other build-time artifact (the boundary
