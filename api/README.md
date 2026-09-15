@@ -533,11 +533,14 @@ only **available** when its endpoint, contract and provenance are published.
       or national totals.
 - [x] Return provisional reported road collisions for January to June 2025
       through `GET /v1/data/road-collisions` and its fatal, serious and slight
-      subsets, for 349 of Great Britain's 350 local authorities on 2024 codes.
-      Each collision is counted in the authority the Department for Transport
-      assigns it to in the published record, not by placing its coordinates
-      in a boundary, so the counts are exact tallies of the source rows and
-      the three severities add up to the total in every authority. The period
+      subsets, for 349 of Great Britain's 350 local authorities on 2024 codes,
+      and in a second partition for the 20,623 December 2021 LSOAs in England
+      and Wales that have a collision; Scotland has no LSOAs.
+      Each collision is counted in the authority and LSOA the Department for
+      Transport assigns it to in the published record, not by placing its
+      coordinates in a boundary, so the counts are exact tallies of the source
+      rows and the three severities add up to the total in every area. An
+      LSOA with no collision records has no value rather than zero. The period
       is `2025-H1`, a provisional half year. Collisions assigned to Heathrow
       Airport are counted in no authority, and North Somerset has no records
       in the file, so it has no value rather than zero. Serious and slight

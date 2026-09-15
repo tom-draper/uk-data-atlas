@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:12d556e79d6e5a45e4bde94ba81c21f45fffe6fefd104b51303e8a70d16689b4",
-	"dataCatalogHash": "sha256:ff7da31226d0266de4d0fea6a5cdf26f11afcd84cdf3da461e42737e8c31a041",
+	"contentHash": "sha256:57550a125b584161c38b431eb297a7b8e4cb2fdc473bd06f66bf9a57a034fb22",
+	"dataCatalogHash": "sha256:4eed5a7f1ff14d6384ced20b2a3d1f7628f7f9a8165e3cead8cb8986a8bcac8b",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
@@ -14060,6 +14060,58 @@
 			}
 		},
 		{
+			"id": "road-collisions-fatal-lsoa-2021-observations",
+			"measureId": "road-collisions-fatal",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "road-collisions-fatal-lsoa-2021-observations",
+			"contentHash": "sha256:b759703836f985a7939154e0b711a769fa860c538e43bfc7fab7073092b5a35d",
+			"bytes": 1134508,
+			"href": "/v1/exports/road-collisions-fatal-lsoa-2021-observations",
+			"recordCount": 20623,
+			"recordCountByPeriod": {
+				"2025-H1": 20623
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions-fatal",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
 			"id": "road-collisions-fatal-observations",
 			"measureId": "road-collisions-fatal",
 			"datasetId": "road-collisions",
@@ -14103,6 +14155,58 @@
 			},
 			"provenance": {
 				"measure": "/v1/measures/road-collisions-fatal",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "road-collisions-lsoa-2021-observations",
+			"measureId": "road-collisions",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "road-collisions-lsoa-2021-observations",
+			"contentHash": "sha256:002d2cf672cbf6028386f66cdf19312f917b90a0d3c56848a440256245d176ef",
+			"bytes": 1134723,
+			"href": "/v1/exports/road-collisions-lsoa-2021-observations",
+			"recordCount": 20623,
+			"recordCountByPeriod": {
+				"2025-H1": 20623
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions",
 				"datasets": [
 					{
 						"id": "road-collisions",
@@ -14164,6 +14268,58 @@
 			}
 		},
 		{
+			"id": "road-collisions-serious-lsoa-2021-observations",
+			"measureId": "road-collisions-serious",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "road-collisions-serious-lsoa-2021-observations",
+			"contentHash": "sha256:d776ae75f9bda75695b3a9d91d7bf8687473fe0f0aaac8e19c96b8a948eafcb2",
+			"bytes": 1134513,
+			"href": "/v1/exports/road-collisions-serious-lsoa-2021-observations",
+			"recordCount": 20623,
+			"recordCountByPeriod": {
+				"2025-H1": 20623
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions-serious",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
 			"id": "road-collisions-serious-observations",
 			"measureId": "road-collisions-serious",
 			"datasetId": "road-collisions",
@@ -14207,6 +14363,58 @@
 			},
 			"provenance": {
 				"measure": "/v1/measures/road-collisions-serious",
+				"datasets": [
+					{
+						"id": "road-collisions",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "road-collisions-slight-lsoa-2021-observations",
+			"measureId": "road-collisions-slight",
+			"datasetId": "road-collisions",
+			"periods": [
+				"2025-H1"
+			],
+			"sourceGeography": {
+				"type": "lsoa",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "road-collisions-slight-lsoa-2021-observations",
+			"contentHash": "sha256:e788e7b64a9519085f33a6ac1720a7a07dfe6262a4c21e0dcdaf275cedfcb8d8",
+			"bytes": 1134619,
+			"href": "/v1/exports/road-collisions-slight-lsoa-2021-observations",
+			"recordCount": 20623,
+			"recordCountByPeriod": {
+				"2025-H1": 20623
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/road-collisions-slight",
 				"datasets": [
 					{
 						"id": "road-collisions",

@@ -885,9 +885,10 @@ const localAuthorityFieldWithGaps = (
 	isAuthority: (code: string) => boolean = () => true,
 	/**
 	 * The table to read. Crime keeps its per-partnership records beside the
-	 * authority ones, under `partnerships`, in the same dataset.
+	 * authority ones, under `partnerships`, and road collisions its LSOA
+	 * records under `lsoas`, in the same dataset.
 	 */
-	table: "data" | "partnerships" = "data",
+	table: "data" | "partnerships" | "lsoas" = "data",
 ) => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PopulationFile;
 	const entries = Object.entries(source);
@@ -1873,7 +1874,12 @@ export const compileDataCatalog = ({
 		geography?: SourceGeography["type"];
 		/** The code vintage the partition is labelled with, when not the dataset's. */
 		partitionBoundaryYear?: number;
-		table?: "data" | "partnerships";
+		table?: "data" | "partnerships" | "lsoas";
+		/**
+		 * The observation artifact's name after the measure id, for a further
+		 * partition of measures another call has already published.
+		 */
+		artifactStem?: string;
 		mergeApril2023?: boolean;
 		coverageNote: string;
 		notes: string[];
@@ -1949,6 +1955,11 @@ export const compileDataCatalog = ({
 					sources: [
 						{
 							datasetId: spec.datasetId,
+							...(spec.artifactStem
+								? {
+										observationArtifact: `${indicator.id}-${spec.artifactStem}-observations`,
+									}
+								: {}),
 							periods: [spec.period],
 							sourceGeography: {
 								type: geography,
@@ -2165,12 +2176,48 @@ export const compileDataCatalog = ({
 		aggregation: { kind: "extensive", operation: "sum", available: true },
 		notes: [note],
 	});
-	const roadCollisionsExcluded = Object.values(
+	const roadCollisionsEdition = Object.values(
 		JSON.parse(readFileSync(roadCollisionsPath, "utf8")) as Record<
 			string,
-			{ excluded?: Array<{ code: string; collisions: number }> }
+			{
+				excluded?: Array<{ code: string; collisions: number }>;
+				withoutLsoa?: Record<string, number>;
+			}
 		>,
-	).flatMap((edition) => edition.excluded ?? []);
+	)[0];
+	const collisionCount = (count: number) =>
+		`${count} collision${count === 1 ? "" : "s"}`;
+	const roadCollisionIndicators = [
+		collisions(
+			"road-collisions",
+			"Reported road collisions",
+			"collisions",
+			"Every reported collision, whatever its severity.",
+		),
+		collisions(
+			"road-collisions-fatal",
+			"Fatal road collisions",
+			"fatal",
+			"Collisions in which someone died within 30 days, a subset of all reported collisions.",
+		),
+		collisions(
+			"road-collisions-serious",
+			"Serious road collisions",
+			"serious",
+			"Collisions whose most severe injury the police recorded as serious. Forces record injuries through two different systems, so this share varies by force as well as by collision; the Department for Transport publishes adjusted estimates for comparisons between forces, which are not served here.",
+		),
+		collisions(
+			"road-collisions-slight",
+			"Slight road collisions",
+			"slight",
+			"Collisions whose most severe injury the police recorded as slight, with the same caveat about recording systems as serious collisions.",
+		),
+	];
+	const roadCollisionNotes = [
+		"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
+		"Each collision is counted in the area the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
+		"These count collisions reported to the police, not casualties or unreported collisions.",
+	];
 	publishIndicators({
 		datasetId: "road-collisions",
 		path: roadCollisionsPath,
@@ -2179,44 +2226,44 @@ export const compileDataCatalog = ({
 		expectedCodes: [...populationCodes].filter(
 			(code) => countryForCode(code) !== "GB-NIR",
 		),
-		coverageNote:
+		coverageNote: [
 			"Published for Great Britain; Northern Ireland's collisions are recorded separately and are not in this file.",
-		notes: [
-			"Provisional reported personal injury collisions from January to June 2025, a half year, which the Department for Transport revises before its final annual release. The period 2025-H1 is not comparable with a full year.",
-			"Each collision is counted in the local authority the Department for Transport assigns it to in the published record, not by placing its coordinates in a boundary.",
-			...roadCollisionsExcluded.map(
+			...(roadCollisionsEdition?.excluded ?? []).map(
 				({ code, collisions: count }) =>
-					`${count} collision${count === 1 ? " is" : "s are"} assigned to ${code}, which is not a local authority code, and ${count === 1 ? "is" : "are"} not counted in any authority.`,
+					`${collisionCount(count)} assigned to ${code}, which is not a local authority code, ${count === 1 ? "is" : "are"} not counted in any authority.`,
 			),
-			"An authority with no collision records in this provisional file has no value rather than zero, since its collisions may not yet have been reported.",
-			"These count collisions reported to the police, not casualties or unreported collisions.",
-		],
-		indicators: [
-			collisions(
-				"road-collisions",
-				"Reported road collisions",
-				"collisions",
-				"Every reported collision, whatever its severity.",
-			),
-			collisions(
-				"road-collisions-fatal",
-				"Fatal road collisions",
-				"fatal",
-				"Collisions in which someone died within 30 days, a subset of all reported collisions.",
-			),
-			collisions(
-				"road-collisions-serious",
-				"Serious road collisions",
-				"serious",
-				"Collisions whose most severe injury the police recorded as serious. Forces record injuries through two different systems, so this share varies by force as well as by collision; the Department for Transport publishes adjusted estimates for comparisons between forces, which are not served here.",
-			),
-			collisions(
-				"road-collisions-slight",
-				"Slight road collisions",
-				"slight",
-				"Collisions whose most severe injury the police recorded as slight, with the same caveat about recording systems as serious collisions.",
-			),
-		],
+			"An authority with no collision records has no value rather than zero, since its collisions may not yet have been reported.",
+		].join(" "),
+		notes: roadCollisionNotes,
+		indicators: roadCollisionIndicators,
+	});
+	const scottishWithoutLsoa =
+		roadCollisionsEdition?.withoutLsoa?.["GB-SCT"] ?? 0;
+	const otherWithoutLsoa = Object.entries(
+		roadCollisionsEdition?.withoutLsoa ?? {},
+	)
+		.filter(([nation]) => nation !== "GB-SCT")
+		.reduce((total, [, count]) => total + count, 0);
+	publishIndicators({
+		datasetId: "road-collisions",
+		path: roadCollisionsPath,
+		boundaryYear: 2024,
+		geography: "lsoa",
+		partitionBoundaryYear: 2021,
+		table: "lsoas",
+		artifactStem: "lsoa-2021",
+		period: "2025-H1",
+		coverageNote: [
+			`Published for England and Wales on December 2021 LSOAs. Scotland has no LSOAs, so its ${collisionCount(scottishWithoutLsoa)} are not in this partition.`,
+			...(otherWithoutLsoa > 0
+				? [
+						`${collisionCount(otherWithoutLsoa)} in England and Wales ${otherWithoutLsoa === 1 ? "has" : "have"} no LSOA code and ${otherWithoutLsoa === 1 ? "is" : "are"} not counted.`,
+					]
+				: []),
+			"An LSOA with no collision records has no value rather than zero: most had none, but a provisional file cannot tell that apart from collisions not yet reported.",
+		].join(" "),
+		notes: roadCollisionNotes,
+		indicators: roadCollisionIndicators,
 	});
 	const medianPay = (
 		id: string,
@@ -2865,9 +2912,34 @@ export const compileDataCatalog = ({
 			),
 		],
 	});
-	const indicatorMeasures = indicatorObservations.map(
-		({ measure }) => measure,
-	);
+	// A measure published in more than one partition, such as road collisions
+	// by local authority and by LSOA, is one measure with a source for each.
+	const indicatorMeasures = [
+		...indicatorObservations
+			.reduce((measures, { measure }) => {
+				const published = measures.get(measure.id);
+				measures.set(
+					measure.id,
+					published
+						? {
+								...published,
+								sources: [
+									...published.sources,
+									...measure.sources,
+								],
+								notes: [
+									...new Set([
+										...(published.notes ?? []),
+										...(measure.notes ?? []),
+									]),
+								],
+							}
+						: measure,
+				);
+				return measures;
+			}, new Map<string, Measure>())
+			.values(),
+	];
 
 	/**
 	 * Population density, the first measure derived from two others.
