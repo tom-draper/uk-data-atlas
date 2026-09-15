@@ -1,12 +1,16 @@
 import type { AreaLookup } from "./areaInventory";
+import {
+	cursorFor,
+	keyFromCursor,
+	MAX_PAGE_SIZE,
+	readPageSize,
+} from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type {
 	AreaSearchIndex,
 	AreaSearchResult,
 	RouteRequest,
 } from "./routing";
-
-const MAX_PAGE_SIZE = 500;
 
 const searchableAreas = (areaLookup: AreaLookup): AreaSearchIndex =>
 	[...areaLookup.entries()]
@@ -32,25 +36,6 @@ const matchesQuery = (area: AreaSearchResult, query: string) => {
 			alias.toLocaleLowerCase().startsWith(normalized),
 		) === true
 	);
-};
-
-const pageSize = (value: string | null) => {
-	if (value === null) return 100;
-	if (!/^[1-9]\d*$/.test(value)) return undefined;
-	const parsed = Number(value);
-	return parsed <= MAX_PAGE_SIZE ? parsed : undefined;
-};
-
-const cursorFor = (id: string) => Buffer.from(id).toString("base64url");
-const cursorValue = (cursor: string) => {
-	try {
-		const value = Buffer.from(cursor, "base64url").toString("utf8");
-		return value.length > 0 && cursorFor(value) === cursor
-			? value
-			: undefined;
-	} catch {
-		return undefined;
-	}
 };
 
 /** Search compiled area identities with stable cursor pagination. */
@@ -93,7 +78,7 @@ export const handleAreaSearchRoutes = ({
 			? exact
 			: filtered.filter((area) => matchesQuery(area, query))
 		: filtered;
-	const limit = pageSize(parsedUrl.searchParams.get("limit"));
+	const limit = readPageSize(parsedUrl.searchParams.get("limit"));
 	if (limit === undefined)
 		return problem(
 			400,
@@ -101,7 +86,7 @@ export const handleAreaSearchRoutes = ({
 			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 		);
 	const cursor = parsedUrl.searchParams.get("cursor");
-	const id = cursor ? cursorValue(cursor) : undefined;
+	const id = cursor ? keyFromCursor(cursor) : undefined;
 	if (cursor && !id)
 		return problem(400, "Invalid Query", "cursor is invalid.");
 	const offset = id ? matches.findIndex((area) => area.id === id) + 1 : 0;

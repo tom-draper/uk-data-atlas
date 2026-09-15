@@ -63,6 +63,13 @@ import {
 	type CallerSelectedGeometry,
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
+import {
+	cursorFor,
+	keyFromCursor,
+	MAX_PAGE_SIZE,
+	nextPageHref,
+	readPageSize,
+} from "./pagination";
 import { handleRoute } from "./routeHandlers";
 import type {
 	AreaSearchIndex,
@@ -142,9 +149,6 @@ const decodePathSegment = (segment: string) => {
 	}
 };
 
-const DEFAULT_PAGE_SIZE = 100;
-const MAX_PAGE_SIZE = 500;
-
 /**
  * The canonical identity of a country code, from the newest compiled country
  * release. Countries are stable across releases, so the newest is a safe
@@ -212,37 +216,12 @@ const statisticPhrase = (statistic: string) =>
 		"life-expectancy": "a life expectancy",
 	})[statistic] ?? `a ${statistic}`;
 
-/** The same query with the cursor advanced, as a relative `Link` target. */
-const nextPageHref = (parsedUrl: URL, nextCursor: string) => {
-	const params = new URLSearchParams(parsedUrl.searchParams);
-	params.set("cursor", nextCursor);
-	return `${parsedUrl.pathname}?${params.toString()}`;
-};
-
-const readPageSize = (value: string | null): number | undefined => {
-	if (value === null) return DEFAULT_PAGE_SIZE;
-	if (!/^[1-9]\d*$/.test(value)) return undefined;
-	const size = Number(value);
-	return size <= MAX_PAGE_SIZE ? size : undefined;
-};
-
 const readRankingOrder = (value: string | null): RankingOrder | undefined =>
 	value === null || value === "desc"
 		? "desc"
 		: value === "asc"
 			? "asc"
 			: undefined;
-
-const cursorFor = (code: string) => Buffer.from(code).toString("base64url");
-
-const codeFromCursor = (cursor: string): string | undefined => {
-	try {
-		const code = Buffer.from(cursor, "base64url").toString("utf8");
-		return code.length > 0 && cursorFor(code) === cursor ? code : undefined;
-	} catch {
-		return undefined;
-	}
-};
 
 const searchableAreas = (areaLookup: AreaLookup): AreaSearchResult[] =>
 	[...areaLookup.entries()]
@@ -1308,7 +1287,7 @@ export const route = (
 			);
 		}
 		const cursor = parsedUrl.searchParams.get("cursor");
-		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 		if (cursor && !cursorCode)
 			return problem(400, "Invalid Query", "cursor is invalid.");
 		const offset = cursorCode
@@ -1713,7 +1692,7 @@ export const route = (
 				);
 			}
 			const cursor = parsedUrl.searchParams.get("cursor");
-			const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+			const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 			if (cursor && !cursorCode) {
 				return problem(400, "Invalid Query", "cursor is invalid.");
 			}
@@ -1893,7 +1872,7 @@ export const route = (
 			);
 		}
 		const cursor = parsedUrl.searchParams.get("cursor");
-		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 		if (cursor && !cursorCode) {
 			return problem(400, "Invalid Query", "cursor is invalid.");
 		}
@@ -2238,7 +2217,7 @@ export const route = (
 			);
 		}
 		const cursor = parsedUrl.searchParams.get("cursor");
-		const cursorCode = cursor ? codeFromCursor(cursor) : undefined;
+		const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 		if (cursor && !cursorCode) {
 			return problem(400, "Invalid Query", "cursor is invalid.");
 		}
