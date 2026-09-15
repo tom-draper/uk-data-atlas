@@ -541,6 +541,10 @@ only **available** when its endpoint, contract and provenance are published.
       policy.
 - [ ] Compare two Atlas releases, identifying changed datasets, boundary
       releases, crosswalks, validation exceptions and named-location definitions.
+      `GET /v1/atlas-releases/compare` already lists the artifacts added,
+      removed and changed between two releases by content hash; it does not
+      yet say which datasets, releases, crosswalks, exceptions or definitions
+      inside a changed artifact differ.
 - [x] Generate a ready-to-use attribution and licence block for selected
       resources through `GET /v1/attribution`, suitable for a map, report or
       bulk download. A measure is attributed through its source datasets; a
@@ -554,6 +558,11 @@ only **available** when its endpoint, contract and provenance are published.
       they add service value rather than restricting openly licensed data.
 - [ ] Publish an export manifest for every asynchronous or bulk download with
       its schema, query, row count, content hashes, provenance and Atlas release.
+      `GET /v1/exports` already records each whole-partition download's
+      measure, dataset, periods, source geography, content hash and size,
+      under the Atlas release its envelope names. A schema, row count and
+      provenance per download are still to add, and there are no asynchronous
+      exports yet.
 - [x] Report a measure/geography/release quality matrix before large queries,
       including observed, derived, missing and suppressed-value coverage.
 
