@@ -38,19 +38,6 @@ const AREA_METRIC_METHOD = {
 	caveat: "Measured from the boundary as that release publishes it, at its own generalisation. This is not a published land-area statistic: a coastline-clipped boundary still encloses inland water, so these figures differ from the ONS Standard Area Measurement used by population density.",
 } as const;
 
-/**
- * Travels with a neighbour list, because the answer rests on a property of the
- * published release rather than on a distance anyone chose.
- */
-const NEIGHBOUR_METHOD = {
-	rule: "Two areas are neighbours where their boundaries share vertices. Adjacent areas in one release are drawn from the same vertices, so a shared border is the same coordinates on both sides and matches exactly. No distance threshold decides who is a neighbour.",
-	sharedBorder:
-		"Summed over the edges the two areas have in common, each counted once, with ground length from the ellipsoid's radii of curvature at the edge's mid-latitude.",
-	unshared:
-		"Perimeter less the border shared with the neighbours returned. For a landlocked area this is nothing; otherwise it is coastline, a national boundary, or a border with an area outside this release.",
-	limits: "Within one geography and release only. Two areas that genuinely touch on the ground but were drawn from different vertices are not found, which is why this is not offered across releases.",
-} as const;
-
 const decodePathSegment = (segment: string) => {
 	try {
 		return decodeURIComponent(segment);
@@ -177,118 +164,6 @@ export const route = (
 				],
 			}),
 		};
-	}
-
-	if (
-		segments.length === 6 &&
-		segments[0] === "v1" &&
-		segments[1] === "areas" &&
-		segments[5] === "neighbours"
-	) {
-		const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-			string,
-			string,
-			string,
-		];
-		const area = findArea(areaLookup, geography, boundaryRelease, code);
-		if (!area)
-			return areaNotFound(context, geography, boundaryRelease, code);
-		if (!areaGeometryCache)
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the geometry source registry before finding neighbours.",
-			);
-		const touches = parsedUrl.searchParams.get("touches") ?? "edge";
-		if (touches !== "edge" && touches !== "any")
-			return problem(
-				400,
-				"Invalid Query",
-				"touches must be edge, for areas sharing a border, or any, which also returns areas meeting at a single point.",
-			);
-		try {
-			const found = areaGeometryCache.findNeighbours(
-				geography,
-				boundaryRelease,
-				code,
-			);
-			if (!found)
-				return problem(
-					404,
-					"Not Found",
-					"No raw geometry matches that area identity.",
-				);
-			const geometry = areaGeometryCache.get(
-				geography,
-				boundaryRelease,
-				code,
-			)!;
-			const metrics = areaMetrics(geometry);
-			const kept = found.filter(
-				(neighbour) => touches === "any" || neighbour.touch === "edge",
-			);
-			const sharedBorderM = kept.reduce(
-				(total, neighbour) => total + neighbour.sharedBorderM,
-				0,
-			);
-			const perimeterM = metrics?.perimeterM ?? 0;
-			return {
-				status: 200,
-				body: envelope(releaseId, {
-					id: `${geography}/${boundaryRelease}/${code}`,
-					geography,
-					boundaryRelease,
-					...area,
-					touches,
-					border: {
-						perimeterM,
-						sharedBorderM,
-						// A fully landlocked area shares every metre, and
-						// summing its neighbours can land a hair over its own
-						// perimeter, so the remainder is floored at nothing
-						// rather than reported as a negative coastline.
-						unsharedBorderM: Math.max(
-							0,
-							perimeterM - sharedBorderM,
-						),
-						pointOnlyTouches: found.filter(
-							(neighbour) => neighbour.touch === "point",
-						).length,
-					},
-					method: NEIGHBOUR_METHOD,
-					neighbours: kept.flatMap((neighbour) => {
-						const neighbourArea = findArea(
-							areaLookup,
-							geography,
-							boundaryRelease,
-							neighbour.code,
-						);
-						return [
-							{
-								id: `${geography}/${boundaryRelease}/${neighbour.code}`,
-								...(neighbourArea ?? { code: neighbour.code }),
-								touch: neighbour.touch,
-								sharedBorderM: neighbour.sharedBorderM,
-								shareOfPerimeter:
-									perimeterM > 0
-										? neighbour.sharedBorderM / perimeterM
-										: 0,
-								sharedEdges: neighbour.sharedEdges,
-								sharedVertices: neighbour.sharedVertices,
-							},
-						];
-					}),
-				}),
-			};
-		} catch (error) {
-			return problem(
-				503,
-				"Geometry Unavailable",
-				error instanceof Error
-					? error.message
-					: "Geometry could not be loaded for neighbour lookup.",
-			);
-		}
 	}
 
 	if (
