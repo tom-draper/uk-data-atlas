@@ -1,10 +1,20 @@
-import type { DatasetCatalogueEntry } from "../dataCatalog";
+import type {
+	DatasetCatalogueEntry,
+	Measure,
+	MeasureObservationArtifact,
+} from "../dataCatalog";
 import { string, number, object } from "./values";
 
 /** The compiled manifest each dataset is checked against. */
 export type CatalogManifest = {
 	manifestPath: string;
 	datasets: DatasetCatalogueEntry[];
+};
+
+/** A measure and the observation artifact that serves it. */
+export type CompiledMeasure = {
+	measure: Measure;
+	artifact: MeasureObservationArtifact;
 };
 
 export type DatasetManifest = {
