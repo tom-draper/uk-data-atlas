@@ -2,39 +2,39 @@ import type { ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
-import { handleBulkRoutes } from "./bulkRoutes";
-import { handleCrosswalkRoutes } from "./crosswalkRoutes";
-import { handleLocationRoutes } from "./locationRoutes";
-import { handleAreaSearchRoutes } from "./areaSearchRoutes";
-import { handleAreaValidationRoutes } from "./areaValidationRoutes";
-import { handleAreaContainsRoutes } from "./areaContainsRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
-import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
-import { handleAreaHistoryRoutes } from "./areaHistoryRoutes";
-import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
-import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
-import { handlePlaceRoutes } from "./placeRoutes";
-import { handleDataTransformRoutes } from "./dataTransformRoutes";
+import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
 import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
-import { handleGovernanceRoutes } from "./governanceRoutes";
-import { handleSyncRoutes } from "./syncRoutes";
+import { handleDataRoutes } from "./dataRoutes";
 import { handleDataSeriesRoutes } from "./dataSeriesRoutes";
 import { handleDataRankingRoutes } from "./dataRankingRoutes";
-import { handleDataValueRoutes } from "./dataValueRoutes";
 import { handleDataChangeRoutes } from "./dataChangeRoutes";
-import { handleDataConversionRoutes } from "./dataConversionRoutes";
-import { handleDataRoutes } from "./dataRoutes";
+import { handleDataValueRoutes } from "./dataValueRoutes";
+import { handlePlaceRoutes } from "./placeRoutes";
+import { handleDataTransformRoutes } from "./dataTransformRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
+import { handleDataConversionRoutes } from "./dataConversionRoutes";
+import { handleAreaSearchRoutes } from "./areaSearchRoutes";
+import { handleAreaContainsRoutes } from "./areaContainsRoutes";
 import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
-import { handleTranslationRoutes } from "./translationRoutes";
-import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
-import { handleAreaNeighbourRoutes } from "./areaNeighbourRoutes";
+import { handleAreaValidationRoutes } from "./areaValidationRoutes";
+import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
+import { handleAreaHistoryRoutes } from "./areaHistoryRoutes";
+import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
 import { handleAreaChildGeometryRoutes } from "./areaChildGeometryRoutes";
-import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
-import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
-import { handleAreaCitationRoutes } from "./areaCitationRoutes";
+import { handleAreaNeighbourRoutes } from "./areaNeighbourRoutes";
+import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
 import { handleAreaCapabilityRoutes } from "./areaCapabilityRoutes";
+import { handleAreaCitationRoutes } from "./areaCitationRoutes";
+import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
+import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
+import { handleTranslationRoutes } from "./translationRoutes";
+import { handleGovernanceRoutes } from "./governanceRoutes";
+import { handleLocationRoutes } from "./locationRoutes";
+import { handleCrosswalkRoutes } from "./crosswalkRoutes";
+import { handleBulkRoutes } from "./bulkRoutes";
+import { handleSyncRoutes } from "./syncRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -54,6 +54,208 @@ const routeFamilies: RouteFamily[] = [
 		name: "index",
 		owns: (segments) => segments.length === 1 && segments[0] === "v1",
 		handle: handleIndexRoutes,
+	},
+	{
+		name: "boundaries",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			[
+				"geographies",
+				"geography-inventory",
+				"boundary-releases",
+				"boundary-releases:resolve",
+			].includes(segments[1] ?? ""),
+		handle: handleBoundaryRoutes,
+	},
+	{
+		name: "catalogue",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			(segments[1] === "datasets" ||
+				(segments[1] === "measures" && segments.length <= 3)),
+		handle: handleCatalogueRoutes,
+	},
+	{
+		name: "measure-compatibility",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "compatibility",
+		handle: handleMeasureCompatibilityRoutes,
+	},
+	{
+		name: "measure-coverage",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "coverage",
+		handle: handleMeasureCoverageRoutes,
+	},
+	{
+		name: "measure-quality",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "quality",
+		handle: handleMeasureQualityRoutes,
+	},
+	{
+		name: "data",
+		owns: (segments) =>
+			segments.length === 3 &&
+			segments[0] === "v1" &&
+			segments[1] === "data",
+		handle: handleDataRoutes,
+	},
+	{
+		name: "data-series",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "series",
+		handle: handleDataSeriesRoutes,
+	},
+	{
+		name: "data-rankings",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "rankings",
+		handle: handleDataRankingRoutes,
+	},
+	{
+		name: "data-change",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "change",
+		handle: handleDataChangeRoutes,
+	},
+	{
+		name: "data-value",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "value",
+		handle: handleDataValueRoutes,
+	},
+	{
+		name: "places",
+		owns: (segments) => segments[0] === "v1" && segments[1] === "places",
+		handle: handlePlaceRoutes,
+	},
+	{
+		name: "data-transforms",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "compare",
+		handle: handleDataTransformRoutes,
+	},
+	{
+		name: "data-aggregate",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "aggregate",
+		handle: handleDataAggregateRoutes,
+	},
+	{
+		name: "data-conversion",
+		owns: (segments) =>
+			segments.length === 4 &&
+			segments[0] === "v1" &&
+			segments[1] === "data" &&
+			segments[3] === "convert",
+		handle: handleDataConversionRoutes,
+	},
+	{
+		name: "area-search",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments.length === 2,
+		handle: handleAreaSearchRoutes,
+	},
+	{
+		name: "area-contains",
+		owns: (segments) =>
+			segments[0] === "v1" && segments[1] === "areas:contains",
+		handle: handleAreaContainsRoutes,
+	},
+	{
+		name: "area-intersects",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas:intersects",
+		handle: handleAreaIntersectsRoutes,
+	},
+	{
+		name: "area-validation",
+		owns: (segments) =>
+			segments[0] === "v1" && segments[1] === "areas:validate",
+		handle: handleAreaValidationRoutes,
+	},
+	{
+		name: "area-identity",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments.length === 5,
+		handle: handleAreaIdentityRoutes,
+	},
+	{
+		name: "area-history",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "history",
+		handle: handleAreaHistoryRoutes,
+	},
+	{
+		name: "area-relationships",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			["parents", "children", "relationships"].includes(segments[5]!),
+		handle: handleAreaRelationshipRoutes,
+	},
+	{
+		name: "area-child-geometry",
+		owns: (segments) =>
+			segments.length === 7 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "children" &&
+			segments[6] === "geometry",
+		handle: handleAreaChildGeometryRoutes,
+	},
+	{
+		name: "area-neighbours",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "neighbours",
+		handle: handleAreaNeighbourRoutes,
+	},
+	{
+		name: "area-overlap",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "overlap",
+		handle: handleAreaOverlapRoutes,
 	},
 	{
 		name: "area-capabilities",
@@ -93,34 +295,6 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleAreaGeometryMetadataRoutes,
 	},
 	{
-		name: "area-child-geometry",
-		owns: (segments) =>
-			segments.length === 7 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "children" &&
-			segments[6] === "geometry",
-		handle: handleAreaChildGeometryRoutes,
-	},
-	{
-		name: "area-neighbours",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "neighbours",
-		handle: handleAreaNeighbourRoutes,
-	},
-	{
-		name: "area-overlap",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "overlap",
-		handle: handleAreaOverlapRoutes,
-	},
-	{
 		name: "translations",
 		owns: (segments) =>
 			segments.length === 2 &&
@@ -129,166 +303,13 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleTranslationRoutes,
 	},
 	{
-		name: "area-intersects",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas:intersects",
-		handle: handleAreaIntersectsRoutes,
-	},
-	{
-		name: "data-aggregate",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "aggregate",
-		handle: handleDataAggregateRoutes,
-	},
-	{
-		name: "data",
-		owns: (segments) =>
-			segments.length === 3 &&
-			segments[0] === "v1" &&
-			segments[1] === "data",
-		handle: handleDataRoutes,
-	},
-	{
-		name: "data-conversion",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "convert",
-		handle: handleDataConversionRoutes,
-	},
-	{
-		name: "data-change",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "change",
-		handle: handleDataChangeRoutes,
-	},
-	{
-		name: "data-value",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "value",
-		handle: handleDataValueRoutes,
-	},
-	{
-		name: "data-rankings",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "rankings",
-		handle: handleDataRankingRoutes,
-	},
-	{
-		name: "data-series",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "series",
-		handle: handleDataSeriesRoutes,
-	},
-	{
-		name: "measure-quality",
+		name: "governance",
 		owns: (segments) =>
 			segments[0] === "v1" &&
-			segments[1] === "measures" &&
-			segments[3] === "quality",
-		handle: handleMeasureQualityRoutes,
-	},
-	{
-		name: "data-transforms",
-		owns: (segments) =>
-			segments.length === 4 &&
-			segments[0] === "v1" &&
-			segments[1] === "data" &&
-			segments[3] === "compare",
-		handle: handleDataTransformRoutes,
-	},
-	{
-		name: "places",
-		owns: (segments) => segments[0] === "v1" && segments[1] === "places",
-		handle: handlePlaceRoutes,
-	},
-	{
-		name: "measure-compatibility",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			segments[1] === "measures" &&
-			segments[3] === "compatibility",
-		handle: handleMeasureCompatibilityRoutes,
-	},
-	{
-		name: "area-identity",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments.length === 5,
-		handle: handleAreaIdentityRoutes,
-	},
-	{
-		name: "area-relationships",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			["parents", "children", "relationships"].includes(segments[5]!),
-		handle: handleAreaRelationshipRoutes,
-	},
-	{
-		name: "area-history",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "history",
-		handle: handleAreaHistoryRoutes,
-	},
-	{
-		name: "measure-coverage",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			segments[1] === "measures" &&
-			segments[3] === "coverage",
-		handle: handleMeasureCoverageRoutes,
-	},
-	{
-		name: "catalogue",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			(segments[1] === "datasets" ||
-				(segments[1] === "measures" && segments.length <= 3)),
-		handle: handleCatalogueRoutes,
-	},
-	{
-		name: "area-contains",
-		owns: (segments) =>
-			segments[0] === "v1" && segments[1] === "areas:contains",
-		handle: handleAreaContainsRoutes,
-	},
-	{
-		name: "area-validation",
-		owns: (segments) =>
-			segments[0] === "v1" && segments[1] === "areas:validate",
-		handle: handleAreaValidationRoutes,
-	},
-	{
-		name: "area-search",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments.length === 2,
-		handle: handleAreaSearchRoutes,
+			["attribution", "relationship-candidates"].includes(
+				segments[1] ?? "",
+			),
+		handle: handleGovernanceRoutes,
 	},
 	{
 		name: "locations",
@@ -309,18 +330,6 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleBulkRoutes,
 	},
 	{
-		name: "boundaries",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			[
-				"geographies",
-				"geography-inventory",
-				"boundary-releases",
-				"boundary-releases:resolve",
-			].includes(segments[1] ?? ""),
-		handle: handleBoundaryRoutes,
-	},
-	{
 		name: "sync",
 		owns: (segments) =>
 			segments[0] === "v1" &&
@@ -328,15 +337,6 @@ const routeFamilies: RouteFamily[] = [
 				segments[1] ?? "",
 			),
 		handle: handleSyncRoutes,
-	},
-	{
-		name: "governance",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			["attribution", "relationship-candidates"].includes(
-				segments[1] ?? "",
-			),
-		handle: handleGovernanceRoutes,
 	},
 ];
 
