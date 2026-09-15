@@ -13,7 +13,7 @@ import {
 	type MeasureSource,
 	type PopulationObservation,
 } from "./dataCatalog";
-import { countryForCode } from "./catalog/compileDataCatalog";
+import { countryForCode } from "./catalog/countries";
 import type { BulkExport, ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { GeometrySourceRegistry } from "./geometrySourceRegistry";
