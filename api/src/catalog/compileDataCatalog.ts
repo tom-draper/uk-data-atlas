@@ -570,21 +570,6 @@ const electionWinnerPeriods = (
 };
 
 /**
- * The house price partition, restored to the codes its publisher used.
- *
- * The website moves Salford's twenty wards onto their 2021 codes so the map
- * joins, but those wards were redrawn in 2021: a price measured on the old ward
- * is not a price for the new one. The compiled record keeps the published code
- * as `sourceWardCode`, so every value is served under the code it was published
- * against, and the list of moved wards lives only in the website loader.
- */
-/**
- * The last period published for a full calendar year. The workbook is a
- * quarterly rolling series, and each year's figure here is the year ending
- * December; the final edition stops at the year ending March 2023, which is
- * not comparable and so is not published as a period.
- */
-/**
  * The four unitary authorities created in April 2023, with the districts each
  * replaced. A partition compiled onto current boundaries can hold both a
  * successor, summed from its predecessors, and the predecessors themselves;
@@ -615,6 +600,12 @@ const APRIL_2020_2021_LAD_MERGERS: Record<string, string[]> = {
 	E06000062: ["E07000151", "E07000154", "E07000155"],
 };
 
+/**
+ * The last period published for a full calendar year. The workbook is a
+ * quarterly rolling series, and each year's figure here is the year ending
+ * December; the final edition stops at the year ending March 2023, which is
+ * not comparable and so is not published as a period.
+ */
 const LAST_DECEMBER_PERIOD = 2022;
 
 /**
@@ -737,6 +728,15 @@ export const onApril2023Authorities = (
 	return { ...period, records };
 };
 
+/**
+ * The house price partition, restored to the codes its publisher used.
+ *
+ * The website moves Salford's twenty wards onto their 2021 codes so the map
+ * joins, but those wards were redrawn in 2021: a price measured on the old ward
+ * is not a price for the new one. The compiled record keeps the published code
+ * as `sourceWardCode`, so every value is served under the code it was published
+ * against, and the list of moved wards lives only in the website loader.
+ */
 const housePricePeriods = (
 	path: string,
 ): MeasureObservationArtifact["periods"] => {
@@ -786,11 +786,6 @@ const housePricePeriods = (
 };
 
 /**
- * Compile source-lineage metadata and one intentionally narrow, source-exact
- * population measure. It does not select a geometry release: the published
- * input records only declare the Ward 2023 code vintage, not a boundary month.
- */
-/**
  * The compiled files the catalogue is built from, by name. Named rather than
  * positional because every published measure adds one, and a shifted
  * positional list compiles fine while reading the wrong file.
@@ -826,6 +821,11 @@ export type DataCatalogInputs = {
 	localElection: string;
 };
 
+/**
+ * Compile source-lineage metadata and one intentionally narrow, source-exact
+ * population measure. It does not select a geometry release: the published
+ * input records only declare the Ward 2023 code vintage, not a boundary month.
+ */
 export const compileDataCatalog = ({
 	manifest: manifestPath,
 	population: populationPath,
