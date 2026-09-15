@@ -145,9 +145,17 @@ only **available** when its endpoint, contract and provenance are published.
       value, and only those datasets are credited; a named `crosswalk` must
       map the area. Either is refused if it supplies nothing for the area.
       Per-area geometry hashes are reported as not yet published.
-- [ ] Resolve the most appropriate available boundary release for a requested
-      date, always returning the exact release selected rather than a mutable
-      `latest` alias.
+- [x] Resolve the boundary release for a requested date through
+      `GET /v1/boundary-releases:resolve?geography=&date=&country=`, returning
+      the exact release selected rather than a mutable `latest` alias: the
+      latest dated on or before the date that covers the country, with the
+      releases either side. Releases are month snapshots, so this is the
+      latest snapshot, not a claim about what was legally in force, and a date
+      in the release's own month is flagged. Northern Ireland wards in
+      December 2019 resolve to the 2018 UK release, passing over the GB-only
+      2019 one; a Wales-only subset is set aside for the release it was
+      derived from; and data zones, published clipped and unclipped in the
+      same month, are a 409 listing both rather than a guess.
 - [ ] Find published conversion paths between two area identities and rank
       them by source authority and exactness; support small, declared multi-step
       crosswalk composition without hiding intermediate mappings.
@@ -1515,6 +1523,7 @@ pnpm start
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/boundary-releases`
+- `GET /v1/boundary-releases:resolve?geography={type}&date={YYYY-MM-DD}`
 - `GET /v1/boundary-releases/{type}/{release}`
 - `GET /v1/areas`
 - `GET /v1/areas/{type}/{release}/{code}`

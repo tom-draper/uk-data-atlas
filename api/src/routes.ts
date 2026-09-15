@@ -1,5 +1,6 @@
 import type { AreaInventory, AreaLookup } from "./areaInventory";
 import { explainAreaAbsence } from "./areaAbsence";
+import { selectReleaseForDate } from "./releaseForDate";
 import type { AreaGeometryCache } from "./areaGeometry";
 import { areaMetrics } from "./areaMetrics";
 import {
@@ -130,6 +131,10 @@ type Problem = {
 	presentIn?: unknown[];
 	/** Extension member: the releases published for a geography. */
 	availableReleases?: unknown[];
+	/** Extension member: the earliest release, when a date precedes it. */
+	earliest?: unknown;
+	/** Extension member: releases dated to a year only, never chosen by date. */
+	undated?: string[];
 	links?: Record<string, string>;
 };
 
@@ -677,6 +682,7 @@ export const route = (
 				links: [
 					"/v1/geographies",
 					"/v1/boundary-releases",
+					"/v1/boundary-releases:resolve",
 					"/v1/boundary-releases/{type}/{release}",
 					"/v1/geography-inventory",
 					"/v1/datasets",
@@ -5056,6 +5062,104 @@ export const route = (
 					"Catalogue Unavailable",
 					"Build the geography inventory before starting the API.",
 				);
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "boundary-releases:resolve"
+	) {
+		const geography = parsedUrl.searchParams.get("geography");
+		const date = parsedUrl.searchParams.get("date") ?? "";
+		const country = parsedUrl.searchParams.get("country") ?? undefined;
+		if (!geography)
+			return problem(
+				400,
+				"Invalid Query",
+				"geography is required, such as geography=ward.",
+			);
+		// A day is accepted but only its month decides: releases are dated to
+		// a month, so nothing finer can be told apart.
+		const dateMatch = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(date);
+		const year = Number(dateMatch?.[1]);
+		const month = Number(dateMatch?.[2]);
+		const day = dateMatch?.[3] === undefined ? 1 : Number(dateMatch[3]);
+		const calendar = new Date(Date.UTC(year, month - 1, day));
+		if (
+			!dateMatch ||
+			calendar.getUTCFullYear() !== year ||
+			calendar.getUTCMonth() !== month - 1 ||
+			calendar.getUTCDate() !== day
+		)
+			return problem(
+				400,
+				"Invalid Query",
+				"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
+			);
+		if (country !== undefined && !/^GB-(ENG|NIR|SCT|WLS)$/.test(country))
+			return problem(
+				400,
+				"Invalid Query",
+				"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
+			);
+		const derivedFrom = new Map(
+			(areaInventory?.releases ?? []).flatMap((release) =>
+				release.status === "available" && release.derivedFrom
+					? [
+							[
+								`${release.geography}/${release.id}`,
+								`${release.derivedFrom.source.geography}/${release.derivedFrom.source.boundaryRelease}`,
+							] as const,
+						]
+					: [],
+			),
+		);
+		const requestedMonth = date.slice(0, 7);
+		const selection = selectReleaseForDate(
+			registry,
+			geography,
+			requestedMonth,
+			country,
+			derivedFrom,
+		);
+		if (selection.status === "none") {
+			return problem(404, "Not Found", selection.detail, {
+				code:
+					selection.absence === "unknown-geography"
+						? "unsupported_geography"
+						: "no_release_for_date",
+				absence: selection.absence,
+				...(selection.absence === "unknown-geography"
+					? { links: { geographies: "/v1/geographies" } }
+					: {}),
+				...(selection.earliest ? { earliest: selection.earliest } : {}),
+				...(selection.undated.length > 0
+					? { undated: selection.undated }
+					: {}),
+			});
+		}
+		if (selection.status === "ambiguous") {
+			return problem(
+				409,
+				"Ambiguous Release",
+				`${selection.choices.length} ${geography} boundary releases are dated ${selection.month} and differ in more than coverage. Choose one by id; each is listed in choices.`,
+				{ code: "ambiguous_release", choices: selection.choices },
+			);
+		}
+		const { status: _status, undated, ...selected } = selection;
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				geography,
+				date,
+				month: requestedMonth,
+				...(country ? { country } : {}),
+				...selected,
+				...(undated.length > 0 ? { undated } : {}),
+				basis: "latest-release-dated-on-or-before",
+				note: "Releases are snapshots dated to a month, so this is the latest snapshot at the date asked for, not a statement of which boundaries were legally in force on it. A change after the selected release shows first in next. When sameMonth is true the date falls in the release's own month, and a change that month may lie either side of it.",
+			}),
+		};
 	}
 
 	if (
