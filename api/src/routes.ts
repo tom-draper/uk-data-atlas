@@ -4179,47 +4179,5 @@ export const route = (
 		};
 	}
 
-	if (
-		segments.length === 6 &&
-		segments[0] === "v1" &&
-		segments[1] === "areas" &&
-		segments[5] === "relationships"
-	) {
-		const [geography, boundaryRelease, code] = segments.slice(2, 5);
-		const area = findArea(
-			areaLookup,
-			geography as string,
-			boundaryRelease as string,
-			code as string,
-		);
-		if (!area) {
-			return areaNotFound(geography, boundaryRelease, code);
-		}
-		if (!crosswalkLookup) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the crosswalk inventory before looking up relationships.",
-			);
-		}
-		const relationships = relationshipsFor(
-			areaRelationshipIndex,
-			crosswalkLookup,
-			geography as string,
-			boundaryRelease as string,
-			code as string,
-		);
-		return {
-			status: 200,
-			body: envelope(releaseId, {
-				id: [geography, boundaryRelease, code].join("/"),
-				geography,
-				boundaryRelease,
-				...area,
-				relationships,
-			}),
-		};
-	}
-
 	return problem(404, "Not Found", "No API resource matches that path.");
 };

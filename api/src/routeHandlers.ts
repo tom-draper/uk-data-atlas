@@ -41,7 +41,9 @@ const routeFamilies: RouteFamily[] = [
 		name: "area-relationships",
 		owns: (segments) =>
 			segments[0] === "v1" &&
-			["parents", "children"].includes(segments[5] ?? ""),
+			["parents", "children", "relationships"].includes(
+				segments[5] ?? "",
+			),
 		handle: handleAreaRelationshipRoutes,
 	},
 	{
