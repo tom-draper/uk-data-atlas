@@ -12,7 +12,10 @@ import type {
 	RouteRequest,
 } from "./routing";
 
-const searchableAreas = (areaLookup: AreaLookup): AreaSearchIndex =>
+/** Every compiled area identity, sorted by id for stable pagination. */
+export const createAreaSearchIndex = (
+	areaLookup: AreaLookup,
+): AreaSearchIndex =>
 	[...areaLookup.entries()]
 		.flatMap(([identity, areas]) => {
 			const slash = identity.indexOf("/");
@@ -61,7 +64,9 @@ export const handleAreaSearchRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const query = parsedUrl.searchParams.get("q")?.trim();
-	const filtered = (areaSearchIndex ?? searchableAreas(areaLookup)).filter(
+	const filtered = (
+		areaSearchIndex ?? createAreaSearchIndex(areaLookup)
+	).filter(
 		(area) =>
 			(geography === null || area.geography === geography) &&
 			(boundaryRelease === null ||
