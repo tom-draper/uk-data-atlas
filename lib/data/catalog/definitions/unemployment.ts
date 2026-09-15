@@ -20,8 +20,7 @@ export const unemploymentDatasetDefinition: DatasetDefinition<UnemploymentDatase
 			description:
 				"Model-based unemployment rate estimates by local authority for Great Britain.",
 		},
-		// "LA,UA Rates" is the local authority rates sheet; the workbook also
-		// holds levels, and the same pair on 2010 constituencies.
-		precompile: async ({ xlsSheet }) =>
-			loadUnemployment((path) => xlsSheet(path, "LA,UA Rates")),
+		// The local authority rates and levels sheets; the workbook also holds
+		// the same pair on 2010 constituencies.
+		precompile: async ({ xlsSheet }) => loadUnemployment(xlsSheet),
 	};

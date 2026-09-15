@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:121b08154fd2597ca7980a9251a5d3c325503cd0f14ee1439be57cecbbf4ad46",
-	"dataCatalogHash": "sha256:d56dd18995fe153a0d00d06bf6cbbf0b8477ca847b9e8f69d6a76e2e235fb7d1",
+	"contentHash": "sha256:652067fbe9c8bc2a9b6870f0c481554d4fa057c5ee45cd4ccb0464ad3c496bd4",
+	"dataCatalogHash": "sha256:7edad575dc52faa377be036f0bea752ea6c043a74cc0ba04fe2c6a534565e8af",
 	"exports": [
 		{
 			"id": "broadband-full-fibre-availability-observations",

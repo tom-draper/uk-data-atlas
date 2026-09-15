@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d56dd18995fe153a0d00d06bf6cbbf0b8477ca847b9e8f69d6a76e2e235fb7d1",
+	"contentHash": "sha256:7edad575dc52faa377be036f0bea752ea6c043a74cc0ba04fe2c6a534565e8af",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1221,6 +1221,12 @@
 					"path": "economics/unemployment/model-based/modelbasedunemploymentdataaugust2022.xls#LA,UA Rates",
 					"bytes": 720874,
 					"sha256": "c7d4b7b8a1a14a9fc6f9f9b905b7d3c4bd41db78a17386f8570904d6bd8df6d7"
+				},
+				{
+					"kind": "xlsSheet",
+					"path": "economics/unemployment/model-based/modelbasedunemploymentdataaugust2022.xls#LA,UA Levels",
+					"bytes": 311290,
+					"sha256": "a5b03002b9da181607bf913834cff7aa97d9753f41d9c7b6f94a54a44924e63f"
 				}
 			],
 			"summary": {
@@ -1231,8 +1237,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 134137,
-				"sha256": "b1cd4f14fa8a9d246739515242c00ee24fb5c6ff8d7b119ad3799a41bf688818"
+				"bytes": 484231,
+				"sha256": "fb8859a4e85c067a36995138b7ddd08787f409b666c2e6547eb80b967e4bf0ed"
 			}
 		},
 		{
