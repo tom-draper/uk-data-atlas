@@ -798,7 +798,77 @@ const electionWinnerPeriods = (
  * December; the final edition stops at the year ending March 2023, which is
  * not comparable and so is not published as a period.
  */
+/**
+ * The four unitary authorities created in April 2023, with the districts each
+ * replaced. A partition compiled onto current boundaries can hold both a
+ * successor, summed from its predecessors, and the predecessors themselves;
+ * summed over a country, those people would be counted twice.
+ */
+const APRIL_2023_LAD_MERGERS: Record<string, string[]> = {
+	E06000063: ["E07000026", "E07000028", "E07000029"],
+	E06000064: ["E07000027", "E07000030", "E07000031"],
+	E06000065: [
+		"E07000163",
+		"E07000164",
+		"E07000165",
+		"E07000166",
+		"E07000167",
+		"E07000168",
+		"E07000169",
+	],
+	E06000066: ["E07000187", "E07000188", "E07000189", "E07000246"],
+};
+
 const LAST_DECEMBER_PERIOD = 2022;
+
+/**
+ * A period of a partition compiled onto April 2023 authorities, with the
+ * districts they replaced removed.
+ *
+ * The census reports on 2021 districts, and the compiled datasets add each
+ * April 2023 authority summed from them while keeping the districts too.
+ * Serving both counts those residents twice in any sum. So a successor that
+ * is present must be exactly the sum of its predecessors, which are then
+ * dropped, and what remains must be exactly the expected 2023 code set; any
+ * other shape is refused rather than published.
+ */
+export const onApril2023Authorities = (
+	period: MeasureObservationArtifact["periods"][number],
+	expectedCodes: Iterable<string>,
+): MeasureObservationArtifact["periods"][number] => {
+	const byCode = new Map(
+		period.records.map((record) => [record.areaCode, record]),
+	);
+	const replaced = new Set<string>();
+	for (const [successor, predecessors] of Object.entries(
+		APRIL_2023_LAD_MERGERS,
+	)) {
+		const record = byCode.get(successor);
+		if (!record) continue;
+		const summed = predecessors.reduce((total, code) => {
+			const predecessor = byCode.get(code);
+			if (!predecessor || !isNumericObservation(predecessor))
+				throw new Error(`${successor} has no predecessor ${code}`);
+			replaced.add(code);
+			return total + predecessor.value;
+		}, 0);
+		if (!isNumericObservation(record) || record.value !== summed)
+			throw new Error(
+				`${successor} is not the sum of its predecessors ${predecessors.join(", ")}`,
+			);
+	}
+	const records = period.records.filter(
+		(record) => !replaced.has(record.areaCode),
+	);
+	const expected = [...expectedCodes].sort().join(",");
+	const published = records
+		.map((record) => record.areaCode)
+		.sort()
+		.join(",");
+	if (published !== expected)
+		throw new Error("does not hold exactly the April 2023 authorities");
+	return { ...period, records };
+};
 
 const housePricePeriods = (
 	path: string,
@@ -1384,6 +1454,10 @@ export const compileDataCatalog = ({
 		"travel-to-work": travelToWorkPath,
 		"car-availability": carAvailabilityPath,
 	};
+	const CENSUS_BOUNDARY_YEAR = 2023;
+	const englandAndWales2023 = [...populationCodes].filter(
+		(code) => code.startsWith("E") || code.startsWith("W"),
+	);
 	const censusObservations = censusBreakdowns.flatMap((breakdown) => {
 		const dataset = datasets.find(
 			(candidate) => candidate.id === breakdown.datasetId,
@@ -1407,11 +1481,22 @@ export const compileDataCatalog = ({
 				path,
 				`${breakdown.field}.${field}`,
 				2025,
-			);
+			).map((period) => {
+				try {
+					return onApril2023Authorities(period, englandAndWales2023);
+				} catch (error) {
+					throw new Error(
+						`${path}: ${measureId} ${period.period}: ${(error as Error).message}`,
+					);
+				}
+			});
 			const content = JSON.stringify({
 				schemaVersion: 1,
 				measureId,
-				sourceGeography: { type: "localAuthority", boundaryYear: 2025 },
+				sourceGeography: {
+					type: "localAuthority",
+					boundaryYear: CENSUS_BOUNDARY_YEAR,
+				},
 				periods,
 			});
 			return {
@@ -1431,7 +1516,7 @@ export const compileDataCatalog = ({
 							periods: periods.map((period) => period.period),
 							sourceGeography: {
 								type: "localAuthority",
-								boundaryYear: 2025,
+								boundaryYear: CENSUS_BOUNDARY_YEAR,
 							},
 							coverage: {
 								kind: "partial",
@@ -1452,7 +1537,7 @@ export const compileDataCatalog = ({
 					notes: [
 						breakdown.universe,
 						...breakdown.notes,
-						"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count.",
+						"The census reports on 2021 boundaries. The four authorities created in April 2023 are compiled by summing their predecessors, which is exact for a count, and the districts they replaced are not served, so no resident is counted twice. The partition is on April 2023 codes, which Barnsley and Sheffield changed in 2025.",
 					],
 				} satisfies Measure,
 				artifact: {
@@ -1461,7 +1546,7 @@ export const compileDataCatalog = ({
 					measureId,
 					sourceGeography: {
 						type: "localAuthority" as const,
-						boundaryYear: 2025,
+						boundaryYear: CENSUS_BOUNDARY_YEAR,
 					},
 					periods,
 				},

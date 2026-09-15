@@ -3,7 +3,11 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { compileDataCatalog, type DataCatalogInputs } from "../src/dataCatalog";
+import {
+	compileDataCatalog,
+	onApril2023Authorities,
+	type DataCatalogInputs,
+} from "../src/dataCatalog";
 
 const dataset = (
 	output: string,
@@ -1043,4 +1047,56 @@ test("refuses an interval that does not contain its estimate", () => {
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
+});
+
+test("serves April 2023 authorities without the districts they replaced", () => {
+	const observed = (areaCode: string, value: number) => ({
+		areaCode,
+		value,
+		status: "observed" as const,
+	});
+	const period = {
+		period: "2021",
+		records: [
+			observed("E06000001", 50),
+			observed("E06000063", 60),
+			observed("E07000026", 10),
+			observed("E07000028", 20),
+			observed("E07000029", 30),
+		],
+	};
+	assert.deepEqual(
+		onApril2023Authorities(period, ["E06000001", "E06000063"]).records,
+		[observed("E06000001", 50), observed("E06000063", 60)],
+	);
+	// A successor that is not its predecessors' sum is not a merger to trust.
+	assert.throws(
+		() =>
+			onApril2023Authorities(
+				{
+					...period,
+					records: period.records.map((record) =>
+						record.areaCode === "E06000063"
+							? observed("E06000063", 61)
+							: record,
+					),
+				},
+				["E06000001", "E06000063"],
+			),
+		/E06000063 is not the sum of its predecessors/,
+	);
+	// Districts with no successor beside them are the wrong vintage.
+	assert.throws(
+		() =>
+			onApril2023Authorities(
+				{
+					...period,
+					records: period.records.filter(
+						(record) => record.areaCode !== "E06000063",
+					),
+				},
+				["E06000001", "E06000063"],
+			),
+		/does not hold exactly the April 2023 authorities/,
+	);
 });

@@ -480,13 +480,15 @@ only **available** when its endpoint, contract and provenance are published.
       declared premises weight does not apply to.
 - [x] Return source-exact Census 2021 travel to work and car availability
       through `GET /v1/data/travel-to-work-{mode}` and
-      `GET /v1/data/car-availability-{band}`: Local Authority 2025 codes for
-      England and Wales. Published as counts, not shares, because a count of
+      `GET /v1/data/car-availability-{band}`: Local Authority April 2023 codes
+      for England and Wales. Published as counts, not shares, because a count of
       people or households adds over areas; each breakdown publishes its own
       `-total` denominator so a caller can derive a share and knows its
       universe. The four authorities created in April 2023 postdate the census
       and are compiled by summing their predecessors, which is exact for a
-      count.
+      count; the districts they replaced are dropped, and the build refuses a
+      partition that is not exactly the April 2023 code set, so no resident is
+      counted twice.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1526,9 +1528,9 @@ pnpm start
 - `GET /v1/measures/mobile-4g-coverage`
 - `GET /v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&areaCode=S92000003`
 - `GET /v1/data/total-jobs/series?areaCode=E08000035&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`

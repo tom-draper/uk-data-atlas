@@ -452,8 +452,10 @@ paths:
         converts.
 
         The `travel-to-work-*` and `car-availability-*` measures cover Census
-        2021 Local Authority 2025 codes for England and Wales, as counts rather
-        than shares: a count of people or households adds over areas, and each
+        2021 Local Authority April 2023 codes for England and Wales, as counts
+        rather than shares; the four authorities created in April 2023 are
+        summed from their predecessors, which are not served, so no resident is
+        counted twice: a count of people or households adds over areas, and each
         breakdown publishes its own `-total` denominator so a caller can derive
         a share and know what it is a share of.
         This route never selects a May/December boundary release, converts
