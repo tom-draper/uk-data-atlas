@@ -485,6 +485,20 @@ test("sums a location whose members span several code vintages", () => {
 				memberCodes: ["E06000001", "E08000999", "E08000998"],
 				bbox: [-2.5, 53.3, -2, 53.7],
 			},
+			{
+				id: "abolished",
+				label: "Abolished",
+				kind: "editorial-grouping",
+				memberCodes: ["E08000999"],
+				bbox: [-2.5, 53.3, -2, 53.7],
+			},
+			{
+				id: "extent",
+				label: "Extent",
+				kind: "editorial-grouping",
+				memberCodes: [],
+				bbox: [-2.5, 53.3, -2, 53.7],
+			},
 		],
 	});
 	const context: RouteContext = {
@@ -515,6 +529,24 @@ test("sums a location whose members span several code vintages", () => {
 	// contribute nothing and withhold nothing: a release's areas are a
 	// partition, so the ground is covered exactly once.
 	assert.equal(data.data.aggregation.inputRecordCount, 1);
+
+	// Nothing is unexplained about a location whose only code was superseded,
+	// or one that names an extent and no codes, so neither is refused as a
+	// coverage gap; each is told why the partition holds none of it.
+	const detail = (locationId: string) => {
+		const refused = routeRequest(
+			"GET",
+			`/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=${locationId}`,
+			context,
+		);
+		assert.equal(refused.status, 422);
+		return (refused.body as { detail: string; code?: string }).detail;
+	};
+	assert.match(
+		detail("abolished"),
+		/Every member code of Abolished is the wrong vintage/,
+	);
+	assert.match(detail("extent"), /Extent carries no member codes/);
 });
 
 test("flags a country total that leaves out areas a matching release holds", () => {

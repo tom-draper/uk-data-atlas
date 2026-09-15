@@ -349,7 +349,7 @@ export const handleDataAggregateRoutes = ({
 			"Build the area inventory before aggregating over a named location, so a member code of another vintage can be told from one that is wrong.",
 		);
 	}
-	if (locationCoverage && !locationCoverage.coversLocation) {
+	if (locationCoverage && locationCoverage.unexplained.length > 0) {
 		return problem(
 			422,
 			"Operation Not Supported",
