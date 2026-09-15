@@ -610,12 +610,14 @@ only **available** when its endpoint, contract and provenance are published.
       from outside their year's release.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy.
-- [ ] Compare two Atlas releases, identifying changed datasets, boundary
+- [x] Compare two Atlas releases, identifying changed datasets, boundary
       releases, crosswalks, validation exceptions and named-location definitions.
-      `GET /v1/atlas-releases/compare` already lists the artifacts added,
-      removed and changed between two releases by content hash; it does not
-      yet say which datasets, releases, crosswalks, exceptions or definitions
-      inside a changed artifact differ.
+      `GET /v1/atlas-releases/compare` lists the artifacts added, removed and
+      changed by content hash, and inside them the datasets, measures,
+      boundary releases, area identities, geometry sources, crosswalks,
+      validation exceptions, named locations, exports and lookups added,
+      removed and changed, by fingerprints each release records. It names a
+      changed resource, not the field that changed.
 - [x] Generate a ready-to-use attribution and licence block for selected
       resources through `GET /v1/attribution`, suitable for a map, report or
       bulk download. A measure is attributed through its source datasets; a
@@ -2398,9 +2400,26 @@ versioned release history it will eventually anchor.
 
 At the start of every build, the previous manifest is archived under
 `public/atlas-releases/`. `GET /v1/atlas-releases/compare` provides a
-machine-readable, artifact-level change log between any archived release and
-the current release. It reports additions, removals and changed hashes; it
-does not infer dataset rows or boundary geometry changes from a hash alone.
+machine-readable change log between any archived release and the current
+release. It reports artifacts added, removed and changed by hash, and, inside
+them, which resources changed. Each release manifest records `resources`: for
+each kind (datasets, measures, boundary releases, area identities, geometry
+sources, crosswalks, validation exceptions, named locations, exports and
+lookups), a fingerprint per resource id, taken from that resource's published
+entry, or from the artifact hash where an inventory already records one. A
+validation exception is a waived check, identified by resource and check, and
+its fingerprint covers both the finding and the reason. The fingerprints are
+read from artifacts the release already hashes, so they do not enter the
+`releaseId`, and a comparison names a changed resource, not the field within
+it that changed. It does not infer dataset rows or boundary geometry changes.
+
+Releases archived before fingerprints existed were given them from git
+history: for each, the commit where it was the current release supplied the
+artifacts, and a kind was recorded only where every artifact it reads matched
+the hash the release pinned. All 25 archived releases matched, for every kind
+but lookups, which no release pinned before the lookup manifest was added. A
+kind one release does not record is reported as `not-recorded` rather than as
+empty.
 
 `public/geometry-sources.json` records, per compiled area release, where its
 raw GeoJSON lives, its CRS, and its code property, or an explicit

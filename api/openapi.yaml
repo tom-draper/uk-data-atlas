@@ -3168,11 +3168,15 @@ paths:
   /atlas-releases/compare:
     get:
       operationId: compareAtlasReleases
-      summary: Compare the hashes in two archived Atlas release manifests
+      summary: Compare two archived Atlas releases, artifact by artifact and resource by resource
       description: >
-        Reports added, removed and changed published artifacts by immutable
-        content hash. It is deliberately an artifact-level changelog, not a
-        claim about individual records within a changed artifact.
+        Reports added, removed and changed published artifacts by content
+        hash, and, inside them, the datasets, measures, boundary releases,
+        area identities, geometry sources, crosswalks, validation exceptions,
+        named locations, exports and lookups added, removed and changed, by the
+        fingerprints each release recorded. A changed resource differs
+        somewhere in its published entry; the comparison does not name the
+        field, and does not infer changes to individual records.
       parameters:
         - name: from
           in: query
@@ -3185,11 +3189,55 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: The immutable artifact-level change summary.
+          description: The change summary between the two releases.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Envelope"
+                $ref: "#/components/schemas/AtlasReleaseComparisonEnvelope"
+              example:
+                apiVersion: v1
+                atlasRelease: "sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
+                data:
+                  from:
+                    releaseId: "sha256:c581bb2adda2787dcb6984eeb8c63399b33380f02b9ef308bdbfb671cf8490d1"
+                    href: /v1/atlas-releases/sha256:c581bb2adda2787dcb6984eeb8c63399b33380f02b9ef308bdbfb671cf8490d1
+                  to:
+                    releaseId: "sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
+                    href: /v1/atlas-releases/sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54
+                  summary: { added: 10, removed: 42, changed: 116, unchanged: 161 }
+                  # Artifact and resource lists are shortened to one entry each.
+                  artifacts:
+                    added:
+                      - id: lookup-manifest
+                        path: lookup-manifest.json
+                        contentHash: "sha256:c4c112851298c80fc47904e21dda22338a4bf0ddf86547d870bb8a9642fc64a3"
+                    removed:
+                      - id: observations/general-election-apni-vote-share-constituency-2010-observations
+                        path: general-election-apni-vote-share-constituency-2010-observations.json
+                        contentHash: "sha256:c7f7203fe79fd08f0f383ce654deffdfb9218794d04cebcb0395e0aacd752415"
+                    changed:
+                      - id: data-catalog
+                        from: { id: data-catalog, path: data-catalog.json, contentHash: "sha256:246d438a543673a5bb26d960263c9576e1a470a2d10062130adec14c96365b3f" }
+                        to: { id: data-catalog, path: data-catalog.json, contentHash: "sha256:4409281f400b22b7b1a238d2028435933dd8a09c6db3997947031dd0478a653f" }
+                  resources:
+                    datasets:
+                      status: compared
+                      added: []
+                      removed: []
+                      changed: [general-election, local-election]
+                      unchanged: 34
+                    geometrySources:
+                      status: compared
+                      added: []
+                      removed: []
+                      changed: [dataZone/2011-12-sc-bfc, superOutputArea/2011-ni]
+                      unchanged: 69
+                    lookups:
+                      status: not-recorded
+                      reason: One release does not record lookups.
+                  note: Artifacts are compared by content hash. Resources inside them, such as datasets, crosswalks and validation exceptions, are compared by the fingerprints each release recorded when it was built; a changed resource differs somewhere in its published entry, and the comparison does not say which field.
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -5336,6 +5384,82 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/AtlasReleaseArtifactRef"
+        resources:
+          type: object
+          description: >
+            A fingerprint per resource id for each kind, read from artifacts the
+            release already hashes, so it does not enter `releaseId`. A kind
+            the release did not record is absent.
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
+
+    ResourceChanges:
+      oneOf:
+        - type: object
+          required: [status, added, removed, changed, unchanged]
+          properties:
+            status:
+              const: compared
+            added:
+              type: array
+              items: { type: string }
+            removed:
+              type: array
+              items: { type: string }
+            changed:
+              type: array
+              items: { type: string }
+            unchanged:
+              type: integer
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              const: not-recorded
+            reason:
+              type: string
+
+    AtlasReleaseComparison:
+      type: object
+      required: [from, to, summary, artifacts, resources, note]
+      properties:
+        from:
+          type: object
+        to:
+          type: object
+        summary:
+          type: object
+          description: Counts of artifacts added, removed, changed and unchanged.
+        artifacts:
+          type: object
+        resources:
+          type: object
+          description: >
+            For each resource kind, the ids added, removed and changed, or
+            `not-recorded` when either release lacks that kind's fingerprints.
+          properties:
+            datasets: { $ref: "#/components/schemas/ResourceChanges" }
+            measures: { $ref: "#/components/schemas/ResourceChanges" }
+            boundaryReleases: { $ref: "#/components/schemas/ResourceChanges" }
+            areaIdentities: { $ref: "#/components/schemas/ResourceChanges" }
+            geometrySources: { $ref: "#/components/schemas/ResourceChanges" }
+            crosswalks: { $ref: "#/components/schemas/ResourceChanges" }
+            validationExceptions: { $ref: "#/components/schemas/ResourceChanges" }
+            namedLocations: { $ref: "#/components/schemas/ResourceChanges" }
+            exports: { $ref: "#/components/schemas/ResourceChanges" }
+            lookups: { $ref: "#/components/schemas/ResourceChanges" }
+        note:
+          type: string
+
+    AtlasReleaseComparisonEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/AtlasReleaseComparison"
 
     AtlasReleaseEnvelope:
       allOf:
