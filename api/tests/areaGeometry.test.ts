@@ -131,6 +131,36 @@ test("throws when no geometry source is registered for the identity", () => {
 	}
 });
 
+test("states the source file and its hash in geometry provenance", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const source = {
+			input: "boundaries/ward/2025/wards.geojson",
+			crs: "EPSG:4326",
+			codeProperty: "WD25CD",
+		};
+		const hashed = new AreaGeometryCache(
+			root,
+			new Map([["ward/2025", { ...source, inputHash: "sha256:wards" }]]),
+		);
+		assert.deepEqual(hashed.provenance("ward", "2025"), {
+			input: "boundaries/ward/2025/wards.geojson",
+			inputHash: "sha256:wards",
+			sourceCrs: "EPSG:4326",
+		});
+		// A registry built before hashes were recorded still serves.
+		const unhashed = new AreaGeometryCache(
+			root,
+			new Map([["ward/2025", source]]),
+		);
+		assert.deepEqual(unhashed.provenance("ward", "2025"), {
+			sourceCrs: "EPSG:4326",
+		});
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
 test("refuses a geometry source with no transformation to WGS84", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {

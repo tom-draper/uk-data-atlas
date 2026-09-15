@@ -27,6 +27,9 @@ export const readGeometrySourceLookup = (
 					r.id,
 					{
 						input: r.input,
+						...(typeof r.inputHash === "string"
+							? { inputHash: r.inputHash }
+							: {}),
 						crs: r.crs,
 						codeProperty: r.codeProperty,
 						...(Array.isArray(r.corrections)

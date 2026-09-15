@@ -11,6 +11,9 @@ export type GeometryTransformation = {
 };
 
 export type GeometryProvenance = {
+	/** The source file, with its hash, when the registry records one. */
+	input?: string;
+	inputHash?: string;
 	sourceCrs: string;
 	transformation?: GeometryTransformation;
 	/** Declared grid corrections that moved this area before reprojection. */

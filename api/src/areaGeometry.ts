@@ -33,6 +33,8 @@ export type GeoJsonGeometry = {
 };
 export type GeometrySource = {
 	input: string;
+	/** SHA-256 of the whole source file, when the registry records it. */
+	inputHash?: string;
 	crs: string;
 	codeProperty: string;
 	/** Grid corrections the release declares, by definition id. */
@@ -119,6 +121,9 @@ export class AreaGeometryCache {
 				? []
 				: this.correctionsFor(source, code);
 		return {
+			...(source.inputHash
+				? { input: source.input, inputHash: source.inputHash }
+				: {}),
 			...geometryProvenance(source.crs),
 			...(corrections.length > 0
 				? {
