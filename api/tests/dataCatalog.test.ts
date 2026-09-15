@@ -50,6 +50,42 @@ const carBreakdown = (noCar: number) => ({
 	total: noCar + 80,
 });
 
+/** The districts replaced in April 2023, which an April 2021 partition holds. */
+const UNEMPLOYMENT_DISTRICTS_2023 = [
+	"E07000026",
+	"E07000027",
+	"E07000028",
+	"E07000029",
+	"E07000030",
+	"E07000031",
+	"E07000163",
+	"E07000164",
+	"E07000165",
+	"E07000166",
+	"E07000167",
+	"E07000168",
+	"E07000169",
+	"E07000187",
+	"E07000188",
+	"E07000189",
+	"E07000246",
+];
+
+/** The districts replaced in April 2020 and 2021, only in an April 2019 partition. */
+const UNEMPLOYMENT_DISTRICTS_2021 = [
+	"E07000004",
+	"E07000005",
+	"E07000006",
+	"E07000007",
+	"E07000150",
+	"E07000151",
+	"E07000152",
+	"E07000153",
+	"E07000154",
+	"E07000155",
+	"E07000156",
+];
+
 /** Every qualification level, summing to the residents aged 16 and over. */
 const qualificationBreakdown = (level4Plus: number) => ({
 	noQualifications: 20,
@@ -164,6 +200,7 @@ const writeSources = (
 	const homelessness = join(directory, "homelessness.json");
 	const income = join(directory, "income.json");
 	const crime = join(directory, "crime.json");
+	const unemployment = join(directory, "unemployment.json");
 	writeFileSync(
 		manifest,
 		JSON.stringify({
@@ -182,6 +219,7 @@ const writeSources = (
 				dataset("homelessness", 1, 1, 2025),
 				dataset("income", 2, 1, 2025),
 				dataset("crime", 1, 1, 2026),
+				dataset("unemployment", 1, 1, 2024),
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
@@ -451,6 +489,63 @@ const writeSources = (
 		}),
 	);
 	writeFileSync(
+		unemployment,
+		JSON.stringify({
+			"2021": {
+				periodLabels: {
+					"2003": "April 2003 to March 2004",
+					"2020": "January to December 2020",
+					"2021": "January to December 2021",
+				},
+				data: Object.fromEntries([
+					...[
+						"E06000001",
+						"S12000001",
+						"W06000001",
+						...UNEMPLOYMENT_DISTRICTS_2023,
+						...UNEMPLOYMENT_DISTRICTS_2021,
+					].map((code) => [
+						code,
+						{
+							// Only the fixture's three standing authorities have
+							// a financial-year estimate.
+							rates: {
+								"2003": code.startsWith("E07") ? null : 6,
+								"2020": 4,
+								"2021": 5,
+							},
+							rateIntervals: {
+								"2003": 1.5,
+								"2020": 1,
+								"2021": null,
+							},
+							levels: {
+								"2003": code.startsWith("E07") ? null : 900,
+								"2020": 1000,
+								"2021": 1100,
+							},
+							levelIntervals: {
+								"2003": 300,
+								"2020": 200,
+								"2021": null,
+							},
+						},
+					]),
+					...["E06000063", "E06000064", "E06000065", "E06000066"].map(
+						(code) => [
+							code,
+							{
+								rates: { "2020": 4 },
+								levels: { "2020": 3000 },
+								derivedFromPredecessors: ["E07000026"],
+							},
+						],
+					),
+				]),
+			},
+		}),
+	);
+	writeFileSync(
 		jobs,
 		JSON.stringify({
 			"2019": jobsYear(2019, false),
@@ -696,6 +791,7 @@ const writeSources = (
 		homelessness,
 		income,
 		crime,
+		unemployment,
 		jobs,
 		landArea,
 		housePrice,
@@ -717,7 +813,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 24);
+		assert.equal(result.catalog.datasets.length, 25);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
@@ -1512,6 +1608,63 @@ test("publishes recorded crime by community safety partnership", () => {
 		assert.equal(
 			records("crime-public-order-offences")?.[0]?.records[0]?.value,
 			-1,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("publishes modelled unemployment in the two code vintages the workbook holds", () => {
+	const directory = mkdtempSync(
+		join(tmpdir(), "uk-data-atlas-data-catalog-"),
+	);
+	try {
+		const result = compileDataCatalog(writeSources(directory));
+		const rate = result.catalog.measures.find(
+			(measure) => measure.id === "unemployment-rate",
+		);
+		assert.deepEqual(
+			rate?.sources.map((source) => [
+				source.sourceGeography.boundaryYear,
+				source.periods,
+			]),
+			[
+				[2019, ["2003-04", "2020", "2021"]],
+				[2021, ["2020", "2021"]],
+			],
+		);
+		assert.equal(rate?.aggregation.kind, "intensive");
+		const partition = (boundaryYear: number) =>
+			result.indicatorObservations.find(
+				(artifact) =>
+					artifact.measureId === "unemployment-rate" &&
+					artifact.sourceGeography.boundaryYear === boundaryYear,
+			);
+		const codes = (boundaryYear: number, period: string) =>
+			partition(boundaryYear)
+				?.periods.find((candidate) => candidate.period === period)
+				?.records.map((record) => record.areaCode);
+		// The April 2020 and 2021 districts are in the 2019 partition only, and
+		// no derived April 2023 authority is served in either.
+		assert.ok(codes(2019, "2021")?.includes("E07000004"));
+		assert.ok(!codes(2021, "2021")?.includes("E07000004"));
+		for (const boundaryYear of [2019, 2021])
+			assert.ok(!codes(boundaryYear, "2020")?.includes("E06000063"));
+		assert.deepEqual(codes(2019, "2003-04"), [
+			"E06000001",
+			"S12000001",
+			"W06000001",
+		]);
+		assert.deepEqual(
+			partition(2019)?.periods.find(
+				(period) => period.period === "2003-04",
+			)?.records[0],
+			{
+				areaCode: "E06000001",
+				value: 6,
+				status: "observed",
+				confidenceInterval: { lower: 4.5, upper: 7.5 },
+			},
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

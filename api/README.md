@@ -528,6 +528,15 @@ only **available** when its endpoint, contract and provenance are published.
       partnerships span several authorities. Partnership counts exclude fraud
       and offences unassigned to any partnership, so they do not sum to force
       or national totals.
+- [x] Return ONS's final model-based unemployment estimates through
+      `GET /v1/data/unemployment-rate` and `GET /v1/data/unemployment-level`,
+      with their 95% confidence intervals, from April 1996 to March 1997 to
+      2021 for Great Britain. The workbook estimates both the districts and
+      the authorities that replaced them in 2020 and 2021, so they are served
+      as two partitions, April 2019 over every period and April 2021 over the
+      years both are estimated, and no resident is counted twice. Rates for
+      the April 2023 authorities, which the model never estimated, are not
+      served.
 - [x] Declare whether each measure's values may be combined over areas, and on
       what terms: extensive values add, intensive values are a ratio that needs
       a named weight, and non-aggregatable values such as medians, ranks and
@@ -1576,6 +1585,7 @@ pnpm start
 - `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/median-annual-pay/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/crime-total?period=year-ending-2026-03&geography=communitySafetyPartnership&boundaryYear=2023&release=2023-12-ew-bgc`
+- `GET /v1/data/unemployment-rate/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2019`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:652067fbe9c8bc2a9b6870f0c481554d4fa057c5ee45cd4ccb0464ad3c496bd4",
-	"dataCatalogHash": "sha256:7edad575dc52faa377be036f0bea752ea6c043a74cc0ba04fe2c6a534565e8af",
+	"contentHash": "sha256:4c8155cc12854f79f6bffe7f62d6a669f2b392797d1cdae08a56f78caa9ce430",
+	"dataCatalogHash": "sha256:9466fedea5368eb02b1b6ea456fee377e9583ceddd6b40c23079fc88aaa1e0fd",
 	"exports": [
 		{
 			"id": "broadband-full-fibre-availability-observations",
@@ -5190,6 +5190,126 @@
 			"contentHash": "sha256:fabb74da43af5105c8624f0fbf7f29e31ed6273c7f5a8c0cd8469dfcd2a00d30",
 			"bytes": 19100,
 			"href": "/v1/exports/travel-to-work-total-observations"
+		},
+		{
+			"id": "unemployment-level-localAuthority-2019-observations",
+			"measureId": "unemployment-level",
+			"datasetId": "unemployment",
+			"periods": [
+				"1996-97",
+				"1997-98",
+				"1998-99",
+				"1999-00",
+				"2000-01",
+				"2001-02",
+				"2002-03",
+				"2003-04",
+				"2004",
+				"2005",
+				"2006",
+				"2007",
+				"2008",
+				"2009",
+				"2010",
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "unemployment-level-localAuthority-2019-observations",
+			"contentHash": "sha256:bc9761421059cb0a79e72d5d770817877962e346cdb7ef4686dd06efd1a4a7e6",
+			"bytes": 1005955,
+			"href": "/v1/exports/unemployment-level-localAuthority-2019-observations"
+		},
+		{
+			"id": "unemployment-level-localAuthority-2021-observations",
+			"measureId": "unemployment-level",
+			"datasetId": "unemployment",
+			"periods": [
+				"2020",
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "unemployment-level-localAuthority-2021-observations",
+			"contentHash": "sha256:af7f726398550844b07c232910ddd7e1d21b5f0d0a93f9194ea2babfb90e7926",
+			"bytes": 76031,
+			"href": "/v1/exports/unemployment-level-localAuthority-2021-observations"
+		},
+		{
+			"id": "unemployment-rate-localAuthority-2019-observations",
+			"measureId": "unemployment-rate",
+			"datasetId": "unemployment",
+			"periods": [
+				"1996-97",
+				"1997-98",
+				"1998-99",
+				"1999-00",
+				"2000-01",
+				"2001-02",
+				"2002-03",
+				"2003-04",
+				"2004",
+				"2005",
+				"2006",
+				"2007",
+				"2008",
+				"2009",
+				"2010",
+				"2011",
+				"2012",
+				"2013",
+				"2014",
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2019
+			},
+			"format": "json",
+			"artifact": "unemployment-rate-localAuthority-2019-observations",
+			"contentHash": "sha256:d3b21622b43f26e1d11d2100330d8fa88a80d0ed52089c04fc43a03777d4d00a",
+			"bytes": 970765,
+			"href": "/v1/exports/unemployment-rate-localAuthority-2019-observations"
+		},
+		{
+			"id": "unemployment-rate-localAuthority-2021-observations",
+			"measureId": "unemployment-rate",
+			"datasetId": "unemployment",
+			"periods": [
+				"2020",
+				"2021"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2021
+			},
+			"format": "json",
+			"artifact": "unemployment-rate-localAuthority-2021-observations",
+			"contentHash": "sha256:1e1680ad5f54bb9131a8cdf98ad9dc90d66ef75d460338a7cacedb2e5c13d962",
+			"bytes": 73499,
+			"href": "/v1/exports/unemployment-rate-localAuthority-2021-observations"
 		},
 		{
 			"id": "wimd-decile-observations",
