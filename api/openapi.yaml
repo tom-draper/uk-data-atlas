@@ -18,6 +18,19 @@ info:
     `GET /atlas-release`, so clients can identify the exact set of artifacts
     that produced a response.
 
+    Representations and paging work the same way everywhere. A JSON response
+    is the `Envelope`, and its `meta.nextCursor` carries the next page, or
+    `null` on the last. A cursor is opaque, belongs to the query that issued
+    it, and any other value is refused with `invalid_cursor`; `limit` is 1 to
+    500 unless an operation says otherwise. `format` chooses among a route's
+    representations where it has more than one: `json`, `csv` or `ndjson` for
+    observations, `csv` or `ndjson` for a lookup, served as
+    `text/csv; charset=utf-8` and `application/x-ndjson; charset=utf-8`. A
+    tabular page has nowhere to put a cursor, so a page that is not the last
+    carries its successor in an RFC 8288 `Link` header with `rel="next"`.
+    `Accept` is not negotiated. Every representation named here is served in
+    the contract tests rather than only described.
+
     An error is always `application/problem+json`, whatever `format` the
     request asked for: a problem is not a representation of the resource that
     failed to serve. Every refusal a client should branch on carries a stable
@@ -120,9 +133,10 @@ paths:
       summary: The OpenAPI description of this API
       description: >
         Returns this document, so a client can read the binding contract from
-        the running API rather than the repository. The JSON envelope is
-        served only when a caller asks for it by `Accept`; the default
-        representation is the YAML document itself.
+        the running API rather than the repository. The response is the YAML
+        document itself; `Accept` is not negotiated on any route, and a
+        route's representations are chosen with `format` where it offers
+        more than one.
       responses:
         "200":
           description: The OpenAPI 3.1 description.

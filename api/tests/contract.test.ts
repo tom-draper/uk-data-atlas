@@ -278,3 +278,91 @@ test("shows each problem code's live response as its OpenAPI example", () => {
 	);
 	assert.deepEqual(drifted, []);
 });
+
+/** The routes that page with a cursor, and a query that fills each one. */
+const PAGINATED = [
+	"/v1/areas?geography=ward&release=2024-12-uk-bgc",
+	"/v1/crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/records",
+	"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023",
+	"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+	"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023",
+	"/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
+];
+
+test("pages every cursor route the same way", () => {
+	for (const path of PAGINATED) {
+		const query = `${path}${path.includes("?") ? "&" : "?"}`;
+		const first = route("GET", `${query}limit=1`, catalogues);
+		assert.equal(first.status, 200, query);
+		const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
+		assert.equal(typeof cursor, "string", `${query} has no nextCursor`);
+		const next = route(
+			"GET",
+			`${query}limit=1&cursor=${encodeURIComponent(cursor ?? "")}`,
+			catalogues,
+		);
+		assert.equal(next.status, 200, query);
+		assert.notDeepEqual(
+			"data" in next.body && next.body.data,
+			"data" in first.body && first.body.data,
+			`${query} served the same page twice`,
+		);
+		// A cursor this API did not issue is refused, not ignored.
+		const refused = route(
+			"GET",
+			`${query}&cursor=not-a-cursor`,
+			catalogues,
+		);
+		assert.equal(refused.status, 400, query);
+		assert.equal(
+			"code" in refused.body && refused.body.code,
+			"invalid_cursor",
+			query,
+		);
+	}
+});
+
+test("serves each representation the OpenAPI document declares", () => {
+	const mediaTypes = (path: string) =>
+		Object.keys(
+			openapi.paths[path]?.get?.responses["200"]?.content ?? {},
+		).sort();
+	const served = (url: string) => {
+		const response = route("GET", url, catalogues);
+		assert.equal(response.status, 200, url);
+		return (
+			response.representation?.contentType.split(";")[0] ??
+			"application/json"
+		);
+	};
+	const data =
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1";
+	assert.deepEqual(
+		[
+			served(data),
+			served(`${data}&format=csv`),
+			served(`${data}&format=ndjson`),
+		].sort(),
+		mediaTypes("/data/{measure-id}"),
+	);
+	const lookup = (
+		route("GET", "/v1/lookups", catalogues).body as {
+			data: { lookups: Array<{ id: string }> };
+		}
+	).data.lookups[0]?.id;
+	assert.ok(lookup);
+	assert.deepEqual(
+		[
+			served(`/v1/lookups/${lookup}`),
+			served(`/v1/lookups/${lookup}?format=ndjson`),
+		].sort(),
+		mediaTypes("/lookups/{lookup-id}"),
+	);
+	// A tabular page that is not the last carries its successor, as the
+	// document says, because a CSV body has nowhere to put a cursor.
+	const page = route("GET", `${data}&format=csv`, catalogues);
+	assert.match(
+		page.representation?.headers?.link ?? "",
+		/^<\/v1\/data\/population-estimate\?[^>]*cursor=[^>]+>; rel="next"$/,
+	);
+});
