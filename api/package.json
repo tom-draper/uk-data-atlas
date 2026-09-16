@@ -7,7 +7,7 @@
 		"node": ">=24 <25"
 	},
 	"scripts": {
-		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:lookup-manifest && pnpm build:validation-report && pnpm build:atlas-release",
+		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
 		"example:trend": "tsx examples/defensible-trend.ts",
@@ -29,6 +29,7 @@
 		"build:export-manifest": "tsx scripts/build-export-manifest.ts",
 		"build:lookup-manifest": "tsx scripts/build-lookup-manifest.ts",
 		"build:measure-compatibility": "tsx scripts/build-measure-compatibility.ts",
+		"build:map-resource": "tsx scripts/build-map-resource.ts",
 		"build:validation-report": "tsx scripts/build-validation-report.ts"
 	},
 	"devDependencies": {
