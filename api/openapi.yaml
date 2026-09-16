@@ -5556,7 +5556,7 @@ components:
 
     IncompatibleGeometryProblem:
       description: >
-        The requested boundary release does not hold every source area code of the partition, so no geometry join is offered; `/v1/measures/{measure-id}/compatibility` lists the releases that do. Produced by `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc`.
+        The requested boundary release does not hold every source area code of the partition, so no geometry join is offered. The refusal names the releases that would carry it in `alternatives.releases`, and `/v1/measures/{measure-id}/compatibility` has the full evidence. Produced by `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -5567,7 +5567,7 @@ components:
             code:
               const: incompatible_geometry
       examples:
-        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/population-estimate/compatibility for supported candidates.","code":"incompatible_geometry"}
+        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"2016-12-gb-bgc does not hold every source area code for this partition of population-estimate, so its values cannot be drawn on it. Inspect /v1/measures/population-estimate/compatibility.","code":"incompatible_geometry","alternatives":{"releases":["2023-05-uk-bgc","2023-12-uk-bgc"]}}
 
     InvalidFormatProblem:
       description: >

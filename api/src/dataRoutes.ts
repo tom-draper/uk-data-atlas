@@ -1,5 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import { resolveObservations } from "./resolve/observationPlan";
 import {
 	exportMeasureRecords,
 	type MeasureExportRecord,
@@ -58,13 +59,11 @@ export const handleDataRoutes = ({
 	const period = parsedUrl.searchParams.get("period");
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	const source = measure.sources.find(
-		(candidate) =>
-			candidate.periods.includes(period ?? "") &&
-			candidate.sourceGeography.type === geography &&
-			String(candidate.sourceGeography.boundaryYear) === boundaryYear,
-	);
-	if (!source) {
+	// This route documents all three as required, so a caller who leaves one
+	// out is answered the same way whatever the measure. Which partition those
+	// name, and whether it may be drawn on a release, is the resolver's to
+	// decide rather than this route's.
+	if (period === null || geography === null || boundaryYear === null) {
 		return problem(
 			400,
 			"Invalid Query",
@@ -72,51 +71,35 @@ export const handleDataRoutes = ({
 		);
 	}
 	const requestedRelease = parsedUrl.searchParams.get("release");
-	let geometry: CallerSelectedGeometry | undefined;
-	if (requestedRelease) {
-		if (!measureCompatibilityInventory) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build measure compatibility before selecting a geometry release for observations.",
-			);
-		}
-		const compatibilitySource = measureCompatibilityInventory.measures
-			.find((candidate) => candidate.measureId === measureId)
-			?.sources.find(
-				(candidate) =>
-					candidate.datasetId === source.datasetId &&
-					candidate.sourceGeography.type ===
-						source.sourceGeography.type &&
-					candidate.sourceGeography.boundaryYear ===
-						source.sourceGeography.boundaryYear &&
-					candidate.periods.includes(period ?? ""),
-			);
-		const candidate = compatibilitySource?.candidates.find(
-			(candidate) => candidate.boundaryRelease === requestedRelease,
+	if (requestedRelease && !measureCompatibilityInventory) {
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build measure compatibility before selecting a geometry release for observations.",
 		);
-		if (
-			!candidate ||
-			(candidate.status !== "exact-code-set" &&
-				candidate.status !== "code-set-compatible") ||
-			candidate.unmatchedSourceCodeCount !== 0 ||
-			candidate.matchedSourceShare !== 1
-		) {
-			return problem(
-				422,
-				"Operation Not Supported",
-				`The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/${measureId}/compatibility for supported candidates.`,
-				{ code: "incompatible_geometry" },
-			);
-		}
-		geometry = {
-			boundaryRelease: candidate.boundaryRelease,
-			selection: "caller-specified",
-			compatibility: candidate.status,
-			areaIdentityTemplate: `${source.sourceGeography.type}/${candidate.boundaryRelease}/{areaCode}`,
-			note: "Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry.",
-		};
 	}
+	const resolved = resolveObservations(context, {
+		measureId,
+		period,
+		geography,
+		boundaryYear,
+		release: requestedRelease,
+	});
+	if (resolved.kind === "refusal") {
+		const { status, title, detail, code, alternatives } = resolved.refusal;
+		return problem(status, title, detail, {
+			...(code ? { code } : {}),
+			...(alternatives ? { alternatives } : {}),
+		});
+	}
+	const { source, join } = resolved.plan;
+	const geometry: CallerSelectedGeometry | undefined = join && {
+		boundaryRelease: join.boundaryRelease,
+		selection: "caller-specified",
+		compatibility: join.compatibility,
+		areaIdentityTemplate: `${source.sourceGeography.type}/${join.boundaryRelease}/{areaCode}`,
+		note: "Values remain source-exact and are joined to this caller-selected geometry by matching area code. This is not a geometry conversion or an assertion of equal geometry.",
+	};
 	if (
 		parsedUrl.searchParams.has("conversion") ||
 		parsedUrl.searchParams.has("aggregate")
