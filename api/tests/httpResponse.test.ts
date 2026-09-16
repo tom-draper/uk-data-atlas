@@ -3,7 +3,12 @@ import { createHash } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { entityTag, httpResponse, matchesEntityTag } from "../src/httpResponse";
+import {
+	entityTag,
+	httpResponse,
+	matchesEntityTag,
+	preflightResponse,
+} from "../src/httpResponse";
 import type { ApiResponse } from "../src/routeResponse";
 import { route } from "../src/routes";
 import { readApiCatalogues } from "../src/server";
@@ -189,5 +194,41 @@ test("caches an empty answer but sends nothing to revalidate", () => {
 	assert.equal(
 		response.headers["cache-control"],
 		"public, max-age=300, must-revalidate",
+	);
+});
+
+test("lets a map in someone else's page read the response", () => {
+	// The obvious client for this API is a renderer on another origin. Without
+	// these a browser fetches a tile and then refuses to let the page read it,
+	// and a conditional request never leaves the browser at all.
+	const response = httpResponse({ method: "GET", headers: {} }, () => ok);
+	assert.equal(response.headers["access-control-allow-origin"], "*");
+	for (const exposed of ["etag", "link"])
+		assert.match(
+			response.headers["access-control-expose-headers"]!,
+			new RegExp(exposed),
+			`${exposed} must be readable or a client cannot use it`,
+		);
+
+	// A 304 carries them too: a revalidated tile is still a cross-origin read.
+	const revalidated = httpResponse(
+		{ method: "GET", headers: { "if-none-match": entityTag(body) } },
+		() => ok,
+	);
+	assert.equal(revalidated.status, 304);
+	assert.equal(revalidated.headers["access-control-allow-origin"], "*");
+});
+
+test("answers a preflight for a conditional cross-origin request", () => {
+	// `If-None-Match` is not safelisted, so a browser asks first. If the answer
+	// does not allow it, every conditional request silently becomes a full one.
+	const preflight = preflightResponse();
+	assert.equal(preflight.status, 204);
+	assert.equal(preflight.body, undefined);
+	assert.equal(preflight.headers["access-control-allow-origin"], "*");
+	assert.match(preflight.headers["access-control-allow-methods"]!, /GET/);
+	assert.match(
+		preflight.headers["access-control-allow-headers"]!,
+		/if-none-match/,
 	);
 });
