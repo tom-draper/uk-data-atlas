@@ -1,6 +1,7 @@
 import type { ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
+import { handleOpenapiRoutes } from "./openapiRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
@@ -54,6 +55,14 @@ const routeFamilies: RouteFamily[] = [
 		name: "index",
 		owns: (segments) => segments.length === 1 && segments[0] === "v1",
 		handle: handleIndexRoutes,
+	},
+	{
+		name: "openapi",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "openapi.yaml",
+		handle: handleOpenapiRoutes,
 	},
 	{
 		name: "boundaries",

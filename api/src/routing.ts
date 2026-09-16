@@ -63,6 +63,8 @@ export type RouteContext = {
 	measureObservations?: AnyMeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 	exportManifest?: ExportManifest;
+	/** The OpenAPI description the server serves at `/v1/openapi.yaml`. */
+	openapiDocument?: string;
 	lookupManifest?: LookupManifest;
 };
 
