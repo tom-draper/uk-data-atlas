@@ -1856,41 +1856,44 @@ it should not look like success with a mysteriously short row set.
 
 ## Resolution contract
 
-None of this is built. It is the contract for the layer every data route
-should sit on: the gazetteer and oracle that answers, once, the question each
-route currently answers for itself. It is written before the code for the same
-reason the [map resource contract](#map-resource-contract) was, and the same
-rule applies: where this section and a route disagree, this section is what
-the route should become.
+This is the contract for the layer every data route sits on: the gazetteer and
+oracle that answers, once, the question each route used to answer for itself.
+It was written before the code for the same reason the
+[map resource contract](#map-resource-contract) was, and the same rule
+applies: where this section and a route disagree, this section is what the
+route should become.
 
-### The question being answered eight times
+The selection half is built and every route that chooses a partition uses it.
+Composition across datasets is not built, and is marked so below.
+
+### The question that was answered three different ways
 
 A data route does the same five things in sequence: find the measure, choose
 the source partition, decide whether the requested geometry is compatible,
-read the observations, and refuse with something useful when it cannot. Today
-each route does all five itself, and they have drifted:
+read the observations, and refuse with something useful when it cannot. Each
+route used to do all five itself, and they had drifted:
 
 - `dataRoutes`, `dataAggregateRoutes`, `dataConversionRoutes`,
-  `dataRankingRoutes` and `dataTransformRoutes` match a source on period,
-  geography and boundary year, and take the first that matches.
-- `dataChangeRoutes` matches on geography and boundary year only, ignoring
-  the period.
-- `dataSeriesRoutes` collects every match and refuses unless there is exactly
-  one, and is the only route that accepts a `datasetId` to disambiguate.
-- `bulkRoutes` matches on dataset, geography, boundary year and the whole
+  `dataRankingRoutes` and `dataTransformRoutes` matched a source on period,
+  geography and boundary year, and took the first that matched.
+- `dataChangeRoutes` matched on geography and boundary year only, because
+  change is measured inside one partition and the periods are checked after.
+- `dataSeriesRoutes` collected every match and refused unless there was
+  exactly one, and was the only route accepting a `datasetId` to
+  disambiguate.
+- `bulkRoutes` matched on dataset, geography, boundary year and the whole
   period set.
 
-So "which source serves this measure here" has three different answers
-depending on which route is asked. No current measure exposes the difference:
-of 148 measures, none has two sources sharing a geography and boundary year,
-so the `find` that takes the first and the `filter` that refuses ambiguity
-agree on every measure published today. It is a trap set for the measure that
-breaks the tie, not a fault a caller can hit now. Fifteen modules also read
-observation artifacts directly and sixteen reach into crosswalks, so the same
-drift is available anywhere.
+So "which source serves this measure here" had three different answers
+depending on which route was asked. No measure exposed the difference: of the
+148 published, none has two sources sharing a geography and boundary year, so
+the `find` that took the first and the `filter` that refused ambiguity agreed
+everywhere. It was a trap set for the measure that breaks the tie, not a fault
+a caller could hit.
 
-The resolver exists to make that one function with one answer, so a new route
-inherits the rules instead of restating them.
+The resolver makes that one function with one answer, so a new route inherits
+the rules instead of restating them. The strictest of the three won: more than
+one match is refused with the choices, never resolved by catalogue order.
 
 ### What the resolver returns
 
@@ -1991,12 +1994,31 @@ than forming them.
 
 ### How routes adopt it
 
-Route handlers stop touching `dataCatalog`, `measureObservations`,
-`crosswalkLookup` and the compatibility inventory directly, and take a plan
-instead. The migration is route by route, each one landing with the tests it
-already has passing unchanged, because a plan for a request that works today
-must produce the response that is served today. The oracle is finished when
-no route module imports an observation artifact.
+A route asks for a plan and reads what the plan names. It does not choose a
+partition, and it does not decide whether a geometry release may carry one.
+It still validates its own parameters, because which of them a route requires
+is part of that route's published contract and not the resolver's business,
+and it still reads the observations, because the resolver plans and does not
+fetch.
+
+Each route was migrated on its own, landing with the tests it already had
+passing unchanged: a plan for a request that worked before must produce the
+response that was served before. Each migration was checked by serving every
+measure and period against the previous commit and comparing whole responses,
+so the only differences are refusals that gained the alternatives they now
+carry.
+
+**One route does not use it, and should not.** `bulkRoutes` matches an export
+to the source that produced it, on the dataset and the exact period sequence
+its manifest recorded. That is not "which partition serves this query", so
+putting it through the resolver would mean teaching the resolver a question it
+should not be asked.
+
+An earlier draft of this section said the work was finished when no route
+imported an observation artifact. That was the wrong line to draw: reading is
+what routes are for, and the resolver was never meant to take it over. The
+line that matters is the one above — no route decides for itself which
+partition answers a request.
 
 ## Map resource contract
 
