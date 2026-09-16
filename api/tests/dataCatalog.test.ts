@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import {
@@ -8,6 +8,8 @@ import {
 	type DataCatalogInputs,
 } from "../src/catalog/compileDataCatalog";
 import { onApril2023Authorities } from "../src/catalog/authorityChanges";
+import { fileURLToPath } from "node:url";
+import type { DataCatalog } from "../src/dataCatalog";
 
 const dataset = (
 	output: string,
@@ -1860,4 +1862,70 @@ test("publishes grid area means as derived, weighted by their grid cells", () =>
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
+});
+
+test("names what covers the nations a measure does not", () => {
+	// Four nations publish four deprivation indices. A caller who asks for
+	// England's and then looks for Scotland must be told where to look and
+	// warned off putting the two on one scale, because nothing in the numbers
+	// themselves says they cannot be.
+	const catalog = JSON.parse(
+		readFileSync(
+			resolve(
+				dirname(fileURLToPath(import.meta.url)),
+				"../public/data-catalog.json",
+			),
+			"utf8",
+		),
+	) as DataCatalog;
+	const byId = new Map(catalog.measures.map((m) => [m.id, m]));
+	const england = byId.get("imd-rank");
+	assert.ok(england, "imd-rank is no longer published");
+	assert.equal(england!.concept, "index-of-multiple-deprivation-rank");
+
+	const covered: string[] = [];
+	for (const source of england!.sources)
+		if (source.coverage.kind === "partial")
+			covered.push(...source.coverage.countries);
+	const mine = new Set(covered);
+
+	const elsewhere = england!.elsewhere ?? [];
+	assert.deepEqual(
+		elsewhere.map((entry) => entry.measureId).sort(),
+		["nimdm-rank", "simd-rank", "wimd-rank"],
+		"the other three nations' indices are not all named",
+	);
+	for (const entry of elsewhere) {
+		// Every link must lead to a measure that exists and really covers
+		// ground this one does not.
+		const other = byId.get(entry.measureId);
+		assert.ok(other, `${entry.measureId} is linked but not published`);
+		assert.equal(entry.href, `/v1/measures/${entry.measureId}`);
+		assert.ok(
+			entry.countries.length > 0,
+			`${entry.measureId} covers nowhere`,
+		);
+		assert.deepEqual(
+			entry.countries.filter((country) => mine.has(country)),
+			[],
+			`${entry.measureId} is offered for a nation imd-rank already covers`,
+		);
+		// The warning is the point: these are never comparable, and the reason
+		// travels with the link rather than living in documentation.
+		assert.equal(entry.comparable, false);
+		assert.ok(entry.reason.length > 40, "the reason explains nothing");
+	}
+
+	// The relationship runs both ways, so a caller arriving at any of them is
+	// told about the rest.
+	for (const id of ["wimd-rank", "simd-rank", "nimdm-rank"]) {
+		const linked = (byId.get(id)?.elsewhere ?? []).map((e) => e.measureId);
+		assert.ok(linked.includes("imd-rank"), `${id} does not link back`);
+	}
+
+	// A measure with no national variant carries neither field, rather than an
+	// empty one a client would have to interpret.
+	const population = byId.get("population-estimate");
+	assert.equal(population?.elsewhere, undefined);
+	assert.equal(population?.concept, undefined);
 });

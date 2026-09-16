@@ -814,6 +814,20 @@ paths:
       operationId: getMeasure
       tags: ["Data catalogue"]
       summary: Get one measure's semantics and availability
+      description: >
+        A measure's definition: what it counts, the unit, whether it may be
+        summed or averaged, and which source partitions publish it with what
+        national coverage.
+
+
+        Where another nation publishes its own answer to the same question,
+        the measure carries `concept` and `elsewhere`. Each entry in
+        `elsewhere` names that measure, the countries it covers, and whether
+        the two are `comparable`. For the four national deprivation indices
+        they are not: each ranks its own nation's areas from 1 against its own
+        domains and weights, so they cannot be put on one scale. The reason
+        travels with the link rather than living in documentation, because the
+        numbers themselves give no sign of it.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
       responses:
