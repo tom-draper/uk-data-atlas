@@ -106,6 +106,7 @@ export const handleDataRoutes = ({
 				422,
 				"Operation Not Supported",
 				`The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/${measureId}/compatibility for supported candidates.`,
+				{ code: "incompatible_geometry" },
 			);
 		}
 		geometry = {
@@ -138,6 +139,7 @@ export const handleDataRoutes = ({
 			400,
 			"Invalid Query",
 			"format must be one of json, csv or ndjson.",
+			{ code: "invalid_format" },
 		);
 	}
 	if (measure.valueKind === "categorical" && requestedFormat !== "json") {
@@ -203,7 +205,9 @@ export const handleDataRoutes = ({
 	const cursor = parsedUrl.searchParams.get("cursor");
 	const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 	if (cursor && !cursorCode) {
-		return problem(400, "Invalid Query", "cursor is invalid.");
+		return problem(400, "Invalid Query", "cursor is invalid.", {
+			code: "invalid_cursor",
+		});
 	}
 	const offset = cursorCode
 		? matches.findIndex((record) => record.areaCode === cursorCode) + 1
@@ -213,6 +217,7 @@ export const handleDataRoutes = ({
 			400,
 			"Invalid Query",
 			"cursor is not valid for this population query.",
+			{ code: "invalid_cursor" },
 		);
 	}
 	const records = matches.slice(offset, offset + pageSize);

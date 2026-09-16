@@ -88,6 +88,7 @@ export const handleDataValueRoutes = ({
 			"Ambiguous Place",
 			`"${place}" names ${outcome.choices.length} places that ${measureId} answers differently. Each choice carries its answer; ask again with the place reference of the one meant.`,
 			{
+				code: "ambiguous_place",
 				choices: outcome.choices.map((choice) => ({
 					...describeAttempt(choice),
 					ask: `/v1/data/${measureId}/value?place=${encodeURIComponent(choice.candidate.place)}${period ? `&period=${encodeURIComponent(period)}` : ""}`,

@@ -2185,11 +2185,12 @@ surface area. They follow Phase 0 and Phase 1 only.
    ambiguous place, absence state, incompatible geometry, unsupported
    conversion, partial coverage, invalid format and cursor failures. Test both
    JSON and tabular error representation policy.
-   *Partly done.* `src/problemCodes.ts` gives absence states, unsupported
-   geography, unsupported aggregation and conversion, partial coverage and
-   ambiguous release a typed schema and a tested example. Ambiguous place,
-   incompatible geometry, invalid format and cursor failures have no code
-   yet, and tabular error representation is not tested.
+   *Done.* `src/problemCodes.ts` declares eleven codes, including ambiguous
+   place, incompatible geometry, invalid format and invalid cursor. Each has
+   an OpenAPI schema whose example is checked against the live response, and
+   a route cannot emit an undeclared code without failing the type check. An
+   error is always `application/problem+json`, whatever `format` was asked
+   for, which `tests/httpResponse.test.ts` holds for a failed CSV request.
 6. **Make delivery semantics consistent.** Audit the implementation against
    the documented `format`/`Accept`, pagination, `Link`, content type,
    `Cache-Control`, provenance and content-hash rules. Implement or remove any

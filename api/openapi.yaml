@@ -18,6 +18,11 @@ info:
     `GET /atlas-release`, so clients can identify the exact set of artifacts
     that produced a response.
 
+    An error is always `application/problem+json`, whatever `format` the
+    request asked for: a problem is not a representation of the resource that
+    failed to serve. Every refusal a client should branch on carries a stable
+    `code`, listed under `Problem`.
+
     Caching and conditional requests apply to every route. A `200` response
     carries a strong `ETag`, the SHA-256 of the exact bytes served, and
     `Cache-Control: public, max-age=300, must-revalidate`. A `GET` or `HEAD`
@@ -3695,6 +3700,10 @@ components:
             - aggregation_not_supported
             - conversion_not_available
             - partial_coverage
+            - ambiguous_place
+            - incompatible_geometry
+            - invalid_format
+            - invalid_cursor
             - no_release_for_date
             - ambiguous_release
           description: >
@@ -3709,8 +3718,14 @@ components:
             `partial_coverage` when a named location or a weight partition
             leaves out areas the sum would need. A partial country or region
             total is not refused; it is a 200 whose coverage says so.
-            From a release resolution: `no_release_for_date` and
-            `ambiguous_release`.
+            From a value request for a place: `ambiguous_place` when the name
+            means several places the measure answers differently. From an
+            observation request: `incompatible_geometry` when the chosen
+            boundary release does not hold every source code. On a 400:
+            `invalid_format` for a `format` the route does not serve, and
+            `invalid_cursor` for a cursor this API did not issue or that
+            belongs to another query. From a release resolution:
+            `no_release_for_date` and `ambiguous_release`.
         absence:
           type: string
           enum:
@@ -3849,6 +3864,66 @@ components:
               const: partial_coverage
       examples:
         - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The named location does not cover this source partition by direct code match: N09000003 (absent-from-release). No conversion or partial sum was applied.","code":"partial_coverage"}
+
+    AmbiguousPlaceProblem:
+      description: >
+        The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone. Produced by `GET /v1/data/population-estimate/value?place=Newport`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, choices]
+          properties:
+            status:
+              enum: [409]
+            code:
+              const: ambiguous_place
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/ambiguous-place","title":"Ambiguous Place","status":409,"detail":"\"Newport\" names 4 places that population-estimate answers differently. Each choice carries its answer; ask again with the place reference of the one meant.","code":"ambiguous_place","choices":[{"place":"localAuthority/W06000022","kind":"area","name":"Newport","geography":"localAuthority","code":"W06000022","match":"exact","served":true,"method":"source-exact","answer":{"period":"2024","value":167899,"status":"observed","periodDefaulted":true},"via":"/v1/data/population-estimate/series?areaCode=W06000022&geography=localAuthority&boundaryYear=2023","ask":"/v1/data/population-estimate/value?place=localAuthority%2FW06000022"}]}
+
+    IncompatibleGeometryProblem:
+      description: >
+        The requested boundary release does not hold every source area code of the partition, so no geometry join is offered; `/v1/measures/{measure-id}/compatibility` lists the releases that do. Produced by `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status:
+              enum: [422]
+            code:
+              const: incompatible_geometry
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/operation-not-supported","title":"Operation Not Supported","status":422,"detail":"The requested release does not contain every source area code for this measure partition. Inspect /v1/measures/population-estimate/compatibility for supported candidates.","code":"incompatible_geometry"}
+
+    InvalidFormatProblem:
+      description: >
+        The `format` asked for is not one this route serves. Produced by `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=xml`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status:
+              enum: [400]
+            code:
+              const: invalid_format
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"format must be one of json, csv or ndjson.","code":"invalid_format"}
+
+    InvalidCursorProblem:
+      description: >
+        The cursor is not one this API issued, or does not belong to the query it was sent with. Ask for the first page again and follow `meta.nextCursor`. Produced by `GET /v1/areas?cursor=not-a-cursor`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code]
+          properties:
+            status:
+              enum: [400]
+            code:
+              const: invalid_cursor
+      examples:
+        - {"type":"https://api.ukdataatlas.com/problems/invalid-query","title":"Invalid Query","status":400,"detail":"cursor is invalid.","code":"invalid_cursor"}
 
     NoReleaseForDateProblem:
       description: >

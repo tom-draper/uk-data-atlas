@@ -119,7 +119,9 @@ export const handleDataRankingRoutes = ({
 	const cursor = parsedUrl.searchParams.get("cursor");
 	const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 	if (cursor && !cursorCode) {
-		return problem(400, "Invalid Query", "cursor is invalid.");
+		return problem(400, "Invalid Query", "cursor is invalid.", {
+			code: "invalid_cursor",
+		});
 	}
 	const offset = cursorCode
 		? ranked.findIndex((record) => record.areaCode === cursorCode) + 1
@@ -129,6 +131,7 @@ export const handleDataRankingRoutes = ({
 			400,
 			"Invalid Query",
 			"cursor is not valid for this ranking query.",
+			{ code: "invalid_cursor" },
 		);
 	}
 	const records = ranked.slice(offset, offset + pageSize);
