@@ -16,6 +16,11 @@ export const handleIndexRoutes = ({
 			links: [
 				"/v1/openapi.yaml",
 				"/v1/geographies",
+				"/v1/map-resources",
+				"/v1/map-resources/{geography}/{release}",
+				"/v1/map-resources/{geography}/{release}.pmtiles",
+				"/v1/map-resources/{geography}/{release}/tiles.json",
+				"/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt",
 				"/v1/boundary-releases",
 				"/v1/boundary-releases:resolve",
 				"/v1/boundary-releases/{geography}/{release}",
