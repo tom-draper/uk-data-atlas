@@ -9,7 +9,8 @@ import { parse } from "yaml";
  * against.
  */
 
-export const API_BASE_URL = "https://api.ukdataatlas.com/v1";
+export const API_ORIGIN = "https://api.ukdataatlas.com";
+export const API_BASE_URL = `${API_ORIGIN}/v1`;
 
 const SPEC_PATH = path.join(process.cwd(), "api", "openapi.yaml");
 const MAX_SCHEMA_DEPTH = 4;
