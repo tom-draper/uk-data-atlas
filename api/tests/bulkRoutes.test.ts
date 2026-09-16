@@ -75,7 +75,7 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 		'attachment; filename="small-area-fixture.json"',
 	);
 	assert.deepEqual(
-		JSON.parse(downloaded.representation?.body ?? "{}"),
+		JSON.parse(String(downloaded.representation?.body ?? "{}")),
 		measureObservations[0],
 	);
 });

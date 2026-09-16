@@ -30,7 +30,12 @@ export type ApiResponse = {
 	body: Envelope<unknown> | Problem;
 	representation?: {
 		contentType: string;
-		body: string;
+		/**
+		 * A Buffer for a representation that is not text, such as a vector
+		 * tile. It travels to the client as it is, and is hashed for the ETag
+		 * the same way a string body is.
+		 */
+		body: string | Buffer;
 		headers?: Record<string, string>;
 	};
 };
