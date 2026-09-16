@@ -171,6 +171,7 @@ paths:
           in: query
           required: true
           schema: { type: string }
+          description: The geography to resolve a release for, e.g. `ward`.
         - name: date
           in: query
           required: true
@@ -182,6 +183,9 @@ paths:
           schema:
             type: string
             enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+          description: >
+            Restricts the answer to releases covering this country, so a Great
+            Britain release is passed over for Northern Ireland.
       responses:
         "200":
           description: The selected release, its neighbours and the basis of the choice.
@@ -296,6 +300,8 @@ paths:
           required: true
           schema:
             type: string
+          description: >
+            A dataset id from `GET /v1/datasets`, such as `population-uk`.
       responses:
         "200":
           description: Dataset metadata and source lineage.
@@ -329,11 +335,7 @@ paths:
       tags: ["Data catalogue"]
       summary: Get one measure's semantics and availability
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
       responses:
         "200":
           description: The measure definition.
@@ -357,11 +359,7 @@ paths:
         `code-set-compatible` result means every source code occurs in the
         candidate; it does not select that release or assert identical geometry.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
       responses:
         "200":
           description: Compatibility counts and bounded samples of unmatched source and candidate-only codes.
@@ -385,11 +383,7 @@ paths:
         code join means all source codes are present; it does not assert equal
         geometry or perform a geographic conversion.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
       responses:
         "200":
           description: Source coverage and boundary code-coverage summary.
@@ -413,10 +407,7 @@ paths:
         aggregation availability and boundary code-set compatibility. It does
         not infer missing areas or claim geometric equivalence from code sets.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/MeasureId"
       responses:
         "200":
           description: The measure-quality matrix.
@@ -559,16 +550,15 @@ paths:
           schema:
             type: string
           description: A period listed by the measure's matching source partition.
-        - name: geography
-          in: query
-          required: true
-          schema:
-            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
+        - $ref: "#/components/parameters/SourceGeography"
         - name: boundaryYear
           in: query
           required: true
           schema:
             const: "2023"
+          description: >
+            The code vintage the partition's areas are published on. This route
+            serves the 2023 vintage.
         - name: release
           in: query
           required: false
@@ -606,19 +596,8 @@ paths:
             `lowerBound` and `upperBound`, empty where no interval is published. Tabular responses are paginated like the
             JSON ones, but carry the next page as a `Link` header with
             `rel="next"` because they have no envelope to hold a cursor.
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 500
-            default: 100
-        - name: cursor
-          in: query
-          required: false
-          schema:
-            type: string
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
           description: A cursor-paginated JSON page or a source-exact tabular export.
@@ -697,26 +676,10 @@ paths:
         This route does not select a boundary release or perform a code or
         geometry conversion.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: period
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: geography
-          in: query
-          required: true
-          schema:
-            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            type: integer
+        - $ref: "#/components/parameters/MeasureId"
+        - $ref: "#/components/parameters/SourcePeriod"
+        - $ref: "#/components/parameters/SourceGeography"
+        - $ref: "#/components/parameters/SourceBoundaryYear"
         - name: locationId
           in: query
           required: false
@@ -806,45 +769,18 @@ paths:
         A source code the crosswalk does not carry, or a split source with no
         published weight, is rejected rather than partially converted.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
         - name: crosswalk
           in: query
           required: true
           schema:
             type: string
           description: A crosswalk id returned by `GET /crosswalks`.
-        - name: period
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: geography
-          in: query
-          required: true
-          schema:
-            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 500
-            default: 100
-        - name: cursor
-          in: query
-          required: false
-          schema:
-            type: string
+        - $ref: "#/components/parameters/SourcePeriod"
+        - $ref: "#/components/parameters/SourceGeography"
+        - $ref: "#/components/parameters/SourceBoundaryYear"
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
           description: >
@@ -880,31 +816,25 @@ paths:
         convert values or aggregate them. Supply `datasetId` when a measure has
         more than one source for the requested geography and boundary year.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
         - name: areaCode
           in: query
           required: true
           schema:
             type: string
-        - name: geography
-          in: query
-          required: true
-          schema:
-            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            type: integer
+          description: >
+            The one area to return the series for, by its code in the source
+            partition.
+        - $ref: "#/components/parameters/SourceGeography"
+        - $ref: "#/components/parameters/SourceBoundaryYear"
         - name: datasetId
           in: query
           required: false
           schema:
             type: string
+          description: >
+            Narrows the partition to one dataset where a measure has several on
+            the same geography and vintage.
       responses:
         "200":
           description: Source-exact observations in ascending source period order.
@@ -936,45 +866,19 @@ paths:
         the following rank accounts for all preceding observations (1, 1, 3).
         It does not select a boundary release, convert values or aggregate them.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: period
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: geography
-          in: query
-          required: true
-          schema:
-            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            type: integer
+        - $ref: "#/components/parameters/MeasureId"
+        - $ref: "#/components/parameters/SourcePeriod"
+        - $ref: "#/components/parameters/SourceGeography"
+        - $ref: "#/components/parameters/SourceBoundaryYear"
         - name: order
           in: query
           required: false
           schema:
             enum: [asc, desc]
             default: desc
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 500
-            default: 100
-        - name: cursor
-          in: query
-          required: false
-          schema:
-            type: string
+          description: Whether the highest or the lowest value ranks first.
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
           description: Cursor-paginated competition ranks for the source partition.
@@ -1039,6 +943,7 @@ paths:
             minimum: 1
             maximum: 500
             default: 10
+          description: How many candidate places to return, 1 to 500.
       responses:
         "200":
           description: The candidate places, best match first. Empty when nothing matches.
@@ -1112,17 +1017,16 @@ paths:
         response is a 422 with a `candidates` member saying why for each, such
         as a median, which cannot be summed over a region.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
         - name: place
           in: query
           required: true
           schema:
             type: string
           example: North West
+          description: >
+            A place name, an area code, or a place reference such as
+            `localAuthority/E08000003` from `GET /v1/places`.
         - name: period
           in: query
           required: false
@@ -1244,27 +1148,23 @@ paths:
         `coverage.onlyAtStart` and `coverage.onlyAtEnd` rather than paired with
         anything.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/MeasureId"
         - name: geography
           in: query
           required: true
           schema:
             type: string
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            type: integer
+          description: >
+            The geography of the source partition the change is measured inside.
+            Both periods come from that one partition.
+        - $ref: "#/components/parameters/SourceBoundaryYear"
         - name: startPeriod
           in: query
           required: true
           schema:
             type: string
           example: "2011"
+          description: The period the change is measured from.
         - name: endPeriod
           in: query
           required: true
@@ -1278,6 +1178,9 @@ paths:
           schema:
             enum: [absolute, relative]
             default: absolute
+          description: >
+            Whether change is the difference in the published unit, or that
+            difference as a proportion of the start value.
         - name: order
           in: query
           required: false
@@ -1291,19 +1194,8 @@ paths:
           description: Return only this area, with its rank among all of them.
           schema:
             type: string
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 500
-            default: 100
-        - name: cursor
-          in: query
-          required: false
-          schema:
-            type: string
+        - $ref: "#/components/parameters/PageLimit"
+        - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
           description: Cursor-paginated competition ranks of change for the source partition.
@@ -1368,36 +1260,22 @@ paths:
         their source scale rather than a misleading relative change. The route
         does not select a boundary release, convert values or aggregate them.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: period
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: geography
-          in: query
-          required: true
-          schema:
-            enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            type: integer
+        - $ref: "#/components/parameters/MeasureId"
+        - $ref: "#/components/parameters/SourcePeriod"
+        - $ref: "#/components/parameters/SourceGeography"
+        - $ref: "#/components/parameters/SourceBoundaryYear"
         - name: baselineAreaCode
           in: query
           required: true
           schema:
             type: string
+          description: The area the difference is measured from.
         - name: comparisonAreaCode
           in: query
           required: true
           schema:
             type: string
+          description: The area the difference is measured to.
       responses:
         "200":
           description: The named source-exact observations and their directed difference.
@@ -1447,14 +1325,7 @@ paths:
           schema:
             type: string
           description: Restrict results to one boundary release.
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 500
-            default: 100
+        - $ref: "#/components/parameters/PageLimit"
         - name: cursor
           in: query
           required: false
@@ -1522,11 +1393,15 @@ paths:
           required: true
           schema:
             type: string
+          description: The geography of the boundary release to search.
         - name: release
           in: query
           required: true
           schema:
             type: string
+          description: >
+            The boundary release to search, whose geometry the box is tested
+            against.
         - name: tier
           in: query
           required: false
@@ -1544,6 +1419,9 @@ paths:
             minimum: 1
             maximum: 1000
             default: 200
+          description: >
+            How many matching areas to return, 1 to 1000. `truncated` says
+            whether the cap bit.
       responses:
         "200":
           description: The areas meeting the box, and how each meets it.
@@ -1629,6 +1507,9 @@ paths:
           in: query
           required: true
           schema: { type: string }
+          description: >
+            The geography of the boundary release to validate the values
+            against.
         - name: release
           in: query
           required: true
@@ -1673,6 +1554,7 @@ paths:
             type: number
             minimum: -180
             maximum: 180
+          description: Longitude in WGS 84 decimal degrees.
         - name: lat
           in: query
           required: true
@@ -1680,14 +1562,19 @@ paths:
             type: number
             minimum: -90
             maximum: 90
+          description: Latitude in WGS 84 decimal degrees.
         - name: geography
           in: query
           required: true
           schema: { type: string }
+          description: >
+            The geography of the boundary release to test the point against.
         - name: release
           in: query
           required: true
           schema: { type: string }
+          description: >
+            The boundary release whose geometry the point is tested against.
       responses:
         "200":
           description: Every area whose geometry contains the point.
@@ -1783,10 +1670,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/AreaCode"
       responses:
         "200":
           description: The area identity and its availability matrix.
@@ -1822,10 +1706,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/AreaCode"
         - name: measure
           in: query
           required: false
@@ -1874,10 +1755,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/AreaCode"
       responses:
         "200":
           description: Area history, including a warning about same-code continuity.
@@ -1895,10 +1773,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/AreaCode"
       responses:
         "200":
           description: The area and its `within` relationships.
@@ -1919,10 +1794,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/AreaCode"
       responses:
         "200":
           description: The area and its `contains` relationships.
@@ -2200,10 +2072,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/AreaCode"
         - name: with
           in: query
           required: true
@@ -2909,10 +2778,7 @@ paths:
         source partition's own checks are served under
         `/validation/exports/{export-id}`.
       parameters:
-        - name: measure-id
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/MeasureId"
       responses:
         "200":
           description: The measure's checks.
@@ -2959,10 +2825,7 @@ paths:
         as the sum of others adds `components-sum-to-total`, comparing each
         area and period with its components in the same source partitions.
       parameters:
-        - name: export-id
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/ExportId"
       responses:
         "200":
           description: The source partition's checks.
@@ -3089,10 +2952,7 @@ paths:
         its content hash against the manifest. This response is intentionally
         not wrapped in the usual API envelope.
       parameters:
-        - name: export-id
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/ExportId"
       responses:
         "200":
           description: The complete source observation artifact.
@@ -3198,12 +3058,18 @@ paths:
           in: path
           required: true
           schema: { type: string }
+          description: >
+            A lookup id from `GET /v1/lookups`, such as
+            `areas-ward-2024-12-uk-bgc`.
         - name: format
           in: query
           required: false
           schema:
             enum: [csv, ndjson]
             default: csv
+          description: >
+            The representation to download. Both are rendered from the same
+            artifact and hashed in the lookup manifest.
       responses:
         "200":
           description: The whole lookup table.
@@ -3268,6 +3134,9 @@ paths:
           in: path
           required: true
           schema: { type: string }
+          description: >
+            An archived release id from `GET /v1/atlas-releases`, the `sha256:`
+            hash the release is named by.
       responses:
         "200":
           description: The immutable release manifest.
@@ -3296,6 +3165,7 @@ paths:
           in: query
           required: true
           schema: { type: string }
+          description: The archived release to compare from, by its release id.
         - name: to
           in: query
           required: false
@@ -3377,28 +3247,38 @@ paths:
           in: query
           required: true
           schema: { type: string }
+          description: The geography the code belongs to.
         - name: sourceRelease
           in: query
           required: true
           schema: { type: string }
+          description: The boundary release the code belongs to.
         - name: code
           in: query
           required: true
           schema: { type: string }
+          description: >
+            The area code to translate, as published in the source release.
         - name: targetGeography
           in: query
           required: true
           schema: { type: string }
+          description: The geography to translate into.
         - name: targetRelease
           in: query
           required: true
           schema: { type: string }
+          description: The boundary release to translate into.
         - name: purpose
           in: query
           schema:
             type: string
             enum: [identity, membership, apportion]
             default: membership
+          description: >
+            What the translation is for: official historical `identity`, clean
+            `membership`, or area-overlap `apportion`. A crosswalk is used only
+            where its method suits the purpose.
       responses:
         "200":
           description: Matching published crosswalk records.
@@ -3495,6 +3375,9 @@ paths:
         - name: q
           in: query
           schema: { type: string }
+          description: >
+            Matches a named location's label, case and punctuation aside. Omit
+            it to list every curated location.
       responses:
         "200":
           description: Named location definitions.
@@ -3510,10 +3393,7 @@ paths:
       tags: ["Geography"]
       summary: Get one curated named-location definition
       parameters:
-        - name: location-id
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/LocationId"
       responses:
         "200":
           description: The location's editorial definition, source codes and bounds.
@@ -3565,10 +3445,7 @@ paths:
         resolved against, which is the release the crosswalk ends at rather
         than the one asked for.
       parameters:
-        - name: location-id
-          in: path
-          required: true
-          schema: { type: string }
+        - $ref: "#/components/parameters/LocationId"
         - name: geography
           in: query
           schema:
@@ -3581,6 +3458,9 @@ paths:
           in: query
           required: true
           schema: { type: string }
+          description: >
+            The boundary release to resolve members in, which fixes the vintage
+            of the codes returned.
         - name: via
           in: query
           required: false
@@ -3633,6 +3513,82 @@ components:
       schema:
         type: string
       description: A crosswalk id, e.g. `constituency-2010-to-2024-official-lookup-v2`.
+    MeasureId:
+      name: measure-id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: A measure id from `GET /v1/measures`, such as `population-estimate`.
+    AreaCode:
+      name: code
+      in: path
+      required: true
+      schema:
+        type: string
+      description: An area's official code in that release, e.g. `E05000932`.
+    ExportId:
+      name: export-id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: An export id from `GET /v1/exports`; one source partition of one measure.
+    LocationId:
+      name: location-id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: A curated named location id from `GET /v1/locations`, e.g. `greater-manchester`.
+    SourceGeography:
+      name: geography
+      in: query
+      required: true
+      schema:
+        enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
+      description: >
+        The geography the publisher observed the values on. With `boundaryYear`
+        it selects one source partition of the measure; it never converts
+        values onto another geography.
+    SourceBoundaryYear:
+      name: boundaryYear
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: >
+        The code vintage the partition's areas are published on, e.g. `2023`.
+        This is the source's own vintage, not a boundary release to draw.
+    SourcePeriod:
+      name: period
+      in: query
+      required: true
+      schema:
+        type: string
+      description: >
+        The observation period as the partition publishes it, e.g. `2022`,
+        `2026-04` or `year-ending-2026-03`. A measure's periods are listed in
+        its catalogue entry.
+    PageCursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+      description: >
+        The `meta.nextCursor` of the previous page. A cursor is opaque and
+        belongs to the query that issued it.
+    PageLimit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 500
+        default: 100
+      description: How many records to return, 1 to 500.
 
   responses:
     NotFound:
