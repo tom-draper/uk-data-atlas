@@ -10,6 +10,7 @@
 		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
+		"example:map-render": "tsx examples/correct-map-render.ts",
 		"example:trend": "tsx examples/defensible-trend.ts",
 		"example:sync": "tsx examples/reliable-sync.ts",
 		"build:area-inventory": "tsx scripts/build-area-inventory.ts",
