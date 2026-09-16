@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c",
+	"releaseId": "sha256:5d8df0d92fc19c9a8e7f1815fced685cc2b21e2e65f872dfd0692140abbb5e30",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -25,17 +25,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:793cb070e8b35e30929d083ebbeb7f2c97078c6e63809b85f8be03fb919904b1"
+			"contentHash": "sha256:cd4b01580bda42fc0e6a648548272b7bd06f10512702272ac22116ed70744951"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:e15523c92a75d8ea0ad4a9e0714ab12b1517d2c86bc598e6c7ffb69526f8277e"
+			"contentHash": "sha256:227c7a1e4e31f01291b521bfba2573226e4f007bdab4e923f4e2dfe5c3e20b64"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:a3f4235126ed395967328339b3b6378c6870ce60125c81329c08b89f06df982a"
+			"contentHash": "sha256:4733bb3d7707b156b41840b3b5777b4b2afb34e57829ff85e164c611994064f1"
 		},
 		{
 			"id": "lookup-manifest",
@@ -75,7 +75,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:a4156bc6a0e7bcc54ae1e4fdbed2105dfcd68c09dd485cc50ee3720c4e781fa8"
+			"contentHash": "sha256:adf446d20dd7640b166b69d195c007e9dc4e1ee9130ad04d1fec1a651de3287c"
 		},
 		{
 			"id": "source-inventory",
@@ -1608,8 +1608,8 @@
 			"general-election-winning-party": "sha256:f5170ad8f5863c6a332f49926aa5d437b86ea93548ab1f87f2e35f8a97334285",
 			"ghg-emissions": "sha256:ab74e42aa71b977f9c80ffa8799ad476dbac11eda586e6e7046dad96549d9e69",
 			"house-price-median": "sha256:2426fea9c81881fd4168bb167a0276c6cbd06803d19512b50a6656768b54bc26",
-			"imd-decile": "sha256:e39f35c972d8ec3e094541e179ed7b054611fac155fdcaed997fc1eed7e0be90",
-			"imd-rank": "sha256:31c073a4dede5e55f2c2fb8a0c12493e75629d57e70c0f6a1bee86183217d8a2",
+			"imd-decile": "sha256:88e348fc7d8bf27141016716b8f5213397ff4634fded27c06415649755610a22",
+			"imd-rank": "sha256:7a11e3a50530c4dc775c8bca6bcd0e7d5125b836031a996e6096e75643d2ab33",
 			"life-expectancy-female": "sha256:38a31a3740cc11b154eddd73386f0888c47587456aba2c5f94fe9569e052163a",
 			"life-expectancy-male": "sha256:2a558b215bc137c16dad7f597043857cf46cd6c9e61d0a5e70837d24b385bbfc",
 			"local-election-con-votes": "sha256:f7061ca33883c12423b7026025f2c2938aacb13673436e09ecff98dfc858949e",
@@ -1628,7 +1628,7 @@
 			"median-hourly-pay": "sha256:9bc174d827dbc4eb3a4b54ea13145845e11537a11d0d574e2cff783184f7711c",
 			"mobile-4g-coverage": "sha256:f9a666f3e3e7b0c6c84dfd9faeda28e2d347036b539defbb23ec72d508ee86c3",
 			"mobile-5g-coverage": "sha256:c57e067a07aa0809df2ec892c8a61a4ca9f8923a554fe965a35d39e611847265",
-			"nimdm-rank": "sha256:1464fbf6084a3ac87251f5e13dc8a1652792622d6fd5703db474b4433944637c",
+			"nimdm-rank": "sha256:8775910c50ef93d96815ecfbb24ccc9a6e6217bf027ff74cb6251421e9752019",
 			"no2-background-mean": "sha256:0542f85cf2f154e64b96bfbfaae7cd90b7a232deffde154af01a955c98ca2e34",
 			"pm10-background-mean": "sha256:a24d2ba576a7270be3c15b8c440eb8f6af47d10d8976578e32651817914700bf",
 			"pm25-background-mean": "sha256:59eb64cf8efabd29a2f3572107d056aba3d235e68c698b4a7e215bae328eb9ee",
@@ -1648,8 +1648,8 @@
 			"road-collisions-fatal": "sha256:8e5eed94a4f43035cb97ff1fe2fc50775a0975e5285d30139c119269f1f9224b",
 			"road-collisions-serious": "sha256:7dfc1e835645651f277bf603b89dbad5edbf3a63c24a1255ca23a5a334bc9696",
 			"road-collisions-slight": "sha256:77d3e7f26389833a53e638d59129bb5b7f125adaac2d5d6ccea8e6ed2c144c4b",
-			"simd-decile": "sha256:f8e9fa7e0b4d658738bb824064971af2fb88f67fefac7005cce53c30b853ee59",
-			"simd-rank": "sha256:30ebd1a5b5385ae68207832de6bfcb65b268b1e29be74d17ddd41def9dff45e4",
+			"simd-decile": "sha256:d3262bb6b5d80bc311e7fd885e108f1afdf0d71aed472a97279c5ceda39e8eb9",
+			"simd-rank": "sha256:4b411eb3723247f8b1d01f8f7e2cb5e159b9abc32c1f1be7a38c4a16584baefe",
 			"temporary-accommodation-children": "sha256:2b6a22efe716ad91d9181f66e3d43593dcdedf90a8b8626edd734d85facd210e",
 			"temporary-accommodation-households": "sha256:caf75c6a10fd8512f6a005f56c6e15fa65c434a3af8949cca05462c3058cf433",
 			"temporary-accommodation-households-with-children": "sha256:cfcd772d2b4e2fd4353cbcb9f9a9fde9c60dcf910143f916ec1601db392d57e8",
@@ -1665,8 +1665,8 @@
 			"travel-to-work-total": "sha256:09e7ef8003b8ae5081c27d089a15c33889ba1086bc3a5269c83a45ca7e3c783e",
 			"unemployment-level": "sha256:c9af75067672ed818d9b89f091285ffb76cf42d4c43de59f3a0e9a585bd4b546",
 			"unemployment-rate": "sha256:71480673ebab93da7039a6c62cee7faaeb846b08ca755f3fe33611f68f4b19c3",
-			"wimd-decile": "sha256:d753e61818d1f1cc88417781f2b29c2d37cb1efc937f08b7a4c20cfa9d78e49c",
-			"wimd-rank": "sha256:0a4a5e7ba42a0853322c6232aa2018ba98ad33869cef1d638f0aee6c5949e566"
+			"wimd-decile": "sha256:98bc4a4112e59b113fa0571882fde582bc6d04a57c103847dbec353a2b4dfc4b",
+			"wimd-rank": "sha256:15deee2ffc47d9a3ad0df52385c4bbfb5e8cb5f98993a62f452c1288c5f492bb"
 		},
 		"boundaryReleases": {
 			"combinedAuthority/2025-12-en-bgc": "sha256:562e6613e32c2ab3c9a6fadda26787fe6334e45a90c569743f71b4dc92fad360",
