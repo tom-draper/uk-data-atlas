@@ -1,5 +1,6 @@
 // components/Navigation.tsx
 import Link from "next/link";
+import { docsIndexable } from "@/lib/docs/mode";
 
 export default function Navigation() {
 	return (
@@ -20,6 +21,14 @@ export default function Navigation() {
 						>
 							Sources
 						</Link>
+						{docsIndexable() && (
+							<Link
+								href="/docs"
+								className="px-4 content-center cursor-pointer hover:underline"
+							>
+								API
+							</Link>
+						)}
 						<Link
 							href="/"
 							className="px-4 content-center cursor-pointer hover:underline"
