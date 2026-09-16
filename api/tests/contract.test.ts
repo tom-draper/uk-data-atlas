@@ -183,21 +183,42 @@ const openapi = parse(
 
 const responseExamples = Object.entries(openapi.paths).flatMap(
 	([path, item]) => {
-		const media = item.get?.responses["200"]?.content?.["application/json"];
-		if (!media) return [];
+		const content = item.get?.responses["200"]?.content ?? {};
+		// A representation that is not JSON, such as a lookup's CSV, shows the
+		// first rows; the served body must start with exactly those bytes.
+		const text = Object.entries(content).flatMap(([type, entry]) =>
+			type !== "application/json" && entry.example !== undefined
+				? [
+						{
+							name: `${path} [${type}]`,
+							request: entry["x-example-request"],
+							value: entry.example,
+							prefix: true,
+						},
+					]
+				: [],
+		);
+		const media = content["application/json"];
+		if (!media) return text;
 		if (media.example !== undefined)
 			return [
+				...text,
 				{
 					name: path,
 					request: media["x-example-request"],
 					value: media.example,
+					prefix: false,
 				},
 			];
-		return Object.entries(media.examples ?? {}).map(([name, example]) => ({
-			name: `${path} ${name}`,
-			request: example["x-example-request"],
-			value: example.value,
-		}));
+		return [
+			...text,
+			...Object.entries(media.examples ?? {}).map(([name, example]) => ({
+				name: `${path} ${name}`,
+				request: example["x-example-request"],
+				value: example.value,
+				prefix: false,
+			})),
+		];
 	},
 );
 
@@ -259,15 +280,23 @@ test("names the request behind every OpenAPI response example", () => {
 });
 
 test("matches every OpenAPI response example to the live response", () => {
-	const drifted = responseExamples.flatMap(({ name, request, value }) => {
-		if (!request) return [];
-		const response = route("GET", request, catalogues);
-		if (response.status !== 200)
-			return [`${name}: ${request} returned ${response.status}`];
-		return departures(value, response.body, "").map(
-			(departure) => `${name}${departure}`,
-		);
-	});
+	const drifted = responseExamples.flatMap(
+		({ name, request, value, prefix }) => {
+			if (!request) return [];
+			const response = route("GET", request, catalogues);
+			if (response.status !== 200)
+				return [`${name}: ${request} returned ${response.status}`];
+			if (prefix) {
+				const body = response.representation?.body ?? "";
+				return body.startsWith(String(value))
+					? []
+					: [`${name}: the response does not start with the example`];
+			}
+			return departures(value, response.body, "").map(
+				(departure) => `${name}${departure}`,
+			);
+		},
+	);
 	assert.deepEqual(drifted, []);
 });
 
