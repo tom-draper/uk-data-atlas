@@ -1,5 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import { resolveObservations } from "./resolve/observationPlan";
 import { rankObservations, readRankingOrder } from "./ranking";
 import {
 	changeRefusal,
@@ -89,18 +90,29 @@ export const handleDataChangeRoutes = ({
 	 * end; pairing periods from partitions on different codes would pair
 	 * areas that are not the same place.
 	 */
-	const source = measure.sources.find(
-		(candidate) =>
-			candidate.sourceGeography.type === geography &&
-			String(candidate.sourceGeography.boundaryYear) === boundaryYear,
-	);
-	if (!source || !startPeriod || !endPeriod) {
+	if (!geography || !boundaryYear || !startPeriod || !endPeriod) {
 		return problem(
 			400,
 			"Invalid Query",
 			`${measureId} measures change within one source partition: give geography, boundaryYear, startPeriod and endPeriod. Published partitions: ${partitions}.`,
 		);
 	}
+	// The partition is chosen by geography and boundary year alone. Which
+	// periods it must hold is checked below, where the route needs their
+	// positions anyway to say which way round the change runs.
+	const resolved = resolveObservations(context, {
+		measureId,
+		periods: [],
+		geography,
+		boundaryYear,
+	});
+	if (resolved.kind === "refusal")
+		return problem(
+			400,
+			"Invalid Query",
+			`${measureId} measures change within one source partition: give geography, boundaryYear, startPeriod and endPeriod. Published partitions: ${partitions}.`,
+		);
+	const { source } = resolved.plan;
 	if (source.periods.length < 2) {
 		return problem(
 			422,

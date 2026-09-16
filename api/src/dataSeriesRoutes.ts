@@ -1,5 +1,6 @@
 import type { MeasureSource, PopulationObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import { resolveObservations } from "./resolve/observationPlan";
 import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,
@@ -67,22 +68,25 @@ export const handleDataSeriesRoutes = ({
 			"areaCode, geography and boundaryYear are required for a source-exact series.",
 		);
 	}
-	const matchingSources = measure.sources.filter(
-		(source) =>
-			source.sourceGeography.type === geography &&
-			String(source.sourceGeography.boundaryYear) === boundaryYear &&
-			(datasetId === null || source.datasetId === datasetId),
-	);
-	if (matchingSources.length !== 1) {
+	// A series is the whole partition rather than a moment in it, so no period
+	// is asked for; the geography and, where a measure needs it, the dataset
+	// are what narrow it to one.
+	const resolved = resolveObservations(context, {
+		measureId,
+		periods: [],
+		geography,
+		boundaryYear,
+		datasetId,
+	});
+	if (resolved.kind === "refusal")
 		return problem(
 			400,
 			"Invalid Query",
-			matchingSources.length === 0
-				? `${measureId} has no published source for that geography, boundary year and dataset.`
-				: "datasetId is required because more than one source matches that geography and boundary year.",
+			resolved.refusal.title === "Ambiguous Source"
+				? "datasetId is required because more than one source matches that geography and boundary year."
+				: `${measureId} has no published source for that geography, boundary year and dataset.`,
 		);
-	}
-	const source = matchingSources[0] as MeasureSource;
+	const source = resolved.plan.source;
 	const observationsByPeriod = source.periods.map((period) => ({
 		period,
 		observations: observationsFor(measureId, source, period, {
