@@ -524,7 +524,7 @@ test("serves the map resource contract's routes, or marks them unbuilt", () => {
 		path: match[2]!.split("?")[0]!,
 	}));
 	assert.equal(routes.length, 7);
-	assert.equal(routes.filter((entry) => entry.built).length, 5);
+	assert.equal(routes.filter((entry) => entry.built).length, 6);
 
 	// What the contract presents as available must answer, and what it marks
 	// unbuilt must not, so the section cannot quietly fall behind the server.

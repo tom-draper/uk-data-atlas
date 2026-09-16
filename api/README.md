@@ -2008,10 +2008,10 @@ the non-binding [conceptual resource model](#2-find-places-and-inspect-geography
 and [commercial roadmap](#production-delivery); where they disagree, this
 section wins.
 
-The five routes below that carry no marker are served. The two marked
-*not built* are, and so is the pinned form: the server holds only the current
-release's artifacts, so a pinned URL cannot be answered honestly yet and is
-not advertised.
+The six routes below that carry no marker are served. The one marked
+*not built* is not, and neither is the pinned form: the server holds only the
+current release's artifacts, so a pinned URL cannot be answered honestly yet
+and is not advertised.
 
 ### What a map resource is
 
@@ -2026,9 +2026,9 @@ GET /v1/map-resources/{geography}/{release}
 GET /v1/map-resources/{geography}/{release}/tiles.json
 GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
 GET /v1/map-resources/{geography}/{release}.pmtiles
+GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}
 
 not built: GET /v1/map-resources/{geography}/{release}/features?tier={tier}&format={geojson|geoparquet}
-not built: GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}
 ```
 
 Each is intended to answer under `/v1/atlas-releases/{release-id}/...` as
@@ -2721,6 +2721,7 @@ second inventory to maintain:
 - `GET /v1/map-resources/{geography}/{release}` — Describe one map resource, its tiles and what they were made from
 - `GET /v1/map-resources/{geography}/{release}/tiles.json` — The TileJSON a renderer is configured with
 - `GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt` — One vector tile of a boundary release
+- `GET /v1/map-resources/{geography}/{release}/join/{measure-id}` — One measure's values, numbered to match this resource's tiles
 - `GET /v1/map-resources/{geography}/{release}.pmtiles` — The whole tile pyramid as one PMTiles archive
 - `GET /v1/geographies` — List geography types with their latest boundary release
 - `GET /v1/boundary-releases` — List every compiled boundary release

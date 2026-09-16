@@ -164,3 +164,84 @@ test("refuses a resource it does not publish", () => {
 		"a refusal should say where the published ones are listed",
 	);
 });
+
+test("numbers join values with the ids the tiles actually carry", () => {
+	// The whole join contract rests on this: a renderer looks a value up by
+	// the feature id it read from the tile. If the two are numbered from
+	// different sets of codes, every value lands on the wrong shape.
+	// Deliberately a measure that does not cover every area in the release:
+	// 318 values against 361 areas. Numbering the values on their own codes
+	// would give a different answer here and the same answer for a measure
+	// that covers everything, so this is the case that discriminates.
+	const join = data(
+		`/v1/map-resources/${RESOURCE}/join/travel-to-work-car` +
+			"?period=2021&geography=localAuthority&boundaryYear=2023",
+	) as unknown as {
+		values: Array<{ id: number; code: string }>;
+		areasWithoutValue: number;
+		join: { method: string; boundaryRelease: string };
+	};
+	assert.equal(join.join.method, "code-match");
+	assert.ok(join.areasWithoutValue > 0, "this measure no longer has gaps");
+	assert.ok(join.values.length > 0);
+	const byCode = new Map(
+		join.values.map((value) => [value.code, value.id] as const),
+	);
+
+	const tile = get(`/v1/map-resources/${RESOURCE}/tiles/0/0/0.mvt`);
+	const [layer] = decodeTile(gunzipSync(tile.body as Buffer));
+	let checked = 0;
+	for (const feature of layer!.features) {
+		const expected = byCode.get(feature.properties.code as string);
+		if (expected === undefined) continue;
+		assert.equal(
+			feature.id,
+			expected,
+			`${feature.properties.code} is ${feature.id} in the tile and ${expected} in the join`,
+		);
+		checked += 1;
+	}
+	assert.ok(checked > 300, `only ${checked} features were cross-checked`);
+	assert.ok(
+		checked < layer!.features.length,
+		"every feature had a value, so the gap case was not exercised",
+	);
+});
+
+test("refuses a join the geometry cannot carry, and says what would work", () => {
+	// A measure published on LSOAs cannot be drawn on local authorities. The
+	// refusal has to name the releases that would carry it, or the caller is
+	// left guessing.
+	const refused = route(
+		"GET",
+		`/v1/map-resources/${RESOURCE}/join/imd-rank?period=2019`,
+		catalogues,
+	);
+	assert.equal(refused.status, 422);
+	const body = refused.body as {
+		code: string;
+		alternatives?: { releases?: string[] };
+	};
+	assert.equal(body.code, "incompatible_geometry");
+	assert.ok(
+		(body.alternatives?.releases ?? []).length > 0,
+		"the refusal names no release that would work",
+	);
+});
+
+test("refuses an ambiguous source rather than taking the first", () => {
+	// population-estimate publishes several partitions for 2022. Choosing one
+	// by catalogue order would make the answer depend on file ordering.
+	const refused = route(
+		"GET",
+		`/v1/map-resources/${RESOURCE}/join/population-estimate?period=2022`,
+		catalogues,
+	);
+	assert.equal(refused.status, 400);
+	const body = refused.body as {
+		detail: string;
+		alternatives?: { partitions?: unknown[] };
+	};
+	assert.match(body.detail, /name the geography and boundary year/);
+	assert.ok((body.alternatives?.partitions ?? []).length > 1);
+});
