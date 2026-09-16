@@ -2484,9 +2484,21 @@ surface area. They follow Phase 0 and Phase 1 only.
     `tests/mapResourceArtifact.test.ts` fails if the committed archive stops
     matching its descriptor.
 
-    What remains is the routes that serve them: the descriptor, the tiles and
-    the archive over HTTP, under both the pinned and unpinned forms the
-    contract sets out.
+    The resource is served. `GET /v1/map-resources` lists what is published,
+    the descriptor answers at `/v1/map-resources/{geography}/{release}`,
+    `tiles.json` gives a renderer TileJSON 3.0 carrying the attribution, and
+    `tiles/{z}/{x}/{y}.mvt` serves a gzipped vector tile; the whole archive
+    downloads from `{release}.pmtiles`. A tile inside the published zooms that
+    covers no area answers `204`, cached like any other answer rather than
+    left unstored, and a zoom past the last says so and tells the renderer to
+    over-zoom. All five are in the OpenAPI description and the index.
+
+    Item 10 is done bar one thing the contract asks for and this does not do:
+    the pinned `/v1/atlas-releases/{release-id}/map-resources/...` form. The
+    server holds only the current release's artifacts, so a pinned URL cannot
+    be answered honestly yet; it is marked unbuilt in the contract rather than
+    advertised, and a tile is served under the ordinary revalidated cache
+    policy instead of `immutable`.
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
