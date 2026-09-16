@@ -2579,12 +2579,17 @@ surface area. They follow Phase 0 and Phase 1 only.
    the documented `format`/`Accept`, pagination, `Link`, content type,
    `Cache-Control`, provenance and content-hash rules. Implement or remove any
    claim that does not hold. Add representation and pagination contract tests.
-   *Partly done.* Conditional requests, caching, `format`, pagination,
-   `Link` and content types are documented once in the OpenAPI description
-   and held by contract tests. `Accept` turned out to be described but never
-   read, and is now documented as not negotiated. Provenance and content-hash
-   rules are gated in the validation report rather than by a representation
-   test.
+   *Done.* Conditional requests, caching, `format`, pagination, `Link` and
+   content types are documented once in the OpenAPI description and held by
+   contract tests. `Accept` turned out to be described but never read, and is
+   now documented as not negotiated. Provenance and content hashes are held at
+   the representation too: `tests/provenance.test.ts` serves every published
+   partition and requires each response to name an artifact that exists, quote
+   that artifact's own hash, agree with its envelope about the release and
+   with the request about the partition, offer no link that does not resolve,
+   and claim a geometry join only where a release was asked for. The
+   validation report proves the build is sound; this proves the response tells
+   the truth about it.
 7. **Clarify existing convenience resources.** In OpenAPI and docs, label
    `/locations` as curated area collections and `/data/{measure}/value` as a
    by-place convenience dispatcher. Add examples showing `/places` first when
