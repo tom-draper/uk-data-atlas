@@ -128,7 +128,9 @@ test("answers a failed tabular request with a JSON problem", () => {
 	assert.equal(response.headers["content-type"], "application/problem+json");
 	assert.equal(response.headers["cache-control"], "no-store");
 	assert.equal(response.headers.etag, undefined);
-	const problem = JSON.parse(response.body ?? "{}") as { code?: string };
+	const problem = JSON.parse(String(response.body ?? "{}")) as {
+		code?: string;
+	};
 	assert.equal(problem.code, "invalid_cursor");
 
 	// The same request without the bad cursor is served as CSV, so the
@@ -142,4 +144,50 @@ test("answers a failed tabular request with a JSON problem", () => {
 	);
 	assert.equal(served.status, 200);
 	assert.equal(served.headers["content-type"], "text/csv; charset=utf-8");
+});
+
+test("serves a binary representation as its own bytes", () => {
+	// A vector tile is gzipped protobuf, so the pipeline must not put it
+	// through a string: the bytes served and the validator must be the tile's.
+	const tile = Buffer.from([0x1f, 0x8b, 0x08, 0x00, 0xff, 0xfe, 0x00, 0x7f]);
+	const response = httpResponse({ method: "GET", headers: {} }, () => ({
+		status: 200,
+		body: ok.body,
+		representation: {
+			contentType: "application/vnd.mapbox-vector-tile",
+			body: tile,
+		},
+	}));
+	assert.equal(response.status, 200);
+	assert.deepEqual(response.body, tile);
+	assert.equal(response.headers["content-length"], String(tile.length));
+	assert.equal(
+		response.headers.etag,
+		`"sha256-${createHash("sha256").update(tile).digest("base64url")}"`,
+	);
+	assert.equal(
+		response.headers["content-type"],
+		"application/vnd.mapbox-vector-tile",
+	);
+});
+
+test("caches an empty answer but sends nothing to revalidate", () => {
+	// A tile covering no area is an ordinary answer for a renderer, not a
+	// failure, so it is stored rather than refetched every time.
+	const response = httpResponse({ method: "GET", headers: {} }, () => ({
+		status: 204,
+		body: ok.body,
+		representation: {
+			contentType: "application/vnd.mapbox-vector-tile",
+			body: Buffer.alloc(0),
+		},
+	}));
+	assert.equal(response.status, 204);
+	assert.equal(response.body, undefined);
+	assert.equal(response.headers["content-length"], undefined);
+	assert.equal(response.headers.etag, undefined);
+	assert.equal(
+		response.headers["cache-control"],
+		"public, max-age=300, must-revalidate",
+	);
 });

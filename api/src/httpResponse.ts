@@ -5,8 +5,8 @@ import type { ApiResponse } from "./routeResponse";
 export type HttpResponse = {
 	status: number;
 	headers: Record<string, string>;
-	/** Absent for HEAD requests and 304 responses. */
-	body?: string;
+	/** Absent for HEAD requests, 204 and 304 responses. */
+	body?: string | Buffer;
 };
 
 // A successful response is a function of the Atlas release the server loaded
@@ -17,7 +17,7 @@ const SUCCESS_CACHE_CONTROL = "public, max-age=300, must-revalidate";
 const ERROR_CACHE_CONTROL = "no-store";
 
 /** A strong validator: the SHA-256 of the exact bytes served. */
-export const entityTag = (body: string) =>
+export const entityTag = (body: string | Buffer) =>
 	`"sha256-${createHash("sha256").update(body).digest("base64url")}"`;
 
 /**
@@ -56,11 +56,20 @@ export const httpResponse = (
 		"x-content-type-options": "nosniff",
 		...result.representation?.headers,
 	};
-	if (result.status !== 200) {
+	// A tile that covers no area answers 204, which is an ordinary answer and
+	// is cached like any other; only a failure is left unstored.
+	if (result.status >= 400) {
 		headers["cache-control"] = ERROR_CACHE_CONTROL;
 		headers["content-length"] = String(Buffer.byteLength(body));
 		return { status: result.status, headers, ...(isHead ? {} : { body }) };
 	}
+	// 204 says there is nothing to send, so it carries neither a body nor a
+	// validator to revalidate one with.
+	if (result.status === 204)
+		return {
+			status: 204,
+			headers: { ...headers, "cache-control": SUCCESS_CACHE_CONTROL },
+		};
 	const etag = entityTag(body);
 	headers.etag = etag;
 	headers["cache-control"] = SUCCESS_CACHE_CONTROL;
@@ -74,5 +83,5 @@ export const httpResponse = (
 		};
 	}
 	headers["content-length"] = String(Buffer.byteLength(body));
-	return { status: 200, headers, ...(isHead ? {} : { body }) };
+	return { status: result.status, headers, ...(isHead ? {} : { body }) };
 };

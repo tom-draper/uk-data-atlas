@@ -289,7 +289,7 @@ test("matches every OpenAPI response example to the live response", () => {
 			if (response.status !== 200)
 				return [`${name}: ${request} returned ${response.status}`];
 			if (prefix) {
-				const body = response.representation?.body ?? "";
+				const body = String(response.representation?.body ?? "");
 				return body.startsWith(String(value))
 					? []
 					: [`${name}: the response does not start with the example`];
