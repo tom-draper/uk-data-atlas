@@ -14,9 +14,10 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 
 	// 1. Pin the release. Every response names it, so a table can record the
 	//    exact set of artifacts it was built from.
-	const release = await client.get<{ releaseId: string; artifacts: unknown[] }>(
-		"/v1/atlas-release",
-	);
+	const release = await client.get<{
+		releaseId: string;
+		artifacts: unknown[];
+	}>("/v1/atlas-release");
 	steps.push({
 		title: "Pin the Atlas release",
 		detail: `${release.data.releaseId} covers ${release.data.artifacts.length} artifacts.`,
@@ -81,9 +82,10 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 
 	// 5. Ask what changed since the pinned release, so only affected tables
 	//    are rebuilt.
-	const history = await client.get<
-		Array<{ releaseId: string; current: boolean }>
-	>("/v1/atlas-releases");
+	const history =
+		await client.get<Array<{ releaseId: string; current: boolean }>>(
+			"/v1/atlas-releases",
+		);
 	const previous = history.data.find((candidate) => !candidate.current);
 	if (!previous) throw new Error("no archived release to compare against");
 	const comparison = await client.get<{
@@ -111,7 +113,9 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 };
 
 if (process.argv[1]?.endsWith("reliable-sync.ts")) {
-	const client = createClient(process.env.BASE_URL ?? "http://127.0.0.1:3001");
+	const client = createClient(
+		process.env.BASE_URL ?? "http://127.0.0.1:3001",
+	);
 	for (const step of await run(client))
 		console.log(`${step.title}: ${step.detail}`);
 }

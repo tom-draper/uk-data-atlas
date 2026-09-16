@@ -58,7 +58,9 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		),
 	);
 	if (!source)
-		throw new Error(`no population partition is compatible with ${release}`);
+		throw new Error(
+			`no population partition is compatible with ${release}`,
+		);
 	const partition = `geography=${source.sourceGeography.type}&boundaryYear=${source.sourceGeography.boundaryYear}`;
 	steps.push({
 		title: "Check the codes fit the boundaries",
@@ -102,7 +104,9 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	);
 	steps.push({
 		title: "Attribute the map",
-		detail: attribution.data.text.replaceAll("\n", " ").replace(/\s+/g, " "),
+		detail: attribution.data.text
+			.replaceAll("\n", " ")
+			.replace(/\s+/g, " "),
 	});
 
 	// Every response came from one immutable Atlas release, so the map can be
@@ -117,6 +121,9 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 };
 
 if (process.argv[1]?.endsWith("correct-map.ts")) {
-	const client = createClient(process.env.BASE_URL ?? "http://127.0.0.1:3001");
-	for (const step of await run(client)) console.log(`${step.title}: ${step.detail}`);
+	const client = createClient(
+		process.env.BASE_URL ?? "http://127.0.0.1:3001",
+	);
+	for (const step of await run(client))
+		console.log(`${step.title}: ${step.detail}`);
 }
