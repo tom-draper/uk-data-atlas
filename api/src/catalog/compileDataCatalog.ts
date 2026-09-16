@@ -33,6 +33,7 @@ import { compileMobileCoverage } from "./mobileCoverage";
 import { compileJobs } from "./jobs";
 import { compileEmissions } from "./emissions";
 import { compilePopulation } from "./population";
+import { withNationalVariants } from "./nationalVariants";
 
 /**
  * The compiled files the catalogue is built from, by name. Named rather than
@@ -216,7 +217,7 @@ export const compileDataCatalog = ({
 		generalElectionPath,
 		localElectionPath,
 	);
-	const measures = [
+	const measures = withNationalVariants([
 		population.measure,
 		...elections.measures,
 		density.measure,
@@ -230,7 +231,7 @@ export const compileDataCatalog = ({
 		...indicatorMeasures,
 		...unemployment.measures,
 		...census.measures,
-	];
+	]);
 	const catalogContent = JSON.stringify({
 		schemaVersion: 1,
 		source: {

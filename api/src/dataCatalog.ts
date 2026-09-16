@@ -114,6 +114,23 @@ export type Measure = {
 	};
 	links: { data: string };
 	/**
+	 * The question this measure answers, where another nation publishes its own
+	 * answer to the same one. Set alongside `elsewhere`.
+	 */
+	concept?: string;
+	/**
+	 * Measures covering nations this one does not. `comparable` says whether
+	 * they may be read as one series; for the four national deprivation
+	 * indices it is false, and the reason says why.
+	 */
+	elsewhere?: Array<{
+		measureId: string;
+		countries: string[];
+		comparable: boolean;
+		reason: string;
+		href: string;
+	}>;
+	/**
 	 * Set when this measure is computed from others rather than published. The
 	 * datasets named here are inputs to the computation and must be attributed
 	 * alongside the measure's own sources.
