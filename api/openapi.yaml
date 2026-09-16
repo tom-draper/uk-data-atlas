@@ -106,6 +106,7 @@ paths:
                     - /v1/map-resources/{geography}/{release}.pmtiles
                     - /v1/map-resources/{geography}/{release}/tiles.json
                     - /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
+                    - /v1/map-resources/{geography}/{release}/join/{measure-id}
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
                     - /v1/boundary-releases/{geography}/{release}
@@ -290,6 +291,67 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /map-resources/{geography}/{release}/join/{measure-id}:
+    get:
+      operationId: getMapResourceJoin
+      tags: ["Geography"]
+      summary: One measure's values, numbered to match this resource's tiles
+      description: >
+        The values a renderer joins to the tiles, as `id`, `code` and `value`.
+        The `id` is the same integer the tile carries, so a renderer sets
+        feature state by it without reading the geometry. Values are joined to
+        this release by matching area code and are never converted: a measure
+        whose source codes are not all in this release is refused with
+        `incompatible_geometry`, and the refusal names the releases that would
+        carry it. Keeping values out of the tiles is what lets one tileset
+        serve every measure, and lets a corrected value invalidate a small
+        table rather than a whole pyramid.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - $ref: "#/components/parameters/MeasureId"
+        - name: period
+          in: query
+          required: true
+          description: The observation period the values describe.
+          schema:
+            type: string
+        - name: geography
+          in: query
+          description: >
+            The measure's source geography, where it publishes more than one
+            partition. Without it an ambiguous request is refused with the
+            partitions listed rather than one being chosen by catalogue order.
+          schema:
+            type: string
+        - name: boundaryYear
+          in: query
+          description: The measure's source boundary year, alongside `geography`.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The values, numbered as the tiles number their features.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MapResourceJoinEnvelope"
+              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: >
+            The measure's source codes are not all in this release, so its
+            values cannot be drawn on it.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/IncompatibleGeometryProblem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -5739,6 +5801,89 @@ components:
                   type: string
             href:
               type: string
+
+    MapResourceJoin:
+      type: object
+      required: [measure, period, sourceGeography, join, layer, areasWithoutValue, values, provenance]
+      properties:
+        measure:
+          type: object
+          required: [id, label]
+          properties:
+            id:
+              type: string
+            label:
+              type: string
+        period:
+          type: string
+        sourceGeography:
+          type: object
+          required: [type, boundaryYear]
+          properties:
+            type:
+              type: string
+            boundaryYear:
+              type: integer
+        join:
+          type: object
+          required: [boundaryRelease, method, compatibility, note]
+          properties:
+            boundaryRelease:
+              type: string
+            method:
+              type: string
+              const: code-match
+              description: Codes are matched. No value is converted.
+            compatibility:
+              type: string
+              description: The code-set status the join was accepted on.
+            note:
+              type: string
+        layer:
+          type: string
+          description: The tile layer these values are numbered for.
+        areasWithoutValue:
+          type: integer
+          description: >
+            Areas in the release the measure publishes no value for. They are
+            in the tiles and absent from this table, and a renderer should
+            draw them as having no data rather than as zero.
+        values:
+          type: array
+          items:
+            type: object
+            required: [id, code, value, status]
+            properties:
+              id:
+                type: integer
+                description: The tile feature id this value belongs to.
+              code:
+                type: string
+              value:
+                type: number
+              status:
+                type: string
+                description: >
+                  `observed` where a publisher reported it, `derived` where
+                  this API computed it.
+        provenance:
+          type: object
+          required: [artifact, contentHash, measure]
+          properties:
+            artifact:
+              type: string
+            contentHash:
+              type: string
+            measure:
+              type: string
+
+    MapResourceJoinEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/MapResourceJoin"
 
     MapResourceEnvelope:
       allOf:
