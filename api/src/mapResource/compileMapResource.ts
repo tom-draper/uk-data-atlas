@@ -27,6 +27,15 @@ import { buildArchive, type ArchiveTile } from "./pmtiles";
 
 export const LAYER_NAME = "boundaries";
 
+/**
+ * A map resource numbers its areas so a renderer can hold state against them,
+ * because a vector tile feature id must be an integer. The number is the
+ * code's place in sorted order, which anything holding the same set of codes
+ * can reproduce without reading the tiles.
+ */
+export const featureIds = (codes: string[]) =>
+	new Map([...codes].sort().map((code, index) => [code, index + 1] as const));
+
 const sha256 = (content: Buffer) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
@@ -110,11 +119,11 @@ export const compileMapResource = (
 			`${geography}/${boundaryRelease} is not a coverage: ${topology.overlappingEdges} edges lie on more than two areas, so it cannot be tiled without drawing one over another.`,
 		);
 
-	// Codes are numbered once, in the order the release publishes them, and a
-	// feature keeps that number at every zoom.
-	const numbered = new Map(
-		[...areas.keys()].map((code, at) => [code, at + 1]),
-	);
+	// A feature keeps its number at every zoom, and the number comes from
+	// sorted code order rather than the order the geometry file happens to
+	// list its features in, so a join table can work it out from the codes
+	// alone instead of having to be told it.
+	const numbered = featureIds([...areas.keys()]);
 
 	const bounds: TileBox = [Infinity, Infinity, -Infinity, -Infinity];
 	const tiles: ArchiveTile[] = [];
