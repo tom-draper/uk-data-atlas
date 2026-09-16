@@ -36,9 +36,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	// 2. One area through time, source-exact: no conversion, no aggregation.
 	const series = await client.get<{
 		series: Array<{ period: string; value: number }>;
-	}>(
-		`/v1/data/population-estimate/series?areaCode=E08000025&${partition}`,
-	);
+	}>(`/v1/data/population-estimate/series?areaCode=E08000025&${partition}`);
 	const first = series.data.series[0];
 	const last = series.data.series.at(-1);
 	steps.push({
@@ -105,7 +103,9 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 };
 
 if (process.argv[1]?.endsWith("defensible-trend.ts")) {
-	const client = createClient(process.env.BASE_URL ?? "http://127.0.0.1:3001");
+	const client = createClient(
+		process.env.BASE_URL ?? "http://127.0.0.1:3001",
+	);
 	for (const step of await run(client))
 		console.log(`${step.title}: ${step.detail}`);
 }

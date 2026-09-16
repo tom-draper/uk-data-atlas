@@ -39,7 +39,9 @@ export const createClient = (baseUrl: string) => {
 		async refusal(path: string): Promise<Problem> {
 			const { status, body } = await call(path);
 			if (status === 200)
-				throw new Error(`GET ${path} was served, but should be refused`);
+				throw new Error(
+					`GET ${path} was served, but should be refused`,
+				);
 			return body as Problem;
 		},
 	};

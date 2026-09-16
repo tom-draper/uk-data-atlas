@@ -21,7 +21,12 @@ export const renderRouteIndex = (spec: Spec) => {
 	for (const tag of spec.tags) {
 		const operations = Object.entries(spec.paths).flatMap(([path, item]) =>
 			item.get?.tags?.includes(tag.name)
-				? [[path === "/" ? "/v1" : `/v1${path}`, item.get.summary] as const]
+				? [
+						[
+							path === "/" ? "/v1" : `/v1${path}`,
+							item.get.summary,
+						] as const,
+					]
 				: [],
 		);
 		if (operations.length === 0) continue;
@@ -46,7 +51,9 @@ export const buildReadmeIndex = (apiRoot: string) => {
 	}
 	const rendered = renderRouteIndex(readSpec(apiRoot));
 	const updated =
-		readme.slice(0, start) + rendered + readme.slice(end + INDEX_END.length);
+		readme.slice(0, start) +
+		rendered +
+		readme.slice(end + INDEX_END.length);
 	writeFileSync(readmePath, updated);
 	return { readmePath, changed: updated !== readme };
 };
