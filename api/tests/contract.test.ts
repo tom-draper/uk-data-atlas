@@ -376,3 +376,59 @@ test("serves each representation the OpenAPI document declares", () => {
 		/^<\/v1\/data\/population-estimate\?[^>]*cursor=[^>]+>; rel="next"$/,
 	);
 });
+
+/** The derivative data routes, each with a query that reaches its work. */
+const DERIVATIVE = [
+	"/v1/data/population-estimate/series?areaCode=E05000932&geography=ward&boundaryYear=2023",
+	"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023",
+	"/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
+	"/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039",
+	"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=north-west",
+	"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+];
+
+test("keeps a geometry release from standing in for a conversion", () => {
+	const base =
+		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=3";
+	const sourceExact = route("GET", base, catalogues);
+	const joined = route("GET", `${base}&release=2023-05-uk-bgc`, catalogues);
+	const records = (response: typeof sourceExact) =>
+		"data" in response.body
+			? (response.body.data as { records: unknown }).records
+			: undefined;
+	// The release chooses geometry to draw the values on. It is not a
+	// conversion, so every value stays exactly what the publisher observed.
+	assert.deepEqual(records(joined), records(sourceExact));
+	const provenance =
+		"data" in joined.body
+			? (
+					joined.body.data as {
+						provenance: {
+							geography: { match: { status: string } };
+							transformation: { status: string };
+						};
+					}
+				).provenance
+			: undefined;
+	assert.equal(
+		provenance?.geography.match.status,
+		"caller-selected-code-join",
+	);
+	assert.equal(provenance?.transformation.status, "not-applied");
+
+	// A route that cannot join geometry refuses the release rather than
+	// ignoring it, so no caller can read it as a conversion that happened.
+	for (const query of DERIVATIVE) {
+		const refused = route(
+			"GET",
+			`${query}&release=2023-05-uk-bgc`,
+			catalogues,
+		);
+		assert.equal(refused.status, 422, query);
+		assert.match(
+			"detail" in refused.body ? refused.body.detail : "",
+			/geometry release/,
+			query,
+		);
+	}
+});
