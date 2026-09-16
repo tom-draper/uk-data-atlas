@@ -2,6 +2,7 @@ import type { AreaLookup } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import { isNumericObservation, type MeasureSource } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
 	aggregateCountryMembers,
 	aggregateLocationMembers,
@@ -185,20 +186,27 @@ export const handleDataAggregateRoutes = ({
 			"Not Found",
 			"No named location matches locationId.",
 		);
-	const source = measure.sources.find(
-		(candidate) =>
-			candidate.periods.includes(period ?? "") &&
-			candidate.sourceGeography.type === geography &&
-			String(candidate.sourceGeography.boundaryYear) === boundaryYear,
-	);
-	if (!source)
+	// The three are documented as required here, so a caller who leaves one out
+	// is answered the same way whatever the measure. Which partition they name
+	// is the resolver's to decide.
+	if (period === null || geography === null || boundaryYear === null)
 		return problem(
 			400,
 			"Invalid Query",
 			`${measureId} has no published source for that period, geography and boundary year.`,
 		);
+	const resolved = resolveObservations(context, {
+		measureId,
+		period,
+		geography,
+		boundaryYear,
+	});
+	if (resolved.kind === "refusal") return refused(resolved.refusal);
+	const { source } = resolved.plan;
 	// The boundary releases this partition is assessed to match, against
-	// which an aggregate's coverage can be judged.
+	// which an aggregate's coverage can be judged. This is evidence about a
+	// partition rather than a choice of one, so it is read here; the resolver
+	// only reports compatibility for a release a caller actually named.
 	const compatibleReleases = (
 		measureCompatibilityInventory?.measures
 			.find((candidate) => candidate.measureId === measureId)
@@ -497,14 +505,18 @@ export const handleDataAggregateRoutes = ({
 		const weightMeasure = dataCatalog.measures.find(
 			(candidate) => candidate.id === weightMeasureId,
 		);
-		const weightSource = weightMeasure?.sources.find(
-			(candidate) =>
-				candidate.periods.includes(period ?? "") &&
-				candidate.sourceGeography.type ===
-					source.sourceGeography.type &&
-				candidate.sourceGeography.boundaryYear ===
-					source.sourceGeography.boundaryYear,
-		);
+		// The same rule picks the weight's partition, but not the same
+		// refusal: a weight this API declared and cannot find is a gap in the
+		// build rather than something the caller asked for wrongly, so the
+		// resolver chooses and this route still answers for it.
+		const weightPlan = resolveObservations(context, {
+			measureId: weightMeasureId,
+			period,
+			geography: source.sourceGeography.type,
+			boundaryYear: String(source.sourceGeography.boundaryYear),
+		});
+		const weightSource =
+			weightPlan.kind === "plan" ? weightPlan.plan.source : undefined;
 		if (!weightMeasure || !weightSource) {
 			return problem(
 				503,
