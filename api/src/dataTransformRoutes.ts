@@ -86,7 +86,7 @@ export const handleDataTransformRoutes = ({
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
-		period,
+		periods: [period],
 		geography,
 		boundaryYear,
 	});

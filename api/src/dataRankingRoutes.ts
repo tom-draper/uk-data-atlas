@@ -82,7 +82,7 @@ export const handleDataRankingRoutes = ({
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
-		period,
+		periods: [period],
 		geography,
 		boundaryYear,
 	});

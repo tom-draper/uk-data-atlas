@@ -197,7 +197,7 @@ export const handleDataAggregateRoutes = ({
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
-		period,
+		periods: [period],
 		geography,
 		boundaryYear,
 	});
@@ -511,7 +511,7 @@ export const handleDataAggregateRoutes = ({
 		// resolver chooses and this route still answers for it.
 		const weightPlan = resolveObservations(context, {
 			measureId: weightMeasureId,
-			period,
+			periods: [period],
 			geography: source.sourceGeography.type,
 			boundaryYear: String(source.sourceGeography.boundaryYear),
 		});
