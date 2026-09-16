@@ -75,6 +75,10 @@ export const handleBulkRoutes = ({
 		const measure = dataCatalog.measures.find(
 			(candidate) => candidate.id === listedExport.measureId,
 		);
+		// Not a partition to answer a query, but the one that produced this
+		// export: the match is on the dataset and the exact period set the
+		// manifest recorded, so it stays here rather than going through the
+		// resolver, which chooses a partition from what a caller asked for.
 		const source = measure?.sources.find(
 			(candidate) =>
 				candidate.datasetId === listedExport.datasetId &&
