@@ -512,17 +512,31 @@ test("holds the map resource contract to the vocabulary it borrows", () => {
 	);
 });
 
-test("keeps the map resource contract's routes proposed, not served", () => {
-	const proposed = [
-		...mapContract.matchAll(/^GET (\/v1\/map-resources\S*)$/gm),
-	].map((match) => match[1]!.split("?")[0]!);
-	assert.equal(proposed.length, 7);
-	assert.deepEqual(
-		proposed.filter(
-			(path) => !isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
+test("serves the map resource contract's routes, or marks them unbuilt", () => {
+	const routes = [
+		...mapContract.matchAll(
+			/^(not built: )?GET (\/v1\/map-resources\S*)$/gm,
 		),
+	].map((match) => ({
+		built: match[1] === undefined,
+		path: match[2]!.split("?")[0]!,
+	}));
+	assert.equal(routes.length, 7);
+	assert.equal(routes.filter((entry) => entry.built).length, 5);
+
+	// What the contract presents as available must answer, and what it marks
+	// unbuilt must not, so the section cannot quietly fall behind the server.
+	const served = (path: string) =>
+		!isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder"));
+	assert.deepEqual(
+		routes.filter((entry) => entry.built && !served(entry.path)),
 		[],
-		"a proposed map route is served; the contract still says it is not",
+		"the contract offers a map route the API does not serve",
+	);
+	assert.deepEqual(
+		routes.filter((entry) => !entry.built && served(entry.path)),
+		[],
+		"a map route is served but the contract still marks it unbuilt",
 	);
 
 	// Every other route it cites as the way to do something today must work.
