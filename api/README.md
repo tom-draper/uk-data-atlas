@@ -2466,8 +2466,21 @@ surface area. They follow Phase 0 and Phase 1 only.
     borders; `tests/mapTiles.test.ts` records that rather than leaving it to
     be found in a renderer.
 
-    What remains is the PMTiles archive, the descriptor carrying the content
-    hashes, and the routes that serve them.
+    The release is now compiled and published. `pnpm build:map-resource`
+    writes `public/map-resources/localAuthority-2023-05-uk-bgc-v2.pmtiles`,
+    a 5.9MB PMTiles v3 archive of 12,206 tiles, and a descriptor in
+    `public/map-resources.json` naming the publisher file behind the shapes,
+    the archive's SHA-256, the zoom ladder and the attribution a renderer must
+    display. The archive is read back in tests by a reader written from the
+    PMTiles specification, and the tile ordering is checked by the property
+    that defines a Hilbert curve rather than by a table of expected numbers.
+    The build is reproducible: rebuilding gives the same bytes, and
+    `tests/mapResourceArtifact.test.ts` fails if the committed archive stops
+    matching its descriptor.
+
+    What remains is the routes that serve them: the descriptor, the tiles and
+    the archive over HTTP, under both the pinned and unpinned forms the
+    contract sets out.
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
