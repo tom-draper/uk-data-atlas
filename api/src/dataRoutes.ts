@@ -80,7 +80,7 @@ export const handleDataRoutes = ({
 	}
 	const resolved = resolveObservations(context, {
 		measureId,
-		period,
+		periods: [period],
 		geography,
 		boundaryYear,
 		release: requestedRelease,

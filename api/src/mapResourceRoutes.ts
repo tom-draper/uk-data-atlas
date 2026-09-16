@@ -185,9 +185,18 @@ export const handleMapResourceRoutes = ({
 		// The map resource decides the geometry: a value may only be drawn on
 		// this release if every source code is in it, which the resolver
 		// checks rather than this route.
+		const period = parsedUrl.searchParams.get("period");
+		// The join documents `period` as required: a map draws one moment, and
+		// which moment is the caller's to say.
+		if (period === null)
+			return problem(
+				400,
+				"Invalid Query",
+				`Ask for the period to draw with period=; /v1/measures/${measureId} lists the ones ${measureId} publishes.`,
+			);
 		const resolved = resolveObservations(context, {
 			measureId,
-			period: parsedUrl.searchParams.get("period"),
+			periods: [period],
 			geography: parsedUrl.searchParams.get("geography"),
 			boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
 			release,
@@ -197,14 +206,14 @@ export const handleMapResourceRoutes = ({
 		const observations = observationsFor(
 			measureId,
 			plan.source,
-			plan.period,
+			period,
 			context,
 		);
 		if (!observations)
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				`The observations for ${measureId} ${plan.period} are not loaded.`,
+				`The observations for ${measureId} ${period} are not loaded.`,
 			);
 		// The ids must be the tiles' ids, so they come from the release's own
 		// codes. Numbering the observations instead would drift the moment a
@@ -222,7 +231,7 @@ export const handleMapResourceRoutes = ({
 			status: 200,
 			body: envelope(releaseId, {
 				measure: { id: plan.measure.id, label: plan.measure.label },
-				period: plan.period,
+				period,
 				sourceGeography: plan.source.sourceGeography,
 				join: {
 					boundaryRelease: plan.join!.boundaryRelease,
