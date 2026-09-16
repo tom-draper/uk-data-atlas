@@ -1,5 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import { refused, resolveObservations } from "./resolve/observationPlan";
 import { rankObservations, readRankingOrder } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import {
@@ -70,19 +71,23 @@ export const handleDataRankingRoutes = ({
 	const period = parsedUrl.searchParams.get("period");
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	const source = measure.sources.find(
-		(candidate) =>
-			candidate.periods.includes(period ?? "") &&
-			candidate.sourceGeography.type === geography &&
-			String(candidate.sourceGeography.boundaryYear) === boundaryYear,
-	);
-	if (!source) {
+	// The three are documented as required here, so a caller who leaves one out
+	// is answered the same way whatever the measure. Which partition they name
+	// is the resolver's to decide.
+	if (period === null || geography === null || boundaryYear === null)
 		return problem(
 			400,
 			"Invalid Query",
 			`${measureId} supports rankings only for a published source period, geography and boundary year.`,
 		);
-	}
+	const resolved = resolveObservations(context, {
+		measureId,
+		period,
+		geography,
+		boundaryYear,
+	});
+	if (resolved.kind === "refusal") return refused(resolved.refusal);
+	const { source } = resolved.plan;
 	const observations = observationsFor(measureId, source, period as string, {
 		populationObservations,
 		populationLocalAuthorityObservations,

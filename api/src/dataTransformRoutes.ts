@@ -1,6 +1,7 @@
 import { compareObservations } from "./comparison";
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import { refused, resolveObservations } from "./resolve/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { sourceExactProvenance } from "./sourceExactProvenance";
@@ -74,18 +75,23 @@ export const handleDataTransformRoutes = ({
 			"Invalid Query",
 			"baselineAreaCode and comparisonAreaCode must differ.",
 		);
-	const source = measure.sources.find(
-		(candidate) =>
-			candidate.periods.includes(period ?? "") &&
-			candidate.sourceGeography.type === geography &&
-			String(candidate.sourceGeography.boundaryYear) === boundaryYear,
-	);
-	if (!source)
+	// The three are documented as required here, so a caller who leaves one out
+	// is answered the same way whatever the measure. Which partition they name
+	// is the resolver's to decide.
+	if (period === null || geography === null || boundaryYear === null)
 		return problem(
 			400,
 			"Invalid Query",
 			`${measureId} supports comparisons only for a published source period, geography and boundary year.`,
 		);
+	const resolved = resolveObservations(context, {
+		measureId,
+		period,
+		geography,
+		boundaryYear,
+	});
+	if (resolved.kind === "refusal") return refused(resolved.refusal);
+	const { source } = resolved.plan;
 	const observations = observationsFor(measureId, source, period!, {
 		populationObservations,
 		populationLocalAuthorityObservations,
