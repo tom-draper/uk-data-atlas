@@ -1,3 +1,7 @@
+import { isNumericObservation } from "./dataCatalog";
+import { featureIds } from "./mapResource/compileMapResource";
+import { observationsFor } from "./observationArtifacts";
+import { resolveObservations } from "./resolve/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -80,6 +84,7 @@ const tileJson = (
 export const handleMapResourceRoutes = ({
 	context,
 	releaseId,
+	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	if (segments[0] !== "v1" || segments[1] !== "map-resources")
@@ -112,6 +117,7 @@ export const handleMapResourceRoutes = ({
 		asArchive ||
 		segments.length === 4 ||
 		(segments.length === 5 && segments[4] === "tiles.json") ||
+		(segments.length === 6 && segments[4] === "join") ||
 		(segments.length === 8 && segments[4] === "tiles");
 	if (!known) return undefined;
 	if (!mapResources) return unavailable();
@@ -156,6 +162,86 @@ export const handleMapResourceRoutes = ({
 			status: 200,
 			body: envelope(releaseId, tileJson(resource, origin)),
 		};
+
+	if (segments.length === 6 && segments[4] === "join") {
+		const measureId = segments[5]!;
+		// The map resource decides the geometry: a value may only be drawn on
+		// this release if every source code is in it, which the resolver
+		// checks rather than this route.
+		const resolved = resolveObservations(context, {
+			measureId,
+			period: parsedUrl.searchParams.get("period"),
+			geography: parsedUrl.searchParams.get("geography"),
+			boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+			release,
+		});
+		if (resolved.kind === "refusal") {
+			const { status, title, detail, code, alternatives } =
+				resolved.refusal;
+			return problem(status, title, detail, {
+				...(code ? { code } : {}),
+				...(alternatives ? { alternatives } : {}),
+			});
+		}
+		const { plan } = resolved;
+		const observations = observationsFor(
+			measureId,
+			plan.source,
+			plan.period,
+			context,
+		);
+		if (!observations)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The observations for ${measureId} ${plan.period} are not loaded.`,
+			);
+		// The ids must be the tiles' ids, so they come from the release's own
+		// codes. Numbering the observations instead would drift the moment a
+		// measure covered fewer areas than the release holds, and the values
+		// would land on the wrong shapes.
+		const inRelease = context.areaLookup?.get(id);
+		if (!inRelease)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The area identities for ${id} are not loaded, so values cannot be numbered to match the tiles.`,
+			);
+		const numbered = featureIds([...inRelease.keys()]);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				measure: { id: plan.measure.id, label: plan.measure.label },
+				period: plan.period,
+				sourceGeography: plan.source.sourceGeography,
+				join: {
+					boundaryRelease: plan.join!.boundaryRelease,
+					method: "code-match",
+					compatibility: plan.join!.compatibility,
+					note: "Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal.",
+				},
+				layer: resource.tiles.layer,
+				areasWithoutValue: plan.join!.candidateOnlyCodeCount,
+				values: observations.records.flatMap((record) =>
+					isNumericObservation(record)
+						? [
+								{
+									id: numbered.get(record.areaCode)!,
+									code: record.areaCode,
+									value: record.value,
+									status: record.status,
+								},
+							]
+						: [],
+				),
+				provenance: {
+					artifact: observations.artifact,
+					contentHash: observations.contentHash,
+					measure: `/v1/measures/${plan.measure.id}`,
+				},
+			}),
+		};
+	}
 
 	if (segments.length === 8 && segments[4] === "tiles") {
 		const archive = mapArchives?.get(id);
