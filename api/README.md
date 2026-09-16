@@ -1854,6 +1854,150 @@ Use RFC 9457 Problem Details for errors. Important machine-readable codes:
 Partial coverage is normally a `200` response with an explicit quality flag;
 it should not look like success with a mysteriously short row set.
 
+## Resolution contract
+
+None of this is built. It is the contract for the layer every data route
+should sit on: the gazetteer and oracle that answers, once, the question each
+route currently answers for itself. It is written before the code for the same
+reason the [map resource contract](#map-resource-contract) was, and the same
+rule applies: where this section and a route disagree, this section is what
+the route should become.
+
+### The question being answered eight times
+
+A data route does the same five things in sequence: find the measure, choose
+the source partition, decide whether the requested geometry is compatible,
+read the observations, and refuse with something useful when it cannot. Today
+each route does all five itself, and they have drifted:
+
+- `dataRoutes`, `dataAggregateRoutes`, `dataConversionRoutes`,
+  `dataRankingRoutes` and `dataTransformRoutes` match a source on period,
+  geography and boundary year, and take the first that matches.
+- `dataChangeRoutes` matches on geography and boundary year only, ignoring
+  the period.
+- `dataSeriesRoutes` collects every match and refuses unless there is exactly
+  one, and is the only route that accepts a `datasetId` to disambiguate.
+- `bulkRoutes` matches on dataset, geography, boundary year and the whole
+  period set.
+
+So "which source serves this measure here" has three different answers
+depending on which route is asked. No current measure exposes the difference:
+of 148 measures, none has two sources sharing a geography and boundary year,
+so the `find` that takes the first and the `filter` that refuses ambiguity
+agree on every measure published today. It is a trap set for the measure that
+breaks the tie, not a fault a caller can hit now. Fifteen modules also read
+observation artifacts directly and sixteen reach into crosswalks, so the same
+drift is available anywhere.
+
+The resolver exists to make that one function with one answer, so a new route
+inherits the rules instead of restating them.
+
+### What the resolver returns
+
+One call, and exactly two possible answers. It is given what a caller asked
+for — a measure, a period or period range, a source geography, optionally a
+geometry release, optionally a named conversion — and it returns a **plan** or
+a **refusal**. It never returns data: a plan says what to read and how to read
+it, and the route reads it.
+
+A **plan** names, for every value it will produce:
+
+- the **source partition**: dataset, source geography, boundary year, period;
+- the **join**, where a geometry release was asked for: the release, and the
+  compatibility status it was accepted on, which is one of
+  `exact-code-set` or `code-set-compatible`. A join matches codes and changes
+  no value;
+- the **conversion**, where one was asked for: the crosswalk, its method
+  (`exact` or `area-weighted`), and what it does not cover;
+- the **provenance** for the answer as a whole, and per area wherever the
+  areas did not all come from the same place;
+- the **quality**: the coverage of the source against the target, and any
+  area the source does not carry.
+
+A **refusal** is the more important half. It carries the stable `code` a
+client branches on, and it must also carry **what would have worked**: the
+periods that do exist, the boundary releases whose code sets do match, the
+crosswalks that do reach the target. A refusal that only says no is a bug in
+this contract. The codes are the ones already declared in
+`src/problemCodes.ts` — `unsupported_geography`, `area_not_in_release`,
+`conversion_not_available`, `incompatible_geometry`, `partial_coverage` and
+the rest — and the resolver may not invent one outside that list.
+
+### It reports what is possible; it does not take the liberty
+
+The resolver knows more than the caller asked. It knows which releases the
+codes would land on, which crosswalks reach the target, and which other
+dataset covers the nation this one misses. **It says so, and it stops there.**
+
+- It never chooses a geometry release on a caller's behalf.
+- It never converts because a conversion happens to exist. Conversion stays
+  what it is today: opt-in, asked for by name at `/data/{measure-id}/convert`,
+  refused when its quality cannot be defended.
+- It never substitutes one dataset for another to fill a gap.
+
+What changes is that the possibilities become visible. A refusal names the
+conversions that would work. A capability response says what this measure can
+be asked for. The caller still decides, and the decision is still recorded in
+the URL they sent. This keeps
+[source-exact by default](#focus-rules) exactly as it stands: the resolver
+makes the API better at explaining itself, not freer to guess.
+
+### Filling a hole from another dataset
+
+The valuable case — England from one publisher, Scotland from another — is
+real, and it is not silent substitution. It is a **declared composite
+measure**: a measure whose catalogue entry names its parts, the geography and
+periods each part covers, and the rule for which part wins where they overlap.
+Then:
+
+- every value carries the dataset it came from, per area, not per response;
+- the composite is gated in the validation report like any other measure, so
+  a part that stops covering what it claims fails the build;
+- `composite` is visible on the measure, so a caller who wants one publisher
+  only can refuse it;
+- a gap no part covers stays a gap, reported through `partial_coverage`.
+
+A composite is a catalogue decision, made once and reviewed, not a fallback
+the resolver improvises per request. Nothing here is built: it needs a
+catalogue schema change and a validation check, and it should follow the
+resolver rather than arrive with it.
+
+### Built once, at build time
+
+The resolver answers from precompiled indexes, not by searching catalogues on
+each request. The build already produces most of what it needs —
+`area-inventory.json`, `boundary-releases.json`, `crosswalk-inventory.json`,
+`geography-inventory.json`, the relationship candidates and the per-measure
+compatibility inventory. What is missing is the index that ties them together:
+for every measure, the partitions it has, the releases each partition can be
+drawn on, the crosswalks that leave it, and the periods available. That index
+is a build artifact with a content hash, gated by the validation report, and
+stale-fails the build like every other.
+
+Two consequences worth stating plainly. A request-time answer is a lookup, so
+the resolver cannot be the reason a route is slow. And the index is a single
+artifact a person can read, so "what can this API answer about this measure"
+stops being a question you answer by reading eight route handlers.
+
+### What the resolver is not
+
+It is not a query engine: it plans one measure's retrieval, not joins across
+measures. It is not a geocoder; place-name resolution stays in
+`placeResolver`, ambiguity-preserving, and the resolver consumes its output
+rather than replacing it. It does not cache values, only plans. It does not
+decide policy: which conversions are defensible and which composites exist
+are catalogue and validation decisions, and the resolver enforces them rather
+than forming them.
+
+### How routes adopt it
+
+Route handlers stop touching `dataCatalog`, `measureObservations`,
+`crosswalkLookup` and the compatibility inventory directly, and take a plan
+instead. The migration is route by route, each one landing with the tests it
+already has passing unchanged, because a plan for a request that works today
+must produce the response that is served today. The oracle is finished when
+no route module imports an observation artifact.
+
 ## Map resource contract
 
 This is the contract that [P1 items 10 to
