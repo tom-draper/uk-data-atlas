@@ -2450,8 +2450,24 @@ surface area. They follow Phase 0 and Phase 1 only.
     reproducing the source edge for edge. The coarsest tier keeps 27,749
     coordinates, a fifteenfold reduction. Generalising the same release one
     area at a time loses 218 of those borders, which the last test requires,
-    so the gate is known to discriminate. What remains is the encoder: vector
-    tiles, a PMTiles archive and the descriptor that carries their hashes.
+    so the gate is known to discriminate.
+
+    Tiles are written too. `src/mapResource/vectorTile.ts` encodes a boundary
+    layer as Mapbox Vector Tile 2.1 without a dependency, and is held to the
+    worked example the specification publishes rather than to a reader written
+    beside it. `tileGrid.ts` rounds coordinates to the tile's grid before
+    cutting them to the tile, in that order, so both sides of a border round
+    to the same integers and the cut then lands in the same place for each;
+    Sutherland-Hodgman is used instead of a general clipper because its cut
+    depends only on the segment. Zooms 0 to 12 draw from `low`, `medium` and
+    `high` as the grid gets finer. From zoom 5 up, no edge in a tile lands on
+    more than two areas. Zoom 0 puts the country on one tile at about 5.7km a
+    unit, where 121 of 4,967 edges merge because the grid is coarser than the
+    borders; `tests/mapTiles.test.ts` records that rather than leaving it to
+    be found in a renderer.
+
+    What remains is the PMTiles archive, the descriptor carrying the content
+    hashes, and the routes that serve them.
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
