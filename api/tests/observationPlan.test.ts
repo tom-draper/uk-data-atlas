@@ -36,13 +36,13 @@ const refusal = (request: Parameters<typeof resolveObservations>[1]) => {
 test("plans a named partition", () => {
 	const resolved = plan({
 		measureId: "population-estimate",
-		period: "2022",
+		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
 	});
 	assert.equal(resolved.measure.id, "population-estimate");
 	assert.equal(resolved.source.sourceGeography.type, "localAuthority");
-	assert.equal(resolved.period, "2022");
+	assert.deepEqual(resolved.periods, ["2022"]);
 	// No release was asked for, so no join is planned.
 	assert.equal(resolved.join, undefined);
 });
@@ -50,7 +50,7 @@ test("plans a named partition", () => {
 test("plans a join only where every source code is in the release", () => {
 	const resolved = plan({
 		measureId: "population-estimate",
-		period: "2022",
+		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
 		release: "2023-05-uk-bgc-v2",
@@ -64,12 +64,12 @@ test("plans a join only where every source code is in the release", () => {
 });
 
 test("refuses an unknown measure and an unpublished period", () => {
-	const unknown = refusal({ measureId: "not-a-measure", period: "2022" });
+	const unknown = refusal({ measureId: "not-a-measure", periods: ["2022"] });
 	assert.equal(unknown.status, 404);
 
 	const period = refusal({
 		measureId: "population-estimate",
-		period: "1801",
+		periods: ["1801"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
 	});
@@ -80,10 +80,68 @@ test("refuses an unknown measure and an unpublished period", () => {
 	);
 });
 
-test("refuses a missing period rather than guessing one", () => {
-	const missing = refusal({ measureId: "population-estimate", period: null });
-	assert.equal(missing.status, 400);
-	assert.ok((missing.alternatives?.periods ?? []).length > 0);
+test("plans a partition itself when no period is asked for", () => {
+	// A series wants the whole partition, not a moment in it. Naming the
+	// geography is what narrows it; a route that needs a period asks for one
+	// itself, because only the route knows whether its contract requires it.
+	const whole = plan({
+		measureId: "population-estimate",
+		periods: [],
+		geography: "localAuthority",
+		boundaryYear: "2023",
+	});
+	assert.deepEqual(whole.periods, []);
+	assert.ok(whole.source.periods.length > 1);
+});
+
+test("plans a partition covering every period a change spans", () => {
+	// Change is measured inside one partition, so both ends must be in the
+	// same one. A partition holding only one of them is not a match.
+	const across = plan({
+		measureId: "population-estimate",
+		periods: ["2012", "2022"],
+		geography: "localAuthority",
+		boundaryYear: "2023",
+	});
+	for (const period of ["2012", "2022"])
+		assert.ok(across.source.periods.includes(period));
+
+	const straddling = refusal({
+		measureId: "population-estimate",
+		periods: ["2022", "1801"],
+		geography: "localAuthority",
+		boundaryYear: "2023",
+	});
+	assert.equal(straddling.status, 400);
+	assert.match(straddling.detail, /no source on|no single source covering/);
+});
+
+test("uses a dataset to choose between partitions that otherwise tie", () => {
+	// Nothing in the catalogue ties today, so this proves the discriminator
+	// narrows rather than that it is currently needed.
+	const named = plan({
+		measureId: "population-estimate",
+		periods: ["2022"],
+		geography: "localAuthority",
+		boundaryYear: "2023",
+	});
+	const byDataset = plan({
+		measureId: "population-estimate",
+		periods: ["2022"],
+		geography: "localAuthority",
+		boundaryYear: "2023",
+		datasetId: named.source.datasetId,
+	});
+	assert.equal(byDataset.source.datasetId, named.source.datasetId);
+
+	const wrong = refusal({
+		measureId: "population-estimate",
+		periods: ["2022"],
+		geography: "localAuthority",
+		boundaryYear: "2023",
+		datasetId: "not-a-dataset",
+	});
+	assert.equal(wrong.status, 400);
 });
 
 test("refuses an ambiguous request with the partitions to choose from", () => {
@@ -91,7 +149,7 @@ test("refuses an ambiguous request with the partitions to choose from", () => {
 	// catalogue order.
 	const ambiguous = refusal({
 		measureId: "population-estimate",
-		period: "2022",
+		periods: ["2022"],
 	});
 	assert.equal(ambiguous.status, 400);
 	assert.match(ambiguous.detail, /name the geography and boundary year/);
@@ -107,7 +165,7 @@ test("refuses an ambiguous request with the partitions to choose from", () => {
 test("refuses a partition the measure does not publish", () => {
 	const wrong = refusal({
 		measureId: "population-estimate",
-		period: "2022",
+		periods: ["2022"],
 		geography: "ward",
 		boundaryYear: "1999",
 	});
@@ -118,7 +176,7 @@ test("refuses a partition the measure does not publish", () => {
 test("refuses a geometry it cannot carry and names ones it can", () => {
 	const refused = refusal({
 		measureId: "imd-rank",
-		period: "2019",
+		periods: ["2019"],
 		release: "2023-05-uk-bgc-v2",
 	});
 	assert.equal(refused.status, 422);
@@ -129,7 +187,7 @@ test("refuses a geometry it cannot carry and names ones it can", () => {
 	for (const release of releases) {
 		const resolved = plan({
 			measureId: "imd-rank",
-			period: "2019",
+			periods: ["2019"],
 			release,
 		});
 		assert.equal(resolved.join?.boundaryRelease, release);
@@ -142,7 +200,7 @@ test("reports possibilities without acting on them", () => {
 	// one. Source-exact means the caller chooses.
 	const refused = refusal({
 		measureId: "imd-rank",
-		period: "2019",
+		periods: ["2019"],
 		release: "2023-05-uk-bgc-v2",
 	});
 	assert.ok((refused.alternatives?.releases ?? []).length > 0);
@@ -155,7 +213,7 @@ test("reports possibilities without acting on them", () => {
 test("refuses without a catalogue rather than pretending", () => {
 	const resolved = resolveObservations(
 		{},
-		{ measureId: "population-estimate", period: "2022" },
+		{ measureId: "population-estimate", periods: ["2022"] },
 	);
 	assert.equal(resolved.kind, "refusal");
 	assert.equal(

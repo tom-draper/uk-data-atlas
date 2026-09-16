@@ -34,9 +34,20 @@ export type JoinableStatus = (typeof JOINABLE)[number];
 
 export type ObservationRequest = {
 	measureId: string;
-	period: string | null;
+	/**
+	 * Every period the partition must publish. One for a single observation,
+	 * two for a change measured across a partition, and none where the caller
+	 * wants the partition itself rather than a moment in it, such as a series.
+	 */
+	periods: string[];
 	geography?: string | null;
 	boundaryYear?: string | null;
+	/**
+	 * Which dataset the values come from, where a measure publishes the same
+	 * geography and boundary year from more than one. Without it, more than
+	 * one match is ambiguous and is refused rather than chosen.
+	 */
+	datasetId?: string | null;
 	/** A boundary release to draw the values on, joined by code, never converted. */
 	release?: string | null;
 };
@@ -44,7 +55,8 @@ export type ObservationRequest = {
 export type ObservationPlan = {
 	measure: Measure;
 	source: MeasureSource;
-	period: string;
+	/** The periods asked for, which this partition publishes all of. */
+	periods: string[];
 	/** Present only where the caller asked to draw the values somewhere. */
 	join?: {
 		boundaryRelease: string;
@@ -144,22 +156,20 @@ export const resolveObservations = (
 			detail: `No measure is published as ${request.measureId}. Inspect /v1/measures for the ones that are.`,
 		});
 
-	if (!request.period)
-		return refuse({
-			status: 400,
-			title: "Invalid Query",
-			detail: `${measure.id} is published for named periods; ask for one of them with period=.`,
-			alternatives: { periods: periodsOf(measure) },
-		});
-
+	const wanted = request.periods;
+	// No period asked for means the caller wants the partition itself, so
+	// every partition is a candidate and the geography narrows it.
 	const forPeriod = measure.sources.filter((source) =>
-		source.periods.includes(request.period!),
+		wanted.every((period) => source.periods.includes(period)),
 	);
 	if (forPeriod.length === 0)
 		return refuse({
 			status: 400,
 			title: "Invalid Query",
-			detail: `${measure.id} publishes no source for ${request.period}.`,
+			detail:
+				wanted.length === 1
+					? `${measure.id} publishes no source for ${wanted[0]}.`
+					: `${measure.id} publishes no single source covering ${wanted.join(" and ")}.`,
 			alternatives: {
 				periods: periodsOf(measure),
 				partitions: partitionsOf(measure),
@@ -167,19 +177,24 @@ export const resolveObservations = (
 		});
 
 	const named = request.geography != null || request.boundaryYear != null;
-	const matching = named
-		? forPeriod.filter(
-				(source) =>
-					source.sourceGeography.type === request.geography &&
-					String(source.sourceGeography.boundaryYear) ===
-						request.boundaryYear,
-			)
-		: forPeriod;
+	const matching = (
+		named
+			? forPeriod.filter(
+					(source) =>
+						source.sourceGeography.type === request.geography &&
+						String(source.sourceGeography.boundaryYear) ===
+							request.boundaryYear,
+				)
+			: forPeriod
+	).filter(
+		(source) =>
+			request.datasetId == null || source.datasetId === request.datasetId,
+	);
 	if (matching.length === 0)
 		return refuse({
 			status: 400,
 			title: "Invalid Query",
-			detail: `${measure.id} publishes no source on ${request.geography} ${request.boundaryYear} for ${request.period}.`,
+			detail: `${measure.id} publishes no source on ${request.geography} ${request.boundaryYear}${wanted.length > 0 ? ` for ${wanted.join(" and ")}` : ""}.`,
 			alternatives: { partitions: partitionsOf(measure) },
 		});
 	// Taking the first would make the answer depend on the order the catalogue
@@ -188,12 +203,12 @@ export const resolveObservations = (
 		return refuse({
 			status: 400,
 			title: "Ambiguous Source",
-			detail: `${measure.id} publishes ${matching.length} sources for ${request.period}; name the geography and boundary year to choose one.`,
+			detail: `${measure.id} publishes ${matching.length} sources${wanted.length > 0 ? ` for ${wanted.join(" and ")}` : ""}; name the geography and boundary year, or the datasetId, to choose one.`,
 			alternatives: { partitions: partitionsOf(measure) },
 		});
 	const source = matching[0]!;
 
-	const plan: ObservationPlan = { measure, source, period: request.period };
+	const plan: ObservationPlan = { measure, source, periods: wanted };
 	if (request.release == null) return { kind: "plan", plan };
 
 	const compatibility = measureCompatibilityInventory?.measures
