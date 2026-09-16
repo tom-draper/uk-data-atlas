@@ -2379,14 +2379,19 @@ Make the existing boundary and measure foundation easy to use safely for a map.
 This is the shortest route to a useful external integration and validates the
 Atlas's core geography value without private state or universal conversion.
 
-- [ ] Publish release-pinned, topology-preserving boundary tiles/PMTiles and
-      the associated attribution and licence metadata.
-- [ ] Publish a small set of map-ready, source-exact value resources for the
-      chosen measures, rather than trying to tile every measure at once.
+- [x] Publish topology-preserving boundary tiles/PMTiles and the associated
+      attribution and licence metadata. One release is published, as a PMTiles
+      archive with its TileJSON and a descriptor carrying the licence. They
+      are not release-pinned: see the last item in this list.
+- [x] Publish a small set of map-ready, source-exact value resources for the
+      chosen measures, rather than trying to tile every measure at once. Every
+      published measure joins to a map resource by code through its join
+      table, so one tileset draws any of them and none is tiled separately.
 - [ ] Provide GeoParquet/Parquet and a compact map join contract for the same
       resources, so a customer may use its own renderer or warehouse.
-- [ ] Supply one MapLibre/TypeScript reference implementation showing place
+- [x] Supply one MapLibre/TypeScript reference implementation showing place
       resolution, explicit release choice, values, tiles and citation.
+      `examples/correct-map-render.ts`, run as a golden path on every build.
 - [ ] Add cache validators and immutable resource URLs before adding API-key
       tiers; public correctness and inexpensive delivery come first. Cache
       validators are in place; resource URLs are not yet pinned to a release,
@@ -2647,6 +2652,25 @@ surface area. They follow Phase 0 and Phase 1 only.
     Parquet/GeoParquet, with schema, manifest and provenance tests.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
     release gate for the first design partner.
+    *Done, bar a design partner.* `examples/correct-map-render.ts` walks the
+    whole path over HTTP using only the published contract: choose a published
+    resource, read its descriptor, be refused a measure these boundaries
+    cannot carry and told which releases would carry it, configure the
+    renderer from TileJSON, join the values by code, and cite the result with
+    the Atlas release and the archive hash. `pnpm example:map-render` writes a
+    runnable MapLibre page, generated from the API's own answers so it cannot
+    drift from them. `tests/examples.test.ts` runs it as a fourth golden path
+    and checks what a test can check without a browser: the style draws the
+    layer the values were numbered for, every tile URL it names is served, and
+    the page carries the attribution, the release and the hash.
+
+    Building it found a defect that would have stopped any browser map: the
+    API sent no CORS headers at all, so a renderer on another origin could
+    fetch a tile and then be refused permission to read it. Responses now
+    carry `Access-Control-Allow-Origin`, expose `ETag` and `Link` so a client
+    can revalidate and page, and answer the preflight that `If-None-Match`
+    triggers. This is the tutorial earning its place as a release gate rather
+    than as documentation.
 13. **Specify, but do not yet generalise,** the analysis-preflight and
     analysis-geography response contracts required by Phase 2. No custom
     geometry or broad analysis endpoint is in this phase.
