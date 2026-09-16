@@ -2201,8 +2201,10 @@ surface area. They follow Phase 0 and Phase 1 only.
    `/locations` as curated area collections and `/data/{measure}/value` as a
    by-place convenience dispatcher. Add examples showing `/places` first when
    ambiguity matters; do not rename either v1 path.
-   *Not started.* OpenAPI still summarises them as named locations and as a
-   measure for a place given by name.
+   *Done.* OpenAPI calls `/locations` the curated area collections and
+   `/data/{measure}/value` a by-place dispatcher, says it is not the primary
+   way to fetch an observation, and points at `/places` first where a name is
+   ambiguous.
 8. **Turn tutorials into integration tests.** Write small, executable
    TypeScript or shell examples for the three golden paths using only the
    published OpenAPI contract. A broken example blocks release rather than
