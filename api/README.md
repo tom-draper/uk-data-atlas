@@ -2162,9 +2162,12 @@ surface area. They follow Phase 0 and Phase 1 only.
    labelled as non-binding, and either generate the standalone endpoint list
    below from OpenAPI or replace it with an OpenAPI-derived task index. Do not
    maintain a second hand-written inventory of several dozen URLs.
-   *Partly done.* The conceptual model is labelled non-binding, and the
-   endpoint list is checked against the index by test, but it is still
-   written by hand rather than generated.
+   *Done.* The conceptual model is labelled non-binding, and the route index
+   under [Initial standalone implementation](#initial-standalone-implementation)
+   is generated from `openapi.yaml` by `pnpm docs:index`, with a test that
+   fails when it goes stale. What remains by hand is a list of worked example
+   requests, which the contract tests run; they are examples, not a second
+   inventory.
 3. **Make operations navigable.** Add the task tags, plain-language summaries,
    parameter descriptions, response examples and error references described in
    [API UX and contract clarity](#api-ux-and-contract-clarity). Link the root
@@ -2255,19 +2258,105 @@ pnpm start
 ```
 
 `pnpm start` runs an independent Node HTTP server at
-`http://127.0.0.1:3001/v1`. Its initial read-only endpoints are:
+`http://127.0.0.1:3001/v1`. Its routes are indexed below by task, generated
+from `openapi.yaml` by `pnpm docs:index` and checked by test, so this is not a
+second inventory to maintain:
+
+<!-- route-index:start -->
+
+**Start here**
+
+- `GET /v1` — API discovery
+- `GET /v1/openapi.yaml` — The OpenAPI description of this API
+- `GET /v1/places` — Find every place a name could mean
+- `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
+- `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity
+
+**Map**
+
+- `GET /v1/data/{measure-id}` — Retrieve a measure's source-exact observations
+- `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
+- `GET /v1/areas:contains` — Find areas containing a WGS84 point in one boundary release
+- `GET /v1/areas/{geography}/{release}/{code}/children/geometry` — Get every child of an area as one GeoJSON FeatureCollection
+- `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
+- `GET /v1/areas/{geography}/{release}/{code}/overlap` — Measure how one area overlaps another
+- `GET /v1/areas/{geography}/{release}/{code}/geometry` — Get one compiled area's raw geometry as a GeoJSON Feature
+- `GET /v1/areas/{geography}/{release}/{code}/geometry/metadata` — Measure one area's geometry without transferring its coordinates
+
+**Trend**
+
+- `GET /v1/data/{measure-id}/aggregate` — Aggregate an extensive or explicitly weighted measure
+- `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure onto a published crosswalk's target areas
+- `GET /v1/data/{measure-id}/series` — Retrieve one area's source-exact time series
+- `GET /v1/data/{measure-id}/rankings` — Rank areas within one source-exact measure partition
+- `GET /v1/data/{measure-id}/change` — Rank areas by change between two periods of one measure partition
+- `GET /v1/data/{measure-id}/compare` — Compare two areas within one source-exact measure partition
+
+**Sync**
+
+- `GET /v1/exports` — List release-pinned whole observation artifacts
+- `GET /v1/exports/{export-id}` — Download one immutable source observation artifact
+- `GET /v1/lookups` — List whole lookup tables for download
+- `GET /v1/lookups/{lookup-id}` — Download one whole lookup table as CSV or NDJSON
+- `GET /v1/atlas-release` — Get the current immutable atlas release manifest
+- `GET /v1/atlas-releases` — List the current and archived immutable Atlas releases
+- `GET /v1/atlas-releases/{release-id}` — Get one current or archived Atlas release manifest
+- `GET /v1/atlas-releases/compare` — Compare two archived Atlas releases, artifact by artifact and resource by resource
+
+**Geography**
+
+- `GET /v1/geographies` — List geography types with their latest boundary release
+- `GET /v1/boundary-releases` — List every compiled boundary release
+- `GET /v1/boundary-releases:resolve` — Select the boundary release to use for a date
+- `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release's metadata
+- `GET /v1/geography-inventory` — Report area identity and relationship (crosswalk) coverage per boundary release
+- `GET /v1/areas` — List or search compiled area identities
+- `GET /v1/areas:validate` — Validate a batch of area codes or names against one release
+- `GET /v1/areas/{geography}/{release}/{code}` — Get one compiled area by its full identity
+- `GET /v1/areas/{geography}/{release}/{code}/relationships` — Get published relationships for one compiled area
+- `GET /v1/areas/{geography}/{release}/{code}/history` — Explain a code's published historical relationships and same-code continuity
+- `GET /v1/areas/{geography}/{release}/{code}/parents` — List published clean-containment parents for an area
+- `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
+- `GET /v1/crosswalks` — List published crosswalks
+- `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
+- `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
+- `GET /v1/translations` — Translate one code through a published crosswalk in either direction
+- `GET /v1/locations` — List the curated area collections
+- `GET /v1/locations/{location-id}` — Get one curated area collection's definition
+- `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
+
+**Data catalogue**
+
+- `GET /v1/datasets` — List published source datasets and their lineage
+- `GET /v1/datasets/{dataset-id}` — Get one published source dataset and its input hashes
+- `GET /v1/measures` — List measures currently available to query
+- `GET /v1/measures/{measure-id}` — Get one measure's semantics and availability
+- `GET /v1/measures/{measure-id}/compatibility` — Report source-code compatibility with compiled boundary releases
+- `GET /v1/measures/{measure-id}/coverage` — Report source and boundary code coverage for a measure
+- `GET /v1/measures/{measure-id}/quality` — Preflight source, status and boundary quality for a measure
+
+**Governance**
+
+- `GET /v1/areas/{geography}/{release}/{code}/citation` — Assemble a citation bundle for one exact area identity
+- `GET /v1/relationship-candidates` — List discovered relationship candidates and their coverage gaps
+- `GET /v1/validation` — Report every release gate, including waived exceptions
+- `GET /v1/validation/boundary-releases/{geography}/{release}` — Get one boundary release's checks
+- `GET /v1/validation/crosswalks/{crosswalk-id}` — Get one crosswalk's checks
+- `GET /v1/validation/measures/{measure-id}` — Get one measure's definition check
+- `GET /v1/validation/exports/{export-id}` — Get one measure source partition's checks
+- `GET /v1/attribution` — Assemble the attribution and licence block for named resources
+
+<!-- route-index:end -->
+
+The requests below are worked examples, each of them run against the compiled
+catalogues by the contract tests:
 
 - `GET /v1`
 - `GET /v1/openapi.yaml`
 - `GET /v1/geographies`
 - `GET /v1/geography-inventory`
 - `GET /v1/datasets`
-- `GET /v1/datasets/{dataset-id}`
 - `GET /v1/measures`
-- `GET /v1/measures/{measure-id}`
-- `GET /v1/measures/{measure-id}/compatibility`
-- `GET /v1/measures/{measure-id}/coverage`
-- `GET /v1/measures/{measure-id}/quality`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
 - `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
@@ -2312,42 +2401,23 @@ pnpm start
 - `GET /v1/locations?q=york`
 - `GET /v1/locations/london`
 - `GET /v1/boundary-releases`
-- `GET /v1/boundary-releases:resolve?geography={geography}&date={YYYY-MM-DD}`
-- `GET /v1/boundary-releases/{geography}/{release}`
 - `GET /v1/areas`
-- `GET /v1/areas:validate?geography={geography}&release={release}&value={code-or-name}`
 - `GET /v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc`
 - `GET /v1/areas:intersects?bbox=-1.6,53.7,-1.4,53.9&geography=ward&release=2024-12-uk-bgc`
-- `GET /v1/areas/{geography}/{release}/{code}`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/history`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/parents`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children/geometry`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/neighbours`
-- `GET /v1/areas/{geography}/{release}/{code}/relationships`
-- `GET /v1/areas/{geography}/{release}/{code}/capabilities`
-- `GET /v1/areas/{geography}/{release}/{code}/citation`
-- `GET /v1/areas/{geography}/{release}/{code}/overlap?with={geography}/{release}/{code}`
-- `GET /v1/areas/{geography}/{release}/{code}/geometry`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/geometry/metadata`
 - `GET /v1/crosswalks`
-- `GET /v1/crosswalks/{crosswalk-id}`
-- `GET /v1/crosswalks/{crosswalk-id}/records`
 - `GET /v1/translations?sourceGeography=ward&sourceRelease=2024-12-uk-bgc&code=E05000932&targetGeography=localAuthority&targetRelease=2024-12-uk-bgc&purpose=membership`
 - `GET /v1/relationship-candidates`
 - `GET /v1/validation`
-- `GET /v1/validation/boundary-releases/{geography}/{release}`
-- `GET /v1/validation/crosswalks/{crosswalk-id}`
-- `GET /v1/validation/measures/{measure-id}`
-- `GET /v1/validation/exports/{export-id}`
 - `GET /v1/exports`
-- `GET /v1/exports/{export-id}`
 - `GET /v1/lookups`
-- `GET /v1/lookups/{lookup-id}`
 - `GET /v1/atlas-release`
 - `GET /v1/atlas-releases`
-- `GET /v1/atlas-releases/{release-id}`
-- `GET /v1/atlas-releases/compare?from={release-id}&to={release-id}`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
 visible to the source inventory on the next build without changing API code.
