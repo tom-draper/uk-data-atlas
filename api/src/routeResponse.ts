@@ -20,6 +20,19 @@ export type Problem = {
 	areaSample?: string[];
 	presentIn?: unknown[];
 	availableReleases?: unknown[];
+	/**
+	 * What the caller could have asked for instead. A refusal that cannot say
+	 * this leaves them guessing, which is what this API exists to remove.
+	 */
+	alternatives?: {
+		periods?: string[];
+		partitions?: Array<{
+			geography: string;
+			boundaryYear: number;
+			periods: string[];
+		}>;
+		releases?: string[];
+	};
 	earliest?: unknown;
 	undated?: string[];
 	links?: Record<string, string>;
