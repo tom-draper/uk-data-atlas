@@ -883,10 +883,15 @@ Implementation and documentation tasks:
       without failing the type check. Each code has an OpenAPI schema with a
       real example, and a contract test sends every example request and checks
       the response and the schema against the declaration.
-- [ ] State representation and pagination rules once: supported `format=` and
+- [x] State representation and pagination rules once: supported `format=` and
       `Accept` combinations, JSON `meta.nextCursor`, tabular `Link` headers,
       content type, caching and conditional request behaviour. Test every
       published representation rather than documenting aspirational headers.
+      The OpenAPI description states them once, and `Accept` is documented as
+      not negotiated because no route reads it. `tests/contract.test.ts`
+      serves every representation the document declares for observations and
+      lookups, checks the `Link` header on a tabular page, and pages all six
+      cursor routes, including refusing a cursor the API did not issue.
 - [ ] Preserve the existing colon convention and explain it: `:action` is a
       collection-wide selection or spatial action (`areas:contains`,
       `areas:validate`, `boundary-releases:resolve`); nested paths are resources
@@ -2195,9 +2200,12 @@ surface area. They follow Phase 0 and Phase 1 only.
    the documented `format`/`Accept`, pagination, `Link`, content type,
    `Cache-Control`, provenance and content-hash rules. Implement or remove any
    claim that does not hold. Add representation and pagination contract tests.
-   *Partly done.* Conditional requests and caching are implemented and
-   documented once in the OpenAPI description; `format`, `Accept`,
-   pagination and `Link` behaviour have not been audited against it.
+   *Partly done.* Conditional requests, caching, `format`, pagination,
+   `Link` and content types are documented once in the OpenAPI description
+   and held by contract tests. `Accept` turned out to be described but never
+   read, and is now documented as not negotiated. Provenance and content-hash
+   rules are gated in the validation report rather than by a representation
+   test.
 7. **Clarify existing convenience resources.** In OpenAPI and docs, label
    `/locations` as curated area collections and `/data/{measure}/value` as a
    by-place convenience dispatcher. Add examples showing `/places` first when
