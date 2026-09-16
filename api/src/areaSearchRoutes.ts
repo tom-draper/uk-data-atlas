@@ -93,13 +93,16 @@ export const handleAreaSearchRoutes = ({
 	const cursor = parsedUrl.searchParams.get("cursor");
 	const id = cursor ? keyFromCursor(cursor) : undefined;
 	if (cursor && !id)
-		return problem(400, "Invalid Query", "cursor is invalid.");
+		return problem(400, "Invalid Query", "cursor is invalid.", {
+			code: "invalid_cursor",
+		});
 	const offset = id ? matches.findIndex((area) => area.id === id) + 1 : 0;
 	if (id && offset === 0)
 		return problem(
 			400,
 			"Invalid Query",
 			"cursor is not valid for this area query.",
+			{ code: "invalid_cursor" },
 		);
 	const areas = matches.slice(offset, offset + limit);
 	const last = areas.at(-1);

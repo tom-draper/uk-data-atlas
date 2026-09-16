@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { dirname, resolve } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import { entityTag, httpResponse, matchesEntityTag } from "../src/httpResponse";
 import type { ApiResponse } from "../src/routeResponse";
+import { route } from "../src/routes";
+import { readApiCatalogues } from "../src/server";
 
 const ok: ApiResponse = {
 	status: 200,
@@ -105,4 +109,37 @@ test("tags a download by its own bytes and keeps its headers", () => {
 		response.headers["content-disposition"],
 		'attachment; filename="x.csv"',
 	);
+});
+
+test("answers a failed tabular request with a JSON problem", () => {
+	// A caller asking for CSV still gets the problem as JSON: an error is not
+	// a representation of the resource it failed to serve.
+	const catalogues = readApiCatalogues(
+		resolve(dirname(fileURLToPath(import.meta.url)), ".."),
+	);
+	const response = httpResponse({ method: "GET", headers: {} }, (method) =>
+		route(
+			method,
+			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv&cursor=not-a-cursor",
+			catalogues,
+		),
+	);
+	assert.equal(response.status, 400);
+	assert.equal(response.headers["content-type"], "application/problem+json");
+	assert.equal(response.headers["cache-control"], "no-store");
+	assert.equal(response.headers.etag, undefined);
+	const problem = JSON.parse(response.body ?? "{}") as { code?: string };
+	assert.equal(problem.code, "invalid_cursor");
+
+	// The same request without the bad cursor is served as CSV, so the
+	// difference is the failure and not the route.
+	const served = httpResponse({ method: "GET", headers: {} }, (method) =>
+		route(
+			method,
+			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv&limit=1",
+			catalogues,
+		),
+	);
+	assert.equal(served.status, 200);
+	assert.equal(served.headers["content-type"], "text/csv; charset=utf-8");
 });

@@ -162,6 +162,7 @@ export const handleBulkRoutes = ({
 				400,
 				"Invalid Query",
 				"format must be csv or ndjson.",
+				{ code: "invalid_format" },
 			);
 		const table = (() => {
 			if (entry.kind === "area-identities") {

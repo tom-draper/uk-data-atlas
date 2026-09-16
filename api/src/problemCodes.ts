@@ -60,6 +60,39 @@ export const PROBLEM_CODES = {
 		example:
 			"/v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=belfast",
 	},
+	ambiguous_place: {
+		statuses: [409],
+		members: ["choices"],
+		alternatives: ["choices"],
+		meaning:
+			"The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone.",
+		example: "/v1/data/population-estimate/value?place=Newport",
+	},
+	incompatible_geometry: {
+		statuses: [422],
+		members: [],
+		alternatives: [],
+		meaning:
+			"The requested boundary release does not hold every source area code of the partition, so no geometry join is offered.",
+		example:
+			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc",
+	},
+	invalid_format: {
+		statuses: [400],
+		members: [],
+		alternatives: [],
+		meaning: "The `format` asked for is not one this route serves.",
+		example:
+			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=xml",
+	},
+	invalid_cursor: {
+		statuses: [400],
+		members: [],
+		alternatives: [],
+		meaning:
+			"The cursor is not one this API issued, or does not belong to the query it was sent with.",
+		example: "/v1/areas?cursor=not-a-cursor",
+	},
 	no_release_for_date: {
 		statuses: [404],
 		members: ["absence"],

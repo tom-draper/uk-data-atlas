@@ -141,7 +141,9 @@ export const handleDataConversionRoutes = ({
 	const cursor = parsedUrl.searchParams.get("cursor");
 	const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
 	if (cursor && !cursorCode)
-		return problem(400, "Invalid Query", "cursor is invalid.");
+		return problem(400, "Invalid Query", "cursor is invalid.", {
+			code: "invalid_cursor",
+		});
 	const offset = cursorCode
 		? converted.records.findIndex(
 				(record) => record.areaCode === cursorCode,
@@ -152,6 +154,7 @@ export const handleDataConversionRoutes = ({
 			400,
 			"Invalid Query",
 			"cursor is not valid for this conversion.",
+			{ code: "invalid_cursor" },
 		);
 	const page = converted.records.slice(offset, offset + pageSize);
 	const lastRecord = page.at(-1);
