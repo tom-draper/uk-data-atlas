@@ -2008,10 +2008,8 @@ the non-binding [conceptual resource model](#2-find-places-and-inspect-geography
 and [commercial roadmap](#production-delivery); where they disagree, this
 section wins.
 
-The six routes below that carry no marker are served. The one marked
-*not built* is not, and neither is the pinned form: the server holds only the
-current release's artifacts, so a pinned URL cannot be answered honestly yet
-and is not advertised.
+The six routes below that carry no marker are served, as is the pinned form.
+The one marked *not built* is not.
 
 ### What a map resource is
 
@@ -2031,9 +2029,12 @@ GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}
 not built: GET /v1/map-resources/{geography}/{release}/features?tier={tier}&format={geojson|geoparquet}
 ```
 
-Each is intended to answer under `/v1/atlas-releases/{release-id}/...` as
-well, which is the form a production map should use; see
-[Caching](#caching-and-release-pinning) below. That form is not served yet.
+Each also answers under `/v1/atlas-releases/{release-id}/...`, which is the
+form a production map should use; see
+[Caching](#caching-and-release-pinning) below. Only the release the server
+currently holds can be answered: the archive keeps release manifests, not the
+data files behind them, so a release that is recorded but no longer served is
+refused with `410` rather than quietly answered from the current one.
 
 The descriptor at `/v1/map-resources/{geography}/{release}` is the only
 document a client needs to read: it carries the tile and archive URLs, the
@@ -2379,10 +2380,11 @@ Make the existing boundary and measure foundation easy to use safely for a map.
 This is the shortest route to a useful external integration and validates the
 Atlas's core geography value without private state or universal conversion.
 
-- [x] Publish topology-preserving boundary tiles/PMTiles and the associated
-      attribution and licence metadata. One release is published, as a PMTiles
-      archive with its TileJSON and a descriptor carrying the licence. They
-      are not release-pinned: see the last item in this list.
+- [x] Publish release-pinned, topology-preserving boundary tiles/PMTiles and
+      the associated attribution and licence metadata. One release is
+      published, as a PMTiles archive with its TileJSON and a descriptor
+      carrying the licence, and every one of them answers under a pinned,
+      immutable URL as well.
 - [x] Publish a small set of map-ready, source-exact value resources for the
       chosen measures, rather than trying to tile every measure at once. Every
       published measure joins to a map resource by code through its join
@@ -2392,10 +2394,12 @@ Atlas's core geography value without private state or universal conversion.
 - [x] Supply one MapLibre/TypeScript reference implementation showing place
       resolution, explicit release choice, values, tiles and citation.
       `examples/correct-map-render.ts`, run as a golden path on every build.
-- [ ] Add cache validators and immutable resource URLs before adding API-key
-      tiers; public correctness and inexpensive delivery come first. Cache
-      validators are in place; resource URLs are not yet pinned to a release,
-      so a cached response is revalidated rather than kept indefinitely.
+- [x] Add cache validators and immutable resource URLs before adding API-key
+      tiers; public correctness and inexpensive delivery come first. Every
+      response carries a strong `ETag`, and anything asked for under
+      `/v1/atlas-releases/{release-id}/` is served `immutable` and never needs
+      revalidating. A request that arrived pinned keeps its links pinned, so a
+      renderer configured from a pinned TileJSON fetches pinned tiles too.
 
 **Exit criterion:** an external engineer can build a cited UK map from the
 reference guide without downloading publisher files, guessing a release or
@@ -2642,12 +2646,16 @@ surface area. They follow Phase 0 and Phase 1 only.
     left unstored, and a zoom past the last says so and tells the renderer to
     over-zoom. All five are in the OpenAPI description and the index.
 
-    Item 10 is done bar one thing the contract asks for and this does not do:
-    the pinned `/v1/atlas-releases/{release-id}/map-resources/...` form. The
-    server holds only the current release's artifacts, so a pinned URL cannot
-    be answered honestly yet; it is marked unbuilt in the contract rather than
-    advertised, and a tile is served under the ordinary revalidated cache
-    policy instead of `immutable`.
+    Item 10 is done. The pinned
+    `/v1/atlas-releases/{release-id}/map-resources/...` form the contract asks
+    for is served too: it answers exactly what the unpinned path answers, with
+    `Cache-Control: public, max-age=31536000, immutable`, and the links it
+    returns stay pinned so a renderer configured from a pinned TileJSON never
+    falls back to a revalidated tile. Only the current release can be
+    answered, because the archive keeps release manifests rather than the data
+    files behind them; a release that is recorded but no longer served is
+    refused with `410`, naming the release now current, rather than quietly
+    answered from it.
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
@@ -2730,6 +2738,7 @@ second inventory to maintain:
 
 **Sync**
 
+- `GET /v1/atlas-releases/{release-id}/map-resources/{geography}/{release}` — A map resource pinned to the Atlas release that produced it
 - `GET /v1/exports` — List release-pinned whole observation artifacts
 - `GET /v1/exports/{export-id}` — Download one immutable source observation artifact
 - `GET /v1/lookups` — List whole lookup tables for download
