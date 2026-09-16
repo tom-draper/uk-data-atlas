@@ -22,6 +22,7 @@ export const handleIndexRoutes = ({
 				"/v1/map-resources/{geography}/{release}/tiles.json",
 				"/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt",
 				"/v1/map-resources/{geography}/{release}/join/{measure-id}",
+				"/v1/atlas-releases/{release-id}/map-resources/{geography}/{release}",
 				"/v1/boundary-releases",
 				"/v1/boundary-releases:resolve",
 				"/v1/boundary-releases/{geography}/{release}",

@@ -3,6 +3,7 @@ import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes } from "./openapiRoutes";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
+import { handlePinnedRoutes } from "./pinnedRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
@@ -351,8 +352,18 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			["atlas-release", "atlas-releases", "validation"].includes(
 				segments[1] ?? "",
-			),
+			) &&
+			// A path below a release id is a pinned resource, not a manifest.
+			!(segments[1] === "atlas-releases" && segments.length >= 4),
 		handle: handleSyncRoutes,
+	},
+	{
+		name: "pinned",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "atlas-releases" &&
+			segments.length >= 4,
+		handle: handlePinnedRoutes,
 	},
 ];
 
