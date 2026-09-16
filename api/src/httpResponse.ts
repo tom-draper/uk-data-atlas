@@ -16,6 +16,34 @@ export type HttpResponse = {
 const SUCCESS_CACHE_CONTROL = "public, max-age=300, must-revalidate";
 const ERROR_CACHE_CONTROL = "no-store";
 
+/**
+ * This is a read-only API over openly licensed data, and its most obvious
+ * client is a map running in someone else's page. Without these a browser
+ * fetches a tile and then refuses to let the page read it.
+ *
+ * `ETag` and `Link` are exposed because a client that cannot read them cannot
+ * revalidate or page, which are both part of the contract. `If-None-Match` is
+ * not a safelisted request header, so a conditional request preflights and the
+ * answer to that preflight has to allow it.
+ */
+const CROSS_ORIGIN: Record<string, string> = {
+	"access-control-allow-origin": "*",
+	"access-control-expose-headers": "etag, link, content-encoding",
+};
+
+const PREFLIGHT: Record<string, string> = {
+	...CROSS_ORIGIN,
+	"access-control-allow-methods": "GET, HEAD, OPTIONS",
+	"access-control-allow-headers": "if-none-match, accept",
+	"access-control-max-age": "86400",
+};
+
+/** A browser asking whether it may make the request it is about to make. */
+export const preflightResponse = (): HttpResponse => ({
+	status: 204,
+	headers: { ...PREFLIGHT, "cache-control": SUCCESS_CACHE_CONTROL },
+});
+
 /** A strong validator: the SHA-256 of the exact bytes served. */
 export const entityTag = (body: string | Buffer) =>
 	`"sha256-${createHash("sha256").update(body).digest("base64url")}"`;
@@ -49,6 +77,7 @@ export const httpResponse = (
 	const body =
 		result.representation?.body ?? `${JSON.stringify(result.body)}\n`;
 	const headers: Record<string, string> = {
+		...CROSS_ORIGIN,
 		"content-type":
 			result.status >= 400
 				? "application/problem+json"
@@ -77,6 +106,7 @@ export const httpResponse = (
 		return {
 			status: 304,
 			headers: {
+				...CROSS_ORIGIN,
 				etag,
 				"cache-control": SUCCESS_CACHE_CONTROL,
 			},

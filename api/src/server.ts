@@ -40,7 +40,7 @@ import {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
-import { httpResponse } from "./httpResponse";
+import { httpResponse, preflightResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
 import { createAreaSearchIndex } from "./areaSearchRoutes";
 import { route } from "./routes";
@@ -382,9 +382,12 @@ const readMapResources = (apiRoot: string) => {
 
 export const createApiServer = (catalogues: ApiCatalogues) =>
 	createServer((request, response) => {
-		const { status, headers, body } = httpResponse(request, (method) =>
-			route(method, request.url, catalogues),
-		);
+		const { status, headers, body } =
+			request.method === "OPTIONS"
+				? preflightResponse()
+				: httpResponse(request, (method) =>
+						route(method, request.url, catalogues),
+					);
 		response.writeHead(status, headers);
 		response.end(body);
 	});
