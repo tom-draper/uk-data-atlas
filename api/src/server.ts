@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
 	createAreaLookup,
@@ -11,6 +11,8 @@ import type { AtlasRelease } from "./atlasRelease";
 import { readArchivedAtlasReleases } from "./atlasReleaseHistory";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
+import { openArchive } from "./mapResource/archiveReader";
+import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import {
 	createAreaRelationshipIndex,
 	type AreaRelationshipIndex,
@@ -317,6 +319,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		);
 	}
 	const geometrySources = readGeometrySourceLookup(apiRoot);
+	const mapResources = readMapResources(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	return {
 		openapiDocument: readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
@@ -349,11 +352,31 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		dataCatalog,
 		exportManifest,
 		lookupManifest: readLookupManifest(apiRoot),
+		mapResources,
+		mapArchives: new Map(
+			mapResources.resources.map((resource) => [
+				resource.id,
+				openArchive(join(apiRoot, "public", resource.tiles.artifact)),
+			]),
+		),
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),
 		measureObservations: readMeasureObservations(apiRoot, dataCatalog),
 		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
+	};
+};
+
+/**
+ * The published map resources, when there are any. A server built without them
+ * still serves everything else, and the map routes answer that the resource is
+ * not published rather than the server failing to start.
+ */
+const readMapResources = (apiRoot: string) => {
+	const path = join(apiRoot, "public", "map-resources.json");
+	if (!existsSync(path)) return { resources: [] };
+	return JSON.parse(readFileSync(path, "utf8")) as {
+		resources: MapResourceDescriptor[];
 	};
 };
 

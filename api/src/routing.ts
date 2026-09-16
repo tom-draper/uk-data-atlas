@@ -16,6 +16,8 @@ import type {
 import type { ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { LookupManifest } from "./lookupExports";
+import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
+import type { MapArchive } from "./mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type {
 	NamedLocationInventory,
@@ -66,6 +68,10 @@ export type RouteContext = {
 	/** The OpenAPI description the server serves at `/v1/openapi.yaml`. */
 	openapiDocument?: string;
 	lookupManifest?: LookupManifest;
+	/** The boundary releases published as map resources, and their tiles. */
+	mapResources?: { resources: MapResourceDescriptor[] };
+	/** Each map resource's archive, opened once and keyed by resource id. */
+	mapArchives?: Map<string, MapArchive>;
 };
 
 export type RouteRequest = {
