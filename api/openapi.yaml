@@ -1004,12 +1004,22 @@ paths:
     get:
       operationId: getMeasureValueForPlace
       tags: ["Start here"]
-      summary: Answer a measure for a place given by name
+      summary: Answer a measure for a place by name (by-place dispatcher)
       description: >
-        Answers "what is the population of the North West?" in one call. The
+        A deliberately narrow convenience for a place-name question, not the
+        primary way to fetch one observation: it resolves the name and
+        dispatches to a route that already serves that kind of place. Ask
+        `/data/{measure-id}` for observations, or `/data/{measure-id}/series`
+        for one area's values, when the area is already known.
+
+
+        It answers "what is the population of the North West?" in one call. The
         place may be a name, an area code or a place reference from `/places`;
         the period may be omitted, in which case the latest the chosen
-        partition publishes is used and the answer says so.
+        partition publishes is used and the answer says so. Where a name may
+        mean several places, `GET /v1/places?q=Newport` lists them first, and
+        a candidate's place reference asks about that one alone:
+        `GET /v1/data/population-estimate/value?place=localAuthority/W06000022`.
 
 
         Nothing is computed here. Each place the name could mean is put to the
@@ -3388,10 +3398,14 @@ paths:
     get:
       operationId: listNamedLocations
       tags: ["Geography"]
-      summary: List curated Atlas named locations
+      summary: List the curated area collections
       description: >
-        Locations are editorial groupings of area codes, not automatically
-        official administrative geographies. `q` matches an id or label prefix.
+        A named location is a curated area collection: an editorial grouping
+        of area codes, kept because people ask for places the official
+        geographies do not name. It is not a generic geographic location and
+        not an official administrative geography, and its membership holds
+        only through a crosswalk the caller names. `q` matches an id or label
+        prefix.
       parameters:
         - name: q
           in: query
@@ -3412,7 +3426,7 @@ paths:
     get:
       operationId: getNamedLocation
       tags: ["Geography"]
-      summary: Get one curated named-location definition
+      summary: Get one curated area collection's definition
       parameters:
         - $ref: "#/components/parameters/LocationId"
       responses:
