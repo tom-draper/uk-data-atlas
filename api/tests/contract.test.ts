@@ -7,6 +7,11 @@ import { parse } from "yaml";
 import { PROBLEM_CODES } from "../src/problemCodes";
 import { route } from "../src/routes";
 import { readApiCatalogues } from "../src/server";
+import {
+	INDEX_END,
+	INDEX_START,
+	renderRouteIndex,
+} from "../scripts/build-readme-index";
 
 /**
  * The API index, the OpenAPI paths and the README's endpoint list are three
@@ -52,18 +57,8 @@ test("serves every route the API index advertises", () => {
 	assert.deepEqual(unrouted, []);
 });
 
-test("lists every advertised route in the README, and nothing else", () => {
+test("resolves every README example to an advertised route", () => {
 	const listedPaths = listed.map((url) => url.split("?")[0]!);
-	assert.deepEqual(
-		indexLinks.filter((link) => {
-			const pattern = templatePattern(link);
-			return !listedPaths.some(
-				(path) => path === link || pattern.test(path),
-			);
-		}),
-		[],
-		"advertised routes missing from the README endpoint list",
-	);
 	const patterns = ["/v1", ...indexLinks].map(templatePattern);
 	assert.deepEqual(
 		listedPaths.filter(
@@ -74,6 +69,18 @@ test("lists every advertised route in the README, and nothing else", () => {
 		),
 		[],
 		"README endpoints the API index does not advertise",
+	);
+});
+
+test("generates the README route index from the OpenAPI document", () => {
+	const readmeIndex = readme.slice(
+		readme.indexOf(INDEX_START),
+		readme.indexOf(INDEX_END) + INDEX_END.length,
+	);
+	assert.equal(
+		readmeIndex,
+		renderRouteIndex(openapi),
+		"the route index is stale; run `pnpm docs:index`",
 	);
 });
 
@@ -157,10 +164,13 @@ type OpenApiMedia = {
 const openapi = parse(
 	readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 ) as {
+	tags: Array<{ name: string; description?: string }>;
 	paths: Record<
 		string,
 		{
 			get?: {
+				tags?: string[];
+				summary?: string;
 				responses: Record<
 					string,
 					{ content?: Record<string, OpenApiMedia> }
