@@ -101,6 +101,11 @@ paths:
                   links:
                     - /v1/openapi.yaml
                     - /v1/geographies
+                    - /v1/map-resources
+                    - /v1/map-resources/{geography}/{release}
+                    - /v1/map-resources/{geography}/{release}.pmtiles
+                    - /v1/map-resources/{geography}/{release}/tiles.json
+                    - /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
                     - /v1/boundary-releases/{geography}/{release}
@@ -157,6 +162,160 @@ paths:
             application/yaml:
               schema:
                 type: string
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /map-resources:
+    get:
+      operationId: listMapResources
+      tags: ["Geography"]
+      summary: List the boundary releases published as map resources
+      description: >
+        A map resource is one boundary release prepared for drawing: tiles
+        whose borders are compiled once and shared, so neighbours cannot be
+        drawn two different ways. Releases are published deliberately rather
+        than every release being tiled, so this list is short.
+      responses:
+        "200":
+          description: One entry per published map resource.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MapResourceListEnvelope"
+              x-example-request: "/v1/map-resources"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /map-resources/{geography}/{release}:
+    get:
+      operationId: getMapResource
+      tags: ["Geography"]
+      summary: Describe one map resource, its tiles and what they were made from
+      description: >
+        The only document a client needs to read to draw this release. It
+        carries the tile and archive URLs, the zoom ladder and the tier behind
+        each zoom, the content hash of the archive, the publisher file the
+        shapes were compiled from, and the attribution to display beside the
+        map.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+      responses:
+        "200":
+          description: The map resource descriptor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MapResourceEnvelope"
+              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /map-resources/{geography}/{release}/tiles.json:
+    get:
+      operationId: getMapResourceTileJson
+      tags: ["Geography"]
+      summary: The TileJSON a renderer is configured with
+      description: >
+        TileJSON 3.0 for this resource, including the attribution a map must
+        display. A tile cannot carry a licence, so a client handed only a tile
+        URL would have nothing to show; this is the document that supplies it.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+      responses:
+        "200":
+          description: TileJSON 3.0 describing the tile endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TileJsonEnvelope"
+              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles.json"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt:
+    get:
+      operationId: getMapResourceTile
+      tags: ["Geography"]
+      summary: One vector tile of a boundary release
+      description: >
+        A Mapbox Vector Tile carrying the `boundaries` layer, gzipped as the
+        archive stores it. Each feature has the area's `code`, its `name` and
+        a stable integer id a renderer can hold state against. Values are not
+        in the tile: one tileset serves every measure, and a value is joined
+        in the renderer. A tile inside the published zooms that covers no area
+        is answered `204`, which is an ordinary answer rather than a failure;
+        a zoom the resource does not publish is `404`, and a renderer should
+        over-zoom past the last one instead.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: z
+          in: path
+          required: true
+          description: Zoom level, within the range the descriptor publishes.
+          schema:
+            type: integer
+            minimum: 0
+        - name: x
+          in: path
+          required: true
+          description: Tile column at this zoom.
+          schema:
+            type: integer
+            minimum: 0
+        - name: y
+          in: path
+          required: true
+          description: Tile row at this zoom, counted from the north.
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: The tile, gzipped.
+          content:
+            application/vnd.mapbox-vector-tile:
+              schema:
+                type: string
+                format: binary
+        "204":
+          description: No area falls in this tile.
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /map-resources/{geography}/{release}.pmtiles:
+    get:
+      operationId: getMapResourceArchive
+      tags: ["Geography"]
+      summary: The whole tile pyramid as one PMTiles archive
+      description: >
+        Every tile of the resource in a single PMTiles v3 file, for an offline
+        map, a CDN or a warehouse. Its SHA-256 is the `contentHash` the
+        descriptor publishes, so a drawing made from it can be tied to the
+        Atlas release that produced it.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+      responses:
+        "200":
+          description: The PMTiles archive.
+          content:
+            application/vnd.pmtiles:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -5407,6 +5566,230 @@ components:
           type: string
         releaseCount:
           type: integer
+
+    MapResourceSummary:
+      type: object
+      required: [id, geography, boundaryRelease, title, href]
+      properties:
+        id:
+          type: string
+          description: The boundary release identity, `{geography}/{release}`.
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+        title:
+          type: string
+        href:
+          type: string
+
+    MapResourceListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/MapResourceSummary"
+
+    MapResourceTiles:
+      type: object
+      required:
+        - artifact
+        - href
+        - format
+        - tileFormat
+        - layer
+        - minZoom
+        - maxZoom
+        - zooms
+        - tileCount
+        - bytes
+        - contentHash
+      properties:
+        artifact:
+          type: string
+        href:
+          type: string
+        format:
+          type: string
+          const: pmtiles-3
+        tileFormat:
+          type: string
+          const: mvt-2.1
+        layer:
+          type: string
+        minZoom:
+          type: integer
+        maxZoom:
+          type: integer
+        zooms:
+          type: array
+          description: Which generalisation tier each band of zooms is drawn from.
+          items:
+            type: object
+            required: [minZoom, maxZoom, tier, toleranceM]
+            properties:
+              minZoom:
+                type: integer
+              maxZoom:
+                type: integer
+              tier:
+                type: string
+              toleranceM:
+                type: number
+        tileCount:
+          type: integer
+        bytes:
+          type: integer
+        contentHash:
+          type: string
+          description: SHA-256 of the archive, so a cited map can be checked.
+
+    MapResource:
+      type: object
+      required:
+        - id
+        - geography
+        - boundaryRelease
+        - title
+        - topology
+        - areaCount
+        - arcCount
+        - bounds
+        - tiles
+        - tiers
+        - generalisation
+        - geometrySource
+        - attribution
+      properties:
+        id:
+          type: string
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+        title:
+          type: string
+        topology:
+          type: string
+          const: shared-arc
+          description: >
+            Borders are compiled once and shared by the two areas along them,
+            so a tier cannot draw the same border two ways.
+        areaCount:
+          type: integer
+        arcCount:
+          type: integer
+          description: Distinct boundary arcs the release decomposes into.
+        bounds:
+          type: array
+          description: West, south, east and north, in degrees.
+          items:
+            type: number
+          minItems: 4
+          maxItems: 4
+        tiles:
+          $ref: "#/components/schemas/MapResourceTiles"
+        tiers:
+          type: array
+          items:
+            type: object
+            required: [tier, toleranceM, coordinates, refinedArcs]
+            properties:
+              tier:
+                type: string
+              toleranceM:
+                type: number
+              coordinates:
+                type: integer
+              refinedArcs:
+                type: integer
+                description: >
+                  Arcs given back detail because a ring built from them
+                  enclosed nothing at this tier, so no part leaves the map.
+        generalisation:
+          type: object
+          description: The terms the tiers were compiled on, in plain words.
+          additionalProperties:
+            type: string
+        geometrySource:
+          type: object
+          description: The publisher file behind the shapes, and how it was transformed.
+        attribution:
+          type: object
+          required: [text, publisher, sourceUrl, licence, href]
+          properties:
+            text:
+              type: string
+              description: Ready to display beside the map.
+            publisher:
+              type: string
+            sourceUrl:
+              type: string
+            licence:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  description: Reproduced as the publisher states it, not interpreted.
+                url:
+                  type: string
+            href:
+              type: string
+
+    MapResourceEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/MapResource"
+
+    TileJsonEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              description: TileJSON 3.0, with the archive's content hash added.
+              required: [tilejson, tiles, minzoom, maxzoom, bounds, vector_layers]
+              properties:
+                tilejson:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                attribution:
+                  type: string
+                scheme:
+                  type: string
+                format:
+                  type: string
+                tiles:
+                  type: array
+                  items:
+                    type: string
+                minzoom:
+                  type: integer
+                maxzoom:
+                  type: integer
+                bounds:
+                  type: array
+                  items:
+                    type: number
+                center:
+                  type: array
+                  items:
+                    type: number
+                vector_layers:
+                  type: array
+                  items:
+                    type: object
 
     GeographySummaryListEnvelope:
       allOf:
