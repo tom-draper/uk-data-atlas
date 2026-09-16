@@ -41,6 +41,11 @@ export type Problem = {
 export type ApiResponse = {
 	status: number;
 	body: Envelope<unknown> | Problem;
+	/**
+	 * Set where the answer is pinned to an immutable Atlas release, so its
+	 * bytes can never change and a client never needs to revalidate them.
+	 */
+	cache?: "immutable";
 	representation?: {
 		contentType: string;
 		/**
