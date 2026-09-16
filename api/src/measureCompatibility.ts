@@ -12,11 +12,19 @@ import {
 	PopulationSource,
 } from "./dataCatalog";
 
-export type CompatibilityStatus =
-	| "exact-code-set"
-	| "code-set-compatible"
-	| "partial-code-overlap"
-	| "no-code-overlap";
+/**
+ * How a source partition's codes stand against a boundary release. Only the
+ * first two mean every source code is present, which is what a geometry join
+ * requires.
+ */
+export const COMPATIBILITY_STATUSES = [
+	"exact-code-set",
+	"code-set-compatible",
+	"partial-code-overlap",
+	"no-code-overlap",
+] as const;
+
+export type CompatibilityStatus = (typeof COMPATIBILITY_STATUSES)[number];
 
 export type CompatibilityCandidate = {
 	boundaryRelease: string;
