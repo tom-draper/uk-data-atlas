@@ -1,6 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import { resolveObservations } from "./resolve/observationPlan";
+import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
 	exportMeasureRecords,
 	type MeasureExportRecord,
@@ -85,13 +85,7 @@ export const handleDataRoutes = ({
 		boundaryYear,
 		release: requestedRelease,
 	});
-	if (resolved.kind === "refusal") {
-		const { status, title, detail, code, alternatives } = resolved.refusal;
-		return problem(status, title, detail, {
-			...(code ? { code } : {}),
-			...(alternatives ? { alternatives } : {}),
-		});
-	}
+	if (resolved.kind === "refusal") return refused(resolved.refusal);
 	const { source, join } = resolved.plan;
 	const geometry: CallerSelectedGeometry | undefined = join && {
 		boundaryRelease: join.boundaryRelease,

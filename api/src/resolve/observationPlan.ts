@@ -5,6 +5,7 @@ import type {
 	MeasureCompatibilityInventory,
 } from "../measureCompatibility";
 import type { ProblemCode } from "../problemCodes";
+import { problem, type ApiResponse } from "../routeResponse";
 
 /**
  * The first slice of the resolution layer described under
@@ -77,6 +78,22 @@ export type ObservationRefusal = {
 export type Resolution =
 	| { kind: "plan"; plan: ObservationPlan }
 	| { kind: "refusal"; refusal: ObservationRefusal };
+
+/**
+ * A refusal as the response a route returns. Every route answers a refusal the
+ * same way, so the alternatives reach a caller whichever route they asked.
+ */
+export const refused = ({
+	status,
+	title,
+	detail,
+	code,
+	alternatives,
+}: ObservationRefusal): ApiResponse =>
+	problem(status, title, detail, {
+		...(code ? { code } : {}),
+		...(alternatives ? { alternatives } : {}),
+	});
 
 const partitionsOf = (measure: Measure) =>
 	measure.sources.map((source) => ({
