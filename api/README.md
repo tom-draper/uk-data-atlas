@@ -2440,6 +2440,18 @@ surface area. They follow Phase 0 and Phase 1 only.
 10. **Build a topology-preserving tile or PMTiles compiler** for one boundary
     release and test that neighbouring features share edges at every published
     map tier.
+    *Geometry done; encoding still to do.* `src/mapResource/` splits a release
+    into shared arcs and generalises each arc once, so both areas along a
+    border get identical coordinates by construction rather than by tolerance.
+    `localAuthority/2023-05-uk-bgc-v2` decomposes into 6,792 arcs over 417,116
+    coordinates with no edge on three areas, and `tests/mapTopology.test.ts`
+    holds all four tiers to the gate: the same 881 bordering pairs as the
+    source, no pair gained or lost, no area dropped, and the full tier
+    reproducing the source edge for edge. The coarsest tier keeps 27,749
+    coordinates, a fifteenfold reduction. Generalising the same release one
+    area at a time loses 218 of those borders, which the last test requires,
+    so the gate is known to discriminate. What remains is the encoder: vector
+    tiles, a PMTiles archive and the descriptor that carries their hashes.
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
