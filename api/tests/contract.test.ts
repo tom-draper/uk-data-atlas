@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -611,5 +611,50 @@ test("names build artifacts the resolution contract can actually read", () => {
 		),
 		[],
 		"the resolution contract reads a build artifact that is not published",
+	);
+});
+
+test("keeps the resolution contract's one exception the only one", () => {
+	// The contract's claim is that no route decides for itself which partition
+	// answers a request, bar one named exception. That is a claim about the
+	// source, so it is checked against the source rather than trusted.
+	// Only the paragraph that makes the claim counts. The route is named
+	// elsewhere in the section as history, which would let this pass whatever
+	// the exception had become.
+	const exception = resolutionContract.slice(
+		resolutionContract.indexOf("**One route does not use it"),
+	);
+	const named = [...exception.matchAll(/`([a-zA-Z]+Routes)`/g)].map(
+		(match) => match[1]!,
+	);
+	assert.deepEqual(
+		named,
+		["bulkRoutes"],
+		"the contract's exception paragraph no longer names exactly the route that is excepted",
+	);
+
+	const routes = readdirSync(resolve(apiRoot, "src")).filter((file) =>
+		file.endsWith("Routes.ts"),
+	);
+	const choosing = routes.filter((file) =>
+		/measure\??\.sources\.(find|filter)\(/.test(
+			readFileSync(resolve(apiRoot, "src", file), "utf8"),
+		),
+	);
+	assert.deepEqual(
+		choosing,
+		["bulkRoutes.ts"],
+		"a route chooses its own partition; either it should ask the resolver, or the contract should say why it does not",
+	);
+
+	// And the resolver is really what the rest of them ask.
+	const asking = routes.filter((file) =>
+		readFileSync(resolve(apiRoot, "src", file), "utf8").includes(
+			"resolveObservations",
+		),
+	);
+	assert.ok(
+		asking.length >= 8,
+		`only ${asking.length} routes ask the resolver`,
 	);
 });
