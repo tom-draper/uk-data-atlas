@@ -870,10 +870,13 @@ Implementation and documentation tasks:
       OpenAPI routes. Treat them as executable contract tests. The glossary and
       endpoint chooser are the two tables above; they are not yet published
       with the OpenAPI description, and the quick starts are not written.
-- [ ] Document the four clocks/identities above beside every data endpoint and
+- [x] Document the four clocks/identities above beside every data endpoint and
       response example. Do not rename v1 parameters; decide clearer names such
       as `observationPeriod`, `sourceGeography`, `geometryRelease` and
-      `atlasRelease` only when designing a versioned successor.
+      `atlasRelease` only when designing a versioned successor. The OpenAPI
+      description states them once, and the shared `SourceGeography`,
+      `SourceBoundaryYear`, `SourcePeriod` and geometry `release` parameters
+      carry that wording into every data route. No v1 parameter was renamed.
 - [x] Define typed RFC 9457 problem schemas and examples for each advertised
       `code`, including machine-readable alternatives where useful. SDK users
       must be able to branch on a stable field rather than prose or unknown
@@ -2184,10 +2187,11 @@ surface area. They follow Phase 0 and Phase 1 only.
    code-compatible geometry `release`, observation `period` and immutable
    `atlasRelease` unambiguous in OpenAPI and examples. Add negative tests that
    prove a geometry selection cannot be mistaken for a value conversion.
-   *Partly done.* Series, rankings and aggregate refuse a geometry `release`
-   by test, and the observation route's join states that no conversion was
-   applied; the OpenAPI descriptions have not been audited for the four
-   identities route by route.
+   *Done.* The OpenAPI description states the four identities once, and the
+   shared parameters carry them into every data route. `tests/contract.test.ts`
+   proves a geometry release leaves every value as published, and that all six
+   derivative routes refuse a release rather than ignoring it. `/convert`
+   ignored `release` silently until this audit; it now refuses it.
 5. **Make errors usable by clients.** Replace loosely documented Problem
    Details extensions with typed schemas, stable `code` values and examples for
    ambiguous place, absence state, incompatible geometry, unsupported

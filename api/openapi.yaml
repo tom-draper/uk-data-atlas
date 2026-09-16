@@ -18,6 +18,19 @@ info:
     `GET /atlas-release`, so clients can identify the exact set of artifacts
     that produced a response.
 
+    A data response carries four identities, and they are deliberately
+    separate. The **source geography** and its **boundary year** are the
+    publisher's own: `geography` and `boundaryYear` select one source
+    partition. The **observation period** is the time the values describe:
+    `period`. The **geometry release** is the caller's choice of boundaries to
+    draw them on: the optional `release` on `/data/{measure-id}`, accepted only
+    where every source code appears in it, which joins geometry by matching
+    code and changes no value. A route that cannot join geometry refuses
+    `release` rather than ignoring it. The **Atlas release** is the immutable
+    build that produced the response: `atlasRelease` in every envelope.
+    Converting values between geographies is a different operation, asked for
+    explicitly at `/data/{measure-id}/convert` with a named crosswalk.
+
     Representations and paging work the same way everywhere. A JSON response
     is the `Envelope`, and its `meta.nextCursor` carries the next page, or
     `null` on the last. A cursor is opaque, belongs to the query that issued
@@ -794,6 +807,12 @@ paths:
         conversion path: `GET /crosswalks` lists the published ones, and the
         response repeats the chosen crosswalk's method, quality, weighting and
         content hash.
+
+
+        The crosswalk decides the target areas, so this route selects no
+        geometry release: passing `release` is refused rather than ignored.
+        Ask `/data/{measure-id}` with a compatible `release` to join geometry
+        to source-exact values instead.
 
         Only a measure declared extensive may be converted, because conversion
         works by adding values up. An intensive measure is rejected: a share or

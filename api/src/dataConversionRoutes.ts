@@ -62,6 +62,16 @@ export const handleDataConversionRoutes = ({
 			{ code: "aggregation_not_supported" },
 		);
 	}
+	// A conversion regroups values onto the crosswalk's target areas, so it
+	// has no geometry release to select: passing one would read as a promise
+	// that the targets are drawn from it.
+	if (parsedUrl.searchParams.has("release")) {
+		return problem(
+			422,
+			"Operation Not Supported",
+			"This conversion does not select a geometry release. The crosswalk names the target areas, and /v1/data/{measure-id} joins a compatible release for a map.",
+		);
+	}
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
 	if (!crosswalkId)
 		return problem(
