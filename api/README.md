@@ -159,6 +159,11 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Find published conversion paths between two area identities and rank
       them by source authority and exactness; support small, declared multi-step
       crosswalk composition without hiding intermediate mappings.
+- [ ] Compile approved relationship paths and named-location projections, so a
+      request such as Greater Manchester → wards or North Wales →
+      constituencies is an indexed read of a published result, not a runtime
+      graph walk or polygon calculation. Every result must retain its complete
+      path, membership meaning and coverage.
 - [x] Return explicit absence states. Every area route answers an unresolved
       identity with a `code` and `absence`: an unpublished geography or
       release, identities not compiled, or a code that is `superseded`,
@@ -256,6 +261,12 @@ only **available** when its endpoint, contract and provenance are published.
       with documented request limits and an efficient multi-geography strategy.
 - [ ] Find nearby areas for a coordinate outside a boundary, reporting distance
       and making clear that nearest is not the same as containing.
+- [ ] Add a coordinate intelligence endpoint that accepts an explicitly
+      declared CRS and date, resolves the requested geographies to exact
+      releases, and returns all containing areas or an explicit boundary /
+      outside-coverage result. Keep terrain elevation as a separately
+      versioned raster lookup, with its vertical datum, resolution and
+      uncertainty; elevation is not part of administrative-area containment.
 - [x] Retrieve the areas that intersect a bounded bbox for a chosen release,
       through `GET /v1/areas:intersects?bbox=west,south,east,north`. Each match
       reports whether it lies `within` the box or merely `overlaps` it, both
@@ -1378,7 +1389,7 @@ raw boundary releases and authoritative correspondence sources. It may reuse
 source material from the website, but must not inherit its limited data model
 or deployment lifecycle.
 
-The compiler produces five separately versioned products:
+The compiler produces eight separately versioned products:
 
 1. **Areas** — every imported area identity, its names and aliases, validity,
    extent, geometry reference and provenance.
@@ -1386,9 +1397,20 @@ The compiler produces five separately versioned products:
    between exact source and target identities.
 3. **Crosswalks** — directional weighted mappings, including their method,
    denominator, coverage and validation facts.
-4. **Change events** — human-readable recodes, splits, mergers, abolitions and
+4. **Place definitions** — versioned, sourced definitions of countries,
+   combined authorities, ceremonial or historic areas, and transparently
+   editorial groupings. A definition is a set of anchored area identities; it
+   is not silently promoted into a new official boundary type.
+5. **Location projections** — materialised membership results for a place
+   definition in a requested geography and boundary release, with the approved
+   relationship path, membership meaning, shares and coverage.
+6. **Spatial indexes** — release-specific candidate indexes for point
+   containment, bbox intersection and nearest-area work. They reference
+   geometry; they do not replace it or make an approximate bbox hit into a
+   containment claim.
+7. **Change events** — human-readable recodes, splits, mergers, abolitions and
    boundary changes linked to supporting evidence.
-5. **Coverage report** — machine-readable statements of what is official,
+8. **Coverage report** — machine-readable statements of what is official,
    derived, partial or not available for each geography/release pair.
 
 “Complete” must mean that the API can give an honest answer for every supported
@@ -1416,6 +1438,134 @@ Useful additions beyond code translation are:
   between releases; and
 - an explicit absence result: a geography can be unavailable, not applicable
   in a nation, abolished, or present but not mapped with enough confidence.
+
+### Geography Resolver: compiled core and roadmap
+
+The **Geography Resolver** is the runtime component that answers a geography
+question from published artifacts. The **Geography Compiler** creates and
+validates those artifacts; the **gazetteer** is the compiled identity, name and
+place data within them. The public capability remains the **Geography
+Intelligence API**. These names distinguish behaviour, build process and data
+without relying on an informal metaphor.
+
+The resolver owns geography facts, not arbitrary statistical transformation. It
+answers what an identity, place, coordinate or boundary relationship means;
+the data layer may use a conversion only after checking that the measure is
+suitable for it. In particular, weights can apportion counts and other
+extensive quantities, but cannot make a rate, median or percentage safely
+convertible on their own.
+
+#### Core query model
+
+There are three identities which must never be collapsed:
+
+| Identity | Example | Immutable key |
+| --- | --- | --- |
+| Area | Manchester LAD in a particular release | `geography / release / code` |
+| Place definition | "Greater Manchester" as a combined-authority area | `location / id / definition-revision` |
+| Relationship | Ward wholly within an LAD; constituency overlapping an LAD | `relationship / source / target / method / release` |
+
+A place definition is anchored to a published set of areas, usually local
+authorities at first. Its projection is not a hand-maintained second list of
+wards or constituencies. The compiler follows an approved relationship path,
+checks it, and materialises the result under this key:
+
+```text
+location definition + target geography + target release + membership mode
+  -> member areas + shares + completeness + path + provenance
+```
+
+This makes common requests direct indexed reads. It also means a target may be
+honestly unavailable: the resolver must return the published paths that would be
+needed, or `conversion_not_available`, rather than invent a route because two
+codes happen to share a name or vintage.
+
+Membership is deliberately more precise than a boolean:
+
+- `direct-code-match` — the place is defined directly in the requested
+  geography and release;
+- `fully-contained` — every returned target area is wholly inside a member of
+  the place, through a clean-containment relationship;
+- `weighted-overlap` — a target touches the place with a stated share and may
+  be partial;
+- `intersects` — useful for discovery or mapping, but not a claim that a
+  selected target belongs wholly to the place; and
+- `covers` — a compiler finding saying whether a selected target set covers
+  the place exactly, has gaps, or spills outside it.
+
+This is what makes Greater Manchester → wards exact when the release publishes
+clean ward-to-LAD containment, while Greater Manchester → constituencies stays
+qualified. A constituency set that touches Greater Manchester can extend beyond
+it; selecting it is not proof that the two boundaries are the same.
+
+Relationships may be traversed in either direction, but their weights are not
+symmetrical. A constituency → LAD share is a fraction of the constituency;
+the reverse LAD → constituency result must be normalised against the LAD and
+labelled as such. The compiler may compose only short, declared paths whose
+methods and purposes are compatible. It must not expose an unrestricted graph
+walk as a conversion feature.
+
+#### Optimised serving model
+
+The system is one logical geography resolver, not one eager JSON file. Build immutable,
+sharded indexes suited to the query:
+
+- canonical identity and normalised-name indexes for code/name resolution;
+- forward and reverse relationship postings, plus a small catalogue of
+  approved conversion paths;
+- materialised place projections for published place × geography × release ×
+  membership-mode combinations;
+- per-release spatial candidate indexes, followed by exact geometry tests only
+  for candidates; and
+- separate raster indexes for terrain or other gridded environmental layers.
+
+The release manifest pins every shard and compiler version. A response carries
+the selected boundary release, definition revision, relationship/path IDs,
+method, quality, coverage and artifact hashes. Expensive overlap, union,
+topology and path-validation work happens during compilation; a request only
+performs bounded index lookups and, for a coordinate, an exact test over the
+small candidate set.
+
+#### Roadmap
+
+1. **Complete the identity foundation.** Compile every supported
+   geography/release into canonical identities, aliases, coverage and absence
+   states. Keep release selection by date explicit and nation-aware.
+2. **Complete the relationship graph.** Publish clean containment, official
+   history and reviewed overlap crosswalks in both directions. Add compiler
+   invariants for endpoint resolution, containment cardinality, weights,
+   coverage, slivers and historical continuity.
+3. **Make places first-class.** Give each country, combined authority,
+   ceremonial/historic area and editorial grouping a source, definition
+   revision and validity interval. Materialise and validate its projections;
+   publish `fully-contained`, `weighted-overlap`, `intersects` and `covers`
+   semantics rather than a bare list of codes.
+4. **Publish approved paths and capabilities.** Let callers discover whether a
+   requested source/target/purpose is exact, available with weights, available
+   only for membership, or not published. Explain every multi-step result
+   without choosing a conversion path silently.
+5. **Generalise coordinate intelligence.** Extend `areas:contains` to accept
+   several explicitly requested geographies and a date/selected releases,
+   using the compiled spatial indexes. Return all matches on a shared border,
+   coordinate precision/tolerance, CRS transformation metadata and an explicit
+   outside-coverage result. Add nearest-area separately, with distance but no
+   containment implication; add bounded batch lookup for point datasets.
+6. **Add terrain and contextual layers.** Serve elevation, slope, aspect and
+   other raster-derived context through separate versioned products. Every
+   elevation answer states its horizontal/vertical CRS or datum, units,
+   raster resolution, interpolation method, source date and uncertainty.
+   Altitude normally does not affect LAD, ward or constituency containment:
+   those are two-dimensional ground footprints.
+7. **Expand deliberately.** Add OA → LSOA → MSOA → LAD hierarchies and their
+   Scottish/Northern Irish equivalents, then non-administrative geographies
+   such as police, NHS and travel-to-work areas only with a named source,
+   release cadence and qualified relationship method.
+
+The compiler's capability report is the roadmap's guardrail. It must expose
+what is available, partial, unsupported or awaiting source data for every
+geography/release pair, place projection and coordinate layer. That prevents
+the public API from overclaiming while still making the next useful mapping
+obvious.
 
 ### Dataset and measure identity
 
@@ -1857,7 +2007,7 @@ it should not look like success with a mysteriously short row set.
 ## Resolution contract
 
 This is the contract for the layer every data route sits on: the gazetteer and
-oracle that answers, once, the question each route used to answer for itself.
+Geography Resolver that answer, once, the question each route used to answer for itself.
 It was written before the code for the same reason the
 [map resource contract](#map-resource-contract) was, and the same rule
 applies: where this section and a route disagree, this section is what the

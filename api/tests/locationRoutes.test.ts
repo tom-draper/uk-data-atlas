@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest } from "../src/routes";
+import { createGeographyResolver } from "../src/geographyResolver";
+import {
+	compileLocationProjections,
+	LocationProjectionStore,
+} from "../src/locationProjections";
 import type { RouteContext } from "../src/routing";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import {
@@ -110,12 +115,31 @@ test("resolves a named location into another geography through a crosswalk", () 
 			},
 		],
 	};
+	const locationProjections = compileLocationProjections(
+		namedLocationInventory,
+		inventory,
+		crosswalkLookup.values(),
+		areaLookup,
+	);
 	const context: RouteContext = {
 		boundaryRegistry: registry,
 		areaLookup,
 		crosswalkInventory: inventory,
 		crosswalkLookup,
 		namedLocationLookup,
+		geographyResolver: createGeographyResolver({
+			areaLookup,
+			crosswalkInventory: inventory,
+			crosswalkLookup,
+			namedLocationLookup,
+			locationProjectionStore: new LocationProjectionStore(
+				locationProjections.inventory,
+				(shard) =>
+					locationProjections.artifacts.find(
+						(artifact) => artifact.crosswalkId === shard.crosswalkId,
+					)!,
+			),
+		}),
 	};
 	const ask = (query: string) =>
 		routeRequest(

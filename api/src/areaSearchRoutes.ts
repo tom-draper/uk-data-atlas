@@ -1,4 +1,4 @@
-import type { AreaLookup } from "./areaInventory";
+import { createAreaSearchIndex, searchAreas } from "./areaSearch";
 import {
 	cursorFor,
 	keyFromCursor,
@@ -6,40 +6,7 @@ import {
 	readPageSize,
 } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type {
-	AreaSearchIndex,
-	AreaSearchResult,
-	RouteRequest,
-} from "./routing";
-
-/** Every compiled area identity, sorted by id for stable pagination. */
-export const createAreaSearchIndex = (
-	areaLookup: AreaLookup,
-): AreaSearchIndex =>
-	[...areaLookup.entries()]
-		.flatMap(([identity, areas]) => {
-			const slash = identity.indexOf("/");
-			const geography = identity.slice(0, slash);
-			const boundaryRelease = identity.slice(slash + 1);
-			return [...areas.values()].map((area) => ({
-				id: [geography, boundaryRelease, area.code].join("/"),
-				geography,
-				boundaryRelease,
-				...area,
-			}));
-		})
-		.sort((left, right) => left.id.localeCompare(right.id));
-
-const matchesQuery = (area: AreaSearchResult, query: string) => {
-	const normalized = query.toLocaleLowerCase();
-	return (
-		area.code.toLocaleLowerCase().startsWith(normalized) ||
-		area.name.toLocaleLowerCase().startsWith(normalized) ||
-		area.aliases?.some((alias) =>
-			alias.toLocaleLowerCase().startsWith(normalized),
-		) === true
-	);
-};
+import type { RouteRequest } from "./routing";
 
 /** Search compiled area identities with stable cursor pagination. */
 export const handleAreaSearchRoutes = ({
@@ -64,25 +31,16 @@ export const handleAreaSearchRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const query = parsedUrl.searchParams.get("q")?.trim();
-	const filtered = (
-		areaSearchIndex ?? createAreaSearchIndex(areaLookup)
-	).filter(
-		(area) =>
-			(geography === null || area.geography === geography) &&
-			(boundaryRelease === null ||
-				area.boundaryRelease === boundaryRelease),
-	);
-	const exact = query
-		? filtered.filter(
-				(area) =>
-					area.code.toLocaleLowerCase() === query.toLocaleLowerCase(),
-			)
-		: [];
-	const matches = query
-		? exact.length > 0
-			? exact
-			: filtered.filter((area) => matchesQuery(area, query))
-		: filtered;
+	const matches = context.geographyResolver?.searchAreas({
+		geography,
+		boundaryRelease,
+		query,
+	}) ??
+		searchAreas(areaSearchIndex ?? createAreaSearchIndex(areaLookup), {
+			geography,
+			boundaryRelease,
+			query,
+		});
 	const limit = readPageSize(parsedUrl.searchParams.get("limit"));
 	if (limit === undefined)
 		return problem(

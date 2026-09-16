@@ -42,9 +42,19 @@ import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
 import { httpResponse, preflightResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
-import { createAreaSearchIndex } from "./areaSearchRoutes";
+import { createAreaSearchIndex } from "./areaSearch";
+import { createGeographyResolver } from "./geographyResolver";
+import {
+	LocationProjectionStore,
+	type LocationProjectionArtifact,
+	type LocationProjectionInventory,
+} from "./locationProjections";
 import { route } from "./routes";
 import type { CrosswalkLookup, RouteContext } from "./routing";
+import {
+	createRelationshipPathIndex,
+	type RelationshipPathInventory,
+} from "./relationshipPaths";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -171,6 +181,66 @@ export const readNamedLocationInventory = (
 	}
 	return inventory;
 };
+
+export const readLocationProjectionInventory = (
+	apiRoot: string,
+	namedLocations: NamedLocationInventory,
+	crosswalkInventory: CrosswalkInventory,
+): LocationProjectionInventory => {
+	const path = join(apiRoot, "public", "location-projection-inventory.json");
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as LocationProjectionInventory;
+	if (
+		inventory.schemaVersion !== 1 ||
+		!Array.isArray(inventory.shards) ||
+		inventory.namedLocationInventoryHash !== namedLocations.contentHash ||
+		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
+	) {
+		throw new Error(`Invalid location projection inventory at ${path}`);
+	}
+	return inventory;
+};
+
+export const readRelationshipPathInventory = (
+	apiRoot: string,
+	crosswalks: CrosswalkInventory,
+): RelationshipPathInventory => {
+	const path = join(apiRoot, "public", "relationship-paths.json");
+	const inventory = JSON.parse(readFileSync(path, "utf8")) as RelationshipPathInventory;
+	if (
+		inventory.schemaVersion !== 1 ||
+		!Array.isArray(inventory.paths) ||
+		inventory.crosswalkInventoryHash !== crosswalks.contentHash
+	) {
+		throw new Error(`Invalid relationship path inventory at ${path}`);
+	}
+	return inventory;
+};
+
+const createLocationProjectionStore = (
+	apiRoot: string,
+	inventory: LocationProjectionInventory,
+	namedLocations: NamedLocationInventory,
+	crosswalkInventory: CrosswalkInventory,
+) =>
+	new LocationProjectionStore(inventory, (shard) => {
+		const path = join(apiRoot, "public", shard.artifact);
+		const artifact = JSON.parse(
+			readFileSync(path, "utf8"),
+		) as LocationProjectionArtifact;
+		if (
+			artifact.schemaVersion !== 1 ||
+			artifact.contentHash !== shard.contentHash ||
+			artifact.crosswalkId !== shard.crosswalkId ||
+			artifact.namedLocationInventoryHash !== namedLocations.contentHash ||
+			artifact.crosswalkInventoryHash !== crosswalkInventory.contentHash ||
+			!Array.isArray(artifact.projections)
+		) {
+			throw new Error(`Invalid location projection shard at ${path}`);
+		}
+		return artifact;
+	});
 
 export const readValidationReport = (apiRoot: string): ValidationReport => {
 	const path = join(apiRoot, "public", "validation-report.json");
@@ -321,6 +391,32 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const mapResources = readMapResources(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
+	const relationshipPathInventory = readRelationshipPathInventory(
+		apiRoot,
+		crosswalkInventory,
+	);
+	const namedLocationLookup = createNamedLocationLookup(namedLocationInventory);
+	const locationProjectionInventory = readLocationProjectionInventory(
+		apiRoot,
+		namedLocationInventory,
+		crosswalkInventory,
+	);
+	const locationProjectionStore = createLocationProjectionStore(
+		apiRoot,
+		locationProjectionInventory,
+		namedLocationInventory,
+		crosswalkInventory,
+	);
+	const geographyResolver = createGeographyResolver({
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		namedLocationLookup,
+		locationProjectionStore,
+		relationshipPathIndex: createRelationshipPathIndex(
+			relationshipPathInventory,
+		),
+	});
 	return {
 		openapiDocument: readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 		boundaryRegistry: readBoundaryRegistry(apiRoot),
@@ -331,6 +427,8 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		areaRelationshipIndex: createAreaRelationshipIndex(
 			crosswalkLookup.values(),
 		),
+		geographyResolver,
+		relationshipPathInventory,
 		areaGeometryCache: new AreaGeometryCache(
 			resolve(apiRoot, ".."),
 			geometrySources,
@@ -348,7 +446,9 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 			readRelationshipCandidateInventory(apiRoot),
 		validationReport: readValidationReport(apiRoot),
 		namedLocationInventory,
-		namedLocationLookup: createNamedLocationLookup(namedLocationInventory),
+		namedLocationLookup,
+		locationProjectionInventory,
+		locationProjectionStore,
 		dataCatalog,
 		exportManifest,
 		lookupManifest: readLookupManifest(apiRoot),

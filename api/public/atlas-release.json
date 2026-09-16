@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:5d8df0d92fc19c9a8e7f1815fced685cc2b21e2e65f872dfd0692140abbb5e30",
+	"releaseId": "sha256:da4898229392e8fa52cd5098cf24c52f11abf454b0adcab178c6c82e30032c15",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -21,6 +21,11 @@
 			"id": "named-locations",
 			"path": "named-locations.json",
 			"contentHash": "sha256:e2da69cbbf92e55d1e6806ee399dbffde610fcef925b1b01228371d42021bf28"
+		},
+		{
+			"id": "location-projection-inventory",
+			"path": "location-projection-inventory.json",
+			"contentHash": "sha256:ff54790faa6f35db52d050aeb2d34f3ec21d81c9c1dee5c88f0d15031c6ae313"
 		},
 		{
 			"id": "data-catalog",
@@ -60,7 +65,12 @@
 		{
 			"id": "crosswalk-inventory",
 			"path": "crosswalk-inventory.json",
-			"contentHash": "sha256:0f947bed96fb281a900c1fbe8670a2426483715c8b4f6a212f989ce937af63fd"
+			"contentHash": "sha256:b6416bc767548f1959fcca79b3597ee196fa8af594f64161d5973baa3bad4232"
+		},
+		{
+			"id": "relationship-paths",
+			"path": "relationship-paths.json",
+			"contentHash": "sha256:ad62ddeaa49bcd547e21508310aa497a29f0c76ad43375ff71075920f2edd4b2"
 		},
 		{
 			"id": "relationship-candidates",
@@ -81,6 +91,66 @@
 			"id": "source-inventory",
 			"path": "source-inventory.json",
 			"contentHash": "sha256:5307e65903b4f1cb1ba9d2afdaacbe5062e85f721138c15726897928f80af4f0"
+		},
+		{
+			"id": "location-projections/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"path": "location-projections/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json",
+			"contentHash": "sha256:1b2f1e7e735da32cf3ade65dc87b8d2f3d3ba5aa721ae1758cc699826431de22"
+		},
+		{
+			"id": "location-projections/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+			"path": "location-projections/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:a2def40971040e12d7fa607fe387261f2650923fec11e4d162e3369541c98583"
+		},
+		{
+			"id": "location-projections/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"path": "location-projections/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:e3d21f0cb457a2f00692fdbb5cce5ecd9c4061ead83d161313ab72ca6b13f376"
+		},
+		{
+			"id": "location-projections/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
+			"path": "location-projections/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment.json",
+			"contentHash": "sha256:f6180ed7b86f835f86794deaa944bca011e07bcc4589325fd7e05187ac737d21"
+		},
+		{
+			"id": "location-projections/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
+			"path": "location-projections/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment.json",
+			"contentHash": "sha256:be7c80bd4242fa2dbee4242b9566e4f5ba4845414231ad9697df3c8581c41075"
+		},
+		{
+			"id": "location-projections/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+			"path": "location-projections/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment.json",
+			"contentHash": "sha256:a3720413b640f4d52254f1109f26683ebf4939b54e148772ffc200a6c9051c6e"
+		},
+		{
+			"id": "location-projections/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+			"path": "location-projections/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:51a6ad08ee7e1bd8449951dbfe333dd9368e983882e26c9d62dc95142d211d1e"
+		},
+		{
+			"id": "location-projections/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+			"path": "location-projections/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:611f5bf14caab053e025c11028ac7fe4f737f041371d0c858f1f41908e23e679"
+		},
+		{
+			"id": "location-projections/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"path": "location-projections/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
+			"contentHash": "sha256:1cbf8c91a1314c2c8a7cae954a70e7eae9776c5f021425161fc1dc50363dfa22"
+		},
+		{
+			"id": "location-projections/ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+			"path": "location-projections/ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:2022bb246ce4d23dfc70423f43d9c5b73484be2e6893f34ad72e373b8f58f417"
+		},
+		{
+			"id": "location-projections/ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+			"path": "location-projections/ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:583d699301ce4a137de93cbbf70fb809dccba4a64a337c43a6c3c319b9482546"
+		},
+		{
+			"id": "location-projections/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+			"path": "location-projections/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
+			"contentHash": "sha256:38791aa136c4de5e83cbd704a76708f5f39d34e40a40e75d4ba7c86780e91318"
 		},
 		{
 			"id": "observations/air-quality-grid-cells-observations",
@@ -1893,7 +1963,9 @@
 		"crosswalks": {
 			"constituency-2010-to-2024-official-lookup-v2": "sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82",
 			"constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap": "sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7",
+			"local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup": "sha256:1f7a34a1892cd630822ce3aa28dbb2ad610e72ca5b02fe8e5da0cb0a75be42d5",
 			"local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap": "sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9",
+			"local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup": "sha256:b182af0c00fe68572c3386da1db803edac42abb8add5bcbcdae3d2ac671da020",
 			"parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment": "sha256:c8d19d3dfe19c5eaf9bc3ac78859509762ed8181ce1eb8bdc861c7d4d267b0d6",
 			"parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment": "sha256:cb85845ce9f69e91479b0ec3d6ba7a1da513979c8aa82cd3f40a9a8d7327fba8",
 			"sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment": "sha256:5c743f37c431e28fd11dcee3ac6ffde00d83969bff1cda23348bf67ec3ef0a3e",

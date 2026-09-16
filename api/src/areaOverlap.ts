@@ -10,6 +10,12 @@ import polygonClipping, {
 } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
+import {
+	canServeAsWgs84,
+	geometryProvenance,
+	toWgs84Geometry,
+} from "./reprojection";
+import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
 import type { AreaOverlapCrosswalkAdapter } from "./crosswalkAdapters";
 import type {
 	AreaOverlapCrosswalkArtifact,
@@ -127,7 +133,50 @@ export const polygonWidthM = (polygon: Polygon) => {
 
 type Bounds = [number, number, number, number];
 
-type AreaGeometry = { geometry: MultiPolygon; bounds: Bounds; areaM2: number };
+type GeometryPiece = { geometry: Polygon; bounds: Bounds };
+type AreaGeometry = {
+	pieces: GeometryPiece[];
+	bounds: Bounds;
+	areaM2: number;
+	/** Spatial buckets avoid comparing every offshore island to every source. */
+	pieceBuckets: Map<string, number[]>;
+};
+
+const PIECE_BUCKET_SIZE_DEGREES = 0.25;
+
+const bucketRange = ([west, south, east, north]: Bounds) => ({
+	west: Math.floor(west / PIECE_BUCKET_SIZE_DEGREES),
+	south: Math.floor(south / PIECE_BUCKET_SIZE_DEGREES),
+	east: Math.floor(east / PIECE_BUCKET_SIZE_DEGREES),
+	north: Math.floor(north / PIECE_BUCKET_SIZE_DEGREES),
+});
+
+const bucketKey = (x: number, y: number) => `${x}/${y}`;
+
+const indexPieces = (pieces: GeometryPiece[]) => {
+	const buckets = new Map<string, number[]>();
+	for (const [index, piece] of pieces.entries()) {
+		const range = bucketRange(piece.bounds);
+		for (let x = range.west; x <= range.east; x += 1)
+			for (let y = range.south; y <= range.north; y += 1) {
+				const key = bucketKey(x, y);
+				const entries = buckets.get(key) ?? [];
+				entries.push(index);
+				buckets.set(key, entries);
+			}
+	}
+	return buckets;
+};
+
+const candidatePieces = (target: AreaGeometry, source: GeometryPiece) => {
+	const candidates = new Set<number>();
+	const range = bucketRange(source.bounds);
+	for (let x = range.west; x <= range.east; x += 1)
+		for (let y = range.south; y <= range.north; y += 1)
+			for (const index of target.pieceBuckets.get(bucketKey(x, y)) ?? [])
+				candidates.add(index);
+	return [...candidates].map((index) => target.pieces[index]!);
+};
 
 const boundsOf = (multiPolygon: MultiPolygon): Bounds => {
 	const bounds: Bounds = [Infinity, Infinity, -Infinity, -Infinity];
@@ -181,13 +230,17 @@ const readGeometries = (
 			`${crosswalkId}: no raw geometry source is available for ${identity}.`,
 		);
 	}
-	if (
-		source.crs !== "EPSG:4326" &&
-		source.crs !== "CRS84" &&
-		!source.crs.endsWith(":CRS84")
-	) {
+	if (!canServeAsWgs84(source.crs)) {
 		throw new Error(
-			`${crosswalkId}: ${identity} geometry is ${source.crs}, not WGS84.`,
+			`${crosswalkId}: ${identity} geometry is ${source.crs} and has no transformation to WGS84.`,
+		);
+	}
+	const offsets = (source.corrections ?? []).map((id) =>
+		readGridOffset(repositoryRoot, id),
+	);
+	if (offsets.some((offset) => offset.crs !== source.crs)) {
+		throw new Error(
+			`${crosswalkId}: ${identity} has a correction for a different CRS.`,
 		);
 	}
 	const content = readFileSync(
@@ -217,10 +270,16 @@ const readGeometries = (
 			);
 		}
 		if (codePattern && !codePattern.test(code)) continue;
+		const corrected = offsets
+			.filter((offset) => appliesTo(offset, code))
+			.reduce(
+				(geometry, offset) => offsetGeometry(offset, geometry),
+				feature.geometry as { type: string; coordinates?: unknown },
+			);
 		const polygons = polygonsByCode.get(code.trim()) ?? [];
 		polygons.push(
 			...toPolygons(
-				feature.geometry,
+				toWgs84Geometry(corrected, source.crs),
 				`${source.input} feature ${index} geometry`,
 			),
 		);
@@ -229,10 +288,15 @@ const readGeometries = (
 	const geometries = new Map<string, AreaGeometry>();
 	for (const code of [...polygonsByCode.keys()].sort()) {
 		const geometry = polygonsByCode.get(code) as MultiPolygon;
+		const pieces = geometry.map((polygon) => ({
+			geometry: polygon,
+			bounds: boundsOf([polygon]),
+		}));
 		geometries.set(code, {
-			geometry,
+			pieces,
 			bounds: boundsOf(geometry),
 			areaM2: multiPolygonAreaM2(geometry),
+			pieceBuckets: indexPieces(pieces),
 		});
 	}
 	return {
@@ -240,6 +304,15 @@ const readGeometries = (
 		provenance: {
 			input: source.input,
 			inputHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
+			...geometryProvenance(source.crs),
+			...(offsets.length > 0
+				? {
+						corrections: offsets.map(({ id, description }) => ({
+							id,
+							description,
+						})),
+					}
+				: {}),
 		},
 	};
 };
@@ -315,10 +388,24 @@ export const compileAreaOverlapCrosswalk = (
 		for (const [targetCode, target] of targets.geometries) {
 			if (!boundsIntersect(source.bounds, target.bounds)) continue;
 			candidatePairCount += 1;
-			const intersection = polygonClipping.intersection(
-				source.geometry,
-				target.geometry,
+			const intersectionPieces = source.pieces.flatMap((sourcePiece) =>
+				candidatePieces(target, sourcePiece).flatMap((targetPiece) =>
+					boundsIntersect(sourcePiece.bounds, targetPiece.bounds)
+						? polygonClipping.intersection(
+								sourcePiece.geometry,
+								targetPiece.geometry,
+							)
+						: [],
+				),
 			);
+			// Source or target releases can split one logical area across
+			// adjacent features. Re-union the small, local intersections so the
+			// sliver check still evaluates the complete source/target overlap.
+			const [firstIntersection, ...remainingIntersections] =
+				intersectionPieces;
+			const intersection = firstIntersection
+				? polygonClipping.union(firstIntersection, ...remainingIntersections)
+				: [];
 			const overlapAreaM2 = multiPolygonAreaM2(intersection);
 			if (overlapAreaM2 <= 0) continue;
 			intersectingPairCount += 1;

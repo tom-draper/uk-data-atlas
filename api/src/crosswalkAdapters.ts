@@ -11,6 +11,7 @@ export type CrosswalkSideAdapter = {
 export type CrosswalkMethod =
 	"official-lookup" | "clean-containment" | "area-overlap";
 export type CrosswalkQuality = "publisher-supplied" | "derived";
+export type PropertyRelationshipPurpose = "identity" | "membership";
 export type AreaOverlapWeighting = {
 	status: "provided";
 	basis: "area";
@@ -28,6 +29,11 @@ export type PropertyCrosswalkAdapter = {
 	input: string;
 	method: "official-lookup" | "clean-containment";
 	quality: "publisher-supplied";
+	/**
+	 * A publisher lookup can describe historical identity or administrative
+	 * membership. Official lookups default to identity for compatibility.
+	 */
+	relationshipPurpose?: PropertyRelationshipPurpose;
 	weighting: { status: "not-provided" } | { status: "not-applicable" };
 	from: CrosswalkSideAdapter;
 	to: CrosswalkSideAdapter;
@@ -55,6 +61,7 @@ type AdapterFile = { schemaVersion?: unknown; crosswalks?: unknown };
 
 const PROPERTY_METHODS = ["official-lookup", "clean-containment"];
 const PROPERTY_WEIGHTING_STATUSES = ["not-provided", "not-applicable"];
+const PROPERTY_RELATIONSHIP_PURPOSES = ["identity", "membership"];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
@@ -79,6 +86,10 @@ const validPropertyAdapter = (
 	typeof adapter.input === "string" &&
 	PROPERTY_METHODS.includes(adapter.method as string) &&
 	adapter.quality === "publisher-supplied" &&
+	(adapter.relationshipPurpose === undefined ||
+		PROPERTY_RELATIONSHIP_PURPOSES.includes(
+			adapter.relationshipPurpose as string,
+		)) &&
 	isRecord(adapter.weighting) &&
 	PROPERTY_WEIGHTING_STATUSES.includes(adapter.weighting.status as string) &&
 	validSide(adapter.from) &&

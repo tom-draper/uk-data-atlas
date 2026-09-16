@@ -299,6 +299,52 @@
 			"minimumCoverage": 0.99
 		},
 		{
+			"id": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+			"input": "lookups/local-authority-to-country/2025-04-uk/LAD25_CTRY25_UK_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM",
+				"aliasProperty": "LAD25NMW"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "CTRY25CD",
+				"nameProperty": "CTRY25NM",
+				"aliasProperty": "CTRY25NMW"
+			}
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+			"input": "lookups/local-authority-to-region/2025-04-en/LAD25_RGN25_EN_LU_v2.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM"
+			},
+			"to": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc",
+				"codeProperty": "RGN25CD",
+				"nameProperty": "RGN25NM"
+			}
+		},
+		{
 			"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
 			"method": "area-overlap",
 			"quality": "derived",

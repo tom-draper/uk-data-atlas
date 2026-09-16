@@ -21,7 +21,12 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 	];
 	const { areaLookup, areaRelationshipIndex, crosswalkLookup } = context;
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!crosswalkLookup)
 		return problem(
@@ -29,13 +34,19 @@ export const handleAreaRelationshipRoutes = ({
 			"Catalogue Unavailable",
 			"Build the crosswalk inventory before looking up area membership.",
 		);
-	const allRelationships = relationshipsFor(
-		areaRelationshipIndex,
-		crosswalkLookup,
-		geography,
-		boundaryRelease,
-		code,
-	);
+	const allRelationships =
+		context.geographyResolver?.relationships({
+			geography,
+			boundaryRelease,
+			code,
+		}) ??
+		relationshipsFor(
+			areaRelationshipIndex,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		);
 	const relationships =
 		segments[5] === "relationships"
 			? allRelationships

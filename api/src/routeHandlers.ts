@@ -33,6 +33,7 @@ import { handleAreaCitationRoutes } from "./areaCitationRoutes";
 import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
 import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
+import { handleRelationshipPathRoutes } from "./relationshipPathRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
@@ -318,6 +319,11 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			segments[1] === "translations",
 		handle: handleTranslationRoutes,
+	},
+	{
+		name: "relationship-paths",
+		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "relationship-paths",
+		handle: handleRelationshipPathRoutes,
 	},
 	{
 		name: "governance",
