@@ -195,6 +195,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BoundaryReleaseListEnvelope"
+              x-example-request: "/v1/boundary-releases"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: 2025-12-en-bgc
+                    geography: combinedAuthority
+                    title: Combined authorities, December 2025 (England, generalised, clipped)
+                    description: English combined authorities and combined county authorities. ONS reports some local area statistics against these, including the life expectancy series held here.
+                    temporalCoverage: "2025"
+                    coverage:
+                      countries:
+                        - GB-ENG
+                    source:
+                      publisher: Office for National Statistics
+                      url: https://geoportal.statistics.gov.uk/
+                      retrievedAt: 2026-09-06
+                      licence:
+                        name: Open Government Licence v3.0
+                        url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+                    metadataHash: sha256:6674a5e354661262ca18eebe9667e39774396aa2794caf8e954bd2a2e6b05e50
+                meta:
+                  nextCursor: null
 
   /boundary-releases:resolve:
     get:
@@ -246,6 +269,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/boundary-releases:resolve?geography=localAuthority&date=2023-06-30"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  geography: localAuthority
+                  date: 2023-06-30
+                  month: 2023-06
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -324,6 +357,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeographyInventoryEnvelope"
+              x-example-request: "/v1/geography-inventory"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  schemaVersion: 1
+                  contentHash: sha256:c5d03f56b5cd3ee31e277ad4a0ee2cde2712c1c64fd373876c19e64c9be4ff0a
+                  boundaryRegistryHash: sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46
+                  releases:
+                    - id: 2025-12-en-bgc
+                      geography: combinedAuthority
+                      countries:
+                        - GB-ENG
+                      inputFormats:
+                        - .geojson
+                      areaIdentities:
+                        status: available
+                        recordCount: 15
+                        artifact: areas/combinedAuthority/2025-12-en-bgc.json
+                      relationships:
+                        status: not-compiled
+                        reason: No published crosswalk references this boundary release yet.
+                  geographies:
+                    - id: combinedAuthority
+                      countries:
+                        - GB-ENG
+                      releaseCount: 1
+                meta:
+                  nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -339,6 +401,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/datasets"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: air-quality
+                    label: Air Quality
+                    publisher: Department for Environment, Food and Rural Affairs
+                    sourceUrl: https://uk-air.defra.gov.uk/data/pcm-data
+                    temporalCoverage: "2024"
+                    licence:
+                      name: Open Government Licence v3.0
+                      url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+                    description: Modelled 2024 annual mean background NO2, PM10 and PM2.5 by local authority, averaged from Defra's 1x1 km PCM maps, with Defra's population-weighted PM2.5.
+                    inputs:
+                      - kind: text
+                        path: environment/air-quality/pcm-background-by-local-authority-2024.csv
+                        bytes: 16025
+                        sha256: 433a690b5d67b88e86543c0e4696a87239f34a1afa5d024956bb0eb285d24e31
+                    summary:
+                      datasetCount: 1
+                      dataRecordCount: 361
+                      boundaryYears:
+                        - 2024
+                    compiled:
+                      bytes: 72571
+                      sha256: 8520b94c71e1e6f1a2d1209fddeae30ea4e8c79487eef04d3402454ee85126db
+                meta:
+                  nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -362,6 +453,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/datasets/population-uk"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: population-uk
+                  label: Population (Local Authority)
+                  publisher: Office for National Statistics
+                  sourceUrl: https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
+                  temporalCoverage: 2011-2024
+                  licence:
+                    name: Open Government Licence v3.0
+                    url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+                  description: UK local authority population estimates by single year of age and sex, mid-2011 to mid-2024.
+                  inputs:
+                    - kind: xlsxSheet
+                      path: demographics/population/uk/myebtablesuk20112024.xlsx#MYEB1
+                      bytes: 5951518
+                      sha256: aec8a5343f3f71ee062cc5b0e3f137087f89e1a1ccd0725cc6ffd2c77ba5d0f1
+                  summary:
+                    datasetCount: 14
+                    dataRecordCount: 5054
+                    boundaryYears:
+                      - 2023
+                  compiled:
+                    bytes: 13350128
+                    sha256: 9dae35e958883344f25f6c3c1b2730a8ae88881ce375c2b85b5c9c2fcd213d1e
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -379,6 +499,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/measures"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                meta:
+                  nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -396,6 +550,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/measures/population-estimate"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: population-estimate
+                  label: Population estimate
+                  valueKind: count
+                  unit: people
+                  aggregation:
+                    kind: extensive
+                    operation: sum
+                    available: true
+                  sources:
+                    - datasetId: population
+                      periods:
+                        - "2022"
+                      sourceGeography:
+                        type: ward
+                        boundaryYear: 2023
+                      coverage:
+                        kind: partial
+                        countries:
+                          - GB-ENG
+                        recordCount: 7608
+                        note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                  availability:
+                    sourceExact: true
+                    conversion: false
+                    aggregation: true
+                  links:
+                    data: /v1/data/population-estimate
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -420,6 +608,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/measures/population-estimate/compatibility"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measureId: population-estimate
+                  sources:
+                    - datasetId: population
+                      sourceGeography:
+                        type: ward
+                        boundaryYear: 2023
+                      periods:
+                        - "2022"
+                      candidates:
+                        - boundaryRelease: 2023-05-uk-bgc
+                          title: Wards, May 2023 (United Kingdom, generalised, clipped)
+                          coverageCountries:
+                            - GB-ENG
+                      note: This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry.
+                  note: Candidates report code-set compatibility only. They do not select a geometry release or assert equal geometry.
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -444,6 +654,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/measures/population-estimate/coverage"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    valueKind: count
+                    unit: people
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    href: /v1/measures/population-estimate
+                  sources:
+                    - dataset:
+                        id: population
+                        href: /v1/datasets/population
+                      periods:
+                        - "2022"
+                      sourceGeography:
+                        type: ward
+                        boundaryYear: 2023
+                      sourceCoverage:
+                        kind: partial
+                        countries:
+                          - GB-ENG
+                        recordCount: 7608
+                        note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                      boundaryCoverage:
+                        - boundaryRelease: 2023-05-uk-bgc
+                          title: Wards, May 2023 (United Kingdom, generalised, clipped)
+                          coverageCountries:
+                            - GB-ENG
+                      assessment:
+                        status: assessed
+                        href: /v1/measures/population-estimate/compatibility
+                        note: Boundary coverage compares area-code membership only; it does not assert equal geometry.
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -468,6 +718,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/measures/population-estimate/quality"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                  sources:
+                    - datasetId: population
+                      sourceGeography:
+                        type: ward
+                        boundaryYear: 2023
+                      sourceCoverage:
+                        kind: partial
+                        countries:
+                          - GB-ENG
+                        recordCount: 7608
+                        note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                      boundaryCoverage:
+                        - boundaryRelease: 2023-05-uk-bgc
+                          title: Wards, May 2023 (United Kingdom, generalised, clipped)
+                          coverageCountries:
+                            - GB-ENG
+                      periods:
+                        - period: "2022"
+                          artifact: population-observations
+                          contentHash: sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18
+                          recordCount: 7608
+                          statusCounts:
+                            observed: 7608
+                  note: Boundary coverage is code-set compatibility only. Status counts describe source observation records and do not impute missing areas.
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -666,6 +959,89 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000932"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                  source:
+                    datasetId: population
+                    periods:
+                      - "2022"
+                    sourceGeography:
+                      type: ward
+                      boundaryYear: 2023
+                    coverage:
+                      kind: partial
+                      countries:
+                        - GB-ENG
+                      recordCount: 7608
+                      note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                  period: "2022"
+                  sourceGeography:
+                    type: ward
+                    boundaryYear: 2023
+                  provenance:
+                    atlasRelease:
+                      id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                      href: /v1/atlas-release
+                    measure:
+                      id: population-estimate
+                      href: /v1/measures/population-estimate
+                    geography:
+                      source:
+                        type: ward
+                        boundaryYear: 2023
+                      match:
+                        status: no-boundary-release-selected
+                        note: The published observations declare a geography type and code vintage, but not a boundary release.
+                    transformation:
+                      status: not-applied
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
+                    source:
+                      dataset:
+                        id: population
+                        href: /v1/datasets/population
+                      observations:
+                        artifact: population-observations
+                        contentHash: sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18
+                        period: "2022"
+                  conversion: null
+                  aggregation: null
+                  records:
+                    - areaCode: E05000932
+                      value: 12676
+                      status: observed
+                meta:
+                  nextCursor: null
             text/csv:
               schema:
                 type: string
@@ -779,6 +1155,108 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&areaCode=W92000004"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                  source:
+                    datasetId: population-uk
+                    periods:
+                      - "2011"
+                    sourceGeography:
+                      type: localAuthority
+                      boundaryYear: 2023
+                    coverage:
+                      kind: source-reported
+                      countries:
+                        - GB-ENG
+                      recordCount: 361
+                      note: Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.
+                  period: "2022"
+                  sourceGeography:
+                    type: localAuthority
+                    boundaryYear: 2023
+                  area:
+                    id: country/2025-12-uk-bgc/W92000004
+                    boundaryRelease: 2025-12-uk-bgc
+                    code: W92000004
+                    name: Wales
+                    aliases:
+                      - Cymru
+                  provenance:
+                    atlasRelease:
+                      id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                      href: /v1/atlas-release
+                    measure:
+                      id: population-estimate
+                      href: /v1/measures/population-estimate
+                    geography:
+                      source:
+                        type: localAuthority
+                        boundaryYear: 2023
+                      match:
+                        status: no-boundary-release-selected
+                        note: The published observations declare a geography type and code vintage, but not a boundary release.
+                    transformation:
+                      status: not-applied
+                      note: Input observations are source-exact; no geographic conversion was applied.
+                    source:
+                      dataset:
+                        id: population-uk
+                        href: /v1/datasets/population-uk
+                      observations:
+                        artifact: population-local-authority-observations
+                        contentHash: sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b
+                        period: "2022"
+                  aggregation:
+                    operation: sum
+                    membership: gss-country-code
+                    inputRecordCount: 22
+                    coverage:
+                      status: complete
+                      assessments:
+                        - boundaryRelease: 2023-05-uk-bgc-v2
+                          status: complete
+                          expectedAreaCount: 22
+                          includedAreaCount: 22
+                          missingAreaCount: 0
+                          missingAreaSample: []
+                      href: /v1/measures/population-estimate/coverage
+                    note: Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.
+                  record:
+                    value: 3134196
+                    status: derived
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -849,6 +1327,105 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment&limit=1"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                  source:
+                    datasetId: population
+                    periods:
+                      - "2022"
+                    sourceGeography:
+                      type: ward
+                      boundaryYear: 2023
+                    coverage:
+                      kind: partial
+                      countries:
+                        - GB-ENG
+                      recordCount: 7608
+                      note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                  period: "2022"
+                  sourceGeography:
+                    type: ward
+                    boundaryYear: 2023
+                  targetGeography:
+                    type: localAuthority
+                    boundaryRelease: 2023-05-uk-bgc-v2
+                  provenance:
+                    atlasRelease:
+                      id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                      href: /v1/atlas-release
+                    measure:
+                      id: population-estimate
+                      href: /v1/measures/population-estimate
+                    geography:
+                      source:
+                        type: ward
+                        boundaryYear: 2023
+                      match:
+                        status: no-boundary-release-selected
+                        note: The published observations declare a geography type and code vintage, but not a boundary release.
+                    transformation:
+                      status: applied
+                      note: Input observations are source-exact; the values below were regrouped onto the crosswalk's target areas.
+                    source:
+                      dataset:
+                        id: population
+                        href: /v1/datasets/population
+                      observations:
+                        artifact: population-observations
+                        contentHash: sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18
+                        period: "2022"
+                  conversion:
+                    crosswalk:
+                      id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                      href: /v1/crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                      method: clean-containment
+                      quality: publisher-supplied
+                      weighting:
+                        status: not-applicable
+                      contentHash: sha256:36a3e0270fa4a0f380c54bd692270fe029cbb1f1213b2e5e9c01d193969e2e7b
+                    method: exact
+                    inputRecordCount: 7608
+                    outputRecordCount: 318
+                    note: Every source area sits wholly within one target, so this is a regrouping and the partition total is unchanged.
+                  aggregation: null
+                  records:
+                    - areaCode: E06000001
+                      value: 93861
+                      status: derived
+                      inputAreaCount: 12
+                meta:
+                  nextCursor: RTA2MDAwMDAx
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -901,6 +1478,89 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                  source:
+                    datasetId: population-uk
+                    periods:
+                      - "2011"
+                    sourceGeography:
+                      type: localAuthority
+                      boundaryYear: 2023
+                    coverage:
+                      kind: source-reported
+                      countries:
+                        - GB-ENG
+                      recordCount: 361
+                      note: Published source records cover all four UK nations for every available period. Historic values remain keyed to the source's 2023 local-authority code vintage.
+                  areaCode: E08000025
+                  sourceGeography:
+                    type: localAuthority
+                    boundaryYear: 2023
+                  provenance:
+                    atlasRelease:
+                      id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                      href: /v1/atlas-release
+                    measure:
+                      id: population-estimate
+                      href: /v1/measures/population-estimate
+                    geography:
+                      source:
+                        type: localAuthority
+                        boundaryYear: 2023
+                      match:
+                        status: no-boundary-release-selected
+                        note: The published observations declare a geography type and code vintage, but not a boundary release.
+                    transformation:
+                      status: not-applied
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
+                    source:
+                      dataset:
+                        id: population-uk
+                        href: /v1/datasets/population-uk
+                      observations:
+                        artifact: population-local-authority-observations
+                        contentHash: sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b
+                        periods:
+                          - "2011"
+                  series:
+                    - period: "2011"
+                      areaCode: E08000025
+                      value: 1074283
+                      status: observed
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -945,6 +1605,93 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                  source:
+                    datasetId: population
+                    periods:
+                      - "2022"
+                    sourceGeography:
+                      type: ward
+                      boundaryYear: 2023
+                    coverage:
+                      kind: partial
+                      countries:
+                        - GB-ENG
+                      recordCount: 7608
+                      note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                  period: "2022"
+                  sourceGeography:
+                    type: ward
+                    boundaryYear: 2023
+                  provenance:
+                    atlasRelease:
+                      id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                      href: /v1/atlas-release
+                    measure:
+                      id: population-estimate
+                      href: /v1/measures/population-estimate
+                    geography:
+                      source:
+                        type: ward
+                        boundaryYear: 2023
+                      match:
+                        status: no-boundary-release-selected
+                        note: The published observations declare a geography type and code vintage, but not a boundary release.
+                    transformation:
+                      status: not-applied
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
+                    source:
+                      dataset:
+                        id: population
+                        href: /v1/datasets/population
+                      observations:
+                        artifact: population-observations
+                        contentHash: sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18
+                        period: "2022"
+                  ranking:
+                    order: desc
+                    method: competition
+                    note: Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3).
+                  records:
+                    - areaCode: E05011403
+                      value: 34637
+                      status: observed
+                      rank: 1
+                      tieCount: 1
+                meta:
+                  nextCursor: RTA1MDExNDAz
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -1352,6 +2099,100 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  measure:
+                    id: population-estimate
+                    label: Population estimate
+                    valueKind: count
+                    unit: people
+                    aggregation:
+                      kind: extensive
+                      operation: sum
+                      available: true
+                    sources:
+                      - datasetId: population
+                        periods:
+                          - "2022"
+                        sourceGeography:
+                          type: ward
+                          boundaryYear: 2023
+                        coverage:
+                          kind: partial
+                          countries:
+                            - GB-ENG
+                          recordCount: 7608
+                          note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                    availability:
+                      sourceExact: true
+                      conversion: false
+                      aggregation: true
+                    links:
+                      data: /v1/data/population-estimate
+                  source:
+                    datasetId: population
+                    periods:
+                      - "2022"
+                    sourceGeography:
+                      type: ward
+                      boundaryYear: 2023
+                    coverage:
+                      kind: partial
+                      countries:
+                        - GB-ENG
+                      recordCount: 7608
+                      note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                  period: "2022"
+                  sourceGeography:
+                    type: ward
+                    boundaryYear: 2023
+                  provenance:
+                    atlasRelease:
+                      id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                      href: /v1/atlas-release
+                    measure:
+                      id: population-estimate
+                      href: /v1/measures/population-estimate
+                    geography:
+                      source:
+                        type: ward
+                        boundaryYear: 2023
+                      match:
+                        status: no-boundary-release-selected
+                        note: The published observations declare a geography type and code vintage, but not a boundary release.
+                    transformation:
+                      status: not-applied
+                      note: Values are served source-exact; no geographic conversion or aggregation was applied.
+                    source:
+                      dataset:
+                        id: population
+                        href: /v1/datasets/population
+                      observations:
+                        artifact: population-observations
+                        contentHash: sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18
+                        period: "2022"
+                  comparison:
+                    baseline:
+                      areaCode: E05000932
+                      value: 12676
+                      status: observed
+                    comparison:
+                      areaCode: W05001039
+                      value: 3288
+                      status: observed
+                    difference:
+                      direction: comparison-minus-baseline
+                      value: -9388
+                      unit: people
+                      interpretation: Difference in the source-published unit.
+                    relativeDifference:
+                      value: -0.74061218049858
+                      basis: (comparison - baseline) / baseline
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -1408,6 +2249,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaListEnvelope"
+              x-example-request: "/v1/areas?geography=ward&release=2024-12-uk-bgc&limit=1"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: ward/2024-12-uk-bgc/E05000932
+                    geography: ward
+                    boundaryRelease: 2024-12-uk-bgc
+                    code: E05000932
+                    name: Ainsdale
+                meta:
+                  nextCursor: d2FyZC8yMDI0LTEyLXVrLWJnYy9FMDUwMDA5MzI
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "503":
@@ -1601,6 +2454,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/areas:validate?geography=localAuthority&release=2025-05-uk-bgc-v2&value=Bristol&value=E07000026"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  geography: localAuthority
+                  boundaryRelease: 2025-05-uk-bgc-v2
+                  summary:
+                    valueCount: 2
+                    byStatus:
+                      matched: 1
+                      superseded: 1
+                    duplicateCount: 0
+                    normalisedCount: 0
+                    joinable: false
+                  values:
+                    - index: 0
+                      value: Bristol
+                      kind: name
+                      status: matched
+                      match: exact-without-title
+                      area:
+                        id: localAuthority/2025-05-uk-bgc-v2/E06000023
+                        code: E06000023
+                        name: Bristol, City of
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -1650,6 +2530,28 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  point:
+                    lng: -1.5491
+                    lat: 53.8008
+                  geography: localAuthority
+                  boundaryRelease: 2024-05-uk-bgc
+                  boundaryRule: included
+                  matches:
+                    - id: localAuthority/2024-05-uk-bgc/E08000035
+                      code: E08000035
+                      name: Leeds
+                      containment: interior
+                      geometrySource:
+                        input: boundaries/local-authority/2024-05-uk-bgc/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson
+                        inputHash: sha256:a54c16257bac529d380d7f9e9a3449186fda563ee426e565153a08e60d4afa3a
+                        sourceCrs: EPSG:4326
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -1721,6 +2623,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaRelationshipsEnvelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/relationships"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  code: E08000025
+                  name: Birmingham
+                  relationships:
+                    - relation: contains
+                      counterpart:
+                        id: ward/2023-05-uk-bgc/E05011118
+                        geography: ward
+                        boundaryRelease: 2023-05-uk-bgc
+                        code: E05011118
+                        labels:
+                          - Acocks Green
+                      crosswalk:
+                        id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                        method: clean-containment
+                        quality: publisher-supplied
+                        weighting:
+                          status: not-applicable
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -1746,6 +2675,83 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/capabilities"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  code: E08000025
+                  name: Birmingham
+                  capabilities:
+                    geometry:
+                      status: available
+                      href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/geometry
+                      provenance:
+                        input: boundaries/local-authority/2023-05-uk-bgc-v2/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson
+                        inputHash: sha256:e351e4817d9d27ba520c771e6e1ac40a40021171d61df049c4cc82dc38a4b611
+                        sourceCrs: EPSG:4326
+                    relationships:
+                      status: available
+                      href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/relationships
+                      count: 69
+                      byRelation:
+                        contains: 69
+                      parents:
+                        count: 0
+                        href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/parents
+                      children:
+                        count: 69
+                        href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children
+                      crosswalks:
+                        - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                          method: clean-containment
+                          quality: publisher-supplied
+                          weighting:
+                            status: not-applicable
+                          href: /v1/crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                    namedLocations:
+                      status: available
+                      membership: direct-code-match
+                      locations:
+                        - id: birmingham
+                          label: Birmingham
+                          href: /v1/locations/birmingham/members?geography=localAuthority&release=2023-05-uk-bgc-v2
+                      note: Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.
+                    data:
+                      status: available
+                      measures:
+                        - id: population-estimate
+                          valueKind: count
+                          unit: people
+                          availability:
+                            sourceExact: true
+                            conversion: false
+                            aggregation: true
+                          href: /v1/measures/population-estimate
+                          sources:
+                            - dataset:
+                                id: population-uk
+                                href: /v1/datasets/population-uk
+                              sourceGeography:
+                                type: localAuthority
+                                boundaryYear: 2023
+                              codeSetCompatibility:
+                                boundaryRelease: 2023-05-uk-bgc-v2
+                                title: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
+                                coverageCountries:
+                                  - GB-ENG
+                              periods:
+                                - period: "2011"
+                                  artifact: population-local-authority-observations
+                                  contentHash: sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b
+                                  availability: present
+                                  status: observed
+                      note: Compatibility compares area-code membership only. It does not assert equal geometry between a source and this boundary release.
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -1797,6 +2803,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/citation"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "422":
@@ -1831,6 +2847,27 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/history"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  code: E08000025
+                  name: Birmingham
+                  relationships: []
+                  sameCodeReleases:
+                    - id: localAuthority/2016-12-gb-bgc/E08000025
+                      geography: localAuthority
+                      boundaryRelease: 2016-12-gb-bgc
+                      code: E08000025
+                      name: Birmingham
+                      status: same-code-continuity
+                  note: Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -1850,6 +2887,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaRelationshipsEnvelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/parents"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  code: E08000025
+                  name: Birmingham
+                  relationships: []
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -1871,6 +2921,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaRelationshipsEnvelope"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
+                  geography: localAuthority
+                  boundaryRelease: 2023-05-uk-bgc-v2
+                  code: E08000025
+                  name: Birmingham
+                  relationships:
+                    - relation: contains
+                      counterpart:
+                        id: ward/2023-05-uk-bgc/E05011118
+                        geography: ward
+                        boundaryRelease: 2023-05-uk-bgc
+                        code: E05011118
+                        labels:
+                          - Acocks Green
+                      crosswalk:
+                        id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                        method: clean-containment
+                        quality: publisher-supplied
+                        weighting:
+                          status: not-applicable
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -2156,6 +3233,63 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001063/overlap?with=localAuthority/2024-05-uk-bgc/E07000089"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  first:
+                    id: constituency/2024-07-uk-bgc/E14001063
+                    geography: constituency
+                    boundaryRelease: 2024-07-uk-bgc
+                    code: E14001063
+                    name: Aldershot
+                    areaM2: 57138472
+                    geometry:
+                      input: boundaries/constituency/2024-07-uk-bgc/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.geojson
+                      inputHash: sha256:d3ac7aea554e63864a030baf6b5b2069cb8b1870e16a611ae21df6ad23b04383
+                      sourceCrs: EPSG:4326
+                  second:
+                    id: localAuthority/2024-05-uk-bgc/E07000089
+                    geography: localAuthority
+                    boundaryRelease: 2024-05-uk-bgc
+                    code: E07000089
+                    name: Hart
+                    areaM2: 215399269
+                    geometry:
+                      input: boundaries/local-authority/2024-05-uk-bgc/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson
+                      inputHash: sha256:a54c16257bac529d380d7f9e9a3449186fda563ee426e565153a08e60d4afa3a
+                      sourceCrs: EPSG:4326
+                  relation: overlaps
+                  overlap:
+                    areaM2: 18055366
+                    shareOfFirst: 0.315993
+                    shareOfSecond: 0.083823
+                    pieceCount: 1
+                    widestPieceWidthM: 1486
+                  publishedRelationships:
+                    - relation: overlaps
+                      crosswalk:
+                        id: constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
+                        method: area-overlap
+                        quality: derived
+                        weighting:
+                          status: provided
+                          basis: area
+                          normalisation: per-source
+                        href: /v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap
+                      overlap:
+                        areaM2: 18055366
+                        shareOfArea: 0.315993
+                        shareOfCounterpart: 0.083823
+                  method:
+                    sliverWidthM: 100
+                    minimumCoverage: 0.99
+                    areaProjection: EPSG:6933
+                    clipping: polygon-clipping@0.15.7
+                    area: Ellipsoidal, through EPSG:6933, an equal-area projection on the WGS 84 ellipsoid, so no correction is applied. A piece's width is twice its area over its perimeter.
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -3032,6 +4166,16 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/exports/total-jobs-observations"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: total-jobs-observations
+                  measureId: total-jobs
+                  datasetId: jobs
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -3149,6 +4293,11 @@ paths:
           content:
             text/csv:
               schema: { type: string }
+              x-example-request: "/v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=csv"
+              example: |
+                geography,boundaryRelease,code,name,aliases
+                combinedAuthority,2025-12-en-bgc,E47000001,Greater Manchester,
+                combinedAuthority,2025-12-en-bgc,E47000002,South Yorkshire,
             application/x-ndjson:
               schema: { type: string }
         "400":
@@ -3177,6 +4326,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AtlasReleaseEnvelope"
+              x-example-request: "/v1/atlas-release"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  schemaVersion: 1
+                  releaseId: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                  artifacts:
+                    - id: boundary-registry
+                      path: boundary-releases.json
+                      contentHash: sha256:6516841abb2149d864316bde871efceafbedeb0e6b681bbab588def86e06e0f2
+                  resources:
+                    datasets:
+                      air-quality: sha256:298235aea52aaa0bfdc40b99b8f4d069f4cc8f149d0c7618100d4798ba17391f
+                      brexit: sha256:0ec6e449c5f0b597e464066c65411e507fe5bbde99fa164d0d62babed779337c
+                      brexit-constituency: sha256:b9f2a2369e2ebaa243155e16f74fe20662a67972774a7a64c9069fb8d729a931
+                    measures:
+                      air-quality-grid-cells: sha256:22b496a24ae5ea228a90ae28834e615610aae3fcab6de60fbd406dde42638b5e
+                      broadband-full-fibre-availability: sha256:75c5f4ab3ad7d5bf3a6927c0e89c0f25ba2ccca741558310517186e4e1d5efb3
+                      broadband-gigabit-availability: sha256:42403d33b12abf4c70ef7d6ad12141091438e24f23b951ca0e01964ef0937a0f
+                    boundaryReleases:
+                      combinedAuthority/2025-12-en-bgc: sha256:562e6613e32c2ab3c9a6fadda26787fe6334e45a90c569743f71b4dc92fad360
+                      communitySafetyPartnership/2023-12-ew-bgc: sha256:bfb385ac91c582e9040ba33234a3e7cfb0f7396f12c3a7429e9fcadf205320b9
+                      constituency/2015-12-gb-bgc: sha256:9b84fcdd92aeaf87c9b9a87db04297a13399f683e0eca3cf3979270cab5b9f0a
+                    areaIdentities:
+                      combinedAuthority/2025-12-en-bgc: sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446
+                      communitySafetyPartnership/2023-12-ew-bgc: sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12
+                      constituency/2015-12-gb-bgc: sha256:c5b97468289a1adb7c4415faa751ac06475931585b2e4f5871f201a1364cd9e3
+                    geometrySources:
+                      combinedAuthority/2025-12-en-bgc: sha256:40afe13d45f67a5a67dbf1c8a71e3a0c4d6da175bff3e85ce112d72d49c294e5
+                      communitySafetyPartnership/2023-12-ew-bgc: sha256:8c9388ddb1be325fde9e6cad29d00e4d86d1623707e2b784b2af3bf98ee198da
+                      constituency/2015-12-gb-bgc: sha256:7ebadb3a6199a789146d4d3919d5d2f26e9417497dc8c77e9fea81757221f936
+                    crosswalks:
+                      constituency-2010-to-2024-official-lookup-v2: sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82
+                      constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
+                      local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
+                    validationExceptions:
+                      boundary-releases/ward/2025-05-uk-bgc-v2 candidates-reviewed: sha256:97e4075ffbe862495c7c4c4c6fe76b572d224d18187737b0a75906e27fc6305f
+                      crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
+                      exports/house-price-median-observations records-resolve: sha256:54165bd7f3d2e901e64f5f33f9ae949f51eacb5e4a2c1f3c1905d594fa0df487
+                    namedLocations:
+                      aberdeen: sha256:47f33490b901a4fc7f27e09b784369b9a23faa95a8a4e347fbac2d78a8eac3a5
+                      aberystwyth: sha256:d04c975edf3c45d63d521e6f2084fc4fcbadff11d758ac95d0af55d2b9088016
+                      armagh-down-and-newry: sha256:89a0303432937e9c13bdaa9000f7ec61e486f5e1f21aefa86ef1ba59a97d0ae7
+                    exports:
+                      air-quality-grid-cells-observations: sha256:28c7d88c02cc1e686e1a5a74a39daf2b009c89df48f83b233138858857923603
+                      broadband-full-fibre-availability-observations: sha256:befe13a38c77c602110ffd824fed7abd96b3157b989b3fb47c5e1b7cf2e05a9b
+                      broadband-gigabit-availability-observations: sha256:0ceec568db3d3e9288aa542d5f5a405236ea7f30a2c5a1a4a40f4081be0b2eae
+                    lookups:
+                      areas-combinedAuthority-2025-12-en-bgc: sha256:c16596703c7eafca73c9ed4fcf90e5c89f67e5591ba2ac044a2f27de547da50c
+                      areas-communitySafetyPartnership-2023-12-ew-bgc: sha256:7ebc8ad95e6e2f99639050ef6e6f2b0c5deeaac929b2242957d8d720c3564bb4
+                      areas-constituency-2015-12-gb-bgc: sha256:5f67da9c8ca631f5f59ebad11d33a13dc63b5eebb349a494d3bc9071fb9c9517
+                meta:
+                  nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -3192,6 +4395,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/atlas-releases"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - releaseId: sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab
+                    href: /v1/atlas-releases/sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab
+                    artifactCount: 284
+                    current: false
+                meta:
+                  nextCursor: null
 
   /atlas-releases/{release-id}:
     get:
@@ -3213,6 +4427,57 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AtlasReleaseEnvelope"
+              x-example-request: "/v1/atlas-releases/sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  schemaVersion: 1
+                  releaseId: sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab
+                  artifacts:
+                    - id: boundary-registry
+                      path: boundary-releases.json
+                      contentHash: sha256:07f06fd2970c65d03d11665dc7e2dcc4b791fc5d5d37afe08ebdb259ab1f279e
+                  resources:
+                    datasets:
+                      air-quality: sha256:36d5f2fe98d6d6adf0ba05b6ac7c0c8470cb98cf067f4d1bde1cfc13a966cf54
+                      brexit: sha256:0ec6e449c5f0b597e464066c65411e507fe5bbde99fa164d0d62babed779337c
+                      brexit-constituency: sha256:b9f2a2369e2ebaa243155e16f74fe20662a67972774a7a64c9069fb8d729a931
+                    measures:
+                      broadband-full-fibre-availability: sha256:75c5f4ab3ad7d5bf3a6927c0e89c0f25ba2ccca741558310517186e4e1d5efb3
+                      broadband-gigabit-availability: sha256:42403d33b12abf4c70ef7d6ad12141091438e24f23b951ca0e01964ef0937a0f
+                      broadband-superfast-availability: sha256:79d6c78c48b3bee8b46f8ee9f55bff1cfc9f6c7738a088b20ca3cfe5e7489594
+                    boundaryReleases:
+                      combinedAuthority/2025-12-en-bgc: sha256:562e6613e32c2ab3c9a6fadda26787fe6334e45a90c569743f71b4dc92fad360
+                      communitySafetyPartnership/2023-12-ew-bgc: sha256:bfb385ac91c582e9040ba33234a3e7cfb0f7396f12c3a7429e9fcadf205320b9
+                      constituency/2015-12-gb-bgc: sha256:9b84fcdd92aeaf87c9b9a87db04297a13399f683e0eca3cf3979270cab5b9f0a
+                    areaIdentities:
+                      combinedAuthority/2025-12-en-bgc: sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446
+                      communitySafetyPartnership/2023-12-ew-bgc: sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12
+                      constituency/2015-12-gb-bgc: sha256:c5b97468289a1adb7c4415faa751ac06475931585b2e4f5871f201a1364cd9e3
+                    geometrySources:
+                      combinedAuthority/2025-12-en-bgc: sha256:40afe13d45f67a5a67dbf1c8a71e3a0c4d6da175bff3e85ce112d72d49c294e5
+                      communitySafetyPartnership/2023-12-ew-bgc: sha256:8c9388ddb1be325fde9e6cad29d00e4d86d1623707e2b784b2af3bf98ee198da
+                      constituency/2015-12-gb-bgc: sha256:7ebadb3a6199a789146d4d3919d5d2f26e9417497dc8c77e9fea81757221f936
+                    crosswalks:
+                      constituency-2010-to-2024-official-lookup-v2: sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82
+                      constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
+                      local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
+                    validationExceptions:
+                      boundary-releases/dataZone/2011-12-sc-bfc geometry-servable: sha256:c2dde292f7107539e0dde87b8bcd34a3130621045c6b55fd08b7dc0240ff5d83
+                      boundary-releases/superOutputArea/2011-ni geometry-servable: sha256:c2dde292f7107539e0dde87b8bcd34a3130621045c6b55fd08b7dc0240ff5d83
+                      boundary-releases/ward/2025-05-uk-bgc-v2 candidates-reviewed: sha256:97e4075ffbe862495c7c4c4c6fe76b572d224d18187737b0a75906e27fc6305f
+                      crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
+                    namedLocations:
+                      aberdeen: sha256:47f33490b901a4fc7f27e09b784369b9a23faa95a8a4e347fbac2d78a8eac3a5
+                      aberystwyth: sha256:d04c975edf3c45d63d521e6f2084fc4fcbadff11d758ac95d0af55d2b9088016
+                      armagh-down-and-newry: sha256:89a0303432937e9c13bdaa9000f7ec61e486f5e1f21aefa86ef1ba59a97d0ae7
+                    exports:
+                      broadband-full-fibre-availability-observations: sha256:cf95d6ea2a25ed6b3e1d3b16c3f1b9f232def6cf846b4af10124a6f1b6fccbbd
+                      broadband-gigabit-availability-observations: sha256:b19dc1cad58dd485fc7aa456c5251599fb1e10fdb977d2e813ed42cc85d6a736
+                      broadband-superfast-availability-observations: sha256:d51b13aca8a13a3c639c1f786623ca25b20eba6bab8605ea6fc2bb53bae468ee
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -3354,6 +4619,40 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/translations?sourceGeography=ward&sourceRelease=2024-12-uk-bgc&code=E05000932&targetGeography=localAuthority&targetRelease=2024-12-uk-bgc&purpose=membership"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  source:
+                    geography: ward
+                    boundaryRelease: 2024-12-uk-bgc
+                    code: E05000932
+                  target:
+                    geography: localAuthority
+                    boundaryRelease: 2024-12-uk-bgc
+                  purpose: membership
+                  matches:
+                    - crosswalk:
+                        id: ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment
+                        method: clean-containment
+                        quality: publisher-supplied
+                        weighting:
+                          status: not-applicable
+                        provenance:
+                          input: boundaries/ward/2024-12-uk-bgc/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.geojson
+                          inputHash: sha256:8d74542cadd4da4801c5ed0f6db1a3eb4437327cdd7b77030c4fbcf01e0d9177
+                        direction: forward
+                      source:
+                        code: E05000932
+                        labels:
+                          - Ainsdale
+                      targets:
+                        - code: E08000014
+                          labels:
+                            - Sefton
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "422":
@@ -3425,6 +4724,30 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  atlasRelease:
+                    id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                    href: /v1/atlas-release
+                  resources:
+                    - kind: dataset
+                      id: ghg-emissions
+                      label: Greenhouse Gas Emissions
+                      href: /v1/datasets/ghg-emissions
+                      publisher: Department for Energy Security and Net Zero
+                      sourceUrl: https://www.gov.uk/government/statistics/uk-local-authority-and-regional-greenhouse-gas-emissions-statistics-2005-to-2024
+                      licence:
+                        name: Open Government Licence v3.0
+                        url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+                  licences:
+                    - name: Open Government Licence v3.0
+                      url: http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+                  note: Licence names are reproduced as the publisher states them and are not interpreted here. Where several apply, check each before reusing the combined work.
+                meta:
+                  nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -3457,6 +4780,20 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/locations?q=york"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  - id: york
+                    label: York
+                    kind: editorial-grouping
+                    memberCodes:
+                      - E06000014
+                    bbox:
+                      - -1.15
+                meta:
+                  nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -3473,6 +4810,20 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/locations/london"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  id: london
+                  label: London
+                  kind: editorial-grouping
+                  memberCodes:
+                    - E09000001
+                  bbox:
+                    - -0.5
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -3560,6 +4911,23 @@ paths:
           content:
             application/json:
               schema: { type: object }
+              x-example-request: "/v1/locations/north-wales/members?geography=ward&release=2024-12-uk-bgc&via=ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  location:
+                    id: north-wales
+                    label: North Wales
+                    kind: editorial-grouping
+                    memberCodes:
+                      - W06000001
+                    bbox:
+                      - -4.8
+                  geography: ward
+                  boundaryRelease: 2024-12-uk-bgc
+                meta:
+                  nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
 
