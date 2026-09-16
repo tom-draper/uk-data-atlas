@@ -10,7 +10,10 @@ import type { PopulationObservation } from "./dataCatalog";
  * is an estimate: it assumes the measure is spread evenly across the source,
  * and population and most social measures are not.
  */
-export type ConversionMethod = "exact" | "area-weighted";
+/** How a crosswalk moves values: one to one, or split by a published weight. */
+export const CONVERSION_METHODS = ["exact", "area-weighted"] as const;
+
+export type ConversionMethod = (typeof CONVERSION_METHODS)[number];
 
 export type ConvertedObservation = {
 	areaCode: string;
