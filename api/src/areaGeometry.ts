@@ -219,6 +219,19 @@ export class AreaGeometryCache {
 		return reprojected;
 	}
 	/**
+	 * Every area code the release publishes, in the order its source lists
+	 * them. Used to compile a whole release rather than answer for one area.
+	 */
+	codes(geography: string, boundaryRelease: string): string[] {
+		// Calling get loads and validates the release without requiring a known
+		// code; the empty code can never turn into a result.
+		this.get(geography, boundaryRelease, "");
+		const release = this.releases.get(
+			[geography, boundaryRelease].join("/"),
+		);
+		return release ? [...release.geometries.keys()] : [];
+	}
+	/**
 	 * Find areas containing a WGS84 point within one boundary release. Bounds are
 	 * cached before the exact polygon test, so repeated map clicks avoid scanning
 	 * every ring of every feature.
