@@ -2217,6 +2217,123 @@ join table above. No OGC API Tiles representation, which stays deferred until
 a design partner needs it. No asynchronous map exports. Each would be a
 separate contract, and none is required by the correct-map beta.
 
+## Analysis contract
+
+None of this is built, and none of it should be built in Phase 1. It is the
+contract [P1 item 13](#p1--prove-the-correct-map-product) asks for: enough of
+Phase 2's shape decided now that the correct-map work does not quietly
+foreclose it, and no more. Two things are specified, an **analysis geography**
+and an **analysis preflight**, and the boundaries of both are drawn tightly on
+purpose.
+
+What this deliberately does not specify: any custom or caller-supplied
+geometry, any general analysis or query endpoint, and any widening of which
+conversions exist. Conversion stays what it is — declared per measure, asked
+for by name, refused when its quality cannot be defended.
+
+### An analysis geography is declared, not chosen
+
+An **analysis geography** is an exact geography and boundary release, named as
+the common frame a series or comparison is expressed on. `localAuthority` on a
+2023 release is one. It is not a new kind of area and it holds no data of its
+own; it is the frame a caller says they want their answer in.
+
+The critical restriction: a caller may name only a frame the Atlas has
+published as supported, and support is per measure. It is published where, and
+only where, a conversion path exists whose method suits that measure's own
+semantics:
+
+- an `extensive` measure, one that sums, may be converted where the crosswalk
+  carries a weight appropriate to what is being counted, or where the method
+  is an `official-lookup` or `clean-containment` that needs none;
+- an `intensive` measure, a rate or a mean, may be converted only alongside
+  the denominator its catalogue entry names in `aggregation.weight`, because
+  averaging an average is not the average;
+- a `categorical` measure converts only as counts within its categories,
+  never as a share;
+- a `non-aggregatable` measure is never converted onto another frame. No
+  weight recovers a `median`, a `rank`, a `decile` or a `life-expectancy`, and
+  the catalogue already names which of them a measure is, so a refusal can say
+  which one it is rather than only that it refused.
+
+A crosswalk suitable for land area is not automatically suitable for people,
+votes or rates, and this is the rule that says so. Support is therefore a
+published fact per measure and frame, not a property of the crosswalk alone.
+
+```text
+not built: GET /v1/analysis-geographies
+not built: GET /v1/measures/{measure-id}/conversion-support?analysisGeography={geography}/{release}
+not built: GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}
+```
+
+### The preflight is the plan, returned instead of acted on
+
+The [resolution contract](#resolution-contract) already has the object this
+needs. The resolver answers a request with a plan or a refusal; a preflight is
+that plan handed to the caller rather than to a route. It selects no data,
+reads no observations and costs a lookup.
+
+So a preflight is not a new subsystem. It is a route that resolves, and then
+returns what it resolved: the source partition, the conversion that would be
+applied and by which crosswalk, the aggregation rule the measure's semantics
+allow, the coverage the result would have, roughly how large it would be, and
+the refusal that would come back instead. When it refuses it carries the same
+alternatives every resolver refusal carries, which is what "safer
+alternatives" means here — they are computed, not curated.
+
+It exists because the expensive mistakes happen before the first request. A
+caller who builds a pipeline around a trend and discovers at the end that two
+of its periods were never comparable has wasted the work. The preflight moves
+that discovery to the start, and makes it free.
+
+### A result says what each value is, per period
+
+An analysis answer is not uniformly source-exact or uniformly derived. A trend
+across a boundary change is usually observed on one side of it and derived on
+the other, and a response that flattens that difference is the failure this
+whole design exists to prevent. Every value therefore carries its **basis**:
+
+- **observed** — published on the analysis geography itself, unconverted;
+- **derived** — converted onto it by a named crosswalk, carrying that
+  crosswalk, the method, the weight and the share of the source that reached
+  the target;
+- **not-comparable** — no defensible path exists for that period, stated as
+  its own outcome rather than as a gap.
+
+`not-comparable` is a value of the field, not an absence. A period dropped
+from an array is indistinguishable from a period that was never requested,
+and a caller charting the result would draw a line straight through it.
+
+Two rules follow, and both are refusals rather than judgements the API makes:
+
+- **A gap is never filled.** Not by a same-code assumption, not by an
+  unlabelled best fit, not by the nearest release. Where coverage falls below
+  what the measure's declared threshold allows, the answer is
+  `partial_coverage` with the areas named.
+- **Mixing bases is the caller's decision.** The API returns them
+  distinguished; it does not decide that a trend of four observed points and
+  one derived point is fit to publish. It gives them what they need to decide.
+
+### The receipt
+
+A result that cannot be re-derived is not defensible, so an analysis response
+carries a compact receipt: the Atlas release, the source partitions by
+artifact and content hash, the crosswalk and its own hash, the method and
+weighting, and the coverage at every period. That is the same material
+`sourceExactProvenance` already assembles for a source-exact response, plus
+the conversion — which is the point of specifying it now rather than later.
+The receipt is release-pinned, so the URL that produced it can be cited under
+`/v1/atlas-releases/{release-id}/` and fetched again unchanged.
+
+### What would have to be true before any of it is built
+
+Phase 2 begins only after the correct-map tutorial succeeds with a design
+partner, and this section does not change that. When it does begin, the order
+is: publish the supported pairs, implement one conversion path end to end for
+one measure and one frame, prove conservation, coverage, rounding and refusal
+for that pair, and only then consider a second. The generalisation comes from
+having done it twice, not from designing for it once.
+
 ## Architecture
 
 The public service should be built from immutable, independently testable
@@ -2709,6 +2826,18 @@ surface area. They follow Phase 0 and Phase 1 only.
 13. **Specify, but do not yet generalise,** the analysis-preflight and
     analysis-geography response contracts required by Phase 2. No custom
     geometry or broad analysis endpoint is in this phase.
+    *Done.* [Analysis contract](#analysis-contract) settles both and builds
+    nothing. An analysis geography is a declared frame, supported per measure
+    and only where the conversion method suits that measure's own semantics,
+    so the four kinds the catalogue distinguishes each get a rule and a
+    `non-aggregatable` median or rank is never converted at all. The preflight
+    turns out not to be a new subsystem: it is the resolver's plan returned to
+    the caller instead of to a route, which is why specifying it now was worth
+    doing rather than later. A result carries a `basis` per period, where
+    `not-comparable` is a value rather than a missing entry, because a period
+    dropped from an array is indistinguishable from one never asked for.
+    `tests/contract.test.ts` requires the section to rule on every aggregation
+    kind in use and to keep its three routes unserved.
 
 Phase 2 begins only after the correct-map tutorial succeeds with a design
 partner. This order fixes the present usability debt, then proves a valuable
