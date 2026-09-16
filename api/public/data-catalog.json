@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:bb74ed7f9fc98892754e3ec80f01ced497277057ff7097a898d49a7d5acebd65",
+	"contentHash": "sha256:893a9d6a3ae2c288bdcb2e12e4598fa515b037eadb59e3a74274db117bc0aec3",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -6368,6 +6368,36 @@
 			"notes": [
 				"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"The published file itself contains 26 tied ranks; they are served as published rather than re-ranked."
+			],
+			"concept": "index-of-multiple-deprivation-rank",
+			"elsewhere": [
+				{
+					"measureId": "wimd-rank",
+					"countries": [
+						"GB-WLS"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/wimd-rank"
+				},
+				{
+					"measureId": "simd-rank",
+					"countries": [
+						"GB-SCT"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/simd-rank"
+				},
+				{
+					"measureId": "nimdm-rank",
+					"countries": [
+						"GB-NIR"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/nimdm-rank"
+				}
 			]
 		},
 		{
@@ -6412,6 +6442,27 @@
 			"notes": [
 				"A position within England alone. The Welsh, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank."
+			],
+			"concept": "index-of-multiple-deprivation-decile",
+			"elsewhere": [
+				{
+					"measureId": "wimd-decile",
+					"countries": [
+						"GB-WLS"
+					],
+					"comparable": false,
+					"reason": "Each decile divides that nation's own areas into ten, so the first decile means the most deprived tenth of that nation and not of the United Kingdom. Northern Ireland publishes no decile alongside its rank.",
+					"href": "/v1/measures/wimd-decile"
+				},
+				{
+					"measureId": "simd-decile",
+					"countries": [
+						"GB-SCT"
+					],
+					"comparable": false,
+					"reason": "Each decile divides that nation's own areas into ten, so the first decile means the most deprived tenth of that nation and not of the United Kingdom. Northern Ireland publishes no decile alongside its rank.",
+					"href": "/v1/measures/simd-decile"
+				}
 			]
 		},
 		{
@@ -6456,6 +6507,36 @@
 			"notes": [
 				"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Taken from the Welsh Government's published ranks. The separately published scores are rounded to one decimal place, so ranking them does not reproduce these ranks."
+			],
+			"concept": "index-of-multiple-deprivation-rank",
+			"elsewhere": [
+				{
+					"measureId": "imd-rank",
+					"countries": [
+						"GB-ENG"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/imd-rank"
+				},
+				{
+					"measureId": "simd-rank",
+					"countries": [
+						"GB-SCT"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/simd-rank"
+				},
+				{
+					"measureId": "nimdm-rank",
+					"countries": [
+						"GB-NIR"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/nimdm-rank"
+				}
 			]
 		},
 		{
@@ -6500,6 +6581,27 @@
 			"notes": [
 				"A position within Wales alone. The English, Scottish and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Taken from the Welsh Government's published deciles."
+			],
+			"concept": "index-of-multiple-deprivation-decile",
+			"elsewhere": [
+				{
+					"measureId": "imd-decile",
+					"countries": [
+						"GB-ENG"
+					],
+					"comparable": false,
+					"reason": "Each decile divides that nation's own areas into ten, so the first decile means the most deprived tenth of that nation and not of the United Kingdom. Northern Ireland publishes no decile alongside its rank.",
+					"href": "/v1/measures/imd-decile"
+				},
+				{
+					"measureId": "simd-decile",
+					"countries": [
+						"GB-SCT"
+					],
+					"comparable": false,
+					"reason": "Each decile divides that nation's own areas into ten, so the first decile means the most deprived tenth of that nation and not of the United Kingdom. Northern Ireland publishes no decile alongside its rank.",
+					"href": "/v1/measures/simd-decile"
+				}
 			]
 		},
 		{
@@ -6544,6 +6646,36 @@
 			"notes": [
 				"A position within Scotland alone. The English, Welsh and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"SIMD 2020v2, taken from the Scottish Government's published data zone lookup, whose ranks agree with its separately published ranks workbook."
+			],
+			"concept": "index-of-multiple-deprivation-rank",
+			"elsewhere": [
+				{
+					"measureId": "imd-rank",
+					"countries": [
+						"GB-ENG"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/imd-rank"
+				},
+				{
+					"measureId": "wimd-rank",
+					"countries": [
+						"GB-WLS"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/wimd-rank"
+				},
+				{
+					"measureId": "nimdm-rank",
+					"countries": [
+						"GB-NIR"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/nimdm-rank"
+				}
 			]
 		},
 		{
@@ -6588,6 +6720,27 @@
 			"notes": [
 				"A position within Scotland alone. The English, Welsh and Northern Irish indices use different methods, domains and dates, so a rank or decile cannot be compared across nations.",
 				"Taken from the Scottish Government's published data zone lookup. Quintiles are also published there but are not offered as a measure."
+			],
+			"concept": "index-of-multiple-deprivation-decile",
+			"elsewhere": [
+				{
+					"measureId": "imd-decile",
+					"countries": [
+						"GB-ENG"
+					],
+					"comparable": false,
+					"reason": "Each decile divides that nation's own areas into ten, so the first decile means the most deprived tenth of that nation and not of the United Kingdom. Northern Ireland publishes no decile alongside its rank.",
+					"href": "/v1/measures/imd-decile"
+				},
+				{
+					"measureId": "wimd-decile",
+					"countries": [
+						"GB-WLS"
+					],
+					"comparable": false,
+					"reason": "Each decile divides that nation's own areas into ten, so the first decile means the most deprived tenth of that nation and not of the United Kingdom. Northern Ireland publishes no decile alongside its rank.",
+					"href": "/v1/measures/wimd-decile"
+				}
 			]
 		},
 		{
@@ -6633,6 +6786,36 @@
 				"A position within Northern Ireland alone. The English, Welsh and Scottish indices use different methods, domains and dates, so a rank cannot be compared across nations.",
 				"The publisher labels these areas SOA2001. Super output areas were drawn for the 2001 census and reused unchanged for 2011, and every code matches the 2011 release.",
 				"NISRA publishes ranks, not deciles, for super output areas, so no decile measure is offered."
+			],
+			"concept": "index-of-multiple-deprivation-rank",
+			"elsewhere": [
+				{
+					"measureId": "imd-rank",
+					"countries": [
+						"GB-ENG"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/imd-rank"
+				},
+				{
+					"measureId": "wimd-rank",
+					"countries": [
+						"GB-WLS"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/wimd-rank"
+				},
+				{
+					"measureId": "simd-rank",
+					"countries": [
+						"GB-SCT"
+					],
+					"comparable": false,
+					"reason": "Each nation builds its index from its own domains, weights and reference population, and ranks its own areas from 1. A rank in one nation says nothing about a rank in another, and the four cannot be placed on a single scale.",
+					"href": "/v1/measures/simd-rank"
+				}
 			]
 		},
 		{
