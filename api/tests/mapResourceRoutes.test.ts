@@ -245,3 +245,97 @@ test("refuses an ambiguous source rather than taking the first", () => {
 	assert.match(body.detail, /name the geography and boundary year/);
 	assert.ok((body.alternatives?.partitions ?? []).length > 1);
 });
+
+test("answers a pinned request immutably and keeps its links pinned", () => {
+	const release = (
+		route("GET", "/v1/atlas-release", catalogues).body as {
+			data: { releaseId: string };
+		}
+	).data.releaseId;
+	const pinned = `/v1/atlas-releases/${release}/map-resources/${RESOURCE}`;
+
+	// The same answer as the unpinned path, but never needing revalidation.
+	const descriptor = get(pinned);
+	assert.equal(descriptor.status, 200);
+	assert.equal(
+		descriptor.headers["cache-control"],
+		"public, max-age=31536000, immutable",
+	);
+
+	// A renderer configured from the pinned TileJSON must fetch pinned tiles,
+	// or every tile it draws falls back to being revalidated.
+	const tileJson = data(`${pinned}/tiles.json`) as unknown as {
+		tiles: string[];
+	};
+	assert.ok(
+		tileJson.tiles[0]!.startsWith(`/v1/atlas-releases/${release}/`),
+		`pinned TileJSON points at ${tileJson.tiles[0]}`,
+	);
+	const tile = get(
+		tileJson.tiles[0]!.replace("{z}", "0")
+			.replace("{x}", "0")
+			.replace("{y}", "0"),
+	);
+	assert.equal(tile.status, 200);
+	assert.equal(
+		tile.headers["cache-control"],
+		"public, max-age=31536000, immutable",
+	);
+
+	// The unpinned descriptor says how to pin, so a client never has to
+	// assemble that URL itself.
+	const unpinned = data(`/v1/map-resources/${RESOURCE}`) as {
+		pinned: { atlasRelease: string; href: string };
+	};
+	assert.equal(unpinned.pinned.atlasRelease, release);
+	assert.equal(unpinned.pinned.href, pinned);
+});
+
+test("refuses a release it no longer serves rather than answering from another", () => {
+	// Quietly serving the current release under an older release's URL is the
+	// one thing a pinned URL must never do.
+	const archived = (
+		route("GET", "/v1/atlas-releases", catalogues).body as {
+			data: Array<{ releaseId: string }>;
+		}
+	).data;
+	const current = (
+		route("GET", "/v1/atlas-release", catalogues).body as {
+			data: { releaseId: string };
+		}
+	).data.releaseId;
+	const older = archived.find((entry) => entry.releaseId !== current);
+	if (older) {
+		const gone = route(
+			"GET",
+			`/v1/atlas-releases/${older.releaseId}/map-resources/${RESOURCE}`,
+			catalogues,
+		);
+		assert.equal(gone.status, 410);
+		assert.match(
+			(gone.body as { detail: string }).detail,
+			/no longer served/,
+		);
+	}
+
+	const unknown = route(
+		"GET",
+		`/v1/atlas-releases/sha256:0000/map-resources/${RESOURCE}`,
+		catalogues,
+	);
+	assert.equal(unknown.status, 404);
+	assert.equal(
+		get(`/v1/atlas-releases/sha256:0000/map-resources/${RESOURCE}`).headers[
+			"cache-control"
+		],
+		"no-store",
+	);
+
+	// A refusal from the resource itself, reached through a good pin, is not
+	// immutable either: it may well succeed once that resource is published.
+	const missing = get(
+		`/v1/atlas-releases/${current}/map-resources/ward/1066`,
+	);
+	assert.equal(missing.status, 404);
+	assert.equal(missing.headers["cache-control"], "no-store");
+});
