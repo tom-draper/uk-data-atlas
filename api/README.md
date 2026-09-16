@@ -2165,10 +2165,12 @@ surface area. They follow Phase 0 and Phase 1 only.
    [API UX and contract clarity](#api-ux-and-contract-clarity). Link the root
    response to the authoritative OpenAPI description and a human documentation
    landing page.
-   *Partly done.* All 60 operations carry a task tag and a summary, and 56
-   document their error responses. Only 24 have a response example, 81
-   parameters have no description, and the root response does not yet link
-   to the OpenAPI description.
+   *Partly done.* All 61 operations carry a task tag and a summary, 57
+   document their error responses, and every parameter is described, the
+   repeated ones through shared components. The index now links to the
+   description, which the API serves at `GET /v1/openapi.yaml`. 24 operations
+   have a response example, and there is no human documentation landing page
+   to link to yet.
 4. **Document the data identity model.** For `/data/{measure}` and every
    derivative route, make source geography, `boundaryYear`, optional
    code-compatible geometry `release`, observation `period` and immutable
