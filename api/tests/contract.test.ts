@@ -658,3 +658,64 @@ test("keeps the resolution contract's one exception the only one", () => {
 		`only ${asking.length} routes ask the resolver`,
 	);
 });
+
+/**
+ * The analysis contract specifies Phase 2 and builds nothing, but it decides
+ * what may be converted from the semantics a measure already declares. If those
+ * are renamed the rule stops meaning anything, so the names are checked, and so
+ * is the claim that none of it is served yet.
+ */
+const analysisContract = (() => {
+	const heading = "\n## Analysis contract\n";
+	const start = readme.indexOf(heading);
+	assert.notEqual(start, -1, "the analysis contract section is missing");
+	const end = readme.indexOf("\n## ", start + heading.length);
+	return readme.slice(start, end);
+})();
+
+test("holds the analysis contract to the semantics it rules on", () => {
+	// Every aggregation kind the catalogue distinguishes must be ruled on:
+	// silence about one is how an unconvertible measure gets converted.
+	const kinds = new Set(
+		(catalogues.dataCatalog?.measures ?? []).map(
+			(measure) => measure.aggregation.kind,
+		),
+	);
+	assert.ok(kinds.size >= 3, `only ${kinds.size} aggregation kinds in use`);
+	assert.deepEqual(
+		[...kinds].filter((kind) => !analysisContract.includes(`\`${kind}\``)),
+		[],
+		"the analysis contract does not say what happens to every kind of measure",
+	);
+
+	// The statistics it names as never convertible are really the ones the
+	// catalogue calls non-aggregatable.
+	const statistics = new Set(
+		(catalogues.dataCatalog?.measures ?? []).flatMap((measure) =>
+			measure.aggregation.kind === "non-aggregatable"
+				? [measure.aggregation.statistic]
+				: [],
+		),
+	);
+	assert.deepEqual(
+		[...statistics].filter(
+			(statistic) => !analysisContract.includes(statistic),
+		),
+		[],
+		"a statistic the catalogue calls non-aggregatable is not named as unconvertible",
+	);
+});
+
+test("keeps the analysis contract's routes unbuilt", () => {
+	const proposed = [
+		...analysisContract.matchAll(/^not built: GET (\/v1\/\S*)$/gm),
+	].map((match) => match[1]!.split("?")[0]!);
+	assert.equal(proposed.length, 3);
+	assert.deepEqual(
+		proposed.filter(
+			(path) => !isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
+		),
+		[],
+		"an analysis route is served; the contract still says it is not",
+	);
+});
