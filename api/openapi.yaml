@@ -107,6 +107,7 @@ paths:
                     - /v1/map-resources/{geography}/{release}/tiles.json
                     - /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
                     - /v1/map-resources/{geography}/{release}/join/{measure-id}
+                    - /v1/atlas-releases/{release-id}/map-resources/{geography}/{release}
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
                     - /v1/boundary-releases/{geography}/{release}
@@ -163,6 +164,57 @@ paths:
             application/yaml:
               schema:
                 type: string
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /atlas-releases/{release-id}/map-resources/{geography}/{release}:
+    get:
+      operationId: getPinnedMapResource
+      tags: ["Sync"]
+      summary: A map resource pinned to the Atlas release that produced it
+      description: >
+        The same descriptor as the unpinned path, answered with
+        `Cache-Control: public, max-age=31536000, immutable`: the bytes are a
+        function of that release alone, so there is nothing to revalidate.
+        This is the form a production map should cite, and every link in the
+        answer stays pinned, so a renderer configured from the pinned TileJSON
+        fetches pinned tiles too.
+
+
+        Any path below the release id is served this way, including
+        `tiles.json`, `tiles/{z}/{x}/{y}.mvt`, the `.pmtiles` archive and a
+        join table. Only the release the server currently holds can be
+        answered: the archive keeps release manifests, not the data files
+        behind them, so a release that is recorded but no longer served is
+        refused with `410` rather than quietly answered from the current one.
+        A copy a client already holds stays correct, which is what pinning
+        bought it.
+      parameters:
+        - name: release-id
+          in: path
+          required: true
+          schema: { type: string }
+          description: >
+            The Atlas release to pin to, the `sha256:` hash from
+            `GET /v1/atlas-release`.
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+      responses:
+        "200":
+          description: The map resource descriptor, pinned and immutable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MapResourceEnvelope"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          description: >
+            The release is recorded but its artifacts are no longer served.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
