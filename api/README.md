@@ -2225,7 +2225,12 @@ surface area. They follow Phase 0 and Phase 1 only.
    TypeScript or shell examples for the three golden paths using only the
    published OpenAPI contract. A broken example blocks release rather than
    becoming a support burden.
-   *Not started.*
+   *Done.* `examples/correct-map.ts`, `examples/defensible-trend.ts` and
+   `examples/reliable-sync.ts` walk the three paths over HTTP using only the
+   published contract, and `tests/examples.test.ts` runs them against a server
+   it starts. Each asserts what it demonstrates: the trend example shows two
+   refusals, and the sync example recomputes an export's hash and revalidates
+   it for a 304.
 
 ### P1 — prove the correct-map product
 
@@ -2351,6 +2356,18 @@ second inventory to maintain:
 - `GET /v1/attribution` — Assemble the attribution and licence block for named resources
 
 <!-- route-index:end -->
+
+Three worked walkthroughs live in `examples/`, one for each golden path. Each
+uses only the published contract, prints what a reader should notice, and
+fails if what it demonstrates stops being true. `tests/examples.test.ts` runs
+all three against a server it starts, so a broken tutorial blocks a release:
+
+```sh
+pnpm start &                      # or BASE_URL=https://api.ukdataatlas.com/v1
+pnpm example:map                  # place → release → compatible values → geometry → attribution
+pnpm example:trend                # series → ranked change → two refusals → caveat
+pnpm example:sync                 # pin → download → verify hash → 304 → what changed
+```
 
 The requests below are worked examples, each of them run against the compiled
 catalogues by the contract tests:
