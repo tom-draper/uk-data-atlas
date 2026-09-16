@@ -4,8 +4,10 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
+import { httpResponse } from "../src/httpResponse";
 import { PROBLEM_CODES } from "../src/problemCodes";
 import { route } from "../src/routes";
+import { GEOMETRY_TIERS } from "../src/simplifyGeometry";
 import { readApiCatalogues } from "../src/server";
 import {
 	INDEX_END,
@@ -460,4 +462,81 @@ test("keeps a geometry release from standing in for a conversion", () => {
 			query,
 		);
 	}
+});
+
+/**
+ * The map resource contract specifies routes that are not built yet, but it
+ * borrows vocabulary that is: tier names, a problem code, the cache header and
+ * the routes it tells a caller to use instead. Those can drift away from it
+ * silently, so they are checked here. The proposed routes are checked to be
+ * absent, which is the claim the section opens with; when the compiler lands,
+ * this test is the reminder to say so.
+ */
+const mapContract = (() => {
+	const heading = "\n## Map resource contract\n";
+	const start = readme.indexOf(heading);
+	assert.notEqual(start, -1, "the map resource contract section is missing");
+	const end = readme.indexOf("\n## ", start + heading.length);
+	return readme.slice(start, end);
+})();
+
+test("holds the map resource contract to the vocabulary it borrows", () => {
+	// The tier ladder it shares with the per-area geometry route.
+	assert.ok(
+		mapContract.includes(
+			Object.keys(GEOMETRY_TIERS)
+				.map((tier) => `\`${tier}\``)
+				.join(", "),
+		),
+		"the contract's tier names are not the tiers the API serves",
+	);
+
+	// Any snake_case identifier it quotes is a declared problem code.
+	const quotedCodes = [
+		...mapContract.matchAll(/`([a-z]+(?:_[a-z]+)+)`/g),
+	].map((match) => match[1]!);
+	assert.notEqual(quotedCodes.length, 0);
+	assert.deepEqual(
+		quotedCodes.filter((code) => !(code in PROBLEM_CODES)),
+		[],
+		"problem codes the contract names but the API does not declare",
+	);
+
+	// The cache header it quotes for an unpinned response is the one served.
+	const served = httpResponse({ method: "GET", headers: {} }, () =>
+		route("GET", "/v1", catalogues),
+	);
+	assert.ok(
+		mapContract.includes(served.headers["cache-control"]!),
+		"the contract quotes a cache policy the API does not apply",
+	);
+});
+
+test("keeps the map resource contract's routes proposed, not served", () => {
+	const proposed = [
+		...mapContract.matchAll(/^GET (\/v1\/map-resources\S*)$/gm),
+	].map((match) => match[1]!.split("?")[0]!);
+	assert.equal(proposed.length, 7);
+	assert.deepEqual(
+		proposed.filter(
+			(path) => !isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
+		),
+		[],
+		"a proposed map route is served; the contract still says it is not",
+	);
+
+	// Every other route it cites as the way to do something today must work.
+	const cited = [...mapContract.matchAll(/`(\/v1\/[^`]*)`/g)]
+		.map((match) => match[1]!.split("?")[0]!)
+		.filter(
+			(path) => !path.includes("...") && !path.includes("/map-resources"),
+		);
+	assert.notEqual(cited.length, 0);
+	assert.deepEqual(
+		cited.filter((path) =>
+			isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
+		),
+		[],
+		"the contract sends a caller to a route that does not exist",
+	);
 });
