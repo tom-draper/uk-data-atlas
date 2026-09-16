@@ -23,10 +23,13 @@ import type { ProblemCode } from "../problemCodes";
  */
 
 /** A join is only offered where every source code is present in the release. */
-const JOINABLE: readonly CompatibilityStatus[] = [
-	"exact-code-set",
-	"code-set-compatible",
-];
+const JOINABLE = ["exact-code-set", "code-set-compatible"] as const;
+
+/**
+ * The only statuses a planned join can carry. Saying so in the type means a
+ * caller cannot be handed a join on a partial code overlap by mistake.
+ */
+export type JoinableStatus = (typeof JOINABLE)[number];
 
 export type ObservationRequest = {
 	measureId: string;
@@ -44,7 +47,7 @@ export type ObservationPlan = {
 	/** Present only where the caller asked to draw the values somewhere. */
 	join?: {
 		boundaryRelease: string;
-		compatibility: CompatibilityStatus;
+		compatibility: JoinableStatus;
 		/** Codes in the release the source has no value for. */
 		candidateOnlyCodeCount: number;
 	};
@@ -185,8 +188,12 @@ export const resolveObservations = (
 				entry.sourceGeography.boundaryYear ===
 					source.sourceGeography.boundaryYear,
 		);
-	const joinable = (candidate: CompatibilityCandidate) =>
-		JOINABLE.includes(candidate.status) &&
+	const joinable = (
+		candidate: CompatibilityCandidate,
+	): candidate is CompatibilityCandidate & { status: JoinableStatus } =>
+		(JOINABLE as readonly CompatibilityStatus[]).includes(
+			candidate.status,
+		) &&
 		candidate.unmatchedSourceCodeCount === 0 &&
 		candidate.matchedSourceShare === 1;
 	const candidate = compatibility?.candidates.find(
