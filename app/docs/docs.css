@@ -1,0 +1,312 @@
+/*
+ * The sunlit page behind the API docs: warm light falling across paper from
+ * the top right, through a window, with a little drifting dust. It stands in
+ * for the map the atlas glass panes normally sit over, giving the glass
+ * something soft to refract.
+ */
+
+.docs-sky {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			120% 90% at 92% -12%,
+			#fff8e4 0%,
+			rgba(255, 248, 228, 0) 58%
+		),
+		radial-gradient(
+			80% 60% at 0% 100%,
+			rgba(200, 214, 236, 0.55) 0%,
+			rgba(200, 214, 236, 0) 70%
+		),
+		linear-gradient(170deg, #fcf9f1 0%, #f5f2ea 45%, #eceff4 100%);
+}
+
+/* The sun itself, just off the top-right corner, breathing slowly. */
+.docs-sun {
+	position: absolute;
+	top: -26vmax;
+	right: -20vmax;
+	width: 70vmax;
+	height: 70vmax;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(255, 253, 245, 1) 0%,
+		rgba(255, 236, 188, 0.7) 18%,
+		rgba(255, 219, 150, 0.28) 42%,
+		rgba(255, 219, 150, 0) 68%
+	);
+	filter: blur(8px);
+	animation: docs-breathe 16s ease-in-out infinite alternate;
+}
+
+/* Shafts of light fanning out from the sun, faded out before the far side. */
+.docs-rays {
+	position: absolute;
+	inset: -20%;
+	background: repeating-conic-gradient(
+		from 205deg at 90% 8%,
+		rgba(255, 236, 190, 0) 0deg,
+		rgba(255, 236, 190, 0.55) 2.5deg,
+		rgba(255, 236, 190, 0) 6deg,
+		rgba(160, 178, 206, 0.07) 9deg,
+		rgba(255, 236, 190, 0) 12deg
+	);
+	-webkit-mask-image: radial-gradient(
+		ellipse 75% 85% at 90% 8%,
+		#000 0%,
+		rgba(0, 0, 0, 0.55) 40%,
+		transparent 78%
+	);
+	mask-image: radial-gradient(
+		ellipse 75% 85% at 90% 8%,
+		#000 0%,
+		rgba(0, 0, 0, 0.55) 40%,
+		transparent 78%
+	);
+	filter: blur(18px);
+	transform-origin: 90% 8%;
+	animation: docs-sway 38s ease-in-out infinite alternate;
+}
+
+/* Window panes of light cast across the page. */
+.docs-pane {
+	position: absolute;
+	width: 22vw;
+	height: 120vh;
+	border-radius: 12px;
+	background: linear-gradient(
+		180deg,
+		rgba(255, 250, 236, 0.85) 0%,
+		rgba(255, 242, 214, 0.35) 55%,
+		rgba(255, 242, 214, 0) 100%
+	);
+	filter: blur(28px);
+	opacity: 0.55;
+	transform: rotate(32deg) skewY(-6deg);
+	animation: docs-drift 30s ease-in-out infinite alternate;
+}
+
+.docs-pane:nth-of-type(1) {
+	top: -30vh;
+	right: 18vw;
+}
+
+.docs-pane:nth-of-type(2) {
+	top: -10vh;
+	right: -2vw;
+	width: 14vw;
+	animation-delay: -12s;
+}
+
+/* Soft shadow dapples, as if something moves outside the window. */
+.docs-dapple {
+	position: absolute;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(120, 140, 175, 0.16) 0%,
+		rgba(120, 140, 175, 0) 70%
+	);
+	filter: blur(24px);
+	animation: docs-drift 26s ease-in-out infinite alternate;
+}
+
+.docs-mote {
+	position: absolute;
+	border-radius: 50%;
+	background: rgba(255, 246, 222, 0.95);
+	box-shadow:
+		0 0 6px 2px rgba(255, 226, 160, 0.55),
+		0 0 1px rgba(160, 120, 40, 0.4);
+	animation: docs-float linear infinite;
+}
+
+.docs-grain {
+	position: absolute;
+	inset: 0;
+	opacity: 0.06;
+	mix-blend-mode: multiply;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes docs-breathe {
+	from {
+		transform: scale(1);
+		opacity: 0.9;
+	}
+	to {
+		transform: scale(1.06);
+		opacity: 1;
+	}
+}
+
+@keyframes docs-sway {
+	from {
+		transform: rotate(-1.5deg);
+	}
+	to {
+		transform: rotate(1.5deg);
+	}
+}
+
+@keyframes docs-drift {
+	from {
+		translate: 0 0;
+	}
+	to {
+		translate: -3vw 2vh;
+	}
+}
+
+@keyframes docs-float {
+	0% {
+		translate: 0 0;
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+	85% {
+		opacity: 1;
+	}
+	100% {
+		translate: -6vw 22vh;
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.docs-sun,
+	.docs-rays,
+	.docs-pane,
+	.docs-dapple {
+		animation: none;
+	}
+
+	.docs-mote {
+		display: none;
+	}
+}
+
+/* Syntax colours for the smoked-glass code panels. */
+.docs-code .tok-key {
+	color: #a5b4fc;
+}
+
+.docs-code .tok-string {
+	color: #fcd9a0;
+}
+
+.docs-code .tok-number {
+	color: #86efac;
+}
+
+.docs-code .tok-literal {
+	color: #f9a8d4;
+}
+
+.docs-code .tok-punct {
+	color: rgba(226, 232, 240, 0.45);
+}
+
+.docs-code .tok-param {
+	color: #fcd9a0;
+}
+
+.docs-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+}
+
+/*
+ * Light falling across the page itself, above the glass. Multiplying warm
+ * bands and faint cool shade over near-white glass reads as sun through a
+ * window on paper, and never touches legibility: it only tints.
+ */
+.docs-sunfall {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.docs-sunfall::before {
+	content: "";
+	position: absolute;
+	inset: -40% -20%;
+	background: repeating-linear-gradient(
+		118deg,
+		rgba(255, 232, 186, 0) 0%,
+		rgba(255, 232, 186, 0.34) 6%,
+		rgba(255, 232, 186, 0.1) 11%,
+		rgba(196, 208, 230, 0.16) 15%,
+		rgba(255, 232, 186, 0) 20%,
+		rgba(255, 232, 186, 0) 27%
+	);
+	-webkit-mask-image: radial-gradient(
+		ellipse 80% 90% at 95% 0%,
+		#000 0%,
+		rgba(0, 0, 0, 0.5) 45%,
+		transparent 85%
+	);
+	mask-image: radial-gradient(
+		ellipse 80% 90% at 95% 0%,
+		#000 0%,
+		rgba(0, 0, 0, 0.5) 45%,
+		transparent 85%
+	);
+	mix-blend-mode: multiply;
+	filter: blur(22px);
+	animation: docs-drift 34s ease-in-out infinite alternate;
+}
+
+/* The bright bloom where the sun catches the top-right of the page. */
+.docs-sunfall::after {
+	content: "";
+	position: absolute;
+	top: -30vmax;
+	right: -24vmax;
+	width: 62vmax;
+	height: 62vmax;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(255, 244, 214, 0.5) 0%,
+		rgba(255, 236, 196, 0.2) 35%,
+		rgba(255, 236, 196, 0) 65%
+	);
+	mix-blend-mode: multiply;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.docs-sunfall::before {
+		animation: none;
+	}
+}
+
+/* A soft frost behind the sticky header, so text scrolling past fades out. */
+.docs-header-veil::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 -14px 0;
+	z-index: -1;
+	background: linear-gradient(
+		180deg,
+		rgba(249, 247, 241, 0.75) 0%,
+		rgba(249, 247, 241, 0) 100%
+	);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	-webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
+	mask-image: linear-gradient(180deg, #000 55%, transparent);
+}
+
+.docs-description > summary::-webkit-details-marker {
+	display: none;
+}
