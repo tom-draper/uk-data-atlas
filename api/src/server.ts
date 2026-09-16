@@ -319,6 +319,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	return {
+		openapiDocument: readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 		boundaryRegistry: readBoundaryRegistry(apiRoot),
 		geographyInventory: readGeographyInventory(apiRoot),
 		areaInventory,

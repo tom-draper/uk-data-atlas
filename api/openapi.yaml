@@ -68,6 +68,7 @@ paths:
                 data:
                   name: UK Data Atlas API
                   links:
+                    - /v1/openapi.yaml
                     - /v1/geographies
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
@@ -106,6 +107,26 @@ paths:
                     - /v1/atlas-releases/compare
                 meta:
                   nextCursor: null
+
+  /openapi.yaml:
+    get:
+      operationId: getOpenapiDescription
+      tags: ["Start here"]
+      summary: The OpenAPI description of this API
+      description: >
+        Returns this document, so a client can read the binding contract from
+        the running API rather than the repository. The JSON envelope is
+        served only when a caller asks for it by `Accept`; the default
+        representation is the YAML document itself.
+      responses:
+        "200":
+          description: The OpenAPI 3.1 description.
+          content:
+            application/yaml:
+              schema:
+                type: string
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
 
   /geographies:
     get:

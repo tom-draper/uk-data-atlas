@@ -11,7 +11,10 @@ export const handleIndexRoutes = ({
 		status: 200,
 		body: envelope(releaseId, {
 			name: "UK Data Atlas API",
+			// The binding description of these routes, served as a document.
+			openapi: "/v1/openapi.yaml",
 			links: [
+				"/v1/openapi.yaml",
 				"/v1/geographies",
 				"/v1/boundary-releases",
 				"/v1/boundary-releases:resolve",

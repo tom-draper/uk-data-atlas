@@ -2245,6 +2245,7 @@ pnpm start
 `http://127.0.0.1:3001/v1`. Its initial read-only endpoints are:
 
 - `GET /v1`
+- `GET /v1/openapi.yaml`
 - `GET /v1/geographies`
 - `GET /v1/geography-inventory`
 - `GET /v1/datasets`
