@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { httpResponse } from "../src/httpResponse";
+import { CONVERSION_METHODS } from "../src/conversion";
+import { COMPATIBILITY_STATUSES } from "../src/measureCompatibility";
 import { PROBLEM_CODES } from "../src/problemCodes";
 import { route } from "../src/routes";
 import { GEOMETRY_TIERS } from "../src/simplifyGeometry";
@@ -552,5 +554,62 @@ test("serves the map resource contract's routes, or marks them unbuilt", () => {
 		),
 		[],
 		"the contract sends a caller to a route that does not exist",
+	);
+});
+
+/**
+ * The resolution contract describes a layer that is not built, but it names
+ * vocabulary that is: the compatibility statuses a join may be accepted on,
+ * the conversion methods, the problem codes a refusal may carry and the build
+ * artifacts it reads. If any of those are renamed, the contract becomes wrong
+ * about the system it is meant to govern, so they are checked here.
+ */
+const resolutionContract = (() => {
+	const heading = "\n## Resolution contract\n";
+	const start = readme.indexOf(heading);
+	assert.notEqual(start, -1, "the resolution contract section is missing");
+	const end = readme.indexOf("\n## ", start + heading.length);
+	return readme.slice(start, end);
+})();
+
+test("holds the resolution contract to the vocabulary it borrows", () => {
+	// Every kebab-case or snake_case term it quotes must be something the
+	// system really has: a compatibility status, a conversion method, or a
+	// declared problem code.
+	const known = new Set([
+		...COMPATIBILITY_STATUSES,
+		...CONVERSION_METHODS,
+		...Object.keys(PROBLEM_CODES),
+	]);
+	const quoted = [
+		...resolutionContract.matchAll(/`([a-z]+(?:[-_][a-z]+)+)`/g),
+	].map((match) => match[1]!);
+	assert.notEqual(quoted.length, 0);
+	assert.deepEqual(
+		quoted.filter((term) => !known.has(term)),
+		[],
+		"the resolution contract names a status, method or code the API does not have",
+	);
+
+	// A join may only be accepted on a status that really means every source
+	// code is present, which is the rule the data routes already apply.
+	for (const status of ["exact-code-set", "code-set-compatible"])
+		assert.ok(
+			resolutionContract.includes(`\`${status}\``),
+			`the contract no longer names ${status} as a status a join is accepted on`,
+		);
+});
+
+test("names build artifacts the resolution contract can actually read", () => {
+	const artifacts = [
+		...resolutionContract.matchAll(/`([a-z-]+\.json)`/g),
+	].map((match) => match[1]!);
+	assert.notEqual(artifacts.length, 0);
+	assert.deepEqual(
+		artifacts.filter(
+			(name) => !existsSync(resolve(apiRoot, "public", name)),
+		),
+		[],
+		"the resolution contract reads a build artifact that is not published",
 	);
 });
