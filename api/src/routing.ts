@@ -84,4 +84,11 @@ export type RouteRequest = {
 	 * exactly what a more specific route gives when called directly.
 	 */
 	dispatch: (url: string) => ApiResponse;
+	/**
+	 * The Atlas release this request was pinned to, where it was asked for
+	 * under `/v1/atlas-releases/{release-id}/`. A route uses it to build links
+	 * that stay pinned, so a client that pinned once does not fall back to a
+	 * revalidated URL on its next hop.
+	 */
+	pinnedTo?: string;
 };

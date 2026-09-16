@@ -15,6 +15,11 @@ export type HttpResponse = {
 // stored: the next request may well succeed.
 const SUCCESS_CACHE_CONTROL = "public, max-age=300, must-revalidate";
 const ERROR_CACHE_CONTROL = "no-store";
+// A response pinned to an Atlas release is a function of that release alone,
+// so it can be kept for a year and never revalidated. The release it names
+// stops being served when the Atlas rebuilds, and a copy already held stays
+// correct for exactly as long as it is a copy of that release.
+const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 /**
  * This is a read-only API over openly licensed data, and its most obvious
@@ -94,21 +99,25 @@ export const httpResponse = (
 	}
 	// 204 says there is nothing to send, so it carries neither a body nor a
 	// validator to revalidate one with.
+	const freshness =
+		result.cache === "immutable"
+			? IMMUTABLE_CACHE_CONTROL
+			: SUCCESS_CACHE_CONTROL;
 	if (result.status === 204)
 		return {
 			status: 204,
-			headers: { ...headers, "cache-control": SUCCESS_CACHE_CONTROL },
+			headers: { ...headers, "cache-control": freshness },
 		};
 	const etag = entityTag(body);
 	headers.etag = etag;
-	headers["cache-control"] = SUCCESS_CACHE_CONTROL;
+	headers["cache-control"] = freshness;
 	if (matchesEntityTag(request.headers["if-none-match"], etag)) {
 		return {
 			status: 304,
 			headers: {
 				...CROSS_ORIGIN,
 				etag,
-				"cache-control": SUCCESS_CACHE_CONTROL,
+				"cache-control": freshness,
 			},
 		};
 	}
