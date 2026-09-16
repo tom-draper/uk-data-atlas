@@ -50,6 +50,10 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "derived-boundaries", path: "derived-boundaries.json" },
 	{ id: "area-inventory", path: "area-inventory.json" },
 	{ id: "named-locations", path: "named-locations.json" },
+	{
+		id: "location-projection-inventory",
+		path: "location-projection-inventory.json",
+	},
 	{ id: "data-catalog", path: "data-catalog.json" },
 	{ id: "measure-compatibility", path: "measure-compatibility.json" },
 	{ id: "export-manifest", path: "export-manifest.json" },
@@ -61,6 +65,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	},
 	{ id: "geometry-sources", path: "geometry-sources.json" },
 	{ id: "crosswalk-inventory", path: "crosswalk-inventory.json" },
+	{ id: "relationship-paths", path: "relationship-paths.json" },
 	{ id: "relationship-candidates", path: "relationship-candidates.json" },
 	{ id: "geography-inventory", path: "geography-inventory.json" },
 	{ id: "validation-report", path: "validation-report.json" },
@@ -94,6 +99,24 @@ const cataloguedObservationArtifacts = (
 	return [...artifacts.values()].sort((left, right) =>
 		left.id.localeCompare(right.id),
 	);
+};
+
+/** Projection shards are pinned individually, while the inventory selects them. */
+const cataloguedLocationProjectionArtifacts = (publicDirectory: string) => {
+	const path = join(publicDirectory, "location-projection-inventory.json");
+	if (!existsSync(path)) return [];
+	const inventory = JSON.parse(readFileSync(path, "utf8")) as {
+		shards?: Array<{ crosswalkId?: unknown; artifact?: unknown }>;
+	};
+	if (!Array.isArray(inventory.shards)) return [];
+	return inventory.shards
+		.flatMap((shard) =>
+			typeof shard.crosswalkId === "string" &&
+			typeof shard.artifact === "string"
+				? [{ id: `location-projections/${shard.crosswalkId}`, path: shard.artifact }]
+				: [],
+		)
+		.sort((left, right) => left.id.localeCompare(right.id));
 };
 
 type Entries = Array<Record<string, unknown>>;
@@ -215,6 +238,9 @@ export const createAtlasRelease = (publicDirectory: string): AtlasRelease => {
 	};
 	const artifacts = [
 		...RELEASE_ARTIFACTS.map(artifactReference),
+		...cataloguedLocationProjectionArtifacts(publicDirectory).map(
+			artifactReference,
+		),
 		...cataloguedObservationArtifacts(publicDirectory).map(
 			artifactReference,
 		),

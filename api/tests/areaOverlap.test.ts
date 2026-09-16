@@ -31,6 +31,21 @@ const box = (west: number, east: number): Polygon => [
 	],
 ];
 
+const bngBox = (
+	west: number,
+	east: number,
+	south: number,
+	north: number,
+): Polygon => [
+	[
+		[west, south],
+		[east, south],
+		[east, north],
+		[west, north],
+		[west, south],
+	],
+];
+
 const writeCollection = (
 	root: string,
 	path: string,
@@ -251,7 +266,7 @@ test("fails when an area is less covered than the adapter requires", () => {
 	});
 });
 
-test("fails on geometry without a compiled identity or outside WGS84", () => {
+test("fails on geometry without a compiled identity or a supported transformation", () => {
 	withFixture((root) => {
 		assert.throws(
 			() =>
@@ -268,10 +283,37 @@ test("fails on geometry without a compiled identity or outside WGS84", () => {
 				compileAreaOverlapCrosswalk(
 					root,
 					adapter(),
-					geometrySources("EPSG:27700"),
+					geometrySources("EPSG:99999"),
 					areaLookup(),
 				),
-			/source\/1 geometry is EPSG:27700, not WGS84/,
+			/source\/1 geometry is EPSG:99999 and has no transformation to WGS84/,
+		);
+	});
+});
+
+test("reprojects BNG geometry before calculating an overlap", () => {
+	withFixture((root) => {
+		writeCollection(root, "sources.geojson", "SRC", [
+			["S1", bngBox(530000, 531000, 180000, 181000)],
+		]);
+		writeCollection(root, "targets.geojson", "TGT", [
+			["T1", bngBox(530000, 531000, 180000, 181000)],
+		]);
+		const artifact = compileAreaOverlapCrosswalk(
+			root,
+			adapter(),
+			geometrySources("EPSG:27700"),
+			areaLookup(["T1"]),
+		);
+		assert.deepEqual(artifact.records[0]?.targets.map(({ code }) => code), [
+			"T1",
+		]);
+		assert.equal(artifact.records[0]?.source.coverage, 1);
+		assert.equal(
+			artifact.provenance.inputs.every(
+				(input) => input.sourceCrs === "EPSG:27700",
+			),
+			true,
 		);
 	});
 });

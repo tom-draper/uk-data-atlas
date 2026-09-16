@@ -17,6 +17,7 @@ import {
 } from "./crosswalkValidation";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
+import type { GeometryProvenance } from "./reprojection";
 
 export type {
 	CrosswalkMethod,
@@ -74,6 +75,7 @@ type CrosswalkArtifactBase = {
 	id: string;
 	from: { geography: string; boundaryRelease: string };
 	to: { geography: string; boundaryRelease: string };
+	relationshipPurpose?: "identity" | "membership";
 };
 
 export type PropertyCrosswalkArtifact = CrosswalkArtifactBase & {
@@ -93,12 +95,12 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 	quality: "derived";
 	weighting: AreaOverlapWeighting;
 	provenance: {
-		inputs: Array<{
+	inputs: Array<{
 			side: "from" | "to";
 			input: string;
 			inputHash: string;
 			sourceCodePattern?: string;
-		}>;
+		} & GeometryProvenance>;
 		areaProjection: "EPSG:6933";
 		clipping: string;
 	};
@@ -122,6 +124,7 @@ export type CrosswalkInventory = {
 		to: { geography: string; boundaryRelease: string };
 		method: CrosswalkMethod;
 		quality: CrosswalkQuality;
+		relationshipPurpose?: "identity" | "membership";
 		weighting: CrosswalkWeighting;
 		recordCount: number;
 		artifact: string;
@@ -254,6 +257,9 @@ const compilePropertyCrosswalk = (
 		id: adapter.id,
 		method: adapter.method,
 		quality: adapter.quality,
+		...(adapter.relationshipPurpose === undefined
+			? {}
+			: { relationshipPurpose: adapter.relationshipPurpose }),
 		weighting: adapter.weighting,
 		from: {
 			geography: adapter.from.geography,
@@ -308,12 +314,21 @@ export const compileCrosswalks = (
 			areaLookup,
 		);
 	});
+	return { inventory: createCrosswalkInventory(artifacts), artifacts };
+};
+
+export const createCrosswalkInventory = (
+	artifacts: CrosswalkArtifact[],
+): CrosswalkInventory => {
 	const crosswalks = artifacts.map((artifact) => ({
 		id: artifact.id,
 		from: artifact.from,
 		to: artifact.to,
 		method: artifact.method,
 		quality: artifact.quality,
+		...(artifact.relationshipPurpose === undefined
+			? {}
+			: { relationshipPurpose: artifact.relationshipPurpose }),
 		weighting: artifact.weighting,
 		recordCount: artifact.records.length,
 		artifact: `crosswalks/${artifact.id}.json`,
@@ -321,11 +336,8 @@ export const compileCrosswalks = (
 	}));
 	const content = JSON.stringify({ schemaVersion: 1, crosswalks });
 	return {
-		inventory: {
-			schemaVersion: 1,
-			contentHash: sha256(content),
-			crosswalks,
-		},
-		artifacts,
+		schemaVersion: 1,
+		contentHash: sha256(content),
+		crosswalks,
 	};
 };

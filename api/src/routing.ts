@@ -1,5 +1,6 @@
 import type { AreaGeometryCache } from "./areaGeometry";
 import type { AreaInventory, AreaLookup } from "./areaInventory";
+import type { AreaSearchIndex } from "./areaSearch";
 import type { AreaRelationshipIndex } from "./areaRelationships";
 import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
@@ -16,6 +17,11 @@ import type {
 import type { ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { LookupManifest } from "./lookupExports";
+import type { GeographyResolver } from "./geographyResolver";
+import type {
+	LocationProjectionInventory,
+	LocationProjectionStore,
+} from "./locationProjections";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { MapArchive } from "./mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
@@ -24,21 +30,11 @@ import type {
 	NamedLocationLookup,
 } from "./namedLocations";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
+import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { ApiResponse } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
-
-export type AreaSearchResult = {
-	id: string;
-	geography: string;
-	boundaryRelease: string;
-	code: string;
-	name: string;
-	aliases?: string[];
-};
-
-export type AreaSearchIndex = AreaSearchResult[];
 
 /** The independently-built resources available to API route handlers. */
 export type RouteContext = {
@@ -53,11 +49,16 @@ export type RouteContext = {
 	atlasReleaseHistory?: Map<string, AtlasRelease>;
 	areaSearchIndex?: AreaSearchIndex;
 	areaRelationshipIndex?: AreaRelationshipIndex;
+	/** Compiled geography indexes and domain operations for this Atlas release. */
+	geographyResolver?: GeographyResolver;
+	relationshipPathInventory?: RelationshipPathInventory;
 	areaGeometryCache?: AreaGeometryCache;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
 	namedLocationInventory?: NamedLocationInventory;
 	namedLocationLookup?: NamedLocationLookup;
+	locationProjectionInventory?: LocationProjectionInventory;
+	locationProjectionStore?: LocationProjectionStore;
 	dataCatalog?: DataCatalog;
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;

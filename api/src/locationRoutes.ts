@@ -45,7 +45,9 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
-		const location = namedLocationLookup?.get(segments[2]!);
+		const location =
+			context.geographyResolver?.namedLocation(segments[2]!) ??
+			namedLocationLookup?.get(segments[2]!);
 		return location
 			? { status: 200, body: envelope(releaseId, location) }
 			: problem(
@@ -60,7 +62,9 @@ export const handleLocationRoutes = ({
 		segments[1] === "locations" &&
 		segments[3] === "members"
 	) {
-		const location = namedLocationLookup?.get(segments[2]!);
+		const location =
+			context.geographyResolver?.namedLocation(segments[2]!) ??
+			namedLocationLookup?.get(segments[2]!);
 		if (!location)
 			return problem(
 				404,
@@ -124,12 +128,18 @@ export const handleLocationRoutes = ({
 				"Catalogue Unavailable",
 				"Build the crosswalk inventory before resolving a named location into another geography.",
 			);
-		const candidates = crosswalksTo(
-			crosswalkInventory,
-			geography,
-			boundaryRelease,
-			MEMBER_GEOGRAPHY,
-		);
+		const candidates =
+			context.geographyResolver?.crosswalksToLocationMembers(
+				geography,
+				boundaryRelease,
+				MEMBER_GEOGRAPHY,
+			) ??
+			crosswalksTo(
+				crosswalkInventory,
+				geography,
+				boundaryRelease,
+				MEMBER_GEOGRAPHY,
+			);
 		const requested = parsedUrl.searchParams.get("via");
 		if (!requested)
 			return problem(
@@ -142,13 +152,57 @@ export const handleLocationRoutes = ({
 		const summary = candidates.find(
 			(candidate) => candidate.id === requested,
 		);
-		const crosswalk = summary ? crosswalkLookup.get(requested) : undefined;
+		const crosswalk = summary
+			? (context.geographyResolver?.crosswalk(requested) ??
+				crosswalkLookup.get(requested))
+			: undefined;
 		if (!summary || !crosswalk)
 			return problem(
 				404,
 				"Not Found",
 				`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${MEMBER_GEOGRAPHY} release.`,
 			);
+		const projection = context.geographyResolver?.locationProjection(
+			location.id,
+			geography,
+			boundaryRelease,
+			requested,
+		);
+		if (projection) {
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					location,
+					geography,
+					boundaryRelease,
+					membership: projection.membership,
+					membershipNote:
+						projection.membership === "fully-contained"
+							? "Each area is placed wholly inside one member by the publisher's own lookup, so membership is exact and no area is counted in part."
+							: "Areas are matched by area overlap. One straddling the edge of the location is returned with the share of it that lies inside, and marked partial; it is not a whole member of this location.",
+					via: projection.via,
+					members: projection.members.map((member) => ({
+						id: `${geography}/${boundaryRelease}/${member.code}`,
+						...(areas.get(member.code) ?? {
+							name: member.labels[0] ?? member.code,
+						}),
+						code: member.code,
+						through: {
+							id: `${projection.parentGeography}/${projection.parentBoundaryRelease}/${member.throughCode}`,
+							code: member.throughCode,
+						},
+						...(member.weight === undefined
+							? {}
+							: { weight: member.weight }),
+						...(member.partial ? { partial: true } : {}),
+					})),
+					partialMembers: projection.partialMembers,
+					parentGeography: projection.parentGeography,
+					parentBoundaryRelease: projection.parentBoundaryRelease,
+					coverage: projection.coverage,
+				}),
+			};
+		}
 		const parentRelease = crosswalk.to.boundaryRelease;
 		const parents =
 			areaLookup.get(`${MEMBER_GEOGRAPHY}/${parentRelease}`) ?? new Map();
@@ -176,13 +230,13 @@ export const handleLocationRoutes = ({
 					from: crosswalk.from,
 					to: crosswalk.to,
 					contentHash: summary.contentHash,
-				},
-				members: traversed.map((member) => ({
-					id: `${geography}/${boundaryRelease}/${member.code}`,
-					code: member.code,
-					...(areas.get(member.code) ?? {
-						name: member.labels[0] ?? member.code,
-					}),
+					},
+					members: traversed.map((member) => ({
+						id: `${geography}/${boundaryRelease}/${member.code}`,
+						...(areas.get(member.code) ?? {
+							name: member.labels[0] ?? member.code,
+						}),
+						code: member.code,
 					through: {
 						id: `${MEMBER_GEOGRAPHY}/${parentRelease}/${member.throughCode}`,
 						code: member.throughCode,

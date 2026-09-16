@@ -1,0 +1,61 @@
+{
+	"schemaVersion": 1,
+	"paths": [
+		{
+			"id": "ward-2025-12-uk-bgc-to-country-2025-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "country-2025-12-uk-bgc-to-ward-2025-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "reverse"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-region-2025-12-en-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "region-2025-12-en-bgc-to-ward-2025-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "reverse"
+				}
+			]
+		}
+	]
+}
