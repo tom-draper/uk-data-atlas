@@ -1854,6 +1854,196 @@ Use RFC 9457 Problem Details for errors. Important machine-readable codes:
 Partial coverage is normally a `200` response with an explicit quality flag;
 it should not look like success with a mysteriously short row set.
 
+## Map resource contract
+
+Nothing below is served yet. This is the contract that [P1 items 10 to
+12](#p1--prove-the-correct-map-product) must build against, written first so
+the tile format is decided here rather than by whichever encoder is reached
+for first. It supersedes the map-shaped candidate routes sketched in the
+non-binding [conceptual resource model](#2-find-places-and-inspect-geography)
+and [commercial roadmap](#production-delivery); where they disagree, this
+section wins.
+
+### What a map resource is
+
+A **map resource** is one compiled boundary release, prepared for drawing. Its
+identity is the boundary-release identity used everywhere else in this API,
+`{geography}/{release}`, under an immutable Atlas release. Nothing else
+identifies it: not a tolerance, not a zoom, not a measure.
+
+```text
+GET /v1/map-resources
+GET /v1/map-resources/{geography}/{release}
+GET /v1/map-resources/{geography}/{release}/tiles.json
+GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
+GET /v1/map-resources/{geography}/{release}.pmtiles
+GET /v1/map-resources/{geography}/{release}/features?tier={tier}&format={geojson|geoparquet}
+GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}
+```
+
+Each of those also answers under `/v1/atlas-releases/{release-id}/...`, which
+is the form a production map should use; see
+[Caching](#caching-and-release-pinning) below.
+
+The descriptor at `/v1/map-resources/{geography}/{release}` is the only
+document a client needs to read: it carries the tile and archive URLs, the
+zoom range, the generalisation table, every content hash, the attribution
+block and the measures that may legally be joined to it.
+
+### Values are joined by the client, never baked into the tiles
+
+A tile carries identity, not statistics. Every feature has exactly two
+properties:
+
+- `code` — the area code in this geometry release;
+- `name` — the area's name in this release, for labels and tooltips.
+
+and a feature `id`, a stable integer the compiler assigns per resource and
+publishes in the join table. Vector-tile feature ids must be integers, and
+MapLibre's `feature-state` needs one, so it is part of the contract rather
+than an encoder detail: the same area keeps the same `id` for the life of the
+resource.
+
+Values arrive separately, from
+`/v1/map-resources/{geography}/{release}/join/{measure-id}?period=`, as a
+compact table of `id`, `code` and value under the usual envelope. The client
+joins in the renderer. This is the whole point of the design:
+
+- one tileset serves every measure, so tiles are compiled once per release;
+- a corrected value invalidates a small join table, not a tile pyramid;
+- the join table is the same shape whatever the measure, so a customer's
+  renderer or warehouse code is written once.
+
+**The join is by code, and never by conversion.** A join is legal only when
+the measure's source geography and boundary year resolve to the codes this
+geometry release publishes. Where they differ the request is refused with
+`incompatible_geometry` (422), naming the measure's source geography, the
+geometry release and the `/v1/measures/{measure-id}/compatibility` evidence.
+The code is the one `/v1/data/{measure-id}` already returns when a caller
+asks for a release that does not hold every source code; a map resource
+applies the same rule to the shapes. To map a measure published on
+another geography, call `/v1/data/{measure-id}/convert` first and map its
+result as the resource it declares. The map layer performs no conversion; a
+drawn shape must never imply a value was moved between geographies.
+
+### Topology tiers
+
+The generalisation already served by
+`GET /v1/areas/{geography}/{release}/{code}/geometry?tier=` simplifies one
+area in isolation. That is correct for a feature query and wrong for a map:
+two neighbours simplified independently diverge along the border they share,
+leaving visible cracks and overlaps.
+
+A map resource is therefore compiled from a **shared-arc decomposition**. The
+release's boundaries are split into arcs, each arc simplified once, and every
+area rebuilt from the simplified arcs. Two areas that shared a border before
+simplification share the identical coordinate sequence after it, at every
+tier, by construction rather than by tolerance.
+
+The tier names and their tolerances are the same ladder as the per-area route
+(`full`, `high`, `medium`, `low`), because the thresholds are the same
+metres. The compiler is not. So:
+
+- every geometry response declares its `topology`, `per-feature` from the
+  per-area route and `shared-arc` from a map resource;
+- the two are not interchangeable. A shape taken from one must not be drawn
+  against a shape taken from the other, and the descriptor says so.
+
+Tiles do not take a tier. A tile pyramid generalises per zoom level, and the
+descriptor publishes the zoom-to-tolerance table it used. Tiers appear only on
+the flat `features` form, where the caller picks the detail it wants.
+
+Two obligations fall on the compiler, both testable:
+
+- **Shared edges.** For every pair of areas adjacent in the release, the arc
+  they share is coordinate-identical in both features, at every published tier
+  and every published zoom. This is P1 item 10's release gate.
+- **No silent disappearance.** Every area in the release appears in every
+  tier, as a valid, non-empty geometry. Where a tier would erase an area or
+  one of its parts, the compiler keeps that part at the finest tolerance that
+  survives and records it in the descriptor. A map that quietly loses the
+  Isles of Scilly is a wrong map, not a generalised one.
+
+### Attribution
+
+A map resource carries the same attribution block that `/v1/attribution`
+returns for its boundary release, and a join table adds the blocks for the
+measure's source datasets. Licence names are reproduced as the publisher
+states them and are not interpreted, as everywhere else.
+
+Tiles cannot carry a licence, so the descriptor, the TileJSON `attribution`
+field and the PMTiles archive metadata each carry a ready-to-paste
+attribution string for a map corner. A tile URL handed to a renderer without
+its TileJSON is an incomplete citation, and the descriptor says which string
+to display.
+
+### Caching and release pinning
+
+Two URL forms, with deliberately different cache policy:
+
+- **Pinned**, under `/v1/atlas-releases/{release-id}/map-resources/...`. The
+  bytes can never change, so these are served
+  `Cache-Control: public, max-age=31536000, immutable` and are never
+  revalidated. A production map, a saved analysis and a PMTiles archive all
+  cite this form.
+- **Unpinned**, under `/v1/map-resources/...`. Answers under whichever Atlas
+  release the server has loaded, and keeps the standard
+  `public, max-age=300, must-revalidate` with an ETag. This form is for
+  discovery: it tells a client which pinned URL to use, and the descriptor it
+  returns names that URL.
+
+Tiles carry the same strong ETag as every other response, the SHA-256 of the
+bytes served, so a CDN and a client revalidate a tile exactly as they
+revalidate JSON.
+
+One exception to the rule that every failure is `application/problem+json`: a
+tile inside the resource's declared zoom range that covers no area returns
+`204 No Content`, cached like the resource. An empty tile is an ordinary
+answer for a renderer, not an error. A tile outside the declared zoom range,
+or for an unknown resource, is a `404` problem document as usual.
+
+### Content hashes
+
+The chain from publisher file to drawn pixel must be checkable without
+trusting this API:
+
+- the descriptor records the geometry source's `inputHash`, already held in
+  the geometry source registry, so the publisher file behind the shapes is
+  named;
+- each compiled artifact — the tile pyramid, the PMTiles archive and each
+  flat `features` representation — declares `contentHash` and `bytes`, in the
+  `sha256:` form the export manifest and validation report already use;
+- each tile's ETag is the hash of its own bytes;
+- a join table declares the content hash of the observation artifact it was
+  compiled from, which is the same hash `/v1/exports` publishes.
+
+A client that has fetched a pinned tileset, a join table and the Atlas
+release can therefore prove the three agree, which is what makes a map
+citable.
+
+### Source release and geometry release are different things
+
+The distinction the rest of this API insists on holds here too, and a map is
+where it is easiest to lose:
+
+- the **geometry release** is `{geography}/{release}`: the shapes drawn;
+- the **source geography** is the geography and boundary year the measure's
+  values are published on;
+- the **observation period** is the period those values describe;
+- the **Atlas release** pins all three, and appears in the pinned URL.
+
+A map resource selects geometry. It never selects, converts or reinterprets a
+value. Where the first three cannot be reconciled by code, the join is
+refused rather than approximated.
+
+### Not in this contract
+
+No custom or uploaded geometry. No server-side styling, no raster tiles, no
+legend or classification service. No pre-joined thematic tilesets beyond the
+join table above. No OGC API Tiles representation, which stays deferred until
+a design partner needs it. No asynchronous map exports. Each would be a
+separate contract, and none is required by the correct-map beta.
+
 ## Architecture
 
 The public service should be built from immutable, independently testable
@@ -2238,6 +2428,15 @@ surface area. They follow Phase 0 and Phase 1 only.
 9. **Specify the release-pinned map resource contract:** identity, value join,
    simplification/topology tier, attribution, caching, content hashes and the
    distinction between source and geometry release.
+   *Done.* [Map resource contract](#map-resource-contract) settles all seven
+   and resolves the drift between the two candidate tile shapes the
+   non-binding sections sketched. Nothing in it is served yet; it is what
+   items 10 to 12 build against. The two decisions that most affect those
+   items: a tile carries `code`, `name` and a stable integer feature id only,
+   with values joined in the renderer from a separate table, so one tileset
+   serves every measure; and tiers are compiled from a shared-arc
+   decomposition, so neighbours cannot diverge, which the existing per-area
+   generalisation does not guarantee.
 10. **Build a topology-preserving tile or PMTiles compiler** for one boundary
     release and test that neighbouring features share edges at every published
     map tier.
