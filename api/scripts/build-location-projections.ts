@@ -53,6 +53,15 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 		),
 		readAreaLookup(outputDirectory),
 	);
+	for (const artifact of projections.parentArtifacts) {
+		const outputPath = join(
+			outputDirectory,
+			"location-parent-projections",
+			`${artifact.crosswalkId}.json`,
+		);
+		mkdirSync(dirname(outputPath), { recursive: true });
+		writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
+	}
 	for (const artifact of projections.artifacts) {
 		const outputPath = join(
 			outputDirectory,
@@ -73,6 +82,7 @@ export const buildLocationProjections = (repositoryRoot: string) => {
 	return {
 		inventoryPath,
 		shardCount: projections.artifacts.length,
+		parentShardCount: projections.parentArtifacts.length,
 		count: projections.artifacts.reduce(
 			(total, artifact) => total + artifact.projections.length,
 			0,
@@ -85,6 +95,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildLocationProjections(repositoryRoot);
 	console.log(
-		`Wrote ${result.count} location projections in ${result.shardCount} shards to ${result.inventoryPath}`,
+		`Wrote ${result.count} location projections in ${result.shardCount} shards, and parents in ${result.parentShardCount} shards, to ${result.inventoryPath}`,
 	);
 }

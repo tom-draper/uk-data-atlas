@@ -2,7 +2,9 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { reconcileMembers } from "./memberReconciliation";
 import {
+	COVERS_MINIMUM_SHARE,
 	crosswalksTo,
+	memberReach,
 	membersThroughCrosswalk,
 	membershipKindFor,
 } from "./locationMembership";
@@ -191,6 +193,7 @@ export const handleLocationRoutes = ({
 							id: `${projection.parentGeography}/${projection.parentBoundaryRelease}/${member.throughCode}`,
 							code: member.throughCode,
 						},
+						relation: member.relation,
 						...(member.weight === undefined
 							? {}
 							: { weight: member.weight }),
@@ -199,6 +202,7 @@ export const handleLocationRoutes = ({
 					partialMembers: projection.partialMembers,
 					parentGeography: projection.parentGeography,
 					parentBoundaryRelease: projection.parentBoundaryRelease,
+					reach: projection.reach,
 					coverage: projection.coverage,
 				}),
 			};
@@ -230,17 +234,18 @@ export const handleLocationRoutes = ({
 					from: crosswalk.from,
 					to: crosswalk.to,
 					contentHash: summary.contentHash,
-					},
-					members: traversed.map((member) => ({
-						id: `${geography}/${boundaryRelease}/${member.code}`,
-						...(areas.get(member.code) ?? {
-							name: member.labels[0] ?? member.code,
-						}),
-						code: member.code,
+				},
+				members: traversed.map((member) => ({
+					id: `${geography}/${boundaryRelease}/${member.code}`,
+					...(areas.get(member.code) ?? {
+						name: member.labels[0] ?? member.code,
+					}),
+					code: member.code,
 					through: {
 						id: `${MEMBER_GEOGRAPHY}/${parentRelease}/${member.throughCode}`,
 						code: member.throughCode,
 					},
+					relation: member.relation,
 					...(member.weight === undefined
 						? {}
 						: { weight: member.weight }),
@@ -250,6 +255,7 @@ export const handleLocationRoutes = ({
 					.length,
 				parentGeography: MEMBER_GEOGRAPHY,
 				parentBoundaryRelease: parentRelease,
+				reach: memberReach(crosswalk, parentCodes),
 				coverage: reconcileMembers(
 					areaLookup,
 					MEMBER_GEOGRAPHY,
@@ -260,5 +266,128 @@ export const handleLocationRoutes = ({
 			}),
 		};
 	}
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "locations" &&
+		segments[3] === "parents"
+	)
+		return locationParents({ context, releaseId, parsedUrl, segments });
 	return undefined;
+};
+
+const RELATION_RULE = `A parent is covered when the location takes in all of it: for a containment lookup, every area the publisher places in the parent is a member; for an area-overlap crosswalk, the members cover at least ${COVERS_MINIMUM_SHARE} of its area. Otherwise the location only intersects it. locationWithin names the single parent holding every member, and is null when members fall in several parents or any is placed in none.`;
+
+/**
+ * The areas of a coarser geography a named location lies in, covers or meets,
+ * read from projections compiled over a crosswalk out of its member geography.
+ */
+const locationParents = ({
+	context,
+	releaseId,
+	parsedUrl,
+	segments,
+}: Pick<
+	RouteRequest,
+	"context" | "releaseId" | "parsedUrl" | "segments"
+>): ApiResponse => {
+	const { geographyResolver, areaLookup } = context;
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before resolving a location's parents.",
+		);
+	const location = geographyResolver.namedLocation(segments[2]!);
+	if (!location)
+		return problem(
+			404,
+			"Not Found",
+			"No named location matches that identity.",
+		);
+	const geography = parsedUrl.searchParams.get("geography");
+	const boundaryRelease = parsedUrl.searchParams.get("release");
+	if (!geography || !boundaryRelease)
+		return problem(
+			400,
+			"Invalid Query",
+			"geography and release are required to find the areas a location lies in.",
+		);
+	const candidates = geographyResolver.locationParentCrosswalks(
+		geography,
+		boundaryRelease,
+	);
+	const requested = parsedUrl.searchParams.get("via");
+	if (!requested)
+		return problem(
+			400,
+			"Invalid Query",
+			candidates.length === 0
+				? `No published crosswalk runs from ${MEMBER_GEOGRAPHY} to ${geography}/${boundaryRelease}, so a location's parents there cannot be resolved.`
+				: `Name the crosswalk to resolve parents through, with via=. Published for ${geography}/${boundaryRelease}: ${candidates.map((candidate) => candidate.crosswalkId).join("; ")}.`,
+		);
+	const projection = candidates.some(
+		(candidate) => candidate.crosswalkId === requested,
+	)
+		? geographyResolver.locationParents(location.id, requested)
+		: undefined;
+	if (!projection)
+		return problem(
+			404,
+			"Not Found",
+			`No published crosswalk ${requested} runs from ${MEMBER_GEOGRAPHY} to ${geography}/${boundaryRelease}.`,
+		);
+	const parentAreas = areaLookup?.get(`${geography}/${boundaryRelease}`);
+	const memberAreas = areaLookup?.get(
+		`${projection.memberGeography}/${projection.memberBoundaryRelease}`,
+	);
+	const parentId = (code: string) =>
+		`${geography}/${boundaryRelease}/${code}`;
+	const memberId = (code: string) =>
+		`${projection.memberGeography}/${projection.memberBoundaryRelease}/${code}`;
+	return {
+		status: 200,
+		body: envelope(releaseId, {
+			location,
+			geography,
+			boundaryRelease,
+			via: projection.via,
+			memberGeography: projection.memberGeography,
+			memberBoundaryRelease: projection.memberBoundaryRelease,
+			relationRule: RELATION_RULE,
+			locationWithin:
+				projection.locationWithin === null
+					? null
+					: {
+							id: parentId(projection.locationWithin),
+							code: projection.locationWithin,
+							name:
+								parentAreas?.get(projection.locationWithin)
+									?.name ?? projection.parents[0]?.labels[0],
+						},
+			parents: projection.parents.map((parent) => ({
+				id: parentId(parent.code),
+				code: parent.code,
+				name: parentAreas?.get(parent.code)?.name ?? parent.labels[0],
+				relation: parent.relation,
+				members: parent.memberCodes.map((code) => ({
+					id: memberId(code),
+					code,
+					name: memberAreas?.get(code)?.name ?? code,
+				})),
+				...(parent.parentMemberCount === undefined
+					? {}
+					: { parentMemberCount: parent.parentMemberCount }),
+				...(parent.coveredShare === undefined
+					? {}
+					: { coveredShare: parent.coveredShare }),
+			})),
+			unplaced: projection.unplaced.map((code) => ({
+				id: memberId(code),
+				code,
+				name: memberAreas?.get(code)?.name ?? code,
+			})),
+			coverage: projection.coverage,
+		}),
+	};
 };

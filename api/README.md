@@ -177,11 +177,12 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Find published conversion paths between two area identities and rank
       them by source authority and exactness; support small, declared multi-step
       crosswalk composition without hiding intermediate mappings.
-- [ ] Compile approved relationship paths and named-location projections, so a
-      request such as Greater Manchester → wards or North Wales →
-      constituencies is an indexed read of a published result, not a runtime
-      graph walk or polygon calculation. Every result must retain its complete
-      path, membership meaning and coverage.
+- [x] Compile named-location projections, so a request such as Greater
+      Manchester → wards or North Wales → constituencies is an indexed read of
+      a published result, not a runtime graph walk or polygon calculation.
+      Every location is projected through every crosswalk into local
+      authorities, and through every crosswalk out of them, and each result
+      keeps its path, membership meaning, reach and coverage.
 - [x] Return explicit absence states. Every area route answers an unresolved
       identity with a `code` and `absence`: an unpublished geography or
       release, identities not compiled, or a code that is `superseded`,
@@ -224,7 +225,23 @@ only **available** when its endpoint, contract and provenance are published.
       and Widnes and Halewood at 0.466, both of which reach into Lancashire and
       Cheshire. Shares in two members of the same location add, so an area
       split between them is whole rather than partial. Each member names the
-      authority it was found through.
+      authority it was found through, and its `relation`: `within`, or
+      `partly-within` where only its weight lies inside.
+
+
+      `reach` names any of the location's authorities the crosswalk places no
+      area under, so Glasgow's LSOAs come back empty with its authority listed
+      as unreached, rather than as an empty answer that looks complete.
+- [x] Find the regions, counties, combined authorities or countries a named
+      location lies in through
+      `GET /v1/locations/{id}/parents?geography=&release=&via=`. Each parent is
+      `covers` or `intersects`: by count through a containment or membership
+      lookup, and by area through an overlap crosswalk, where 0.99 of the
+      parent's area counts as cover. Greater Manchester covers its combined
+      authority and lies within it; it meets the North West, of whose area it
+      is 9%. `locationWithin` names the one parent holding every member, and
+      members a lookup places in no parent, such as London's boroughs against
+      combined authorities, are listed as `unplaced`.
 - [ ] Return a named location's boundary, bounding box and optional union
       geometry.
 - [ ] Compare location definitions and membership across releases.
@@ -3121,6 +3138,7 @@ second inventory to maintain:
 - `GET /v1/locations` — List the curated area collections
 - `GET /v1/locations/{location-id}` — Get one curated area collection's definition
 - `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
+- `GET /v1/locations/{location-id}/parents` — Find the areas of a coarser geography a named location covers or meets
 
 **Data catalogue**
 
@@ -3198,6 +3216,7 @@ catalogues by the contract tests:
 - `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
+- `GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`

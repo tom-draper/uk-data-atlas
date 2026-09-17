@@ -5,9 +5,14 @@ import type {
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import {
+	isParentCrosswalk,
+	memberReach,
 	membersThroughCrosswalk,
 	membershipKindFor,
+	parentsThroughCrosswalk,
+	type MemberReach,
 	type MembershipKind,
+	type ParentProjection,
 	type TraversedMember,
 } from "./locationMembership";
 import { reconcileMembers, type MemberCoverage } from "./memberReconciliation";
@@ -31,6 +36,20 @@ export type LocationProjection = {
 	partialMembers: number;
 	parentGeography: string;
 	parentBoundaryRelease: string;
+	reach: MemberReach;
+	coverage: MemberCoverage;
+};
+
+type ProjectionVia = LocationProjection["via"];
+
+/** A location seen from a coarser geography: which parents it covers or meets. */
+export type LocationParentProjection = ParentProjection & {
+	locationId: string;
+	geography: string;
+	boundaryRelease: string;
+	via: ProjectionVia;
+	memberGeography: string;
+	memberBoundaryRelease: string;
 	coverage: MemberCoverage;
 };
 
@@ -47,6 +66,24 @@ export type LocationProjectionInventory = {
 		artifact: string;
 		contentHash: string;
 	}>;
+	/** One shard per crosswalk from the member geography to a coarser one. */
+	parentShards: Array<{
+		crosswalkId: string;
+		geography: string;
+		boundaryRelease: string;
+		recordCount: number;
+		artifact: string;
+		contentHash: string;
+	}>;
+};
+
+export type LocationParentProjectionArtifact = {
+	schemaVersion: 1;
+	contentHash: string;
+	namedLocationInventoryHash: string;
+	crosswalkInventoryHash: string;
+	crosswalkId: string;
+	parentProjections: LocationParentProjection[];
 };
 
 export type LocationProjectionArtifact = {
@@ -82,7 +119,6 @@ const compileLocationProjectionArtifact = (
 	crosswalk: CrosswalkArtifact,
 	areaLookup: AreaLookup,
 	memberGeography = "localAuthority",
-
 ): LocationProjectionArtifact | undefined => {
 	if (crosswalk.to.geography !== memberGeography) return undefined;
 	const parents = areaLookup.get(
@@ -114,9 +150,11 @@ const compileLocationProjectionArtifact = (
 					contentHash: summary.contentHash,
 				},
 				members,
-				partialMembers: members.filter((member) => member.partial).length,
+				partialMembers: members.filter((member) => member.partial)
+					.length,
 				parentGeography: memberGeography,
 				parentBoundaryRelease: crosswalk.to.boundaryRelease,
+				reach: memberReach(crosswalk, parentCodes),
 				coverage: reconcileMembers(
 					areaLookup,
 					memberGeography,
@@ -159,6 +197,85 @@ const compileLocationProjectionArtifact = (
 	};
 };
 
+const viaFor = (
+	summary: CrosswalkInventory["crosswalks"][number],
+	crosswalk: CrosswalkArtifact,
+): ProjectionVia => ({
+	id: crosswalk.id,
+	method: crosswalk.method,
+	quality: crosswalk.quality,
+	weighting: crosswalk.weighting,
+	from: crosswalk.from,
+	to: crosswalk.to,
+	contentHash: summary.contentHash,
+});
+
+/**
+ * Materialise, for every location, the parents a crosswalk out of the member
+ * geography places its members in, and whether it covers each.
+ */
+const compileLocationParentArtifact = (
+	namedLocations: NamedLocationInventory,
+	crosswalkInventoryHash: string,
+	summary: CrosswalkInventory["crosswalks"][number],
+	crosswalk: CrosswalkArtifact,
+	areaLookup: AreaLookup,
+	memberGeography: string,
+): LocationParentProjectionArtifact | undefined => {
+	if (
+		crosswalk.from.geography !== memberGeography ||
+		crosswalk.to.geography === memberGeography ||
+		!isParentCrosswalk(crosswalk)
+	)
+		return undefined;
+	const members = areaLookup.get(
+		`${memberGeography}/${crosswalk.from.boundaryRelease}`,
+	);
+	if (!members) {
+		throw new Error(
+			`${crosswalk.id}: cannot materialise location parents because ${memberGeography}/${crosswalk.from.boundaryRelease} has no compiled areas.`,
+		);
+	}
+	const parentProjections = namedLocations.locations
+		.map((location): LocationParentProjection => {
+			const memberCodes = new Set(
+				location.memberCodes.filter((code) => members.has(code)),
+			);
+			return {
+				locationId: location.id,
+				geography: crosswalk.to.geography,
+				boundaryRelease: crosswalk.to.boundaryRelease,
+				via: viaFor(summary, crosswalk),
+				memberGeography,
+				memberBoundaryRelease: crosswalk.from.boundaryRelease,
+				...parentsThroughCrosswalk(crosswalk, memberCodes),
+				coverage: reconcileMembers(
+					areaLookup,
+					memberGeography,
+					crosswalk.from.boundaryRelease,
+					location.memberCodes,
+					memberCodes,
+				),
+			};
+		})
+		.sort((left, right) => left.locationId.localeCompare(right.locationId));
+	const content = JSON.stringify({
+		schemaVersion: 1,
+		namedLocationInventoryHash: namedLocations.contentHash,
+		crosswalkInventoryHash,
+		crosswalkId: crosswalk.id,
+		parentProjections,
+	});
+	return {
+		schemaVersion: 1,
+		contentHash: sha256(content),
+		namedLocationInventoryHash: namedLocations.contentHash,
+		crosswalkInventoryHash,
+		crosswalkId: crosswalk.id,
+		parentProjections,
+	};
+};
+
 /** Compiles one shard per crosswalk, avoiding a monolithic location matrix. */
 export const compileLocationProjections = (
 	namedLocations: NamedLocationInventory,
@@ -186,7 +303,8 @@ export const compileLocationProjections = (
 	const shards = artifacts
 		.map((artifact) => {
 			const first = artifact.projections[0];
-			if (!first) throw new Error(`${artifact.crosswalkId}: no projections.`);
+			if (!first)
+				throw new Error(`${artifact.crosswalkId}: no projections.`);
 			return {
 				crosswalkId: artifact.crosswalkId,
 				geography: first.geography,
@@ -196,12 +314,45 @@ export const compileLocationProjections = (
 				contentHash: artifact.contentHash,
 			};
 		})
-		.sort((left, right) => left.crosswalkId.localeCompare(right.crosswalkId));
+		.sort((left, right) =>
+			left.crosswalkId.localeCompare(right.crosswalkId),
+		);
+	const parentArtifacts = crosswalkInventory.crosswalks.flatMap((summary) => {
+		const crosswalk = crosswalkById.get(summary.id);
+		if (!crosswalk) return [];
+		const artifact = compileLocationParentArtifact(
+			namedLocations,
+			crosswalkInventory.contentHash,
+			summary,
+			crosswalk,
+			areaLookup,
+			memberGeography,
+		);
+		return artifact ? [artifact] : [];
+	});
+	const parentShards = parentArtifacts
+		.map((artifact) => {
+			const first = artifact.parentProjections[0];
+			if (!first)
+				throw new Error(`${artifact.crosswalkId}: no projections.`);
+			return {
+				crosswalkId: artifact.crosswalkId,
+				geography: first.geography,
+				boundaryRelease: first.boundaryRelease,
+				recordCount: artifact.parentProjections.length,
+				artifact: `location-parent-projections/${artifact.crosswalkId}.json`,
+				contentHash: artifact.contentHash,
+			};
+		})
+		.sort((left, right) =>
+			left.crosswalkId.localeCompare(right.crosswalkId),
+		);
 	const content = JSON.stringify({
 		schemaVersion: 1,
 		namedLocationInventoryHash: namedLocations.contentHash,
 		crosswalkInventoryHash: crosswalkInventory.contentHash,
 		shards,
+		parentShards,
 	});
 	return {
 		inventory: {
@@ -210,8 +361,10 @@ export const compileLocationProjections = (
 			namedLocationInventoryHash: namedLocations.contentHash,
 			crosswalkInventoryHash: crosswalkInventory.contentHash,
 			shards,
+			parentShards,
 		},
 		artifacts,
+		parentArtifacts,
 	};
 };
 
@@ -236,14 +389,62 @@ export class LocationProjectionStore {
 		LocationProjectionInventory["shards"][number]
 	>();
 	private readonly lookups = new Map<string, LocationProjectionLookup>();
+	private readonly parentShards = new Map<
+		string,
+		LocationProjectionInventory["parentShards"][number]
+	>();
+	private readonly parentLookups = new Map<
+		string,
+		Map<string, LocationParentProjection>
+	>();
 
 	constructor(
 		inventory: LocationProjectionInventory,
 		private readonly load: (
 			shard: LocationProjectionInventory["shards"][number],
 		) => LocationProjectionArtifact,
+		private readonly loadParents?: (
+			shard: LocationProjectionInventory["parentShards"][number],
+		) => LocationParentProjectionArtifact,
 	) {
-		for (const shard of inventory.shards) this.shards.set(shard.crosswalkId, shard);
+		for (const shard of inventory.shards)
+			this.shards.set(shard.crosswalkId, shard);
+		for (const shard of inventory.parentShards ?? [])
+			this.parentShards.set(shard.crosswalkId, shard);
+	}
+
+	/** Crosswalks with parent projections into a geography and release. */
+	parentCrosswalks(geography: string, boundaryRelease: string) {
+		return [...this.parentShards.values()].filter(
+			(shard) =>
+				shard.geography === geography &&
+				shard.boundaryRelease === boundaryRelease,
+		);
+	}
+
+	parents(
+		locationId: string,
+		crosswalkId: string,
+	): LocationParentProjection | undefined {
+		const shard = this.parentShards.get(crosswalkId);
+		if (!shard || !this.loadParents) return undefined;
+		let lookup = this.parentLookups.get(crosswalkId);
+		if (!lookup) {
+			const artifact = this.loadParents(shard);
+			if (artifact.contentHash !== shard.contentHash) {
+				throw new Error(
+					`${crosswalkId}: location parent projection hash mismatch.`,
+				);
+			}
+			lookup = new Map(
+				artifact.parentProjections.map((projection) => [
+					projection.locationId,
+					projection,
+				]),
+			);
+			this.parentLookups.set(crosswalkId, lookup);
+		}
+		return lookup.get(locationId);
 	}
 
 	get(
@@ -263,13 +464,20 @@ export class LocationProjectionStore {
 		if (!lookup) {
 			const artifact = this.load(shard);
 			if (artifact.contentHash !== shard.contentHash) {
-				throw new Error(`${crosswalkId}: location projection hash mismatch.`);
+				throw new Error(
+					`${crosswalkId}: location projection hash mismatch.`,
+				);
 			}
 			lookup = createLocationProjectionLookup(artifact);
 			this.lookups.set(crosswalkId, lookup);
 		}
 		return lookup.get(
-			locationProjectionKey(locationId, geography, boundaryRelease, crosswalkId),
+			locationProjectionKey(
+				locationId,
+				geography,
+				boundaryRelease,
+				crosswalkId,
+			),
 		);
 	}
 }

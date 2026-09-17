@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
 	crosswalksTo,
+	isParentCrosswalk,
+	memberReach,
 	membersThroughCrosswalk,
 	membershipKindFor,
+	parentsThroughCrosswalk,
 } from "../src/locationMembership";
 import type {
 	CrosswalkArtifact,
@@ -187,6 +190,9 @@ test("marks an overlapping area partial and reports the share inside", () => {
 	// Wholly inside one member.
 	assert.equal(byCode.get("C1")!.weight, 1);
 	assert.equal(byCode.get("C1")!.partial, undefined);
+	assert.equal(byCode.get("C1")!.relation, "within");
+	assert.equal(byCode.get("C2")!.relation, "partly-within");
+	assert.equal(byCode.get("C3")!.relation, "within");
 
 	// Straddles the edge: only the share inside is reported, and it is flagged.
 	assert.equal(byCode.get("C2")!.weight, 0.4);
@@ -215,4 +221,125 @@ test("finds nothing for a location no member of which appears", () => {
 		[],
 	);
 	assert.deepEqual(membersThroughCrosswalk(containment, new Set()), []);
+});
+
+test("names the members a crosswalk places no area under", () => {
+	assert.deepEqual(memberReach(containment, new Set(["LA1", "LA7"])), {
+		memberCount: 2,
+		reachedCount: 1,
+		unreached: ["LA7"],
+		complete: false,
+	});
+});
+
+// Authorities placed in regions: R1 holds LA1 and LA2, R2 holds LA3.
+const toRegion = {
+	...containment,
+	id: "lad-to-region",
+	from: { geography: "localAuthority", boundaryRelease: "2023-lad" },
+	to: { geography: "region", boundaryRelease: "2023" },
+	records: [
+		{
+			source: { code: "LA1", labels: ["One"] },
+			targets: [{ code: "R1", labels: ["Region one"] }],
+		},
+		{
+			source: { code: "LA2", labels: ["Two"] },
+			targets: [{ code: "R1", labels: ["Region one"] }],
+		},
+		{
+			source: { code: "LA3", labels: ["Three"] },
+			targets: [{ code: "R2", labels: ["Region two"] }],
+		},
+	],
+} as unknown as CrosswalkArtifact;
+
+test("says whether a location covers each parent or only meets it", () => {
+	const part = parentsThroughCrosswalk(toRegion, new Set(["LA1"]));
+	assert.deepEqual(part, {
+		parents: [
+			{
+				code: "R1",
+				labels: ["Region one"],
+				relation: "intersects",
+				memberCodes: ["LA1"],
+				parentMemberCount: 2,
+			},
+		],
+		locationWithin: "R1",
+		unplaced: [],
+	});
+
+	const whole = parentsThroughCrosswalk(
+		toRegion,
+		new Set(["LA1", "LA2", "LA3"]),
+	);
+	assert.deepEqual(
+		whole.parents.map(({ code, relation }) => [code, relation]),
+		[
+			["R1", "covers"],
+			["R2", "covers"],
+		],
+	);
+	// Spread over two parents, so within neither.
+	assert.equal(whole.locationWithin, null);
+
+	// A member the lookup places nowhere keeps the location out of any one
+	// parent, even though every placed member shares it.
+	const unplaced = parentsThroughCrosswalk(toRegion, new Set(["LA1", "LA9"]));
+	assert.equal(unplaced.locationWithin, null);
+	assert.deepEqual(unplaced.unplaced, ["LA9"]);
+});
+
+test("judges cover of a parent by area share for an overlap crosswalk", () => {
+	const toRegion = (second: number) =>
+		({
+			...overlap,
+			id: "lad-to-region-overlap",
+			from: { geography: "localAuthority", boundaryRelease: "2024-lad" },
+			to: { geography: "region", boundaryRelease: "2024" },
+			records: [
+				{
+					source: { code: "LA1", labels: ["One"] },
+					targets: [{ ...overlapTarget("R1", 1), targetShare: 0.7 }],
+				},
+				{
+					source: { code: "LA2", labels: ["Two"] },
+					targets: [
+						{ ...overlapTarget("R1", 1), targetShare: second },
+					],
+				},
+			],
+		}) as unknown as CrosswalkArtifact;
+	const members = new Set(["LA1", "LA2"]);
+
+	const short = parentsThroughCrosswalk(toRegion(0.28), members);
+	assert.equal(short.parents[0]!.relation, "intersects");
+	assert.equal(short.parents[0]!.coveredShare, 0.98);
+	assert.equal(short.parents[0]!.parentMemberCount, undefined);
+	// Both members lie wholly in the region, so the location is within it.
+	assert.equal(short.locationWithin, "R1");
+
+	const whole = parentsThroughCrosswalk(toRegion(0.295), members);
+	assert.equal(whole.parents[0]!.relation, "covers");
+	assert.equal(whole.parents[0]!.coveredShare, 0.995);
+});
+
+test("reads only belonging crosswalks as leading to parents", () => {
+	assert.equal(isParentCrosswalk(containment), true);
+	assert.equal(isParentCrosswalk(overlap), true);
+	assert.equal(
+		isParentCrosswalk({
+			method: "official-lookup",
+			relationshipPurpose: "identity",
+		}),
+		false,
+	);
+	assert.equal(
+		isParentCrosswalk({
+			method: "official-lookup",
+			relationshipPurpose: "membership",
+		}),
+		true,
+	);
 });

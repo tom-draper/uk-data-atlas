@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:8ca1b29debdf14e8a998d2bcbde155a33e41de2ce944c8c9d50cb417f307ed0e",
+	"contentHash": "sha256:6b19506db2b5911ceeda7123940715434a37c3dbb7a844e27eae6461fb6dc0e2",
 	"namedLocationInventoryHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149",
 	"crosswalkInventoryHash": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 	"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
@@ -33,12 +33,19 @@
 					"labels": [
 						"Aberdeen City"
 					],
-					"throughCode": "S12000033"
+					"throughCode": "S12000033",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -80,12 +87,19 @@
 						"Ceredigion",
 						"Ceredigion"
 					],
-					"throughCode": "W06000008"
+					"throughCode": "W06000008",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -126,19 +140,27 @@
 					"labels": [
 						"Armagh City, Banbridge and Craigavon"
 					],
-					"throughCode": "N09000002"
+					"throughCode": "N09000002",
+					"relation": "within"
 				},
 				{
 					"code": "N09000010",
 					"labels": [
 						"Newry, Mourne and Down"
 					],
-					"throughCode": "N09000010"
+					"throughCode": "N09000010",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 2,
+				"reachedCount": 2,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 2,
@@ -180,12 +202,19 @@
 						"Isle of Anglesey",
 						"Ynys Môn"
 					],
-					"throughCode": "W06000001"
+					"throughCode": "W06000001",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -226,12 +255,19 @@
 					"labels": [
 						"Barnsley"
 					],
-					"throughCode": "E08000016"
+					"throughCode": "E08000016",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 1,
@@ -283,12 +319,19 @@
 					"labels": [
 						"Basingstoke and Deane"
 					],
-					"throughCode": "E07000084"
+					"throughCode": "E07000084",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -329,12 +372,19 @@
 					"labels": [
 						"Bath and North East Somerset"
 					],
-					"throughCode": "E06000022"
+					"throughCode": "E06000022",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -375,33 +425,43 @@
 					"labels": [
 						"Antrim and Newtownabbey"
 					],
-					"throughCode": "N09000001"
+					"throughCode": "N09000001",
+					"relation": "within"
 				},
 				{
 					"code": "N09000003",
 					"labels": [
 						"Belfast"
 					],
-					"throughCode": "N09000003"
+					"throughCode": "N09000003",
+					"relation": "within"
 				},
 				{
 					"code": "N09000007",
 					"labels": [
 						"Lisburn and Castlereagh"
 					],
-					"throughCode": "N09000007"
+					"throughCode": "N09000007",
+					"relation": "within"
 				},
 				{
 					"code": "N09000011",
 					"labels": [
 						"Ards and North Down"
 					],
-					"throughCode": "N09000011"
+					"throughCode": "N09000011",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 4,
+				"reachedCount": 4,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 4,
 				"resolvedCount": 4,
@@ -442,12 +502,19 @@
 					"labels": [
 						"Belfast"
 					],
-					"throughCode": "N09000003"
+					"throughCode": "N09000003",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -488,12 +555,19 @@
 					"labels": [
 						"Birmingham"
 					],
-					"throughCode": "E08000025"
+					"throughCode": "E08000025",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -534,12 +608,19 @@
 					"labels": [
 						"Blackburn with Darwen"
 					],
-					"throughCode": "E06000008"
+					"throughCode": "E06000008",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -580,12 +661,19 @@
 					"labels": [
 						"Blackpool"
 					],
-					"throughCode": "E06000009"
+					"throughCode": "E06000009",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -626,12 +714,19 @@
 					"labels": [
 						"Bolton"
 					],
-					"throughCode": "E08000001"
+					"throughCode": "E08000001",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -672,12 +767,19 @@
 					"labels": [
 						"Bournemouth, Christchurch and Poole"
 					],
-					"throughCode": "E06000058"
+					"throughCode": "E06000058",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -718,12 +820,19 @@
 					"labels": [
 						"Bradford"
 					],
-					"throughCode": "E08000032"
+					"throughCode": "E08000032",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -764,12 +873,19 @@
 					"labels": [
 						"Brighton and Hove"
 					],
-					"throughCode": "E06000043"
+					"throughCode": "E06000043",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -810,12 +926,19 @@
 					"labels": [
 						"Bristol, City of"
 					],
-					"throughCode": "E06000023"
+					"throughCode": "E06000023",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -856,12 +979,19 @@
 					"labels": [
 						"Buckinghamshire"
 					],
-					"throughCode": "E06000060"
+					"throughCode": "E06000060",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 5,
 				"resolvedCount": 1,
@@ -943,12 +1073,19 @@
 					"labels": [
 						"Cambridge"
 					],
-					"throughCode": "E07000008"
+					"throughCode": "E07000008",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -989,12 +1126,19 @@
 					"labels": [
 						"Canterbury"
 					],
-					"throughCode": "E07000106"
+					"throughCode": "E07000106",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1036,7 +1180,8 @@
 						"Caerdydd",
 						"Cardiff"
 					],
-					"throughCode": "W06000015"
+					"throughCode": "W06000015",
+					"relation": "within"
 				},
 				{
 					"code": "W06000016",
@@ -1044,7 +1189,8 @@
 						"Rhondda Cynon Taf",
 						"Rhondda Cynon Taf"
 					],
-					"throughCode": "W06000016"
+					"throughCode": "W06000016",
+					"relation": "within"
 				},
 				{
 					"code": "W06000018",
@@ -1052,7 +1198,8 @@
 						"Caerffili",
 						"Caerphilly"
 					],
-					"throughCode": "W06000018"
+					"throughCode": "W06000018",
+					"relation": "within"
 				},
 				{
 					"code": "W06000019",
@@ -1060,7 +1207,8 @@
 						"Blaenau Gwent",
 						"Blaenau Gwent"
 					],
-					"throughCode": "W06000019"
+					"throughCode": "W06000019",
+					"relation": "within"
 				},
 				{
 					"code": "W06000020",
@@ -1068,7 +1216,8 @@
 						"Torfaen",
 						"Torfaen"
 					],
-					"throughCode": "W06000020"
+					"throughCode": "W06000020",
+					"relation": "within"
 				},
 				{
 					"code": "W06000021",
@@ -1076,7 +1225,8 @@
 						"Monmouthshire",
 						"Sir Fynwy"
 					],
-					"throughCode": "W06000021"
+					"throughCode": "W06000021",
+					"relation": "within"
 				},
 				{
 					"code": "W06000022",
@@ -1084,12 +1234,19 @@
 						"Casnewydd",
 						"Newport"
 					],
-					"throughCode": "W06000022"
+					"throughCode": "W06000022",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 7,
+				"reachedCount": 7,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 7,
 				"resolvedCount": 7,
@@ -1131,12 +1288,19 @@
 						"Caerdydd",
 						"Cardiff"
 					],
-					"throughCode": "W06000015"
+					"throughCode": "W06000015",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1175,6 +1339,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 0,
@@ -1228,19 +1398,27 @@
 					"labels": [
 						"Causeway Coast and Glens"
 					],
-					"throughCode": "N09000004"
+					"throughCode": "N09000004",
+					"relation": "within"
 				},
 				{
 					"code": "N09000008",
 					"labels": [
 						"Mid and East Antrim"
 					],
-					"throughCode": "N09000008"
+					"throughCode": "N09000008",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 2,
+				"reachedCount": 2,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 2,
@@ -1281,89 +1459,107 @@
 					"labels": [
 						"Clackmannanshire"
 					],
-					"throughCode": "S12000005"
+					"throughCode": "S12000005",
+					"relation": "within"
 				},
 				{
 					"code": "S12000010",
 					"labels": [
 						"East Lothian"
 					],
-					"throughCode": "S12000010"
+					"throughCode": "S12000010",
+					"relation": "within"
 				},
 				{
 					"code": "S12000014",
 					"labels": [
 						"Falkirk"
 					],
-					"throughCode": "S12000014"
+					"throughCode": "S12000014",
+					"relation": "within"
 				},
 				{
 					"code": "S12000019",
 					"labels": [
 						"Midlothian"
 					],
-					"throughCode": "S12000019"
+					"throughCode": "S12000019",
+					"relation": "within"
 				},
 				{
 					"code": "S12000029",
 					"labels": [
 						"South Lanarkshire"
 					],
-					"throughCode": "S12000029"
+					"throughCode": "S12000029",
+					"relation": "within"
 				},
 				{
 					"code": "S12000030",
 					"labels": [
 						"Stirling"
 					],
-					"throughCode": "S12000030"
+					"throughCode": "S12000030",
+					"relation": "within"
 				},
 				{
 					"code": "S12000036",
 					"labels": [
 						"City of Edinburgh"
 					],
-					"throughCode": "S12000036"
+					"throughCode": "S12000036",
+					"relation": "within"
 				},
 				{
 					"code": "S12000039",
 					"labels": [
 						"West Dunbartonshire"
 					],
-					"throughCode": "S12000039"
+					"throughCode": "S12000039",
+					"relation": "within"
 				},
 				{
 					"code": "S12000040",
 					"labels": [
 						"West Lothian"
 					],
-					"throughCode": "S12000040"
+					"throughCode": "S12000040",
+					"relation": "within"
 				},
 				{
 					"code": "S12000045",
 					"labels": [
 						"East Dunbartonshire"
 					],
-					"throughCode": "S12000045"
+					"throughCode": "S12000045",
+					"relation": "within"
 				},
 				{
 					"code": "S12000049",
 					"labels": [
 						"Glasgow City"
 					],
-					"throughCode": "S12000049"
+					"throughCode": "S12000049",
+					"relation": "within"
 				},
 				{
 					"code": "S12000050",
 					"labels": [
 						"North Lanarkshire"
 					],
-					"throughCode": "S12000050"
+					"throughCode": "S12000050",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 12,
+				"reachedCount": 12,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 14,
 				"resolvedCount": 12,
@@ -1423,12 +1619,19 @@
 					"labels": [
 						"Cheltenham"
 					],
-					"throughCode": "E07000078"
+					"throughCode": "E07000078",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1469,33 +1672,43 @@
 					"labels": [
 						"Halton"
 					],
-					"throughCode": "E06000006"
+					"throughCode": "E06000006",
+					"relation": "within"
 				},
 				{
 					"code": "E06000007",
 					"labels": [
 						"Warrington"
 					],
-					"throughCode": "E06000007"
+					"throughCode": "E06000007",
+					"relation": "within"
 				},
 				{
 					"code": "E06000049",
 					"labels": [
 						"Cheshire East"
 					],
-					"throughCode": "E06000049"
+					"throughCode": "E06000049",
+					"relation": "within"
 				},
 				{
 					"code": "E06000050",
 					"labels": [
 						"Cheshire West and Chester"
 					],
-					"throughCode": "E06000050"
+					"throughCode": "E06000050",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 4,
+				"reachedCount": 4,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 4,
 				"resolvedCount": 4,
@@ -1536,12 +1749,19 @@
 					"labels": [
 						"Cheshire West and Chester"
 					],
-					"throughCode": "E06000050"
+					"throughCode": "E06000050",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1582,12 +1802,19 @@
 					"labels": [
 						"Chesterfield"
 					],
-					"throughCode": "E07000034"
+					"throughCode": "E07000034",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1628,12 +1855,19 @@
 					"labels": [
 						"Colchester"
 					],
-					"throughCode": "E07000071"
+					"throughCode": "E07000071",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1674,12 +1908,19 @@
 					"labels": [
 						"Cornwall"
 					],
-					"throughCode": "E06000052"
+					"throughCode": "E06000052",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1720,12 +1961,19 @@
 					"labels": [
 						"Coventry"
 					],
-					"throughCode": "E08000026"
+					"throughCode": "E08000026",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1766,12 +2014,19 @@
 					"labels": [
 						"Crawley"
 					],
-					"throughCode": "E07000226"
+					"throughCode": "E07000226",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1812,12 +2067,19 @@
 					"labels": [
 						"Darlington"
 					],
-					"throughCode": "E06000005"
+					"throughCode": "E06000005",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1858,12 +2120,19 @@
 					"labels": [
 						"Derby"
 					],
-					"throughCode": "E06000015"
+					"throughCode": "E06000015",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -1904,61 +2173,75 @@
 					"labels": [
 						"Derby"
 					],
-					"throughCode": "E06000015"
+					"throughCode": "E06000015",
+					"relation": "within"
 				},
 				{
 					"code": "E07000032",
 					"labels": [
 						"Amber Valley"
 					],
-					"throughCode": "E07000032"
+					"throughCode": "E07000032",
+					"relation": "within"
 				},
 				{
 					"code": "E07000033",
 					"labels": [
 						"Bolsover"
 					],
-					"throughCode": "E07000033"
+					"throughCode": "E07000033",
+					"relation": "within"
 				},
 				{
 					"code": "E07000034",
 					"labels": [
 						"Chesterfield"
 					],
-					"throughCode": "E07000034"
+					"throughCode": "E07000034",
+					"relation": "within"
 				},
 				{
 					"code": "E07000035",
 					"labels": [
 						"Derbyshire Dales"
 					],
-					"throughCode": "E07000035"
+					"throughCode": "E07000035",
+					"relation": "within"
 				},
 				{
 					"code": "E07000036",
 					"labels": [
 						"Erewash"
 					],
-					"throughCode": "E07000036"
+					"throughCode": "E07000036",
+					"relation": "within"
 				},
 				{
 					"code": "E07000037",
 					"labels": [
 						"High Peak"
 					],
-					"throughCode": "E07000037"
+					"throughCode": "E07000037",
+					"relation": "within"
 				},
 				{
 					"code": "E07000038",
 					"labels": [
 						"North East Derbyshire"
 					],
-					"throughCode": "E07000038"
+					"throughCode": "E07000038",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 8,
+				"reachedCount": 8,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 8,
 				"resolvedCount": 8,
@@ -1999,68 +2282,83 @@
 					"labels": [
 						"Cornwall"
 					],
-					"throughCode": "E06000052"
+					"throughCode": "E06000052",
+					"relation": "within"
 				},
 				{
 					"code": "E07000040",
 					"labels": [
 						"East Devon"
 					],
-					"throughCode": "E07000040"
+					"throughCode": "E07000040",
+					"relation": "within"
 				},
 				{
 					"code": "E07000041",
 					"labels": [
 						"Exeter"
 					],
-					"throughCode": "E07000041"
+					"throughCode": "E07000041",
+					"relation": "within"
 				},
 				{
 					"code": "E07000042",
 					"labels": [
 						"Mid Devon"
 					],
-					"throughCode": "E07000042"
+					"throughCode": "E07000042",
+					"relation": "within"
 				},
 				{
 					"code": "E07000043",
 					"labels": [
 						"North Devon"
 					],
-					"throughCode": "E07000043"
+					"throughCode": "E07000043",
+					"relation": "within"
 				},
 				{
 					"code": "E07000044",
 					"labels": [
 						"South Hams"
 					],
-					"throughCode": "E07000044"
+					"throughCode": "E07000044",
+					"relation": "within"
 				},
 				{
 					"code": "E07000045",
 					"labels": [
 						"Teignbridge"
 					],
-					"throughCode": "E07000045"
+					"throughCode": "E07000045",
+					"relation": "within"
 				},
 				{
 					"code": "E07000046",
 					"labels": [
 						"Torridge"
 					],
-					"throughCode": "E07000046"
+					"throughCode": "E07000046",
+					"relation": "within"
 				},
 				{
 					"code": "E07000047",
 					"labels": [
 						"West Devon"
 					],
-					"throughCode": "E07000047"
+					"throughCode": "E07000047",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 9,
+				"reachedCount": 9,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 9,
 				"resolvedCount": 9,
@@ -2101,12 +2399,19 @@
 					"labels": [
 						"Doncaster"
 					],
-					"throughCode": "E08000017"
+					"throughCode": "E08000017",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -2147,19 +2452,27 @@
 					"labels": [
 						"Bournemouth, Christchurch and Poole"
 					],
-					"throughCode": "E06000058"
+					"throughCode": "E06000058",
+					"relation": "within"
 				},
 				{
 					"code": "E06000059",
 					"labels": [
 						"Dorset"
 					],
-					"throughCode": "E06000059"
+					"throughCode": "E06000059",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 2,
+				"reachedCount": 2,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 8,
 				"resolvedCount": 2,
@@ -2255,12 +2568,19 @@
 					"labels": [
 						"Dudley"
 					],
-					"throughCode": "E08000027"
+					"throughCode": "E08000027",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -2301,12 +2621,19 @@
 					"labels": [
 						"Dundee City"
 					],
-					"throughCode": "S12000042"
+					"throughCode": "S12000042",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -2347,12 +2674,19 @@
 					"labels": [
 						"County Durham"
 					],
-					"throughCode": "E06000047"
+					"throughCode": "E06000047",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -2393,250 +2727,291 @@
 					"labels": [
 						"Derby"
 					],
-					"throughCode": "E06000015"
+					"throughCode": "E06000015",
+					"relation": "within"
 				},
 				{
 					"code": "E06000016",
 					"labels": [
 						"Leicester"
 					],
-					"throughCode": "E06000016"
+					"throughCode": "E06000016",
+					"relation": "within"
 				},
 				{
 					"code": "E06000017",
 					"labels": [
 						"Rutland"
 					],
-					"throughCode": "E06000017"
+					"throughCode": "E06000017",
+					"relation": "within"
 				},
 				{
 					"code": "E06000018",
 					"labels": [
 						"Nottingham"
 					],
-					"throughCode": "E06000018"
+					"throughCode": "E06000018",
+					"relation": "within"
 				},
 				{
 					"code": "E06000061",
 					"labels": [
 						"North Northamptonshire"
 					],
-					"throughCode": "E06000061"
+					"throughCode": "E06000061",
+					"relation": "within"
 				},
 				{
 					"code": "E06000062",
 					"labels": [
 						"West Northamptonshire"
 					],
-					"throughCode": "E06000062"
+					"throughCode": "E06000062",
+					"relation": "within"
 				},
 				{
 					"code": "E07000032",
 					"labels": [
 						"Amber Valley"
 					],
-					"throughCode": "E07000032"
+					"throughCode": "E07000032",
+					"relation": "within"
 				},
 				{
 					"code": "E07000033",
 					"labels": [
 						"Bolsover"
 					],
-					"throughCode": "E07000033"
+					"throughCode": "E07000033",
+					"relation": "within"
 				},
 				{
 					"code": "E07000034",
 					"labels": [
 						"Chesterfield"
 					],
-					"throughCode": "E07000034"
+					"throughCode": "E07000034",
+					"relation": "within"
 				},
 				{
 					"code": "E07000035",
 					"labels": [
 						"Derbyshire Dales"
 					],
-					"throughCode": "E07000035"
+					"throughCode": "E07000035",
+					"relation": "within"
 				},
 				{
 					"code": "E07000036",
 					"labels": [
 						"Erewash"
 					],
-					"throughCode": "E07000036"
+					"throughCode": "E07000036",
+					"relation": "within"
 				},
 				{
 					"code": "E07000037",
 					"labels": [
 						"High Peak"
 					],
-					"throughCode": "E07000037"
+					"throughCode": "E07000037",
+					"relation": "within"
 				},
 				{
 					"code": "E07000038",
 					"labels": [
 						"North East Derbyshire"
 					],
-					"throughCode": "E07000038"
+					"throughCode": "E07000038",
+					"relation": "within"
 				},
 				{
 					"code": "E07000039",
 					"labels": [
 						"South Derbyshire"
 					],
-					"throughCode": "E07000039"
+					"throughCode": "E07000039",
+					"relation": "within"
 				},
 				{
 					"code": "E07000129",
 					"labels": [
 						"Blaby"
 					],
-					"throughCode": "E07000129"
+					"throughCode": "E07000129",
+					"relation": "within"
 				},
 				{
 					"code": "E07000130",
 					"labels": [
 						"Charnwood"
 					],
-					"throughCode": "E07000130"
+					"throughCode": "E07000130",
+					"relation": "within"
 				},
 				{
 					"code": "E07000131",
 					"labels": [
 						"Harborough"
 					],
-					"throughCode": "E07000131"
+					"throughCode": "E07000131",
+					"relation": "within"
 				},
 				{
 					"code": "E07000132",
 					"labels": [
 						"Hinckley and Bosworth"
 					],
-					"throughCode": "E07000132"
+					"throughCode": "E07000132",
+					"relation": "within"
 				},
 				{
 					"code": "E07000133",
 					"labels": [
 						"Melton"
 					],
-					"throughCode": "E07000133"
+					"throughCode": "E07000133",
+					"relation": "within"
 				},
 				{
 					"code": "E07000134",
 					"labels": [
 						"North West Leicestershire"
 					],
-					"throughCode": "E07000134"
+					"throughCode": "E07000134",
+					"relation": "within"
 				},
 				{
 					"code": "E07000135",
 					"labels": [
 						"Oadby and Wigston"
 					],
-					"throughCode": "E07000135"
+					"throughCode": "E07000135",
+					"relation": "within"
 				},
 				{
 					"code": "E07000136",
 					"labels": [
 						"Boston"
 					],
-					"throughCode": "E07000136"
+					"throughCode": "E07000136",
+					"relation": "within"
 				},
 				{
 					"code": "E07000137",
 					"labels": [
 						"East Lindsey"
 					],
-					"throughCode": "E07000137"
+					"throughCode": "E07000137",
+					"relation": "within"
 				},
 				{
 					"code": "E07000138",
 					"labels": [
 						"Lincoln"
 					],
-					"throughCode": "E07000138"
+					"throughCode": "E07000138",
+					"relation": "within"
 				},
 				{
 					"code": "E07000139",
 					"labels": [
 						"North Kesteven"
 					],
-					"throughCode": "E07000139"
+					"throughCode": "E07000139",
+					"relation": "within"
 				},
 				{
 					"code": "E07000140",
 					"labels": [
 						"South Holland"
 					],
-					"throughCode": "E07000140"
+					"throughCode": "E07000140",
+					"relation": "within"
 				},
 				{
 					"code": "E07000141",
 					"labels": [
 						"South Kesteven"
 					],
-					"throughCode": "E07000141"
+					"throughCode": "E07000141",
+					"relation": "within"
 				},
 				{
 					"code": "E07000142",
 					"labels": [
 						"West Lindsey"
 					],
-					"throughCode": "E07000142"
+					"throughCode": "E07000142",
+					"relation": "within"
 				},
 				{
 					"code": "E07000170",
 					"labels": [
 						"Ashfield"
 					],
-					"throughCode": "E07000170"
+					"throughCode": "E07000170",
+					"relation": "within"
 				},
 				{
 					"code": "E07000171",
 					"labels": [
 						"Bassetlaw"
 					],
-					"throughCode": "E07000171"
+					"throughCode": "E07000171",
+					"relation": "within"
 				},
 				{
 					"code": "E07000172",
 					"labels": [
 						"Broxtowe"
 					],
-					"throughCode": "E07000172"
+					"throughCode": "E07000172",
+					"relation": "within"
 				},
 				{
 					"code": "E07000173",
 					"labels": [
 						"Gedling"
 					],
-					"throughCode": "E07000173"
+					"throughCode": "E07000173",
+					"relation": "within"
 				},
 				{
 					"code": "E07000174",
 					"labels": [
 						"Mansfield"
 					],
-					"throughCode": "E07000174"
+					"throughCode": "E07000174",
+					"relation": "within"
 				},
 				{
 					"code": "E07000175",
 					"labels": [
 						"Newark and Sherwood"
 					],
-					"throughCode": "E07000175"
+					"throughCode": "E07000175",
+					"relation": "within"
 				},
 				{
 					"code": "E07000176",
 					"labels": [
 						"Rushcliffe"
 					],
-					"throughCode": "E07000176"
+					"throughCode": "E07000176",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 35,
+				"reachedCount": 35,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 42,
 				"resolvedCount": 35,
@@ -2748,320 +3123,371 @@
 					"labels": [
 						"Peterborough"
 					],
-					"throughCode": "E06000031"
+					"throughCode": "E06000031",
+					"relation": "within"
 				},
 				{
 					"code": "E06000032",
 					"labels": [
 						"Luton"
 					],
-					"throughCode": "E06000032"
+					"throughCode": "E06000032",
+					"relation": "within"
 				},
 				{
 					"code": "E06000033",
 					"labels": [
 						"Southend-on-Sea"
 					],
-					"throughCode": "E06000033"
+					"throughCode": "E06000033",
+					"relation": "within"
 				},
 				{
 					"code": "E06000034",
 					"labels": [
 						"Thurrock"
 					],
-					"throughCode": "E06000034"
+					"throughCode": "E06000034",
+					"relation": "within"
 				},
 				{
 					"code": "E06000055",
 					"labels": [
 						"Bedford"
 					],
-					"throughCode": "E06000055"
+					"throughCode": "E06000055",
+					"relation": "within"
 				},
 				{
 					"code": "E06000056",
 					"labels": [
 						"Central Bedfordshire"
 					],
-					"throughCode": "E06000056"
+					"throughCode": "E06000056",
+					"relation": "within"
 				},
 				{
 					"code": "E07000008",
 					"labels": [
 						"Cambridge"
 					],
-					"throughCode": "E07000008"
+					"throughCode": "E07000008",
+					"relation": "within"
 				},
 				{
 					"code": "E07000009",
 					"labels": [
 						"East Cambridgeshire"
 					],
-					"throughCode": "E07000009"
+					"throughCode": "E07000009",
+					"relation": "within"
 				},
 				{
 					"code": "E07000010",
 					"labels": [
 						"Fenland"
 					],
-					"throughCode": "E07000010"
+					"throughCode": "E07000010",
+					"relation": "within"
 				},
 				{
 					"code": "E07000011",
 					"labels": [
 						"Huntingdonshire"
 					],
-					"throughCode": "E07000011"
+					"throughCode": "E07000011",
+					"relation": "within"
 				},
 				{
 					"code": "E07000012",
 					"labels": [
 						"South Cambridgeshire"
 					],
-					"throughCode": "E07000012"
+					"throughCode": "E07000012",
+					"relation": "within"
 				},
 				{
 					"code": "E07000066",
 					"labels": [
 						"Basildon"
 					],
-					"throughCode": "E07000066"
+					"throughCode": "E07000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000067",
 					"labels": [
 						"Braintree"
 					],
-					"throughCode": "E07000067"
+					"throughCode": "E07000067",
+					"relation": "within"
 				},
 				{
 					"code": "E07000068",
 					"labels": [
 						"Brentwood"
 					],
-					"throughCode": "E07000068"
+					"throughCode": "E07000068",
+					"relation": "within"
 				},
 				{
 					"code": "E07000069",
 					"labels": [
 						"Castle Point"
 					],
-					"throughCode": "E07000069"
+					"throughCode": "E07000069",
+					"relation": "within"
 				},
 				{
 					"code": "E07000070",
 					"labels": [
 						"Chelmsford"
 					],
-					"throughCode": "E07000070"
+					"throughCode": "E07000070",
+					"relation": "within"
 				},
 				{
 					"code": "E07000071",
 					"labels": [
 						"Colchester"
 					],
-					"throughCode": "E07000071"
+					"throughCode": "E07000071",
+					"relation": "within"
 				},
 				{
 					"code": "E07000072",
 					"labels": [
 						"Epping Forest"
 					],
-					"throughCode": "E07000072"
+					"throughCode": "E07000072",
+					"relation": "within"
 				},
 				{
 					"code": "E07000073",
 					"labels": [
 						"Harlow"
 					],
-					"throughCode": "E07000073"
+					"throughCode": "E07000073",
+					"relation": "within"
 				},
 				{
 					"code": "E07000074",
 					"labels": [
 						"Maldon"
 					],
-					"throughCode": "E07000074"
+					"throughCode": "E07000074",
+					"relation": "within"
 				},
 				{
 					"code": "E07000075",
 					"labels": [
 						"Rochford"
 					],
-					"throughCode": "E07000075"
+					"throughCode": "E07000075",
+					"relation": "within"
 				},
 				{
 					"code": "E07000076",
 					"labels": [
 						"Tendring"
 					],
-					"throughCode": "E07000076"
+					"throughCode": "E07000076",
+					"relation": "within"
 				},
 				{
 					"code": "E07000077",
 					"labels": [
 						"Uttlesford"
 					],
-					"throughCode": "E07000077"
+					"throughCode": "E07000077",
+					"relation": "within"
 				},
 				{
 					"code": "E07000095",
 					"labels": [
 						"Broxbourne"
 					],
-					"throughCode": "E07000095"
+					"throughCode": "E07000095",
+					"relation": "within"
 				},
 				{
 					"code": "E07000096",
 					"labels": [
 						"Dacorum"
 					],
-					"throughCode": "E07000096"
+					"throughCode": "E07000096",
+					"relation": "within"
 				},
 				{
 					"code": "E07000098",
 					"labels": [
 						"Hertsmere"
 					],
-					"throughCode": "E07000098"
+					"throughCode": "E07000098",
+					"relation": "within"
 				},
 				{
 					"code": "E07000099",
 					"labels": [
 						"North Hertfordshire"
 					],
-					"throughCode": "E07000099"
+					"throughCode": "E07000099",
+					"relation": "within"
 				},
 				{
 					"code": "E07000102",
 					"labels": [
 						"Three Rivers"
 					],
-					"throughCode": "E07000102"
+					"throughCode": "E07000102",
+					"relation": "within"
 				},
 				{
 					"code": "E07000103",
 					"labels": [
 						"Watford"
 					],
-					"throughCode": "E07000103"
+					"throughCode": "E07000103",
+					"relation": "within"
 				},
 				{
 					"code": "E07000143",
 					"labels": [
 						"Breckland"
 					],
-					"throughCode": "E07000143"
+					"throughCode": "E07000143",
+					"relation": "within"
 				},
 				{
 					"code": "E07000144",
 					"labels": [
 						"Broadland"
 					],
-					"throughCode": "E07000144"
+					"throughCode": "E07000144",
+					"relation": "within"
 				},
 				{
 					"code": "E07000145",
 					"labels": [
 						"Great Yarmouth"
 					],
-					"throughCode": "E07000145"
+					"throughCode": "E07000145",
+					"relation": "within"
 				},
 				{
 					"code": "E07000146",
 					"labels": [
 						"King's Lynn and West Norfolk"
 					],
-					"throughCode": "E07000146"
+					"throughCode": "E07000146",
+					"relation": "within"
 				},
 				{
 					"code": "E07000147",
 					"labels": [
 						"North Norfolk"
 					],
-					"throughCode": "E07000147"
+					"throughCode": "E07000147",
+					"relation": "within"
 				},
 				{
 					"code": "E07000148",
 					"labels": [
 						"Norwich"
 					],
-					"throughCode": "E07000148"
+					"throughCode": "E07000148",
+					"relation": "within"
 				},
 				{
 					"code": "E07000149",
 					"labels": [
 						"South Norfolk"
 					],
-					"throughCode": "E07000149"
+					"throughCode": "E07000149",
+					"relation": "within"
 				},
 				{
 					"code": "E07000200",
 					"labels": [
 						"Babergh"
 					],
-					"throughCode": "E07000200"
+					"throughCode": "E07000200",
+					"relation": "within"
 				},
 				{
 					"code": "E07000202",
 					"labels": [
 						"Ipswich"
 					],
-					"throughCode": "E07000202"
+					"throughCode": "E07000202",
+					"relation": "within"
 				},
 				{
 					"code": "E07000203",
 					"labels": [
 						"Mid Suffolk"
 					],
-					"throughCode": "E07000203"
+					"throughCode": "E07000203",
+					"relation": "within"
 				},
 				{
 					"code": "E07000240",
 					"labels": [
 						"St Albans"
 					],
-					"throughCode": "E07000240"
+					"throughCode": "E07000240",
+					"relation": "within"
 				},
 				{
 					"code": "E07000241",
 					"labels": [
 						"Welwyn Hatfield"
 					],
-					"throughCode": "E07000241"
+					"throughCode": "E07000241",
+					"relation": "within"
 				},
 				{
 					"code": "E07000242",
 					"labels": [
 						"East Hertfordshire"
 					],
-					"throughCode": "E07000242"
+					"throughCode": "E07000242",
+					"relation": "within"
 				},
 				{
 					"code": "E07000243",
 					"labels": [
 						"Stevenage"
 					],
-					"throughCode": "E07000243"
+					"throughCode": "E07000243",
+					"relation": "within"
 				},
 				{
 					"code": "E07000244",
 					"labels": [
 						"East Suffolk"
 					],
-					"throughCode": "E07000244"
+					"throughCode": "E07000244",
+					"relation": "within"
 				},
 				{
 					"code": "E07000245",
 					"labels": [
 						"West Suffolk"
 					],
-					"throughCode": "E07000245"
+					"throughCode": "E07000245",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 45,
+				"reachedCount": 45,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 50,
 				"resolvedCount": 45,
@@ -3153,12 +3579,19 @@
 					"labels": [
 						"City of Edinburgh"
 					],
-					"throughCode": "S12000036"
+					"throughCode": "S12000036",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -3197,6 +3630,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 0,
 				"resolvedCount": 0,
@@ -3237,89 +3676,107 @@
 					"labels": [
 						"Southend-on-Sea"
 					],
-					"throughCode": "E06000033"
+					"throughCode": "E06000033",
+					"relation": "within"
 				},
 				{
 					"code": "E07000066",
 					"labels": [
 						"Basildon"
 					],
-					"throughCode": "E07000066"
+					"throughCode": "E07000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000067",
 					"labels": [
 						"Braintree"
 					],
-					"throughCode": "E07000067"
+					"throughCode": "E07000067",
+					"relation": "within"
 				},
 				{
 					"code": "E07000068",
 					"labels": [
 						"Brentwood"
 					],
-					"throughCode": "E07000068"
+					"throughCode": "E07000068",
+					"relation": "within"
 				},
 				{
 					"code": "E07000069",
 					"labels": [
 						"Castle Point"
 					],
-					"throughCode": "E07000069"
+					"throughCode": "E07000069",
+					"relation": "within"
 				},
 				{
 					"code": "E07000070",
 					"labels": [
 						"Chelmsford"
 					],
-					"throughCode": "E07000070"
+					"throughCode": "E07000070",
+					"relation": "within"
 				},
 				{
 					"code": "E07000071",
 					"labels": [
 						"Colchester"
 					],
-					"throughCode": "E07000071"
+					"throughCode": "E07000071",
+					"relation": "within"
 				},
 				{
 					"code": "E07000072",
 					"labels": [
 						"Epping Forest"
 					],
-					"throughCode": "E07000072"
+					"throughCode": "E07000072",
+					"relation": "within"
 				},
 				{
 					"code": "E07000073",
 					"labels": [
 						"Harlow"
 					],
-					"throughCode": "E07000073"
+					"throughCode": "E07000073",
+					"relation": "within"
 				},
 				{
 					"code": "E07000074",
 					"labels": [
 						"Maldon"
 					],
-					"throughCode": "E07000074"
+					"throughCode": "E07000074",
+					"relation": "within"
 				},
 				{
 					"code": "E07000075",
 					"labels": [
 						"Rochford"
 					],
-					"throughCode": "E07000075"
+					"throughCode": "E07000075",
+					"relation": "within"
 				},
 				{
 					"code": "E07000076",
 					"labels": [
 						"Tendring"
 					],
-					"throughCode": "E07000076"
+					"throughCode": "E07000076",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 12,
+				"reachedCount": 12,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 12,
 				"resolvedCount": 12,
@@ -3360,12 +3817,19 @@
 					"labels": [
 						"Exeter"
 					],
-					"throughCode": "E07000041"
+					"throughCode": "E07000041",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -3406,12 +3870,19 @@
 					"labels": [
 						"Fife"
 					],
-					"throughCode": "S12000047"
+					"throughCode": "S12000047",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 1,
@@ -3461,12 +3932,19 @@
 					"labels": [
 						"Gateshead"
 					],
-					"throughCode": "E08000037"
+					"throughCode": "E08000037",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 1,
@@ -3519,12 +3997,19 @@
 					"labels": [
 						"Glasgow City"
 					],
-					"throughCode": "S12000049"
+					"throughCode": "S12000049",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 1,
@@ -3575,12 +4060,19 @@
 					"labels": [
 						"Gloucester"
 					],
-					"throughCode": "E07000081"
+					"throughCode": "E07000081",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -3621,47 +4113,59 @@
 					"labels": [
 						"Cheltenham"
 					],
-					"throughCode": "E07000078"
+					"throughCode": "E07000078",
+					"relation": "within"
 				},
 				{
 					"code": "E07000079",
 					"labels": [
 						"Cotswold"
 					],
-					"throughCode": "E07000079"
+					"throughCode": "E07000079",
+					"relation": "within"
 				},
 				{
 					"code": "E07000080",
 					"labels": [
 						"Forest of Dean"
 					],
-					"throughCode": "E07000080"
+					"throughCode": "E07000080",
+					"relation": "within"
 				},
 				{
 					"code": "E07000081",
 					"labels": [
 						"Gloucester"
 					],
-					"throughCode": "E07000081"
+					"throughCode": "E07000081",
+					"relation": "within"
 				},
 				{
 					"code": "E07000082",
 					"labels": [
 						"Stroud"
 					],
-					"throughCode": "E07000082"
+					"throughCode": "E07000082",
+					"relation": "within"
 				},
 				{
 					"code": "E07000083",
 					"labels": [
 						"Tewkesbury"
 					],
-					"throughCode": "E07000083"
+					"throughCode": "E07000083",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 6,
+				"reachedCount": 6,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 6,
 				"resolvedCount": 6,
@@ -3702,26 +4206,35 @@
 					"labels": [
 						"Moray"
 					],
-					"throughCode": "S12000020"
+					"throughCode": "S12000020",
+					"relation": "within"
 				},
 				{
 					"code": "S12000033",
 					"labels": [
 						"Aberdeen City"
 					],
-					"throughCode": "S12000033"
+					"throughCode": "S12000033",
+					"relation": "within"
 				},
 				{
 					"code": "S12000034",
 					"labels": [
 						"Aberdeenshire"
 					],
-					"throughCode": "S12000034"
+					"throughCode": "S12000034",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 3,
+				"reachedCount": 3,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 3,
 				"resolvedCount": 3,
@@ -3762,47 +4275,59 @@
 					"labels": [
 						"East Renfrewshire"
 					],
-					"throughCode": "S12000011"
+					"throughCode": "S12000011",
+					"relation": "within"
 				},
 				{
 					"code": "S12000018",
 					"labels": [
 						"Inverclyde"
 					],
-					"throughCode": "S12000018"
+					"throughCode": "S12000018",
+					"relation": "within"
 				},
 				{
 					"code": "S12000038",
 					"labels": [
 						"Renfrewshire"
 					],
-					"throughCode": "S12000038"
+					"throughCode": "S12000038",
+					"relation": "within"
 				},
 				{
 					"code": "S12000039",
 					"labels": [
 						"West Dunbartonshire"
 					],
-					"throughCode": "S12000039"
+					"throughCode": "S12000039",
+					"relation": "within"
 				},
 				{
 					"code": "S12000045",
 					"labels": [
 						"East Dunbartonshire"
 					],
-					"throughCode": "S12000045"
+					"throughCode": "S12000045",
+					"relation": "within"
 				},
 				{
 					"code": "S12000049",
 					"labels": [
 						"Glasgow City"
 					],
-					"throughCode": "S12000049"
+					"throughCode": "S12000049",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 6,
+				"reachedCount": 6,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 7,
 				"resolvedCount": 6,
@@ -3853,75 +4378,91 @@
 					"labels": [
 						"Bolton"
 					],
-					"throughCode": "E08000001"
+					"throughCode": "E08000001",
+					"relation": "within"
 				},
 				{
 					"code": "E08000002",
 					"labels": [
 						"Bury"
 					],
-					"throughCode": "E08000002"
+					"throughCode": "E08000002",
+					"relation": "within"
 				},
 				{
 					"code": "E08000003",
 					"labels": [
 						"Manchester"
 					],
-					"throughCode": "E08000003"
+					"throughCode": "E08000003",
+					"relation": "within"
 				},
 				{
 					"code": "E08000004",
 					"labels": [
 						"Oldham"
 					],
-					"throughCode": "E08000004"
+					"throughCode": "E08000004",
+					"relation": "within"
 				},
 				{
 					"code": "E08000005",
 					"labels": [
 						"Rochdale"
 					],
-					"throughCode": "E08000005"
+					"throughCode": "E08000005",
+					"relation": "within"
 				},
 				{
 					"code": "E08000006",
 					"labels": [
 						"Salford"
 					],
-					"throughCode": "E08000006"
+					"throughCode": "E08000006",
+					"relation": "within"
 				},
 				{
 					"code": "E08000007",
 					"labels": [
 						"Stockport"
 					],
-					"throughCode": "E08000007"
+					"throughCode": "E08000007",
+					"relation": "within"
 				},
 				{
 					"code": "E08000008",
 					"labels": [
 						"Tameside"
 					],
-					"throughCode": "E08000008"
+					"throughCode": "E08000008",
+					"relation": "within"
 				},
 				{
 					"code": "E08000009",
 					"labels": [
 						"Trafford"
 					],
-					"throughCode": "E08000009"
+					"throughCode": "E08000009",
+					"relation": "within"
 				},
 				{
 					"code": "E08000010",
 					"labels": [
 						"Wigan"
 					],
-					"throughCode": "E08000010"
+					"throughCode": "E08000010",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 10,
+				"reachedCount": 10,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 10,
 				"resolvedCount": 10,
@@ -3962,12 +4503,19 @@
 					"labels": [
 						"Guildford"
 					],
-					"throughCode": "E07000209"
+					"throughCode": "E07000209",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4008,12 +4556,19 @@
 					"labels": [
 						"Calderdale"
 					],
-					"throughCode": "E08000033"
+					"throughCode": "E08000033",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4054,89 +4609,107 @@
 					"labels": [
 						"Portsmouth"
 					],
-					"throughCode": "E06000044"
+					"throughCode": "E06000044",
+					"relation": "within"
 				},
 				{
 					"code": "E06000045",
 					"labels": [
 						"Southampton"
 					],
-					"throughCode": "E06000045"
+					"throughCode": "E06000045",
+					"relation": "within"
 				},
 				{
 					"code": "E07000084",
 					"labels": [
 						"Basingstoke and Deane"
 					],
-					"throughCode": "E07000084"
+					"throughCode": "E07000084",
+					"relation": "within"
 				},
 				{
 					"code": "E07000085",
 					"labels": [
 						"East Hampshire"
 					],
-					"throughCode": "E07000085"
+					"throughCode": "E07000085",
+					"relation": "within"
 				},
 				{
 					"code": "E07000086",
 					"labels": [
 						"Eastleigh"
 					],
-					"throughCode": "E07000086"
+					"throughCode": "E07000086",
+					"relation": "within"
 				},
 				{
 					"code": "E07000087",
 					"labels": [
 						"Fareham"
 					],
-					"throughCode": "E07000087"
+					"throughCode": "E07000087",
+					"relation": "within"
 				},
 				{
 					"code": "E07000088",
 					"labels": [
 						"Gosport"
 					],
-					"throughCode": "E07000088"
+					"throughCode": "E07000088",
+					"relation": "within"
 				},
 				{
 					"code": "E07000089",
 					"labels": [
 						"Hart"
 					],
-					"throughCode": "E07000089"
+					"throughCode": "E07000089",
+					"relation": "within"
 				},
 				{
 					"code": "E07000090",
 					"labels": [
 						"Havant"
 					],
-					"throughCode": "E07000090"
+					"throughCode": "E07000090",
+					"relation": "within"
 				},
 				{
 					"code": "E07000091",
 					"labels": [
 						"New Forest"
 					],
-					"throughCode": "E07000091"
+					"throughCode": "E07000091",
+					"relation": "within"
 				},
 				{
 					"code": "E07000092",
 					"labels": [
 						"Rushmoor"
 					],
-					"throughCode": "E07000092"
+					"throughCode": "E07000092",
+					"relation": "within"
 				},
 				{
 					"code": "E07000093",
 					"labels": [
 						"Test Valley"
 					],
-					"throughCode": "E07000093"
+					"throughCode": "E07000093",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 12,
+				"reachedCount": 12,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 12,
 				"resolvedCount": 12,
@@ -4175,6 +4748,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 0,
@@ -4228,12 +4807,19 @@
 					"labels": [
 						"Hartlepool"
 					],
-					"throughCode": "E06000001"
+					"throughCode": "E06000001",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4274,12 +4860,19 @@
 					"labels": [
 						"Herefordshire, County of"
 					],
-					"throughCode": "E06000019"
+					"throughCode": "E06000019",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4320,75 +4913,91 @@
 					"labels": [
 						"Broxbourne"
 					],
-					"throughCode": "E07000095"
+					"throughCode": "E07000095",
+					"relation": "within"
 				},
 				{
 					"code": "E07000096",
 					"labels": [
 						"Dacorum"
 					],
-					"throughCode": "E07000096"
+					"throughCode": "E07000096",
+					"relation": "within"
 				},
 				{
 					"code": "E07000098",
 					"labels": [
 						"Hertsmere"
 					],
-					"throughCode": "E07000098"
+					"throughCode": "E07000098",
+					"relation": "within"
 				},
 				{
 					"code": "E07000099",
 					"labels": [
 						"North Hertfordshire"
 					],
-					"throughCode": "E07000099"
+					"throughCode": "E07000099",
+					"relation": "within"
 				},
 				{
 					"code": "E07000102",
 					"labels": [
 						"Three Rivers"
 					],
-					"throughCode": "E07000102"
+					"throughCode": "E07000102",
+					"relation": "within"
 				},
 				{
 					"code": "E07000103",
 					"labels": [
 						"Watford"
 					],
-					"throughCode": "E07000103"
+					"throughCode": "E07000103",
+					"relation": "within"
 				},
 				{
 					"code": "E07000240",
 					"labels": [
 						"St Albans"
 					],
-					"throughCode": "E07000240"
+					"throughCode": "E07000240",
+					"relation": "within"
 				},
 				{
 					"code": "E07000241",
 					"labels": [
 						"Welwyn Hatfield"
 					],
-					"throughCode": "E07000241"
+					"throughCode": "E07000241",
+					"relation": "within"
 				},
 				{
 					"code": "E07000242",
 					"labels": [
 						"East Hertfordshire"
 					],
-					"throughCode": "E07000242"
+					"throughCode": "E07000242",
+					"relation": "within"
 				},
 				{
 					"code": "E07000243",
 					"labels": [
 						"Stevenage"
 					],
-					"throughCode": "E07000243"
+					"throughCode": "E07000243",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 10,
+				"reachedCount": 10,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 14,
 				"resolvedCount": 10,
@@ -4471,12 +5080,19 @@
 					"labels": [
 						"Kirklees"
 					],
-					"throughCode": "E08000034"
+					"throughCode": "E08000034",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4517,12 +5133,19 @@
 					"labels": [
 						"Kingston upon Hull, City of"
 					],
-					"throughCode": "E06000010"
+					"throughCode": "E06000010",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4563,12 +5186,19 @@
 					"labels": [
 						"Highland"
 					],
-					"throughCode": "S12000017"
+					"throughCode": "S12000017",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4609,12 +5239,19 @@
 					"labels": [
 						"Ipswich"
 					],
-					"throughCode": "E07000202"
+					"throughCode": "E07000202",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4655,103 +5292,123 @@
 					"labels": [
 						"Medway"
 					],
-					"throughCode": "E06000035"
+					"throughCode": "E06000035",
+					"relation": "within"
 				},
 				{
 					"code": "E06000036",
 					"labels": [
 						"Bracknell Forest"
 					],
-					"throughCode": "E06000036"
+					"throughCode": "E06000036",
+					"relation": "within"
 				},
 				{
 					"code": "E07000105",
 					"labels": [
 						"Ashford"
 					],
-					"throughCode": "E07000105"
+					"throughCode": "E07000105",
+					"relation": "within"
 				},
 				{
 					"code": "E07000106",
 					"labels": [
 						"Canterbury"
 					],
-					"throughCode": "E07000106"
+					"throughCode": "E07000106",
+					"relation": "within"
 				},
 				{
 					"code": "E07000107",
 					"labels": [
 						"Dartford"
 					],
-					"throughCode": "E07000107"
+					"throughCode": "E07000107",
+					"relation": "within"
 				},
 				{
 					"code": "E07000108",
 					"labels": [
 						"Dover"
 					],
-					"throughCode": "E07000108"
+					"throughCode": "E07000108",
+					"relation": "within"
 				},
 				{
 					"code": "E07000109",
 					"labels": [
 						"Gravesham"
 					],
-					"throughCode": "E07000109"
+					"throughCode": "E07000109",
+					"relation": "within"
 				},
 				{
 					"code": "E07000110",
 					"labels": [
 						"Maidstone"
 					],
-					"throughCode": "E07000110"
+					"throughCode": "E07000110",
+					"relation": "within"
 				},
 				{
 					"code": "E07000111",
 					"labels": [
 						"Sevenoaks"
 					],
-					"throughCode": "E07000111"
+					"throughCode": "E07000111",
+					"relation": "within"
 				},
 				{
 					"code": "E07000112",
 					"labels": [
 						"Folkestone and Hythe"
 					],
-					"throughCode": "E07000112"
+					"throughCode": "E07000112",
+					"relation": "within"
 				},
 				{
 					"code": "E07000113",
 					"labels": [
 						"Swale"
 					],
-					"throughCode": "E07000113"
+					"throughCode": "E07000113",
+					"relation": "within"
 				},
 				{
 					"code": "E07000114",
 					"labels": [
 						"Thanet"
 					],
-					"throughCode": "E07000114"
+					"throughCode": "E07000114",
+					"relation": "within"
 				},
 				{
 					"code": "E07000115",
 					"labels": [
 						"Tonbridge and Malling"
 					],
-					"throughCode": "E07000115"
+					"throughCode": "E07000115",
+					"relation": "within"
 				},
 				{
 					"code": "E07000116",
 					"labels": [
 						"Tunbridge Wells"
 					],
-					"throughCode": "E07000116"
+					"throughCode": "E07000116",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 14,
+				"reachedCount": 14,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 14,
 				"resolvedCount": 14,
@@ -4792,110 +5449,131 @@
 					"labels": [
 						"Blackburn with Darwen"
 					],
-					"throughCode": "E06000008"
+					"throughCode": "E06000008",
+					"relation": "within"
 				},
 				{
 					"code": "E06000009",
 					"labels": [
 						"Blackpool"
 					],
-					"throughCode": "E06000009"
+					"throughCode": "E06000009",
+					"relation": "within"
 				},
 				{
 					"code": "E07000117",
 					"labels": [
 						"Burnley"
 					],
-					"throughCode": "E07000117"
+					"throughCode": "E07000117",
+					"relation": "within"
 				},
 				{
 					"code": "E07000118",
 					"labels": [
 						"Chorley"
 					],
-					"throughCode": "E07000118"
+					"throughCode": "E07000118",
+					"relation": "within"
 				},
 				{
 					"code": "E07000119",
 					"labels": [
 						"Fylde"
 					],
-					"throughCode": "E07000119"
+					"throughCode": "E07000119",
+					"relation": "within"
 				},
 				{
 					"code": "E07000120",
 					"labels": [
 						"Hyndburn"
 					],
-					"throughCode": "E07000120"
+					"throughCode": "E07000120",
+					"relation": "within"
 				},
 				{
 					"code": "E07000121",
 					"labels": [
 						"Lancaster"
 					],
-					"throughCode": "E07000121"
+					"throughCode": "E07000121",
+					"relation": "within"
 				},
 				{
 					"code": "E07000122",
 					"labels": [
 						"Pendle"
 					],
-					"throughCode": "E07000122"
+					"throughCode": "E07000122",
+					"relation": "within"
 				},
 				{
 					"code": "E07000123",
 					"labels": [
 						"Preston"
 					],
-					"throughCode": "E07000123"
+					"throughCode": "E07000123",
+					"relation": "within"
 				},
 				{
 					"code": "E07000124",
 					"labels": [
 						"Ribble Valley"
 					],
-					"throughCode": "E07000124"
+					"throughCode": "E07000124",
+					"relation": "within"
 				},
 				{
 					"code": "E07000125",
 					"labels": [
 						"Rossendale"
 					],
-					"throughCode": "E07000125"
+					"throughCode": "E07000125",
+					"relation": "within"
 				},
 				{
 					"code": "E07000126",
 					"labels": [
 						"South Ribble"
 					],
-					"throughCode": "E07000126"
+					"throughCode": "E07000126",
+					"relation": "within"
 				},
 				{
 					"code": "E07000127",
 					"labels": [
 						"West Lancashire"
 					],
-					"throughCode": "E07000127"
+					"throughCode": "E07000127",
+					"relation": "within"
 				},
 				{
 					"code": "E07000128",
 					"labels": [
 						"Wyre"
 					],
-					"throughCode": "E07000128"
+					"throughCode": "E07000128",
+					"relation": "within"
 				},
 				{
 					"code": "E08000014",
 					"labels": [
 						"Sefton"
 					],
-					"throughCode": "E08000014"
+					"throughCode": "E08000014",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 15,
+				"reachedCount": 15,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 15,
 				"resolvedCount": 15,
@@ -4936,12 +5614,19 @@
 					"labels": [
 						"Lancaster"
 					],
-					"throughCode": "E07000121"
+					"throughCode": "E07000121",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -4982,12 +5667,19 @@
 					"labels": [
 						"Leeds"
 					],
-					"throughCode": "E08000035"
+					"throughCode": "E08000035",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5028,12 +5720,19 @@
 					"labels": [
 						"Leicester"
 					],
-					"throughCode": "E06000016"
+					"throughCode": "E06000016",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5074,12 +5773,19 @@
 					"labels": [
 						"Lincoln"
 					],
-					"throughCode": "E07000138"
+					"throughCode": "E07000138",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5120,68 +5826,83 @@
 					"labels": [
 						"North East Lincolnshire"
 					],
-					"throughCode": "E06000012"
+					"throughCode": "E06000012",
+					"relation": "within"
 				},
 				{
 					"code": "E06000013",
 					"labels": [
 						"North Lincolnshire"
 					],
-					"throughCode": "E06000013"
+					"throughCode": "E06000013",
+					"relation": "within"
 				},
 				{
 					"code": "E07000136",
 					"labels": [
 						"Boston"
 					],
-					"throughCode": "E07000136"
+					"throughCode": "E07000136",
+					"relation": "within"
 				},
 				{
 					"code": "E07000137",
 					"labels": [
 						"East Lindsey"
 					],
-					"throughCode": "E07000137"
+					"throughCode": "E07000137",
+					"relation": "within"
 				},
 				{
 					"code": "E07000138",
 					"labels": [
 						"Lincoln"
 					],
-					"throughCode": "E07000138"
+					"throughCode": "E07000138",
+					"relation": "within"
 				},
 				{
 					"code": "E07000139",
 					"labels": [
 						"North Kesteven"
 					],
-					"throughCode": "E07000139"
+					"throughCode": "E07000139",
+					"relation": "within"
 				},
 				{
 					"code": "E07000140",
 					"labels": [
 						"South Holland"
 					],
-					"throughCode": "E07000140"
+					"throughCode": "E07000140",
+					"relation": "within"
 				},
 				{
 					"code": "E07000141",
 					"labels": [
 						"South Kesteven"
 					],
-					"throughCode": "E07000141"
+					"throughCode": "E07000141",
+					"relation": "within"
 				},
 				{
 					"code": "E07000142",
 					"labels": [
 						"West Lindsey"
 					],
-					"throughCode": "E07000142"
+					"throughCode": "E07000142",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 9,
+				"reachedCount": 9,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 9,
 				"resolvedCount": 9,
@@ -5222,12 +5943,19 @@
 					"labels": [
 						"Lisburn and Castlereagh"
 					],
-					"throughCode": "N09000007"
+					"throughCode": "N09000007",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5268,12 +5996,19 @@
 					"labels": [
 						"Liverpool"
 					],
-					"throughCode": "E08000012"
+					"throughCode": "E08000012",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5314,236 +6049,275 @@
 					"labels": [
 						"City of London"
 					],
-					"throughCode": "E09000001"
+					"throughCode": "E09000001",
+					"relation": "within"
 				},
 				{
 					"code": "E09000002",
 					"labels": [
 						"Barking and Dagenham"
 					],
-					"throughCode": "E09000002"
+					"throughCode": "E09000002",
+					"relation": "within"
 				},
 				{
 					"code": "E09000003",
 					"labels": [
 						"Barnet"
 					],
-					"throughCode": "E09000003"
+					"throughCode": "E09000003",
+					"relation": "within"
 				},
 				{
 					"code": "E09000004",
 					"labels": [
 						"Bexley"
 					],
-					"throughCode": "E09000004"
+					"throughCode": "E09000004",
+					"relation": "within"
 				},
 				{
 					"code": "E09000005",
 					"labels": [
 						"Brent"
 					],
-					"throughCode": "E09000005"
+					"throughCode": "E09000005",
+					"relation": "within"
 				},
 				{
 					"code": "E09000006",
 					"labels": [
 						"Bromley"
 					],
-					"throughCode": "E09000006"
+					"throughCode": "E09000006",
+					"relation": "within"
 				},
 				{
 					"code": "E09000007",
 					"labels": [
 						"Camden"
 					],
-					"throughCode": "E09000007"
+					"throughCode": "E09000007",
+					"relation": "within"
 				},
 				{
 					"code": "E09000008",
 					"labels": [
 						"Croydon"
 					],
-					"throughCode": "E09000008"
+					"throughCode": "E09000008",
+					"relation": "within"
 				},
 				{
 					"code": "E09000009",
 					"labels": [
 						"Ealing"
 					],
-					"throughCode": "E09000009"
+					"throughCode": "E09000009",
+					"relation": "within"
 				},
 				{
 					"code": "E09000010",
 					"labels": [
 						"Enfield"
 					],
-					"throughCode": "E09000010"
+					"throughCode": "E09000010",
+					"relation": "within"
 				},
 				{
 					"code": "E09000011",
 					"labels": [
 						"Greenwich"
 					],
-					"throughCode": "E09000011"
+					"throughCode": "E09000011",
+					"relation": "within"
 				},
 				{
 					"code": "E09000012",
 					"labels": [
 						"Hackney"
 					],
-					"throughCode": "E09000012"
+					"throughCode": "E09000012",
+					"relation": "within"
 				},
 				{
 					"code": "E09000013",
 					"labels": [
 						"Hammersmith and Fulham"
 					],
-					"throughCode": "E09000013"
+					"throughCode": "E09000013",
+					"relation": "within"
 				},
 				{
 					"code": "E09000014",
 					"labels": [
 						"Haringey"
 					],
-					"throughCode": "E09000014"
+					"throughCode": "E09000014",
+					"relation": "within"
 				},
 				{
 					"code": "E09000015",
 					"labels": [
 						"Harrow"
 					],
-					"throughCode": "E09000015"
+					"throughCode": "E09000015",
+					"relation": "within"
 				},
 				{
 					"code": "E09000016",
 					"labels": [
 						"Havering"
 					],
-					"throughCode": "E09000016"
+					"throughCode": "E09000016",
+					"relation": "within"
 				},
 				{
 					"code": "E09000017",
 					"labels": [
 						"Hillingdon"
 					],
-					"throughCode": "E09000017"
+					"throughCode": "E09000017",
+					"relation": "within"
 				},
 				{
 					"code": "E09000018",
 					"labels": [
 						"Hounslow"
 					],
-					"throughCode": "E09000018"
+					"throughCode": "E09000018",
+					"relation": "within"
 				},
 				{
 					"code": "E09000019",
 					"labels": [
 						"Islington"
 					],
-					"throughCode": "E09000019"
+					"throughCode": "E09000019",
+					"relation": "within"
 				},
 				{
 					"code": "E09000020",
 					"labels": [
 						"Kensington and Chelsea"
 					],
-					"throughCode": "E09000020"
+					"throughCode": "E09000020",
+					"relation": "within"
 				},
 				{
 					"code": "E09000021",
 					"labels": [
 						"Kingston upon Thames"
 					],
-					"throughCode": "E09000021"
+					"throughCode": "E09000021",
+					"relation": "within"
 				},
 				{
 					"code": "E09000022",
 					"labels": [
 						"Lambeth"
 					],
-					"throughCode": "E09000022"
+					"throughCode": "E09000022",
+					"relation": "within"
 				},
 				{
 					"code": "E09000023",
 					"labels": [
 						"Lewisham"
 					],
-					"throughCode": "E09000023"
+					"throughCode": "E09000023",
+					"relation": "within"
 				},
 				{
 					"code": "E09000024",
 					"labels": [
 						"Merton"
 					],
-					"throughCode": "E09000024"
+					"throughCode": "E09000024",
+					"relation": "within"
 				},
 				{
 					"code": "E09000025",
 					"labels": [
 						"Newham"
 					],
-					"throughCode": "E09000025"
+					"throughCode": "E09000025",
+					"relation": "within"
 				},
 				{
 					"code": "E09000026",
 					"labels": [
 						"Redbridge"
 					],
-					"throughCode": "E09000026"
+					"throughCode": "E09000026",
+					"relation": "within"
 				},
 				{
 					"code": "E09000027",
 					"labels": [
 						"Richmond upon Thames"
 					],
-					"throughCode": "E09000027"
+					"throughCode": "E09000027",
+					"relation": "within"
 				},
 				{
 					"code": "E09000028",
 					"labels": [
 						"Southwark"
 					],
-					"throughCode": "E09000028"
+					"throughCode": "E09000028",
+					"relation": "within"
 				},
 				{
 					"code": "E09000029",
 					"labels": [
 						"Sutton"
 					],
-					"throughCode": "E09000029"
+					"throughCode": "E09000029",
+					"relation": "within"
 				},
 				{
 					"code": "E09000030",
 					"labels": [
 						"Tower Hamlets"
 					],
-					"throughCode": "E09000030"
+					"throughCode": "E09000030",
+					"relation": "within"
 				},
 				{
 					"code": "E09000031",
 					"labels": [
 						"Waltham Forest"
 					],
-					"throughCode": "E09000031"
+					"throughCode": "E09000031",
+					"relation": "within"
 				},
 				{
 					"code": "E09000032",
 					"labels": [
 						"Wandsworth"
 					],
-					"throughCode": "E09000032"
+					"throughCode": "E09000032",
+					"relation": "within"
 				},
 				{
 					"code": "E09000033",
 					"labels": [
 						"Westminster"
 					],
-					"throughCode": "E09000033"
+					"throughCode": "E09000033",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 33,
+				"reachedCount": 33,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 33,
 				"resolvedCount": 33,
@@ -5584,12 +6358,19 @@
 					"labels": [
 						"Derry City and Strabane"
 					],
-					"throughCode": "N09000005"
+					"throughCode": "N09000005",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5630,33 +6411,43 @@
 					"labels": [
 						"Dumfries and Galloway"
 					],
-					"throughCode": "S12000006"
+					"throughCode": "S12000006",
+					"relation": "within"
 				},
 				{
 					"code": "S12000008",
 					"labels": [
 						"East Ayrshire"
 					],
-					"throughCode": "S12000008"
+					"throughCode": "S12000008",
+					"relation": "within"
 				},
 				{
 					"code": "S12000021",
 					"labels": [
 						"North Ayrshire"
 					],
-					"throughCode": "S12000021"
+					"throughCode": "S12000021",
+					"relation": "within"
 				},
 				{
 					"code": "S12000028",
 					"labels": [
 						"South Ayrshire"
 					],
-					"throughCode": "S12000028"
+					"throughCode": "S12000028",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 4,
+				"reachedCount": 4,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 4,
 				"resolvedCount": 4,
@@ -5697,12 +6488,19 @@
 					"labels": [
 						"Luton"
 					],
-					"throughCode": "E06000032"
+					"throughCode": "E06000032",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5743,12 +6541,19 @@
 					"labels": [
 						"Maidstone"
 					],
-					"throughCode": "E07000110"
+					"throughCode": "E07000110",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5789,12 +6594,19 @@
 					"labels": [
 						"Manchester"
 					],
-					"throughCode": "E08000003"
+					"throughCode": "E08000003",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5835,12 +6647,19 @@
 					"labels": [
 						"Mansfield"
 					],
-					"throughCode": "E07000174"
+					"throughCode": "E07000174",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -5881,40 +6700,51 @@
 					"labels": [
 						"Knowsley"
 					],
-					"throughCode": "E08000011"
+					"throughCode": "E08000011",
+					"relation": "within"
 				},
 				{
 					"code": "E08000012",
 					"labels": [
 						"Liverpool"
 					],
-					"throughCode": "E08000012"
+					"throughCode": "E08000012",
+					"relation": "within"
 				},
 				{
 					"code": "E08000013",
 					"labels": [
 						"St. Helens"
 					],
-					"throughCode": "E08000013"
+					"throughCode": "E08000013",
+					"relation": "within"
 				},
 				{
 					"code": "E08000014",
 					"labels": [
 						"Sefton"
 					],
-					"throughCode": "E08000014"
+					"throughCode": "E08000014",
+					"relation": "within"
 				},
 				{
 					"code": "E08000015",
 					"labels": [
 						"Wirral"
 					],
-					"throughCode": "E08000015"
+					"throughCode": "E08000015",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 5,
+				"reachedCount": 5,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 5,
 				"resolvedCount": 5,
@@ -5956,7 +6786,8 @@
 						"Powys",
 						"Powys"
 					],
-					"throughCode": "W06000023"
+					"throughCode": "W06000023",
+					"relation": "within"
 				},
 				{
 					"code": "W06000024",
@@ -5964,12 +6795,19 @@
 						"Merthyr Tudful",
 						"Merthyr Tydfil"
 					],
-					"throughCode": "W06000024"
+					"throughCode": "W06000024",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 2,
+				"reachedCount": 2,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 2,
@@ -6010,12 +6848,19 @@
 					"labels": [
 						"Middlesbrough"
 					],
-					"throughCode": "E06000002"
+					"throughCode": "E06000002",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -6056,12 +6901,19 @@
 					"labels": [
 						"Milton Keynes"
 					],
-					"throughCode": "E06000042"
+					"throughCode": "E06000042",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -6102,12 +6954,19 @@
 					"labels": [
 						"Newcastle upon Tyne"
 					],
-					"throughCode": "E08000021"
+					"throughCode": "E08000021",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -6149,12 +7008,19 @@
 						"Casnewydd",
 						"Newport"
 					],
-					"throughCode": "W06000022"
+					"throughCode": "W06000022",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -6195,12 +7061,19 @@
 					"labels": [
 						"Newry, Mourne and Down"
 					],
-					"throughCode": "N09000010"
+					"throughCode": "N09000010",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -6241,54 +7114,67 @@
 					"labels": [
 						"Breckland"
 					],
-					"throughCode": "E07000143"
+					"throughCode": "E07000143",
+					"relation": "within"
 				},
 				{
 					"code": "E07000144",
 					"labels": [
 						"Broadland"
 					],
-					"throughCode": "E07000144"
+					"throughCode": "E07000144",
+					"relation": "within"
 				},
 				{
 					"code": "E07000145",
 					"labels": [
 						"Great Yarmouth"
 					],
-					"throughCode": "E07000145"
+					"throughCode": "E07000145",
+					"relation": "within"
 				},
 				{
 					"code": "E07000146",
 					"labels": [
 						"King's Lynn and West Norfolk"
 					],
-					"throughCode": "E07000146"
+					"throughCode": "E07000146",
+					"relation": "within"
 				},
 				{
 					"code": "E07000147",
 					"labels": [
 						"North Norfolk"
 					],
-					"throughCode": "E07000147"
+					"throughCode": "E07000147",
+					"relation": "within"
 				},
 				{
 					"code": "E07000148",
 					"labels": [
 						"Norwich"
 					],
-					"throughCode": "E07000148"
+					"throughCode": "E07000148",
+					"relation": "within"
 				},
 				{
 					"code": "E07000149",
 					"labels": [
 						"South Norfolk"
 					],
-					"throughCode": "E07000149"
+					"throughCode": "E07000149",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 7,
+				"reachedCount": 7,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 7,
 				"resolvedCount": 7,
@@ -6329,26 +7215,35 @@
 					"labels": [
 						"Moray"
 					],
-					"throughCode": "S12000020"
+					"throughCode": "S12000020",
+					"relation": "within"
 				},
 				{
 					"code": "S12000033",
 					"labels": [
 						"Aberdeen City"
 					],
-					"throughCode": "S12000033"
+					"throughCode": "S12000033",
+					"relation": "within"
 				},
 				{
 					"code": "S12000034",
 					"labels": [
 						"Aberdeenshire"
 					],
-					"throughCode": "S12000034"
+					"throughCode": "S12000034",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 3,
+				"reachedCount": 3,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 3,
 				"resolvedCount": 3,
@@ -6389,89 +7284,107 @@
 					"labels": [
 						"Hartlepool"
 					],
-					"throughCode": "E06000001"
+					"throughCode": "E06000001",
+					"relation": "within"
 				},
 				{
 					"code": "E06000002",
 					"labels": [
 						"Middlesbrough"
 					],
-					"throughCode": "E06000002"
+					"throughCode": "E06000002",
+					"relation": "within"
 				},
 				{
 					"code": "E06000003",
 					"labels": [
 						"Redcar and Cleveland"
 					],
-					"throughCode": "E06000003"
+					"throughCode": "E06000003",
+					"relation": "within"
 				},
 				{
 					"code": "E06000004",
 					"labels": [
 						"Stockton-on-Tees"
 					],
-					"throughCode": "E06000004"
+					"throughCode": "E06000004",
+					"relation": "within"
 				},
 				{
 					"code": "E06000005",
 					"labels": [
 						"Darlington"
 					],
-					"throughCode": "E06000005"
+					"throughCode": "E06000005",
+					"relation": "within"
 				},
 				{
 					"code": "E06000047",
 					"labels": [
 						"County Durham"
 					],
-					"throughCode": "E06000047"
+					"throughCode": "E06000047",
+					"relation": "within"
 				},
 				{
 					"code": "E06000057",
 					"labels": [
 						"Northumberland"
 					],
-					"throughCode": "E06000057"
+					"throughCode": "E06000057",
+					"relation": "within"
 				},
 				{
 					"code": "E08000021",
 					"labels": [
 						"Newcastle upon Tyne"
 					],
-					"throughCode": "E08000021"
+					"throughCode": "E08000021",
+					"relation": "within"
 				},
 				{
 					"code": "E08000022",
 					"labels": [
 						"North Tyneside"
 					],
-					"throughCode": "E08000022"
+					"throughCode": "E08000022",
+					"relation": "within"
 				},
 				{
 					"code": "E08000023",
 					"labels": [
 						"South Tyneside"
 					],
-					"throughCode": "E08000023"
+					"throughCode": "E08000023",
+					"relation": "within"
 				},
 				{
 					"code": "E08000024",
 					"labels": [
 						"Sunderland"
 					],
-					"throughCode": "E08000024"
+					"throughCode": "E08000024",
+					"relation": "within"
 				},
 				{
 					"code": "E08000037",
 					"labels": [
 						"Gateshead"
 					],
-					"throughCode": "E08000037"
+					"throughCode": "E08000037",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 12,
+				"reachedCount": 12,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 14,
 				"resolvedCount": 12,
@@ -6535,7 +7448,8 @@
 						"Isle of Anglesey",
 						"Ynys Môn"
 					],
-					"throughCode": "W06000001"
+					"throughCode": "W06000001",
+					"relation": "within"
 				},
 				{
 					"code": "W06000002",
@@ -6543,7 +7457,8 @@
 						"Gwynedd",
 						"Gwynedd"
 					],
-					"throughCode": "W06000002"
+					"throughCode": "W06000002",
+					"relation": "within"
 				},
 				{
 					"code": "W06000003",
@@ -6551,7 +7466,8 @@
 						"Conwy",
 						"Conwy"
 					],
-					"throughCode": "W06000003"
+					"throughCode": "W06000003",
+					"relation": "within"
 				},
 				{
 					"code": "W06000004",
@@ -6559,7 +7475,8 @@
 						"Denbighshire",
 						"Sir Ddinbych"
 					],
-					"throughCode": "W06000004"
+					"throughCode": "W06000004",
+					"relation": "within"
 				},
 				{
 					"code": "W06000005",
@@ -6567,7 +7484,8 @@
 						"Flintshire",
 						"Sir y Fflint"
 					],
-					"throughCode": "W06000005"
+					"throughCode": "W06000005",
+					"relation": "within"
 				},
 				{
 					"code": "W06000006",
@@ -6575,12 +7493,19 @@
 						"Wrecsam",
 						"Wrexham"
 					],
-					"throughCode": "W06000006"
+					"throughCode": "W06000006",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 6,
+				"reachedCount": 6,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 6,
 				"resolvedCount": 6,
@@ -6621,278 +7546,323 @@
 					"labels": [
 						"Halton"
 					],
-					"throughCode": "E06000006"
+					"throughCode": "E06000006",
+					"relation": "within"
 				},
 				{
 					"code": "E06000007",
 					"labels": [
 						"Warrington"
 					],
-					"throughCode": "E06000007"
+					"throughCode": "E06000007",
+					"relation": "within"
 				},
 				{
 					"code": "E06000008",
 					"labels": [
 						"Blackburn with Darwen"
 					],
-					"throughCode": "E06000008"
+					"throughCode": "E06000008",
+					"relation": "within"
 				},
 				{
 					"code": "E06000009",
 					"labels": [
 						"Blackpool"
 					],
-					"throughCode": "E06000009"
+					"throughCode": "E06000009",
+					"relation": "within"
 				},
 				{
 					"code": "E06000049",
 					"labels": [
 						"Cheshire East"
 					],
-					"throughCode": "E06000049"
+					"throughCode": "E06000049",
+					"relation": "within"
 				},
 				{
 					"code": "E06000050",
 					"labels": [
 						"Cheshire West and Chester"
 					],
-					"throughCode": "E06000050"
+					"throughCode": "E06000050",
+					"relation": "within"
 				},
 				{
 					"code": "E07000026",
 					"labels": [
 						"Allerdale"
 					],
-					"throughCode": "E06000063"
+					"throughCode": "E06000063",
+					"relation": "within"
 				},
 				{
 					"code": "E07000027",
 					"labels": [
 						"Barrow-in-Furness"
 					],
-					"throughCode": "E06000064"
+					"throughCode": "E06000064",
+					"relation": "within"
 				},
 				{
 					"code": "E07000028",
 					"labels": [
 						"Carlisle"
 					],
-					"throughCode": "E06000063"
+					"throughCode": "E06000063",
+					"relation": "within"
 				},
 				{
 					"code": "E07000029",
 					"labels": [
 						"Copeland"
 					],
-					"throughCode": "E06000063"
+					"throughCode": "E06000063",
+					"relation": "within"
 				},
 				{
 					"code": "E07000030",
 					"labels": [
 						"Eden"
 					],
-					"throughCode": "E06000064"
+					"throughCode": "E06000064",
+					"relation": "within"
 				},
 				{
 					"code": "E07000031",
 					"labels": [
 						"South Lakeland"
 					],
-					"throughCode": "E06000064"
+					"throughCode": "E06000064",
+					"relation": "within"
 				},
 				{
 					"code": "E07000117",
 					"labels": [
 						"Burnley"
 					],
-					"throughCode": "E07000117"
+					"throughCode": "E07000117",
+					"relation": "within"
 				},
 				{
 					"code": "E07000118",
 					"labels": [
 						"Chorley"
 					],
-					"throughCode": "E07000118"
+					"throughCode": "E07000118",
+					"relation": "within"
 				},
 				{
 					"code": "E07000119",
 					"labels": [
 						"Fylde"
 					],
-					"throughCode": "E07000119"
+					"throughCode": "E07000119",
+					"relation": "within"
 				},
 				{
 					"code": "E07000120",
 					"labels": [
 						"Hyndburn"
 					],
-					"throughCode": "E07000120"
+					"throughCode": "E07000120",
+					"relation": "within"
 				},
 				{
 					"code": "E07000121",
 					"labels": [
 						"Lancaster"
 					],
-					"throughCode": "E07000121"
+					"throughCode": "E07000121",
+					"relation": "within"
 				},
 				{
 					"code": "E07000122",
 					"labels": [
 						"Pendle"
 					],
-					"throughCode": "E07000122"
+					"throughCode": "E07000122",
+					"relation": "within"
 				},
 				{
 					"code": "E07000123",
 					"labels": [
 						"Preston"
 					],
-					"throughCode": "E07000123"
+					"throughCode": "E07000123",
+					"relation": "within"
 				},
 				{
 					"code": "E07000124",
 					"labels": [
 						"Ribble Valley"
 					],
-					"throughCode": "E07000124"
+					"throughCode": "E07000124",
+					"relation": "within"
 				},
 				{
 					"code": "E07000125",
 					"labels": [
 						"Rossendale"
 					],
-					"throughCode": "E07000125"
+					"throughCode": "E07000125",
+					"relation": "within"
 				},
 				{
 					"code": "E07000126",
 					"labels": [
 						"South Ribble"
 					],
-					"throughCode": "E07000126"
+					"throughCode": "E07000126",
+					"relation": "within"
 				},
 				{
 					"code": "E07000127",
 					"labels": [
 						"West Lancashire"
 					],
-					"throughCode": "E07000127"
+					"throughCode": "E07000127",
+					"relation": "within"
 				},
 				{
 					"code": "E07000128",
 					"labels": [
 						"Wyre"
 					],
-					"throughCode": "E07000128"
+					"throughCode": "E07000128",
+					"relation": "within"
 				},
 				{
 					"code": "E08000001",
 					"labels": [
 						"Bolton"
 					],
-					"throughCode": "E08000001"
+					"throughCode": "E08000001",
+					"relation": "within"
 				},
 				{
 					"code": "E08000002",
 					"labels": [
 						"Bury"
 					],
-					"throughCode": "E08000002"
+					"throughCode": "E08000002",
+					"relation": "within"
 				},
 				{
 					"code": "E08000003",
 					"labels": [
 						"Manchester"
 					],
-					"throughCode": "E08000003"
+					"throughCode": "E08000003",
+					"relation": "within"
 				},
 				{
 					"code": "E08000004",
 					"labels": [
 						"Oldham"
 					],
-					"throughCode": "E08000004"
+					"throughCode": "E08000004",
+					"relation": "within"
 				},
 				{
 					"code": "E08000005",
 					"labels": [
 						"Rochdale"
 					],
-					"throughCode": "E08000005"
+					"throughCode": "E08000005",
+					"relation": "within"
 				},
 				{
 					"code": "E08000006",
 					"labels": [
 						"Salford"
 					],
-					"throughCode": "E08000006"
+					"throughCode": "E08000006",
+					"relation": "within"
 				},
 				{
 					"code": "E08000007",
 					"labels": [
 						"Stockport"
 					],
-					"throughCode": "E08000007"
+					"throughCode": "E08000007",
+					"relation": "within"
 				},
 				{
 					"code": "E08000008",
 					"labels": [
 						"Tameside"
 					],
-					"throughCode": "E08000008"
+					"throughCode": "E08000008",
+					"relation": "within"
 				},
 				{
 					"code": "E08000009",
 					"labels": [
 						"Trafford"
 					],
-					"throughCode": "E08000009"
+					"throughCode": "E08000009",
+					"relation": "within"
 				},
 				{
 					"code": "E08000010",
 					"labels": [
 						"Wigan"
 					],
-					"throughCode": "E08000010"
+					"throughCode": "E08000010",
+					"relation": "within"
 				},
 				{
 					"code": "E08000011",
 					"labels": [
 						"Knowsley"
 					],
-					"throughCode": "E08000011"
+					"throughCode": "E08000011",
+					"relation": "within"
 				},
 				{
 					"code": "E08000012",
 					"labels": [
 						"Liverpool"
 					],
-					"throughCode": "E08000012"
+					"throughCode": "E08000012",
+					"relation": "within"
 				},
 				{
 					"code": "E08000013",
 					"labels": [
 						"St. Helens"
 					],
-					"throughCode": "E08000013"
+					"throughCode": "E08000013",
+					"relation": "within"
 				},
 				{
 					"code": "E08000014",
 					"labels": [
 						"Sefton"
 					],
-					"throughCode": "E08000014"
+					"throughCode": "E08000014",
+					"relation": "within"
 				},
 				{
 					"code": "E08000015",
 					"labels": [
 						"Wirral"
 					],
-					"throughCode": "E08000015"
+					"throughCode": "E08000015",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 35,
+				"reachedCount": 35,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 41,
 				"resolvedCount": 35,
@@ -7006,54 +7976,67 @@
 					"labels": [
 						"Craven"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000164",
 					"labels": [
 						"Hambleton"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000165",
 					"labels": [
 						"Harrogate"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000166",
 					"labels": [
 						"Richmondshire"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000167",
 					"labels": [
 						"Ryedale"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000168",
 					"labels": [
 						"Scarborough"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000169",
 					"labels": [
 						"Selby"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 8,
 				"resolvedCount": 1,
@@ -7179,12 +8162,19 @@
 					"labels": [
 						"West Northamptonshire"
 					],
-					"throughCode": "E06000062"
+					"throughCode": "E06000062",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7223,6 +8213,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 0,
 				"resolvedCount": 0,
@@ -7263,12 +8259,19 @@
 					"labels": [
 						"Norwich"
 					],
-					"throughCode": "E07000148"
+					"throughCode": "E07000148",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7309,12 +8312,19 @@
 					"labels": [
 						"Nottingham"
 					],
-					"throughCode": "E06000018"
+					"throughCode": "E06000018",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7355,12 +8365,19 @@
 					"labels": [
 						"Oldham"
 					],
-					"throughCode": "E08000004"
+					"throughCode": "E08000004",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7401,12 +8418,19 @@
 					"labels": [
 						"Oxford"
 					],
-					"throughCode": "E07000178"
+					"throughCode": "E07000178",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7447,40 +8471,51 @@
 					"labels": [
 						"Cherwell"
 					],
-					"throughCode": "E07000177"
+					"throughCode": "E07000177",
+					"relation": "within"
 				},
 				{
 					"code": "E07000178",
 					"labels": [
 						"Oxford"
 					],
-					"throughCode": "E07000178"
+					"throughCode": "E07000178",
+					"relation": "within"
 				},
 				{
 					"code": "E07000179",
 					"labels": [
 						"South Oxfordshire"
 					],
-					"throughCode": "E07000179"
+					"throughCode": "E07000179",
+					"relation": "within"
 				},
 				{
 					"code": "E07000180",
 					"labels": [
 						"Vale of White Horse"
 					],
-					"throughCode": "E07000180"
+					"throughCode": "E07000180",
+					"relation": "within"
 				},
 				{
 					"code": "E07000181",
 					"labels": [
 						"West Oxfordshire"
 					],
-					"throughCode": "E07000181"
+					"throughCode": "E07000181",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 5,
+				"reachedCount": 5,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 5,
 				"resolvedCount": 5,
@@ -7521,12 +8556,19 @@
 					"labels": [
 						"Renfrewshire"
 					],
-					"throughCode": "S12000038"
+					"throughCode": "S12000038",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7568,12 +8610,19 @@
 						"Pembrokeshire",
 						"Sir Benfro"
 					],
-					"throughCode": "W06000009"
+					"throughCode": "W06000009",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7614,12 +8663,19 @@
 					"labels": [
 						"Perth and Kinross"
 					],
-					"throughCode": "S12000048"
+					"throughCode": "S12000048",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 1,
@@ -7669,12 +8725,19 @@
 					"labels": [
 						"Peterborough"
 					],
-					"throughCode": "E06000031"
+					"throughCode": "E06000031",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7715,12 +8778,19 @@
 					"labels": [
 						"Plymouth"
 					],
-					"throughCode": "E06000026"
+					"throughCode": "E06000026",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7759,6 +8829,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 0,
@@ -7809,12 +8885,19 @@
 					"labels": [
 						"Portsmouth"
 					],
-					"throughCode": "E06000044"
+					"throughCode": "E06000044",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7855,12 +8938,19 @@
 					"labels": [
 						"Preston"
 					],
-					"throughCode": "E07000123"
+					"throughCode": "E07000123",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7901,12 +8991,19 @@
 					"labels": [
 						"Reading"
 					],
-					"throughCode": "E06000038"
+					"throughCode": "E06000038",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7947,12 +9044,19 @@
 					"labels": [
 						"Rochdale"
 					],
-					"throughCode": "E08000005"
+					"throughCode": "E08000005",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -7993,12 +9097,19 @@
 					"labels": [
 						"Rotherham"
 					],
-					"throughCode": "E08000018"
+					"throughCode": "E08000018",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8039,12 +9150,19 @@
 					"labels": [
 						"Salford"
 					],
-					"throughCode": "E08000006"
+					"throughCode": "E08000006",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8085,12 +9203,19 @@
 					"labels": [
 						"Sandwell"
 					],
-					"throughCode": "E08000028"
+					"throughCode": "E08000028",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8129,6 +9254,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 0,
@@ -8180,6 +9311,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 0,
 				"resolvedCount": 0,
@@ -8220,12 +9357,19 @@
 					"labels": [
 						"Scottish Borders"
 					],
-					"throughCode": "S12000026"
+					"throughCode": "S12000026",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8266,26 +9410,35 @@
 					"labels": [
 						"Na h-Eileanan Siar"
 					],
-					"throughCode": "S12000013"
+					"throughCode": "S12000013",
+					"relation": "within"
 				},
 				{
 					"code": "S12000023",
 					"labels": [
 						"Orkney Islands"
 					],
-					"throughCode": "S12000023"
+					"throughCode": "S12000023",
+					"relation": "within"
 				},
 				{
 					"code": "S12000027",
 					"labels": [
 						"Shetland Islands"
 					],
-					"throughCode": "S12000027"
+					"throughCode": "S12000027",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 3,
+				"reachedCount": 3,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 3,
 				"resolvedCount": 3,
@@ -8326,12 +9479,19 @@
 					"labels": [
 						"Sheffield"
 					],
-					"throughCode": "E08000019"
+					"throughCode": "E08000019",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 1,
@@ -8383,12 +9543,19 @@
 					"labels": [
 						"Shropshire"
 					],
-					"throughCode": "E06000051"
+					"throughCode": "E06000051",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8429,12 +9596,19 @@
 					"labels": [
 						"Slough"
 					],
-					"throughCode": "E06000039"
+					"throughCode": "E06000039",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8475,12 +9649,19 @@
 					"labels": [
 						"Solihull"
 					],
-					"throughCode": "E08000029"
+					"throughCode": "E08000029",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -8521,33 +9702,43 @@
 					"labels": [
 						"Mendip"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000188",
 					"labels": [
 						"Sedgemoor"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000189",
 					"labels": [
 						"South Somerset"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000246",
 					"labels": [
 						"Somerset West and Taunton"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 7,
 				"resolvedCount": 1,
@@ -8654,7 +9845,8 @@
 						"Bridgend",
 						"Pen-y-bont ar Ogwr"
 					],
-					"throughCode": "W06000013"
+					"throughCode": "W06000013",
+					"relation": "within"
 				},
 				{
 					"code": "W06000014",
@@ -8662,7 +9854,8 @@
 						"Bro Morgannwg",
 						"Vale of Glamorgan"
 					],
-					"throughCode": "W06000014"
+					"throughCode": "W06000014",
+					"relation": "within"
 				},
 				{
 					"code": "W06000015",
@@ -8670,7 +9863,8 @@
 						"Caerdydd",
 						"Cardiff"
 					],
-					"throughCode": "W06000015"
+					"throughCode": "W06000015",
+					"relation": "within"
 				},
 				{
 					"code": "W06000016",
@@ -8678,7 +9872,8 @@
 						"Rhondda Cynon Taf",
 						"Rhondda Cynon Taf"
 					],
-					"throughCode": "W06000016"
+					"throughCode": "W06000016",
+					"relation": "within"
 				},
 				{
 					"code": "W06000018",
@@ -8686,12 +9881,19 @@
 						"Caerffili",
 						"Caerphilly"
 					],
-					"throughCode": "W06000018"
+					"throughCode": "W06000018",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 5,
+				"reachedCount": 5,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 5,
 				"resolvedCount": 5,
@@ -8732,432 +9934,499 @@
 					"labels": [
 						"Medway"
 					],
-					"throughCode": "E06000035"
+					"throughCode": "E06000035",
+					"relation": "within"
 				},
 				{
 					"code": "E06000036",
 					"labels": [
 						"Bracknell Forest"
 					],
-					"throughCode": "E06000036"
+					"throughCode": "E06000036",
+					"relation": "within"
 				},
 				{
 					"code": "E06000037",
 					"labels": [
 						"West Berkshire"
 					],
-					"throughCode": "E06000037"
+					"throughCode": "E06000037",
+					"relation": "within"
 				},
 				{
 					"code": "E06000038",
 					"labels": [
 						"Reading"
 					],
-					"throughCode": "E06000038"
+					"throughCode": "E06000038",
+					"relation": "within"
 				},
 				{
 					"code": "E06000039",
 					"labels": [
 						"Slough"
 					],
-					"throughCode": "E06000039"
+					"throughCode": "E06000039",
+					"relation": "within"
 				},
 				{
 					"code": "E06000040",
 					"labels": [
 						"Windsor and Maidenhead"
 					],
-					"throughCode": "E06000040"
+					"throughCode": "E06000040",
+					"relation": "within"
 				},
 				{
 					"code": "E06000041",
 					"labels": [
 						"Wokingham"
 					],
-					"throughCode": "E06000041"
+					"throughCode": "E06000041",
+					"relation": "within"
 				},
 				{
 					"code": "E06000042",
 					"labels": [
 						"Milton Keynes"
 					],
-					"throughCode": "E06000042"
+					"throughCode": "E06000042",
+					"relation": "within"
 				},
 				{
 					"code": "E06000043",
 					"labels": [
 						"Brighton and Hove"
 					],
-					"throughCode": "E06000043"
+					"throughCode": "E06000043",
+					"relation": "within"
 				},
 				{
 					"code": "E06000044",
 					"labels": [
 						"Portsmouth"
 					],
-					"throughCode": "E06000044"
+					"throughCode": "E06000044",
+					"relation": "within"
 				},
 				{
 					"code": "E06000045",
 					"labels": [
 						"Southampton"
 					],
-					"throughCode": "E06000045"
+					"throughCode": "E06000045",
+					"relation": "within"
 				},
 				{
 					"code": "E06000046",
 					"labels": [
 						"Isle of Wight"
 					],
-					"throughCode": "E06000046"
+					"throughCode": "E06000046",
+					"relation": "within"
 				},
 				{
 					"code": "E06000060",
 					"labels": [
 						"Buckinghamshire"
 					],
-					"throughCode": "E06000060"
+					"throughCode": "E06000060",
+					"relation": "within"
 				},
 				{
 					"code": "E07000061",
 					"labels": [
 						"Eastbourne"
 					],
-					"throughCode": "E07000061"
+					"throughCode": "E07000061",
+					"relation": "within"
 				},
 				{
 					"code": "E07000062",
 					"labels": [
 						"Hastings"
 					],
-					"throughCode": "E07000062"
+					"throughCode": "E07000062",
+					"relation": "within"
 				},
 				{
 					"code": "E07000063",
 					"labels": [
 						"Lewes"
 					],
-					"throughCode": "E07000063"
+					"throughCode": "E07000063",
+					"relation": "within"
 				},
 				{
 					"code": "E07000064",
 					"labels": [
 						"Rother"
 					],
-					"throughCode": "E07000064"
+					"throughCode": "E07000064",
+					"relation": "within"
 				},
 				{
 					"code": "E07000065",
 					"labels": [
 						"Wealden"
 					],
-					"throughCode": "E07000065"
+					"throughCode": "E07000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000084",
 					"labels": [
 						"Basingstoke and Deane"
 					],
-					"throughCode": "E07000084"
+					"throughCode": "E07000084",
+					"relation": "within"
 				},
 				{
 					"code": "E07000085",
 					"labels": [
 						"East Hampshire"
 					],
-					"throughCode": "E07000085"
+					"throughCode": "E07000085",
+					"relation": "within"
 				},
 				{
 					"code": "E07000086",
 					"labels": [
 						"Eastleigh"
 					],
-					"throughCode": "E07000086"
+					"throughCode": "E07000086",
+					"relation": "within"
 				},
 				{
 					"code": "E07000087",
 					"labels": [
 						"Fareham"
 					],
-					"throughCode": "E07000087"
+					"throughCode": "E07000087",
+					"relation": "within"
 				},
 				{
 					"code": "E07000088",
 					"labels": [
 						"Gosport"
 					],
-					"throughCode": "E07000088"
+					"throughCode": "E07000088",
+					"relation": "within"
 				},
 				{
 					"code": "E07000089",
 					"labels": [
 						"Hart"
 					],
-					"throughCode": "E07000089"
+					"throughCode": "E07000089",
+					"relation": "within"
 				},
 				{
 					"code": "E07000090",
 					"labels": [
 						"Havant"
 					],
-					"throughCode": "E07000090"
+					"throughCode": "E07000090",
+					"relation": "within"
 				},
 				{
 					"code": "E07000091",
 					"labels": [
 						"New Forest"
 					],
-					"throughCode": "E07000091"
+					"throughCode": "E07000091",
+					"relation": "within"
 				},
 				{
 					"code": "E07000092",
 					"labels": [
 						"Rushmoor"
 					],
-					"throughCode": "E07000092"
+					"throughCode": "E07000092",
+					"relation": "within"
 				},
 				{
 					"code": "E07000093",
 					"labels": [
 						"Test Valley"
 					],
-					"throughCode": "E07000093"
+					"throughCode": "E07000093",
+					"relation": "within"
 				},
 				{
 					"code": "E07000094",
 					"labels": [
 						"Winchester"
 					],
-					"throughCode": "E07000094"
+					"throughCode": "E07000094",
+					"relation": "within"
 				},
 				{
 					"code": "E07000105",
 					"labels": [
 						"Ashford"
 					],
-					"throughCode": "E07000105"
+					"throughCode": "E07000105",
+					"relation": "within"
 				},
 				{
 					"code": "E07000106",
 					"labels": [
 						"Canterbury"
 					],
-					"throughCode": "E07000106"
+					"throughCode": "E07000106",
+					"relation": "within"
 				},
 				{
 					"code": "E07000107",
 					"labels": [
 						"Dartford"
 					],
-					"throughCode": "E07000107"
+					"throughCode": "E07000107",
+					"relation": "within"
 				},
 				{
 					"code": "E07000108",
 					"labels": [
 						"Dover"
 					],
-					"throughCode": "E07000108"
+					"throughCode": "E07000108",
+					"relation": "within"
 				},
 				{
 					"code": "E07000109",
 					"labels": [
 						"Gravesham"
 					],
-					"throughCode": "E07000109"
+					"throughCode": "E07000109",
+					"relation": "within"
 				},
 				{
 					"code": "E07000110",
 					"labels": [
 						"Maidstone"
 					],
-					"throughCode": "E07000110"
+					"throughCode": "E07000110",
+					"relation": "within"
 				},
 				{
 					"code": "E07000111",
 					"labels": [
 						"Sevenoaks"
 					],
-					"throughCode": "E07000111"
+					"throughCode": "E07000111",
+					"relation": "within"
 				},
 				{
 					"code": "E07000112",
 					"labels": [
 						"Folkestone and Hythe"
 					],
-					"throughCode": "E07000112"
+					"throughCode": "E07000112",
+					"relation": "within"
 				},
 				{
 					"code": "E07000113",
 					"labels": [
 						"Swale"
 					],
-					"throughCode": "E07000113"
+					"throughCode": "E07000113",
+					"relation": "within"
 				},
 				{
 					"code": "E07000114",
 					"labels": [
 						"Thanet"
 					],
-					"throughCode": "E07000114"
+					"throughCode": "E07000114",
+					"relation": "within"
 				},
 				{
 					"code": "E07000115",
 					"labels": [
 						"Tonbridge and Malling"
 					],
-					"throughCode": "E07000115"
+					"throughCode": "E07000115",
+					"relation": "within"
 				},
 				{
 					"code": "E07000116",
 					"labels": [
 						"Tunbridge Wells"
 					],
-					"throughCode": "E07000116"
+					"throughCode": "E07000116",
+					"relation": "within"
 				},
 				{
 					"code": "E07000178",
 					"labels": [
 						"Oxford"
 					],
-					"throughCode": "E07000178"
+					"throughCode": "E07000178",
+					"relation": "within"
 				},
 				{
 					"code": "E07000179",
 					"labels": [
 						"South Oxfordshire"
 					],
-					"throughCode": "E07000179"
+					"throughCode": "E07000179",
+					"relation": "within"
 				},
 				{
 					"code": "E07000180",
 					"labels": [
 						"Vale of White Horse"
 					],
-					"throughCode": "E07000180"
+					"throughCode": "E07000180",
+					"relation": "within"
 				},
 				{
 					"code": "E07000207",
 					"labels": [
 						"Elmbridge"
 					],
-					"throughCode": "E07000207"
+					"throughCode": "E07000207",
+					"relation": "within"
 				},
 				{
 					"code": "E07000208",
 					"labels": [
 						"Epsom and Ewell"
 					],
-					"throughCode": "E07000208"
+					"throughCode": "E07000208",
+					"relation": "within"
 				},
 				{
 					"code": "E07000209",
 					"labels": [
 						"Guildford"
 					],
-					"throughCode": "E07000209"
+					"throughCode": "E07000209",
+					"relation": "within"
 				},
 				{
 					"code": "E07000210",
 					"labels": [
 						"Mole Valley"
 					],
-					"throughCode": "E07000210"
+					"throughCode": "E07000210",
+					"relation": "within"
 				},
 				{
 					"code": "E07000211",
 					"labels": [
 						"Reigate and Banstead"
 					],
-					"throughCode": "E07000211"
+					"throughCode": "E07000211",
+					"relation": "within"
 				},
 				{
 					"code": "E07000212",
 					"labels": [
 						"Runnymede"
 					],
-					"throughCode": "E07000212"
+					"throughCode": "E07000212",
+					"relation": "within"
 				},
 				{
 					"code": "E07000213",
 					"labels": [
 						"Spelthorne"
 					],
-					"throughCode": "E07000213"
+					"throughCode": "E07000213",
+					"relation": "within"
 				},
 				{
 					"code": "E07000214",
 					"labels": [
 						"Surrey Heath"
 					],
-					"throughCode": "E07000214"
+					"throughCode": "E07000214",
+					"relation": "within"
 				},
 				{
 					"code": "E07000215",
 					"labels": [
 						"Tandridge"
 					],
-					"throughCode": "E07000215"
+					"throughCode": "E07000215",
+					"relation": "within"
 				},
 				{
 					"code": "E07000216",
 					"labels": [
 						"Waverley"
 					],
-					"throughCode": "E07000216"
+					"throughCode": "E07000216",
+					"relation": "within"
 				},
 				{
 					"code": "E07000217",
 					"labels": [
 						"Woking"
 					],
-					"throughCode": "E07000217"
+					"throughCode": "E07000217",
+					"relation": "within"
 				},
 				{
 					"code": "E07000223",
 					"labels": [
 						"Adur"
 					],
-					"throughCode": "E07000223"
+					"throughCode": "E07000223",
+					"relation": "within"
 				},
 				{
 					"code": "E07000224",
 					"labels": [
 						"Arun"
 					],
-					"throughCode": "E07000224"
+					"throughCode": "E07000224",
+					"relation": "within"
 				},
 				{
 					"code": "E07000225",
 					"labels": [
 						"Chichester"
 					],
-					"throughCode": "E07000225"
+					"throughCode": "E07000225",
+					"relation": "within"
 				},
 				{
 					"code": "E07000226",
 					"labels": [
 						"Crawley"
 					],
-					"throughCode": "E07000226"
+					"throughCode": "E07000226",
+					"relation": "within"
 				},
 				{
 					"code": "E07000227",
 					"labels": [
 						"Horsham"
 					],
-					"throughCode": "E07000227"
+					"throughCode": "E07000227",
+					"relation": "within"
 				},
 				{
 					"code": "E07000228",
 					"labels": [
 						"Mid Sussex"
 					],
-					"throughCode": "E07000228"
+					"throughCode": "E07000228",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 61,
+				"reachedCount": 61,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 65,
 				"resolvedCount": 61,
@@ -9239,12 +10508,19 @@
 					"labels": [
 						"South Tyneside"
 					],
-					"throughCode": "E08000023"
+					"throughCode": "E08000023",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -9286,7 +10562,8 @@
 						"Pembrokeshire",
 						"Sir Benfro"
 					],
-					"throughCode": "W06000009"
+					"throughCode": "W06000009",
+					"relation": "within"
 				},
 				{
 					"code": "W06000010",
@@ -9294,7 +10571,8 @@
 						"Carmarthenshire",
 						"Sir Gaerfyrddin"
 					],
-					"throughCode": "W06000010"
+					"throughCode": "W06000010",
+					"relation": "within"
 				},
 				{
 					"code": "W06000011",
@@ -9302,7 +10580,8 @@
 						"Abertawe",
 						"Swansea"
 					],
-					"throughCode": "W06000011"
+					"throughCode": "W06000011",
+					"relation": "within"
 				},
 				{
 					"code": "W06000012",
@@ -9310,7 +10589,8 @@
 						"Castell-nedd Port Talbot",
 						"Neath Port Talbot"
 					],
-					"throughCode": "W06000012"
+					"throughCode": "W06000012",
+					"relation": "within"
 				},
 				{
 					"code": "W06000013",
@@ -9318,7 +10598,8 @@
 						"Bridgend",
 						"Pen-y-bont ar Ogwr"
 					],
-					"throughCode": "W06000013"
+					"throughCode": "W06000013",
+					"relation": "within"
 				},
 				{
 					"code": "W06000014",
@@ -9326,7 +10607,8 @@
 						"Bro Morgannwg",
 						"Vale of Glamorgan"
 					],
-					"throughCode": "W06000014"
+					"throughCode": "W06000014",
+					"relation": "within"
 				},
 				{
 					"code": "W06000015",
@@ -9334,7 +10616,8 @@
 						"Caerdydd",
 						"Cardiff"
 					],
-					"throughCode": "W06000015"
+					"throughCode": "W06000015",
+					"relation": "within"
 				},
 				{
 					"code": "W06000016",
@@ -9342,7 +10625,8 @@
 						"Rhondda Cynon Taf",
 						"Rhondda Cynon Taf"
 					],
-					"throughCode": "W06000016"
+					"throughCode": "W06000016",
+					"relation": "within"
 				},
 				{
 					"code": "W06000018",
@@ -9350,7 +10634,8 @@
 						"Caerffili",
 						"Caerphilly"
 					],
-					"throughCode": "W06000018"
+					"throughCode": "W06000018",
+					"relation": "within"
 				},
 				{
 					"code": "W06000019",
@@ -9358,7 +10643,8 @@
 						"Blaenau Gwent",
 						"Blaenau Gwent"
 					],
-					"throughCode": "W06000019"
+					"throughCode": "W06000019",
+					"relation": "within"
 				},
 				{
 					"code": "W06000020",
@@ -9366,7 +10652,8 @@
 						"Torfaen",
 						"Torfaen"
 					],
-					"throughCode": "W06000020"
+					"throughCode": "W06000020",
+					"relation": "within"
 				},
 				{
 					"code": "W06000021",
@@ -9374,7 +10661,8 @@
 						"Monmouthshire",
 						"Sir Fynwy"
 					],
-					"throughCode": "W06000021"
+					"throughCode": "W06000021",
+					"relation": "within"
 				},
 				{
 					"code": "W06000022",
@@ -9382,12 +10670,19 @@
 						"Casnewydd",
 						"Newport"
 					],
-					"throughCode": "W06000022"
+					"throughCode": "W06000022",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 13,
+				"reachedCount": 13,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 13,
 				"resolvedCount": 13,
@@ -9428,208 +10723,243 @@
 					"labels": [
 						"Bath and North East Somerset"
 					],
-					"throughCode": "E06000022"
+					"throughCode": "E06000022",
+					"relation": "within"
 				},
 				{
 					"code": "E06000023",
 					"labels": [
 						"Bristol, City of"
 					],
-					"throughCode": "E06000023"
+					"throughCode": "E06000023",
+					"relation": "within"
 				},
 				{
 					"code": "E06000024",
 					"labels": [
 						"North Somerset"
 					],
-					"throughCode": "E06000024"
+					"throughCode": "E06000024",
+					"relation": "within"
 				},
 				{
 					"code": "E06000025",
 					"labels": [
 						"South Gloucestershire"
 					],
-					"throughCode": "E06000025"
+					"throughCode": "E06000025",
+					"relation": "within"
 				},
 				{
 					"code": "E06000026",
 					"labels": [
 						"Plymouth"
 					],
-					"throughCode": "E06000026"
+					"throughCode": "E06000026",
+					"relation": "within"
 				},
 				{
 					"code": "E06000027",
 					"labels": [
 						"Torbay"
 					],
-					"throughCode": "E06000027"
+					"throughCode": "E06000027",
+					"relation": "within"
 				},
 				{
 					"code": "E06000052",
 					"labels": [
 						"Cornwall"
 					],
-					"throughCode": "E06000052"
+					"throughCode": "E06000052",
+					"relation": "within"
 				},
 				{
 					"code": "E06000053",
 					"labels": [
 						"Isles of Scilly"
 					],
-					"throughCode": "E06000053"
+					"throughCode": "E06000053",
+					"relation": "within"
 				},
 				{
 					"code": "E06000054",
 					"labels": [
 						"Wiltshire"
 					],
-					"throughCode": "E06000054"
+					"throughCode": "E06000054",
+					"relation": "within"
 				},
 				{
 					"code": "E06000058",
 					"labels": [
 						"Bournemouth, Christchurch and Poole"
 					],
-					"throughCode": "E06000058"
+					"throughCode": "E06000058",
+					"relation": "within"
 				},
 				{
 					"code": "E06000059",
 					"labels": [
 						"Dorset"
 					],
-					"throughCode": "E06000059"
+					"throughCode": "E06000059",
+					"relation": "within"
 				},
 				{
 					"code": "E07000040",
 					"labels": [
 						"East Devon"
 					],
-					"throughCode": "E07000040"
+					"throughCode": "E07000040",
+					"relation": "within"
 				},
 				{
 					"code": "E07000041",
 					"labels": [
 						"Exeter"
 					],
-					"throughCode": "E07000041"
+					"throughCode": "E07000041",
+					"relation": "within"
 				},
 				{
 					"code": "E07000042",
 					"labels": [
 						"Mid Devon"
 					],
-					"throughCode": "E07000042"
+					"throughCode": "E07000042",
+					"relation": "within"
 				},
 				{
 					"code": "E07000043",
 					"labels": [
 						"North Devon"
 					],
-					"throughCode": "E07000043"
+					"throughCode": "E07000043",
+					"relation": "within"
 				},
 				{
 					"code": "E07000044",
 					"labels": [
 						"South Hams"
 					],
-					"throughCode": "E07000044"
+					"throughCode": "E07000044",
+					"relation": "within"
 				},
 				{
 					"code": "E07000045",
 					"labels": [
 						"Teignbridge"
 					],
-					"throughCode": "E07000045"
+					"throughCode": "E07000045",
+					"relation": "within"
 				},
 				{
 					"code": "E07000046",
 					"labels": [
 						"Torridge"
 					],
-					"throughCode": "E07000046"
+					"throughCode": "E07000046",
+					"relation": "within"
 				},
 				{
 					"code": "E07000047",
 					"labels": [
 						"West Devon"
 					],
-					"throughCode": "E07000047"
+					"throughCode": "E07000047",
+					"relation": "within"
 				},
 				{
 					"code": "E07000078",
 					"labels": [
 						"Cheltenham"
 					],
-					"throughCode": "E07000078"
+					"throughCode": "E07000078",
+					"relation": "within"
 				},
 				{
 					"code": "E07000079",
 					"labels": [
 						"Cotswold"
 					],
-					"throughCode": "E07000079"
+					"throughCode": "E07000079",
+					"relation": "within"
 				},
 				{
 					"code": "E07000080",
 					"labels": [
 						"Forest of Dean"
 					],
-					"throughCode": "E07000080"
+					"throughCode": "E07000080",
+					"relation": "within"
 				},
 				{
 					"code": "E07000081",
 					"labels": [
 						"Gloucester"
 					],
-					"throughCode": "E07000081"
+					"throughCode": "E07000081",
+					"relation": "within"
 				},
 				{
 					"code": "E07000082",
 					"labels": [
 						"Stroud"
 					],
-					"throughCode": "E07000082"
+					"throughCode": "E07000082",
+					"relation": "within"
 				},
 				{
 					"code": "E07000083",
 					"labels": [
 						"Tewkesbury"
 					],
-					"throughCode": "E07000083"
+					"throughCode": "E07000083",
+					"relation": "within"
 				},
 				{
 					"code": "E07000187",
 					"labels": [
 						"Mendip"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000188",
 					"labels": [
 						"Sedgemoor"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000189",
 					"labels": [
 						"South Somerset"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				},
 				{
 					"code": "E07000246",
 					"labels": [
 						"Somerset West and Taunton"
 					],
-					"throughCode": "E06000066"
+					"throughCode": "E06000066",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 26,
+				"reachedCount": 26,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 27,
 				"resolvedCount": 26,
@@ -9680,12 +11010,19 @@
 					"labels": [
 						"Southampton"
 					],
-					"throughCode": "E06000045"
+					"throughCode": "E06000045",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -9726,12 +11063,19 @@
 					"labels": [
 						"Southend-on-Sea"
 					],
-					"throughCode": "E06000033"
+					"throughCode": "E06000033",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -9772,68 +11116,83 @@
 					"labels": [
 						"Stoke-on-Trent"
 					],
-					"throughCode": "E06000021"
+					"throughCode": "E06000021",
+					"relation": "within"
 				},
 				{
 					"code": "E07000192",
 					"labels": [
 						"Cannock Chase"
 					],
-					"throughCode": "E07000192"
+					"throughCode": "E07000192",
+					"relation": "within"
 				},
 				{
 					"code": "E07000193",
 					"labels": [
 						"East Staffordshire"
 					],
-					"throughCode": "E07000193"
+					"throughCode": "E07000193",
+					"relation": "within"
 				},
 				{
 					"code": "E07000194",
 					"labels": [
 						"Lichfield"
 					],
-					"throughCode": "E07000194"
+					"throughCode": "E07000194",
+					"relation": "within"
 				},
 				{
 					"code": "E07000195",
 					"labels": [
 						"Newcastle-under-Lyme"
 					],
-					"throughCode": "E07000195"
+					"throughCode": "E07000195",
+					"relation": "within"
 				},
 				{
 					"code": "E07000196",
 					"labels": [
 						"South Staffordshire"
 					],
-					"throughCode": "E07000196"
+					"throughCode": "E07000196",
+					"relation": "within"
 				},
 				{
 					"code": "E07000197",
 					"labels": [
 						"Stafford"
 					],
-					"throughCode": "E07000197"
+					"throughCode": "E07000197",
+					"relation": "within"
 				},
 				{
 					"code": "E07000198",
 					"labels": [
 						"Staffordshire Moorlands"
 					],
-					"throughCode": "E07000198"
+					"throughCode": "E07000198",
+					"relation": "within"
 				},
 				{
 					"code": "E07000199",
 					"labels": [
 						"Tamworth"
 					],
-					"throughCode": "E07000199"
+					"throughCode": "E07000199",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 9,
+				"reachedCount": 9,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 9,
 				"resolvedCount": 9,
@@ -9874,12 +11233,19 @@
 					"labels": [
 						"Stirling"
 					],
-					"throughCode": "S12000030"
+					"throughCode": "S12000030",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -9920,12 +11286,19 @@
 					"labels": [
 						"Stockport"
 					],
-					"throughCode": "E08000007"
+					"throughCode": "E08000007",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -9966,12 +11339,19 @@
 					"labels": [
 						"Stockton-on-Tees"
 					],
-					"throughCode": "E06000004"
+					"throughCode": "E06000004",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10012,12 +11392,19 @@
 					"labels": [
 						"Stoke-on-Trent"
 					],
-					"throughCode": "E06000021"
+					"throughCode": "E06000021",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10058,40 +11445,51 @@
 					"labels": [
 						"Babergh"
 					],
-					"throughCode": "E07000200"
+					"throughCode": "E07000200",
+					"relation": "within"
 				},
 				{
 					"code": "E07000202",
 					"labels": [
 						"Ipswich"
 					],
-					"throughCode": "E07000202"
+					"throughCode": "E07000202",
+					"relation": "within"
 				},
 				{
 					"code": "E07000203",
 					"labels": [
 						"Mid Suffolk"
 					],
-					"throughCode": "E07000203"
+					"throughCode": "E07000203",
+					"relation": "within"
 				},
 				{
 					"code": "E07000244",
 					"labels": [
 						"East Suffolk"
 					],
-					"throughCode": "E07000244"
+					"throughCode": "E07000244",
+					"relation": "within"
 				},
 				{
 					"code": "E07000245",
 					"labels": [
 						"West Suffolk"
 					],
-					"throughCode": "E07000245"
+					"throughCode": "E07000245",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 5,
+				"reachedCount": 5,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 9,
 				"resolvedCount": 5,
@@ -10169,12 +11567,19 @@
 					"labels": [
 						"Sunderland"
 					],
-					"throughCode": "E08000024"
+					"throughCode": "E08000024",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10215,96 +11620,115 @@
 					"labels": [
 						"Brighton and Hove"
 					],
-					"throughCode": "E06000043"
+					"throughCode": "E06000043",
+					"relation": "within"
 				},
 				{
 					"code": "E07000061",
 					"labels": [
 						"Eastbourne"
 					],
-					"throughCode": "E07000061"
+					"throughCode": "E07000061",
+					"relation": "within"
 				},
 				{
 					"code": "E07000062",
 					"labels": [
 						"Hastings"
 					],
-					"throughCode": "E07000062"
+					"throughCode": "E07000062",
+					"relation": "within"
 				},
 				{
 					"code": "E07000063",
 					"labels": [
 						"Lewes"
 					],
-					"throughCode": "E07000063"
+					"throughCode": "E07000063",
+					"relation": "within"
 				},
 				{
 					"code": "E07000064",
 					"labels": [
 						"Rother"
 					],
-					"throughCode": "E07000064"
+					"throughCode": "E07000064",
+					"relation": "within"
 				},
 				{
 					"code": "E07000065",
 					"labels": [
 						"Wealden"
 					],
-					"throughCode": "E07000065"
+					"throughCode": "E07000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000223",
 					"labels": [
 						"Adur"
 					],
-					"throughCode": "E07000223"
+					"throughCode": "E07000223",
+					"relation": "within"
 				},
 				{
 					"code": "E07000224",
 					"labels": [
 						"Arun"
 					],
-					"throughCode": "E07000224"
+					"throughCode": "E07000224",
+					"relation": "within"
 				},
 				{
 					"code": "E07000225",
 					"labels": [
 						"Chichester"
 					],
-					"throughCode": "E07000225"
+					"throughCode": "E07000225",
+					"relation": "within"
 				},
 				{
 					"code": "E07000226",
 					"labels": [
 						"Crawley"
 					],
-					"throughCode": "E07000226"
+					"throughCode": "E07000226",
+					"relation": "within"
 				},
 				{
 					"code": "E07000227",
 					"labels": [
 						"Horsham"
 					],
-					"throughCode": "E07000227"
+					"throughCode": "E07000227",
+					"relation": "within"
 				},
 				{
 					"code": "E07000228",
 					"labels": [
 						"Mid Sussex"
 					],
-					"throughCode": "E07000228"
+					"throughCode": "E07000228",
+					"relation": "within"
 				},
 				{
 					"code": "E07000229",
 					"labels": [
 						"Worthing"
 					],
-					"throughCode": "E07000229"
+					"throughCode": "E07000229",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 13,
+				"reachedCount": 13,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 13,
 				"resolvedCount": 13,
@@ -10346,12 +11770,19 @@
 						"Abertawe",
 						"Swansea"
 					],
-					"throughCode": "W06000011"
+					"throughCode": "W06000011",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10392,12 +11823,19 @@
 					"labels": [
 						"Swindon"
 					],
-					"throughCode": "E06000030"
+					"throughCode": "E06000030",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10438,26 +11876,35 @@
 					"labels": [
 						"Angus"
 					],
-					"throughCode": "S12000041"
+					"throughCode": "S12000041",
+					"relation": "within"
 				},
 				{
 					"code": "S12000042",
 					"labels": [
 						"Dundee City"
 					],
-					"throughCode": "S12000042"
+					"throughCode": "S12000042",
+					"relation": "within"
 				},
 				{
 					"code": "S12000048",
 					"labels": [
 						"Perth and Kinross"
 					],
-					"throughCode": "S12000048"
+					"throughCode": "S12000048",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 3,
+				"reachedCount": 3,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 4,
 				"resolvedCount": 3,
@@ -10507,19 +11954,27 @@
 					"labels": [
 						"Na h-Eileanan Siar"
 					],
-					"throughCode": "S12000013"
+					"throughCode": "S12000013",
+					"relation": "within"
 				},
 				{
 					"code": "S12000017",
 					"labels": [
 						"Highland"
 					],
-					"throughCode": "S12000017"
+					"throughCode": "S12000017",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 2,
+				"reachedCount": 2,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 2,
@@ -10560,19 +12015,27 @@
 					"labels": [
 						"Highland"
 					],
-					"throughCode": "S12000017"
+					"throughCode": "S12000017",
+					"relation": "within"
 				},
 				{
 					"code": "S12000035",
 					"labels": [
 						"Argyll and Bute"
 					],
-					"throughCode": "S12000035"
+					"throughCode": "S12000035",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 2,
+				"reachedCount": 2,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 2,
 				"resolvedCount": 2,
@@ -10614,7 +12077,8 @@
 						"Blaenau Gwent",
 						"Blaenau Gwent"
 					],
-					"throughCode": "W06000019"
+					"throughCode": "W06000019",
+					"relation": "within"
 				},
 				{
 					"code": "W06000020",
@@ -10622,7 +12086,8 @@
 						"Torfaen",
 						"Torfaen"
 					],
-					"throughCode": "W06000020"
+					"throughCode": "W06000020",
+					"relation": "within"
 				},
 				{
 					"code": "W06000021",
@@ -10630,7 +12095,8 @@
 						"Monmouthshire",
 						"Sir Fynwy"
 					],
-					"throughCode": "W06000021"
+					"throughCode": "W06000021",
+					"relation": "within"
 				},
 				{
 					"code": "W06000022",
@@ -10638,7 +12104,8 @@
 						"Casnewydd",
 						"Newport"
 					],
-					"throughCode": "W06000022"
+					"throughCode": "W06000022",
+					"relation": "within"
 				},
 				{
 					"code": "W06000024",
@@ -10646,12 +12113,19 @@
 						"Merthyr Tudful",
 						"Merthyr Tydfil"
 					],
-					"throughCode": "W06000024"
+					"throughCode": "W06000024",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 5,
+				"reachedCount": 5,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 5,
 				"resolvedCount": 5,
@@ -10692,12 +12166,19 @@
 					"labels": [
 						"Torbay"
 					],
-					"throughCode": "E06000027"
+					"throughCode": "E06000027",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10736,6 +12217,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 0,
 				"resolvedCount": 0,
@@ -10776,12 +12263,19 @@
 					"labels": [
 						"Wakefield"
 					],
-					"throughCode": "E08000036"
+					"throughCode": "E08000036",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10820,6 +12314,12 @@
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 0,
+				"reachedCount": 0,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 0,
 				"resolvedCount": 0,
@@ -10860,12 +12360,19 @@
 					"labels": [
 						"Walsall"
 					],
-					"throughCode": "E08000030"
+					"throughCode": "E08000030",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10906,12 +12413,19 @@
 					"labels": [
 						"Warrington"
 					],
-					"throughCode": "E06000007"
+					"throughCode": "E06000007",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -10952,208 +12466,243 @@
 					"labels": [
 						"Herefordshire, County of"
 					],
-					"throughCode": "E06000019"
+					"throughCode": "E06000019",
+					"relation": "within"
 				},
 				{
 					"code": "E06000020",
 					"labels": [
 						"Telford and Wrekin"
 					],
-					"throughCode": "E06000020"
+					"throughCode": "E06000020",
+					"relation": "within"
 				},
 				{
 					"code": "E06000021",
 					"labels": [
 						"Stoke-on-Trent"
 					],
-					"throughCode": "E06000021"
+					"throughCode": "E06000021",
+					"relation": "within"
 				},
 				{
 					"code": "E06000051",
 					"labels": [
 						"Shropshire"
 					],
-					"throughCode": "E06000051"
+					"throughCode": "E06000051",
+					"relation": "within"
 				},
 				{
 					"code": "E07000192",
 					"labels": [
 						"Cannock Chase"
 					],
-					"throughCode": "E07000192"
+					"throughCode": "E07000192",
+					"relation": "within"
 				},
 				{
 					"code": "E07000193",
 					"labels": [
 						"East Staffordshire"
 					],
-					"throughCode": "E07000193"
+					"throughCode": "E07000193",
+					"relation": "within"
 				},
 				{
 					"code": "E07000194",
 					"labels": [
 						"Lichfield"
 					],
-					"throughCode": "E07000194"
+					"throughCode": "E07000194",
+					"relation": "within"
 				},
 				{
 					"code": "E07000195",
 					"labels": [
 						"Newcastle-under-Lyme"
 					],
-					"throughCode": "E07000195"
+					"throughCode": "E07000195",
+					"relation": "within"
 				},
 				{
 					"code": "E07000196",
 					"labels": [
 						"South Staffordshire"
 					],
-					"throughCode": "E07000196"
+					"throughCode": "E07000196",
+					"relation": "within"
 				},
 				{
 					"code": "E07000197",
 					"labels": [
 						"Stafford"
 					],
-					"throughCode": "E07000197"
+					"throughCode": "E07000197",
+					"relation": "within"
 				},
 				{
 					"code": "E07000199",
 					"labels": [
 						"Tamworth"
 					],
-					"throughCode": "E07000199"
+					"throughCode": "E07000199",
+					"relation": "within"
 				},
 				{
 					"code": "E07000218",
 					"labels": [
 						"North Warwickshire"
 					],
-					"throughCode": "E07000218"
+					"throughCode": "E07000218",
+					"relation": "within"
 				},
 				{
 					"code": "E07000219",
 					"labels": [
 						"Nuneaton and Bedworth"
 					],
-					"throughCode": "E07000219"
+					"throughCode": "E07000219",
+					"relation": "within"
 				},
 				{
 					"code": "E07000220",
 					"labels": [
 						"Rugby"
 					],
-					"throughCode": "E07000220"
+					"throughCode": "E07000220",
+					"relation": "within"
 				},
 				{
 					"code": "E07000221",
 					"labels": [
 						"Stratford-on-Avon"
 					],
-					"throughCode": "E07000221"
+					"throughCode": "E07000221",
+					"relation": "within"
 				},
 				{
 					"code": "E07000222",
 					"labels": [
 						"Warwick"
 					],
-					"throughCode": "E07000222"
+					"throughCode": "E07000222",
+					"relation": "within"
 				},
 				{
 					"code": "E07000234",
 					"labels": [
 						"Bromsgrove"
 					],
-					"throughCode": "E07000234"
+					"throughCode": "E07000234",
+					"relation": "within"
 				},
 				{
 					"code": "E07000235",
 					"labels": [
 						"Malvern Hills"
 					],
-					"throughCode": "E07000235"
+					"throughCode": "E07000235",
+					"relation": "within"
 				},
 				{
 					"code": "E07000236",
 					"labels": [
 						"Redditch"
 					],
-					"throughCode": "E07000236"
+					"throughCode": "E07000236",
+					"relation": "within"
 				},
 				{
 					"code": "E07000237",
 					"labels": [
 						"Worcester"
 					],
-					"throughCode": "E07000237"
+					"throughCode": "E07000237",
+					"relation": "within"
 				},
 				{
 					"code": "E07000238",
 					"labels": [
 						"Wychavon"
 					],
-					"throughCode": "E07000238"
+					"throughCode": "E07000238",
+					"relation": "within"
 				},
 				{
 					"code": "E07000239",
 					"labels": [
 						"Wyre Forest"
 					],
-					"throughCode": "E07000239"
+					"throughCode": "E07000239",
+					"relation": "within"
 				},
 				{
 					"code": "E08000025",
 					"labels": [
 						"Birmingham"
 					],
-					"throughCode": "E08000025"
+					"throughCode": "E08000025",
+					"relation": "within"
 				},
 				{
 					"code": "E08000026",
 					"labels": [
 						"Coventry"
 					],
-					"throughCode": "E08000026"
+					"throughCode": "E08000026",
+					"relation": "within"
 				},
 				{
 					"code": "E08000027",
 					"labels": [
 						"Dudley"
 					],
-					"throughCode": "E08000027"
+					"throughCode": "E08000027",
+					"relation": "within"
 				},
 				{
 					"code": "E08000028",
 					"labels": [
 						"Sandwell"
 					],
-					"throughCode": "E08000028"
+					"throughCode": "E08000028",
+					"relation": "within"
 				},
 				{
 					"code": "E08000029",
 					"labels": [
 						"Solihull"
 					],
-					"throughCode": "E08000029"
+					"throughCode": "E08000029",
+					"relation": "within"
 				},
 				{
 					"code": "E08000030",
 					"labels": [
 						"Walsall"
 					],
-					"throughCode": "E08000030"
+					"throughCode": "E08000030",
+					"relation": "within"
 				},
 				{
 					"code": "E08000031",
 					"labels": [
 						"Wolverhampton"
 					],
-					"throughCode": "E08000031"
+					"throughCode": "E08000031",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 29,
+				"reachedCount": 29,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 29,
 				"resolvedCount": 29,
@@ -11194,26 +12743,35 @@
 					"labels": [
 						"Derry City and Strabane"
 					],
-					"throughCode": "N09000005"
+					"throughCode": "N09000005",
+					"relation": "within"
 				},
 				{
 					"code": "N09000006",
 					"labels": [
 						"Fermanagh and Omagh"
 					],
-					"throughCode": "N09000006"
+					"throughCode": "N09000006",
+					"relation": "within"
 				},
 				{
 					"code": "N09000009",
 					"labels": [
 						"Mid Ulster"
 					],
-					"throughCode": "N09000009"
+					"throughCode": "N09000009",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 3,
+				"reachedCount": 3,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 3,
 				"resolvedCount": 3,
@@ -11255,7 +12813,8 @@
 						"Ceredigion",
 						"Ceredigion"
 					],
-					"throughCode": "W06000008"
+					"throughCode": "W06000008",
+					"relation": "within"
 				},
 				{
 					"code": "W06000010",
@@ -11263,7 +12822,8 @@
 						"Carmarthenshire",
 						"Sir Gaerfyrddin"
 					],
-					"throughCode": "W06000010"
+					"throughCode": "W06000010",
+					"relation": "within"
 				},
 				{
 					"code": "W06000011",
@@ -11271,12 +12831,19 @@
 						"Abertawe",
 						"Swansea"
 					],
-					"throughCode": "W06000011"
+					"throughCode": "W06000011",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 3,
+				"reachedCount": 3,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 3,
 				"resolvedCount": 3,
@@ -11317,12 +12884,19 @@
 					"labels": [
 						"Wigan"
 					],
-					"throughCode": "E08000010"
+					"throughCode": "E08000010",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -11363,12 +12937,19 @@
 					"labels": [
 						"Winchester"
 					],
-					"throughCode": "E07000094"
+					"throughCode": "E07000094",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -11409,12 +12990,19 @@
 					"labels": [
 						"Wolverhampton"
 					],
-					"throughCode": "E08000031"
+					"throughCode": "E08000031",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -11455,12 +13043,19 @@
 					"labels": [
 						"Worcester"
 					],
-					"throughCode": "E07000237"
+					"throughCode": "E07000237",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -11502,12 +13097,19 @@
 						"Wrecsam",
 						"Wrexham"
 					],
-					"throughCode": "W06000006"
+					"throughCode": "W06000006",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -11548,12 +13150,19 @@
 					"labels": [
 						"York"
 					],
-					"throughCode": "E06000014"
+					"throughCode": "E06000014",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 1,
+				"reachedCount": 1,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 1,
 				"resolvedCount": 1,
@@ -11594,138 +13203,163 @@
 					"labels": [
 						"Kingston upon Hull, City of"
 					],
-					"throughCode": "E06000010"
+					"throughCode": "E06000010",
+					"relation": "within"
 				},
 				{
 					"code": "E06000011",
 					"labels": [
 						"East Riding of Yorkshire"
 					],
-					"throughCode": "E06000011"
+					"throughCode": "E06000011",
+					"relation": "within"
 				},
 				{
 					"code": "E06000014",
 					"labels": [
 						"York"
 					],
-					"throughCode": "E06000014"
+					"throughCode": "E06000014",
+					"relation": "within"
 				},
 				{
 					"code": "E07000163",
 					"labels": [
 						"Craven"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000164",
 					"labels": [
 						"Hambleton"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000165",
 					"labels": [
 						"Harrogate"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000166",
 					"labels": [
 						"Richmondshire"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000167",
 					"labels": [
 						"Ryedale"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000168",
 					"labels": [
 						"Scarborough"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E07000169",
 					"labels": [
 						"Selby"
 					],
-					"throughCode": "E06000065"
+					"throughCode": "E06000065",
+					"relation": "within"
 				},
 				{
 					"code": "E08000016",
 					"labels": [
 						"Barnsley"
 					],
-					"throughCode": "E08000016"
+					"throughCode": "E08000016",
+					"relation": "within"
 				},
 				{
 					"code": "E08000017",
 					"labels": [
 						"Doncaster"
 					],
-					"throughCode": "E08000017"
+					"throughCode": "E08000017",
+					"relation": "within"
 				},
 				{
 					"code": "E08000018",
 					"labels": [
 						"Rotherham"
 					],
-					"throughCode": "E08000018"
+					"throughCode": "E08000018",
+					"relation": "within"
 				},
 				{
 					"code": "E08000019",
 					"labels": [
 						"Sheffield"
 					],
-					"throughCode": "E08000019"
+					"throughCode": "E08000019",
+					"relation": "within"
 				},
 				{
 					"code": "E08000032",
 					"labels": [
 						"Bradford"
 					],
-					"throughCode": "E08000032"
+					"throughCode": "E08000032",
+					"relation": "within"
 				},
 				{
 					"code": "E08000033",
 					"labels": [
 						"Calderdale"
 					],
-					"throughCode": "E08000033"
+					"throughCode": "E08000033",
+					"relation": "within"
 				},
 				{
 					"code": "E08000034",
 					"labels": [
 						"Kirklees"
 					],
-					"throughCode": "E08000034"
+					"throughCode": "E08000034",
+					"relation": "within"
 				},
 				{
 					"code": "E08000035",
 					"labels": [
 						"Leeds"
 					],
-					"throughCode": "E08000035"
+					"throughCode": "E08000035",
+					"relation": "within"
 				},
 				{
 					"code": "E08000036",
 					"labels": [
 						"Wakefield"
 					],
-					"throughCode": "E08000036"
+					"throughCode": "E08000036",
+					"relation": "within"
 				}
 			],
 			"partialMembers": 0,
 			"parentGeography": "localAuthority",
 			"parentBoundaryRelease": "2023-05-uk-bgc-v2",
+			"reach": {
+				"memberCount": 13,
+				"reachedCount": 13,
+				"unreached": [],
+				"complete": true
+			},
 			"coverage": {
 				"memberCodeCount": 22,
 				"resolvedCount": 13,

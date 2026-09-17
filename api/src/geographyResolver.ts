@@ -387,6 +387,23 @@ export class GeographyResolver {
 		);
 	}
 
+	/** Crosswalks with materialised location parents in a geography release. */
+	locationParentCrosswalks(geography: string, boundaryRelease: string) {
+		return (
+			this.inputs.locationProjectionStore?.parentCrosswalks(
+				geography,
+				boundaryRelease,
+			) ?? []
+		);
+	}
+
+	locationParents(locationId: string, crosswalkId: string) {
+		return this.inputs.locationProjectionStore?.parents(
+			locationId,
+			crosswalkId,
+		);
+	}
+
 	relationshipPaths(
 		from: { geography: string; boundaryRelease: string },
 		to: { geography: string; boundaryRelease: string },
