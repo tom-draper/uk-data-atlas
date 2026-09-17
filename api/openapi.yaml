@@ -2777,74 +2777,369 @@ paths:
     get:
       operationId: findContainingAreas
       tags: ["Map"]
-      summary: Find areas containing a WGS84 point in one boundary release
+      summary: Find the areas containing a WGS84 point in one or more geographies
       description: >
-        Uses a cached bounding-box prefilter followed by an exact polygon test.
-        Points on exterior or hole rings are included and labelled `boundary`;
-        a point on a shared border may therefore return more than one area.
+        Tests a point against one boundary release of each requested geography,
+        at most four in one request, and says for each what contains it or why
+        nothing does.
+
+
+        Each geography's release is either pinned, as
+        `release={geography}/{release}`, or chosen for `date` as the latest one
+        dated on or before it, exactly as `/boundary-releases:resolve` chooses.
+        A geography with neither is refused. A date no release fits, or one
+        several releases of the same month fit equally, is reported in that
+        geography's result as `no-release-for-date` or `ambiguous-release`
+        rather than failing the whole lookup.
+
+
+        Points on an exterior or hole ring are included and labelled
+        `boundary`, so a point on a shared border returns every area sharing
+        it. A result with no match is `outside-coverage` when the point's
+        country is outside the release's coverage, or outside every UK country
+        boundary, and `no-match` when the release covers the point's country
+        but no area of it contains the point. The country comes from a matched
+        area's code where one has it, and otherwise from the country
+        boundaries, and `country.determinedBy` says which.
+
+
+        Every result states how far its answer can be trusted.
+        `positionalToleranceM` adds the coordinate's uncertainty, taken from
+        `accuracy` or else from its written decimal places, the boundary's
+        generalisation, read from the ONS release name, and the stated accuracy
+        of any transformation from the source CRS to WGS 84. A match whose edge
+        lies within that tolerance is `nearBoundary`. The geometry's source
+        file, hash, CRS and transformation are given for each release and each
+        match.
+
+
+        Each release is read into memory on first use, which can take a second
+        or more for a large release; later lookups against it are fast.
       parameters:
         - name: lng
           in: query
           required: true
-          schema:
-            type: number
-            minimum: -180
-            maximum: 180
-          description: Longitude in WGS 84 decimal degrees.
+          schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+          description: >
+            Longitude in WGS 84 decimal degrees, -180 to 180. Written as a plain
+            decimal: its decimal places are read as its precision.
         - name: lat
           in: query
           required: true
-          schema:
-            type: number
-            minimum: -90
-            maximum: 90
-          description: Latitude in WGS 84 decimal degrees.
-        - name: geography
-          in: query
-          required: true
-          schema: { type: string }
-          description: >
-            The geography of the boundary release to test the point against.
-        - name: release
-          in: query
-          required: true
-          schema: { type: string }
-          description: >
-            The boundary release whose geometry the point is tested against.
+          schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+          description: Latitude in WGS 84 decimal degrees, -90 to 90, as for `lng`.
+        - $ref: "#/components/parameters/PointLookupGeography"
+        - $ref: "#/components/parameters/PointLookupRelease"
+        - $ref: "#/components/parameters/PointLookupDate"
+        - $ref: "#/components/parameters/PointLookupAccuracy"
       responses:
         "200":
-          description: Every area whose geometry contains the point.
+          description: Each requested geography's containing areas, or why there are none.
           content:
             application/json:
-              schema: { type: object }
-              x-example-request: "/v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc"
+              schema:
+                $ref: "#/components/schemas/PointContainmentEnvelope"
+              x-example-request: "/v1/areas:contains?lng=-3.1791&lat=51.4816&geography=ward&geography=localHealthBoard&geography=combinedAuthority&date=2025-06-01"
               example:
                 apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                atlasRelease: sha256:da4898229392e8fa52cd5098cf24c52f11abf454b0adcab178c6c82e30032c15
                 data:
                   point:
-                    lng: -1.5491
-                    lat: 53.8008
-                  geography: localAuthority
-                  boundaryRelease: 2024-05-uk-bgc
+                    lng: -3.1791
+                    lat: 51.4816
+                    crs: EPSG:4326
+                    precision:
+                      decimalPlaces: { lng: 4, lat: 4 }
+                      uncertaintyM: 5.56
+                      basis: decimal-places
+                  date: "2025-06-01"
+                  country:
+                    code: GB-WLS
+                    determinedBy: area-code
+                    area: ward/2025-05-uk-bgc-v2/W05001274
                   boundaryRule: included
-                  matches:
-                    - id: localAuthority/2024-05-uk-bgc/E08000035
-                      code: E08000035
-                      name: Leeds
-                      containment: interior
+                  results:
+                    - geography: ward
+                      boundaryRelease: 2025-05-uk-bgc-v2
+                      href: /v1/boundary-releases/ward/2025-05-uk-bgc-v2
+                      selection:
+                        policy: latest-release-dated-on-or-before
+                        date: "2025-06-01"
+                        sameMonth: false
+                      boundaryResolution:
+                        generalisation: generalised-20m
+                        extent: clipped-to-coastline
+                        toleranceM: 20
+                        basis: ons-release-name
                       geometrySource:
-                        input: boundaries/local-authority/2024-05-uk-bgc/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.geojson
-                        inputHash: sha256:a54c16257bac529d380d7f9e9a3449186fda563ee426e565153a08e60d4afa3a
                         sourceCrs: EPSG:4326
-                meta:
-                  nextCursor: null
+                      status: matched
+                      positionalToleranceM: 25.56
+                      matches:
+                        - id: ward/2025-05-uk-bgc-v2/W05001274
+                          code: W05001274
+                          name: Cathays
+                          containment: interior
+                          distanceToBoundaryM: 465.67
+                          nearBoundary: false
+                    - geography: localHealthBoard
+                      boundaryRelease: 2023-12-w-bgc
+                      coverage:
+                        countries: [GB-WLS]
+                      status: matched
+                      matches:
+                        - id: localHealthBoard/2023-12-w-bgc/W11000029
+                          code: W11000029
+                          name: Cardiff and Vale University Health Board
+                          containment: interior
+                          nearBoundary: false
+                    - geography: combinedAuthority
+                      selection:
+                        policy: latest-release-dated-on-or-before
+                        date: "2025-06-01"
+                      status: no-release-for-date
+                      detail: The earliest combinedAuthority boundary release is dated 2025-12, after 2025-06.
+                      earliest:
+                        id: 2025-12-en-bgc
+                        month: "2025-12"
+                      matches: []
         "400":
-          $ref: "#/components/responses/InvalidQuery"
+          description: >
+            The point is missing, malformed or out of range; no geography is
+            named; more than four are; a geography has neither a pinned release
+            nor a date; a bare release id is given with several geographies; or
+            `date` or `accuracy` is malformed.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: >
+            A pinned release is not published or not compiled, or a geography
+            is unknown.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas:containsBatch:
+    get:
+      operationId: findContainingAreasForPoints
+      tags: ["Map"]
+      summary: Find the areas containing each of a bounded batch of points
+      description: >
+        The `areas:contains` lookup for up to 100 points at once, each given as
+        `point={lng},{lat}` or `point={lng},{lat},{accuracy}`. Geographies,
+        release selection and statuses are exactly as for a single point.
+
+
+        Release-wide facts, including selection, coverage, resolution and
+        geometry provenance, are given once in `releases`. Each point then
+        lists its country and, per release in the same order, its status and
+        matches; a match carries `corrections` only where a declared grid
+        correction moved that area. `summary` counts the lookups by outcome
+        and how many have a match near a boundary.
+
+
+        Every release is read once for all the points, so the cost of a batch
+        grows with its points rather than with its points times its
+        geographies. This is a bounded convenience for a caller's own point
+        dataset, not a bulk geocoder: for more points, page through them in
+        batches.
+      parameters:
+        - name: point
+          in: query
+          required: true
+          schema:
+            type: array
+            maxItems: 100
+            items: { type: string }
+          style: form
+          explode: true
+          description: >
+            `{lng},{lat}` in plain decimal WGS 84 degrees, optionally followed
+            by `,{accuracy}` in metres. Repeat for each point, up to 100.
+        - $ref: "#/components/parameters/PointLookupGeography"
+        - $ref: "#/components/parameters/PointLookupRelease"
+        - $ref: "#/components/parameters/PointLookupDate"
+        - $ref: "#/components/parameters/PointLookupAccuracy"
+      responses:
+        "200":
+          description: Each point's containing areas in every requested release.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PointContainmentBatchEnvelope"
+              x-example-request: "/v1/areas:containsBatch?point=-1.5491,53.8008&point=1.0,54.5&geography=localAuthority&date=2025-06-01"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:da4898229392e8fa52cd5098cf24c52f11abf454b0adcab178c6c82e30032c15
+                data:
+                  date: "2025-06-01"
+                  boundaryRule: included
+                  releases:
+                    - geography: localAuthority
+                      boundaryRelease: 2025-05-uk-bgc-v2
+                      selection:
+                        policy: latest-release-dated-on-or-before
+                        date: "2025-06-01"
+                      boundaryResolution:
+                        generalisation: generalised-20m
+                        toleranceM: 20
+                      geometrySource:
+                        sourceCrs: EPSG:4326
+                  summary:
+                    points: 2
+                    lookups: 2
+                    matched: 1
+                    noMatch: 0
+                    outsideCoverage: 1
+                    unresolved: 0
+                    nearBoundary: 0
+                  points:
+                    - index: 0
+                      point: { lng: -1.5491, lat: 53.8008 }
+                      country:
+                        code: GB-ENG
+                        determinedBy: area-code
+                        area: localAuthority/2025-05-uk-bgc-v2/E08000035
+                      results:
+                        - geography: localAuthority
+                          boundaryRelease: 2025-05-uk-bgc-v2
+                          status: matched
+                          positionalToleranceM: 25.57
+                          matches:
+                            - id: localAuthority/2025-05-uk-bgc-v2/E08000035
+                              code: E08000035
+                              name: Leeds
+                              containment: interior
+                              distanceToBoundaryM: 6460.39
+                              nearBoundary: false
+                    - index: 1
+                      point: { lng: 1, lat: 54.5 }
+                      country:
+                        code: null
+                        determinedBy: country-boundary
+                        boundaryRelease: 2024-12-uk-bgc
+                      results:
+                        - geography: localAuthority
+                          status: outside-coverage
+                          reason: outside-uk-boundaries
+                          matches: []
+        "400":
+          description: >
+            No point is given, more than 100 are, or one is malformed, and the
+            detail names it; or the geographies, releases, date or accuracy are
+            refused as for `areas:contains`.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
-          $ref: "#/components/responses/GeometryUnavailable"
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas:near:
+    get:
+      operationId: findNearestAreas
+      tags: ["Map"]
+      summary: Rank the areas nearest a WGS84 point by distance
+      description: >
+        Returns up to `limit` areas of each requested geography whose published
+        geometry lies within `within` metres of the point, nearest first.
+        Releases are selected exactly as for `areas:contains`.
+
+
+        This is a distance answer, labelled `relation: distance`, and never a
+        containment one. An area at zero metres has the point on or inside it,
+        but only `areas:contains` makes that claim, with its boundary rule and
+        tolerance. Use this route where containment has nothing to say: a
+        point offshore or in an estuary that a generalised boundary leaves
+        out, or a site for which the nearest few areas all matter.
+
+
+        Distances are to the nearest part of each area's geometry, measured on
+        the WGS 84 ellipsoid in a plane tangent at the point, which within the
+        50 km this route reaches departs from the geodesic by less than a tenth
+        of a percent. They carry the coordinate's own uncertainty, given in
+        `point.precision`. `matched` counts every area within the distance, and
+        `truncated` says whether `limit` cut it.
+      parameters:
+        - name: lng
+          in: query
+          required: true
+          schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+          description: Longitude in WGS 84 decimal degrees, -180 to 180.
+        - name: lat
+          in: query
+          required: true
+          schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+          description: Latitude in WGS 84 decimal degrees, -90 to 90.
+        - $ref: "#/components/parameters/PointLookupGeography"
+        - $ref: "#/components/parameters/PointLookupRelease"
+        - $ref: "#/components/parameters/PointLookupDate"
+        - $ref: "#/components/parameters/PointLookupAccuracy"
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 10, default: 1 }
+          description: How many areas to return per geography, 1 to 10.
+        - name: within
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 50000, default: 1000 }
+          description: The furthest an area may be, in whole metres, up to 50 km.
+      responses:
+        "200":
+          description: Each requested geography's nearest areas, with their distances.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NearestAreasEnvelope"
+              x-example-request: "/v1/areas:near?lng=-0.5800&lat=54.5100&geography=ward&date=2025-06-01&limit=2&within=5000"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:da4898229392e8fa52cd5098cf24c52f11abf454b0adcab178c6c82e30032c15
+                data:
+                  point:
+                    lng: -0.58
+                    lat: 54.51
+                    crs: EPSG:4326
+                  date: "2025-06-01"
+                  within: 5000
+                  limit: 2
+                  relation: distance
+                  results:
+                    - geography: ward
+                      boundaryRelease: 2025-05-uk-bgc-v2
+                      selection:
+                        policy: latest-release-dated-on-or-before
+                        date: "2025-06-01"
+                      status: found
+                      matched: 4
+                      truncated: true
+                      nearest:
+                        - rank: 1
+                          id: ward/2025-05-uk-bgc-v2/E05014272
+                          code: E05014272
+                          name: Esk Valley & Coast
+                          distanceM: 2372.3
+        "400":
+          description: >
+            The point, `limit`, `within` or `accuracy` is malformed or out of
+            range, or the geographies and releases are refused as for
+            `areas:contains`.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
 
   /areas/{geography}/{release}/{code}:
     get:
@@ -5220,6 +5515,52 @@ paths:
 
 components:
   parameters:
+    PointLookupGeography:
+      name: geography
+      in: query
+      required: false
+      schema:
+        type: array
+        maxItems: 4
+        items: { type: string }
+      style: form
+      explode: true
+      description: >
+        A geography to look the point up in. Repeat for up to four. A geography
+        named only in a pinned `release` need not be repeated here.
+    PointLookupRelease:
+      name: release
+      in: query
+      required: false
+      schema:
+        type: array
+        items: { type: string }
+      style: form
+      explode: true
+      description: >
+        A release to pin, as `{geography}/{release}`, such as
+        `ward/2025-12-uk-bgc`. A bare release id is accepted when exactly one
+        geography is requested. A pinned release is used whatever `date` says.
+    PointLookupDate:
+      name: date
+      in: query
+      required: false
+      schema: { type: string, pattern: "^\\d{4}-\\d{2}(-\\d{2})?$" }
+      description: >
+        A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`. Every
+        geography without a pinned release uses the latest release dated on or
+        before it. The country boundaries used to place a point that matches
+        nothing are chosen the same way.
+    PointLookupAccuracy:
+      name: accuracy
+      in: query
+      required: false
+      schema: { type: number, exclusiveMinimum: 0, maximum: 100000 }
+      description: >
+        How far the true position may lie from the coordinate, in metres, such
+        as a GPS fix's reported accuracy. Without it, uncertainty is half the
+        coordinate's last written decimal place, which overstates it where a
+        client drops trailing zeros.
     Geography:
       name: geography
       in: path
@@ -6493,6 +6834,319 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/AreaBoxSearch"
+
+    LookupPoint:
+      type: object
+      required: [lng, lat, crs, precision]
+      properties:
+        lng: { type: number }
+        lat: { type: number }
+        crs: { const: "EPSG:4326" }
+        precision:
+          type: object
+          required: [decimalPlaces, uncertaintyM, basis]
+          properties:
+            decimalPlaces:
+              type: object
+              required: [lng, lat]
+              properties:
+                lng: { type: integer }
+                lat: { type: integer }
+            uncertaintyM:
+              type: number
+              description: How far the true position may lie from the coordinate, in metres.
+            basis:
+              type: string
+              enum: [stated-accuracy, decimal-places]
+
+    PointCountry:
+      type: object
+      description: >
+        The UK country the point lies in. `area-code` reads it from a matched
+        area's GSS code; `country-boundary` tests the point against a country
+        release, and a null `code` there means no UK country contains it.
+      required: [code, determinedBy]
+      properties:
+        code:
+          type: ["string", "null"]
+          enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS, null]
+        determinedBy:
+          type: string
+          enum: [area-code, country-boundary, undetermined]
+        area: { type: string }
+        boundaryRelease: { type: string }
+        detail: { type: string }
+
+    PointLookupRelease:
+      type: object
+      description: >
+        A requested geography's release and how it was chosen. When no release
+        could be read, `status` and `detail` say why and the release-wide
+        members are absent.
+      required: [geography, selection]
+      properties:
+        geography: { type: string }
+        boundaryRelease: { type: string }
+        href: { type: string }
+        selection:
+          type: object
+          required: [policy]
+          properties:
+            policy:
+              type: string
+              enum: [pinned, latest-release-dated-on-or-before]
+            date: { type: string }
+            sameMonth: { type: boolean }
+            next:
+              oneOf:
+                - $ref: "#/components/schemas/ReleaseReference"
+                - type: "null"
+        coverage:
+          type: object
+          required: [countries]
+          properties:
+            countries:
+              type: array
+              items: { type: string }
+        boundaryResolution:
+          type: object
+          required: [generalisation]
+          description: >
+            How much the boundary's lines were generalised, read from the ONS
+            release name. `undeclared` where the name does not say.
+          properties:
+            generalisation: { type: string }
+            extent:
+              type: string
+              enum: [clipped-to-coastline, full-extent-of-realm]
+            toleranceM: { type: number }
+            basis: { const: ons-release-name }
+        geometrySource:
+          $ref: "#/components/schemas/GeometrySource"
+        source:
+          type: object
+          properties:
+            publisher: { type: string }
+            licence:
+              type: object
+              properties:
+                name: { type: string }
+                url: { type: string }
+        status:
+          type: string
+          enum: [ambiguous-release, no-release-for-date, geometry-unavailable]
+        detail: { type: string }
+        choices:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReleaseReference"
+        earliest:
+          $ref: "#/components/schemas/ReleaseReference"
+
+    ReleaseReference:
+      type: object
+      required: [id, month, title, countries, href]
+      properties:
+        id: { type: string }
+        month: { type: string }
+        title: { type: string }
+        countries:
+          type: array
+          items: { type: string }
+        href: { type: string }
+
+    PointLookupResult:
+      type: object
+      required: [geography, status, matches]
+      properties:
+        geography: { type: string }
+        boundaryRelease: { type: string }
+        status:
+          type: string
+          enum:
+            [
+              matched,
+              no-match,
+              outside-coverage,
+              ambiguous-release,
+              no-release-for-date,
+              geometry-unavailable,
+            ]
+        reason:
+          type: string
+          enum: [country-not-covered, outside-uk-boundaries]
+        detail: { type: string }
+        positionalToleranceM:
+          type: number
+          description: >
+            Coordinate uncertainty, boundary generalisation and transformation
+            accuracy added together, in metres.
+        matches:
+          type: array
+          items:
+            type: object
+            required:
+              [id, code, name, containment, distanceToBoundaryM, nearBoundary]
+            properties:
+              id: { type: string }
+              code: { type: string }
+              name: { type: string }
+              aliases:
+                type: array
+                items: { type: string }
+              containment:
+                type: string
+                enum: [interior, boundary]
+              distanceToBoundaryM:
+                type: number
+                description: Metres from the point to the area's nearest edge.
+              nearBoundary:
+                type: boolean
+                description: The edge lies within `positionalToleranceM`.
+              geometrySource:
+                $ref: "#/components/schemas/GeometrySource"
+              corrections:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: string }
+                    description: { type: string }
+
+    PointContainment:
+      type: object
+      required: [point, country, boundaryRule, results, note]
+      properties:
+        point:
+          $ref: "#/components/schemas/LookupPoint"
+        date: { type: string }
+        country:
+          $ref: "#/components/schemas/PointCountry"
+        boundaryRule: { const: included }
+        results:
+          type: array
+          description: One per requested geography, in the order requested.
+          items:
+            allOf:
+              - $ref: "#/components/schemas/PointLookupRelease"
+              - $ref: "#/components/schemas/PointLookupResult"
+        note: { type: string }
+
+    PointContainmentEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/PointContainment"
+
+    PointContainmentBatch:
+      type: object
+      required: [boundaryRule, releases, summary, points, note]
+      properties:
+        date: { type: string }
+        boundaryRule: { const: included }
+        releases:
+          type: array
+          items:
+            $ref: "#/components/schemas/PointLookupRelease"
+        summary:
+          type: object
+          required:
+            [points, lookups, matched, noMatch, outsideCoverage, unresolved, nearBoundary]
+          properties:
+            points: { type: integer }
+            lookups: { type: integer }
+            matched: { type: integer }
+            noMatch: { type: integer }
+            outsideCoverage: { type: integer }
+            unresolved:
+              type: integer
+              description: Lookups with no answer about the point, such as an ambiguous release.
+            nearBoundary: { type: integer }
+        points:
+          type: array
+          items:
+            type: object
+            required: [index, point, country, results]
+            properties:
+              index: { type: integer }
+              point:
+                $ref: "#/components/schemas/LookupPoint"
+              country:
+                $ref: "#/components/schemas/PointCountry"
+              results:
+                type: array
+                description: One per entry in releases, in the same order.
+                items:
+                  $ref: "#/components/schemas/PointLookupResult"
+        note: { type: string }
+
+    PointContainmentBatchEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/PointContainmentBatch"
+
+    NearestAreas:
+      type: object
+      required: [point, within, limit, relation, distanceMethod, results, note]
+      properties:
+        point:
+          $ref: "#/components/schemas/LookupPoint"
+        date: { type: string }
+        within: { type: integer }
+        limit: { type: integer }
+        relation: { const: distance }
+        distanceMethod: { type: string }
+        results:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/PointLookupRelease"
+              - type: object
+                required: [nearest]
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      [
+                        found,
+                        none-within,
+                        ambiguous-release,
+                        no-release-for-date,
+                        geometry-unavailable,
+                      ]
+                  matched: { type: integer }
+                  truncated: { type: boolean }
+                  nearest:
+                    type: array
+                    items:
+                      type: object
+                      required: [rank, id, code, name, distanceM]
+                      properties:
+                        rank: { type: integer }
+                        id: { type: string }
+                        code: { type: string }
+                        name: { type: string }
+                        distanceM:
+                          type: number
+                          description: >
+                            Metres to the area, zero when the point is on or
+                            inside it. Not a containment claim.
+                        geometrySource:
+                          $ref: "#/components/schemas/GeometrySource"
+        note: { type: string }
+
+    NearestAreasEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/NearestAreas"
 
     AreaChildrenGeometry:
       type: object

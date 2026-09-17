@@ -19,7 +19,11 @@ import { handleDataTransformRoutes } from "./dataTransformRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
-import { handleAreaContainsRoutes } from "./areaContainsRoutes";
+import {
+	handleAreaContainsBatchRoutes,
+	handleAreaContainsRoutes,
+} from "./areaContainsRoutes";
+import { handleAreaNearRoutes } from "./areaNearRoutes";
 import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
 import { handleAreaValidationRoutes } from "./areaValidationRoutes";
 import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
@@ -208,6 +212,18 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleAreaContainsRoutes,
 	},
 	{
+		name: "area-contains-batch",
+		owns: (segments) =>
+			segments[0] === "v1" && segments[1] === "areas:containsBatch",
+		handle: handleAreaContainsBatchRoutes,
+	},
+	{
+		name: "area-near",
+		owns: (segments) =>
+			segments[0] === "v1" && segments[1] === "areas:near",
+		handle: handleAreaNearRoutes,
+	},
+	{
 		name: "area-intersects",
 		owns: (segments) =>
 			segments.length === 2 &&
@@ -322,7 +338,10 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "relationship-paths",
-		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "relationship-paths",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "relationship-paths",
 		handle: handleRelationshipPathRoutes,
 	},
 	{
