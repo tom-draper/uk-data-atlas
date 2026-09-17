@@ -259,14 +259,33 @@ only **available** when its endpoint, contract and provenance are published.
       larger, which is its lochs.
 - [ ] Expand point lookup beyond its current single geography/release scope,
       with documented request limits and an efficient multi-geography strategy.
-- [ ] Find nearby areas for a coordinate outside a boundary, reporting distance
-      and making clear that nearest is not the same as containing.
-- [ ] Add a coordinate intelligence endpoint that accepts an explicitly
-      declared CRS and date, resolves the requested geographies to exact
-      releases, and returns all containing areas or an explicit boundary /
-      outside-coverage result. Keep terrain elevation as a separately
-      versioned raster lookup, with its vertical datum, resolution and
-      uncertainty; elevation is not part of administrative-area containment.
+- [x] Find nearby areas for a coordinate outside a boundary through
+      `GET /v1/areas:near`, ranking up to ten areas per geography within 50 km
+      by ground distance to their published geometry. The answer is labelled
+      `relation: distance` and never states containment; an area at zero
+      metres has the point on or inside it, but only `areas:contains` says so.
+- [x] Look a coordinate up in up to four geographies at once through
+      `GET /v1/areas:contains`, each release pinned as
+      `release={geography}/{release}` or chosen for `date` as the latest dated
+      on or before it. Every geography gets its own status: `matched`,
+      `no-match` within a covered country, `outside-coverage` for an uncovered
+      country or a point outside every UK country boundary, or an ambiguous or
+      missing release for the date. Each result carries coordinate precision
+      (written decimals, or a stated `accuracy`), the boundary's
+      generalisation, the transformation's accuracy, their sum as
+      `positionalToleranceM`, and a `nearBoundary` flag on any match whose edge
+      lies within it, beside the geometry's source file, hash and CRS.
+      `GET /v1/areas:containsBatch` answers the same for up to 100 points,
+      reading each release once for the whole batch.
+- [ ] Accept a coordinate in a declared CRS other than WGS 84, such as British
+      National Grid eastings and northings, stating the transformation used.
+- [ ] Keep terrain elevation as a separately versioned raster lookup, with its
+      vertical datum, resolution and uncertainty; elevation is not part of
+      administrative-area containment.
+- [ ] Serve point lookup from a compact per-release spatial index rather than
+      the parsed GeoJSON. A release costs 60 to 400 MB of heap once read, so
+      only two are held at a time, and a lookup across more geographies than
+      that re-reads the others on every request.
 - [x] Retrieve the areas that intersect a bounded bbox for a chosen release,
       through `GET /v1/areas:intersects?bbox=west,south,east,north`. Each match
       reports whether it lies `within` the box or merely `overlaps` it, both
@@ -1194,7 +1213,7 @@ GET /v1/snapshots/{snapshot-id}
 - [ ] Add versioned postcode-to-geography resolution as soon as the relevant
       ONS directory release is available, including the postcode release and
       containment method in every response.
-- [ ] Extend coordinate lookup to multiple explicitly selected geographies and
+- [x] Extend coordinate lookup to multiple explicitly selected geographies and
       add a nearest-area convenience route. Nearest must be labelled as a
       distance result, never as containment.
 - [ ] Defer address/UPRN lookup, drive-time catchments, public-transport
@@ -1206,8 +1225,8 @@ Candidate read-only routes:
 ```text
 GET /v1/licensing:assess?measure={measure-id}&boundaryRelease={geography}/{release}&use={map|export|embed|report}
 GET /v1/postcodes/{postcode}
-GET /v1/areas:contains?lng={longitude}&lat={latitude}&geography={geography}&geography={geography}
-GET /v1/areas:near?lng={longitude}&lat={latitude}&geography={geography}
+GET /v1/areas:contains?lng={longitude}&lat={latitude}&geography={geography}&geography={geography}&date={date}
+GET /v1/areas:near?lng={longitude}&lat={latitude}&release={geography}/{release}
 ```
 
 #### Dataset priorities
@@ -1695,7 +1714,7 @@ GET /v1/areas/{area-id}/ancestors
 GET /v1/areas/{area-id}/descendants?type=ward
 GET /v1/areas/{area-id}/relations?type=constituency
 GET /v1/areas/{area-id}/history
-GET /v1/areas:contains?lng=-2.2426&lat=53.4808&types=ward,local-authority,constituency
+GET /v1/areas:contains?lng=-2.2426&lat=53.4808&geography=ward&geography=localAuthority&geography=constituency&date=2025-06-01
 GET /v1/areas/{area-id}/geometry?format=geojson&simplification=standard
 GET /v1/boundaries/{geography}/{release}/features?bbox=-2.7,53.3,-1.9,53.8
 GET /v1/boundaries/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
@@ -1725,9 +1744,10 @@ response has an `identityResult` only when the relationship is one-to-one and
 exact; otherwise it supplies candidate areas and relationship metadata.
 
 `/areas:contains` is a deliberately bounded point-in-polygon convenience
-endpoint. It accepts a coordinate and selected types/releases, returns all
-matching areas with boundary versions, and is rate-limited. It is not a
-replacement for a bulk geocoder or spatial-analysis service.
+endpoint. It accepts a coordinate and up to four geographies with pinned or
+date-selected releases, and returns all matching areas with boundary versions.
+`/areas:containsBatch` takes at most 100 points. Neither is a replacement for
+a bulk geocoder or spatial-analysis service.
 
 ### 3. Named locations
 
@@ -3026,7 +3046,9 @@ second inventory to maintain:
 
 - `GET /v1/data/{measure-id}` — Retrieve a measure's source-exact observations
 - `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
-- `GET /v1/areas:contains` — Find areas containing a WGS84 point in one boundary release
+- `GET /v1/areas:contains` — Find the areas containing a WGS84 point in one or more geographies
+- `GET /v1/areas:containsBatch` — Find the areas containing each of a bounded batch of points
+- `GET /v1/areas:near` — Rank the areas nearest a WGS84 point by distance
 - `GET /v1/areas/{geography}/{release}/{code}/children/geometry` — Get every child of an area as one GeoJSON FeatureCollection
 - `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
 - `GET /v1/areas/{geography}/{release}/{code}/overlap` — Measure how one area overlaps another
@@ -3172,6 +3194,9 @@ catalogues by the contract tests:
 - `GET /v1/boundary-releases`
 - `GET /v1/areas`
 - `GET /v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc`
+- `GET /v1/areas:contains?lng=-3.1791&lat=51.4816&geography=ward&geography=localHealthBoard&date=2025-06-01`
+- `GET /v1/areas:containsBatch?point=-1.5491,53.8008&point=1.0,54.5&geography=localAuthority&date=2025-06-01`
+- `GET /v1/areas:near?lng=-0.5800&lat=54.5100&geography=ward&date=2025-06-01&limit=2&within=5000`
 - `GET /v1/areas:intersects?bbox=-1.6,53.7,-1.4,53.9&geography=ward&release=2024-12-uk-bgc`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/history`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/parents`

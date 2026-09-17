@@ -4,6 +4,7 @@ import type {
 	GeoJsonGeometry,
 	IntersectingArea,
 } from "./areaGeometry";
+import { distanceToBoundaryM } from "./areaDistance";
 import type { Neighbour } from "./areaNeighbours";
 import type { GeometryBounds, PointContainment } from "./areaContainment";
 import {
@@ -37,7 +38,22 @@ export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 export type ResolvedContainingArea = AreaRecord & {
 	id: string;
 	containment: PointContainment;
+	/** Metres from the point to the area's nearest edge. */
+	distanceToBoundaryM: number;
 	geometrySource: GeometryProvenance;
+};
+
+export type ResolvedNearbyArea = AreaRecord & {
+	id: string;
+	/** Metres to the area, zero when the point is on or inside it. */
+	distanceM: number;
+	geometrySource: GeometryProvenance;
+};
+
+export type ResolvedNearbyAreas = {
+	/** Every area within the distance, before any limit. */
+	matched: number;
+	nearest: ResolvedNearbyArea[];
 };
 
 export type ResolvedAreaGeometry = AreaRecord & {
@@ -230,7 +246,8 @@ export class GeographyResolver {
 			.findContaining(geography, boundaryRelease, point)
 			.flatMap(({ code, containment }) => {
 				const area = this.area({ geography, boundaryRelease, code });
-				return area
+				const geometry = cache.get(geography, boundaryRelease, code);
+				return area && geometry
 					? [
 							{
 								id: areaId({
@@ -240,6 +257,10 @@ export class GeographyResolver {
 								}),
 								...area,
 								containment,
+								distanceToBoundaryM: distanceToBoundaryM(
+									point,
+									geometry,
+								),
 								geometrySource: cache.provenance(
 									geography,
 									boundaryRelease,
@@ -249,6 +270,47 @@ export class GeographyResolver {
 						]
 					: [];
 			});
+	}
+
+	/** Published areas of one release nearest a WGS84 coordinate, nearest first. */
+	nearestAreas(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+		{ withinM, limit }: { withinM: number; limit: number },
+	): ResolvedNearbyAreas | undefined {
+		const cache = this.inputs.areaGeometryCache;
+		if (!cache) return undefined;
+		const found = cache
+			.findNearest(geography, boundaryRelease, point, withinM)
+			.flatMap(({ code, distanceM }) => {
+				const area = this.area({ geography, boundaryRelease, code });
+				return area ? [{ code, area, distanceM }] : [];
+			});
+		return {
+			matched: found.length,
+			nearest: found.slice(0, limit).map(({ code, area, distanceM }) => ({
+				id: areaId({ geography, boundaryRelease, code }),
+				...area,
+				distanceM,
+				geometrySource: cache.provenance(
+					geography,
+					boundaryRelease,
+					code,
+				),
+			})),
+		};
+	}
+
+	/** How a release's geometry reached WGS84, without any one area's corrections. */
+	releaseGeometrySource(
+		geography: string,
+		boundaryRelease: string,
+	): GeometryProvenance | undefined {
+		return this.inputs.areaGeometryCache?.provenance(
+			geography,
+			boundaryRelease,
+		);
 	}
 
 	/** Published areas meeting a WGS84 box, with geometry for optional rendering. */
@@ -294,7 +356,9 @@ export class GeographyResolver {
 		boundaryRelease?: string | null;
 		query?: string;
 	}) {
-		return this.areaSearchIndex ? searchAreas(this.areaSearchIndex, query) : [];
+		return this.areaSearchIndex
+			? searchAreas(this.areaSearchIndex, query)
+			: [];
 	}
 
 	relationships(identity: AreaIdentity): AreaRelationship[] {
@@ -350,7 +414,8 @@ export class GeographyResolver {
 		const direct = this.crosswalksBySource.get(
 			[geography, boundaryRelease, memberGeography].join("/"),
 		);
-		return direct ??
+		return (
+			direct ??
 			(this.inputs.crosswalkInventory
 				? crosswalksTo(
 						this.inputs.crosswalkInventory,
@@ -358,7 +423,8 @@ export class GeographyResolver {
 						boundaryRelease,
 						memberGeography,
 					)
-				: []);
+				: [])
+		);
 	}
 }
 

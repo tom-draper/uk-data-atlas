@@ -206,7 +206,7 @@ const segmentMeetsBounds = (
 	);
 };
 
-const ringsOf = (geometry: GeoJsonGeometry): Coordinate[][] => {
+export const ringsOf = (geometry: GeoJsonGeometry): Coordinate[][] => {
 	if (geometry.type === "GeometryCollection")
 		return (geometry.geometries ?? []).flatMap(ringsOf);
 	const polygons =

@@ -15,6 +15,7 @@ import {
 } from "./gridOffset";
 import { readShapefileFeatures } from "./shapefile";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
+import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
 	boundsIntersect,
 	boundsWithin,
@@ -61,6 +62,12 @@ type CachedRelease = {
 export type ContainingArea = {
 	code: string;
 	containment: Exclude<PointContainment, "outside">;
+};
+
+export type NearbyArea = {
+	code: string;
+	/** Metres to the area, zero when the point is on or inside it. */
+	distanceM: number;
 };
 
 export type IntersectingArea = {
@@ -262,6 +269,43 @@ export class AreaGeometryCache {
 		}
 		return matches.sort((left, right) =>
 			left.code.localeCompare(right.code),
+		);
+	}
+
+	/**
+	 * The areas of one release nearest a WGS84 point, no further than
+	 * `withinM`, nearest first. Cached bounds rule out every area whose box is
+	 * already too far, so only areas near the point have their rings walked.
+	 */
+	findNearest(
+		geography: string,
+		boundaryRelease: string,
+		point: Coordinate,
+		withinM: number,
+	): NearbyArea[] {
+		// As in findContaining: load and validate the release without needing
+		// a known code.
+		this.get(geography, boundaryRelease, "");
+		const identity = [geography, boundaryRelease].join("/");
+		const release = this.releases.get(identity);
+		if (!release) return [];
+		const nearby: NearbyArea[] = [];
+		for (const code of release.geometries.keys()) {
+			const geometry = this.get(geography, boundaryRelease, code);
+			if (!geometry) continue;
+			let bounds = release.bounds.get(code);
+			if (bounds === undefined && !release.bounds.has(code)) {
+				bounds = geometryBounds(geometry);
+				release.bounds.set(code, bounds);
+			}
+			if (!bounds || distanceToBoundsM(point, bounds) > withinM) continue;
+			const distanceM = distanceToGeometryM(point, geometry);
+			if (distanceM <= withinM) nearby.push({ code, distanceM });
+		}
+		return nearby.sort(
+			(left, right) =>
+				left.distanceM - right.distanceM ||
+				left.code.localeCompare(right.code),
 		);
 	}
 

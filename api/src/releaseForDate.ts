@@ -1,3 +1,4 @@
+import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 
 type BoundaryRelease = BoundaryRegistry["releases"][number];
@@ -5,6 +6,43 @@ type BoundaryRelease = BoundaryRegistry["releases"][number];
 /** A release's month as `YYYY-MM`, from its id; undefined when it has none. */
 export const releaseMonth = (id: string): string | undefined =>
 	/^(\d{4}-(0[1-9]|1[0-2]))(?:-|$)/.exec(id)?.[1];
+
+/**
+ * A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`, and the month it
+ * falls in; undefined when it is neither.
+ */
+export const parseSelectionDate = (
+	date: string,
+): { date: string; month: string } | undefined => {
+	const match = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(date);
+	if (!match) return undefined;
+	const year = Number(match[1]);
+	const month = Number(match[2]);
+	const day = match[3] === undefined ? 1 : Number(match[3]);
+	const calendar = new Date(Date.UTC(year, month - 1, day));
+	return calendar.getUTCFullYear() === year &&
+		calendar.getUTCMonth() === month - 1 &&
+		calendar.getUTCDate() === day
+		? { date, month: date.slice(0, 7) }
+		: undefined;
+};
+
+/** Each compiled release derived from another, as `geography/release` pairs. */
+export const derivedReleaseSources = (
+	areaInventory: AreaInventory | undefined,
+): Map<string, string> =>
+	new Map(
+		(areaInventory?.releases ?? []).flatMap((release) =>
+			release.status === "available" && release.derivedFrom
+				? [
+						[
+							`${release.geography}/${release.id}`,
+							`${release.derivedFrom.source.geography}/${release.derivedFrom.source.boundaryRelease}`,
+						] as const,
+					]
+				: [],
+		),
+	);
 
 export type ReleaseReference = {
 	id: string;

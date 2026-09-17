@@ -1,5 +1,9 @@
 import { areaNotFound } from "./areaResources";
-import { selectReleaseForDate } from "./releaseForDate";
+import {
+	derivedReleaseSources,
+	parseSelectionDate,
+	selectReleaseForDate,
+} from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -64,17 +68,8 @@ export const handleBoundaryRoutes = ({
 				"Invalid Query",
 				"geography is required, such as geography=ward.",
 			);
-		const dateMatch = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(date);
-		const year = Number(dateMatch?.[1]);
-		const month = Number(dateMatch?.[2]);
-		const day = dateMatch?.[3] === undefined ? 1 : Number(dateMatch[3]);
-		const calendar = new Date(Date.UTC(year, month - 1, day));
-		if (
-			!dateMatch ||
-			calendar.getUTCFullYear() !== year ||
-			calendar.getUTCMonth() !== month - 1 ||
-			calendar.getUTCDate() !== day
-		)
+		const selectionDate = parseSelectionDate(date);
+		if (!selectionDate)
 			return problem(
 				400,
 				"Invalid Query",
@@ -86,25 +81,13 @@ export const handleBoundaryRoutes = ({
 				"Invalid Query",
 				"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
 			);
-		const derivedFrom = new Map(
-			(areaInventory?.releases ?? []).flatMap((release) =>
-				release.status === "available" && release.derivedFrom
-					? [
-							[
-								`${release.geography}/${release.id}`,
-								`${release.derivedFrom.source.geography}/${release.derivedFrom.source.boundaryRelease}`,
-							] as const,
-						]
-					: [],
-			),
-		);
-		const requestedMonth = date.slice(0, 7);
+		const requestedMonth = selectionDate.month;
 		const selection = selectReleaseForDate(
 			boundaryRegistry,
 			geography,
 			requestedMonth,
 			country,
-			derivedFrom,
+			derivedReleaseSources(areaInventory),
 		);
 		if (selection.status === "none") {
 			return problem(404, "Not Found", selection.detail, {
