@@ -3,7 +3,25 @@
 # Vercel builds every file under a top-level api/ directory as a serverless
 # function, so without this the website deploy tried to compile the API's
 # source, tests and build scripts as individual endpoints, and failed on the
-# API's tsconfig asking for Node types. Nothing in the website imports from
-# api/ or reads api/public. Anchored to the root so a Next.js app/api route
-# would still deploy.
-/api
+# API's tsconfig asking for Node types. Anchored to the root so a Next.js
+# app/api route would still deploy.
+#
+# The exceptions are the artifacts the docs pages read when the site builds:
+# the spec behind the API reference (lib/docs/openapi.ts) and the four
+# catalogue files behind the data and geography pages (lib/docs/catalogue.ts).
+# Everything else the API serves from api/public stays out of the deployment.
+#
+# Directory contents are listed rather than the directories themselves
+# because an ignored directory cannot have a file re-included from it: with
+# `/api`, every `!` line below is silently ignored and the build fails with
+# ENOENT. Vercel has no builder for .yaml or .json, so these deploy no extra
+# functions. Adding a docs page that reads another api/ file means adding it
+# here too.
+/api/*
+!/api/openapi.yaml
+!/api/public
+/api/public/*
+!/api/public/data-catalog.json
+!/api/public/boundary-releases.json
+!/api/public/geography-inventory.json
+!/api/public/map-resources.json
