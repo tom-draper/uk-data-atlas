@@ -49,33 +49,84 @@ const findCountryIdentity = (
 };
 
 /**
- * An area-overlap crosswalk is safe for direct regional membership only when
- * every selected source area is wholly covered by exactly that one region.
- * Split or partial overlaps remain conversion data and are never silently
- * treated as a regional sum.
+ * How a crosswalk establishes that a source area belongs wholly to one target,
+ * which is what an extensive sum over that target rests on. The label travels
+ * in the response so a caller can see which claim the total is standing on.
+ *
+ * A crosswalk carrying anything weaker stays conversion data: an identity
+ * lookup relates two vintages of the same area rather than a membership, and
+ * an area-overlap record that splits or partially covers its source is an
+ * apportionment, never silently summed.
  */
-const fullRegionMembership = (
-	crosswalk: CrosswalkArtifact,
-	regionCode: string,
-) => {
-	if (crosswalk.method !== "area-overlap") return undefined;
-	const matching = crosswalk.records.filter((record) =>
-		record.targets.some((target) => target.code === regionCode),
-	);
-	const memberCodes = matching.flatMap((record) => {
-		const target = record.targets.find(
-			(candidate) => candidate.code === regionCode,
-		);
-		return target &&
-			record.targets.length === 1 &&
-			record.source.coverage === 1 &&
-			target.sourceShare === 1
-			? [record.source.code]
-			: [];
-	});
+const MEMBERSHIP_CLAIMS = {
+	"area-overlap": "verified-full-area-overlap",
+	"clean-containment": "verified-clean-containment",
+	"official-lookup": "published-membership-lookup",
+} as const;
+
+const membershipClaimFor = (crosswalk: CrosswalkArtifact) => {
+	// An official lookup says what it relates; only a membership one is a
+	// set of parts. Clean containment and full overlap are membership by
+	// construction and carry no purpose of their own.
+	if (crosswalk.method === "official-lookup")
+		return crosswalk.relationshipPurpose === "membership"
+			? MEMBERSHIP_CLAIMS["official-lookup"]
+			: undefined;
+	return MEMBERSHIP_CLAIMS[
+		crosswalk.method as keyof typeof MEMBERSHIP_CLAIMS
+	];
+};
+
+/**
+ * The source areas a crosswalk puts wholly inside one target. A source is a
+ * member only when the target is its sole target, and, where the crosswalk
+ * measures area, when the whole of it is covered. `unsafeSourceCount` counts
+ * the ones that reach the target without meeting that bar, so a partial
+ * membership is refused rather than quietly summed short.
+ */
+const fullMembership = (crosswalk: CrosswalkArtifact, targetCode: string) => {
+	if (!membershipClaimFor(crosswalk)) return undefined;
+	const reaches = (targets: { code: string }[]) =>
+		targets.some((target) => target.code === targetCode);
+	// Branching on the method first keeps each arm's records typed, so the
+	// area measurements are read only where the crosswalk carries them.
+	const { matched, members } =
+		crosswalk.method === "area-overlap"
+			? (() => {
+					const matched = crosswalk.records.filter((record) =>
+						reaches(record.targets),
+					);
+					return {
+						matched: matched.length,
+						members: matched.flatMap((record) => {
+							const target = record.targets.find(
+								(candidate) => candidate.code === targetCode,
+							);
+							return record.targets.length === 1 &&
+								target &&
+								record.source.coverage === 1 &&
+								target.sourceShare === 1
+								? [record.source.code]
+								: [];
+						}),
+					};
+				})()
+			: (() => {
+					const matched = crosswalk.records.filter((record) =>
+						reaches(record.targets),
+					);
+					return {
+						matched: matched.length,
+						members: matched.flatMap((record) =>
+							record.targets.length === 1
+								? [record.source.code]
+								: [],
+						),
+					};
+				})();
 	return {
-		memberCodes,
-		unsafeSourceCount: matching.length - memberCodes.length,
+		memberCodes: members,
+		unsafeSourceCount: matched - members.length,
 	};
 };
 
@@ -155,12 +206,22 @@ export const handleDataAggregateRoutes = ({
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 	const locationId = parsedUrl.searchParams.get("locationId");
 	const areaCode = parsedUrl.searchParams.get("areaCode");
+	// `regionCode` is the original spelling of `targetCode`, from when regions
+	// were the only membership target. It still selects the same way.
 	const regionCode = parsedUrl.searchParams.get("regionCode");
-	if ([locationId, areaCode, regionCode].filter(Boolean).length !== 1) {
+	const targetCode = parsedUrl.searchParams.get("targetCode") ?? regionCode;
+	if (
+		[
+			locationId,
+			areaCode,
+			regionCode,
+			parsedUrl.searchParams.get("targetCode"),
+		].filter(Boolean).length !== 1
+	) {
 		return problem(
 			400,
 			"Invalid Query",
-			"Supply exactly one of locationId, for a curated named location, areaCode, for a country, or regionCode with a regional crosswalk.",
+			"Supply exactly one of locationId, for a curated named location, areaCode, for a country, or targetCode with a membership crosswalk.",
 		);
 	}
 	if (areaCode && !isCountryCode(areaCode)) {
@@ -225,21 +286,21 @@ export const handleDataAggregateRoutes = ({
 			candidate.status === "code-set-compatible",
 	);
 	const regional = (() => {
-		if (!regionCode) return undefined;
+		if (!targetCode) return undefined;
 		const crosswalkId = parsedUrl.searchParams.get("crosswalk");
 		const sourceRelease = parsedUrl.searchParams.get("sourceRelease");
 		if (!crosswalkId || !sourceRelease) {
 			return problem(
 				400,
 				"Invalid Query",
-				"regionCode aggregation requires crosswalk and sourceRelease, so regional membership is explicit rather than inferred.",
+				"targetCode aggregation requires crosswalk and sourceRelease, so membership is explicit rather than inferred.",
 			);
 		}
 		if (!crosswalkLookup || !measureCompatibilityInventory) {
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				"Build crosswalk and measure compatibility inventories before aggregating a region.",
+				"Build crosswalk and measure compatibility inventories before aggregating over a membership crosswalk.",
 			);
 		}
 		const compatibility = compatibleReleases.find(
@@ -257,38 +318,68 @@ export const handleDataAggregateRoutes = ({
 		if (
 			!crosswalk ||
 			crosswalk.from.geography !== source.sourceGeography.type ||
-			crosswalk.from.boundaryRelease !== sourceRelease ||
-			crosswalk.to.geography !== "region"
+			crosswalk.from.boundaryRelease !== sourceRelease
 		) {
 			return problem(
 				422,
 				"Operation Not Supported",
-				"That crosswalk does not map the caller-selected compatible source release to regions.",
+				"That crosswalk does not map the caller-selected compatible source release.",
 				{ code: "conversion_not_available" },
 			);
 		}
-		const membership = fullRegionMembership(crosswalk, regionCode);
+		// `regionCode` named its target geography; `targetCode` takes it from
+		// the crosswalk, so the caller cannot ask one geography for another's
+		// code.
+		if (regionCode && crosswalk.to.geography !== "region") {
+			return problem(
+				422,
+				"Operation Not Supported",
+				"That crosswalk does not map to regions. Use targetCode to aggregate onto another geography.",
+				{ code: "conversion_not_available" },
+			);
+		}
+		const claim = membershipClaimFor(crosswalk);
+		if (!claim) {
+			return problem(
+				422,
+				"Operation Not Supported",
+				`The ${crosswalk.method} crosswalk ${crosswalk.id} does not declare membership, so its records are conversion data rather than the parts of one area.`,
+				{ code: "conversion_not_available" },
+			);
+		}
+		const membership = fullMembership(crosswalk, targetCode);
 		if (!membership || membership.unsafeSourceCount > 0) {
 			return problem(
 				422,
 				"Operation Not Supported",
-				"The selected region is not represented by complete one-to-one source-area membership in that crosswalk.",
+				`The selected ${crosswalk.to.geography} is not represented by complete one-to-one source-area membership in that crosswalk.`,
 				{ code: "conversion_not_available" },
+			);
+		}
+		// A target the crosswalk never mentions would otherwise sum to zero,
+		// which reads as an observation rather than an absence.
+		if (membership.memberCodes.length === 0) {
+			return problem(
+				404,
+				"Not Found",
+				`${crosswalk.id} maps no ${crosswalk.from.geography} to ${targetCode}.`,
 			);
 		}
 		return {
 			crosswalk,
+			claim,
 			sourceRelease,
 			memberCodes: new Set(membership.memberCodes),
-			region: {
-				id: `region/${crosswalk.to.boundaryRelease}/${regionCode}`,
+			target: {
+				id: `${crosswalk.to.geography}/${crosswalk.to.boundaryRelease}/${targetCode}`,
+				geography: crosswalk.to.geography,
 				boundaryRelease: crosswalk.to.boundaryRelease,
-				code: regionCode,
+				code: targetCode,
 				...findArea(
 					areaLookup,
-					"region",
+					crosswalk.to.geography,
 					crosswalk.to.boundaryRelease,
-					regionCode,
+					targetCode,
 				),
 			},
 		};
@@ -419,11 +510,11 @@ export const handleDataAggregateRoutes = ({
 			"This source partition publishes no areas for that country, so there is nothing to sum.",
 		);
 	}
-	if (byRegion && byRegion.members.length === 0) {
+	if (byRegion && regional && byRegion.members.length === 0) {
 		return problem(
 			422,
 			"Operation Not Supported",
-			"This source partition publishes no areas for that region, so there is nothing to combine.",
+			`This source partition publishes no areas for that ${regional.target.geography}, so there is nothing to combine.`,
 		);
 	}
 	/*
@@ -481,7 +572,7 @@ export const handleDataAggregateRoutes = ({
 		return problem(
 			400,
 			"Invalid Query",
-			"Supply exactly one of locationId, areaCode or regionCode.",
+			"Supply exactly one of locationId, areaCode or targetCode.",
 		);
 	let aggregateValue = aggregate.value;
 	let weighting:
@@ -627,7 +718,14 @@ export const handleDataAggregateRoutes = ({
 			...(location
 				? { location }
 				: regional
-					? { region: regional.region }
+					? {
+							target: regional.target,
+							// `region` predates `target` and still names a
+							// region, so a caller reading it keeps working.
+							...(regional.target.geography === "region"
+								? { region: regional.target }
+								: {}),
+						}
 					: { area: country }),
 			provenance: {
 				...sourceExactProvenance({
@@ -701,7 +799,7 @@ export const handleDataAggregateRoutes = ({
 				: regional
 					? {
 							operation: weighting ? "weighted-mean" : "sum",
-							membership: "verified-full-area-overlap",
+							membership: regional.claim,
 							inputRecordCount: aggregate.members.length,
 							crosswalk: {
 								id: regional.crosswalk.id,

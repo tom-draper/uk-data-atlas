@@ -1740,7 +1740,7 @@ paths:
       description: >
         Returns a derived sum for a measure declared extensive, or a weighted
         mean for a measure that publishes an available weight measure. Supply
-        exactly one of `locationId`, `areaCode`, or `regionCode`.
+        exactly one of `locationId`, `areaCode`, or `targetCode`.
 
         With `locationId`, the location's member codes are matched in the
         requested source partition. A location lists every code it has been
@@ -1768,12 +1768,27 @@ paths:
         election does for wards that did not go to the polls, and
         `not-assessed` when no matching release is compiled.
 
-        With `regionCode`, callers must also name a code-set-compatible
-        `sourceRelease` and a published `crosswalk`. The regional crosswalk
-        must show complete one-to-one source-area membership; split or partial
-        overlap is rejected rather than used as an implicit conversion.
-        `aggregation.coverage` is `partial` when the partition has no value for
-        some of the areas the crosswalk places in the region.
+        With `targetCode`, callers must also name a code-set-compatible
+        `sourceRelease` and a published `crosswalk`; the target's geography is
+        the crosswalk's, so a combined authority, county, integrated care
+        board or any other published membership target is summed the same way
+        a region is. The crosswalk must declare membership: a clean-containment
+        or full area-overlap crosswalk is membership by construction, an
+        official lookup only where it declares `relationshipPurpose:
+        membership`, and an identity lookup never, because it relates two
+        vintages of one area rather than the parts of a larger one. It must
+        then show complete one-to-one source-area membership for the target;
+        split or partial overlap is rejected rather than used as an implicit
+        conversion, and a target the crosswalk never mentions is `404` rather
+        than a sum of nothing. `aggregation.membership` names which of those
+        claims the total rests on, and `aggregation.coverage` is `partial` when
+        the partition has no value for some of the areas the crosswalk places
+        in the target.
+
+        `regionCode` is the original spelling of `targetCode`, from when a
+        region was the only membership target. It still selects the same way,
+        and is answered with `region` beside `target` in the response; it
+        refuses a crosswalk that maps to any other geography.
 
         This route does not select a boundary release or perform a code or
         geometry conversion.
@@ -1798,13 +1813,25 @@ paths:
           description: >
             A country code, such as `E92000001`. Supply exactly one target
             selector.
+        - name: targetCode
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            The code of the area to sum onto, in the geography the named
+            crosswalk maps to, such as `E47000006` for the Tees Valley combined
+            authority. Requires `crosswalk` and `sourceRelease`; supply exactly
+            one target selector.
         - name: regionCode
           in: query
           required: false
           schema:
             type: string
           description: >
-            An official English region code. Requires `crosswalk` and
+            An official English region code. The original spelling of
+            `targetCode`, kept for callers that use it; it refuses a crosswalk
+            that maps to any geography but `region`. Requires `crosswalk` and
             `sourceRelease`; supply exactly one target selector.
         - name: sourceRelease
           in: query
@@ -1812,7 +1839,7 @@ paths:
           schema:
             type: string
           description: >
-            The source boundary release named by the regional crosswalk. It
+            The source boundary release the membership crosswalk maps from. It
             must be code-set compatible with the requested measure source.
         - name: crosswalk
           in: query
@@ -1820,7 +1847,7 @@ paths:
           schema:
             type: string
           description: >
-            A regional membership crosswalk returned by `GET /crosswalks`.
+            A membership crosswalk returned by `GET /crosswalks`.
       responses:
         "200":
           description: A derived sum with its direct-code membership evidence and source provenance.
@@ -5686,8 +5713,8 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a
-                    href: /v1/atlas-releases/sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a
+                  - releaseId: sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
+                    href: /v1/atlas-releases/sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
                     artifactCount: 313
                     current: true
                 meta:
@@ -5723,7 +5750,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a
+                  releaseId: sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5809,14 +5836,14 @@ paths:
               x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a"
+                atlasRelease: "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1"
                 data:
                   from:
-                    releaseId: "sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a"
-                    href: /v1/atlas-releases/sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a
+                    releaseId: "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1"
+                    href: /v1/atlas-releases/sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
                   to:
-                    releaseId: "sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a"
-                    href: /v1/atlas-releases/sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a
+                    releaseId: "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1"
+                    href: /v1/atlas-releases/sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 313 }
                   artifacts:
                     added: []

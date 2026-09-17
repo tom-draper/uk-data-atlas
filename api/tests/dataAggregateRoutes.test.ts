@@ -649,3 +649,168 @@ test("flags a country total that leaves out areas a matching release holds", () 
 	);
 	assert.equal(unassessed.status, "not-assessed");
 });
+
+/**
+ * A clean-containment crosswalk is membership by construction, so a target it
+ * maps to is summed the same way a region is. The fixture puts one of the two
+ * fixture authorities in the combined authority and leaves the other out, so a
+ * sum that ignored membership would be caught by the total.
+ */
+const containmentCrosswalk = (
+	id: string,
+	overrides: Partial<CrosswalkArtifact> = {},
+): CrosswalkArtifact =>
+	({
+		schemaVersion: 1,
+		contentHash: "sha256:containment-crosswalk",
+		id,
+		method: "clean-containment",
+		quality: "publisher-supplied",
+		weighting: { status: "not-applicable" },
+		from: {
+			geography: "localAuthority",
+			boundaryRelease: "2025-12-uk-lad",
+		},
+		to: {
+			geography: "combinedAuthority",
+			boundaryRelease: "2025-12-en-cauth",
+		},
+		provenance: { input: "fixture-lookup", inputHash: "sha256:lookup" },
+		validation: {
+			sourceNameConflicts: [],
+			endpoints: {
+				from: {
+					status: "verified",
+					availableAreaCount: 1,
+					referencedCodeCount: 1,
+				},
+				to: {
+					status: "verified",
+					availableAreaCount: 1,
+					referencedCodeCount: 1,
+				},
+			},
+		},
+		records: [
+			{
+				source: { code: "E06000001", labels: ["Fixture authority"] },
+				targets: [{ code: "E47000001", labels: ["Fixture combined"] }],
+			},
+		],
+		...overrides,
+	}) as CrosswalkArtifact;
+
+const containmentCompatibility: MeasureCompatibilityInventory = {
+	...measureCompatibilityInventory,
+	measures: [
+		...measureCompatibilityInventory.measures,
+		{
+			measureId: "ghg-emissions",
+			sources: [
+				{
+					datasetId: "ghg-emissions",
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2025,
+					},
+					periods: ["2024"],
+					candidates: [
+						{
+							boundaryRelease: "2025-12-uk-lad",
+							title: "Fixture local authorities",
+							coverageCountries: ["GB-ENG"],
+							status: "exact-code-set",
+							sourceCodeCount: 1,
+							candidateCodeCount: 1,
+							matchingCodeCount: 1,
+							matchedSourceShare: 1,
+							unmatchedSourceCodeCount: 0,
+							unmatchedSourceCodeSample: [],
+							candidateOnlyCodeCount: 0,
+							candidateOnlyCodeSample: [],
+						},
+					],
+					note: "Fixture compatibility.",
+				},
+			],
+		},
+	],
+};
+
+const aggregateOnto = (query: string, crosswalk: CrosswalkArtifact) =>
+	routeWithCatalog(
+		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&sourceRelease=2025-12-uk-lad&${query}`,
+		dataCatalog,
+		measureObservations,
+		{
+			crosswalkLookup: new Map([
+				...crosswalkLookup,
+				[crosswalk.id, crosswalk],
+			]),
+			measureCompatibilityInventory: containmentCompatibility,
+		},
+	);
+
+test("aggregates onto any membership target, not only a region", () => {
+	const crosswalk = containmentCrosswalk("lad-to-combined-authority-fixture");
+	const response = aggregateOnto(
+		`targetCode=E47000001&crosswalk=${crosswalk.id}`,
+		crosswalk,
+	);
+	assert.equal(response.status, 200);
+	const data = ("data" in response.body ? response.body.data : {}) as {
+		record: unknown;
+		target: Record<string, unknown>;
+		region?: unknown;
+		aggregation: { membership: string };
+	};
+	assert.deepEqual(data.record, { value: 400, status: "derived" });
+	assert.equal(data.aggregation.membership, "verified-clean-containment");
+	assert.equal(data.target.geography, "combinedAuthority");
+	assert.equal(data.target.code, "E47000001");
+	assert.equal(
+		data.target.id,
+		"combinedAuthority/2025-12-en-cauth/E47000001",
+	);
+	// `region` names a region, so a combined authority must not borrow it.
+	assert.equal(data.region, undefined);
+});
+
+test("refuses a crosswalk that relates vintages rather than membership", () => {
+	const crosswalk = containmentCrosswalk("lad-identity-fixture", {
+		method: "official-lookup",
+		relationshipPurpose: "identity",
+	});
+	const response = aggregateOnto(
+		`targetCode=E47000001&crosswalk=${crosswalk.id}`,
+		crosswalk,
+	);
+	assert.equal(response.status, 422);
+	assert.match(
+		"detail" in response.body ? String(response.body.detail) : "",
+		/does not declare membership/,
+	);
+});
+
+test("refuses a target the crosswalk never places anything in", () => {
+	const crosswalk = containmentCrosswalk("lad-to-combined-authority-empty");
+	const response = aggregateOnto(
+		`targetCode=E47000999&crosswalk=${crosswalk.id}`,
+		crosswalk,
+	);
+	// Summing nothing would read as an observation of zero.
+	assert.equal(response.status, 404);
+});
+
+test("keeps regionCode pointing only at regions", () => {
+	const crosswalk = containmentCrosswalk("lad-to-combined-authority-region");
+	const response = aggregateOnto(
+		`regionCode=E47000001&crosswalk=${crosswalk.id}`,
+		crosswalk,
+	);
+	assert.equal(response.status, 422);
+	assert.match(
+		"detail" in response.body ? String(response.body.detail) : "",
+		/does not map to regions/,
+	);
+});
