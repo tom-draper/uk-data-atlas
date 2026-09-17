@@ -37,6 +37,12 @@
 			"path": "welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
 			"role": "source",
 			"note": "\"WIMD 2019 index and domain ranks by small area\", as published at https://www.gov.wales/sites/default/files/statistics-and-research/2022-02/welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods. The loader reads the published overall rank and decile from the Deciles_quintiles_quartiles table. Ranks must not be recomputed from the scores sheet: its scores are rounded to one decimal place, and re-ranking them disagrees with the published rank for 1,341 of 1,909 LSOAs."
+		},
+		{
+			"path": "wales-lsoa-population-mid-2017.csv",
+			"role": "source",
+			"bytes": 81467,
+			"note": "ONS mid-2017 small area population estimates, all ages, persons, for the 1,909 Welsh LSOAs (2011): the population year WIMD 2019 used for its own denominators. Retrieved from Nomis dataset NM_2010_1 (Population estimates - small area based by single year of age) on 17 September 2026 with https://www.nomisweb.co.uk/api/v01/dataset/NM_2010_1.data.csv?geography=TYPE298&date=2017&gender=0&c_age=200&measures=20100&select=date_name,geography_code,geography_name,obs_value (two pages, recordoffset=25000), keeping W01 codes and sorting by code. Totals 3,125,165, the published mid-2017 population of Wales. Open Government Licence v3.0. Used to weight LSOA scores into an average score for a group of areas, as MHCLG does for local authorities."
 		}
 	]
 }
