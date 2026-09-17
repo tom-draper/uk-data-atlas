@@ -108,6 +108,8 @@ paths:
       operationId: getRoot
       tags: ["Start here"]
       summary: API discovery
+      x-likely-refusal:
+        when: "Takes no input, so nothing is refused but the server-wide rate limit."
       description: Lists the currently implemented resource paths.
       responses:
         "200":
@@ -176,6 +178,9 @@ paths:
       operationId: getOpenapiDescription
       tags: ["Start here"]
       summary: The OpenAPI description of this API
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without its OpenAPI document."
       description: >
         Returns this document, so a client can read the binding contract from
         the running API rather than the repository. The response is the YAML
@@ -197,6 +202,9 @@ paths:
       operationId: getPinnedMapResource
       tags: ["Sync"]
       summary: A map resource pinned to the Atlas release that produced it
+      x-likely-refusal:
+        status: 410
+        when: "The Atlas release in the path was served once and has been rebuilt since. Ask `/v1/atlas-release` for the release now served; a copy already held stays correct."
       description: >
         The same descriptor as the unpinned path, answered with
         `Cache-Control: public, max-age=31536000, immutable`: the bytes are a
@@ -248,6 +256,9 @@ paths:
       operationId: listMapResources
       tags: ["Geography"]
       summary: List the boundary releases published as map resources
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without map resources built."
       description: >
         A map resource is one boundary release prepared for drawing: tiles
         whose borders are compiled once and shared, so neighbours cannot be
@@ -269,6 +280,10 @@ paths:
       operationId: getMapResource
       tags: ["Geography"]
       summary: Describe one map resource, its tiles and what they were made from
+      x-likely-refusal:
+        status: 404
+        when: "The boundary release is published, but not as a map resource. `/v1/map-resources` lists the ones that are."
+        x-example-request: "/v1/map-resources/ward/2024-12-uk-bgc"
       description: >
         The only document a client needs to read to draw this release. It
         carries the tile and archive URLs, the zoom ladder and the tier behind
@@ -296,6 +311,10 @@ paths:
       operationId: getMapResourceTileJson
       tags: ["Geography"]
       summary: The TileJSON a renderer is configured with
+      x-likely-refusal:
+        status: 404
+        when: "The boundary release is published, but not as a map resource. `/v1/map-resources` lists the ones that are."
+        x-example-request: "/v1/map-resources/ward/2024-12-uk-bgc/tiles.json"
       description: >
         TileJSON 3.0 for this resource, including the attribution a map must
         display. A tile cannot carry a licence, so a client handed only a tile
@@ -321,6 +340,10 @@ paths:
       operationId: getMapResourceFeatures
       tags: ["Geography"]
       summary: Every area of one tier as a GeoParquet file
+      x-likely-refusal:
+        status: 400
+        when: "No `tier` is given. The detail is the caller's to choose: `full`, `high`, `medium` or `low`."
+        x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features"
       description: >
         The flat form of the resource, for a warehouse or a GIS that holds
         features rather than tiles: GeoParquet 1.1 with one row per area,
@@ -376,6 +399,10 @@ paths:
       operationId: getMapResourceTile
       tags: ["Geography"]
       summary: One vector tile of a boundary release
+      x-likely-refusal:
+        status: 404
+        when: "The zoom is past the last one the descriptor publishes. A renderer should over-zoom rather than request it."
+        x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles/13/4000/2600.mvt"
       description: >
         A Mapbox Vector Tile carrying the `boundaries` layer, gzipped as the
         archive stores it. Each feature has the area's `code`, its `name` and
@@ -431,6 +458,11 @@ paths:
       operationId: getMapResourceJoin
       tags: ["Geography"]
       summary: One measure's values, numbered to match this resource's tiles
+      x-likely-refusal:
+        status: 422
+        code: incompatible_geometry
+        when: "The measure is published on areas this release does not hold, so its values cannot be drawn on it. The refusal names the releases that would carry it."
+        x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2019"
       description: >
         The values a renderer joins to the tiles, as `id`, `code` and `value`.
         The `id` is the same integer the tile carries, so a renderer sets
@@ -513,6 +545,10 @@ paths:
       operationId: getMapResourceArchive
       tags: ["Geography"]
       summary: The whole tile pyramid as one PMTiles archive
+      x-likely-refusal:
+        status: 404
+        when: "The boundary release is published, but not as a map resource. `/v1/map-resources` lists the ones that are."
+        x-example-request: "/v1/map-resources/ward/2024-12-uk-bgc.pmtiles"
       description: >
         Every tile of the resource in a single PMTiles v3 file, for an offline
         map, a CDN or a warehouse. Its SHA-256 is the `contentHash` the
@@ -539,6 +575,8 @@ paths:
       operationId: listGeographies
       tags: ["Geography"]
       summary: List geography types with their latest boundary release
+      x-likely-refusal:
+        when: "Takes no input, so nothing is refused but the server-wide rate limit."
       responses:
         "200":
           description: One entry per geography type present in the boundary registry.
@@ -562,6 +600,8 @@ paths:
       operationId: listBoundaryReleases
       tags: ["Geography"]
       summary: List every compiled boundary release
+      x-likely-refusal:
+        when: "Takes no input, so nothing is refused but the server-wide rate limit."
       responses:
         "200":
           description: The full boundary registry.
@@ -598,6 +638,11 @@ paths:
       operationId: resolveBoundaryReleaseForDate
       tags: ["Geography"]
       summary: Select the boundary release to use for a date
+      x-likely-refusal:
+        status: 404
+        code: no_release_for_date
+        when: "The date is before the earliest release of that geography. The refusal gives the earliest date that resolves."
+        x-example-request: "/v1/boundary-releases:resolve?geography=ward&date=1990-01-01"
       description: >
         Returns the latest release of a geography dated on or before `date`
         that covers `country` when one is given, as an exact release id rather
@@ -679,6 +724,11 @@ paths:
       operationId: getBoundaryRelease
       tags: ["Geography"]
       summary: Get one boundary release's metadata
+      x-likely-refusal:
+        status: 404
+        code: unsupported_geography
+        when: "The release is named by a date alone. A release id also names its coverage and product, such as `2024-12-uk-bgc`; `/v1/boundary-releases` lists them."
+        x-example-request: "/v1/boundary-releases/ward/2024-12"
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -718,6 +768,9 @@ paths:
       operationId: getGeographyInventory
       tags: ["Geography"]
       summary: Report area identity and relationship (crosswalk) coverage per boundary release
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the geography inventory built."
       description: >
         For every boundary release, states whether an area identity artifact
         has been compiled and which published crosswalks reference it, or an
@@ -777,6 +830,9 @@ paths:
       operationId: listDatasets
       tags: ["Data catalogue"]
       summary: List published source datasets and their lineage
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the data catalogue built."
       responses:
         "200":
           description: Dataset metadata compiled from the repository dataset manifest.
@@ -821,6 +877,10 @@ paths:
       operationId: getDataset
       tags: ["Data catalogue"]
       summary: Get one published source dataset and its input hashes
+      x-likely-refusal:
+        status: 404
+        when: "The id is a measure's, not a dataset's. A dataset is a publisher's source; `/v1/measures/{measure-id}` names the datasets behind a measure."
+        x-example-request: "/v1/datasets/population-estimate"
       parameters:
         - name: dataset-id
           in: path
@@ -875,6 +935,9 @@ paths:
       operationId: listMeasures
       tags: ["Data catalogue"]
       summary: List measures currently available to query
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the data catalogue built."
       responses:
         "200":
           description: Measure definitions, coverage and supported operations.
@@ -924,6 +987,10 @@ paths:
       operationId: getMeasure
       tags: ["Data catalogue"]
       summary: Get one measure's semantics and availability
+      x-likely-refusal:
+        status: 404
+        when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids, such as `population-estimate`."
+        x-example-request: "/v1/measures/population"
       description: >
         A measure's definition: what it counts, the unit, whether it may be
         summed or averaged, and which source partitions publish it with what
@@ -991,6 +1058,10 @@ paths:
       operationId: getMeasureCompatibility
       tags: ["Data catalogue"]
       summary: Report source-code compatibility with compiled boundary releases
+      x-likely-refusal:
+        status: 404
+        when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids."
+        x-example-request: "/v1/measures/population/compatibility"
       description: >
         Compares every source partition's area-code set with compiled boundary
         releases of the same geography and source boundary year. A
@@ -1037,6 +1108,10 @@ paths:
       operationId: getMeasureCoverage
       tags: ["Data catalogue"]
       summary: Report source and boundary code coverage for a measure
+      x-likely-refusal:
+        status: 400
+        when: "`geography` is given without `release`. They are asked together, to test coverage of one boundary release."
+        x-example-request: "/v1/measures/population-estimate/coverage?geography=ward"
       description: >
         Summarises each source partition's published coverage and the proportion
         of its area codes found in every assessed boundary release. An eligible
@@ -1146,6 +1221,10 @@ paths:
       operationId: getMeasureQuality
       tags: ["Data catalogue"]
       summary: Preflight source, status and boundary quality for a measure
+      x-likely-refusal:
+        status: 404
+        when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids."
+        x-example-request: "/v1/measures/population/quality"
       description: >
         Reports every source partition and period before a data request,
         including source record-status counts, immutable artifact hash,
@@ -1213,6 +1292,10 @@ paths:
       operationId: getMeasureObservations
       tags: ["Map"]
       summary: Retrieve a measure's source-exact observations
+      x-likely-refusal:
+        status: 400
+        when: "The source partition is not named. A measure may publish several for one period, so `geography` and `boundaryYear` are required rather than one being chosen."
+        x-example-request: "/v1/data/population-estimate?period=2022"
       description: >
         Serves observed values for one published measure and source partition.
         `population-estimate` covers 2022 Ward 2023 codes in England and Wales,
@@ -1506,6 +1589,11 @@ paths:
       operationId: aggregateSourceExactMeasure
       tags: ["Trend"]
       summary: Aggregate an extensive or explicitly weighted measure
+      x-likely-refusal:
+        status: 422
+        code: aggregation_not_supported
+        when: "The measure is a rank, median or share that cannot be combined over areas. Only a measure declared additive is aggregated."
+        x-example-request: "/v1/data/imd-rank/aggregate?period=2019&locationId=north-west"
       description: >
         Returns a derived sum for a measure declared extensive, or a weighted
         mean for a measure that publishes an available weight measure. Supply
@@ -1721,6 +1809,10 @@ paths:
       operationId: convertSourceExactMeasure
       tags: ["Trend"]
       summary: Regroup an extensive measure onto a published crosswalk's target areas
+      x-likely-refusal:
+        status: 400
+        when: "No `crosswalk` is named. This route never chooses a conversion path; `/v1/relationship-paths` finds the published ones."
+        x-example-request: "/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023"
       description: >
         Converts a source partition onto another geography or code vintage
         using the crosswalk the caller names. The route never selects a
@@ -1888,6 +1980,10 @@ paths:
       operationId: getSourceExactMeasureSeries
       tags: ["Trend"]
       summary: Retrieve one area's source-exact time series
+      x-likely-refusal:
+        status: 400
+        when: "The source partition is not named. A series stays within one partition, so `geography` and `boundaryYear` are required."
+        x-example-request: "/v1/data/population-estimate/series?areaCode=E05000932"
       description: >
         Returns all published observations for one area code within one source
         geography and code vintage. It does not select a boundary release,
@@ -2021,6 +2117,10 @@ paths:
       operationId: getSourceExactMeasureRankings
       tags: ["Trend"]
       summary: Rank areas within one source-exact measure partition
+      x-likely-refusal:
+        status: 400
+        when: "The source partition is not named, so there is no one set of areas to rank."
+        x-example-request: "/v1/data/population-estimate/rankings?period=2022"
       description: >
         Ranks only the observations published for one period, geography and
         code vintage. Uses competition ranking: tied values share a rank and
@@ -2152,6 +2252,10 @@ paths:
       operationId: resolvePlaces
       tags: ["Start here"]
       summary: Find every place a name could mean
+      x-likely-refusal:
+        status: 400
+        when: "No `q` is given."
+        x-example-request: "/v1/places"
       description: >
         Turns a name into candidate places, each saying what kind of place it
         is. A name is rarely one area: "Manchester" is a local authority, a
@@ -2232,6 +2336,11 @@ paths:
       operationId: getMeasureValueForPlace
       tags: ["Start here"]
       summary: Answer a measure for a place by name (by-place dispatcher)
+      x-likely-refusal:
+        status: 409
+        code: ambiguous_place
+        when: "The name means more than one place and the measure answers them differently. Each choice carries its value and a reference to ask again with."
+        x-example-request: "/v1/data/population-estimate/value?place=Newport"
       description: >
         A deliberately narrow convenience for a place-name question, not the
         primary way to fetch one observation: it resolves the name and
@@ -2367,6 +2476,10 @@ paths:
       operationId: getSourceExactMeasureChange
       tags: ["Trend"]
       summary: Rank areas by change between two periods of one measure partition
+      x-likely-refusal:
+        status: 400
+        when: "A required part of the comparison is missing. Change is measured within one partition between two named periods."
+        x-example-request: "/v1/data/population-estimate/change?geography=localAuthority&startPeriod=2011"
       description: >
         Returns how each area changed between two periods, ranked: the question
         "where did population grow fastest between 2011 and 2022?" Pass
@@ -2511,6 +2624,10 @@ paths:
       operationId: compareSourceExactMeasureAreas
       tags: ["Trend"]
       summary: Compare two areas within one source-exact measure partition
+      x-likely-refusal:
+        status: 400
+        when: "The source partition is not named, so the two areas are not known to be on the same codes."
+        x-example-request: "/v1/data/population-estimate/compare?period=2022&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
       description: >
         Returns the comparison observation minus the baseline observation for
         one published period, geography and code vintage. The two named areas
@@ -2653,6 +2770,11 @@ paths:
       operationId: listAreas
       tags: ["Geography"]
       summary: List or search compiled area identities
+      x-likely-refusal:
+        status: 400
+        code: invalid_cursor
+        when: "The cursor was not issued by this API, or was issued for a different query."
+        x-example-request: "/v1/areas?cursor=not-a-cursor"
       description: >
         Searches official codes, names and supplied aliases case-insensitively.
         Exact code matches take precedence over prefix matches, so a bare code
@@ -2713,6 +2835,10 @@ paths:
       operationId: findAreasIntersectingBox
       tags: ["Map"]
       summary: Find the areas meeting a bounding box in one release
+      x-likely-refusal:
+        status: 400
+        when: "No `release` is given. Geometry differs between releases, so the box is tested against one named release."
+        x-example-request: "/v1/areas:intersects?bbox=-2.3,53.4,-2.2,53.5&geography=ward"
       description: >
         Returns every area of one geography and release that meets the given
         WGS 84 box: the query a map makes when it pans, and the one an analysis
@@ -2844,6 +2970,10 @@ paths:
       operationId: validateAreaValues
       tags: ["Geography"]
       summary: Validate a batch of area codes or names against one release
+      x-likely-refusal:
+        status: 400
+        when: "No `value` is given to validate."
+        x-example-request: "/v1/areas:validate?geography=ward&release=2024-12-uk-bgc"
       description: >
         Checks each `value` against one exact boundary release before a caller
         joins data to it, and says for every value what it names or why it
@@ -2933,6 +3063,10 @@ paths:
       operationId: findContainingAreas
       tags: ["Map"]
       summary: Find the areas containing a WGS84 point in one or more geographies
+      x-likely-refusal:
+        status: 400
+        when: "A geography is named without a release or a date. The point is looked up in one release, which is never chosen for the caller."
+        x-example-request: "/v1/areas:contains?lng=-2.24&lat=53.48&geography=ward"
       description: >
         Tests a point against one boundary release of each requested geography,
         at most four in one request, and says for each what contains it or why
@@ -3084,6 +3218,10 @@ paths:
       operationId: findContainingAreasForPoints
       tags: ["Map"]
       summary: Find the areas containing each of a bounded batch of points
+      x-likely-refusal:
+        status: 400
+        when: "No `point` is given."
+        x-example-request: "/v1/areas:containsBatch"
       description: >
         The `areas:contains` lookup for up to 100 points at once, each given as
         `point={lng},{lat}` or `point={lng},{lat},{accuracy}`. Geographies,
@@ -3202,6 +3340,10 @@ paths:
       operationId: findNearestAreas
       tags: ["Map"]
       summary: Rank the areas nearest a WGS84 point by distance
+      x-likely-refusal:
+        status: 400
+        when: "The coordinate is incomplete or out of range."
+        x-example-request: "/v1/areas:near?lng=-2.24"
       description: >
         Returns up to `limit` areas of each requested geography whose published
         geometry lies within `within` metres of the point, nearest first.
@@ -3301,6 +3443,11 @@ paths:
       operationId: getArea
       tags: ["Geography"]
       summary: Get one compiled area by its full identity
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830"
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -3337,6 +3484,11 @@ paths:
       operationId: getAreaRelationships
       tags: ["Geography"]
       summary: Get published relationships for one compiled area
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/relationships"
       description: >
         Returns only relationships from published crosswalks. A
         clean-containment mapping is represented as within from child to parent
@@ -3397,6 +3549,11 @@ paths:
       operationId: getAreaCapabilities
       tags: ["Start here"]
       summary: Report what the Atlas can serve for one exact area identity
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/capabilities"
       description: >
         Reports geometry, published relationship and crosswalk edges,
         direct-code named-location membership, and every measure's capability
@@ -3539,6 +3696,10 @@ paths:
       operationId: getAreaCitation
       tags: ["Governance"]
       summary: Assemble a citation bundle for one exact area identity
+      x-likely-refusal:
+        status: 422
+        when: "The named measure supplies nothing for this area on this release, so there is nothing of it to cite."
+        x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/citation?measure=imd-rank"
       description: >
         Returns what a caller needs to cite an area as served by this Atlas
         release: the immutable Atlas release, the content hash of the area
@@ -3611,6 +3772,11 @@ paths:
       operationId: getAreaHistory
       tags: ["Geography"]
       summary: Explain a code's published historical relationships and same-code continuity
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/history"
       description: >
         Returns published predecessor and successor relationships plus every
         other release of the same geography that contains the same code.
@@ -3668,6 +3834,11 @@ paths:
       operationId: getAreaParents
       tags: ["Geography"]
       summary: List published clean-containment parents for an area
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/parents"
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -3702,6 +3873,11 @@ paths:
       operationId: getAreaChildren
       tags: ["Geography"]
       summary: List published clean-containment children for an area
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/children"
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -3750,6 +3926,10 @@ paths:
       operationId: getAreaChildrenGeometry
       tags: ["Map"]
       summary: Get every child of an area as one GeoJSON FeatureCollection
+      x-likely-refusal:
+        status: 409
+        when: "The children are published in several overlapping releases. Choose one with `childGeography` rather than having shapes from different vintages drawn together."
+        x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/children/geometry"
       description: >
         Returns the geometry of every area a published crosswalk names as
         contained by this one, as a single FeatureCollection: all the wards in
@@ -3895,6 +4075,11 @@ paths:
       operationId: getAreaNeighbours
       tags: ["Map"]
       summary: List the areas whose boundary meets this one's
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/neighbours"
       description: >
         Returns the areas next to this one within the same geography and
         release, each with the length of the border they share. This supports
@@ -4007,6 +4192,10 @@ paths:
       operationId: getAreaOverlap
       tags: ["Map"]
       summary: Measure how one area overlaps another
+      x-likely-refusal:
+        status: 400
+        when: "No `with` names the other area as `{geography}/{release}/{code}`."
+        x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/overlap"
       description: >
         Intersects this area with the area named in `with`, which may be of
         another geography or boundary release, and returns the shared area,
@@ -4114,6 +4303,11 @@ paths:
       operationId: getAreaGeometry
       tags: ["Map"]
       summary: Get one compiled area's raw geometry as a GeoJSON Feature
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/geometry"
       description: >
         Serves the area's own geometry from its raw, cached source GeoJSON,
         not a generalised or simplified derivative, always in WGS84. A source
@@ -4225,6 +4419,11 @@ paths:
       operationId: getAreaGeometryMetadata
       tags: ["Map"]
       summary: Measure one area's geometry without transferring its coordinates
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/geometry/metadata"
       description: >
         Returns the bounding box, centroid, label point, area and perimeter of
         an area's geometry, so a caller can size, place or label an area
@@ -4323,6 +4522,10 @@ paths:
       operationId: findRelationshipPaths
       tags: ["Geography"]
       summary: Find the published paths from one boundary release to another for a purpose
+      x-likely-refusal:
+        status: 400
+        when: "Part of the question is missing. Both ends are exact releases, and the purpose decides which relationships count."
+        x-example-request: "/v1/relationship-paths?sourceGeography=ward"
       description: >
         Says whether a published crosswalk path relates a source release to a
         target release for `identity` (the same area under a new code or
@@ -4397,6 +4600,9 @@ paths:
       operationId: listCrosswalks
       tags: ["Geography"]
       summary: List published crosswalks
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the crosswalk inventory built."
       responses:
         "200":
           description: The current crosswalk inventory.
@@ -4446,6 +4652,10 @@ paths:
       operationId: getCrosswalk
       tags: ["Geography"]
       summary: Get one crosswalk's metadata
+      x-likely-refusal:
+        status: 404
+        when: "The id is described rather than listed. A crosswalk id names both releases and the method; `/v1/crosswalks` lists them."
+        x-example-request: "/v1/crosswalks/ward-to-local-authority"
       description: >
         Returns the crosswalk's method, quality, weighting, endpoints,
         provenance and validation facts, but not its full record set. Fetch
@@ -4535,6 +4745,10 @@ paths:
       operationId: listCrosswalkRecords
       tags: ["Geography"]
       summary: List (optionally filtered) records for one crosswalk
+      x-likely-refusal:
+        status: 404
+        when: "The id is described rather than listed. A crosswalk id names both releases and the method; `/v1/crosswalks` lists them."
+        x-example-request: "/v1/crosswalks/ward-to-local-authority/records"
       parameters:
         - $ref: "#/components/parameters/CrosswalkId"
         - name: source
@@ -4629,6 +4843,9 @@ paths:
       operationId: listRelationshipCandidates
       tags: ["Governance"]
       summary: List discovered relationship candidates and their coverage gaps
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the relationship candidates built."
       description: >
         Scans every compiled area release's raw source for extra code/name
         property pairs beyond the one already used for its own identity, and
@@ -4684,6 +4901,10 @@ paths:
       operationId: getValidationReport
       tags: ["Governance"]
       summary: Report every release gate, including waived exceptions
+      x-likely-refusal:
+        status: 400
+        when: "The status filter is not `passed` or `waived`. A release with a failing check is not published, so there is no `failed`."
+        x-example-request: "/v1/validation?status=failed"
       description: >
         The build checks each boundary release, each crosswalk, each measure,
         each measure's source partitions and the links between the Atlas's
@@ -4753,6 +4974,10 @@ paths:
       operationId: getBoundaryReleaseValidation
       tags: ["Governance"]
       summary: Get one boundary release's checks
+      x-likely-refusal:
+        status: 404
+        when: "The release is named by a date alone. `/v1/boundary-releases` lists the full release ids."
+        x-example-request: "/v1/validation/boundary-releases/ward/2024-12"
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -4797,6 +5022,10 @@ paths:
       operationId: getCrosswalkValidation
       tags: ["Governance"]
       summary: Get one crosswalk's checks
+      x-likely-refusal:
+        status: 404
+        when: "The id is described rather than listed. `/v1/crosswalks` lists them."
+        x-example-request: "/v1/validation/crosswalks/ward-to-local-authority"
       description: >
         Every crosswalk is checked for artifact integrity, resolvable
         endpoints, consistent source names and at least one target per
@@ -4858,6 +5087,10 @@ paths:
       operationId: getMeasureValidation
       tags: ["Governance"]
       summary: Get one measure's definition check
+      x-likely-refusal:
+        status: 404
+        when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids."
+        x-example-request: "/v1/validation/measures/population"
       description: >
         Checks that a measure's definition agrees with itself and with the
         catalogue: its availability matches its aggregation, a categorical
@@ -4899,6 +5132,10 @@ paths:
       operationId: getMeasureSourceValidation
       tags: ["Governance"]
       summary: Get one measure source partition's checks
+      x-likely-refusal:
+        status: 404
+        when: "A measure id is given where an export id is asked for. An export is one source partition; `/v1/exports` lists them."
+        x-example-request: "/v1/validation/exports/population-estimate"
       description: >
         Each export serves one source partition of a measure, and is checked
         from the observation artifact itself. `artifact-integrity`: the
@@ -4963,6 +5200,9 @@ paths:
       operationId: listBulkExports
       tags: ["Sync"]
       summary: List release-pinned whole observation artifacts
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the export manifest built."
       description: >
         Returns immutable JSON downloads for each published measure-source
         partition, under the Atlas release that pins the manifest. Every entry
@@ -5036,6 +5276,10 @@ paths:
       operationId: downloadBulkExport
       tags: ["Sync"]
       summary: Download one immutable source observation artifact
+      x-likely-refusal:
+        status: 404
+        when: "A measure id is given where an export id is asked for. An export is one source partition; `/v1/exports` lists them."
+        x-example-request: "/v1/exports/population-estimate"
       description: >
         Returns the exact JSON artifact listed by `/exports`, after checking
         its content hash against the manifest. This response is intentionally
@@ -5072,6 +5316,9 @@ paths:
       operationId: listBulkLookups
       tags: ["Sync"]
       summary: List whole lookup tables for download
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the lookup manifest built."
       description: >
         Returns every bulk lookup: each boundary release's area identities
         with their aliases, each crosswalk flattened to one row per source and
@@ -5145,6 +5392,11 @@ paths:
       operationId: downloadBulkLookup
       tags: ["Sync"]
       summary: Download one whole lookup table as CSV or NDJSON
+      x-likely-refusal:
+        status: 400
+        code: invalid_format
+        when: "The format is not `csv` or `ndjson`. A lookup is a table, and `/v1/lookups` describes it as JSON."
+        x-example-request: "/v1/lookups/areas-combinedAuthority-2025-12-en-bgc?format=json"
       description: >
         Renders the lookup from its source artifact and returns it only if
         the bytes match the hash its manifest lists for the format. In CSV a
@@ -5198,6 +5450,9 @@ paths:
       operationId: getAtlasRelease
       tags: ["Sync"]
       summary: Get the current immutable atlas release manifest
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the release manifest built."
       description: >
         References the boundary registry, derived boundaries, area
         inventory, named-location inventory, geometry source registry, crosswalk inventory,
@@ -5274,6 +5529,8 @@ paths:
       operationId: listAtlasReleases
       tags: ["Sync"]
       summary: List the current and archived immutable Atlas releases
+      x-likely-refusal:
+        when: "Takes no input, so nothing is refused but the server-wide rate limit."
       responses:
         "200":
           description: Release identities with artifact counts.
@@ -5298,6 +5555,10 @@ paths:
       operationId: getArchivedAtlasRelease
       tags: ["Sync"]
       summary: Get one current or archived Atlas release manifest
+      x-likely-refusal:
+        status: 404
+        when: "The release was never published by this API, or is a hash of something other than a release manifest."
+        x-example-request: "/v1/atlas-releases/sha256:0000000000000000000000000000000000000000000000000000000000000000"
       parameters:
         - name: release-id
           in: path
@@ -5370,6 +5631,10 @@ paths:
       operationId: compareAtlasReleases
       tags: ["Sync"]
       summary: Compare two archived Atlas releases, artifact by artifact and resource by resource
+      x-likely-refusal:
+        status: 404
+        when: "`from` names a release this API has not archived."
+        x-example-request: "/v1/atlas-releases/compare?from=sha256:0000000000000000000000000000000000000000000000000000000000000000"
       description: >
         Reports added, removed and changed published artifacts by content
         hash, and, inside them, the datasets, measures, boundary releases,
@@ -5440,6 +5705,10 @@ paths:
       operationId: translateAreaCode
       tags: ["Geography"]
       summary: Translate one code through a published crosswalk in either direction
+      x-likely-refusal:
+        status: 422
+        when: "No crosswalk is published for this source, target and purpose. A shared code is never taken as proof of the same area."
+        x-example-request: "/v1/translations?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&code=E05000932&targetGeography=constituency&targetRelease=2024-07-uk-bgc"
       description: >
         `identity` permits publisher-supplied historical lookups only,
         `membership` permits clean containment only, and `apportion` permits
@@ -5540,6 +5809,10 @@ paths:
       operationId: getAttribution
       tags: ["Governance"]
       summary: Assemble the attribution and licence block for named resources
+      x-likely-refusal:
+        status: 400
+        when: "No resource is named to attribute."
+        x-example-request: "/v1/attribution"
       description: >
         Collects the publisher, source and licence of every resource behind an
         answer, and returns a plain-text block suitable for a map corner, a
@@ -5633,6 +5906,9 @@ paths:
       operationId: listNamedLocations
       tags: ["Geography"]
       summary: List the curated area collections
+      x-likely-refusal:
+        status: 503
+        when: "A search that matches nothing is an empty list, not a refusal. Refused only when the server was started without named locations built."
       description: >
         A named location is a curated area collection: an editorial grouping
         of area codes, kept because people ask for places the official
@@ -5675,6 +5951,10 @@ paths:
       operationId: getNamedLocation
       tags: ["Geography"]
       summary: Get one curated area collection's definition
+      x-likely-refusal:
+        status: 404
+        when: "The id is guessed rather than listed. `/v1/locations?q=` searches them by name."
+        x-example-request: "/v1/locations/greater-london"
       parameters:
         - $ref: "#/components/parameters/LocationId"
       responses:
@@ -5705,6 +5985,10 @@ paths:
       operationId: getNamedLocationMembers
       tags: ["Geography"]
       summary: Resolve a named location's members in one geography and release
+      x-likely-refusal:
+        status: 400
+        when: "No `release` is given. Members are resolved in one named release, never the latest by default."
+        x-example-request: "/v1/locations/north-west/members"
       description: >
         `release` is required because location definitions may include legacy
         codes. Missing members are returned explicitly; this route never
@@ -5823,6 +6107,10 @@ paths:
       operationId: getNamedLocationParents
       tags: ["Geography"]
       summary: Find the areas of a coarser geography a named location covers or meets
+      x-likely-refusal:
+        status: 400
+        when: "`geography` is given without `release`."
+        x-example-request: "/v1/locations/north-west/parents?geography=localAuthority"
       description: >
         The other direction from `members`: which regions, counties, combined
         authorities or countries a location lies in, and whether it takes in

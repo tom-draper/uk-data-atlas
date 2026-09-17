@@ -332,6 +332,80 @@ test("shows each problem code's live response as its OpenAPI example", () => {
 	assert.deepEqual(drifted, []);
 });
 
+type LikelyRefusal = {
+	status?: number;
+	code?: string;
+	when?: string;
+	"x-example-request"?: string;
+};
+
+/**
+ * Each operation documents the refusal a client is most likely to meet, so a
+ * reader learns what goes wrong before it does. A refusal a client can cause
+ * is shown by a request that causes it, sent here; one it cannot, the server
+ * started without a catalogue or a release since rebuilt, is described only.
+ */
+test("names each operation's most likely refusal, and produces it", () => {
+	const problems: string[] = [];
+	for (const [path, item] of Object.entries(openapi.paths)) {
+		const operation = item.get as
+			| (NonNullable<typeof item.get> & {
+					operationId: string;
+					"x-likely-refusal"?: LikelyRefusal;
+			  })
+			| undefined;
+		if (!operation) continue;
+		const name = `${operation.operationId} (${path})`;
+		const refusal = operation["x-likely-refusal"];
+		if (!refusal?.when) {
+			problems.push(`${name}: no x-likely-refusal with a \`when\``);
+			continue;
+		}
+		const declared = Object.keys(operation.responses)
+			.map(Number)
+			.filter((status) => status >= 400);
+		const clientErrors = declared.filter((status) => status < 500);
+		if (refusal.status === undefined) {
+			if (declared.length > 0)
+				problems.push(`${name}: declares refusals but names none`);
+			continue;
+		}
+		if (!declared.includes(refusal.status))
+			problems.push(`${name}: ${refusal.status} is not a declared response`);
+		const causable = refusal.status !== 410 && refusal.status < 500;
+		// A refusal nothing a client sends can cause is only the likeliest
+		// when the operation takes no input a client could get wrong.
+		if (refusal.status >= 500 && clientErrors.length > 0)
+			problems.push(`${name}: names ${refusal.status} over a client error`);
+		const request = refusal["x-example-request"];
+		if (!causable) {
+			if (request)
+				problems.push(`${name}: ${refusal.status} cannot be produced on request`);
+			continue;
+		}
+		if (!request) {
+			problems.push(`${name}: no request that produces ${refusal.status}`);
+			continue;
+		}
+		if (!templatePattern(`/v1${path}`).test(request.split("?")[0]!))
+			problems.push(`${name}: ${request} is not a request to this operation`);
+		const response = route("GET", request, catalogues);
+		const body = response.body as { code?: string };
+		if (response.status !== refusal.status)
+			problems.push(`${name}: ${request} is ${response.status}, not ${refusal.status}`);
+		if (body.code !== refusal.code)
+			problems.push(`${name}: ${request} carries code ${body.code}, not ${refusal.code}`);
+		if (
+			refusal.code &&
+			!PROBLEM_CODES[refusal.code as keyof typeof PROBLEM_CODES]?.statuses.some(
+				(status) => status === refusal.status,
+			)
+		)
+			problems.push(`${name}: ${refusal.code} is not declared with ${refusal.status}`);
+	}
+	assert.deepEqual(problems, []);
+});
+
 /** The routes that page with a cursor, and a query that fills each one. */
 const PAGINATED = [
 	"/v1/areas?geography=ward&release=2024-12-uk-bgc",
