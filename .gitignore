@@ -57,3 +57,6 @@ next-env.d.ts
 
 # atomic-write temp files from precompile
 data/precompiled/*.tmp
+
+AGENTS.md
+CLAUDE.md
