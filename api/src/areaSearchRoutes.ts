@@ -21,7 +21,7 @@ export const handleAreaSearchRoutes = ({
 		segments[1] !== "areas"
 	)
 		return undefined;
-	const { areaLookup, areaSearchIndex } = context;
+	const { areaLookup } = context;
 	if (!areaLookup)
 		return problem(
 			503,
@@ -31,12 +31,13 @@ export const handleAreaSearchRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const query = parsedUrl.searchParams.get("q")?.trim();
-	const matches = context.geographyResolver?.searchAreas({
-		geography,
-		boundaryRelease,
-		query,
-	}) ??
-		searchAreas(areaSearchIndex ?? createAreaSearchIndex(areaLookup), {
+	const matches =
+		context.geographyResolver?.searchAreas({
+			geography,
+			boundaryRelease,
+			query,
+		}) ??
+		searchAreas(createAreaSearchIndex(areaLookup), {
 			geography,
 			boundaryRelease,
 			query,

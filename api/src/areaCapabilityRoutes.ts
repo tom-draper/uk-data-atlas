@@ -24,7 +24,6 @@ export const handleAreaCapabilityRoutes = ({
 	const {
 		areaLookup,
 		crosswalkLookup,
-		areaRelationshipIndex,
 		areaGeometryCache,
 		namedLocationInventory,
 		dataCatalog,
@@ -38,7 +37,12 @@ export const handleAreaCapabilityRoutes = ({
 		string,
 		string,
 	];
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
@@ -68,13 +72,18 @@ export const handleAreaCapabilityRoutes = ({
 		}
 	})();
 	const relationships = crosswalkLookup
-		? relationshipsFor(
-				areaRelationshipIndex,
+		? (context.geographyResolver?.relationships({
+				geography,
+				boundaryRelease,
+				code,
+			}) ??
+			relationshipsFor(
+				undefined,
 				crosswalkLookup,
 				geography,
 				boundaryRelease,
 				code,
-			)
+			))
 		: [];
 	const relationCount = (relation: string) =>
 		relationships.filter((candidate) => candidate.relation === relation)

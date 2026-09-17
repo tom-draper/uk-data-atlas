@@ -20,8 +20,13 @@ export const handleAreaHistoryRoutes = ({
 		string,
 		string,
 	];
-	const { areaLookup, areaRelationshipIndex, crosswalkLookup } = context;
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	const { areaLookup, crosswalkLookup } = context;
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const sameCodeReleases = [...(areaLookup?.entries() ?? [])]
 		.flatMap(([identity, areas]) => {
@@ -47,12 +52,19 @@ export const handleAreaHistoryRoutes = ({
 		.sort((left, right) =>
 			left.boundaryRelease.localeCompare(right.boundaryRelease),
 		);
-	const relationships = relationshipsFor(
-		areaRelationshipIndex,
-		crosswalkLookup,
-		geography,
-		boundaryRelease,
-		code,
+	const relationships = (
+		context.geographyResolver?.relationships({
+			geography,
+			boundaryRelease,
+			code,
+		}) ??
+		relationshipsFor(
+			undefined,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		)
 	).filter(
 		(relationship) =>
 			relationship.relation === "successor" ||

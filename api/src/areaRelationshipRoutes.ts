@@ -20,7 +20,7 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 		string,
 	];
-	const { areaLookup, areaRelationshipIndex, crosswalkLookup } = context;
+	const { areaLookup, crosswalkLookup } = context;
 	const area =
 		context.geographyResolver?.area({
 			geography,
@@ -41,7 +41,7 @@ export const handleAreaRelationshipRoutes = ({
 			code,
 		}) ??
 		relationshipsFor(
-			areaRelationshipIndex,
+			undefined,
 			crosswalkLookup,
 			geography,
 			boundaryRelease,

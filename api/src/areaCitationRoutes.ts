@@ -33,7 +33,6 @@ export const handleAreaCitationRoutes = ({
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		areaRelationshipIndex,
 		areaGeometryCache,
 		validationReport,
 		dataCatalog,
@@ -47,7 +46,12 @@ export const handleAreaCitationRoutes = ({
 		string,
 		string,
 	];
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!dataCatalog || !crosswalkInventory) {
 		return problem(
@@ -84,13 +88,19 @@ export const handleAreaCitationRoutes = ({
 
 	// A crosswalk is cited for an area only when it maps that area; citing
 	// one that does not would lend it evidence it never supplied.
-	const relationships = relationshipsFor(
-		areaRelationshipIndex,
-		crosswalkLookup,
-		geography,
-		boundaryRelease,
-		code,
-	);
+	const relationships =
+		context.geographyResolver?.relationships({
+			geography,
+			boundaryRelease,
+			code,
+		}) ??
+		relationshipsFor(
+			undefined,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		);
 	const unrelatedCrosswalks = crosswalkIds.filter(
 		(id) =>
 			!relationships.some(

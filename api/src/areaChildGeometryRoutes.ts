@@ -23,18 +23,18 @@ export const handleAreaChildGeometryRoutes = ({
 		segments[6] !== "geometry"
 	)
 		return undefined;
-	const {
-		areaLookup,
-		crosswalkLookup,
-		areaRelationshipIndex,
-		areaGeometryCache,
-	} = context;
+	const { areaLookup, crosswalkLookup, areaGeometryCache } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!crosswalkLookup)
 		return problem(
@@ -57,12 +57,19 @@ export const handleAreaChildGeometryRoutes = ({
 				GEOMETRY_TIERS,
 			).join(", ")}.`,
 		);
-	const children = relationshipsFor(
-		areaRelationshipIndex,
-		crosswalkLookup,
-		geography,
-		boundaryRelease,
-		code,
+	const children = (
+		context.geographyResolver?.relationships({
+			geography,
+			boundaryRelease,
+			code,
+		}) ??
+		relationshipsFor(
+			undefined,
+			crosswalkLookup,
+			geography,
+			boundaryRelease,
+			code,
+		)
 	).filter((relationship) => relationship.relation === "contains");
 	if (children.length === 0)
 		return problem(

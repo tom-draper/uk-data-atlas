@@ -25,12 +25,7 @@ export const handleAreaOverlapRoutes = ({
 		segments[5] !== "overlap"
 	)
 		return undefined;
-	const {
-		areaLookup,
-		crosswalkLookup,
-		areaRelationshipIndex,
-		areaGeometryCache,
-	} = context;
+	const { areaLookup, crosswalkLookup, areaGeometryCache } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
@@ -49,14 +44,19 @@ export const handleAreaOverlapRoutes = ({
 		string,
 		string,
 	];
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const otherArea = findArea(
-		areaLookup,
-		otherGeography,
-		otherRelease,
-		otherCode,
-	);
+	const otherArea =
+		context.geographyResolver?.area({
+			geography: otherGeography,
+			boundaryRelease: otherRelease,
+			code: otherCode,
+		}) ?? findArea(areaLookup, otherGeography, otherRelease, otherCode);
 	if (!otherArea)
 		return areaNotFound(context, otherGeography, otherRelease, otherCode);
 	if (!areaGeometryCache)
@@ -127,12 +127,19 @@ export const handleAreaOverlapRoutes = ({
 							? null
 							: Math.round(measured.widestPieceWidthM * 10) / 10,
 				},
-				publishedRelationships: relationshipsFor(
-					areaRelationshipIndex,
-					crosswalkLookup,
-					geography,
-					boundaryRelease,
-					code,
+				publishedRelationships: (
+					context.geographyResolver?.relationships({
+						geography,
+						boundaryRelease,
+						code,
+					}) ??
+					relationshipsFor(
+						undefined,
+						crosswalkLookup,
+						geography,
+						boundaryRelease,
+						code,
+					)
 				)
 					.filter(
 						(relationship) =>
