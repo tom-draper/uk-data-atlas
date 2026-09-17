@@ -13,8 +13,11 @@ export const handleIndexRoutes = ({
 			name: "UK Data Atlas API",
 			// The binding description of these routes, served as a document.
 			openapi: "/v1/openapi.yaml",
+			// The same contract for a person to read, with quick starts.
+			documentation: "/v1/docs",
 			links: [
 				"/v1/openapi.yaml",
+				"/v1/docs",
 				"/v1/geographies",
 				"/v1/map-resources",
 				"/v1/map-resources/{geography}/{release}",

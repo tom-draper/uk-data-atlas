@@ -68,7 +68,7 @@ const routeFamilies: RouteFamily[] = [
 		owns: (segments) =>
 			segments.length === 2 &&
 			segments[0] === "v1" &&
-			segments[1] === "openapi.yaml",
+			(segments[1] === "openapi.yaml" || segments[1] === "docs"),
 		handle: handleOpenapiRoutes,
 	},
 	{

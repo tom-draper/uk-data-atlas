@@ -924,6 +924,7 @@ The route selector in the documentation should begin with the user’s job:
 | resolve a name or inspect possible meanings | `/places` |
 | inspect one exact official identity | `/areas/{geography}/{release}/{code}` |
 | get its geometry, relationships or citation | the corresponding area subresource |
+| draw a whole release as a map, or load its features into a warehouse | `/map-resources/{geography}/{release}` and its `features` |
 | render values or download source-exact observations | `/data/{measure}` |
 | see a trend, ranking, comparison or change | `/series`, `/rankings`, `/compare` or `/change` under that measure |
 | translate an identifier through a published crosswalk | `/translations` |
@@ -974,9 +975,12 @@ Implementation and documentation tasks:
       operation takes no input a client could get wrong.
 - [x] Publish a glossary, endpoint chooser and three copy-paste quick starts
       (correct map, defensible trend, reliable sync) which use only current
-      OpenAPI routes. Treat them as executable contract tests. The glossary and
-      endpoint chooser are the two tables above; they are not yet published
-      with the OpenAPI description, and the quick starts are not written.
+      OpenAPI routes. Treat them as executable contract tests. They are
+      published in the OpenAPI description as `x-glossary`,
+      `x-endpoint-chooser` and `x-quick-starts`, and rendered with every
+      operation at `GET /v1/docs`. `tests/docsPage.test.ts` sends every quick
+      start request and checks it answers as the guide says, deliberate
+      refusals included, and holds the two tables above to the published ones.
 - [x] Document the four clocks/identities above beside every data endpoint and
       response example. Do not rename v1 parameters; decide clearer names such
       as `observationPeriod`, `sourceGeography`, `geometryRelease` and
@@ -3058,13 +3062,11 @@ surface area. They follow Phase 0 and Phase 1 only.
    [API UX and contract clarity](#api-ux-and-contract-clarity). Link the root
    response to the authoritative OpenAPI description and a human documentation
    landing page.
-   *Done, bar a landing page.* All 61 operations carry a task tag and a
-   summary, 57 document their error responses, and every parameter is
-   described, the repeated ones through shared components. 60 carry a response
-   example taken from a live response and held to it by test; the exception is
-   `GET /v1/openapi.yaml`, whose response is this document. The index links to
-   that description, which the API serves. There is no human documentation
-   landing page to link to yet.
+   *Done.* Every operation carries a task tag, a summary and its most likely
+   refusal, and every parameter is described, the repeated ones through shared
+   components. Response examples are taken from live responses and held to
+   them by test. The index links to that description, which the API serves,
+   and to `GET /v1/docs`, a landing page rendered from it.
 4. **Document the data identity model.** For `/data/{measure}` and every
    derivative route, make source geography, `boundaryYear`, optional
    code-compatible geometry `release`, observation `period` and immutable
@@ -3271,6 +3273,7 @@ second inventory to maintain:
 
 - `GET /v1` — API discovery
 - `GET /v1/openapi.yaml` — The OpenAPI description of this API
+- `GET /v1/docs` — The human documentation landing page
 - `GET /v1/places` — Find every place a name could mean
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
 - `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity

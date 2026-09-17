@@ -99,6 +99,121 @@ tags:
     description: "What data exists: source datasets with their input hashes, and measures with their semantics, code compatibility, coverage and quality."
   - name: "Governance"
     description: "Why a result can be trusted: release validation and waived exceptions, relationship candidates awaiting review, attribution and citation."
+x-glossary:
+  - term: Area
+    meaning: "One official, versioned identity: `{geography}/{release}/{code}`."
+  - term: Place
+    meaning: "An ambiguous name-resolution result from `/places`; it is never silently chosen."
+  - term: Curated area collection
+    meaning: "An editorial grouping served by `/locations`, not a generic geographic `location`."
+  - term: Source geography
+    meaning: "The geography and code vintage on the publisher's observation."
+  - term: Geometry release
+    meaning: "The caller-selected boundary release used only to join compatible geometry for a map."
+  - term: Observation period
+    meaning: "The time period the measure describes."
+  - term: Atlas release
+    meaning: "The immutable published Atlas artifact set that produced the response."
+x-endpoint-chooser:
+  - need: resolve a name or inspect possible meanings
+    start: ["/places"]
+  - need: inspect one exact official identity
+    start: ["/areas/{geography}/{release}/{code}"]
+  - need: get its geometry, relationships or citation
+    start: ["/areas/{geography}/{release}/{code}/geometry", "/areas/{geography}/{release}/{code}/relationships", "/areas/{geography}/{release}/{code}/citation"]
+  - need: draw a whole release as a map, or load its features into a warehouse
+    start: ["/map-resources/{geography}/{release}", "/map-resources/{geography}/{release}/features"]
+  - need: render values or download source-exact observations
+    start: ["/data/{measure-id}", "/map-resources/{geography}/{release}/join/{measure-id}"]
+  - need: see a trend, ranking, comparison or change
+    start: ["/data/{measure-id}/series", "/data/{measure-id}/rankings", "/data/{measure-id}/compare", "/data/{measure-id}/change"]
+  - need: translate an identifier through a published crosswalk
+    start: ["/translations"]
+  - need: convert values under a declared measure/method rule
+    start: ["/data/{measure-id}/convert"]
+  - need: validate a supplied code/name or discover releases
+    start: ["/areas:validate", "/geographies", "/boundary-releases"]
+  - need: cite, attribute or inspect the published release
+    start: ["/areas/{geography}/{release}/{code}/citation", "/attribution", "/atlas-releases", "/validation"]
+x-quick-starts:
+  - id: correct-map
+    title: Correct map
+    audience: GIS or product engineer
+    promise: Draw release-pinned UK boundaries and values without a code/geometry mismatch, and cite them.
+    steps:
+      - title: Resolve the place
+        explain: A name is not an area. Every place it could mean comes back with its geography and code, and none is chosen for you.
+        request: "/v1/places?q=Birmingham"
+      - title: Find the boundaries published for drawing
+        explain: A map resource is one boundary release compiled so neighbours share their borders exactly.
+        request: "/v1/map-resources"
+      - title: Read the descriptor
+        explain: The one document a map needs. It gives the tile and archive URLs, the zoom ladder, every content hash, the attribution and a pinned URL that never needs revalidating.
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2"
+      - title: Configure the renderer
+        explain: TileJSON 3.0 for MapLibre or any other renderer. The tiles carry each area's code, name and a stable integer id, and no values.
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles.json"
+      - title: Fetch values numbered for the tiles
+        explain: The join table carries the same integer ids as the tiles, so a renderer sets feature state without reading any geometry. The source partition is named, never guessed.
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023"
+      - title: See a join refused, not a wrong map
+        explain: The deprivation rank is published on LSOAs, which this release does not hold. The refusal names the releases that would carry it.
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2019"
+        status: 422
+      - title: Or take the features flat
+        explain: The same shapes as GeoParquet, with the same ids, for a GIS or warehouse that draws features rather than tiles.
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=medium"
+      - title: Attribute the map
+        explain: The licence and publisher text to display, for both the boundaries and the values.
+        request: "/v1/attribution?measure=population-estimate&boundaryRelease=localAuthority/2023-05-uk-bgc-v2"
+  - id: defensible-trend
+    title: Defensible trend
+    audience: Analyst or consultant
+    promise: Compare a measure through time on one set of codes, with the refusals and caveats visible.
+    steps:
+      - title: Read the measure
+        explain: Its aggregation kind and source partitions say what it can be used for before any value is fetched.
+        request: "/v1/measures/population-estimate"
+      - title: Take one area's series
+        explain: Source-exact, within one partition, so the code means the same place in every period.
+        request: "/v1/data/population-estimate/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
+      - title: Rank the change
+        explain: The same change against every other area in the partition, so a figure is put in context rather than quoted alone.
+        request: "/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025"
+      - title: See a median refused, not averaged
+        explain: A median of medians is not a median, so the API refuses to combine one over areas.
+        request: "/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001"
+        status: 422
+      - title: Keep geometry out of the trend
+        explain: A boundary release selects shapes for a map. It is refused on a trend, because it would suggest the values were moved onto it.
+        request: "/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&release=2023-05-uk-bgc-v2"
+        status: 422
+      - title: Quote the caveat
+        explain: Each partition's coverage note travels with the measure, ready to quote beside the figure.
+        request: "/v1/measures/population-estimate/quality"
+  - id: reliable-sync
+    title: Reliable sync
+    audience: Data engineer
+    promise: Ingest release-pinned data into an existing stack, verify it, and reprocess only what changed.
+    steps:
+      - title: Pin the Atlas release
+        explain: Every response names the release that produced it. Record it beside every table you load.
+        request: "/v1/atlas-release"
+      - title: List the whole-partition exports
+        explain: Each export is one immutable source partition, with its record count, schema, content hash and the datasets to attribute.
+        request: "/v1/exports"
+      - title: Download a partition and check its hash
+        explain: The artifact's `contentHash` is the hash of its content without that field, so it can be recomputed rather than trusted. Send the ETag back as `If-None-Match` on the next run and an unchanged export answers 304 with no body.
+        request: "/v1/exports/total-jobs-observations"
+      - title: Load boundaries into the warehouse
+        explain: Every area of a release as GeoParquet, with a bbox covering column. DuckDB, BigQuery and GeoPandas read it directly.
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=full"
+      - title: Take the reference tables
+        explain: Area identities, crosswalks and named-location membership as whole CSV or NDJSON files.
+        request: "/v1/lookups/areas-localAuthority-2023-05-uk-bgc-v2?format=ndjson"
+      - title: Reprocess only what moved
+        explain: When a new release is published, compare it with the one you pinned using `/atlas-releases/compare?from=`, and rebuild only the resources it names.
+        request: "/v1/atlas-releases"
 servers:
   - url: http://127.0.0.1:3001/v1
     description: Local development server (pnpm start)
@@ -126,6 +241,7 @@ paths:
                   name: UK Data Atlas API
                   links:
                     - /v1/openapi.yaml
+                    - /v1/docs
                     - /v1/geographies
                     - /v1/map-resources
                     - /v1/map-resources/{geography}/{release}
@@ -192,6 +308,33 @@ paths:
           description: The OpenAPI 3.1 description.
           content:
             application/yaml:
+              schema:
+                type: string
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /docs:
+    get:
+      operationId: getDocumentation
+      tags: ["Start here"]
+      summary: The human documentation landing page
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without its OpenAPI description."
+      description: >
+        An HTML page rendered from this document: an endpoint chooser that
+        starts from the job, the glossary of the identities a response
+        carries, three copy-paste quick starts for a correct map, a defensible
+        trend and a reliable sync, and every operation grouped by task with
+        its most likely refusal. It is read from `x-endpoint-chooser`,
+        `x-glossary`, `x-quick-starts` and each operation's
+        `x-likely-refusal`, so it cannot describe a route this document does
+        not, and every quick start request is sent as a contract test.
+      responses:
+        "200":
+          description: The documentation page.
+          content:
+            text/html:
               schema:
                 type: string
         "503":
@@ -6728,6 +6871,12 @@ components:
       properties:
         name:
           type: string
+        openapi:
+          type: string
+          description: This OpenAPI description, the binding contract.
+        documentation:
+          type: string
+          description: The human landing page rendered from it.
         links:
           type: array
           items:

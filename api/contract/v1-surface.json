@@ -10,8 +10,10 @@
 					"apiVersion",
 					"atlasRelease",
 					"data",
+					"data.documentation",
 					"data.links",
 					"data.name",
+					"data.openapi",
 					"meta",
 					"meta.nextCursor"
 				]
@@ -22,6 +24,33 @@
 			"parameters": {},
 			"responses": {
 				"200 application/yaml": [],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /docs": {
+			"operationId": "getDocumentation",
+			"parameters": {},
+			"responses": {
+				"200 text/html": [],
 				"503 application/problem+json": [
 					"absence",
 					"areaCount",
