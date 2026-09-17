@@ -41,7 +41,8 @@ import type { LookupManifest } from "./lookupExports";
 import { createGeographyResolver } from "./geographyResolver";
 import {
 	LocationProjectionStore,
-	type LocationProjectionArtifact,
+	type LocationParentProjectionArtifact,
+	LocationProjectionArtifact,
 	type LocationProjectionInventory,
 } from "./locationProjections";
 import { route } from "./routes";
@@ -202,7 +203,9 @@ export const readRelationshipPathInventory = (
 	crosswalks: CrosswalkInventory,
 ): RelationshipPathInventory => {
 	const path = join(apiRoot, "public", "relationship-paths.json");
-	const inventory = JSON.parse(readFileSync(path, "utf8")) as RelationshipPathInventory;
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as RelationshipPathInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
 		!Array.isArray(inventory.paths) ||
@@ -219,23 +222,49 @@ const createLocationProjectionStore = (
 	namedLocations: NamedLocationInventory,
 	crosswalkInventory: CrosswalkInventory,
 ) =>
-	new LocationProjectionStore(inventory, (shard) => {
-		const path = join(apiRoot, "public", shard.artifact);
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as LocationProjectionArtifact;
-		if (
-			artifact.schemaVersion !== 1 ||
-			artifact.contentHash !== shard.contentHash ||
-			artifact.crosswalkId !== shard.crosswalkId ||
-			artifact.namedLocationInventoryHash !== namedLocations.contentHash ||
-			artifact.crosswalkInventoryHash !== crosswalkInventory.contentHash ||
-			!Array.isArray(artifact.projections)
-		) {
-			throw new Error(`Invalid location projection shard at ${path}`);
-		}
-		return artifact;
-	});
+	new LocationProjectionStore(
+		inventory,
+		(shard) => {
+			const path = join(apiRoot, "public", shard.artifact);
+			const artifact = JSON.parse(
+				readFileSync(path, "utf8"),
+			) as LocationProjectionArtifact;
+			if (
+				artifact.schemaVersion !== 1 ||
+				artifact.contentHash !== shard.contentHash ||
+				artifact.crosswalkId !== shard.crosswalkId ||
+				artifact.namedLocationInventoryHash !==
+					namedLocations.contentHash ||
+				artifact.crosswalkInventoryHash !==
+					crosswalkInventory.contentHash ||
+				!Array.isArray(artifact.projections)
+			) {
+				throw new Error(`Invalid location projection shard at ${path}`);
+			}
+			return artifact;
+		},
+		(shard) => {
+			const path = join(apiRoot, "public", shard.artifact);
+			const artifact = JSON.parse(
+				readFileSync(path, "utf8"),
+			) as LocationParentProjectionArtifact;
+			if (
+				artifact.schemaVersion !== 1 ||
+				artifact.contentHash !== shard.contentHash ||
+				artifact.crosswalkId !== shard.crosswalkId ||
+				artifact.namedLocationInventoryHash !==
+					namedLocations.contentHash ||
+				artifact.crosswalkInventoryHash !==
+					crosswalkInventory.contentHash ||
+				!Array.isArray(artifact.parentProjections)
+			) {
+				throw new Error(
+					`Invalid location parent projection shard at ${path}`,
+				);
+			}
+			return artifact;
+		},
+	);
 
 export const readValidationReport = (apiRoot: string): ValidationReport => {
 	const path = join(apiRoot, "public", "validation-report.json");
@@ -390,7 +419,9 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		apiRoot,
 		crosswalkInventory,
 	);
-	const namedLocationLookup = createNamedLocationLookup(namedLocationInventory);
+	const namedLocationLookup = createNamedLocationLookup(
+		namedLocationInventory,
+	);
 	const locationProjectionInventory = readLocationProjectionInventory(
 		apiRoot,
 		namedLocationInventory,

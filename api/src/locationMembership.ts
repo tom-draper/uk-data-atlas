@@ -30,6 +30,12 @@ export type TraversedMember = {
 	weight?: number;
 	/** True when some of this area lies outside the location. */
 	partial?: boolean;
+	/**
+	 * `within` when the whole area lies inside the location, `partly-within`
+	 * when only the share in `weight` does. The first is what a sum may count
+	 * whole; the second is only ever apportioned.
+	 */
+	relation: "within" | "partly-within";
 };
 
 export const membershipKindFor = (
@@ -92,6 +98,7 @@ export const membersThroughCrosswalk = (
 				code: record.source.code,
 				labels: record.source.labels,
 				throughCode: existing?.throughCode ?? target.code,
+				relation: "within",
 				...(weight === undefined
 					? {}
 					: {
@@ -103,9 +110,176 @@ export const membersThroughCrosswalk = (
 	for (const member of found.values()) {
 		if (member.weight !== undefined && member.weight < 0.999999) {
 			member.partial = true;
+			member.relation = "partly-within";
 		}
 	}
 	return [...found.values()].sort((left, right) =>
 		left.code.localeCompare(right.code),
 	);
+};
+
+export type MemberReach = {
+	/** The location's members that resolve in the crosswalk's parent release. */
+	memberCount: number;
+	/** Of those, how many the crosswalk places any area in. */
+	reachedCount: number;
+	/**
+	 * Members the crosswalk says nothing about, typically because it covers
+	 * fewer countries than the location spans. Areas under them are missing
+	 * from the answer, not absent from the ground.
+	 */
+	unreached: string[];
+	complete: boolean;
+};
+
+/** Which of the location's members a crosswalk has any area under. */
+export const memberReach = (
+	crosswalk: CrosswalkArtifact,
+	memberCodes: Set<string>,
+): MemberReach => {
+	const reached = new Set<string>();
+	for (const record of crosswalk.records)
+		for (const target of record.targets)
+			if (memberCodes.has(target.code)) reached.add(target.code);
+	const unreached = [...memberCodes]
+		.filter((code) => !reached.has(code))
+		.sort();
+	return {
+		memberCount: memberCodes.size,
+		reachedCount: reached.size,
+		unreached,
+		complete: unreached.length === 0,
+	};
+};
+
+/** Share of a parent that must be covered before a location is said to cover it. */
+export const COVERS_MINIMUM_SHARE = 0.99;
+
+export type ParentRelation = {
+	code: string;
+	labels: string[];
+	/**
+	 * `covers` when the location takes in the whole parent, `intersects` when
+	 * it takes in only part of it.
+	 */
+	relation: "covers" | "intersects";
+	/** The location's members lying in this parent. */
+	memberCodes: string[];
+	/**
+	 * For a containment lookup, every area the publisher places in the parent;
+	 * `covers` means the location holds all of them.
+	 */
+	parentMemberCount?: number;
+	/**
+	 * For an area-overlap crosswalk, the share of the parent's area the
+	 * location's members cover; `covers` means at least
+	 * COVERS_MINIMUM_SHARE of it.
+	 */
+	coveredShare?: number;
+};
+
+export type ParentProjection = {
+	parents: ParentRelation[];
+	/**
+	 * The one parent the whole location lies in, when there is one: every
+	 * member is placed in it, and wholly so for an overlap. Null otherwise.
+	 */
+	locationWithin: string | null;
+	/**
+	 * Members the crosswalk places in no parent, such as Welsh districts in an
+	 * English region lookup. A location with any is never within one parent.
+	 */
+	unplaced: string[];
+};
+
+/** Whether a crosswalk out of the member geography states belonging. */
+export const isParentCrosswalk = (
+	crosswalk: Pick<CrosswalkArtifact, "method" | "relationshipPurpose">,
+) =>
+	crosswalk.method === "clean-containment" ||
+	crosswalk.method === "area-overlap" ||
+	crosswalk.relationshipPurpose === "membership";
+
+/**
+ * The parents a location reaches through a crosswalk running from its member
+ * geography to a coarser one, such as local authority to region, and whether
+ * it covers each or only meets it.
+ */
+export const parentsThroughCrosswalk = (
+	crosswalk: CrosswalkArtifact,
+	memberCodes: Set<string>,
+): ParentProjection => {
+	const byParent = new Map<
+		string,
+		{
+			labels: string[];
+			children: Set<string>;
+			members: Set<string>;
+			coveredShare: number;
+			memberWeight: number;
+		}
+	>();
+	const placedMembers = new Set<string>();
+	for (const record of crosswalk.records) {
+		const isMember = memberCodes.has(record.source.code);
+		if (isMember) placedMembers.add(record.source.code);
+		for (const target of record.targets) {
+			const parent = byParent.get(target.code) ?? {
+				labels: target.labels,
+				children: new Set<string>(),
+				members: new Set<string>(),
+				coveredShare: 0,
+				memberWeight: 0,
+			};
+			parent.children.add(record.source.code);
+			if (isMember) {
+				parent.members.add(record.source.code);
+				if (isOverlapTarget(target)) {
+					parent.coveredShare += target.targetShare;
+					parent.memberWeight += target.weight;
+				}
+			}
+			byParent.set(target.code, parent);
+		}
+	}
+	const overlap = crosswalk.method === "area-overlap";
+	const parents = [...byParent]
+		.filter(([, parent]) => parent.members.size > 0)
+		.map(([code, parent]): ParentRelation => {
+			const covers = overlap
+				? parent.coveredShare >= COVERS_MINIMUM_SHARE
+				: parent.members.size === parent.children.size;
+			return {
+				code,
+				labels: parent.labels,
+				relation: covers ? "covers" : "intersects",
+				memberCodes: [...parent.members].sort(),
+				...(overlap
+					? {
+							coveredShare:
+								Math.round(
+									Math.min(parent.coveredShare, 1) * 1e6,
+								) / 1e6,
+						}
+					: { parentMemberCount: parent.children.size }),
+			};
+		})
+		.sort((left, right) => left.code.localeCompare(right.code));
+	const [only] = parents;
+	const within =
+		parents.length === 1 &&
+		only &&
+		placedMembers.size > 0 &&
+		placedMembers.size === memberCodes.size &&
+		(overlap
+			? byParent.get(only.code)!.memberWeight >=
+				placedMembers.size * COVERS_MINIMUM_SHARE
+			: true);
+	return {
+		parents,
+		locationWithin: within ? only!.code : null,
+		unplaced: [...memberCodes]
+			.filter((code) => !placedMembers.has(code))
+			.sort(),
+	};
 };

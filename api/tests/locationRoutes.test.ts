@@ -136,7 +136,8 @@ test("resolves a named location into another geography through a crosswalk", () 
 				locationProjections.inventory,
 				(shard) =>
 					locationProjections.artifacts.find(
-						(artifact) => artifact.crosswalkId === shard.crosswalkId,
+						(artifact) =>
+							artifact.crosswalkId === shard.crosswalkId,
 					)!,
 			),
 		}),
@@ -224,4 +225,128 @@ test("resolves a named location into another geography through a crosswalk", () 
 			(direct.body as { data: { membership: string } }).data.membership,
 		"direct-code-match",
 	);
+});
+
+test("says which parents a named location covers or meets", () => {
+	const toRegion = {
+		...containmentCrosswalk,
+		contentHash: "sha256:authority-to-region",
+		id: "local-authority-to-region-2025",
+		method: "official-lookup" as const,
+		relationshipPurpose: "membership" as const,
+		weighting: { status: "not-provided" as const },
+		from: {
+			geography: "localAuthority",
+			boundaryRelease: "2025-01-uk-lad",
+		},
+		to: { geography: "region", boundaryRelease: "2025-12-en" },
+		records: [
+			{
+				source: { code: "E08000001", labels: ["Greater Manchester"] },
+				targets: [{ code: "E12000002", labels: ["North West"] }],
+			},
+			{
+				source: { code: "E08000002", labels: ["Elsewhere"] },
+				targets: [{ code: "E12000002", labels: ["North West"] }],
+			},
+		],
+	};
+	const inventory: CrosswalkInventory = {
+		...crosswalkInventory,
+		crosswalks: [
+			{
+				id: toRegion.id,
+				from: toRegion.from,
+				to: toRegion.to,
+				method: toRegion.method,
+				quality: toRegion.quality,
+				relationshipPurpose: toRegion.relationshipPurpose,
+				weighting: toRegion.weighting,
+				recordCount: toRegion.records.length,
+				artifact: `crosswalks/${toRegion.id}.json`,
+				contentHash: toRegion.contentHash,
+			},
+		],
+	};
+	const compiled = compileLocationProjections(
+		namedLocationInventory,
+		inventory,
+		[toRegion],
+		areaLookup,
+	);
+	assert.equal(compiled.inventory.parentShards.length, 1);
+	const context: RouteContext = {
+		boundaryRegistry: registry,
+		areaLookup,
+		namedLocationLookup,
+		geographyResolver: createGeographyResolver({
+			areaLookup,
+			namedLocationLookup,
+			locationProjectionStore: new LocationProjectionStore(
+				compiled.inventory,
+				() => {
+					throw new Error("no member shards");
+				},
+				(shard) =>
+					compiled.parentArtifacts.find(
+						(artifact) =>
+							artifact.crosswalkId === shard.crosswalkId,
+					)!,
+			),
+		}),
+	};
+	const ask = (query: string) =>
+		routeRequest(
+			"GET",
+			`/v1/locations/greater-manchester/parents?${query}`,
+			context,
+		);
+
+	const unnamed = ask("geography=region&release=2025-12-en");
+	assert.equal(unnamed.status, 400);
+	assert.match(
+		(unnamed.body as { detail: string }).detail,
+		/local-authority-to-region-2025/,
+	);
+	assert.equal(ask("geography=region").status, 400);
+	assert.equal(
+		ask("geography=region&release=2025-12-en&via=nowhere").status,
+		404,
+	);
+
+	const resolved = ask(
+		"geography=region&release=2025-12-en&via=local-authority-to-region-2025",
+	);
+	assert.equal(resolved.status, 200);
+	const data = ("data" in resolved.body && resolved.body.data) as {
+		locationWithin: { id: string } | null;
+		parents: {
+			id: string;
+			name: string;
+			relation: string;
+			parentMemberCount: number;
+			members: { id: string }[];
+		}[];
+		unplaced: unknown[];
+	};
+	// One of the region's two authorities is a member: the location lies in
+	// the region but does not cover it.
+	assert.deepEqual(data.parents, [
+		{
+			id: "region/2025-12-en/E12000002",
+			code: "E12000002",
+			name: "North West",
+			relation: "intersects",
+			members: [
+				{
+					id: "localAuthority/2025-01-uk-lad/E08000001",
+					code: "E08000001",
+					name: "Greater Manchester",
+				},
+			],
+			parentMemberCount: 2,
+		},
+	]);
+	assert.equal(data.locationWithin?.id, "region/2025-12-en/E12000002");
+	assert.deepEqual(data.unplaced, []);
 });
