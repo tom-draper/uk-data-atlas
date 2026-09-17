@@ -1,7 +1,4 @@
-import type {
-	DocsField,
-	DocsParameter,
-} from "@/lib/docs/openapi";
+import type { DocsField, DocsParameter } from "@/lib/docs/openapi";
 import Prose, { Inline } from "./Prose";
 
 function Values({ values, label }: { values: string[]; label: string }) {
