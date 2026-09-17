@@ -4,7 +4,7 @@
 		"boundaryRegistry": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
 		"areaInventory": "sha256:50bf361ae94c9390f967c3afc440aac7d5e4011ce555cb545c787581a2e882ab",
 		"geometrySources": "sha256:57f1dcfd54ca6639d8ceea4acd9ec6df417ceb485245ef3d4b95026dc91a19a8",
-		"crosswalkInventory": "sha256:5576446ba0b841f3cb756c0bd7485f50bf7181c45660c1f166608add82250c41",
+		"crosswalkInventory": "sha256:e4a363c36f8e5501b86f2350a68e1d8433797f4c7f7345027612567fc4d36040",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 		"geographyInventory": "sha256:c5d03f56b5cd3ee31e277ad4a0ee2cde2712c1c64fd373876c19e64c9be4ff0a",
 		"dataCatalog": "sha256:893a9d6a3ae2c288bdcb2e12e4598fa515b037eadb59e3a74274db117bc0aec3",
@@ -13,16 +13,16 @@
 		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
 	},
 	"summary": {
-		"resourceCount": 517,
-		"checkCount": 1660,
-		"passedCount": 1613,
+		"resourceCount": 519,
+		"checkCount": 1668,
+		"passedCount": 1621,
 		"waivedCount": 47,
 		"coverage": {
 			"boundaryReleases": 72,
 			"areaIdentities": 72,
 			"servableGeometry": 72,
 			"withRelationships": 23,
-			"crosswalks": 15,
+			"crosswalks": 17,
 			"weightedCrosswalks": 2,
 			"measures": 148,
 			"measureSources": 281
@@ -2294,6 +2294,32 @@
 			]
 		},
 		{
+			"id": "crosswalks/local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 361
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "crosswalks/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -2343,6 +2369,32 @@
 						"narrowestOverlapWidthM": 621.2,
 						"sliverPairCount": 0
 					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 296
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
 				}
 			]
 		},
@@ -16388,5 +16440,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:279043f9ae376bc4c5962755c13862ef80163f8ce12908b79c66da199d986663"
+	"contentHash": "sha256:baaf82bfdede444506fdcbc71872736fa73b5e51c6366f28529dc88c8717516f"
 }
