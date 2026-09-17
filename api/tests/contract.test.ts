@@ -288,7 +288,16 @@ test("matches every OpenAPI response example to the live response", () => {
 	const drifted = responseExamples.flatMap(
 		({ name, request, value, prefix }) => {
 			if (!request) return [];
-			const response = route("GET", request, catalogues);
+			// Release ids change with every build, so an example request that
+			// needs one names the release the server holds by placeholder.
+			const response = route(
+				"GET",
+				request.replaceAll(
+					"{current-atlas-release}",
+					catalogues.atlasRelease.releaseId,
+				),
+				catalogues,
+			);
 			if (response.status !== 200)
 				return [`${name}: ${request} returned ${response.status}`];
 			if (prefix) {

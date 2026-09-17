@@ -5209,10 +5209,10 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab
-                    href: /v1/atlas-releases/sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab
-                    artifactCount: 284
-                    current: false
+                  - releaseId: sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d
+                    href: /v1/atlas-releases/sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d
+                    artifactCount: 313
+                    current: true
                 meta:
                   nextCursor: null
 
@@ -5236,13 +5236,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AtlasReleaseEnvelope"
-              x-example-request: "/v1/atlas-releases/sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab"
+              x-example-request: "/v1/atlas-releases/{current-atlas-release}"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:14e8acd20084336d68f76dd47ee27a57536e3c25dedbbff07cdec665778b8bab
+                  releaseId: sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5273,8 +5273,6 @@ paths:
                       constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
                       local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
                     validationExceptions:
-                      boundary-releases/dataZone/2011-12-sc-bfc geometry-servable: sha256:c2dde292f7107539e0dde87b8bcd34a3130621045c6b55fd08b7dc0240ff5d83
-                      boundary-releases/superOutputArea/2011-ni geometry-servable: sha256:c2dde292f7107539e0dde87b8bcd34a3130621045c6b55fd08b7dc0240ff5d83
                       boundary-releases/ward/2025-05-uk-bgc-v2 candidates-reviewed: sha256:97e4075ffbe862495c7c4c4c6fe76b572d224d18187737b0a75906e27fc6305f
                       crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
                     namedLocations:
@@ -5321,48 +5319,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AtlasReleaseComparisonEnvelope"
-              x-example-request: "/v1/atlas-releases/compare?from=sha256:c581bb2adda2787dcb6984eeb8c63399b33380f02b9ef308bdbfb671cf8490d1&to=sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
+              # Until a second release is published, the only live comparison
+              # is the served release with itself, so every list is empty.
+              x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
+                atlasRelease: "sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d"
                 data:
                   from:
-                    releaseId: "sha256:c581bb2adda2787dcb6984eeb8c63399b33380f02b9ef308bdbfb671cf8490d1"
-                    href: /v1/atlas-releases/sha256:c581bb2adda2787dcb6984eeb8c63399b33380f02b9ef308bdbfb671cf8490d1
+                    releaseId: "sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d"
+                    href: /v1/atlas-releases/sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d
                   to:
-                    releaseId: "sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54"
-                    href: /v1/atlas-releases/sha256:c837686a95b6be584fa3bdeb73b54264193e4450016030d709e6da853a5eeb54
-                  summary: { added: 10, removed: 42, changed: 116, unchanged: 161 }
-                  # Artifact and resource lists are shortened to one entry each.
+                    releaseId: "sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d"
+                    href: /v1/atlas-releases/sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d
+                  summary: { added: 0, removed: 0, changed: 0, unchanged: 313 }
                   artifacts:
-                    added:
-                      - id: lookup-manifest
-                        path: lookup-manifest.json
-                        contentHash: "sha256:c4c112851298c80fc47904e21dda22338a4bf0ddf86547d870bb8a9642fc64a3"
-                    removed:
-                      - id: observations/general-election-apni-vote-share-constituency-2010-observations
-                        path: general-election-apni-vote-share-constituency-2010-observations.json
-                        contentHash: "sha256:c7f7203fe79fd08f0f383ce654deffdfb9218794d04cebcb0395e0aacd752415"
-                    changed:
-                      - id: data-catalog
-                        from: { id: data-catalog, path: data-catalog.json, contentHash: "sha256:246d438a543673a5bb26d960263c9576e1a470a2d10062130adec14c96365b3f" }
-                        to: { id: data-catalog, path: data-catalog.json, contentHash: "sha256:4409281f400b22b7b1a238d2028435933dd8a09c6db3997947031dd0478a653f" }
+                    added: []
+                    removed: []
+                    changed: []
                   resources:
                     datasets:
                       status: compared
                       added: []
                       removed: []
-                      changed: [general-election, local-election]
-                      unchanged: 34
-                    geometrySources:
+                      changed: []
+                      unchanged: 37
+                    crosswalks:
                       status: compared
                       added: []
                       removed: []
-                      changed: [dataZone/2011-12-sc-bfc, superOutputArea/2011-ni]
-                      unchanged: 69
-                    lookups:
-                      status: not-recorded
-                      reason: One release does not record lookups.
+                      changed: []
+                      unchanged: 26
                   note: Artifacts are compared by content hash. Resources inside them, such as datasets, crosswalks and validation exceptions, are compared by the fingerprints each release recorded when it was built; a changed resource differs somewhere in its published entry, and the comparison does not say which field.
                 meta:
                   nextCursor: null
