@@ -169,6 +169,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	const result = buildCrosswalkInventory(repositoryRoot);
 	console.log(
-		`Wrote ${result.crosswalkCount} crosswalk to ${result.inventoryPath}`,
+		`Wrote ${result.crosswalkCount} crosswalks to ${result.inventoryPath}`,
 	);
 }
