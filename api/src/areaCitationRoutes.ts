@@ -24,11 +24,9 @@ export const handleAreaCitationRoutes = ({
 	const {
 		boundaryRegistry: registry,
 		areaInventory,
-		areaLookup,
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		areaGeometryCache,
 		validationReport,
 		dataCatalog,
 		populationObservations,
@@ -48,11 +46,8 @@ export const handleAreaCitationRoutes = ({
 			"Catalogue Unavailable",
 			"Build the geography resolver before citing an area.",
 		);
-	const area = geographyResolver.area({
-		geography,
-		boundaryRelease,
-		code,
-	});
+	const identity = { geography, boundaryRelease, code };
+	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!dataCatalog || !crosswalkInventory) {
 		return problem(
@@ -235,26 +230,20 @@ export const handleAreaCitationRoutes = ({
 					note: "No hash of the geometry source is recorded for this release. The boundary release's metadataHash pins its metadata, which names the source file but does not hash its contents.",
 				};
 	const geometry = (() => {
-		if (!areaGeometryCache)
+		if (!geographyResolver.hasAreaGeometryCache())
 			return {
 				status: "not-published" as const,
 				href: geometryHref,
 				hash: geometryHash(),
 			};
 		try {
-			const provenance = areaGeometryCache.get(
-				geography,
-				boundaryRelease,
-				code,
-			)
-				? areaGeometryCache.provenance(geography, boundaryRelease, code)
-				: undefined;
-			return provenance
+			const resolved = geographyResolver.areaGeometry(identity);
+			return resolved
 				? {
 						status: "available" as const,
 						href: geometryHref,
-						provenance,
-						hash: geometryHash(provenance.inputHash),
+						provenance: resolved.geometrySource,
+						hash: geometryHash(resolved.geometrySource.inputHash),
 					}
 				: {
 						status: "not-found" as const,
