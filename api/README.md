@@ -377,7 +377,11 @@ only **available** when its endpoint, contract and provenance are published.
       tier. Source CRS, transformation, area and perimeter method, centroid, a
       guaranteed-inside label point, and the source file with its SHA-256 are
       already served.
-- [ ] Deliver vector tiles and cached exports for map-scale workloads.
+- [x] Deliver vector tiles and cached exports for map-scale workloads. One
+      boundary release is published as a PMTiles archive with its TileJSON and
+      per-tile `.mvt` reads, compiled from shared arcs so neighbours cannot
+      disagree, and every whole-partition export and lookup table is an
+      immutable, cacheable download under a pinned release.
 - [x] Publish bulk, versioned CSV and NDJSON downloads for area identities,
       aliases, hierarchy relations, named-location membership and crosswalks
       through `GET /v1/lookups`, so no one needs thousands of API calls to
@@ -1199,13 +1203,17 @@ GET /v1/boundary-releases/compare?from={geography}/{release}&to={geography}/{rel
       its schema, row count, hashes and provenance under a pinned release.
       Boundaries are GeoParquet through a map resource's `features`; Parquet
       source partitions and lookups, and GeoParquet crosswalks, remain.
-- [ ] Deliver boundaries and selected measure joins as cached vector tiles or
+- [x] Deliver boundaries and selected measure joins as cached vector tiles or
       PMTiles. This is the correct map-scale interface; nationwide GeoJSON is
-      not.
-- [ ] Compile topology-preserving collection/tile geometries for map delivery.
+      not. One release is served as a PMTiles archive, its TileJSON and
+      per-tile `.mvt` reads, with every published measure joining to it by code
+      through a separate join table.
+- [x] Compile topology-preserving collection/tile geometries for map delivery.
       The existing per-area simplification is appropriate for a feature query,
       but a map must not show cracks or divergent shared borders between
-      neighbours.
+      neighbours. The release is decomposed into shared arcs and generalised
+      one arc at a time, so two areas either share a border exactly or do not
+      share it at all, at every tier.
 - [ ] Provide pre-joined, release-pinned thematic resources for common mapping
       requests, rather than requiring every customer to repeat an area/value
       join.
