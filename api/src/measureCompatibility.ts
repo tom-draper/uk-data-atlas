@@ -150,6 +150,13 @@ const candidateFor = (
  * This deliberately establishes code compatibility only: a matching code set
  * says nothing about whether two releases have identical geometry.
  */
+/** The key a measure's observation artifact is recorded under in `inputs`. */
+export const observationPartitionKey = ({
+	measureId,
+	sourceGeography,
+}: Pick<AnyMeasureObservationArtifact, "measureId" | "sourceGeography">) =>
+	`${measureId}/${sourceGeography.type}/${sourceGeography.boundaryYear}`;
+
 export const compileMeasureCompatibility = (
 	dataCatalog: DataCatalog,
 	boundaryRegistry: BoundaryRegistry,
@@ -231,10 +238,12 @@ export const compileMeasureCompatibility = (
 		populationObservations: wardObservations.contentHash,
 		populationLocalAuthorityObservations:
 			localAuthorityObservations.contentHash,
+		// Keyed by partition: a measure published at several source
+		// geographies has one artifact for each, and each must be recorded.
 		measureObservations: Object.fromEntries(
 			measureObservations
 				.map((observations) => [
-					observations.measureId,
+					observationPartitionKey(observations),
 					observations.contentHash,
 				])
 				.sort(([left], [right]) =>
