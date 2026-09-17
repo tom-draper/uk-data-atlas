@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e54f7dd00fc25ffb21cd928e81c9e38cd865edfe262d70e469b5d25ff55b5c51",
+	"contentHash": "sha256:1b8939ed00de43982117da509b82840de34e6e21bc1cd50d693beb040162684a",
 	"lookups": [
 		{
 			"id": "areas-combinedAuthority-2025-12-en-bgc",
@@ -1959,6 +1959,62 @@
 					"bytes": 52875,
 					"contentHash": "sha256:55b1a04b40ea0b8670062837c7e29078be369c23ea1da3e39daf83dc4e6aead0",
 					"href": "/v1/lookups/areas-localPlanningAuthority-2019-04-uk-bgc?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "areas-lsoa-2001-12-ew-bgc",
+			"kind": "area-identities",
+			"title": "Area identities, lsoa 2001-12-ew-bgc",
+			"source": {
+				"artifact": "areas/lsoa/2001-12-ew-bgc.json",
+				"contentHash": "sha256:4e25173feacc01a74d9771030279088e089b9865a649a9a075f75762c66430bd"
+			},
+			"columns": [
+				{
+					"name": "geography",
+					"type": "string",
+					"required": true,
+					"description": "The geography the release publishes."
+				},
+				{
+					"name": "boundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The boundary release."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"required": true,
+					"description": "The official area code."
+				},
+				{
+					"name": "name",
+					"type": "string",
+					"required": true,
+					"description": "The area's name in the release."
+				},
+				{
+					"name": "aliases",
+					"type": "string[]",
+					"required": false,
+					"description": "Other names the release gives the area, such as a Welsh name."
+				}
+			],
+			"rowCount": 34378,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1657056,
+					"contentHash": "sha256:03d9ef3e01275744eb7bd65a3dfd1bf93b9a034a250cc4131930aa0815e3b1d9",
+					"href": "/v1/lookups/areas-lsoa-2001-12-ew-bgc?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3928808,
+					"contentHash": "sha256:9eca936bfefc2b38048008ef580dd1b2c7b478fcc8fa10e40688479e1758346d",
+					"href": "/v1/lookups/areas-lsoa-2001-12-ew-bgc?format=ndjson"
 				}
 			}
 		},
@@ -4255,6 +4311,776 @@
 			}
 		},
 		{
+			"id": "crosswalk-itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+			"source": {
+				"artifact": "crosswalks/itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup.json",
+				"contentHash": "sha256:f2d067a6349c9f9e033d46ff664d03776d999002045a6c714e9dcab7bfcadde7"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 41,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 7375,
+					"contentHash": "sha256:9b740be6c2b68eda25c20c34fd4d71298482e52a039b59aa046e36a4918e853f",
+					"href": "/v1/lookups/crosswalk-itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 17273,
+					"contentHash": "sha256:c4feb4208de947dc1e4875a3166eddc1471b4b4b16c82bc7ce05b1632cf86965",
+					"href": "/v1/lookups/crosswalk-itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+			"source": {
+				"artifact": "crosswalks/itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup.json",
+				"contentHash": "sha256:e29aab8036c6540bd91d06368e61ec67b86252a1bf0f1e10d22e8bffc3fcc14b"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 179,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 33413,
+					"contentHash": "sha256:ce62f84575404e42402de4115b6f2202fa24a44a9a8114bd3740230b119b0140",
+					"href": "/v1/lookups/crosswalk-itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 77191,
+					"contentHash": "sha256:ea8012a5d7f41c98cc1a835d92d4e0b59fdda9436e384867befcf8e74ef90246",
+					"href": "/v1/lookups/crosswalk-itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+			"source": {
+				"artifact": "crosswalks/local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup.json",
+				"contentHash": "sha256:e6d94a747543bc3bdb01d61a79686f5539402673f9cd41596cb5b51a52eb980c"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 374,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 76374,
+					"contentHash": "sha256:a990ec03d0429b3dba9a5b247e0951ccb30980f6bb0676c46837661777fe0ef6",
+					"href": "/v1/lookups/crosswalk-local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 168178,
+					"contentHash": "sha256:bb5cd7bf4ce6eb27c9d0f64788628ceef2965286c33a0174e8bcf86a7318fabb",
+					"href": "/v1/lookups/crosswalk-local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+			"source": {
+				"artifact": "crosswalks/local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup.json",
+				"contentHash": "sha256:5ebd15e6f5fe04f0be7c8c3dd74f595a795fa701d0bc330d8b9fa01cbd689f0b"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 71583,
+					"contentHash": "sha256:457496e47623674be28b79bb7a4b863f1dc69933ea765e4ace20b6418db550a5",
+					"href": "/v1/lookups/crosswalk-local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 160189,
+					"contentHash": "sha256:b9957a17dd6fbbeb9aee2965eb51a0c3702edbe22eae3185708ffcb282410bc7",
+					"href": "/v1/lookups/crosswalk-local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+			"source": {
+				"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup.json",
+				"contentHash": "sha256:a656d00cefb79cc93cc5984ad7fe483622304ecfe3ece139c2b74f9d6af3a44c"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 106,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 23237,
+					"contentHash": "sha256:cb990af18a7588a2eeee88a26dfc85354119192d049b259cd95ca55e3869f86d",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 49133,
+					"contentHash": "sha256:408d8ae37e63347fda973a69b35f31d933ffd2bd386eadb9a6ff44b909b9c92b",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+			"source": {
+				"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup.json",
+				"contentHash": "sha256:1f7a34a1892cd630822ce3aa28dbb2ad610e72ca5b02fe8e5da0cb0a75be42d5"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 71327,
+					"contentHash": "sha256:a6a61a9cdc57de48bb5dcdc0f7be9f4ee1b584583dff20c7afe83ac0c29fcec2",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 159945,
+					"contentHash": "sha256:9296571952843aae2097fe97854952c0ed42f0245d6d94fa4c58230f13843917",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+			"source": {
+				"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup.json",
+				"contentHash": "sha256:048f148eb776c914c6bf2d2e325e57a394d0c3e08ff4143697ed7e3884b4fa2a"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 361,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 84428,
+					"contentHash": "sha256:a64e5d56038ae85d9269c50d3f1cedc8c8ee3f2a5391fa7f9b5a8fc9853eb113",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 173034,
+					"contentHash": "sha256:db9f0cf4d0e44da18d9e6d2dc74af216d4a4b756936e281f8fa8db34b272bab4",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
 			"id": "crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
 			"kind": "crosswalk",
 			"title": "Crosswalk, local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
@@ -4361,6 +5187,446 @@
 					"bytes": 127698,
 					"contentHash": "sha256:3ccc6365b1d8ec995573eab7edb05f2e47de14514d1844a6c46ad7f015e98960",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+			"source": {
+				"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup.json",
+				"contentHash": "sha256:b182af0c00fe68572c3386da1db803edac42abb8add5bcbcdae3d2ac671da020"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 296,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 56052,
+					"contentHash": "sha256:0019427db4f747118ac18b5dc49b87e27cad9ea7160c9c4b0e0fd6350ad7145b",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 128684,
+					"contentHash": "sha256:8cbe2b9f60aecc82f1d0df5fcb79c0950929fece66bc3f04ce02957eccfd256a",
+					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
+			"source": {
+				"artifact": "crosswalks/lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup.json",
+				"contentHash": "sha256:aa77554563bab179bd39ba38469433d10459626aa4140ce1fb179aa0a9dc1da9"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 35796,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 6420113,
+					"contentHash": "sha256:0c489da9cd07d190720a3e04d7edeeae6b78469fe2db3bd52862cbfdc2fa21d9",
+					"href": "/v1/lookups/crosswalk-lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 15225273,
+					"contentHash": "sha256:fc8abda1043403372b6f70d60e3902073aceb51a3a79ceaaa26bbfa68e7f88eb",
+					"href": "/v1/lookups/crosswalk-lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"source": {
+				"artifact": "crosswalks/lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup.json",
+				"contentHash": "sha256:3183aa98f875efa813b59c19bcda355d608de8dcbb4f82f27d37d058ff586a21"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 35672,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 7296181,
+					"contentHash": "sha256:58d4cdb970590667137c82cd886fd18f55ec14b6c383fb15321a7c02d5194bcf",
+					"href": "/v1/lookups/crosswalk-lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 16070357,
+					"contentHash": "sha256:3cfd272001cbc44c1b3a0f9a7ee6db605d29c3fcd4ea1eee7ed86440279344b2",
+					"href": "/v1/lookups/crosswalk-lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"kind": "crosswalk",
+			"title": "Crosswalk, msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"source": {
+				"artifact": "crosswalks/msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup.json",
+				"contentHash": "sha256:d6544402294b47815684f6f6157de8501ae8749606eab0aa2409764a0219d18a"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for an area overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for an area overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for an area overlap."
+				}
+			],
+			"rowCount": 7264,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 1478640,
+					"contentHash": "sha256:575c36a89aea72d6a60545326b36cd57dda4487e26a775a94071db4c13811059",
+					"href": "/v1/lookups/crosswalk-msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 3265216,
+					"contentHash": "sha256:8d55b020e8105e9752ffd9d6e1e4099858c066e94bf0b291b8deabfd3137c3e8",
+					"href": "/v1/lookups/crosswalk-msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=ndjson"
 				}
 			}
 		},

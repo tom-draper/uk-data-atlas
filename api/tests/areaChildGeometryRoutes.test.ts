@@ -12,6 +12,7 @@ import {
 	registry,
 	geographyInventory,
 	areaLookup,
+	containmentCrosswalk,
 	crosswalkInventory,
 	crosswalkLookup,
 } from "./routeFixtures";
@@ -182,4 +183,50 @@ test("lists the children it could not draw rather than dropping them", () => {
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
+});
+
+test("refuses to draw children of several geographies as one collection", () => {
+	const lsoaCrosswalk = {
+		...containmentCrosswalk,
+		contentHash: "sha256:lsoa-containment",
+		id: "lsoa-to-local-authority-2025",
+		from: { geography: "lsoa", boundaryRelease: "2021-12-ew" },
+		records: [
+			{
+				source: { code: "E01000001", labels: ["Example LSOA"] },
+				targets: [
+					{ code: "E08000001", labels: ["Greater Manchester"] },
+				],
+			},
+		],
+	};
+	const children = (query: string) =>
+		route(
+			"GET",
+			`/v1/areas/localAuthority/2025-01-uk-lad/E08000001/children/geometry${query}`,
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			new Map([...crosswalkLookup, [lsoaCrosswalk.id, lsoaCrosswalk]]),
+			undefined,
+			new AreaGeometryCache(tmpdir(), new Map()),
+		);
+
+	const mixed = children("");
+	assert.equal(mixed.status, 409);
+	assert.deepEqual("choices" in mixed.body && mixed.body.choices, [
+		"lsoa/2021-12-ew",
+		"ward/2025-01-en-ward",
+	]);
+
+	const wards = children("?childGeography=ward");
+	assert.equal(wards.status, 200);
+	const data = ("data" in wards.body && wards.body.data) as {
+		collection: { members: number };
+	};
+	assert.equal(data.collection.members, 1);
+
+	assert.equal(children("?childGeography=lsoa/2021-12-ew").status, 200);
+	assert.equal(children("?childGeography=msoa").status, 404);
 });

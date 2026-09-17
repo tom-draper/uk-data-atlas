@@ -650,8 +650,17 @@ paths:
                         recordCount: 15
                         artifact: areas/combinedAuthority/2025-12-en-bgc.json
                       relationships:
-                        status: not-compiled
-                        reason: No published crosswalk references this boundary release yet.
+                        status: available
+                        crosswalks:
+                          - id: local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup
+                            direction: to
+                            counterpart:
+                              geography: localAuthority
+                              boundaryRelease: 2025-12-uk-bgc
+                            method: clean-containment
+                            quality: publisher-supplied
+                            weighting:
+                              status: not-applicable
                   geographies:
                     - id: combinedAuthority
                       countries:
@@ -3439,7 +3448,20 @@ paths:
                   boundaryRelease: 2023-05-uk-bgc-v2
                   code: E08000025
                   name: Birmingham
-                  relationships: []
+                  relationships:
+                    - relation: predecessor
+                      counterpart:
+                        id: localAuthority/2022-12-uk-bgc-v2/E08000025
+                        geography: localAuthority
+                        boundaryRelease: 2022-12-uk-bgc-v2
+                        code: E08000025
+                        labels: [Birmingham]
+                      crosswalk:
+                        id: local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup
+                        method: official-lookup
+                        quality: publisher-supplied
+                        weighting:
+                          status: not-provided
                   sameCodeReleases:
                     - id: localAuthority/2016-12-gb-bgc/E08000025
                       geography: localAuthority
@@ -3587,6 +3609,17 @@ paths:
           description: >
             The generalisation tier applied to every member, as on the geometry
             route.
+        - name: childGeography
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            Which children to draw, as a geography such as `ward` or as
+            `{geography}/{release}`. Required when the area's children are
+            published in more than one geography release, such as a
+            district's wards and its LSOAs, since those overlap one another;
+            the 409 lists the choices.
       responses:
         "200":
           description: >
@@ -3596,7 +3629,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AreaChildrenGeometryEnvelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children/geometry?tier=low"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children/geometry?tier=low&childGeography=ward"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -3653,6 +3686,15 @@ paths:
           description: >
             Either no compiled area matches that identity, or no published
             relationship names anything as contained by it.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "409":
+          description: >
+            The area's children are published in more than one geography
+            release and `childGeography` does not choose one; `choices` lists
+            them.
           content:
             application/problem+json:
               schema:

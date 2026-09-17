@@ -1,0 +1,1735 @@
+{
+	"schemaVersion": 1,
+	"id": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+	"method": "clean-containment",
+	"quality": "publisher-supplied",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "localAuthority",
+		"boundaryRelease": "2025-12-uk-bgc"
+	},
+	"to": {
+		"geography": "combinedAuthority",
+		"boundaryRelease": "2025-12-en-bgc"
+	},
+	"provenance": {
+		"input": "lookups/local-authority-to-combined-authority/2025-05-en/LAD25_CAUTH25_EN_LU.geojson",
+		"inputHash": "sha256:373902cf32dfe28722128c72a85843ecb00ef0df845ca1a9685c91c32f742abb"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 361,
+				"referencedCodeCount": 106
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 15,
+				"referencedCodeCount": 15
+			}
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "E06000001",
+				"labels": [
+					"Hartlepool"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000006",
+					"labels": [
+						"Tees Valley"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000002",
+				"labels": [
+					"Middlesbrough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000006",
+					"labels": [
+						"Tees Valley"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000003",
+				"labels": [
+					"Redcar and Cleveland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000006",
+					"labels": [
+						"Tees Valley"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000004",
+				"labels": [
+					"Stockton-on-Tees"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000006",
+					"labels": [
+						"Tees Valley"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000005",
+				"labels": [
+					"Darlington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000006",
+					"labels": [
+						"Tees Valley"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000006",
+				"labels": [
+					"Halton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000004",
+					"labels": [
+						"Liverpool City Region"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000008",
+				"labels": [
+					"Blackburn with Darwen"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000009",
+				"labels": [
+					"Blackpool"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000010",
+				"labels": [
+					"Kingston upon Hull, City of"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000016",
+					"labels": [
+						"Hull and East Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000011",
+				"labels": [
+					"East Riding of Yorkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000016",
+					"labels": [
+						"Hull and East Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000012",
+				"labels": [
+					"North East Lincolnshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000013",
+				"labels": [
+					"North Lincolnshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000014",
+				"labels": [
+					"York"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000012",
+					"labels": [
+						"York and North Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000015",
+				"labels": [
+					"Derby"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000018",
+				"labels": [
+					"Nottingham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000022",
+				"labels": [
+					"Bath and North East Somerset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000009",
+					"labels": [
+						"West of England"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000023",
+				"labels": [
+					"Bristol, City of"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000009",
+					"labels": [
+						"West of England"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000025",
+				"labels": [
+					"South Gloucestershire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000009",
+					"labels": [
+						"West of England"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000027",
+				"labels": [
+					"Torbay"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000031",
+				"labels": [
+					"Peterborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000008",
+					"labels": [
+						"Cambridgeshire and Peterborough"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000047",
+				"labels": [
+					"County Durham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000057",
+				"labels": [
+					"Northumberland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E06000065",
+				"labels": [
+					"North Yorkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000012",
+					"labels": [
+						"York and North Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000008",
+				"labels": [
+					"Cambridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000008",
+					"labels": [
+						"Cambridgeshire and Peterborough"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000009",
+				"labels": [
+					"East Cambridgeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000008",
+					"labels": [
+						"Cambridgeshire and Peterborough"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000010",
+				"labels": [
+					"Fenland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000008",
+					"labels": [
+						"Cambridgeshire and Peterborough"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000011",
+				"labels": [
+					"Huntingdonshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000008",
+					"labels": [
+						"Cambridgeshire and Peterborough"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000012",
+				"labels": [
+					"South Cambridgeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000008",
+					"labels": [
+						"Cambridgeshire and Peterborough"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000032",
+				"labels": [
+					"Amber Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000033",
+				"labels": [
+					"Bolsover"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000034",
+				"labels": [
+					"Chesterfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000035",
+				"labels": [
+					"Derbyshire Dales"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000036",
+				"labels": [
+					"Erewash"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000037",
+				"labels": [
+					"High Peak"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000038",
+				"labels": [
+					"North East Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000039",
+				"labels": [
+					"South Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000040",
+				"labels": [
+					"East Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000041",
+				"labels": [
+					"Exeter"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000042",
+				"labels": [
+					"Mid Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000043",
+				"labels": [
+					"North Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000044",
+				"labels": [
+					"South Hams"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000045",
+				"labels": [
+					"Teignbridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000046",
+				"labels": [
+					"Torridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000047",
+				"labels": [
+					"West Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000015",
+					"labels": [
+						"Devon and Torbay"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000117",
+				"labels": [
+					"Burnley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000118",
+				"labels": [
+					"Chorley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000119",
+				"labels": [
+					"Fylde"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000120",
+				"labels": [
+					"Hyndburn"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000121",
+				"labels": [
+					"Lancaster"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000122",
+				"labels": [
+					"Pendle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000123",
+				"labels": [
+					"Preston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000124",
+				"labels": [
+					"Ribble Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000125",
+				"labels": [
+					"Rossendale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000126",
+				"labels": [
+					"South Ribble"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000127",
+				"labels": [
+					"West Lancashire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000128",
+				"labels": [
+					"Wyre"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000018",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000136",
+				"labels": [
+					"Boston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000137",
+				"labels": [
+					"East Lindsey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000138",
+				"labels": [
+					"Lincoln"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000139",
+				"labels": [
+					"North Kesteven"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000140",
+				"labels": [
+					"South Holland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000141",
+				"labels": [
+					"South Kesteven"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000142",
+				"labels": [
+					"West Lindsey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000017",
+					"labels": [
+						"Greater Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000170",
+				"labels": [
+					"Ashfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000171",
+				"labels": [
+					"Bassetlaw"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000172",
+				"labels": [
+					"Broxtowe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000173",
+				"labels": [
+					"Gedling"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000174",
+				"labels": [
+					"Mansfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000175",
+				"labels": [
+					"Newark and Sherwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E07000176",
+				"labels": [
+					"Rushcliffe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000013",
+					"labels": [
+						"East Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000001",
+				"labels": [
+					"Bolton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000002",
+				"labels": [
+					"Bury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000003",
+				"labels": [
+					"Manchester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000004",
+				"labels": [
+					"Oldham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000005",
+				"labels": [
+					"Rochdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000006",
+				"labels": [
+					"Salford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000007",
+				"labels": [
+					"Stockport"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000008",
+				"labels": [
+					"Tameside"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000009",
+				"labels": [
+					"Trafford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000010",
+				"labels": [
+					"Wigan"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000001",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000011",
+				"labels": [
+					"Knowsley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000004",
+					"labels": [
+						"Liverpool City Region"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000012",
+				"labels": [
+					"Liverpool"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000004",
+					"labels": [
+						"Liverpool City Region"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000013",
+				"labels": [
+					"St. Helens"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000004",
+					"labels": [
+						"Liverpool City Region"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000014",
+				"labels": [
+					"Sefton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000004",
+					"labels": [
+						"Liverpool City Region"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000015",
+				"labels": [
+					"Wirral"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000004",
+					"labels": [
+						"Liverpool City Region"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000017",
+				"labels": [
+					"Doncaster"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000002",
+					"labels": [
+						"South Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000018",
+				"labels": [
+					"Rotherham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000002",
+					"labels": [
+						"South Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000021",
+				"labels": [
+					"Newcastle upon Tyne"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000022",
+				"labels": [
+					"North Tyneside"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000023",
+				"labels": [
+					"South Tyneside"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000024",
+				"labels": [
+					"Sunderland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000025",
+				"labels": [
+					"Birmingham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000026",
+				"labels": [
+					"Coventry"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000027",
+				"labels": [
+					"Dudley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000028",
+				"labels": [
+					"Sandwell"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000029",
+				"labels": [
+					"Solihull"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000030",
+				"labels": [
+					"Walsall"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000031",
+				"labels": [
+					"Wolverhampton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000007",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000032",
+				"labels": [
+					"Bradford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000003",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000033",
+				"labels": [
+					"Calderdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000003",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000034",
+				"labels": [
+					"Kirklees"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000003",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000035",
+				"labels": [
+					"Leeds"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000003",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000036",
+				"labels": [
+					"Wakefield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000003",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000037",
+				"labels": [
+					"Gateshead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000014",
+					"labels": [
+						"North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000038",
+				"labels": [
+					"Barnsley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000002",
+					"labels": [
+						"South Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E08000039",
+				"labels": [
+					"Sheffield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E47000002",
+					"labels": [
+						"South Yorkshire"
+					]
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:a656d00cefb79cc93cc5984ad7fe483622304ecfe3ece139c2b74f9d6af3a44c"
+}

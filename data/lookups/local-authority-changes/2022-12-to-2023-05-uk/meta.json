@@ -1,0 +1,21 @@
+{
+	"id": "2022-12-to-2023-05-uk",
+	"kind": "lookup",
+	"title": "Local authority district changes, December 2022 to May 2023 (United Kingdom)",
+	"description": "Official ONS lookup from December 2022 Local Authority Districts to their May 2023 successors.",
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD22_LAD23_UK_LU_v1/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+	"retrieved": "2026-09-17",
+	"temporalCoverage": "2023-04-01",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "LAD22_LAD23_UK_LU_v1.geojson",
+			"role": "source",
+			"note": "Exported from the ONS Open Geography Portal feature service, 374 rows paged in ObjectId order."
+		}
+	]
+}

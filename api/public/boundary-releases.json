@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
+	"contentHash": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -892,6 +892,28 @@
 				}
 			},
 			"metadataHash": "sha256:6a0e3820eedb02a39281fd791576fb2f30ea8f8077796c6a3240187193356e8f"
+		},
+		{
+			"id": "2001-12-ew-bgc",
+			"geography": "lsoa",
+			"title": "Lower layer super output areas, December 2001 (England and Wales, generalised, clipped)",
+			"description": "Lower layer super output areas as published for December 2001, covering England and Wales. Generalised to 20 m and clipped to the coastline. From the publisher's 2022 re-issue.",
+			"temporalCoverage": "2001",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:0a96db9665d9f8ea347d8f85191e7208036997b886f8f2304b5c3629d1b87ff6"
 		},
 		{
 			"id": "2015-12-ew-bgc",

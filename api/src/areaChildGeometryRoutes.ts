@@ -62,14 +62,53 @@ export const handleAreaChildGeometryRoutes = ({
 				GEOMETRY_TIERS,
 			).join(", ")}.`,
 		);
-	const children = geographyResolver
+	const contained = geographyResolver
 		.relationships({ geography, boundaryRelease, code })
 		.filter((relationship) => relationship.relation === "contains");
-	if (children.length === 0)
+	if (contained.length === 0)
 		return problem(
 			404,
 			"Not Found",
 			"No published relationship names anything as contained by that area.",
+		);
+	// Children of different geographies, such as a district's wards and its
+	// LSOAs, overlap one another, so they are never drawn as one collection.
+	const childGeography = parsedUrl.searchParams.get("childGeography");
+	const layers = [
+		...new Set(
+			contained.map(
+				({ counterpart }) =>
+					`${counterpart.geography}/${counterpart.boundaryRelease}`,
+			),
+		),
+	].sort();
+	const children = childGeography
+		? contained.filter(
+				({ counterpart }) =>
+					counterpart.geography === childGeography ||
+					`${counterpart.geography}/${counterpart.boundaryRelease}` ===
+						childGeography,
+			)
+		: contained;
+	const chosenLayers = new Set(
+		children.map(
+			({ counterpart }) =>
+				`${counterpart.geography}/${counterpart.boundaryRelease}`,
+		),
+	);
+	if (childGeography && children.length === 0)
+		return problem(
+			404,
+			"Not Found",
+			`No published relationship names a ${childGeography} area as contained by that area. Its children are published as ${layers.join(", ")}.`,
+			{ choices: layers },
+		);
+	if (chosenLayers.size > 1)
+		return problem(
+			409,
+			"Ambiguous Children",
+			`That area's children are published in ${chosenLayers.size} geography releases, which overlap one another. Choose one with childGeography, as a geography or {geography}/{release}.`,
+			{ choices: [...chosenLayers].sort() },
 		);
 	const features: unknown[] = [];
 	// A child can be published as a relationship and still have no servable

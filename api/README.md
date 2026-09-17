@@ -113,9 +113,22 @@ only **available** when its endpoint, contract and provenance are published.
       choices each carry their value, as "Newport" does for the Welsh authority
       and its namesake wards; a name the measure answers for no candidate is a
       422 saying why for each.
-- [ ] Expand parent/child coverage beyond currently published clean-containment
-      relationships, for example constituency → wards where an authoritative or
-      carefully qualified mapping exists.
+- [x] Expand parent/child coverage from official ONS lookups, downloaded
+      reproducibly by `scripts/fetch-ons-lookup.ts` from the sources listed in
+      `config/ons-lookups.json`: LSOA 2021 and MSOA 2021 → LAD (May 2023),
+      LAD → county and unitary authority and LAD → combined authority
+      (December 2025 releases), and ITL3 → ITL2 → ITL1 (2021). Every code on
+      both sides must resolve in its compiled release and every source must
+      have exactly one parent, or the build fails. LAD → ITL3 is deliberately
+      not published: Highland, North Ayrshire and Argyll and Bute are split
+      between ITL3 areas, so it is not containment.
+- [ ] Publish constituency → ward and LSOA 2021 → MSOA 2021 where an
+      authoritative or carefully qualified mapping exists. ONS publishes ward
+      → constituency only as a best fit, and LSOA → MSOA only for England.
+- [ ] Derive containment from geometry as a cross-check on the official
+      lookups, by testing a child's vertices against its expected parent
+      rather than clipping polygons, which is too slow and fragile on the ITL
+      and Scottish Parliament boundaries.
 - [x] Add purpose-aware reverse translation rather than requiring a caller to
       reverse a directional crosswalk themselves. Results state `forward` or
       `reverse`, preserve the original crosswalk provenance, and normalise
@@ -123,8 +136,13 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Publish a directional relationship graph: within, contains, overlaps,
       predecessor, successor, split-from, merged-from and equivalent-to, each with
       method, quality and provenance.
-- [ ] Add official ward and LAD historical change lookups. Do not promote
-      name-based matching or same-code continuity to a public equivalence claim.
+- [x] Add official LAD historical change lookups, December 2022 → May 2023 and
+      December 2024 → May 2025, and the 2011 → 2021 LSOA changes, where 865
+      2011 LSOAs have more than one successor. An official lookup declared as
+      membership, such as LAD → region, is related as within/contains rather
+      than as succession.
+- [ ] Add official ward historical change lookups. Do not promote name-based
+      matching or same-code continuity to a public equivalence claim.
 - [ ] Find and explain a multi-step relationship path, for example 2019 ward →
       current LAD → constituency. Return every step's method, release and
       quality rather than collapsing it to an undocumented answer.

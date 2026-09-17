@@ -40,10 +40,15 @@ const areaId = (geography: string, boundaryRelease: string, code: string) =>
 	[geography, boundaryRelease, code].join("/");
 
 const relationFor = (
-	method: CrosswalkMethod,
+	{ method, relationshipPurpose }: CrosswalkArtifact,
 	direction: "from" | "to",
 ): AreaRelation => {
-	if (method === "clean-containment") {
+	// An official lookup declared as membership, such as district to region,
+	// states belonging, not succession.
+	if (
+		method === "clean-containment" ||
+		relationshipPurpose === "membership"
+	) {
 		return direction === "from" ? "within" : "contains";
 	}
 	if (method === "area-overlap") return "overlaps";
@@ -100,7 +105,7 @@ export const createAreaRelationshipIndex = (
 					target.code,
 				);
 				addRelationship(index, sourceId, {
-					relation: relationFor(crosswalk.method, "from"),
+					relation: relationFor(crosswalk, "from"),
 					counterpart: {
 						id: targetId,
 						geography: crosswalk.to.geography,
@@ -112,7 +117,7 @@ export const createAreaRelationshipIndex = (
 					...overlapFor(target, "from"),
 				});
 				addRelationship(index, targetId, {
-					relation: relationFor(crosswalk.method, "to"),
+					relation: relationFor(crosswalk, "to"),
 					counterpart: {
 						id: sourceId,
 						geography: crosswalk.from.geography,

@@ -45,7 +45,7 @@
 				],
 				"tileCount": 12206,
 				"bytes": 6163957,
-				"contentHash": "sha256:e10a6bed9650aa3f78048c2315cd2958f641feeb3663f1c707278dc0a2c7a674"
+				"contentHash": "sha256:56226fcbbb371d0c636612a7038c0ccd776793933f38490b458061724a52c8ac"
 			},
 			"tiers": [
 				{
@@ -92,5 +92,5 @@
 			}
 		}
 	],
-	"contentHash": "sha256:a794af0bbc0931ac461d50b67632c8470eba326319b4e1d96b890b974e75b9fe"
+	"contentHash": "sha256:c9cafb3b65015145cc76669131bb6678f15e6938cd1580425b1f5e22964adb56"
 }

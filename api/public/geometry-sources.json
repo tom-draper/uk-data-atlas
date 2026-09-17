@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:57f1dcfd54ca6639d8ceea4acd9ec6df417ceb485245ef3d4b95026dc91a19a8",
+	"contentHash": "sha256:f6fd25a1a7a3cbf44c958700277bdea918f7c02cea5371d79e03524ff1af4965",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -339,6 +339,14 @@
 			"inputHash": "sha256:c8ab257dff040e97a5b270f951432d59a0c358ce243b0e8bd9fc7005446cfbd9",
 			"crs": "EPSG:4326",
 			"codeProperty": "LSOA11CD"
+		},
+		{
+			"id": "lsoa/2001-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/lsoa/2001-12-ew-bgc/source.geojson",
+			"inputHash": "sha256:aa3bd3ee6173eda2d3f3ce7bc548802e99e5b35c27e67ff9945985e2f731bb3a",
+			"crs": "EPSG:4326",
+			"codeProperty": "LSOA01CD"
 		},
 		{
 			"id": "majorTownAndCity/2015-12-ew-bgc",

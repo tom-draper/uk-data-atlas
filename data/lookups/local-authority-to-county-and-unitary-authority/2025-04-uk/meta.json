@@ -1,0 +1,21 @@
+{
+	"id": "2025-04-uk",
+	"kind": "lookup",
+	"title": "Local authority district to county and unitary authority, April 2025 (United Kingdom)",
+	"description": "Official ONS lookup from Local Authority Districts to counties and unitary authorities in the United Kingdom, as at 1 April 2025.",
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD25_CTYUA25_UK_LU_v2/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+	"retrieved": "2026-09-17",
+	"temporalCoverage": "2025-04-01",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "LAD25_CTYUA25_UK_LU_v2.geojson",
+			"role": "source",
+			"note": "Exported from the ONS Open Geography Portal feature service, 361 rows paged in ObjectId order."
+		}
+	]
+}

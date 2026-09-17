@@ -364,6 +364,208 @@
 			"sourceCodePattern": "^E",
 			"sliverWidthM": 100,
 			"minimumCoverage": 0.99
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+			"input": "lookups/local-authority-to-combined-authority/2025-05-en/LAD25_CAUTH25_EN_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM"
+			},
+			"to": {
+				"geography": "combinedAuthority",
+				"boundaryRelease": "2025-12-en-bgc",
+				"codeProperty": "CAUTH25CD",
+				"nameProperty": "CAUTH25NM"
+			}
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+			"input": "lookups/local-authority-to-county-and-unitary-authority/2025-04-uk/LAD25_CTYUA25_UK_LU_v2.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM",
+				"aliasProperty": "LAD25NMW"
+			},
+			"to": {
+				"geography": "countyAndUnitaryAuthority",
+				"boundaryRelease": "2025-12-uk-bgc",
+				"codeProperty": "CTYUA25CD",
+				"nameProperty": "CTYUA25NM",
+				"aliasProperty": "CTYUA25NMW"
+			}
+		},
+		{
+			"id": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+			"input": "lookups/local-authority-to-itl/2021-01-uk/LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2021-01-uk-bgc-v3",
+				"codeProperty": "ITL321CD",
+				"nameProperty": "ITL321NM"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2",
+				"codeProperty": "ITL221CD",
+				"nameProperty": "ITL221NM"
+			}
+		},
+		{
+			"id": "itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+			"input": "lookups/local-authority-to-itl/2021-01-uk/LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2",
+				"codeProperty": "ITL221CD",
+				"nameProperty": "ITL221NM"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc",
+				"codeProperty": "ITL121CD",
+				"nameProperty": "ITL121NM"
+			}
+		},
+		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"input": "lookups/lsoa-to-local-authority/2023-05-ew/LSOA21_LAD23_EW_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2",
+				"codeProperty": "LAD23CD",
+				"nameProperty": "LAD23NM",
+				"aliasProperty": "LAD23NMW"
+			}
+		},
+		{
+			"id": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"input": "lookups/msoa-to-local-authority/2023-05-ew/MSOA21_LAD23_EW_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "msoa",
+				"boundaryRelease": "2021-12-ew-bgc-v3",
+				"codeProperty": "MSOA21CD",
+				"nameProperty": "MSOA21NM",
+				"aliasProperty": "MSOA21NMW"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2",
+				"codeProperty": "LAD23CD",
+				"nameProperty": "LAD23NM",
+				"aliasProperty": "LAD23NMW"
+			}
+		},
+		{
+			"id": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+			"input": "lookups/local-authority-changes/2022-12-to-2023-05-uk/LAD22_LAD23_UK_LU_v1.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2",
+				"codeProperty": "LAD22CD",
+				"nameProperty": "LAD22NM",
+				"aliasProperty": "LAD22NMW"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2",
+				"codeProperty": "LAD23CD",
+				"nameProperty": "LAD23NM",
+				"aliasProperty": "LAD23NMW"
+			}
+		},
+		{
+			"id": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+			"input": "lookups/local-authority-changes/2024-12-to-2025-05-uk/LAD24_LAD25_UK_LU_v2.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc",
+				"codeProperty": "LAD24CD",
+				"nameProperty": "LAD24NM",
+				"aliasProperty": "LAD24NMW"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2",
+				"codeProperty": "LAD25CD",
+				"nameProperty": "LAD25NM",
+				"aliasProperty": "LAD25NMW"
+			}
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
+			"input": "lookups/lsoa-changes/2011-to-2021-ew/LSOA11_LSOA21_LAD22_EW_LU_v5.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3",
+				"codeProperty": "LSOA11CD",
+				"nameProperty": "LSOA11NM"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM"
+			}
 		}
 	]
 }
