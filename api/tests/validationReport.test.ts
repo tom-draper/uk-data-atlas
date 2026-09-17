@@ -113,11 +113,13 @@ const overlap = (): AreaOverlapCrosswalkArtifact =>
 					side: "from" as const,
 					input: "wards.geojson",
 					inputHash: "sha256:w",
+					sourceCrs: "EPSG:4326",
 				},
 				{
 					side: "to" as const,
 					input: "lads.geojson",
 					inputHash: "sha256:l",
+					sourceCrs: "EPSG:4326",
 				},
 			],
 			areaProjection: "EPSG:6933" as const,

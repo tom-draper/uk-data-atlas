@@ -43,6 +43,12 @@ describe("parseDatasetMeta", () => {
 		});
 	});
 
+	it("accepts lookup metadata", () => {
+		const meta = parseDatasetMeta({ ...valid(), kind: "lookup" }, "2025");
+
+		expect(meta.kind).toBe("lookup");
+	});
+
 	it("omits optional fields rather than storing undefined", () => {
 		const meta = parseDatasetMeta(valid(), "2025");
 

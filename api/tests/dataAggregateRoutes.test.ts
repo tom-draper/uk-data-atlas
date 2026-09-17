@@ -71,11 +71,17 @@ test("aggregates a region through an explicit complete crosswalk", () => {
 		to: { geography: "region", boundaryRelease: "2025-12-en-rgn" },
 		provenance: {
 			inputs: [
-				{ side: "from", input: "fixture-lad", inputHash: "sha256:lad" },
+				{
+					side: "from",
+					input: "fixture-lad",
+					inputHash: "sha256:lad",
+					sourceCrs: "EPSG:4326",
+				},
 				{
 					side: "to",
 					input: "fixture-region",
 					inputHash: "sha256:region",
+					sourceCrs: "EPSG:4326",
 				},
 			],
 			areaProjection: "EPSG:6933",
