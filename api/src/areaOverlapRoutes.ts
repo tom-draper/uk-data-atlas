@@ -25,7 +25,7 @@ export const handleAreaOverlapRoutes = ({
 		segments[5] !== "overlap"
 	)
 		return undefined;
-	const { areaGeometryCache, geographyResolver } = context;
+	const { geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
@@ -50,63 +50,49 @@ export const handleAreaOverlapRoutes = ({
 			"Catalogue Unavailable",
 			"Build the geography resolver before measuring an area overlap.",
 		);
-	const area = geographyResolver.area({
-		geography,
-		boundaryRelease,
-		code,
-	});
+	const identity = { geography, boundaryRelease, code };
+	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const otherArea = geographyResolver.area({
+	const otherIdentity = {
 		geography: otherGeography,
 		boundaryRelease: otherRelease,
 		code: otherCode,
-	});
+	};
+	const otherArea = geographyResolver.area(otherIdentity);
 	if (!otherArea)
 		return areaNotFound(context, otherGeography, otherRelease, otherCode);
-	if (!areaGeometryCache)
+	if (!geographyResolver.hasAreaGeometryCache())
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the geometry source registry before measuring an overlap.",
 		);
 	try {
-		const geometry = areaGeometryCache.get(
-			geography,
-			boundaryRelease,
-			code,
-		);
-		const otherGeometry = areaGeometryCache.get(
-			otherGeography,
-			otherRelease,
-			otherCode,
-		);
-		if (!geometry || !otherGeometry)
+		const resolved = geographyResolver.areaGeometry(identity);
+		const otherResolved = geographyResolver.areaGeometry(otherIdentity);
+		if (!resolved || !otherResolved)
 			return problem(
 				404,
 				"Not Found",
-				`No raw geometry matches ${geometry ? `${otherGeography}/${otherRelease}/${otherCode}` : `${geography}/${boundaryRelease}/${code}`}.`,
+				`No raw geometry matches ${!resolved ? `${geography}/${boundaryRelease}/${code}` : `${otherGeography}/${otherRelease}/${otherCode}`}.`,
 			);
 		const measured = measurePairOverlap(
-			geometry,
-			otherGeometry,
+			resolved.geometry,
+			otherResolved.geometry,
 			PAIR_OVERLAP_RULES,
 		);
-		const otherId = `${otherGeography}/${otherRelease}/${otherCode}`;
+		const otherId = otherResolved.id;
 		const round = (value: number) => Math.round(value * 1e6) / 1e6;
 		return {
 			status: 200,
 			body: envelope(releaseId, {
 				first: {
-					id: `${geography}/${boundaryRelease}/${code}`,
+					id: resolved.id,
 					geography,
 					boundaryRelease,
 					...area,
 					areaM2: Math.round(measured.firstAreaM2),
-					geometry: areaGeometryCache.provenance(
-						geography,
-						boundaryRelease,
-						code,
-					),
+					geometry: resolved.geometrySource,
 				},
 				second: {
 					id: otherId,
@@ -114,11 +100,7 @@ export const handleAreaOverlapRoutes = ({
 					boundaryRelease: otherRelease,
 					...otherArea,
 					areaM2: Math.round(measured.secondAreaM2),
-					geometry: areaGeometryCache.provenance(
-						otherGeography,
-						otherRelease,
-						otherCode,
-					),
+					geometry: otherResolved.geometrySource,
 				},
 				relation: measured.relation,
 				overlap: {
