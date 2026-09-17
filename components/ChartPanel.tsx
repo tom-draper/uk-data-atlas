@@ -12,7 +12,7 @@ import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { useDeferredValue } from "react";
 import type { CodeMapper } from "@/lib/data/boundaries/codeMapper";
-import TransportSection from "./transport/TransportSection";
+import TransportCards from "./transport/TransportCards";
 import CustomSection from "./custom/CustomSection";
 import ChartSections from "./ChartSections";
 import { ChartLoadingProvider } from "./ChartLoadingPlaceholder";
@@ -54,6 +54,8 @@ function ChartPanelContent({
 	location,
 }: ChartPanelProps) {
 	const deferredArea = useDeferredValue(selectedArea);
+	const hasTransportLayers =
+		roadSafetyDatasets.length > 0 || networkDatasets.length > 0;
 
 	return (
 		<ChartPanelShell>
@@ -75,14 +77,20 @@ function ChartPanelContent({
 								}
 								boundaryData={boundaryData}
 								location={location}
-							/>
-							<TransportSection
-								roadSafetyDatasets={roadSafetyDatasets}
-								networkDatasets={networkDatasets}
-								activeViz={activeViz}
-								setActiveViz={setActiveViz}
-								location={location}
-								mapManager={mapManager}
+								extras={{
+									Transport: hasTransportLayers ? (
+										<TransportCards
+											roadSafetyDatasets={
+												roadSafetyDatasets
+											}
+											networkDatasets={networkDatasets}
+											activeViz={activeViz}
+											setActiveViz={setActiveViz}
+											location={location}
+											mapManager={mapManager}
+										/>
+									) : undefined,
+								}}
 							/>
 							<CustomSection
 								customDatasets={customDatasets}
