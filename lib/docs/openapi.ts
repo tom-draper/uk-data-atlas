@@ -76,6 +76,8 @@ export interface ApiContract {
 	version: string;
 	introduction: string[];
 	sections: DocsSection[];
+	/** The stable `code` values a refusal can carry, from `Problem`. */
+	problemCodes: string[];
 }
 
 type Schema = Record<string, unknown>;
@@ -338,11 +340,16 @@ export function buildContract(spec: Spec): ApiContract {
 		}
 	}
 
+	const problem = spec.components?.schemas?.Problem as Schema | undefined;
+	const code = (problem?.properties as Record<string, Schema> | undefined)
+		?.code;
+
 	return {
 		title: spec.info.title,
 		version: spec.info.version,
 		introduction: paragraphs(spec.info.description),
 		sections,
+		problemCodes: Array.isArray(code?.enum) ? code.enum.map(String) : [],
 	};
 }
 
@@ -355,6 +362,19 @@ export function loadApiContract(): ApiContract {
 
 export function allOperations(contract: ApiContract): DocsOperation[] {
 	return contract.sections.flatMap((section) => section.operations);
+}
+
+export function findOperationById(
+	contract: ApiContract,
+	id: string,
+): DocsOperation {
+	const operation = allOperations(contract).find((op) => op.id === id);
+	if (!operation) throw new Error(`The spec has no operation ${id}`);
+	return operation;
+}
+
+export function operationHref(operation: DocsOperation): string {
+	return `/docs/reference/${operation.sectionSlug}/${operation.slug}`;
 }
 
 export function findSection(
