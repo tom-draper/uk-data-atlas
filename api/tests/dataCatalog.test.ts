@@ -191,6 +191,11 @@ const writeSources = (
 	);
 	const generalElection = join(directory, "general-election.json");
 	const localElection = join(directory, "local-election.json");
+	const regionalGdp = {
+		itl1: join(directory, "regional-gdp-itl1.json"),
+		itl2: join(directory, "regional-gdp-itl2.json"),
+		itl3: join(directory, "regional-gdp-itl3.json"),
+	} as const;
 	const censusPaths = {
 		"travel-to-work": join(directory, "travel-to-work.json"),
 		"car-availability": join(directory, "car-availability.json"),
@@ -237,6 +242,9 @@ const writeSources = (
 				dataset("population-constituency", 4, 2, 2024),
 				dataset("general-election", 4, 2, 2019),
 				dataset("local-election", 5, 2, 2019),
+				dataset("regional-gdp-itl1", 4, 2, 2025),
+				dataset("regional-gdp-itl2", 4, 2, 2025),
+				dataset("regional-gdp-itl3", 4, 2, 2025),
 			],
 		}),
 	);
@@ -843,6 +851,40 @@ const writeSources = (
 			},
 		}),
 	);
+	// Two ITL areas over two years, the same areas in both, as the publisher
+	// restates the whole series on one code vintage.
+	for (const [tier, codes] of [
+		["itl1", ["TLC", "TLL"]],
+		["itl2", ["TLC3", "TLL1"]],
+		["itl3", ["TLC31", "TLL11"]],
+	] as const) {
+		writeFileSync(
+			regionalGdp[tier],
+			JSON.stringify(
+				Object.fromEntries(
+					["2022", "2023"].map((year, index) => [
+						year,
+						{
+							year: Number(year),
+							boundaryType: tier,
+							boundaryYear: 2025,
+							data: Object.fromEntries(
+								codes.map((code, area) => [
+									code,
+									{
+										itlCode: code,
+										itlName: code,
+										gvaMillionGbp: 100 + index + area,
+										gdpMillionGbp: 110 + index + area,
+									},
+								]),
+							),
+						},
+					]),
+				),
+			),
+		);
+	}
 	return {
 		manifest,
 		population,
@@ -872,6 +914,9 @@ const writeSources = (
 		populationConstituency,
 		generalElection,
 		localElection,
+		regionalGdpItl1: regionalGdp.itl1,
+		regionalGdpItl2: regionalGdp.itl2,
+		regionalGdpItl3: regionalGdp.itl3,
 	};
 };
 
@@ -882,7 +927,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 27);
+		assert.equal(result.catalog.datasets.length, 30);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",

@@ -39,6 +39,9 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		populationConstituency: precompiled("population-constituency.json"),
 		generalElection: precompiled("general-election.json"),
 		localElection: precompiled("local-election.json"),
+		regionalGdpItl1: precompiled("regional-gdp-itl1.json"),
+		regionalGdpItl2: precompiled("regional-gdp-itl2.json"),
+		regionalGdpItl3: precompiled("regional-gdp-itl3.json"),
 	};
 	const missing = Object.values(inputs).filter((path) => !existsSync(path));
 	if (missing.length > 0) {
@@ -55,6 +58,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		jobsObservations,
 		mobileCoverageObservations,
 		censusObservations,
+		regionalGdpObservations,
 		indicatorObservations,
 		populationDensityObservations,
 		housePriceObservations,
@@ -94,6 +98,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		jobsObservations,
 		...mobileCoverageObservations,
 		...censusObservations,
+		...regionalGdpObservations,
 		...indicatorObservations,
 		populationDensityObservations,
 		housePriceObservations,
@@ -142,6 +147,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 			jobsObservations,
 			...mobileCoverageObservations,
 			...censusObservations,
+			...regionalGdpObservations,
 			...indicatorObservations,
 			populationDensityObservations,
 			housePriceObservations,

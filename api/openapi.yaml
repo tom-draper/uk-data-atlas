@@ -5713,8 +5713,8 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
-                    href: /v1/atlas-releases/sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
+                  - releaseId: sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e
+                    href: /v1/atlas-releases/sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e
                     artifactCount: 313
                     current: true
                 meta:
@@ -5750,7 +5750,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
+                  releaseId: sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5836,14 +5836,14 @@ paths:
               x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1"
+                atlasRelease: "sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e"
                 data:
                   from:
-                    releaseId: "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1"
-                    href: /v1/atlas-releases/sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
+                    releaseId: "sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e"
+                    href: /v1/atlas-releases/sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e
                   to:
-                    releaseId: "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1"
-                    href: /v1/atlas-releases/sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1
+                    releaseId: "sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e"
+                    href: /v1/atlas-releases/sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 313 }
                   artifacts:
                     added: []

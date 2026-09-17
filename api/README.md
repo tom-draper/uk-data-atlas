@@ -431,6 +431,20 @@ only **available** when its endpoint, contract and provenance are published.
       immutable Atlas release, measure and dataset links, observation artifact
       hash, source geography, caller-selected code match (if any), and an
       explicit no-transformation statement.
+- [x] Return source-exact regional economic output through
+      `GET /v1/data/gdp` and `GET /v1/data/gva`: 1998-2023 gross domestic
+      product at current market prices and balanced gross value added at
+      current basic prices, in £ million, across all four UK nations on each
+      of the three International Territorial Level tiers. The publisher
+      restates the whole series on current codes, so all three partitions are
+      on the January 2025 vintage, compiled here as three new boundary
+      releases: the 2025 revision renumbers much of the 2021 tier, moving Tees
+      Valley from TLC1 to TLC3, and only 31 of 46 ITL2 codes and 122 of 182
+      ITL3 codes are shared, so the series is deliberately not offered on the
+      2021 releases. The tiers nest, so each is its own partition and areas
+      may be summed within one tier but never across them. Output per head is
+      not served: it is a ratio, and the publisher's population basis for it
+      is not the one this API serves.
 - [x] Return source-exact greenhouse gas emissions through
       `GET /v1/data/ghg-emissions`: 2005-2024 Local Authority 2025 codes across
       all four UK nations, as net territorial emissions in kt CO2e. Emissions
