@@ -23,7 +23,6 @@ import {
 	yearSpan,
 } from "@/lib/docs/dataPages";
 import { docsMetadata } from "@/lib/docs/metadata";
-import { docsEnabled } from "@/lib/docs/mode";
 import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
 import { API_BASE_URL } from "@/lib/docs/openapi";
 
@@ -34,7 +33,6 @@ const VISIBLE_NOTES = 6;
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-	if (!docsEnabled()) return [];
 	return DATA_PAGES.map((page) => ({ slug: page.slug }));
 }
 

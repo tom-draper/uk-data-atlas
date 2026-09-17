@@ -13,7 +13,6 @@ import {
 import CodePanel, { RequestSamples } from "@/components/docs/CodePanel";
 import { CardGrid, H2, LinkCard, List, Pager } from "@/components/docs/Content";
 import { Eyebrow, Sheet } from "@/components/docs/Page";
-import { docsIndexable } from "@/lib/docs/mode";
 import { findOperationById, loadApiContract } from "@/lib/docs/openapi";
 import { operationExample } from "@/lib/docs/samples";
 
@@ -62,12 +61,11 @@ export default function IntroductionPage() {
 							Browse the reference
 						</Link>
 					</div>
-					{!docsIndexable() && (
-						<p className="mt-6 inline-flex rounded-full bg-amber-400/15 px-3 py-1 text-[12.5px] text-amber-900 ring-1 ring-amber-600/20">
-							Coming soon. The API isn't live yet, so details may
-							change.
-						</p>
-					)}
+					{/* Remove once the API is deployed. */}
+					<p className="mt-6 inline-flex rounded-full bg-amber-400/15 px-3 py-1 text-[12.5px] text-amber-900 ring-1 ring-amber-600/20">
+						Coming soon. The API isn't live yet, so details may
+						change.
+					</p>
 				</div>
 
 				<div className="min-w-0 space-y-3">
