@@ -32,7 +32,7 @@ test("discovers source metadata and reports boundary compiler coverage", () => {
 	assert.ok(geographyInventory.geographies.length > 0);
 	assert.ok(
 		geographyInventory.releases.every(
-			(release) => release.areaIdentities.status === "not-compiled",
+			(release) => release.areaIdentities.status === "unsupported",
 		),
 	);
 	assert.match(geographyInventory.contentHash, /^sha256:[a-f0-9]{64}$/);
@@ -97,7 +97,7 @@ test("reports crosswalk relationship coverage and its gaps", () => {
 		(release) => release !== target,
 	);
 	assert.deepEqual(unrelated?.relationships, {
-		status: "not-compiled",
+		status: "unsupported",
 		reason: "No published crosswalk references this boundary release yet.",
 	});
 });

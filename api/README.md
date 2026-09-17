@@ -154,6 +154,16 @@ only **available** when its endpoint, contract and provenance are published.
       and measures for its exact release. The API reports explicit unavailable
       and not-published states, and never upgrades code-set compatibility into
       a geometry-equivalence claim.
+- [x] Answer every capability question in one vocabulary, set out in the
+      [capability contract](#capability-contract): an area's geometry,
+      relationships, named locations and each measure, a measure's coverage
+      of a named boundary release, and whether a relationship path is
+      published. A measure with no partition on a release but a working
+      conversion onto it names the conversion, with a ready link, rather
+      than being left out. Contract tests hold the OpenAPI enum to the code
+      and walk live answers across nations and geographies.
+- [x] Advertise `GET /v1/relationship-paths` in the API index and OpenAPI
+      document. It was served but undiscoverable.
 - [x] Return an area-specific citation bundle through
       `GET /v1/areas/{geography}/{release}/{code}/citation`: the immutable Atlas
       release, the area identity artifact's hash, the boundary release's
@@ -2059,6 +2069,38 @@ Use RFC 9457 Problem Details for errors. Important machine-readable codes:
 Partial coverage is normally a `200` response with an explicit quality flag;
 it should not look like success with a mysteriously short row set.
 
+## Capability contract
+
+A caller asks the Atlas the same question in several places: can I have this
+here? An area's capabilities, a measure's coverage of a boundary release and a
+relationship path all answer it, and they answer in one vocabulary, with a
+`reason` on every status but the first:
+
+- `available`: served directly, and completely for what was asked.
+- `partial`: served directly, but only for part of it, such as some periods
+  or a release with areas the source gives no value for.
+- `requires-conversion`: not served directly, but a published conversion path
+  answers it. The answer names each conversion with its crosswalk, source
+  partition and period, and a link to the convert route.
+- `unsupported`: nothing the Atlas publishes answers it.
+- `not-built`: this deployment has not built the artifact that would say.
+
+A conversion is claimed only once it is known to work. The capability runs the
+same conversion the convert route would, on the source partition's latest
+period, and offers it only if it is accepted and, for one area, reaches that
+area. A measure whose values do not add over areas is never offered one.
+
+`unsupported` and `not-built` are kept apart deliberately. The first is a fact
+about the Atlas, such as a release no crosswalk names; the second is a fact
+about the deployment answering, and a fuller build may change it.
+
+The vocabulary is `CAPABILITY_STATUSES` in `src/capability.ts`, and the
+OpenAPI document declares it as `CapabilityStatus`. The contract tests require
+the two to agree, and walk live capability answers for areas in all four
+nations, measure coverage of several releases and relationship paths, failing
+if any answer strays outside the vocabulary, omits a reason, or offers a
+conversion the convert route does not serve.
+
 ## Resolution contract
 
 This is the contract for the layer every data route sits on: the gazetteer and
@@ -3131,6 +3173,7 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/history` — Explain a code's published historical relationships and same-code continuity
 - `GET /v1/areas/{geography}/{release}/{code}/parents` — List published clean-containment parents for an area
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
+- `GET /v1/relationship-paths` — Find the published paths from one boundary release to another for a purpose
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
@@ -3217,6 +3260,8 @@ catalogues by the contract tests:
 - `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap`
+- `GET /v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership`
+- `GET /v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`

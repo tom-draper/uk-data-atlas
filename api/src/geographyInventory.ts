@@ -30,7 +30,7 @@ export type GeographyReleaseInventory = {
 				artifact: string;
 		  }
 		| {
-				status: "not-compiled";
+				status: "unsupported";
 				reason: string;
 		  };
 	relationships:
@@ -39,7 +39,7 @@ export type GeographyReleaseInventory = {
 				crosswalks: GeographyRelationship[];
 		  }
 		| {
-				status: "not-compiled";
+				status: "unsupported";
 				reason: string;
 		  };
 };
@@ -63,12 +63,12 @@ const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
 const pending = {
-	status: "not-compiled" as const,
+	status: "unsupported" as const,
 	reason: "No API compiler adapter has been published for this release yet.",
 };
 
 const relationshipsPending = {
-	status: "not-compiled" as const,
+	status: "unsupported" as const,
 	reason: "No published crosswalk references this boundary release yet.",
 };
 
@@ -140,7 +140,12 @@ export const createGeographyInventory = (
 							recordCount: areaRelease.recordCount,
 							artifact: areaRelease.artifact,
 						}
-					: (areaRelease ?? pending),
+					: areaRelease
+						? {
+								status: "unsupported" as const,
+								reason: areaRelease.reason,
+							}
+						: pending,
 			relationships: relationships
 				? { status: "available" as const, crosswalks: relationships }
 				: relationshipsPending,

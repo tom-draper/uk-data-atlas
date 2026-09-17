@@ -5,6 +5,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { httpResponse } from "../src/httpResponse";
+import { CAPABILITY_STATUSES } from "../src/capability";
 import { CONVERSION_METHODS } from "../src/conversion";
 import { COMPATIBILITY_STATUSES } from "../src/measureCompatibility";
 import { PROBLEM_CODES } from "../src/problemCodes";
@@ -718,4 +719,147 @@ test("keeps the analysis contract's routes unbuilt", () => {
 		[],
 		"an analysis route is served; the contract still says it is not",
 	);
+});
+
+/**
+ * Every capability answer speaks one vocabulary. These walk the live answers
+ * a caller gets across geographies, nations and measures, rather than a
+ * fixture, because the promise is about what the compiled catalogue says.
+ */
+const capabilityAnswers = (url: string) => {
+	const response = route("GET", url, catalogues);
+	assert.equal(response.status, 200, url);
+	const data = (response.body as { data: Record<string, any> }).data;
+	if (data.capabilities) {
+		const {
+			geometry,
+			relationships,
+			namedLocations,
+			data: measures,
+		} = data.capabilities;
+		return [
+			geometry,
+			relationships,
+			namedLocations,
+			measures,
+			...(measures.measures ?? []),
+		];
+	}
+	if (data.target) return [data.target];
+	return [data];
+};
+
+const CAPABILITY_REQUESTS = [
+	"/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000035/capabilities",
+	"/v1/areas/localAuthority/2025-12-uk-bgc/S12000049/capabilities",
+	"/v1/areas/localAuthority/2025-12-uk-bgc/N09000003/capabilities",
+	"/v1/areas/ward/2024-12-uk-bgc/E05011403/capabilities",
+	"/v1/areas/lsoa/2021-12-ew-bgc-v5/E01011264/capabilities",
+	"/v1/areas/region/2025-12-en-bgc/E12000003/capabilities",
+	"/v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc",
+	"/v1/measures/population-estimate/coverage?geography=localAuthority&release=2025-12-uk-bgc",
+	"/v1/measures/road-collisions/coverage?geography=localAuthority&release=2023-05-uk-bgc-v2",
+	"/v1/measures/general-election-turnout/coverage?geography=localAuthority&release=2024-05-uk-bgc",
+	"/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership",
+	"/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=identity",
+];
+
+test("documents exactly the capability vocabulary the API speaks", () => {
+	assert.deepEqual(
+		openapi.components.schemas.CapabilityStatus as unknown as {
+			enum: string[];
+		},
+		{
+			...(openapi.components.schemas.CapabilityStatus as object),
+			enum: [...CAPABILITY_STATUSES],
+		},
+	);
+});
+
+test("answers every capability question in the vocabulary, with a reason", () => {
+	const statuses = new Set<string>();
+	const problems = CAPABILITY_REQUESTS.flatMap((url) =>
+		capabilityAnswers(url).flatMap((answer, index) => {
+			statuses.add(answer.status);
+			return [
+				...((CAPABILITY_STATUSES as readonly string[]).includes(
+					answer.status,
+				)
+					? []
+					: [`${url} [${index}]: status ${answer.status}`]),
+				...(answer.status !== "available" &&
+				(typeof answer.reason !== "string" ||
+					answer.reason.length === 0)
+					? [`${url} [${index}]: ${answer.status} without a reason`]
+					: []),
+				// A section summary, which carries counts, points at the
+				// measures listed under it; each of those names its conversions.
+				...(answer.status === "requires-conversion" &&
+				!answer.counts &&
+				!(answer.conversions?.length > 0)
+					? [
+							`${url} [${index}]: requires-conversion names no conversion`,
+						]
+					: []),
+			];
+		}),
+	);
+	assert.deepEqual(problems, []);
+	// The sample is only worth something if it reaches the statuses a
+	// catalogue built from real data actually produces.
+	for (const status of [
+		"available",
+		"partial",
+		"requires-conversion",
+		"unsupported",
+	])
+		assert.ok(statuses.has(status), `no sampled answer is ${status}`);
+});
+
+test("offers only conversions that the convert route serves for the area", () => {
+	const url =
+		"/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000035/capabilities";
+	const conversions = capabilityAnswers(url).flatMap(
+		(answer) => answer.conversions ?? [],
+	);
+	assert.ok(conversions.length > 0);
+	for (const { href } of conversions) {
+		const response = route("GET", `${href}&limit=500`, catalogues);
+		assert.equal(response.status, 200, href);
+	}
+});
+
+test("lists an area's measures only from sources on its own geography", () => {
+	// Ward and local authority releases share ids such as 2024-12-uk-bgc.
+	const measures = capabilityAnswers(
+		"/v1/areas/ward/2024-12-uk-bgc/E05011403/capabilities",
+	).at(3).measures as Array<{
+		sources?: Array<{ sourceGeography: { type: string } }>;
+	}>;
+	assert.deepEqual(
+		[
+			...new Set(
+				measures.flatMap((measure) =>
+					(measure.sources ?? []).map(
+						(source) => source.sourceGeography.type,
+					),
+				),
+			),
+		],
+		["ward"],
+	);
+});
+
+test("holds the capability contract to the vocabulary the API speaks", () => {
+	const heading = "\n## Capability contract\n";
+	const start = readme.indexOf(heading);
+	assert.notEqual(start, -1, "the capability contract section is missing");
+	const section = readme.slice(
+		start,
+		readme.indexOf("\n## ", start + heading.length),
+	);
+	const listed = [...section.matchAll(/^- `([a-z-]+)`:/gm)].map(
+		(match) => match[1]!,
+	);
+	assert.deepEqual(listed, [...CAPABILITY_STATUSES]);
 });

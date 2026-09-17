@@ -352,7 +352,7 @@ const inputs = (
 					recordCount: 1,
 					artifact: `areas/${geography}/2025.json`,
 				},
-				relationships: { status: "not-compiled", reason: "None." },
+				relationships: { status: "unsupported", reason: "None." },
 			})),
 			geographies: [],
 		},
