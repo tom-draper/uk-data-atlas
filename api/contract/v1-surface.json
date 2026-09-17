@@ -1571,6 +1571,9 @@
 				"query:areaCode": {
 					"required": false
 				},
+				"query:targetCode": {
+					"required": false
+				},
 				"query:regionCode": {
 					"required": false
 				},

@@ -127,11 +127,13 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	// Analysis
 	aggregateSourceExactMeasure: {
 		title: "Add up a measure",
-		intro: "Get a total over a group of areas, such as a country, a region or a named location like Greater Manchester. Shares with a published weight are averaged instead. It only combines values where the result genuinely means something.",
+		intro: "Get a total over a group of areas, such as a country, a combined authority, a county or a named location like Greater Manchester. Shares with a published weight are averaged instead. It only combines values where the result genuinely means something.",
 		tips: [
-			"Pass exactly one of `locationId`, `areaCode` or `regionCode`.",
+			"Pass exactly one of `locationId`, `areaCode` or `targetCode`.",
+			"`targetCode` sums onto whatever geography your chosen `crosswalk` maps to, so the same call gives you a combined authority, a county or a region. Find one with [List crosswalks](/docs/reference/geography/list-crosswalks).",
+			"Only a crosswalk that establishes membership can be used. Clean containment and full area overlap qualify; a lookup that relates two vintages of the same area does not, and is refused rather than summed.",
 			"Counts add up. Medians and ranks don't, so asking for one gets a `422` that explains why, rather than a misleading number.",
-			"If a named location is missing some of its areas, you get a `partial_coverage` refusal. A country or region total with gaps is still returned, with its coverage stated plainly.",
+			"If a named location is missing some of its areas, you get a `partial_coverage` refusal. A country or membership total with gaps is still returned, with its coverage stated plainly.",
 		],
 	},
 	convertSourceExactMeasure: {

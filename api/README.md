@@ -667,12 +667,22 @@ only **available** when its endpoint, contract and provenance are published.
       member its vintage does not explain, a country the partition does not
       reach, and a measure that neither adds nor names a usable weight are all
       rejected rather than summed.
-- [x] Aggregate an extensive or explicitly weighted local-authority measure
-      over an English region through `GET /v1/data/{measure-id}/aggregate`.
-      Callers must name the 2025 local-authority-to-region crosswalk and a
-      code-set-compatible source release. The derived crosswalk records only
-      complete one-to-one area membership; no split or partial overlap is used
-      as an implicit geographic conversion.
+- [x] Aggregate an extensive or explicitly weighted measure onto any published
+      membership target through `GET /v1/data/{measure-id}/aggregate`, with
+      `targetCode`, a code-set-compatible source release and the crosswalk that
+      establishes the membership. The target's geography is the crosswalk's, so
+      a combined authority, a county and unitary authority, an English region
+      and an integrated care board are each summed the same way, and a measure
+      published on local authorities reaches all of them without new data.
+      Only a crosswalk that establishes membership qualifies: clean containment
+      and complete one-to-one area overlap are membership by construction, an
+      official lookup only where it declares that purpose, and an identity
+      lookup never, because it relates two vintages of one area rather than the
+      parts of a larger one. `aggregation.membership` names which claim the
+      total rests on. A split or partial overlap is refused rather than used as
+      an implicit conversion, and a target the crosswalk never mentions is a
+      404 rather than a sum of nothing. `regionCode` remains the original
+      spelling for a region and is answered beside `target`.
 - [x] Convert an extensive measure across releases through
       `GET /v1/data/{measure-id}/convert`, using only the crosswalk the caller
       names. The response repeats that crosswalk's method, quality, weighting
