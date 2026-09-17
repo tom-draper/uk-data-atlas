@@ -23,7 +23,7 @@ export const handleAreaChildGeometryRoutes = ({
 		segments[6] !== "geometry"
 	)
 		return undefined;
-	const { crosswalkLookup, areaGeometryCache, geographyResolver } = context;
+	const { crosswalkLookup, geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
@@ -47,7 +47,7 @@ export const handleAreaChildGeometryRoutes = ({
 			"Catalogue Unavailable",
 			"Build the crosswalk inventory before looking up area membership.",
 		);
-	if (!areaGeometryCache)
+	if (!geographyResolver.hasAreaGeometryCache())
 		return problem(
 			503,
 			"Catalogue Unavailable",
@@ -89,13 +89,13 @@ export const handleAreaChildGeometryRoutes = ({
 				reason,
 			});
 		};
-		let geometry;
+		let resolved;
 		try {
-			geometry = areaGeometryCache.get(
-				counterpart.geography,
-				counterpart.boundaryRelease,
-				counterpart.code,
-			);
+			resolved = geographyResolver.geometryFor({
+				geography: counterpart.geography,
+				boundaryRelease: counterpart.boundaryRelease,
+				code: counterpart.code,
+			});
 		} catch (error) {
 			note(
 				error instanceof Error
@@ -104,11 +104,11 @@ export const handleAreaChildGeometryRoutes = ({
 			);
 			continue;
 		}
-		if (!geometry) {
+		if (!resolved) {
 			note("No feature for this code in the raw geometry source.");
 			continue;
 		}
-		const simplified = simplifyGeometry(geometry, requestedTier);
+		const simplified = simplifyGeometry(resolved.geometry, requestedTier);
 		if (!simplified) {
 			note(`Every part is smaller than the ${requestedTier} tier keeps.`);
 			continue;
@@ -140,11 +140,7 @@ export const handleAreaChildGeometryRoutes = ({
 					parts: simplified.partsAfter,
 					partsAtFullResolution: simplified.partsBefore,
 				},
-				geometrySource: areaGeometryCache.provenance(
-					counterpart.geography,
-					counterpart.boundaryRelease,
-					counterpart.code,
-				),
+				geometrySource: resolved.geometrySource,
 			},
 			geometry: simplified.geometry,
 		});

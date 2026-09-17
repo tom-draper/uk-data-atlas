@@ -46,6 +46,11 @@ export type ResolvedAreaGeometry = AreaRecord & {
 	geometrySource: GeometryProvenance;
 };
 
+export type ResolvedGeometry = {
+	geometry: GeoJsonGeometry;
+	geometrySource: GeometryProvenance;
+};
+
 export type ResolvedIntersectingArea = AreaRecord & {
 	id: string;
 	relation: IntersectingArea["relation"];
@@ -146,20 +151,17 @@ export class GeographyResolver {
 		return this.inputs.areaGeometryCache !== undefined;
 	}
 
-	/** A published area's WGS84 geometry and source provenance. */
-	areaGeometry(identity: AreaIdentity): ResolvedAreaGeometry | undefined {
+	/** An area's WGS84 geometry and source provenance, when the source holds it. */
+	geometryFor(identity: AreaIdentity): ResolvedGeometry | undefined {
 		const cache = this.inputs.areaGeometryCache;
 		if (!cache) return undefined;
-		const area = this.area(identity);
 		const geometry = cache.get(
 			identity.geography,
 			identity.boundaryRelease,
 			identity.code,
 		);
-		return area && geometry
+		return geometry
 			? {
-					id: areaId(identity),
-					...area,
 					geometry,
 					geometrySource: cache.provenance(
 						identity.geography,
@@ -167,6 +169,15 @@ export class GeographyResolver {
 						identity.code,
 					),
 				}
+			: undefined;
+	}
+
+	/** A published area's WGS84 geometry and source provenance. */
+	areaGeometry(identity: AreaIdentity): ResolvedAreaGeometry | undefined {
+		const area = this.area(identity);
+		const resolved = this.geometryFor(identity);
+		return area && resolved
+			? { id: areaId(identity), ...area, ...resolved }
 			: undefined;
 	}
 
