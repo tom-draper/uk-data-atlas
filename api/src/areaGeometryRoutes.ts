@@ -4,7 +4,7 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import { areaNotFound, findArea } from "./areaResources";
+import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -22,28 +22,30 @@ export const handleAreaGeometryRoutes = ({
 		segments[5] !== "geometry"
 	)
 		return undefined;
-	const { areaLookup, areaGeometryCache } = context;
+	const { geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5);
-	const area = findArea(
-		areaLookup,
-		geography as string,
-		boundaryRelease as string,
-		code as string,
-	);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before retrieving geometry.",
+		);
+	const identity = {
+		geography: geography as string,
+		boundaryRelease: boundaryRelease as string,
+		code: code as string,
+	};
+	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!areaGeometryCache)
+	if (!geographyResolver.hasAreaGeometryCache())
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the geometry source registry before retrieving geometry.",
 		);
 	try {
-		const geometry = areaGeometryCache.get(
-			geography as string,
-			boundaryRelease as string,
-			code as string,
-		);
-		if (!geometry)
+		const resolved = geographyResolver.areaGeometry(identity);
+		if (!resolved)
 			return problem(
 				404,
 				"Not Found",
@@ -58,7 +60,7 @@ export const handleAreaGeometryRoutes = ({
 					GEOMETRY_TIERS,
 				).join(", ")}.`,
 			);
-		const simplified = simplifyGeometry(geometry, requestedTier);
+		const simplified = simplifyGeometry(resolved.geometry, requestedTier);
 		if (!simplified)
 			return problem(
 				404,
@@ -69,9 +71,9 @@ export const handleAreaGeometryRoutes = ({
 			status: 200,
 			body: envelope(releaseId, {
 				type: "Feature",
-				id: [geography, boundaryRelease, code].join("/"),
+				id: resolved.id,
 				properties: {
-					id: [geography, boundaryRelease, area.code].join("/"),
+					id: resolved.id,
 					geography,
 					boundaryRelease,
 					...area,
@@ -87,11 +89,7 @@ export const handleAreaGeometryRoutes = ({
 							? {}
 							: { method: GENERALISATION_METHOD }),
 					},
-					geometrySource: areaGeometryCache.provenance(
-						geography as string,
-						boundaryRelease as string,
-						code as string,
-					),
+					geometrySource: resolved.geometrySource,
 				},
 				geometry: simplified.geometry,
 			}),

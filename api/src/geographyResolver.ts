@@ -39,6 +39,12 @@ export type ResolvedContainingArea = AreaRecord & {
 	geometrySource: GeometryProvenance;
 };
 
+export type ResolvedAreaGeometry = AreaRecord & {
+	id: string;
+	geometry: GeoJsonGeometry;
+	geometrySource: GeometryProvenance;
+};
+
 export type ResolvedIntersectingArea = AreaRecord & {
 	id: string;
 	relation: IntersectingArea["relation"];
@@ -123,6 +129,34 @@ export class GeographyResolver {
 			this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`) ??
 			false
 		);
+	}
+
+	hasAreaGeometryCache(): boolean {
+		return this.inputs.areaGeometryCache !== undefined;
+	}
+
+	/** A published area's WGS84 geometry and source provenance. */
+	areaGeometry(identity: AreaIdentity): ResolvedAreaGeometry | undefined {
+		const cache = this.inputs.areaGeometryCache;
+		if (!cache) return undefined;
+		const area = this.area(identity);
+		const geometry = cache.get(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
+		return area && geometry
+			? {
+					id: areaId(identity),
+					...area,
+					geometry,
+					geometrySource: cache.provenance(
+						identity.geography,
+						identity.boundaryRelease,
+						identity.code,
+					),
+				}
+			: undefined;
 	}
 
 	/** Areas in one release that contain a WGS84 coordinate. */
