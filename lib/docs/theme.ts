@@ -7,8 +7,22 @@ import { glassStyle } from "@/lib/helpers/panelTheme";
  * Reading happens on the canvas itself, with paper cards and ink code blocks.
  */
 
-/** The atlas glass pane, for the floating header and its menu. */
-export const glassPane: CSSProperties = glassStyle(false);
+/**
+ * The atlas glass pane, adapted for the docs header and menu. Its shorter
+ * shadow keeps the floating navigation present without competing with text.
+ */
+export const glassPane: CSSProperties = {
+	...glassStyle(false),
+	boxShadow: [
+		"inset 0 1px 0 rgba(255,255,255,0.85)",
+		"inset 1px 0 0 rgba(255,255,255,0.6)",
+		"inset -1px 0 0 rgba(0,0,0,0.04)",
+		"inset 0 -1px 0 rgba(0,0,0,0.06)",
+		"0 10px 32px rgba(0,0,0,0.10)",
+		"0 2px 8px rgba(0,0,0,0.06)",
+		"0 0 0 0.5px rgba(255,255,255,0.65)",
+	].join(", "),
+};
 
 /** A light card resting on the canvas. */
 export const paperCard: CSSProperties = {

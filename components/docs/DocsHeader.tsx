@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -27,7 +28,7 @@ export default function DocsHeader({
 				style={glassPane}
 			>
 				<GlassOverlays isDark={false} />
-				<div className="relative z-10 flex h-12 items-center gap-3 px-3 sm:px-4">
+				<div className="relative z-10 flex h-9 items-center gap-3 px-3 sm:pr-4 sm:pl-0">
 					<button
 						type="button"
 						onClick={() => setMenuPath(menuOpen ? null : pathname)}
@@ -42,7 +43,19 @@ export default function DocsHeader({
 						)}
 					</button>
 
-					<Link href="/" className="flex items-center gap-2">
+					<Link href="/" className="-mr-3 hidden shrink-0 sm:block">
+						<Image
+							src="/union-jack.png"
+							alt=""
+							width={72}
+							height={36}
+							className="-m-px mr-3 h-9 rounded-r-md opacity-60 scale-x-[-1]"
+							style={{
+								filter: "contrast(0.2) grayscale(1) brightness(1.8)",
+							}}
+						/>
+					</Link>
+					<Link href="/" className="flex shrink-0 items-center">
 						<span className="text-[15px] font-semibold tracking-tight text-slate-900">
 							UK Data Atlas
 						</span>
@@ -73,14 +86,13 @@ export default function DocsHeader({
 						>
 							API reference
 						</HeaderLink>
-						<HeaderLink href="/atlas">Open the Atlas</HeaderLink>
 					</nav>
 				</div>
 			</div>
 
 			{menuOpen && (
 				<div
-					className="absolute inset-x-3 top-[64px] flex max-h-[calc(100dvh-80px)] flex-col overflow-hidden rounded-md sm:inset-x-4 lg:hidden"
+					className="absolute inset-x-3 top-[52px] flex max-h-[calc(100dvh-68px)] flex-col overflow-hidden rounded-md sm:inset-x-4 lg:hidden"
 					style={glassPane}
 				>
 					<GlassOverlays isDark={false} />
