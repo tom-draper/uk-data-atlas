@@ -250,6 +250,21 @@ interface Itl3Properties2021 {
 	ITL321NM: string;
 }
 
+interface Itl1Properties2025 {
+	ITL125CD: string;
+	ITL125NM: string;
+}
+
+interface Itl2Properties2025 {
+	ITL225CD: string;
+	ITL225NM: string;
+}
+
+interface Itl3Properties2025 {
+	ITL325CD: string;
+	ITL325NM: string;
+}
+
 interface MajorTownAndCityProperties2015 {
 	TCITY15CD: string;
 	TCITY15NM: string;
@@ -413,6 +428,9 @@ export type YearToProperties = {
 	itl1_2021: Itl1Properties2021;
 	itl2_2021: Itl2Properties2021;
 	itl3_2021: Itl3Properties2021;
+	itl1_2025: Itl1Properties2025;
+	itl2_2025: Itl2Properties2025;
+	itl3_2025: Itl3Properties2025;
 	majorTownAndCity_2015: MajorTownAndCityProperties2015;
 	scottishParliamentaryConstituency_2021: ScottishParliamentaryConstituencyProperties2021;
 	scottishParliamentaryRegion_2022: ScottishParliamentaryRegionProperties2022;

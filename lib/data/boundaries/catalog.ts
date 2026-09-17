@@ -616,6 +616,15 @@ const CATALOG = {
 	itl1: {
 		releases: [
 			{
+				id: "2025-01-uk-bgc",
+				year: 2025,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL125CD",
+				nameKey: "ITL125NM",
+				asset: asset("itl1", "2025-01-uk-bgc"),
+			},
+			{
 				id: "2021-01-uk-bgc",
 				year: 2021,
 				month: 1,
@@ -629,6 +638,15 @@ const CATALOG = {
 	itl2: {
 		releases: [
 			{
+				id: "2025-01-uk-bgc",
+				year: 2025,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL225CD",
+				nameKey: "ITL225NM",
+				asset: asset("itl2", "2025-01-uk-bgc"),
+			},
+			{
 				id: "2021-01-uk-bgc-v2",
 				year: 2021,
 				month: 1,
@@ -641,6 +659,15 @@ const CATALOG = {
 	},
 	itl3: {
 		releases: [
+			{
+				id: "2025-01-uk-bgc-v2",
+				year: 2025,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL325CD",
+				nameKey: "ITL325NM",
+				asset: asset("itl3", "2025-01-uk-bgc-v2"),
+			},
 			{
 				id: "2021-01-uk-bgc-v3",
 				year: 2021,
