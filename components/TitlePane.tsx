@@ -36,10 +36,16 @@ export default function TitlePane() {
 						}}
 					/>
 				</a>
-				<h1 className={`text-[15px] font-semibold tracking-tight ${t.heading}`}>
+				<h1
+					className={`flex items-center text-[15px] font-semibold tracking-tight ${t.heading}`}
+				>
 					UK Data Atlas
 					<span
-						className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}
+						className={`ml-2 inline-flex rounded-full px-2 py-0.5 font-mono text-[11px] font-normal ring-1 ${
+							isDark
+								? "bg-white/10 text-gray-400 ring-white/10"
+								: "bg-white/60 text-slate-500 ring-slate-900/5"
+						}`}
 					>
 						v{packageJson.version}
 					</span>
