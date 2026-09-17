@@ -87,18 +87,26 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			"/v1/atlas-releases",
 		);
 	const previous = history.data.find((candidate) => !candidate.current);
-	if (!previous) throw new Error("no archived release to compare against");
-	const comparison = await client.get<{
-		summary: { added: number; removed: number; changed: number };
-		resources: Record<string, { changed?: unknown[] }>;
-	}>(`/v1/atlas-releases/compare?from=${previous.releaseId}`);
-	const changedKinds = Object.entries(comparison.data.resources)
-		.filter(([, value]) => (value.changed?.length ?? 0) > 0)
-		.map(([kind]) => kind);
-	steps.push({
-		title: "Reprocess only what moved",
-		detail: `Against ${previous.releaseId.slice(0, 19)}…: ${comparison.data.summary.changed} artifacts changed${changedKinds.length > 0 ? `, in ${changedKinds.join(", ")}` : ""}.`,
-	});
+	if (!previous) {
+		// The first published release has nothing before it: a sync starting
+		// here takes everything, and compares from its next run onwards.
+		steps.push({
+			title: "Reprocess only what moved",
+			detail: `${history.data.length} release published, so there is nothing to compare yet; take everything and pin this release.`,
+		});
+	} else {
+		const comparison = await client.get<{
+			summary: { added: number; removed: number; changed: number };
+			resources: Record<string, { changed?: unknown[] }>;
+		}>(`/v1/atlas-releases/compare?from=${previous.releaseId}`);
+		const changedKinds = Object.entries(comparison.data.resources)
+			.filter(([, value]) => (value.changed?.length ?? 0) > 0)
+			.map(([kind]) => kind);
+		steps.push({
+			title: "Reprocess only what moved",
+			detail: `Against ${previous.releaseId.slice(0, 19)}…: ${comparison.data.summary.changed} artifacts changed${changedKinds.length > 0 ? `, in ${changedKinds.join(", ")}` : ""}.`,
+		});
+	}
 
 	// 6. The reference tables a warehouse joins against, as whole files.
 	const lookups = await client.get<{
