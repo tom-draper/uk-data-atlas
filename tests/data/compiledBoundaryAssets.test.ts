@@ -57,3 +57,34 @@ describe("compiled ward boundary assets", () => {
 		}
 	}, 60_000);
 });
+
+describe("every compiled boundary release", () => {
+	const releases = Object.entries(BOUNDARY_CATALOG)
+		.flatMap(([type, family]) =>
+			family.releases.flatMap((release) =>
+				release.asset
+					? [
+							{
+								label: `${type}/${release.id}`,
+								path: localBoundaryPath(release.asset),
+							},
+						]
+					: [],
+			),
+		)
+		.filter(({ path }) => existsSync(path));
+
+	// The map keys hover state by feature id. May 2026 local authorities, May
+	// 2025 parishes and 2011 data zones were published without one, and none of
+	// their areas could be hovered.
+	it.each(releases)(
+		"gives every feature of $label an id the map can hover",
+		({ path }) => {
+			const ids = decodeBoundaryData(
+				JSON.parse(readFileSync(path, "utf8")),
+			).features.map((feature) => feature.id);
+			expect(ids.filter((id) => id === undefined)).toEqual([]);
+			expect(new Set(ids).size).toBe(ids.length);
+		},
+	);
+});
