@@ -58,6 +58,9 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "measure-compatibility", path: "measure-compatibility.json" },
 	{ id: "export-manifest", path: "export-manifest.json" },
 	{ id: "lookup-manifest", path: "lookup-manifest.json" },
+	// The descriptor holds the hash of every tile archive and GeoParquet file,
+	// so pinning it pins them: a pinned map URL is served immutable.
+	{ id: "map-resources", path: "map-resources.json" },
 	{ id: "population-observations", path: "population-observations.json" },
 	{
 		id: "population-local-authority-observations",
