@@ -9,7 +9,7 @@ export const mobileCoverageDefinition: ChartDatasetDefinition<MobileCoverageData
 		chart: {
 			group: "Telecoms",
 			key: "telecoms-mobileCoverage",
-			label: "Mobile Coverage - 5G [2025]",
+			label: "Mobile Coverage [2025]",
 			defaultVisible: true,
 			componentPath: "@/components/telecoms/mobile/MobileCoverageChart",
 			calculateStats: (aggregator, geojson, data, location, datasetId) =>

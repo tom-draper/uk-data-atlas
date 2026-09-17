@@ -118,7 +118,7 @@ export default function MobileCoverageChart({
 
 	return (
 		<ChartCard
-			heading={`Mobile Coverage, 5G [${dataset.year}]`}
+			heading={`Mobile Coverage [${dataset.year}]`}
 			accent={stats ? ACCENT : null}
 			isActive={isActive}
 			title="Ofcom. Connected Nations, mobile coverage. ofcom.org.uk"
@@ -155,7 +155,7 @@ export default function MobileCoverageChart({
 							<span
 								className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
 							>
-								% on all four networks
+								% 5G, all four
 							</span>
 						</div>
 						<span
