@@ -49,6 +49,7 @@ export const USING_THE_API: NavLink[] = [
 	{ href: "/docs/pagination", title: "Pagination" },
 	{ href: "/docs/formats", title: "CSV and bulk downloads" },
 	{ href: "/docs/caching", title: "Caching" },
+	{ href: "/docs/rate-limits", title: "Rate limits" },
 	{ href: "/docs/errors", title: "Errors" },
 ];
 
