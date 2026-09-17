@@ -1,4 +1,6 @@
 import type { AreaLookup, AreaRecord } from "./areaInventory";
+import type { AreaGeometryCache } from "./areaGeometry";
+import type { PointContainment } from "./areaContainment";
 import {
 	createAreaSearchIndex,
 	searchAreas,
@@ -23,8 +25,15 @@ import type {
 	RelationshipPath,
 	RelationshipPurpose,
 } from "./relationshipPaths";
+import type { GeometryProvenance } from "./reprojection";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
+
+export type ResolvedContainingArea = AreaRecord & {
+	id: string;
+	containment: PointContainment;
+	geometrySource: GeometryProvenance;
+};
 
 type AreaIdentity = {
 	geography: string;
@@ -36,6 +45,7 @@ export type GeographyResolverInputs = {
 	areaLookup?: AreaLookup;
 	crosswalkInventory?: CrosswalkInventory;
 	crosswalkLookup?: CrosswalkLookup;
+	areaGeometryCache?: AreaGeometryCache;
 	namedLocationLookup?: NamedLocationLookup;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
@@ -88,6 +98,46 @@ export class GeographyResolver {
 		return this.inputs.areaLookup
 			?.get(`${identity.geography}/${identity.boundaryRelease}`)
 			?.get(identity.code);
+	}
+
+	hasAreaRelease(geography: string, boundaryRelease: string): boolean {
+		return (
+			this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`) ??
+			false
+		);
+	}
+
+	/** Areas in one release that contain a WGS84 coordinate. */
+	containingAreas(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+	): ResolvedContainingArea[] | undefined {
+		const cache = this.inputs.areaGeometryCache;
+		if (!cache) return undefined;
+		return cache
+			.findContaining(geography, boundaryRelease, point)
+			.flatMap(({ code, containment }) => {
+				const area = this.area({ geography, boundaryRelease, code });
+				return area
+					? [
+							{
+								id: areaId({
+									geography,
+									boundaryRelease,
+									code,
+								}),
+								...area,
+								containment,
+								geometrySource: cache.provenance(
+									geography,
+									boundaryRelease,
+									code,
+								),
+							},
+						]
+					: [];
+			});
 	}
 
 	searchAreas(query: {
