@@ -19,22 +19,28 @@ export default function Home() {
 		>
 			<div className="relative z-10">
 				<Navigation />
-				<div className="pt-[25vh] px-[16%]">
+				<div className="pt-[20vh] px-[16%]">
 					<div className="p-5">
-						<h1 className="text-5xl font-bold">UK Data Atlas</h1>
-						<div className="mt-2.5">
-							<p>
-								A powerful mapping platform for visualizing data
-								that shapes the United Kingdom.
-							</p>
-						</div>
+						<h1 className="text-[38px] leading-[1.08] font-semibold tracking-tight text-slate-900 sm:text-[50px]">
+							UK Data Atlas
+						</h1>
+						<p className="mt-5 max-w-[54ch] text-[18px] leading-[1.65] text-slate-600">
+							A powerful mapping platform for visualizing data
+							that shapes the United Kingdom.
+						</p>
 
-						<div className="pt-12 flex">
+						<div className="mt-7 flex flex-wrap items-center gap-3">
 							<Link
-								className="bg-gray-950 text-white px-6 py-3 rounded-md hover:opacity-80 cursor-pointer"
+								className="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
 								href="/atlas"
 							>
 								Get Started
+							</Link>
+							<Link
+								className="inline-flex items-center rounded-lg border border-white/80 bg-white/55 px-4 py-2.5 text-[14px] font-medium text-slate-800 transition-colors hover:bg-white/85"
+								href="/docs"
+							>
+								Explore the API
 							</Link>
 							{/* <a className="text-[#4e4e4e] pt-0 my-auto pl-8 hover:underline cursor-pointer" href="/atlas?demo=true">
 							Or try the demo

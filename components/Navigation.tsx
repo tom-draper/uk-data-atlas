@@ -1,17 +1,18 @@
 // components/Navigation.tsx
 import Link from "next/link";
 
-const linkClass = "px-4 content-center cursor-pointer hover:underline";
+const linkClass =
+	"rounded-md px-2.5 py-1.5 text-[13px] text-slate-600 transition-colors hover:bg-white/50 hover:text-slate-900";
 
 export default function Navigation() {
 	return (
 		<nav>
 			<div className="flex py-6 px-4 w-[65%] mx-auto">
-				<h1 className="text-xl w-50 font-semibold">
+				<h1 className="w-50 text-[15px] font-semibold tracking-tight text-slate-900">
 					<Link href="/">UK Data Atlas</Link>
 				</h1>
-				<div className="flex place-items-center grow text-[#4e4e4e]">
-					<div className="ml-auto grow text-right">
+				<div className="flex grow items-center">
+					<div className="ml-auto flex items-center gap-1 text-right">
 						<Link href="/atlas" className={linkClass}>
 							Atlas
 						</Link>
