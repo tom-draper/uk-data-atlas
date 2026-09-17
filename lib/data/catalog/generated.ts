@@ -28,6 +28,9 @@ import type { populationDatasetDefinition } from "./definitions/population";
 import type { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import type { populationUkDatasetDefinition } from "./definitions/populationUk";
 import type { qualificationDatasetDefinition } from "./definitions/qualification";
+import type { regionalGdpItl1DatasetDefinition } from "./definitions/regionalGdpItl1";
+import type { regionalGdpItl2DatasetDefinition } from "./definitions/regionalGdpItl2";
+import type { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3";
 import type { roadCollisionsDatasetDefinition } from "./definitions/roadCollisions";
 import type { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import type { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
@@ -102,6 +105,15 @@ export type CatalogueDataset =
 	  >[string]
 	| Awaited<
 			ReturnType<typeof qualificationDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof regionalGdpItl1DatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof regionalGdpItl2DatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof regionalGdpItl3DatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof roadCollisionsDatasetDefinition.precompile>
@@ -201,6 +213,15 @@ export type CatalogueDatasetRecords = {
 	>;
 	qualification: Awaited<
 		ReturnType<typeof qualificationDatasetDefinition.precompile>
+	>;
+	regionalGdpItl1: Awaited<
+		ReturnType<typeof regionalGdpItl1DatasetDefinition.precompile>
+	>;
+	regionalGdpItl2: Awaited<
+		ReturnType<typeof regionalGdpItl2DatasetDefinition.precompile>
+	>;
+	regionalGdpItl3: Awaited<
+		ReturnType<typeof regionalGdpItl3DatasetDefinition.precompile>
 	>;
 	roadCollisions: Awaited<
 		ReturnType<typeof roadCollisionsDatasetDefinition.precompile>

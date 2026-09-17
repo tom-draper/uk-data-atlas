@@ -74,6 +74,17 @@ export const DATA_PAGES: DataPage[] = [
 		intro: "Median annual and hourly pay for employees in each English local authority, by where they live.",
 	},
 	{
+		slug: "economic-output",
+		title: "Economic output",
+		topic: "work",
+		datasets: [
+			"regional-gdp-itl1",
+			"regional-gdp-itl2",
+			"regional-gdp-itl3",
+		],
+		intro: "Gross domestic product and gross value added for every UK region, from 1998 to 2023, on all three tiers of the International Territorial Level geography that economic statistics are published on. Output is counted where it is produced, not where the people who earn it live.",
+	},
+	{
 		slug: "unemployment",
 		title: "Unemployment",
 		topic: "work",

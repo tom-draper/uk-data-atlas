@@ -29,6 +29,9 @@ import { populationDatasetDefinition } from "./definitions/population";
 import { populationConstituencyDatasetDefinition } from "./definitions/populationConstituency";
 import { populationUkDatasetDefinition } from "./definitions/populationUk";
 import { qualificationDatasetDefinition } from "./definitions/qualification";
+import { regionalGdpItl1DatasetDefinition } from "./definitions/regionalGdpItl1";
+import { regionalGdpItl2DatasetDefinition } from "./definitions/regionalGdpItl2";
+import { regionalGdpItl3DatasetDefinition } from "./definitions/regionalGdpItl3";
 import { roadCollisionsDatasetDefinition } from "./definitions/roadCollisions";
 import { schoolPerformanceDatasetDefinition } from "./definitions/schoolPerformance";
 import { schoolPerformanceConstituencyDatasetDefinition } from "./definitions/schoolPerformanceConstituency";
@@ -69,6 +72,9 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	populationConstituencyDatasetDefinition,
 	populationUkDatasetDefinition,
 	qualificationDatasetDefinition,
+	regionalGdpItl1DatasetDefinition,
+	regionalGdpItl2DatasetDefinition,
+	regionalGdpItl3DatasetDefinition,
 	roadCollisionsDatasetDefinition,
 	schoolPerformanceDatasetDefinition,
 	schoolPerformanceConstituencyDatasetDefinition,
