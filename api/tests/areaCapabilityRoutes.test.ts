@@ -147,10 +147,12 @@ test("reports published geometry capability through the resolver", () => {
 		const response = routeRequest(
 			"GET",
 			"/v1/areas/ward/2023-05-uk-bgc/E05000001/capabilities",
-			testContext({
-				boundaryRegistry: registry,
-				areaLookup: compatibleWardAreaLookup,
-				areaGeometryCache: new AreaGeometryCache(
+			testContext(
+				{
+					boundaryRegistry: registry,
+					areaLookup: compatibleWardAreaLookup,
+				},
+				new AreaGeometryCache(
 					root,
 					new Map([
 						[
@@ -163,7 +165,7 @@ test("reports published geometry capability through the resolver", () => {
 						],
 					]),
 				),
-			}),
+			),
 		);
 		const data = ("data" in response.body && response.body.data) as {
 			capabilities: { geometry: unknown };

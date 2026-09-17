@@ -1,4 +1,3 @@
-import type { AreaGeometryCache } from "./areaGeometry";
 import type { AreaInventory, AreaLookup } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
@@ -48,7 +47,6 @@ export type RouteContext = {
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver?: GeographyResolver;
 	relationshipPathInventory?: RelationshipPathInventory;
-	areaGeometryCache?: AreaGeometryCache;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
 	namedLocationInventory?: NamedLocationInventory;

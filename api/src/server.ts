@@ -425,7 +425,6 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		areaLookup,
 		geographyResolver,
 		relationshipPathInventory,
-		areaGeometryCache,
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,

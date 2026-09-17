@@ -1,4 +1,5 @@
 import { createAreaLookup } from "../src/areaInventory";
+import type { AreaGeometryCache } from "../src/areaGeometry";
 import { createGeographyResolver } from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
 import type { CrosswalkLookup, RouteContext } from "../src/routing";
@@ -31,15 +32,15 @@ const resolverFor = (
 		| "crosswalkLookup"
 		| "namedLocationLookup"
 		| "locationProjectionStore"
-		| "areaGeometryCache"
 	>,
+	areaGeometryCache?: AreaGeometryCache,
 ) =>
 	context.areaLookup
 		? createGeographyResolver({
 				areaLookup: context.areaLookup,
 				crosswalkInventory: context.crosswalkInventory,
 				crosswalkLookup: context.crosswalkLookup,
-				areaGeometryCache: context.areaGeometryCache,
+				areaGeometryCache,
 				namedLocationLookup: context.namedLocationLookup,
 				locationProjectionStore: context.locationProjectionStore,
 			})
@@ -59,7 +60,7 @@ export const route = (
 	atlasRelease?: RouteContext["atlasRelease"],
 	_legacyAreaSearchIndex?: never,
 	_legacyAreaRelationshipIndex?: never,
-	areaGeometryCache?: RouteContext["areaGeometryCache"],
+	areaGeometryCache?: AreaGeometryCache,
 	relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
 	validationReport?: RouteContext["validationReport"],
 	namedLocationInventory?: RouteContext["namedLocationInventory"],
@@ -78,14 +79,15 @@ export const route = (
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		geographyResolver: resolverFor({
-			areaLookup,
-			crosswalkInventory,
-			crosswalkLookup,
-			namedLocationLookup,
+		geographyResolver: resolverFor(
+			{
+				areaLookup,
+				crosswalkInventory,
+				crosswalkLookup,
+				namedLocationLookup,
+			},
 			areaGeometryCache,
-		}),
-		areaGeometryCache,
+		),
 		relationshipCandidateInventory,
 		validationReport,
 		namedLocationInventory,
@@ -119,11 +121,14 @@ export const registry: BoundaryRegistry = {
 
 export const testContext = (
 	overrides: Partial<RouteContext> = {},
+	areaGeometryCache?: AreaGeometryCache,
 ): RouteContext => {
 	const context = { boundaryRegistry: registry, ...overrides };
 	return {
 		...context,
-		geographyResolver: context.geographyResolver ?? resolverFor(context),
+		geographyResolver:
+			context.geographyResolver ??
+			resolverFor(context, areaGeometryCache),
 	};
 };
 
