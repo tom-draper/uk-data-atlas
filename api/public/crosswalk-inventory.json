@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:e4a363c36f8e5501b86f2350a68e1d8433797f4c7f7345027612567fc4d36040",
+	"contentHash": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -330,6 +330,180 @@
 			"recordCount": 296,
 			"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap.json",
 			"contentHash": "sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9"
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "combinedAuthority",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 106,
+			"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup.json",
+			"contentHash": "sha256:a656d00cefb79cc93cc5984ad7fe483622304ecfe3ece139c2b74f9d6af3a44c"
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyAndUnitaryAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 361,
+			"artifact": "crosswalks/local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup.json",
+			"contentHash": "sha256:048f148eb776c914c6bf2d2e325e57a394d0c3e08ff4143697ed7e3884b4fa2a"
+		},
+		{
+			"id": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2021-01-uk-bgc-v3"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 179,
+			"artifact": "crosswalks/itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup.json",
+			"contentHash": "sha256:e29aab8036c6540bd91d06368e61ec67b86252a1bf0f1e10d22e8bffc3fcc14b"
+		},
+		{
+			"id": "itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 41,
+			"artifact": "crosswalks/itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup.json",
+			"contentHash": "sha256:f2d067a6349c9f9e033d46ff664d03776d999002045a6c714e9dcab7bfcadde7"
+		},
+		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 35672,
+			"artifact": "crosswalks/lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup.json",
+			"contentHash": "sha256:3183aa98f875efa813b59c19bcda355d608de8dcbb4f82f27d37d058ff586a21"
+		},
+		{
+			"id": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"from": {
+				"geography": "msoa",
+				"boundaryRelease": "2021-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 7264,
+			"artifact": "crosswalks/msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup.json",
+			"contentHash": "sha256:d6544402294b47815684f6f6157de8501ae8749606eab0aa2409764a0219d18a"
+		},
+		{
+			"id": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"recordCount": 374,
+			"artifact": "crosswalks/local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup.json",
+			"contentHash": "sha256:e6d94a747543bc3bdb01d61a79686f5539402673f9cd41596cb5b51a52eb980c"
+		},
+		{
+			"id": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"recordCount": 361,
+			"artifact": "crosswalks/local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup.json",
+			"contentHash": "sha256:5ebd15e6f5fe04f0be7c8c3dd74f595a795fa701d0bc330d8b9fa01cbd689f0b"
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5"
+			},
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"recordCount": 34753,
+			"artifact": "crosswalks/lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup.json",
+			"contentHash": "sha256:aa77554563bab179bd39ba38469433d10459626aa4140ce1fb179aa0a9dc1da9"
 		}
 	]
 }

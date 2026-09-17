@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:c5d03f56b5cd3ee31e277ad4a0ee2cde2712c1c64fd373876c19e64c9be4ff0a",
-	"boundaryRegistryHash": "sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46",
+	"contentHash": "sha256:2163c97730d762007940849905e9e722a4f19d405093fa9519ab27c3ab44cd8f",
+	"boundaryRegistryHash": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -18,8 +18,22 @@
 				"artifact": "areas/combinedAuthority/2025-12-en-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -212,8 +226,22 @@
 				"artifact": "areas/country/2025-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -344,8 +372,22 @@
 				"artifact": "areas/countyAndUnitaryAuthority/2025-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -484,8 +526,22 @@
 				"artifact": "areas/itl1/2021-01-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "itl2",
+							"boundaryRelease": "2021-01-uk-bgc-v2"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -506,8 +562,35 @@
 				"artifact": "areas/itl2/2021-01-uk-bgc-v2.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "itl3",
+							"boundaryRelease": "2021-01-uk-bgc-v3"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl1",
+							"boundaryRelease": "2021-01-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -528,8 +611,22 @@
 				"artifact": "areas/itl3/2021-01-uk-bgc-v3.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl2",
+							"boundaryRelease": "2021-01-uk-bgc-v2"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -615,6 +712,32 @@
 						}
 					},
 					{
+						"id": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					},
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "region",
+							"boundaryRelease": "2025-12-en-bgc"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					},
+					{
 						"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
 						"direction": "from",
 						"counterpart": {
@@ -627,6 +750,32 @@
 							"status": "provided",
 							"basis": "area",
 							"normalisation": "per-source"
+						}
+					},
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "combinedAuthority",
+							"boundaryRelease": "2025-12-en-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "countyAndUnitaryAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
 						}
 					}
 				]
@@ -677,6 +826,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2024-12-uk-bgc"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
 					}
 				]
 			}
@@ -712,6 +874,19 @@
 						"quality": "publisher-supplied",
 						"weighting": {
 							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-05-uk-bgc-v2"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
 						}
 					}
 				]
@@ -800,6 +975,45 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2021-12-ew-bgc-v5"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "msoa",
+							"boundaryRelease": "2021-12-ew-bgc-v3"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2022-12-uk-bgc-v2"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
 					}
 				]
 			}
@@ -835,6 +1049,19 @@
 						"quality": "publisher-supplied",
 						"weighting": {
 							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-05-uk-bgc-v2"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
 						}
 					}
 				]
@@ -1012,8 +1239,35 @@
 				"artifact": "areas/lsoa/2021-12-ew-bgc-v5.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-05-uk-bgc-v2"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2011-12-ew-bgc-v3"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1049,6 +1303,40 @@
 				"status": "available",
 				"recordCount": 34753,
 				"artifact": "areas/lsoa/2011-12-ew-bgc-v3.json"
+			},
+			"relationships": {
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2021-12-ew-bgc-v5"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					}
+				]
+			}
+		},
+		{
+			"id": "2001-12-ew-bgc",
+			"geography": "lsoa",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 34378,
+				"artifact": "areas/lsoa/2001-12-ew-bgc.json"
 			},
 			"relationships": {
 				"status": "not-compiled",
@@ -1091,8 +1379,22 @@
 				"artifact": "areas/msoa/2021-12-ew-bgc-v3.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-05-uk-bgc-v2"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1340,6 +1642,19 @@
 			"relationships": {
 				"status": "available",
 				"crosswalks": [
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "official-lookup",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-provided"
+						}
+					},
 					{
 						"id": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
 						"direction": "to",
@@ -2087,7 +2402,7 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 3
+			"releaseCount": 4
 		},
 		{
 			"id": "majorTownAndCity",

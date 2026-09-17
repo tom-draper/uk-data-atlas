@@ -1,0 +1,21 @@
+{
+	"id": "2023-05-ew",
+	"kind": "lookup",
+	"title": "2021 MSOA to local authority district, May 2023 (England and Wales)",
+	"description": "Official ONS exact-fit lookup from 2021 Middle Layer Super Output Areas to Local Authority Districts as at May 2023.",
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/MSOA21_LAD23_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+	"retrieved": "2026-09-17",
+	"temporalCoverage": "2023-05",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "MSOA21_LAD23_EW_LU.geojson",
+			"role": "source",
+			"note": "Exported from the ONS Open Geography Portal feature service, 7264 rows paged in ObjectId order."
+		}
+	]
+}

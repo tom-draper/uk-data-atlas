@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b0b11cce1edec91aa78c2451824b8015441a061b8ca14c0ac5fa88f1050a521d",
+	"contentHash": "sha256:be4879f0ee3446d61ada9be1bb9d7ca7bcf9d71262891e6796e182d2419a0efa",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -597,6 +597,22 @@
 				}
 			],
 			"metadataHash": "sha256:1abb4b9ce944b295eace86c46a80b3215fb9ff53ff34d155dd782f111a2c108b"
+		},
+		{
+			"key": "boundaries/lsoa/2001-12-ew-bgc",
+			"metadataId": "2001-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Lower layer super output areas, December 2001 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2001",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0a96db9665d9f8ea347d8f85191e7208036997b886f8f2304b5c3629d1b87ff6"
 		},
 		{
 			"key": "boundaries/lsoa/2011-12-ew-bgc-v3",
@@ -1883,6 +1899,166 @@
 				}
 			],
 			"metadataHash": "sha256:18631a23e13815aba3754c9f54164991bed0545d349f780a8e821c55b33b69f0"
+		},
+		{
+			"key": "lookups/local-authority-changes/2022-12-to-2023-05-uk",
+			"metadataId": "2022-12-to-2023-05-uk",
+			"kind": "lookup",
+			"title": "Local authority district changes, December 2022 to May 2023 (United Kingdom)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD22_LAD23_UK_LU_v1/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2023-04-01",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:97ec2e5fee15a0db6987fe150546dc0483c5ef35d747d6a7e963f1e2d2d18670"
+		},
+		{
+			"key": "lookups/local-authority-changes/2024-12-to-2025-05-uk",
+			"metadataId": "2024-12-to-2025-05-uk",
+			"kind": "lookup",
+			"title": "Local authority district changes, December 2024 to May 2025 (United Kingdom)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD24_LAD25_UK_LU_v2/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2025-04-01",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:1018df7f09dd14d5a0a04698b0501b41d549b39f21082da923f90a016923430e"
+		},
+		{
+			"key": "lookups/local-authority-to-combined-authority/2025-05-en",
+			"metadataId": "2025-05-en",
+			"kind": "lookup",
+			"title": "Local authority district to combined authority, May 2025 (England)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD25_CAUTH25_EN_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2025-05",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:f15f93d81b468a799cc3356aeec71150f5ee39377b540a3a016e3b384fca4664"
+		},
+		{
+			"key": "lookups/local-authority-to-country/2025-04-uk",
+			"metadataId": "2025-04-uk",
+			"kind": "lookup",
+			"title": "Local authority district to country, April 2025 (United Kingdom)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD25_CTRY25_UK_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2025-04-01",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:8e440a03fb087470cd68e7dfc11f867035109983524773e629a8f9013e7cf518"
+		},
+		{
+			"key": "lookups/local-authority-to-county-and-unitary-authority/2025-04-uk",
+			"metadataId": "2025-04-uk",
+			"kind": "lookup",
+			"title": "Local authority district to county and unitary authority, April 2025 (United Kingdom)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD25_CTYUA25_UK_LU_v2/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2025-04-01",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:205b13657287702a7f73482df2608840148c73d5901a2df7d57229331e639880"
+		},
+		{
+			"key": "lookups/local-authority-to-itl/2021-01-uk",
+			"metadataId": "2021-01-uk",
+			"kind": "lookup",
+			"title": "Local authority district to LAU1 and ITL levels 3, 2 and 1, 2021 (United Kingdom)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d8ccb8cd300e39f9a8793c7c8c5996ac9593c6617bfb8d02016e4a14e6b1aec1"
+		},
+		{
+			"key": "lookups/local-authority-to-region/2025-04-en",
+			"metadataId": "2025-04-en",
+			"kind": "lookup",
+			"title": "Local authority district to region, April 2025 (England)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD25_RGN25_EN_LU_v2/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2025-04-01",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:2ad4e444af4aa2bebd2aa3f69468559095451fe5153d0222f0de984ccb007f98"
+		},
+		{
+			"key": "lookups/lsoa-changes/2011-to-2021-ew",
+			"metadataId": "2011-to-2021-ew",
+			"kind": "lookup",
+			"title": "2011 LSOA to 2021 LSOA changes (England and Wales)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LSOA11_LSOA21_LAD22_EW_LU_v5/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2021-03-21",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:c3a4eb9b3945275b1b756ee9dac052b77bae9a0b58a8c42ed6a34cf706f9a363"
+		},
+		{
+			"key": "lookups/lsoa-to-local-authority/2023-05-ew",
+			"metadataId": "2023-05-ew",
+			"kind": "lookup",
+			"title": "2021 LSOA to local authority district, May 2023 (England and Wales)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LSOA21_LAD23_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2023-05",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:33e9f87381dc2d0bfa19a616e93a7d8ddcfa7081bbe23291204bf195c55d2f6b"
+		},
+		{
+			"key": "lookups/msoa-to-local-authority/2023-05-ew",
+			"metadataId": "2023-05-ew",
+			"kind": "lookup",
+			"title": "2021 MSOA to local authority district, May 2023 (England and Wales)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/MSOA21_LAD23_EW_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+			"temporalCoverage": "2023-05",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:7fe47594e7cb6fd05a83adeb2568d65d081b2bc93c2846f1346b786b7a553686"
 		},
 		{
 			"key": "politics/elections/general-elections/1918-2019",

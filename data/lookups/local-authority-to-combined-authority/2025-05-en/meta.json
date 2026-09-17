@@ -1,0 +1,21 @@
+{
+	"id": "2025-05-en",
+	"kind": "lookup",
+	"title": "Local authority district to combined authority, May 2025 (England)",
+	"description": "Official ONS lookup from English Local Authority Districts to the combined authorities they belong to, as at May 2025. Districts outside any combined authority are not listed.",
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD25_CAUTH25_EN_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+	"retrieved": "2026-09-17",
+	"temporalCoverage": "2025-05",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "LAD25_CAUTH25_EN_LU.geojson",
+			"role": "source",
+			"note": "Exported from the ONS Open Geography Portal feature service, 106 rows paged in ObjectId order."
+		}
+	]
+}

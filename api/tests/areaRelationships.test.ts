@@ -145,3 +145,33 @@ test("relates containment and overlap crosswalks from both ends", () => {
 	);
 	assert.equal(index.get("ward/2024/W1")?.[0].relation, "within");
 });
+
+test("relates a membership lookup as belonging, and an identity lookup as succession", () => {
+	const lookup = (
+		id: string,
+		relationshipPurpose: "membership" | "identity",
+	): PropertyCrosswalkArtifact => ({
+		...containment,
+		id,
+		method: "official-lookup",
+		relationshipPurpose,
+		weighting: { status: "not-provided" },
+	});
+	const index = createAreaRelationshipIndex([
+		lookup("lad-to-region", "membership"),
+		lookup("lad-changes", "identity"),
+	]);
+	assert.deepEqual(
+		index
+			.get("ward/2024/W1")
+			?.map(({ relation, crosswalk }) => [relation, crosswalk.id]),
+		[
+			["successor", "lad-changes"],
+			["within", "lad-to-region"],
+		],
+	);
+	assert.deepEqual(
+		index.get("localAuthority/2024/L1")?.map(({ relation }) => relation),
+		["contains", "predecessor"],
+	);
+});

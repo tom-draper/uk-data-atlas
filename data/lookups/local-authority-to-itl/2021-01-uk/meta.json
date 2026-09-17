@@ -1,0 +1,21 @@
+{
+	"id": "2021-01-uk",
+	"kind": "lookup",
+	"title": "Local authority district to LAU1 and ITL levels 3, 2 and 1, 2021 (United Kingdom)",
+	"description": "Official ONS lookup from 2021 Local Authority Districts through Local Administrative Units to International Territorial Levels 3, 2 and 1.",
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson",
+	"retrieved": "2026-09-17",
+	"temporalCoverage": "2021",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU.geojson",
+			"role": "source",
+			"note": "Exported from the ONS Open Geography Portal feature service, 388 rows paged in ObjectId order."
+		}
+	]
+}

@@ -1,0 +1,2903 @@
+{
+	"schemaVersion": 1,
+	"id": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
+	"method": "clean-containment",
+	"quality": "publisher-supplied",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "itl3",
+		"boundaryRelease": "2021-01-uk-bgc-v3"
+	},
+	"to": {
+		"geography": "itl2",
+		"boundaryRelease": "2021-01-uk-bgc-v2"
+	},
+	"provenance": {
+		"input": "lookups/local-authority-to-itl/2021-01-uk/LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU.geojson",
+		"inputHash": "sha256:03af543fd287e6b4eed12189732469fadcc8ab8d094a12208924bcf0f5c0d357"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 179,
+				"referencedCodeCount": 179
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 41,
+				"referencedCodeCount": 41
+			}
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "TLC11",
+				"labels": [
+					"Hartlepool and Stockton-on-Tees"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC1",
+					"labels": [
+						"Tees Valley and Durham"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLC12",
+				"labels": [
+					"South Teesside"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC1",
+					"labels": [
+						"Tees Valley and Durham"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLC13",
+				"labels": [
+					"Darlington"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC1",
+					"labels": [
+						"Tees Valley and Durham"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLC14",
+				"labels": [
+					"Durham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC1",
+					"labels": [
+						"Tees Valley and Durham"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLC21",
+				"labels": [
+					"Northumberland"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC2",
+					"labels": [
+						"Northumberland, and Tyne and Wear"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLC22",
+				"labels": [
+					"Tyneside"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC2",
+					"labels": [
+						"Northumberland, and Tyne and Wear"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLC23",
+				"labels": [
+					"Sunderland"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLC2",
+					"labels": [
+						"Northumberland, and Tyne and Wear"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD11",
+				"labels": [
+					"West Cumbria"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD1",
+					"labels": [
+						"Cumbria"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD12",
+				"labels": [
+					"East Cumbria"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD1",
+					"labels": [
+						"Cumbria"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD33",
+				"labels": [
+					"Manchester"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD3",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD34",
+				"labels": [
+					"Greater Manchester South West"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD3",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD35",
+				"labels": [
+					"Greater Manchester South East"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD3",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD36",
+				"labels": [
+					"Greater Manchester North West"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD3",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD37",
+				"labels": [
+					"Greater Manchester North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD3",
+					"labels": [
+						"Greater Manchester"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD41",
+				"labels": [
+					"Blackburn with Darwen"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD4",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD42",
+				"labels": [
+					"Blackpool"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD4",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD44",
+				"labels": [
+					"Lancaster and Wyre"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD4",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD45",
+				"labels": [
+					"Mid Lancashire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD4",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD46",
+				"labels": [
+					"East Lancashire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD4",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD47",
+				"labels": [
+					"Chorley and West Lancashire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD4",
+					"labels": [
+						"Lancashire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD61",
+				"labels": [
+					"Warrington"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD6",
+					"labels": [
+						"Cheshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD62",
+				"labels": [
+					"Cheshire East"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD6",
+					"labels": [
+						"Cheshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD63",
+				"labels": [
+					"Cheshire West and Chester"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD6",
+					"labels": [
+						"Cheshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD71",
+				"labels": [
+					"East Merseyside"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD7",
+					"labels": [
+						"Merseyside"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD72",
+				"labels": [
+					"Liverpool"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD7",
+					"labels": [
+						"Merseyside"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD73",
+				"labels": [
+					"Sefton"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD7",
+					"labels": [
+						"Merseyside"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLD74",
+				"labels": [
+					"Wirral"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLD7",
+					"labels": [
+						"Merseyside"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE11",
+				"labels": [
+					"Kingston upon Hull, City of"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE1",
+					"labels": [
+						"East Yorkshire and Northern Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE12",
+				"labels": [
+					"East Riding of Yorkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE1",
+					"labels": [
+						"East Yorkshire and Northern Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE13",
+				"labels": [
+					"North and North East Lincolnshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE1",
+					"labels": [
+						"East Yorkshire and Northern Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE21",
+				"labels": [
+					"York"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE2",
+					"labels": [
+						"North Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE22",
+				"labels": [
+					"North Yorkshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE2",
+					"labels": [
+						"North Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE31",
+				"labels": [
+					"Barnsley, Doncaster and Rotherham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE3",
+					"labels": [
+						"South Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE32",
+				"labels": [
+					"Sheffield"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE3",
+					"labels": [
+						"South Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE41",
+				"labels": [
+					"Bradford"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE4",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE42",
+				"labels": [
+					"Leeds"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE4",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE44",
+				"labels": [
+					"Calderdale and Kirklees"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE4",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLE45",
+				"labels": [
+					"Wakefield"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE4",
+					"labels": [
+						"West Yorkshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF11",
+				"labels": [
+					"Derby"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF1",
+					"labels": [
+						"Derbyshire and Nottinghamshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF12",
+				"labels": [
+					"East Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF1",
+					"labels": [
+						"Derbyshire and Nottinghamshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF13",
+				"labels": [
+					"South and West Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF1",
+					"labels": [
+						"Derbyshire and Nottinghamshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF14",
+				"labels": [
+					"Nottingham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF1",
+					"labels": [
+						"Derbyshire and Nottinghamshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF15",
+				"labels": [
+					"North Nottinghamshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF1",
+					"labels": [
+						"Derbyshire and Nottinghamshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF16",
+				"labels": [
+					"South Nottinghamshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF1",
+					"labels": [
+						"Derbyshire and Nottinghamshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF21",
+				"labels": [
+					"Leicester"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF2",
+					"labels": [
+						"Leicestershire, Rutland and Northamptonshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF22",
+				"labels": [
+					"Leicestershire CC and Rutland"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF2",
+					"labels": [
+						"Leicestershire, Rutland and Northamptonshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF24",
+				"labels": [
+					"West Northamptonshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF2",
+					"labels": [
+						"Leicestershire, Rutland and Northamptonshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF25",
+				"labels": [
+					"North Northamptonshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF2",
+					"labels": [
+						"Leicestershire, Rutland and Northamptonshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF30",
+				"labels": [
+					"Lincolnshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF3",
+					"labels": [
+						"Lincolnshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG11",
+				"labels": [
+					"Herefordshire, County of"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG1",
+					"labels": [
+						"Herefordshire, Worcestershire and Warwickshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG12",
+				"labels": [
+					"Worcestershire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG1",
+					"labels": [
+						"Herefordshire, Worcestershire and Warwickshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG13",
+				"labels": [
+					"Warwickshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG1",
+					"labels": [
+						"Herefordshire, Worcestershire and Warwickshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG21",
+				"labels": [
+					"Telford and Wrekin"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG2",
+					"labels": [
+						"Shropshire and Staffordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG22",
+				"labels": [
+					"Shropshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG2",
+					"labels": [
+						"Shropshire and Staffordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG23",
+				"labels": [
+					"Stoke-on-Trent"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG2",
+					"labels": [
+						"Shropshire and Staffordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG24",
+				"labels": [
+					"Staffordshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG2",
+					"labels": [
+						"Shropshire and Staffordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG31",
+				"labels": [
+					"Birmingham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG32",
+				"labels": [
+					"Solihull"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG33",
+				"labels": [
+					"Coventry"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG36",
+				"labels": [
+					"Dudley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG37",
+				"labels": [
+					"Sandwell"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG38",
+				"labels": [
+					"Walsall"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG39",
+				"labels": [
+					"Wolverhampton"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG3",
+					"labels": [
+						"West Midlands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH11",
+				"labels": [
+					"Peterborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH1",
+					"labels": [
+						"East Anglia"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH12",
+				"labels": [
+					"Cambridgeshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH1",
+					"labels": [
+						"East Anglia"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH14",
+				"labels": [
+					"Suffolk CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH1",
+					"labels": [
+						"East Anglia"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH15",
+				"labels": [
+					"Norwich and East Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH1",
+					"labels": [
+						"East Anglia"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH16",
+				"labels": [
+					"North and West Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH1",
+					"labels": [
+						"East Anglia"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH17",
+				"labels": [
+					"Breckland and South Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH1",
+					"labels": [
+						"East Anglia"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH21",
+				"labels": [
+					"Luton"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH2",
+					"labels": [
+						"Bedfordshire and Hertfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH23",
+				"labels": [
+					"Hertfordshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH2",
+					"labels": [
+						"Bedfordshire and Hertfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH24",
+				"labels": [
+					"Bedford"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH2",
+					"labels": [
+						"Bedfordshire and Hertfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH25",
+				"labels": [
+					"Central Bedfordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH2",
+					"labels": [
+						"Bedfordshire and Hertfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH31",
+				"labels": [
+					"Southend-on-Sea"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH3",
+					"labels": [
+						"Essex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH32",
+				"labels": [
+					"Thurrock"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH3",
+					"labels": [
+						"Essex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH34",
+				"labels": [
+					"Essex Haven Gateway"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH3",
+					"labels": [
+						"Essex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH35",
+				"labels": [
+					"West Essex"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH3",
+					"labels": [
+						"Essex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH36",
+				"labels": [
+					"Heart of Essex"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH3",
+					"labels": [
+						"Essex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLH37",
+				"labels": [
+					"Essex Thames Gateway"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLH3",
+					"labels": [
+						"Essex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI31",
+				"labels": [
+					"Camden and City of London"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI3",
+					"labels": [
+						"Inner London - West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI32",
+				"labels": [
+					"Westminster"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI3",
+					"labels": [
+						"Inner London - West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI33",
+				"labels": [
+					"Kensington & Chelsea and Hammersmith & Fulham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI3",
+					"labels": [
+						"Inner London - West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI34",
+				"labels": [
+					"Wandsworth"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI3",
+					"labels": [
+						"Inner London - West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI41",
+				"labels": [
+					"Hackney and Newham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI4",
+					"labels": [
+						"Inner London - East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI42",
+				"labels": [
+					"Tower Hamlets"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI4",
+					"labels": [
+						"Inner London - East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI43",
+				"labels": [
+					"Haringey and Islington"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI4",
+					"labels": [
+						"Inner London - East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI44",
+				"labels": [
+					"Lewisham and Southwark"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI4",
+					"labels": [
+						"Inner London - East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI45",
+				"labels": [
+					"Lambeth"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI4",
+					"labels": [
+						"Inner London - East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI51",
+				"labels": [
+					"Bexley and Greenwich"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI5",
+					"labels": [
+						"Outer London - East and North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI52",
+				"labels": [
+					"Barking & Dagenham and Havering"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI5",
+					"labels": [
+						"Outer London - East and North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI53",
+				"labels": [
+					"Redbridge and Waltham Forest"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI5",
+					"labels": [
+						"Outer London - East and North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI54",
+				"labels": [
+					"Enfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI5",
+					"labels": [
+						"Outer London - East and North East"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI61",
+				"labels": [
+					"Bromley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI6",
+					"labels": [
+						"Outer London - South"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI62",
+				"labels": [
+					"Croydon"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI6",
+					"labels": [
+						"Outer London - South"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI63",
+				"labels": [
+					"Merton, Kingston upon Thames and Sutton"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI6",
+					"labels": [
+						"Outer London - South"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI71",
+				"labels": [
+					"Barnet"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI7",
+					"labels": [
+						"Outer London - West and North West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI72",
+				"labels": [
+					"Brent"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI7",
+					"labels": [
+						"Outer London - West and North West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI73",
+				"labels": [
+					"Ealing"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI7",
+					"labels": [
+						"Outer London - West and North West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI74",
+				"labels": [
+					"Harrow and Hillingdon"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI7",
+					"labels": [
+						"Outer London - West and North West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI75",
+				"labels": [
+					"Hounslow and Richmond upon Thames"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI7",
+					"labels": [
+						"Outer London - West and North West"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ11",
+				"labels": [
+					"Berkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ1",
+					"labels": [
+						"Berkshire, Buckinghamshire and Oxfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ12",
+				"labels": [
+					"Milton Keynes"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ1",
+					"labels": [
+						"Berkshire, Buckinghamshire and Oxfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ13",
+				"labels": [
+					"Buckinghamshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ1",
+					"labels": [
+						"Berkshire, Buckinghamshire and Oxfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ14",
+				"labels": [
+					"Oxfordshire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ1",
+					"labels": [
+						"Berkshire, Buckinghamshire and Oxfordshire"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ21",
+				"labels": [
+					"Brighton and Hove"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ2",
+					"labels": [
+						"Surrey, East and West Sussex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ22",
+				"labels": [
+					"East Sussex CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ2",
+					"labels": [
+						"Surrey, East and West Sussex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ25",
+				"labels": [
+					"West Surrey"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ2",
+					"labels": [
+						"Surrey, East and West Sussex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ26",
+				"labels": [
+					"East Surrey"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ2",
+					"labels": [
+						"Surrey, East and West Sussex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ27",
+				"labels": [
+					"West Sussex (South West)"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ2",
+					"labels": [
+						"Surrey, East and West Sussex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ28",
+				"labels": [
+					"West Sussex (North East)"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ2",
+					"labels": [
+						"Surrey, East and West Sussex"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ31",
+				"labels": [
+					"Portsmouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ3",
+					"labels": [
+						"Hampshire and Isle of Wight"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ32",
+				"labels": [
+					"Southampton"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ3",
+					"labels": [
+						"Hampshire and Isle of Wight"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ34",
+				"labels": [
+					"Isle of Wight"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ3",
+					"labels": [
+						"Hampshire and Isle of Wight"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ35",
+				"labels": [
+					"South Hampshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ3",
+					"labels": [
+						"Hampshire and Isle of Wight"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ36",
+				"labels": [
+					"Central Hampshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ3",
+					"labels": [
+						"Hampshire and Isle of Wight"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ37",
+				"labels": [
+					"North Hampshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ3",
+					"labels": [
+						"Hampshire and Isle of Wight"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ41",
+				"labels": [
+					"Medway"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ4",
+					"labels": [
+						"Kent"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ43",
+				"labels": [
+					"Kent Thames Gateway"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ4",
+					"labels": [
+						"Kent"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ44",
+				"labels": [
+					"East Kent"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ4",
+					"labels": [
+						"Kent"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ45",
+				"labels": [
+					"Mid Kent"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ4",
+					"labels": [
+						"Kent"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLJ46",
+				"labels": [
+					"West Kent"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLJ4",
+					"labels": [
+						"Kent"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK11",
+				"labels": [
+					"Bristol, City of"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK1",
+					"labels": [
+						"Gloucestershire, Wiltshire and Bath/Bristol area"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK12",
+				"labels": [
+					"Bath and North East Somerset, North Somerset and South Gloucestershire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK1",
+					"labels": [
+						"Gloucestershire, Wiltshire and Bath/Bristol area"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK13",
+				"labels": [
+					"Gloucestershire CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK1",
+					"labels": [
+						"Gloucestershire, Wiltshire and Bath/Bristol area"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK14",
+				"labels": [
+					"Swindon"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK1",
+					"labels": [
+						"Gloucestershire, Wiltshire and Bath/Bristol area"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK15",
+				"labels": [
+					"Wiltshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK1",
+					"labels": [
+						"Gloucestershire, Wiltshire and Bath/Bristol area"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK23",
+				"labels": [
+					"Somerset CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK2",
+					"labels": [
+						"Dorset and Somerset"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK24",
+				"labels": [
+					"Bournemouth, Christchurch and Poole"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK2",
+					"labels": [
+						"Dorset and Somerset"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK25",
+				"labels": [
+					"Dorset"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK2",
+					"labels": [
+						"Dorset and Somerset"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK30",
+				"labels": [
+					"Cornwall and Isles of Scilly"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK3",
+					"labels": [
+						"Cornwall and Isles of Scilly"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK41",
+				"labels": [
+					"Plymouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK4",
+					"labels": [
+						"Devon"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK42",
+				"labels": [
+					"Torbay"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK4",
+					"labels": [
+						"Devon"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK43",
+				"labels": [
+					"Devon CC"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK4",
+					"labels": [
+						"Devon"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL11",
+				"labels": [
+					"Isle of Anglesey"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL12",
+				"labels": [
+					"Gwynedd"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL13",
+				"labels": [
+					"Conwy and Denbighshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL14",
+				"labels": [
+					"South West Wales"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL15",
+				"labels": [
+					"Central Valleys"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL16",
+				"labels": [
+					"Gwent Valleys"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL17",
+				"labels": [
+					"Bridgend and Neath Port Talbot"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL18",
+				"labels": [
+					"Swansea"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL1",
+					"labels": [
+						"West Wales and The Valleys"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL21",
+				"labels": [
+					"Monmouthshire and Newport"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL2",
+					"labels": [
+						"East Wales"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL22",
+				"labels": [
+					"Cardiff and Vale of Glamorgan"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL2",
+					"labels": [
+						"East Wales"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL23",
+				"labels": [
+					"Flintshire and Wrexham"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL2",
+					"labels": [
+						"East Wales"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLL24",
+				"labels": [
+					"Powys"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLL2",
+					"labels": [
+						"East Wales"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM50",
+				"labels": [
+					"Aberdeen City and Aberdeenshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM5",
+					"labels": [
+						"North Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM61",
+				"labels": [
+					"Caithness and Sutherland, and Ross and Cromarty"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM6",
+					"labels": [
+						"Highlands and Islands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM62",
+				"labels": [
+					"Inverness and Nairn, Moray, and Badenoch and Strathspey"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM6",
+					"labels": [
+						"Highlands and Islands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM63",
+				"labels": [
+					"Lochaber, Skye and Lochalsh, Arran and Cumbrae, and Argyll and Bute"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM6",
+					"labels": [
+						"Highlands and Islands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM64",
+				"labels": [
+					"Na h-Eileanan Siar"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM6",
+					"labels": [
+						"Highlands and Islands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM65",
+				"labels": [
+					"Orkney Islands"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM6",
+					"labels": [
+						"Highlands and Islands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM66",
+				"labels": [
+					"Shetland Islands"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM6",
+					"labels": [
+						"Highlands and Islands"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM71",
+				"labels": [
+					"Angus and Dundee City"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM72",
+				"labels": [
+					"Clackmannanshire and Fife"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM73",
+				"labels": [
+					"East Lothian and Midlothian"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM75",
+				"labels": [
+					"City of Edinburgh"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM76",
+				"labels": [
+					"Falkirk"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM77",
+				"labels": [
+					"Perth and Kinross, and Stirling"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM78",
+				"labels": [
+					"West Lothian"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM7",
+					"labels": [
+						"Eastern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM81",
+				"labels": [
+					"East Dunbartonshire, West Dunbartonshire, and Helensburgh and Lomond"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM8",
+					"labels": [
+						"West Central Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM82",
+				"labels": [
+					"Glasgow City"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM8",
+					"labels": [
+						"West Central Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM83",
+				"labels": [
+					"Inverclyde, East Renfrewshire, and Renfrewshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM8",
+					"labels": [
+						"West Central Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM84",
+				"labels": [
+					"North Lanarkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM8",
+					"labels": [
+						"West Central Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM91",
+				"labels": [
+					"Scottish Borders"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM9",
+					"labels": [
+						"Southern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM92",
+				"labels": [
+					"Dumfries and Galloway"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM9",
+					"labels": [
+						"Southern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM93",
+				"labels": [
+					"East Ayrshire and North Ayrshire mainland"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM9",
+					"labels": [
+						"Southern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM94",
+				"labels": [
+					"South Ayrshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM9",
+					"labels": [
+						"Southern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLM95",
+				"labels": [
+					"South Lanarkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM9",
+					"labels": [
+						"Southern Scotland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN06",
+				"labels": [
+					"Belfast"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN07",
+				"labels": [
+					"Armagh City, Banbridge and Craigavon"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN08",
+				"labels": [
+					"Newry, Mourne and Down"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN09",
+				"labels": [
+					"Ards and North Down"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0A",
+				"labels": [
+					"Derry City and Strabane"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0B",
+				"labels": [
+					"Mid Ulster"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0C",
+				"labels": [
+					"Causeway Coast and Glens"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0D",
+				"labels": [
+					"Antrim and Newtownabbey"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0E",
+				"labels": [
+					"Lisburn and Castlereagh"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0F",
+				"labels": [
+					"Mid and East Antrim"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN0G",
+				"labels": [
+					"Fermanagh and Omagh"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN0",
+					"labels": [
+						"Northern Ireland"
+					]
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:e29aab8036c6540bd91d06368e61ec67b86252a1bf0f1e10d22e8bffc3fcc14b"
+}
