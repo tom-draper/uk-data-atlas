@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
-import { glassCard, glassSheet } from "@/lib/docs/theme";
+import { paperCard } from "@/lib/docs/theme";
 
 export function Sheet({
 	children,
@@ -11,10 +11,7 @@ export function Sheet({
 	className?: string;
 }) {
 	return (
-		<div
-			className={`rounded-2xl px-5 py-7 sm:px-10 sm:py-10 ${className}`}
-			style={glassSheet}
-		>
+		<div className={`px-1 pt-6 pb-10 sm:px-6 lg:px-10 ${className}`}>
 			{children}
 		</div>
 	);
@@ -28,7 +25,7 @@ export function Card({
 	className?: string;
 }) {
 	return (
-		<div className={`rounded-xl ${className}`} style={glassCard}>
+		<div className={`rounded-xl ${className}`} style={paperCard}>
 			{children}
 		</div>
 	);

@@ -2,46 +2,28 @@ import type { CSSProperties } from "react";
 import { glassStyle } from "@/lib/helpers/panelTheme";
 
 /**
- * The atlas glass panes, tuned for reading. The atlas panes sit over a busy
- * map and hold a few short labels; a docs page holds long prose, so the sheet
- * keeps the same edge highlights and blur with a denser frost behind the text.
+ * Surfaces for the docs. Glass is kept for the one thing that floats over
+ * the page, the header, as the atlas uses it for its panes over the map.
+ * Reading happens on the canvas itself, with paper cards and ink code blocks.
  */
 
-const lightGlass = glassStyle(false);
+/** The atlas glass pane, for the floating header and its menu. */
+export const glassPane: CSSProperties = glassStyle(false);
 
-/** Chrome: header and sidebar, as see-through as the atlas panes. */
-export const glassPane: CSSProperties = lightGlass;
-
-/** The reading surface for page content. */
-export const glassSheet: CSSProperties = {
-	...lightGlass,
-	background:
-		"linear-gradient(160deg, rgba(255,255,255,0.66) 0%, rgba(255,255,255,0.5) 40%, rgba(236,241,250,0.44) 100%)",
+/** A light card resting on the canvas. */
+export const paperCard: CSSProperties = {
+	background: "rgba(255,255,255,0.72)",
+	border: "1px solid rgba(15,23,42,0.07)",
+	boxShadow: "0 1px 2px rgba(15,23,42,0.04), 0 6px 20px rgba(15,23,42,0.04)",
 };
 
-/** A lighter card set on a sheet. */
-export const glassCard: CSSProperties = {
+/** Code sits in dark ink, the atlas's dark pane colour made solid. */
+export const inkPanel: CSSProperties = {
 	background:
-		"linear-gradient(150deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.38) 100%)",
-	border: "1px solid rgba(255,255,255,0.75)",
+		"linear-gradient(150deg, #1c2030 0%, #151826 55%, #10121c 100%)",
+	border: "1px solid rgba(15,23,42,0.5)",
 	boxShadow: [
-		"inset 0 1px 0 rgba(255,255,255,0.9)",
-		"0 1px 2px rgba(15,23,42,0.04)",
-		"0 8px 24px rgba(15,23,42,0.06)",
-	].join(", "),
-};
-
-/** The atlas dark smoked glass, deep enough to hold code on a bright page. */
-export const smokedGlass: CSSProperties = {
-	background:
-		"linear-gradient(150deg, rgba(30,34,52,0.92) 0%, rgba(17,20,33,0.94) 55%, rgba(12,14,24,0.96) 100%)",
-	backdropFilter: "blur(20px) saturate(160%)",
-	WebkitBackdropFilter: "blur(20px) saturate(160%)",
-	border: "1px solid rgba(255,255,255,0.10)",
-	boxShadow: [
-		"inset 0 1px 0 rgba(255,255,255,0.14)",
-		"inset 1px 0 0 rgba(255,255,255,0.06)",
-		"0 20px 60px rgba(15,23,42,0.28)",
-		"0 4px 16px rgba(15,23,42,0.16)",
+		"inset 0 1px 0 rgba(255,255,255,0.08)",
+		"0 12px 32px rgba(15,23,42,0.14)",
 	].join(", "),
 };
