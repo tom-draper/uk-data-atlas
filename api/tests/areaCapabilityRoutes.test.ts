@@ -11,13 +11,14 @@ import {
 	populationObservations,
 	populationLocalAuthorityObservations,
 	measureCompatibilityInventory,
+	testContext,
 } from "./routeFixtures";
 
 test("reports an area's exact-release capability and availability matrix", () => {
 	const response = routeRequest(
 		"GET",
 		"/v1/areas/ward/2023-05-uk-bgc/E05000001/capabilities",
-		{
+		testContext({
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
 			crosswalkLookup,
@@ -27,7 +28,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 			populationLocalAuthorityObservations,
 			measureObservations,
 			measureCompatibilityInventory,
-		},
+		}),
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
