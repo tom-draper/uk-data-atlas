@@ -270,7 +270,7 @@ export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 						{head.map((cell) => (
 							<th
 								key={cell}
-								className="px-4 py-2.5 text-[12px] font-semibold tracking-wide text-slate-500"
+								className="px-4 py-2.5 text-[12px] font-semibold whitespace-nowrap tracking-wide text-slate-500"
 							>
 								{cell}
 							</th>
