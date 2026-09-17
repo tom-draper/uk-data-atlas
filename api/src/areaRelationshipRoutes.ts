@@ -20,8 +20,8 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 		string,
 	];
-	const { crosswalkLookup, geographyResolver } = context;
-	if (!geographyResolver || !crosswalkLookup)
+	const { geographyResolver } = context;
+	if (!geographyResolver || !geographyResolver.hasAreaRelationships())
 		return problem(
 			503,
 			"Catalogue Unavailable",
