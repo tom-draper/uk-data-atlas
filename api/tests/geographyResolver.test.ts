@@ -2,18 +2,44 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createGeographyResolver } from "../src/geographyResolver";
 import {
+	compileLocationProjections,
+	LocationProjectionStore,
+} from "../src/locationProjections";
+import {
+	compileRelationshipPaths,
+	createRelationshipPathIndex,
+} from "../src/relationshipPaths";
+import {
 	areaLookup,
 	containmentCrosswalk,
 	crosswalkInventory,
+	namedLocationInventory,
 	namedLocationLookup,
 } from "./geographyFixtures";
 
 test("builds immutable geography indexes once for route-level queries", () => {
+	const locationProjections = compileLocationProjections(
+		namedLocationInventory,
+		crosswalkInventory,
+		[containmentCrosswalk],
+		areaLookup,
+	);
+	const relationshipPaths = compileRelationshipPaths(crosswalkInventory);
 	const resolver = createGeographyResolver({
 		areaLookup,
 		crosswalkInventory,
-		crosswalkLookup: new Map([[containmentCrosswalk.id, containmentCrosswalk]]),
+		crosswalkLookup: new Map([
+			[containmentCrosswalk.id, containmentCrosswalk],
+		]),
 		namedLocationLookup,
+		locationProjectionStore: new LocationProjectionStore(
+			locationProjections.inventory,
+			(shard) =>
+				locationProjections.artifacts.find(
+					(artifact) => artifact.crosswalkId === shard.crosswalkId,
+				)!,
+		),
+		relationshipPathIndex: createRelationshipPathIndex(relationshipPaths),
 	});
 
 	assert.deepEqual(
@@ -51,5 +77,27 @@ test("builds immutable geography indexes once for route-level queries", () => {
 	assert.equal(
 		resolver.namedLocation("greater-manchester")?.label,
 		"Greater Manchester",
+	);
+	assert.equal(
+		resolver.locationProjection(
+			"greater-manchester",
+			"ward",
+			"2025-01-en-ward",
+			containmentCrosswalk.id,
+		)?.membership,
+		"fully-contained",
+	);
+	assert.deepEqual(
+		resolver
+			.relationshipPaths(
+				{ geography: "ward", boundaryRelease: "2025-01-en-ward" },
+				{
+					geography: "localAuthority",
+					boundaryRelease: "2025-01-uk-lad",
+				},
+				"membership",
+			)
+			.map((path) => path.id),
+		[`${containmentCrosswalk.id}/forward/membership`],
 	);
 });

@@ -17,7 +17,12 @@ export const handleAreaIdentityRoutes = ({
 	const [geography, boundaryRelease, code] = segments.slice(2);
 	if (!geography || !boundaryRelease || !code)
 		return problem(400, "Invalid Path", "An area identity is incomplete.");
-	const area = findArea(context.areaLookup, geography, boundaryRelease, code);
+	const area =
+		context.geographyResolver?.area({
+			geography,
+			boundaryRelease,
+			code,
+		}) ?? findArea(context.areaLookup, geography, boundaryRelease, code);
 	if (area)
 		return {
 			status: 200,

@@ -13,10 +13,6 @@ import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
 import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
-import {
-	createAreaRelationshipIndex,
-	type AreaRelationshipIndex,
-} from "./areaRelationships";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -42,7 +38,6 @@ import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
 import { httpResponse, preflightResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
-import { createAreaSearchIndex } from "./areaSearch";
 import { createGeographyResolver } from "./geographyResolver";
 import {
 	LocationProjectionStore,
@@ -373,7 +368,10 @@ export const readMeasureCompatibility = (
 	return inventory;
 };
 
-export type ApiCatalogues = Required<RouteContext>;
+/** Production catalogues are complete; derived geography indexes live in the resolver. */
+export type ApiCatalogues = Required<
+	Omit<RouteContext, "areaSearchIndex" | "areaRelationshipIndex">
+>;
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaInventory = readAreaInventory(apiRoot);
@@ -423,10 +421,6 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		geographyInventory: readGeographyInventory(apiRoot),
 		areaInventory,
 		areaLookup,
-		areaSearchIndex: createAreaSearchIndex(areaLookup),
-		areaRelationshipIndex: createAreaRelationshipIndex(
-			crosswalkLookup.values(),
-		),
 		geographyResolver,
 		relationshipPathInventory,
 		areaGeometryCache: new AreaGeometryCache(
