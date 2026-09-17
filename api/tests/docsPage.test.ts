@@ -75,12 +75,16 @@ test("answers every quick start request as the guide says it will", () => {
 			if (!step.request.startsWith("/v1/"))
 				return [`${name}: ${step.request} is not a /v1 request`];
 			if (!operationFor(step.request))
-				return [`${name}: ${step.request} is not a documented operation`];
+				return [
+					`${name}: ${step.request} is not a documented operation`,
+				];
 			const response = route("GET", step.request, catalogues);
 			const expected = step.status ?? 200;
 			return response.status === expected
 				? []
-				: [`${name}: ${step.request} answered ${response.status}, not ${expected}`];
+				: [
+						`${name}: ${step.request} answered ${response.status}, not ${expected}`,
+					];
 		}),
 	);
 	assert.deepEqual(problems, []);
@@ -132,7 +136,9 @@ test("serves the landing page the index points to", () => {
 	for (const guide of openapi["x-quick-starts"])
 		for (const step of guide.steps)
 			assert.ok(
-				html.includes(`href="${step.request.replaceAll("&", "&amp;")}"`),
+				html.includes(
+					`href="${step.request.replaceAll("&", "&amp;")}"`,
+				),
 				`${step.request} is not on the page`,
 			);
 	for (const entry of openapi["x-glossary"])
@@ -143,7 +149,10 @@ test("escapes the document's text rather than trusting it as markup", () => {
 	const html = renderDocsPage(
 		{
 			...openapi,
-			info: { title: "<script>alert(1)</script>", description: "A `<b>` & B" },
+			info: {
+				title: "<script>alert(1)</script>",
+				description: "A `<b>` & B",
+			},
 			"x-glossary": [{ term: "<i>", meaning: '"quoted"' }],
 		},
 		"sha256:test",

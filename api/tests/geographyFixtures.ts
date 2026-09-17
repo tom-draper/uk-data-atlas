@@ -31,7 +31,9 @@ export const areaLookup = createAreaLookup([
 		boundaryRelease: "2025-01-uk-lad",
 		codeProperty: "LAD25CD",
 		nameProperty: "LAD25NM",
-		areas: [{ code: "E08000001", name: "Greater Manchester", aliases: ["GM"] }],
+		areas: [
+			{ code: "E08000001", name: "Greater Manchester", aliases: ["GM"] },
+		],
 	},
 ]);
 

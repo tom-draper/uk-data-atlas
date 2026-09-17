@@ -56,7 +56,8 @@ export const searchAreas = (
 	const filtered = index.filter(
 		(area) =>
 			(geography == null || area.geography === geography) &&
-			(boundaryRelease == null || area.boundaryRelease === boundaryRelease),
+			(boundaryRelease == null ||
+				area.boundaryRelease === boundaryRelease),
 	);
 	if (!query) return filtered;
 	const exact = filtered.filter(

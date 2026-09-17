@@ -31,9 +31,9 @@ test("publishes only explicit, directional paths with their valid purpose", () =
 		],
 	);
 	assert.equal(
-		createRelationshipPathIndex(inventory)
-			.get("ward/2025-01-en-ward/localAuthority/2025-01-uk-lad/membership")
-			?.length,
+		createRelationshipPathIndex(inventory).get(
+			"ward/2025-01-en-ward/localAuthority/2025-01-uk-lad/membership",
+		)?.length,
 		1,
 	);
 });
@@ -72,7 +72,10 @@ test("uses an official hierarchy lookup as membership rather than identity", () 
 					geography: "localAuthority",
 					boundaryRelease: "2025-01-uk-lad",
 				},
-				to: { geography: "country", boundaryRelease: "2025-01-uk-country" },
+				to: {
+					geography: "country",
+					boundaryRelease: "2025-01-uk-country",
+				},
 				method: "official-lookup" as const,
 				quality: "publisher-supplied" as const,
 				relationshipPurpose: "membership" as const,

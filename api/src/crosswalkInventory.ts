@@ -95,12 +95,14 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 	quality: "derived";
 	weighting: AreaOverlapWeighting;
 	provenance: {
-	inputs: Array<{
-			side: "from" | "to";
-			input: string;
-			inputHash: string;
-			sourceCodePattern?: string;
-		} & GeometryProvenance>;
+		inputs: Array<
+			{
+				side: "from" | "to";
+				input: string;
+				inputHash: string;
+				sourceCodePattern?: string;
+			} & GeometryProvenance
+		>;
 		areaProjection: "EPSG:6933";
 		clipping: string;
 	};

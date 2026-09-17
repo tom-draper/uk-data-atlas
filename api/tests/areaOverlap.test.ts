@@ -305,9 +305,10 @@ test("reprojects BNG geometry before calculating an overlap", () => {
 			geometrySources("EPSG:27700"),
 			areaLookup(["T1"]),
 		);
-		assert.deepEqual(artifact.records[0]?.targets.map(({ code }) => code), [
-			"T1",
-		]);
+		assert.deepEqual(
+			artifact.records[0]?.targets.map(({ code }) => code),
+			["T1"],
+		);
 		assert.equal(artifact.records[0]?.source.coverage, 1);
 		assert.equal(
 			artifact.provenance.inputs.every(

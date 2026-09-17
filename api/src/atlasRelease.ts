@@ -116,7 +116,12 @@ const cataloguedLocationProjectionArtifacts = (publicDirectory: string) => {
 		.flatMap((shard) =>
 			typeof shard.crosswalkId === "string" &&
 			typeof shard.artifact === "string"
-				? [{ id: `location-projections/${shard.crosswalkId}`, path: shard.artifact }]
+				? [
+						{
+							id: `location-projections/${shard.crosswalkId}`,
+							path: shard.artifact,
+						},
+					]
 				: [],
 		)
 		.sort((left, right) => left.id.localeCompare(right.id));

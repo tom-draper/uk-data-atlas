@@ -60,18 +60,23 @@ const reusableAreaOverlap = (
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
 	if (!existsSync(path)) return undefined;
 	try {
-		const artifact = JSON.parse(readFileSync(path, "utf8")) as CrosswalkArtifact;
+		const artifact = JSON.parse(
+			readFileSync(path, "utf8"),
+		) as CrosswalkArtifact;
 		if (artifact.method !== "area-overlap") return undefined;
 		const { contentHash, ...withoutHash } = artifact;
-		if (contentHash !== sha256(JSON.stringify(withoutHash))) return undefined;
+		if (contentHash !== sha256(JSON.stringify(withoutHash)))
+			return undefined;
 		if (
 			artifact.id !== adapter.id ||
 			artifact.quality !== adapter.quality ||
 			JSON.stringify(artifact.from) !== JSON.stringify(adapter.from) ||
 			JSON.stringify(artifact.to) !== JSON.stringify(adapter.to) ||
-			JSON.stringify(artifact.weighting) !== JSON.stringify(adapter.weighting) ||
+			JSON.stringify(artifact.weighting) !==
+				JSON.stringify(adapter.weighting) ||
 			artifact.validation.overlap.sliverWidthM !== adapter.sliverWidthM ||
-			artifact.validation.overlap.minimumCoverage !== adapter.minimumCoverage
+			artifact.validation.overlap.minimumCoverage !==
+				adapter.minimumCoverage
 		)
 			return undefined;
 		const expected = [
@@ -110,7 +115,9 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const adapters = readCrosswalkAdapters(
 		join(repositoryRoot, "api", "config", "crosswalk-adapters.json"),
 	);
-	const geometrySources = readGeometrySourceLookup(join(repositoryRoot, "api"));
+	const geometrySources = readGeometrySourceLookup(
+		join(repositoryRoot, "api"),
+	);
 	const reusable = new Map(
 		adapters.flatMap((adapter) =>
 			adapter.method === "area-overlap"
@@ -120,7 +127,9 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 							adapter,
 							geometrySources,
 						);
-						return artifact ? [[adapter.id, artifact] as const] : [];
+						return artifact
+							? [[adapter.id, artifact] as const]
+							: [];
 					})()
 				: [],
 		),
@@ -134,11 +143,14 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	);
 	const artifactById = new Map([
 		...reusable,
-		...compiled.artifacts.map((artifact) => [artifact.id, artifact] as const),
+		...compiled.artifacts.map(
+			(artifact) => [artifact.id, artifact] as const,
+		),
 	]);
 	const artifacts = adapters.map((adapter) => {
 		const artifact = artifactById.get(adapter.id);
-		if (!artifact) throw new Error(`No compiled artifact for ${adapter.id}`);
+		if (!artifact)
+			throw new Error(`No compiled artifact for ${adapter.id}`);
 		return artifact;
 	});
 	const inventory = createCrosswalkInventory(artifacts);

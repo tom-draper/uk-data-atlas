@@ -166,10 +166,12 @@ test("serves each tier flat, as the GeoParquet its descriptor lists", () => {
 			rowCount: number;
 		}>;
 	};
-	assert.deepEqual(
-		descriptor.features.map((entry) => entry.tier).sort(),
-		["full", "high", "low", "medium"],
-	);
+	assert.deepEqual(descriptor.features.map((entry) => entry.tier).sort(), [
+		"full",
+		"high",
+		"low",
+		"medium",
+	]);
 	for (const entry of descriptor.features) {
 		const response = get(entry.href);
 		assert.equal(response.status, 200, entry.href);
@@ -220,7 +222,12 @@ test("serves a join table as Parquet holding exactly the JSON values", () => {
 		`/v1/map-resources/${RESOURCE}/join/travel-to-work-car` +
 		"?period=2021&geography=localAuthority&boundaryYear=2023";
 	const json = data(url) as unknown as {
-		values: Array<{ id: number; code: string; value: number; status: string }>;
+		values: Array<{
+			id: number;
+			code: string;
+			value: number;
+			status: string;
+		}>;
 		provenance: { contentHash: string };
 	};
 	const response = get(`${url}&format=parquet`);

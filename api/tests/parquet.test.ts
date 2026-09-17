@@ -13,11 +13,28 @@ import { chunkBounds, readParquet } from "./parquetFixtures";
 const table: ParquetTable = {
 	columns: [
 		{ name: "id", type: "int32", values: [3, 1, 2] },
-		{ name: "code", type: "string", values: ["E06000001", "W06000001", "Ynys Môn"] },
-		{ name: "value", type: "double", optional: true, values: [1.5, null, -2.25] },
+		{
+			name: "code",
+			type: "string",
+			values: ["E06000001", "W06000001", "Ynys Môn"],
+		},
+		{
+			name: "value",
+			type: "double",
+			optional: true,
+			values: [1.5, null, -2.25],
+		},
 		{ name: "count", type: "int64", values: [0n, 9007199254740993n, -1] },
 		{ name: "bbox.xmin", type: "double", values: [-1, -2, -3] },
-		{ name: "geometry", type: "binary", values: [new Uint8Array([1]), new Uint8Array([]), new Uint8Array([2, 3])] },
+		{
+			name: "geometry",
+			type: "binary",
+			values: [
+				new Uint8Array([1]),
+				new Uint8Array([]),
+				new Uint8Array([2, 3]),
+			],
+		},
 		{ name: "bbox.xmax", type: "double", values: [1, 2, 3] },
 	],
 	metadata: { geo: '{"version":"1.1.0"}', atlas: "yes" },
@@ -27,9 +44,30 @@ test("reads back every value, null and group it was given", () => {
 	const file = readParquet(writeParquet(table));
 	assert.equal(file.rowCount, 3);
 	assert.deepEqual(file.rows, [
-		{ id: 3, code: "E06000001", value: 1.5, count: 0n, bbox: { xmin: -1, xmax: 1 }, geometry: Buffer.from([1]) },
-		{ id: 1, code: "W06000001", value: null, count: 9007199254740993n, bbox: { xmin: -2, xmax: 2 }, geometry: Buffer.from([]) },
-		{ id: 2, code: "Ynys Môn", value: -2.25, count: -1n, bbox: { xmin: -3, xmax: 3 }, geometry: Buffer.from([2, 3]) },
+		{
+			id: 3,
+			code: "E06000001",
+			value: 1.5,
+			count: 0n,
+			bbox: { xmin: -1, xmax: 1 },
+			geometry: Buffer.from([1]),
+		},
+		{
+			id: 1,
+			code: "W06000001",
+			value: null,
+			count: 9007199254740993n,
+			bbox: { xmin: -2, xmax: 2 },
+			geometry: Buffer.from([]),
+		},
+		{
+			id: 2,
+			code: "Ynys Môn",
+			value: -2.25,
+			count: -1n,
+			bbox: { xmin: -3, xmax: 3 },
+			geometry: Buffer.from([2, 3]),
+		},
 	]);
 });
 
@@ -75,12 +113,32 @@ test("writes the same bytes for the same table", () => {
 
 test("bounds numeric columns so a reader can skip a file", () => {
 	const { chunks } = readParquet(writeParquet(table));
-	assert.deepEqual(chunkBounds(chunks.get("id")!), { min: 1, max: 3, nullCount: 0 });
-	assert.deepEqual(chunkBounds(chunks.get("value")!), { min: -2.25, max: 1.5, nullCount: 1 });
-	assert.deepEqual(chunkBounds(chunks.get("count")!), { min: -1n, max: 9007199254740993n, nullCount: 0 });
-	assert.deepEqual(chunkBounds(chunks.get("bbox.xmin")!), { min: -3, max: -1, nullCount: 0 });
+	assert.deepEqual(chunkBounds(chunks.get("id")!), {
+		min: 1,
+		max: 3,
+		nullCount: 0,
+	});
+	assert.deepEqual(chunkBounds(chunks.get("value")!), {
+		min: -2.25,
+		max: 1.5,
+		nullCount: 1,
+	});
+	assert.deepEqual(chunkBounds(chunks.get("count")!), {
+		min: -1n,
+		max: 9007199254740993n,
+		nullCount: 0,
+	});
+	assert.deepEqual(chunkBounds(chunks.get("bbox.xmin")!), {
+		min: -3,
+		max: -1,
+		nullCount: 0,
+	});
 	// Byte strings have no bounds under the order declared for them here.
-	assert.deepEqual(chunkBounds(chunks.get("code")!), { min: undefined, max: undefined, nullCount: 0 });
+	assert.deepEqual(chunkBounds(chunks.get("code")!), {
+		min: undefined,
+		max: undefined,
+		nullCount: 0,
+	});
 });
 
 test("follows the specification's rules for zero and NaN bounds", () => {
@@ -132,9 +190,15 @@ test("refuses a table it cannot write faithfully", () => {
 		],
 		/has 2 values for 1 rows/,
 	);
-	refuses([{ name: "a", type: "int32", values: [null] }], /required but holds a null/);
+	refuses(
+		[{ name: "a", type: "int32", values: [null] }],
+		/required but holds a null/,
+	);
 	refuses([{ name: "a", type: "int32", values: [1.5] }], /non-integer/);
-	refuses([{ name: "a.b.c", type: "int32", values: [1] }], /more than one level/);
+	refuses(
+		[{ name: "a.b.c", type: "int32", values: [1] }],
+		/more than one level/,
+	);
 	refuses(
 		[
 			{ name: "a", type: "int32", values: [1] },
