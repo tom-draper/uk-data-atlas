@@ -962,13 +962,17 @@ Implementation and documentation tasks:
       they change with every data build. Each problem code's schema example
       must be its example request's live response. The document is parsed
       strictly, so a repeated key fails the build.
-- [ ] Group every OpenAPI operation under task-oriented tags: **Start here**,
+- [x] Group every OpenAPI operation under task-oriented tags: **Start here**,
       **Map**, **Trend**, **Sync**, **Geography**, **Data catalogue** and
       **Governance**. Give each operation a plain-language summary, its
-      success shape and its most likely refusal. Every operation now carries
-      exactly one of these tags, checked by test; each has a summary, but its
-      most likely refusal is not yet documented operation by operation.
-- [ ] Publish a glossary, endpoint chooser and three copy-paste quick starts
+      success shape and its most likely refusal. Every operation carries
+      exactly one of these tags and an `x-likely-refusal` giving the status,
+      the stable `code` where there is one, when it happens and a request
+      that produces it. `tests/contract.test.ts` sends each request and
+      checks the status and code. A refusal no request can cause, a catalogue
+      not built or a pinned release rebuilt, is named only where the
+      operation takes no input a client could get wrong.
+- [x] Publish a glossary, endpoint chooser and three copy-paste quick starts
       (correct map, defensible trend, reliable sync) which use only current
       OpenAPI routes. Treat them as executable contract tests. The glossary and
       endpoint chooser are the two tables above; they are not yet published
