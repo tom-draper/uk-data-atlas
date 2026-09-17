@@ -48,19 +48,34 @@ export function useLegendControls(
 		if (options.mode === "percentage" && options.selected === id) {
 			onMapOptionsChange(type, { mode: "majority", selected: undefined });
 		} else {
-			onMapOptionsChange(type, { mode: "percentage", selected: id });
+			// Selecting a crossed out category brings it back.
+			onMapOptionsChange(type, {
+				mode: "percentage",
+				selected: id,
+				excluded: (options.excluded ?? []).filter((item) => item !== id),
+			});
 		}
 	};
 	const toggleExcluded = (
 		type: ElectionType | "ethnicity",
 		id: PartyCode | EthnicityCode,
 	) => {
-		const excluded = displayOptions[type].excluded ?? [];
-		onMapOptionsChange(type, {
-			excluded: excluded.includes(id)
-				? excluded.filter((item) => item !== id)
-				: [...excluded, id],
-		});
+		const options = displayOptions[type];
+		const excluded = options.excluded ?? [];
+		if (excluded.includes(id)) {
+			onMapOptionsChange(type, {
+				excluded: excluded.filter((item) => item !== id),
+			});
+		} else if (options.mode === "percentage" && options.selected === id) {
+			// Crossing out the selected category clears the selection.
+			onMapOptionsChange(type, {
+				mode: "majority",
+				selected: undefined,
+				excluded: [...excluded, id],
+			});
+		} else {
+			onMapOptionsChange(type, { excluded: [...excluded, id] });
+		}
 	};
 
 	const handleElectionRangeInput = (min: number, max: number) => {
@@ -145,6 +160,9 @@ export function useLegendControls(
 					displayOptions.custom.selectedPointValue === numericValue
 						? undefined
 						: numericValue,
+				excludedPointValues: (
+					displayOptions.custom.excludedPointValues ?? []
+				).filter((item) => item !== numericValue),
 			});
 		},
 		handlePointLegendRightClick: (value: string) => {
@@ -171,6 +189,9 @@ export function useLegendControls(
 			onMapOptionsChange("network", {
 				selected:
 					displayOptions.network?.selected === id ? undefined : id,
+				excluded: (displayOptions.network?.excluded ?? []).filter(
+					(item) => item !== id,
+				),
 			});
 		},
 		handleNetworkRightClick: (id: string) => {
