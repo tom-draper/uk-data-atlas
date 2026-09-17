@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
 	"inputs": {
-		"boundaryRegistry": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
-		"areaInventory": "sha256:6fe29c7fe3934468922fcbbb14c41aeabb6d0c00c2a05551c80ce3aaa099cf1a",
-		"geometrySources": "sha256:f6fd25a1a7a3cbf44c958700277bdea918f7c02cea5371d79e03524ff1af4965",
+		"boundaryRegistry": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
+		"areaInventory": "sha256:3cdc9bff4271ac6fea04b1225e48f194dd1b8969991997b7a9845e98a3ad21ed",
+		"geometrySources": "sha256:bfc181943afe1dd6341223fc4bf030ec3cc53de94fa23796d8bdfb2263209927",
 		"crosswalkInventory": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
-		"geographyInventory": "sha256:1b14bf41bc699e785855025bfc2370af8ad875b4f57fd692bdf8caa871c403b3",
-		"dataCatalog": "sha256:dbff85a6b6d7fe2bbc7a3c7652790d29d131b90e69073d5d3b8ee585bf13aee5",
-		"exportManifest": "sha256:a5dce534a491bc468323c674f15bc701392314f3967099fcf7b5c65d50f136c7",
+		"geographyInventory": "sha256:45e8062e25a46877e3439fe3b01c921dd8ae960d849f90f571a12ac841058d0b",
+		"dataCatalog": "sha256:cee24bdce17526115d5ec5b3c55a577996b56360f491d4333a9b95b0755252f7",
+		"exportManifest": "sha256:5950a100f62ad9de1da3b02512c2518e41fd9824e1531c0464d60c30cad419ce",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
 	},
 	"summary": {
-		"resourceCount": 529,
-		"checkCount": 1714,
-		"passedCount": 1667,
+		"resourceCount": 540,
+		"checkCount": 1752,
+		"passedCount": 1705,
 		"waivedCount": 47,
 		"coverage": {
-			"boundaryReleases": 73,
-			"areaIdentities": 73,
-			"servableGeometry": 73,
+			"boundaryReleases": 76,
+			"areaIdentities": 76,
+			"servableGeometry": 76,
 			"withRelationships": 32,
 			"crosswalks": 26,
 			"weightedCrosswalks": 2,
-			"measures": 148,
-			"measureSources": 281
+			"measures": 150,
+			"measureSources": 287
 		}
 	},
 	"resources": [
@@ -42,7 +42,7 @@
 					"id": "release-coverage",
 					"status": "passed",
 					"measured": {
-						"boundaryReleaseCount": 73
+						"boundaryReleaseCount": 76
 					}
 				}
 			]
@@ -650,6 +650,35 @@
 			]
 		},
 		{
+			"id": "boundary-releases/itl1/2025-01-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 12
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/itl2/2021-01-uk-bgc-v2",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -679,6 +708,35 @@
 			]
 		},
 		{
+			"id": "boundary-releases/itl2/2025-01-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 46
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/itl3/2021-01-uk-bgc-v3",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -692,6 +750,35 @@
 					"status": "passed",
 					"measured": {
 						"areaCount": 179
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/itl3/2025-01-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 182
 					}
 				},
 				{
@@ -3802,6 +3889,20 @@
 			]
 		},
 		{
+			"id": "measures/gdp",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 3
+					}
+				}
+			]
+		},
+		{
 			"id": "measures/general-election-apni-vote-share",
 			"kind": "measure",
 			"status": "passed",
@@ -4273,6 +4374,20 @@
 					"status": "passed",
 					"measured": {
 						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/gva",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 3
 					}
 				}
 			]
@@ -7328,6 +7443,126 @@
 			]
 		},
 		{
+			"id": "exports/gdp-itl1-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 26,
+						"recordCount": 312
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 12,
+						"boundaryRelease": "2025-01-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 312,
+						"minimum": 22285,
+						"maximum": 617915
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gdp-itl2-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 26,
+						"recordCount": 1196
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 46,
+						"boundaryRelease": "2025-01-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1196,
+						"minimum": 5613,
+						"maximum": 286809
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gdp-itl3-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 26,
+						"recordCount": 4732
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 182,
+						"boundaryRelease": "2025-01-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 4732,
+						"minimum": 671,
+						"maximum": 207887
+					}
+				}
+			]
+		},
+		{
 			"id": "exports/general-election-apni-vote-share-constituency-2019-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -10021,6 +10256,126 @@
 						"recordCount": 7220,
 						"minimum": 6.783000000000001,
 						"maximum": 12272.668
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gva-itl1-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 26,
+						"recordCount": 312
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 12,
+						"boundaryRelease": "2025-01-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 312,
+						"minimum": 19603,
+						"maximum": 577141
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gva-itl2-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 26,
+						"recordCount": 1196
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 46,
+						"boundaryRelease": "2025-01-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1196,
+						"minimum": 4926,
+						"maximum": 278203
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gva-itl3-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 26,
+						"recordCount": 4732
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 182,
+						"boundaryRelease": "2025-01-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 4732,
+						"minimum": 579,
+						"maximum": 204021
 					}
 				}
 			]
@@ -16727,5 +17082,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:318fd5c601280ed6b857e2b3af70f0dd5149ae2dcfd099b70a7a8dab9553efa6"
+	"contentHash": "sha256:e2f4768217c9951236c720c452062dc06328eb95e19fe02eb23a6747160da2a9"
 }

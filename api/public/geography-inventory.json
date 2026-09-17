@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:1b14bf41bc699e785855025bfc2370af8ad875b4f57fd692bdf8caa871c403b3",
-	"boundaryRegistryHash": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
+	"contentHash": "sha256:45e8062e25a46877e3439fe3b01c921dd8ae960d849f90f571a12ac841058d0b",
+	"boundaryRegistryHash": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -509,6 +509,28 @@
 			}
 		},
 		{
+			"id": "2025-01-uk-bgc",
+			"geography": "itl1",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 12,
+				"artifact": "areas/itl1/2025-01-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2021-01-uk-bgc",
 			"geography": "itl1",
 			"countries": [
@@ -542,6 +564,28 @@
 						}
 					}
 				]
+			}
+		},
+		{
+			"id": "2025-01-uk-bgc",
+			"geography": "itl2",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 46,
+				"artifact": "areas/itl2/2025-01-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -591,6 +635,28 @@
 						}
 					}
 				]
+			}
+		},
+		{
+			"id": "2025-01-uk-bgc-v2",
+			"geography": "itl3",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 182,
+				"artifact": "areas/itl3/2025-01-uk-bgc-v2.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -2347,7 +2413,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 2
 		},
 		{
 			"id": "itl2",
@@ -2357,7 +2423,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 2
 		},
 		{
 			"id": "itl3",
@@ -2367,7 +2433,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 2
 		},
 		{
 			"id": "localAuthority",

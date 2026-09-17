@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:2cc02c52145764fda6bf65c9a30eb86abbaf9c425c09e52d5eb2d314444f17f1",
+	"releaseId": "sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
 			"path": "boundary-releases.json",
-			"contentHash": "sha256:b0d298eb81851d60659848e5c0f72330c22dd47d32e7c0408d05d70609fc52f6"
+			"contentHash": "sha256:161a1e25b2d4dc7faec2de631c983ebdcf38e7975629c6c5daeb8d68ac8d5673"
 		},
 		{
 			"id": "derived-boundaries",
@@ -15,7 +15,7 @@
 		{
 			"id": "area-inventory",
 			"path": "area-inventory.json",
-			"contentHash": "sha256:e49e12dbe4f546a50003af5dd108c25391abe36669ff3b2402d241be6b20b1c8"
+			"contentHash": "sha256:a45d519780f2e524e3a789dba29a4a6429e68e3df28d80c42883a7f43f09828f"
 		},
 		{
 			"id": "named-locations",
@@ -30,22 +30,22 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:ffa89a655f596df2f1f7d7222030a8346546d11eaa7dc696944917bb55002db2"
+			"contentHash": "sha256:b151e14776e41a654b8e0ff88abf398fb03685802247eb5a6cbf63d66ecc4a49"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:4770cef7ccdae567f14bd11a7feacbd994c8e98cd0e3d40628d0a6a7fd10215b"
+			"contentHash": "sha256:f7e2d371919d1468afd68f56bcac2902439cb81114dc3298441d5482ebcc700e"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:c97e5681296382aab89f4381fcbf7468e78a51974af3269622cb538aeb7b7613"
+			"contentHash": "sha256:068113d34abe50dfb814d78b9866f94b4adb1580c8a9990149470c2d184d7a09"
 		},
 		{
 			"id": "lookup-manifest",
 			"path": "lookup-manifest.json",
-			"contentHash": "sha256:8c7f610bfd10d70b269d6e87b202183332f5a8cfa25fe3fa0886dab2c909f024"
+			"contentHash": "sha256:5ba08e1a0e54436b97888748006d3e33f737f6ee77ec658a3c4e0618f4bb618f"
 		},
 		{
 			"id": "map-resources",
@@ -65,7 +65,7 @@
 		{
 			"id": "geometry-sources",
 			"path": "geometry-sources.json",
-			"contentHash": "sha256:18029cc3ae53e3faff08757208ecbcef0f6ba5dc72eece8f7d51dc2b99502993"
+			"contentHash": "sha256:f8ec7f477db55ae3601808b364dfa38b82ab77007926671b0c2811f2b8376bc6"
 		},
 		{
 			"id": "crosswalk-inventory",
@@ -85,17 +85,17 @@
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:5743b840a37a6f607cc49bbade5705a180eb61bee1192a93a738a7117b3220e2"
+			"contentHash": "sha256:a5f2629bd7e9b7a815fc82a853fa7c6f026217e3e94e33f322ef6792efaefac4"
 		},
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:159f65888675f4ce2d155054c3763d39d76504b3e6c378784d10a96b26f15433"
+			"contentHash": "sha256:ee37d2d9455ab78e2f8938f7a5bc7ac7d87e222d4201c6c23ffe35cf577d3b83"
 		},
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:9c2b0c9852c45e60dc1cbfe3d2fc22b01003f73a22c6db0af12b73a414f219db"
+			"contentHash": "sha256:fd90957d85cea5780133178f74fc116617ed3fd8f74913a2f0b6bb94c244e4eb"
 		},
 		{
 			"id": "location-projections/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
@@ -448,6 +448,21 @@
 			"contentHash": "sha256:c2015e189ee7036d78dfd13ac0663d65066751485959311aeacab76ac0edaee6"
 		},
 		{
+			"id": "observations/gdp-itl1-observations",
+			"path": "gdp-itl1-observations.json",
+			"contentHash": "sha256:88323e0fb36cbd859a78aa87892759430eff82212629bf41956306d62d06c22f"
+		},
+		{
+			"id": "observations/gdp-itl2-observations",
+			"path": "gdp-itl2-observations.json",
+			"contentHash": "sha256:adc7f6e1aeaf16465f1d882ff4de69b06479f2c00daaf91be6b9f377e7c51425"
+		},
+		{
+			"id": "observations/gdp-itl3-observations",
+			"path": "gdp-itl3-observations.json",
+			"contentHash": "sha256:c7300317189cce76ecc7465b8b5c6714b9accdd58f09c0511b58e91d456af04c"
+		},
+		{
 			"id": "observations/general-election-apni-vote-share-constituency-2019-observations",
 			"path": "general-election-apni-vote-share-constituency-2019-observations.json",
 			"contentHash": "sha256:e1d9b58b3ce2392abdadc1566f9c5a3c24f4a1ea54172e11b535a8b255691896"
@@ -781,6 +796,21 @@
 			"id": "observations/ghg-emissions-observations",
 			"path": "ghg-emissions-observations.json",
 			"contentHash": "sha256:cc6b1799ff22078c54cd500af0756bcb8c0de9fe0e8c0f866da23456ade8327f"
+		},
+		{
+			"id": "observations/gva-itl1-observations",
+			"path": "gva-itl1-observations.json",
+			"contentHash": "sha256:bd6410617cb26ac58a0079a06e086b0566b09342e22c0763e322b2397dec429b"
+		},
+		{
+			"id": "observations/gva-itl2-observations",
+			"path": "gva-itl2-observations.json",
+			"contentHash": "sha256:f16455349d4b9abfd64e02fe85eaf01c20cd21040f47f8c323985f62c31e68ec"
+		},
+		{
+			"id": "observations/gva-itl3-observations",
+			"path": "gva-itl3-observations.json",
+			"contentHash": "sha256:175d6bec312943d4f00c2475e32ea85804de255ef8b4ba2762dd351d63a43cdc"
 		},
 		{
 			"id": "observations/house-price-median-observations",
@@ -1604,6 +1634,9 @@
 			"population-constituency": "sha256:c54929dfd810cb5b7b7c25c4c73869dbca897ded550de597464fa0a0bd70a116",
 			"population-uk": "sha256:69125d0b67f73ab3e20006b9200c14670f129bc93cffaf7299de25ab6cef6f5c",
 			"qualification": "sha256:678346dd068e28442096451dd673b3843c163896107ca7ea2022c297e0b54e89",
+			"regional-gdp-itl1": "sha256:a39afe3d1968d0e65cc0c7886525064cad015d754456f6edc707be15f6bbbb8b",
+			"regional-gdp-itl2": "sha256:560bd326fb06845d3453fad445e11eef99a05175810d34be9b6763b5af5747ad",
+			"regional-gdp-itl3": "sha256:0556503e33acbcebf470c93a7261f0b851bed434c608f95856794906939e413d",
 			"road-collisions": "sha256:dc3f80e5a7c0cc5346ec2fb92866a422b0024f63cfe5298d63cbe439bd8d1821",
 			"school-performance": "sha256:da8b1666da221a5f1ad96509f78c7bf43a4fa7864f784a39a75ff55caf3dbd27",
 			"school-performance-constituency": "sha256:9048816ad866186b5308defdf298d2ff37e89972297b8f2efc40ff10bbde0ad6",
@@ -1668,6 +1701,7 @@
 			"ethnicity-white-and-black-african": "sha256:afa9af0bafa7790337488185220a02dd4eb91215c3c20049dc6a77dc289d828c",
 			"ethnicity-white-and-black-caribbean": "sha256:5fdd9ed419b3b6fc53d810a47da928fb4d70d0b5dfcc5592ac02f30202899956",
 			"ethnicity-white-british": "sha256:f670ed32496343874435a91db9f5f2f03d724ee3877e122bec53eeac91918c46",
+			"gdp": "sha256:cc4f57d45c365041645b2f8f0ca0dba5d28feae8a515e61f76ecb7d9bf3027e9",
 			"general-election-apni-vote-share": "sha256:1571c9165d0545419a47708d1898eb61e553f296f4a2f570cdd023a4664e5890",
 			"general-election-apni-votes": "sha256:3397bd337989834dec6addccd5a062057edbf1dcdcda7f359374f81be36e6de8",
 			"general-election-brx-vote-share": "sha256:1a5619e8d0e26f5fae9febfd9e6ccb219a3a1d634be9a0cdd148795eea0a771e",
@@ -1702,6 +1736,7 @@
 			"general-election-valid-votes": "sha256:59e0d403362d723385b86a4fe446cb0d37214fce50efffb20ded1c5ed02a75f4",
 			"general-election-winning-party": "sha256:f5170ad8f5863c6a332f49926aa5d437b86ea93548ab1f87f2e35f8a97334285",
 			"ghg-emissions": "sha256:ab74e42aa71b977f9c80ffa8799ad476dbac11eda586e6e7046dad96549d9e69",
+			"gva": "sha256:8cfc8bd10e9d3ca572228c3ad3252585cb4573a3d09586c96b27b32b5f8ecbbb",
 			"house-price-median": "sha256:2426fea9c81881fd4168bb167a0276c6cbd06803d19512b50a6656768b54bc26",
 			"imd-decile": "sha256:88e348fc7d8bf27141016716b8f5213397ff4634fded27c06415649755610a22",
 			"imd-rank": "sha256:7a11e3a50530c4dc775c8bca6bcd0e7d5125b836031a996e6096e75643d2ab33",
@@ -1784,8 +1819,11 @@
 			"fireAndRescueAuthority/2021-05-ew-bgc": "sha256:e03b46f8da3c2581d29ac4650b728e81734f9b03ef46ef46a41b2cb0a1f3f7bf",
 			"integratedCareBoard/2026-04-en-bgc": "sha256:242452ec8830c419b6f594cee09e89c86f9b6a1bec2be5bf38a707e1411194a6",
 			"itl1/2021-01-uk-bgc": "sha256:45756db7248fe1fe4337c9bf8a78be6917e113f277621229b87815c8535bbb79",
+			"itl1/2025-01-uk-bgc": "sha256:671b126332b689758fa9c8235993a2e2d447be2b83bb5a6bf54da8026a7fbfb3",
 			"itl2/2021-01-uk-bgc-v2": "sha256:47665d0a806fc8690e239a3690b5d98c095a4187f6dcb17105ccb0f6e96feeff",
+			"itl2/2025-01-uk-bgc": "sha256:ae5df34b46600d3238d573942043aa107a69015da727a5f4a1dbf07037f1c844",
 			"itl3/2021-01-uk-bgc-v3": "sha256:01d16f59cc8547e391db767de0915c76c0fbc8c5b752746ee8cbaec0f3a14868",
+			"itl3/2025-01-uk-bgc-v2": "sha256:0d00d7ee2d9f264fcfc12a90baa60dc0fb2f27233f39e922f523b0f839a71e64",
 			"localAuthority/2016-12-gb-bgc": "sha256:ceaf1548b3671d3c3827fda21b75ca15d3da4e58170149bc4c09b77b55f2d3fe",
 			"localAuthority/2018-12-uk-bgc": "sha256:e04ff7f1cc48940f1fd21d8d1da069e7071f5bdcac4345720d5f5b00a5e98a02",
 			"localAuthority/2019-12-uk-bgc": "sha256:fd4d54f48512f0631f877a33589ef0388d775d649ff62d75c8f40bee26975264",
@@ -1859,8 +1897,11 @@
 			"fireAndRescueAuthority/2021-05-ew-bgc": "sha256:4481ca340f19e728cdb4cc4f020e89fad8a4427a7051372260179bcdcfbaf6a2",
 			"integratedCareBoard/2026-04-en-bgc": "sha256:d75788fc39d335523e54c5122d58296f13ffa8104e3c0312858fe747e06fc7dc",
 			"itl1/2021-01-uk-bgc": "sha256:2b735f9e8be9fb74c08677b89e66a420f6ec9bea66b5e2da9e42aed77e8ba079",
+			"itl1/2025-01-uk-bgc": "sha256:8d51ded06e7d1849c74b1769bbcffb38e920f4382a5155a51ac7c67b7e7bc75f",
 			"itl2/2021-01-uk-bgc-v2": "sha256:f7db77090ed6f22004e4cb1ee41e949acd602413ca6b0916a558e055e4ae2cbe",
+			"itl2/2025-01-uk-bgc": "sha256:5365dba1cf010e39aed335bf5dc122eecb652d8feb9ff70b231ed584da8b7b86",
 			"itl3/2021-01-uk-bgc-v3": "sha256:05216534aca243529eee2f921933d8b04d831aa0899317a48dadfccd17f6be70",
+			"itl3/2025-01-uk-bgc-v2": "sha256:45aad183e7c7bb33c568644fe4cad4c144441e720665531c9bd7371e3c19edf7",
 			"localAuthority/2016-12-gb-bgc": "sha256:2ca2840c27a5bb8acadff68a7e48425c6a910b57b41a7b11dcc020d0eeaf3665",
 			"localAuthority/2018-12-uk-bgc": "sha256:4d720a8e3e6c4b149e96eea216290f433540ce4616490f72b424dede0b68fea5",
 			"localAuthority/2019-12-uk-bgc": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56",
@@ -1934,8 +1975,11 @@
 			"fireAndRescueAuthority/2021-05-ew-bgc": "sha256:46e0bd32f1ab7732a737516fe3309ce142682b4e7b5b2e750fc2d002dc5a7baf",
 			"integratedCareBoard/2026-04-en-bgc": "sha256:e9182ce1636d21913c7104f910aaa9422bae8520dd442e57b4d9cabec40579f3",
 			"itl1/2021-01-uk-bgc": "sha256:0c854d7ca985438f6faae99615ee0eff5937e33bb132eda3e92166ea7475a602",
+			"itl1/2025-01-uk-bgc": "sha256:4e76cb2bb6f1dd80b7bff71ca0898fed13942e242c060431ec7ae1f6ba0c26ff",
 			"itl2/2021-01-uk-bgc-v2": "sha256:eb59b55588cc5477c930b744ab4503681df12d95e74d205934544c6158155870",
+			"itl2/2025-01-uk-bgc": "sha256:7ac7feb205d6787cc19c904b57c9d9562247bffabed9c3a194552f915002ddcd",
 			"itl3/2021-01-uk-bgc-v3": "sha256:5331512f4d1447e7ee411dcc9a4ac2045fdd93ec8e0e2fbc208d63a159cb4a8a",
+			"itl3/2025-01-uk-bgc-v2": "sha256:2280ae4f2b4de7460e603d49146701ae84425f7123add65e8ce58cc4af1b48a8",
 			"localAuthority/2016-12-gb-bgc": "sha256:204b0ea0860c3668d82746e2556cfc220b8e624eceb7b1c515d6b28e179eff96",
 			"localAuthority/2018-12-uk-bgc": "sha256:34e37353185c531c7764a3983ff570927ecc7634f419a72d0464960bf399f1ca",
 			"localAuthority/2019-12-uk-bgc": "sha256:958446a7947506533aa316e75ec993ff6ffe44df59c3ca916957a898abf7774c",
@@ -2284,6 +2328,9 @@
 			"ethnicity-white-and-black-african-observations": "sha256:2a39becc68eadbc0ee05fc2e890aaed15a6cf6536e212f22d0565f2f930fb4ad",
 			"ethnicity-white-and-black-caribbean-observations": "sha256:20e65aca5aff6939fb4ae84dd166ccfe15b3e115c2df98df94d8ec05a2947554",
 			"ethnicity-white-british-observations": "sha256:ff5a424c1aae000dc897f4b986e42a14540335f008d34878cccf8d8c2f1ee154",
+			"gdp-itl1-observations": "sha256:f1a7d8a67769487dedaec57edd6b4cd04302176e2fab806af7d6ca9bef9a7cfa",
+			"gdp-itl2-observations": "sha256:58ead5329d872247c347747bf1ce51e859185ea42f831d7d24e0746a4efdc4b9",
+			"gdp-itl3-observations": "sha256:553b7c97a55bce90fb5ad629186097eb312cc54c74037baff5a53a4a093d3d11",
 			"general-election-apni-vote-share-constituency-2019-observations": "sha256:bad64dbc7686e99fa70173f97bcbc1b7b2dff2e070f0e210a75a756b3ea10d78",
 			"general-election-apni-vote-share-constituency-2024-observations": "sha256:c4267e951fd4c518cbec10dcbab92b2556fedf34459a3daea78b812e7305a029",
 			"general-election-apni-votes-constituency-2019-observations": "sha256:2487314cf76ac7f7cf7a6ad00c34e5e49bd1e08c4e3e57a4c02510f40726f6bc",
@@ -2351,6 +2398,9 @@
 			"general-election-winning-party-constituency-2019-observations": "sha256:1fd9a361bb8668ca618326244b193bfc0500b11f56928a430d4ecffef04e8312",
 			"general-election-winning-party-constituency-2024-observations": "sha256:d1d35216aafb7e9e078dc91e72ed7a6bb3788e79d396c667c306c4832d66b6bb",
 			"ghg-emissions-observations": "sha256:a50ce2b31ce84b9ca06a05022e17b64d0c8c751493e091c91af31beb8fe348cc",
+			"gva-itl1-observations": "sha256:0c37b06c5508a7e1300a86b8f0a0ef7b75ef0427742843173f05e3ca21a4b3ca",
+			"gva-itl2-observations": "sha256:f1d97480cd9c6e1f25593e7e6c68c498e0974c6694d698447438e51a24d5c807",
+			"gva-itl3-observations": "sha256:271bd97bc18078c8f5fcc529fb821d0bc244a3a84c6da99c8d96e57b5509b65a",
 			"house-price-median-observations": "sha256:0e54243440904edc22b3279d931828d922eec28e14ed25a067c29ccbc39d5128",
 			"imd-decile-observations": "sha256:65972f428d8848bbd73c38dfa8af09e5db73c3948aa1dffb62a55a8ece7b07f0",
 			"imd-rank-observations": "sha256:24cf65e768d1e96bc0560819f1ca2716625642ba98d290dc7788e3422126d808",
@@ -2533,8 +2583,11 @@
 			"areas-fireAndRescueAuthority-2021-05-ew-bgc": "sha256:7177f3f111e4c4983de78ebfbc6c258a3932d6cc680c6116d90b87cf8ae1ffb4",
 			"areas-integratedCareBoard-2026-04-en-bgc": "sha256:529bfd824e6cdfbafc7159fd8496c80de2da79235b2b4b211c83fd2b4b48f2b7",
 			"areas-itl1-2021-01-uk-bgc": "sha256:ccbd83e1001f8b00dc954cc344169ef789c3d7def46fbdea873922c8e49817cc",
+			"areas-itl1-2025-01-uk-bgc": "sha256:d71f1ee8d0677b7fbbe63d8931fa1e13f5e1eda0a07ede40fe0f882615cd2a83",
 			"areas-itl2-2021-01-uk-bgc-v2": "sha256:b9d3178cd5a065af05351da7155c31ec759ee39841fc484b22c749565c9ce8d7",
+			"areas-itl2-2025-01-uk-bgc": "sha256:d7963f4b5a4c35b22017d78192db40281e0d85498398a91053671ac086d024e1",
 			"areas-itl3-2021-01-uk-bgc-v3": "sha256:634b62ee5759bf1be6c161e92028ae5eac6e75e936494427104d8d9a60ef2955",
+			"areas-itl3-2025-01-uk-bgc-v2": "sha256:6e510e23dfa5f53c7efe163c7bd7a6ba3b81007dd185b32e33a449be98396277",
 			"areas-localAuthority-2016-12-gb-bgc": "sha256:223f05f75488e543f54a1044da2bfaa2f6062291f1cae714646c75d779ca3d3d",
 			"areas-localAuthority-2018-12-uk-bgc": "sha256:4eefb6ec476ea1fe591a2494d63ad3c2db7e4cde5a288f257da6d9fc3c104753",
 			"areas-localAuthority-2019-12-uk-bgc": "sha256:98d73413d44bb18dc3182881f49fcf6d1e8177b767a6fc6391b930f037eb3ae7",

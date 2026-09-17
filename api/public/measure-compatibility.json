@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:8e3e67b3665ea9fc8e3b426825dc3513ba3dfcbc4f5c74b6b9038c8e20f4812e",
+	"contentHash": "sha256:6e4df0df337e523baacedebe7afb9ebc1f217f7f85ffa399596f0a363e791dbb",
 	"inputs": {
-		"dataCatalog": "sha256:dbff85a6b6d7fe2bbc7a3c7652790d29d131b90e69073d5d3b8ee585bf13aee5",
-		"boundaryRegistry": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
+		"dataCatalog": "sha256:cee24bdce17526115d5ec5b3c55a577996b56360f491d4333a9b95b0755252f7",
+		"boundaryRegistry": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
 		"measureObservations": {
@@ -61,6 +61,9 @@
 			"ethnicity-white-and-black-african/localAuthority/2023": "sha256:32cabe32ad026e870129f97538e5590d5337595133e3b0b48ca43fd01b89bdd6",
 			"ethnicity-white-and-black-caribbean/localAuthority/2023": "sha256:09706a2412aead537678970dfd9acc45324acac9a5887da01463bd025cc4813c",
 			"ethnicity-white-british/localAuthority/2023": "sha256:6c2c4ff6d0be74a1f0317d8c8e05b5870f11da9d309722f41be1d33bd30413fa",
+			"gdp/itl1/2025": "sha256:5271a7dfa6db1cf874f687558789da9ff0e3a68207bd8fa669ae3eb9067452b5",
+			"gdp/itl2/2025": "sha256:635cc005e40b021e3fd62e2da4df150aa02d978646232271d9b4d11c5c479f1f",
+			"gdp/itl3/2025": "sha256:1359a93393321f4f88f15773a3a30c11a6a5b19740bf2fc231baf5e754c9d0f1",
 			"general-election-apni-vote-share/constituency/2019": "sha256:327b8ff9f6f3ff61d528119ad56338a947b1545ceabdf85dca9ce96e74c63c1f",
 			"general-election-apni-vote-share/constituency/2024": "sha256:d4c437d02cb0b1c80da69b2cb0733500e6e42a0d0d0a611af16a66a9d3e8d92b",
 			"general-election-apni-votes/constituency/2019": "sha256:a4e0872025bddd04045369038737fb8b5096ae08d8ac595320d9a61ccab52036",
@@ -128,6 +131,9 @@
 			"general-election-winning-party/constituency/2019": "sha256:77c3f4cf3e5051e60573ed69a6431008feaf6805cd34f0be04c609b98a5afc93",
 			"general-election-winning-party/constituency/2024": "sha256:021de8e176cbdd61ac79fd4a227ecef84720e3427691064cffd937066e748a0f",
 			"ghg-emissions/localAuthority/2025": "sha256:5adf191291c17242e186a6015de015a512d311d621119fc6bb189e3bc477efcc",
+			"gva/itl1/2025": "sha256:c18a43f7a2fc7b5ab4545e3cfb1f2d4b32dfb3e45ed08d1c60c6e75efbd30a99",
+			"gva/itl2/2025": "sha256:463fd15e378784fca72b13005a7d8fa3166dbf62ef26dd3f22e24e182d5cdd9f",
+			"gva/itl3/2025": "sha256:6da87459e2446f5b6f1ce5699a810d14323ed0ac2c1fdc88322079cfb8afcedb",
 			"house-price-median/ward/2020": "sha256:23c9606dc8ea74c20429bf1791360a0f13b673281fc755effb48ba739753ab17",
 			"imd-decile/lsoa/2011": "sha256:4b374a910c0ab30ae55f253c84bc0bec6f8a954a704e2a78861db909c8fe63ee",
 			"imd-rank/lsoa/2011": "sha256:8320612d0617286f36f619c41172be9fbe57f2f1d02cd3e8f75c6422925059dd",
@@ -293,6 +299,9 @@
 			"constituency/2024-07-uk-bgc": "sha256:77090f645fcaf7d5bf78e9973464e79ae9c5373ead42f1fecc14c39ba075db9d",
 			"dataZone/2011-12-sc-bfc": "sha256:62075d67d2c29754f57495650508bd7d0b7d820fd9f95c4d7d8629ade649dbc9",
 			"dataZone/2011-12-sc-nc": "sha256:115e5e21b45f210041b5de1af56d90ad020071816e76165c31ea2cdc8bfc920c",
+			"itl1/2025-01-uk-bgc": "sha256:8d51ded06e7d1849c74b1769bbcffb38e920f4382a5155a51ac7c67b7e7bc75f",
+			"itl2/2025-01-uk-bgc": "sha256:5365dba1cf010e39aed335bf5dc122eecb652d8feb9ff70b231ed584da8b7b86",
+			"itl3/2025-01-uk-bgc-v2": "sha256:45aad183e7c7bb33c568644fe4cad4c144441e720665531c9bd7371e3c19edf7",
 			"localAuthority/2019-12-uk-bgc": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56",
 			"localAuthority/2021-12-uk-bgc": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
@@ -11075,6 +11084,358 @@
 							"sourceCodeCount": 361,
 							"candidateCodeCount": 361,
 							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "gva",
+			"sources": [
+				{
+					"datasetId": "regional-gdp-itl1",
+					"sourceGeography": {
+						"type": "itl1",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-01-uk-bgc",
+							"title": "International territorial level 1, January 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 12,
+							"candidateCodeCount": 12,
+							"matchingCodeCount": 12,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "regional-gdp-itl2",
+					"sourceGeography": {
+						"type": "itl2",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-01-uk-bgc",
+							"title": "International territorial level 2, January 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 46,
+							"candidateCodeCount": 46,
+							"matchingCodeCount": 46,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "regional-gdp-itl3",
+					"sourceGeography": {
+						"type": "itl3",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-01-uk-bgc-v2",
+							"title": "International territorial level 3, January 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 182,
+							"candidateCodeCount": 182,
+							"matchingCodeCount": 182,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "gdp",
+			"sources": [
+				{
+					"datasetId": "regional-gdp-itl1",
+					"sourceGeography": {
+						"type": "itl1",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-01-uk-bgc",
+							"title": "International territorial level 1, January 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 12,
+							"candidateCodeCount": 12,
+							"matchingCodeCount": 12,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "regional-gdp-itl2",
+					"sourceGeography": {
+						"type": "itl2",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-01-uk-bgc",
+							"title": "International territorial level 2, January 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 46,
+							"candidateCodeCount": 46,
+							"matchingCodeCount": 46,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "regional-gdp-itl3",
+					"sourceGeography": {
+						"type": "itl3",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-01-uk-bgc-v2",
+							"title": "International territorial level 3, January 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 182,
+							"candidateCodeCount": 182,
+							"matchingCodeCount": 182,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
