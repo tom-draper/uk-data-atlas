@@ -35,7 +35,13 @@ export type SourceGeography = {
 		| "communitySafetyPartnership"
 		| "lsoa"
 		| "dataZone"
-		| "superOutputArea";
+		| "superOutputArea"
+		// The three International Territorial Level tiers, which economic
+		// statistics are published on. They nest, so a measure names each as
+		// its own partition rather than mixing them in one total.
+		| "itl1"
+		| "itl2"
+		| "itl3";
 	boundaryYear: number;
 };
 

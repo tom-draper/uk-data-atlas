@@ -32,6 +32,7 @@ import { compileCensus } from "./census";
 import { compileMobileCoverage } from "./mobileCoverage";
 import { compileJobs } from "./jobs";
 import { compileEmissions } from "./emissions";
+import { compileRegionalGdp } from "./regionalGdp";
 import { compilePopulation } from "./population";
 import { withNationalVariants } from "./nationalVariants";
 
@@ -69,6 +70,9 @@ export type DataCatalogInputs = {
 	populationConstituency: string;
 	generalElection: string;
 	localElection: string;
+	regionalGdpItl1: string;
+	regionalGdpItl2: string;
+	regionalGdpItl3: string;
 };
 
 /**
@@ -106,11 +110,15 @@ export const compileDataCatalog = ({
 	populationConstituency: populationConstituencyPath,
 	generalElection: generalElectionPath,
 	localElection: localElectionPath,
+	regionalGdpItl1: regionalGdpItl1Path,
+	regionalGdpItl2: regionalGdpItl2Path,
+	regionalGdpItl3: regionalGdpItl3Path,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
 	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
 	ghgEmissionsObservations: MeasureObservationArtifact;
+	regionalGdpObservations: MeasureObservationArtifact[];
 	jobsObservations: MeasureObservationArtifact;
 	mobileCoverageObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
@@ -153,6 +161,11 @@ export const compileDataCatalog = ({
 		),
 	);
 	const emissions = compileEmissions(catalogManifest, ghgEmissionsPath);
+	const regionalGdp = compileRegionalGdp(catalogManifest, {
+		"regional-gdp-itl1": regionalGdpItl1Path,
+		"regional-gdp-itl2": regionalGdpItl2Path,
+		"regional-gdp-itl3": regionalGdpItl3Path,
+	});
 	const jobs = compileJobs(catalogManifest, jobsPath, populationCodes);
 	const mobileCoverage = compileMobileCoverage(
 		catalogManifest,
@@ -226,6 +239,7 @@ export const compileDataCatalog = ({
 		nimdm.measure,
 		...lifeExpectancy.measures,
 		emissions.measure,
+		...regionalGdp.measures,
 		jobs.measure,
 		...mobileCoverage.measures,
 		...indicatorMeasures,
@@ -257,6 +271,7 @@ export const compileDataCatalog = ({
 		populationLocalAuthorityObservations:
 			population.localAuthorityObservations,
 		ghgEmissionsObservations: emissions.artifact,
+		regionalGdpObservations: regionalGdp.artifacts,
 		jobsObservations: jobs.artifact,
 		mobileCoverageObservations: mobileCoverage.artifacts,
 		censusObservations: census.artifacts,
