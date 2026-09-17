@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:893a9d6a3ae2c288bdcb2e12e4598fa515b037eadb59e3a74274db117bc0aec3",
+	"contentHash": "sha256:dbff85a6b6d7fe2bbc7a3c7652790d29d131b90e69073d5d3b8ee585bf13aee5",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -567,8 +567,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 10533660,
-				"sha256": "01f67eab2faf53d2cc75f3b6ad6a6ed8414aedc0e8f6be69682c1714af97dc0d"
+				"bytes": 11141657,
+				"sha256": "c3bfe91e29ee7b8914846f3d95b72af1254b4c7ca9b540d5d5d9da0648068864"
 			}
 		},
 		{
@@ -1333,6 +1333,12 @@
 				},
 				{
 					"kind": "text",
+					"path": "deprivation/wimd/wales-lsoa-population-mid-2017.csv",
+					"bytes": 81467,
+					"sha256": "43e0ea8ce85f47b97cffc4c5f8926bda741a9dfd43e895983315cc66de184f76"
+				},
+				{
+					"kind": "text",
 					"path": "deprivation/wimd/wimd2019.csv",
 					"bytes": 149322,
 					"sha256": "1097ba8139fe83c036a612d1099410d5e96c15010e42cd06541dc5150a08d0a9"
@@ -1346,8 +1352,8 @@
 				]
 			},
 			"compiled": {
-				"bytes": 299545,
-				"sha256": "d012a323f768fe4a0d61a67a4c1398e591c7f02eeaaf093b9a1b0d2682386be9"
+				"bytes": 335071,
+				"sha256": "775aa852c76948ad85a79d2698fc7db7a345a9df277531339af3b78b662c0933"
 			}
 		}
 	],

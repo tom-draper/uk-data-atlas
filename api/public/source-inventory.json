@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:be4879f0ee3446d61ada9be1bb9d7ca7bcf9d71262891e6796e182d2419a0efa",
+	"contentHash": "sha256:24430663642847dae5f0b2dae9803e61aabcc09e93b358308e2d3620abc08b28",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1440,9 +1440,13 @@
 				{
 					"extension": ".ods",
 					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:1f77f7be5038d45a38b4190f2c5ed662c555e86bdcb6d58c00d915b73dc0f6ab"
+			"metadataHash": "sha256:f5616a5078d3cf4acb8ae165343e64921cd675bd95a6f15294a24ce56ed668dd"
 		},
 		{
 			"key": "economics/child-poverty",

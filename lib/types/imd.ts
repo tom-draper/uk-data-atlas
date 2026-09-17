@@ -1,4 +1,4 @@
-import type { DeprivationSummary } from "./deprivation";
+import type { ScoredDeprivationSummary } from "./deprivation";
 
 export interface IMDLSOAData {
 	lsoaCode: string;
@@ -8,6 +8,8 @@ export interface IMDLSOAData {
 	imdScore: number;
 	imdRank: number;
 	imdDecile: number;
+	/** Mid-2015 population excluding prisoners, the index's own denominator. */
+	population: number;
 	incomeScore: number;
 	employmentScore: number;
 	educationScore: number;
@@ -31,5 +33,5 @@ export interface IMDDataset {
 	};
 }
 
-/** A group of areas, summarised without averaging ranks or deciles. */
-export type AggregatedIMDData = DeprivationSummary;
+/** A group of areas: its population-weighted average score, and its share in the most deprived tenth. */
+export type AggregatedIMDData = ScoredDeprivationSummary;

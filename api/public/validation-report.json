@@ -7,8 +7,8 @@
 		"crosswalkInventory": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 		"geographyInventory": "sha256:1b14bf41bc699e785855025bfc2370af8ad875b4f57fd692bdf8caa871c403b3",
-		"dataCatalog": "sha256:893a9d6a3ae2c288bdcb2e12e4598fa515b037eadb59e3a74274db117bc0aec3",
-		"exportManifest": "sha256:4245e6f96f3bbc11dffd65f89d194da7656fc25344ed424f9183a525b3230849",
+		"dataCatalog": "sha256:dbff85a6b6d7fe2bbc7a3c7652790d29d131b90e69073d5d3b8ee585bf13aee5",
+		"exportManifest": "sha256:a5dce534a491bc468323c674f15bc701392314f3967099fcf7b5c65d50f136c7",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
 	},
@@ -16727,5 +16727,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:dbcd7cddb812028fe35a86c2c9e53d1c0414765e87307b4135295bd596199aae"
+	"contentHash": "sha256:318fd5c601280ed6b857e2b3af70f0dd5149ae2dcfd099b70a7a8dab9553efa6"
 }

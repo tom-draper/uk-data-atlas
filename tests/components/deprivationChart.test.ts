@@ -39,10 +39,10 @@ describe("areaDisplay", () => {
 
 describe("summaryDisplay", () => {
 	it("puts the national rate of a tenth at the middle of the scale", () => {
-		const display = summaryDisplay(
-			{ areaCount: 200, mostDeprivedCount: 20 },
-			"LSOAs",
-		);
+		const display = summaryDisplay(index, {
+			areaCount: 200,
+			mostDeprivedCount: 20,
+		});
 		expect(display.value).toBe("10%");
 		expect(display.secondary).toBe("20 of 200 LSOAs");
 		expect(display.severity).toBe(0.5);
@@ -50,8 +50,43 @@ describe("summaryDisplay", () => {
 
 	it("saturates at twice the national rate", () => {
 		expect(
-			summaryDisplay({ areaCount: 10, mostDeprivedCount: 5 }, "LSOAs")
+			summaryDisplay(index, { areaCount: 10, mostDeprivedCount: 5 })
 				.severity,
 		).toBe(1);
+	});
+
+	describe("for an index that publishes scores", () => {
+		const scored: DeprivationIndex = {
+			...index,
+			metric: "score",
+			metricMaximum: 80,
+		};
+		const summary = {
+			areaCount: 200,
+			mostDeprivedCount: 30,
+			population: 300_000,
+			averageScore: 24.26,
+		};
+
+		it("leads with the average score, keeping the share beneath it", () => {
+			const display = summaryDisplay(scored, summary);
+			expect(display.value).toBe("24.3");
+			expect(display.unit).toBe("average score");
+			expect(display.secondary).toBe("15% in most deprived 10%");
+		});
+
+		it("scales an average score's bar as it scales one area's score", () => {
+			expect(summaryDisplay(scored, summary).barWidth).toBe(
+				areaDisplay(scored, 3, { kind: "score", value: 24.26 })
+					.barWidth,
+			);
+		});
+
+		it("falls back to the share where no area has a population", () => {
+			expect(
+				summaryDisplay(scored, { ...summary, averageScore: null })
+					.value,
+			).toBe("15%");
+		});
 	});
 });
