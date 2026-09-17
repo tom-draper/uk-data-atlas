@@ -58,11 +58,13 @@ test("measures how two areas overlap beside any published relationship", () => {
 			"LAD25CD",
 			[["E08000001", square(-1, 54, 0, 55)]],
 		);
-		const context = testContext({
-			boundaryRegistry: registry,
-			areaLookup,
-			crosswalkLookup,
-			areaGeometryCache: new AreaGeometryCache(
+		const context = testContext(
+			{
+				boundaryRegistry: registry,
+				areaLookup,
+				crosswalkLookup,
+			} satisfies RouteContext,
+			new AreaGeometryCache(
 				root,
 				new Map([
 					[
@@ -83,7 +85,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 					],
 				]),
 			),
-		} satisfies RouteContext);
+		);
 		const url = "/v1/areas/ward/2025-01-en-ward/E05000001/overlap";
 
 		const response = routeRequest(
