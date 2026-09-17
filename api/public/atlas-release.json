@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97",
+	"releaseId": "sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -50,7 +50,7 @@
 		{
 			"id": "map-resources",
 			"path": "map-resources.json",
-			"contentHash": "sha256:9abc11a67328de2de541bf9abda2951a4c48a0c48464d9c707c779c3e1ad1cac"
+			"contentHash": "sha256:770fbdc80e64bf585001beb7effcf628c13a1b93dd58d3695d8fd927ff18ad7f"
 		},
 		{
 			"id": "population-observations",

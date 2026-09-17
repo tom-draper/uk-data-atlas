@@ -67,6 +67,8 @@ export type RouteContext = {
 	mapResources?: { resources: MapResourceDescriptor[] };
 	/** Each map resource's archive, opened once and keyed by resource id. */
 	mapArchives?: Map<string, MapArchive>;
+	/** Each map resource tier's GeoParquet file, keyed by its artifact path. */
+	mapFeatures?: Map<string, Buffer>;
 };
 
 export type RouteRequest = {

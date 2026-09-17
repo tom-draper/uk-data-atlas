@@ -1,8 +1,9 @@
 import { createHash } from "node:crypto";
 import type { AreaGeometryCache } from "../areaGeometry";
-import type { GeometryTier } from "../simplifyGeometry";
+import { GEOMETRY_TIERS, type GeometryTier } from "../simplifyGeometry";
 import { decomposeArcs } from "./arcs";
-import { compileTier, TOPOLOGY_METHOD } from "./topologyTiers";
+import { buildGeoParquet } from "./geoParquet";
+import { compileTier, TOPOLOGY_METHOD, type TierGeometry } from "./topologyTiers";
 import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
 import {
 	boundsOf,
@@ -73,6 +74,22 @@ export type MapResourceDescriptor = {
 		coordinates: number;
 		refinedArcs: number;
 	}>;
+	/**
+	 * The flat form: every area of one tier as a GeoParquet feature, with the
+	 * ids the tiles and join tables use. Every tier is published, `full`
+	 * included, because a warehouse chooses its own detail.
+	 */
+	features: Array<{
+		tier: GeometryTier;
+		toleranceM: number;
+		format: "geoparquet-1.1";
+		artifact: string;
+		href: string;
+		rowCount: number;
+		coordinates: number;
+		bytes: number;
+		contentHash: string;
+	}>;
 	generalisation: typeof TOPOLOGY_METHOD;
 	geometrySource: Record<string, unknown>;
 	attribution: {
@@ -101,7 +118,11 @@ export const compileMapResource = (
 	/** Each area's name in this release, for the label a renderer draws. */
 	names: Map<string, string>,
 	artifact: string,
-): { archive: Buffer; descriptor: MapResourceDescriptor } => {
+): {
+	archive: Buffer;
+	features: Array<{ artifact: string; body: Buffer }>;
+	descriptor: MapResourceDescriptor;
+} => {
 	const { geography, id: boundaryRelease } = release;
 	const areas = new Map(
 		cache.codes(geography, boundaryRelease).flatMap((code) => {
@@ -125,11 +146,20 @@ export const compileMapResource = (
 	// alone instead of having to be told it.
 	const numbered = featureIds([...areas.keys()]);
 
+	// Each tier is generalised once and used for both forms, so a feature in
+	// the flat download and the same feature in a tile are the same shape.
+	const compiledTiers = new Map<GeometryTier, TierGeometry>(
+		(Object.keys(GEOMETRY_TIERS) as GeometryTier[]).map((tier) => [
+			tier,
+			compileTier(topology, tier),
+		]),
+	);
+
 	const bounds: TileBox = [Infinity, Infinity, -Infinity, -Infinity];
 	const tiles: ArchiveTile[] = [];
 	const tiers: MapResourceDescriptor["tiers"] = [];
 	for (const band of ZOOM_TIERS) {
-		const compiled = compileTier(topology, band.tier);
+		const compiled = compiledTiers.get(band.tier)!;
 		tiers.push({
 			tier: band.tier,
 			toleranceM: compiled.toleranceM,
@@ -177,6 +207,33 @@ export const compileMapResource = (
 		licence: release.source.licence,
 		href: `/v1/attribution?boundaryReleases=${geography}/${boundaryRelease}`,
 	};
+	const id = `${geography}/${boundaryRelease}`;
+	const features = [...compiledTiers].map(([tier, compiled]) => {
+		const body = buildGeoParquet(
+			[...compiled.areas].map(([code, geometry]) => ({
+				id: numbered.get(code)!,
+				code,
+				name: names.get(code) ?? code,
+				geometry,
+			})),
+			{
+				mapResource: id,
+				tier,
+				toleranceM: compiled.toleranceM,
+				topology: "shared-arc",
+				attribution: attribution.text,
+				geometrySourceInputHash:
+					cache.provenance(geography, boundaryRelease).inputHash ??
+					null,
+			},
+		);
+		return {
+			tier,
+			compiled,
+			body,
+			artifact: artifact.replace(/\.pmtiles$/, `-${tier}.parquet`),
+		};
+	});
 	const archive = buildArchive(tiles, {
 		minZoom: MIN_ZOOM,
 		maxZoom: MAX_ZOOM,
@@ -210,8 +267,9 @@ export const compileMapResource = (
 
 	return {
 		archive,
+		features: features.map(({ artifact, body }) => ({ artifact, body })),
 		descriptor: {
-			id: `${geography}/${boundaryRelease}`,
+			id,
 			geography,
 			boundaryRelease,
 			title: release.title,
@@ -239,6 +297,17 @@ export const compileMapResource = (
 				contentHash: sha256(archive),
 			},
 			tiers,
+			features: features.map(({ tier, compiled, body, artifact }) => ({
+				tier,
+				toleranceM: compiled.toleranceM,
+				format: "geoparquet-1.1" as const,
+				artifact,
+				href: `/v1/map-resources/${id}/features?tier=${tier}`,
+				rowCount: compiled.areas.size,
+				coordinates: compiled.verticesAfter,
+				bytes: body.length,
+				contentHash: sha256(body),
+			})),
 			generalisation: TOPOLOGY_METHOD,
 			geometrySource: cache.provenance(
 				geography,

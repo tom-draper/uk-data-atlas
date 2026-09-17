@@ -488,6 +488,14 @@ export const readApiCatalogues = (
 				openArchive(join(apiRoot, "public", resource.tiles.artifact)),
 			]),
 		),
+		mapFeatures: new Map(
+			mapResources.resources.flatMap((resource) =>
+				(resource.features ?? []).map((entry) => [
+					entry.artifact,
+					readFileSync(join(apiRoot, "public", entry.artifact)),
+				]),
+			),
+		),
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),

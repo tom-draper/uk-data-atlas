@@ -74,6 +74,16 @@
 					"data.attribution.text",
 					"data.boundaryRelease",
 					"data.bounds",
+					"data.features",
+					"data.features[].artifact",
+					"data.features[].bytes",
+					"data.features[].contentHash",
+					"data.features[].coordinates",
+					"data.features[].format",
+					"data.features[].href",
+					"data.features[].rowCount",
+					"data.features[].tier",
+					"data.features[].toleranceM",
 					"data.generalisation",
 					"data.geography",
 					"data.geometrySource",
@@ -231,6 +241,16 @@
 					"data.attribution.text",
 					"data.boundaryRelease",
 					"data.bounds",
+					"data.features",
+					"data.features[].artifact",
+					"data.features[].bytes",
+					"data.features[].contentHash",
+					"data.features[].coordinates",
+					"data.features[].format",
+					"data.features[].href",
+					"data.features[].rowCount",
+					"data.features[].tier",
+					"data.features[].toleranceM",
 					"data.generalisation",
 					"data.geography",
 					"data.geometrySource",
@@ -332,6 +352,95 @@
 					"data.vector_layers",
 					"meta",
 					"meta.nextCursor"
+				],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /map-resources/{geography}/{release}/features": {
+			"operationId": "getMapResourceFeatures",
+			"parameters": {
+				"path:geography": {
+					"required": true
+				},
+				"path:release": {
+					"required": true
+				},
+				"query:tier": {
+					"required": true,
+					"enum": [
+						"full",
+						"high",
+						"low",
+						"medium"
+					]
+				},
+				"query:format": {
+					"required": false,
+					"enum": [
+						"geoparquet"
+					]
+				}
+			},
+			"responses": {
+				"200 application/vnd.apache.parquet": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
 				],
 				"404 application/problem+json": [
 					"absence",
@@ -482,9 +591,17 @@
 				},
 				"query:boundaryYear": {
 					"required": false
+				},
+				"query:format": {
+					"required": false,
+					"enum": [
+						"json",
+						"parquet"
+					]
 				}
 			},
 			"responses": {
+				"200 application/vnd.apache.parquet": [],
 				"200 application/json": [
 					"apiVersion",
 					"atlasRelease",

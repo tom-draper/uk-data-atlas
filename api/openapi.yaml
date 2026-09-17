@@ -130,6 +130,7 @@ paths:
                     - /v1/map-resources/{geography}/{release}.pmtiles
                     - /v1/map-resources/{geography}/{release}/tiles.json
                     - /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
+                    - /v1/map-resources/{geography}/{release}/features
                     - /v1/map-resources/{geography}/{release}/join/{measure-id}
                     - /v1/atlas-releases/{release-id}/map-resources/{geography}/{release}
                     - /v1/boundary-releases
@@ -206,8 +207,8 @@ paths:
 
 
         Any path below the release id is served this way, including
-        `tiles.json`, `tiles/{z}/{x}/{y}.mvt`, the `.pmtiles` archive and a
-        join table. Only the release the server currently holds can be
+        `tiles.json`, `tiles/{z}/{x}/{y}.mvt`, the `.pmtiles` archive, the
+        GeoParquet `features` and a join table. Only the release the server currently holds can be
         answered: the archive keeps release manifests, not the data files
         behind them, so a release that is recorded but no longer served is
         refused with `410` rather than quietly answered from the current one.
@@ -315,6 +316,61 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /map-resources/{geography}/{release}/features:
+    get:
+      operationId: getMapResourceFeatures
+      tags: ["Geography"]
+      summary: Every area of one tier as a GeoParquet file
+      description: >
+        The flat form of the resource, for a warehouse or a GIS that holds
+        features rather than tiles: GeoParquet 1.1 with one row per area,
+        carrying the same `id`, `code` and `name` as the tiles, its shape as
+        WKB in OGC:CRS84, and a `bbox` covering column a reader can filter
+        on. Each tier is compiled from the same shared-arc generalisation the
+        tiles are drawn from, so neighbours share their borders exactly, and
+        the ids are the ones a join table publishes, so values join by `id`
+        or `code` without reading a tile. Every tier is published, `full`
+        included, and its size and SHA-256 are listed under `features` in the
+        descriptor. A coarse tier keeps every border shared but is not
+        guaranteed to be a valid polygon everywhere, as the descriptor's
+        `generalisation` says. The file's `uk-data-atlas` metadata names the
+        resource, tier, attribution and publisher file hash, so a copy loaded
+        on its own is still citable. GeoJSON is not offered.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - name: tier
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [full, high, medium, low]
+          description: >
+            The detail to download. `full` is the release's own geometry; each
+            coarser tier drops detail smaller than 10, 100 or 1,000 metres.
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [geoparquet]
+            default: geoparquet
+          description: The representation. GeoParquet is the only one served.
+      responses:
+        "200":
+          description: The GeoParquet file.
+          content:
+            application/vnd.apache.parquet:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt:
     get:
       operationId: getMapResourceTile
@@ -385,6 +441,13 @@ paths:
         carry it. Keeping values out of the tiles is what lets one tileset
         serve every measure, and lets a corrected value invalidate a small
         table rather than a whole pyramid.
+
+
+        With `format=parquet` the same table is served as a Parquet file with
+        `id`, `code`, `value` and `status` columns, for a warehouse to join to
+        the GeoParquet `features`. Everything the JSON envelope says about the
+        table, from the Atlas release to the join rule and provenance, travels
+        in the file's `uk-data-atlas` metadata.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -408,10 +471,24 @@ paths:
           description: The measure's source boundary year, alongside `geography`.
           schema:
             type: integer
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [json, parquet]
+            default: json
+          description: >
+            `json` for the envelope a renderer reads, `parquet` for the same
+            rows as a Parquet file.
       responses:
         "200":
           description: The values, numbered as the tiles number their features.
           content:
+            application/vnd.apache.parquet:
+              schema:
+                type: string
+                format: binary
             application/json:
               schema:
                 $ref: "#/components/schemas/MapResourceJoinEnvelope"
@@ -5209,8 +5286,8 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97
-                    href: /v1/atlas-releases/sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97
+                  - releaseId: sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd
+                    href: /v1/atlas-releases/sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd
                     artifactCount: 313
                     current: true
                 meta:
@@ -5242,7 +5319,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97
+                  releaseId: sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5324,14 +5401,14 @@ paths:
               x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97"
+                atlasRelease: "sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd"
                 data:
                   from:
-                    releaseId: "sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97"
-                    href: /v1/atlas-releases/sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97
+                    releaseId: "sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd"
+                    href: /v1/atlas-releases/sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd
                   to:
-                    releaseId: "sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97"
-                    href: /v1/atlas-releases/sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97
+                    releaseId: "sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd"
+                    href: /v1/atlas-releases/sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 313 }
                   artifacts:
                     added: []
@@ -6480,6 +6557,7 @@ components:
         - bounds
         - tiles
         - tiers
+        - features
         - generalisation
         - geometrySource
         - attribution
@@ -6529,6 +6607,38 @@ components:
                 description: >
                   Arcs given back detail because a ring built from them
                   enclosed nothing at this tier, so no part leaves the map.
+        features:
+          type: array
+          description: >
+            Every tier as a GeoParquet download, compiled from the same
+            shared-arc generalisation as the tiles.
+          items:
+            type: object
+            required: [tier, toleranceM, format, artifact, href, rowCount, coordinates, bytes, contentHash]
+            properties:
+              tier:
+                type: string
+                enum: [full, high, medium, low]
+              toleranceM:
+                type: number
+              format:
+                type: string
+                const: geoparquet-1.1
+              artifact:
+                type: string
+              href:
+                type: string
+              rowCount:
+                type: integer
+                description: One row per area in the release.
+              coordinates:
+                type: integer
+                description: Coordinates across the tier's shared arcs, each border counted once.
+              bytes:
+                type: integer
+              contentHash:
+                type: string
+                description: SHA-256 of the file served at `href`.
         generalisation:
           type: object
           description: The terms the tiers were compiled on, in plain words.

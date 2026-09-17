@@ -6,6 +6,7 @@ import { gunzipSync } from "node:zlib";
 import { httpResponse } from "../src/httpResponse";
 import { route } from "../src/routes";
 import { readApiCatalogues } from "../src/server";
+import { readParquet } from "./parquetFixtures";
 import { decodeTile } from "./vectorTileFixtures";
 
 /**
@@ -153,6 +154,102 @@ test("serves the whole archive with the hash its descriptor gives", () => {
 	const archive = response.body as Buffer;
 	assert.equal(archive.length, descriptor.tiles.bytes);
 	assert.equal(archive.subarray(0, 7).toString("ascii"), "PMTiles");
+});
+
+test("serves each tier flat, as the GeoParquet its descriptor lists", () => {
+	const descriptor = data(`/v1/map-resources/${RESOURCE}`) as {
+		areaCount: number;
+		features: Array<{
+			tier: string;
+			href: string;
+			bytes: number;
+			rowCount: number;
+		}>;
+	};
+	assert.deepEqual(
+		descriptor.features.map((entry) => entry.tier).sort(),
+		["full", "high", "low", "medium"],
+	);
+	for (const entry of descriptor.features) {
+		const response = get(entry.href);
+		assert.equal(response.status, 200, entry.href);
+		assert.equal(
+			response.headers["content-type"],
+			"application/vnd.apache.parquet",
+		);
+		assert.match(
+			response.headers["content-disposition"]!,
+			new RegExp(`filename=".*-${entry.tier}\\.parquet"`),
+		);
+		const body = response.body as Buffer;
+		assert.equal(body.length, entry.bytes);
+		assert.equal(entry.rowCount, descriptor.areaCount);
+	}
+	// Asking for the default format by name is the same request.
+	const low = descriptor.features.find((entry) => entry.tier === "low")!;
+	assert.equal(
+		get(`${low.href}&format=geoparquet`).headers.etag,
+		get(low.href).headers.etag,
+	);
+});
+
+test("refuses a features download without a tier it publishes", () => {
+	for (const query of ["", "?tier=", "?tier=coarse"]) {
+		const refused = route(
+			"GET",
+			`/v1/map-resources/${RESOURCE}/features${query}`,
+			catalogues,
+		);
+		assert.equal(refused.status, 400, query);
+		assert.match(
+			(refused.body as { detail: string }).detail,
+			/full, high, medium, low/,
+		);
+	}
+	const format = route(
+		"GET",
+		`/v1/map-resources/${RESOURCE}/features?tier=low&format=geojson`,
+		catalogues,
+	);
+	assert.equal(format.status, 400);
+	assert.equal((format.body as { code: string }).code, "invalid_format");
+});
+
+test("serves a join table as Parquet holding exactly the JSON values", () => {
+	const url =
+		`/v1/map-resources/${RESOURCE}/join/travel-to-work-car` +
+		"?period=2021&geography=localAuthority&boundaryYear=2023";
+	const json = data(url) as unknown as {
+		values: Array<{ id: number; code: string; value: number; status: string }>;
+		provenance: { contentHash: string };
+	};
+	const response = get(`${url}&format=parquet`);
+	assert.equal(response.status, 200);
+	assert.equal(
+		response.headers["content-type"],
+		"application/vnd.apache.parquet",
+	);
+	const file = readParquet(response.body as Buffer);
+	assert.deepEqual(file.rows, json.values);
+	// A copy loaded on its own still says what it is and where it came from.
+	const about = JSON.parse(file.metadata["uk-data-atlas"]!) as {
+		atlasRelease: string;
+		mapResource: string;
+		join: { method: string };
+		provenance: { contentHash: string };
+	};
+	assert.equal(
+		about.atlasRelease,
+		(route("GET", url, catalogues).body as { atlasRelease: string })
+			.atlasRelease,
+	);
+	assert.equal(about.mapResource, RESOURCE);
+	assert.equal(about.join.method, "code-match");
+	assert.equal(about.provenance.contentHash, json.provenance.contentHash);
+
+	const refused = route("GET", `${url}&format=csv`, catalogues);
+	assert.equal(refused.status, 400);
+	assert.equal((refused.body as { code: string }).code, "invalid_format");
 });
 
 test("refuses a resource it does not publish", () => {
