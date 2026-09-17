@@ -58,6 +58,30 @@ info:
     release records no build time, so the `ETag` is the only validator. A
     response can change only when the server loads a different Atlas release,
     and its `ETag` then changes with it.
+
+    Versioning is by path and by release. Within `/v1` the contract only
+    grows: an operation, parameter, status or response property is never
+    removed, a parameter never becomes required and never accepts less. An
+    operation to be withdrawn is first marked `deprecated` with
+    `x-deprecated-since` and `x-sunset` dates, and every response it serves
+    carries RFC 9745 `Deprecation` and RFC 8594 `Sunset` headers until then.
+    `contract/v1-surface.json` locks this document's surface, and a test
+    refuses any change that breaks it. What the data says is pinned
+    separately: every response carries an `Atlas-Release` header naming the
+    release that produced it, and a path under
+    `/atlas-releases/{release-id}/` answers exactly as the unpinned path does,
+    marked `immutable`, for as long as that release is served. A release no
+    longer served is refused with `410` rather than answered from another.
+
+    Any operation may also answer with a problem that is not in its own list,
+    because it comes from the server rather than the route. `429` means the
+    client has spent its requests: each client has a bucket, described by
+    the IETF draft `RateLimit-Policy` and `RateLimit` headers on every
+    response, and a refusal carries `Retry-After` in seconds. `414` means the
+    request target is longer than the server accepts. `500` means the route
+    failed unexpectedly, and carries a `requestId`. Every response carries
+    `X-Request-Id`, echoing a well-formed one the client sent, so a failure
+    can be found in the server's logs. None of these is cached.
   license:
     name: Proposal; no licence has been assigned yet
 tags:
