@@ -33,19 +33,21 @@ export default function GeneralElectionRegistryChart({
 }: GeneralElectionRegistryChartProps) {
 	const { excludedGeneralParties, selectedGeneralParty } =
 		useExcludedCategories();
+	const isActive =
+		activeDataset?.type === "generalElection" &&
+		activeDataset.id === `generalElection-${year}`;
+
 	const data = computeGeneralElectionYearData(
 		year,
 		availableDatasets?.[year],
 		aggregatedData,
 		selectedArea,
 		codeMapper?.getCodeForYear,
-		excludedGeneralParties,
-		selectedGeneralParty,
+		// The legend filter belongs to the dataset on the map, so other years
+		// keep showing their full results.
+		isActive ? excludedGeneralParties : undefined,
+		isActive ? selectedGeneralParty : undefined,
 	);
-
-	const isActive =
-		activeDataset?.type === "generalElection" &&
-		activeDataset.id === `generalElection-${year}`;
 
 	return (
 		<GeneralElectionResultChart
