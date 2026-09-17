@@ -64,7 +64,7 @@ export function Breadcrumbs({
 
 export function Eyebrow({ children }: { children: ReactNode }) {
 	return (
-		<p className="mb-2 text-[12px] font-semibold tracking-[0.12em] text-indigo-600/90 uppercase">
+		<p className="mb-2 text-[14px] font-medium text-indigo-600">
 			{children}
 		</p>
 	);
