@@ -52,7 +52,9 @@ export function useLegendControls(
 			onMapOptionsChange(type, {
 				mode: "percentage",
 				selected: id,
-				excluded: (options.excluded ?? []).filter((item) => item !== id),
+				excluded: (options.excluded ?? []).filter(
+					(item) => item !== id,
+				),
 			});
 		}
 	};

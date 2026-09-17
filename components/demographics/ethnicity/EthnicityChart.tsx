@@ -138,7 +138,8 @@ export default function EthnicityChart({
 			(item) =>
 				!isActive ||
 				(!excludedEthnicities.has(item.ethnicity) &&
-					(!selectedEthnicity || item.ethnicity === selectedEthnicity)),
+					(!selectedEthnicity ||
+						item.ethnicity === selectedEthnicity)),
 		);
 
 		const totalPopulation = allEthnicities.reduce(
