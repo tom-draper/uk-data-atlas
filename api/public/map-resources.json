@@ -44,8 +44,8 @@
 					}
 				],
 				"tileCount": 12206,
-				"bytes": 6163957,
-				"contentHash": "sha256:56226fcbbb371d0c636612a7038c0ccd776793933f38490b458061724a52c8ac"
+				"bytes": 6168498,
+				"contentHash": "sha256:761cbe31c54b07bb0ee0adb3f57c151d7fbb94f63fe1941eb07dc49f2e16882d"
 			},
 			"tiers": [
 				{
@@ -76,8 +76,8 @@
 					"href": "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=full",
 					"rowCount": 361,
 					"coordinates": 417116,
-					"bytes": 7252566,
-					"contentHash": "sha256:5fd8bcefcd72c67a6aa75bebbe82fd15ac9713d6da12cb20b6540034f8e37b7b"
+					"bytes": 6689139,
+					"contentHash": "sha256:681feea505fea4027be3a5060449bfc588f69d85c7cf2df95a5a418f06b580a7"
 				},
 				{
 					"tier": "high",
@@ -87,8 +87,8 @@
 					"href": "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=high",
 					"rowCount": 361,
 					"coordinates": 389259,
-					"bytes": 6862205,
-					"contentHash": "sha256:3f9f3891980fa57836eca54a8ad5deebfe536660a6eb16b931290c8639347a6e"
+					"bytes": 6339251,
+					"contentHash": "sha256:d2ebf96a3d0b1c5c5b4b0e000fe9a38bf198730979ef4c652c277322504e84b1"
 				},
 				{
 					"tier": "medium",
@@ -98,8 +98,8 @@
 					"href": "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=medium",
 					"rowCount": 361,
 					"coordinates": 133142,
-					"bytes": 2522935,
-					"contentHash": "sha256:de67f18c3fa913d47871b31f32d55194cfb4165341d94603c537d80e642ee5e3"
+					"bytes": 2369022,
+					"contentHash": "sha256:6ff87e8a518d18e1d98c6574d177f86c40b987781418c449cdb2384269ef481b"
 				},
 				{
 					"tier": "low",
@@ -109,8 +109,8 @@
 					"href": "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=low",
 					"rowCount": 361,
 					"coordinates": 27749,
-					"bytes": 462339,
-					"contentHash": "sha256:fb758b1a5da24d68e7f5661b74aaf8b6ee20b7bebbd68555fd31cae50ddbe65e"
+					"bytes": 444615,
+					"contentHash": "sha256:5b3fe7e23da0848cb297d77583f617c28260abb90961f4031f943521aa26769a"
 				}
 			],
 			"generalisation": {
@@ -138,5 +138,5 @@
 			}
 		}
 	],
-	"contentHash": "sha256:c5244542d1245bfbfcdd807c07d2a6b51dffe86e5e08b329aaa04d305432e25f"
+	"contentHash": "sha256:09c733148b78bbc47c6cf71e3c5fd75adbea03d40b68a565d6bd67ad0230825b"
 }
