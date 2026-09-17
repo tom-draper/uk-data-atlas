@@ -65,7 +65,7 @@ export function DocPage({
 				{toc.length > 0 && (
 					<nav aria-label="On this page" className="hidden xl:block">
 						<div className="sticky top-[100px]">
-							<p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-slate-400 uppercase">
+							<p className="mb-3 text-[13px] font-medium text-slate-900">
 								On this page
 							</p>
 							<ul className="space-y-2 border-l border-slate-900/[0.08] text-[13px]">
