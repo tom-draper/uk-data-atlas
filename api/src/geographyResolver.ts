@@ -4,6 +4,7 @@ import type {
 	GeoJsonGeometry,
 	IntersectingArea,
 } from "./areaGeometry";
+import type { Neighbour } from "./areaNeighbours";
 import type { GeometryBounds, PointContainment } from "./areaContainment";
 import {
 	createAreaSearchIndex,
@@ -57,6 +58,16 @@ export type ResolvedIntersectingAreas = {
 	/** All raw-geometry matches, including any not present in the inventory. */
 	matched: number;
 	matches: ResolvedIntersectingArea[];
+};
+
+export type ResolvedAreaNeighbour = Neighbour & {
+	id: string;
+	area?: AreaRecord;
+};
+
+export type ResolvedAreaNeighbours = {
+	geometry: GeoJsonGeometry;
+	neighbours: ResolvedAreaNeighbour[];
 };
 
 type AreaIdentity = {
@@ -157,6 +168,39 @@ export class GeographyResolver {
 					),
 				}
 			: undefined;
+	}
+
+	/** Areas in one release whose boundaries meet a published area. */
+	areaNeighbours(identity: AreaIdentity): ResolvedAreaNeighbours | undefined {
+		const cache = this.inputs.areaGeometryCache;
+		if (!cache) return undefined;
+		const neighbours = cache.findNeighbours(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
+		const geometry = cache.get(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
+		if (!neighbours || !geometry) return undefined;
+		return {
+			geometry,
+			neighbours: neighbours.map((neighbour) => ({
+				...neighbour,
+				id: areaId({
+					geography: identity.geography,
+					boundaryRelease: identity.boundaryRelease,
+					code: neighbour.code,
+				}),
+				area: this.area({
+					geography: identity.geography,
+					boundaryRelease: identity.boundaryRelease,
+					code: neighbour.code,
+				}),
+			})),
+		};
 	}
 
 	/** Areas in one release that contain a WGS84 coordinate. */

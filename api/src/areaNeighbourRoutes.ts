@@ -1,5 +1,5 @@
 import { areaMetrics } from "./areaMetrics";
-import { areaNotFound, findArea } from "./areaResources";
+import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -30,15 +30,22 @@ export const handleAreaNeighbourRoutes = ({
 		segments[5] !== "neighbours"
 	)
 		return undefined;
-	const { areaLookup, areaGeometryCache } = context;
+	const { geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	const area = findArea(areaLookup, geography, boundaryRelease, code);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before finding neighbours.",
+		);
+	const identity = { geography, boundaryRelease, code };
+	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!areaGeometryCache)
+	if (!geographyResolver.hasAreaGeometryCache())
 		return problem(
 			503,
 			"Catalogue Unavailable",
@@ -52,24 +59,15 @@ export const handleAreaNeighbourRoutes = ({
 			"touches must be edge, for areas sharing a border, or any, which also returns areas meeting at a single point.",
 		);
 	try {
-		const found = areaGeometryCache.findNeighbours(
-			geography,
-			boundaryRelease,
-			code,
-		);
-		if (!found)
+		const resolved = geographyResolver.areaNeighbours(identity);
+		if (!resolved)
 			return problem(
 				404,
 				"Not Found",
 				"No raw geometry matches that area identity.",
 			);
-		const geometry = areaGeometryCache.get(
-			geography,
-			boundaryRelease,
-			code,
-		)!;
-		const metrics = areaMetrics(geometry);
-		const kept = found.filter(
+		const metrics = areaMetrics(resolved.geometry);
+		const kept = resolved.neighbours.filter(
 			(neighbour) => touches === "any" || neighbour.touch === "edge",
 		);
 		const sharedBorderM = kept.reduce(
@@ -93,22 +91,16 @@ export const handleAreaNeighbourRoutes = ({
 					// perimeter, so the remainder is floored at nothing
 					// rather than reported as a negative coastline.
 					unsharedBorderM: Math.max(0, perimeterM - sharedBorderM),
-					pointOnlyTouches: found.filter(
+					pointOnlyTouches: resolved.neighbours.filter(
 						(neighbour) => neighbour.touch === "point",
 					).length,
 				},
 				method: NEIGHBOUR_METHOD,
 				neighbours: kept.flatMap((neighbour) => {
-					const neighbourArea = findArea(
-						areaLookup,
-						geography,
-						boundaryRelease,
-						neighbour.code,
-					);
 					return [
 						{
-							id: `${geography}/${boundaryRelease}/${neighbour.code}`,
-							...(neighbourArea ?? { code: neighbour.code }),
+							id: neighbour.id,
+							...(neighbour.area ?? { code: neighbour.code }),
 							touch: neighbour.touch,
 							sharedBorderM: neighbour.sharedBorderM,
 							shareOfPerimeter:
