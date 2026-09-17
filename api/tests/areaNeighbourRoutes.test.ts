@@ -101,8 +101,6 @@ test("lists an area's neighbours with the border each shares", () => {
 				crosswalkInventory,
 				crosswalkLookup,
 				undefined,
-				undefined,
-				undefined,
 				areaGeometryCache,
 			);
 		const data = (response: ReturnType<typeof get>) =>

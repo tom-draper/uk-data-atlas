@@ -70,8 +70,6 @@ test("draws every child of an area as one FeatureCollection", () => {
 				crosswalkInventory,
 				crosswalkLookup,
 				undefined,
-				undefined,
-				undefined,
 				new AreaGeometryCache(root, sources),
 			);
 
@@ -161,8 +159,6 @@ test("lists the children it could not draw rather than dropping them", () => {
 			areaLookup,
 			crosswalkInventory,
 			crosswalkLookup,
-			undefined,
-			undefined,
 			undefined,
 			new AreaGeometryCache(root, sources),
 		);

@@ -58,8 +58,6 @@ export const route = (
 	crosswalkInventory?: RouteContext["crosswalkInventory"],
 	crosswalkLookup?: RouteContext["crosswalkLookup"],
 	atlasRelease?: RouteContext["atlasRelease"],
-	_legacyAreaSearchIndex?: never,
-	_legacyAreaRelationshipIndex?: never,
 	areaGeometryCache?: AreaGeometryCache,
 	relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
 	validationReport?: RouteContext["validationReport"],

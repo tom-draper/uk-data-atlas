@@ -92,8 +92,6 @@ test("finds every area containing a point and labels shared borders", () => {
 			crosswalkInventory,
 			crosswalkLookup,
 			undefined,
-			undefined,
-			undefined,
 			areaGeometryCache,
 		);
 		assert.equal(boundary.status, 200);
@@ -130,8 +128,6 @@ test("finds every area containing a point and labels shared borders", () => {
 			areaLookup,
 			crosswalkInventory,
 			crosswalkLookup,
-			undefined,
-			undefined,
 			undefined,
 			areaGeometryCache,
 		);

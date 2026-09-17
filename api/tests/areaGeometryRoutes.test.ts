@@ -63,8 +63,6 @@ test("gets an area's geometry as a GeoJSON Feature", () => {
 			crosswalkInventory,
 			crosswalkLookup,
 			undefined,
-			undefined,
-			undefined,
 			areaGeometryCache,
 		);
 		assert.equal(response.status, 200);
@@ -103,8 +101,6 @@ test("gets an area's geometry as a GeoJSON Feature", () => {
 			crosswalkInventory,
 			crosswalkLookup,
 			undefined,
-			undefined,
-			undefined,
 			areaGeometryCache,
 		);
 		assert.equal(unknownArea.status, 404);
@@ -137,8 +133,6 @@ test("surfaces a missing or unsupported geometry source as a clear error", () =>
 			crosswalkInventory,
 			crosswalkLookup,
 			undefined,
-			undefined,
-			undefined,
 			noSourceCache,
 		);
 		assert.equal(noSource.status, 503);
@@ -166,8 +160,6 @@ test("surfaces a missing or unsupported geometry source as a clear error", () =>
 			areaLookup,
 			crosswalkInventory,
 			crosswalkLookup,
-			undefined,
-			undefined,
 			undefined,
 			nonWgs84Cache,
 		);
@@ -234,8 +226,6 @@ test("serves geometry at a named generalisation tier", () => {
 				areaLookup,
 				crosswalkInventory,
 				crosswalkLookup,
-				undefined,
-				undefined,
 				undefined,
 				areaGeometryCache,
 			);

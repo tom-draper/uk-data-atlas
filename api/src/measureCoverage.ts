@@ -1,4 +1,4 @@
-import type { DataCatalog, PopulationSource } from "./dataCatalog";
+import type { DataCatalog, MeasureSource } from "./dataCatalog";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
@@ -11,10 +11,10 @@ const isEligibleForCodeJoin = (candidate: CompatibilityCandidate) =>
 	candidate.matchedSourceShare === 1;
 
 const sameSource = (
-	left: PopulationSource,
+	left: MeasureSource,
 	right: {
-		datasetId: PopulationSource["datasetId"];
-		sourceGeography: PopulationSource["sourceGeography"];
+		datasetId: MeasureSource["datasetId"];
+		sourceGeography: MeasureSource["sourceGeography"];
 		periods: string[];
 	},
 ) =>
