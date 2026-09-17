@@ -127,7 +127,7 @@ export function useLegendControls(
 			min: electionOptions?.percentageRange?.min ?? 0,
 			max:
 				(electionOptions as CategoryOptions | null)?.percentageRange
-					?.max ?? 100,
+					?.max ?? 50,
 		},
 		ethnicityRange: {
 			min: ethnicityOptions.percentageRange?.min ?? 0,

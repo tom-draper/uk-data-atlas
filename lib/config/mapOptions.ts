@@ -18,12 +18,12 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	...chartMapOptions,
 	generalElection: {
 		mode: "majority",
-		percentageRange: { min: 0, max: 100 },
+		percentageRange: { min: 0, max: 50 },
 		colorRange: { min: 0, max: 1 },
 	},
 	localElection: {
 		mode: "majority",
-		percentageRange: { min: 0, max: 100 },
+		percentageRange: { min: 0, max: 50 },
 		colorRange: { min: 0, max: 1 },
 	},
 	ageDistribution: {
@@ -37,7 +37,7 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	},
 	ethnicity: {
 		mode: "majority",
-		percentageRange: { min: 0, max: 100 },
+		percentageRange: { min: 0, max: 50 },
 		colorRange: { min: 0, max: 1 },
 	},
 	brexit: { colorRange: { min: 30, max: 70 } },
