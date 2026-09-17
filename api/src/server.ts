@@ -402,10 +402,15 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		namedLocationInventory,
 		crosswalkInventory,
 	);
+	const areaGeometryCache = new AreaGeometryCache(
+		resolve(apiRoot, ".."),
+		geometrySources,
+	);
 	const geographyResolver = createGeographyResolver({
 		areaLookup,
 		crosswalkInventory,
 		crosswalkLookup,
+		areaGeometryCache,
 		namedLocationLookup,
 		locationProjectionStore,
 		relationshipPathIndex: createRelationshipPathIndex(
@@ -420,10 +425,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 		areaLookup,
 		geographyResolver,
 		relationshipPathInventory,
-		areaGeometryCache: new AreaGeometryCache(
-			resolve(apiRoot, ".."),
-			geometrySources,
-		),
+		areaGeometryCache,
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,

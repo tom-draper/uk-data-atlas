@@ -31,6 +31,7 @@ const resolverFor = (
 		| "crosswalkLookup"
 		| "namedLocationLookup"
 		| "locationProjectionStore"
+		| "areaGeometryCache"
 	>,
 ) =>
 	context.areaLookup
@@ -38,6 +39,7 @@ const resolverFor = (
 				areaLookup: context.areaLookup,
 				crosswalkInventory: context.crosswalkInventory,
 				crosswalkLookup: context.crosswalkLookup,
+				areaGeometryCache: context.areaGeometryCache,
 				namedLocationLookup: context.namedLocationLookup,
 				locationProjectionStore: context.locationProjectionStore,
 			})
@@ -81,6 +83,7 @@ export const route = (
 			crosswalkInventory,
 			crosswalkLookup,
 			namedLocationLookup,
+			areaGeometryCache,
 		}),
 		areaGeometryCache,
 		relationshipCandidateInventory,

@@ -37,41 +37,31 @@ export const handleAreaContainsRoutes = ({
 			"Invalid Query",
 			"lng (-180 to 180), lat (-90 to 90), geography and release are required.",
 		);
-	const { areaGeometryCache, areaLookup } = context;
-	if (!areaLookup || !areaGeometryCache)
+	const { geographyResolver } = context;
+	if (!geographyResolver)
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			"Build the area inventory and geometry source registry before point lookup.",
+			"Build the geography resolver before point lookup.",
 		);
-	if (!areaLookup.has(`${geography}/${boundaryRelease}`))
+	if (!geographyResolver.hasAreaRelease(geography, boundaryRelease))
 		return problem(
 			404,
 			"Not Found",
 			"No compiled area release matches the requested geography and release.",
 		);
 	try {
-		const matches = areaGeometryCache
-			.findContaining(geography, boundaryRelease, [longitude, latitude])
-			.flatMap(({ code, containment }) => {
-				const area = areaLookup
-					.get(`${geography}/${boundaryRelease}`)
-					?.get(code);
-				return area
-					? [
-							{
-								id: `${geography}/${boundaryRelease}/${code}`,
-								...area,
-								containment,
-								geometrySource: areaGeometryCache.provenance(
-									geography,
-									boundaryRelease,
-									code,
-								),
-							},
-						]
-					: [];
-			});
+		const matches = geographyResolver.containingAreas(
+			geography,
+			boundaryRelease,
+			[longitude, latitude],
+		);
+		if (!matches)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geometry source registry before point lookup.",
+			);
 		return {
 			status: 200,
 			body: envelope(releaseId, {
