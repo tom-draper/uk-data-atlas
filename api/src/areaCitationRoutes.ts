@@ -3,12 +3,7 @@ import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { DataCatalog } from "./dataCatalog";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
-import {
-	areaMeasureSources,
-	areaNotFound,
-	findArea,
-	relationshipsFor,
-} from "./areaResources";
+import { areaMeasureSources, areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -40,18 +35,24 @@ export const handleAreaCitationRoutes = ({
 		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
+		geographyResolver,
 	} = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	const area =
-		context.geographyResolver?.area({
-			geography,
-			boundaryRelease,
-			code,
-		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before citing an area.",
+		);
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!dataCatalog || !crosswalkInventory) {
 		return problem(
@@ -88,19 +89,11 @@ export const handleAreaCitationRoutes = ({
 
 	// A crosswalk is cited for an area only when it maps that area; citing
 	// one that does not would lend it evidence it never supplied.
-	const relationships =
-		context.geographyResolver?.relationships({
-			geography,
-			boundaryRelease,
-			code,
-		}) ??
-		relationshipsFor(
-			undefined,
-			crosswalkLookup,
-			geography,
-			boundaryRelease,
-			code,
-		);
+	const relationships = geographyResolver.relationships({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	const unrelatedCrosswalks = crosswalkIds.filter(
 		(id) =>
 			!relationships.some(

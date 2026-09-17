@@ -1,4 +1,5 @@
 import { createAreaLookup } from "../src/areaInventory";
+import { createGeographyResolver } from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
 import type { CrosswalkLookup, RouteContext } from "../src/routing";
 import type { AtlasRelease } from "../src/atlasRelease";
@@ -22,6 +23,26 @@ import type {
 } from "../src/dataCatalog";
 import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 
+const resolverFor = (
+	context: Pick<
+		RouteContext,
+		| "areaLookup"
+		| "crosswalkInventory"
+		| "crosswalkLookup"
+		| "namedLocationLookup"
+		| "locationProjectionStore"
+	>,
+) =>
+	context.areaLookup
+		? createGeographyResolver({
+				areaLookup: context.areaLookup,
+				crosswalkInventory: context.crosswalkInventory,
+				crosswalkLookup: context.crosswalkLookup,
+				namedLocationLookup: context.namedLocationLookup,
+				locationProjectionStore: context.locationProjectionStore,
+			})
+		: undefined;
+
 // Most tests exercise one narrow dependency combination. This fixture adapter
 // keeps those cases concise while ensuring the production router only accepts
 // its named RouteContext.
@@ -34,8 +55,8 @@ export const route = (
 	crosswalkInventory?: RouteContext["crosswalkInventory"],
 	crosswalkLookup?: RouteContext["crosswalkLookup"],
 	atlasRelease?: RouteContext["atlasRelease"],
-	areaSearchIndex?: RouteContext["areaSearchIndex"],
-	areaRelationshipIndex?: RouteContext["areaRelationshipIndex"],
+	_legacyAreaSearchIndex?: never,
+	_legacyAreaRelationshipIndex?: never,
 	areaGeometryCache?: RouteContext["areaGeometryCache"],
 	relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
 	validationReport?: RouteContext["validationReport"],
@@ -55,8 +76,12 @@ export const route = (
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		areaSearchIndex,
-		areaRelationshipIndex,
+		geographyResolver: resolverFor({
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			namedLocationLookup,
+		}),
 		areaGeometryCache,
 		relationshipCandidateInventory,
 		validationReport,
@@ -91,10 +116,13 @@ export const registry: BoundaryRegistry = {
 
 export const testContext = (
 	overrides: Partial<RouteContext> = {},
-): RouteContext => ({
-	boundaryRegistry: registry,
-	...overrides,
-});
+): RouteContext => {
+	const context = { boundaryRegistry: registry, ...overrides };
+	return {
+		...context,
+		geographyResolver: context.geographyResolver ?? resolverFor(context),
+	};
+};
 
 export const geographyInventory: GeographyInventory = {
 	schemaVersion: 1,

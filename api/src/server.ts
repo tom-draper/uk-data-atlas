@@ -368,10 +368,7 @@ export const readMeasureCompatibility = (
 	return inventory;
 };
 
-/** Production catalogues are complete; derived geography indexes live in the resolver. */
-export type ApiCatalogues = Required<
-	Omit<RouteContext, "areaSearchIndex" | "areaRelationshipIndex">
->;
+export type ApiCatalogues = Required<RouteContext>;
 
 export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaInventory = readAreaInventory(apiRoot);

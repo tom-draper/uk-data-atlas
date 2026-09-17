@@ -1,4 +1,3 @@
-import { createAreaSearchIndex, searchAreas } from "./areaSearch";
 import {
 	cursorFor,
 	keyFromCursor,
@@ -21,27 +20,21 @@ export const handleAreaSearchRoutes = ({
 		segments[1] !== "areas"
 	)
 		return undefined;
-	const { areaLookup } = context;
-	if (!areaLookup)
+	const { geographyResolver } = context;
+	if (!geographyResolver)
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			"Build the area inventory before searching areas.",
+			"Build the geography resolver before searching areas.",
 		);
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const query = parsedUrl.searchParams.get("q")?.trim();
-	const matches =
-		context.geographyResolver?.searchAreas({
-			geography,
-			boundaryRelease,
-			query,
-		}) ??
-		searchAreas(createAreaSearchIndex(areaLookup), {
-			geography,
-			boundaryRelease,
-			query,
-		});
+	const matches = geographyResolver.searchAreas({
+		geography,
+		boundaryRelease,
+		query,
+	});
 	const limit = readPageSize(parsedUrl.searchParams.get("limit"));
 	if (limit === undefined)
 		return problem(

@@ -1,5 +1,5 @@
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
-import { areaNotFound, findArea, relationshipsFor } from "./areaResources";
+import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -25,7 +25,7 @@ export const handleAreaOverlapRoutes = ({
 		segments[5] !== "overlap"
 	)
 		return undefined;
-	const { areaLookup, crosswalkLookup, areaGeometryCache } = context;
+	const { areaGeometryCache, geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
@@ -44,19 +44,23 @@ export const handleAreaOverlapRoutes = ({
 		string,
 		string,
 	];
-	const area =
-		context.geographyResolver?.area({
-			geography,
-			boundaryRelease,
-			code,
-		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before measuring an area overlap.",
+		);
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const otherArea =
-		context.geographyResolver?.area({
-			geography: otherGeography,
-			boundaryRelease: otherRelease,
-			code: otherCode,
-		}) ?? findArea(areaLookup, otherGeography, otherRelease, otherCode);
+	const otherArea = geographyResolver.area({
+		geography: otherGeography,
+		boundaryRelease: otherRelease,
+		code: otherCode,
+	});
 	if (!otherArea)
 		return areaNotFound(context, otherGeography, otherRelease, otherCode);
 	if (!areaGeometryCache)
@@ -127,20 +131,8 @@ export const handleAreaOverlapRoutes = ({
 							? null
 							: Math.round(measured.widestPieceWidthM * 10) / 10,
 				},
-				publishedRelationships: (
-					context.geographyResolver?.relationships({
-						geography,
-						boundaryRelease,
-						code,
-					}) ??
-					relationshipsFor(
-						undefined,
-						crosswalkLookup,
-						geography,
-						boundaryRelease,
-						code,
-					)
-				)
+				publishedRelationships: geographyResolver
+					.relationships({ geography, boundaryRelease, code })
 					.filter(
 						(relationship) =>
 							relationship.counterpart.id === otherId,

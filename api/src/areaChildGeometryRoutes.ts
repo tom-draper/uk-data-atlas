@@ -4,7 +4,7 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import { areaNotFound, findArea, relationshipsFor } from "./areaResources";
+import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -23,18 +23,23 @@ export const handleAreaChildGeometryRoutes = ({
 		segments[6] !== "geometry"
 	)
 		return undefined;
-	const { areaLookup, crosswalkLookup, areaGeometryCache } = context;
+	const { crosswalkLookup, areaGeometryCache, geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	const area =
-		context.geographyResolver?.area({
-			geography,
-			boundaryRelease,
-			code,
-		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before retrieving child geometry.",
+		);
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	if (!crosswalkLookup)
 		return problem(
@@ -57,20 +62,9 @@ export const handleAreaChildGeometryRoutes = ({
 				GEOMETRY_TIERS,
 			).join(", ")}.`,
 		);
-	const children = (
-		context.geographyResolver?.relationships({
-			geography,
-			boundaryRelease,
-			code,
-		}) ??
-		relationshipsFor(
-			undefined,
-			crosswalkLookup,
-			geography,
-			boundaryRelease,
-			code,
-		)
-	).filter((relationship) => relationship.relation === "contains");
+	const children = geographyResolver
+		.relationships({ geography, boundaryRelease, code })
+		.filter((relationship) => relationship.relation === "contains");
 	if (children.length === 0)
 		return problem(
 			404,
@@ -120,12 +114,11 @@ export const handleAreaChildGeometryRoutes = ({
 			continue;
 		}
 		vertices += simplified.verticesAfter;
-		const childArea = findArea(
-			areaLookup,
-			counterpart.geography,
-			counterpart.boundaryRelease,
-			counterpart.code,
-		);
+		const childArea = geographyResolver.area({
+			geography: counterpart.geography,
+			boundaryRelease: counterpart.boundaryRelease,
+			code: counterpart.code,
+		});
 		features.push({
 			type: "Feature",
 			id: counterpart.id,
