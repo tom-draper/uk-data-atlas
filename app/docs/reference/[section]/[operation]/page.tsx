@@ -148,7 +148,7 @@ export default async function OperationPage({ params }: { params: Params }) {
 								id="returns"
 								aside={
 									success.schemaName && (
-										<code className="font-mono text-[12px] text-indigo-600">
+										<code className="font-mono text-[12px] text-slate-600">
 											{success.schemaName}
 										</code>
 									)

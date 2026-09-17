@@ -72,7 +72,7 @@ export default function DocsSidebar({
 					value={query}
 					onChange={(event) => setQuery(event.target.value)}
 					placeholder="Search the docs"
-					className="w-full rounded-lg border border-slate-900/[0.08] bg-white/70 py-1.5 pr-2 pl-8 text-[13px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-500/15"
+					className="w-full rounded-lg border border-slate-900/[0.08] bg-white/70 py-1.5 pr-2 pl-8 text-[13px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-500/15"
 				/>
 			</label>
 
@@ -167,7 +167,7 @@ function ParentLink({
 									aria-current={active ? "page" : undefined}
 									className={`-ml-px block border-l py-[5px] pr-2 pl-3 text-[13px] leading-snug transition-colors ${
 										active
-											? "border-indigo-500 font-medium text-indigo-700"
+											? "border-slate-700 font-medium text-slate-900"
 											: "border-transparent text-slate-500 hover:border-slate-400 hover:text-slate-900"
 									}`}
 								>
@@ -200,7 +200,7 @@ function SidebarLink({
 			aria-current={active ? "page" : undefined}
 			className={`block min-w-0 flex-1 rounded-md px-2 py-[5px] text-[13.5px] transition-colors ${
 				active
-					? "bg-indigo-500/[0.07] font-medium text-indigo-700"
+					? "bg-slate-900/[0.07] font-medium text-slate-900"
 					: "text-slate-600 hover:bg-slate-900/[0.04] hover:text-slate-900"
 			}`}
 		>

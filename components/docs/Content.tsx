@@ -73,7 +73,7 @@ export function DocPage({
 									<li key={entry.id}>
 										<a
 											href={`#${entry.id}`}
-											className="-ml-px block border-l border-transparent pl-3 text-slate-500 hover:border-indigo-400 hover:text-slate-900"
+											className="-ml-px block border-l border-transparent pl-3 text-slate-500 hover:border-slate-400 hover:text-slate-900"
 										>
 											{entry.title}
 										</a>
@@ -124,7 +124,7 @@ function PagerLink({
 				{isNext ? "Next" : "Previous"}
 				{isNext && <ArrowRight className="h-3 w-3" />}
 			</span>
-			<span className="mt-0.5 block text-[14px] font-medium text-slate-800 group-hover:text-indigo-700">
+			<span className="mt-0.5 block text-[14px] font-medium text-slate-800 group-hover:text-slate-950">
 				{title}
 			</span>
 		</Link>
@@ -168,7 +168,7 @@ export function List({ items }: { items: ReactNode[] }) {
 		<ul className="my-4 space-y-2 text-[15.5px] leading-[1.7] text-slate-600">
 			{items.map((item, i) => (
 				<li key={i} className="flex gap-3">
-					<span className="mt-[11px] h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-400/70" />
+					<span className="mt-[11px] h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400/70" />
 					<span>
 						{typeof item === "string" ? (
 							<Inline text={item} />
@@ -249,7 +249,7 @@ export function Step({
 	children: ReactNode;
 }) {
 	return (
-		<li className="relative pb-10 pl-12 [counter-increment:step] before:absolute before:top-0 before:left-0 before:flex before:h-8 before:w-8 before:items-center before:justify-center before:rounded-full before:bg-gradient-to-b before:from-white before:to-indigo-50 before:font-mono before:text-[13px] before:font-semibold before:text-indigo-700 before:shadow-[inset_0_1px_0_#fff,0_1px_3px_rgba(79,70,229,0.2)] before:ring-1 before:ring-indigo-600/10 before:content-[counter(step)] after:absolute after:top-10 after:bottom-2 after:left-[15.5px] after:w-px after:bg-gradient-to-b after:from-indigo-200 after:to-transparent last:after:hidden">
+		<li className="relative pb-10 pl-12 [counter-increment:step] before:absolute before:top-0 before:left-0 before:flex before:h-8 before:w-8 before:items-center before:justify-center before:rounded-full before:bg-gradient-to-b before:from-white before:to-slate-100 before:font-mono before:text-[13px] before:font-semibold before:text-slate-700 before:shadow-[inset_0_1px_0_#fff,0_1px_3px_rgba(15,23,42,0.12)] before:ring-1 before:ring-slate-900/10 before:content-[counter(step)] after:absolute after:top-10 after:bottom-2 after:left-[15.5px] after:w-px after:bg-gradient-to-b after:from-slate-300 after:to-transparent last:after:hidden">
 			<h3
 				id={id}
 				className="scroll-mt-24 pt-1 text-[18px] font-semibold text-slate-900"
@@ -331,11 +331,11 @@ export function LinkCard({
 		<Link href={href} className="group block h-full">
 			<Card className="flex h-full flex-col px-4 py-4 transition-[background] group-hover:bg-white/80">
 				{icon && (
-					<span className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-white to-indigo-50 text-indigo-600 shadow-[inset_0_1px_0_#fff,0_1px_3px_rgba(79,70,229,0.15)] ring-1 ring-indigo-600/10">
+					<span className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-white to-slate-100 text-slate-600 shadow-[inset_0_1px_0_#fff,0_1px_3px_rgba(15,23,42,0.1)] ring-1 ring-slate-900/10">
 						{icon}
 					</span>
 				)}
-				<span className="flex items-center gap-1 text-[15px] font-semibold text-slate-900 group-hover:text-indigo-700">
+				<span className="flex items-center gap-1 text-[15px] font-semibold text-slate-900 group-hover:text-slate-950">
 					{title}
 					<ArrowRight className="h-3.5 w-3.5 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
 				</span>
@@ -357,7 +357,7 @@ export function EndpointRef({ id }: { id: string }) {
 		>
 			<MethodBadge method={operation.method} size="sm" />
 			<EndpointPath path={operation.path} className="text-slate-700" />
-			<span className="ml-auto flex items-center gap-1 text-[12.5px] text-slate-500 group-hover:text-indigo-700">
+			<span className="ml-auto flex items-center gap-1 text-[12.5px] text-slate-500 group-hover:text-slate-900">
 				{endpointContent(operation).title}
 				<ArrowRight className="h-3 w-3" />
 			</span>
