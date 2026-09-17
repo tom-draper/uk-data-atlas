@@ -280,7 +280,11 @@ function NetworkCard({
 	);
 }
 
-export default function TransportSection({
+/**
+ * The transport map layers, road networks and road collisions, as cards for
+ * the registry's Transport chart section, so transport has one heading.
+ */
+export default function TransportCards({
 	roadSafetyDatasets,
 	networkDatasets,
 	activeViz,
@@ -295,46 +299,32 @@ export default function TransportSection({
 	location: string;
 	mapManager: MapManager | null;
 }) {
-	const isDark = useIsDark();
-
-	if (roadSafetyDatasets.length === 0 && networkDatasets.length === 0)
-		return null;
-
 	return (
-		<div
-			className={`space-y-2 border-t ${isDark ? "border-white/10" : "border-gray-200/80"}`}
-		>
-			<h3
-				className={`text-xs font-bold pt-2 ${isDark ? "text-gray-200" : "text-gray-800"}`}
-			>
-				Transport
-			</h3>
-			<div className="space-y-2">
-				{networkDatasets.map((ds) => (
-					<NetworkCard
-						key={ds.id}
-						dataset={ds}
-						isActive={
-							activeViz.datasetType === "network" &&
-							activeViz.datasetId === ds.id
-						}
-						setActiveViz={setActiveViz}
-						mapManager={mapManager}
-					/>
-				))}
-				{roadSafetyDatasets.map((ds) => (
-					<RoadSafetyCard
-						key={ds.id}
-						dataset={ds}
-						isActive={
-							activeViz.datasetType === "custom" &&
-							activeViz.datasetId === ds.id
-						}
-						setActiveViz={setActiveViz}
-						location={location}
-					/>
-				))}
-			</div>
+		<div className="space-y-2">
+			{networkDatasets.map((ds) => (
+				<NetworkCard
+					key={ds.id}
+					dataset={ds}
+					isActive={
+						activeViz.datasetType === "network" &&
+						activeViz.datasetId === ds.id
+					}
+					setActiveViz={setActiveViz}
+					mapManager={mapManager}
+				/>
+			))}
+			{roadSafetyDatasets.map((ds) => (
+				<RoadSafetyCard
+					key={ds.id}
+					dataset={ds}
+					isActive={
+						activeViz.datasetType === "custom" &&
+						activeViz.datasetId === ds.id
+					}
+					setActiveViz={setActiveViz}
+					location={location}
+				/>
+			))}
 		</div>
 	);
 }
