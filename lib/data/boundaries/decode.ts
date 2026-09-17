@@ -172,6 +172,28 @@ const reprojectBritishNationalGrid = (
 });
 
 /**
+ * Numbers any feature that arrives without an id by its position, counting
+ * from one. The map keys hover state by feature id, so a feature without one
+ * cannot be hovered or highlighted. Whether a publisher file carries ids
+ * depends on the format it was downloaded in, not on the release, so they are
+ * never relied on. Position from one is the numbering the files that do carry
+ * ids already use, and the one properties sidecars are given.
+ */
+const withFeatureIds = (
+	geojson: GeoJsonFeatureCollection,
+): GeoJsonFeatureCollection =>
+	geojson.features.every((feature) => feature.id !== undefined)
+		? geojson
+		: {
+				...geojson,
+				features: geojson.features.map((feature, index) =>
+					feature.id === undefined
+						? { ...feature, id: index + 1 }
+						: feature,
+				),
+			};
+
+/**
  * Normalises a fetched boundary file into a GeoJSON FeatureCollection. The
  * files are TopoJSON, but a plain FeatureCollection is accepted too, so the
  * shape is decided at runtime rather than assumed.
@@ -191,6 +213,8 @@ export const decodeBoundaryData = (json: unknown): BoundaryGeojson => {
 	} else {
 		geojson = json as GeoJsonFeatureCollection;
 	}
+
+	geojson = withFeatureIds(geojson);
 
 	if (isBritishNationalGrid(geojson)) {
 		geojson = reprojectBritishNationalGrid(geojson);
