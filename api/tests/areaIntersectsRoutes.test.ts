@@ -71,8 +71,6 @@ test("finds the areas meeting a box, and says how each meets it", () => {
 				crosswalkInventory,
 				crosswalkLookup,
 				undefined,
-				undefined,
-				undefined,
 				areaGeometryCache,
 			);
 		const where = "geography=ward&release=2025-01-en-ward";
@@ -174,8 +172,6 @@ test("bounds a box query by result count and rejects a malformed one", () => {
 				areaLookup,
 				crosswalkInventory,
 				crosswalkLookup,
-				undefined,
-				undefined,
 				undefined,
 				new AreaGeometryCache(root, sources),
 			);

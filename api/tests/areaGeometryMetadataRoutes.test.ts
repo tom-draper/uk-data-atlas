@@ -71,8 +71,6 @@ test("measures an area's geometry without returning its coordinates", () => {
 			crosswalkInventory,
 			crosswalkLookup,
 			undefined,
-			undefined,
-			undefined,
 			areaGeometryCache,
 		);
 		assert.equal(response.status, 200);
@@ -113,8 +111,6 @@ test("measures an area's geometry without returning its coordinates", () => {
 			areaLookup,
 			crosswalkInventory,
 			crosswalkLookup,
-			undefined,
-			undefined,
 			undefined,
 			areaGeometryCache,
 		);
@@ -168,8 +164,6 @@ test("refuses to measure geometry that carries no polygon", () => {
 			areaLookup,
 			crosswalkInventory,
 			crosswalkLookup,
-			undefined,
-			undefined,
 			undefined,
 			new AreaGeometryCache(root, sources),
 		);

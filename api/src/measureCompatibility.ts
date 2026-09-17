@@ -9,7 +9,6 @@ import {
 	MeasureSource,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
-	PopulationSource,
 } from "./dataCatalog";
 
 /**
@@ -43,7 +42,7 @@ export type CompatibilityCandidate = {
 
 export type MeasureCompatibilitySource = {
 	datasetId: MeasureSource["datasetId"];
-	sourceGeography: PopulationSource["sourceGeography"];
+	sourceGeography: MeasureSource["sourceGeography"];
 	periods: string[];
 	candidates: CompatibilityCandidate[];
 	note: string;

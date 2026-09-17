@@ -150,11 +150,6 @@ export type Measure = {
 	notes?: string[];
 };
 
-/** @deprecated Use `MeasureSource`; kept so existing imports keep compiling. */
-export type PopulationSource = MeasureSource;
-/** @deprecated Use `Measure`. */
-export type PopulationMeasure = Measure;
-
 export type DataCatalog = {
 	schemaVersion: 1;
 	contentHash: string;

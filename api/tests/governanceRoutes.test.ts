@@ -22,8 +22,6 @@ test("lists discovered relationship candidates and their coverage gaps", () => {
 		crosswalkLookup,
 		atlasRelease,
 		undefined,
-		undefined,
-		undefined,
 		relationshipCandidateInventory,
 	);
 	assert.equal(response.status, 200);
