@@ -5,6 +5,7 @@ import {
 	aggregateSIMD,
 	aggregateWIMD,
 	NIMDM_MOST_DEPRIVED_RANK,
+	summariseDeprivation,
 	summariseDeprivationBy,
 } from "@/lib/helpers/datasetAggregation/deprivation";
 import { CODE_KEY, features } from "./fixtures";
@@ -41,29 +42,58 @@ describe("aggregateSIMD", () => {
 
 describe("aggregateWIMD", () => {
 	const data = {
-		W1: { wimdScore: 60, wimdRank: 20, wimdDecile: 1 },
-		W2: { wimdScore: 30, wimdRank: 400, wimdDecile: 3 },
+		W1: { wimdScore: 60, wimdRank: 20, wimdDecile: 1, population: 1000 },
+		W2: { wimdScore: 30, wimdRank: 400, wimdDecile: 3, population: 2000 },
 	} as any;
 
-	it("counts areas in the published most deprived decile", () => {
+	it("counts areas in the published most deprived decile, and weights the average score by population", () => {
 		expect(aggregateWIMD(features(["W1", "W2"]), CODE_KEY, data)).toEqual({
 			areaCount: 2,
 			mostDeprivedCount: 1,
+			population: 3000,
+			// (60 x 1,000 + 30 x 2,000) / 3,000, not the unweighted 45.
+			averageScore: 40,
 		});
 	});
 });
 
 describe("aggregateIMD", () => {
 	const data = {
-		E1: { imdScore: 70, imdRank: 10, imdDecile: 1 },
-		E2: { imdScore: 60, imdRank: 50, imdDecile: 1 },
-		E3: { imdScore: 5, imdRank: 30000, imdDecile: 10 },
+		E1: { imdScore: 70, imdRank: 10, imdDecile: 1, population: 1500 },
+		E2: { imdScore: 60, imdRank: 50, imdDecile: 1, population: 1500 },
+		E3: { imdScore: 5, imdRank: 30000, imdDecile: 10, population: 3000 },
 	} as any;
 
-	it("counts LSOAs in the published most deprived decile", () => {
+	it("counts LSOAs in the published most deprived decile, and weights the average score by population", () => {
 		expect(
 			aggregateIMD(features(["E1", "E2", "E3"]), CODE_KEY, data),
-		).toEqual({ areaCount: 3, mostDeprivedCount: 2 });
+		).toEqual({
+			areaCount: 3,
+			mostDeprivedCount: 2,
+			population: 6000,
+			averageScore: 35,
+		});
+	});
+
+	it("leaves an area without a population out of the average, not the share", () => {
+		const summary = aggregateIMD(features(["E1", "E3"]), CODE_KEY, {
+			...data,
+			E3: { ...data.E3, population: Number.NaN },
+		});
+		expect(summary).toMatchObject({
+			areaCount: 2,
+			mostDeprivedCount: 1,
+			population: 1500,
+			averageScore: 70,
+		});
+	});
+
+	it("has no average when no area has a population", () => {
+		expect(
+			aggregateIMD(features(["E1"]), CODE_KEY, {
+				E1: { ...data.E1, population: 0 },
+			})?.averageScore,
+		).toBeNull();
 	});
 });
 
@@ -94,7 +124,11 @@ describe("summariseDeprivationBy", () => {
 			summariseDeprivationBy(
 				records,
 				(record) => record.lad,
-				(record) => record.decile === 1,
+				(group) =>
+					summariseDeprivation(
+						group,
+						(record) => record.decile === 1,
+					),
 			),
 		).toEqual({
 			A: { areaCount: 2, mostDeprivedCount: 1 },

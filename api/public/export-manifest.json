@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4245e6f96f3bbc11dffd65f89d194da7656fc25344ed424f9183a525b3230849",
-	"dataCatalogHash": "sha256:893a9d6a3ae2c288bdcb2e12e4598fa515b037eadb59e3a74274db117bc0aec3",
+	"contentHash": "sha256:a5dce534a491bc468323c674f15bc701392314f3967099fcf7b5c65d50f136c7",
+	"dataCatalogHash": "sha256:dbff85a6b6d7fe2bbc7a3c7652790d29d131b90e69073d5d3b8ee585bf13aee5",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
@@ -511,6 +511,10 @@
 				{
 					"path": "deprivation/wimd/welsh-index-multiple-deprivation-2019-index-and-domain-ranks-by-small-area.ods",
 					"sha256": "920ead6eba328d4310703aa83613f4eab536f95313a7b2e75a587f0e1a59f889"
+				},
+				{
+					"path": "deprivation/wimd/wales-lsoa-population-mid-2017.csv",
+					"sha256": "43e0ea8ce85f47b97cffc4c5f8926bda741a9dfd43e895983315cc66de184f76"
 				},
 				{
 					"path": "deprivation/wimd/wimd2019.csv",

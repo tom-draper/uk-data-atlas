@@ -1,6 +1,7 @@
 import { NIMDMDataset, NIMDMLSOAData } from "@/lib/types/nimdm";
 import {
 	isMostDeprivedNIMDM,
+	summariseDeprivation,
 	summariseDeprivationBy,
 } from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
@@ -75,7 +76,7 @@ export async function loadNIMDM(
 	const lgdStats: NIMDMDataset["lgdStats"] = summariseDeprivationBy(
 		Object.values(records),
 		(record) => record.lgdCode,
-		isMostDeprivedNIMDM,
+		(group) => summariseDeprivation(group, isMostDeprivedNIMDM),
 	);
 
 	return {

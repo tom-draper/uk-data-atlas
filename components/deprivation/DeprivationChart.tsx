@@ -1,6 +1,9 @@
 "use client";
 import type { ActiveViz, Dataset } from "@lib/types";
-import type { DeprivationSummary } from "@/lib/types/deprivation";
+import type {
+	DeprivationSummary,
+	ScoredDeprivationSummary,
+} from "@/lib/types/deprivation";
 import DecileChart from "./DecileChart";
 
 /** The identity and wording of one national deprivation index. */
@@ -25,7 +28,10 @@ export type DeprivationDetail =
 /** One small area as published, or a group of them summarised. */
 export type DeprivationView =
 	| { kind: "area"; decile: number | null; detail: DeprivationDetail | null }
-	| { kind: "summary"; summary: DeprivationSummary };
+	| {
+			kind: "summary";
+			summary: DeprivationSummary | ScoredDeprivationSummary;
+	  };
 
 /**
  * By construction a tenth of a nation's areas sit in its most deprived tenth,
@@ -34,13 +40,39 @@ export type DeprivationView =
  */
 const TYPICAL_SHARE = 0.1;
 
-export function summaryDisplay(summary: DeprivationSummary, areaNoun: string) {
+/** How far along its bar a score sits, on the same scale for one area or many. */
+const scoreBarWidth = (index: DeprivationIndex, score: number) =>
+	Math.max(0, Math.min(100, (score / index.metricMaximum) * 100));
+
+export function summaryDisplay(
+	index: DeprivationIndex,
+	summary: DeprivationSummary | ScoredDeprivationSummary,
+) {
 	const share = summary.mostDeprivedCount / summary.areaCount;
+	const sharePercent = `${Math.round(share * 100)}%`;
+	// An index that publishes scores is summarised by its average score, so
+	// the headline means the same thing as it does for one small area. The
+	// share stays beneath it, since an average can hide a few very deprived
+	// areas among many that are not.
+	if (
+		index.metric === "score" &&
+		"averageScore" in summary &&
+		summary.averageScore !== null
+	) {
+		const barWidth = scoreBarWidth(index, summary.averageScore);
+		return {
+			value: summary.averageScore.toFixed(1),
+			unit: "average score",
+			secondary: `${sharePercent} in most deprived 10%`,
+			barWidth,
+			severity: barWidth / 100,
+		};
+	}
 	const severity = Math.min(1, share / (TYPICAL_SHARE * 2));
 	return {
-		value: `${Math.round(share * 100)}%`,
+		value: sharePercent,
 		unit: "in most deprived 10%",
-		secondary: `${summary.mostDeprivedCount.toLocaleString()} of ${summary.areaCount.toLocaleString()} ${areaNoun}`,
+		secondary: `${summary.mostDeprivedCount.toLocaleString()} of ${summary.areaCount.toLocaleString()} ${index.areaNoun}`,
 		barWidth: severity * 100,
 		severity,
 	};
@@ -58,7 +90,7 @@ export function areaDisplay(
 				Math.min(
 					100,
 					index.metric === "score"
-						? (detail.value / index.metricMaximum) * 100
+						? scoreBarWidth(index, detail.value)
 						: ((index.metricMaximum + 1 - detail.value) /
 								index.metricMaximum) *
 								100,
@@ -105,7 +137,7 @@ export function DeprivationChart({
 			: view.kind === "summary"
 				? {
 						hasData: true,
-						...summaryDisplay(view.summary, index.areaNoun),
+						...summaryDisplay(index, view.summary),
 					}
 				: areaDisplay(index, view.decile, view.detail);
 

@@ -1,6 +1,7 @@
 import { SIMDDataset, SIMDDataZoneData } from "@/lib/types/simd";
 import {
 	isMostDeprivedSIMD,
+	summariseDeprivation,
 	summariseDeprivationBy,
 } from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
@@ -102,7 +103,7 @@ export async function loadSIMD(
 	const councilStats: SIMDDataset["councilStats"] = summariseDeprivationBy(
 		Object.values(records),
 		(record) => record.councilAreaCode,
-		isMostDeprivedSIMD,
+		(group) => summariseDeprivation(group, isMostDeprivedSIMD),
 	);
 
 	return {

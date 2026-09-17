@@ -1,7 +1,7 @@
 import { WIMDDataset, WIMDLSOAData } from "@/lib/types/wimd";
 import {
-	isMostDeprivedWIMD,
 	summariseDeprivationBy,
+	summariseWIMD,
 } from "@/lib/helpers/datasetAggregation/deprivation";
 import { findHeaderLine, parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNum } from "@/lib/helpers/parseNumber";
@@ -69,11 +69,33 @@ export function publishedWIMDRanks(
 	return ranks;
 }
 
+/**
+ * ONS mid-2017 population by LSOA code, from the Nomis extract beside the
+ * scores. WIMD publishes no population of its own, and a group's average score
+ * is weighted by it.
+ */
+export function welshLSOAPopulations(csv: string): Map<string, number> {
+	const populations = new Map<string, number>();
+	for (const line of csv.split(/\r?\n/).slice(1)) {
+		if (!line.trim()) continue;
+		const cells = line.split(",").map((cell) => cell.replace(/"/g, ""));
+		const code = cells[1];
+		const population = Number(cells.at(-1));
+		if (!code?.startsWith("W01") || !Number.isInteger(population))
+			throw new Error(`WIMD population: unreadable row "${line}"`);
+		populations.set(code, population);
+	}
+	return populations;
+}
+
 export async function loadWIMD(
 	read: (path: string) => Promise<string>,
 	ranksContentXml: string,
 ): Promise<Record<string, WIMDDataset>> {
 	const published = publishedWIMDRanks(ranksContentXml);
+	const populations = welshLSOAPopulations(
+		await read("deprivation/wimd/wales-lsoa-population-mid-2017.csv"),
+	);
 	const text = await read("deprivation/wimd/wimd2019.csv");
 	const { data } = await parseCsv(text, {
 		header: true,
@@ -119,6 +141,9 @@ export async function loadWIMD(
 			throw new Error(`WIMD ranks: no published rank for ${lsoaCode}`);
 		const wimdRank = publishedRank.rank;
 		const wimdDecile = publishedRank.decile;
+		const population = populations.get(lsoaCode);
+		if (population === undefined)
+			throw new Error(`WIMD population: no estimate for ${lsoaCode}`);
 
 		records[lsoaCode] = {
 			lsoaCode,
@@ -135,13 +160,14 @@ export async function loadWIMD(
 			wimdScore,
 			wimdRank,
 			wimdDecile,
+			population,
 		};
 	}
 
 	const ladStats: WIMDDataset["ladStats"] = summariseDeprivationBy(
 		Object.values(records),
 		(record) => record.ladCode,
-		isMostDeprivedWIMD,
+		summariseWIMD,
 	);
 
 	return {

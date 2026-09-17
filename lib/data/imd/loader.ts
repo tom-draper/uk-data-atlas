@@ -1,7 +1,7 @@
 import { IMDDataset, IMDLSOAData } from "@/lib/types/imd";
 import {
-	isMostDeprivedIMD,
 	summariseDeprivationBy,
+	summariseIMD,
 } from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNum, parseNumInt } from "@/lib/helpers/parseNumber";
@@ -50,13 +50,16 @@ export async function loadIMD(
 				row["Barriers to Housing and Services Score"],
 			),
 			livingEnvironmentScore: parseNum(row["Living Environment Score"]),
+			population: parseNumInt(
+				row["Total population: mid 2015 (excluding prisoners)"],
+			),
 		};
 	}
 
 	const ladStats: IMDDataset["ladStats"] = summariseDeprivationBy(
 		Object.values(records),
 		(record) => record.ladCode,
-		isMostDeprivedIMD,
+		summariseIMD,
 	);
 
 	return {

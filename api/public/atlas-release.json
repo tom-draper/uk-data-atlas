@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:fad747dda37c66980429092063c84eb6be6b7ee3185dfa3f23c96989eefcbecd",
+	"releaseId": "sha256:1f18e39f9ccdf308aceb42ddbdf2448d1f9b4b3ab02d007c504a288dcef72f0a",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -30,17 +30,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:cd4b01580bda42fc0e6a648548272b7bd06f10512702272ac22116ed70744951"
+			"contentHash": "sha256:ffa89a655f596df2f1f7d7222030a8346546d11eaa7dc696944917bb55002db2"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:279ef70fc1e6ebf4ac3885265ea5a63a25f21d2268fab0e6e4d4e85721447d48"
+			"contentHash": "sha256:4770cef7ccdae567f14bd11a7feacbd994c8e98cd0e3d40628d0a6a7fd10215b"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:4733bb3d7707b156b41840b3b5777b4b2afb34e57829ff85e164c611994064f1"
+			"contentHash": "sha256:c97e5681296382aab89f4381fcbf7468e78a51974af3269622cb538aeb7b7613"
 		},
 		{
 			"id": "lookup-manifest",
@@ -90,12 +90,12 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:0a5c95140ba52187eea9fa3801ef2be7be3c02dee61ef88d5c9de90a1d62710f"
+			"contentHash": "sha256:159f65888675f4ce2d155054c3763d39d76504b3e6c378784d10a96b26f15433"
 		},
 		{
 			"id": "source-inventory",
 			"path": "source-inventory.json",
-			"contentHash": "sha256:fa45c52ba5501e0f4966534b2f60e2bdec8f6b66146c14a06e622b82d95b44b0"
+			"contentHash": "sha256:9c2b0c9852c45e60dc1cbfe3d2fc22b01003f73a22c6db0af12b73a414f219db"
 		},
 		{
 			"id": "location-projections/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
@@ -1590,7 +1590,7 @@
 			"historical-general-election": "sha256:9e45e614934a106e5d5748f0b57c6d22deef772eeaaf21b8911e3594875b92a4",
 			"homelessness": "sha256:aab4b621128eebd97f52f8130e3979a72bcd1250eb4d4acf4edd0289fd858ae7",
 			"house-price": "sha256:5082d4aa7aeb5f1c5697acaa57b111177e8eabceb560ea405a8d83ea8f06cdf6",
-			"imd": "sha256:9420f7eeb9c750ad479d708a89bbeac82b5b18a2ac3ebe011d1aa7aaec1f63c4",
+			"imd": "sha256:c8744d2f86599ee8d24e1537f5b389a1b51c852b7b74ad3d0dfdd467b125a06d",
 			"income": "sha256:8647d4114d10aaf428de3712d8ea3b8907e231a1dc095b285f9fda0857b38a46",
 			"jobs": "sha256:8a8f41db98f6377f5b26fe49664c4fa47b754f04e1eccc6144a58084ecbc06f4",
 			"land-area": "sha256:3005c1d46a32a857a47e43c2528c7da5a5b3c5a0b8264a948dd922cd9a5d0b51",
@@ -1611,7 +1611,7 @@
 			"simd": "sha256:97258b5a1266dbc0b939d180173f4ac54fe40ef7219bd289a0faa5fe5ae2c96c",
 			"travel-to-work": "sha256:e43b1bb49e3bf4b260984a0368d57e4a6576c6685b5f4f25b4b9e61e11265075",
 			"unemployment": "sha256:8f0b66b430015efca1908075a9b9938218024b50fdbb3d93cb8e304d14361793",
-			"wimd": "sha256:c14e2762fdb3433319922c0554018de67c76936a6c382fc9eb446d0dd2e8014e"
+			"wimd": "sha256:0a4594d7ac30e9ecd4121e66d82c74d23224d3928da5569c07870ebe8dc8d8d3"
 		},
 		"measures": {
 			"air-quality-grid-cells": "sha256:22b496a24ae5ea228a90ae28834e615610aae3fcab6de60fbd406dde42638b5e",
