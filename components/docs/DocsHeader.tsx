@@ -10,11 +10,9 @@ import DocsSidebar from "./DocsSidebar";
 export default function DocsHeader({
 	groups,
 	version,
-	preview,
 }: {
 	groups: NavGroup[];
 	version: string;
-	preview: boolean;
 }) {
 	const pathname = usePathname();
 	const [menuPath, setMenuPath] = useState<string | null>(null);
@@ -56,11 +54,6 @@ export default function DocsHeader({
 				<span className="hidden rounded-full bg-white/60 px-2 py-0.5 font-mono text-[11px] text-slate-500 ring-1 ring-slate-900/5 sm:inline">
 					v{version}
 				</span>
-				{preview && (
-					<span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[11px] font-medium text-amber-800 ring-1 ring-amber-600/20">
-						Preview
-					</span>
-				)}
 
 				<nav className="ml-auto flex items-center gap-1 text-[13px]">
 					<HeaderLink

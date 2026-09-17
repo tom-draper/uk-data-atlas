@@ -1,13 +1,11 @@
 import type { MetadataRoute } from "next";
-import { docsIndexable } from "@/lib/docs/mode";
 import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";
 
-/** Every page of the API docs, listed only once they are public. */
+/** Every page of the API docs. */
 function docsEntries(): MetadataRoute.Sitemap {
-	if (!docsIndexable()) return [];
 	return readingOrder(loadApiContract()).map((link) => ({
 		url: `${SITE_URL}${link.href}`,
 		changeFrequency: "monthly" as const,

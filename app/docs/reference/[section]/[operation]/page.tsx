@@ -14,7 +14,6 @@ import {
 } from "@/components/docs/Page";
 import Prose, { Inline } from "@/components/docs/Prose";
 import { FieldList, ParameterList } from "@/components/docs/Reference";
-import { docsEnabled } from "@/lib/docs/mode";
 import {
 	endpointContent,
 	sectionContent,
@@ -35,7 +34,6 @@ type Params = Promise<{ section: string; operation: string }>;
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-	if (!docsEnabled()) return [];
 	return allOperations(loadApiContract()).map((op) => ({
 		section: op.sectionSlug,
 		operation: op.slug,

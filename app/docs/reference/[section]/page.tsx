@@ -6,7 +6,6 @@ import { Pager } from "@/components/docs/Content";
 import { EndpointPath, MethodBadge } from "@/components/docs/Endpoint";
 import { Breadcrumbs, Card, Eyebrow, Sheet } from "@/components/docs/Page";
 import { Inline } from "@/components/docs/Prose";
-import { docsEnabled } from "@/lib/docs/mode";
 import {
 	endpointContent,
 	sectionContent,
@@ -23,7 +22,6 @@ type Params = Promise<{ section: string }>;
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-	if (!docsEnabled()) return [];
 	return loadApiContract().sections.map((section) => ({
 		section: section.slug,
 	}));

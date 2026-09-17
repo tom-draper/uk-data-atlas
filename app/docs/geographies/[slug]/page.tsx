@@ -17,7 +17,6 @@ import {
 	findGeographyBySlug,
 } from "@/lib/docs/dataPages";
 import { docsMetadata } from "@/lib/docs/metadata";
-import { docsEnabled } from "@/lib/docs/mode";
 import { dataPageHref, geographyHref } from "@/lib/docs/navigation";
 import { API_BASE_URL } from "@/lib/docs/openapi";
 
@@ -26,7 +25,6 @@ type Params = Promise<{ slug: string }>;
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-	if (!docsEnabled()) return [];
 	return Object.values(GEOGRAPHIES).map((content) => ({
 		slug: content.slug,
 	}));
