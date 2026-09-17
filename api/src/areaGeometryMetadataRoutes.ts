@@ -1,5 +1,5 @@
 import { areaMetrics } from "./areaMetrics";
-import { areaNotFound, findArea } from "./areaResources";
+import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -33,34 +33,36 @@ export const handleAreaGeometryMetadataRoutes = ({
 		segments[6] !== "metadata"
 	)
 		return undefined;
-	const { areaLookup, areaGeometryCache } = context;
+	const { geographyResolver } = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5);
-	const area = findArea(
-		areaLookup,
-		geography as string,
-		boundaryRelease as string,
-		code as string,
-	);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before retrieving geometry.",
+		);
+	const identity = {
+		geography: geography as string,
+		boundaryRelease: boundaryRelease as string,
+		code: code as string,
+	};
+	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!areaGeometryCache)
+	if (!geographyResolver.hasAreaGeometryCache())
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the geometry source registry before retrieving geometry.",
 		);
 	try {
-		const geometry = areaGeometryCache.get(
-			geography as string,
-			boundaryRelease as string,
-			code as string,
-		);
-		if (!geometry)
+		const resolved = geographyResolver.areaGeometry(identity);
+		if (!resolved)
 			return problem(
 				404,
 				"Not Found",
 				"No raw geometry matches that area identity.",
 			);
-		const metrics = areaMetrics(geometry);
+		const metrics = areaMetrics(resolved.geometry);
 		if (!metrics)
 			return problem(
 				422,
@@ -70,7 +72,7 @@ export const handleAreaGeometryMetadataRoutes = ({
 		return {
 			status: 200,
 			body: envelope(releaseId, {
-				id: [geography, boundaryRelease, area.code].join("/"),
+				id: resolved.id,
 				geography,
 				boundaryRelease,
 				...area,
@@ -93,11 +95,7 @@ export const handleAreaGeometryMetadataRoutes = ({
 					vertices: metrics.vertices,
 				},
 				method: AREA_METRIC_METHOD,
-				geometrySource: areaGeometryCache.provenance(
-					geography as string,
-					boundaryRelease as string,
-					code as string,
-				),
+				geometrySource: resolved.geometrySource,
 			}),
 		};
 	} catch (error) {
