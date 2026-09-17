@@ -57,7 +57,7 @@ export default function CodeTabs({
 
 	return (
 		<figure
-			className="docs-code min-w-0 overflow-hidden rounded-lg"
+			className="docs-code min-w-0 overflow-hidden rounded-md"
 			style={frameStyle}
 		>
 			<figcaption className="flex min-h-10 items-center gap-1 border-b border-white/[0.07] pr-1.5 pl-2">

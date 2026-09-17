@@ -25,7 +25,7 @@ export function Card({
 	className?: string;
 }) {
 	return (
-		<div className={`rounded-xl ${className}`} style={paperCard}>
+		<div className={`rounded-md ${className}`} style={paperCard}>
 			{children}
 		</div>
 	);

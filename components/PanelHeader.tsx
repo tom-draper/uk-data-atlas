@@ -112,7 +112,9 @@ export default function PanelHeader({
 	return (
 		<div className={`pb-2 pt-2.5 px-2.5 ${t.section}`}>
 			<div className="flex items-center justify-between">
-				<h2 className={`font-semibold text-sm ${t.heading}`}>
+				<h2
+					className={`text-sm font-semibold tracking-tight ${t.heading}`}
+				>
 					{title}
 				</h2>
 				<button

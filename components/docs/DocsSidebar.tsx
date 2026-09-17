@@ -72,7 +72,7 @@ export default function DocsSidebar({
 					value={query}
 					onChange={(event) => setQuery(event.target.value)}
 					placeholder="Search the docs"
-					className="w-full rounded-lg border border-slate-900/[0.08] bg-white/70 py-1.5 pr-2 pl-8 text-[13px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-500/15"
+					className="w-full rounded-md border border-slate-900/[0.08] bg-white/70 py-1.5 pr-2 pl-8 text-[13px] text-slate-700 outline-none placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-500/15"
 				/>
 			</label>
 

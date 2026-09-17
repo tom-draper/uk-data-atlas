@@ -115,7 +115,7 @@ function PagerLink({
 	return (
 		<Link
 			href={href}
-			className={`group rounded-xl border border-slate-900/[0.07] bg-white/60 px-4 py-3 transition-colors hover:bg-white/70 ${isNext ? "sm:text-right" : ""}`}
+			className={`group rounded-md border border-slate-900/[0.07] bg-white/60 px-4 py-3 transition-colors hover:bg-white/70 ${isNext ? "sm:text-right" : ""}`}
 		>
 			<span
 				className={`flex items-center gap-1 text-[12px] text-slate-500 ${isNext ? "sm:justify-end" : ""}`}
@@ -213,7 +213,7 @@ export function Callout({
 	const Icon = style.icon;
 	return (
 		<div
-			className={`my-6 flex gap-3 rounded-xl border px-4 py-3.5 text-[14.5px] leading-[1.7] ${style.box}`}
+			className={`my-6 flex gap-3 rounded-md border px-4 py-3.5 text-[14.5px] leading-[1.7] ${style.box}`}
 		>
 			<Icon className={`mt-[3px] h-4 w-4 shrink-0 ${style.iconColour}`} />
 			<div className="min-w-0 [&_p]:my-0">
@@ -263,7 +263,7 @@ export function Step({
 
 export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
 	return (
-		<div className="my-6 overflow-x-auto rounded-xl border border-slate-900/[0.07] bg-white/60">
+		<div className="my-6 overflow-x-auto rounded-md border border-slate-900/[0.07] bg-white/60">
 			<table className="w-full text-left text-[14px]">
 				<thead>
 					<tr className="border-b border-slate-900/[0.07]">
@@ -331,7 +331,7 @@ export function LinkCard({
 		<Link href={href} className="group block h-full">
 			<Card className="flex h-full flex-col px-4 py-4 transition-[background] group-hover:bg-white/80">
 				{icon && (
-					<span className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-b from-white to-slate-100 text-slate-600 shadow-[inset_0_1px_0_#fff,0_1px_3px_rgba(15,23,42,0.1)] ring-1 ring-slate-900/10">
+					<span className="mb-3 flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-b from-white to-slate-100 text-slate-600 shadow-[inset_0_1px_0_#fff,0_1px_3px_rgba(15,23,42,0.1)] ring-1 ring-slate-900/10">
 						{icon}
 					</span>
 				)}
@@ -353,7 +353,7 @@ export function EndpointRef({ id }: { id: string }) {
 	return (
 		<Link
 			href={operationHref(operation)}
-			className="group my-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-lg border border-slate-900/[0.07] bg-white/60 px-3 py-2 text-[13px] transition-colors hover:bg-white/80"
+			className="group my-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-md border border-slate-900/[0.07] bg-white/60 px-3 py-2 text-[13px] transition-colors hover:bg-white/80"
 		>
 			<MethodBadge method={operation.method} size="sm" />
 			<EndpointPath path={operation.path} className="text-slate-700" />
