@@ -21,11 +21,11 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 	];
 	const { geographyResolver } = context;
-	if (!geographyResolver || !geographyResolver.hasAreaRelationships())
+	if (!geographyResolver)
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			"Build the geography resolver and crosswalk inventory before looking up area membership.",
+			"Build the geography resolver before looking up area membership.",
 		);
 	const area = geographyResolver.area({
 		geography,
@@ -33,6 +33,12 @@ export const handleAreaRelationshipRoutes = ({
 		code,
 	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
+	if (!geographyResolver.hasAreaRelationships())
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the crosswalk inventory before looking up area membership.",
+		);
 	const allRelationships = geographyResolver.relationships({
 		geography,
 		boundaryRelease,
