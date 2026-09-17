@@ -236,9 +236,12 @@ async function main() {
 	const boundaries = described.filter(
 		(dataset) => dataset.meta.kind === "boundary",
 	);
+	const lookups = described.filter(
+		(dataset) => dataset.meta.kind === "lookup",
+	);
 	console.log(
-		`  described datasets: ${described.length - boundaries.length} ` +
-			`(and ${boundaries.length} boundary releases)`,
+		`  described datasets: ${described.length - boundaries.length - lookups.length} ` +
+			`(and ${boundaries.length} boundary releases, ${lookups.length} lookup tables)`,
 	);
 	await verifyDescribedFiles(described);
 
