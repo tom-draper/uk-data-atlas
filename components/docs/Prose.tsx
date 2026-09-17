@@ -1,22 +1,18 @@
+import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 import { paragraphs } from "@/lib/docs/openapi";
 
+const INLINE = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g;
+
 /**
- * The spec's descriptions use only paragraphs, `code` and **bold**, so this
- * renders exactly those rather than pulling in a Markdown parser.
+ * Inline text for the docs: `code`, **bold** and [links](/docs/...). That is
+ * all the spec's descriptions and the written content use, so it is rendered
+ * directly rather than through a Markdown parser.
  */
 export function Inline({ text }: { text: string }) {
-	const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
-	return parts.map((part, i): ReactNode => {
+	return text.split(INLINE).map((part, i): ReactNode => {
 		if (part.startsWith("`") && part.endsWith("`") && part.length > 1) {
-			return (
-				<code
-					key={i}
-					className="rounded-[4px] border border-slate-900/[0.06] bg-white/70 px-[0.35em] py-[0.1em] font-mono text-[0.86em] text-slate-800"
-				>
-					{part.slice(1, -1)}
-				</code>
-			);
+			return <Code key={i}>{part.slice(1, -1)}</Code>;
 		}
 		if (part.startsWith("**") && part.endsWith("**") && part.length > 3) {
 			return (
@@ -25,8 +21,41 @@ export function Inline({ text }: { text: string }) {
 				</strong>
 			);
 		}
+		const link = /^\[([^\]]+)\]\(([^)\s]+)\)$/.exec(part);
+		if (link) {
+			return (
+				<TextLink key={i} href={link[2]}>
+					<Inline text={link[1]} />
+				</TextLink>
+			);
+		}
 		return <Fragment key={i}>{part}</Fragment>;
 	});
+}
+
+export function Code({ children }: { children: ReactNode }) {
+	return (
+		<code className="rounded-[4px] border border-slate-900/[0.06] bg-white/70 px-[0.35em] py-[0.1em] font-mono text-[0.86em] text-slate-800">
+			{children}
+		</code>
+	);
+}
+
+export function TextLink({
+	href,
+	children,
+}: {
+	href: string;
+	children: ReactNode;
+}) {
+	return (
+		<Link
+			href={href}
+			className="font-medium text-indigo-700 underline decoration-indigo-300 underline-offset-[3px] hover:decoration-indigo-600"
+		>
+			{children}
+		</Link>
+	);
 }
 
 export default function Prose({
@@ -45,53 +74,6 @@ export default function Prose({
 					<Inline text={paragraph} />
 				</p>
 			))}
-		</div>
-	);
-}
-
-/** The first sentence of a description, for summaries and meta tags. */
-export function firstSentence(text: string, maxLength = 160): string {
-	const flat = paragraphs(text)[0]?.replace(/[`*]/g, "") ?? "";
-	const sentence = flat.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? flat;
-	return sentence.length > maxLength
-		? `${sentence.slice(0, maxLength - 1).trimEnd()}…`
-		: sentence;
-}
-
-const LONG_DESCRIPTION = 600;
-
-/**
- * An operation's description. A long one opens with its first sentence and
- * folds the rest, so the parameters stay within reach; the folded text is
- * still in the page for readers and search engines.
- */
-export function Description({ text }: { text: string }) {
-	const [first = "", ...rest] = paragraphs(text);
-	if (text.length <= LONG_DESCRIPTION) return <Prose text={text} />;
-
-	const lead = first.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? first;
-	const remainder = [first.slice(lead.length).trim(), ...rest]
-		.filter(Boolean)
-		.join("\n\n");
-
-	return (
-		<div>
-			<p className="text-[16px] leading-[1.7] text-slate-700">
-				<Inline text={lead} />
-			</p>
-			{remainder && (
-				<details className="docs-description group mt-3">
-					<summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-slate-900/[0.08] bg-white/55 px-3 py-1 text-[13px] text-slate-600 select-none hover:bg-white/80 hover:text-slate-900">
-						<span className="group-open:hidden">
-							Read the full description
-						</span>
-						<span className="hidden group-open:inline">
-							Show less
-						</span>
-					</summary>
-					<Prose text={remainder} className="mt-4" />
-				</details>
-			)}
 		</div>
 	);
 }

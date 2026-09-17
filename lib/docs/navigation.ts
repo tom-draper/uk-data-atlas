@@ -20,21 +20,33 @@ export interface NavLink {
 	method?: HttpMethod;
 	/** Extra text the sidebar filter matches, such as a route. */
 	keywords?: string;
+	/** Pages nested beneath this one, such as a section's endpoints. */
+	children?: NavLink[];
 }
 
 export interface NavGroup {
 	title: string;
-	href?: string;
 	links: NavLink[];
-	/** Reference sections fold away; the written pages stay open. */
-	collapsible: boolean;
 }
 
 export const GET_STARTED: NavLink[] = [
 	{ href: "/docs", title: "Introduction" },
 	{ href: "/docs/quickstart", title: "Quickstart" },
-	{ href: "/docs/concepts", title: "Key concepts" },
-	{ href: "/docs/responses", title: "Responses & paging" },
+];
+
+export const CONCEPTS: NavLink[] = [
+	{ href: "/docs/concepts/measures", title: "Measures and periods" },
+	{ href: "/docs/concepts/areas", title: "Areas and boundaries" },
+	{ href: "/docs/concepts/places", title: "Places and named locations" },
+	{ href: "/docs/concepts/crosswalks", title: "Crosswalks" },
+	{ href: "/docs/concepts/releases", title: "Atlas releases" },
+];
+
+export const USING_THE_API: NavLink[] = [
+	{ href: "/docs/responses", title: "Responses" },
+	{ href: "/docs/pagination", title: "Pagination" },
+	{ href: "/docs/formats", title: "CSV and bulk downloads" },
+	{ href: "/docs/caching", title: "Caching" },
 	{ href: "/docs/errors", title: "Errors" },
 ];
 
@@ -46,7 +58,7 @@ export const GUIDES: NavLink[] = [
 
 export const REFERENCE_HOME: NavLink = {
 	href: "/docs/reference",
-	title: "Overview",
+	title: "Reference overview",
 };
 
 export function endpointContent(operation: DocsOperation) {
@@ -71,34 +83,39 @@ export function sectionHref(section: DocsSection): string {
 
 export function docsNavigation(contract: ApiContract): NavGroup[] {
 	return [
-		{ title: "Get started", links: GET_STARTED, collapsible: false },
-		{ title: "Guides", links: GUIDES, collapsible: false },
+		{ title: "Get started", links: GET_STARTED },
+		{ title: "Concepts", links: CONCEPTS },
+		{ title: "Using the API", links: USING_THE_API },
+		{ title: "Guides", links: GUIDES },
 		{
 			title: "API reference",
-			links: [REFERENCE_HOME],
-			collapsible: false,
+			links: [
+				REFERENCE_HOME,
+				...contract.sections.map((section) => ({
+					href: sectionHref(section),
+					title: sectionContent(section).title,
+					children: section.operations.map((operation) => ({
+						href: operationHref(operation),
+						title: endpointContent(operation).title,
+						method: operation.method,
+						keywords: operation.path,
+					})),
+				})),
+			],
 		},
-		...contract.sections.map((section) => ({
-			title: sectionContent(section).title,
-			href: sectionHref(section),
-			collapsible: true,
-			links: section.operations.map((operation) => ({
-				href: operationHref(operation),
-				title: endpointContent(operation).title,
-				method: operation.method,
-				keywords: operation.path,
-			})),
-		})),
 	];
+}
+
+function flatten(links: NavLink[]): NavLink[] {
+	return links.flatMap(({ children, ...link }) => [
+		link,
+		...flatten(children ?? []),
+	]);
 }
 
 /** Every page in reading order, for previous and next links. */
 export function readingOrder(contract: ApiContract): NavLink[] {
-	return docsNavigation(contract).flatMap((group) =>
-		group.href
-			? [{ href: group.href, title: group.title }, ...group.links]
-			: group.links,
-	);
+	return docsNavigation(contract).flatMap((group) => flatten(group.links));
 }
 
 export function neighbours(

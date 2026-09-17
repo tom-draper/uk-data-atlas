@@ -4,14 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { glassPane } from "@/lib/docs/theme";
-import DocsSidebar, { type SidebarSection } from "./DocsSidebar";
+import type { NavGroup } from "@/lib/docs/navigation";
+import DocsSidebar from "./DocsSidebar";
 
 export default function DocsHeader({
-	sections,
+	groups,
 	version,
 	preview,
 }: {
-	sections: SidebarSection[];
+	groups: NavGroup[];
 	version: string;
 	preview: boolean;
 }) {
@@ -62,18 +63,21 @@ export default function DocsHeader({
 				)}
 
 				<nav className="ml-auto flex items-center gap-1 text-[13px]">
-					<Link
-						href="/atlas"
-						className="rounded-md px-2.5 py-1.5 text-slate-600 hover:bg-white/50 hover:text-slate-900"
+					<HeaderLink
+						href="/docs/guides/map"
+						active={pathname.startsWith("/docs/guides")}
+						className="hidden md:block"
 					>
-						Atlas
-					</Link>
-					<Link
-						href="/sources"
-						className="hidden rounded-md px-2.5 py-1.5 text-slate-600 hover:bg-white/50 hover:text-slate-900 sm:block"
+						Guides
+					</HeaderLink>
+					<HeaderLink
+						href="/docs/reference"
+						active={pathname.startsWith("/docs/reference")}
+						className="hidden sm:block"
 					>
-						Sources
-					</Link>
+						API reference
+					</HeaderLink>
+					<HeaderLink href="/atlas">Open the Atlas</HeaderLink>
 				</nav>
 			</div>
 
@@ -87,11 +91,36 @@ export default function DocsHeader({
 					}}
 				>
 					<DocsSidebar
-						sections={sections}
+						groups={groups}
 						onNavigate={() => setMenuPath(null)}
 					/>
 				</div>
 			)}
 		</header>
+	);
+}
+
+function HeaderLink({
+	href,
+	active = false,
+	className = "",
+	children,
+}: {
+	href: string;
+	active?: boolean;
+	className?: string;
+	children: React.ReactNode;
+}) {
+	return (
+		<Link
+			href={href}
+			className={`rounded-md px-2.5 py-1.5 transition-colors ${
+				active
+					? "bg-white/60 text-slate-900"
+					: "text-slate-600 hover:bg-white/50 hover:text-slate-900"
+			} ${className}`}
+		>
+			{children}
+		</Link>
 	);
 }
