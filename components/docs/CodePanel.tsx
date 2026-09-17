@@ -14,7 +14,7 @@ function Frame({
 }) {
 	return (
 		<figure
-			className="docs-code min-w-0 overflow-hidden rounded-lg"
+			className="docs-code min-w-0 overflow-hidden rounded-md"
 			style={inkPanel}
 		>
 			<figcaption className="flex min-h-10 items-center gap-2 border-b border-white/[0.07] pr-1.5 pl-4">

@@ -23,7 +23,7 @@ export default function DocsHeader({
 	return (
 		<header className="sticky top-0 z-30 px-3 pt-3 sm:px-4">
 			<div
-				className="relative mx-auto max-w-[calc(1480px-1.5rem)] overflow-hidden rounded-xl sm:max-w-[calc(1480px-2rem)]"
+				className="relative mx-auto max-w-[calc(1480px-1.5rem)] overflow-hidden rounded-md sm:max-w-[calc(1480px-2rem)]"
 				style={glassPane}
 			>
 				<GlassOverlays isDark={false} />
@@ -80,7 +80,7 @@ export default function DocsHeader({
 
 			{menuOpen && (
 				<div
-					className="absolute inset-x-3 top-[64px] flex max-h-[calc(100dvh-80px)] flex-col overflow-hidden rounded-xl sm:inset-x-4 lg:hidden"
+					className="absolute inset-x-3 top-[64px] flex max-h-[calc(100dvh-80px)] flex-col overflow-hidden rounded-md sm:inset-x-4 lg:hidden"
 					style={glassPane}
 				>
 					<GlassOverlays isDark={false} />

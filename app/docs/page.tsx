@@ -49,14 +49,14 @@ export default function IntroductionPage() {
 					<div className="mt-7 flex flex-wrap items-center gap-3">
 						<Link
 							href="/docs/quickstart"
-							className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
+							className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
 						>
 							Make your first request
 							<ArrowRight className="h-4 w-4" />
 						</Link>
 						<Link
 							href="/docs/reference"
-							className="inline-flex items-center gap-2 rounded-lg border border-white/80 bg-white/55 px-4 py-2.5 text-[14px] font-medium text-slate-800 transition-colors hover:bg-white/85"
+							className="inline-flex items-center gap-2 rounded-md border border-white/80 bg-white/55 px-4 py-2.5 text-[14px] font-medium text-slate-800 transition-colors hover:bg-white/85"
 						>
 							Browse the reference
 						</Link>

@@ -36,7 +36,7 @@ export default function TitlePane() {
 						}}
 					/>
 				</a>
-				<h1 className={`font-semibold text-[15px] ${t.heading}`}>
+				<h1 className={`text-[15px] font-semibold tracking-tight ${t.heading}`}>
 					UK Data Atlas
 					<span
 						className={`ml-2 text-[10px] font-normal align-middle ${t.textMuted}`}

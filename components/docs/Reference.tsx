@@ -88,7 +88,7 @@ export function FieldList({
 			className={
 				depth === 0
 					? "divide-y divide-slate-900/[0.06]"
-					: "mt-3 divide-y divide-slate-900/[0.05] rounded-lg border border-slate-900/[0.06] bg-white/35 px-4"
+					: "mt-3 divide-y divide-slate-900/[0.05] rounded-md border border-slate-900/[0.06] bg-white/35 px-4"
 			}
 		>
 			{fields.map((field) => (

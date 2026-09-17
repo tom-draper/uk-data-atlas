@@ -30,7 +30,9 @@ export default function MapOptions({
 		>
 			<GlassOverlays isDark={isDark} />
 			<div className="p-2.5 relative" style={{ zIndex: 1 }}>
-				<h2 className={`font-semibold mb-2 ${theme.heading}`}>
+				<h2
+					className={`mb-2 font-semibold tracking-tight ${theme.heading}`}
+				>
 					Map Options
 				</h2>
 				<AppearanceControls
