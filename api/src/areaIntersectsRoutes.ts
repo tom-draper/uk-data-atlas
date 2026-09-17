@@ -4,7 +4,6 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import { findArea } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -30,7 +29,7 @@ export const handleAreaIntersectsRoutes = ({
 		segments[1] !== "areas:intersects"
 	)
 		return undefined;
-	const { areaLookup, areaGeometryCache } = context;
+	const { geographyResolver } = context;
 	const raw = parsedUrl.searchParams.get("bbox");
 	const parts = (raw ?? "").split(",").map((part) => Number(part.trim()));
 	const [west, south, east, north] = parts;
@@ -77,14 +76,14 @@ export const handleAreaIntersectsRoutes = ({
 			`limit must be a whole number from 1 to ${MAX_INTERSECTS_LIMIT}.`,
 		);
 	}
-	if (!areaLookup || !areaGeometryCache) {
+	if (!geographyResolver) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			"Build the area inventory and geometry source registry before box lookup.",
+			"Build the geography resolver before box lookup.",
 		);
 	}
-	if (!areaLookup.has(`${geography}/${boundaryRelease}`)) {
+	if (!geographyResolver.hasAreaRelease(geography, boundaryRelease)) {
 		return problem(
 			404,
 			"Not Found",
@@ -92,56 +91,38 @@ export const handleAreaIntersectsRoutes = ({
 		);
 	}
 	try {
-		const found = areaGeometryCache.findIntersecting(
+		const found = geographyResolver.intersectingAreas(
 			geography,
 			boundaryRelease,
 			[west!, south!, east!, north!],
 		);
-		const matches = found.slice(0, limit).flatMap((match) => {
-			const area = findArea(
-				areaLookup,
-				geography,
-				boundaryRelease,
-				match.code,
+		if (!found)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geometry source registry before box lookup.",
 			);
-			if (!area) return [];
+		const matches = found.matches.slice(0, limit).map((match) => {
+			const { geometry, ...area } = match;
 			const simplified =
 				requestedTier === null
 					? undefined
-					: simplifyGeometry(
-							areaGeometryCache.get(
-								geography,
-								boundaryRelease,
-								match.code,
-							)!,
-							requestedTier,
-						);
-			return [
-				{
-					id: `${geography}/${boundaryRelease}/${match.code}`,
-					...area,
-					relation: match.relation,
-					boundingBox: match.bounds,
-					geometrySource: areaGeometryCache.provenance(
-						geography,
-						boundaryRelease,
-						match.code,
-					),
-					...(simplified
-						? {
-								generalisation: {
-									vertices: simplified.verticesAfter,
-									verticesAtFullResolution:
-										simplified.verticesBefore,
-									parts: simplified.partsAfter,
-									partsAtFullResolution:
-										simplified.partsBefore,
-								},
-								geometry: simplified.geometry,
-							}
-						: {}),
-				},
-			];
+					: simplifyGeometry(geometry, requestedTier);
+			return {
+				...area,
+				...(simplified
+					? {
+							generalisation: {
+								vertices: simplified.verticesAfter,
+								verticesAtFullResolution:
+									simplified.verticesBefore,
+								parts: simplified.partsAfter,
+								partsAtFullResolution: simplified.partsBefore,
+							},
+							geometry: simplified.geometry,
+						}
+					: {}),
+			};
 		});
 		return {
 			status: 200,
@@ -149,10 +130,10 @@ export const handleAreaIntersectsRoutes = ({
 				bbox: [west!, south!, east!, north!],
 				geography,
 				boundaryRelease,
-				matched: found.length,
+				matched: found.matched,
 				returned: matches.length,
 				limit,
-				truncated: found.length > limit,
+				truncated: found.matched > limit,
 				relationRule:
 					"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.",
 				...(requestedTier === null
