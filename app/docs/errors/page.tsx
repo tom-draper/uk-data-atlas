@@ -88,6 +88,18 @@ const STATUSES: [string, string][] = [
 		"`422` Unprocessable",
 		"The request is clear, but answering it would be misleading, so the API declines.",
 	],
+	[
+		"`414` URI Too Long",
+		"The request target is longer than the server accepts. Send fewer codes, or page the request.",
+	],
+	[
+		"`429` Too Many Requests",
+		"You've spent your requests for now. `Retry-After` says how many seconds to wait. See [Rate limits](/docs/rate-limits).",
+	],
+	[
+		"`500` Server Error",
+		"The route failed unexpectedly. The response carries a `requestId`; quote it if you report the failure.",
+	],
 	["`503` Unavailable", "The data isn't ready yet. Try again shortly."],
 ];
 
