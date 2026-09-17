@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:2163c97730d762007940849905e9e722a4f19d405093fa9519ab27c3ab44cd8f",
+	"contentHash": "sha256:1b14bf41bc699e785855025bfc2370af8ad875b4f57fd692bdf8caa871c403b3",
 	"boundaryRegistryHash": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
 	"releases": [
 		{
@@ -52,7 +52,7 @@
 				"artifact": "areas/communitySafetyPartnership/2023-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -161,7 +161,7 @@
 				"artifact": "areas/constituency/2017-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -183,7 +183,7 @@
 				"artifact": "areas/constituency/2016-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -204,7 +204,7 @@
 				"artifact": "areas/constituency/2015-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -262,7 +262,7 @@
 				"artifact": "areas/country/2024-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -284,7 +284,7 @@
 				"artifact": "areas/country/2023-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -306,7 +306,7 @@
 				"artifact": "areas/country/2022-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -328,7 +328,7 @@
 				"artifact": "areas/country/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -350,7 +350,7 @@
 				"artifact": "areas/country/2020-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -405,7 +405,7 @@
 				"artifact": "areas/countyElectoralDivision/2023-05-en-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -424,7 +424,7 @@
 				"artifact": "areas/dataZone/2011-12-sc-nc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -451,7 +451,7 @@
 				"artifact": "areas/dataZone/2011-12-sc-bfc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -471,7 +471,7 @@
 				"artifact": "areas/fireAndRescueAuthority/2021-05-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1085,7 +1085,7 @@
 				"artifact": "areas/localAuthority/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1143,7 +1143,7 @@
 				"artifact": "areas/localAuthority/2018-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1197,7 +1197,7 @@
 				"artifact": "areas/localHealthBoard/2023-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1219,7 +1219,7 @@
 				"artifact": "areas/localPlanningAuthority/2019-04-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1285,7 +1285,7 @@
 				"artifact": "areas/lsoa/2011-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1339,7 +1339,7 @@
 				"artifact": "areas/lsoa/2001-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1359,7 +1359,7 @@
 				"artifact": "areas/majorTownAndCity/2015-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1414,7 +1414,7 @@
 				"artifact": "areas/nationalPark/2020-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1433,7 +1433,7 @@
 				"artifact": "areas/nhsEnglandRegion/2022-07-en-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1487,7 +1487,7 @@
 				"artifact": "areas/parish/2025-05-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1507,7 +1507,7 @@
 				"artifact": "areas/parish/2024-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1527,7 +1527,7 @@
 				"artifact": "areas/parish/2023-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1547,7 +1547,7 @@
 				"artifact": "areas/parish/2022-12-ew-bgc-v3.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1567,7 +1567,7 @@
 				"artifact": "areas/parish/2021-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1621,7 +1621,7 @@
 				"artifact": "areas/policeForceArea/2023-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1688,7 +1688,7 @@
 				"artifact": "areas/scottishParliamentaryConstituency/2021-05-sc-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1707,7 +1707,7 @@
 				"artifact": "areas/scottishParliamentaryRegion/2022-12-sc-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1726,7 +1726,7 @@
 				"artifact": "areas/seneddConstituency/2022-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1745,7 +1745,7 @@
 				"artifact": "areas/seneddElectoralRegion/2022-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1808,7 +1808,7 @@
 				"artifact": "areas/superOutputArea/2011-ni.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -1830,7 +1830,7 @@
 				"artifact": "areas/travelToWorkArea/2011-12-uk-gcb.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2022,7 +2022,7 @@
 				"artifact": "areas/ward/2024-05-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2044,7 +2044,7 @@
 				"artifact": "areas/ward/2023-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2138,7 +2138,7 @@
 				"artifact": "areas/ward/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2160,7 +2160,7 @@
 				"artifact": "areas/ward/2020-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2181,7 +2181,7 @@
 				"artifact": "areas/ward/2019-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2203,7 +2203,7 @@
 				"artifact": "areas/ward/2018-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
@@ -2224,7 +2224,7 @@
 				"artifact": "areas/ward/2017-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "not-compiled",
+				"status": "unsupported",
 				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},

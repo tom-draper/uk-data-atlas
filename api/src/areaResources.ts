@@ -44,14 +44,21 @@ export const areaNotFound = (
 export const areaMeasureSources = (
 	measure: DataCatalog["measures"][number],
 	coverage: ReturnType<typeof measureCoverage>,
+	geography: string,
 	boundaryRelease: string,
 	code: string,
 	artifacts: Parameters<typeof observationsFor>[3],
 ) =>
 	coverage?.sources.flatMap((coveredSource, index) => {
-		const boundaryCoverage = coveredSource.boundaryCoverage.find(
-			(candidate) => candidate.boundaryRelease === boundaryRelease,
-		);
+		// Release ids repeat across geographies, as 2024-12-uk-bgc does for
+		// wards and local authorities, so the geography must match as well.
+		const boundaryCoverage =
+			coveredSource.sourceGeography.type === geography
+				? coveredSource.boundaryCoverage.find(
+						(candidate) =>
+							candidate.boundaryRelease === boundaryRelease,
+					)
+				: undefined;
 		const source = measure.sources[index];
 		if (!boundaryCoverage || !source) return [];
 		return [

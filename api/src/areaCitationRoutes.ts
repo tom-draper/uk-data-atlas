@@ -120,6 +120,7 @@ export const handleAreaCitationRoutes = ({
 		const sources = areaMeasureSources(
 			measure,
 			coverage,
+			geography,
 			boundaryRelease,
 			code,
 			{

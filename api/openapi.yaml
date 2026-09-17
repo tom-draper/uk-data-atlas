@@ -941,8 +941,27 @@ paths:
         of its area codes found in every assessed boundary release. An eligible
         code join means all source codes are present; it does not assert equal
         geometry or perform a geographic conversion.
+
+
+        Given `geography` and `release` together, `target` answers whether the
+        measure can be had on that boundary release, in the capability
+        vocabulary: `available` from a partition whose codes all join a release
+        with no area left without a value, `partial` when some areas have none
+        or the codes only partly join, `requires-conversion` with the
+        `conversions` a published crosswalk makes possible, as on an area's
+        capabilities, and `unsupported` otherwise, always with a `reason`.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
+        - name: geography
+          in: query
+          required: false
+          schema: { type: string }
+          description: With `release`, the geography of a boundary release to assess the measure against.
+        - name: release
+          in: query
+          required: false
+          schema: { type: string }
+          description: With `geography`, the boundary release to assess the measure against.
       responses:
         "200":
           description: Source coverage and boundary code-coverage summary.
@@ -950,46 +969,72 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/measures/population-estimate/coverage"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  measure:
-                    id: population-estimate
-                    valueKind: count
-                    unit: people
-                    availability:
-                      sourceExact: true
-                      conversion: false
-                      aggregation: true
-                    href: /v1/measures/population-estimate
-                  sources:
-                    - dataset:
-                        id: population
-                        href: /v1/datasets/population
-                      periods:
-                        - "2022"
-                      sourceGeography:
-                        type: ward
-                        boundaryYear: 2023
-                      sourceCoverage:
-                        kind: partial
-                        countries:
-                          - GB-ENG
-                        recordCount: 7608
-                        note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
-                      boundaryCoverage:
-                        - boundaryRelease: 2023-05-uk-bgc
-                          title: Wards, May 2023 (United Kingdom, generalised, clipped)
-                          coverageCountries:
-                            - GB-ENG
-                      assessment:
-                        status: assessed
-                        href: /v1/measures/population-estimate/compatibility
-                        note: Boundary coverage compares area-code membership only; it does not assert equal geometry.
-                meta:
-                  nextCursor: null
+              examples:
+                all:
+                  x-example-request: "/v1/measures/population-estimate/coverage"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                    data:
+                      measure:
+                        id: population-estimate
+                        valueKind: count
+                        unit: people
+                        availability:
+                          sourceExact: true
+                          conversion: false
+                          aggregation: true
+                        href: /v1/measures/population-estimate
+                      sources:
+                        - dataset:
+                            id: population
+                            href: /v1/datasets/population
+                          periods:
+                            - "2022"
+                          sourceGeography:
+                            type: ward
+                            boundaryYear: 2023
+                          sourceCoverage:
+                            kind: partial
+                            countries:
+                              - GB-ENG
+                            recordCount: 7608
+                            note: Published source records are available for England and Wales only; this endpoint does not infer Scottish or Northern Irish values.
+                          boundaryCoverage:
+                            - boundaryRelease: 2023-05-uk-bgc
+                              title: Wards, May 2023 (United Kingdom, generalised, clipped)
+                              coverageCountries:
+                                - GB-ENG
+                          assessment:
+                            status: assessed
+                            href: /v1/measures/population-estimate/compatibility
+                            note: Boundary coverage compares area-code membership only; it does not assert equal geometry.
+                    meta:
+                      nextCursor: null
+                target:
+                  x-example-request: "/v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                    data:
+                      target:
+                        geography: ward
+                        boundaryRelease: 2023-05-uk-bgc
+                        status: partial
+                        reason: Every source value joins ward/2023-05-uk-bgc, but the release has areas the source gives no value for.
+                        sources:
+                          - dataset:
+                              id: population
+                              href: /v1/datasets/population
+                            eligibleForCodeJoin: true
+                    meta:
+                      nextCursor: null
+        "400":
+          description: Only one of `geography` and `release` is given.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -3253,9 +3298,29 @@ paths:
       summary: Report what the Atlas can serve for one exact area identity
       description: >
         Reports geometry, published relationship and crosswalk edges,
-        direct-code named-location membership, and measure sources assessed
-        against this exact boundary release. Measure compatibility is based on
-        area-code membership only and does not assert equal geometry.
+        direct-code named-location membership, and every measure's capability
+        for this exact area, each in the capability vocabulary described by
+        `CapabilityStatus`: `available`, `partial`, `requires-conversion`,
+        `unsupported` or `not-built`, with a `reason` on every status but
+        `available`.
+
+
+        A measure is `available` when a source partition published on this
+        release has a value for the area in every period, and `partial` when
+        it has one in only some periods or its codes only partly join the
+        release. It `requires-conversion` when no partition is published on
+        the release but a published crosswalk converts one onto it: each entry
+        in `conversions` names the crosswalk, the source partition and period,
+        and a ready `href` to the convert route. A conversion is only offered
+        after that exact conversion has been run on the source's latest period
+        and accepted, and only if it reaches this area. A measure whose values
+        do not add over areas is never offered a conversion.
+
+
+        `data.measures` lists the available, partial and convertible measures;
+        `data.counts` counts every measure by status, the unsupported ones
+        included. Compatibility is based on area-code membership only and does
+        not assert equal geometry.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -3313,7 +3378,28 @@ paths:
                       note: Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.
                     data:
                       status: available
+                      counts:
+                        available: 44
+                        partial: 0
+                        requires-conversion: 5
+                        unsupported: 99
+                        not-built: 0
                       measures:
+                        - id: road-collisions
+                          status: requires-conversion
+                          reason: No source partition is published on localAuthority/2023-05-uk-bgc-v2; a published crosswalk converts one onto it.
+                          conversions:
+                            - crosswalk:
+                                id: lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
+                                method: clean-containment
+                                quality: publisher-supplied
+                              source:
+                                datasetId: road-collisions
+                                geography: lsoa
+                                boundaryYear: 2021
+                                period: 2025-H1
+                              method: exact
+                              href: /v1/data/road-collisions/convert?period=2025-H1&geography=lsoa&boundaryYear=2021&crosswalk=lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
                         - id: population-estimate
                           valueKind: count
                           unit: people
@@ -3322,6 +3408,7 @@ paths:
                             conversion: false
                             aggregation: true
                           href: /v1/measures/population-estimate
+                          status: available
                           sources:
                             - dataset:
                                 id: population-uk
@@ -3340,7 +3427,7 @@ paths:
                                   contentHash: sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b
                                   availability: present
                                   status: observed
-                      note: Compatibility compares area-code membership only. It does not assert equal geometry between a source and this boundary release.
+                      note: Measures are listed when they are available, partial or require a conversion; counts include the unsupported ones. Compatibility compares area-code membership only and does not assert equal geometry between a source and this boundary release. A conversion is offered only after the conversion it names has been tried and accepted on the source's latest period.
                 meta:
                   nextCursor: null
         "404":
@@ -4129,6 +4216,80 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/GeometryUnavailable"
+
+  /relationship-paths:
+    get:
+      operationId: findRelationshipPaths
+      tags: ["Geography"]
+      summary: Find the published paths from one boundary release to another for a purpose
+      description: >
+        Says whether a published crosswalk path relates a source release to a
+        target release for `identity` (the same area under a new code or
+        boundary), `membership` (containment) or `apportion` (weighted
+        overlap). It never builds or chooses a path at request time: each path
+        is compiled from published crosswalks, in either direction, with every
+        step's method and the weakest step's quality.
+
+
+        `status` is `available` when at least one path is published and
+        `unsupported` when none is, with a `reason`. When none is published for
+        the purpose asked but one is for another purpose between the same
+        releases, `alternatives` links to it, since a caller asking for an
+        identity where only membership exists usually wants to know that.
+      parameters:
+        - { name: sourceGeography, in: query, required: true, schema: { type: string } }
+        - { name: sourceRelease, in: query, required: true, schema: { type: string } }
+        - { name: targetGeography, in: query, required: true, schema: { type: string } }
+        - { name: targetRelease, in: query, required: true, schema: { type: string } }
+        - name: purpose
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [identity, membership, apportion]
+      responses:
+        "200":
+          description: The published paths, or why there are none.
+          content:
+            application/json:
+              schema: { type: object }
+              examples:
+                available:
+                  x-example-request: "/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                    data:
+                      purpose: membership
+                      status: available
+                      paths:
+                        - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/forward/membership
+                          quality: publisher-supplied
+                          steps:
+                            - crosswalkId: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+                              direction: forward
+                              method: clean-containment
+                    meta:
+                      nextCursor: null
+                unsupported:
+                  x-example-request: "/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=identity"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                    data:
+                      purpose: identity
+                      status: unsupported
+                      reason: No path is published from ward/2023-05-uk-bgc to localAuthority/2023-05-uk-bgc-v2 for identity; one is published for membership.
+                      paths: []
+                      alternatives:
+                        - purpose: membership
+                          href: /v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership
+                    meta:
+                      nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
 
   /crosswalks:
     get:
@@ -5845,6 +6006,28 @@ components:
             $ref: "#/components/schemas/Problem"
 
   schemas:
+    CapabilityStatus:
+      type: string
+      enum: [available, partial, requires-conversion, unsupported, not-built]
+      description: >
+        The one vocabulary every capability answer uses. `available`: served
+        directly and completely for what was asked. `partial`: served directly
+        for only part of it. `requires-conversion`: not served directly, but a
+        published conversion path answers it, and the answer names that path.
+        `unsupported`: nothing the Atlas publishes answers it. `not-built`:
+        this deployment has not built the artifact that would say. Every status
+        but `available` carries a `reason`.
+
+    Capability:
+      type: object
+      required: [status]
+      properties:
+        status:
+          $ref: "#/components/schemas/CapabilityStatus"
+        reason:
+          type: string
+          description: Why the status is not `available`; present on every other status.
+
     Problem:
       type: object
       description: >

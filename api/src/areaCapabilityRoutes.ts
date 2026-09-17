@@ -1,5 +1,11 @@
-import { measureCoverage } from "./measureCoverage";
-import { areaMeasureSources, areaNotFound } from "./areaResources";
+import { areaNotFound } from "./areaResources";
+import {
+	CAPABILITY_STATUSES,
+	notBuilt,
+	unsupported,
+	type CapabilityStatus,
+} from "./capability";
+import { measureCapability } from "./measureCapability";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -43,7 +49,12 @@ export const handleAreaCapabilityRoutes = ({
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
 		if (!geographyResolver.hasAreaGeometryCache())
-			return { status: "not-published" as const, href: geometryHref };
+			return {
+				...notBuilt(
+					"Build the geometry source registry before serving geometry.",
+				),
+				href: geometryHref,
+			};
 		try {
 			const resolved = geographyResolver.areaGeometry(identity);
 			return resolved
@@ -52,15 +63,20 @@ export const handleAreaCapabilityRoutes = ({
 						href: geometryHref,
 						provenance: resolved.geometrySource,
 					}
-				: { status: "not-found" as const, href: geometryHref };
+				: {
+						...unsupported(
+							"The release's geometry source has no feature for this area's code.",
+						),
+						href: geometryHref,
+					};
 		} catch (error) {
 			return {
-				status: "unavailable" as const,
-				href: geometryHref,
-				reason:
+				...unsupported(
 					error instanceof Error
 						? error.message
 						: "Geometry could not be loaded.",
+				),
+				href: geometryHref,
 			};
 		}
 	})();
@@ -81,43 +97,60 @@ export const handleAreaCapabilityRoutes = ({
 		...crosswalk,
 		href: `/v1/crosswalks/${crosswalk.id}`,
 	}));
-	const data =
-		dataCatalog && measureCompatibilityInventory
-			? {
-					status: "available" as const,
-					measures: dataCatalog.measures.flatMap((measure) => {
-						const coverage = measureCoverage(
-							dataCatalog,
-							measureCompatibilityInventory,
-							measure.id,
-						);
-						const sources = areaMeasureSources(
-							measure,
-							coverage,
-							boundaryRelease,
-							code,
-							{
-								populationObservations,
-								populationLocalAuthorityObservations,
-								measureObservations,
-							},
-						);
-						return sources.length > 0
-							? [
-									{
-										id: measure.id,
-										valueKind: measure.valueKind,
-										unit: measure.unit,
-										availability: measure.availability,
-										href: `/v1/measures/${measure.id}`,
-										sources,
-									},
-								]
-							: [];
+	const locations = (namedLocationInventory?.locations ?? []).filter(
+		(location) => location.memberCodes.includes(code),
+	);
+	const data = (() => {
+		if (!dataCatalog || !measureCompatibilityInventory)
+			return notBuilt(
+				"Build the data catalogue and measure compatibility before describing data.",
+			);
+		const assessed = dataCatalog.measures.map((measure) => ({
+			measure,
+			capability: measureCapability(context, measure, identity),
+		}));
+		const counts = Object.fromEntries(
+			CAPABILITY_STATUSES.map((status) => [
+				status,
+				assessed.filter(
+					({ capability }) => capability.status === status,
+				).length,
+			]),
+		) as Record<CapabilityStatus, number>;
+		const status: CapabilityStatus =
+			counts.available > 0
+				? "available"
+				: counts.partial > 0
+					? "partial"
+					: counts["requires-conversion"] > 0
+						? "requires-conversion"
+						: "unsupported";
+		return {
+			status,
+			...(status === "available"
+				? {}
+				: {
+						reason:
+							status === "unsupported"
+								? "No published measure has a value for this area, directly or through a conversion."
+								: status === "partial"
+									? "Measures have values for this area in only some periods or only partly joined sources."
+									: "No measure is published on this release; some convert onto it through a published crosswalk.",
 					}),
-					note: "Compatibility compares area-code membership only. It does not assert equal geometry between a source and this boundary release.",
-				}
-			: { status: "not-published" as const };
+			counts,
+			measures: assessed
+				.filter(({ capability }) => capability.status !== "unsupported")
+				.map(({ measure, capability }) => ({
+					id: measure.id,
+					valueKind: measure.valueKind,
+					unit: measure.unit,
+					availability: measure.availability,
+					href: `/v1/measures/${measure.id}`,
+					...capability,
+				})),
+			note: "Measures are listed when they are available, partial or require a conversion; counts include the unsupported ones. Compatibility compares area-code membership only and does not assert equal geometry between a source and this boundary release. A conversion is offered only after the conversion it names has been tried and accepted on the source's latest period.",
+		};
+	})();
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -127,9 +160,16 @@ export const handleAreaCapabilityRoutes = ({
 			...area,
 			capabilities: {
 				geometry,
-				relationships: crosswalkLookup
-					? {
-							status: "available" as const,
+				relationships: !crosswalkLookup
+					? notBuilt(
+							"Build the crosswalk inventory before describing relationships.",
+						)
+					: {
+							...(relationships.length > 0
+								? { status: "available" as const }
+								: unsupported(
+										"No published crosswalk names this area.",
+									)),
 							href: `/v1/areas/${geography}/${boundaryRelease}/${code}/relationships`,
 							count: relationships.length,
 							byRelation: Object.fromEntries(
@@ -154,24 +194,25 @@ export const handleAreaCapabilityRoutes = ({
 								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/children`,
 							},
 							crosswalks,
-						}
-					: { status: "not-published" as const },
-				namedLocations: namedLocationInventory
-					? {
-							status: "available" as const,
+						},
+				namedLocations: !namedLocationInventory
+					? notBuilt(
+							"Build the named location inventory before describing location membership.",
+						)
+					: {
+							...(locations.length > 0
+								? { status: "available" as const }
+								: unsupported(
+										"No curated named location lists this area's code.",
+									)),
 							membership: "direct-code-match" as const,
-							locations: namedLocationInventory.locations
-								.filter((location) =>
-									location.memberCodes.includes(code),
-								)
-								.map((location) => ({
-									id: location.id,
-									label: location.label,
-									href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
-								})),
+							locations: locations.map((location) => ({
+								id: location.id,
+								label: location.label,
+								href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
+							})),
 							note: "Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.",
-						}
-					: { status: "not-published" as const },
+						},
 				data,
 			},
 		}),

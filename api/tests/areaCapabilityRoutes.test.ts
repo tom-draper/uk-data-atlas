@@ -40,11 +40,15 @@ test("reports an area's exact-release capability and availability matrix", () =>
 	const capabilities = (data as { capabilities: Record<string, unknown> })
 		.capabilities;
 	assert.deepEqual(capabilities.geometry, {
-		status: "not-published",
+		status: "not-built",
+		reason: "Build the geometry source registry before serving geometry.",
 		href: "/v1/areas/ward/2023-05-uk-bgc/E05000001/geometry",
 	});
+	// The crosswalks are built but name nothing for this ward, which is a
+	// statement about the Atlas rather than about this deployment.
 	assert.deepEqual(capabilities.relationships, {
-		status: "available",
+		status: "unsupported",
+		reason: "No published crosswalk names this area.",
 		href: "/v1/areas/ward/2023-05-uk-bgc/E05000001/relationships",
 		count: 0,
 		byRelation: {},
@@ -58,10 +62,15 @@ test("reports an area's exact-release capability and availability matrix", () =>
 		},
 		crosswalks: [],
 	});
-	assert.equal(
-		(capabilities.namedLocations as { status: string }).status,
-		"available",
-	);
+	// Named locations are curated as local authority codes, so none lists a
+	// ward.
+	assert.deepEqual(capabilities.namedLocations, {
+		status: "unsupported",
+		reason: "No curated named location lists this area's code.",
+		membership: "direct-code-match",
+		locations: [],
+		note: "Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.",
+	});
 	const measureData = capabilities.data as {
 		status: string;
 		measures: Array<{
@@ -72,6 +81,16 @@ test("reports an area's exact-release capability and availability matrix", () =>
 		}>;
 	};
 	assert.equal(measureData.status, "available");
+	assert.deepEqual(
+		(measureData as unknown as { counts: Record<string, number> }).counts,
+		{
+			available: 1,
+			partial: 0,
+			"requires-conversion": 0,
+			unsupported: dataCatalog.measures.length - 1,
+			"not-built": 0,
+		},
+	);
 	assert.deepEqual(measureData.measures, [
 		{
 			id: "population-estimate",
@@ -83,6 +102,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 				aggregation: true,
 			},
 			href: "/v1/measures/population-estimate",
+			status: "available",
 			sources: [
 				{
 					dataset: {
