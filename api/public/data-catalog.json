@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:dbff85a6b6d7fe2bbc7a3c7652790d29d131b90e69073d5d3b8ee585bf13aee5",
+	"contentHash": "sha256:cee24bdce17526115d5ec5b3c55a577996b56360f491d4333a9b95b0755252f7",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -1082,6 +1082,99 @@
 			"compiled": {
 				"bytes": 63545,
 				"sha256": "14c808dd39e675b682ee5154042ac6bb39da2a41ad73ea7eb327e1c68141c4d2"
+			}
+		},
+		{
+			"id": "regional-gdp-itl1",
+			"label": "Regional gross domestic product: ITL1 regions",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/datasets/regionalgrossdomesticproductallnutslevelregions",
+			"temporalCoverage": "1998-2023",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Balanced gross value added at current basic prices and gross domestic product at current market prices, in £ million, for the twelve ITL1 regions and nations, 1998 to 2023. Extracted from tables 1 and 5 of the published workbook, which restates the whole series on January 2025 ITL codes.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "economics/regional-gdp/gdp-itl1-1998-2023.csv",
+					"bytes": 10620,
+					"sha256": "0d4f9291683381c5d2f9b886345f25587ff802b141f803c38b3e0ab2e855ea19"
+				}
+			],
+			"summary": {
+				"datasetCount": 26,
+				"dataRecordCount": 312,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 33712,
+				"sha256": "4bbac947d69c7f3315f8eb8c4a8c3c8811335b892cafa1d60340f0022dc0e27f"
+			}
+		},
+		{
+			"id": "regional-gdp-itl2",
+			"label": "Regional gross domestic product: ITL2 regions",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/datasets/regionalgrossdomesticproductallnutslevelregions",
+			"temporalCoverage": "1998-2023",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Balanced gross value added at current basic prices and gross domestic product at current market prices, in £ million, for the forty-six ITL2 regions, 1998 to 2023. Extracted from tables 1 and 5 of the published workbook, which restates the whole series on January 2025 ITL codes.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "economics/regional-gdp/gdp-itl2-1998-2023.csv",
+					"bytes": 52850,
+					"sha256": "68e1bdf9c2620c6cb4c1c54358c1db9b4322a84382e93f33692f4cb4ecf0d66f"
+				}
+			],
+			"summary": {
+				"datasetCount": 26,
+				"dataRecordCount": 1196,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 128982,
+				"sha256": "92d2932b26bc56018024c9a964ed9221f51bd909a1cc1c1e2520def823db002b"
+			}
+		},
+		{
+			"id": "regional-gdp-itl3",
+			"label": "Regional gross domestic product: ITL3 regions",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/economy/grossdomesticproductgdp/datasets/regionalgrossdomesticproductallnutslevelregions",
+			"temporalCoverage": "1998-2023",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Balanced gross value added at current basic prices and gross domestic product at current market prices, in £ million, for the 182 ITL3 areas, 1998 to 2023. Extracted from tables 1 and 5 of the published workbook, which restates the whole series on January 2025 ITL codes.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "economics/regional-gdp/gdp-itl3-1998-2023.csv",
+					"bytes": 186967,
+					"sha256": "70412dbff2acd928d734fb89bbc34942cb553d9cc039e4ad342ec7cd432f995e"
+				}
+			],
+			"summary": {
+				"datasetCount": 26,
+				"dataRecordCount": 4732,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 479835,
+				"sha256": "f4d7c7f1358398a0458c00a588fd349885ba04c153ac9759aea77c903727f9d2"
 			}
 		},
 		{
@@ -7028,6 +7121,344 @@
 				"Values are net territorial emissions across every sector and gas. Land use, land use change and forestry is a net sink in most rural authorities, so their totals are lower than their gross emissions. No published authority-year is negative, but nothing in the method prevents it.",
 				"Emissions per resident are not served. They are a ratio, and a ratio cannot be summed over areas or compared between authorities of different size without recomputing it from the underlying totals.",
 				"Local authority totals exclude sources the publisher cannot attribute to an area, such as aviation and shipping, so they do not sum to the national inventory."
+			]
+		},
+		{
+			"id": "gva",
+			"label": "Gross value added",
+			"valueKind": "quantity",
+			"unit": "£ million",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "regional-gdp-itl1",
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "itl1",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gva-itl1-observations",
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 12,
+						"note": "Published source records cover all four UK nations for every period, as 12 itl1 areas on one restated code vintage."
+					}
+				},
+				{
+					"datasetId": "regional-gdp-itl2",
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "itl2",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gva-itl2-observations",
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 46,
+						"note": "Published source records cover all four UK nations for every period, as 46 itl2 areas on one restated code vintage."
+					}
+				},
+				{
+					"datasetId": "regional-gdp-itl3",
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "itl3",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gva-itl3-observations",
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 182,
+						"note": "Published source records cover all four UK nations for every period, as 182 itl3 areas on one restated code vintage."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/gva"
+			},
+			"notes": [
+				"Balanced gross value added at current basic prices: the output of an area before taxes on products are added and subsidies taken off. It is not comparable with the national GDP figure; use gdp for that.",
+				"Values are in cash terms for the year observed, not adjusted for inflation, so a rise between two periods is not a rise in real output.",
+				"The three ITL tiers nest, so an ITL3 area sits inside an ITL2 area inside an ITL1 area. Each tier is a separate source partition; areas may be summed within one tier, never across tiers.",
+				"Output per head is not served. It is a ratio, so it cannot be summed over areas, and the publisher's population basis for it is the regional accounts one rather than the mid-year estimates this API serves.",
+				"Output is measured where it is produced, not where the people who earn it live, so an area that many commute into records output they do not live beside."
+			]
+		},
+		{
+			"id": "gdp",
+			"label": "Gross domestic product",
+			"valueKind": "quantity",
+			"unit": "£ million",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "regional-gdp-itl1",
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "itl1",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gdp-itl1-observations",
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 12,
+						"note": "Published source records cover all four UK nations for every period, as 12 itl1 areas on one restated code vintage."
+					}
+				},
+				{
+					"datasetId": "regional-gdp-itl2",
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "itl2",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gdp-itl2-observations",
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 46,
+						"note": "Published source records cover all four UK nations for every period, as 46 itl2 areas on one restated code vintage."
+					}
+				},
+				{
+					"datasetId": "regional-gdp-itl3",
+					"periods": [
+						"1998",
+						"1999",
+						"2000",
+						"2001",
+						"2002",
+						"2003",
+						"2004",
+						"2005",
+						"2006",
+						"2007",
+						"2008",
+						"2009",
+						"2010",
+						"2011",
+						"2012",
+						"2013",
+						"2014",
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023"
+					],
+					"sourceGeography": {
+						"type": "itl3",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gdp-itl3-observations",
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 182,
+						"note": "Published source records cover all four UK nations for every period, as 182 itl3 areas on one restated code vintage."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/gdp"
+			},
+			"notes": [
+				"Gross domestic product at current market prices: balanced gross value added plus taxes on products less subsidies on them, allocated to areas by the publisher. This is the regional figure comparable with the national accounts.",
+				"Values are in cash terms for the year observed, not adjusted for inflation, so a rise between two periods is not a rise in real output.",
+				"The three ITL tiers nest, so an ITL3 area sits inside an ITL2 area inside an ITL1 area. Each tier is a separate source partition; areas may be summed within one tier, never across tiers.",
+				"Output per head is not served. It is a ratio, so it cannot be summed over areas, and the publisher's population basis for it is the regional accounts one rather than the mid-year estimates this API serves.",
+				"Output is measured where it is produced, not where the people who earn it live, so an area that many commute into records output they do not live beside."
 			]
 		},
 		{

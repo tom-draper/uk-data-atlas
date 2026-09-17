@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:24430663642847dae5f0b2dae9803e61aabcc09e93b358308e2d3620abc08b28",
+	"contentHash": "sha256:7cf2efc2bcd9ad4f898650340284293cc9e2d6d024e85831a1b62353434cbc90",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -359,6 +359,22 @@
 			"metadataHash": "sha256:29a2e8a6b07732d758b615764a2e4af2cfe2df90b14103b278ff1d9f42d3435a"
 		},
 		{
+			"key": "boundaries/itl1/2025-01-uk-bgc",
+			"metadataId": "2025-01-uk-bgc",
+			"kind": "boundary",
+			"title": "International territorial level 1, January 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:ed63007371212e094d46c29e571b692f3a7d5eab9dd8417cd77d6cd29ce31826"
+		},
+		{
 			"key": "boundaries/itl2/2021-01-uk-bgc-v2",
 			"metadataId": "2021-01-uk-bgc-v2",
 			"kind": "boundary",
@@ -375,6 +391,22 @@
 			"metadataHash": "sha256:7afe95cb269960e38add867369e932d1eace482c9b528f7add82efd8ee4cedd6"
 		},
 		{
+			"key": "boundaries/itl2/2025-01-uk-bgc",
+			"metadataId": "2025-01-uk-bgc",
+			"kind": "boundary",
+			"title": "International territorial level 2, January 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:26ee61d0a16caf4f066edcc456fed01a0754f01bc09eb2fc8a2a11c0bcf126d8"
+		},
+		{
 			"key": "boundaries/itl3/2021-01-uk-bgc-v3",
 			"metadataId": "2021-01-uk-bgc-v3",
 			"kind": "boundary",
@@ -389,6 +421,22 @@
 				}
 			],
 			"metadataHash": "sha256:3b2edf94104928061c3dac616fddb1fccc1e79c90fb27a606297090e4b84a1c8"
+		},
+		{
+			"key": "boundaries/itl3/2025-01-uk-bgc-v2",
+			"metadataId": "2025-01-uk-bgc-v2",
+			"kind": "boundary",
+			"title": "International territorial level 3, January 2025 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:dc5ccdc9234176695c1847369a5fa3b0e27c8005ba669db65469912347ef59f2"
 		},
 		{
 			"key": "boundaries/local-authority/2016-12-gb-bgc",

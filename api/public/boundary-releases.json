@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
+	"contentHash": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -445,6 +445,31 @@
 			"metadataHash": "sha256:598dad1a78a6f5ae764ec30bb9a8153f357ed7435b069a39a16766112aba1558"
 		},
 		{
+			"id": "2025-01-uk-bgc",
+			"geography": "itl1",
+			"title": "International territorial level 1, January 2025 (United Kingdom, generalised, clipped)",
+			"description": "The twelve ITL1 areas: the nine English regions plus Wales, Scotland and Northern Ireland. The top tier of the geography that replaced NUTS for UK economic statistics.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-17",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:ed63007371212e094d46c29e571b692f3a7d5eab9dd8417cd77d6cd29ce31826"
+		},
+		{
 			"id": "2021-01-uk-bgc",
 			"geography": "itl1",
 			"title": "International territorial level 1, January 2021 (United Kingdom, generalised, clipped)",
@@ -470,6 +495,31 @@
 			"metadataHash": "sha256:29a2e8a6b07732d758b615764a2e4af2cfe2df90b14103b278ff1d9f42d3435a"
 		},
 		{
+			"id": "2025-01-uk-bgc",
+			"geography": "itl2",
+			"title": "International territorial level 2, January 2025 (United Kingdom, generalised, clipped)",
+			"description": "The middle tier of the ITL geography used for UK economic statistics, between the ITL1 nations and regions and the ITL3 local areas. The 2025 revision renumbers and resplits much of the 2021 tier, so its codes are not interchangeable with it.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-17",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:26ee61d0a16caf4f066edcc456fed01a0754f01bc09eb2fc8a2a11c0bcf126d8"
+		},
+		{
 			"id": "2021-01-uk-bgc-v2",
 			"geography": "itl2",
 			"title": "International territorial level 2, January 2021 (United Kingdom, generalised, clipped)",
@@ -493,6 +543,31 @@
 				}
 			},
 			"metadataHash": "sha256:7afe95cb269960e38add867369e932d1eace482c9b528f7add82efd8ee4cedd6"
+		},
+		{
+			"id": "2025-01-uk-bgc-v2",
+			"geography": "itl3",
+			"title": "International territorial level 3, January 2025 (United Kingdom, generalised, clipped)",
+			"description": "The finest tier of the ITL geography used for UK economic statistics, grouping local authorities into areas comparable across the United Kingdom. The 2025 revision renumbers and resplits much of the 2021 tier, so its codes are not interchangeable with it.",
+			"temporalCoverage": "2025",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-17",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:dc5ccdc9234176695c1847369a5fa3b0e27c8005ba669db65469912347ef59f2"
 		},
 		{
 			"id": "2021-01-uk-bgc-v3",

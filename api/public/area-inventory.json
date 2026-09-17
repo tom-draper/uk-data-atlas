@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6fe29c7fe3934468922fcbbb14c41aeabb6d0c00c2a05551c80ce3aaa099cf1a",
-	"boundaryRegistryHash": "sha256:94895ed6c66abd59f15dfdc896ebe54dcc56df0fc6afc1475d60b82fb9fb77a0",
+	"contentHash": "sha256:3cdc9bff4271ac6fea04b1225e48f194dd1b8969991997b7a9845e98a3ad21ed",
+	"boundaryRegistryHash": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -194,6 +194,16 @@
 			"nameProperty": "ICB26NM"
 		},
 		{
+			"id": "2025-01-uk-bgc",
+			"geography": "itl1",
+			"status": "available",
+			"recordCount": 12,
+			"artifact": "areas/itl1/2025-01-uk-bgc.json",
+			"contentHash": "sha256:8d51ded06e7d1849c74b1769bbcffb38e920f4382a5155a51ac7c67b7e7bc75f",
+			"codeProperty": "ITL125CD",
+			"nameProperty": "ITL125NM"
+		},
+		{
 			"id": "2021-01-uk-bgc",
 			"geography": "itl1",
 			"status": "available",
@@ -204,6 +214,16 @@
 			"nameProperty": "ITL121NM"
 		},
 		{
+			"id": "2025-01-uk-bgc",
+			"geography": "itl2",
+			"status": "available",
+			"recordCount": 46,
+			"artifact": "areas/itl2/2025-01-uk-bgc.json",
+			"contentHash": "sha256:5365dba1cf010e39aed335bf5dc122eecb652d8feb9ff70b231ed584da8b7b86",
+			"codeProperty": "ITL225CD",
+			"nameProperty": "ITL225NM"
+		},
+		{
 			"id": "2021-01-uk-bgc-v2",
 			"geography": "itl2",
 			"status": "available",
@@ -212,6 +232,16 @@
 			"contentHash": "sha256:f7db77090ed6f22004e4cb1ee41e949acd602413ca6b0916a558e055e4ae2cbe",
 			"codeProperty": "ITL221CD",
 			"nameProperty": "ITL221NM"
+		},
+		{
+			"id": "2025-01-uk-bgc-v2",
+			"geography": "itl3",
+			"status": "available",
+			"recordCount": 182,
+			"artifact": "areas/itl3/2025-01-uk-bgc-v2.json",
+			"contentHash": "sha256:45aad183e7c7bb33c568644fe4cad4c144441e720665531c9bd7371e3c19edf7",
+			"codeProperty": "ITL325CD",
+			"nameProperty": "ITL325NM"
 		},
 		{
 			"id": "2021-01-uk-bgc-v3",

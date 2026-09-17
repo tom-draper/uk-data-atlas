@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f6fd25a1a7a3cbf44c958700277bdea918f7c02cea5371d79e03524ff1af4965",
+	"contentHash": "sha256:bfc181943afe1dd6341223fc4bf030ec3cc53de94fa23796d8bdfb2263209927",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -173,6 +173,14 @@
 			"codeProperty": "ICB26CD"
 		},
 		{
+			"id": "itl1/2025-01-uk-bgc",
+			"status": "available",
+			"input": "boundaries/itl1/2025-01-uk-bgc/ITL1_JAN_2025_UK_BGC.geojson",
+			"inputHash": "sha256:2ee80ac980be413d5d5338327f91f069c3407b5ff3d1b2331d5a457cf4c5fe7d",
+			"crs": "EPSG:4326",
+			"codeProperty": "ITL125CD"
+		},
+		{
 			"id": "itl1/2021-01-uk-bgc",
 			"status": "available",
 			"input": "boundaries/itl1/2021-01-uk-bgc/ITL1_JAN_2021_UK_BGC.geojson",
@@ -181,12 +189,28 @@
 			"codeProperty": "ITL121CD"
 		},
 		{
+			"id": "itl2/2025-01-uk-bgc",
+			"status": "available",
+			"input": "boundaries/itl2/2025-01-uk-bgc/ITL2_JAN_2025_UK_BGC.geojson",
+			"inputHash": "sha256:e0f3d2248ddf2364d5643503cb89c828f3679c18affd4cf6d515364f8cdf37d1",
+			"crs": "EPSG:4326",
+			"codeProperty": "ITL225CD"
+		},
+		{
 			"id": "itl2/2021-01-uk-bgc-v2",
 			"status": "available",
 			"input": "boundaries/itl2/2021-01-uk-bgc-v2/ITL2_JAN_2021_UK_BGC_V2.geojson",
 			"inputHash": "sha256:e7d084682bb8b78efcfe6592c8556559885be294fd33225c29c54c5a038a9144",
 			"crs": "EPSG:4326",
 			"codeProperty": "ITL221CD"
+		},
+		{
+			"id": "itl3/2025-01-uk-bgc-v2",
+			"status": "available",
+			"input": "boundaries/itl3/2025-01-uk-bgc-v2/ITL3_JAN_2025_UK_BGC_V2.geojson",
+			"inputHash": "sha256:23007a49d7b3e53ca883a438b217538ce236f5af871d74fc5ef396fcc1bdbc51",
+			"crs": "EPSG:4326",
+			"codeProperty": "ITL325CD"
 		},
 		{
 			"id": "itl3/2021-01-uk-bgc-v3",
