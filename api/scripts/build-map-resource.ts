@@ -69,13 +69,15 @@ export const buildMapResources = (root: string) => {
 			readFileSync(join(out, identity.artifact), "utf8"),
 		) as { areas: Array<{ code: string; name: string }> };
 		const artifact = `map-resources/${wanted.geography}-${wanted.id}.pmtiles`;
-		const { archive, descriptor } = compileMapResource(
+		const { archive, features, descriptor } = compileMapResource(
 			cache,
 			release,
 			new Map(areas.areas.map((area) => [area.code, area.name])),
 			artifact,
 		);
 		writeFileSync(join(out, artifact), archive);
+		for (const feature of features)
+			writeFileSync(join(out, feature.artifact), feature.body);
 		resources.push(descriptor);
 	}
 
@@ -96,7 +98,7 @@ if (process.argv[1] && resolve(process.argv[1]) === path) {
 	const result = buildMapResources(resolve(dirname(path), "../.."));
 	for (const resource of result.resources)
 		console.log(
-			`${resource.id}: ${resource.areaCount} areas, ${resource.arcCount} arcs, ${resource.tiles.tileCount} tiles, ${(resource.tiles.bytes / 1048576).toFixed(1)}MB`,
+			`${resource.id}: ${resource.areaCount} areas, ${resource.arcCount} arcs, ${resource.tiles.tileCount} tiles, ${(resource.tiles.bytes / 1048576).toFixed(1)}MB; features ${resource.features.map((entry) => `${entry.tier} ${(entry.bytes / 1048576).toFixed(1)}MB`).join(", ")}`,
 		);
 	console.log("Wrote " + result.path);
 }

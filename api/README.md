@@ -382,7 +382,8 @@ only **available** when its endpoint, contract and provenance are published.
       aliases, hierarchy relations, named-location membership and crosswalks
       through `GET /v1/lookups`, so no one needs thousands of API calls to
       reproduce a lookup. Hierarchy is the clean-containment crosswalks, one
-      row per child and parent. Parquet is not offered yet.
+      row per child and parent. Lookups are not offered as Parquet yet;
+      map resource features and join tables are.
 - [ ] Support bounded custom-polygon overlap queries (for example “which wards
       overlap this drawn area?”), with area shares and method/provenance. Keep
       this asynchronous and rate-limited; it is not a general GIS service.
@@ -1187,8 +1188,9 @@ GET /v1/boundary-releases/compare?from={geography}/{release}&to={geography}/{rel
       licence/provenance block and Atlas release manifest. Source partitions
       are whole JSON downloads through `GET /v1/exports`, and crosswalks and
       area identities are CSV and NDJSON through `GET /v1/lookups`, each with
-      its schema, row count, hashes and provenance under a pinned release;
-      Parquet, GeoParquet and tabular source partitions remain.
+      its schema, row count, hashes and provenance under a pinned release.
+      Boundaries are GeoParquet through a map resource's `features`; Parquet
+      source partitions and lookups, and GeoParquet crosswalks, remain.
 - [ ] Deliver boundaries and selected measure joins as cached vector tiles or
       PMTiles. This is the correct map-scale interface; nationwide GeoJSON is
       not.
@@ -2410,8 +2412,9 @@ the non-binding [conceptual resource model](#2-find-places-and-inspect-geography
 and [commercial roadmap](#production-delivery); where they disagree, this
 section wins.
 
-The six routes below that carry no marker are served, as is the pinned form.
-The one marked *not built* is not.
+All seven routes below are served, as is the pinned form. The flat
+`features` form is GeoParquet only; GeoJSON is not built, because a whole
+release at `full` detail is the nationwide GeoJSON a map should not download.
 
 ### What a map resource is
 
@@ -2426,9 +2429,8 @@ GET /v1/map-resources/{geography}/{release}
 GET /v1/map-resources/{geography}/{release}/tiles.json
 GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
 GET /v1/map-resources/{geography}/{release}.pmtiles
-GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}
-
-not built: GET /v1/map-resources/{geography}/{release}/features?tier={tier}&format={geojson|geoparquet}
+GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}&format={json|parquet}
+GET /v1/map-resources/{geography}/{release}/features?tier={tier}&format=geoparquet
 ```
 
 Each also answers under `/v1/atlas-releases/{release-id}/...`, which is the
@@ -2908,8 +2910,16 @@ Atlas's core geography value without private state or universal conversion.
       chosen measures, rather than trying to tile every measure at once. Every
       published measure joins to a map resource by code through its join
       table, so one tileset draws any of them and none is tiled separately.
-- [ ] Provide GeoParquet/Parquet and a compact map join contract for the same
-      resources, so a customer may use its own renderer or warehouse.
+- [x] Provide GeoParquet/Parquet and a compact map join contract for the same
+      resources, so a customer may use its own renderer or warehouse. Every
+      tier of a map resource, `full` included, is published as GeoParquet 1.1
+      through `GET /v1/map-resources/{geography}/{release}/features?tier=`,
+      compiled from the same shared-arc tiers as the tiles and carrying their
+      ids, with a `bbox` covering column and each file's hash and size in the
+      descriptor. A join table is served as Parquet with `format=parquet`, its
+      envelope carried in the file's metadata. The files are written by
+      `src/parquet.ts`, which has no dependency, and read back in tests by a
+      reader written from the Parquet specification; pyarrow reads them too.
 - [x] Supply one MapLibre/TypeScript reference implementation showing place
       resolution, explicit release choice, values, tiles and citation.
       `examples/correct-map-render.ts`, run as a golden path on every build.
@@ -3182,6 +3192,15 @@ surface area. They follow Phase 0 and Phase 1 only.
     answered from it.
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
+    *Done.* Every measure that joins to the published map resource is served
+    as a Parquet join table, and the resource's shapes as GeoParquet at every
+    tier. `tests/mapResourceArtifact.test.ts` holds each GeoParquet file to
+    the hash, size and row count its descriptor gives, to the GeoParquet
+    metadata and bounding boxes, and to the ids and names in the tiles;
+    `tests/mapResourceRoutes.test.ts` requires the Parquet join table to hold
+    exactly the JSON values and to name its release and source. The map
+    resource descriptor is now part of the Atlas release manifest, so a pinned
+    map URL is covered by the release it names.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
     release gate for the first design partner.
     *Done, bar a design partner.* `examples/correct-map-render.ts` walks the
@@ -3291,6 +3310,7 @@ second inventory to maintain:
 - `GET /v1/map-resources` — List the boundary releases published as map resources
 - `GET /v1/map-resources/{geography}/{release}` — Describe one map resource, its tiles and what they were made from
 - `GET /v1/map-resources/{geography}/{release}/tiles.json` — The TileJSON a renderer is configured with
+- `GET /v1/map-resources/{geography}/{release}/features` — Every area of one tier as a GeoParquet file
 - `GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt` — One vector tile of a boundary release
 - `GET /v1/map-resources/{geography}/{release}/join/{measure-id}` — One measure's values, numbered to match this resource's tiles
 - `GET /v1/map-resources/{geography}/{release}.pmtiles` — The whole tile pyramid as one PMTiles archive

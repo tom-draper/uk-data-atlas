@@ -1,9 +1,11 @@
 import { isNumericObservation } from "./dataCatalog";
 import { featureIds } from "./mapResource/compileMapResource";
 import { observationsFor } from "./observationArtifacts";
+import { writeParquet } from "./parquet";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";
 
 /**
  * The map resources: what is published, what each one is, and the tiles
@@ -13,11 +15,15 @@ import type { RouteRequest } from "./routing";
  * archive URLs, the zoom ladder, the content hashes and the attribution to
  * display. The tiles are served both one at a time and as the whole archive,
  * because a renderer wants one and a warehouse or an offline map wants the
- * other.
+ * other. For a warehouse or a GIS that holds features rather than tiles, each
+ * tier is also served flat, as GeoParquet, and a join table as Parquet.
  */
 
 const MVT_CONTENT_TYPE = "application/vnd.mapbox-vector-tile";
 const PMTILES_CONTENT_TYPE = "application/vnd.pmtiles";
+const PARQUET_CONTENT_TYPE = "application/vnd.apache.parquet";
+
+const TIER_NAMES = Object.keys(GEOMETRY_TIERS).join(", ");
 
 const unavailable = () =>
 	problem(
@@ -118,6 +124,7 @@ export const handleMapResourceRoutes = ({
 		asArchive ||
 		segments.length === 4 ||
 		(segments.length === 5 && segments[4] === "tiles.json") ||
+		(segments.length === 5 && segments[4] === "features") ||
 		(segments.length === 6 && segments[4] === "join") ||
 		(segments.length === 8 && segments[4] === "tiles");
 	if (!known) return undefined;
@@ -180,8 +187,53 @@ export const handleMapResourceRoutes = ({
 			body: envelope(releaseId, tileJson(resource, origin)),
 		};
 
+	if (segments.length === 5 && segments[4] === "features") {
+		const tier = parsedUrl.searchParams.get("tier");
+		// Like a join's period, the detail is the caller's to choose: the
+		// finest is twenty times the coarsest, and neither is a safe default
+		// for both a warehouse and a web page.
+		if (tier === null || !isGeometryTier(tier))
+			return problem(
+				400,
+				"Invalid Query",
+				`Ask for the detail to download with tier=, one of ${TIER_NAMES}.`,
+			);
+		const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
+		if (format !== "geoparquet")
+			return problem(
+				400,
+				"Invalid Query",
+				"format must be geoparquet.",
+				{ code: "invalid_format" },
+			);
+		const entry = resource.features.find(
+			(candidate) => candidate.tier === tier,
+		);
+		const body = entry && context.mapFeatures?.get(entry.artifact);
+		if (!entry || !body) return unavailable();
+		return {
+			status: 200,
+			body: envelope(releaseId, entry),
+			representation: {
+				contentType: PARQUET_CONTENT_TYPE,
+				body,
+				headers: {
+					"content-disposition": `attachment; filename="${geography}-${release}-${tier}.parquet"`,
+				},
+			},
+		};
+	}
+
 	if (segments.length === 6 && segments[4] === "join") {
 		const measureId = segments[5]!;
+		const format = parsedUrl.searchParams.get("format") ?? "json";
+		if (format !== "json" && format !== "parquet")
+			return problem(
+				400,
+				"Invalid Query",
+				"format must be json or parquet.",
+				{ code: "invalid_format" },
+			);
 		// The map resource decides the geometry: a value may only be drawn on
 		// this release if every source code is in it, which the resolver
 		// checks rather than this route.
@@ -227,38 +279,69 @@ export const handleMapResourceRoutes = ({
 				`The area identities for ${id} are not loaded, so values cannot be numbered to match the tiles.`,
 			);
 		const numbered = featureIds([...inRelease.keys()]);
+		const values = observations.records.flatMap((record) =>
+			isNumericObservation(record)
+				? [
+						{
+							id: numbered.get(record.areaCode)!,
+							code: record.areaCode,
+							value: record.value,
+							status: record.status,
+						},
+					]
+				: [],
+		);
+		const join = {
+			measure: { id: plan.measure.id, label: plan.measure.label },
+			period,
+			sourceGeography: plan.source.sourceGeography,
+			join: {
+				boundaryRelease: plan.join!.boundaryRelease,
+				method: "code-match",
+				compatibility: plan.join!.compatibility,
+				note: "Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal.",
+			},
+			layer: resource.tiles.layer,
+			areasWithoutValue: plan.join!.candidateOnlyCodeCount,
+		};
+		const provenance = {
+			artifact: observations.artifact,
+			contentHash: observations.contentHash,
+			measure: `/v1/measures/${plan.measure.id}`,
+		};
+		if (format === "json")
+			return {
+				status: 200,
+				body: envelope(releaseId, { ...join, values, provenance }),
+			};
+		// The same table as columns. Everything the envelope says about it
+		// travels in the file's metadata, so a copy loaded into a warehouse on
+		// its own still names its release, its source and its join rule.
 		return {
 			status: 200,
-			body: envelope(releaseId, {
-				measure: { id: plan.measure.id, label: plan.measure.label },
-				period,
-				sourceGeography: plan.source.sourceGeography,
-				join: {
-					boundaryRelease: plan.join!.boundaryRelease,
-					method: "code-match",
-					compatibility: plan.join!.compatibility,
-					note: "Values are joined to this geometry by matching area code. No value is converted, and no geometry is asserted to be equal.",
+			body: envelope(releaseId, { ...join, provenance }),
+			representation: {
+				contentType: PARQUET_CONTENT_TYPE,
+				body: writeParquet({
+					columns: [
+						{ name: "id", type: "int32", values: values.map((row) => row.id) },
+						{ name: "code", type: "string", values: values.map((row) => row.code) },
+						{ name: "value", type: "double", values: values.map((row) => row.value) },
+						{ name: "status", type: "string", values: values.map((row) => row.status) },
+					],
+					metadata: {
+						"uk-data-atlas": JSON.stringify({
+							atlasRelease: releaseId,
+							mapResource: id,
+							...join,
+							provenance,
+						}),
+					},
+				}),
+				headers: {
+					"content-disposition": `attachment; filename="${geography}-${release}-${measureId}-${period}.parquet"`,
 				},
-				layer: resource.tiles.layer,
-				areasWithoutValue: plan.join!.candidateOnlyCodeCount,
-				values: observations.records.flatMap((record) =>
-					isNumericObservation(record)
-						? [
-								{
-									id: numbered.get(record.areaCode)!,
-									code: record.areaCode,
-									value: record.value,
-									status: record.status,
-								},
-							]
-						: [],
-				),
-				provenance: {
-					artifact: observations.artifact,
-					contentHash: observations.contentHash,
-					measure: `/v1/measures/${plan.measure.id}`,
-				},
-			}),
+			},
 		};
 	}
 
