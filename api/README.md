@@ -714,8 +714,10 @@ only **available** when its endpoint, contract and provenance are published.
       their year's release.
 - [ ] Machine-readable change log, release notifications and deprecation
       policy. `GET /v1/atlas-releases/compare` is already a machine-readable
-      change log between any two releases; there are no release notifications
-      and no deprecation policy yet.
+      change log between any two releases, and the
+      [operations contract](#operations-contract) sets out the deprecation
+      policy and the test that enforces it. There are no release notifications
+      yet.
 - [x] Compare two Atlas releases, identifying changed datasets, boundary
       releases, crosswalks, validation exceptions and named-location definitions.
       `GET /v1/atlas-releases/compare` lists the artifacts added, removed and
@@ -736,8 +738,33 @@ only **available** when its endpoint, contract and provenance are published.
       partitions and lookup tables are already immutable, cacheable downloads
       through `GET /v1/exports` and `GET /v1/lookups`; a query's results
       cannot yet be snapshotted.
-- [ ] Operational API keys, fair rate limits and managed services only when
-      they add service value rather than restricting openly licensed data.
+- [x] Fair rate limits: a token bucket per client, IPv6 clients by /64,
+      announced on every response with the IETF draft `RateLimit-Policy` and
+      `RateLimit` headers and refused with `429` and `Retry-After`. The
+      defaults allow a burst of 600 requests, earned back at 10 a second,
+      which a map drawing a view does not reach. Behind a proxy the client is
+      read from `X-Forwarded-For` only as far as the declared proxy hops.
+- [ ] Operational API keys and managed services, only when they add service
+      value rather than restricting openly licensed data. There are no keys:
+      nothing served needs one, and the rate limit is what keeps one client
+      from starving the others.
+- [x] Lock the v1 contract against breaking change. `contract/v1-surface.json`
+      records every operation, parameter and limit, status, media type and
+      response property path in `openapi.yaml`, and a test refuses a change
+      that removes or narrows any of them, or a deprecation without dates.
+      Growth must be locked with `pnpm contract:surface`, so each addition is
+      reviewed as a promise.
+- [x] Operate the server: `/healthz`, `/readyz` and Prometheus `/metrics`,
+      one JSON log line per request labelled by operation template with a
+      request id, a logged `500` with a `requestId` rather than a crashed
+      process, bounded URL length and client timeouts, a configurable geometry
+      cache that reports its reads, loads and evictions, and a drain on
+      `SIGTERM`.
+- [x] Gate a deployment with `pnpm smoke <base-url>`: sixteen checks of the
+      contract rather than of one release's contents, from readiness and the
+      OpenAPI description to conditional requests, pinning, problem details,
+      rate limit headers and metrics. `tests/smoke.test.ts` holds the suite to
+      passing in full against the compiled catalogues.
 - [ ] Publish an export manifest for every asynchronous or bulk download with
       its schema, query, row count, content hashes, provenance and Atlas release.
       `GET /v1/exports` already records each whole-partition download's
@@ -2100,6 +2127,112 @@ the two to agree, and walk live capability answers for areas in all four
 nations, measure coverage of several releases and relationship paths, failing
 if any answer strays outside the vocabulary, omits a reason, or offers a
 conversion the convert route does not serve.
+
+## Operations contract
+
+How the server is run, as opposed to what it answers. None of this is under
+`/v1` or in `openapi.yaml`, because none of it is for a client of the API.
+
+### Versioning and release pinning
+
+Two things can change under a client, and each is pinned separately.
+
+- **The contract** is pinned by the path. Within `/v1` it only grows. An
+  operation, parameter, status, media type or response property is never
+  removed, a parameter never becomes required, and none accepts less than it
+  did. `contract/v1-surface.json` records the surface of `openapi.yaml`, and
+  `tests/apiSurface.test.ts` refuses a change that breaks it. An addition must
+  be locked with `pnpm contract:surface`, which itself refuses to lock a
+  breaking change. The one way out is deprecation: an operation marked
+  `deprecated: true` with `x-deprecated-since` and `x-sunset` dates is served
+  with `Deprecation` and `Sunset` headers, and may be removed once its sunset
+  has passed. A change that breaks anything else needs `/v2`.
+- **The data** is pinned by the Atlas release. Every response carries an
+  `Atlas-Release` header, and JSON responses name it in the envelope too. A
+  path under `/v1/atlas-releases/{release-id}/` answers as the unpinned path
+  does and is marked `immutable`. One server serves one release: a pinned path
+  to a release it no longer serves is `410 Gone`, never answered from another.
+
+### Endpoints
+
+| Path | Answers |
+| --- | --- |
+| `/healthz` | `200` while the process is serving. |
+| `/readyz` | `200` with the release served and the geometry cache's state; `503` once the server is draining. |
+| `/metrics` | Prometheus text. Behind `Authorization: Bearer` when `ATLAS_METRICS_TOKEN` is set. |
+
+None is cached or rate limited: a refused probe would take a healthy instance
+out of service.
+
+Metrics label a request by the OpenAPI template it reached, such as
+`/v1/areas/{geography}/{release}/{code}`, and a pinned request by the same
+template under `/v1/atlas-releases/{release-id}`. A path matching no template
+is `unmatched`, so a scan of made-up paths cannot grow the series. Besides
+request counts, durations and bytes, the server exports rate-limit refusals,
+unhandled errors, process memory, event loop delay and the geometry cache's
+area reads, release loads, evictions and load time. Handlers run synchronously, so event
+loop delay is the first sign of a slow request: typically a geometry release
+being read for the first time.
+
+### Logs and errors
+
+`pnpm start` writes one JSON object per line to standard output. Each request
+is logged with its request id, method, operation template, path, status,
+duration, bytes and any problem `code`. A request that throws is answered
+`500` with a `requestId` and no internal detail, logged at `error` with its
+stack, and passed to `onError`, where an error tracker can be attached; the
+server keeps serving. A route answering `5xx` itself, such as a catalogue not
+built, is logged at `warn`. An exception outside a request is logged and ends
+the process for its supervisor to restart. A client's `X-Request-Id` is used
+when it is 1 to 128 letters, digits and `._:-`, so its logs and the server's
+line up.
+
+### Limits
+
+- **Rate limit:** a token bucket per client, see the checklist above. At most
+  100,000 clients are remembered; the least recently seen is forgotten first,
+  and starts again with the full bucket it would have earned anyway.
+- **Request target:** longer than `ATLAS_MAX_URL_LENGTH` is `414`.
+- **Slow clients:** headers must arrive within 15 seconds and the whole
+  request within 30; idle keep-alive connections close after 5.
+- **Geometry cache:** a count of releases, because one costs 60 to 400 MB of
+  heap. A rising eviction count means the cache is too small for the traffic.
+- **Shutdown:** on `SIGTERM` the server reports not ready, stops accepting
+  connections, finishes what it holds, and closes whatever is left after the
+  grace period.
+
+### Configuration
+
+Every setting is read once at start, and a malformed value stops the server
+rather than falling back to the default.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `PORT` | `3001` | Port to listen on. |
+| `HOST` | `127.0.0.1` | Address to listen on. |
+| `ATLAS_RATE_LIMIT_CAPACITY` | `600` | Requests a client may make at once; `0` turns limiting off. |
+| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10` | Requests earned back each second. |
+| `ATLAS_TRUSTED_PROXY_HOPS` | `0` | Proxies in front of the server that append to `X-Forwarded-For`. |
+| `ATLAS_GEOMETRY_CACHE_RELEASES` | `2` | Geometry releases held in memory at once. |
+| `ATLAS_METRICS_TOKEN` | unset | Bearer token `/metrics` requires; unset, it is open. |
+| `ATLAS_ACCESS_LOG` | `on` | Log every request, not only failures. |
+| `ATLAS_MAX_URL_LENGTH` | `4096` | Longest request target served. |
+| `ATLAS_SHUTDOWN_GRACE_SECONDS` | `10` | Time to finish open requests after `SIGTERM`. |
+
+### Deployment smoke test
+
+`pnpm smoke <base-url>` checks a deployed server and prints TAP, exiting
+non-zero on any failure. It checks the contract rather than what one release
+contains, discovering every id it needs from the server, and loads no geometry
+release, so it passes unchanged from release to release and is cheap enough to
+run on a schedule. It checks liveness and readiness, discovery and the
+`Atlas-Release` header, that OpenAPI documents every index link, request ids,
+a `304` revalidation, `HEAD`, a cross-origin preflight, problem details for
+`404` and `405`, the release manifest, an immutable pinned response and a
+refused unknown pin, an area and an observation, the validation report, rate
+limit headers and metrics. Where a check cannot apply, such as rate limit
+headers with limiting off or protected metrics without
+`ATLAS_METRICS_TOKEN`, it is skipped with the reason rather than passed.
 
 ## Resolution contract
 

@@ -1,4 +1,3 @@
-import { createServer } from "node:http";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
@@ -36,7 +35,6 @@ import {
 } from "./dataCatalog";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { ExportManifest } from "./exportManifest";
-import { httpResponse, preflightResponse } from "./httpResponse";
 import type { LookupManifest } from "./lookupExports";
 import { createGeographyResolver } from "./geographyResolver";
 import {
@@ -45,7 +43,6 @@ import {
 	LocationProjectionArtifact,
 	type LocationProjectionInventory,
 } from "./locationProjections";
-import { route } from "./routes";
 import type { CrosswalkLookup, RouteContext } from "./routing";
 import {
 	createRelationshipPathIndex,
@@ -399,7 +396,15 @@ export const readMeasureCompatibility = (
 
 export type ApiCatalogues = Required<RouteContext>;
 
-export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
+export type CatalogueOptions = {
+	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
+	geometryCacheReleases?: number;
+};
+
+export const readApiCatalogues = (
+	apiRoot: string,
+	options: CatalogueOptions = {},
+): ApiCatalogues => {
 	const areaInventory = readAreaInventory(apiRoot);
 	const areaLookup = readAreaLookup(apiRoot, areaInventory);
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
@@ -436,6 +441,7 @@ export const readApiCatalogues = (apiRoot: string): ApiCatalogues => {
 	const areaGeometryCache = new AreaGeometryCache(
 		resolve(apiRoot, ".."),
 		geometrySources,
+		options.geometryCacheReleases,
 	);
 	const geographyResolver = createGeographyResolver({
 		areaLookup,
@@ -503,14 +509,4 @@ const readMapResources = (apiRoot: string) => {
 	};
 };
 
-export const createApiServer = (catalogues: ApiCatalogues) =>
-	createServer((request, response) => {
-		const { status, headers, body } =
-			request.method === "OPTIONS"
-				? preflightResponse()
-				: httpResponse(request, (method) =>
-						route(method, request.url, catalogues),
-					);
-		response.writeHead(status, headers);
-		response.end(body);
-	});
+export { createApiServer, type ApiServer } from "./apiServer";

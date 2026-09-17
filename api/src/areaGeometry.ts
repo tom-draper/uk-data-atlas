@@ -76,14 +76,47 @@ export type IntersectingArea = {
 	relation: "within" | "overlaps";
 	bounds: GeometryBounds;
 };
+/**
+ * How the geometry cache has behaved since the server started. A release costs
+ * 60 to 400 MB of heap once read, so the limit is a count of releases, and a
+ * rising eviction count says it is too small for the traffic it serves.
+ */
+export type AreaGeometryCacheStats = {
+	maxReleases: number;
+	loadedReleases: string[];
+	/** Area reads answered from a release already in memory. */
+	reads: number;
+	loads: number;
+	evictions: number;
+	loadSeconds: number;
+};
+
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
 	private readonly offsets = new Map<string, GridOffset>();
+	private readonly counts = {
+		reads: 0,
+		loads: 0,
+		evictions: 0,
+		loadSeconds: 0,
+	};
 	constructor(
 		private readonly repositoryRoot: string,
 		private readonly sources: GeometrySourceLookup,
 		private readonly maxReleases = 2,
-	) {}
+	) {
+		if (!Number.isInteger(maxReleases) || maxReleases < 1)
+			throw new Error(
+				"The geometry cache must hold at least one release.",
+			);
+	}
+	stats(): AreaGeometryCacheStats {
+		return {
+			maxReleases: this.maxReleases,
+			loadedReleases: [...this.releases.keys()],
+			...this.counts,
+		};
+	}
 	private source(geography: string, boundaryRelease: string) {
 		const identity = [geography, boundaryRelease].join("/");
 		const source = this.sources.get(identity);
@@ -150,6 +183,7 @@ export class AreaGeometryCache {
 		const identity = [geography, boundaryRelease].join("/");
 		let release = this.releases.get(identity);
 		if (!release) {
+			const started = performance.now();
 			const source = this.source(geography, boundaryRelease);
 			const inputPath = join(this.repositoryRoot, "data", source.input);
 			const data: Collection = inputPath.toLowerCase().endsWith(".shp")
@@ -199,11 +233,16 @@ export class AreaGeometryCache {
 				bounds: new Map(),
 			};
 			this.releases.set(identity, release);
-			while (this.releases.size > this.maxReleases)
+			this.counts.loads += 1;
+			this.counts.loadSeconds += (performance.now() - started) / 1000;
+			while (this.releases.size > this.maxReleases) {
 				this.releases.delete(
 					this.releases.keys().next().value as string,
 				);
+				this.counts.evictions += 1;
+			}
 		} else {
+			this.counts.reads += 1;
 			this.releases.delete(identity);
 			this.releases.set(identity, release);
 		}

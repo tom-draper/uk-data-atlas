@@ -36,6 +36,8 @@ export type Problem = {
 	earliest?: unknown;
 	undated?: string[];
 	links?: Record<string, string>;
+	/** Quoted on a failure the server did not expect, to find it in the logs. */
+	requestId?: string;
 };
 
 export type ApiResponse = {

@@ -27,19 +27,23 @@ const IMMUTABLE_CACHE_CONTROL = "public, max-age=31536000, immutable";
  * fetches a tile and then refuses to let the page read it.
  *
  * `ETag` and `Link` are exposed because a client that cannot read them cannot
- * revalidate or page, which are both part of the contract. `If-None-Match` is
+ * revalidate or page, which are both part of the contract. The release and
+ * request id identify an answer, and the rate limit, `Retry-After`,
+ * `Deprecation` and `Sunset` fields tell a browser client when to slow down or
+ * move on, so they are exposed too. `If-None-Match` is
  * not a safelisted request header, so a conditional request preflights and the
  * answer to that preflight has to allow it.
  */
 const CROSS_ORIGIN: Record<string, string> = {
 	"access-control-allow-origin": "*",
-	"access-control-expose-headers": "etag, link, content-encoding",
+	"access-control-expose-headers":
+		"etag, link, content-encoding, atlas-release, x-request-id, ratelimit, ratelimit-policy, retry-after, deprecation, sunset",
 };
 
 const PREFLIGHT: Record<string, string> = {
 	...CROSS_ORIGIN,
 	"access-control-allow-methods": "GET, HEAD, OPTIONS",
-	"access-control-allow-headers": "if-none-match, accept",
+	"access-control-allow-headers": "if-none-match, accept, x-request-id",
 	"access-control-max-age": "86400",
 };
 

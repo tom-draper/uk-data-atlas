@@ -1,6 +1,7 @@
 import type { AreaLookup, AreaRecord } from "./areaInventory";
 import type {
 	AreaGeometryCache,
+	AreaGeometryCacheStats,
 	GeoJsonGeometry,
 	IntersectingArea,
 } from "./areaGeometry";
@@ -165,6 +166,11 @@ export class GeographyResolver {
 
 	hasAreaGeometryCache(): boolean {
 		return this.inputs.areaGeometryCache !== undefined;
+	}
+
+	/** How the geometry cache has behaved, for operational metrics. */
+	geometryCacheStats(): AreaGeometryCacheStats | undefined {
+		return this.inputs.areaGeometryCache?.stats();
 	}
 
 	hasAreaRelationships(): boolean {
