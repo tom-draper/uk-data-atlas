@@ -19,6 +19,10 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "List every route",
 		intro: "Returns the paths the API serves right now. Handy as a quick health check, or to see at a glance what's available.",
 	},
+	getDocumentation: {
+		title: "Open the built-in docs page",
+		intro: "A single HTML page the API serves itself, built from the OpenAPI spec: a route chooser, a glossary, three quick starts and every endpoint with the mistake people most often make calling it. Useful wherever the API runs without this site.",
+	},
 	getOpenapiDescription: {
 		title: "Get the OpenAPI spec",
 		intro: "Download the machine-readable OpenAPI 3.1 description of the whole API, as YAML. Point a client generator, Postman or your editor at it and you get every route, parameter and response shape for free.",
@@ -68,6 +72,23 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "Which ward is this spot in? Give a longitude and latitude and get the area, or areas, of one geography that contain it.",
 		tips: [
 			"A point exactly on a border belongs to both sides, so you can get more than one result. Those are labelled `boundary`.",
+		],
+	},
+	findContainingAreasForPoints: {
+		title: "Find areas for many points",
+		intro: "The same lookup as [Find areas at a point](/docs/reference/map/find-containing-areas), for up to 100 points in one request. Handy for tagging a list of sites or addresses with their ward and council.",
+		tips: [
+			"Give each point as `point={lng},{lat}`, repeated. Add a third number for its accuracy in metres.",
+			"Details that are the same for every point, like which boundary release was used, are given once in `releases` rather than repeated per point.",
+			"For more than 100 points, send them in batches.",
+		],
+	},
+	findNearestAreas: {
+		title: "Find the nearest areas",
+		intro: "Get the areas closest to a point, nearest first, with the distance to each. It answers the questions a containment lookup can't, like which ward is nearest a point just offshore.",
+		tips: [
+			"A distance of zero means the point touches the area, but only [Find areas at a point](/docs/reference/map/find-containing-areas) says an area contains it.",
+			"`within` sets how far to look, in metres, and `limit` how many areas to return.",
 		],
 	},
 	getAreaChildrenGeometry: {
@@ -225,6 +246,16 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "A small table of one measure's values, keyed by the same numeric `id` the tiles use, so your map can colour areas without touching the shapes.",
 		tips: [
 			"If the measure's area codes aren't all in this boundary release, you'll get an `incompatible_geometry` refusal that names releases that would work.",
+			"Add `format=parquet` for the same table as a Parquet file, to join to the [GeoParquet shapes](/docs/reference/geography/map-resource-features) in a warehouse.",
+		],
+	},
+	getMapResourceFeatures: {
+		title: "Download shapes as GeoParquet",
+		intro: "Every area of a boundary release in one GeoParquet file, ready for DuckDB, BigQuery, QGIS or GeoPandas. The shapes match the tiles exactly, borders included, and each row carries the same `id` and `code`, so values join straight on.",
+		tips: [
+			"`tier` is required. Use `full` for analysis, or `medium` or `low` for a lighter file.",
+			"A `bbox` column lets your database skip areas outside the region you're querying.",
+			"[Get values for tiles](/docs/reference/geography/map-resource-join) with `format=parquet` gives you the matching values table.",
 		],
 	},
 	getMapResourceArchive: {
@@ -301,6 +332,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "List crosswalk mappings",
 		intro: "Page through a crosswalk's mappings, or filter them to one `source` area.",
 	},
+	findRelationshipPaths: {
+		title: "Check how two releases connect",
+		intro: "Before translating codes between two boundary releases, check whether the Atlas publishes a way to do it, and how. You get each path step by step, with the method behind it, or a clear reason why there isn't one.",
+		tips: [
+			"`purpose` matters: `identity` for old codes to new, `membership` for what sits inside what, and `apportion` for areas that overlap.",
+			"If nothing is published for your purpose but something is for another, `alternatives` points you to it.",
+		],
+	},
 	translateAreaCode: {
 		title: "Translate an area code",
 		intro: "Turn a code in one geography into its match in another: a ward into its local authority, or an old constituency into its 2024 successor.",
@@ -318,6 +357,13 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	getNamedLocation: {
 		title: "Get a named location",
 		intro: "Get one named location's description, the area codes it's made from and its bounds.",
+	},
+	getNamedLocationParents: {
+		title: "Find what a named location sits in",
+		intro: "The other way round from listing its areas: which regions, counties or combined authorities a named location falls in, and whether it covers each one whole or only part of it.",
+		tips: [
+			"Give `geography` and `release`, then choose a crosswalk with `via`. Leave `via` out to see the crosswalks you can use.",
+		],
 	},
 	getNamedLocationMembers: {
 		title: "List a named location's areas",
