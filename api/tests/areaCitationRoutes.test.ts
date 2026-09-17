@@ -16,6 +16,7 @@ import {
 	populationLocalAuthorityObservations,
 	measureCompatibilityInventory,
 	atlasRelease,
+	testContext,
 	validationReport,
 } from "./routeFixtures";
 
@@ -122,7 +123,7 @@ const citationContext = {
 } satisfies RouteContext;
 
 const citation = (url: string, context: RouteContext = citationContext) => {
-	const response = routeRequest("GET", url, context);
+	const response = routeRequest("GET", url, testContext(context));
 	return {
 		status: response.status,
 		data: ("data" in response.body ? response.body.data : undefined) as

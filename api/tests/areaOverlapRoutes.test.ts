@@ -6,7 +6,12 @@ import test from "node:test";
 import { AreaGeometryCache } from "../src/areaGeometry";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/routing";
-import { registry, areaLookup, crosswalkLookup } from "./routeFixtures";
+import {
+	registry,
+	areaLookup,
+	crosswalkLookup,
+	testContext,
+} from "./routeFixtures";
 
 test("measures how two areas overlap beside any published relationship", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
@@ -53,7 +58,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 			"LAD25CD",
 			[["E08000001", square(-1, 54, 0, 55)]],
 		);
-		const context = {
+		const context = testContext({
 			boundaryRegistry: registry,
 			areaLookup,
 			crosswalkLookup,
@@ -78,7 +83,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 					],
 				]),
 			),
-		} satisfies RouteContext;
+		} satisfies RouteContext);
 		const url = "/v1/areas/ward/2025-01-en-ward/E05000001/overlap";
 
 		const response = routeRequest(
