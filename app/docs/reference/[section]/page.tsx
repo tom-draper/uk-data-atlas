@@ -80,10 +80,10 @@ export default async function SectionPage({ params }: { params: Params }) {
 							>
 								<Card className="flex h-full flex-col px-5 py-4 transition-[background] group-hover:bg-white/80">
 									<span className="flex items-center justify-between gap-3">
-										<span className="text-[15.5px] font-semibold text-slate-900 group-hover:text-indigo-700">
+										<span className="text-[15.5px] font-semibold text-slate-900 group-hover:text-slate-950">
 											{endpoint.title}
 										</span>
-										<ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-indigo-500" />
+										<ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-slate-600" />
 									</span>
 									<span className="mt-1.5 line-clamp-2 flex-1 text-[13.5px] leading-relaxed text-slate-500">
 										<Inline

@@ -51,7 +51,7 @@ export function TextLink({
 	return (
 		<Link
 			href={href}
-			className="font-medium text-indigo-700 underline decoration-indigo-300 underline-offset-[3px] hover:decoration-indigo-600"
+			className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
 		>
 			{children}
 		</Link>

@@ -64,7 +64,7 @@ export function Breadcrumbs({
 
 export function Eyebrow({ children }: { children: ReactNode }) {
 	return (
-		<p className="mb-2 text-[14px] font-medium text-indigo-600">
+		<p className="mb-2 text-[14px] font-medium text-slate-500">
 			{children}
 		</p>
 	);
@@ -101,11 +101,10 @@ export function Pill({
 	tone = "slate",
 }: {
 	children: ReactNode;
-	tone?: "slate" | "indigo" | "amber" | "rose" | "emerald";
+	tone?: "slate" | "amber" | "rose" | "emerald";
 }) {
 	const tones = {
 		slate: "bg-white/60 text-slate-600 ring-slate-900/[0.08]",
-		indigo: "bg-indigo-500/10 text-indigo-700 ring-indigo-600/15",
 		amber: "bg-amber-400/15 text-amber-800 ring-amber-600/20",
 		rose: "bg-rose-500/10 text-rose-700 ring-rose-600/15",
 		emerald: "bg-emerald-500/10 text-emerald-700 ring-emerald-600/15",

@@ -101,7 +101,7 @@ export default function ReferencePage() {
 									<Link
 										href={operationHref(op)}
 										title={endpointContent(op).title}
-										className="-mx-1.5 block rounded px-1.5 py-0.5 text-[12.5px] text-slate-700 hover:bg-white/70 hover:text-indigo-700"
+										className="-mx-1.5 block rounded px-1.5 py-0.5 text-[12.5px] text-slate-700 hover:bg-white/70 hover:text-slate-950"
 									>
 										<EndpointPath
 											path={op.path}

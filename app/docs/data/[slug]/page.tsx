@@ -215,7 +215,7 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 							key="source"
 							href={dataset.sourceUrl}
 							rel="noopener"
-							className="font-medium text-indigo-700 underline decoration-indigo-300 underline-offset-[3px]"
+							className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px]"
 						>
 							{dataset.label}
 						</a>
@@ -228,7 +228,7 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 							key="licence"
 							href={dataset.licence.url}
 							rel="noopener"
-							className="text-indigo-700 underline decoration-indigo-300 underline-offset-[3px]"
+							className="text-slate-800 underline decoration-slate-400 underline-offset-[3px]"
 						>
 							{dataset.licence.name}
 						</a>

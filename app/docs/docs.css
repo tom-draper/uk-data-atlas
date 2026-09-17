@@ -237,23 +237,6 @@
 	scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
 }
 
-/* A soft frost behind the sticky header, so text scrolling past fades out. */
-.docs-header-veil::before {
-	content: "";
-	position: absolute;
-	inset: 0 0 -14px 0;
-	z-index: -1;
-	background: linear-gradient(
-		180deg,
-		rgba(246, 246, 244, 0.8) 0%,
-		rgba(246, 246, 244, 0) 100%
-	);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	-webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
-	mask-image: linear-gradient(180deg, #000 55%, transparent);
-}
-
 .docs-description > summary::-webkit-details-marker {
 	display: none;
 }
