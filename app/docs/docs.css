@@ -1,8 +1,7 @@
 /*
- * The sunlit page behind the API docs: warm light falling across paper from
- * the top right, through a window, with a little drifting dust. It stands in
- * for the map the atlas glass panes normally sit over, giving the glass
- * something soft to refract.
+ * The page behind the API docs: a pale canvas with daylight falling across it
+ * from a window to the upper left. The light is white and the shade is cool,
+ * so it reads as light on a surface rather than a colour.
  */
 
 .docs-sky {
@@ -13,144 +12,125 @@
 	pointer-events: none;
 	background:
 		radial-gradient(
-			120% 90% at 92% -12%,
-			#fff8e4 0%,
-			rgba(255, 248, 228, 0) 58%
+			140% 110% at 50% 40%,
+			rgba(255, 255, 255, 0) 55%,
+			rgba(120, 128, 140, 0.1) 100%
 		),
-		radial-gradient(
-			80% 60% at 0% 100%,
-			rgba(200, 214, 236, 0.55) 0%,
-			rgba(200, 214, 236, 0) 70%
-		),
-		linear-gradient(170deg, #fcf9f1 0%, #f5f2ea 45%, #eceff4 100%);
+		linear-gradient(165deg, #f8f8f6 0%, #f3f3f1 55%, #eeeff0 100%);
 }
 
-/* The sun itself, just off the top-right corner, breathing slowly. */
-.docs-sun {
+/* The broad wash of daylight where the window's light lands. */
+.docs-light {
 	position: absolute;
-	top: -26vmax;
-	right: -20vmax;
+	top: -30vmax;
+	left: -20vmax;
+	width: 95vmax;
+	height: 95vmax;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.95) 0%,
+		rgba(255, 255, 255, 0.6) 30%,
+		rgba(255, 255, 255, 0) 65%
+	);
+	animation: docs-breathe 18s ease-in-out infinite alternate;
+}
+
+/* Window panes of light thrown across the canvas, with the frame's shadow between. */
+.docs-window {
+	position: absolute;
+	top: -25vh;
+	left: -8vw;
+	width: 90vw;
+	height: 150vh;
+	transform: skewX(-24deg);
+	transform-origin: top left;
+	background: repeating-linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0) 0,
+		rgba(255, 255, 255, 0.75) 4vw,
+		rgba(255, 255, 255, 0.75) 15vw,
+		rgba(255, 255, 255, 0) 19vw,
+		rgba(110, 120, 135, 0.05) 20.5vw,
+		rgba(255, 255, 255, 0) 22vw
+	);
+	-webkit-mask-image: linear-gradient(
+		165deg,
+		#000 0%,
+		rgba(0, 0, 0, 0.45) 45%,
+		transparent 80%
+	);
+	mask-image: linear-gradient(
+		165deg,
+		#000 0%,
+		rgba(0, 0, 0, 0.45) 45%,
+		transparent 80%
+	);
+	filter: blur(26px);
+	animation: docs-drift 40s ease-in-out infinite alternate;
+}
+
+/* Soft shade in the far corner, away from the window. */
+.docs-shade {
+	position: absolute;
+	right: -25vmax;
+	bottom: -25vmax;
 	width: 70vmax;
 	height: 70vmax;
 	border-radius: 50%;
 	background: radial-gradient(
 		circle,
-		rgba(255, 253, 245, 1) 0%,
-		rgba(255, 236, 188, 0.7) 18%,
-		rgba(255, 219, 150, 0.28) 42%,
-		rgba(255, 219, 150, 0) 68%
+		rgba(120, 130, 145, 0.12) 0%,
+		rgba(120, 130, 145, 0) 65%
 	);
-	filter: blur(8px);
-	animation: docs-breathe 16s ease-in-out infinite alternate;
 }
 
-/* Shafts of light fanning out from the sun, faded out before the far side. */
-.docs-rays {
+/* The weave of the canvas, barely there. */
+.docs-weave {
 	position: absolute;
-	inset: -20%;
-	background: repeating-conic-gradient(
-		from 205deg at 90% 8%,
-		rgba(255, 236, 190, 0) 0deg,
-		rgba(255, 236, 190, 0.55) 2.5deg,
-		rgba(255, 236, 190, 0) 6deg,
-		rgba(160, 178, 206, 0.07) 9deg,
-		rgba(255, 236, 190, 0) 12deg
-	);
-	-webkit-mask-image: radial-gradient(
-		ellipse 75% 85% at 90% 8%,
-		#000 0%,
-		rgba(0, 0, 0, 0.55) 40%,
-		transparent 78%
-	);
-	mask-image: radial-gradient(
-		ellipse 75% 85% at 90% 8%,
-		#000 0%,
-		rgba(0, 0, 0, 0.55) 40%,
-		transparent 78%
-	);
-	filter: blur(18px);
-	transform-origin: 90% 8%;
-	animation: docs-sway 38s ease-in-out infinite alternate;
-}
-
-/* Window panes of light cast across the page. */
-.docs-pane {
-	position: absolute;
-	width: 22vw;
-	height: 120vh;
-	border-radius: 12px;
-	background: linear-gradient(
-		180deg,
-		rgba(255, 250, 236, 0.85) 0%,
-		rgba(255, 242, 214, 0.35) 55%,
-		rgba(255, 242, 214, 0) 100%
-	);
-	filter: blur(28px);
-	opacity: 0.55;
-	transform: rotate(32deg) skewY(-6deg);
-	animation: docs-drift 30s ease-in-out infinite alternate;
-}
-
-.docs-pane:nth-of-type(1) {
-	top: -30vh;
-	right: 18vw;
-}
-
-.docs-pane:nth-of-type(2) {
-	top: -10vh;
-	right: -2vw;
-	width: 14vw;
-	animation-delay: -12s;
-}
-
-/* Soft shadow dapples, as if something moves outside the window. */
-.docs-dapple {
-	position: absolute;
-	border-radius: 50%;
-	background: radial-gradient(
-		circle,
-		rgba(120, 140, 175, 0.16) 0%,
-		rgba(120, 140, 175, 0) 70%
-	);
-	filter: blur(24px);
-	animation: docs-drift 26s ease-in-out infinite alternate;
-}
-
-.docs-mote {
-	position: absolute;
-	border-radius: 50%;
-	background: rgba(255, 246, 222, 0.95);
-	box-shadow:
-		0 0 6px 2px rgba(255, 226, 160, 0.55),
-		0 0 1px rgba(160, 120, 40, 0.4);
-	animation: docs-float linear infinite;
+	inset: 0;
+	opacity: 0.35;
+	mix-blend-mode: multiply;
+	background-image:
+		repeating-linear-gradient(
+			0deg,
+			rgba(90, 95, 105, 0.035) 0 1px,
+			transparent 1px 3px
+		),
+		repeating-linear-gradient(
+			90deg,
+			rgba(90, 95, 105, 0.03) 0 1px,
+			transparent 1px 3px
+		);
 }
 
 .docs-grain {
 	position: absolute;
 	inset: 0;
-	opacity: 0.06;
+	opacity: 0.05;
 	mix-blend-mode: multiply;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@keyframes docs-breathe {
-	from {
-		transform: scale(1);
-		opacity: 0.9;
-	}
-	to {
-		transform: scale(1.06);
-		opacity: 1;
-	}
+/* Dust catching the light. */
+.docs-mote {
+	position: absolute;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow:
+		0 0 4px 1px rgba(255, 255, 255, 0.8),
+		0 0 1px rgba(100, 110, 125, 0.35);
+	animation: docs-float linear infinite;
 }
 
-@keyframes docs-sway {
+@keyframes docs-breathe {
 	from {
-		transform: rotate(-1.5deg);
+		opacity: 0.85;
+		transform: scale(1);
 	}
 	to {
-		transform: rotate(1.5deg);
+		opacity: 1;
+		transform: scale(1.04);
 	}
 }
 
@@ -159,7 +139,7 @@
 		translate: 0 0;
 	}
 	to {
-		translate: -3vw 2vh;
+		translate: 2vw 1vh;
 	}
 }
 
@@ -168,23 +148,57 @@
 		translate: 0 0;
 		opacity: 0;
 	}
-	15% {
-		opacity: 1;
+	20% {
+		opacity: 0.9;
 	}
-	85% {
-		opacity: 1;
+	80% {
+		opacity: 0.9;
 	}
 	100% {
-		translate: -6vw 22vh;
+		translate: 5vw 18vh;
 		opacity: 0;
 	}
 }
 
+/*
+ * The shadow of the window frame falls over the content too, so the light
+ * reads as landing on the page. Cool and faint, it only tints.
+ */
+.docs-sunfall {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.docs-sunfall::before {
+	content: "";
+	position: absolute;
+	top: -25vh;
+	left: -8vw;
+	width: 90vw;
+	height: 150vh;
+	transform: skewX(-24deg);
+	transform-origin: top left;
+	background: repeating-linear-gradient(
+		90deg,
+		rgba(110, 120, 135, 0) 0,
+		rgba(110, 120, 135, 0) 18vw,
+		rgba(110, 120, 135, 0.05) 20.5vw,
+		rgba(110, 120, 135, 0) 23vw
+	);
+	-webkit-mask-image: linear-gradient(165deg, #000 0%, transparent 70%);
+	mask-image: linear-gradient(165deg, #000 0%, transparent 70%);
+	mix-blend-mode: multiply;
+	filter: blur(20px);
+	animation: docs-drift 40s ease-in-out infinite alternate;
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.docs-sun,
-	.docs-rays,
-	.docs-pane,
-	.docs-dapple {
+	.docs-light,
+	.docs-window,
+	.docs-sunfall::before {
 		animation: none;
 	}
 
@@ -223,73 +237,6 @@
 	scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
 }
 
-/*
- * Light falling across the page itself, above the glass. Multiplying warm
- * bands and faint cool shade over near-white glass reads as sun through a
- * window on paper, and never touches legibility: it only tints.
- */
-.docs-sunfall {
-	position: fixed;
-	inset: 0;
-	z-index: 40;
-	overflow: hidden;
-	pointer-events: none;
-}
-
-.docs-sunfall::before {
-	content: "";
-	position: absolute;
-	inset: -40% -20%;
-	background: repeating-linear-gradient(
-		118deg,
-		rgba(255, 232, 186, 0) 0%,
-		rgba(255, 232, 186, 0.34) 6%,
-		rgba(255, 232, 186, 0.1) 11%,
-		rgba(196, 208, 230, 0.16) 15%,
-		rgba(255, 232, 186, 0) 20%,
-		rgba(255, 232, 186, 0) 27%
-	);
-	-webkit-mask-image: radial-gradient(
-		ellipse 80% 90% at 95% 0%,
-		#000 0%,
-		rgba(0, 0, 0, 0.5) 45%,
-		transparent 85%
-	);
-	mask-image: radial-gradient(
-		ellipse 80% 90% at 95% 0%,
-		#000 0%,
-		rgba(0, 0, 0, 0.5) 45%,
-		transparent 85%
-	);
-	mix-blend-mode: multiply;
-	filter: blur(22px);
-	animation: docs-drift 34s ease-in-out infinite alternate;
-}
-
-/* The bright bloom where the sun catches the top-right of the page. */
-.docs-sunfall::after {
-	content: "";
-	position: absolute;
-	top: -30vmax;
-	right: -24vmax;
-	width: 62vmax;
-	height: 62vmax;
-	border-radius: 50%;
-	background: radial-gradient(
-		circle,
-		rgba(255, 244, 214, 0.5) 0%,
-		rgba(255, 236, 196, 0.2) 35%,
-		rgba(255, 236, 196, 0) 65%
-	);
-	mix-blend-mode: multiply;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.docs-sunfall::before {
-		animation: none;
-	}
-}
-
 /* A soft frost behind the sticky header, so text scrolling past fades out. */
 .docs-header-veil::before {
 	content: "";
@@ -298,8 +245,8 @@
 	z-index: -1;
 	background: linear-gradient(
 		180deg,
-		rgba(249, 247, 241, 0.75) 0%,
-		rgba(249, 247, 241, 0) 100%
+		rgba(246, 246, 244, 0.8) 0%,
+		rgba(246, 246, 244, 0) 100%
 	);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
@@ -309,4 +256,13 @@
 
 .docs-description > summary::-webkit-details-marker {
 	display: none;
+}
+
+.docs-code .tok-comment {
+	color: rgba(148, 163, 184, 0.75);
+	font-style: italic;
+}
+
+.docs-code .tok-fn {
+	color: #93c5fd;
 }

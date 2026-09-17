@@ -16,19 +16,19 @@ export interface CodeSample {
 /** How a response should be read: the JSON envelope, other JSON, text or bytes. */
 export type ResponseKind = "envelope" | "json" | "text" | "binary";
 
-export const SAMPLE_LABELS: Record<SampleLanguage, string> = {
+const SAMPLE_LABELS: Record<SampleLanguage, string> = {
 	curl: "cURL",
 	javascript: "JavaScript",
 	python: "Python",
 };
 
 function splitUrl(url: string): { base: string; params: [string, string][] } {
-	const [base, query = ""] = url.split(/\?(.*)/s);
+	const [base, query = ""] = url.split(/\?(.*)/);
 	const params = query
 		.split("&")
 		.filter(Boolean)
 		.map((pair): [string, string] => {
-			const [key, value = ""] = pair.split(/=(.*)/s);
+			const [key, value = ""] = pair.split(/=(.*)/);
 			return [decode(key), decode(value)];
 		});
 	return { base, params };

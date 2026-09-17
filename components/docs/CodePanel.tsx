@@ -1,39 +1,42 @@
 import type { ReactNode } from "react";
-import { smokedGlass } from "@/lib/docs/theme";
+import type { CodeSample } from "@/lib/docs/samples";
+import { inkPanel } from "@/lib/docs/theme";
+import CodeTabs from "./CodeTabs";
 import CopyButton from "./CopyButton";
+import { highlight, type CodeLanguage } from "./highlight";
 
-const JSON_TOKEN =
-	/("(?:[^"\\]|\\.)*")(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|\b(true|false|null)\b|([{}[\],])/g;
-
-/** Colour a pretty-printed JSON document; anything else is left as text. */
-export function highlightJson(source: string): ReactNode[] {
-	const nodes: ReactNode[] = [];
-	let last = 0;
-	for (const match of source.matchAll(JSON_TOKEN)) {
-		const index = match.index ?? 0;
-		if (index > last) nodes.push(source.slice(last, index));
-		const [text, string, colon, number, literal] = match;
-		const kind = string
-			? colon
-				? "key"
-				: "string"
-			: number
-				? "number"
-				: literal
-					? "literal"
-					: "punct";
-		nodes.push(
-			<span key={index} className={`tok-${kind}`}>
-				{colon ? string : text}
-			</span>,
-		);
-		if (colon) nodes.push(colon);
-		last = index + text.length;
-	}
-	nodes.push(source.slice(last));
-	return nodes;
+function Frame({
+	header,
+	children,
+}: {
+	header: ReactNode;
+	children: ReactNode;
+}) {
+	return (
+		<figure
+			className="docs-code min-w-0 overflow-hidden rounded-lg"
+			style={inkPanel}
+		>
+			<figcaption className="flex min-h-10 items-center gap-2 border-b border-white/[0.07] pr-1.5 pl-4">
+				{header}
+			</figcaption>
+			{children}
+		</figure>
+	);
 }
 
+function Body({ code, maxHeight }: { code: ReactNode; maxHeight?: string }) {
+	return (
+		<pre
+			className="docs-scroll overflow-auto px-4 py-3.5 font-mono text-[12.5px] leading-[1.7] text-slate-200"
+			style={maxHeight ? { maxHeight } : undefined}
+		>
+			<code>{code}</code>
+		</pre>
+	);
+}
+
+/** One block of code in the atlas's smoked glass. */
 export default function CodePanel({
 	title,
 	code,
@@ -43,57 +46,60 @@ export default function CodePanel({
 }: {
 	title: string;
 	code: string;
-	language?: "json" | "shell" | "text";
+	language?: CodeLanguage;
 	badge?: ReactNode;
 	maxHeight?: string;
 }) {
-	const body =
-		language === "json" ? (
-			highlightJson(code)
-		) : language === "shell" ? (
-			<ShellCode code={code} />
-		) : (
-			code
-		);
-
 	return (
-		<figure
-			className="docs-code overflow-hidden rounded-lg"
-			style={smokedGlass}
+		<Frame
+			header={
+				<>
+					<span className="text-[11.5px] font-medium tracking-wide text-slate-300">
+						{title}
+					</span>
+					{badge}
+					<span className="ml-auto" />
+					<CopyButton
+						value={code}
+						label={`Copy ${title.toLowerCase()}`}
+					/>
+				</>
+			}
 		>
-			<figcaption className="flex items-center gap-2 border-b border-white/[0.07] py-1.5 pr-1.5 pl-4">
-				<span className="text-[11px] font-medium tracking-wide text-slate-300">
-					{title}
-				</span>
-				{badge}
-				<span className="ml-auto" />
-				<CopyButton
-					value={code}
-					label={`Copy ${title.toLowerCase()}`}
-				/>
-			</figcaption>
-			<pre
-				className="docs-scroll overflow-auto px-4 py-3.5 font-mono text-[12.5px] leading-[1.65] text-slate-200"
-				style={maxHeight ? { maxHeight } : undefined}
-			>
-				<code>{body}</code>
-			</pre>
-		</figure>
+			<Body code={highlight(code, language)} maxHeight={maxHeight} />
+		</Frame>
 	);
 }
 
-function ShellCode({ code }: { code: string }) {
-	return code.split(/(\{[^}]+\}|^curl\b)/gm).map((part, i) =>
-		part === "curl" ? (
-			<span key={i} className="tok-key">
-				{part}
-			</span>
-		) : part.startsWith("{") ? (
-			<span key={i} className="tok-param">
-				{part}
-			</span>
-		) : (
-			part
-		),
+/**
+ * The same request in each language, with the reader's language remembered
+ * across every sample on the site. Highlighting happens here on the server;
+ * only the choice of tab runs in the browser.
+ */
+export function RequestSamples({
+	samples,
+	title,
+	maxHeight,
+}: {
+	samples: CodeSample[];
+	title?: string;
+	maxHeight?: string;
+}) {
+	return (
+		<CodeTabs
+			title={title}
+			tabs={samples.map((sample) => ({
+				id: sample.language,
+				label: sample.label,
+				code: sample.code,
+				body: (
+					<Body
+						code={highlight(sample.code, sample.language)}
+						maxHeight={maxHeight}
+					/>
+				),
+			}))}
+			frameStyle={inkPanel}
+		/>
 	);
 }
