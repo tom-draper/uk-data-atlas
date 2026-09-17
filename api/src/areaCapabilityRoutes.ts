@@ -17,9 +17,7 @@ export const handleAreaCapabilityRoutes = ({
 	)
 		return undefined;
 	const {
-		areaLookup,
 		crosswalkLookup,
-		areaGeometryCache,
 		namedLocationInventory,
 		dataCatalog,
 		populationObservations,
@@ -39,26 +37,20 @@ export const handleAreaCapabilityRoutes = ({
 			"Catalogue Unavailable",
 			"Build the geography resolver before describing an area.",
 		);
-	const area = geographyResolver.area({
-		geography,
-		boundaryRelease,
-		code,
-	});
+	const identity = { geography, boundaryRelease, code };
+	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
-		if (!areaGeometryCache)
+		if (!geographyResolver.hasAreaGeometryCache())
 			return { status: "not-published" as const, href: geometryHref };
 		try {
-			return areaGeometryCache.get(geography, boundaryRelease, code)
+			const resolved = geographyResolver.areaGeometry(identity);
+			return resolved
 				? {
 						status: "available" as const,
 						href: geometryHref,
-						provenance: areaGeometryCache.provenance(
-							geography,
-							boundaryRelease,
-							code,
-						),
+						provenance: resolved.geometrySource,
 					}
 				: { status: "not-found" as const, href: geometryHref };
 		} catch (error) {

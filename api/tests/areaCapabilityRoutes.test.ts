@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
+import { AreaGeometryCache } from "../src/areaGeometry";
 import { route as routeRequest } from "../src/routes";
 import {
 	registry,
@@ -112,4 +116,64 @@ test("reports an area's exact-release capability and availability matrix", () =>
 			],
 		},
 	]);
+});
+
+test("reports published geometry capability through the resolver", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const directory = join(
+			root,
+			"data",
+			"boundaries",
+			"ward",
+			"2023-05-uk-bgc",
+		);
+		mkdirSync(directory, { recursive: true });
+		writeFileSync(
+			join(directory, "wards.geojson"),
+			JSON.stringify({
+				type: "FeatureCollection",
+				features: [
+					{
+						properties: { WD23CD: "E05000001" },
+						geometry: {
+							type: "Point",
+							coordinates: [-2.24, 53.48],
+						},
+					},
+				],
+			}),
+		);
+		const response = routeRequest(
+			"GET",
+			"/v1/areas/ward/2023-05-uk-bgc/E05000001/capabilities",
+			testContext({
+				boundaryRegistry: registry,
+				areaLookup: compatibleWardAreaLookup,
+				areaGeometryCache: new AreaGeometryCache(
+					root,
+					new Map([
+						[
+							"ward/2023-05-uk-bgc",
+							{
+								input: "boundaries/ward/2023-05-uk-bgc/wards.geojson",
+								crs: "EPSG:4326",
+								codeProperty: "WD23CD",
+							},
+						],
+					]),
+				),
+			}),
+		);
+		const data = ("data" in response.body && response.body.data) as {
+			capabilities: { geometry: unknown };
+		};
+		assert.deepEqual(data.capabilities.geometry, {
+			status: "available",
+			href: "/v1/areas/ward/2023-05-uk-bgc/E05000001/geometry",
+			provenance: { sourceCrs: "EPSG:4326" },
+		});
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
 });
