@@ -157,7 +157,11 @@ const wkbRings = (wkb: Buffer) => {
 	let rings: Array<Array<[number, number]>>;
 	if (type === 3) rings = polygon();
 	else {
-		assert.equal(type, 6, `WKB type ${type} is not a polygon or multipolygon`);
+		assert.equal(
+			type,
+			6,
+			`WKB type ${type} is not a polygon or multipolygon`,
+		);
 		at = 5;
 		rings = Array.from({ length: u32() }, polygon).flat();
 	}
@@ -245,15 +249,30 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 					matched += 1;
 				}
 				const geometry = row.geometry as Buffer;
-				types.add(geometry.readUInt32LE(1) === 3 ? "Polygon" : "MultiPolygon");
+				types.add(
+					geometry.readUInt32LE(1) === 3 ? "Polygon" : "MultiPolygon",
+				);
 				const box = row.bbox as Record<string, number>;
 				let points = 0;
 				for (const ring of wkbRings(geometry)) {
-					assert.ok(ring.length >= 4, `${code} has a ring enclosing nothing`);
-					assert.deepEqual(ring[0], ring.at(-1), `${code} has an open ring`);
+					assert.ok(
+						ring.length >= 4,
+						`${code} has a ring enclosing nothing`,
+					);
+					assert.deepEqual(
+						ring[0],
+						ring.at(-1),
+						`${code} has an open ring`,
+					);
 					for (const [x, y] of ring) {
-						assert.ok(x >= box.xmin! && x <= box.xmax!, `${code} lies outside its bbox`);
-						assert.ok(y >= box.ymin! && y <= box.ymax!, `${code} lies outside its bbox`);
+						assert.ok(
+							x >= box.xmin! && x <= box.xmax!,
+							`${code} lies outside its bbox`,
+						);
+						assert.ok(
+							y >= box.ymin! && y <= box.ymax!,
+							`${code} lies outside its bbox`,
+						);
 						points += 1;
 					}
 				}
@@ -263,7 +282,11 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 				extent[2] = Math.max(extent[2]!, box.xmax!);
 				extent[3] = Math.max(extent[3]!, box.ymax!);
 			});
-			assert.equal(matched, inTiles.size, "a tile area is missing from the GeoParquet");
+			assert.equal(
+				matched,
+				inTiles.size,
+				"a tile area is missing from the GeoParquet",
+			);
 			assert.deepEqual(column.geometry_types, [...types].sort());
 			assert.deepEqual(column.bbox, extent);
 		}

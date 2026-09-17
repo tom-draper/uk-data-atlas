@@ -198,7 +198,9 @@ const plainValues = (column: ParquetColumn): Buffer => {
 							? Buffer.from(value)
 							: undefined;
 				if (!bytes)
-					throw new Error(`${column.name} holds a non-${column.type}.`);
+					throw new Error(
+						`${column.name} holds a non-${column.type}.`,
+					);
 				const length = Buffer.alloc(4);
 				length.writeUInt32LE(bytes.length);
 				return [length, bytes];
@@ -279,7 +281,11 @@ const leafElement = (name: string, column: ParquetColumn): Field[] => [
 		? ([
 				{ id: 6, kind: "i32", value: CONVERTED_UTF8 },
 				// LogicalType is a union; field 1 is STRING, an empty struct.
-				{ id: 10, kind: "struct", value: [{ id: 1, kind: "struct", value: [] }] },
+				{
+					id: 10,
+					kind: "struct",
+					value: [{ id: 1, kind: "struct", value: [] }],
+				},
 			] satisfies Field[])
 		: []),
 ];
@@ -328,7 +334,11 @@ const schemaElements = (columns: ParquetColumn[]): Field[][] => {
 						[
 							{ id: 3, kind: "i32", value: REPETITION.required },
 							{ id: 4, kind: "binary", value: entry.name },
-							{ id: 5, kind: "i32", value: entry.children.length },
+							{
+								id: 5,
+								kind: "i32",
+								value: entry.children.length,
+							},
 						] satisfies Field[],
 						...entry.children.map((child) =>
 							leafElement(child.name.split(".")[1]!, child),

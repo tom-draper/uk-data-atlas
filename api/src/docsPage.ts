@@ -156,7 +156,10 @@ export const renderDocsPage = (
 		.join("\n");
 
 	const glossary = document["x-glossary"]
-		.map((entry) => `<dt>${escape(entry.term)}</dt><dd>${inline(entry.meaning)}</dd>`)
+		.map(
+			(entry) =>
+				`<dt>${escape(entry.term)}</dt><dd>${inline(entry.meaning)}</dd>`,
+		)
 		.join("\n");
 
 	const quickStarts = document["x-quick-starts"]
@@ -167,7 +170,9 @@ export const renderDocsPage = (
 <ol class="steps">
 ${guide.steps
 	.map(
-		(step) => `<li><strong>${escape(step.title)}.</strong> ${inline(step.explain)}
+		(
+			step,
+		) => `<li><strong>${escape(step.title)}.</strong> ${inline(step.explain)}
 ${step.status ? `<div class="expect">Answers ${step.status}, deliberately.</div>` : ""}
 <pre><code>curl -sS '${escape(origin + step.request)}'</code></pre>
 <a href="${escape(step.request)}">Open</a></li>`,
@@ -260,7 +265,10 @@ export const docsPage = (openapiDocument: string, atlasRelease: string) => {
 	if (rendered?.key !== key)
 		rendered = {
 			key,
-			html: renderDocsPage(parse(openapiDocument) as OpenApiGuide, atlasRelease),
+			html: renderDocsPage(
+				parse(openapiDocument) as OpenApiGuide,
+				atlasRelease,
+			),
 		};
 	return rendered.html;
 };

@@ -3,7 +3,11 @@ import type { AreaGeometryCache } from "../areaGeometry";
 import { GEOMETRY_TIERS, type GeometryTier } from "../simplifyGeometry";
 import { decomposeArcs } from "./arcs";
 import { buildGeoParquet } from "./geoParquet";
-import { compileTier, TOPOLOGY_METHOD, type TierGeometry } from "./topologyTiers";
+import {
+	compileTier,
+	TOPOLOGY_METHOD,
+	type TierGeometry,
+} from "./topologyTiers";
 import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
 import {
 	boundsOf,

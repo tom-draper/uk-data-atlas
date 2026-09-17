@@ -55,16 +55,18 @@ export const compileRelationshipPaths = (
 	const direct = crosswalks.crosswalks.flatMap((crosswalk) => {
 		const purpose = purposeFor(crosswalk);
 		if (!purpose) return [];
-		const path = (
-			direction: "forward" | "reverse",
-		): RelationshipPath => ({
+		const path = (direction: "forward" | "reverse"): RelationshipPath => ({
 			id: `${crosswalk.id}/${direction}/${purpose}`,
 			purpose,
 			from: direction === "forward" ? crosswalk.from : crosswalk.to,
 			to: direction === "forward" ? crosswalk.to : crosswalk.from,
 			quality: crosswalk.quality,
 			steps: [
-				{ crosswalkId: crosswalk.id, direction, method: crosswalk.method },
+				{
+					crosswalkId: crosswalk.id,
+					direction,
+					method: crosswalk.method,
+				},
 			],
 		});
 		return [path("forward"), path("reverse")];
@@ -72,7 +74,9 @@ export const compileRelationshipPaths = (
 	const edgeById = new Map(direct.map((path) => [path.id, path]));
 	const composed = approved.map((declaration) => {
 		if (declaration.steps.length < 2) {
-			throw new Error(`${declaration.id}: a composed path needs at least two steps.`);
+			throw new Error(
+				`${declaration.id}: a composed path needs at least two steps.`,
+			);
 		}
 		const steps = declaration.steps.map((step) => {
 			const path = edgeById.get(
@@ -92,7 +96,9 @@ export const compileRelationshipPaths = (
 				previous.to.geography !== next.from.geography ||
 				previous.to.boundaryRelease !== next.from.boundaryRelease
 			) {
-				throw new Error(`${declaration.id}: step ${index} does not start where the previous step ends.`);
+				throw new Error(
+					`${declaration.id}: step ${index} does not start where the previous step ends.`,
+				);
 			}
 		}
 		return {

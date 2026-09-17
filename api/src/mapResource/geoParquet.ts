@@ -103,19 +103,50 @@ export const buildGeoParquet = (
 	};
 	return writeParquet({
 		columns: [
-			{ name: "id", type: "int32", values: sorted.map((feature) => feature.id) },
-			{ name: "code", type: "string", values: sorted.map((feature) => feature.code) },
-			{ name: "name", type: "string", values: sorted.map((feature) => feature.name) },
+			{
+				name: "id",
+				type: "int32",
+				values: sorted.map((feature) => feature.id),
+			},
+			{
+				name: "code",
+				type: "string",
+				values: sorted.map((feature) => feature.code),
+			},
+			{
+				name: "name",
+				type: "string",
+				values: sorted.map((feature) => feature.name),
+			},
 			{
 				name: "geometry",
 				type: "binary",
 				values: sorted.map((feature) => toWkb(feature.geometry)),
 			},
-			{ name: "bbox.xmin", type: "double", values: boxes.map((box) => box[0]) },
-			{ name: "bbox.ymin", type: "double", values: boxes.map((box) => box[1]) },
-			{ name: "bbox.xmax", type: "double", values: boxes.map((box) => box[2]) },
-			{ name: "bbox.ymax", type: "double", values: boxes.map((box) => box[3]) },
+			{
+				name: "bbox.xmin",
+				type: "double",
+				values: boxes.map((box) => box[0]),
+			},
+			{
+				name: "bbox.ymin",
+				type: "double",
+				values: boxes.map((box) => box[1]),
+			},
+			{
+				name: "bbox.xmax",
+				type: "double",
+				values: boxes.map((box) => box[2]),
+			},
+			{
+				name: "bbox.ymax",
+				type: "double",
+				values: boxes.map((box) => box[3]),
+			},
 		],
-		metadata: { geo: JSON.stringify(geo), "uk-data-atlas": JSON.stringify(about) },
+		metadata: {
+			geo: JSON.stringify(geo),
+			"uk-data-atlas": JSON.stringify(about),
+		},
 	});
 };

@@ -23,6 +23,10 @@ export const buildRelationshipPaths = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const result = buildRelationshipPaths(resolve(dirname(scriptPath), "../.."));
-	console.log(`Wrote ${result.count} relationship paths to ${result.outputPath}`);
+	const result = buildRelationshipPaths(
+		resolve(dirname(scriptPath), "../.."),
+	);
+	console.log(
+		`Wrote ${result.count} relationship paths to ${result.outputPath}`,
+	);
 }

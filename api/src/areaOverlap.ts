@@ -404,7 +404,10 @@ export const compileAreaOverlapCrosswalk = (
 			const [firstIntersection, ...remainingIntersections] =
 				intersectionPieces;
 			const intersection = firstIntersection
-				? polygonClipping.union(firstIntersection, ...remainingIntersections)
+				? polygonClipping.union(
+						firstIntersection,
+						...remainingIntersections,
+					)
 				: [];
 			const overlapAreaM2 = multiPolygonAreaM2(intersection);
 			if (overlapAreaM2 <= 0) continue;

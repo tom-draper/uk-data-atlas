@@ -200,12 +200,9 @@ export const handleMapResourceRoutes = ({
 			);
 		const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
 		if (format !== "geoparquet")
-			return problem(
-				400,
-				"Invalid Query",
-				"format must be geoparquet.",
-				{ code: "invalid_format" },
-			);
+			return problem(400, "Invalid Query", "format must be geoparquet.", {
+				code: "invalid_format",
+			});
 		const entry = resource.features.find(
 			(candidate) => candidate.tier === tier,
 		);
@@ -324,10 +321,26 @@ export const handleMapResourceRoutes = ({
 				contentType: PARQUET_CONTENT_TYPE,
 				body: writeParquet({
 					columns: [
-						{ name: "id", type: "int32", values: values.map((row) => row.id) },
-						{ name: "code", type: "string", values: values.map((row) => row.code) },
-						{ name: "value", type: "double", values: values.map((row) => row.value) },
-						{ name: "status", type: "string", values: values.map((row) => row.status) },
+						{
+							name: "id",
+							type: "int32",
+							values: values.map((row) => row.id),
+						},
+						{
+							name: "code",
+							type: "string",
+							values: values.map((row) => row.code),
+						},
+						{
+							name: "value",
+							type: "double",
+							values: values.map((row) => row.value),
+						},
+						{
+							name: "status",
+							type: "string",
+							values: values.map((row) => row.status),
+						},
 					],
 					metadata: {
 						"uk-data-atlas": JSON.stringify({

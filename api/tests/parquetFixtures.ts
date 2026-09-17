@@ -134,10 +134,7 @@ const readSchema = (elements: ThriftStruct[]): SchemaNode => {
 	let index = 0;
 	const node = (): SchemaNode => {
 		const element = elements[index++]!;
-		const children = Array.from(
-			{ length: int(element, 5) ?? 0 },
-			node,
-		);
+		const children = Array.from({ length: int(element, 5) ?? 0 }, node);
 		return {
 			name: text(element, 4)!,
 			type: int(element, 1),
@@ -241,7 +238,11 @@ export const readParquet = (file: Buffer): ParquetFile => {
 			if (child.repetition === 2)
 				throw new Error("Repeated fields are not read by this reader.");
 			if (child.children.length === 0)
-				leaves.push({ path: [...path, child.name], node: child, maxDef: def });
+				leaves.push({
+					path: [...path, child.name],
+					node: child,
+					maxDef: def,
+				});
 			else walk(child, [...path, child.name], def);
 		}
 	};
@@ -282,7 +283,9 @@ export const readParquet = (file: Buffer): ParquetFile => {
 				const raw = file.subarray(at, at + compressedSize);
 				at += compressedSize;
 				if (int(header, 1) !== 0)
-					throw new Error("Only data page v1 is read by this reader.");
+					throw new Error(
+						"Only data page v1 is read by this reader.",
+					);
 				const body =
 					codec === CODEC_GZIP
 						? gunzipSync(raw)
@@ -291,7 +294,9 @@ export const readParquet = (file: Buffer): ParquetFile => {
 							: undefined;
 				if (!body) throw new Error(`Unsupported codec ${codec}.`);
 				if (body.length !== int(header, 2))
-					throw new Error("A page is not its declared uncompressed size.");
+					throw new Error(
+						"A page is not its declared uncompressed size.",
+					);
 				const pageHeader = header.get(5) as ThriftStruct;
 				const count = int(pageHeader, 1)!;
 				let offset = 0;
@@ -317,7 +322,9 @@ export const readParquet = (file: Buffer): ParquetFile => {
 					values.push(level === leaf.maxDef ? decoded[next++] : null);
 			}
 			if (values.length !== groupRows)
-				throw new Error(`${leaf.path.join(".")} has ${values.length} values.`);
+				throw new Error(
+					`${leaf.path.join(".")} has ${values.length} values.`,
+				);
 			values.forEach((value, row) => {
 				let target = rows[row]!;
 				for (const part of leaf.path.slice(0, -1))
@@ -334,7 +341,10 @@ export const readParquet = (file: Buffer): ParquetFile => {
 		createdBy: text(footer, 6),
 		schema,
 		metadata: Object.fromEntries(
-			structs(footer, 5).map((entry) => [text(entry, 1)!, text(entry, 2)!]),
+			structs(footer, 5).map((entry) => [
+				text(entry, 1)!,
+				text(entry, 2)!,
+			]),
 		),
 		rows,
 		chunks,
@@ -347,7 +357,9 @@ export const chunkBounds = (chunk: ThriftStruct) => {
 	const type = int(chunk, 1)!;
 	const decode = (id: number) => {
 		const bytes = stats?.get(id);
-		return Buffer.isBuffer(bytes) ? plain(type, bytes, 1, false)[0] : undefined;
+		return Buffer.isBuffer(bytes)
+			? plain(type, bytes, 1, false)[0]
+			: undefined;
 	};
 	return {
 		min: decode(6),
