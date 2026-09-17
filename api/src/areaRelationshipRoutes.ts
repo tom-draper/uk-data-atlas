@@ -1,4 +1,4 @@
-import { areaNotFound, findArea, relationshipsFor } from "./areaResources";
+import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -20,33 +20,24 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 		string,
 	];
-	const { areaLookup, crosswalkLookup } = context;
-	const area =
-		context.geographyResolver?.area({
-			geography,
-			boundaryRelease,
-			code,
-		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!crosswalkLookup)
+	const { crosswalkLookup, geographyResolver } = context;
+	if (!geographyResolver || !crosswalkLookup)
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			"Build the crosswalk inventory before looking up area membership.",
+			"Build the geography resolver and crosswalk inventory before looking up area membership.",
 		);
-	const allRelationships =
-		context.geographyResolver?.relationships({
-			geography,
-			boundaryRelease,
-			code,
-		}) ??
-		relationshipsFor(
-			undefined,
-			crosswalkLookup,
-			geography,
-			boundaryRelease,
-			code,
-		);
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
+	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
+	const allRelationships = geographyResolver.relationships({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	const relationships =
 		segments[5] === "relationships"
 			? allRelationships

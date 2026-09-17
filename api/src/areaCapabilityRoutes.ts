@@ -1,12 +1,7 @@
 import { measureCoverage } from "./measureCoverage";
-import {
-	areaMeasureSources,
-	areaNotFound,
-	findArea,
-	relationshipsFor,
-} from "./areaResources";
+import { areaMeasureSources, areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
-import { envelope, type ApiResponse } from "./routeResponse";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** What the API can answer for one area: its geometry, relationships, named locations and measure coverage. */
 export const handleAreaCapabilityRoutes = ({
@@ -31,18 +26,24 @@ export const handleAreaCapabilityRoutes = ({
 		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
+		geographyResolver,
 	} = context;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	const area =
-		context.geographyResolver?.area({
-			geography,
-			boundaryRelease,
-			code,
-		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before describing an area.",
+		);
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
@@ -72,18 +73,7 @@ export const handleAreaCapabilityRoutes = ({
 		}
 	})();
 	const relationships = crosswalkLookup
-		? (context.geographyResolver?.relationships({
-				geography,
-				boundaryRelease,
-				code,
-			}) ??
-			relationshipsFor(
-				undefined,
-				crosswalkLookup,
-				geography,
-				boundaryRelease,
-				code,
-			))
+		? geographyResolver.relationships({ geography, boundaryRelease, code })
 		: [];
 	const relationCount = (relation: string) =>
 		relationships.filter((candidate) => candidate.relation === relation)

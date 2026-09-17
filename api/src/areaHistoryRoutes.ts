@@ -1,5 +1,5 @@
-import { areaNotFound, findArea, relationshipsFor } from "./areaResources";
-import { envelope, type ApiResponse } from "./routeResponse";
+import { areaNotFound } from "./areaResources";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Published predecessor/successor links and explicitly qualified same-code continuity. */
@@ -20,13 +20,18 @@ export const handleAreaHistoryRoutes = ({
 		string,
 		string,
 	];
-	const { areaLookup, crosswalkLookup } = context;
-	const area =
-		context.geographyResolver?.area({
-			geography,
-			boundaryRelease,
-			code,
-		}) ?? findArea(areaLookup, geography, boundaryRelease, code);
+	const { areaLookup, geographyResolver } = context;
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before looking up area history.",
+		);
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const sameCodeReleases = [...(areaLookup?.entries() ?? [])]
 		.flatMap(([identity, areas]) => {
@@ -52,24 +57,17 @@ export const handleAreaHistoryRoutes = ({
 		.sort((left, right) =>
 			left.boundaryRelease.localeCompare(right.boundaryRelease),
 		);
-	const relationships = (
-		context.geographyResolver?.relationships({
+	const relationships = geographyResolver
+		.relationships({
 			geography,
 			boundaryRelease,
 			code,
-		}) ??
-		relationshipsFor(
-			undefined,
-			crosswalkLookup,
-			geography,
-			boundaryRelease,
-			code,
-		)
-	).filter(
-		(relationship) =>
-			relationship.relation === "successor" ||
-			relationship.relation === "predecessor",
-	);
+		})
+		.filter(
+			(relationship) =>
+				relationship.relation === "successor" ||
+				relationship.relation === "predecessor",
+		);
 	return {
 		status: 200,
 		body: envelope(releaseId, {

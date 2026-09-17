@@ -1,9 +1,5 @@
 import { explainAreaAbsence } from "./areaAbsence";
 import type { AreaLookup } from "./areaInventory";
-import {
-	createAreaRelationshipIndex,
-	type AreaRelationshipIndex,
-} from "./areaRelationships";
 import type { DataCatalog } from "./dataCatalog";
 import type { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
@@ -38,20 +34,6 @@ export const areaNotFound = (
 	);
 	return problem(404, "Not Found", detail, absence);
 };
-
-export const relationshipsFor = (
-	areaRelationshipIndex: AreaRelationshipIndex | undefined,
-	crosswalkLookup: CrosswalkLookup | undefined,
-	geography: string,
-	boundaryRelease: string,
-	code: string,
-) =>
-	(
-		areaRelationshipIndex ??
-		(crosswalkLookup
-			? createAreaRelationshipIndex(crosswalkLookup.values())
-			: undefined)
-	)?.get(`${geography}/${boundaryRelease}/${code}`) ?? [];
 
 /**
  * The source partitions of a measure assessed against one boundary release,

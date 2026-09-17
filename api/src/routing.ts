@@ -1,7 +1,5 @@
 import type { AreaGeometryCache } from "./areaGeometry";
 import type { AreaInventory, AreaLookup } from "./areaInventory";
-import type { AreaSearchIndex } from "./areaSearch";
-import type { AreaRelationshipIndex } from "./areaRelationships";
 import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
@@ -47,8 +45,6 @@ export type RouteContext = {
 	crosswalkLookup?: CrosswalkLookup;
 	atlasRelease?: AtlasRelease;
 	atlasReleaseHistory?: Map<string, AtlasRelease>;
-	areaSearchIndex?: AreaSearchIndex;
-	areaRelationshipIndex?: AreaRelationshipIndex;
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver?: GeographyResolver;
 	relationshipPathInventory?: RelationshipPathInventory;
