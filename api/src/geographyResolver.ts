@@ -151,6 +151,10 @@ export class GeographyResolver {
 		return this.inputs.areaGeometryCache !== undefined;
 	}
 
+	hasAreaRelationships(): boolean {
+		return this.inputs.crosswalkLookup !== undefined;
+	}
+
 	/** An area's WGS84 geometry and source provenance, when the source holds it. */
 	geometryFor(identity: AreaIdentity): ResolvedGeometry | undefined {
 		const cache = this.inputs.areaGeometryCache;
