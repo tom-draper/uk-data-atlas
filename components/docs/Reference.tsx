@@ -1,10 +1,8 @@
 import type {
 	DocsField,
 	DocsParameter,
-	DocsResponse,
 } from "@/lib/docs/openapi";
 import Prose, { Inline } from "./Prose";
-import { Pill, statusTone } from "./Page";
 
 function Values({ values, label }: { values: string[]; label: string }) {
 	if (values.length === 0) return null;
@@ -128,45 +126,6 @@ export function FieldList({
 							/>
 						</details>
 					)}
-				</li>
-			))}
-		</ul>
-	);
-}
-
-export function ResponseList({ responses }: { responses: DocsResponse[] }) {
-	return (
-		<ul className="divide-y divide-slate-900/[0.06]">
-			{responses.map((response) => (
-				<li
-					key={response.status}
-					className="flex flex-col gap-2 py-3.5 sm:flex-row sm:gap-4"
-				>
-					<div className="flex w-[52px] shrink-0 pt-0.5">
-						<Pill tone={statusTone(response.status)}>
-							<span className="font-mono">{response.status}</span>
-						</Pill>
-					</div>
-					<div className="min-w-0 flex-1">
-						<p className="text-[14px] leading-[1.65] text-slate-700">
-							<Inline text={response.description} />
-						</p>
-						<div className="mt-1.5 flex flex-wrap gap-1.5">
-							{response.contentTypes.map((type) => (
-								<code
-									key={type}
-									className="font-mono text-[11.5px] text-slate-500"
-								>
-									{type}
-								</code>
-							))}
-							{response.schemaName && (
-								<span className="font-mono text-[11.5px] text-indigo-600">
-									· {response.schemaName}
-								</span>
-							)}
-						</div>
-					</div>
 				</li>
 			))}
 		</ul>

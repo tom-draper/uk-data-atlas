@@ -77,10 +77,16 @@ describe("links written into the content", () => {
 
 describe("docsNavigation", () => {
 	it("lists every endpoint exactly once", () => {
-		const links = docsNavigation(contract).flatMap((g) => g.links);
+		const links = readingOrder(contract);
 		const endpointLinks = links.filter((link) => link.method);
 		expect(endpointLinks).toHaveLength(operations.length);
 		expect(new Set(links.map((l) => l.href)).size).toBe(links.length);
+	});
+
+	it("nests each reference section's endpoints beneath it", () => {
+		const reference = docsNavigation(contract).at(-1);
+		const sections = reference?.links.filter((link) => link.children);
+		expect(sections).toHaveLength(contract.sections.length);
 	});
 
 	it("links each page to the ones either side of it", () => {
