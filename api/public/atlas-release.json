@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:142fcc9893b9e2e121b109bae7ecd6a5a7ef28e3db722f4653000fb97c6f078d",
+	"releaseId": "sha256:e90d4a0702b6370adcad71aa4aeaa77a03ab8c2d861590b50cebead8f188cb97",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -46,6 +46,11 @@
 			"id": "lookup-manifest",
 			"path": "lookup-manifest.json",
 			"contentHash": "sha256:8c7f610bfd10d70b269d6e87b202183332f5a8cfa25fe3fa0886dab2c909f024"
+		},
+		{
+			"id": "map-resources",
+			"path": "map-resources.json",
+			"contentHash": "sha256:9abc11a67328de2de541bf9abda2951a4c48a0c48464d9c707c779c3e1ad1cac"
 		},
 		{
 			"id": "population-observations",
