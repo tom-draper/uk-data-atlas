@@ -1,10 +1,12 @@
+import { docsPage } from "./docsPage";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /**
  * The OpenAPI description this server implements, served as the document
- * itself. The index links to it, so a client can find the binding contract
- * from the API rather than from the repository.
+ * itself, and the human landing page rendered from it. The index links to
+ * both, so a client can find the binding contract from the API rather than
+ * from the repository, and a person can read it.
  */
 export const handleOpenapiRoutes = ({
 	context,
@@ -14,7 +16,7 @@ export const handleOpenapiRoutes = ({
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
-		segments[1] !== "openapi.yaml"
+		(segments[1] !== "openapi.yaml" && segments[1] !== "docs")
 	)
 		return undefined;
 	const { openapiDocument } = context;
@@ -24,6 +26,19 @@ export const handleOpenapiRoutes = ({
 			"Description Unavailable",
 			"The server was started without its OpenAPI description.",
 		);
+	if (segments[1] === "docs")
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				title: "UK Data Atlas API documentation",
+				href: "/v1/docs",
+				describes: "/v1/openapi.yaml",
+			}),
+			representation: {
+				contentType: "text/html; charset=utf-8",
+				body: docsPage(openapiDocument, releaseId),
+			},
+		};
 	return {
 		status: 200,
 		body: envelope(releaseId, {
