@@ -133,10 +133,12 @@ export default function EthnicityChart({
 			return { hasData: false, ethnicityData: [], totalPopulation: 0 };
 		}
 
+		// The legend filter only applies while this dataset is on the map.
 		const allEthnicities = flattenEthnicityData(areaData).filter(
 			(item) =>
-				!excludedEthnicities.has(item.ethnicity) &&
-				(!selectedEthnicity || item.ethnicity === selectedEthnicity),
+				!isActive ||
+				(!excludedEthnicities.has(item.ethnicity) &&
+					(!selectedEthnicity || item.ethnicity === selectedEthnicity)),
 		);
 
 		const totalPopulation = allEthnicities.reduce(
