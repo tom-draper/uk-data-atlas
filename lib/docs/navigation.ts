@@ -1,4 +1,6 @@
+import { DATA_PAGES, DATA_TOPICS } from "./content/data";
 import { ENDPOINTS } from "./content/endpoints";
+import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "./content/geographies";
 import { SECTIONS } from "./content/sections";
 import {
 	operationHref,
@@ -56,6 +58,48 @@ export const GUIDES: NavLink[] = [
 	{ href: "/docs/guides/sync", title: "Keep a copy in sync" },
 ];
 
+export function dataPageHref(slug: string): string {
+	return `/docs/data/${slug}`;
+}
+
+export function geographyHref(geography: string): string {
+	return `/docs/geographies/${GEOGRAPHIES[geography].slug}`;
+}
+
+/** Data pages under their topics, each topic an anchor on the data overview. */
+export const DATA: NavLink[] = [
+	{ href: "/docs/data", title: "All data" },
+	...DATA_TOPICS.map((topic): NavLink => {
+		const pages = DATA_PAGES.filter((page) => page.topic === topic.id);
+		// A topic of one page is just that page.
+		if (pages.length === 1) {
+			return { href: dataPageHref(pages[0].slug), title: topic.title };
+		}
+		return {
+			href: `/docs/data#${topic.id}`,
+			title: topic.title,
+			children: pages.map((page) => ({
+				href: dataPageHref(page.slug),
+				title: page.title,
+			})),
+		};
+	}),
+];
+
+export const GEOGRAPHY_LINKS: NavLink[] = [
+	{ href: "/docs/geographies", title: "All geographies" },
+	...GEOGRAPHY_GROUPS.map((group) => ({
+		href: `/docs/geographies#${group.id}`,
+		title: group.title,
+		children: Object.entries(GEOGRAPHIES)
+			.filter(([, content]) => content.group === group.id)
+			.map(([id, content]) => ({
+				href: geographyHref(id),
+				title: content.title,
+			})),
+	})),
+];
+
 export const REFERENCE_HOME: NavLink = {
 	href: "/docs/reference",
 	title: "Reference overview",
@@ -87,6 +131,8 @@ export function docsNavigation(contract: ApiContract): NavGroup[] {
 		{ title: "Concepts", links: CONCEPTS },
 		{ title: "Using the API", links: USING_THE_API },
 		{ title: "Guides", links: GUIDES },
+		{ title: "Data", links: DATA },
+		{ title: "Geographies", links: GEOGRAPHY_LINKS },
 		{
 			title: "API reference",
 			links: [
@@ -106,9 +152,10 @@ export function docsNavigation(contract: ApiContract): NavGroup[] {
 	];
 }
 
+/** Pages in order; a heading that only points into another page is skipped. */
 function flatten(links: NavLink[]): NavLink[] {
 	return links.flatMap(({ children, ...link }) => [
-		link,
+		...(link.href.includes("#") ? [] : [link]),
 		...flatten(children ?? []),
 	]);
 }
