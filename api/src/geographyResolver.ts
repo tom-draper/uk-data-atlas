@@ -1,6 +1,10 @@
 import type { AreaLookup, AreaRecord } from "./areaInventory";
-import type { AreaGeometryCache } from "./areaGeometry";
-import type { PointContainment } from "./areaContainment";
+import type {
+	AreaGeometryCache,
+	GeoJsonGeometry,
+	IntersectingArea,
+} from "./areaGeometry";
+import type { GeometryBounds, PointContainment } from "./areaContainment";
 import {
 	createAreaSearchIndex,
 	searchAreas,
@@ -33,6 +37,20 @@ export type ResolvedContainingArea = AreaRecord & {
 	id: string;
 	containment: PointContainment;
 	geometrySource: GeometryProvenance;
+};
+
+export type ResolvedIntersectingArea = AreaRecord & {
+	id: string;
+	relation: IntersectingArea["relation"];
+	boundingBox: GeometryBounds;
+	geometry: GeoJsonGeometry;
+	geometrySource: GeometryProvenance;
+};
+
+export type ResolvedIntersectingAreas = {
+	/** All raw-geometry matches, including any not present in the inventory. */
+	matched: number;
+	matches: ResolvedIntersectingArea[];
 };
 
 type AreaIdentity = {
@@ -138,6 +156,44 @@ export class GeographyResolver {
 						]
 					: [];
 			});
+	}
+
+	/** Published areas meeting a WGS84 box, with geometry for optional rendering. */
+	intersectingAreas(
+		geography: string,
+		boundaryRelease: string,
+		box: GeometryBounds,
+	): ResolvedIntersectingAreas | undefined {
+		const cache = this.inputs.areaGeometryCache;
+		if (!cache) return undefined;
+		const found = cache.findIntersecting(geography, boundaryRelease, box);
+		return {
+			matched: found.length,
+			matches: found.flatMap(({ code, relation, bounds }) => {
+				const area = this.area({ geography, boundaryRelease, code });
+				const geometry = cache.get(geography, boundaryRelease, code);
+				return area && geometry
+					? [
+							{
+								id: areaId({
+									geography,
+									boundaryRelease,
+									code,
+								}),
+								...area,
+								relation,
+								boundingBox: bounds,
+								geometry,
+								geometrySource: cache.provenance(
+									geography,
+									boundaryRelease,
+									code,
+								),
+							},
+						]
+					: [];
+			}),
+		};
 	}
 
 	searchAreas(query: {
