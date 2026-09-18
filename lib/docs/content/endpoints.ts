@@ -5,7 +5,7 @@
  * page. Keyed by `operationId`; the docs tests fail if an endpoint is added
  * to the spec without an entry here, or an entry outlives its endpoint.
  *
- * Text may use `code`, **bold** and [links](/docs/...).
+ * Text may use `code`, **bold** and [links](/docs/v1/...).
  */
 export interface EndpointContent {
 	title: string;
@@ -33,7 +33,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		tips: [
 			"Matching ignores case, accents, punctuation and ampersands, so `Brighton & Hove` and `Ynys Mon` find what was published.",
 			'Official titles are set aside too: "Bristol" finds the council published as "Bristol, City of".',
-			"Each result has a `place` reference, like `localAuthority/E06000023`, that you can pass straight to [Get a value for a place](/docs/reference/start-here/measure-value-for-place).",
+			"Each result has a `place` reference, like `localAuthority/E06000023`, that you can pass straight to [Get a value for a place](/docs/v1/reference/start-here/measure-value-for-place).",
 		],
 	},
 	getMeasureValueForPlace: {
@@ -42,7 +42,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		tips: [
 			"Leave out `period` to get the latest one. The answer tells you when it did that, with `periodDefaulted`.",
 			"If a name could mean several places with different answers, you'll get a `409` listing the `choices`. Pass one of their `place` references to pick.",
-			"Already know the area code? [Get observations](/docs/reference/map/measure-observations) or [Get a time series](/docs/reference/trend/source-exact-measure-series) give you more control.",
+			"Already know the area code? [Get observations](/docs/v1/reference/map/measure-observations) or [Get a time series](/docs/v1/reference/trend/source-exact-measure-series) give you more control.",
 		],
 	},
 	getAreaCapabilities: {
@@ -55,7 +55,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Get observations",
 		intro: "The main way to fetch data. Ask for a measure, a period and the set of areas it was published on, and you get the values exactly as the publisher released them, with nothing converted or added up.",
 		tips: [
-			"`geography` and `boundaryYear` together choose which published set of area codes you want. [Get a measure](/docs/reference/data-catalogue/measure) lists the combinations on offer.",
+			"`geography` and `boundaryYear` together choose which published set of area codes you want. [Get a measure](/docs/v1/reference/data-catalogue/measure) lists the combinations on offer.",
 			"Add `release` to draw the values on a particular set of boundaries. It's accepted only when every area code is in that release, so your map never silently loses areas.",
 			"Set `format=csv` or `format=ndjson` for a table you can load straight into a spreadsheet or database.",
 		],
@@ -76,7 +76,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	findContainingAreasForPoints: {
 		title: "Find areas for many points",
-		intro: "The same lookup as [Find areas at a point](/docs/reference/map/find-containing-areas), for up to 100 points in one request. Handy for tagging a list of sites or addresses with their ward and council.",
+		intro: "The same lookup as [Find areas at a point](/docs/v1/reference/map/find-containing-areas), for up to 100 points in one request. Handy for tagging a list of sites or addresses with their ward and council.",
 		tips: [
 			"Give each point as `point={lng},{lat}`, repeated. Add a third number for its accuracy in metres.",
 			"Details that are the same for every point, like which boundary release was used, are given once in `releases` rather than repeated per point.",
@@ -87,7 +87,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Find the nearest areas",
 		intro: "Get the areas closest to a point, nearest first, with the distance to each. It answers the questions a containment lookup can't, like which ward is nearest a point just offshore.",
 		tips: [
-			"A distance of zero means the point touches the area, but only [Find areas at a point](/docs/reference/map/find-containing-areas) says an area contains it.",
+			"A distance of zero means the point touches the area, but only [Find areas at a point](/docs/v1/reference/map/find-containing-areas) says an area contains it.",
 			"`within` sets how far to look, in metres, and `limit` how many areas to return.",
 		],
 	},
@@ -130,7 +130,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "Get a total over a group of areas, such as a country, a combined authority, a county or a named location like Greater Manchester. Shares with a published weight are averaged instead. It only combines values where the result genuinely means something.",
 		tips: [
 			"Pass exactly one of `locationId`, `areaCode` or `targetCode`.",
-			"`targetCode` sums onto whatever geography your chosen `crosswalk` maps to, so the same call gives you a combined authority, a county or a region. Find one with [List crosswalks](/docs/reference/geography/list-crosswalks).",
+			"`targetCode` sums onto whatever geography your chosen `crosswalk` maps to, so the same call gives you a combined authority, a county or a region. Find one with [List crosswalks](/docs/v1/reference/geography/list-crosswalks).",
 			"Only a crosswalk that establishes membership can be used. Clean containment and full area overlap qualify; a lookup that relates two vintages of the same area does not, and is refused rather than summed.",
 			"Counts add up. Medians and ranks don't, so asking for one gets a `422` that explains why, rather than a misleading number.",
 			"If a named location is missing some of its areas, you get a `partial_coverage` refusal. A country or membership total with gaps is still returned, with its coverage stated plainly.",
@@ -140,7 +140,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Convert to other areas",
 		intro: "Regroup a measure onto a different set of areas, such as wards up to local authorities, using a crosswalk you choose. Only counts can be converted, because converting works by adding values up.",
 		tips: [
-			"Find a crosswalk with [List crosswalks](/docs/reference/geography/list-crosswalks).",
+			"Find a crosswalk with [List crosswalks](/docs/v1/reference/geography/list-crosswalks).",
 			"The response's `method` tells you whether the conversion was `exact`, meaning every area fitted neatly inside one target.",
 		],
 	},
@@ -174,7 +174,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	// Bulk data & releases
 	getPinnedMapResource: {
 		title: "Get a pinned map resource",
-		intro: "The same as [Get a map resource](/docs/reference/geography/map-resource), but locked to one Atlas release so it never changes. Use this form in production: it can be cached for good.",
+		intro: "The same as [Get a map resource](/docs/v1/reference/geography/map-resource), but locked to one Atlas release so it never changes. Use this form in production: it can be cached for good.",
 		tips: [
 			"Only the release the server currently holds can be served. An older one returns `410 Gone` rather than quietly giving you newer data.",
 		],
@@ -240,7 +240,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "One Mapbox Vector Tile of boundaries. Each feature carries the area's `code`, its `name` and a numeric `id`. Values aren't baked in, so one set of tiles works for every measure.",
 		tips: [
 			"A tile with no areas in it is a `204`, which is a normal answer rather than an error.",
-			"Colour areas by fetching [values for tiles](/docs/reference/geography/map-resource-join) and joining them on `id`.",
+			"Colour areas by fetching [values for tiles](/docs/v1/reference/geography/map-resource-join) and joining them on `id`.",
 		],
 	},
 	getMapResourceJoin: {
@@ -248,7 +248,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "A small table of one measure's values, keyed by the same numeric `id` the tiles use, so your map can colour areas without touching the shapes.",
 		tips: [
 			"If the measure's area codes aren't all in this boundary release, you'll get an `incompatible_geometry` refusal that names releases that would work.",
-			"Add `format=parquet` for the same table as a Parquet file, to join to the [GeoParquet shapes](/docs/reference/geography/map-resource-features) in a warehouse.",
+			"Add `format=parquet` for the same table as a Parquet file, to join to the [GeoParquet shapes](/docs/v1/reference/geography/map-resource-features) in a warehouse.",
 		],
 	},
 	getMapResourceFeatures: {
@@ -257,7 +257,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		tips: [
 			"`tier` is required. Use `full` for analysis, or `medium` or `low` for a lighter file.",
 			"A `bbox` column lets your database skip areas outside the region you're querying.",
-			"[Get values for tiles](/docs/reference/geography/map-resource-join) with `format=parquet` gives you the matching values table.",
+			"[Get values for tiles](/docs/v1/reference/geography/map-resource-join) with `format=parquet` gives you the matching values table.",
 		],
 	},
 	getMapResourceArchive: {

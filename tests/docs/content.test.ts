@@ -12,7 +12,7 @@ const contract = loadApiContract();
 const operations = allOperations(contract);
 const hrefs = new Set(readingOrder(contract).map((link) => link.href));
 
-/** Every `[text](/docs/...)` link written into the content. */
+/** Every `[text](/docs/v1/...)` link written into the content. */
 function docsLinks(text: string): string[] {
 	return [...text.matchAll(/\]\((\/docs[^)#]*)/g)].map((match) => match[1]);
 }
@@ -90,10 +90,10 @@ describe("docsNavigation", () => {
 	});
 
 	it("links each page to the ones either side of it", () => {
-		expect(neighbours(contract, "/docs")).toEqual({
+		expect(neighbours(contract, "/docs/v1")).toEqual({
 			previous: undefined,
-			next: { href: "/docs/quickstart", title: "Quickstart" },
+			next: { href: "/docs/v1/quickstart", title: "Quickstart" },
 		});
-		expect(neighbours(contract, "/docs/nowhere")).toEqual({});
+		expect(neighbours(contract, "/docs/v1/nowhere")).toEqual({});
 	});
 });
