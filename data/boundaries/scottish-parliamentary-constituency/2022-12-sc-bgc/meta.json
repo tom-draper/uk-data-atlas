@@ -1,0 +1,32 @@
+{
+	"id": "2022-12-sc-bgc",
+	"kind": "boundary",
+	"title": "Scottish Parliamentary constituencies, December 2022 (Scotland, generalised, clipped)",
+	"description": "The 73 constituency seats of the Scottish Parliament as published for December 2022.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"retrieved": "2026-09-18",
+	"temporalCoverage": "2022",
+	"spatialCoverage": {
+		"geography": "scottishParliamentaryConstituency",
+		"vintage": 2022,
+		"countries": [
+			"GB-SCT"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "Scottish_Parliamentary_Constituencies_December_2022_Boundaries_SC_BGC_-4321770165958689159.geojson",
+			"role": "source",
+			"note": "Published as Scottish_Parliamentary_Constituencies_December_2022_Boundaries_SC_BGC_-4321770165958689159.geojson, 73 features in WGS84."
+		}
+	]
+}
