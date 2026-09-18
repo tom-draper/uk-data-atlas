@@ -8,8 +8,10 @@ import { carAvailabilityDatasetDefinition } from "./definitions/carAvailability"
 import { childPovertyDatasetDefinition } from "./definitions/childPoverty";
 import { claimantCountDatasetDefinition } from "./definitions/claimantCount";
 import { crimeDatasetDefinition } from "./definitions/crime";
+import { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption";
 import { ethnicityDatasetDefinition } from "./definitions/ethnicity";
 import { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty";
+import { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption";
 import { generalElectionDatasetDefinition } from "./definitions/generalElection";
 import { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions";
 import { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
@@ -51,8 +53,10 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	childPovertyDatasetDefinition,
 	claimantCountDatasetDefinition,
 	crimeDatasetDefinition,
+	electricityConsumptionDatasetDefinition,
 	ethnicityDatasetDefinition,
 	fuelPovertyDatasetDefinition,
+	gasConsumptionDatasetDefinition,
 	generalElectionDatasetDefinition,
 	ghgEmissionsDatasetDefinition,
 	historicalGeneralElectionDatasetDefinition,
