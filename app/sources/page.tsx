@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Navigation from "@/components/Navigation";
-import { paperCard } from "@/lib/docs/theme";
+import { Card, Eyebrow, Sheet } from "@/components/docs/Page";
 import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog/registry";
 
 export const metadata: Metadata = {
@@ -15,32 +15,23 @@ const datasets = CATALOGUE_DATASET_DEFINITIONS.map(
 
 export default function DatasetsPage() {
 	return (
-		<div className="relative min-h-screen overflow-hidden bg-[#f3f3f1]">
-			<div
-				aria-hidden="true"
-				className="absolute inset-0 bg-[url('/map-background.png')] bg-cover bg-center opacity-45"
-			/>
-			<div className="relative z-10">
-				<Navigation />
-				<main className="mx-auto max-w-[1320px] px-4 pt-16 pb-16 sm:px-8 lg:px-12">
+		<div className="min-h-screen bg-[#f3f3f1] text-slate-700">
+			<Navigation />
+			<main className="mx-auto max-w-[1480px] px-3 sm:px-4">
+				<Sheet>
 					<div className="max-w-[760px]">
-						<p className="mb-2 text-[14px] font-medium text-slate-500">
-							Datasets
-						</p>
-						<h1 className="text-[38px] leading-[1.08] font-semibold tracking-tight text-slate-900 sm:text-[50px]">
+						<Eyebrow>Datasets</Eyebrow>
+						<h1 className="text-[32px] leading-[1.15] font-semibold tracking-tight text-slate-900 sm:text-[38px]">
 							Data wired into the Atlas
 						</h1>
-						<p className="mt-5 text-[18px] leading-[1.65] text-slate-600">
+						<p className="mt-4 text-[17px] leading-[1.7] text-slate-600">
 							The official datasets currently connected to the UK
 							Data Atlas map. Sources, years and licences are
 							listed so you can see where each layer comes from.
 						</p>
 					</div>
 
-					<div
-						className="mt-10 overflow-hidden rounded-md"
-						style={paperCard}
-					>
+					<Card className="mt-9 overflow-hidden">
 						<div className="overflow-x-auto">
 							<table className="w-full text-left text-[14px]">
 								<thead>
@@ -101,9 +92,9 @@ export default function DatasetsPage() {
 								</tbody>
 							</table>
 						</div>
-					</div>
-				</main>
-			</div>
+					</Card>
+				</Sheet>
+			</main>
 		</div>
 	);
 }
