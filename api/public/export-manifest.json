@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5950a100f62ad9de1da3b02512c2518e41fd9824e1531c0464d60c30cad419ce",
-	"dataCatalogHash": "sha256:cee24bdce17526115d5ec5b3c55a577996b56360f491d4333a9b95b0755252f7",
+	"contentHash": "sha256:1099ed038cabab7ab86ef4ffcc569d19f0eb606377cb18a7de1a7fda76447c77",
+	"dataCatalogHash": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
@@ -93,6 +93,21 @@
 			],
 			"href": "/v1/datasets/crime"
 		},
+		"electricity-consumption": {
+			"publisher": "Department for Energy Security and Net Zero",
+			"sourceUrl": "https://www.gov.uk/government/statistics/regional-and-local-authority-electricity-consumption-statistics",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "environment/energy-consumption/electricity-lad-2015-2024.csv",
+					"sha256": "544626c8ca57a8dcb1a5d818c543f7eae6d5512ec6e4aac01232ab7a60668fa9"
+				}
+			],
+			"href": "/v1/datasets/electricity-consumption"
+		},
 		"ethnicity": {
 			"publisher": "Office for National Statistics",
 			"sourceUrl": "https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
@@ -107,6 +122,21 @@
 				}
 			],
 			"href": "/v1/datasets/ethnicity"
+		},
+		"gas-consumption": {
+			"publisher": "Department for Energy Security and Net Zero",
+			"sourceUrl": "https://www.gov.uk/government/statistics/regional-and-local-authority-gas-consumption-statistics",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "environment/energy-consumption/gas-lad-2015-2024.csv",
+					"sha256": "6157b1bc081de40459dc1da79a8aeda9acadaa973b990571adc7793a7424c8bb"
+				}
+			],
+			"href": "/v1/datasets/gas-consumption"
 		},
 		"general-election": {
 			"publisher": "House of Commons Library",
@@ -2391,6 +2421,216 @@
 			}
 		},
 		{
+			"id": "electricity-consumption-domestic-observations",
+			"measureId": "electricity-consumption-domestic",
+			"datasetId": "electricity-consumption",
+			"periods": [
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "electricity-consumption-domestic-observations",
+			"contentHash": "sha256:f9426346cd54749f52efe3e989259ba6e1f87eff847ea7d3fcca0bc9169740e2",
+			"bytes": 248612,
+			"href": "/v1/exports/electricity-consumption-domestic-observations",
+			"recordCount": 3500,
+			"recordCountByPeriod": {
+				"2015": 350,
+				"2016": 350,
+				"2017": 350,
+				"2018": 350,
+				"2019": 350,
+				"2020": 350,
+				"2021": 350,
+				"2022": 350,
+				"2023": 350,
+				"2024": 350
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/electricity-consumption-domestic",
+				"datasets": [
+					{
+						"id": "electricity-consumption",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "electricity-consumption-non-domestic-observations",
+			"measureId": "electricity-consumption-non-domestic",
+			"datasetId": "electricity-consumption",
+			"periods": [
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "electricity-consumption-non-domestic-observations",
+			"contentHash": "sha256:e4ce8d77d3f4f595898b04a5379aa1e25723ac1c85875ff3f3afaa68a7dd3e81",
+			"bytes": 247768,
+			"href": "/v1/exports/electricity-consumption-non-domestic-observations",
+			"recordCount": 3500,
+			"recordCountByPeriod": {
+				"2015": 350,
+				"2016": 350,
+				"2017": 350,
+				"2018": 350,
+				"2019": 350,
+				"2020": 350,
+				"2021": 350,
+				"2022": 350,
+				"2023": 350,
+				"2024": 350
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/electricity-consumption-non-domestic",
+				"datasets": [
+					{
+						"id": "electricity-consumption",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "electricity-consumption-observations",
+			"measureId": "electricity-consumption",
+			"datasetId": "electricity-consumption",
+			"periods": [
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "electricity-consumption-observations",
+			"contentHash": "sha256:b8cc060dcb820c35405e83cfa44b4cef72097ef2fd847544a5e35ce95852aba6",
+			"bytes": 248569,
+			"href": "/v1/exports/electricity-consumption-observations",
+			"recordCount": 3500,
+			"recordCountByPeriod": {
+				"2015": 350,
+				"2016": 350,
+				"2017": 350,
+				"2018": 350,
+				"2019": 350,
+				"2020": 350,
+				"2021": 350,
+				"2022": 350,
+				"2023": 350,
+				"2024": 350
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/electricity-consumption",
+				"datasets": [
+					{
+						"id": "electricity-consumption",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
 			"id": "ethnicity-african-observations",
 			"measureId": "ethnicity-african",
 			"datasetId": "ethnicity",
@@ -3373,6 +3613,216 @@
 				"datasets": [
 					{
 						"id": "ethnicity",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "gas-consumption-domestic-observations",
+			"measureId": "gas-consumption-domestic",
+			"datasetId": "gas-consumption",
+			"periods": [
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "gas-consumption-domestic-observations",
+			"contentHash": "sha256:fd36ab7cdfc7cc5a7627bfc3e5594f94a9910c831df5798e0524bb157dfa281f",
+			"bytes": 247934,
+			"href": "/v1/exports/gas-consumption-domestic-observations",
+			"recordCount": 3497,
+			"recordCountByPeriod": {
+				"2015": 350,
+				"2016": 350,
+				"2017": 350,
+				"2018": 350,
+				"2019": 350,
+				"2020": 350,
+				"2021": 350,
+				"2022": 350,
+				"2023": 347,
+				"2024": 350
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/gas-consumption-domestic",
+				"datasets": [
+					{
+						"id": "gas-consumption",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "gas-consumption-non-domestic-observations",
+			"measureId": "gas-consumption-non-domestic",
+			"datasetId": "gas-consumption",
+			"periods": [
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "gas-consumption-non-domestic-observations",
+			"contentHash": "sha256:c0a0d5c77a7ca1a69cf240cf3b42842b530600cbcec05a08bf3d455328f7d58c",
+			"bytes": 247994,
+			"href": "/v1/exports/gas-consumption-non-domestic-observations",
+			"recordCount": 3497,
+			"recordCountByPeriod": {
+				"2015": 350,
+				"2016": 350,
+				"2017": 350,
+				"2018": 350,
+				"2019": 350,
+				"2020": 350,
+				"2021": 350,
+				"2022": 350,
+				"2023": 347,
+				"2024": 350
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/gas-consumption-non-domestic",
+				"datasets": [
+					{
+						"id": "gas-consumption",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "gas-consumption-observations",
+			"measureId": "gas-consumption",
+			"datasetId": "gas-consumption",
+			"periods": [
+				"2015",
+				"2016",
+				"2017",
+				"2018",
+				"2019",
+				"2020",
+				"2021",
+				"2022",
+				"2023",
+				"2024"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "gas-consumption-observations",
+			"contentHash": "sha256:24f572dff9fa839cfbdf93123c94d17cd0c06776b5ede0d2982b74219467baea",
+			"bytes": 247948,
+			"href": "/v1/exports/gas-consumption-observations",
+			"recordCount": 3497,
+			"recordCountByPeriod": {
+				"2015": 350,
+				"2016": 350,
+				"2017": 350,
+				"2018": 350,
+				"2019": 350,
+				"2020": 350,
+				"2021": 350,
+				"2022": 350,
+				"2023": 347,
+				"2024": 350
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/gas-consumption",
+				"datasets": [
+					{
+						"id": "gas-consumption",
 						"role": "source"
 					}
 				]
