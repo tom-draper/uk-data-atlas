@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7bfd4ea77644afc6d2bc6d88f4a30adb90189f8f082a0e5604aea2cb6faa832d",
+	"contentHash": "sha256:6cda41e67646675d1d710e1b82d33e140faf250d1cf87590a2d21ae7f892623b",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -715,6 +715,31 @@
 			"metadataHash": "sha256:faa515680684ce4dd670c5cb8b44bd671cbbfffb148af0640944e4e817fce6b0"
 		},
 		{
+			"id": "2023-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2023, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2023",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:446baf9839e279fcd2ee119587b4d65256858fb0b0687fce5d00da7dbb25cf04"
+		},
+		{
 			"id": "2023-05-uk-bgc-v2",
 			"geography": "localAuthority",
 			"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
@@ -787,6 +812,31 @@
 			"metadataHash": "sha256:a9de24f8cfd72921ebd78fa0149265b922cd2f0b175d5de6012f38992652d672"
 		},
 		{
+			"id": "2020-12-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2020 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for December 2020, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2020",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:0b6b6b6b5acde18ede11337fdca536eaba05a879b91c510e8836f6a619e67fd1"
+		},
+		{
 			"id": "2019-12-uk-bgc",
 			"geography": "localAuthority",
 			"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
@@ -809,6 +859,31 @@
 				}
 			},
 			"metadataHash": "sha256:32e1e89bdaea89d5163c1a2682f6855c9864d2f0a4768b2851363f7f47e35b5c"
+		},
+		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, April 2019 (United Kingdom, generalised, clipped)",
+			"description": "Local authority districts as published for April 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:1fb4125948cf64f1b1282f17db96d1a0f13764691ef26ed1ce14b82880367161"
 		},
 		{
 			"id": "2018-12-uk-bgc",
@@ -835,6 +910,30 @@
 			"metadataHash": "sha256:1061a4b4577bdda6c8b4dcd30997c57a58ad64de418a43d50c8bfa3db200513c"
 		},
 		{
+			"id": "2017-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2017 (Great Britain, generalised, clipped)",
+			"description": "Local authority districts as published for December 2017, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2017",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:35f652644fa82c7ec988574beebbc1e31645740d9cfcacd83060832baaad2afd"
+		},
+		{
 			"id": "2016-12-gb-bgc",
 			"geography": "localAuthority",
 			"title": "Local authority districts, December 2016 (Great Britain, generalised, clipped)",
@@ -856,6 +955,78 @@
 				}
 			},
 			"metadataHash": "sha256:0e6fb09babbb678cff8497008fed10bbcb36cd08dce24ce121f8acdfa132f3c0"
+		},
+		{
+			"id": "2011-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2011 (Great Britain, generalised, clipped)",
+			"description": "Local authority districts as published for December 2011, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:2ce04895927ff84ecf47c70580b0affbff8f0c7576ad5bf1b118352490b59803"
+		},
+		{
+			"id": "2009-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2009 (Great Britain, generalised, clipped)",
+			"description": "Local authority districts as published for December 2009, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2009",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:44b0e26c41642facd77aef76263246e0d046e85966950bc0b42844d3cd205a0a"
+		},
+		{
+			"id": "2008-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2008 (Great Britain, generalised, clipped)",
+			"description": "Local authority districts as published for December 2008, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2008",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:43cd65af847ce643756f854a06e75df13364f77edba06c31e40adde6b445ec10"
 		},
 		{
 			"id": "2023-12-w-bgc",
