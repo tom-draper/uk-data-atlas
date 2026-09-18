@@ -13,11 +13,11 @@ export default function Navigation() {
 						<Link href="/atlas" className={linkClass}>
 							Atlas
 						</Link>
-						<Link href="/docs" className={linkClass}>
-							Documentation
-						</Link>
 						<Link href="/datasets" className={linkClass}>
 							Datasets
+						</Link>
+						<Link href="/docs" className={linkClass}>
+							Documentation
 						</Link>
 						<a
 							href="https://github.com/tom-draper/uk-data-atlas"
