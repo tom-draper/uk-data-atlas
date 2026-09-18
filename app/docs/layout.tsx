@@ -18,11 +18,11 @@ export default function DocsLayout({
 			<SunlitBackdrop />
 			<div className="relative z-10">
 				<DocsHeader groups={groups} version={contract.version} />
-				<div className="mx-auto flex max-w-[1480px] gap-6 px-3 pt-2 pb-10 sm:px-4">
-					<aside className="sticky top-[64px] hidden h-[calc(100vh-72px)] w-[248px] shrink-0 flex-col border-r border-slate-900/[0.06] pt-4 pr-5 pl-1 lg:flex">
+				<div className="mx-auto flex max-w-[1480px] gap-6 px-3 pt-2 sm:px-4">
+					<aside className="sticky top-[64px] hidden h-[calc(100vh-72px)] w-[248px] shrink-0 flex-col border-r border-slate-900/[0.06] pt-4 pr-5 lg:flex">
 						<DocsSidebar groups={groups} />
 					</aside>
-					<main className="min-w-0 flex-1">{children}</main>
+					<main className="min-w-0 flex-1 pb-10">{children}</main>
 				</div>
 			</div>
 			<Sunfall />
