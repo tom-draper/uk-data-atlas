@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6cda41e67646675d1d710e1b82d33e140faf250d1cf87590a2d21ae7f892623b",
+	"contentHash": "sha256:0c65495502963456977ead45ac90b00a144f041e2b0b51a904d68714c06c06fe",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -72,6 +72,81 @@
 			"metadataHash": "sha256:cb36a990db1b57ae973ebe88874fae7f560a12721fa784cf5e52a9fd5e8466f3"
 		},
 		{
+			"id": "2022-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2022 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2022, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:270b81dd7458662a0cbc6884ec096f63783c60fe2809bd71a26dc7d1b1c89d05"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2021 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2021, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2021",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:6668fa0acbcd71562b5163d70eaf2c91f035284d3787588d3dd706aedd19264e"
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2020 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2020, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2020",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:03ffd3134df2db23e620f2307e43becb7bfdb93850546162d48a57744de443a7"
+		},
+		{
 			"id": "2019-12-uk-bgc",
 			"geography": "constituency",
 			"title": "Westminster parliamentary constituencies, December 2019 (United Kingdom, generalised, clipped)",
@@ -94,6 +169,31 @@
 				}
 			},
 			"metadataHash": "sha256:8c00f2461ea86b9d4724e304067b3d36f6800c7aed929f78efc7bfacc048d462"
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "constituency",
+			"title": "Westminster parliamentary constituencies, December 2018 (United Kingdom, generalised, clipped)",
+			"description": "Westminster parliamentary constituencies as published for December 2018, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2018",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:e03cb7cc627a0410cc6651cefb20448f83c6904529216c90b4e83a1302405c09"
 		},
 		{
 			"id": "2017-12-uk-bgc",
