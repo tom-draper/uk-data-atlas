@@ -70,6 +70,10 @@ export default function GeographiesPage() {
 					</CardGrid>
 				</section>
 			))}
+			<P>
+				Want the boundary files directly? [Download datasets and
+				boundaries](/docs/downloads#boundaries).
+			</P>
 		</DocPage>
 	);
 }

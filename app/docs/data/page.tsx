@@ -52,6 +52,10 @@ export default function DataPage() {
 					</CardGrid>
 				</section>
 			))}
+			<P>
+				Want the files directly? [Download datasets and
+				boundaries](/docs/downloads#datasets).
+			</P>
 		</DocPage>
 	);
 }

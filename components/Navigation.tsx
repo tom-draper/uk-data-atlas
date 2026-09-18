@@ -16,8 +16,8 @@ export default function Navigation() {
 						<Link href="/docs" className={linkClass}>
 							Documentation
 						</Link>
-						<Link href="/sources" className={linkClass}>
-							Data sources
+						<Link href="/datasets" className={linkClass}>
+							Datasets
 						</Link>
 						<a
 							href="https://github.com/tom-draper/uk-data-atlas"
