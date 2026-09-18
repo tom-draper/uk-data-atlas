@@ -54,6 +54,17 @@ export interface CatalogueMeasure {
 	uncertainty?: unknown;
 }
 
+export interface CatalogueExport {
+	id: string;
+	measureId: string;
+	datasetId: string;
+	periods: string[];
+	sourceGeography: { type: string; boundaryYear: number };
+	bytes: number;
+	recordCount: number;
+	href: string;
+}
+
 export interface BoundaryRelease {
 	id: string;
 	geography: string;
@@ -67,6 +78,7 @@ export interface BoundaryRelease {
 export interface Catalogue {
 	datasets: CatalogueDataset[];
 	measures: CatalogueMeasure[];
+	exports: CatalogueExport[];
 	releases: BoundaryRelease[];
 	/** Compiled area counts, keyed by `geography/release`. */
 	areaCounts: Map<string, number>;
@@ -86,6 +98,9 @@ export function loadCatalogue(): Catalogue {
 		datasets: CatalogueDataset[];
 		measures: CatalogueMeasure[];
 	}>("data-catalog.json");
+	const exportsManifest = readJson<{ exports: CatalogueExport[] }>(
+		"export-manifest.json",
+	);
 	const registry = readJson<{ releases: BoundaryRelease[] }>(
 		"boundary-releases.json",
 	);
@@ -110,6 +125,7 @@ export function loadCatalogue(): Catalogue {
 				periods: Array.isArray(source.periods) ? source.periods : [],
 			})),
 		})),
+		exports: exportsManifest.exports,
 		releases: registry.releases,
 		areaCounts: new Map(
 			inventory.releases
@@ -151,6 +167,16 @@ export function measuresFromDatasets(
 ): CatalogueMeasure[] {
 	return catalogue.measures.filter((measure) =>
 		measure.sources.some((source) => datasetIds.includes(source.datasetId)),
+	);
+}
+
+/** Complete observation exports that include at least one of these datasets. */
+export function exportsFromDatasets(
+	catalogue: Catalogue,
+	datasetIds: string[],
+): CatalogueExport[] {
+	return catalogue.exports.filter((item) =>
+		datasetIds.includes(item.datasetId),
 	);
 }
 

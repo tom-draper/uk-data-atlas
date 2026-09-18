@@ -83,6 +83,7 @@ export default function DocsHeader({
 							href="/docs/responses"
 							active={[
 								"/docs/responses",
+								"/docs/downloads",
 								"/docs/pagination",
 								"/docs/formats",
 								"/docs/caching",

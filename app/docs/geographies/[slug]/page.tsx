@@ -76,6 +76,7 @@ export default async function GeographyPage({ params }: { params: Params }) {
 				{ id: "releases", title: "Boundary releases" },
 				{ id: "data", title: "Data on these areas" },
 				{ id: "request", title: "Request it" },
+				{ id: "downloads", title: "Downloads" },
 			]}
 		>
 			<Facts
@@ -177,6 +178,56 @@ export default async function GeographyPage({ params }: { params: Params }) {
 			{releases.length > 1 && (
 				<EndpointRef id="resolveBoundaryReleaseForDate" />
 			)}
+
+			<H2 id="downloads">Downloads</H2>
+			<P>
+				Every release has an area-code lookup table. Releases with map
+				resources also have downloadable PMTiles and GeoParquet shapes.
+				The source and licence information above applies to these files
+				too; preserve the attribution and note any cleaning or
+				reformatting when you redistribute one.
+			</P>
+			<Table
+				head={["Release", "Area codes", "Boundary files"]}
+				rows={releases.map((release) => {
+					const resourceId = `${id}/${release.id}`;
+					const hasMapResource =
+						catalogue.mapResources.has(resourceId);
+					const lookupUrl = `${API_BASE_URL}/lookups/areas-${id}-${release.id}?format=csv`;
+					return [
+						<span key="release" className="font-mono text-[12.5px]">
+							{release.id}
+						</span>,
+						<a
+							href={lookupUrl}
+							rel="noopener"
+							className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+						>
+							CSV
+						</a>,
+						hasMapResource ? (
+							<span className="flex flex-wrap gap-x-3 gap-y-1">
+								<a
+									href={`${API_BASE_URL}/map-resources/${id}/${release.id}.pmtiles`}
+									rel="noopener"
+									className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+								>
+									PMTiles
+								</a>
+								<a
+									href={`${API_BASE_URL}/map-resources/${id}/${release.id}/features?tier=full`}
+									rel="noopener"
+									className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+								>
+									GeoParquet
+								</a>
+							</span>
+						) : (
+							"—"
+						),
+					];
+				})}
+			/>
 		</DocPage>
 	);
 }

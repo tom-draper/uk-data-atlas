@@ -1,5 +1,9 @@
 # Boundary releases
 
+For the distinction between the repository's MIT-licensed code and the
+source licences that apply to boundary files, see
+[`DATA-LICENCES.md`](../../DATA-LICENCES.md).
+
 Every set of areas the atlas can draw lives in one folder:
 
 ```
