@@ -86,9 +86,7 @@ describe("geography pages", () => {
 describe("catalogue helpers", () => {
 	it("names nations in a readable list", () => {
 		expect(nationList(["GB-WLS", "GB-ENG"])).toBe("England and Wales");
-		expect(nationList(["GB-SCT", "GB-NIR", "GB-ENG", "GB-WLS"])).toBe(
-			"the whole UK",
-		);
+		expect(nationList(["GB-SCT", "GB-NIR", "GB-ENG", "GB-WLS"])).toBe("UK");
 		expect(nationList(["GB-ENG", "GB-WLS", "GB-NIR"])).toBe(
 			"England, Wales and Northern Ireland",
 		);

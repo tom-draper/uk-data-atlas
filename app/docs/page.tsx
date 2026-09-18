@@ -11,7 +11,14 @@ import {
 	Table2,
 } from "lucide-react";
 import CodePanel, { RequestSamples } from "@/components/docs/CodePanel";
-import { CardGrid, H2, LinkCard, List, Pager } from "@/components/docs/Content";
+import {
+	CardGrid,
+	H2,
+	LinkCard,
+	List,
+	P,
+	Pager,
+} from "@/components/docs/Content";
 import { Eyebrow, Sheet } from "@/components/docs/Page";
 import { findOperationById, loadApiContract } from "@/lib/docs/openapi";
 import { operationExample } from "@/lib/docs/samples";
@@ -117,6 +124,21 @@ export default function IntroductionPage() {
 						publish.
 					</LinkCard>
 				</CardGrid>
+
+				<H2 id="why-the-api-exists">Why the API exists</H2>
+				<P>
+					UK public data is fragmented, inconsistent, and often
+					difficult to use. Boundaries change between years, location
+					codes and names go missing, and datasets across England,
+					Wales, Scotland and Northern Ireland rarely line up cleanly.
+				</P>
+				<P>
+					While building the UK Data Atlas, we collected, cleaned,
+					repaired and standardised this data ourselves. The API makes
+					that work available to everyone, giving you one consistent
+					way to access UK public datasets, boundaries and geographic
+					mappings without having to clean them first.
+				</P>
 
 				<H2 id="why">Why it's different</H2>
 				<List
