@@ -10,7 +10,7 @@ import {
 } from "@/components/docs/Content";
 import { SpecExample } from "@/components/docs/Example";
 
-const TITLE = "Quickstart – UK Data Atlas API";
+const TITLE = "Quickstart - UK Data Atlas API";
 const DESCRIPTION =
 	"Make your first requests to the UK Data Atlas API in five minutes: search for a place, get a population figure, and fetch a time series.";
 

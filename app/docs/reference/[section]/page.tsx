@@ -16,6 +16,7 @@ import {
 	loadApiContract,
 	operationHref,
 } from "@/lib/docs/openapi";
+import { titleCase } from "@/lib/docs/metadata";
 
 type Params = Promise<{ section: string }>;
 
@@ -35,7 +36,7 @@ export async function generateMetadata({
 	const section = findSection(loadApiContract(), (await params).section);
 	if (!section) return {};
 	const content = sectionContent(section);
-	const title = `${content.title} – UK Data Atlas API reference`;
+	const title = `${titleCase(content.title)} - UK Data Atlas API Reference`;
 	return {
 		title: { absolute: title },
 		description: content.intro,

@@ -23,7 +23,8 @@ import { Eyebrow, Sheet } from "@/components/docs/Page";
 import { findOperationById, loadApiContract } from "@/lib/docs/openapi";
 import { operationExample } from "@/lib/docs/samples";
 
-const TITLE = "UK Data Atlas API – official UK statistics for every area";
+const TITLE =
+	"UK Data Atlas API - Official Statistics for Every Corner of the UK";
 const DESCRIPTION =
 	"A friendly API for official UK statistics: population, pay, house prices, deprivation, broadband, crime and more, for every ward, council and constituency, with boundaries to map them.";
 
