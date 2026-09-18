@@ -35,53 +35,35 @@ export default function IntroductionPage() {
 
 	return (
 		<Sheet>
-			<div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,470px)] xl:items-center">
-				<div>
-					<Eyebrow>Introduction</Eyebrow>
-					<h1 className="text-[38px] leading-[1.08] font-semibold tracking-tight text-slate-900 sm:text-[50px]">
-						UK Data Atlas API
-					</h1>
-					<p className="mt-5 max-w-[54ch] text-[18px] leading-[1.65] text-slate-600">
-						Official statistics for every corner of the UK, from
-						population and pay to broadband and air quality, ready
-						to drop into your apps, maps and analysis.
-					</p>
-					<div className="mt-7 flex flex-wrap items-center gap-3">
-						<Link
-							href="/docs/quickstart"
-							className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
-						>
-							Make your first request
-							<ArrowRight className="h-4 w-4" />
-						</Link>
-						<Link
-							href="/docs/reference"
-							className="inline-flex items-center gap-2 rounded-md border border-white/80 bg-white/55 px-4 py-2.5 text-[14px] font-medium text-slate-800 transition-colors hover:bg-white/85"
-						>
-							Browse the reference
-						</Link>
-					</div>
-					{/* Remove once the API is deployed. */}
-					<p className="mt-6 inline-flex rounded-full bg-amber-400/15 px-3 py-1 text-[12.5px] text-amber-900 ring-1 ring-amber-600/20">
-						Coming soon. The API isn't live yet, so details may
-						change.
-					</p>
+			<div className="pt-20 pb-8">
+				<Eyebrow>Introduction</Eyebrow>
+				<h1 className="text-[38px] leading-[1.08] font-semibold tracking-tight text-slate-900 sm:text-[50px]">
+					UK Data Atlas API
+				</h1>
+				<p className="mt-5 max-w-[64ch] text-[18px] leading-[1.65] text-slate-600">
+					Official statistics for every corner of the UK, from
+					population and pay to broadband and air quality, ready to
+					drop into your apps, maps and analysis.
+				</p>
+				<div className="mt-7 flex flex-wrap items-center gap-3">
+					<Link
+						href="/docs/quickstart"
+						className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
+					>
+						Make your first request
+						<ArrowRight className="h-4 w-4" />
+					</Link>
+					<Link
+						href="/docs/reference"
+						className="inline-flex items-center gap-2 rounded-md border border-white/80 bg-white/55 px-4 py-2.5 text-[14px] font-medium text-slate-800 transition-colors hover:bg-white/85"
+					>
+						Browse the reference
+					</Link>
 				</div>
-
-				<div className="min-w-0 space-y-3">
-					<RequestSamples
-						title="Ask a question"
-						samples={example.samples}
-					/>
-					{example.response && (
-						<CodePanel
-							title="Get an answer"
-							language="json"
-							code={example.response.body}
-							maxHeight="250px"
-						/>
-					)}
-				</div>
+				{/* Remove once the API is deployed. */}
+				<p className="mt-6 inline-flex rounded-full bg-amber-400/15 px-3 py-1 text-[12.5px] text-amber-900 ring-1 ring-amber-600/20">
+					Coming soon. The API isn't live yet, so details may change.
+				</p>
 			</div>
 
 			<div className="max-w-[900px]">
@@ -144,7 +126,31 @@ export default function IntroductionPage() {
 						"**It says no rather than mislead.** Ask for an average of medians and you'll get a clear explanation, not a number that looks right but isn't.",
 					]}
 				/>
+			</div>
 
+			<section aria-labelledby="try-it" className="mt-14">
+				<H2 id="try-it">Try a question</H2>
+				<p className="mb-5 max-w-[70ch] text-[15.5px] leading-[1.75] text-slate-600">
+					Ask for a statistic in the language you use, then see the
+					request and response the API would return.
+				</p>
+				<div className="min-w-0 space-y-3">
+					<RequestSamples
+						title="Ask a question"
+						samples={example.samples}
+					/>
+					{example.response && (
+						<CodePanel
+							title="Get an answer"
+							language="json"
+							code={example.response.body}
+							maxHeight="250px"
+						/>
+					)}
+				</div>
+			</section>
+
+			<div className="max-w-[900px]">
 				<H2 id="next">Where next</H2>
 				<CardGrid columns={3}>
 					<LinkCard
