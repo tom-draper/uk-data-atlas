@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:0c65495502963456977ead45ac90b00a144f041e2b0b51a904d68714c06c06fe",
+	"contentHash": "sha256:661901149a9fe68f189a93c77a42c5de745428916e64699383d1c5fe5d28ac01",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -1560,6 +1560,50 @@
 			"metadataHash": "sha256:e40a5ec957ae6a715a2e5f4e1015e3a20b5ecaa7f13e888fc9836d2b068a7312"
 		},
 		{
+			"id": "2026-05-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"title": "Scottish Parliamentary constituencies, May 2026 (Scotland, generalised, clipped)",
+			"description": "The 73 constituency seats of the Scottish Parliament as published for May 2026.",
+			"temporalCoverage": "2026",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:d71512f022a3295e15c62860695942557004f4c7fe4a09bb67817584ab3884a7"
+		},
+		{
+			"id": "2022-12-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"title": "Scottish Parliamentary constituencies, December 2022 (Scotland, generalised, clipped)",
+			"description": "The 73 constituency seats of the Scottish Parliament as published for December 2022.",
+			"temporalCoverage": "2022",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:f7c4d48af50fe2b8e85ce45286beca91a60bbaa56418d12d98b44cf119a09f12"
+		},
+		{
 			"id": "2021-05-sc-bgc",
 			"geography": "scottishParliamentaryConstituency",
 			"title": "Scottish Parliamentary constituencies, May 2021 (Scotland, generalised, clipped)",
@@ -1580,6 +1624,28 @@
 				}
 			},
 			"metadataHash": "sha256:2199f52f65696ad9fab3d95d3fbec3d12edf7a8f6b58eec12b9763278bdd041d"
+		},
+		{
+			"id": "2016-05-sc-gcb",
+			"geography": "scottishParliamentaryConstituency",
+			"title": "Scottish Parliamentary constituencies, May 2016 (Scotland, generalised, clipped)",
+			"description": "The 73 constituency seats of the Scottish Parliament as published for May 2016. Reissued by the Office for National Statistics in 2022.",
+			"temporalCoverage": "2016",
+			"coverage": {
+				"countries": [
+					"GB-SCT"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"retrievedAt": "2026-09-18",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:50d12a7df6b5cbb1b179fad193458f8387134c5de0ecd383edf0cecfb7b692e9"
 		},
 		{
 			"id": "2022-12-sc-bgc",
