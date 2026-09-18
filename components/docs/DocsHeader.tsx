@@ -57,11 +57,11 @@ export default function DocsHeader({ groups }: { groups: NavGroup[] }) {
 					<span className="h-4 w-px bg-slate-900/10" aria-hidden />
 					<Link
 						href="/docs/v1"
-						className="text-[14px] font-medium text-slate-600 hover:text-slate-900"
+						className="text-[14px] leading-5 font-medium text-slate-600 hover:text-slate-900"
 					>
 						API
 					</Link>
-					<span className="hidden rounded-full bg-white/60 px-2 py-0.5 font-mono text-[11px] text-slate-500 sm:inline">
+					<span className="hidden h-5 items-center rounded-full border border-slate-900/[0.08] bg-white/60 px-2 font-mono text-[11px] leading-5 text-slate-500 sm:inline-flex">
 						v1
 					</span>
 
