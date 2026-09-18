@@ -32,44 +32,44 @@ export interface NavGroup {
 }
 
 export const GET_STARTED: NavLink[] = [
-	{ href: "/docs", title: "Introduction" },
-	{ href: "/docs/quickstart", title: "Quickstart" },
+	{ href: "/docs/v1", title: "Introduction" },
+	{ href: "/docs/v1/quickstart", title: "Quickstart" },
 ];
 
 export const CONCEPTS: NavLink[] = [
-	{ href: "/docs/concepts/measures", title: "Measures and periods" },
-	{ href: "/docs/concepts/areas", title: "Areas and boundaries" },
-	{ href: "/docs/concepts/places", title: "Places and named locations" },
-	{ href: "/docs/concepts/crosswalks", title: "Crosswalks" },
-	{ href: "/docs/concepts/releases", title: "Atlas releases" },
+	{ href: "/docs/v1/concepts/measures", title: "Measures and periods" },
+	{ href: "/docs/v1/concepts/areas", title: "Areas and boundaries" },
+	{ href: "/docs/v1/concepts/places", title: "Places and named locations" },
+	{ href: "/docs/v1/concepts/crosswalks", title: "Crosswalks" },
+	{ href: "/docs/v1/concepts/releases", title: "Atlas releases" },
 ];
 
 export const USING_THE_API: NavLink[] = [
-	{ href: "/docs/responses", title: "Responses" },
-	{ href: "/docs/pagination", title: "Pagination" },
-	{ href: "/docs/formats", title: "CSV and bulk downloads" },
-	{ href: "/docs/caching", title: "Caching" },
-	{ href: "/docs/rate-limits", title: "Rate limits" },
-	{ href: "/docs/errors", title: "Errors" },
+	{ href: "/docs/v1/responses", title: "Responses" },
+	{ href: "/docs/v1/pagination", title: "Pagination" },
+	{ href: "/docs/v1/formats", title: "CSV and bulk downloads" },
+	{ href: "/docs/v1/caching", title: "Caching" },
+	{ href: "/docs/v1/rate-limits", title: "Rate limits" },
+	{ href: "/docs/v1/errors", title: "Errors" },
 ];
 
 export const GUIDES: NavLink[] = [
-	{ href: "/docs/guides/map", title: "Draw a map" },
-	{ href: "/docs/guides/trend", title: "Chart a trend" },
-	{ href: "/docs/guides/sync", title: "Keep a copy in sync" },
+	{ href: "/docs/v1/guides/map", title: "Draw a map" },
+	{ href: "/docs/v1/guides/trend", title: "Chart a trend" },
+	{ href: "/docs/v1/guides/sync", title: "Keep a copy in sync" },
 ];
 
 export function dataPageHref(slug: string): string {
-	return `/docs/data/${slug}`;
+	return `/docs/v1/data/${slug}`;
 }
 
 export function geographyHref(geography: string): string {
-	return `/docs/geographies/${GEOGRAPHIES[geography].slug}`;
+	return `/docs/v1/geographies/${GEOGRAPHIES[geography].slug}`;
 }
 
 /** Data pages under their topics, each topic an anchor on the data overview. */
 export const DATA: NavLink[] = [
-	{ href: "/docs/data", title: "All data" },
+	{ href: "/docs/v1/data", title: "All data" },
 	...DATA_TOPICS.map((topic): NavLink => {
 		const pages = DATA_PAGES.filter((page) => page.topic === topic.id);
 		// A topic of one page is just that page.
@@ -77,7 +77,7 @@ export const DATA: NavLink[] = [
 			return { href: dataPageHref(pages[0].slug), title: topic.title };
 		}
 		return {
-			href: `/docs/data#${topic.id}`,
+			href: `/docs/v1/data#${topic.id}`,
 			title: topic.title,
 			children: pages.map((page) => ({
 				href: dataPageHref(page.slug),
@@ -85,13 +85,13 @@ export const DATA: NavLink[] = [
 			})),
 		};
 	}),
-	{ href: "/docs/downloads", title: "Downloads" },
+	{ href: "/docs/v1/downloads", title: "Downloads" },
 ];
 
 export const GEOGRAPHY_LINKS: NavLink[] = [
-	{ href: "/docs/geographies", title: "All geographies" },
+	{ href: "/docs/v1/geographies", title: "All geographies" },
 	...GEOGRAPHY_GROUPS.map((group) => ({
-		href: `/docs/geographies#${group.id}`,
+		href: `/docs/v1/geographies#${group.id}`,
 		title: group.title,
 		children: Object.entries(GEOGRAPHIES)
 			.filter(([, content]) => content.group === group.id)
@@ -100,11 +100,11 @@ export const GEOGRAPHY_LINKS: NavLink[] = [
 				title: content.title,
 			})),
 	})),
-	{ href: "/docs/downloads#boundaries", title: "Downloads" },
+	{ href: "/docs/v1/downloads#boundaries", title: "Downloads" },
 ];
 
 export const REFERENCE_HOME: NavLink = {
-	href: "/docs/reference",
+	href: "/docs/v1/reference",
 	title: "Reference overview",
 };
 
@@ -125,7 +125,7 @@ export function sectionContent(section: DocsSection) {
 }
 
 export function sectionHref(section: DocsSection): string {
-	return `/docs/reference/${section.slug}`;
+	return `/docs/v1/reference/${section.slug}`;
 }
 
 export function docsNavigation(contract: ApiContract): NavGroup[] {

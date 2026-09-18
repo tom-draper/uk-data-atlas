@@ -9,13 +9,7 @@ import type { NavGroup } from "@/lib/docs/navigation";
 import GlassOverlays from "../GlassOverlays";
 import DocsSidebar from "./DocsSidebar";
 
-export default function DocsHeader({
-	groups,
-	version,
-}: {
-	groups: NavGroup[];
-	version: string;
-}) {
+export default function DocsHeader({ groups }: { groups: NavGroup[] }) {
 	const pathname = usePathname();
 	const [menuPath, setMenuPath] = useState<string | null>(null);
 	// The menu belongs to the page it was opened on, so navigating closes it.
@@ -62,68 +56,68 @@ export default function DocsHeader({
 					</Link>
 					<span className="h-4 w-px bg-slate-900/10" aria-hidden />
 					<Link
-						href="/docs"
+						href="/docs/v1"
 						className="text-[14px] font-medium text-slate-600 hover:text-slate-900"
 					>
 						API
 					</Link>
-					<span className="hidden rounded-full bg-white/60 px-2 py-0.5 font-mono text-[11px] text-slate-500 ring-1 ring-slate-900/5 sm:inline">
-						v{version}
+					<span className="hidden rounded-full bg-white/60 px-2 py-0.5 font-mono text-[11px] text-slate-500 sm:inline">
+						v1
 					</span>
 
 					<nav className="ml-auto flex items-center gap-1 text-[13px]">
 						<HeaderLink
-							href="/docs/concepts/measures"
-							active={pathname.startsWith("/docs/concepts")}
+							href="/docs/v1/concepts/measures"
+							active={pathname.startsWith("/docs/v1/concepts")}
 							className="hidden lg:block"
 						>
 							Concepts
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/responses"
+							href="/docs/v1/responses"
 							active={[
-								"/docs/responses",
-								"/docs/pagination",
-								"/docs/formats",
-								"/docs/caching",
-								"/docs/rate-limits",
-								"/docs/errors",
+								"/docs/v1/responses",
+								"/docs/v1/pagination",
+								"/docs/v1/formats",
+								"/docs/v1/caching",
+								"/docs/v1/rate-limits",
+								"/docs/v1/errors",
 							].some((prefix) => pathname.startsWith(prefix))}
 							className="hidden lg:block"
 						>
 							Using the API
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/guides/map"
-							active={pathname.startsWith("/docs/guides")}
+							href="/docs/v1/guides/map"
+							active={pathname.startsWith("/docs/v1/guides")}
 							className="hidden lg:block"
 						>
 							Guides
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/data"
-							active={pathname.startsWith("/docs/data")}
+							href="/docs/v1/data"
+							active={pathname.startsWith("/docs/v1/data")}
 							className="hidden lg:block"
 						>
 							Data
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/geographies"
-							active={pathname.startsWith("/docs/geographies")}
+							href="/docs/v1/geographies"
+							active={pathname.startsWith("/docs/v1/geographies")}
 							className="hidden lg:block"
 						>
 							Geographies
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/reference"
-							active={pathname.startsWith("/docs/reference")}
+							href="/docs/v1/reference"
+							active={pathname.startsWith("/docs/v1/reference")}
 							className="hidden lg:block"
 						>
 							API reference
 						</HeaderLink>
 						<HeaderLink
-							href="/docs/downloads"
-							active={pathname.startsWith("/docs/downloads")}
+							href="/docs/v1/downloads"
+							active={pathname.startsWith("/docs/v1/downloads")}
 							className="hidden lg:block"
 						>
 							Downloads

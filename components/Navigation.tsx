@@ -16,7 +16,7 @@ export default function Navigation() {
 						<Link href="/datasets" className={linkClass}>
 							Datasets
 						</Link>
-						<Link href="/docs" className={linkClass}>
+						<Link href="/docs/v1" className={linkClass}>
 							Documentation
 						</Link>
 						<a

@@ -374,7 +374,7 @@ export function findOperationById(
 }
 
 export function operationHref(operation: DocsOperation): string {
-	return `/docs/reference/${operation.sectionSlug}/${operation.slug}`;
+	return `/docs/v1/reference/${operation.sectionSlug}/${operation.slug}`;
 }
 
 export function findSection(

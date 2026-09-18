@@ -12,7 +12,7 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 	unsupported_geography: {
 		status: 404,
 		meaning: "That geography or boundary release isn't available.",
-		fix: "Check the spelling against [List geographies](/docs/reference/geography/list-geographies) and [List boundary releases](/docs/reference/geography/list-boundary-releases).",
+		fix: "Check the spelling against [List geographies](/docs/v1/reference/geography/list-geographies) and [List boundary releases](/docs/v1/reference/geography/list-boundary-releases).",
 	},
 	area_not_in_release: {
 		status: 404,
@@ -24,19 +24,19 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 		status: 422,
 		meaning:
 			"This measure can't be combined that way, like adding up medians or ranks.",
-		fix: "Check the measure's `aggregation` with [Get a measure](/docs/reference/data-catalogue/measure), and use individual observations instead.",
+		fix: "Check the measure's `aggregation` with [Get a measure](/docs/v1/reference/data-catalogue/measure), and use individual observations instead.",
 	},
 	conversion_not_available: {
 		status: 422,
 		meaning:
 			"The crosswalk can't convert this data without dropping, splitting or guessing values.",
-		fix: "Try another crosswalk from [List crosswalks](/docs/reference/geography/list-crosswalks), or keep the data on its original areas.",
+		fix: "Try another crosswalk from [List crosswalks](/docs/v1/reference/geography/list-crosswalks), or keep the data on its original areas.",
 	},
 	partial_coverage: {
 		status: 422,
 		meaning:
 			"Some areas a total needs are missing, so no total is given rather than a quietly incomplete one.",
-		fix: "See where the measure is published with [Check a measure's coverage](/docs/reference/data-catalogue/measure-coverage), then choose a period or group of areas it fully covers.",
+		fix: "See where the measure is published with [Check a measure's coverage](/docs/v1/reference/data-catalogue/measure-coverage), then choose a period or group of areas it fully covers.",
 	},
 	ambiguous_place: {
 		status: 409,
@@ -47,7 +47,7 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 		status: 422,
 		meaning:
 			"Not every area code in the data appears in the boundary release you chose.",
-		fix: "Find a release that fits with [Check which boundaries fit](/docs/reference/data-catalogue/measure-compatibility).",
+		fix: "Find a release that fits with [Check which boundaries fit](/docs/v1/reference/data-catalogue/measure-compatibility).",
 	},
 	invalid_format: {
 		status: 400,
