@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:45e8062e25a46877e3439fe3b01c921dd8ae960d849f90f571a12ac841058d0b",
-	"boundaryRegistryHash": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
+	"contentHash": "sha256:dee84507f945fec3f8d24f0ddac24e586e3475034c05a4b9c79c46ae384bb3ba",
+	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -108,6 +108,72 @@
 			}
 		},
 		{
+			"id": "2022-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2022-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2021-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2020-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2019-12-uk-bgc",
 			"geography": "constituency",
 			"countries": [
@@ -141,6 +207,28 @@
 						}
 					}
 				]
+			}
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "constituency",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 650,
+				"artifact": "areas/constituency/2018-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1010,6 +1098,28 @@
 			}
 		},
 		{
+			"id": "2023-12-uk-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 361,
+				"artifact": "areas/localAuthority/2023-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2023-05-uk-bgc-v2",
 			"geography": "localAuthority",
 			"countries": [
@@ -1156,6 +1266,28 @@
 			}
 		},
 		{
+			"id": "2020-12-uk-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 379,
+				"artifact": "areas/localAuthority/2020-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2019-12-uk-bgc",
 			"geography": "localAuthority",
 			"countries": [
@@ -1192,6 +1324,28 @@
 			}
 		},
 		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 382,
+				"artifact": "areas/localAuthority/2019-04-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2018-12-uk-bgc",
 			"geography": "localAuthority",
 			"countries": [
@@ -1207,6 +1361,27 @@
 				"status": "available",
 				"recordCount": 391,
 				"artifact": "areas/localAuthority/2018-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2017-12-gb-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 380,
+				"artifact": "areas/localAuthority/2017-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "unsupported",
@@ -1246,6 +1421,69 @@
 						}
 					}
 				]
+			}
+		},
+		{
+			"id": "2011-12-gb-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 380,
+				"artifact": "areas/localAuthority/2011-12-gb-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2009-12-gb-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 380,
+				"artifact": "areas/localAuthority/2009-12-gb-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2008-12-gb-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 408,
+				"artifact": "areas/localAuthority/2008-12-gb-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
 			}
 		},
 		{
@@ -1740,6 +1978,44 @@
 			}
 		},
 		{
+			"id": "2026-05-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 73,
+				"artifact": "areas/scottishParliamentaryConstituency/2026-05-sc-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2022-12-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 73,
+				"artifact": "areas/scottishParliamentaryConstituency/2022-12-sc-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2021-05-sc-bgc",
 			"geography": "scottishParliamentaryConstituency",
 			"countries": [
@@ -1752,6 +2028,25 @@
 				"status": "available",
 				"recordCount": 73,
 				"artifact": "areas/scottishParliamentaryConstituency/2021-05-sc-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2016-05-sc-gcb",
+			"geography": "scottishParliamentaryConstituency",
+			"countries": [
+				"GB-SCT"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 73,
+				"artifact": "areas/scottishParliamentaryConstituency/2016-05-sc-gcb.json"
 			},
 			"relationships": {
 				"status": "unsupported",
@@ -2231,6 +2526,28 @@
 			}
 		},
 		{
+			"id": "2019-12-uk-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-NIR",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 8887,
+				"artifact": "areas/ward/2019-12-uk-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
 			"id": "2019-12-gb-bgc",
 			"geography": "ward",
 			"countries": [
@@ -2328,6 +2645,46 @@
 					}
 				]
 			}
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "unsupported",
+				"reason": "Could not identify exactly one matching code/name property pair."
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
+		},
+		{
+			"id": "2011-12-ew-bgc",
+			"geography": "ward",
+			"countries": [
+				"GB-ENG",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 8588,
+				"artifact": "areas/ward/2011-12-ew-bgc.json"
+			},
+			"relationships": {
+				"status": "unsupported",
+				"reason": "No published crosswalk references this boundary release yet."
+			}
 		}
 	],
 	"geographies": [
@@ -2354,7 +2711,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 5
+			"releaseCount": 9
 		},
 		{
 			"id": "country",
@@ -2443,7 +2800,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 11
+			"releaseCount": 18
 		},
 		{
 			"id": "localHealthBoard",
@@ -2530,7 +2887,7 @@
 			"countries": [
 				"GB-SCT"
 			],
-			"releaseCount": 1
+			"releaseCount": 4
 		},
 		{
 			"id": "scottishParliamentaryRegion",
@@ -2585,7 +2942,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 14
+			"releaseCount": 17
 		}
 	]
 }

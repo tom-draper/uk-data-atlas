@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7f8d7db13a803fabb028619ad438beff2ffdfcc46bcb9a71431a747bef216dee",
+	"contentHash": "sha256:db0dfa7a45d7790bb1e554c88e09a69a853e0306a9aae489b1196bbf43559ac6",
 	"namedLocationInventoryHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149",
 	"crosswalkInventoryHash": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 	"crosswalkId": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
@@ -566,10 +566,13 @@
 						"name": "Armagh City, Banbridge and Craigavon",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -583,10 +586,13 @@
 						"name": "Newry, Mourne and Down",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -1620,10 +1626,13 @@
 						"name": "Antrim and Newtownabbey",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -1637,10 +1646,13 @@
 						"name": "Belfast",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -1654,10 +1666,13 @@
 						"name": "Lisburn and Castlereagh",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -1671,10 +1686,13 @@
 						"name": "Ards and North Down",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -1733,10 +1751,13 @@
 						"name": "Belfast",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -2806,10 +2827,13 @@
 						"status": "not-yet-current",
 						"name": "Bournemouth, Christchurch and Poole",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -4467,9 +4491,11 @@
 						"status": "not-yet-current",
 						"name": "Buckinghamshire",
 						"presentIn": [
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -7169,10 +7195,13 @@
 						"name": "Causeway Coast and Glens",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -7186,10 +7215,13 @@
 						"name": "Mid and East Antrim",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -8328,10 +8360,13 @@
 						"status": "not-yet-current",
 						"name": "Glasgow City",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -8344,10 +8379,13 @@
 						"status": "not-yet-current",
 						"name": "North Lanarkshire",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -17263,10 +17301,13 @@
 						"status": "not-yet-current",
 						"name": "Bournemouth, Christchurch and Poole",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -17279,10 +17320,13 @@
 						"status": "not-yet-current",
 						"name": "Dorset",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -25183,6 +25227,7 @@
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -25198,6 +25243,7 @@
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -32920,59 +32966,53 @@
 				"unresolvedCount": 6,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "East Hertfordshire",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "St Albans",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Stevenage",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Welwyn Hatfield",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000244",
 						"status": "not-yet-current",
 						"name": "East Suffolk",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -32985,10 +33025,13 @@
 						"status": "not-yet-current",
 						"name": "West Suffolk",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -35547,10 +35590,13 @@
 						"name": "Fife",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -35777,19 +35823,16 @@
 				"unresolvedCount": 1,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Gateshead",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					}
 				],
 				"note": "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`."
@@ -36010,10 +36053,13 @@
 						"status": "not-yet-current",
 						"name": "Glasgow City",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -38303,10 +38349,13 @@
 						"status": "not-yet-current",
 						"name": "Glasgow City",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -44872,49 +44921,40 @@
 				"unresolvedCount": 4,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "East Hertfordshire",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "St Albans",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Stevenage",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Welwyn Hatfield",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					}
 				],
 				"note": "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`."
@@ -53382,10 +53422,13 @@
 						"name": "Lisburn and Castlereagh",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -59006,10 +59049,13 @@
 						"name": "Derry City and Strabane",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -62963,10 +63009,13 @@
 						"name": "Newry, Mourne and Down",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -67707,29 +67756,24 @@
 				"unresolvedCount": 2,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E06000048",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E06000048",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Northumberland",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Gateshead",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					}
 				],
 				"note": "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`."
@@ -77236,6 +77280,7 @@
 						"name": "Cumberland",
 						"presentIn": [
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -77249,6 +77294,7 @@
 						"name": "Westmorland and Furness",
 						"presentIn": [
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -78580,6 +78626,7 @@
 						"name": "North Yorkshire",
 						"presentIn": [
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -78640,6 +78687,7 @@
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -81234,10 +81282,13 @@
 						"name": "Perth and Kinross",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -86229,6 +86280,7 @@
 						"name": "Somerset",
 						"presentIn": [
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -86241,7 +86293,9 @@
 						"status": "not-yet-current",
 						"name": "Somerset West and Taunton",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -98518,9 +98572,11 @@
 						"status": "not-yet-current",
 						"name": "Buckinghamshire",
 						"presentIn": [
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -108581,10 +108637,13 @@
 						"status": "not-yet-current",
 						"name": "Bournemouth, Christchurch and Poole",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -108597,10 +108656,13 @@
 						"status": "not-yet-current",
 						"name": "Dorset",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -108614,6 +108676,7 @@
 						"name": "Somerset",
 						"presentIn": [
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -112947,10 +113010,13 @@
 						"status": "not-yet-current",
 						"name": "East Suffolk",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -112963,10 +113029,13 @@
 						"status": "not-yet-current",
 						"name": "West Suffolk",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -116190,10 +116259,13 @@
 						"name": "Perth and Kinross",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -124476,10 +124548,13 @@
 						"name": "Derry City and Strabane",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -124493,10 +124568,13 @@
 						"name": "Fermanagh and Omagh",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -124510,10 +124588,13 @@
 						"name": "Mid Ulster",
 						"presentIn": [
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",
@@ -130664,6 +130745,7 @@
 						"name": "North Yorkshire",
 						"presentIn": [
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc",
 							"2025-05-uk-bgc-v2",

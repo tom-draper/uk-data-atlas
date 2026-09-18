@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:c2cddd2aa8ea4e5eac1caf27aa3e406ffed7d102ba2f0c81b47d4b90220b7a66",
+	"contentHash": "sha256:56d952ece576286abaa07b179c8be261b3e87cf379de22834734edea148e7be5",
 	"namedLocationInventoryHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149",
 	"crosswalkInventoryHash": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 	"crosswalkId": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
@@ -218,12 +218,17 @@
 						"status": "superseded",
 						"name": "Barnsley",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc"
 						]
@@ -827,8 +832,11 @@
 						"status": "superseded",
 						"name": "Aylesbury Vale",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					},
@@ -837,8 +845,11 @@
 						"status": "superseded",
 						"name": "Chiltern",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					},
@@ -847,8 +858,11 @@
 						"status": "superseded",
 						"name": "South Bucks",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					},
@@ -857,8 +871,11 @@
 						"status": "superseded",
 						"name": "Wycombe",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					}
@@ -1082,9 +1099,13 @@
 						"status": "superseded",
 						"name": "Carlisle",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -1187,7 +1208,9 @@
 						"status": "superseded",
 						"name": "North Lanarkshire",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -1196,7 +1219,9 @@
 						"status": "superseded",
 						"name": "Glasgow City",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -1867,7 +1892,9 @@
 						"status": "superseded",
 						"name": "Christchurch",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -1876,7 +1903,9 @@
 						"status": "superseded",
 						"name": "East Dorset",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -1885,7 +1914,9 @@
 						"status": "superseded",
 						"name": "North Dorset",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -1894,7 +1925,9 @@
 						"status": "superseded",
 						"name": "Purbeck",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -1903,7 +1936,9 @@
 						"status": "superseded",
 						"name": "West Dorset",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -1912,7 +1947,9 @@
 						"status": "superseded",
 						"name": "Weymouth and Portland",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -2157,9 +2194,13 @@
 						"status": "superseded",
 						"name": "Corby",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					},
 					{
@@ -2167,9 +2208,13 @@
 						"status": "superseded",
 						"name": "Daventry",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					},
 					{
@@ -2177,9 +2222,13 @@
 						"status": "superseded",
 						"name": "East Northamptonshire",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					},
 					{
@@ -2187,9 +2236,13 @@
 						"status": "superseded",
 						"name": "Kettering",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					},
 					{
@@ -2197,9 +2250,13 @@
 						"status": "superseded",
 						"name": "Northampton",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					},
 					{
@@ -2207,9 +2264,13 @@
 						"status": "superseded",
 						"name": "South Northamptonshire",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					},
 					{
@@ -2217,9 +2278,13 @@
 						"status": "superseded",
 						"name": "Wellingborough",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
-							"2019-12-uk-bgc"
+							"2019-04-uk-bgc",
+							"2019-12-uk-bgc",
+							"2020-12-uk-bgc"
 						]
 					}
 				],
@@ -2315,56 +2380,49 @@
 				"unresolvedCount": 5,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "East Hertfordshire",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "St Albans",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Stevenage",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Welwyn Hatfield",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000201",
 						"status": "superseded",
 						"name": "Forest Heath",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -2593,7 +2651,9 @@
 						"status": "superseded",
 						"name": "Fife",
 						"presentIn": [
-							"2016-12-gb-bgc"
+							"2011-12-gb-bgc",
+							"2016-12-gb-bgc",
+							"2017-12-gb-bgc"
 						]
 					}
 				],
@@ -2644,19 +2704,16 @@
 				"unresolvedCount": 1,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Gateshead",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					}
 				],
 				"note": "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`."
@@ -2704,7 +2761,9 @@
 						"status": "superseded",
 						"name": "Glasgow City",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -2886,7 +2945,9 @@
 						"status": "superseded",
 						"name": "Glasgow City",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -3134,9 +3195,13 @@
 						"status": "superseded",
 						"name": "Harrogate",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -3278,49 +3343,40 @@
 				"unresolvedCount": 4,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E07000097",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "East Hertfordshire",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000100",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "St Albans",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000101",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Stevenage",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E07000104",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Welwyn Hatfield",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					}
 				],
 				"note": "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`."
@@ -4732,29 +4788,24 @@
 				"unresolvedCount": 2,
 				"complete": false,
 				"coversLocation": true,
-				"legacy": [
-					{
-						"code": "E06000048",
-						"status": "unknown",
-						"presentIn": []
-					},
-					{
-						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
-					}
-				],
+				"legacy": [],
 				"unexplained": [],
 				"unresolved": [
 					{
 						"code": "E06000048",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Northumberland",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					},
 					{
 						"code": "E08000020",
-						"status": "unknown",
-						"presentIn": []
+						"status": "superseded",
+						"name": "Gateshead",
+						"presentIn": [
+							"2011-12-gb-bgc"
+						]
 					}
 				],
 				"note": "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`."
@@ -4954,9 +5005,13 @@
 						"status": "superseded",
 						"name": "Allerdale",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -4966,9 +5021,13 @@
 						"status": "superseded",
 						"name": "Barrow-in-Furness",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -4978,9 +5037,13 @@
 						"status": "superseded",
 						"name": "Carlisle",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -4990,9 +5053,13 @@
 						"status": "superseded",
 						"name": "Copeland",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5002,9 +5069,13 @@
 						"status": "superseded",
 						"name": "Eden",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5014,9 +5085,13 @@
 						"status": "superseded",
 						"name": "South Lakeland",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5077,9 +5152,13 @@
 						"status": "superseded",
 						"name": "Craven",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5089,9 +5168,13 @@
 						"status": "superseded",
 						"name": "Hambleton",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5101,9 +5184,13 @@
 						"status": "superseded",
 						"name": "Harrogate",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5113,9 +5200,13 @@
 						"status": "superseded",
 						"name": "Richmondshire",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5125,9 +5216,13 @@
 						"status": "superseded",
 						"name": "Ryedale",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5137,9 +5232,13 @@
 						"status": "superseded",
 						"name": "Scarborough",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5149,9 +5248,13 @@
 						"status": "superseded",
 						"name": "Selby",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -5582,9 +5685,11 @@
 					{
 						"code": "S12000024",
 						"status": "superseded",
-						"name": "Perth and Kinross",
+						"name": "Perth & Kinross",
 						"presentIn": [
-							"2016-12-gb-bgc"
+							"2011-12-gb-bgc",
+							"2016-12-gb-bgc",
+							"2017-12-gb-bgc"
 						]
 					}
 				],
@@ -5721,7 +5826,9 @@
 						"status": "superseded",
 						"name": "Poole",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -6099,9 +6206,13 @@
 						"status": "superseded",
 						"name": "Scarborough",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -6282,12 +6393,17 @@
 						"status": "superseded",
 						"name": "Sheffield",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc"
 						]
@@ -6468,9 +6584,13 @@
 						"status": "superseded",
 						"name": "Mendip",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -6480,9 +6600,13 @@
 						"status": "superseded",
 						"name": "Sedgemoor",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -6492,9 +6616,13 @@
 						"status": "superseded",
 						"name": "South Somerset",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -6504,7 +6632,9 @@
 						"status": "superseded",
 						"name": "Taunton Deane",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -6513,7 +6643,9 @@
 						"status": "superseded",
 						"name": "West Somerset",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -6522,7 +6654,9 @@
 						"status": "superseded",
 						"name": "Somerset West and Taunton",
 						"presentIn": [
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -6633,8 +6767,11 @@
 						"status": "superseded",
 						"name": "Aylesbury Vale",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					},
@@ -6643,8 +6780,11 @@
 						"status": "superseded",
 						"name": "Chiltern",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					},
@@ -6653,8 +6793,11 @@
 						"status": "superseded",
 						"name": "South Bucks",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					},
@@ -6663,8 +6806,11 @@
 						"status": "superseded",
 						"name": "Wycombe",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc"
 						]
 					}
@@ -6906,7 +7052,9 @@
 						"status": "superseded",
 						"name": "Bournemouth",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -7268,7 +7416,9 @@
 						"status": "superseded",
 						"name": "Forest Heath",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -7277,7 +7427,9 @@
 						"status": "superseded",
 						"name": "St Edmundsbury",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -7286,7 +7438,9 @@
 						"status": "superseded",
 						"name": "Suffolk Coastal",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					},
@@ -7295,7 +7449,9 @@
 						"status": "superseded",
 						"name": "Waveney",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
 						]
 					}
@@ -7527,9 +7683,11 @@
 					{
 						"code": "S12000024",
 						"status": "superseded",
-						"name": "Perth and Kinross",
+						"name": "Perth & Kinross",
 						"presentIn": [
-							"2016-12-gb-bgc"
+							"2011-12-gb-bgc",
+							"2016-12-gb-bgc",
+							"2017-12-gb-bgc"
 						]
 					}
 				],
@@ -8455,9 +8613,13 @@
 						"status": "superseded",
 						"name": "Craven",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8467,9 +8629,13 @@
 						"status": "superseded",
 						"name": "Hambleton",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8479,9 +8645,13 @@
 						"status": "superseded",
 						"name": "Harrogate",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8491,9 +8661,13 @@
 						"status": "superseded",
 						"name": "Richmondshire",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8503,9 +8677,13 @@
 						"status": "superseded",
 						"name": "Ryedale",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8515,9 +8693,13 @@
 						"status": "superseded",
 						"name": "Scarborough",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8527,9 +8709,13 @@
 						"status": "superseded",
 						"name": "Selby",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2"
 						]
@@ -8539,12 +8725,17 @@
 						"status": "superseded",
 						"name": "Barnsley",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc"
 						]
@@ -8554,12 +8745,17 @@
 						"status": "superseded",
 						"name": "Sheffield",
 						"presentIn": [
+							"2011-12-gb-bgc",
 							"2016-12-gb-bgc",
+							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
+							"2019-04-uk-bgc",
 							"2019-12-uk-bgc",
+							"2020-12-uk-bgc",
 							"2021-12-uk-bgc",
 							"2022-12-uk-bgc-v2",
 							"2023-05-uk-bgc-v2",
+							"2023-12-uk-bgc",
 							"2024-05-uk-bgc",
 							"2024-12-uk-bgc"
 						]

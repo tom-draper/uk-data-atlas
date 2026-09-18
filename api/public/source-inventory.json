@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7cf2efc2bcd9ad4f898650340284293cc9e2d6d024e85831a1b62353434cbc90",
+	"contentHash": "sha256:9700a5a00ad607b0cf781f331f21c670dfea627483fa1888a295d25aecda32e8",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -83,6 +83,22 @@
 			"metadataHash": "sha256:aec65f9166c56c476fcb65c8a8446c88138776aedc974d9e8f29dc00f5e5996c"
 		},
 		{
+			"key": "boundaries/constituency/2018-12-uk-bgc",
+			"metadataId": "2018-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2018 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2018",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:e03cb7cc627a0410cc6651cefb20448f83c6904529216c90b4e83a1302405c09"
+		},
+		{
 			"key": "boundaries/constituency/2019-12-uk-bgc",
 			"metadataId": "2019-12-uk-bgc",
 			"kind": "boundary",
@@ -97,6 +113,54 @@
 				}
 			],
 			"metadataHash": "sha256:8c00f2461ea86b9d4724e304067b3d36f6800c7aed929f78efc7bfacc048d462"
+		},
+		{
+			"key": "boundaries/constituency/2020-12-uk-bgc",
+			"metadataId": "2020-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2020 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2020",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:03ffd3134df2db23e620f2307e43becb7bfdb93850546162d48a57744de443a7"
+		},
+		{
+			"key": "boundaries/constituency/2021-12-uk-bgc",
+			"metadataId": "2021-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2021 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:6668fa0acbcd71562b5163d70eaf2c91f035284d3787588d3dd706aedd19264e"
+		},
+		{
+			"key": "boundaries/constituency/2022-12-uk-bgc",
+			"metadataId": "2022-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Westminster parliamentary constituencies, December 2022 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:270b81dd7458662a0cbc6884ec096f63783c60fe2809bd71a26dc7d1b1c89d05"
 		},
 		{
 			"key": "boundaries/constituency/2024-07-uk-bgc",
@@ -439,6 +503,54 @@
 			"metadataHash": "sha256:dc5ccdc9234176695c1847369a5fa3b0e27c8005ba669db65469912347ef59f2"
 		},
 		{
+			"key": "boundaries/local-authority/2008-12-gb-bgc",
+			"metadataId": "2008-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2008 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2008",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:43cd65af847ce643756f854a06e75df13364f77edba06c31e40adde6b445ec10"
+		},
+		{
+			"key": "boundaries/local-authority/2009-12-gb-bgc",
+			"metadataId": "2009-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2009 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2009",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:44b0e26c41642facd77aef76263246e0d046e85966950bc0b42844d3cd205a0a"
+		},
+		{
+			"key": "boundaries/local-authority/2011-12-gb-bgc",
+			"metadataId": "2011-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2011 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:2ce04895927ff84ecf47c70580b0affbff8f0c7576ad5bf1b118352490b59803"
+		},
+		{
 			"key": "boundaries/local-authority/2016-12-gb-bgc",
 			"metadataId": "2016-12-gb-bgc",
 			"kind": "boundary",
@@ -453,6 +565,22 @@
 				}
 			],
 			"metadataHash": "sha256:0e6fb09babbb678cff8497008fed10bbcb36cd08dce24ce121f8acdfa132f3c0"
+		},
+		{
+			"key": "boundaries/local-authority/2017-12-gb-bgc",
+			"metadataId": "2017-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2017 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2017",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:35f652644fa82c7ec988574beebbc1e31645740d9cfcacd83060832baaad2afd"
 		},
 		{
 			"key": "boundaries/local-authority/2018-12-uk-bgc",
@@ -471,6 +599,22 @@
 			"metadataHash": "sha256:1061a4b4577bdda6c8b4dcd30997c57a58ad64de418a43d50c8bfa3db200513c"
 		},
 		{
+			"key": "boundaries/local-authority/2019-04-uk-bgc",
+			"metadataId": "2019-04-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, April 2019 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:1fb4125948cf64f1b1282f17db96d1a0f13764691ef26ed1ce14b82880367161"
+		},
+		{
 			"key": "boundaries/local-authority/2019-12-uk-bgc",
 			"metadataId": "2019-12-uk-bgc",
 			"kind": "boundary",
@@ -485,6 +629,22 @@
 				}
 			],
 			"metadataHash": "sha256:32e1e89bdaea89d5163c1a2682f6855c9864d2f0a4768b2851363f7f47e35b5c"
+		},
+		{
+			"key": "boundaries/local-authority/2020-12-uk-bgc",
+			"metadataId": "2020-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2020 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2020",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0b6b6b6b5acde18ede11337fdca536eaba05a879b91c510e8836f6a619e67fd1"
 		},
 		{
 			"key": "boundaries/local-authority/2021-12-uk-bgc",
@@ -533,6 +693,22 @@
 				}
 			],
 			"metadataHash": "sha256:231a7436f0749c6f26a37ef3858dbb722a28905702b920af4e4ad98def5f56d1"
+		},
+		{
+			"key": "boundaries/local-authority/2023-12-uk-bgc",
+			"metadataId": "2023-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2023",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:446baf9839e279fcd2ee119587b4d65256858fb0b0687fce5d00da7dbb25cf04"
 		},
 		{
 			"key": "boundaries/local-authority/2024-05-uk-bgc",
@@ -919,6 +1095,22 @@
 			"metadataHash": "sha256:e40a5ec957ae6a715a2e5f4e1015e3a20b5ecaa7f13e888fc9836d2b068a7312"
 		},
 		{
+			"key": "boundaries/scottish-parliamentary-constituency/2016-05-sc-gcb",
+			"metadataId": "2016-05-sc-gcb",
+			"kind": "boundary",
+			"title": "Scottish Parliamentary constituencies, May 2016 (Scotland, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2016",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:50d12a7df6b5cbb1b179fad193458f8387134c5de0ecd383edf0cecfb7b692e9"
+		},
+		{
 			"key": "boundaries/scottish-parliamentary-constituency/2021-05-sc-bgc",
 			"metadataId": "2021-05-sc-bgc",
 			"kind": "boundary",
@@ -932,7 +1124,39 @@
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:2199f52f65696ad9fab3d95d3fbec3d12edf7a8f6b58eec12b9763278bdd041d"
+			"metadataHash": "sha256:6da9b13ff845b5425ff2e27d5d7fe46f8477357e48b24152924fce2bf489a875"
+		},
+		{
+			"key": "boundaries/scottish-parliamentary-constituency/2022-12-sc-bgc",
+			"metadataId": "2022-12-sc-bgc",
+			"kind": "boundary",
+			"title": "Scottish Parliamentary constituencies, December 2022 (Scotland, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2022",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:f7c4d48af50fe2b8e85ce45286beca91a60bbaa56418d12d98b44cf119a09f12"
+		},
+		{
+			"key": "boundaries/scottish-parliamentary-constituency/2026-05-sc-bgc",
+			"metadataId": "2026-05-sc-bgc",
+			"kind": "boundary",
+			"title": "Scottish Parliamentary constituencies, May 2026 (Scotland, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2026",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:d71512f022a3295e15c62860695942557004f4c7fe4a09bb67817584ab3884a7"
 		},
 		{
 			"key": "boundaries/scottish-parliamentary-region/2022-12-sc-bgc",
@@ -1075,6 +1299,38 @@
 			"metadataHash": "sha256:26a4467bccb8c0c07fa27035530c193adb2e93c592e7f213b1eb0d9fac7fd500"
 		},
 		{
+			"key": "boundaries/ward/2011-12-ew-bgc",
+			"metadataId": "2011-12-ew-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2011 (England and Wales, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2011",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:1e05be3693d8fa940d06a40739334bfb72a8a815b34dbfe7b46f9a0e70d48c3d"
+		},
+		{
+			"key": "boundaries/ward/2015-12-gb-bgc",
+			"metadataId": "2015-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2015 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2015",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:18fc128cbe231132abdd0db88a8e21973b72a7dc8cea698c24acf647fb29f176"
+		},
+		{
 			"key": "boundaries/ward/2016-12-gb-bgc",
 			"metadataId": "2016-12-gb-bgc",
 			"kind": "boundary",
@@ -1137,6 +1393,22 @@
 				}
 			],
 			"metadataHash": "sha256:5decc170cee60d10d13c0953ac24d8ecaad202063cb9f725ef8836e5a052d6b7"
+		},
+		{
+			"key": "boundaries/ward/2019-12-uk-bgc",
+			"metadataId": "2019-12-uk-bgc",
+			"kind": "boundary",
+			"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://geoportal.statistics.gov.uk/",
+			"temporalCoverage": "2019",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:151c6992cbbf7cb04cb55d22e57f430665324a1a6b3d94efde6ed46eadd709a5"
 		},
 		{
 			"key": "boundaries/ward/2020-12-uk-bgc",

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:3cdc9bff4271ac6fea04b1225e48f194dd1b8969991997b7a9845e98a3ad21ed",
-	"boundaryRegistryHash": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
+	"contentHash": "sha256:584a5a08aa1541aad21fcf044feaedefd80fa187296a493d612e853e914809ec",
+	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -34,6 +34,36 @@
 			"nameProperty": "PCON24NM"
 		},
 		{
+			"id": "2022-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2022-12-uk-bgc.json",
+			"contentHash": "sha256:b704f15e69094e531424802acce657ed7984e19a5577172ccf6802501c36803d",
+			"codeProperty": "PCON22CD",
+			"nameProperty": "PCON22NM"
+		},
+		{
+			"id": "2021-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2021-12-uk-bgc.json",
+			"contentHash": "sha256:081a09067763dc303ab9edbcad90fc71b79d753394f8f0e2b3dc69224ad2dc2f",
+			"codeProperty": "PCON21CD",
+			"nameProperty": "PCON21NM"
+		},
+		{
+			"id": "2020-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2020-12-uk-bgc.json",
+			"contentHash": "sha256:019718339d1e5ad98fcb0a9ebc2d935c4846a8248a0486667032332d5744eda1",
+			"codeProperty": "PCON20CD",
+			"nameProperty": "PCON20NM"
+		},
+		{
 			"id": "2019-12-uk-bgc",
 			"geography": "constituency",
 			"status": "available",
@@ -42,6 +72,16 @@
 			"contentHash": "sha256:f23bb9b367674668a675dcc8c1853d57605b5dd5e634d5b5aa67f8b7a1b9da02",
 			"codeProperty": "pcon19cd",
 			"nameProperty": "pcon19nm"
+		},
+		{
+			"id": "2018-12-uk-bgc",
+			"geography": "constituency",
+			"status": "available",
+			"recordCount": 650,
+			"artifact": "areas/constituency/2018-12-uk-bgc.json",
+			"contentHash": "sha256:356e6f24946c4b6c538af7c4a6ebc42d97243e1dd0c7b35dc8fca273b3c3ea71",
+			"codeProperty": "pcon18cd",
+			"nameProperty": "pcon18nm"
 		},
 		{
 			"id": "2017-12-uk-bgc",
@@ -304,6 +344,16 @@
 			"nameProperty": "LAD24NM"
 		},
 		{
+			"id": "2023-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 361,
+			"artifact": "areas/localAuthority/2023-12-uk-bgc.json",
+			"contentHash": "sha256:9c2f7572e1993ec44f9420ec40fa6f6ba8fa02b98923d878d53d3822688113d7",
+			"codeProperty": "LAD23CD",
+			"nameProperty": "LAD23NM"
+		},
+		{
 			"id": "2023-05-uk-bgc-v2",
 			"geography": "localAuthority",
 			"status": "available",
@@ -334,6 +384,16 @@
 			"nameProperty": "LAD21NM"
 		},
 		{
+			"id": "2020-12-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 379,
+			"artifact": "areas/localAuthority/2020-12-uk-bgc.json",
+			"contentHash": "sha256:36cc60f18fca0bed2b81dfb40e1c9fa5a1bf076b1c3ef81234edd5a536659510",
+			"codeProperty": "LAD20CD",
+			"nameProperty": "LAD20NM"
+		},
+		{
 			"id": "2019-12-uk-bgc",
 			"geography": "localAuthority",
 			"status": "available",
@@ -342,6 +402,16 @@
 			"contentHash": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56",
 			"codeProperty": "lad19cd",
 			"nameProperty": "lad19nm"
+		},
+		{
+			"id": "2019-04-uk-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 382,
+			"artifact": "areas/localAuthority/2019-04-uk-bgc.json",
+			"contentHash": "sha256:20e13debff3e8b499da4077e39af2628779310b7ed00230b4ed44051a49c9669",
+			"codeProperty": "LAD19CD",
+			"nameProperty": "LAD19NM"
 		},
 		{
 			"id": "2018-12-uk-bgc",
@@ -354,6 +424,16 @@
 			"nameProperty": "lad18nm"
 		},
 		{
+			"id": "2017-12-gb-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 380,
+			"artifact": "areas/localAuthority/2017-12-gb-bgc.json",
+			"contentHash": "sha256:1c20e6745b20bd7b9b367aff108fc650fb2228eca63ba9ac8af18012e41abbea",
+			"codeProperty": "LAD17CD",
+			"nameProperty": "LAD17NM"
+		},
+		{
 			"id": "2016-12-gb-bgc",
 			"geography": "localAuthority",
 			"status": "available",
@@ -362,6 +442,36 @@
 			"contentHash": "sha256:2ca2840c27a5bb8acadff68a7e48425c6a910b57b41a7b11dcc020d0eeaf3665",
 			"codeProperty": "LAD16CD",
 			"nameProperty": "LAD16NM"
+		},
+		{
+			"id": "2011-12-gb-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 380,
+			"artifact": "areas/localAuthority/2011-12-gb-bgc.json",
+			"contentHash": "sha256:297cfb71b1a2adce00cac11216a9f255044c56eea53db63efaf9b5d422120b7d",
+			"codeProperty": "lad11cd",
+			"nameProperty": "lad11nm"
+		},
+		{
+			"id": "2009-12-gb-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 380,
+			"artifact": "areas/localAuthority/2009-12-gb-bgc.json",
+			"contentHash": "sha256:9478e12c6a49f12278b3ff6f4dfa3f47366875743a07ff79b32db2874fc52edc",
+			"codeProperty": "lad09cd",
+			"nameProperty": "lad09nm"
+		},
+		{
+			"id": "2008-12-gb-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 408,
+			"artifact": "areas/localAuthority/2008-12-gb-bgc.json",
+			"contentHash": "sha256:073015aafbdab585501191ae0c54ec277c2a163a65b5aa0bcacf258efcf79285",
+			"codeProperty": "LAD08CD",
+			"nameProperty": "LAD08NM"
 		},
 		{
 			"id": "2023-12-w-bgc",
@@ -564,6 +674,26 @@
 			"nameProperty": "RGN25NM"
 		},
 		{
+			"id": "2026-05-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"status": "available",
+			"recordCount": 73,
+			"artifact": "areas/scottishParliamentaryConstituency/2026-05-sc-bgc.json",
+			"contentHash": "sha256:e3df48e3a078bb686fd53fe6493d23113f850fc3967e37105c3f54ead865aa35",
+			"codeProperty": "SPC26CD",
+			"nameProperty": "SPC26NM"
+		},
+		{
+			"id": "2022-12-sc-bgc",
+			"geography": "scottishParliamentaryConstituency",
+			"status": "available",
+			"recordCount": 73,
+			"artifact": "areas/scottishParliamentaryConstituency/2022-12-sc-bgc.json",
+			"contentHash": "sha256:90a3a5d83dd01e55aa7820e681c184f67c7beaca3c0c8386b8a33778905b68dd",
+			"codeProperty": "SPC22CD",
+			"nameProperty": "SPC22NM"
+		},
+		{
 			"id": "2021-05-sc-bgc",
 			"geography": "scottishParliamentaryConstituency",
 			"status": "available",
@@ -572,6 +702,16 @@
 			"contentHash": "sha256:fbeca10090780d1c226f92ace344efac371aaef488abab05473d16fe0714aeb9",
 			"codeProperty": "SPC21CD",
 			"nameProperty": "SPC21NM"
+		},
+		{
+			"id": "2016-05-sc-gcb",
+			"geography": "scottishParliamentaryConstituency",
+			"status": "available",
+			"recordCount": 73,
+			"artifact": "areas/scottishParliamentaryConstituency/2016-05-sc-gcb.json",
+			"contentHash": "sha256:eaf1c63c2cebcaa53f7aeda647fe12df46dadf5c348c3306720eb3420c4be2a2",
+			"codeProperty": "spc16cd",
+			"nameProperty": "spc16nm"
 		},
 		{
 			"id": "2022-12-sc-bgc",
@@ -734,6 +874,16 @@
 			"nameProperty": "WD20NM"
 		},
 		{
+			"id": "2019-12-uk-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8887,
+			"artifact": "areas/ward/2019-12-uk-bgc.json",
+			"contentHash": "sha256:4842e907f220a5a534ff2a85969132e48ad7ec8f4bc3bd6d45005a9c4d51879a",
+			"codeProperty": "WD19CD",
+			"nameProperty": "WD19NM"
+		},
+		{
 			"id": "2019-12-gb-bgc",
 			"geography": "ward",
 			"status": "available",
@@ -772,6 +922,22 @@
 			"contentHash": "sha256:db5d9a79b319ea350ec428522a5e0f57de2fdc3559983b58657fc07f69e7b3b4",
 			"codeProperty": "wd16cd",
 			"nameProperty": "wd16nm"
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "ward",
+			"status": "not-compiled",
+			"reason": "Could not identify exactly one matching code/name property pair."
+		},
+		{
+			"id": "2011-12-ew-bgc",
+			"geography": "ward",
+			"status": "available",
+			"recordCount": 8588,
+			"artifact": "areas/ward/2011-12-ew-bgc.json",
+			"contentHash": "sha256:de46433b24b3ccce303ad908adc72522d0fcb9b9eced17ab61627f246f6c29f4",
+			"codeProperty": "wd11cd",
+			"nameProperty": "wd11nm"
 		}
 	]
 }
