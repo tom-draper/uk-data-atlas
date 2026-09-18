@@ -13,6 +13,13 @@
 
 <img width="2750" height="2076" alt="UK-Data-Atlas-12-31-2025_03_41_PM (1)" src="https://github.com/user-attachments/assets/fb52d8fa-40ac-4497-a598-335a33486d5a" />
 
+## Licensing
+
+The source code is released under the [MIT License](./LICENSE). The datasets
+and boundary files retain their own source licences; see
+[DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution, attribution and
+future paid-data policy.
+
 ## Datasets
 
 <!-- sources:start -->

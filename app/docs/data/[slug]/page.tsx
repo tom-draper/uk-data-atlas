@@ -12,7 +12,12 @@ import {
 import { Request } from "@/components/docs/Example";
 import Facts from "@/components/docs/Facts";
 import { TextLink } from "@/components/docs/Prose";
-import { nationList, periodRange } from "@/lib/docs/catalogue";
+import {
+	exportsFromDatasets,
+	loadCatalogue,
+	nationList,
+	periodRange,
+} from "@/lib/docs/catalogue";
 import { DATA_PAGES, DATA_TOPICS } from "@/lib/docs/content/data";
 import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
 import {
@@ -58,6 +63,8 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 	const page = findDataPage((await params).slug);
 	if (!page) notFound();
 	const facts = dataPageFacts(page);
+	const catalogue = loadCatalogue();
+	const downloads = exportsFromDatasets(catalogue, page.datasets);
 	const topic = DATA_TOPICS.find((t) => t.id === page.topic);
 
 	// A request that works: the first measure on its first published period.
@@ -90,6 +97,7 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 					: []),
 				{ id: "request", title: "Request it" },
 				{ id: "source", title: "Source and licence" },
+				{ id: "downloads", title: "Downloads" },
 			]}
 		>
 			<Facts
@@ -240,6 +248,43 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 			<Callout tone="tip">
 				{`Using this data in something you publish? [Get attribution text](/docs/reference/governance/attribution) with \`measure=${sampleMeasure ?? ""}\` returns the credit line to include.`}
 			</Callout>
+
+			<H2 id="downloads">Downloads</H2>
+			<P>
+				Download complete, source-exact observation files instead of
+				paging through the API. Each file has a stable hash and covers
+				one measure, period set and source geography. The source and
+				licence information above applies to these files too; preserve
+				the attribution and note any cleaning or reformatting when you
+				redistribute one.
+			</P>
+			<Table
+				head={["Measure", "Coverage", "Records", "Download"]}
+				rows={downloads.map((download) => {
+					const measure = catalogue.measures.find(
+						(item) => item.id === download.measureId,
+					);
+					return [
+						<span key="measure">
+							<span className="block font-medium text-slate-900">
+								{measure?.label ?? download.measureId}
+							</span>
+							<code className="font-mono text-[12.5px] text-slate-500">
+								{download.measureId}
+							</code>
+						</span>,
+						`${geographyName(download.sourceGeography.type)} · ${periodRange(download.periods)} · code year ${download.sourceGeography.boundaryYear}`,
+						download.recordCount.toLocaleString("en-GB"),
+						<a
+							href={`${API_BASE_URL}${download.href}`}
+							rel="noopener"
+							className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+						>
+							JSON
+						</a>,
+					];
+				})}
+			/>
 		</DocPage>
 	);
 }
