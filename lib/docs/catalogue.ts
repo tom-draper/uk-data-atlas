@@ -133,10 +133,10 @@ const NATIONS: Record<string, string> = {
 
 const NATION_ORDER = ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"];
 
-/** "England and Wales", or "the whole UK" when all four are covered. */
+/** "England and Wales", or "UK" when all four are covered. */
 export function nationList(countries: Iterable<string>): string {
 	const set = new Set(countries);
-	if (NATION_ORDER.every((code) => set.has(code))) return "the whole UK";
+	if (NATION_ORDER.every((code) => set.has(code))) return "UK";
 	const names = NATION_ORDER.filter((code) => set.has(code)).map(
 		(code) => NATIONS[code],
 	);

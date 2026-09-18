@@ -79,7 +79,7 @@ export default function AreasPage() {
 			</P>
 			<List
 				items={[
-					"`2024-07-uk-bgc` is the July 2024 release covering the whole UK.",
+					"`2024-07-uk-bgc` is the July 2024 release covering the UK.",
 					"The middle part is the coverage, such as `uk`, `gb`, `ew` (England and Wales), `en` or `sc`.",
 					"The last part is the publisher's boundary type: `bgc` is generalised and clipped to the coastline, and `bfc` is full resolution.",
 				]}
