@@ -191,6 +191,10 @@ const writeSources = (
 	);
 	const generalElection = join(directory, "general-election.json");
 	const localElection = join(directory, "local-election.json");
+	const energy = {
+		electricity: join(directory, "electricity-consumption.json"),
+		gas: join(directory, "gas-consumption.json"),
+	} as const;
 	const regionalGdp = {
 		itl1: join(directory, "regional-gdp-itl1.json"),
 		itl2: join(directory, "regional-gdp-itl2.json"),
@@ -245,6 +249,8 @@ const writeSources = (
 				dataset("regional-gdp-itl1", 4, 2, 2025),
 				dataset("regional-gdp-itl2", 4, 2, 2025),
 				dataset("regional-gdp-itl3", 4, 2, 2025),
+				dataset("electricity-consumption", 4, 2, 2025),
+				dataset("gas-consumption", 3, 2, 2025),
 			],
 		}),
 	);
@@ -885,6 +891,51 @@ const writeSources = (
 			),
 		);
 	}
+	// Two authorities over two years. Gas leaves one of them out of the later
+	// year, as the publisher does where it records no value at all.
+	for (const [path, drop] of [
+		[energy.electricity, false],
+		[energy.gas, true],
+	] as const) {
+		writeFileSync(
+			path,
+			JSON.stringify(
+				Object.fromEntries(
+					["2023", "2024"].map((year, index) => [
+						year,
+						{
+							year: Number(year),
+							boundaryType: "localAuthority",
+							boundaryYear: 2025,
+							data: Object.fromEntries(
+								["E06000001", "W06000001"]
+									.filter(
+										(_, area) =>
+											!(
+												drop &&
+												index === 1 &&
+												area === 1
+											),
+									)
+									.map((code, area) => [
+										code,
+										{
+											ladCode: code,
+											ladName: code,
+											domesticGwh: 10 + index + area,
+											nonDomesticGwh: 20 + index + area,
+											allMetersGwh:
+												30 + 2 * index + 2 * area,
+											metersThousands: 5 + area,
+										},
+									]),
+							),
+						},
+					]),
+				),
+			),
+		);
+	}
 	return {
 		manifest,
 		population,
@@ -917,6 +968,8 @@ const writeSources = (
 		regionalGdpItl1: regionalGdp.itl1,
 		regionalGdpItl2: regionalGdp.itl2,
 		regionalGdpItl3: regionalGdp.itl3,
+		electricityConsumption: energy.electricity,
+		gasConsumption: energy.gas,
 	};
 };
 
@@ -927,7 +980,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 	try {
 		const sources = writeSources(directory);
 		const result = compileDataCatalog(sources);
-		assert.equal(result.catalog.datasets.length, 30);
+		assert.equal(result.catalog.datasets.length, 32);
 		assert.deepEqual(result.catalog.measures[0]?.sources, [
 			{
 				datasetId: "population",
