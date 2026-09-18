@@ -1,0 +1,32 @@
+{
+	"id": "2011-12-ew-bgc",
+	"kind": "boundary",
+	"title": "Wards, December 2011 (England and Wales, generalised, clipped)",
+	"description": "Wards as published for December 2011, covering England and Wales. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"temporalCoverage": "2011",
+	"spatialCoverage": {
+		"geography": "ward",
+		"vintage": 2011,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "Wards_December_2011_GCB_EW_2022_-947102383281376386.geojson",
+			"role": "source",
+			"note": "Published as Wards_December_2011_GCB_EW_2022_-947102383281376386.geojson. 8,588 features in WGS84."
+		}
+	]
+}

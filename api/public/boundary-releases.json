@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
+	"contentHash": "sha256:7bfd4ea77644afc6d2bc6d88f4a30adb90189f8f082a0e5604aea2cb6faa832d",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -1685,6 +1685,30 @@
 			"metadataHash": "sha256:cf3bb9f457189981a778c39d4265ea129ca1e95cf464d0d57c260bc16c34de9c"
 		},
 		{
+			"id": "2019-12-uk-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+			"description": "Wards as published for December 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2019",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-NIR",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:151c6992cbbf7cb04cb55d22e57f430665324a1a6b3d94efde6ed46eadd709a5"
+		},
+		{
 			"id": "2019-12-gb-bgc",
 			"geography": "ward",
 			"title": "Wards, December 2019 (Great Britain, generalised, clipped)",
@@ -1776,6 +1800,51 @@
 				}
 			},
 			"metadataHash": "sha256:229595c28eb51e48be521fce99b5ffc667d2c9eb262df36b59f939e7635fbd32"
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2015 (Great Britain, generalised, clipped)",
+			"description": "Wards as published for December 2015, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2015",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:18fc128cbe231132abdd0db88a8e21973b72a7dc8cea698c24acf647fb29f176"
+		},
+		{
+			"id": "2011-12-ew-bgc",
+			"geography": "ward",
+			"title": "Wards, December 2011 (England and Wales, generalised, clipped)",
+			"description": "Wards as published for December 2011, covering England and Wales. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2011",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://geoportal.statistics.gov.uk/",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:1e05be3693d8fa940d06a40739334bfb72a8a815b34dbfe7b46f9a0e70d48c3d"
 		}
 	]
 }
