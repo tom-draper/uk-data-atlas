@@ -1,19 +1,12 @@
 "use client";
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
 import { glassPane } from "@/lib/docs/theme";
-import type { NavGroup } from "@/lib/docs/navigation";
 import GlassOverlays from "../GlassOverlays";
-import DocsSidebar from "./DocsSidebar";
 
-export default function DocsHeader({ groups }: { groups: NavGroup[] }) {
+export default function DocsHeader() {
 	const pathname = usePathname();
-	const [menuPath, setMenuPath] = useState<string | null>(null);
-	// The menu belongs to the page it was opened on, so navigating closes it.
-	const menuOpen = menuPath === pathname;
 
 	return (
 		<header className="sticky top-0 z-30 px-3 pt-3 sm:px-4">
@@ -23,20 +16,6 @@ export default function DocsHeader({ groups }: { groups: NavGroup[] }) {
 			>
 				<GlassOverlays isDark={false} />
 				<div className="relative z-10 flex h-9 items-center gap-3 px-3 sm:pr-4 sm:pl-0">
-					<button
-						type="button"
-						onClick={() => setMenuPath(menuOpen ? null : pathname)}
-						aria-expanded={menuOpen}
-						aria-label={menuOpen ? "Close menu" : "Open menu"}
-						className="-ml-1 cursor-pointer rounded-md p-1.5 text-slate-600 hover:bg-white/50 lg:hidden"
-					>
-						{menuOpen ? (
-							<X className="h-4 w-4" />
-						) : (
-							<Menu className="h-4 w-4" />
-						)}
-					</button>
-
 					<Link href="/" className="-mr-3 hidden shrink-0 sm:block">
 						<Image
 							src="/union-jack.png"
@@ -125,21 +104,6 @@ export default function DocsHeader({ groups }: { groups: NavGroup[] }) {
 					</nav>
 				</div>
 			</div>
-
-			{menuOpen && (
-				<div
-					className="absolute inset-x-3 top-[52px] flex max-h-[calc(100dvh-68px)] flex-col overflow-hidden rounded-md sm:inset-x-4 lg:hidden"
-					style={glassPane}
-				>
-					<GlassOverlays isDark={false} />
-					<div className="relative z-10 flex min-h-0 flex-1 flex-col">
-						<DocsSidebar
-							groups={groups}
-							onNavigate={() => setMenuPath(null)}
-						/>
-					</div>
-				</div>
-			)}
 		</header>
 	);
 }
