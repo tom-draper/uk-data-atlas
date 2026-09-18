@@ -26,7 +26,7 @@
 		{
 			"path": "SPC_MAY_2021_SC_BGC.geojson",
 			"role": "source",
-			"note": "Exported from the Open Geography Portal feature service \"Scottish_Parliamentary_Constituencies_May_2021_Boundaries_SC_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Scottish_Parliamentary_Constituencies_May_2021_Boundaries_SC_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 73 features in WGS84. The portal serves this product through the API rather than as a named download, so the file is named for the layer and reproduced by rerunning that query rather than by filename."
+			"note": "Exported from the Open Geography Portal feature service \"Scottish_Parliamentary_Constituencies_May_2021_Boundaries_SC_BGC\" (https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Scottish_Parliamentary_Constituencies_May_2021_Boundaries_SC_BGC/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson), 73 features in WGS84. The publisher-derived Shape__Area and Shape__Length fields are omitted."
 		}
 	]
 }
