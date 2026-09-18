@@ -431,6 +431,23 @@ only **available** when its endpoint, contract and provenance are published.
       immutable Atlas release, measure and dataset links, observation artifact
       hash, source geography, caller-selected code match (if any), and an
       explicit no-transformation statement.
+- [x] Return source-exact metered energy consumption through
+      `GET /v1/data/electricity-consumption` and
+      `GET /v1/data/gas-consumption`, each also split into `-domestic` and
+      `-non-domestic`: 2015-2024 Local Authority 2025 codes in Great Britain,
+      in GWh. These are settlement-reconciled meter readings rather than a
+      model, so a total adds up over areas exactly and the two segments equal
+      the whole in every published area and period. Northern Ireland runs
+      separate energy markets and is declared absent rather than served as a
+      gap. Consumption per meter is not published: it is a ratio, and neither
+      sums nor averages over a group of authorities. The publisher's 2012 to
+      2014 years are on an older local authority vintage and 2005 to 2011
+      predate GSS codes, so neither resolves against a compiled release and
+      neither is offered. The Isles of Scilly, Orkney and Shetland have no
+      mains gas grid, which the publisher records as zero in every year but
+      2023, where the cells are blank; a blank is not a measurement, so those
+      three are absent for that period and named in the coverage note rather
+      than filled in with the zero the other years show.
 - [x] Return source-exact regional economic output through
       `GET /v1/data/gdp` and `GET /v1/data/gva`: 1998-2023 gross domestic
       product at current market prices and balanced gross value added at

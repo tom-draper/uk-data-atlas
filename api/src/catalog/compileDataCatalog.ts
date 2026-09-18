@@ -33,6 +33,7 @@ import { compileMobileCoverage } from "./mobileCoverage";
 import { compileJobs } from "./jobs";
 import { compileEmissions } from "./emissions";
 import { compileRegionalGdp } from "./regionalGdp";
+import { compileEnergyConsumption } from "./energyConsumption";
 import { compilePopulation } from "./population";
 import { withNationalVariants } from "./nationalVariants";
 
@@ -73,6 +74,8 @@ export type DataCatalogInputs = {
 	regionalGdpItl1: string;
 	regionalGdpItl2: string;
 	regionalGdpItl3: string;
+	electricityConsumption: string;
+	gasConsumption: string;
 };
 
 /**
@@ -113,12 +116,15 @@ export const compileDataCatalog = ({
 	regionalGdpItl1: regionalGdpItl1Path,
 	regionalGdpItl2: regionalGdpItl2Path,
 	regionalGdpItl3: regionalGdpItl3Path,
+	electricityConsumption: electricityConsumptionPath,
+	gasConsumption: gasConsumptionPath,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
 	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
 	ghgEmissionsObservations: MeasureObservationArtifact;
 	regionalGdpObservations: MeasureObservationArtifact[];
+	energyConsumptionObservations: MeasureObservationArtifact[];
 	jobsObservations: MeasureObservationArtifact;
 	mobileCoverageObservations: MeasureObservationArtifact[];
 	indicatorObservations: MeasureObservationArtifact[];
@@ -161,6 +167,10 @@ export const compileDataCatalog = ({
 		),
 	);
 	const emissions = compileEmissions(catalogManifest, ghgEmissionsPath);
+	const energyConsumption = compileEnergyConsumption(catalogManifest, {
+		"electricity-consumption": electricityConsumptionPath,
+		"gas-consumption": gasConsumptionPath,
+	});
 	const regionalGdp = compileRegionalGdp(catalogManifest, {
 		"regional-gdp-itl1": regionalGdpItl1Path,
 		"regional-gdp-itl2": regionalGdpItl2Path,
@@ -240,6 +250,7 @@ export const compileDataCatalog = ({
 		...lifeExpectancy.measures,
 		emissions.measure,
 		...regionalGdp.measures,
+		...energyConsumption.measures,
 		jobs.measure,
 		...mobileCoverage.measures,
 		...indicatorMeasures,
@@ -272,6 +283,7 @@ export const compileDataCatalog = ({
 			population.localAuthorityObservations,
 		ghgEmissionsObservations: emissions.artifact,
 		regionalGdpObservations: regionalGdp.artifacts,
+		energyConsumptionObservations: energyConsumption.artifacts,
 		jobsObservations: jobs.artifact,
 		mobileCoverageObservations: mobileCoverage.artifacts,
 		censusObservations: census.artifacts,
