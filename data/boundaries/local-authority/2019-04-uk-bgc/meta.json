@@ -1,0 +1,35 @@
+{
+	"id": "2019-04-uk-bgc",
+	"kind": "boundary",
+	"title": "Local authority districts, April 2019 (United Kingdom, generalised, clipped)",
+	"description": "Local authority districts as published for April 2019, covering the United Kingdom. Generalised to 20 m and clipped to the coastline.",
+	"topics": [
+		"boundaries",
+		"geography"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://geoportal.statistics.gov.uk/",
+	"retrieved": "2026-09-18",
+	"temporalCoverage": "2019",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2019,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS",
+			"GB-SCT",
+			"GB-NIR"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "Local_Authority_Districts_April_2019_UK_BGC_2022_-8454321281105718192.geojson",
+			"role": "source",
+			"note": "Published as Local_Authority_Districts_April_2019_UK_BGC_2022_-8454321281105718192.geojson. 382 features in WGS84."
+		}
+	]
+}
