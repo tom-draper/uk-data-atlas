@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5b73f3df3d6c4fee522e1525f54382defb317a063d9fc7d75abf65ccada6c80d",
+	"contentHash": "sha256:7dcec2ef0a02656d610b996831aebd5cbabd72a673734af37d88616b226fca59",
 	"inputs": {
 		"dataCatalog": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
-		"boundaryRegistry": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
+		"boundaryRegistry": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
 		"measureObservations": {
@@ -308,9 +308,11 @@
 			"itl1/2025-01-uk-bgc": "sha256:8d51ded06e7d1849c74b1769bbcffb38e920f4382a5155a51ac7c67b7e7bc75f",
 			"itl2/2025-01-uk-bgc": "sha256:5365dba1cf010e39aed335bf5dc122eecb652d8feb9ff70b231ed584da8b7b86",
 			"itl3/2025-01-uk-bgc-v2": "sha256:45aad183e7c7bb33c568644fe4cad4c144441e720665531c9bd7371e3c19edf7",
+			"localAuthority/2019-04-uk-bgc": "sha256:20e13debff3e8b499da4077e39af2628779310b7ed00230b4ed44051a49c9669",
 			"localAuthority/2019-12-uk-bgc": "sha256:ee6cec9445fd13f8b3607068ae9d2e3b8f5163e8f5611686d47504b4b02e0d56",
 			"localAuthority/2021-12-uk-bgc": "sha256:bad319cb06dab4ba8ce6f1c9490a96c423f9745be9e0d80e9acfcf11b67842e6",
 			"localAuthority/2023-05-uk-bgc-v2": "sha256:acd6f8ffa4fafb9ea8a89006bd28cdb1e7e64dcd59a8a586103c7686c750db19",
+			"localAuthority/2023-12-uk-bgc": "sha256:9c2f7572e1993ec44f9420ec40fa6f6ba8fa02b98923d878d53d3822688113d7",
 			"localAuthority/2024-05-uk-bgc": "sha256:7ccc829d47ce7e7eed0d847bc285cad2e96abe768a3008506b3aefaa15b3f935",
 			"localAuthority/2024-12-uk-bgc": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
 			"localAuthority/2025-05-uk-bgc-v2": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a",
@@ -323,6 +325,7 @@
 			"ward/2017-12-gb-bgc": "sha256:493711bf119a2a76fd053b49c419dfc25a28a1079cba4ab45cba6455c9b561ea",
 			"ward/2018-12-uk-bgc": "sha256:7063d16729f25bbbb7b81c1d238ee0dfdc3ce4a2b4383e0ba124ad103ec256c4",
 			"ward/2019-12-gb-bgc": "sha256:fd8f10cc8648b485089e8710e7bbc31f8d8fd6d4a83678abfe71234e9b6a055b",
+			"ward/2019-12-uk-bgc": "sha256:4842e907f220a5a534ff2a85969132e48ad7ec8f4bc3bd6d45005a9c4d51879a",
 			"ward/2020-12-uk-bgc": "sha256:4bfb5190bc06e7b52a261dbf246de956121ab74acad909a180946656468b0447",
 			"ward/2021-12-uk-bgc": "sha256:40aad610bb225c00de198f96c6b816eed8d7dec14a330a113c3f8c8e0c62684d",
 			"ward/2022-12-uk-bgc": "sha256:6193af5fbe8a02f789beb8b7adabba6ceca36c585d09c23a43c7ca0d7aad0b61",
@@ -457,6 +460,25 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -3147,6 +3169,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -4167,6 +4232,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -4775,6 +4883,49 @@
 								"E05013831"
 							],
 							"candidateOnlyCodeCount": 3154,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
 							"candidateOnlyCodeSample": [
 								"E05000026",
 								"E05000027",
@@ -5427,6 +5578,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -6035,6 +6229,49 @@
 								"E05013831"
 							],
 							"candidateOnlyCodeCount": 3154,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
 							"candidateOnlyCodeSample": [
 								"E05000026",
 								"E05000027",
@@ -6687,6 +6924,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -7295,6 +7575,49 @@
 								"E05013831"
 							],
 							"candidateOnlyCodeCount": 3154,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
 							"candidateOnlyCodeSample": [
 								"E05000026",
 								"E05000027",
@@ -7947,6 +8270,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -8555,6 +8921,49 @@
 								"E05013831"
 							],
 							"candidateOnlyCodeCount": 3154,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
 							"candidateOnlyCodeSample": [
 								"E05000026",
 								"E05000027",
@@ -9207,6 +9616,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -9837,6 +10289,49 @@
 								"E05000044",
 								"E05000045"
 							]
+						},
+						{
+							"boundaryRelease": "2019-12-uk-bgc",
+							"title": "Wards, December 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "partial-code-overlap",
+							"sourceCodeCount": 5273,
+							"candidateCodeCount": 8887,
+							"matchingCodeCount": 5271,
+							"matchedSourceShare": 0.9996207092736583,
+							"unmatchedSourceCodeCount": 2,
+							"unmatchedSourceCodeSample": [
+								"E05013830",
+								"E05013831"
+							],
+							"candidateOnlyCodeCount": 3616,
+							"candidateOnlyCodeSample": [
+								"E05000026",
+								"E05000027",
+								"E05000028",
+								"E05000029",
+								"E05000030",
+								"E05000031",
+								"E05000032",
+								"E05000033",
+								"E05000034",
+								"E05000035",
+								"E05000036",
+								"E05000037",
+								"E05000038",
+								"E05000039",
+								"E05000040",
+								"E05000041",
+								"E05000042",
+								"E05000043",
+								"E05000044",
+								"E05000045"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -10257,6 +10752,25 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -12016,6 +12530,25 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -14687,6 +15220,39 @@
 					],
 					"candidates": [
 						{
+							"boundaryRelease": "2019-04-uk-bgc",
+							"title": "Local authority districts, April 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 369,
+							"candidateCodeCount": 382,
+							"matchingCodeCount": 369,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 13,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E09000001",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						},
+						{
 							"boundaryRelease": "2019-12-uk-bgc",
 							"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
@@ -14809,6 +15375,39 @@
 						"2021"
 					],
 					"candidates": [
+						{
+							"boundaryRelease": "2019-04-uk-bgc",
+							"title": "Local authority districts, April 2019 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 369,
+							"candidateCodeCount": 382,
+							"matchingCodeCount": 369,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 13,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E09000001",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						},
 						{
 							"boundaryRelease": "2019-12-uk-bgc",
 							"title": "Local authority districts, December 2019 (United Kingdom, generalised, clipped)",
@@ -14946,6 +15545,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -14968,6 +15607,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15062,6 +15741,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15084,6 +15803,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15178,6 +15937,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15200,6 +15999,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15294,6 +16133,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15316,6 +16195,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15410,6 +16329,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15432,6 +16391,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15526,6 +16525,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15548,6 +16587,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15642,6 +16721,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15664,6 +16783,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15758,6 +16917,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15780,6 +16979,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15874,6 +17113,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -15896,6 +17175,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -15990,6 +17309,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16012,6 +17371,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16106,6 +17505,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16128,6 +17567,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16222,6 +17701,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16244,6 +17763,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16338,6 +17897,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16360,6 +17959,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16454,6 +18093,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16476,6 +18155,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16570,6 +18289,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16592,6 +18351,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16686,6 +18485,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16708,6 +18547,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16802,6 +18681,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16824,6 +18743,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -16918,6 +18877,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -16940,6 +18939,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -17034,6 +19073,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -17056,6 +19135,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",
@@ -17150,6 +19269,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -17208,6 +19367,46 @@
 								"S12000017",
 								"S12000018"
 							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
 						}
 					],
 					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
@@ -17230,6 +19429,46 @@
 						{
 							"boundaryRelease": "2023-05-uk-bgc-v2",
 							"title": "Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 318,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 318,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 43,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2023-12-uk-bgc",
+							"title": "Local authority districts, December 2023 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",

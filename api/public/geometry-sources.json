@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:bfc181943afe1dd6341223fc4bf030ec3cc53de94fa23796d8bdfb2263209927",
+	"contentHash": "sha256:5d8169a4605a9790003ff3888fc25b846dd46d80cd3d9ca96dc9ecfc2b23e978",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -27,12 +27,44 @@
 			"codeProperty": "PCON24CD"
 		},
 		{
+			"id": "constituency/2022-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2022-12-uk-bgc/Westminster_Parliamentary_Constituencies_Dec_2022_UK_BGC_-515287536884539596.geojson",
+			"inputHash": "sha256:2bad3ac38f2052b1949c9878af2d3a91e1a9e7123bc8afb45e5381d313c336c3",
+			"crs": "EPSG:4326",
+			"codeProperty": "PCON22CD"
+		},
+		{
+			"id": "constituency/2021-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2021-12-uk-bgc/Westminster_Parliamentary_Constituencies_Dec_2021_UK_BGC_2022_8503125933138445651.geojson",
+			"inputHash": "sha256:bcee26d4d1274427a163d20886ac53c979c7045f5cc074a5801b02fa1a8a0e1b",
+			"crs": "EPSG:4326",
+			"codeProperty": "PCON21CD"
+		},
+		{
+			"id": "constituency/2020-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2020-12-uk-bgc/WPC_Dec_2020_UK_BGC_2022_6135968359695458764.geojson",
+			"inputHash": "sha256:a026da9d46048c94aae153caa00ed7fffc340189498041f2e4e1604cbedca53c",
+			"crs": "EPSG:4326",
+			"codeProperty": "PCON20CD"
+		},
+		{
 			"id": "constituency/2019-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/constituency/2019-12-uk-bgc/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.geojson",
 			"inputHash": "sha256:c7d2a274a12ff9acbd1198ccd347b9adad049398a121b7478dcc1595f6ca7609",
 			"crs": "EPSG:4326",
 			"codeProperty": "pcon19cd"
+		},
+		{
+			"id": "constituency/2018-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/constituency/2018-12-uk-bgc/WPC_Dec_2018_GCB_UK_2022_2200571597771043723.geojson",
+			"inputHash": "sha256:7c6c985d4493b80b675f81a58ca4d6ced5fd95ff040900b211e197bb0d56db96",
+			"crs": "EPSG:4326",
+			"codeProperty": "pcon18cd"
 		},
 		{
 			"id": "constituency/2017-12-uk-bgc",
@@ -261,6 +293,14 @@
 			"codeProperty": "LAD24CD"
 		},
 		{
+			"id": "localAuthority/2023-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2023-12-uk-bgc/Local_Authority_Districts_December_2023_Boundaries_UK_BGC_2537431731774104276.geojson",
+			"inputHash": "sha256:1dd11ab454e2fc9af719b4ed2a6d12fcb83e3faf0ef2536026821277c2a39d02",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD23CD"
+		},
+		{
 			"id": "localAuthority/2023-05-uk-bgc-v2",
 			"status": "available",
 			"input": "boundaries/local-authority/2023-05-uk-bgc-v2/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson",
@@ -291,12 +331,28 @@
 			]
 		},
 		{
+			"id": "localAuthority/2020-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2020-12-uk-bgc/LAD_DEC_2020_UK_BGC_-8109919495747152672.geojson",
+			"inputHash": "sha256:f90ef2afd73b2d8e519aabb9c496354686a740ade79126ee9c45773fa1f59b79",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD20CD"
+		},
+		{
 			"id": "localAuthority/2019-12-uk-bgc",
 			"status": "available",
 			"input": "boundaries/local-authority/2019-12-uk-bgc/Local_Authority_Districts_December_2019_GCB_UK_2022_-8923619463176079630.geojson",
 			"inputHash": "sha256:033f22a9340e5d7ba5761cc1673b618dcc4d07b2ae91e854df6c598abe1d3b60",
 			"crs": "EPSG:4326",
 			"codeProperty": "lad19cd"
+		},
+		{
+			"id": "localAuthority/2019-04-uk-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2019-04-uk-bgc/Local_Authority_Districts_April_2019_UK_BGC_2022_-8454321281105718192.geojson",
+			"inputHash": "sha256:f70c33109e3e22a5df98c9ea8ef3f1aea2ac0824c6473ee2ce7e607e59cc380f",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD19CD"
 		},
 		{
 			"id": "localAuthority/2018-12-uk-bgc",
@@ -310,12 +366,44 @@
 			]
 		},
 		{
+			"id": "localAuthority/2017-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2017-12-gb-bgc/Local_Authority_Districts_December_2017_Boundaries_GB_BGC_2022_3136182530925297806.geojson",
+			"inputHash": "sha256:307b77eb08905636e6ff7547d36e42a51f96c5da1caf9b94ebf6da775b0f98fd",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD17CD"
+		},
+		{
 			"id": "localAuthority/2016-12-gb-bgc",
 			"status": "available",
 			"input": "boundaries/local-authority/2016-12-gb-bgc/LAD_Dec_2016_GB_BGC_2022_699407162867034067.geojson",
 			"inputHash": "sha256:533b0b39c34a3f1071125ac83041dc660c44686564e9f4bbaf8f5d6268ca1b4e",
 			"crs": "EPSG:27700",
 			"codeProperty": "LAD16CD"
+		},
+		{
+			"id": "localAuthority/2011-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2011-12-gb-bgc/Local_Authority_Districts_December_2011_GB_BGC_2022_2387179450727791111.geojson",
+			"inputHash": "sha256:1fe618bbf89fb05af481501afe5ab8b5bc1c7640388b370c55c192c97e084f01",
+			"crs": "EPSG:4326",
+			"codeProperty": "lad11cd"
+		},
+		{
+			"id": "localAuthority/2009-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2009-12-gb-bgc/LAD_Dec_2009_GCB_GB_2022_-1989139076564000426.geojson",
+			"inputHash": "sha256:e49733088f7a9b0ded48a094f30c77a3ac2dfe24700e8382a70d072db8b9e8ea",
+			"crs": "EPSG:4326",
+			"codeProperty": "lad09cd"
+		},
+		{
+			"id": "localAuthority/2008-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2008-12-gb-bgc/Local_Authority_Districts_December_2008_Boundaries_GB_BGC_4985427897473653410.geojson",
+			"inputHash": "sha256:ed8a8ecb1eb9eaaa74e7a604a216f6f4833aab52bfb653f64ef1899b8c1465f0",
+			"crs": "EPSG:4326",
+			"codeProperty": "LAD08CD"
 		},
 		{
 			"id": "localHealthBoard/2023-12-w-bgc",
@@ -477,12 +565,36 @@
 			"codeProperty": "RGN25CD"
 		},
 		{
+			"id": "scottishParliamentaryConstituency/2026-05-sc-bgc",
+			"status": "available",
+			"input": "boundaries/scottish-parliamentary-constituency/2026-05-sc-bgc/SPC_MAY_2026_SC_BGC_-4687613309834503802.geojson",
+			"inputHash": "sha256:b801c6d4eb7422a48305c476552c695cfe6a0008b33c5e52bc9f62681d445da3",
+			"crs": "EPSG:4326",
+			"codeProperty": "SPC26CD"
+		},
+		{
+			"id": "scottishParliamentaryConstituency/2022-12-sc-bgc",
+			"status": "available",
+			"input": "boundaries/scottish-parliamentary-constituency/2022-12-sc-bgc/Scottish_Parliamentary_Constituencies_December_2022_Boundaries_SC_BGC_-4321770165958689159.geojson",
+			"inputHash": "sha256:3957744631dfae2695ca93967d02db4f04e0057ed2bc9a8c358fed334b15f5a9",
+			"crs": "EPSG:4326",
+			"codeProperty": "SPC22CD"
+		},
+		{
 			"id": "scottishParliamentaryConstituency/2021-05-sc-bgc",
 			"status": "available",
 			"input": "boundaries/scottish-parliamentary-constituency/2021-05-sc-bgc/SPC_MAY_2021_SC_BGC.geojson",
-			"inputHash": "sha256:ccac339d6b0b8d4a5f6eaef2972d43a04666b90f223ca94fe552b722310260b4",
+			"inputHash": "sha256:7f39684df570e41fd515969f1769021a0ab09ccd83a310a11419d627997424a9",
 			"crs": "EPSG:4326",
 			"codeProperty": "SPC21CD"
+		},
+		{
+			"id": "scottishParliamentaryConstituency/2016-05-sc-gcb",
+			"status": "available",
+			"input": "boundaries/scottish-parliamentary-constituency/2016-05-sc-gcb/SPC_May_2016_GCB_in_Scotland_2022_-2087020359828495341.geojson",
+			"inputHash": "sha256:518ce0390b3c98e6659f43b6e8ae87f3ebeccd428d78ececd2463feb8d3ced64",
+			"crs": "EPSG:4326",
+			"codeProperty": "spc16cd"
 		},
 		{
 			"id": "scottishParliamentaryRegion/2022-12-sc-bgc",
@@ -625,6 +737,14 @@
 			"codeProperty": "WD20CD"
 		},
 		{
+			"id": "ward/2019-12-uk-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2019-12-uk-bgc/Wards_December_2019_Boundaries_UK_BGC_2022_-6799453306730731802.geojson",
+			"inputHash": "sha256:c8b5bf42d13fdef10ca4eb0afb89e40587117cb0039143e7241e29a7337a776e",
+			"crs": "EPSG:4326",
+			"codeProperty": "WD19CD"
+		},
+		{
 			"id": "ward/2019-12-gb-bgc",
 			"status": "available",
 			"input": "boundaries/ward/2019-12-gb-bgc/Wards_December_2019_GCB_GB_2022_-3199817513651023624.geojson",
@@ -658,6 +778,14 @@
 			"inputHash": "sha256:ec4c4fb2c4ba9a762a40ce2ecf41c6f5ec3944dd22abb788f01a21b2ea811a42",
 			"crs": "EPSG:27700",
 			"codeProperty": "wd16cd"
+		},
+		{
+			"id": "ward/2011-12-ew-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2011-12-ew-bgc/Wards_December_2011_GCB_EW_2022_-947102383281376386.geojson",
+			"inputHash": "sha256:1b3151f1d28d62dda562cd01c8a2505cf7909cc8188a668462590ef5a2e20d2a",
+			"crs": "EPSG:4326",
+			"codeProperty": "wd11cd"
 		}
 	]
 }

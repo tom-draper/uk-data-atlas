@@ -1,7 +1,46 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
+	"contentHash": "sha256:8d42b1c451e7c0feb5dfb29d4178d007c2977b25bbd2ed2caed74a7a95ee04bc",
 	"candidates": [
+		{
+			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc",
+			"input": "boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc",
+				"codeProperty": "parncp19cd",
+				"nameProperty": "parncp19nm"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc",
+				"codeProperty": "lad19cd",
+				"nameProperty": "lad19nm"
+			},
+			"status": "eligible",
+			"validation": {
+				"endpoints": {
+					"from": {
+						"status": "verified",
+						"availableAreaCount": 11556,
+						"referencedCodeCount": 11556
+					},
+					"to": {
+						"status": "verified",
+						"availableAreaCount": 382,
+						"referencedCodeCount": 339
+					}
+				},
+				"relationship": {
+					"sourceFeatureCount": 11556,
+					"sourceCodeCount": 11556,
+					"targetCodeCount": 339,
+					"multiTargetSourceCount": 0,
+					"missingValueFeatureCount": 0
+				},
+				"reasons": []
+			}
+		},
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc",
 			"input": "boundaries/parish/2019-04-ew-bgc/Parishes_and_Non_Civil_Parished_Areas_April_2019_GCB_EW_2022_7767177223882237005.geojson",
@@ -241,6 +280,45 @@
 				"reasons": []
 			},
 			"publishedCrosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment"
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc",
+			"input": "boundaries/ward/2023-05-uk-bgc/WD_MAY_2023_UK_BGC_932649178890735580.geojson",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc",
+				"codeProperty": "WD23CD",
+				"nameProperty": "WD23NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc",
+				"codeProperty": "LAD23CD",
+				"nameProperty": "LAD23NM"
+			},
+			"status": "eligible",
+			"validation": {
+				"endpoints": {
+					"from": {
+						"status": "verified",
+						"availableAreaCount": 8441,
+						"referencedCodeCount": 8441
+					},
+					"to": {
+						"status": "verified",
+						"availableAreaCount": 361,
+						"referencedCodeCount": 361
+					}
+				},
+				"relationship": {
+					"sourceFeatureCount": 8441,
+					"sourceCodeCount": 8441,
+					"targetCodeCount": 361,
+					"multiTargetSourceCount": 0,
+					"missingValueFeatureCount": 0
+				},
+				"reasons": []
+			}
 		},
 		{
 			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc",
