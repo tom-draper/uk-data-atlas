@@ -7,8 +7,10 @@ import type { carAvailabilityDatasetDefinition } from "./definitions/carAvailabi
 import type { childPovertyDatasetDefinition } from "./definitions/childPoverty";
 import type { claimantCountDatasetDefinition } from "./definitions/claimantCount";
 import type { crimeDatasetDefinition } from "./definitions/crime";
+import type { electricityConsumptionDatasetDefinition } from "./definitions/electricityConsumption";
 import type { ethnicityDatasetDefinition } from "./definitions/ethnicity";
 import type { fuelPovertyDatasetDefinition } from "./definitions/fuelPoverty";
+import type { gasConsumptionDatasetDefinition } from "./definitions/gasConsumption";
 import type { generalElectionDatasetDefinition } from "./definitions/generalElection";
 import type { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions";
 import type { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
@@ -57,9 +59,17 @@ export type CatalogueDataset =
 			ReturnType<typeof claimantCountDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<
+				typeof electricityConsumptionDatasetDefinition.precompile
+			>
+	  >[string]
 	| Awaited<ReturnType<typeof ethnicityDatasetDefinition.precompile>>[string]
 	| Awaited<
 			ReturnType<typeof fuelPovertyDatasetDefinition.precompile>
+	  >[string]
+	| Awaited<
+			ReturnType<typeof gasConsumptionDatasetDefinition.precompile>
 	  >[string]
 	| Awaited<
 			ReturnType<typeof generalElectionDatasetDefinition.precompile>
@@ -161,11 +171,17 @@ export type CatalogueDatasetRecords = {
 		ReturnType<typeof claimantCountDatasetDefinition.precompile>
 	>;
 	crime: Awaited<ReturnType<typeof crimeDatasetDefinition.precompile>>;
+	electricityConsumption: Awaited<
+		ReturnType<typeof electricityConsumptionDatasetDefinition.precompile>
+	>;
 	ethnicity: Awaited<
 		ReturnType<typeof ethnicityDatasetDefinition.precompile>
 	>;
 	fuelPoverty: Awaited<
 		ReturnType<typeof fuelPovertyDatasetDefinition.precompile>
+	>;
+	gasConsumption: Awaited<
+		ReturnType<typeof gasConsumptionDatasetDefinition.precompile>
 	>;
 	generalElection: Awaited<
 		ReturnType<typeof generalElectionDatasetDefinition.precompile>

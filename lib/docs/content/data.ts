@@ -183,6 +183,13 @@ export const DATA_PAGES: DataPage[] = [
 		intro: "Net greenhouse gas emissions produced within each UK local authority every year from 2005 to 2024, in kilotonnes of CO2 equivalent.",
 	},
 	{
+		slug: "energy-consumption",
+		title: "Energy consumption",
+		topic: "environment",
+		datasets: ["electricity-consumption", "gas-consumption"],
+		intro: "Metered electricity and gas used in each Great Britain local authority from 2015 to 2024, split between domestic and non-domestic meters. These are meter readings rather than a model, so they add up over areas exactly.",
+	},
+	{
 		slug: "crime",
 		title: "Crime",
 		topic: "crime",
