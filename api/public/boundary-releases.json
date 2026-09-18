@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:661901149a9fe68f189a93c77a42c5de745428916e64699383d1c5fe5d28ac01",
+	"contentHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -1623,7 +1623,7 @@
 					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 				}
 			},
-			"metadataHash": "sha256:2199f52f65696ad9fab3d95d3fbec3d12edf7a8f6b58eec12b9763278bdd041d"
+			"metadataHash": "sha256:6da9b13ff845b5425ff2e27d5d7fe46f8477357e48b24152924fce2bf489a875"
 		},
 		{
 			"id": "2016-05-sc-gcb",
