@@ -17,7 +17,7 @@ import {
 	resourceGroups,
 } from "@/lib/docs/openapi";
 
-const TITLE = "API reference – UK Data Atlas";
+const TITLE = "API Reference - UK Data Atlas";
 const DESCRIPTION =
 	"Every endpoint in the UK Data Atlas API, grouped by what it's for: places, observations, maps, analysis, bulk downloads, boundaries and citation.";
 

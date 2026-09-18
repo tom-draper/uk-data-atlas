@@ -19,6 +19,7 @@ import {
 	sectionContent,
 	sectionHref,
 } from "@/lib/docs/navigation";
+import { titleCase } from "@/lib/docs/metadata";
 import {
 	API_BASE_URL,
 	allOperations,
@@ -49,7 +50,7 @@ export async function generateMetadata({
 	const op = findOperation(loadApiContract(), section, operation);
 	if (!op) return {};
 	const content = endpointContent(op);
-	const title = `${content.title} – UK Data Atlas API`;
+	const title = `${titleCase(content.title)} - UK Data Atlas API Reference`;
 	const description = content.intro.replace(/[`*]|\[|\]\([^)]*\)/g, "");
 	return {
 		title: { absolute: title },
