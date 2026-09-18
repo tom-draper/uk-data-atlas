@@ -45,7 +45,6 @@ export const CONCEPTS: NavLink[] = [
 ];
 
 export const USING_THE_API: NavLink[] = [
-	{ href: "/docs/downloads", title: "Downloads" },
 	{ href: "/docs/responses", title: "Responses" },
 	{ href: "/docs/pagination", title: "Pagination" },
 	{ href: "/docs/formats", title: "CSV and bulk downloads" },
@@ -86,6 +85,7 @@ export const DATA: NavLink[] = [
 			})),
 		};
 	}),
+	{ href: "/docs/downloads", title: "Downloads" },
 ];
 
 export const GEOGRAPHY_LINKS: NavLink[] = [
@@ -100,6 +100,7 @@ export const GEOGRAPHY_LINKS: NavLink[] = [
 				title: content.title,
 			})),
 	})),
+	{ href: "/docs/downloads#boundaries", title: "Downloads" },
 ];
 
 export const REFERENCE_HOME: NavLink = {

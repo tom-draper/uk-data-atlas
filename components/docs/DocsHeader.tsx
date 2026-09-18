@@ -83,7 +83,6 @@ export default function DocsHeader({
 							href="/docs/responses"
 							active={[
 								"/docs/responses",
-								"/docs/downloads",
 								"/docs/pagination",
 								"/docs/formats",
 								"/docs/caching",
@@ -121,6 +120,13 @@ export default function DocsHeader({
 							className="hidden lg:block"
 						>
 							API reference
+						</HeaderLink>
+						<HeaderLink
+							href="/docs/downloads"
+							active={pathname.startsWith("/docs/downloads")}
+							className="hidden lg:block"
+						>
+							Downloads
 						</HeaderLink>
 					</nav>
 				</div>
