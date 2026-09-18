@@ -73,16 +73,51 @@ export default function DocsHeader({
 
 					<nav className="ml-auto flex items-center gap-1 text-[13px]">
 						<HeaderLink
+							href="/docs/concepts/measures"
+							active={pathname.startsWith("/docs/concepts")}
+							className="hidden lg:block"
+						>
+							Concepts
+						</HeaderLink>
+						<HeaderLink
+							href="/docs/responses"
+							active={[
+								"/docs/responses",
+								"/docs/pagination",
+								"/docs/formats",
+								"/docs/caching",
+								"/docs/rate-limits",
+								"/docs/errors",
+							].some((prefix) => pathname.startsWith(prefix))}
+							className="hidden lg:block"
+						>
+							Using the API
+						</HeaderLink>
+						<HeaderLink
 							href="/docs/guides/map"
 							active={pathname.startsWith("/docs/guides")}
-							className="hidden md:block"
+							className="hidden lg:block"
 						>
 							Guides
 						</HeaderLink>
 						<HeaderLink
+							href="/docs/data"
+							active={pathname.startsWith("/docs/data")}
+							className="hidden lg:block"
+						>
+							Data
+						</HeaderLink>
+						<HeaderLink
+							href="/docs/geographies"
+							active={pathname.startsWith("/docs/geographies")}
+							className="hidden lg:block"
+						>
+							Geographies
+						</HeaderLink>
+						<HeaderLink
 							href="/docs/reference"
 							active={pathname.startsWith("/docs/reference")}
-							className="hidden sm:block"
+							className="hidden lg:block"
 						>
 							API reference
 						</HeaderLink>
@@ -122,10 +157,10 @@ function HeaderLink({
 	return (
 		<Link
 			href={href}
-			className={`rounded-md px-2.5 py-1.5 transition-colors ${
+			className={`px-2.5 py-1.5 transition-colors ${
 				active
-					? "bg-white/60 text-slate-900"
-					: "text-slate-600 hover:bg-white/50 hover:text-slate-900"
+					? "font-medium text-slate-900"
+					: "text-slate-600 hover:text-slate-900"
 			} ${className}`}
 		>
 			{children}
