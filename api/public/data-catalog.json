@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:cee24bdce17526115d5ec5b3c55a577996b56360f491d4333a9b95b0755252f7",
+	"contentHash": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -267,6 +267,37 @@
 			}
 		},
 		{
+			"id": "electricity-consumption",
+			"label": "Subnational electricity consumption",
+			"publisher": "Department for Energy Security and Net Zero",
+			"sourceUrl": "https://www.gov.uk/government/statistics/regional-and-local-authority-electricity-consumption-statistics",
+			"temporalCoverage": "2015-2024",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Metered electricity consumption by local authority in Great Britain, 2015 to 2024, split between domestic and non-domestic meters and reported in GWh. Domestic meters are counted on both standard and Economy 7 tariffs. The series is restated on 2025 local authority codes; earlier published years are on the boundaries in force at the time and are not included.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "environment/energy-consumption/electricity-lad-2015-2024.csv",
+					"bytes": 350075,
+					"sha256": "544626c8ca57a8dcb1a5d818c543f7eae6d5512ec6e4aac01232ab7a60668fa9"
+				}
+			],
+			"summary": {
+				"datasetCount": 10,
+				"dataRecordCount": 3500,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 651820,
+				"sha256": "01e49d20d39f4b4d7252a3684f68feb039de8e00980f161f805a625020fcf3b6"
+			}
+		},
+		{
 			"id": "ethnicity",
 			"label": "Ethnicity",
 			"publisher": "Office for National Statistics",
@@ -326,6 +357,37 @@
 			"compiled": {
 				"bytes": 5137247,
 				"sha256": "d42e95c1712b1ccb9ed37c432f5f003835aa59d9abea377a5db768f9f4131d87"
+			}
+		},
+		{
+			"id": "gas-consumption",
+			"label": "Subnational gas consumption",
+			"publisher": "Department for Energy Security and Net Zero",
+			"sourceUrl": "https://www.gov.uk/government/statistics/regional-and-local-authority-gas-consumption-statistics",
+			"temporalCoverage": "2015-2024",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Metered gas consumption by local authority in Great Britain, 2015 to 2024, split between domestic and non-domestic meters and reported in GWh. Figures are weather corrected, as the publisher's headline series is, so a cold year is not read as a rise in demand. The series is restated on 2025 local authority codes; earlier published years are on the boundaries in force at the time and are not included.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "environment/energy-consumption/gas-lad-2015-2024.csv",
+					"bytes": 347719,
+					"sha256": "6157b1bc081de40459dc1da79a8aeda9acadaa973b990571adc7793a7424c8bb"
+				}
+			],
+			"summary": {
+				"datasetCount": 10,
+				"dataRecordCount": 3497,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 650212,
+				"sha256": "8fcd6eeefb22cb0685840f736497fb7de0f0e8952285bdd0c49971a2194c4d19"
 			}
 		},
 		{
@@ -7459,6 +7521,354 @@
 				"The three ITL tiers nest, so an ITL3 area sits inside an ITL2 area inside an ITL1 area. Each tier is a separate source partition; areas may be summed within one tier, never across tiers.",
 				"Output per head is not served. It is a ratio, so it cannot be summed over areas, and the publisher's population basis for it is the regional accounts one rather than the mid-year estimates this API serves.",
 				"Output is measured where it is produced, not where the people who earn it live, so an area that many commute into records output they do not live beside."
+			]
+		},
+		{
+			"id": "electricity-consumption",
+			"label": "Electricity consumption",
+			"valueKind": "quantity",
+			"unit": "GWh",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "electricity-consumption",
+					"periods": [
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "electricity-consumption-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Published source records cover Great Britain only; Northern Ireland runs separate energy markets and this endpoint does not infer its values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/electricity-consumption"
+			},
+			"notes": [
+				"Metered electricity consumption across every meter, in GWh.",
+				"Domestic meters cover both standard and Economy 7 tariffs. Electricity used off the meter, such as generation consumed where it is produced, is not in these figures.",
+				"Consumption is measured where the meter is, so output consumed by a large industrial site raises the authority it stands in rather than the one that owns the activity.",
+				"Consumption per meter is not served. It is a ratio, so it cannot be summed over areas, and comparing it between authorities of different meter mixes is not a like-for-like comparison.",
+				"Great Britain only. Northern Ireland has separate electricity and gas markets and is not in this collection."
+			]
+		},
+		{
+			"id": "electricity-consumption-domestic",
+			"label": "Electricity consumption (domestic)",
+			"valueKind": "quantity",
+			"unit": "GWh",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "electricity-consumption",
+					"periods": [
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "electricity-consumption-domestic-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Published source records cover Great Britain only; Northern Ireland runs separate energy markets and this endpoint does not infer its values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/electricity-consumption-domestic"
+			},
+			"notes": [
+				"Metered electricity consumption across domestic meters, in GWh.",
+				"Domestic meters cover both standard and Economy 7 tariffs. Electricity used off the meter, such as generation consumed where it is produced, is not in these figures.",
+				"Consumption is measured where the meter is, so output consumed by a large industrial site raises the authority it stands in rather than the one that owns the activity.",
+				"Consumption per meter is not served. It is a ratio, so it cannot be summed over areas, and comparing it between authorities of different meter mixes is not a like-for-like comparison.",
+				"Great Britain only. Northern Ireland has separate electricity and gas markets and is not in this collection."
+			]
+		},
+		{
+			"id": "electricity-consumption-non-domestic",
+			"label": "Electricity consumption (non-domestic)",
+			"valueKind": "quantity",
+			"unit": "GWh",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "electricity-consumption",
+					"periods": [
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "electricity-consumption-non-domestic-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Published source records cover Great Britain only; Northern Ireland runs separate energy markets and this endpoint does not infer its values."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/electricity-consumption-non-domestic"
+			},
+			"notes": [
+				"Metered electricity consumption across non-domestic meters, in GWh.",
+				"Domestic meters cover both standard and Economy 7 tariffs. Electricity used off the meter, such as generation consumed where it is produced, is not in these figures.",
+				"Consumption is measured where the meter is, so output consumed by a large industrial site raises the authority it stands in rather than the one that owns the activity.",
+				"Consumption per meter is not served. It is a ratio, so it cannot be summed over areas, and comparing it between authorities of different meter mixes is not a like-for-like comparison.",
+				"Great Britain only. Northern Ireland has separate electricity and gas markets and is not in this collection."
+			]
+		},
+		{
+			"id": "gas-consumption",
+			"label": "Gas consumption",
+			"valueKind": "quantity",
+			"unit": "GWh",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "gas-consumption",
+					"periods": [
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gas-consumption-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Published source records cover Great Britain only; Northern Ireland runs separate energy markets and this endpoint does not infer its values. E06000053, S12000023, S12000027 are absent from 2023, where the publisher left the cells blank rather than recording the zero its other years show."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/gas-consumption"
+			},
+			"notes": [
+				"Metered gas consumption across every meter, in GWh.",
+				"Figures are weather corrected, as the publisher's headline series is, so a cold year does not read as a rise in demand. Consumption away from the mains grid, such as bottled or tanked gas, is not metered and not counted.",
+				"Consumption is measured where the meter is, so output consumed by a large industrial site raises the authority it stands in rather than the one that owns the activity.",
+				"Consumption per meter is not served. It is a ratio, so it cannot be summed over areas, and comparing it between authorities of different meter mixes is not a like-for-like comparison.",
+				"Great Britain only. Northern Ireland has separate electricity and gas markets and is not in this collection."
+			]
+		},
+		{
+			"id": "gas-consumption-domestic",
+			"label": "Gas consumption (domestic)",
+			"valueKind": "quantity",
+			"unit": "GWh",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "gas-consumption",
+					"periods": [
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gas-consumption-domestic-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Published source records cover Great Britain only; Northern Ireland runs separate energy markets and this endpoint does not infer its values. E06000053, S12000023, S12000027 are absent from 2023, where the publisher left the cells blank rather than recording the zero its other years show."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/gas-consumption-domestic"
+			},
+			"notes": [
+				"Metered gas consumption across domestic meters, in GWh.",
+				"Figures are weather corrected, as the publisher's headline series is, so a cold year does not read as a rise in demand. Consumption away from the mains grid, such as bottled or tanked gas, is not metered and not counted.",
+				"Consumption is measured where the meter is, so output consumed by a large industrial site raises the authority it stands in rather than the one that owns the activity.",
+				"Consumption per meter is not served. It is a ratio, so it cannot be summed over areas, and comparing it between authorities of different meter mixes is not a like-for-like comparison.",
+				"Great Britain only. Northern Ireland has separate electricity and gas markets and is not in this collection."
+			]
+		},
+		{
+			"id": "gas-consumption-non-domestic",
+			"label": "Gas consumption (non-domestic)",
+			"valueKind": "quantity",
+			"unit": "GWh",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "gas-consumption",
+					"periods": [
+						"2015",
+						"2016",
+						"2017",
+						"2018",
+						"2019",
+						"2020",
+						"2021",
+						"2022",
+						"2023",
+						"2024"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"observationArtifact": "gas-consumption-non-domestic-observations",
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 350,
+						"note": "Published source records cover Great Britain only; Northern Ireland runs separate energy markets and this endpoint does not infer its values. E06000053, S12000023, S12000027 are absent from 2023, where the publisher left the cells blank rather than recording the zero its other years show."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/gas-consumption-non-domestic"
+			},
+			"notes": [
+				"Metered gas consumption across non-domestic meters, in GWh.",
+				"Figures are weather corrected, as the publisher's headline series is, so a cold year does not read as a rise in demand. Consumption away from the mains grid, such as bottled or tanked gas, is not metered and not counted.",
+				"Consumption is measured where the meter is, so output consumed by a large industrial site raises the authority it stands in rather than the one that owns the activity.",
+				"Consumption per meter is not served. It is a ratio, so it cannot be summed over areas, and comparing it between authorities of different meter mixes is not a like-for-like comparison.",
+				"Great Britain only. Northern Ireland has separate electricity and gas markets and is not in this collection."
 			]
 		},
 		{

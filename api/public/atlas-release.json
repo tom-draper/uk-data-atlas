@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:c12aaf247bb41324df2f70d095ec7428f799fa311e7703c9d9a89019ccca1a5e",
+	"releaseId": "sha256:5e653457e2ad5a27a894ff0f3ea2aa491098cf26e4d29a75240ef2c0b7d1bec9",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -30,17 +30,17 @@
 		{
 			"id": "data-catalog",
 			"path": "data-catalog.json",
-			"contentHash": "sha256:b151e14776e41a654b8e0ff88abf398fb03685802247eb5a6cbf63d66ecc4a49"
+			"contentHash": "sha256:e073bf62110ab8ab633fb4845c02169d8b8be9b6541b7953a84fb82a9d0b1070"
 		},
 		{
 			"id": "measure-compatibility",
 			"path": "measure-compatibility.json",
-			"contentHash": "sha256:f7e2d371919d1468afd68f56bcac2902439cb81114dc3298441d5482ebcc700e"
+			"contentHash": "sha256:05741bac4b073f9a761657f3f8cc663147c5ba994bf262ec6ef528ff06404484"
 		},
 		{
 			"id": "export-manifest",
 			"path": "export-manifest.json",
-			"contentHash": "sha256:068113d34abe50dfb814d78b9866f94b4adb1580c8a9990149470c2d184d7a09"
+			"contentHash": "sha256:f10db7c191e1e0692e06b2cd9bcaa9129ffea58d97de4946f6402520ca573b82"
 		},
 		{
 			"id": "lookup-manifest",
@@ -90,7 +90,7 @@
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:ee37d2d9455ab78e2f8938f7a5bc7ac7d87e222d4201c6c23ffe35cf577d3b83"
+			"contentHash": "sha256:a755a6617cae9345297d7493d3aaa055f4d1f634a54e19f295e1353c312475fd"
 		},
 		{
 			"id": "source-inventory",
@@ -353,6 +353,21 @@
 			"contentHash": "sha256:201b96e04f216fb800d198d5a87f1324a6f63d96d568e5b59edafb46f405c70b"
 		},
 		{
+			"id": "observations/electricity-consumption-domestic-observations",
+			"path": "electricity-consumption-domestic-observations.json",
+			"contentHash": "sha256:63c307db883109c2d487483dedbfc4a61d156728cbe9ae9fa66789b952b07ef2"
+		},
+		{
+			"id": "observations/electricity-consumption-non-domestic-observations",
+			"path": "electricity-consumption-non-domestic-observations.json",
+			"contentHash": "sha256:6e424a7aa8ffd1d812c727a76be922dc4ae8e419730f62b4a87e5a92f8ab7c85"
+		},
+		{
+			"id": "observations/electricity-consumption-observations",
+			"path": "electricity-consumption-observations.json",
+			"contentHash": "sha256:49ed76c6571650249048978a360219ee6f410f148f92bdcceefeff9b23bdd86a"
+		},
+		{
 			"id": "observations/ethnicity-african-observations",
 			"path": "ethnicity-african-observations.json",
 			"contentHash": "sha256:3dd02ce3ce1c8a0d626bffb869ce75697e402a786d8f15702b99e6b74e517fcf"
@@ -446,6 +461,21 @@
 			"id": "observations/ethnicity-white-british-observations",
 			"path": "ethnicity-white-british-observations.json",
 			"contentHash": "sha256:c2015e189ee7036d78dfd13ac0663d65066751485959311aeacab76ac0edaee6"
+		},
+		{
+			"id": "observations/gas-consumption-domestic-observations",
+			"path": "gas-consumption-domestic-observations.json",
+			"contentHash": "sha256:fd54ebe1683a7ca84098a813cab89e0e35f192e615c0c608382fdfebdb8d08d5"
+		},
+		{
+			"id": "observations/gas-consumption-non-domestic-observations",
+			"path": "gas-consumption-non-domestic-observations.json",
+			"contentHash": "sha256:ff25e9ced1a5c74b74b9c34a7b91cf228ac02c3df4b7e8c66169c1d3b2c61834"
+		},
+		{
+			"id": "observations/gas-consumption-observations",
+			"path": "gas-consumption-observations.json",
+			"contentHash": "sha256:39ee2e362dc9286a670446bc0c4104af3bd0af24616eb534317af6d52d45e7ea"
 		},
 		{
 			"id": "observations/gdp-itl1-observations",
@@ -1613,8 +1643,10 @@
 			"child-poverty": "sha256:021db577f4cce75b66f0ad6ff0d916c5440173ca6e7ef877516c47d511bd414c",
 			"claimant-count": "sha256:00825ac73352e77df3677f91a8e95f86cd4469d2a37d9790c1ae96c833c0c754",
 			"crime": "sha256:7c0641c07707517b99d8a9e3cc713b3d1b283d1e74f6cc0b5778e886ff218df2",
+			"electricity-consumption": "sha256:eaa866325df85ebc91e200f55fdf0fc0fc658b7b1c86ee7e059c3b2ff31e4ee4",
 			"ethnicity": "sha256:f864708482d4afbb29529bc408d597275bbc0feb553768534643bfafaaa67160",
 			"fuel-poverty": "sha256:b19b903e9dbfddff08239bf2067cef5551e3fb38e042c2f78993b31a331a8218",
+			"gas-consumption": "sha256:ab4562e78551e5a4f67f973effd32dc4a7a290883986de4551eea8df0ff34aff",
 			"general-election": "sha256:c6618a63c35fca3e0b68594871ef8d393d06ceaa4baae0e0ed0f304ce3b95719",
 			"ghg-emissions": "sha256:e52db01ab0f6695bea06dd3ce7acf0d7adb40630fd9db53774f6092995768271",
 			"historical-general-election": "sha256:9e45e614934a106e5d5748f0b57c6d22deef772eeaaf21b8911e3594875b92a4",
@@ -1682,6 +1714,9 @@
 			"crime-violence-against-the-person": "sha256:7f1aaf095dafca42628bef6db47089e9f973bdf363cea7bf4702cfaef4465528",
 			"crime-violence-with-injury": "sha256:ba8d8d5e4bf473bd20769aa590a73270ba4df37ff87b878ebd0716274b553cbb",
 			"crime-violence-without-injury": "sha256:b3b6730c285f4169581430ef167d35e9565efa9cad04aa1a4794d156396e94b6",
+			"electricity-consumption": "sha256:c7f48ede73286d446afd2a303641dd056e049b36cce9622dc2730d12708ebb6c",
+			"electricity-consumption-domestic": "sha256:b8ed4cfec23ca1c1fbfb5f5acfaf8fb8170a6bfe1dbb05172b88f644aa540f5b",
+			"electricity-consumption-non-domestic": "sha256:6f8d57e4e4b9b42336536a557d9629575f5ce1d331c583d26323941ddf460ce8",
 			"ethnicity-african": "sha256:03251c6c4dc2ba8d8cc3e3a6a1a8c09907d368f53705a2ee57a794cd9fa9c5c2",
 			"ethnicity-any-other": "sha256:afdf736150ea0f38886fad4125331e0848a7cf2d1415e583c1ad98093f72218d",
 			"ethnicity-arab": "sha256:926eaf35f51f55be189d56bc1cebb3c8f0552a47b34fe66a08e27b5cc44300ba",
@@ -1701,6 +1736,9 @@
 			"ethnicity-white-and-black-african": "sha256:afa9af0bafa7790337488185220a02dd4eb91215c3c20049dc6a77dc289d828c",
 			"ethnicity-white-and-black-caribbean": "sha256:5fdd9ed419b3b6fc53d810a47da928fb4d70d0b5dfcc5592ac02f30202899956",
 			"ethnicity-white-british": "sha256:f670ed32496343874435a91db9f5f2f03d724ee3877e122bec53eeac91918c46",
+			"gas-consumption": "sha256:f2c75d6c51458f671a6979c326de405b3e670fe9fb37a2c0aab3276ad313ebc3",
+			"gas-consumption-domestic": "sha256:3202d7bebab74ec194b3d7586e83aaf837d7d2e1f79c6d066082a20974e9d6f2",
+			"gas-consumption-non-domestic": "sha256:baa08ba1167a961d6bcbee982166c0c13b45f2e89c750c109eea20630b766187",
 			"gdp": "sha256:cc4f57d45c365041645b2f8f0ca0dba5d28feae8a515e61f76ecb7d9bf3027e9",
 			"general-election-apni-vote-share": "sha256:1571c9165d0545419a47708d1898eb61e553f296f4a2f570cdd023a4664e5890",
 			"general-election-apni-votes": "sha256:3397bd337989834dec6addccd5a062057edbf1dcdcda7f359374f81be36e6de8",
@@ -2309,6 +2347,9 @@
 			"crime-violence-against-the-person-observations": "sha256:f2e751c211531ea0101025da08a3cc0a1afcb2426b96e8c9e49e70fad4171097",
 			"crime-violence-with-injury-observations": "sha256:f8331607c55966ad7ed28567ad2d32f371be271bbcb9edd9f479b27abd55b898",
 			"crime-violence-without-injury-observations": "sha256:586e3adaff17f90fd8e9278da899f765f08982846a17dfe72eb5085b2e58ca1f",
+			"electricity-consumption-domestic-observations": "sha256:f5f497a2b136abef115b28b4ed2a8fa224675b8fa34f5d369affbe66a7dfe59f",
+			"electricity-consumption-non-domestic-observations": "sha256:792d502530f90913bf857b498c5556516935769a1066d670dd81669110787a1d",
+			"electricity-consumption-observations": "sha256:e27a86c2b22c7c5649076a63eacb2bb9164592f1edcf8407677806ba5cdb80bd",
 			"ethnicity-african-observations": "sha256:d3e234b8267c99dea1d9857111dde0672c9fcd90a363b76a826f024efb62ecb5",
 			"ethnicity-any-other-observations": "sha256:89f8aa115bf5c71cc23d88c70cd4f9f05782fe2b2f9aaf52b54adcfa1fc096ab",
 			"ethnicity-arab-observations": "sha256:d0bc185bbfe8d61b3f272a4314ba185fe1d568a5654da35a09c596fc965e6778",
@@ -2328,6 +2369,9 @@
 			"ethnicity-white-and-black-african-observations": "sha256:2a39becc68eadbc0ee05fc2e890aaed15a6cf6536e212f22d0565f2f930fb4ad",
 			"ethnicity-white-and-black-caribbean-observations": "sha256:20e65aca5aff6939fb4ae84dd166ccfe15b3e115c2df98df94d8ec05a2947554",
 			"ethnicity-white-british-observations": "sha256:ff5a424c1aae000dc897f4b986e42a14540335f008d34878cccf8d8c2f1ee154",
+			"gas-consumption-domestic-observations": "sha256:60bcae3c0b47e2742ec0c605de91d5845d8506373c1634cdbd2665f3d05ae93c",
+			"gas-consumption-non-domestic-observations": "sha256:9da1832a49c4a347f20332969e5f2910f997f5ee438fba1b718322aefbb927b5",
+			"gas-consumption-observations": "sha256:0e4fb12ddf4a54c024df722dc19a0477a974dc7fc531ccfc0690419bd1460399",
 			"gdp-itl1-observations": "sha256:f1a7d8a67769487dedaec57edd6b4cd04302176e2fab806af7d6ca9bef9a7cfa",
 			"gdp-itl2-observations": "sha256:58ead5329d872247c347747bf1ce51e859185ea42f831d7d24e0746a4efdc4b9",
 			"gdp-itl3-observations": "sha256:553b7c97a55bce90fb5ad629186097eb312cc54c74037baff5a53a4a093d3d11",

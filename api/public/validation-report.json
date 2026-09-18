@@ -7,15 +7,15 @@
 		"crosswalkInventory": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
 		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
 		"geographyInventory": "sha256:45e8062e25a46877e3439fe3b01c921dd8ae960d849f90f571a12ac841058d0b",
-		"dataCatalog": "sha256:cee24bdce17526115d5ec5b3c55a577996b56360f491d4333a9b95b0755252f7",
-		"exportManifest": "sha256:5950a100f62ad9de1da3b02512c2518e41fd9824e1531c0464d60c30cad419ce",
+		"dataCatalog": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
+		"exportManifest": "sha256:1099ed038cabab7ab86ef4ffcc569d19f0eb606377cb18a7de1a7fda76447c77",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
 	},
 	"summary": {
-		"resourceCount": 540,
-		"checkCount": 1752,
-		"passedCount": 1705,
+		"resourceCount": 552,
+		"checkCount": 1782,
+		"passedCount": 1735,
 		"waivedCount": 47,
 		"coverage": {
 			"boundaryReleases": 76,
@@ -24,8 +24,8 @@
 			"withRelationships": 32,
 			"crosswalks": 26,
 			"weightedCrosswalks": 2,
-			"measures": 150,
-			"measureSources": 287
+			"measures": 156,
+			"measureSources": 293
 		}
 	},
 	"resources": [
@@ -3623,6 +3623,48 @@
 			]
 		},
 		{
+			"id": "measures/electricity-consumption",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/electricity-consumption-domestic",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/electricity-consumption-non-domestic",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
 			"id": "measures/ethnicity-african",
 			"kind": "measure",
 			"status": "passed",
@@ -3876,6 +3918,48 @@
 		},
 		{
 			"id": "measures/ethnicity-white-british",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/gas-consumption",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/gas-consumption-domestic",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/gas-consumption-non-domestic",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -6683,6 +6767,126 @@
 			]
 		},
 		{
+			"id": "exports/electricity-consumption-domestic-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 10,
+						"recordCount": 3500
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3500,
+						"minimum": 6.719457200000004,
+						"maximum": 1633.056211497889
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/electricity-consumption-non-domestic-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 10,
+						"recordCount": 3500
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3500,
+						"minimum": 8.328625999999998,
+						"maximum": 3323.986663429005
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/electricity-consumption-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 10,
+						"recordCount": 3500
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3500,
+						"minimum": 15.61053801184932,
+						"maximum": 4347.199216051023
+					}
+				}
+			]
+		},
+		{
 			"id": "exports/ethnicity-african-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -7438,6 +7642,126 @@
 						"recordCount": 318,
 						"minimum": 1926,
 						"maximum": 595737
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gas-consumption-domestic-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 10,
+						"recordCount": 3497
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3497,
+						"minimum": 0,
+						"maximum": 5769.701672749461
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gas-consumption-non-domestic-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 10,
+						"recordCount": 3497
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3497,
+						"minimum": 0,
+						"maximum": 3299.027793617222
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/gas-consumption-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 10,
+						"recordCount": 3497
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3497,
+						"minimum": 0,
+						"maximum": 8885.966968301607
 					}
 				}
 			]
@@ -17082,5 +17406,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:e2f4768217c9951236c720c452062dc06328eb95e19fe02eb23a6747160da2a9"
+	"contentHash": "sha256:8b120bedd393b62824fa4ecc3b18704f408baf79c2ef9de083312c8b1bc129a2"
 }
