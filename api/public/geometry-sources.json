@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5d8169a4605a9790003ff3888fc25b846dd46d80cd3d9ca96dc9ecfc2b23e978",
+	"contentHash": "sha256:b8b03409f34ee2ee38d7e3c64fd7fdb01256245d245fba80f376022d13d28d8c",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -778,6 +778,14 @@
 			"inputHash": "sha256:ec4c4fb2c4ba9a762a40ce2ecf41c6f5ec3944dd22abb788f01a21b2ea811a42",
 			"crs": "EPSG:27700",
 			"codeProperty": "wd16cd"
+		},
+		{
+			"id": "ward/2015-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/ward/2015-12-gb-bgc/Wards_December_2015_GCB_in_Great_Britain_2022_8754526311494082379.geojson",
+			"inputHash": "sha256:8cd9d87aea6597d827ab9781b0e7489791bcffaaf6da6739e97d12d3c5501b50",
+			"crs": "EPSG:4326",
+			"codeProperty": "wd15cd"
 		},
 		{
 			"id": "ward/2011-12-ew-bgc",

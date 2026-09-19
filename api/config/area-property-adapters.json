@@ -21,6 +21,10 @@
 			"codeProperty": "SOA_CODE",
 			"nameProperty": "SOA_LABEL"
 		},
+		"ward/2015-12-gb-bgc": {
+			"codeProperty": "wd15cd",
+			"nameProperty": "wd15nm"
+		},
 		"ward/2016-12-gb-bgc": {
 			"codeProperty": "wd16cd",
 			"nameProperty": "wd16nm"

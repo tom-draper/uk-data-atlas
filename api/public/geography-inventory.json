@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:dee84507f945fec3f8d24f0ddac24e586e3475034c05a4b9c79c46ae384bb3ba",
+	"contentHash": "sha256:67b42e36c2493284926dedbab162a30e0b337f913904bbb3ce09b3de46389006",
 	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
@@ -2658,8 +2658,9 @@
 				".geojson"
 			],
 			"areaIdentities": {
-				"status": "unsupported",
-				"reason": "Could not identify exactly one matching code/name property pair."
+				"status": "available",
+				"recordCount": 8734,
+				"artifact": "areas/ward/2015-12-gb-bgc.json"
 			},
 			"relationships": {
 				"status": "unsupported",
