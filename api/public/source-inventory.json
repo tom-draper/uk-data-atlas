@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:9700a5a00ad607b0cf781f331f21c670dfea627483fa1888a295d25aecda32e8",
+	"contentHash": "sha256:5f83996495679ce4d20204d2ea7110fd878fc544bdc6bbe4e348a9b4a1558452",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1769,6 +1769,21 @@
 			"metadataHash": "sha256:f5616a5078d3cf4acb8ae165343e64921cd675bd95a6f15294a24ce56ed668dd"
 		},
 		{
+			"key": "economics/business-activity",
+			"metadataId": "business-activity",
+			"title": "UK business: activity, size and location",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/businessindustryandtrade/business/activitysizeandlocation/datasets/ukbusinessactivitysizeandlocation",
+			"temporalCoverage": "2025",
+			"files": [
+				{
+					"extension": ".xlsx",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:0691d8afbedf34642525d1606fe3c6e58fb6fc85705681c49c1a328e4b9080c9"
+		},
+		{
 			"key": "economics/child-poverty",
 			"metadataId": "child-poverty",
 			"title": "Children in low income families, local area statistics",
@@ -1941,13 +1956,44 @@
 			"metadataHash": "sha256:ea32a54a75a9765a4f2ebd2037d86e5107ad25811a7938de0f9a8b2a2a95fa77"
 		},
 		{
+			"key": "economics/housing/net-additional-dwellings",
+			"metadataId": "net-additional-dwellings",
+			"title": "Housing supply: net additional dwellings",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/collections/net-supply-of-housing",
+			"temporalCoverage": "2001-02 to 2024-25",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				},
+				{
+					"extension": ".ods",
+					"role": "source"
+				},
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:66e68204615558a85e3c39832520d2ed0621c299ac6f23c64ed7853bd839d1b3"
+		},
+		{
 			"key": "economics/income",
 			"metadataId": "income",
-			"title": "Place of residence by local authority, ASHE Table 8",
+			"title": "ASHE Tables 7 and 8 by local authority",
 			"publisher": "Office for National Statistics",
 			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofresidencebylocalauthorityashetable8",
 			"temporalCoverage": "2025",
 			"files": [
+				{
+					"extension": ".zip",
+					"role": "source"
+				},
+				{
+					"extension": ".zip",
+					"role": "source"
+				},
 				{
 					"extension": ".xlsx",
 					"role": "source"
@@ -2037,7 +2083,7 @@
 					"role": "reference"
 				}
 			],
-			"metadataHash": "sha256:21e4fd11c94939cba3ae047669aebad4e209fcd92fc5dfa34d6567635995b3c1"
+			"metadataHash": "sha256:53c95764f17d83be89052980a387d9e06f267420a4f8abb3068dc5c129e3b23f"
 		},
 		{
 			"key": "economics/jobs",
@@ -2053,6 +2099,48 @@
 				}
 			],
 			"metadataHash": "sha256:0d5bbb0d5099415e2ee7121082f458d9e202d20a1730d29be62b2986e3339005"
+		},
+		{
+			"key": "economics/local-government-finance",
+			"metadataId": "local-government-finance",
+			"title": "Local authority revenue expenditure and financing",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/local-authority-revenue-expenditure-and-financing-england-2026-to-2027-budget",
+			"temporalCoverage": "2026-27",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				},
+				{
+					"extension": ".ods",
+					"role": "source"
+				},
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:49557b384f8374b890489a08c5289f8217324e142eca648319b2fa19a4f1b82c"
+		},
+		{
+			"key": "economics/local-government-finance/council-tax",
+			"metadataId": "council-tax",
+			"title": "Council Tax levels in England",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/council-tax-levels-set-by-local-authorities-in-england-2026-to-2027",
+			"temporalCoverage": "2026-27",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				},
+				{
+					"extension": ".ods",
+					"role": "reference"
+				}
+			],
+			"metadataHash": "sha256:e3e12ef0c9c6cde9f45b706561e31682485b7c4f6a33e08ac885281ed1fbaca2"
 		},
 		{
 			"key": "economics/unemployment/by-age-and-duration",
@@ -2176,6 +2264,21 @@
 			"metadataHash": "sha256:0beebd6832342ab995ef5250d908aeff13804dc383e22a55564446609e9332be"
 		},
 		{
+			"key": "environment/waste",
+			"metadataId": "waste",
+			"title": "Local authority collected waste management",
+			"publisher": "Department for Environment, Food and Rural Affairs",
+			"sourceUrl": "https://www.gov.uk/government/statistics/local-authority-collected-waste-management-annual-results",
+			"temporalCoverage": "2024-25",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:27cf9e9f0cc54f860d76c26d00d4395cabb4872282cab7ab7e486c6c2d2d3b5e"
+		},
+		{
 			"key": "geography/land-area",
 			"metadataId": "land-area",
 			"title": "Standard Area Measurements for local authority districts, December 2024",
@@ -2189,6 +2292,36 @@
 				}
 			],
 			"metadataHash": "sha256:7278e2d0e659c0aa7a8880f60fc76450e1ffc187ae5428957d62159f6a5f9263"
+		},
+		{
+			"key": "health/adult-social-care/activity",
+			"metadataId": "activity",
+			"title": "Adult social care activity in England",
+			"publisher": "Department of Health and Social Care",
+			"sourceUrl": "https://www.gov.uk/government/statistics/adult-social-care-activity-report-england-2024-to-2025",
+			"temporalCoverage": "2024-25",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:3d14b42064245a980f80a1a49e452d8611d7c659f1a58eaf32734a5f6c905743"
+		},
+		{
+			"key": "health/adult-social-care/ascof",
+			"metadataId": "ascof",
+			"title": "Adult Social Care Outcomes Framework, England",
+			"publisher": "Department of Health and Social Care",
+			"sourceUrl": "https://www.gov.uk/government/statistics/measures-from-the-adult-social-care-outcomes-framework-england-2024-to-2025",
+			"temporalCoverage": "2024-25",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:b5bc0ef6361e92b83ddcc8c018d35b0e18b50194a4a4943f4ef4e7050f66b508"
 		},
 		{
 			"key": "health/life-expectancy",
@@ -2223,6 +2356,25 @@
 				}
 			],
 			"metadataHash": "sha256:18631a23e13815aba3754c9f54164991bed0545d349f780a8e821c55b33b69f0"
+		},
+		{
+			"key": "housing/planning-applications",
+			"metadataId": "planning-applications",
+			"title": "Planning applications in England",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-planning-application-statistics",
+			"temporalCoverage": "1996 Q2 to 2026 Q1",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:5540ef47b5fa83f3d187f5acaf2c0e09f05d5a26a6d07dea5823d896d3fc318b"
 		},
 		{
 			"key": "lookups/local-authority-changes/2022-12-to-2023-05-uk",
@@ -2735,6 +2887,21 @@
 				}
 			],
 			"metadataHash": "sha256:f2400fe1b6ec9971d70ad056f526087afe930fc179958ed380db9deb4e7a1d0b"
+		},
+		{
+			"key": "transport/electric-vehicle-chargers",
+			"metadataId": "electric-vehicle-chargers",
+			"title": "Public electric vehicle chargers by local authority",
+			"publisher": "Department for Transport",
+			"sourceUrl": "https://www.gov.uk/government/collections/electric-vehicle-charging-infrastructure-statistics",
+			"temporalCoverage": "2026-07-01",
+			"files": [
+				{
+					"extension": ".ods",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:118e1d8e7c15c64b63da84fca915e87319d0cb1f61b6fc4ed3297e11e448ee0d"
 		},
 		{
 			"key": "transport/road-safety",

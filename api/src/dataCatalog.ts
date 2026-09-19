@@ -31,6 +31,7 @@ export type SourceGeography = {
 	type:
 		| "ward"
 		| "localAuthority"
+		| "localPlanningAuthority"
 		| "constituency"
 		| "communitySafetyPartnership"
 		| "lsoa"

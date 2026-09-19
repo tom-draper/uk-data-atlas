@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4b90968fe96be879664324fbea0db9085e20b8f428e9cfa70d300ff6bd86b41d",
-	"dataCatalogHash": "sha256:5c2c9bbf60c8f85af9e5c2e88ea7b08ee263bc2a1e878bfa7bb9b94ad749637d",
+	"contentHash": "sha256:5d88f1e8b1f86f033a94901535d744f3aaf2aa97384f7737d3545558f6d4c9d7",
+	"dataCatalogHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
@@ -10,6 +10,36 @@
 		"confidenceInterval": "The publisher's interval around the value, with `lower` and `upper` bounds."
 	},
 	"datasets": {
+		"adult-social-care-activity": {
+			"publisher": "Department of Health and Social Care",
+			"sourceUrl": "https://www.gov.uk/government/statistics/adult-social-care-activity-report-england-2024-to-2025",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "health/adult-social-care/activity/asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+					"sha256": "1ae089a2c92cb1a4868bfb8b16b2fffc364ca094cfe3b484445c06b923cd002a"
+				}
+			],
+			"href": "/v1/datasets/adult-social-care-activity"
+		},
+		"adult-social-care-outcomes": {
+			"publisher": "Department of Health and Social Care",
+			"sourceUrl": "https://www.gov.uk/government/statistics/measures-from-the-adult-social-care-outcomes-framework-england-2024-to-2025",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "health/adult-social-care/ascof/dhsc-ascof-england-2024-to-2025-outcome-and-demographic-data-23-january-2026.ods",
+					"sha256": "dd44af1805231b939ce16a0d84a9c591f937f2ca2e30ce8f76842ac70b30b093"
+				}
+			],
+			"href": "/v1/datasets/adult-social-care-outcomes"
+		},
 		"air-quality": {
 			"publisher": "Department for Environment, Food and Rural Affairs",
 			"sourceUrl": "https://uk-air.defra.gov.uk/data/pcm-data",
@@ -43,6 +73,21 @@
 				}
 			],
 			"href": "/v1/datasets/broadband"
+		},
+		"business-activity": {
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/businessindustryandtrade/business/activitysizeandlocation/datasets/ukbusinessactivitysizeandlocation",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "economics/business-activity/ukbusinessworkbook2025new.xlsx#Table 1",
+					"sha256": "afac42985fae95315814160bd87b609aa44183e7dc63b574bd17b3a50159692f"
+				}
+			],
+			"href": "/v1/datasets/business-activity"
 		},
 		"car-availability": {
 			"publisher": "Office for National Statistics",
@@ -78,6 +123,21 @@
 			],
 			"href": "/v1/datasets/claimant-count"
 		},
+		"council-tax": {
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/council-tax-levels-set-by-local-authorities-in-england-2026-to-2027",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "economics/local-government-finance/council-tax/Table_10_2026-27.ods",
+					"sha256": "9b25ad5ec11e18ec264ef0e2b72e9f49703c95a125dd1b52abd5de71bd5b7530"
+				}
+			],
+			"href": "/v1/datasets/council-tax"
+		},
 		"crime": {
 			"publisher": "Office for National Statistics",
 			"sourceUrl": "https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
@@ -92,6 +152,21 @@
 				}
 			],
 			"href": "/v1/datasets/crime"
+		},
+		"electric-vehicle-chargers": {
+			"publisher": "Department for Transport",
+			"sourceUrl": "https://www.gov.uk/government/collections/electric-vehicle-charging-infrastructure-statistics",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "transport/electric-vehicle-chargers/evci0102_2026-07_EV_chargers_by_local_authority_UK.ods",
+					"sha256": "cb04b107ca6a09725dbe5e678b4e4b5e1a156c23beedf215475193dd7f0175e5"
+				}
+			],
+			"href": "/v1/datasets/electric-vehicle-chargers"
 		},
 		"electricity-consumption": {
 			"publisher": "Department for Energy Security and Net Zero",
@@ -368,6 +443,21 @@
 			],
 			"href": "/v1/datasets/local-election"
 		},
+		"local-government-finance": {
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/local-authority-revenue-expenditure-and-financing-england-2026-to-2027-budget",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "economics/local-government-finance/RA_2026-27_data_Part_1.ods",
+					"sha256": "541d7ff3ea422899608f249cc4d976b107a7c66ac9cfe9436d60f96455acfbef"
+				}
+			],
+			"href": "/v1/datasets/local-government-finance"
+		},
 		"mobile-coverage": {
 			"publisher": "Ofcom",
 			"sourceUrl": "https://www.ofcom.org.uk/phones-and-broadband/coverage-and-speeds/connected-nations-20252/data-downloads-2025",
@@ -383,6 +473,21 @@
 			],
 			"href": "/v1/datasets/mobile-coverage"
 		},
+		"net-additional-dwellings": {
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/collections/net-supply-of-housing",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "economics/housing/net-additional-dwellings/Live_Table_122.ods",
+					"sha256": "999b779c15263c8aaa93c0f287a6fe7fe8ebe9425be260cb41b16cb89b7ceb53"
+				}
+			],
+			"href": "/v1/datasets/net-additional-dwellings"
+		},
 		"nimdm": {
 			"publisher": "Northern Ireland Statistics and Research Agency",
 			"sourceUrl": "https://www.nisra.gov.uk/statistics/deprivation/northern-ireland-multiple-deprivation-measure-2017-nimdm2017",
@@ -397,6 +502,21 @@
 				}
 			],
 			"href": "/v1/datasets/nimdm"
+		},
+		"planning-applications": {
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-planning-application-statistics",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "housing/planning-applications/ps1-full-2026-03.csv",
+					"sha256": "682754f5e146f570f642a1a15036ec33be78c0d320af7f792c9025cef25397eb"
+				}
+			],
+			"href": "/v1/datasets/planning-applications"
 		},
 		"population": {
 			"publisher": "Office for National Statistics",
@@ -575,6 +695,21 @@
 			],
 			"href": "/v1/datasets/unemployment"
 		},
+		"waste": {
+			"publisher": "Department for Environment, Food and Rural Affairs",
+			"sourceUrl": "https://www.gov.uk/government/statistics/local-authority-collected-waste-management-annual-results",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods",
+					"sha256": "5b93082b0e67b602d36a8406afd46f78e57af32967d7351bca8cf4632fac2f42"
+				}
+			],
+			"href": "/v1/datasets/waste"
+		},
 		"wimd": {
 			"publisher": "Welsh Government",
 			"sourceUrl": "https://www.gov.wales/welsh-index-multiple-deprivation",
@@ -619,6 +754,110 @@
 		}
 	},
 	"exports": [
+		{
+			"id": "adult-social-care-activity-observations",
+			"measureId": "adult-social-care-activity",
+			"datasetId": "adult-social-care-activity",
+			"periods": [
+				"2024-25"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "adult-social-care-activity-observations",
+			"contentHash": "sha256:97aa931a0fd576e3113108a245393be0f1e12de10502bb19e10ce1dfea913152",
+			"bytes": 7740,
+			"href": "/v1/exports/adult-social-care-activity-observations",
+			"recordCount": 129,
+			"recordCountByPeriod": {
+				"2024-25": 129
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/adult-social-care-activity",
+				"datasets": [
+					{
+						"id": "adult-social-care-activity",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "adult-social-care-outcomes-observations",
+			"measureId": "adult-social-care-outcomes",
+			"datasetId": "adult-social-care-outcomes",
+			"periods": [
+				"2024-25"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "adult-social-care-outcomes-observations",
+			"contentHash": "sha256:7ed05a6065f188c93d8268cd33e4e13de7174f137a37ac4b782fa2adca1a3b75",
+			"bytes": 7656,
+			"href": "/v1/exports/adult-social-care-outcomes-observations",
+			"recordCount": 128,
+			"recordCountByPeriod": {
+				"2024-25": 128
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/adult-social-care-outcomes",
+				"datasets": [
+					{
+						"id": "adult-social-care-outcomes",
+						"role": "source"
+					}
+				]
+			}
+		},
 		{
 			"id": "air-quality-grid-cells-observations",
 			"measureId": "air-quality-grid-cells",
@@ -874,6 +1113,58 @@
 				"datasets": [
 					{
 						"id": "broadband",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "business-activity-observations",
+			"measureId": "business-activity",
+			"datasetId": "business-activity",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "business-activity-observations",
+			"contentHash": "sha256:30a941789f58edbecf87e8d53ed6b83f86c61d325544ef46562f888d57833500",
+			"bytes": 21277,
+			"href": "/v1/exports/business-activity-observations",
+			"recordCount": 359,
+			"recordCountByPeriod": {
+				"2025": 359
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/business-activity",
+				"datasets": [
+					{
+						"id": "business-activity",
 						"role": "source"
 					}
 				]
@@ -1238,6 +1529,58 @@
 				"datasets": [
 					{
 						"id": "claimant-count",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "council-tax-observations",
+			"measureId": "council-tax",
+			"datasetId": "council-tax",
+			"periods": [
+				"2026-27"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2026
+			},
+			"format": "json",
+			"artifact": "council-tax-observations",
+			"contentHash": "sha256:e5cecaee337d50f46346ac3511dee99a3528cd1bce60486b82b629f3b4144d20",
+			"bytes": 18097,
+			"href": "/v1/exports/council-tax-observations",
+			"recordCount": 296,
+			"recordCountByPeriod": {
+				"2026-27": 296
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/council-tax",
+				"datasets": [
+					{
+						"id": "council-tax",
 						"role": "source"
 					}
 				]
@@ -2434,6 +2777,58 @@
 				"datasets": [
 					{
 						"id": "crime",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "electric-vehicle-chargers-observations",
+			"measureId": "electric-vehicle-chargers",
+			"datasetId": "electric-vehicle-chargers",
+			"periods": [
+				"2026-07-01"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2026
+			},
+			"format": "json",
+			"artifact": "electric-vehicle-chargers-observations",
+			"contentHash": "sha256:9c194bc6c61c73693074a2da269a46a9b0f813521e19743267618d062f23b6bd",
+			"bytes": 20802,
+			"href": "/v1/exports/electric-vehicle-chargers-observations",
+			"recordCount": 361,
+			"recordCountByPeriod": {
+				"2026-07-01": 361
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/electric-vehicle-chargers",
+				"datasets": [
+					{
+						"id": "electric-vehicle-chargers",
 						"role": "source"
 					}
 				]
@@ -13988,6 +14383,58 @@
 			}
 		},
 		{
+			"id": "local-government-finance-observations",
+			"measureId": "local-government-finance",
+			"datasetId": "local-government-finance",
+			"periods": [
+				"2026-27"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2026
+			},
+			"format": "json",
+			"artifact": "local-government-finance-observations",
+			"contentHash": "sha256:7eafe883b1b050ebdede0d9f81e2815d29cd1bb3c12674de1630868160998ff4",
+			"bytes": 16391,
+			"href": "/v1/exports/local-government-finance-observations",
+			"recordCount": 287,
+			"recordCountByPeriod": {
+				"2026-27": 287
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/local-government-finance",
+				"datasets": [
+					{
+						"id": "local-government-finance",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
 			"id": "median-annual-pay-observations",
 			"measureId": "median-annual-pay",
 			"datasetId": "income",
@@ -14300,6 +14747,58 @@
 			}
 		},
 		{
+			"id": "net-additional-dwellings-observations",
+			"measureId": "net-additional-dwellings",
+			"datasetId": "net-additional-dwellings",
+			"periods": [
+				"2024-25"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "net-additional-dwellings-observations",
+			"contentHash": "sha256:936e559971c43f0a5df8dbbdfc9e33a2eefd44900614d97f673420589ca4041c",
+			"bytes": 16422,
+			"href": "/v1/exports/net-additional-dwellings-observations",
+			"recordCount": 283,
+			"recordCountByPeriod": {
+				"2024-25": 283
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/net-additional-dwellings",
+				"datasets": [
+					{
+						"id": "net-additional-dwellings",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
 			"id": "nimdm-rank-observations",
 			"measureId": "nimdm-rank",
 			"datasetId": "nimdm",
@@ -14398,6 +14897,58 @@
 				"datasets": [
 					{
 						"id": "air-quality",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "planning-applications-observations",
+			"measureId": "planning-applications",
+			"datasetId": "planning-applications",
+			"periods": [
+				"2026-Q1"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "planning-applications-observations",
+			"contentHash": "sha256:77c3d30b344f06591f4f61009b827a9805821f23def7727b3ec60b60dedd112c",
+			"bytes": 17098,
+			"href": "/v1/exports/planning-applications-observations",
+			"recordCount": 296,
+			"recordCountByPeriod": {
+				"2026-Q1": 296
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/planning-applications",
+				"datasets": [
+					{
+						"id": "planning-applications",
 						"role": "source"
 					}
 				]
@@ -16842,6 +17393,58 @@
 				"datasets": [
 					{
 						"id": "unemployment",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "waste-observations",
+			"measureId": "waste",
+			"datasetId": "waste",
+			"periods": [
+				"2024-25"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "waste-observations",
+			"contentHash": "sha256:ae46fb3d86ec0c80d8bff8760aeac9ac05c062701e61e24209a66d9b39b26b17",
+			"bytes": 11819,
+			"href": "/v1/exports/waste-observations",
+			"recordCount": 196,
+			"recordCountByPeriod": {
+				"2024-25": 196
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/waste",
+				"datasets": [
+					{
+						"id": "waste",
 						"role": "source"
 					}
 				]

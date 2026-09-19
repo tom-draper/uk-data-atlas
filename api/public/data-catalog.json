@@ -1,11 +1,73 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5c2c9bbf60c8f85af9e5c2e88ea7b08ee263bc2a1e878bfa7bb9b94ad749637d",
+	"contentHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
 	},
 	"datasets": [
+		{
+			"id": "adult-social-care-activity",
+			"label": "Adult social care activity in England",
+			"publisher": "Department of Health and Social Care",
+			"sourceUrl": "https://www.gov.uk/government/statistics/adult-social-care-activity-report-england-2024-to-2025",
+			"temporalCoverage": "2024-25",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Clients receiving long-term support during the year, across ages 18 to 64 and 65 and over.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "health/adult-social-care/activity/asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+					"bytes": 9284927,
+					"sha256": "1ae089a2c92cb1a4868bfb8b16b2fffc364ca094cfe3b484445c06b923cd002a"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 129,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 8888,
+				"sha256": "2087f96ebc617656256e237ec9041e86a3ca31d53973fc0dfcda497d6e44a090"
+			}
+		},
+		{
+			"id": "adult-social-care-outcomes",
+			"label": "Adult Social Care Outcomes Framework, England",
+			"publisher": "Department of Health and Social Care",
+			"sourceUrl": "https://www.gov.uk/government/statistics/measures-from-the-adult-social-care-outcomes-framework-england-2024-to-2025",
+			"temporalCoverage": "2024-25",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Social care-related quality-of-life score for local authorities, out of 24.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "health/adult-social-care/ascof/dhsc-ascof-england-2024-to-2025-outcome-and-demographic-data-23-january-2026.ods",
+					"bytes": 19294278,
+					"sha256": "dd44af1805231b939ce16a0d84a9c591f937f2ca2e30ce8f76842ac70b30b093"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 128,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 8801,
+				"sha256": "52c30538bcb31e454aec3d19086c006ca27598f01e76dfe8205f9879c378f6b2"
+			}
+		},
 		{
 			"id": "air-quality",
 			"label": "Air Quality",
@@ -137,6 +199,37 @@
 			}
 		},
 		{
+			"id": "business-activity",
+			"label": "UK business: activity, size and location",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/businessindustryandtrade/business/activitysizeandlocation/datasets/ukbusinessactivitysizeandlocation",
+			"temporalCoverage": "2025",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "VAT and/or PAYE based enterprises by local authority district, summed across published broad industries.",
+			"inputs": [
+				{
+					"kind": "xlsxSheet",
+					"path": "economics/business-activity/ukbusinessworkbook2025new.xlsx#Table 1",
+					"bytes": 40972,
+					"sha256": "afac42985fae95315814160bd87b609aa44183e7dc63b574bd17b3a50159692f"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 359,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 24643,
+				"sha256": "c4b0ff23c6db776171d254334c9e414efa7bc3e9ee5bc06f1f0c65ad00a8d5f8"
+			}
+		},
+		{
 			"id": "car-availability",
 			"label": "Car Availability",
 			"publisher": "Office for National Statistics",
@@ -236,6 +329,37 @@
 			}
 		},
 		{
+			"id": "council-tax",
+			"label": "Council Tax levels in England",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/council-tax-levels-set-by-local-authorities-in-england-2026-to-2027",
+			"temporalCoverage": "2026-27",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Average Band D council tax set by English billing authorities.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "economics/local-government-finance/council-tax/Table_10_2026-27.ods",
+					"bytes": 5195151,
+					"sha256": "9b25ad5ec11e18ec264ef0e2b72e9f49703c95a125dd1b52abd5de71bd5b7530"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 296,
+				"boundaryYears": [
+					2026
+				]
+			},
+			"compiled": {
+				"bytes": 20654,
+				"sha256": "3667e664f41580f048228f0d1bf03b82b1372b662c5b2dbaee1d0d845c4c7085"
+			}
+		},
+		{
 			"id": "crime",
 			"label": "Crime",
 			"publisher": "Office for National Statistics",
@@ -264,6 +388,37 @@
 			"compiled": {
 				"bytes": 470215,
 				"sha256": "99a74097c3404b2ff606f779d9d5b1d2928b4cdfd63b2e012c63b1945af08db2"
+			}
+		},
+		{
+			"id": "electric-vehicle-chargers",
+			"label": "Public electric vehicle chargers by local authority",
+			"publisher": "Department for Transport",
+			"sourceUrl": "https://www.gov.uk/government/collections/electric-vehicle-charging-infrastructure-statistics",
+			"temporalCoverage": "1 July 2026",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Publicly available electric-vehicle chargers by local authority.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "transport/electric-vehicle-chargers/evci0102_2026-07_EV_chargers_by_local_authority_UK.ods",
+					"bytes": 4941027,
+					"sha256": "cb04b107ca6a09725dbe5e678b4e4b5e1a156c23beedf215475193dd7f0175e5"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 361,
+				"boundaryYears": [
+					2026
+				]
+			},
+			"compiled": {
+				"bytes": 24187,
+				"sha256": "919c0b8b780939ad7e25eb955cb336b7afe7ffd458330a425287d82af8cb902b"
 			}
 		},
 		{
@@ -924,6 +1079,37 @@
 			}
 		},
 		{
+			"id": "local-government-finance",
+			"label": "Local authority revenue expenditure and financing",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistics/local-authority-revenue-expenditure-and-financing-england-2026-to-2027-budget",
+			"temporalCoverage": "2026-27",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "English local-authority revenue budget estimates; the Atlas map shows total education-services expenditure.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "economics/local-government-finance/RA_2026-27_data_Part_1.ods",
+					"bytes": 12040611,
+					"sha256": "541d7ff3ea422899608f249cc4d976b107a7c66ac9cfe9436d60f96455acfbef"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 287,
+				"boundaryYears": [
+					2026
+				]
+			},
+			"compiled": {
+				"bytes": 18852,
+				"sha256": "d6b4cf6372defecab108041eff4120f16f9d1bc2ec39bf789aac0f0898aaf4c4"
+			}
+		},
+		{
 			"id": "mobile-coverage",
 			"label": "Mobile Coverage",
 			"publisher": "Ofcom",
@@ -952,6 +1138,37 @@
 			"compiled": {
 				"bytes": 77314,
 				"sha256": "44b51eaed2adac71159b9ff804fdc331f7ebfd4136bcc84820ae8b4cfc268f82"
+			}
+		},
+		{
+			"id": "net-additional-dwellings",
+			"label": "Housing supply: net additional dwellings",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/collections/net-supply-of-housing",
+			"temporalCoverage": "2024-25",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Net additional dwellings by English local authority district.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "economics/housing/net-additional-dwellings/Live_Table_122.ods",
+					"bytes": 1528200,
+					"sha256": "999b779c15263c8aaa93c0f287a6fe7fe8ebe9425be260cb41b16cb89b7ceb53"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 283,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 19020,
+				"sha256": "4d7a9a81458e2f22dd0d4ac8c33f6f0e274565398d84e215f910014e7f0d2884"
 			}
 		},
 		{
@@ -1014,6 +1231,37 @@
 			"compiled": {
 				"bytes": 114947,
 				"sha256": "bb783da1edf90f4618e55fb738c0ba1985a6bc82bea6da69140078854e238c6b"
+			}
+		},
+		{
+			"id": "planning-applications",
+			"label": "Planning applications in England",
+			"publisher": "Ministry of Housing, Communities and Local Government",
+			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/live-tables-on-planning-application-statistics",
+			"temporalCoverage": "2026 Q1",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Planning applications received by English local planning authority during 2026 Q1.",
+			"inputs": [
+				{
+					"kind": "text",
+					"path": "housing/planning-applications/ps1-full-2026-03.csv",
+					"bytes": 12453674,
+					"sha256": "682754f5e146f570f642a1a15036ec33be78c0d320af7f792c9025cef25397eb"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 296,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 19705,
+				"sha256": "92707b6bde6d622e0a0e418a40626fcbc36c289aad3a2c79daee82b95a5370a1"
 			}
 		},
 		{
@@ -1466,6 +1714,37 @@
 			"compiled": {
 				"bytes": 484231,
 				"sha256": "fb8859a4e85c067a36995138b7ddd08787f409b666c2e6547eb80b967e4bf0ed"
+			}
+		},
+		{
+			"id": "waste",
+			"label": "Local authority collected waste management",
+			"publisher": "Department for Environment, Food and Rural Affairs",
+			"sourceUrl": "https://www.gov.uk/government/statistics/local-authority-collected-waste-management-annual-results",
+			"temporalCoverage": "2024-25",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Local-authority collected waste in England; collection authorities only to avoid double counting.",
+			"inputs": [
+				{
+					"kind": "odsContent",
+					"path": "environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods",
+					"bytes": 24292613,
+					"sha256": "5b93082b0e67b602d36a8406afd46f78e57af32967d7351bca8cf4632fac2f42"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 196,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 22975,
+				"sha256": "f67c8a635d602212ec8be715d430cb07fc6069fac3c18a44c93bec4b74a91a9a"
 			}
 		},
 		{
@@ -10339,6 +10618,395 @@
 				"The anthropogenic part of Defra's population-weighted PM2.5 for 2024, excluding natural sources such as sea salt.",
 				"Background concentrations are modelled for 1x1 km squares away from the immediate influence of roads and industrial sources, so they are lower than roadside measurements.",
 				"PCM maps from https://uk-air.defra.gov.uk/data/pcm-data. Each cell is assigned to the December 2024 authority containing its centre; a coastal cell whose centre lies offshore of the generalised coastline belongs to none."
+			]
+		},
+		{
+			"id": "business-activity",
+			"label": "VAT and/or PAYE based enterprises",
+			"valueKind": "count",
+			"unit": "enterprises",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "business-activity",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 359,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/business-activity"
+			},
+			"notes": [
+				"The primary value sums the published broad-industry counts for each local authority."
+			]
+		},
+		{
+			"id": "net-additional-dwellings",
+			"label": "Net additional dwellings",
+			"valueKind": "count",
+			"unit": "dwellings",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "net-additional-dwellings",
+					"periods": [
+						"2024-25"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 283,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/net-additional-dwellings"
+			},
+			"notes": [
+				"Annual net additional dwellings in English local authority districts."
+			]
+		},
+		{
+			"id": "local-government-finance",
+			"label": "Education services revenue budget",
+			"valueKind": "quantity",
+			"unit": "£ thousand",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "local-government-finance",
+					"periods": [
+						"2026-27"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2026
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 287,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/local-government-finance"
+			},
+			"notes": [
+				"The Atlas primary measure is the published total education-services budget line."
+			]
+		},
+		{
+			"id": "council-tax",
+			"label": "Average Band D council tax",
+			"valueKind": "currency",
+			"unit": "£",
+			"aggregation": {
+				"kind": "intensive",
+				"operation": "weighted-mean",
+				"weight": {
+					"description": "The billing authority's council-tax base.",
+					"datasetField": "tax base"
+				},
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "council-tax",
+					"periods": [
+						"2026-27"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2026
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 296,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/council-tax"
+			},
+			"notes": [
+				"A published billing-authority average; it must not be summed or averaged flat."
+			]
+		},
+		{
+			"id": "waste",
+			"label": "Local authority collected waste",
+			"valueKind": "quantity",
+			"unit": "tonnes",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "waste",
+					"periods": [
+						"2024-25"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 196,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/waste"
+			},
+			"notes": [
+				"Collection authorities only, avoiding double counting between collection and disposal authorities."
+			]
+		},
+		{
+			"id": "adult-social-care-activity",
+			"label": "Clients receiving long-term support",
+			"valueKind": "count",
+			"unit": "clients",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "adult-social-care-activity",
+					"periods": [
+						"2024-25"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 129,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/adult-social-care-activity"
+			},
+			"notes": [
+				"Clients receiving long-term support during the year, across both published age bands."
+			]
+		},
+		{
+			"id": "adult-social-care-outcomes",
+			"label": "Social care-related quality of life",
+			"valueKind": "ratio",
+			"unit": "score out of 24",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "median",
+				"note": "This is a survey outcome score, not a count that can be summed.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "adult-social-care-outcomes",
+					"periods": [
+						"2024-25"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 128,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/adult-social-care-outcomes"
+			},
+			"notes": [
+				"The total-population council outcome score from ASCOF table 1a."
+			]
+		},
+		{
+			"id": "planning-applications",
+			"label": "Planning applications received",
+			"valueKind": "count",
+			"unit": "applications",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "planning-applications",
+					"periods": [
+						"2026-Q1"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 296,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/planning-applications"
+			},
+			"notes": [
+				"Planning applications received during 2026 Q1; the publisher labels the areas local planning authorities but supplies local-authority district codes."
+			]
+		},
+		{
+			"id": "electric-vehicle-chargers",
+			"label": "Public electric vehicle chargers",
+			"valueKind": "count",
+			"unit": "chargers",
+			"aggregation": {
+				"kind": "extensive",
+				"operation": "sum",
+				"available": true
+			},
+			"sources": [
+				{
+					"datasetId": "electric-vehicle-chargers",
+					"periods": [
+						"2026-07-01"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2026
+					},
+					"coverage": {
+						"kind": "source-reported",
+						"countries": [
+							"GB-ENG",
+							"GB-NIR",
+							"GB-SCT",
+							"GB-WLS"
+						],
+						"recordCount": 361,
+						"note": "Values are source-reported for the authorities included in the publisher's release."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": true
+			},
+			"links": {
+				"data": "/v1/data/electric-vehicle-chargers"
+			},
+			"notes": [
+				"Publicly available chargers by local authority at 1 July 2026."
 			]
 		},
 		{
