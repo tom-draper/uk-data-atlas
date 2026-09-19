@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:9357ab0a8550e4bd21018e1c13db4a628e95ed87591da026b6b6458ce9f7ee7d",
-	"crosswalkInventoryHash": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
+	"contentHash": "sha256:ee4e7feec2477fe68a36b88b6fdbbf303c3bef2fc67f50df195e64b2d4b56214",
+	"crosswalkInventoryHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
 	"paths": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2/forward/identity",
@@ -583,6 +583,46 @@
 			"steps": [
 				{
 					"crosswalkId": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
 				}
