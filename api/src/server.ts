@@ -48,6 +48,7 @@ import {
 	createRelationshipPathIndex,
 	type RelationshipPathInventory,
 } from "./relationshipPaths";
+import type { AnalysisGeographyInventory } from "./analysisGeographies";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -394,6 +395,26 @@ export const readMeasureCompatibility = (
 	return inventory;
 };
 
+export const readAnalysisGeographyInventory = (
+	apiRoot: string,
+	dataCatalog: DataCatalog,
+	crosswalkInventory: CrosswalkInventory,
+): AnalysisGeographyInventory => {
+	const path = join(apiRoot, "public", "analysis-geographies.json");
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as AnalysisGeographyInventory;
+	if (
+		inventory.schemaVersion !== 1 ||
+		!Array.isArray(inventory.supports) ||
+		inventory.dataCatalogHash !== dataCatalog.contentHash ||
+		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
+	) {
+		throw new Error(`Invalid analysis geography inventory at ${path}`);
+	}
+	return inventory;
+};
+
 export type ApiCatalogues = Required<RouteContext>;
 
 export type CatalogueOptions = {
@@ -420,6 +441,11 @@ export const readApiCatalogues = (
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const mapResources = readMapResources(apiRoot);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
+	const analysisGeographyInventory = readAnalysisGeographyInventory(
+		apiRoot,
+		dataCatalog,
+		crosswalkInventory,
+	);
 	const relationshipPathInventory = readRelationshipPathInventory(
 		apiRoot,
 		crosswalkInventory,
@@ -501,6 +527,7 @@ export const readApiCatalogues = (
 			readPopulationLocalAuthorityObservations(apiRoot),
 		measureObservations: readMeasureObservations(apiRoot, dataCatalog),
 		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
+		analysisGeographyInventory,
 	};
 };
 

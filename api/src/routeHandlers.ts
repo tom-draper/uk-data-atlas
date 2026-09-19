@@ -18,6 +18,7 @@ import { handlePlaceRoutes } from "./placeRoutes";
 import { handleDataTransformRoutes } from "./dataTransformRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
+import { handleAnalysisGeographyRoutes } from "./analysisGeographyRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
 import {
 	handleAreaContainsBatchRoutes,
@@ -120,6 +121,15 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "measures" &&
 			segments[3] === "quality",
 		handle: handleMeasureQualityRoutes,
+	},
+	{
+		name: "analysis-geographies",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			(segments[1] === "analysis-geographies" ||
+				segments[1] === "analysis:plan" ||
+				(segments[1] === "measures" && segments[3] === "conversion-support")),
+		handle: handleAnalysisGeographyRoutes,
 	},
 	{
 		name: "data",

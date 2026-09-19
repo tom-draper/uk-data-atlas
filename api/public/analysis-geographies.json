@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"dataCatalogHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
+	"crosswalkInventoryHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+	"supports": [
+		{
+			"measureId": "road-collisions",
+			"analysisGeography": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"source": {
+				"datasetId": "road-collisions",
+				"geography": "lsoa",
+				"boundaryYear": 2021,
+				"periods": [
+					"2025-H1"
+				]
+			},
+			"crosswalk": {
+				"id": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+				"method": "clean-containment",
+				"quality": "publisher-supplied"
+			},
+			"note": "Reported collision counts are extensive. Every published 2021 LSOA in this source has one verified May 2023 local-authority parent, so values are regrouped exactly; no area weighting is used."
+		}
+	],
+	"contentHash": "sha256:628dd2e7c1e67dbaf375dfd762c5a114ffa81264ef3403bf6f7a902bc8c9e296"
+}

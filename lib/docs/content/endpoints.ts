@@ -170,6 +170,30 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Compare two areas",
 		intro: "Put two areas side by side for one period and get both values and the difference between them.",
 	},
+	listAnalysisGeographies: {
+		title: "List reviewed conversions",
+		intro: "See which measure, source and analysis-boundary combinations the Atlas has reviewed as safe to convert. A crosswalk appearing in the catalogue alone is not an approval to use it for analysis.",
+		tips: [
+			"Add `measure` to narrow the list to the conversions available for one measure.",
+			"Each entry names the source partition and the crosswalk, so you can inspect exactly what will be regrouped.",
+		],
+	},
+	planAnalysis: {
+		title: "Preflight an analysis conversion",
+		intro: "Check whether one published period can be compared on a named analysis boundary before retrieving data. The response is a plan: it selects no data and never silently chooses between source partitions.",
+		tips: [
+			"Name `sourceGeography` and `sourceBoundaryYear` explicitly, even when a measure has only one obvious source today.",
+			"An `available` plan gives you the exact conversion request. A `not-comparable` plan explains why the named period cannot be used on that frame.",
+		],
+	},
+	getMeasureConversionSupport: {
+		title: "Check conversion support",
+		intro: "Inspect the reviewed conversion paths for one measure on one analysis boundary. Use it to discover supported source partitions before asking for a preflight plan.",
+		tips: [
+			"`analysisGeography` is one exact `geography/release` pair, for example `localAuthority/2023-05-uk-bgc-v2`.",
+			"An unsupported response is intentional: it means the Atlas has not established a defensible path, not that it guessed a substitute.",
+		],
+	},
 
 	// Bulk data & releases
 	getPinnedMapResource: {

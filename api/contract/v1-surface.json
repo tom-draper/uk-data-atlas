@@ -1419,6 +1419,160 @@
 				]
 			}
 		},
+		"GET /analysis-geographies": {
+			"operationId": "listAnalysisGeographies",
+			"parameters": {
+				"query:measure": {
+					"required": false
+				}
+			},
+			"responses": {
+				"200": [],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /analysis:plan": {
+			"operationId": "planAnalysis",
+			"parameters": {
+				"query:measure": {
+					"required": true
+				},
+				"query:period": {
+					"required": true
+				},
+				"query:analysisGeography": {
+					"required": true
+				},
+				"query:sourceGeography": {
+					"required": true
+				},
+				"query:sourceBoundaryYear": {
+					"required": true
+				}
+			},
+			"responses": {
+				"200": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /measures/{measure-id}/conversion-support": {
+			"operationId": "getMeasureConversionSupport",
+			"parameters": {
+				"path:measure-id": {
+					"required": true
+				},
+				"query:analysisGeography": {
+					"required": true
+				},
+				"query:sourceGeography": {
+					"required": false
+				},
+				"query:sourceBoundaryYear": {
+					"required": false
+				}
+			},
+			"responses": {
+				"200": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /data/{measure-id}": {
 			"operationId": "getMeasureObservations",
 			"parameters": {

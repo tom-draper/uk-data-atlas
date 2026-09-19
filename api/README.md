@@ -1179,12 +1179,14 @@ originally observed on that geography. The result separates source-exact and
 derived observations and carries the chosen path, weights, coverage and
 quality at every period.
 
-- [ ] Define an `analysis geography`: an exact geography and boundary release
+- [x] Define an `analysis geography`: an exact geography and boundary release
       selected as the common frame for a series or comparison.
-- [ ] Publish supported historical-to-analysis conversion pairs only where an
+- [x] Publish reviewed source-to-analysis conversion pairs only where an
       official lookup or validated, measure-appropriate weighting method
-      exists. A crosswalk suitable for land area is not automatically suitable
-      for people, votes or rates.
+      exists. The first pair is 2021 LSOA road-collision counts to May 2023
+      local authorities through verified clean containment. A crosswalk
+      suitable for land area is not automatically suitable for people, votes
+      or rates.
 - [ ] Return `not-comparable` or separate source partitions where no defensible
       conversion exists. Never fill a gap with a same-code assumption or an
       unlabelled best fit.
@@ -2658,12 +2660,10 @@ separate contract, and none is required by the correct-map beta.
 
 ## Analysis contract
 
-None of this is built, and none of it should be built in Phase 1. It is the
-contract [P1 item 13](#p1--prove-the-correct-map-product) asks for: enough of
-Phase 2's shape decided now that the correct-map work does not quietly
-foreclose it, and no more. Two things are specified, an **analysis geography**
-and an **analysis preflight**, and the boundaries of both are drawn tightly on
-purpose.
+Phase 1 specified this contract; the first narrow Phase 2 slice now publishes
+one reviewed source-to-analysis pair and its preflight. It does not generalise
+conversion: a frame is available only when this contract and a checked-in
+support artifact name the exact measure, source partition and crosswalk.
 
 What this deliberately does not specify: any custom or caller-supplied
 geometry, any general analysis or query endpoint, and any widening of which
@@ -2700,10 +2700,15 @@ votes or rates, and this is the rule that says so. Support is therefore a
 published fact per measure and frame, not a property of the crosswalk alone.
 
 ```text
-not built: GET /v1/analysis-geographies
-not built: GET /v1/measures/{measure-id}/conversion-support?analysisGeography={geography}/{release}
-not built: GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}
+available: GET /v1/analysis-geographies
+available: GET /v1/measures/{measure-id}/conversion-support?analysisGeography={geography}/{release}
+available: GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}&sourceGeography={geography}&sourceBoundaryYear={year}
 ```
+
+The initial published pair is provisional reported road-collision counts on
+2021 LSOAs, exactly regrouped through the verified 2021 LSOA → May 2023 local
+authority containment lookup. It is a single-period conversion foundation,
+not yet the historical trend required for the Phase 2 exit criterion.
 
 ### The preflight is the plan, returned instead of acted on
 
@@ -2997,7 +3002,10 @@ Make one historical claim safe. The target is not universal geography
 conversion; it is a small, transparent demonstration that the Atlas can retain
 comparability when geography changes.
 
-- [ ] Define the analysis-geography and analysis-preflight contracts.
+- [x] Define the analysis-geography and analysis-preflight contracts. The
+      API publishes reviewed support and returns a plan for the selected
+      measure, source partition, period and exact target frame; an unsupported
+      period is `not-comparable` rather than silently omitted.
 - [ ] Implement and validate one source-to-analysis conversion path for the
       selected measure/geography pair, including coverage, conservation,
       rounding and refusal behaviour.
@@ -3342,6 +3350,9 @@ second inventory to maintain:
 
 **Trend**
 
+- `GET /v1/analysis-geographies` — List reviewed analysis geography conversions
+- `GET /v1/analysis:plan` — Preflight a reviewed source-to-analysis conversion
+- `GET /v1/measures/{measure-id}/conversion-support` — Inspect reviewed conversion support for one measure and frame
 - `GET /v1/data/{measure-id}/aggregate` — Aggregate an extensive or explicitly weighted measure
 - `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure onto a published crosswalk's target areas
 - `GET /v1/data/{measure-id}/series` — Retrieve one area's source-exact time series

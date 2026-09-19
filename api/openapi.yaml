@@ -1430,6 +1430,69 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /analysis-geographies:
+    get:
+      operationId: listAnalysisGeographies
+      tags: ["Trend"]
+      summary: List reviewed analysis geography conversions
+      x-likely-refusal:
+        status: 503
+        when: "Takes no required input; an unknown `measure` filter returns an empty list."
+      description: >
+        Lists the measure/source/frame conversions that the Atlas has reviewed
+        as safe to perform. A published crosswalk alone is not sufficient.
+      parameters:
+        - name: measure
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200": { description: Reviewed analysis geography support. }
+        "503": { $ref: "#/components/responses/CatalogueUnavailable" }
+
+  /analysis:plan:
+    get:
+      operationId: planAnalysis
+      tags: ["Trend"]
+      summary: Preflight a reviewed source-to-analysis conversion
+      x-likely-refusal:
+        status: 400
+        when: "The source partition is not explicit. The route does not choose between a measure's sources."
+        x-example-request: "/v1/analysis:plan?measure=road-collisions&period=2025-H1&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa"
+      description: >
+        Returns a plan only: the selected source partition, the published
+        crosswalk and whether the requested period is comparable on the named
+        analysis frame. It does not fetch or transform observations.
+      parameters:
+        - { name: measure, in: query, required: true, schema: { type: string } }
+        - { name: period, in: query, required: true, schema: { type: string } }
+        - { name: analysisGeography, in: query, required: true, schema: { type: string } }
+        - { name: sourceGeography, in: query, required: true, schema: { type: string } }
+        - { name: sourceBoundaryYear, in: query, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: An available or not-comparable analysis plan. }
+        "400": { $ref: "#/components/responses/InvalidQuery" }
+        "503": { $ref: "#/components/responses/CatalogueUnavailable" }
+
+  /measures/{measure-id}/conversion-support:
+    get:
+      operationId: getMeasureConversionSupport
+      tags: ["Trend"]
+      summary: Inspect reviewed conversion support for one measure and frame
+      x-likely-refusal:
+        status: 400
+        when: "`analysisGeography` is missing or is not an exact geography/release pair."
+        x-example-request: "/v1/measures/road-collisions/conversion-support"
+      parameters:
+        - { name: measure-id, in: path, required: true, schema: { type: string } }
+        - { name: analysisGeography, in: query, required: true, schema: { type: string } }
+        - { name: sourceGeography, in: query, required: false, schema: { type: string } }
+        - { name: sourceBoundaryYear, in: query, required: false, schema: { type: integer } }
+      responses:
+        "200": { description: Reviewed conversion paths, or an explicit unsupported state. }
+        "400": { $ref: "#/components/responses/InvalidQuery" }
+        "503": { $ref: "#/components/responses/CatalogueUnavailable" }
+
   /data/{measure-id}:
     get:
       operationId: getMeasureObservations
@@ -5713,8 +5776,8 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8
-                    href: /v1/atlas-releases/sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8
+                  - releaseId: sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd
+                    href: /v1/atlas-releases/sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd
                     artifactCount: 338
                     current: true
                 meta:
@@ -5750,7 +5813,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8
+                  releaseId: sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5836,14 +5899,14 @@ paths:
               x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8"
+                atlasRelease: "sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd"
                 data:
                   from:
-                    releaseId: "sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8"
-                    href: /v1/atlas-releases/sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8
+                    releaseId: "sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd"
+                    href: /v1/atlas-releases/sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd
                   to:
-                    releaseId: "sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8"
-                    href: /v1/atlas-releases/sha256:a1d2505a10d86104a54d016f37428c24977edeedb848b38298751d13448471c8
+                    releaseId: "sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd"
+                    href: /v1/atlas-releases/sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []

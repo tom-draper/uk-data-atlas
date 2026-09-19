@@ -30,6 +30,7 @@ import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { ApiResponse } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
+import type { AnalysisGeographyInventory } from "./analysisGeographies";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -59,6 +60,8 @@ export type RouteContext = {
 	/** Every measure's observations bar the two population artifacts. */
 	measureObservations?: AnyMeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
+	/** Measure/frame conversions that have passed explicit review. */
+	analysisGeographyInventory?: AnalysisGeographyInventory;
 	exportManifest?: ExportManifest;
 	/** The OpenAPI description the server serves at `/v1/openapi.yaml`. */
 	openapiDocument?: string;
