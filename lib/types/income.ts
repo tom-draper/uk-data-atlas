@@ -54,6 +54,10 @@ export interface IncomeDataset {
 	data: Record<string, IncomeLADData>;
 }
 
+export interface WorkplaceIncomeDataset extends Omit<IncomeDataset, "type"> {
+	type: "workplaceIncome";
+}
+
 export interface AggregatedIncomeData {
 	averageIncome: number;
 }

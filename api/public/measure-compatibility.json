@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7dcec2ef0a02656d610b996831aebd5cbabd72a673734af37d88616b226fca59",
+	"contentHash": "sha256:088942aca1dd6bc105a2d11c563a8e5c3c117d09700835817fa341d76bc63bae",
 	"inputs": {
-		"dataCatalog": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
+		"dataCatalog": "sha256:5c2c9bbf60c8f85af9e5c2e88ea7b08ee263bc2a1e878bfa7bb9b94ad749637d",
 		"boundaryRegistry": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -251,6 +251,8 @@
 			"local-election-winning-party/ward/2025": "sha256:48840eb76f7d99d30f4b4ab58ad5e60ce4b2eadcc7d3f1b2a1ee2a17c6437c02",
 			"median-annual-pay/localAuthority/2025": "sha256:f3bbbdd0663c126fc6906cc1228901d2d82e06323e8438a406fddce61fd8d575",
 			"median-hourly-pay/localAuthority/2025": "sha256:2f12b78aa9e194bbc08b11c899bdfffdbd3f608ddf1157e977721f6b234ec45d",
+			"median-workplace-annual-pay/localAuthority/2025": "sha256:1ad7e380c82553b387a2e7409173a596500fbcc166fa99824ac2b99795c5d11d",
+			"median-workplace-hourly-pay/localAuthority/2025": "sha256:1fcff5bd3182700b5f49ad2eb62e06979c00b1e02739fe95712dadc63fc1cbae",
 			"mobile-4g-coverage/localAuthority/2024": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage/localAuthority/2024": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
 			"nimdm-rank/superOutputArea/2011": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
@@ -14033,6 +14035,202 @@
 								"S12000011",
 								"S12000013",
 								"S12000014"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "median-workplace-annual-pay",
+			"sources": [
+				{
+					"datasetId": "workplace-income",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 295,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 295,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 66,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 295,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 295,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 66,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "median-workplace-hourly-pay",
+			"sources": [
+				{
+					"datasetId": "workplace-income",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 295,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 295,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 66,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 295,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 295,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 66,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017"
 							]
 						}
 					],

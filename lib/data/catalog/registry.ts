@@ -42,6 +42,7 @@ import { simdDatasetDefinition } from "./definitions/simd";
 import { travelToWorkDatasetDefinition } from "./definitions/travelToWork";
 import { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import { wimdDatasetDefinition } from "./definitions/wimd";
+import { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome";
 
 /** The complete framework-neutral catalogue used by compilers and API consumers. */
 export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
@@ -87,4 +88,5 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	travelToWorkDatasetDefinition,
 	unemploymentDatasetDefinition,
 	wimdDatasetDefinition,
+	workplaceIncomeDatasetDefinition,
 ];

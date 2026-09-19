@@ -41,3 +41,4 @@ export { simdDatasetDefinition } from "./simd";
 export { travelToWorkDatasetDefinition } from "./travelToWork";
 export { unemploymentDatasetDefinition } from "./unemployment";
 export { wimdDatasetDefinition } from "./wimd";
+export { workplaceIncomeDatasetDefinition } from "./workplaceIncome";

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:1099ed038cabab7ab86ef4ffcc569d19f0eb606377cb18a7de1a7fda76447c77",
-	"dataCatalogHash": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
+	"contentHash": "sha256:4b90968fe96be879664324fbea0db9085e20b8f428e9cfa70d300ff6bd86b41d",
+	"dataCatalogHash": "sha256:5c2c9bbf60c8f85af9e5c2e88ea7b08ee263bc2a1e878bfa7bb9b94ad749637d",
 	"fields": {
 		"areaCode": "The official code of the area, as the source partition gives it.",
 		"value": "The numeric value, in the measure's unit.",
@@ -242,11 +242,11 @@
 			},
 			"inputs": [
 				{
-					"path": "economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx#All",
+					"path": "economics/income/table-8/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx#All",
 					"sha256": "78f49ca44c28bebda9e959a2391a8c29e39ff2594730a82c81469e13d2aa19cc"
 				},
 				{
-					"path": "economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx#All",
+					"path": "economics/income/table-8/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx#All",
 					"sha256": "86acf7224e5e5ca2a8a4cebe00a98ae13107b28028826d482057993925c922d1"
 				}
 			],
@@ -597,6 +597,25 @@
 				}
 			],
 			"href": "/v1/datasets/wimd"
+		},
+		"workplace-income": {
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/workplacebylocalauthorityashetable7",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"inputs": [
+				{
+					"path": "economics/income/table-7/PROV - Work Geography Table 7.7a   Annual pay - Gross 2025.xlsx#All",
+					"sha256": "aff6713747af47bbaf98cdbd1306c9be189f117eb95f342135c191f1aa1d8266"
+				},
+				{
+					"path": "economics/income/table-7/PROV - Work Geography Table 7.5a   Hourly pay - Gross 2025.xlsx#All",
+					"sha256": "e4ebcec620ab50e4a9d74f9a7bea5bbbbbfdd3ee1bd3902cd9e23e57e807e8df"
+				}
+			],
+			"href": "/v1/datasets/workplace-income"
 		}
 	},
 	"exports": [
@@ -14067,6 +14086,110 @@
 				"datasets": [
 					{
 						"id": "income",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "median-workplace-annual-pay-observations",
+			"measureId": "median-workplace-annual-pay",
+			"datasetId": "workplace-income",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "median-workplace-annual-pay-observations",
+			"contentHash": "sha256:1ad7e380c82553b387a2e7409173a596500fbcc166fa99824ac2b99795c5d11d",
+			"bytes": 17661,
+			"href": "/v1/exports/median-workplace-annual-pay-observations",
+			"recordCount": 295,
+			"recordCountByPeriod": {
+				"2025": 295
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/median-workplace-annual-pay",
+				"datasets": [
+					{
+						"id": "workplace-income",
+						"role": "source"
+					}
+				]
+			}
+		},
+		{
+			"id": "median-workplace-hourly-pay-observations",
+			"measureId": "median-workplace-hourly-pay",
+			"datasetId": "workplace-income",
+			"periods": [
+				"2025"
+			],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2025
+			},
+			"format": "json",
+			"artifact": "median-workplace-hourly-pay-observations",
+			"contentHash": "sha256:1fcff5bd3182700b5f49ad2eb62e06979c00b1e02739fe95712dadc63fc1cbae",
+			"bytes": 17619,
+			"href": "/v1/exports/median-workplace-hourly-pay-observations",
+			"recordCount": 295,
+			"recordCountByPeriod": {
+				"2025": 295
+			},
+			"schema": {
+				"version": 1,
+				"layout": "periods",
+				"recordType": "numeric",
+				"fields": [
+					{
+						"name": "areaCode",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "value",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "status",
+						"type": "string",
+						"required": true
+					}
+				]
+			},
+			"provenance": {
+				"measure": "/v1/measures/median-workplace-hourly-pay",
+				"datasets": [
+					{
+						"id": "workplace-income",
 						"role": "source"
 					}
 				]

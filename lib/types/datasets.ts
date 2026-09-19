@@ -1,7 +1,11 @@
 // lib/types/datasets.ts
 import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
 import { AggregatedCrimeData, CrimeDataset } from "./crime";
-import { AggregatedIncomeData, IncomeDataset } from "./income";
+import {
+	AggregatedIncomeData,
+	IncomeDataset,
+	WorkplaceIncomeDataset,
+} from "./income";
 import { AggregatedCustomData, CustomDataset } from "./custom";
 import { NetworkDataset } from "./network";
 import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
@@ -29,6 +33,7 @@ type DatasetValue =
 	| HousePriceDataset
 	| CrimeDataset
 	| IncomeDataset
+	| WorkplaceIncomeDataset
 	| CustomDataset
 	| NetworkDataset
 	| BroadbandDataset
@@ -46,6 +51,7 @@ export type Datasets = {
 	housePrice: Record<string, HousePriceDataset>;
 	crime: Record<string, CrimeDataset>;
 	income: Record<string, IncomeDataset>;
+	workplaceIncome: Record<string, WorkplaceIncomeDataset>;
 	broadband: Record<string, BroadbandDataset>;
 	airQuality: Record<string, AirQualityDataset>;
 	claimantCount: Record<string, ClaimantCountDataset>;

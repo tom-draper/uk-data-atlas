@@ -41,6 +41,7 @@ import type { simdDatasetDefinition } from "./definitions/simd";
 import type { travelToWorkDatasetDefinition } from "./definitions/travelToWork";
 import type { unemploymentDatasetDefinition } from "./definitions/unemployment";
 import type { wimdDatasetDefinition } from "./definitions/wimd";
+import type { workplaceIncomeDatasetDefinition } from "./definitions/workplaceIncome";
 
 export type CatalogueDataset =
 	| Awaited<ReturnType<typeof airQualityDatasetDefinition.precompile>>[string]
@@ -148,7 +149,10 @@ export type CatalogueDataset =
 	| Awaited<
 			ReturnType<typeof unemploymentDatasetDefinition.precompile>
 	  >[string]
-	| Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string];
+	| Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>[string]
+	| Awaited<
+			ReturnType<typeof workplaceIncomeDatasetDefinition.precompile>
+	  >[string];
 export type CatalogueDatasetType = CatalogueDataset["type"];
 export type CatalogueDatasetRecords = {
 	airQuality: Awaited<
@@ -263,4 +267,7 @@ export type CatalogueDatasetRecords = {
 		ReturnType<typeof unemploymentDatasetDefinition.precompile>
 	>;
 	wimd: Awaited<ReturnType<typeof wimdDatasetDefinition.precompile>>;
+	workplaceIncome: Awaited<
+		ReturnType<typeof workplaceIncomeDatasetDefinition.precompile>
+	>;
 };
