@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"analysisGeographyInventoryHash": "sha256:628dd2e7c1e67dbaf375dfd762c5a114ffa81264ef3403bf6f7a902bc8c9e296",
+	"dataCatalogHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
+	"crosswalkInventoryHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+	"supports": [
+		{
+			"measureId": "road-collisions",
+			"analysisGeography": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"source": {
+				"datasetId": "road-collisions",
+				"geography": "lsoa",
+				"boundaryYear": 2021,
+				"periods": [
+					"2025-H1"
+				]
+			},
+			"crosswalk": {
+				"id": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+				"contentHash": "sha256:3183aa98f875efa813b59c19bcda355d608de8dcbb4f82f27d37d058ff586a21"
+			},
+			"observations": {
+				"artifact": "road-collisions-lsoa-2021-observations",
+				"contentHash": "sha256:002d2cf672cbf6028386f66cdf19312f917b90a0d3c56848a440256245d176ef"
+			},
+			"periods": [
+				{
+					"period": "2025-H1",
+					"method": "exact",
+					"inputRecordCount": 20623,
+					"outputRecordCount": 317,
+					"inputTotal": 46649,
+					"outputTotal": 46649
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:848cf030e39a70c3ef406169d1023f8f3f45503bff3e2ff4639ea344ee239e80"
+}

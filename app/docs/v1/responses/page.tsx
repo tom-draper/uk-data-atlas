@@ -17,7 +17,7 @@ export const metadata = docsMetadata(
 
 const ENVELOPE = `{
   "apiVersion": "v1",
-  "atlasRelease": "sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd",
+  "atlasRelease": "sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb",
   "data": {
     "…": "the result you asked for"
   },

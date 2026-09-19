@@ -1189,13 +1189,21 @@ quality at every period.
       local authorities through verified clean containment. A crosswalk
       suitable for land area is not automatically suitable for people, votes
       or rates.
-- [ ] Return `not-comparable` or separate source partitions where no defensible
+- [x] Return `not-comparable` or separate source partitions where no defensible
       conversion exists. Never fill a gap with a same-code assumption or an
-      unlabelled best fit.
-- [ ] Test conservation of extensive values, coverage thresholds, rounding and
-      uncertainty rules for each measure/crosswalk pair before publication.
-- [ ] Let a response state whether a change is observed on a common source
-      geography, derived onto an analysis geography, or unavailable.
+      unlabelled best fit: analysis preflight and series requests report that
+      state rather than selecting an alternate source.
+- [x] Test conservation of extensive values, coverage thresholds, rounding and
+      uncertainty rules for each measure/crosswalk pair before publication. The
+      release-pinned analysis validation artifact now runs each reviewed source
+      period through its converter and fails on a missing code, split, non-numeric
+      record, non-exact method or changed partition total. The first receipt
+      records 20,623 2025-H1 LSOA road-collision observations and a conserved
+      total of 46,649 regrouped into 317 local authorities.
+- [x] Let a response state whether a change is observed on a common source
+      geography, derived onto an analysis geography, or unavailable. Series
+      responses use `derived` only after a reviewed conversion, and name the
+      source, frame and crosswalk alongside it.
 
 Candidate read-only routes:
 

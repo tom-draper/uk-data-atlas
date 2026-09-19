@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:8dc6e252bc5d477d44e3276cb1869cce69b5cec2b48ab50bbb2c9bf2e39523fd",
+	"releaseId": "sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -76,6 +76,11 @@
 			"id": "analysis-geographies",
 			"path": "analysis-geographies.json",
 			"contentHash": "sha256:da6ec6f573cbbe252c6a961f7524e358ed8bc83ef99339ac22f8473dd6116a27"
+		},
+		{
+			"id": "analysis-geography-validation",
+			"path": "analysis-geography-validation.json",
+			"contentHash": "sha256:610e5f64130749dab34a73782b229a72b123d99ac261018fef63b67fde6660b3"
 		},
 		{
 			"id": "relationship-paths",
