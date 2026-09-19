@@ -493,9 +493,11 @@ only **available** when its endpoint, contract and provenance are published.
       figure. Values are marked `derived`, not `observed`, and the measure
       names both input datasets so attribution covers the denominator too.
 - [x] Return source-exact time series for one published area code and source
-      partition through `GET /v1/data/{measure-id}/series`. The route neither
-      converts nor aggregates values, and reports the observation artifact and
-      all periods in its provenance.
+      partition through `GET /v1/data/{measure-id}/series`. With an explicit,
+      reviewed `analysisGeography`, the same route returns only clearly marked
+      derived values regrouped onto that frame; unsupported pairs answer
+      `not-comparable` rather than selecting a substitute. Every form reports
+      the observation artifact and all periods in its provenance.
 - [x] Rank a source-exact measure partition through
       `GET /v1/data/{measure-id}/rankings`, using documented competition ranks
       for ties and refusing release selection, conversion and aggregation.
@@ -3355,7 +3357,7 @@ second inventory to maintain:
 - `GET /v1/measures/{measure-id}/conversion-support` — Inspect reviewed conversion support for one measure and frame
 - `GET /v1/data/{measure-id}/aggregate` — Aggregate an extensive or explicitly weighted measure
 - `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure onto a published crosswalk's target areas
-- `GET /v1/data/{measure-id}/series` — Retrieve one area's source-exact time series
+- `GET /v1/data/{measure-id}/series` — Retrieve a source-exact or reviewed derived time series
 - `GET /v1/data/{measure-id}/rankings` — Rank areas within one source-exact measure partition
 - `GET /v1/data/{measure-id}/change` — Rank areas by change between two periods of one measure partition
 - `GET /v1/data/{measure-id}/compare` — Compare two areas within one source-exact measure partition

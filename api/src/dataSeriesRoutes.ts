@@ -1,4 +1,9 @@
-import type { MeasureSource, PopulationObservation } from "./dataCatalog";
+import {
+	isNumericObservation,
+	type MeasureSource,
+	type PopulationObservation,
+} from "./dataCatalog";
+import { convertObservations } from "./conversion";
 import { observationsFor } from "./observationArtifacts";
 import { resolveObservations } from "./resolve/observationPlan";
 import {
@@ -8,7 +13,14 @@ import {
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
-/** One area's source-exact values across every published period of a measure. */
+const parseAnalysisGeography = (value: string) => {
+	const [geography, boundaryRelease, ...rest] = value.split("/");
+	return geography && boundaryRelease && rest.length === 0
+		? { geography, boundaryRelease }
+		: undefined;
+};
+
+/** One area's source-exact, or explicitly reviewed derived, values over time. */
 export const handleDataSeriesRoutes = ({
 	context,
 	releaseId,
@@ -46,6 +58,9 @@ export const handleDataSeriesRoutes = ({
 			"No published measure serves a series at that path.",
 		);
 	}
+	const analysisGeographyValue = parsedUrl.searchParams.get(
+		"analysisGeography",
+	);
 	if (
 		parsedUrl.searchParams.has("release") ||
 		parsedUrl.searchParams.has("conversion") ||
@@ -108,6 +123,127 @@ export const handleDataSeriesRoutes = ({
 			records: PopulationObservation[];
 		};
 	}>;
+	const firstObservations = available[0]?.observations;
+	if (!firstObservations) {
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"The measure source declares no observation periods.",
+		);
+	}
+	if (analysisGeographyValue !== null) {
+		const analysisGeography = parseAnalysisGeography(analysisGeographyValue);
+		if (!analysisGeography)
+			return problem(
+				400,
+				"Invalid Query",
+				"analysisGeography must be one geography/release pair.",
+			);
+		const inventory = context.analysisGeographyInventory;
+		const crosswalkLookup = context.crosswalkLookup;
+		if (!inventory || !crosswalkLookup)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the reviewed analysis geography inventory and crosswalks before retrieving an analysis series.",
+			);
+		const support = inventory.supports.find(
+			(candidate) =>
+				candidate.measureId === measureId &&
+				candidate.analysisGeography.geography ===
+					analysisGeography.geography &&
+				candidate.analysisGeography.boundaryRelease ===
+					analysisGeography.boundaryRelease &&
+				candidate.source.datasetId === source.datasetId &&
+				candidate.source.geography === source.sourceGeography.type &&
+				candidate.source.boundaryYear === source.sourceGeography.boundaryYear,
+		);
+		if (!support)
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					measureId,
+					areaCode,
+					analysisGeography,
+					status: "not-comparable" as const,
+					reason:
+						"No reviewed conversion is published from the requested source partition to that analysis geography.",
+				}),
+			};
+		const crosswalk = crosswalkLookup.get(support.crosswalk.id);
+		if (!crosswalk)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The reviewed crosswalk ${support.crosswalk.id} is not built.`,
+			);
+		let conversionFailure: string | undefined;
+		const series = available.flatMap(({ period, observations }) => {
+			if (!support.source.periods.includes(period)) return [];
+			if (!observations.records.every(isNumericObservation)) {
+				conversionFailure =
+					`${measureId}/${period} has non-numeric records despite its reviewed extensive conversion.`;
+				return [];
+			}
+			const converted = convertObservations(crosswalk, observations.records);
+			if (converted.status !== "converted") {
+				conversionFailure =
+					`${measureId}/${period} no longer satisfies reviewed conversion ${support.crosswalk.id}: ${converted.reason}`;
+				return [];
+			}
+			const record = converted.records.find(
+				(candidate) => candidate.areaCode === areaCode,
+			);
+			return record
+				? [
+						{
+							period,
+							...record,
+							basis: "derived" as const,
+						},
+					]
+				: [];
+		});
+		if (conversionFailure)
+			return problem(503, "Catalogue Unavailable", conversionFailure);
+		if (series.length === 0)
+			return problem(
+				404,
+				"Not Found",
+				"No reviewed converted observations match that analysis-area code.",
+			);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				measure,
+				areaCode,
+				analysisGeography,
+				status: "available" as const,
+				basis: "derived" as const,
+				source,
+				conversion: support.crosswalk,
+				provenance: {
+					atlasRelease: { id: releaseId, href: "/v1/atlas-release" },
+					transformation: {
+						status: "applied" as const,
+						note: "Each source-exact period was regrouped on the reviewed crosswalk; every returned value is derived on the named analysis geography.",
+					},
+					source: {
+						dataset: {
+							id: source.datasetId,
+							href: `/v1/datasets/${source.datasetId}`,
+						},
+						observations: {
+							artifact: firstObservations.artifact,
+							contentHash: firstObservations.contentHash,
+							periods: support.source.periods,
+						},
+					},
+				},
+				series,
+			}),
+		};
+	}
 	const records = available.flatMap(({ period, observations }) => {
 		const record = observations.records.find(
 			(candidate) => candidate.areaCode === areaCode,
@@ -119,14 +255,6 @@ export const handleDataSeriesRoutes = ({
 			404,
 			"Not Found",
 			"No published source-exact observations match that area code.",
-		);
-	}
-	const firstObservations = available[0]?.observations;
-	if (!firstObservations) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"The measure source declares no observation periods.",
 		);
 	}
 	return {
