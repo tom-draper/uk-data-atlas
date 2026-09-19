@@ -30,7 +30,7 @@ export default function ReleasesPage() {
 		>
 			<H2 id="what">What a release is</H2>
 			<P>
-				A release is identified by a hash, like `sha256:5c4aa452…`. It's
+				A release is identified by a hash, like `sha256:a1d2505a…`. It's
 				calculated from the fingerprints of every file the Atlas
 				publishes, so building from the same inputs always gives the
 				same id, and any change gives a new one.
