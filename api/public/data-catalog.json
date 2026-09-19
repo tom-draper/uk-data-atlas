@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
+	"contentHash": "sha256:5c2c9bbf60c8f85af9e5c2e88ea7b08ee263bc2a1e878bfa7bb9b94ad749637d",
 	"source": {
 		"artifact": "data/precompiled/dataset-manifest.json",
 		"manifestVersion": 1
@@ -647,13 +647,13 @@
 			"inputs": [
 				{
 					"kind": "xlsxSheet",
-					"path": "economics/income/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx#All",
+					"path": "economics/income/table-8/PROV - Home Geography Table 8.7a   Annual pay - Gross 2025.xlsx#All",
 					"bytes": 41741,
 					"sha256": "78f49ca44c28bebda9e959a2391a8c29e39ff2594730a82c81469e13d2aa19cc"
 				},
 				{
 					"kind": "xlsxSheet",
-					"path": "economics/income/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx#All",
+					"path": "economics/income/table-8/PROV - Home Geography Table 8.5a   Hourly pay - Gross 2025.xlsx#All",
 					"bytes": 42213,
 					"sha256": "86acf7224e5e5ca2a8a4cebe00a98ae13107b28028826d482057993925c922d1"
 				}
@@ -1509,6 +1509,43 @@
 			"compiled": {
 				"bytes": 335071,
 				"sha256": "775aa852c76948ad85a79d2698fc7db7a345a9df277531339af3b78b662c0933"
+			}
+		},
+		{
+			"id": "workplace-income",
+			"label": "Workplace income",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/workplacebylocalauthorityashetable7",
+			"temporalCoverage": "2025",
+			"licence": {
+				"name": "Open Government Licence v3.0",
+				"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+			},
+			"description": "Earnings estimates by local authority of workplace for England.",
+			"inputs": [
+				{
+					"kind": "xlsxSheet",
+					"path": "economics/income/table-7/PROV - Work Geography Table 7.7a   Annual pay - Gross 2025.xlsx#All",
+					"bytes": 41496,
+					"sha256": "aff6713747af47bbaf98cdbd1306c9be189f117eb95f342135c191f1aa1d8266"
+				},
+				{
+					"kind": "xlsxSheet",
+					"path": "economics/income/table-7/PROV - Work Geography Table 7.5a   Hourly pay - Gross 2025.xlsx#All",
+					"bytes": 42162,
+					"sha256": "e4ebcec620ab50e4a9d74f9a7bea5bbbbbfdd3ee1bd3902cd9e23e57e807e8df"
+				}
+			],
+			"summary": {
+				"datasetCount": 1,
+				"dataRecordCount": 335,
+				"boundaryYears": [
+					2025
+				]
+			},
+			"compiled": {
+				"bytes": 186260,
+				"sha256": "1706d8722e5abd91b29fc509956e65e9dcec631a4291f4d2f238648d0905cb59"
 			}
 		}
 	],
@@ -8779,7 +8816,7 @@
 			},
 			"notes": [
 				"Annual pay is estimated only for employees who have been in the same job for at least a year.",
-				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
+				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives. Every employee job counts, full and part time; the self-employed are not included.",
 				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
 				"Provisional results are revised when the following year's survey is published."
 			]
@@ -8825,7 +8862,99 @@
 			},
 			"notes": [
 				"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
-				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives in, not where they work. Every employee job counts, full and part time; the self-employed are not included.",
+				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 8: pay of employee jobs by the local authority the employee lives. Every employee job counts, full and part time; the self-employed are not included.",
+				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+				"Provisional results are revised when the following year's survey is published."
+			]
+		},
+		{
+			"id": "median-workplace-annual-pay",
+			"label": "Median gross annual workplace pay",
+			"valueKind": "currency",
+			"unit": "£ per year",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "median",
+				"note": "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "workplace-income",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 295,
+						"note": "Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value. No value is published for 1 of the 296 authorities: E06000053."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/median-workplace-annual-pay"
+			},
+			"notes": [
+				"Annual pay is estimated only for employees who have been in the same job for at least a year.",
+				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 7: pay of employee jobs by the local authority where the employee works. Every employee job counts, full and part time; the self-employed are not included.",
+				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
+				"Provisional results are revised when the following year's survey is published."
+			]
+		},
+		{
+			"id": "median-workplace-hourly-pay",
+			"label": "Median gross hourly workplace pay",
+			"valueKind": "currency",
+			"unit": "£ per hour",
+			"aggregation": {
+				"kind": "non-aggregatable",
+				"statistic": "median",
+				"note": "A median of authorities' medians is not the median pay of their combined residents, and no weight recovers it.",
+				"available": false
+			},
+			"sources": [
+				{
+					"datasetId": "workplace-income",
+					"periods": [
+						"2025"
+					],
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"coverage": {
+						"kind": "partial",
+						"countries": [
+							"GB-ENG"
+						],
+						"recordCount": 295,
+						"note": "Published source records cover English authorities only. An authority whose estimate the publisher suppressed as unreliable has no value. No value is published for 1 of the 296 authorities: E06000053."
+					}
+				}
+			],
+			"availability": {
+				"sourceExact": true,
+				"conversion": false,
+				"aggregation": false
+			},
+			"links": {
+				"data": "/v1/data/median-workplace-hourly-pay"
+			},
+			"notes": [
+				"Gross hourly pay includes overtime pay and overtime hours; the publisher's separate table excluding overtime is not served.",
+				"Annual Survey of Hours and Earnings, 2025 provisional results, Table 7: pay of employee jobs by the local authority where the employee works. Every employee job counts, full and part time; the self-employed are not included.",
 				"Gross pay, before tax and other deductions. The mean and percentiles the table also publishes are not served.",
 				"Provisional results are revised when the following year's survey is published."
 			]

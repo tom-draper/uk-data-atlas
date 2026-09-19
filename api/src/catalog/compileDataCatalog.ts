@@ -57,6 +57,7 @@ export type DataCatalogInputs = {
 	homelessness: string;
 	roadCollisions: string;
 	income: string;
+	workplaceIncome: string;
 	crime: string;
 	airQuality: string;
 	unemployment: string;
@@ -99,6 +100,7 @@ export const compileDataCatalog = ({
 	homelessness: homelessnessPath,
 	roadCollisions: roadCollisionsPath,
 	income: incomePath,
+	workplaceIncome: workplaceIncomePath,
 	crime: crimePath,
 	airQuality: airQualityPath,
 	unemployment: unemploymentPath,
@@ -155,6 +157,9 @@ export const compileDataCatalog = ({
 		throw new Error(`${manifestPath} has duplicate dataset outputs`);
 	}
 	const catalogManifest: CatalogManifest = { manifestPath, datasets };
+	const hasWorkplaceIncome = datasets.some(
+		(dataset) => dataset.id === "workplace-income",
+	);
 	const population = compilePopulation(
 		catalogManifest,
 		populationPath,
@@ -207,6 +212,11 @@ export const compileDataCatalog = ({
 			populationCodes,
 		),
 		...compileIncome(catalogManifest, incomePath, england2025),
+		...(hasWorkplaceIncome
+			? compileIncome(catalogManifest, workplaceIncomePath, england2025, {
+					datasetId: "workplace-income",
+				})
+			: []),
 		...compileCrime(catalogManifest, crimePath),
 	];
 	const unemployment = compileUnemployment(

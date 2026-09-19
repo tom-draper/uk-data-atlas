@@ -951,6 +951,7 @@ const writeSources = (
 		homelessness,
 		roadCollisions,
 		income,
+		workplaceIncome: income,
 		crime,
 		unemployment,
 		airQuality,

@@ -95,11 +95,10 @@ const readZip = (path: string): Promise<string> => {
 // Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
 // workbook can stay in data/ exactly as published and no extracted copy has to
 // be committed alongside it.
-const readXlsxSheet = async (
-	path: string,
+const readXlsxSheetFile = async (
+	fullPath: string,
 	sheetName: string,
 ): Promise<string> => {
-	const fullPath = join(SOURCE_DATA, path);
 	const entry = (name: string) =>
 		execSync(`unzip -p "${fullPath}" "${name}"`, {
 			maxBuffer: 512 * 1024 * 1024,
@@ -126,6 +125,9 @@ const readXlsxSheet = async (
 		sheetRows(entry(sheetPath), sharedStrings, percentStyleIds),
 	);
 };
+
+const readXlsxSheet = (path: string, sheetName: string) =>
+	readXlsxSheetFile(join(SOURCE_DATA, path), sheetName);
 
 // ODS source files are never exposed by the application. The child-poverty
 // loader only needs its worksheet XML, which is then reduced to compact JSON.
