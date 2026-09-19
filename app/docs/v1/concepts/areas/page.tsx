@@ -83,12 +83,14 @@ export default function AreasPage() {
 					"`2024-07-uk-bgc` is the July 2024 release covering the UK.",
 					"The middle part is the coverage, such as `uk`, `gb`, `ew` (England and Wales), `en` or `sc`.",
 					"The last part is the publisher's boundary type: `bgc` is generalised and clipped to the coastline, and `bfc` is full resolution.",
+					"A year can have more than one release. Use the full id, including its month and coverage, when you need one exact set of shapes.",
 				]}
 			/>
 			<Callout tone="tip">
 				Not sure which release to use for a date? [Find boundaries for a
 				date](/docs/v1/reference/geography/resolve-boundary-release-for-date)
-				picks the right one.
+				picks the right one. The [geography pages](/docs/v1/geographies)
+				list every available release and its coverage.
 			</Callout>
 
 			<H2 id="identity">Naming an exact area</H2>

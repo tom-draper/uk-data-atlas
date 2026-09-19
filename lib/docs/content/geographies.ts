@@ -77,13 +77,13 @@ export const GEOGRAPHIES: Record<string, GeographyContent> = {
 		slug: "westminster-constituencies",
 		title: "Westminster constituencies",
 		group: "electoral",
-		intro: "The areas that each elect a Member of Parliament to the House of Commons. Their boundaries were redrawn for the 2024 general election, and the Atlas holds releases from before and after.",
+		intro: "The areas that each elect a Member of Parliament to the House of Commons. The Atlas holds release history from 2015, including boundaries from before and after the 2024 general-election redraw.",
 	},
 	ward: {
 		slug: "wards",
 		title: "Wards",
 		group: "electoral",
-		intro: "Electoral wards, the areas that elect local councillors. They're redrawn often, so the Atlas holds a release for most years since 2016.",
+		intro: "Electoral wards, the areas that elect local councillors. They're redrawn often, so the Atlas holds a range of historical releases from 2011 onward.",
 	},
 	countyElectoralDivision: {
 		slug: "county-electoral-divisions",
