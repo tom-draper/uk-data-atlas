@@ -1,0 +1,26 @@
+{
+	"id": "activity",
+	"title": "Adult social care activity in England",
+	"description": "Selected local-authority adult social care activity tables for 2024-25, covering requests for support, short-term support, long-term support and reviews.",
+	"topics": ["health", "adult social care", "local government"],
+	"publisher": "Department of Health and Social Care",
+	"sourceUrl": "https://www.gov.uk/government/statistics/adult-social-care-activity-report-england-2024-to-2025",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-19",
+	"temporalCoverage": "2024-25",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2025,
+		"countries": ["GB-ENG"]
+	},
+	"files": [
+		{
+			"path": "asc-activity-report-england-2024-to-2025-data-tables-updated-june-2026.ods",
+			"role": "source",
+			"note": "Selected published data tables. The detailed accompanying CSV files are substantially larger and are not included here."
+		}
+	]
+}
