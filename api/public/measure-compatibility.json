@@ -1,17 +1,20 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:088942aca1dd6bc105a2d11c563a8e5c3c117d09700835817fa341d76bc63bae",
+	"contentHash": "sha256:05d68bd46f6fba9e2b062c1e7f4a73047bdd6a0607e8b72b44bbb54ff4c1fe21",
 	"inputs": {
-		"dataCatalog": "sha256:5c2c9bbf60c8f85af9e5c2e88ea7b08ee263bc2a1e878bfa7bb9b94ad749637d",
+		"dataCatalog": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
 		"boundaryRegistry": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
 		"measureObservations": {
+			"adult-social-care-activity/localAuthority/2025": "sha256:97aa931a0fd576e3113108a245393be0f1e12de10502bb19e10ce1dfea913152",
+			"adult-social-care-outcomes/localAuthority/2025": "sha256:7ed05a6065f188c93d8268cd33e4e13de7174f137a37ac4b782fa2adca1a3b75",
 			"air-quality-grid-cells/localAuthority/2024": "sha256:521134e2174cf4ca62658cd8588bf89df0b26e1a71c2e128190b9aa13a1fa454",
 			"broadband-full-fibre-availability/localAuthority/2024": "sha256:adcae0059870335e3a59ebe6af47078bec1664a5d31d05bd75753f3a7439ab4d",
 			"broadband-gigabit-availability/localAuthority/2024": "sha256:fe88864a232bf7ad1e3c4dff26ff0b53f0135423b0b8d447070f9b6fdd2d30ec",
 			"broadband-superfast-availability/localAuthority/2024": "sha256:243141fab55c79b0592d9c646a0a282cbac6f10adbf226b8ceb28132e9390fc5",
 			"broadband-ultrafast-availability/localAuthority/2024": "sha256:df11d8eb2fe0d96b5075d1e21287c569ad9a4c32e611a627c0c32786f0759a99",
+			"business-activity/localAuthority/2025": "sha256:30a941789f58edbecf87e8d53ed6b83f86c61d325544ef46562f888d57833500",
 			"car-availability-none/localAuthority/2023": "sha256:8878a28b3af4dadf0462248921f347f2ba32f7f6dc668207e13ba545d589b123",
 			"car-availability-one/localAuthority/2023": "sha256:37389ecc2d794b56c1fdbea1aa017426948bd95f2682b618aedba17223327500",
 			"car-availability-three-or-more/localAuthority/2023": "sha256:4bf1b294b5251efb90e55ad39bfd764e0e63b893791f6f47ed8acd4f98593a52",
@@ -19,6 +22,7 @@
 			"car-availability-two/localAuthority/2023": "sha256:adad4e413f97ea41d283144d57c33266a18e21e09f5143178006223887910eb2",
 			"claimant-count-16-to-24/localAuthority/2024": "sha256:7093e47efacadacecd7cfff7849c81366d1bb29be00e5e97109173dbf929fcd7",
 			"claimant-count/localAuthority/2024": "sha256:7a82fb1dac37f30966c2592af704efa6043b6ff1489bc76b10280cb724bd4921",
+			"council-tax/localAuthority/2026": "sha256:e5cecaee337d50f46346ac3511dee99a3528cd1bce60486b82b629f3b4144d20",
 			"crime-bicycle-theft/communitySafetyPartnership/2023": "sha256:8e84f5a659a7a838e6359f1a139f41256cb31ebc344f0c25d7275a80430d285e",
 			"crime-burglary/communitySafetyPartnership/2023": "sha256:815154678d09c6593a86fd31c61ce39df01894aa1189831eff2408863a307eac",
 			"crime-criminal-damage-and-arson/communitySafetyPartnership/2023": "sha256:633295ffc2a0f628ad54529bb0d50b273a4137c53d2a922e8cd85701cd3da2d4",
@@ -42,6 +46,7 @@
 			"crime-violence-against-the-person/communitySafetyPartnership/2023": "sha256:ee49d971ab747ac82e53a082115b2c807044e62b8960b74218356836f34f69cc",
 			"crime-violence-with-injury/communitySafetyPartnership/2023": "sha256:49e643c012842ae296213e2f914878b0b2455d323f560d1c90616b6bc3421f0c",
 			"crime-violence-without-injury/communitySafetyPartnership/2023": "sha256:c4b4358ff791e5ca3f1cd241e34567332de856de3843e761095d9c50820b8e5c",
+			"electric-vehicle-chargers/localAuthority/2026": "sha256:9c194bc6c61c73693074a2da269a46a9b0f813521e19743267618d062f23b6bd",
 			"electricity-consumption-domestic/localAuthority/2025": "sha256:f9426346cd54749f52efe3e989259ba6e1f87eff847ea7d3fcca0bc9169740e2",
 			"electricity-consumption-non-domestic/localAuthority/2025": "sha256:e4ce8d77d3f4f595898b04a5379aa1e25723ac1c85875ff3f3afaa68a7dd3e81",
 			"electricity-consumption/localAuthority/2025": "sha256:b8cc060dcb820c35405e83cfa44b4cef72097ef2fd847544a5e35ce95852aba6",
@@ -249,14 +254,17 @@
 			"local-election-winning-party/ward/2023": "sha256:d3354c4937e5c3d3a6ac3fa90fc0ae867b52f5308c2f30a55d96089032598b03",
 			"local-election-winning-party/ward/2024": "sha256:b48b1e0aaaa09371827fe874df6b360a7d3797a4e88348ff90317cddaa465c79",
 			"local-election-winning-party/ward/2025": "sha256:48840eb76f7d99d30f4b4ab58ad5e60ce4b2eadcc7d3f1b2a1ee2a17c6437c02",
+			"local-government-finance/localAuthority/2026": "sha256:7eafe883b1b050ebdede0d9f81e2815d29cd1bb3c12674de1630868160998ff4",
 			"median-annual-pay/localAuthority/2025": "sha256:f3bbbdd0663c126fc6906cc1228901d2d82e06323e8438a406fddce61fd8d575",
 			"median-hourly-pay/localAuthority/2025": "sha256:2f12b78aa9e194bbc08b11c899bdfffdbd3f608ddf1157e977721f6b234ec45d",
 			"median-workplace-annual-pay/localAuthority/2025": "sha256:1ad7e380c82553b387a2e7409173a596500fbcc166fa99824ac2b99795c5d11d",
 			"median-workplace-hourly-pay/localAuthority/2025": "sha256:1fcff5bd3182700b5f49ad2eb62e06979c00b1e02739fe95712dadc63fc1cbae",
 			"mobile-4g-coverage/localAuthority/2024": "sha256:7a27702632b9debc547096b8420a9c8267a4c475f728c7d69ea53af582188e00",
 			"mobile-5g-coverage/localAuthority/2024": "sha256:f53f73c9bf58c2866fb83170aa84c9f30d46e0330e4418188ef962d1fa1aacf3",
+			"net-additional-dwellings/localAuthority/2025": "sha256:936e559971c43f0a5df8dbbdfc9e33a2eefd44900614d97f673420589ca4041c",
 			"nimdm-rank/superOutputArea/2011": "sha256:88111405f0658ce03e1367b6f13f03f5511b147ba6f4c48c649a78a07cc21c1c",
 			"no2-background-mean/localAuthority/2024": "sha256:7adfb60a58219c850a970725ac92f11090dfb51355af51b2cdb4c930a9d208d9",
+			"planning-applications/localAuthority/2025": "sha256:77c3d30b344f06591f4f61009b827a9805821f23def7727b3ec60b60dedd112c",
 			"pm10-background-mean/localAuthority/2024": "sha256:1eeb02a339bf2eab6a6f3086368203c964150e174c852d7b5051060b867949e0",
 			"pm25-background-mean/localAuthority/2024": "sha256:05ea9f34f17bcab62ef68a5e55b2fefcde27fc77f5523f545d4201c89175487d",
 			"pm25-population-weighted-anthropogenic/localAuthority/2024": "sha256:02055e23ef645620d8478b114768670375be0461c954a8809187ceb9a7f42aa4",
@@ -298,6 +306,7 @@
 			"unemployment-level/localAuthority/2021": "sha256:af7f726398550844b07c232910ddd7e1d21b5f0d0a93f9194ea2babfb90e7926",
 			"unemployment-rate/localAuthority/2019": "sha256:d3b21622b43f26e1d11d2100330d8fa88a80d0ed52089c04fc43a03777d4d00a",
 			"unemployment-rate/localAuthority/2021": "sha256:1e1680ad5f54bb9131a8cdf98ad9dc90d66ef75d460338a7cacedb2e5c13d962",
+			"waste/localAuthority/2025": "sha256:ae46fb3d86ec0c80d8bff8760aeac9ac05c062701e61e24209a66d9b39b26b17",
 			"wimd-decile/lsoa/2011": "sha256:b26d55f31599a26c3c54ee731ae25d9f884e2a3ba367bd886fcc2b22e2c527c0",
 			"wimd-rank/lsoa/2011": "sha256:2b2d1cf909f6bcd942f22e3e898adc183aa454dfce580475feb01ffced876654"
 		},
@@ -319,6 +328,7 @@
 			"localAuthority/2024-12-uk-bgc": "sha256:31265967f1dfba88b929c7a0656f06d8a0d544c118fdd9d201e1b4b8aecec6b1",
 			"localAuthority/2025-05-uk-bgc-v2": "sha256:5c832fa744ee66475a4f0d0cda3faea14eadd039abb6e9223e248e8445ac608a",
 			"localAuthority/2025-12-uk-bgc": "sha256:53eeb1c7f828f03e50c8f66081d88019ec9f9a31b2a56b41d2b3eff891e40b24",
+			"localAuthority/2026-05-uk-bgc": "sha256:bf3b8365d5ae3b30c1d34059f4eb573f92632351c52b956f8f72d13bf3891ce1",
 			"lsoa/2011-12-ew-bgc-v3": "sha256:f4e0776a1192b05ac9f672b11aa54de56f4fa810ac70fca271da7fdf359704cf",
 			"lsoa/2011-12-w-bgc": "sha256:f5754d1eef26a50551d62f6b0240d60e4f99989e2d1c9fda24b3886b0fa46e5a",
 			"lsoa/2021-12-ew-bgc-v5": "sha256:c6fa67b6497572a7d37d49265e2dedd86e18b195733f48b1adb52631e7c8bb3d",
@@ -15358,6 +15368,711 @@
 						{
 							"boundaryRelease": "2024-12-uk-bgc",
 							"title": "Local authority districts, December 2024 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "exact-code-set",
+							"sourceCodeCount": 361,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 361,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 0,
+							"candidateOnlyCodeSample": []
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "business-activity",
+			"sources": [
+				{
+					"datasetId": "business-activity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 359,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 359,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 2,
+							"candidateOnlyCodeSample": [
+								"E08000038",
+								"E08000039"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 359,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 359,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 2,
+							"candidateOnlyCodeSample": [
+								"E08000038",
+								"E08000039"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "net-additional-dwellings",
+			"sources": [
+				{
+					"datasetId": "net-additional-dwellings",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2024-25"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 283,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 283,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 78,
+							"candidateOnlyCodeSample": [
+								"E06000058",
+								"E06000059",
+								"E06000060",
+								"E06000061",
+								"E06000062",
+								"E06000063",
+								"E06000064",
+								"E06000065",
+								"E06000066",
+								"E07000244",
+								"E07000245",
+								"E08000038",
+								"E08000039",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 283,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 283,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 78,
+							"candidateOnlyCodeSample": [
+								"E06000058",
+								"E06000059",
+								"E06000060",
+								"E06000061",
+								"E06000062",
+								"E06000063",
+								"E06000064",
+								"E06000065",
+								"E06000066",
+								"E07000244",
+								"E07000245",
+								"E08000038",
+								"E08000039",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "local-government-finance",
+			"sources": [
+				{
+					"datasetId": "local-government-finance",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2026
+					},
+					"periods": [
+						"2026-27"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2026-05-uk-bgc",
+							"title": "Local authority districts, May 2026 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 287,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 287,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 74,
+							"candidateOnlyCodeSample": [
+								"E06000025",
+								"E06000063",
+								"E07000069",
+								"E07000072",
+								"E07000209",
+								"E07000222",
+								"E08000026",
+								"E08000027",
+								"E09000011",
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "council-tax",
+			"sources": [
+				{
+					"datasetId": "council-tax",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2026
+					},
+					"periods": [
+						"2026-27"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2026-05-uk-bgc",
+							"title": "Local authority districts, May 2026 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 296,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 296,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 65,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "waste",
+			"sources": [
+				{
+					"datasetId": "waste",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2024-25"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 196,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 196,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 165,
+							"candidateOnlyCodeSample": [
+								"E06000001",
+								"E06000002",
+								"E06000003",
+								"E06000004",
+								"E06000005",
+								"E06000006",
+								"E06000007",
+								"E06000008",
+								"E06000009",
+								"E06000010",
+								"E06000011",
+								"E06000012",
+								"E06000013",
+								"E06000014",
+								"E06000015",
+								"E06000016",
+								"E06000017",
+								"E06000018",
+								"E06000019",
+								"E06000020"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 196,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 196,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 165,
+							"candidateOnlyCodeSample": [
+								"E06000001",
+								"E06000002",
+								"E06000003",
+								"E06000004",
+								"E06000005",
+								"E06000006",
+								"E06000007",
+								"E06000008",
+								"E06000009",
+								"E06000010",
+								"E06000011",
+								"E06000012",
+								"E06000013",
+								"E06000014",
+								"E06000015",
+								"E06000016",
+								"E06000017",
+								"E06000018",
+								"E06000019",
+								"E06000020"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "adult-social-care-activity",
+			"sources": [
+				{
+					"datasetId": "adult-social-care-activity",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2024-25"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 129,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 129,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 232,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E07000008",
+								"E07000009",
+								"E07000010",
+								"E07000011",
+								"E07000012",
+								"E07000032",
+								"E07000033",
+								"E07000034",
+								"E07000035",
+								"E07000036",
+								"E07000037",
+								"E07000038",
+								"E07000039",
+								"E07000040",
+								"E07000041",
+								"E07000042",
+								"E07000043",
+								"E07000044",
+								"E07000045"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 129,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 129,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 232,
+							"candidateOnlyCodeSample": [
+								"E06000053",
+								"E07000008",
+								"E07000009",
+								"E07000010",
+								"E07000011",
+								"E07000012",
+								"E07000032",
+								"E07000033",
+								"E07000034",
+								"E07000035",
+								"E07000036",
+								"E07000037",
+								"E07000038",
+								"E07000039",
+								"E07000040",
+								"E07000041",
+								"E07000042",
+								"E07000043",
+								"E07000044",
+								"E07000045"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "adult-social-care-outcomes",
+			"sources": [
+				{
+					"datasetId": "adult-social-care-outcomes",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2024-25"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 128,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 128,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 233,
+							"candidateOnlyCodeSample": [
+								"E06000015",
+								"E06000053",
+								"E07000008",
+								"E07000009",
+								"E07000010",
+								"E07000011",
+								"E07000012",
+								"E07000032",
+								"E07000033",
+								"E07000034",
+								"E07000035",
+								"E07000036",
+								"E07000037",
+								"E07000038",
+								"E07000039",
+								"E07000040",
+								"E07000041",
+								"E07000042",
+								"E07000043",
+								"E07000044"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 128,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 128,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 233,
+							"candidateOnlyCodeSample": [
+								"E06000015",
+								"E06000053",
+								"E07000008",
+								"E07000009",
+								"E07000010",
+								"E07000011",
+								"E07000012",
+								"E07000032",
+								"E07000033",
+								"E07000034",
+								"E07000035",
+								"E07000036",
+								"E07000037",
+								"E07000038",
+								"E07000039",
+								"E07000040",
+								"E07000041",
+								"E07000042",
+								"E07000043",
+								"E07000044"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "planning-applications",
+			"sources": [
+				{
+					"datasetId": "planning-applications",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2026-Q1"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 296,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 296,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 65,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 296,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 296,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 65,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011",
+								"S12000005",
+								"S12000006",
+								"S12000008",
+								"S12000010",
+								"S12000011",
+								"S12000013",
+								"S12000014",
+								"S12000017",
+								"S12000018"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				}
+			]
+		},
+		{
+			"measureId": "electric-vehicle-chargers",
+			"sources": [
+				{
+					"datasetId": "electric-vehicle-chargers",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2026
+					},
+					"periods": [
+						"2026-07-01"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2026-05-uk-bgc",
+							"title": "Local authority districts, May 2026 (United Kingdom, generalised, clipped)",
 							"coverageCountries": [
 								"GB-ENG",
 								"GB-NIR",

@@ -41,3 +41,4 @@ export * from "./schoolPerformance";
 export * from "./nhsWaiting";
 export * from "./unemployment";
 export * from "./homelessness";
+export * from "./indicator";

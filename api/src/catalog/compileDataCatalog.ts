@@ -36,6 +36,7 @@ import { compileRegionalGdp } from "./regionalGdp";
 import { compileEnergyConsumption } from "./energyConsumption";
 import { compilePopulation } from "./population";
 import { withNationalVariants } from "./nationalVariants";
+import { compileNewDatasets, NEW_DATASET_MEASURES } from "./newDatasets";
 
 /**
  * The compiled files the catalogue is built from, by name. Named rather than
@@ -77,6 +78,15 @@ export type DataCatalogInputs = {
 	regionalGdpItl3: string;
 	electricityConsumption: string;
 	gasConsumption: string;
+	businessActivity?: string;
+	netAdditionalDwellings?: string;
+	localGovernmentFinance?: string;
+	councilTax?: string;
+	waste?: string;
+	adultSocialCareActivity?: string;
+	adultSocialCareOutcomes?: string;
+	planningApplications?: string;
+	electricVehicleChargers?: string;
 };
 
 /**
@@ -120,6 +130,15 @@ export const compileDataCatalog = ({
 	regionalGdpItl3: regionalGdpItl3Path,
 	electricityConsumption: electricityConsumptionPath,
 	gasConsumption: gasConsumptionPath,
+	businessActivity: businessActivityPath,
+	netAdditionalDwellings: netAdditionalDwellingsPath,
+	localGovernmentFinance: localGovernmentFinancePath,
+	councilTax: councilTaxPath,
+	waste: wastePath,
+	adultSocialCareActivity: adultSocialCareActivityPath,
+	adultSocialCareOutcomes: adultSocialCareOutcomesPath,
+	planningApplications: planningApplicationsPath,
+	electricVehicleChargers: electricVehicleChargersPath,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -229,6 +248,24 @@ export const compileDataCatalog = ({
 	indicatorObservations.push(
 		...compileAirQuality(catalogManifest, airQualityPath, populationCodes),
 	);
+	const newDatasetPaths = {
+		businessActivity: businessActivityPath,
+		netAdditionalDwellings: netAdditionalDwellingsPath,
+		localGovernmentFinance: localGovernmentFinancePath,
+		councilTax: councilTaxPath,
+		waste: wastePath,
+		adultSocialCareActivity: adultSocialCareActivityPath,
+		adultSocialCareOutcomes: adultSocialCareOutcomesPath,
+		planningApplications: planningApplicationsPath,
+		electricVehicleChargers: electricVehicleChargersPath,
+	};
+	if (Object.values(newDatasetPaths).every((path): path is string => !!path))
+		indicatorObservations.push(
+			...compileNewDatasets(
+				catalogManifest,
+				NEW_DATASET_MEASURES(newDatasetPaths),
+			),
+		);
 	const indicatorMeasures = mergeMeasurePartitions(indicatorObservations);
 
 	const density = compilePopulationDensity(

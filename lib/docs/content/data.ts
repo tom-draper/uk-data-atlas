@@ -70,8 +70,22 @@ export const DATA_PAGES: DataPage[] = [
 		slug: "pay",
 		title: "Pay",
 		topic: "work",
-		datasets: ["income"],
-		intro: "Median annual and hourly pay for employees in each English local authority, by where they live.",
+		datasets: ["income", "workplace-income"],
+		intro: "Median annual and hourly pay for employees in each English local authority, both by where workers live and where their jobs are located.",
+	},
+	{
+		slug: "businesses",
+		title: "Businesses",
+		topic: "work",
+		datasets: ["business-activity"],
+		intro: "VAT and/or PAYE based enterprises in each UK local authority, published by broad industry group.",
+	},
+	{
+		slug: "local-government-finance",
+		title: "Local government finance",
+		topic: "work",
+		datasets: ["local-government-finance", "council-tax"],
+		intro: "English local-authority revenue budgets and the council tax levels billing authorities set for 2026-27.",
 	},
 	{
 		slug: "economic-output",
@@ -111,6 +125,20 @@ export const DATA_PAGES: DataPage[] = [
 		topic: "housing",
 		datasets: ["homelessness"],
 		intro: "Households living in temporary accommodation in each English local authority, including households with children and the number of children.",
+	},
+	{
+		slug: "housing-supply-and-planning",
+		title: "Housing supply and planning",
+		topic: "housing",
+		datasets: ["net-additional-dwellings", "planning-applications"],
+		intro: "New homes added and planning applications received by English local authorities.",
+	},
+	{
+		slug: "adult-social-care",
+		title: "Adult social care",
+		topic: "people",
+		datasets: ["adult-social-care-activity", "adult-social-care-outcomes"],
+		intro: "Adult social care activity and the care-related quality-of-life outcome score reported by English councils.",
 	},
 	{
 		slug: "deprivation",
@@ -155,6 +183,13 @@ export const DATA_PAGES: DataPage[] = [
 		intro: "Provisional counts of reported road collisions in the first half of 2025, by how serious the worst injury was, for local authorities in Great Britain and small areas in England and Wales.",
 	},
 	{
+		slug: "electric-vehicle-chargers",
+		title: "Electric vehicle chargers",
+		topic: "transport",
+		datasets: ["electric-vehicle-chargers"],
+		intro: "Public electric vehicle charger counts by UK local authority.",
+	},
+	{
 		slug: "broadband",
 		title: "Broadband",
 		topic: "connectivity",
@@ -188,6 +223,13 @@ export const DATA_PAGES: DataPage[] = [
 		topic: "environment",
 		datasets: ["electricity-consumption", "gas-consumption"],
 		intro: "Metered electricity and gas used in each Great Britain local authority from 2015 to 2024, split between domestic and non-domestic meters. These are meter readings rather than a model, so they add up over areas exactly.",
+	},
+	{
+		slug: "waste",
+		title: "Waste and recycling",
+		topic: "environment",
+		datasets: ["waste"],
+		intro: "Local-authority collected waste in England, including material sent for recycling, composting and reuse.",
 	},
 	{
 		slug: "crime",

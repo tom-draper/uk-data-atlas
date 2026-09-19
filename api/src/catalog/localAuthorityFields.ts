@@ -106,6 +106,7 @@ export const localAuthorityFieldWithGaps = (
 	 * records under `lsoas`, in the same dataset.
 	 */
 	table: "data" | "partnerships" | "lsoas" = "data",
+	geography: SourceGeography["type"] = "localAuthority",
 ) => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const entries = Object.entries(source);
@@ -113,12 +114,9 @@ export const localAuthorityFieldWithGaps = (
 		throw new Error(`${path}: expected a single period`);
 	const [[period, value]] = entries as [[string, unknown]];
 	const entry = object(value, `${path}.${period}`);
-	if (
-		entry.boundaryYear !== boundaryYear ||
-		entry.boundaryType !== "localAuthority"
-	)
+	if (entry.boundaryYear !== boundaryYear || entry.boundaryType !== geography)
 		throw new Error(
-			`${path}.${period}: expected localAuthority data on the ${boundaryYear} code vintage`,
+			`${path}.${period}: expected ${geography} data on the ${boundaryYear} code vintage`,
 		);
 	const records: PopulationObservation[] = [];
 	const absent: string[] = [];

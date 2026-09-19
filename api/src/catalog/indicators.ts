@@ -88,6 +88,7 @@ export const publishIndicators = (
 			spec.boundaryYear,
 			spec.isAuthority,
 			spec.table,
+			geography === "localPlanningAuthority" ? geography : undefined,
 		);
 		let records = indicator.status
 			? read.records.map((record) => ({

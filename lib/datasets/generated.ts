@@ -5,14 +5,19 @@ import type {
 	CatalogueDatasetType,
 } from "../data/catalog/generated";
 import type { ChartDatasetDefinition } from "./types";
+import { adultSocialCareActivityDefinition } from "./adultSocialCareActivity";
+import { adultSocialCareOutcomesDefinition } from "./adultSocialCareOutcomes";
 import { airQualityDefinition } from "./airQuality";
 import { brexitDefinition } from "./brexit";
 import { brexitConstituencyDefinition } from "./brexitConstituency";
 import { broadbandDefinition } from "./broadband";
+import { businessActivityDefinition } from "./businessActivity";
 import { carAvailabilityDefinition } from "./carAvailability";
 import { childPovertyDefinition } from "./childPoverty";
 import { claimantCountDefinition } from "./claimantCount";
+import { councilTaxDefinition } from "./councilTax";
 import { crimeDefinition } from "./crime";
+import { electricVehicleChargersDefinition } from "./electricVehicleChargers";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { generalElectionDefinition } from "./generalElection";
@@ -23,9 +28,12 @@ import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
 import { localElectionDefinition } from "./localElection";
+import { localGovernmentFinanceDefinition } from "./localGovernmentFinance";
 import { mobileCoverageDefinition } from "./mobileCoverage";
+import { netAdditionalDwellingsDefinition } from "./netAdditionalDwellings";
 import { nhsWaitingDefinition } from "./nhsWaiting";
 import { nimdmDefinition } from "./nimdm";
+import { planningApplicationsDefinition } from "./planningApplications";
 import { populationDefinition } from "./population";
 import { qualificationDefinition } from "./qualification";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
@@ -33,6 +41,7 @@ import { schoolPerformanceDisadvantageDefinition } from "./schoolPerformanceDisa
 import { simdDefinition } from "./simd";
 import { travelToWorkDefinition } from "./travelToWork";
 import { unemploymentDefinition } from "./unemployment";
+import { wasteDefinition } from "./waste";
 import { wimdDefinition } from "./wimd";
 
 export type ChartDatasetType = CatalogueDatasetType;
@@ -41,14 +50,19 @@ export type ChartDatasetRecords = CatalogueDatasetRecords;
 
 export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDataset>[] =
 	[
+		adultSocialCareActivityDefinition,
+		adultSocialCareOutcomesDefinition,
 		airQualityDefinition,
 		brexitDefinition,
 		brexitConstituencyDefinition,
 		broadbandDefinition,
+		businessActivityDefinition,
 		carAvailabilityDefinition,
 		childPovertyDefinition,
 		claimantCountDefinition,
+		councilTaxDefinition,
 		crimeDefinition,
+		electricVehicleChargersDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,
 		generalElectionDefinition,
@@ -59,9 +73,12 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		incomeDefinition,
 		lifeExpectancyDefinition,
 		localElectionDefinition,
+		localGovernmentFinanceDefinition,
 		mobileCoverageDefinition,
+		netAdditionalDwellingsDefinition,
 		nhsWaitingDefinition,
 		nimdmDefinition,
+		planningApplicationsDefinition,
 		populationDefinition,
 		qualificationDefinition,
 		schoolPerformanceDefinition,
@@ -69,5 +86,6 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		simdDefinition,
 		travelToWorkDefinition,
 		unemploymentDefinition,
+		wasteDefinition,
 		wimdDefinition,
 	];

@@ -13,6 +13,7 @@ import {
 	collectBoundaryRecords,
 } from "./numeric";
 import { aggregateNHSWaiting } from "./health";
+import { aggregateIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import {
 	aggregateCrime,
@@ -212,4 +213,9 @@ export const unemploymentAggregation = boundaryAggregation(
 	"unemployment",
 	"localAuthority",
 	aggregateUnemployment,
+);
+export const indicatorAggregation = numericAggregation(
+	"indicator",
+	"any",
+	aggregateIndicator,
 );

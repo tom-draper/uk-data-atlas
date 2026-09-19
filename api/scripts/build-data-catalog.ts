@@ -45,8 +45,19 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		regionalGdpItl3: precompiled("regional-gdp-itl3.json"),
 		electricityConsumption: precompiled("electricity-consumption.json"),
 		gasConsumption: precompiled("gas-consumption.json"),
+		businessActivity: precompiled("business-activity.json"),
+		netAdditionalDwellings: precompiled("net-additional-dwellings.json"),
+		localGovernmentFinance: precompiled("local-government-finance.json"),
+		councilTax: precompiled("council-tax.json"),
+		waste: precompiled("waste.json"),
+		adultSocialCareActivity: precompiled("adult-social-care-activity.json"),
+		adultSocialCareOutcomes: precompiled("adult-social-care-outcomes.json"),
+		planningApplications: precompiled("planning-applications.json"),
+		electricVehicleChargers: precompiled("electric-vehicle-chargers.json"),
 	};
-	const missing = Object.values(inputs).filter((path) => !existsSync(path));
+	const missing = Object.values(inputs).filter(
+		(path): path is string => !path || !existsSync(path),
+	);
 	if (missing.length > 0) {
 		throw new Error(
 			`Build the website's precompiled data before the API data catalogue. Missing: ${missing.join(", ")}`,
