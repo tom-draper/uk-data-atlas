@@ -760,10 +760,10 @@ test("keeps the resolution contract's one exception the only one", () => {
 });
 
 /**
- * The analysis contract specifies Phase 2 and builds nothing, but it decides
- * what may be converted from the semantics a measure already declares. If those
- * are renamed the rule stops meaning anything, so the names are checked, and so
- * is the claim that none of it is served yet.
+ * The analysis contract decides what may be converted from the semantics a
+ * measure already declares. If those are renamed the rule stops meaning
+ * anything, so the names are checked, along with the deliberately small set
+ * of routes that publish reviewed support and a plan.
  */
 const analysisContract = (() => {
 	const heading = "\n## Analysis contract\n";
@@ -806,17 +806,17 @@ test("holds the analysis contract to the semantics it rules on", () => {
 	);
 });
 
-test("keeps the analysis contract's routes unbuilt", () => {
+test("serves the analysis contract's reviewed-support routes", () => {
 	const proposed = [
-		...analysisContract.matchAll(/^not built: GET (\/v1\/\S*)$/gm),
+		...analysisContract.matchAll(/^available: GET (\/v1\/\S*)$/gm),
 	].map((match) => match[1]!.split("?")[0]!);
 	assert.equal(proposed.length, 3);
 	assert.deepEqual(
 		proposed.filter(
-			(path) => !isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
+			(path) => isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
 		),
 		[],
-		"an analysis route is served; the contract still says it is not",
+		"an available analysis route is not served",
 	);
 });
 

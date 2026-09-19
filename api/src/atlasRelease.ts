@@ -68,6 +68,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	},
 	{ id: "geometry-sources", path: "geometry-sources.json" },
 	{ id: "crosswalk-inventory", path: "crosswalk-inventory.json" },
+	{ id: "analysis-geographies", path: "analysis-geographies.json" },
 	{ id: "relationship-paths", path: "relationship-paths.json" },
 	{ id: "relationship-candidates", path: "relationship-candidates.json" },
 	{ id: "geography-inventory", path: "geography-inventory.json" },

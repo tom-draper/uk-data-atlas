@@ -30,6 +30,7 @@ const ARTIFACTS: Record<string, string> = {
 	areaInventory: "area-inventory.json",
 	geometrySources: "geometry-sources.json",
 	crosswalkInventory: "crosswalk-inventory.json",
+	analysisGeographyInventory: "analysis-geographies.json",
 	relationshipCandidates: "relationship-candidates.json",
 	geographyInventory: "geography-inventory.json",
 	dataCatalog: "data-catalog.json",
@@ -50,6 +51,10 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 		"crosswalkInventoryHash",
 	],
 	"relationship-paths.json": ["crosswalkInventoryHash"],
+	"analysis-geographies.json": [
+		"dataCatalogHash",
+		"crosswalkInventoryHash",
+	],
 };
 
 const compiled = readdirSync(publicRoot)
