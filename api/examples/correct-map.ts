@@ -22,15 +22,6 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			boundaryReleases: string[];
 		}>;
 	}>("/v1/places?q=Birmingham");
-	const authority = places.data.candidates.find(
-		(candidate) => candidate.geography === "localAuthority",
-	);
-	if (!authority) throw new Error("no local authority is called Birmingham");
-	steps.push({
-		title: "Resolve the place",
-		detail: `"Birmingham" matched ${places.data.candidates.length} places; took ${authority.place}.`,
-	});
-
 	// 2. Pin the boundaries to a dated release rather than to "latest".
 	const resolved = await client.get<{ selected: { id: string } }>(
 		"/v1/boundary-releases:resolve?geography=localAuthority&date=2023-06-30",
@@ -39,6 +30,17 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	steps.push({
 		title: "Choose a boundary release",
 		detail: `Mid-2023 resolves to ${release}, an exact release id.`,
+	});
+	const authority = places.data.candidates.find(
+		(candidate) =>
+			candidate.geography === "localAuthority" &&
+			candidate.boundaryReleases.includes(release),
+	);
+	if (!authority)
+		throw new Error(`no local authority named Birmingham is in ${release}`);
+	steps.push({
+		title: "Resolve the place",
+		detail: `"Birmingham" matched ${places.data.candidates.length} places; took ${authority.place}, which ${release} carries.`,
 	});
 
 	// 3. Ask the API whether the values can be drawn on it, rather than

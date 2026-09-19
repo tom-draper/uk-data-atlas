@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
+	"contentHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -153,6 +153,25 @@
 			"recordCount": 8668,
 			"artifact": "crosswalks/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment.json",
 			"contentHash": "sha256:95f3b0a1dda67fd49a087cbf7778a02012c3c3a4ce57f9b9583d4c8ba6b1c0fe"
+		},
+		{
+			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 11556,
+			"artifact": "crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:0aecddd049831b2111fed3be1bb091d2512c96dcc8758c0ab66bab7df102eb5e"
 		},
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",

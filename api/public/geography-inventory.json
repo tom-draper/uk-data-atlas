@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:67b42e36c2493284926dedbab162a30e0b337f913904bbb3ce09b3de46389006",
+	"contentHash": "sha256:cbc933b9a0d523933aaa0b5e173244f2dda7ce12a787173e7a0fb405888ea627",
 	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
@@ -1341,8 +1341,22 @@
 				"artifact": "areas/localAuthority/2019-04-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2019-04-ew-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1893,6 +1907,19 @@
 			"relationships": {
 				"status": "available",
 				"crosswalks": [
+					{
+						"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2019-04-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
 					{
 						"id": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
 						"direction": "from",

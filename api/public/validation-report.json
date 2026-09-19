@@ -1,31 +1,31 @@
 {
 	"schemaVersion": 1,
 	"inputs": {
-		"boundaryRegistry": "sha256:afa7b66e55511578bab47168c0c1d0e4fc2ee2db43b45179731a0a8bc31284e5",
-		"areaInventory": "sha256:3cdc9bff4271ac6fea04b1225e48f194dd1b8969991997b7a9845e98a3ad21ed",
-		"geometrySources": "sha256:bfc181943afe1dd6341223fc4bf030ec3cc53de94fa23796d8bdfb2263209927",
-		"crosswalkInventory": "sha256:012a95d045b5d873fae326e8779633b4dcc9912117c51cca3c4390353ce63d1b",
-		"relationshipCandidates": "sha256:51cbfdb468606c0aa8957db62f49fcb5f9aafb6ca5812273fc8651ffd0aae57a",
-		"geographyInventory": "sha256:45e8062e25a46877e3439fe3b01c921dd8ae960d849f90f571a12ac841058d0b",
-		"dataCatalog": "sha256:4a7d71f4a70a4a1032795ec567ba6bf8a43278f5c8e18ac77826d8d03251d430",
-		"exportManifest": "sha256:1099ed038cabab7ab86ef4ffcc569d19f0eb606377cb18a7de1a7fda76447c77",
+		"boundaryRegistry": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
+		"areaInventory": "sha256:330ce8e9601d355c161a27d417b93fbca85b06492f3078604d5bdc9949893c83",
+		"geometrySources": "sha256:b8b03409f34ee2ee38d7e3c64fd7fdb01256245d245fba80f376022d13d28d8c",
+		"crosswalkInventory": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+		"relationshipCandidates": "sha256:5f19a0e6d79f61de251ad7464db3a6cb9579af20ac8fd9706de749e422c8bcff",
+		"geographyInventory": "sha256:cbc933b9a0d523933aaa0b5e173244f2dda7ce12a787173e7a0fb405888ea627",
+		"dataCatalog": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
+		"exportManifest": "sha256:5d88f1e8b1f86f033a94901535d744f3aaf2aa97384f7737d3545558f6d4c9d7",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
-		"waivers": "sha256:e2ae28f596c70d182eb41c95d54ae8c7c2e7c4722c13a3c2d975c0474c574b06"
+		"waivers": "sha256:5d1199bee4732bb280b9c2ea4b863aaebb8277c37ad7511257a9ad267a550d4e"
 	},
 	"summary": {
-		"resourceCount": 552,
-		"checkCount": 1782,
-		"passedCount": 1735,
-		"waivedCount": 47,
+		"resourceCount": 592,
+		"checkCount": 1910,
+		"passedCount": 1862,
+		"waivedCount": 48,
 		"coverage": {
-			"boundaryReleases": 76,
-			"areaIdentities": 76,
-			"servableGeometry": 76,
-			"withRelationships": 32,
-			"crosswalks": 26,
+			"boundaryReleases": 93,
+			"areaIdentities": 93,
+			"servableGeometry": 93,
+			"withRelationships": 33,
+			"crosswalks": 27,
 			"weightedCrosswalks": 2,
-			"measures": 156,
-			"measureSources": 293
+			"measures": 167,
+			"measureSources": 304
 		}
 	},
 	"resources": [
@@ -42,7 +42,7 @@
 					"id": "release-coverage",
 					"status": "passed",
 					"measured": {
-						"boundaryReleaseCount": 76
+						"boundaryReleaseCount": 93
 					}
 				}
 			]
@@ -195,7 +195,123 @@
 			]
 		},
 		{
+			"id": "boundary-releases/constituency/2018-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/constituency/2019-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2020-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2021-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 650
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/constituency/2022-12-uk-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
 			"checks": [
@@ -795,6 +911,93 @@
 			]
 		},
 		{
+			"id": "boundary-releases/localAuthority/2008-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 408
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2009-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 380
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2011-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 380
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/localAuthority/2016-12-gb-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -817,6 +1020,35 @@
 						"crs": "EPSG:27700",
 						"transformation": "OSGB36 to WGS 84 (6)",
 						"transformationAccuracyM": 2
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2017-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 380
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
 					}
 				},
 				{
@@ -858,6 +1090,35 @@
 			]
 		},
 		{
+			"id": "boundary-releases/localAuthority/2019-04-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 382
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/localAuthority/2019-12-uk-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -871,6 +1132,35 @@
 					"status": "passed",
 					"measured": {
 						"areaCount": 382
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2020-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 379
 					}
 				},
 				{
@@ -952,6 +1242,35 @@
 		},
 		{
 			"id": "boundary-releases/localAuthority/2023-05-uk-bgc-v2",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 361
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2023-12-uk-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
 			"checks": [
@@ -1691,7 +2010,94 @@
 			]
 		},
 		{
+			"id": "boundary-releases/scottishParliamentaryConstituency/2016-05-sc-gcb",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 73
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/scottishParliamentaryConstituency/2021-05-sc-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 73
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/scottishParliamentaryConstituency/2022-12-sc-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 73
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/scottishParliamentaryConstituency/2026-05-sc-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
 			"checks": [
@@ -1896,6 +2302,64 @@
 			]
 		},
 		{
+			"id": "boundary-releases/ward/2011-12-ew-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8588
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/ward/2015-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8734
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/ward/2016-12-gb-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -2021,6 +2485,35 @@
 			]
 		},
 		{
+			"id": "boundary-releases/ward/2019-12-uk-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 8887
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "boundary-releases/ward/2020-12-uk-bgc",
 			"kind": "boundary-release",
 			"status": "passed",
@@ -2110,7 +2603,7 @@
 		{
 			"id": "boundary-releases/ward/2023-05-uk-bgc",
 			"kind": "boundary-release",
-			"status": "passed",
+			"status": "waived",
 			"checks": [
 				{
 					"id": "licence-recorded",
@@ -2135,7 +2628,11 @@
 				},
 				{
 					"id": "candidates-reviewed",
-					"status": "passed"
+					"status": "waived",
+					"detail": "Relationship candidates awaiting a decision: ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc (eligible).",
+					"waiver": {
+						"reason": "Its local authority fields also match the December 2023 release, which holds the same 361 authorities as May 2023. These wards' parents are already published against the May 2023 release, so this later pairing is not published."
+					}
 				}
 			]
 		},
@@ -2773,6 +3270,36 @@
 			]
 		},
 		{
+			"id": "crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11556
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
 			"id": "crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3133,6 +3660,34 @@
 			]
 		},
 		{
+			"id": "measures/adult-social-care-activity",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/adult-social-care-outcomes",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
 			"id": "measures/air-quality-grid-cells",
 			"kind": "measure",
 			"status": "passed",
@@ -3190,6 +3745,20 @@
 		},
 		{
 			"id": "measures/broadband-ultrafast-availability",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/business-activity",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -3288,6 +3857,20 @@
 		},
 		{
 			"id": "measures/claimant-count-16-to-24",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/council-tax",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -3610,6 +4193,20 @@
 		},
 		{
 			"id": "measures/crime-violence-without-injury",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/electric-vehicle-chargers",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -4715,6 +5312,20 @@
 			]
 		},
 		{
+			"id": "measures/local-government-finance",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
 			"id": "measures/median-annual-pay",
 			"kind": "measure",
 			"status": "passed",
@@ -4730,6 +5341,34 @@
 		},
 		{
 			"id": "measures/median-hourly-pay",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/median-workplace-annual-pay",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/median-workplace-hourly-pay",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -4771,6 +5410,20 @@
 			]
 		},
 		{
+			"id": "measures/net-additional-dwellings",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
 			"id": "measures/nimdm-rank",
 			"kind": "measure",
 			"status": "passed",
@@ -4786,6 +5439,20 @@
 		},
 		{
 			"id": "measures/no2-background-mean",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "measures/planning-applications",
 			"kind": "measure",
 			"status": "passed",
 			"checks": [
@@ -5289,6 +5956,20 @@
 			]
 		},
 		{
+			"id": "measures/waste",
+			"kind": "measure",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "measure-definition",
+					"status": "passed",
+					"measured": {
+						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
 			"id": "measures/wimd-decile",
 			"kind": "measure",
 			"status": "passed",
@@ -5312,6 +5993,86 @@
 					"status": "passed",
 					"measured": {
 						"sourceCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/adult-social-care-activity-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 129
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 129,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 129,
+						"minimum": 140,
+						"maximum": 15570
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/adult-social-care-outcomes-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 128
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 128,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 128,
+						"minimum": 16.1,
+						"maximum": 20.5
 					}
 				}
 			]
@@ -5512,6 +6273,46 @@
 						"recordCount": 361,
 						"minimum": 10.3,
 						"maximum": 99.6
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/business-activity-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 359
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 359,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 359,
+						"minimum": 410,
+						"maximum": 111340
 					}
 				}
 			]
@@ -5802,6 +6603,46 @@
 						"recordCount": 361,
 						"minimum": 20,
 						"maximum": 77325
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/council-tax-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 296
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 296,
+						"boundaryRelease": "2026-05-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 296,
+						"minimum": 120.46,
+						"maximum": 2282.22
 					}
 				}
 			]
@@ -6762,6 +7603,46 @@
 						"recordCount": 314,
 						"minimum": 2,
 						"maximum": 25795
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/electric-vehicle-chargers-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 361
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 361,
+						"boundaryRelease": "2026-05-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-NIR, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 361,
+						"minimum": 16,
+						"maximum": 2893
 					}
 				}
 			]
@@ -11056,7 +11937,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -11462,7 +12343,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -11898,7 +12779,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -12274,7 +13155,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -12650,7 +13531,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -13026,7 +13907,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -13402,7 +14283,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -13778,7 +14659,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -14154,7 +15035,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -14730,7 +15611,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -15103,7 +15984,7 @@
 				{
 					"id": "records-resolve",
 					"status": "waived",
-					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831).",
+					"detail": "No compiled ward release for 2019 holds every code: 2019-12-gb-bgc lacks 2 (E05013830, E05013831); 2019-12-uk-bgc lacks 2 (E05013830, E05013831).",
 					"measured": {
 						"areaCodeCount": 5273,
 						"boundaryRelease": null,
@@ -15326,6 +16207,46 @@
 			]
 		},
 		{
+			"id": "exports/local-government-finance-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 287
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 287,
+						"boundaryRelease": "2026-05-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 287,
+						"minimum": -2584,
+						"maximum": 335936
+					}
+				}
+			]
+		},
+		{
 			"id": "exports/median-annual-pay-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -15401,6 +16322,86 @@
 						"recordCount": 294,
 						"minimum": 14.28,
 						"maximum": 26.35
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/median-workplace-annual-pay-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 295
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 295,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 295,
+						"minimum": 18675,
+						"maximum": 67064
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/median-workplace-hourly-pay-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 295
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 295,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 295,
+						"minimum": 13.93,
+						"maximum": 34.24
 					}
 				}
 			]
@@ -15486,6 +16487,46 @@
 			]
 		},
 		{
+			"id": "exports/net-additional-dwellings-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 283
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 283,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 283,
+						"minimum": 7,
+						"maximum": 4454
+					}
+				}
+			]
+		},
+		{
 			"id": "exports/nimdm-rank-observations",
 			"kind": "measure-source",
 			"status": "passed",
@@ -15561,6 +16602,46 @@
 						"recordCount": 361,
 						"minimum": 0.73,
 						"maximum": 33.22
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/planning-applications-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 296
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 296,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 296,
+						"minimum": 10,
+						"maximum": 1289
 					}
 				}
 			]
@@ -17183,7 +18264,7 @@
 					"status": "passed",
 					"measured": {
 						"areaCodeCount": 369,
-						"boundaryRelease": "2019-12-uk-bgc",
+						"boundaryRelease": "2019-04-uk-bgc",
 						"unresolvedCount": 0
 					}
 				},
@@ -17263,7 +18344,7 @@
 					"status": "passed",
 					"measured": {
 						"areaCodeCount": 369,
-						"boundaryRelease": "2019-12-uk-bgc",
+						"boundaryRelease": "2019-04-uk-bgc",
 						"unresolvedCount": 0
 					}
 				},
@@ -17321,6 +18402,46 @@
 						"recordCount": 722,
 						"minimum": 2.4,
 						"maximum": 8.2
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/waste-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 196
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 196,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 196,
+						"minimum": 16507,
+						"maximum": 177749
 					}
 				}
 			]
@@ -17406,5 +18527,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:8b120bedd393b62824fa4ecc3b18704f408baf79c2ef9de083312c8b1bc129a2"
+	"contentHash": "sha256:8c2249f90fee090801f45ad3dc5dfa42259c8a6fdb655de879502e230324d392"
 }
