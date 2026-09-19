@@ -31,6 +31,7 @@ const ARTIFACTS: Record<string, string> = {
 	geometrySources: "geometry-sources.json",
 	crosswalkInventory: "crosswalk-inventory.json",
 	analysisGeographyInventory: "analysis-geographies.json",
+	analysisGeographyValidation: "analysis-geography-validation.json",
 	relationshipCandidates: "relationship-candidates.json",
 	geographyInventory: "geography-inventory.json",
 	dataCatalog: "data-catalog.json",
@@ -52,6 +53,11 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 	],
 	"relationship-paths.json": ["crosswalkInventoryHash"],
 	"analysis-geographies.json": [
+		"dataCatalogHash",
+		"crosswalkInventoryHash",
+	],
+	"analysis-geography-validation.json": [
+		"analysisGeographyInventoryHash",
 		"dataCatalogHash",
 		"crosswalkInventoryHash",
 	],
