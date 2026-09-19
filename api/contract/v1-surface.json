@@ -1974,6 +1974,9 @@
 				"query:boundaryYear": {
 					"required": true
 				},
+				"query:analysisGeography": {
+					"required": false
+				},
 				"query:datasetId": {
 					"required": false
 				}

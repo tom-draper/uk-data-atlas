@@ -2212,16 +2212,20 @@ paths:
     get:
       operationId: getSourceExactMeasureSeries
       tags: ["Trend"]
-      summary: Retrieve one area's source-exact time series
+      summary: Retrieve a source-exact or reviewed derived time series
       x-likely-refusal:
         status: 400
         when: "The source partition is not named. A series stays within one partition, so `geography` and `boundaryYear` are required."
         x-example-request: "/v1/data/population-estimate/series?areaCode=E05000932"
       description: >
         Returns all published observations for one area code within one source
-        geography and code vintage. It does not select a boundary release,
-        convert values or aggregate them. Supply `datasetId` when a measure has
-        more than one source for the requested geography and boundary year.
+        geography and code vintage. Without `analysisGeography`, the result is
+        source-exact: it does not select a boundary release, convert values or
+        aggregate them. With `analysisGeography`, the result is available only
+        where the exact source partition has a reviewed conversion; every
+        returned value is then labelled `derived` on that named frame. Supply
+        `datasetId` when a measure has more than one source for the requested
+        geography and boundary year.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
         - name: areaCode
@@ -2234,6 +2238,15 @@ paths:
             partition.
         - $ref: "#/components/parameters/SourceGeography"
         - $ref: "#/components/parameters/SourceBoundaryYear"
+        - name: analysisGeography
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            One `geography/release` pair for a reviewed analysis frame. The
+            source geography and boundary year remain required, so the API
+            never chooses between source partitions.
         - name: datasetId
           in: query
           required: false
@@ -2244,7 +2257,7 @@ paths:
             the same geography and vintage.
       responses:
         "200":
-          description: Source-exact observations in ascending source period order.
+          description: Source-exact or reviewed derived observations in ascending source period order.
           content:
             application/json:
               schema:

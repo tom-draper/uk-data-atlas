@@ -723,7 +723,10 @@ export const routeWithCatalog = (
 	observations: RouteContext["measureObservations"],
 	overrides: Pick<
 		RouteContext,
-		"crosswalkLookup" | "measureCompatibilityInventory" | "exportManifest"
+		| "crosswalkLookup"
+		| "measureCompatibilityInventory"
+		| "analysisGeographyInventory"
+		| "exportManifest"
 	> = {},
 ) =>
 	routeRequest(
@@ -737,10 +740,11 @@ export const routeWithCatalog = (
 			dataCatalog: catalog,
 			populationObservations,
 			populationLocalAuthorityObservations,
-			measureCompatibilityInventory:
-				overrides.measureCompatibilityInventory ??
-				measureCompatibilityInventory,
-			measureObservations: observations,
+		measureCompatibilityInventory:
+			overrides.measureCompatibilityInventory ??
+			measureCompatibilityInventory,
+		analysisGeographyInventory: overrides.analysisGeographyInventory,
+		measureObservations: observations,
 			exportManifest: overrides.exportManifest,
 		}),
 	);

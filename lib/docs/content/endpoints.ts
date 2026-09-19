@@ -146,9 +146,10 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	getSourceExactMeasureSeries: {
 		title: "Get a time series",
-		intro: "Get every published value for one area, oldest first. Just what you need for a line chart.",
+		intro: "Get every value for one area, oldest first. Usually these are published source-exact values; a reviewed analysis geography can instead return values explicitly regrouped onto one named boundary frame.",
 		tips: [
 			"If a measure has more than one source for that geography, add `datasetId` to choose between them.",
+			"Add `analysisGeography=geography/release` only after checking [reviewed conversions](/docs/v1/reference/trend/list-analysis-geographies). Derived entries name their source and conversion; an unsupported frame returns `not-comparable` rather than a guessed substitute.",
 		],
 	},
 	getSourceExactMeasureRankings: {
