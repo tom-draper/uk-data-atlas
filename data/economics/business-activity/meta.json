@@ -1,0 +1,25 @@
+{
+	"id": "business-activity",
+	"title": "UK business: activity, size and location",
+	"description": "Enterprises and local units by industry, legal status, employment and turnover size for UK local authority districts and regions, 2025.",
+	"topics": ["economics", "business", "employment"],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.ons.gov.uk/businessindustryandtrade/business/activitysizeandlocation/datasets/ukbusinessactivitysizeandlocation",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-19",
+	"temporalCoverage": "2025",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"countries": ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"]
+	},
+	"files": [
+		{
+			"path": "ukbusinessworkbook2025new.xlsx",
+			"role": "source",
+			"note": "The 2025 UK Business: activity, size and location workbook, including local-authority enterprise and local-unit tables."
+		}
+	]
+}
