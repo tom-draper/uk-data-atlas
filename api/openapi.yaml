@@ -6853,7 +6853,7 @@ components:
             code:
               const: no_release_for_date
       examples:
-        - {"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"The earliest ward boundary release is dated 2016-12, after 1990-01.","code":"no_release_for_date","absence":"before-first-release","earliest":{"id":"2016-12-gb-bgc","month":"2016-12","title":"Wards, December 2016 (Great Britain, generalised, clipped)","countries":["GB-ENG","GB-SCT"],"href":"/v1/boundary-releases/ward/2016-12-gb-bgc"}}
+        - {"type":"https://api.ukdataatlas.com/problems/not-found","title":"Not Found","status":404,"detail":"The earliest ward boundary release is dated 2011-12, after 1990-01.","code":"no_release_for_date","absence":"before-first-release","earliest":{"id":"2011-12-ew-bgc","month":"2011-12","title":"Wards, December 2011 (England and Wales, generalised, clipped)","countries":["GB-ENG","GB-WLS"],"href":"/v1/boundary-releases/ward/2011-12-ew-bgc"}}
 
     AmbiguousReleaseProblem:
       description: >

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:584a5a08aa1541aad21fcf044feaedefd80fa187296a493d612e853e914809ec",
+	"contentHash": "sha256:330ce8e9601d355c161a27d417b93fbca85b06492f3078604d5bdc9949893c83",
 	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
@@ -926,8 +926,12 @@
 		{
 			"id": "2015-12-gb-bgc",
 			"geography": "ward",
-			"status": "not-compiled",
-			"reason": "Could not identify exactly one matching code/name property pair."
+			"status": "available",
+			"recordCount": 8734,
+			"artifact": "areas/ward/2015-12-gb-bgc.json",
+			"contentHash": "sha256:31765c83b6c305ab12fae54ff1c3e80d64a5594fd6a5d009fc6a9529a81355e7",
+			"codeProperty": "wd15cd",
+			"nameProperty": "wd15nm"
 		},
 		{
 			"id": "2011-12-ew-bgc",
