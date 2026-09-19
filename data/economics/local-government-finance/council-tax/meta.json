@@ -1,0 +1,31 @@
+{
+	"id": "council-tax",
+	"title": "Council Tax levels in England",
+	"description": "Council tax requirements, tax bases and average Band D council tax levels reported by billing and major precepting authorities in England for 2026-27.",
+	"topics": ["economics", "local government", "public finance", "council tax"],
+	"publisher": "Ministry of Housing, Communities and Local Government",
+	"sourceUrl": "https://www.gov.uk/government/statistics/council-tax-levels-set-by-local-authorities-in-england-2026-to-2027",
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"retrieved": "2026-09-19",
+	"temporalCoverage": "2026-27",
+	"spatialCoverage": {
+		"geography": "localAuthority",
+		"vintage": 2026,
+		"countries": ["GB-ENG"]
+	},
+	"files": [
+		{
+			"path": "Table_10_2026-27.ods",
+			"role": "source",
+			"note": "Local-authority-level data from the Council Tax Requirement form, including council tax requirement, taxbase and average Band D figures."
+		},
+		{
+			"path": "Tables_1-9_2026-27.ods",
+			"role": "reference",
+			"note": "England-level summary tables for council tax requirements, taxbase and average Band D levels."
+		}
+	]
+}
