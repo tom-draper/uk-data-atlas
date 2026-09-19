@@ -32,6 +32,8 @@ type BoundaryRelease = {
 	parentCodeKey?: PropertyKeys;
 	/** The served asset. Absent for a release held but not yet compiled. */
 	asset?: string;
+	/** Why this source release is intentionally not served. */
+	holdReason?: string;
 };
 
 type BoundaryProperties = {
@@ -580,6 +582,8 @@ const CATALOG = {
 				extent: "sc",
 				codeKey: "DZ11CD",
 				nameKey: "DZ11NM",
+				holdReason:
+					"It duplicates the served 2011 data zones under incompatible codes.",
 			},
 		],
 	},

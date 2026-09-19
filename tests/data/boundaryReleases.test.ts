@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -22,7 +22,79 @@ const catalogued = BOUNDARY_TYPES.flatMap((type) =>
 	BOUNDARY_CATALOG[type].releases.map((release) => ({ type, release })),
 );
 
+const identity = (geography: string, release: string) =>
+	`${geography}/${release}`;
+
+const toCamelCase = (value: string) =>
+	value.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+
+const sourceBoundaryReleases = readdirSync(
+	join(process.cwd(), "data", "boundaries"),
+	{ withFileTypes: true },
+).flatMap((geography) =>
+	geography.isDirectory()
+		? readdirSync(
+				join(process.cwd(), "data", "boundaries", geography.name),
+				{ withFileTypes: true },
+			)
+				.filter((release) => release.isDirectory())
+				.map((release) => identity(toCamelCase(geography.name), release.name))
+		: [],
+);
+
+const apiBoundaryReleases = JSON.parse(
+	readFileSync(
+		join(process.cwd(), "api", "public", "boundary-releases.json"),
+		"utf8",
+	),
+) as { releases: Array<{ geography: string; id: string }> };
+
+const apiAreaInventory = JSON.parse(
+	readFileSync(
+		join(process.cwd(), "api", "public", "area-inventory.json"),
+		"utf8",
+	),
+) as {
+	releases: Array<{
+		geography: string;
+		id: string;
+		status: "available" | "not-compiled";
+	}>;
+};
+
 describe("boundary releases", () => {
+	it("makes every source release explicitly held or available from both products", () => {
+		const website = new Map(
+			catalogued.map(({ type, release }) => [identity(type, release.id), release]),
+		);
+		const apiRegistry = new Set(
+			apiBoundaryReleases.releases.map((release) =>
+				identity(release.geography, release.id),
+			),
+		);
+		const apiAreas = new Map(
+			apiAreaInventory.releases.map((release) => [
+				identity(release.geography, release.id),
+				release,
+			]),
+		);
+
+		expect([...website.keys()].sort()).toEqual([...sourceBoundaryReleases].sort());
+		expect([...apiRegistry].sort()).toEqual([...sourceBoundaryReleases].sort());
+
+		for (const source of sourceBoundaryReleases) {
+			const release = website.get(source)!;
+			const area = apiAreas.get(source);
+			if (!release.asset) {
+				expect(release.holdReason, `${source} is held without a reason`).toBeTruthy();
+				continue;
+			}
+			expect(release.holdReason, `${source} is both held and served`).toBeUndefined();
+			expect(existsSync(localBoundaryPath(release.asset)), source).toBe(true);
+			expect(area?.status, `${source} is not API-available`).toBe("available");
+		}
+	});
+
 	it("names every asset after the release that owns it", () => {
 		for (const { type, release } of catalogued) {
 			if (!release.asset) continue;
