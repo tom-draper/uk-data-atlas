@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getCachedFilteredBoundaryData } from "@/lib/data/boundaries/locationFilter";
+import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { BoundaryData } from "@/lib/types";
 
 const feature = (code: string) => ({
@@ -87,5 +88,51 @@ describe("getCachedFilteredBoundaryData", () => {
 
 		expect(replacementVisit).not.toBe(firstVisit);
 		expect(replacementVisit.ward[2024]?.features).toHaveLength(0);
+	});
+
+	it("filters LSOA properties by local-authority membership", () => {
+		const includedCode = "E01000001";
+		const neighbouringCode = "E01000002";
+		const rawData = boundaryData("E0001");
+		rawData.lsoa[2011] = {
+			type: "FeatureCollection",
+			crs: {
+				type: "name",
+				properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+			},
+			features: [
+				{
+					...feature(includedCode),
+					properties: { LSOA11CD: includedCode },
+				},
+				{
+					...feature(neighbouringCode),
+					properties: { LSOA11CD: neighbouringCode },
+				},
+			],
+		} as any;
+		const greaterManchester =
+			gazetteer.namedLocation("Greater Manchester")!;
+
+		const filtered = getCachedFilteredBoundaryData(
+			rawData,
+			"Greater Manchester",
+			undefined,
+			null,
+			{
+				version: 1,
+				lsoaToLad: {
+					2011: {
+						[includedCode]: greaterManchester.memberCodes[0]!,
+						[neighbouringCode]: "E06000001",
+					},
+				},
+			},
+		);
+
+		expect(filtered.lsoa[2011]?.features).toHaveLength(1);
+		expect(filtered.lsoa[2011]?.features[0]?.properties).toMatchObject({
+			LSOA11CD: includedCode,
+		});
 	});
 });

@@ -178,4 +178,42 @@ describe("properties-only boundary filtering", () => {
 			PCON24CD: "E14000001",
 		});
 	});
+
+	it("keeps LSOA geometry by its local-authority membership", () => {
+		const greaterManchester = gazetteer.namedLocation("Greater Manchester");
+		expect(greaterManchester?.memberCodes).toBeDefined();
+
+		const boundaries = {
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					properties: { LSOA11CD: "E01000001" },
+					geometry: null,
+				},
+				{
+					type: "Feature",
+					properties: { LSOA11CD: "E01000002" },
+					geometry: null,
+				},
+			],
+		} as unknown as BoundaryGeojson;
+
+		const filtered = filterFeatures(
+			boundaries,
+			"Greater Manchester",
+			"lsoa",
+			undefined,
+			undefined,
+			{
+				E01000001: greaterManchester!.memberCodes[0]!,
+				E01000002: "E06000001",
+			},
+		);
+
+		expect(filtered.features).toHaveLength(1);
+		expect(filtered.features[0]?.properties).toMatchObject({
+			LSOA11CD: "E01000001",
+		});
+	});
 });

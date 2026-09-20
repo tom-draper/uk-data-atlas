@@ -290,6 +290,47 @@ describe("location-scoped chart datasets", () => {
 		expect(Object.keys(filtered[2016].data)).toEqual([includedCode]);
 	});
 
+	it("keeps LSOAs by local-authority membership, not the location bbox", async () => {
+		const includedCode = "E01000001";
+		const overlappingNeighbour = "E01000002";
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(
+				async () =>
+					new Response(
+						JSON.stringify({
+							version: 1,
+							lsoaToLad: {
+								2011: {
+									[includedCode]:
+										greaterManchester.memberCodes[0],
+									[overlappingNeighbour]: "E06000001",
+								},
+							},
+						}),
+					),
+			),
+		);
+		const payload = {
+			2019: {
+				boundaryYear: 2011,
+				data: {
+					[includedCode]: { imdScore: 1 },
+					[overlappingNeighbour]: { imdScore: 2 },
+				},
+			},
+		};
+
+		const filtered = (await filterDatasetPayloadForLocation(payload, {
+			location: "Greater Manchester",
+			boundaryType: "lsoa",
+		})) as typeof payload;
+
+		expect(filtered[2019].data).toEqual({
+			[includedCode]: { imdScore: 1 },
+		});
+	});
+
 	// Only fields keyed by the dataset's own boundary codes may be scoped by its
 	// matcher. IMD's `ladStats` is keyed by local authority while its records are
 	// keyed by LSOA, so scoping it with the LSOA matcher would empty it.
@@ -300,12 +341,12 @@ describe("location-scoped chart datasets", () => {
 				async () =>
 					new Response(
 						JSON.stringify({
-							features: [
-								{
-									LSOA11CD: "E01000001",
-									bbox: greaterManchester.bbox,
+							version: 1,
+							lsoaToLad: {
+								2011: {
+									E01000001: greaterManchester.memberCodes[0],
 								},
-							],
+							},
 						}),
 						{ status: 200 },
 					),

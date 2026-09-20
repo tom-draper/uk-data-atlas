@@ -6,6 +6,8 @@ import {
 } from "../data/boundaries/catalog";
 import type { Crosswalk } from "../data/gazetteer/types";
 import type { PrecompiledBoundaryMappings } from "../data/boundaries/mappings";
+import type { LsoaLadMappings } from "../data/boundaries/lsoaLadMappings";
+import { lsoaYearForBoundaryAsset } from "../data/boundaries/lsoaLadMappings";
 import { withCDN } from "../helpers/cdn";
 import { getProp } from "../data/boundaries/properties";
 
@@ -28,6 +30,9 @@ interface Response {
 const BOUNDARY_MAPPINGS_URL = withCDN(
 	"/data/precompiled/boundary-mappings.json",
 );
+const LSOA_LAD_MAPPINGS_URL = withCDN(
+	"/data/precompiled/lsoa-lad-mappings.json",
+);
 const COUNTRY_LOCATIONS = new Set([
 	"England",
 	"Scotland",
@@ -37,6 +42,8 @@ const COUNTRY_LOCATIONS = new Set([
 ]);
 let wardToLad: Record<string, string> | null = null;
 let wardToLadPending: Promise<Record<string, string>> | null = null;
+let lsoaLadMappings: LsoaLadMappings | null = null;
+let lsoaLadMappingsPending: Promise<LsoaLadMappings> | null = null;
 
 const fetchWardToLad = (): Promise<Record<string, string>> => {
 	if (wardToLad) return Promise.resolve(wardToLad);
@@ -64,6 +71,32 @@ const fetchWardToLad = (): Promise<Record<string, string>> => {
 		});
 
 	return wardToLadPending;
+};
+
+const fetchLsoaLadMappings = (): Promise<LsoaLadMappings> => {
+	if (lsoaLadMappings) return Promise.resolve(lsoaLadMappings);
+	if (lsoaLadMappingsPending) return lsoaLadMappingsPending;
+
+	lsoaLadMappingsPending = fetch(LSOA_LAD_MAPPINGS_URL)
+		.then(async (response) => {
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch LSOA/LAD mappings: ${response.status} ${response.statusText}`,
+				);
+			}
+			return (await response.json()) as LsoaLadMappings;
+		})
+		.then((mappings) => {
+			lsoaLadMappings = mappings;
+			lsoaLadMappingsPending = null;
+			return mappings;
+		})
+		.catch((error) => {
+			lsoaLadMappingsPending = null;
+			throw error;
+		});
+
+	return lsoaLadMappingsPending;
 };
 
 const wardReleaseNeedsLadMapping = (
@@ -94,6 +127,13 @@ self.addEventListener("message", async (event: MessageEvent<Request>) => {
 			wardReleaseNeedsLadMapping(data)
 				? await fetchWardToLad().catch(() => undefined)
 				: undefined;
+		const workerLsoaToLad =
+			filterType === "lsoa" &&
+			filter?.location &&
+			!COUNTRY_LOCATIONS.has(filter.location)
+				? (await fetchLsoaLadMappings().catch(() => undefined))
+						?.lsoaToLad[lsoaYearForBoundaryAsset(url) ?? NaN]
+				: undefined;
 		const filtered =
 			filterType === undefined
 				? data
@@ -105,6 +145,7 @@ self.addEventListener("message", async (event: MessageEvent<Request>) => {
 							? (wardCode) => workerWardToLad[wardCode]
 							: undefined,
 						filter?.constituencyLadOverlaps,
+						workerLsoaToLad,
 					);
 		(self as unknown as Worker).postMessage({
 			id,

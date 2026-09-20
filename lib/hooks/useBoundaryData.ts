@@ -29,6 +29,10 @@ import {
 	fetchConstituencyLadOverlaps,
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
+import {
+	fetchLsoaLadMappings,
+	type LsoaLadMappings,
+} from "../data/boundaries/lsoaLadMappings";
 import { getCachedFilteredBoundaryData } from "../data/boundaries/locationFilter";
 import {
 	DEFAULT_VISIBILITY,
@@ -50,6 +54,8 @@ export function useBoundaryData(
 	const [error, setError] = useState<Error | null>(null);
 	const [constituencyLadOverlaps, setConstituencyLadOverlaps] =
 		useState<ConstituencyLadOverlaps | null>(null);
+	const [lsoaLadMappings, setLsoaLadMappings] =
+		useState<LsoaLadMappings | null>(null);
 
 	// Kept separately because filtering is memoized independently of loading.
 	const getLadForWard = codeMapper?.getLadForWard;
@@ -98,6 +104,15 @@ export function useBoundaryData(
 						return null;
 					})
 				: Promise.resolve(null);
+			const lsoaMappings = wanted.includes("lsoa")
+				? fetchLsoaLadMappings().catch((error) => {
+						console.warn(
+							"[boundaries] Falling back to LSOA bbox filtering:",
+							error,
+						);
+						return null;
+					})
+				: Promise.resolve(null);
 
 			Promise.all([
 				precompiledMappings,
@@ -109,40 +124,58 @@ export function useBoundaryData(
 					}),
 				),
 				overlaps,
+				lsoaMappings,
 			])
-				.then(([mappingsApplied, groups, loadedOverlaps]) => {
-					if (!mounted) return;
-					const boundaryGroups = groups as BoundaryGroupResult[];
-					if (loadedOverlaps)
-						setConstituencyLadOverlaps(loadedOverlaps);
+				.then(
+					([
+						mappingsApplied,
+						groups,
+						loadedOverlaps,
+						loadedLsoaMappings,
+					]) => {
+						if (!mounted) return;
+						const boundaryGroups = groups as BoundaryGroupResult[];
+						if (loadedOverlaps)
+							setConstituencyLadOverlaps(loadedOverlaps);
+						if (loadedLsoaMappings)
+							setLsoaLadMappings(loadedLsoaMappings);
 
-					for (const type of completedBoundaryTypes(boundaryGroups))
-						loadedTypes.current.add(type);
-					const fetched = Object.fromEntries(
-						boundaryGroups.map(([type, { data }]) => [type, data]),
-					) as Partial<
-						Record<BoundaryType, Record<number, BoundaryGeojson>>
-					>;
+						for (const type of completedBoundaryTypes(
+							boundaryGroups,
+						))
+							loadedTypes.current.add(type);
+						const fetched = Object.fromEntries(
+							boundaryGroups.map(([type, { data }]) => [
+								type,
+								data,
+							]),
+						) as Partial<
+							Record<
+								BoundaryType,
+								Record<number, BoundaryGeojson>
+							>
+						>;
 
-					// Whatever did load is still worth drawing, so keep it and
-					// report the gaps alongside rather than instead.
-					const failures = boundaryGroups.flatMap(
-						([, { failures: groupFailures }]) => groupFailures,
-					);
-					if (failures.length > 0) {
-						setError(new Error(failures.join("; ")));
-					}
-
-					startTransition(() => {
-						setRawData((previous) =>
-							mergeBoundaryGroups(previous, boundaryGroups),
+						// Whatever did load is still worth drawing, so keep it and
+						// report the gaps alongside rather than instead.
+						const failures = boundaryGroups.flatMap(
+							([, { failures: groupFailures }]) => groupFailures,
 						);
-						setIsLoading(false);
-					});
+						if (failures.length > 0) {
+							setError(new Error(failures.join("; ")));
+						}
 
-					if (!mappingsApplied && codeMapper)
-						deriveBoundaryMappings(fetched, codeMapper);
-				})
+						startTransition(() => {
+							setRawData((previous) =>
+								mergeBoundaryGroups(previous, boundaryGroups),
+							);
+							setIsLoading(false);
+						});
+
+						if (!mappingsApplied && codeMapper)
+							deriveBoundaryMappings(fetched, codeMapper);
+					},
+				)
 				.catch((err) => {
 					if (mounted) {
 						setError(
@@ -171,9 +204,10 @@ export function useBoundaryData(
 			loc,
 			getLadForWard,
 			constituencyLadOverlaps,
+			lsoaLadMappings,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rawData, loc, constituencyLadOverlaps]);
+	}, [rawData, loc, constituencyLadOverlaps, lsoaLadMappings]);
 
 	const wardCodes = useMemo(
 		() => extractWardCodes(rawData, isLoading),
