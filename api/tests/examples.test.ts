@@ -51,6 +51,24 @@ test("walks the golden paths against a running server", async (t) => {
 			`${path} has a step that says nothing`,
 		);
 	}
+
+	const trend = await defensibleTrend(client);
+	assert.ok(
+		trend.some((step) => step.title === "Preflight the conversion"),
+		"the trend must check reviewed support before using a converted value",
+	);
+	assert.ok(
+		trend.some((step) => step.title === "Retain the validation receipt"),
+		"the trend must retain conservation evidence for its conversion",
+	);
+	assert.ok(
+		trend.some(
+			(step) =>
+				step.title === "Keep an unsafe period out" &&
+				step.detail.includes("not-comparable"),
+		),
+		"the trend must show an unsafe period as not-comparable",
+	);
 });
 
 test("builds a map the tutorial page can actually draw", async (t) => {
