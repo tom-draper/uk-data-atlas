@@ -176,6 +176,12 @@ export type DataCatalog = {
 
 export type PopulationObservation = {
 	areaCode: string;
+	/**
+	 * The code the publisher supplied when a reviewed, code-only correction
+	 * changes `areaCode` to the declared source partition. Absent for ordinary
+	 * observations, whose served and publisher codes are the same.
+	 */
+	sourceAreaCode?: string;
 	value: number;
 	/**
 	 * `observed` is a value the publisher reported. `derived` is one this API

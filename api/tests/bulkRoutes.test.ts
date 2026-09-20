@@ -60,7 +60,7 @@ test("lists and downloads release-pinned whole observation artifacts", () => {
 				})
 			: undefined;
 	assert.deepEqual(listedData?.exports, manifest.exports);
-	assert.match(listedData?.note ?? "", /source-exact/);
+	assert.match(listedData?.note ?? "", /publisher-observation/);
 
 	const downloaded = routeWithCatalog(
 		"/v1/exports/small-area-fixture",

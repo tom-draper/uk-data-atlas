@@ -31,7 +31,11 @@ test("lists API-owned corrections without claiming source artifacts changed", ()
 	assert.deepEqual(
 		"data" in filtered.body && filtered.body.data,
 		{
-			records: correctionRecords,
+			records: correctionRecords.filter(
+				(record) =>
+					record.scope.measureIds.includes("*") ||
+					record.scope.measureIds.includes("ghg-emissions"),
+			),
 			filters: { measure: "ghg-emissions" },
 			note: "These records describe API-owned changes to served values or semantics. They do not rewrite the publisher artifacts, which remain the source evidence.",
 		},

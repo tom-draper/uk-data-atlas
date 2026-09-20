@@ -17,6 +17,16 @@ import { countriesFor } from "./countries";
 const LAST_DECEMBER_PERIOD = 2022;
 
 /**
+ * A code-only repair is safe only where the official geometries are identical.
+ * Temple Newsam's December 2020 and December 2021 ward geometries are
+ * identical, while Garforth & Swillington's are not and must stay on the
+ * publisher's later code.
+ */
+const servedWardCodeCorrections = new Map([
+	["E05013831", "E05011412"], // Temple Newsam, December 2021 -> December 2020
+]);
+
+/**
  * The house price partition, restored to the codes its publisher used.
  *
  * The website moves Salford's twenty wards onto their 2021 codes so the map
@@ -40,8 +50,11 @@ const housePricePeriods = (
 			record,
 			`${path}.${compiledCode}`,
 		).sourceWardCode;
-		const areaCode =
+		const publisherAreaCode =
 			typeof sourceWardCode === "string" ? sourceWardCode : compiledCode;
+		const areaCode =
+			servedWardCodeCorrections.get(publisherAreaCode) ??
+			publisherAreaCode;
 		if (!/^[EW]\d{8}$/.test(areaCode)) {
 			throw new Error(`${path}: unsupported ward code ${areaCode}`);
 		}
@@ -55,6 +68,9 @@ const housePricePeriods = (
 			const records = byPeriod.get(year) ?? [];
 			records.push({
 				areaCode,
+				...(areaCode === publisherAreaCode
+					? {}
+					: { sourceAreaCode: publisherAreaCode }),
 				value: number(price, `${path}.${compiledCode}.prices.${year}`),
 				status: "observed",
 			});
@@ -122,7 +138,7 @@ export const compileHousePrice = (
 		links: { data: "/v1/data/house-price-median" },
 		notes: [
 			"Each period is the year ending December of that year. The source is a quarterly rolling series whose last edition ends at March 2023; that partial year is not comparable and is not published here.",
-			"Ward codes are those the publisher used, which are mostly December 2020 ward codes. Two Leeds wards carry later codes in the source itself, so the partition is not an exact code set for any one release.",
+			"The publisher's ward codes are mostly December 2020 codes. Temple Newsam's later source code is corrected to its geometrically identical December 2020 code and retained as sourceAreaCode; Garforth & Swillington changed geometry, so its later source code remains unresolved rather than being remapped.",
 			"Medians of an even number of sales fall on a half penny in the workbook; values are rounded to the whole pound the publisher displays.",
 		],
 	};

@@ -35,6 +35,41 @@ export type CorrectionRecord = {
  */
 export const correctionRecords: CorrectionRecord[] = [
 	{
+		id: "house-price-temple-newsam-ward-code-v1",
+		kind: "correction",
+		status: "active",
+		title: "Temple Newsam ward-code repair",
+		scope: {
+			measureIds: ["house-price-median"],
+			fields: ["areaCode", "sourceAreaCode"],
+			request:
+				"GET /v1/data/house-price-median?period={period}&geography=ward&boundaryYear=2020",
+			periods: ["1995", "2022"],
+			areaCodes: ["E05011412", "E05013831"],
+		},
+		change: {
+			source: "The publisher's workbook uses Temple Newsam's December 2021 ward code E05013831 within an otherwise December 2020 ward partition.",
+			served: "The API serves the unchanged value under December 2020 code E05011412 and retains E05013831 as sourceAreaCode.",
+			sourceArtifactsChanged: false,
+		},
+		evidence: [
+			{
+				kind: "catalogue",
+				href: "/v1/areas/ward/2020-12-uk-bgc/E05011412",
+				note: "Temple Newsam's December 2020 official ward identity.",
+			},
+			{
+				kind: "catalogue",
+				href: "/v1/areas/ward/2021-12-uk-bgc/E05013831",
+				note: "Temple Newsam's December 2021 official ward identity; its geometry is identical to the December 2020 feature.",
+			},
+		],
+		review: {
+			status: "reviewed",
+			note: "The two official boundary features have identical geometry. Garforth & Swillington was not corrected because its geometry changed.",
+		},
+	},
+	{
 		id: "canonical-unit-presentation-v1",
 		kind: "normalisation",
 		status: "active",

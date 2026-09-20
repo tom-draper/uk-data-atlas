@@ -69,8 +69,9 @@ const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const FIELD_DESCRIPTIONS: Record<string, string> = {
-	areaCode:
-		"The official code of the area, as the source partition gives it.",
+	areaCode: "The official code of the area in the served source partition.",
+	sourceAreaCode:
+		"The publisher-supplied code when a reviewed code-only correction changes areaCode; absent otherwise.",
 	value: "The numeric value, in the measure's unit.",
 	category: "A source-reported label, such as a winning party.",
 	status: "`observed` for a value the publisher reported, `derived` for one this API computed.",
@@ -147,7 +148,7 @@ const legacyArtifactName = (measureId: string, datasetId: string) =>
 /**
  * Publish immutable, whole-artifact JSON downloads for every source partition.
  * The manifest does not manufacture a flattened export: consumers receive the
- * same source-exact observation artifact the API reads. Each entry describes
+ * same publisher-observation artifact the API reads. Each entry describes
  * that artifact as read from it: its records, their fields and the datasets
  * that must be attributed.
  */

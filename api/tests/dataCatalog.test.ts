@@ -665,6 +665,16 @@ const writeSources = (
 						sourceWardCode: "E05000759",
 						prices: { "2022": 179500 },
 					},
+					// Temple Newsam's published 2021 code is safe to correct to
+					// its identical December 2020 ward geometry.
+					E05013831: {
+						prices: { "2022": 200000 },
+					},
+					// Garforth & Swillington changed geometry, so it must not be
+					// moved to its earlier code.
+					E05013830: {
+						prices: { "2022": 210000 },
+					},
 				},
 			},
 		}),
@@ -1364,11 +1374,19 @@ test("publishes house prices under the publisher's own codes and years", () => {
 			["2021", "2022"],
 		);
 		// Salford's value is restored to the code it was published against,
-		// because its wards were redrawn in 2021.
-		assert.deepEqual(
-			periods[1]?.records.map((record) => record.areaCode),
-			["E05000759", "E05008945"],
-		);
+		// because its wards were redrawn in 2021. Temple Newsam is the one
+		// safe code-only correction; Garforth stays on the later source code.
+		assert.deepEqual(periods[1]?.records, [
+			{ areaCode: "E05000759", value: 179500, status: "observed" },
+			{ areaCode: "E05008945", value: 95000, status: "observed" },
+			{
+				areaCode: "E05011412",
+				sourceAreaCode: "E05013831",
+				value: 200000,
+				status: "observed",
+			},
+			{ areaCode: "E05013830", value: 210000, status: "observed" },
+		]);
 
 		const measure = result.catalog.measures.find(
 			(candidate) => candidate.id === "house-price-median",

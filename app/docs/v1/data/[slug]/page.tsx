@@ -209,8 +209,10 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 					<H2 id="corrections">Corrections and improvements</H2>
 					<P>
 						These reviewed changes apply to what the API serves for
-						this data. The publisher&apos;s source files and the
-						source-exact downloads are not changed.
+						this data. The publisher&apos;s source files are not
+						changed; when a code correction applies, the served
+						record retains the publisher&apos;s code as{" "}
+						<code>sourceAreaCode</code>.
 					</P>
 					<Table
 						head={["Change", "What the API serves", "Applies when"]}
@@ -301,12 +303,13 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 
 			<H2 id="downloads">Downloads</H2>
 			<P>
-				Download complete, source-exact observation files instead of
-				paging through the API. Each file has a stable hash and covers
-				one measure, period set and source geography. The source and
-				licence information above applies to these files too; preserve
-				the attribution and note any cleaning or reformatting when you
-				redistribute one.
+				Download complete publisher-observation files instead of paging
+				through the API. Each file has a stable hash and covers one
+				measure, period set and source geography. Any reviewed served
+				code correction is documented and retains its publisher code on
+				the affected record. The source and licence information above
+				applies to these files too; preserve the attribution and note
+				any cleaning or reformatting when you redistribute one.
 			</P>
 			<Table
 				head={["Measure", "Coverage", "Records", "Download"]}
