@@ -1072,9 +1072,13 @@ Implementation and documentation tasks:
       Comparison now reaches resource level, naming each resource added,
       removed or changed by its recorded fingerprint; it does not yet say
       which fields, areas or records within a changed resource differ.
-- [ ] Serve an archived Atlas release or its immutable resources on request,
-      so an analysis can be reproduced as the Atlas published it at a stated
-      time rather than merely inspecting its old manifest.
+- [x] Serve an archived Atlas release or an equivalent immutable release-pinned
+      download path, so an analysis can be reproduced as the Atlas published it
+      at a stated time rather than merely inspecting its old manifest. Before a
+      build replaces the current release, it snapshots every artifact the
+      manifest declares and verifies its byte hash. `GET
+      /v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}` then
+      returns the retained exact bytes with immutable cache semantics.
 - [ ] State a source's publisher release date, Atlas ingestion date, expected
       refresh cadence and freshness status beside the measure metadata.
 - [ ] Monitor upstream sources for a changed file, schema, URL, licence or
@@ -3048,8 +3052,11 @@ Turn the useful resources into production data infrastructure. This is the
 first plausible paid operational tier: service value comes from dependable
 delivery, change management and support, never from withholding OGL data.
 
-- [ ] Serve archived resources or an equivalent immutable release-pinned
-      download path, so a past result remains retrievable.
+- [x] Serve archived resources through an immutable release-pinned download
+      path, so a past result remains retrievable. Each build first snapshots
+      the prior release's manifest-declared artifacts and verifies their hashes;
+      a sync client retrieves one through `GET
+      /v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`.
 - [ ] Publish semantic release changes, freshness states, schema compatibility
       changes and a public correction register for the beta resources.
 - [ ] Provide stable Parquet/GeoParquet downloads and one DuckDB or dbt
@@ -3393,6 +3400,7 @@ second inventory to maintain:
 - `GET /v1/lookups/{lookup-id}` — Download one whole lookup table as CSV or NDJSON
 - `GET /v1/atlas-release` — Get the current immutable atlas release manifest
 - `GET /v1/atlas-releases` — List the current and archived immutable Atlas releases
+- `GET /v1/atlas-releases/{release-id}/artifacts` — Download one artifact from a current or archived Atlas release
 - `GET /v1/atlas-releases/{release-id}` — Get one current or archived Atlas release manifest
 - `GET /v1/atlas-releases/compare` — Compare two archived Atlas releases, artifact by artifact and resource by resource
 
@@ -3725,11 +3733,16 @@ validation report and source inventory) by its content hash, plus a single
 step toward the release and provenance model described above, not the full
 versioned release history it will eventually anchor.
 
-A release is archived under `public/atlas-releases/` when it is published,
-by running `pnpm build:archive-atlas-release` before the next build replaces
-it. `pnpm build` does not archive, so the history holds releases a client
-could have used, not every development build: the development builds made
-before the first deployment were removed. `GET /v1/atlas-releases/compare`
+A build begins by archiving the current release under
+`public/atlas-releases/` before any compiler replaces it. Alongside its
+manifest, the archive retains every artifact that manifest declares in a
+release-ID directory and verifies each file's SHA-256 before copying it. This
+directory belongs on durable deployment storage (or an equivalent object
+store) and is deliberately not duplicated in source control. Read the release
+manifest, then retrieve an exact retained artifact through `GET
+/v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`; the response
+is immutable and refuses a missing or hash-mismatched snapshot rather than
+falling back to current bytes. `GET /v1/atlas-releases/compare`
 provides a machine-readable change log between any archived release and the
 current release. It reports artifacts added, removed and changed by hash, and, inside
 them, which resources changed. Each release manifest records `resources`: for

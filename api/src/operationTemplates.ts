@@ -132,6 +132,15 @@ export const createOperationMatcher = (templates: OperationTemplate[]) => {
 		const segments = pathname.split("/").filter(Boolean);
 		if (segments[0] !== "v1") return { route: UNMATCHED };
 		const rest = segments.slice(1);
+		// A release artifact download is an explicit sync operation, not the
+		// generic pinned form of another route.
+		const direct =
+			rest.length === 3 &&
+			rest[0] === "atlas-releases" &&
+			rest[2] === "artifacts"
+				? find(rest)
+				: undefined;
+		if (direct) return { route: `/v1${direct.path}`, operation: direct };
 		if (rest.length >= 3 && rest[0] === "atlas-releases") {
 			const operation = find(rest.slice(2));
 			return operation

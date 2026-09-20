@@ -5811,6 +5811,62 @@ paths:
                 meta:
                   nextCursor: null
 
+  /atlas-releases/{release-id}/artifacts:
+    get:
+      operationId: downloadAtlasReleaseArtifact
+      tags: ["Sync"]
+      summary: Download one artifact from a current or archived Atlas release
+      x-likely-refusal:
+        status: 404
+        when: "The caller named a release this API has never published."
+        x-example-request: "/v1/atlas-releases/sha256:0000000000000000000000000000000000000000000000000000000000000000/artifacts?artifact=data-catalog"
+      description: >
+        Returns the exact bytes named by an Atlas release manifest. Read
+        `GET /v1/atlas-releases/{release-id}` first, then pass one of its
+        artifact ids as `artifact`. Unlike ordinary pinned routes, this can
+        read an older release when its immutable snapshot has been retained.
+      parameters:
+        - name: release-id
+          in: path
+          required: true
+          schema: { type: string }
+          description: The current or archived Atlas release that declared the artifact.
+        - name: artifact
+          in: query
+          required: true
+          schema: { type: string }
+          description: An artifact id from that release manifest, such as `data-catalog`.
+      responses:
+        "200":
+          description: The immutable artifact bytes, with a strong ETag equal to their SHA-256.
+          content:
+            application/json:
+              schema: { type: object }
+          headers:
+            Content-Disposition:
+              description: A download filename derived from the manifest path.
+              schema: { type: string }
+        "400":
+          description: The required artifact id was not supplied.
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "404":
+          description: The release was never published by this API.
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "410":
+          description: The archived release manifest exists but the artifact snapshot was not retained.
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+        "503":
+          description: The current artifact is absent or does not match its manifest hash.
+          content:
+            application/problem+json:
+              schema: { $ref: "#/components/schemas/Problem" }
+
   /atlas-releases/{release-id}:
     get:
       operationId: getArchivedAtlasRelease

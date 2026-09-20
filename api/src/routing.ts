@@ -1,5 +1,5 @@
 import type { AreaInventory, AreaLookup } from "./areaInventory";
-import type { AtlasRelease } from "./atlasRelease";
+import type { AtlasRelease, AtlasReleaseArtifactRef } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -46,6 +46,11 @@ export type RouteContext = {
 	crosswalkLookup?: CrosswalkLookup;
 	atlasRelease?: AtlasRelease;
 	atlasReleaseHistory?: Map<string, AtlasRelease>;
+	/** Read bytes from an immutable current or archived release artifact. */
+	readReleaseArtifact?: (
+		releaseId: string,
+		artifactId: string,
+	) => { artifact: AtlasReleaseArtifactRef; body: Buffer } | undefined;
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver?: GeographyResolver;
 	relationshipPathInventory?: RelationshipPathInventory;

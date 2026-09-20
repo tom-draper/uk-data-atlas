@@ -7,7 +7,11 @@ import {
 	type AreaReleaseArtifact,
 } from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
-import { readArchivedAtlasReleases } from "./atlasReleaseHistory";
+import {
+	readArchivedAtlasReleaseArtifact,
+	readArchivedAtlasReleases,
+	readAtlasReleaseArtifact,
+} from "./atlasReleaseHistory";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
 import { openArchive } from "./mapResource/archiveReader";
@@ -49,9 +53,7 @@ import {
 	type RelationshipPathInventory,
 } from "./relationshipPaths";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
-import type {
-	AnalysisGeographyValidationInventory,
-} from "./analysisGeographyValidation";
+import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -424,18 +426,15 @@ export const readAnalysisGeographyValidationInventory = (
 	dataCatalog: DataCatalog,
 	crosswalkInventory: CrosswalkInventory,
 ): AnalysisGeographyValidationInventory => {
-	const path = join(
-		apiRoot,
-		"public",
-		"analysis-geography-validation.json",
-	);
+	const path = join(apiRoot, "public", "analysis-geography-validation.json");
 	const inventory = JSON.parse(
 		readFileSync(path, "utf8"),
 	) as AnalysisGeographyValidationInventory;
 	if (
 		inventory.schemaVersion !== 1 ||
 		!Array.isArray(inventory.supports) ||
-		inventory.analysisGeographyInventoryHash !== analysisGeographies.contentHash ||
+		inventory.analysisGeographyInventoryHash !==
+			analysisGeographies.contentHash ||
 		inventory.dataCatalogHash !== dataCatalog.contentHash ||
 		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
 	) {
@@ -463,6 +462,12 @@ export const readApiCatalogues = (
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const dataCatalog = readDataCatalog(apiRoot);
 	const atlasRelease = readAtlasRelease(apiRoot);
+	const publicDirectory = join(apiRoot, "public");
+	const atlasReleaseHistory = new Map(
+		[...readArchivedAtlasReleases(publicDirectory), atlasRelease].map(
+			(release) => [release.releaseId, release],
+		),
+	);
 	const exportManifest = readExportManifest(apiRoot);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
 		throw new Error(
@@ -529,12 +534,18 @@ export const readApiCatalogues = (
 		crosswalkInventory,
 		crosswalkLookup,
 		atlasRelease,
-		atlasReleaseHistory: new Map(
-			[
-				...readArchivedAtlasReleases(join(apiRoot, "public")),
-				atlasRelease,
-			].map((release) => [release.releaseId, release]),
-		),
+		atlasReleaseHistory,
+		readReleaseArtifact: (requestedReleaseId, artifactId) => {
+			const release = atlasReleaseHistory.get(requestedReleaseId);
+			if (!release) return undefined;
+			return requestedReleaseId === atlasRelease.releaseId
+				? readAtlasReleaseArtifact(publicDirectory, release, artifactId)
+				: readArchivedAtlasReleaseArtifact(
+						publicDirectory,
+						release,
+						artifactId,
+					);
+		},
 		relationshipCandidateInventory:
 			readRelationshipCandidateInventory(apiRoot),
 		validationReport: readValidationReport(apiRoot),

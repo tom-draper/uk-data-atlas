@@ -91,6 +91,7 @@ export const handleIndexRoutes = ({
 				"/v1/lookups/{lookup-id}",
 				"/v1/atlas-release",
 				"/v1/atlas-releases",
+				"/v1/atlas-releases/{release-id}/artifacts",
 				"/v1/atlas-releases/{release-id}",
 				"/v1/atlas-releases/compare",
 			],
