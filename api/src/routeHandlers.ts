@@ -127,6 +127,7 @@ const routeFamilies: RouteFamily[] = [
 		owns: (segments) =>
 			segments[0] === "v1" &&
 			(segments[1] === "analysis-geographies" ||
+				segments[1] === "analysis-geography-validation" ||
 				segments[1] === "analysis:plan" ||
 				(segments[1] === "measures" && segments[3] === "conversion-support")),
 		handle: handleAnalysisGeographyRoutes,

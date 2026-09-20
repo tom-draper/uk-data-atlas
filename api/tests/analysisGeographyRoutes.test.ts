@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
+import type {
+	AnalysisGeographyValidationInventory,
+} from "../src/analysisGeographyValidation";
 import { route as routeRequest } from "../src/routes";
 import { registry, testContext } from "./routeFixtures";
 
@@ -32,12 +35,58 @@ const inventory: AnalysisGeographyInventory = {
 	],
 };
 
+const validation: AnalysisGeographyValidationInventory = {
+	schemaVersion: 1,
+	contentHash: "sha256:analysis-geography-validation",
+	analysisGeographyInventoryHash: inventory.contentHash,
+	dataCatalogHash: inventory.dataCatalogHash,
+	crosswalkInventoryHash: inventory.crosswalkInventoryHash,
+	supports: [
+		{
+			measureId: inventory.supports[0]!.measureId,
+			analysisGeography: inventory.supports[0]!.analysisGeography,
+			source: inventory.supports[0]!.source,
+			crosswalk: {
+				id: inventory.supports[0]!.crosswalk.id,
+				contentHash: "sha256:crosswalk",
+			},
+			observations: {
+				artifact: "road-collisions-lsoa-2021-observations",
+				contentHash: "sha256:observations",
+			},
+			periods: [
+				{
+					period: "2025-H1",
+					method: "exact",
+					inputRecordCount: 2,
+					outputRecordCount: 1,
+					inputTotal: 3,
+					outputTotal: 3,
+				},
+			],
+		},
+	],
+};
+
 const route = (url: string) =>
 	routeRequest(
 		"GET",
 		url,
 		testContext({ analysisGeographyInventory: inventory }),
 	);
+
+test("serves the release-pinned validation receipt for reviewed conversions", () => {
+	const response = routeRequest(
+		"GET",
+		"/v1/analysis-geography-validation",
+		testContext({
+			analysisGeographyInventory: inventory,
+			analysisGeographyValidationInventory: validation,
+		}),
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual("data" in response.body && response.body.data, validation);
+});
 
 test("lists only reviewed analysis conversions", () => {
 	const response = route("/v1/analysis-geographies?measure=road-collisions");

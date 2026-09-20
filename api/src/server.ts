@@ -49,6 +49,9 @@ import {
 	type RelationshipPathInventory,
 } from "./relationshipPaths";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
+import type {
+	AnalysisGeographyValidationInventory,
+} from "./analysisGeographyValidation";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -415,6 +418,34 @@ export const readAnalysisGeographyInventory = (
 	return inventory;
 };
 
+export const readAnalysisGeographyValidationInventory = (
+	apiRoot: string,
+	analysisGeographies: AnalysisGeographyInventory,
+	dataCatalog: DataCatalog,
+	crosswalkInventory: CrosswalkInventory,
+): AnalysisGeographyValidationInventory => {
+	const path = join(
+		apiRoot,
+		"public",
+		"analysis-geography-validation.json",
+	);
+	const inventory = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as AnalysisGeographyValidationInventory;
+	if (
+		inventory.schemaVersion !== 1 ||
+		!Array.isArray(inventory.supports) ||
+		inventory.analysisGeographyInventoryHash !== analysisGeographies.contentHash ||
+		inventory.dataCatalogHash !== dataCatalog.contentHash ||
+		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
+	) {
+		throw new Error(
+			`Invalid analysis geography validation inventory at ${path}`,
+		);
+	}
+	return inventory;
+};
+
 export type ApiCatalogues = Required<RouteContext>;
 
 export type CatalogueOptions = {
@@ -446,6 +477,13 @@ export const readApiCatalogues = (
 		dataCatalog,
 		crosswalkInventory,
 	);
+	const analysisGeographyValidationInventory =
+		readAnalysisGeographyValidationInventory(
+			apiRoot,
+			analysisGeographyInventory,
+			dataCatalog,
+			crosswalkInventory,
+		);
 	const relationshipPathInventory = readRelationshipPathInventory(
 		apiRoot,
 		crosswalkInventory,
@@ -528,6 +566,7 @@ export const readApiCatalogues = (
 		measureObservations: readMeasureObservations(apiRoot, dataCatalog),
 		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
 		analysisGeographyInventory,
+		analysisGeographyValidationInventory,
 	};
 };
 

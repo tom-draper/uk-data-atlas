@@ -1450,6 +1450,33 @@
 				]
 			}
 		},
+		"GET /analysis-geography-validation": {
+			"operationId": "getAnalysisGeographyValidation",
+			"parameters": {},
+			"responses": {
+				"200": [],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /analysis:plan": {
 			"operationId": "planAnalysis",
 			"parameters": {
