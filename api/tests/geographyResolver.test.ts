@@ -101,3 +101,58 @@ test("builds immutable geography indexes once for route-level queries", () => {
 		[`${containmentCrosswalk.id}/forward/membership`],
 	);
 });
+
+test("does not claim optional geography capabilities when their artifacts are absent", () => {
+	const resolver = createGeographyResolver({ areaLookup });
+	const ward = {
+		geography: "ward",
+		boundaryRelease: "2025-01-en-ward",
+		code: "E05000001",
+	};
+
+	assert.equal(resolver.hasAreaRelease("ward", "2025-01-en-ward"), true);
+	assert.equal(resolver.hasAreaRelationships(), false);
+	assert.equal(resolver.hasAreaGeometryCache(), false);
+	assert.equal(resolver.hasLocationProjectionStore(), false);
+	assert.equal(resolver.geometryFor(ward), undefined);
+	assert.deepEqual(resolver.relationships(ward), []);
+	assert.deepEqual(
+		resolver.relationshipPaths(
+			{ geography: "ward", boundaryRelease: "2025-01-en-ward" },
+			{
+				geography: "localAuthority",
+				boundaryRelease: "2025-01-uk-lad",
+			},
+			"membership",
+		),
+		[],
+	);
+	assert.deepEqual(
+		resolver.crosswalksToLocationMembers(
+			"ward",
+			"2025-01-en-ward",
+			"localAuthority",
+		),
+		[],
+	);
+	assert.equal(
+		resolver.locationProjection(
+			"greater-manchester",
+			"ward",
+			"2025-01-en-ward",
+			"ward-to-local-authority-2025",
+		),
+		undefined,
+	);
+	assert.deepEqual(
+		resolver.locationParentCrosswalks("region", "2025-12-en"),
+		[],
+	);
+	assert.equal(
+		resolver.locationParents(
+			"greater-manchester",
+			"local-authority-to-region-2025",
+		),
+		undefined,
+	);
+});
