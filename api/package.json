@@ -7,7 +7,7 @@
 		"node": ">=24 <25"
 	},
 	"scripts": {
-		"build": "pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:analysis-geographies && pnpm build:analysis-geography-validation && pnpm build:relationship-paths && pnpm build:location-projections && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release",
+		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:analysis-geographies && pnpm build:analysis-geography-validation && pnpm build:relationship-paths && pnpm build:location-projections && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
 		"example:map-render": "tsx examples/correct-map-render.ts",

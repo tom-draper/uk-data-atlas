@@ -2,6 +2,15 @@ import { compareAtlasReleases } from "./atlasReleaseComparison";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
+const artifactContentType = (path: string) =>
+	path.endsWith(".json")
+		? "application/json"
+		: path.endsWith(".parquet")
+			? "application/vnd.apache.parquet"
+			: path.endsWith(".pmtiles")
+				? "application/vnd.pmtiles"
+				: "application/octet-stream";
+
 /**
  * Endpoints that let a caller synchronise an immutable Atlas release or
  * inspect the validation gate that admitted it. Keeping them together means
@@ -15,6 +24,64 @@ export const handleSyncRoutes = ({
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const { atlasRelease, atlasReleaseHistory, validationReport } = context;
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases" &&
+		segments[3] === "artifacts"
+	) {
+		if (!atlasReleaseHistory || !context.readReleaseArtifact)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the Atlas release history before downloading a release artifact.",
+			);
+		const requestedReleaseId = segments[2] as string;
+		const release = atlasReleaseHistory.get(requestedReleaseId);
+		if (!release)
+			return problem(
+				404,
+				"Not Found",
+				"No archived Atlas release matches that identity.",
+			);
+		const artifactId = parsedUrl.searchParams.get("artifact");
+		if (!artifactId)
+			return problem(
+				400,
+				"Invalid Query",
+				"artifact is required; read the release manifest to choose one of its declared artifact ids.",
+			);
+		const artifact = context.readReleaseArtifact(
+			requestedReleaseId,
+			artifactId,
+		);
+		if (!artifact) {
+			const current = requestedReleaseId === releaseId;
+			return problem(
+				current ? 503 : 410,
+				current ? "Export Unavailable" : "Release No Longer Served",
+				current
+					? `Release artifact ${artifactId} is unavailable or does not match its manifest hash.`
+					: `Atlas release ${requestedReleaseId} is recorded, but artifact ${artifactId} was not retained or no longer matches its release manifest.`,
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				releaseId: requestedReleaseId,
+				artifact: artifact.artifact,
+			}),
+			cache: "immutable",
+			representation: {
+				contentType: artifactContentType(artifact.artifact.path),
+				body: artifact.body,
+				headers: {
+					"content-disposition": `attachment; filename="${artifact.artifact.path.split("/").at(-1)}"`,
+				},
+			},
+		};
+	}
 
 	if (
 		segments.length === 2 &&

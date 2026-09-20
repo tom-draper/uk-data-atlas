@@ -72,6 +72,58 @@ test("serves the current immutable Atlas release", () => {
 	assert.deepEqual((response?.body as { data: unknown }).data, atlasRelease);
 });
 
+test("downloads a retained artifact from an archived release", () => {
+	const archived = {
+		schemaVersion: 1 as const,
+		releaseId: "archived-release",
+		artifacts: [
+			{
+				id: "data-catalog",
+				path: "data-catalog.json",
+				contentHash: "sha256:fixture",
+			},
+		],
+	};
+	const response = handleRoute(
+		request(
+			"/v1/atlas-releases/archived-release/artifacts?artifact=data-catalog",
+			{
+				atlasReleaseHistory: new Map([[archived.releaseId, archived]]),
+				readReleaseArtifact: (releaseId, artifactId) =>
+					releaseId === archived.releaseId &&
+					artifactId === "data-catalog"
+						? {
+								artifact: archived.artifacts[0]!,
+								body: Buffer.from("{}\n"),
+							}
+						: undefined,
+			},
+		),
+	);
+	assert.equal(response?.status, 200);
+	assert.equal(response?.cache, "immutable");
+	assert.equal(response?.representation?.contentType, "application/json");
+	assert.equal(response?.representation?.body.toString(), "{}\n");
+});
+
+test("refuses an archived artifact whose retained bytes are absent", () => {
+	const archived = {
+		schemaVersion: 1 as const,
+		releaseId: "archived-release",
+		artifacts: [],
+	};
+	const response = handleSyncRoutes(
+		request(
+			"/v1/atlas-releases/archived-release/artifacts?artifact=data-catalog",
+			{
+				atlasReleaseHistory: new Map([[archived.releaseId, archived]]),
+				readReleaseArtifact: () => undefined,
+			},
+		),
+	);
+	assert.equal(response?.status, 410);
+});
+
 test("filters validation resources without changing their response envelope", () => {
 	const response = handleSyncRoutes(
 		request("/v1/validation?status=passed", {

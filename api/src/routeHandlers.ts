@@ -129,7 +129,8 @@ const routeFamilies: RouteFamily[] = [
 			(segments[1] === "analysis-geographies" ||
 				segments[1] === "analysis-geography-validation" ||
 				segments[1] === "analysis:plan" ||
-				(segments[1] === "measures" && segments[3] === "conversion-support")),
+				(segments[1] === "measures" &&
+					segments[3] === "conversion-support")),
 		handle: handleAnalysisGeographyRoutes,
 	},
 	{
@@ -389,8 +390,13 @@ const routeFamilies: RouteFamily[] = [
 			["atlas-release", "atlas-releases", "validation"].includes(
 				segments[1] ?? "",
 			) &&
-			// A path below a release id is a pinned resource, not a manifest.
-			!(segments[1] === "atlas-releases" && segments.length >= 4),
+			// A path below a release id is a pinned resource, except an explicit
+			// immutable artifact download from an archived release.
+			!(
+				segments[1] === "atlas-releases" &&
+				segments.length >= 4 &&
+				!(segments.length === 4 && segments[3] === "artifacts")
+			),
 		handle: handleSyncRoutes,
 	},
 	{
@@ -398,7 +404,8 @@ const routeFamilies: RouteFamily[] = [
 		owns: (segments) =>
 			segments[0] === "v1" &&
 			segments[1] === "atlas-releases" &&
-			segments.length >= 4,
+			segments.length >= 4 &&
+			!(segments.length === 4 && segments[3] === "artifacts"),
 		handle: handlePinnedRoutes,
 	},
 ];
