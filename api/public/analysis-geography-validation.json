@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"analysisGeographyInventoryHash": "sha256:f072d58abefea7aa79623ce819486b1a2903cebdc9768a37786a533b5d08f617",
-	"dataCatalogHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
+	"analysisGeographyInventoryHash": "sha256:3101eb85cf7af54a3648a359e7ec18540fe6f2453911a399a699621384ad879e",
+	"dataCatalogHash": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"supports": [
 		{
@@ -15,7 +15,8 @@
 				"geography": "lsoa",
 				"boundaryYear": 2021,
 				"periods": [
-					"2025-H1"
+					"2024",
+					"2025"
 				]
 			},
 			"crosswalk": {
@@ -24,19 +25,27 @@
 			},
 			"observations": {
 				"artifact": "road-collisions-lsoa-2021-observations",
-				"contentHash": "sha256:002d2cf672cbf6028386f66cdf19312f917b90a0d3c56848a440256245d176ef"
+				"contentHash": "sha256:fa7288318a00749f88f6dbb8a49408285dc530c33921d21a530f87e35459dd5b"
 			},
 			"periods": [
 				{
-					"period": "2025-H1",
+					"period": "2024",
 					"method": "exact",
-					"inputRecordCount": 20623,
-					"outputRecordCount": 317,
-					"inputTotal": 46649,
-					"outputTotal": 46649
+					"inputRecordCount": 27199,
+					"outputRecordCount": 318,
+					"inputTotal": 96759,
+					"outputTotal": 96759
+				},
+				{
+					"period": "2025",
+					"method": "exact",
+					"inputRecordCount": 27178,
+					"outputRecordCount": 318,
+					"inputTotal": 97418,
+					"outputTotal": 97418
 				}
 			]
 		}
 	],
-	"contentHash": "sha256:7dc3cf2ed68480c2771ee0856b72bb9c4cd445ca1e3718575503784edf98fff9"
+	"contentHash": "sha256:ed5306196e187293fa8197fdf36eae36190f06abaac6bd8e4a1fb598defaa13d"
 }

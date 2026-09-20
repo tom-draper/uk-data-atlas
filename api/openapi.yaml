@@ -1474,7 +1474,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not explicit. The route does not choose between a measure's sources."
-        x-example-request: "/v1/analysis:plan?measure=road-collisions&period=2025-H1&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa"
+        x-example-request: "/v1/analysis:plan?measure=road-collisions&period=2025&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa"
       description: >
         Returns a plan only: the selected source partition, the published
         crosswalk and whether the requested period is comparable on the named
@@ -3917,9 +3917,9 @@ paths:
                                 datasetId: road-collisions
                                 geography: lsoa
                                 boundaryYear: 2021
-                                period: 2025-H1
+                                period: "2025"
                               method: exact
-                              href: /v1/data/road-collisions/convert?period=2025-H1&geography=lsoa&boundaryYear=2021&crosswalk=lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
+                              href: /v1/data/road-collisions/convert?period=2025&geography=lsoa&boundaryYear=2021&crosswalk=lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
                         - id: population-estimate
                           valueKind: count
                           unit: people
@@ -5804,8 +5804,8 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
-                    href: /v1/atlas-releases/sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
+                  - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
+                    href: /v1/atlas-releases/sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
                     artifactCount: 338
                     current: true
                 meta:
@@ -5841,7 +5841,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
+                  releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5926,14 +5926,14 @@ paths:
               x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d"
+                atlasRelease: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
                 data:
                   from:
-                    releaseId: "sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d"
-                    href: /v1/atlas-releases/sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
+                    releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
+                    href: /v1/atlas-releases/sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
                   to:
-                    releaseId: "sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d"
-                    href: /v1/atlas-releases/sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
+                    releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
+                    href: /v1/atlas-releases/sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []

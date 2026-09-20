@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:05d68bd46f6fba9e2b062c1e7f4a73047bdd6a0607e8b72b44bbb54ff4c1fe21",
+	"contentHash": "sha256:dc99b0bd1fdbe936846e587281226e8227ca7d8d9c489249809822039659bb00",
 	"inputs": {
-		"dataCatalog": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
+		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 		"boundaryRegistry": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 		"populationObservations": "sha256:af1de02a052ace448dfb92c80cc312118a16c30bc77bf7a8c4d0e24a24ddab18",
 		"populationLocalAuthorityObservations": "sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b",
@@ -279,14 +279,18 @@
 			"qualification-none/localAuthority/2023": "sha256:2fccb82d7d0829f1b0c583e70b1c47627a4b2183d6788d2bdf058ca3a06a4399",
 			"qualification-other/localAuthority/2023": "sha256:b7c69d573d116344e331bf3be27fd7a352a5854a5e25f541f24dcd739c1b23c2",
 			"qualification-total/localAuthority/2023": "sha256:4f43e906c768c6351ceb23db021824e66e7b9c028c1538fe03d88ac803244673",
-			"road-collisions-fatal/localAuthority/2024": "sha256:a941910ee8ecf4d9df3b2922ee238711480a4d32fb9a1476fb4650d3c8305c5f",
-			"road-collisions-fatal/lsoa/2021": "sha256:b759703836f985a7939154e0b711a769fa860c538e43bfc7fab7073092b5a35d",
-			"road-collisions-serious/localAuthority/2024": "sha256:3f7beab6622f0932b0d16562709f4d97f3e00898e443c3802c0f082dcc5746bc",
-			"road-collisions-serious/lsoa/2021": "sha256:d776ae75f9bda75695b3a9d91d7bf8687473fe0f0aaac8e19c96b8a948eafcb2",
-			"road-collisions-slight/localAuthority/2024": "sha256:8b836bb96ecd1986c0710a87a4ea3d035ebfd186aaa951643512a930e66ea5ca",
-			"road-collisions-slight/lsoa/2021": "sha256:e788e7b64a9519085f33a6ac1720a7a07dfe6262a4c21e0dcdaf275cedfcb8d8",
-			"road-collisions/localAuthority/2024": "sha256:cefc9f7823d55589f4cf86b2e91ba63e5638b2d02380465564b31bebf1a7e1fa",
-			"road-collisions/lsoa/2021": "sha256:002d2cf672cbf6028386f66cdf19312f917b90a0d3c56848a440256245d176ef",
+			"road-collisions-fatal/localAuthority/2024": "sha256:d0c646fc83cf798e46ab4ae99960cfdb6925e5964029cd14a361acf571d676fd",
+			"road-collisions-fatal/localAuthority/2025": "sha256:83a76550949bf30203062992ebc849735f9be5b86818a7580d922f78c7d4a9d6",
+			"road-collisions-fatal/lsoa/2021": "sha256:819b01110ebde7fbfa11fd1cff661780c4dc734844c7b6858d738ddca0befe14",
+			"road-collisions-serious/localAuthority/2024": "sha256:73827b2ca247e1971add41356a41f5d43599538cf76591b09ba7499c5df340c7",
+			"road-collisions-serious/localAuthority/2025": "sha256:1de060e3f3f04071d8b7d7da48fcaedc2038cd610a1187c7e9f4e75480311e3b",
+			"road-collisions-serious/lsoa/2021": "sha256:adb8f14b54f650c547e1cc8d1acd93bb5ebfaa9d815066686e7db2582d7d81cc",
+			"road-collisions-slight/localAuthority/2024": "sha256:7a5360e913dd8d2cfafeabd509567d801427593e763b4f128cfa3140a15d4e64",
+			"road-collisions-slight/localAuthority/2025": "sha256:a7863922b7aa525147152e9650604bdd7d58d639e943f7d253f75c254f741c6e",
+			"road-collisions-slight/lsoa/2021": "sha256:68208bebbe778743bfd650c65078224b8398479dcf352994cf18e3bd2d3f9889",
+			"road-collisions/localAuthority/2024": "sha256:b21964e4b2e31a32534e0547a1fbd8daef6e71a7541963c65cc0fa561f2b7e75",
+			"road-collisions/localAuthority/2025": "sha256:cc0e3942680a4c0728e5c6f63d6b1e3101684bd6123ddedbe983b5ad964d3288",
+			"road-collisions/lsoa/2021": "sha256:fa7288318a00749f88f6dbb8a49408285dc530c33921d21a530f87e35459dd5b",
 			"simd-decile/dataZone/2011": "sha256:253414cf7ab82282c0e003f2d963804f8fe73e07bca29a5b9261049f6956925c",
 			"simd-rank/dataZone/2011": "sha256:7010ceb2e025a9e2a859509558f46b35a89394182f6aff3853b7b5f08a894830",
 			"temporary-accommodation-children/localAuthority/2025": "sha256:16299aa97146b7337b7c8d7f762c50041a5fa3e1dca05a1e97a43970c9ef1cb1",
@@ -13334,7 +13338,7 @@
 						"boundaryYear": 2024
 					},
 					"periods": [
-						"2025-H1"
+						"2024"
 					],
 					"candidates": [
 						{
@@ -13347,15 +13351,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13379,15 +13382,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13411,7 +13413,8 @@
 						"boundaryYear": 2021
 					},
 					"periods": [
-						"2025-H1"
+						"2024",
+						"2025"
 					],
 					"candidates": [
 						{
@@ -13422,34 +13425,109 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 20623,
+							"sourceCodeCount": 31757,
 							"candidateCodeCount": 35672,
-							"matchingCodeCount": 20623,
+							"matchingCodeCount": 31757,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeCount": 3915,
 							"candidateOnlyCodeSample": [
-								"E01000002",
-								"E01000003",
-								"E01000006",
-								"E01000012",
-								"E01000018",
-								"E01000019",
-								"E01000020",
-								"E01000022",
-								"E01000024",
-								"E01000025",
-								"E01000028",
-								"E01000029",
-								"E01000038",
-								"E01000040",
-								"E01000042",
 								"E01000046",
-								"E01000055",
-								"E01000074",
-								"E01000075",
-								"E01000076"
+								"E01000126",
+								"E01000127",
+								"E01000132",
+								"E01000157",
+								"E01000163",
+								"E01000167",
+								"E01000175",
+								"E01000179",
+								"E01000224",
+								"E01000230",
+								"E01000283",
+								"E01000291",
+								"E01000334",
+								"E01000342",
+								"E01000357",
+								"E01000373",
+								"E01000411",
+								"E01000419",
+								"E01000424"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
 							]
 						}
 					],
@@ -13467,7 +13545,7 @@
 						"boundaryYear": 2024
 					},
 					"periods": [
-						"2025-H1"
+						"2024"
 					],
 					"candidates": [
 						{
@@ -13480,15 +13558,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13512,15 +13589,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13544,7 +13620,8 @@
 						"boundaryYear": 2021
 					},
 					"periods": [
-						"2025-H1"
+						"2024",
+						"2025"
 					],
 					"candidates": [
 						{
@@ -13555,34 +13632,109 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 20623,
+							"sourceCodeCount": 31757,
 							"candidateCodeCount": 35672,
-							"matchingCodeCount": 20623,
+							"matchingCodeCount": 31757,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeCount": 3915,
 							"candidateOnlyCodeSample": [
-								"E01000002",
-								"E01000003",
-								"E01000006",
-								"E01000012",
-								"E01000018",
-								"E01000019",
-								"E01000020",
-								"E01000022",
-								"E01000024",
-								"E01000025",
-								"E01000028",
-								"E01000029",
-								"E01000038",
-								"E01000040",
-								"E01000042",
 								"E01000046",
-								"E01000055",
-								"E01000074",
-								"E01000075",
-								"E01000076"
+								"E01000126",
+								"E01000127",
+								"E01000132",
+								"E01000157",
+								"E01000163",
+								"E01000167",
+								"E01000175",
+								"E01000179",
+								"E01000224",
+								"E01000230",
+								"E01000283",
+								"E01000291",
+								"E01000334",
+								"E01000342",
+								"E01000357",
+								"E01000373",
+								"E01000411",
+								"E01000419",
+								"E01000424"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
 							]
 						}
 					],
@@ -13600,7 +13752,7 @@
 						"boundaryYear": 2024
 					},
 					"periods": [
-						"2025-H1"
+						"2024"
 					],
 					"candidates": [
 						{
@@ -13613,15 +13765,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13645,15 +13796,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13677,7 +13827,8 @@
 						"boundaryYear": 2021
 					},
 					"periods": [
-						"2025-H1"
+						"2024",
+						"2025"
 					],
 					"candidates": [
 						{
@@ -13688,34 +13839,109 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 20623,
+							"sourceCodeCount": 31757,
 							"candidateCodeCount": 35672,
-							"matchingCodeCount": 20623,
+							"matchingCodeCount": 31757,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeCount": 3915,
 							"candidateOnlyCodeSample": [
-								"E01000002",
-								"E01000003",
-								"E01000006",
-								"E01000012",
-								"E01000018",
-								"E01000019",
-								"E01000020",
-								"E01000022",
-								"E01000024",
-								"E01000025",
-								"E01000028",
-								"E01000029",
-								"E01000038",
-								"E01000040",
-								"E01000042",
 								"E01000046",
-								"E01000055",
-								"E01000074",
-								"E01000075",
-								"E01000076"
+								"E01000126",
+								"E01000127",
+								"E01000132",
+								"E01000157",
+								"E01000163",
+								"E01000167",
+								"E01000175",
+								"E01000179",
+								"E01000224",
+								"E01000230",
+								"E01000283",
+								"E01000291",
+								"E01000334",
+								"E01000342",
+								"E01000357",
+								"E01000373",
+								"E01000411",
+								"E01000419",
+								"E01000424"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
 							]
 						}
 					],
@@ -13733,7 +13959,7 @@
 						"boundaryYear": 2024
 					},
 					"periods": [
-						"2025-H1"
+						"2024"
 					],
 					"candidates": [
 						{
@@ -13746,15 +13972,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13778,15 +14003,14 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 349,
+							"sourceCodeCount": 350,
 							"candidateCodeCount": 361,
-							"matchingCodeCount": 349,
+							"matchingCodeCount": 350,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 12,
+							"candidateOnlyCodeCount": 11,
 							"candidateOnlyCodeSample": [
-								"E06000024",
 								"N09000001",
 								"N09000002",
 								"N09000003",
@@ -13810,7 +14034,8 @@
 						"boundaryYear": 2021
 					},
 					"periods": [
-						"2025-H1"
+						"2024",
+						"2025"
 					],
 					"candidates": [
 						{
@@ -13821,34 +14046,109 @@
 								"GB-WLS"
 							],
 							"status": "code-set-compatible",
-							"sourceCodeCount": 20623,
+							"sourceCodeCount": 31757,
 							"candidateCodeCount": 35672,
-							"matchingCodeCount": 20623,
+							"matchingCodeCount": 31757,
 							"matchedSourceShare": 1,
 							"unmatchedSourceCodeCount": 0,
 							"unmatchedSourceCodeSample": [],
-							"candidateOnlyCodeCount": 15049,
+							"candidateOnlyCodeCount": 3915,
 							"candidateOnlyCodeSample": [
-								"E01000002",
-								"E01000003",
-								"E01000006",
-								"E01000012",
-								"E01000018",
-								"E01000019",
-								"E01000020",
-								"E01000022",
-								"E01000024",
-								"E01000025",
-								"E01000028",
-								"E01000029",
-								"E01000038",
-								"E01000040",
-								"E01000042",
 								"E01000046",
-								"E01000055",
-								"E01000074",
-								"E01000075",
-								"E01000076"
+								"E01000126",
+								"E01000127",
+								"E01000132",
+								"E01000157",
+								"E01000163",
+								"E01000167",
+								"E01000175",
+								"E01000179",
+								"E01000224",
+								"E01000230",
+								"E01000283",
+								"E01000291",
+								"E01000334",
+								"E01000342",
+								"E01000357",
+								"E01000373",
+								"E01000411",
+								"E01000419",
+								"E01000424"
+							]
+						}
+					],
+					"note": "This is code-set compatibility only, based on area-code membership. It does not select a boundary release or claim that compatible releases have equal geometry."
+				},
+				{
+					"datasetId": "road-collisions",
+					"sourceGeography": {
+						"type": "localAuthority",
+						"boundaryYear": 2025
+					},
+					"periods": [
+						"2025"
+					],
+					"candidates": [
+						{
+							"boundaryRelease": "2025-05-uk-bgc-v2",
+							"title": "Local authority districts, May 2025 (United Kingdom, generalised, clipped, v2)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
+							]
+						},
+						{
+							"boundaryRelease": "2025-12-uk-bgc",
+							"title": "Local authority districts, December 2025 (United Kingdom, generalised, clipped)",
+							"coverageCountries": [
+								"GB-ENG",
+								"GB-NIR",
+								"GB-SCT",
+								"GB-WLS"
+							],
+							"status": "code-set-compatible",
+							"sourceCodeCount": 350,
+							"candidateCodeCount": 361,
+							"matchingCodeCount": 350,
+							"matchedSourceShare": 1,
+							"unmatchedSourceCodeCount": 0,
+							"unmatchedSourceCodeSample": [],
+							"candidateOnlyCodeCount": 11,
+							"candidateOnlyCodeSample": [
+								"N09000001",
+								"N09000002",
+								"N09000003",
+								"N09000004",
+								"N09000005",
+								"N09000006",
+								"N09000007",
+								"N09000008",
+								"N09000009",
+								"N09000010",
+								"N09000011"
 							]
 						}
 					],

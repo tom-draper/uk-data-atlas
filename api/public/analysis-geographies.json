@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"dataCatalogHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
+	"dataCatalogHash": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"supports": [
 		{
@@ -14,7 +14,8 @@
 				"geography": "lsoa",
 				"boundaryYear": 2021,
 				"periods": [
-					"2025-H1"
+					"2024",
+					"2025"
 				]
 			},
 			"crosswalk": {
@@ -25,5 +26,5 @@
 			"note": "Reported collision counts are extensive. Every published 2021 LSOA in this source has one verified May 2023 local-authority parent, so values are regrouped exactly; no area weighting is used."
 		}
 	],
-	"contentHash": "sha256:f072d58abefea7aa79623ce819486b1a2903cebdc9768a37786a533b5d08f617"
+	"contentHash": "sha256:3101eb85cf7af54a3648a359e7ec18540fe6f2453911a399a699621384ad879e"
 }

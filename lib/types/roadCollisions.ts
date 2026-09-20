@@ -19,7 +19,7 @@ export interface RoadCollisionsDataset {
 	id: string;
 	type: "roadCollisions";
 	year: number;
-	/** The months the provisional file covers, such as "January to June 2025". */
+	/** The months the DfT edition covers, such as "January to December 2025". */
 	period: string;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

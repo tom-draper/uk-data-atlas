@@ -1712,7 +1712,7 @@ test("publishes a single-period indicator and names the authorities it has no va
 	}
 });
 
-test("publishes provisional half-year road collisions for Great Britain by severity", () => {
+test("publishes final annual road collisions for Great Britain by severity", () => {
 	const directory = mkdtempSync(
 		join(tmpdir(), "uk-data-atlas-data-catalog-"),
 	);
@@ -1728,7 +1728,7 @@ test("publishes provisional half-year road collisions for Great Britain by sever
 			)?.periods,
 			[
 				{
-					period: "2025-H1",
+					period: "2025",
 					records: [
 						{ areaCode: "E06000001", value: 1, status: "observed" },
 						{ areaCode: "S12000001", value: 1, status: "observed" },
@@ -1767,11 +1767,11 @@ test("publishes provisional half-year road collisions for Great Britain by sever
 		);
 		assert.match(
 			lsoa?.coverage.note ?? "",
-			/its 6 collisions are not in this partition\. 2 collisions in England and Wales have no LSOA code/,
+			/Scotland has no LSOAs and is not in this partition/,
 		);
 		assert.equal(
 			measure("road-collisions")?.notes?.filter((note) =>
-				note.startsWith("Provisional"),
+				note.startsWith("Final annual"),
 			).length,
 			1,
 		);
@@ -1783,7 +1783,7 @@ test("publishes provisional half-year road collisions for Great Britain by sever
 			)?.periods,
 			[
 				{
-					period: "2025-H1",
+					period: "2025",
 					records: [
 						{ areaCode: "E01000001", value: 1, status: "observed" },
 					],

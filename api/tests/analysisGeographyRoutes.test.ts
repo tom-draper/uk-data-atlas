@@ -23,7 +23,7 @@ const inventory: AnalysisGeographyInventory = {
 				datasetId: "road-collisions",
 				geography: "lsoa",
 				boundaryYear: 2021,
-				periods: ["2025-H1"],
+				periods: ["2024", "2025"],
 			},
 			crosswalk: {
 				id: "lsoa-2021-to-local-authority-2023",
@@ -56,7 +56,7 @@ const validation: AnalysisGeographyValidationInventory = {
 			},
 			periods: [
 				{
-					period: "2025-H1",
+					period: "2025",
 					method: "exact",
 					inputRecordCount: 2,
 					outputRecordCount: 1,
@@ -112,7 +112,7 @@ test("lists only reviewed analysis conversions", () => {
 test("preflights an explicit source and retains not-comparable periods", () => {
 	const base =
 		"/v1/analysis:plan?measure=road-collisions&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa&sourceBoundaryYear=2021";
-	const available = route(`${base}&period=2025-H1`);
+	const available = route(`${base}&period=2025`);
 	assert.equal(available.status, 200);
 	const availableData = "data" in available.body ? available.body.data : undefined;
 	assert.deepEqual(availableData && (availableData as { status: string }).status, "available");
@@ -122,7 +122,7 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 		/\/v1\/data\/road-collisions\/convert/,
 	);
 
-	const unavailable = route(`${base}&period=2024`);
+	const unavailable = route(`${base}&period=2023`);
 	assert.equal(unavailable.status, 200);
 	assert.deepEqual(
 		"data" in unavailable.body && (unavailable.body.data as { status: string }).status,
@@ -130,7 +130,7 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 	);
 
 	const ambiguous = route(
-		"/v1/analysis:plan?measure=road-collisions&period=2025-H1&analysisGeography=localAuthority/2023-05-uk-bgc-v2",
+		"/v1/analysis:plan?measure=road-collisions&period=2025&analysisGeography=localAuthority/2023-05-uk-bgc-v2",
 	);
 	assert.equal(ambiguous.status, 400);
 });

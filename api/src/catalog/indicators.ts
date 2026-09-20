@@ -42,6 +42,8 @@ export const publishIndicators = (
 		path: string;
 		boundaryYear: number;
 		period: string;
+		/** Raw-file period to read when it differs from the published period. */
+		sourcePeriod?: string;
 		/**
 		 * The codes a complete partition holds. Without it the partition is
 		 * not checked here, and the compatibility report is what compares it
@@ -70,10 +72,7 @@ export const publishIndicators = (
 	);
 	if (!dataset)
 		throw new Error(`${manifestPath} has no ${spec.datasetId} dataset`);
-	if (
-		dataset.summary.boundaryYears.length !== 1 ||
-		dataset.summary.boundaryYears[0] !== spec.boundaryYear
-	)
+	if (!dataset.summary.boundaryYears.includes(spec.boundaryYear))
 		throw new Error(
 			`${manifestPath}: ${spec.datasetId} must declare boundary year ${spec.boundaryYear}`,
 		);
@@ -89,6 +88,7 @@ export const publishIndicators = (
 			spec.isAuthority,
 			spec.table,
 			geography === "localPlanningAuthority" ? geography : undefined,
+			spec.sourcePeriod,
 		);
 		let records = indicator.status
 			? read.records.map((record) => ({
