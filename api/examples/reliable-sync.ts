@@ -98,13 +98,31 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		const comparison = await client.get<{
 			summary: { added: number; removed: number; changed: number };
 			resources: Record<string, { changed?: unknown[] }>;
-		}>(`/v1/atlas-releases/compare?from=${previous.releaseId}`);
+			semantic?:
+				| {
+						status: "available";
+						changes: Array<{ kind: string; id: string; fields: string[] }>;
+					}
+				| { status: "unavailable"; reason: string };
+		}>(
+			`/v1/atlas-releases/compare?from=${previous.releaseId}&detail=fields`,
+		);
 		const changedKinds = Object.entries(comparison.data.resources)
 			.filter(([, value]) => (value.changed?.length ?? 0) > 0)
 			.map(([kind]) => kind);
+		const semantic = comparison.data.semantic;
+		const fieldDetail =
+			semantic?.status === "available" && semantic.changes.length > 0
+				? ` Changed fields include ${semantic.changes
+						.slice(0, 3)
+						.map((change) => `${change.kind}/${change.id}: ${change.fields.join(", ")}`)
+						.join("; ")}.`
+				: semantic?.status === "unavailable"
+					? ` Field detail is unavailable: ${semantic.reason}`
+					: "";
 		steps.push({
 			title: "Reprocess only what moved",
-			detail: `Against ${previous.releaseId.slice(0, 19)}…: ${comparison.data.summary.changed} artifacts changed${changedKinds.length > 0 ? `, in ${changedKinds.join(", ")}` : ""}.`,
+			detail: `Against ${previous.releaseId.slice(0, 19)}…: ${comparison.data.summary.changed} artifacts changed${changedKinds.length > 0 ? `, in ${changedKinds.join(", ")}` : ""}.${fieldDetail}`,
 		});
 	}
 
