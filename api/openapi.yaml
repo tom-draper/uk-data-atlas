@@ -1560,7 +1560,10 @@ paths:
         needs the premises weight the measure names.
         `house-price-median` covers ward-level median price paid for England
         and Wales, 1995-2022, each period the year ending December, under the
-        ward codes the publisher used. It is declared `non-aggregatable` with
+        ward codes the publisher used except for one reviewed, code-only
+        correction: Temple Newsam's E05013831 is served as the geometrically
+        identical December 2020 code E05011412, with the publisher code carried
+        as `sourceAreaCode`. It is declared `non-aggregatable` with
         `statistic: median`: a median of medians is not the median of the
         underlying sales, so aggregation and conversion both refuse it.
 
@@ -1640,7 +1643,8 @@ paths:
         published population-weighted concentrations.
         This route never selects a May/December boundary release, converts
         values between geographies, or aggregates them. By default, it serves
-        the source-exact values. A caller may ask for `units=canonical` to
+        publisher-reported values and any reviewed, documented code-only
+        repairs. A caller may ask for `units=canonical` to
         multiply numeric values and any published interval bounds by the
         measure's declared canonical scale. That response identifies the
         calculation and canonical unit; it never changes an observation
@@ -5640,7 +5644,7 @@ paths:
                         datasets:
                           - { id: population-uk, role: source }
                           - { id: land-area, role: derived-from }
-                  note: Each export is the immutable, source-exact JSON observation artifact used by the API.
+                  note: Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record.
                 meta:
                   nextCursor: null
         "503":

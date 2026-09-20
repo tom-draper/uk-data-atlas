@@ -13,9 +13,16 @@ describe("correction register", () => {
 
 	it("finds topic-level changes from the measures it serves", () => {
 		expect(correctionsForMeasure("ghg-emissions")).toEqual(
-			correctionRecords,
+			correctionRecords.filter((record) =>
+				record.scope.measureIds.includes("*"),
+			),
 		);
 		expect(correctionsForMeasures(["ghg-emissions"])).toEqual(
+			correctionRecords.filter((record) =>
+				record.scope.measureIds.includes("*"),
+			),
+		);
+		expect(correctionsForMeasure("house-price-median")).toEqual(
 			correctionRecords,
 		);
 	});

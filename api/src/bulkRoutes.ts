@@ -43,7 +43,7 @@ export const handleBulkRoutes = ({
 					status: 200,
 					body: envelope(releaseId, {
 						...exportManifest,
-						note: "Each export is the immutable, source-exact JSON observation artifact used by the API.",
+						note: "Each export is the immutable publisher-observation JSON artifact used by the API. Reviewed served corrections, if any, are recorded separately and retain the publisher code on the affected record.",
 					}),
 				}
 			: problem(

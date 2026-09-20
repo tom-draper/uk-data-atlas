@@ -5,6 +5,7 @@ export type TabularFormat = "csv" | "ndjson";
 
 export type MeasureExportRecord = {
 	areaCode: string;
+	sourceAreaCode?: string;
 	value: number;
 	status: "observed" | "derived";
 	confidenceInterval?: { lower: number; upper: number };
@@ -58,6 +59,8 @@ const exportRows = ({
 		status: record.status,
 		lowerBound: record.confidenceInterval?.lower ?? "",
 		upperBound: record.confidenceInterval?.upper ?? "",
+		// Appended to the table shape below, preserving existing CSV positions.
+		sourceAreaCode: record.sourceAreaCode ?? "",
 	}));
 
 const columns = [
@@ -81,12 +84,13 @@ const columns = [
 	// their positions. Empty where the publisher gives no interval.
 	"lowerBound",
 	"upperBound",
+	"sourceAreaCode",
 ] as const;
 
 /**
- * Serialize a page of source-exact observations for tools that do not consume
- * the JSON API envelope. Every row repeats the minimum provenance necessary
- * to keep a downloaded page interpretable outside the Atlas API.
+ * Serialize a page of publisher-observed observations for tools that do not
+ * consume the JSON API envelope. Every row repeats the minimum provenance
+ * necessary to keep a downloaded page interpretable outside the Atlas API.
  */
 export const exportMeasureRecords = (
 	format: TabularFormat,
