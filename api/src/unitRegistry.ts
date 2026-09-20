@@ -1,4 +1,8 @@
-import type { DataCatalog, Measure } from "./dataCatalog";
+import type {
+	DataCatalog,
+	Measure,
+	PopulationObservation,
+} from "./dataCatalog";
 
 /**
  * Machine-readable unit semantics for a measure's published numeric values.
@@ -117,3 +121,52 @@ export const withUnitDefinitions = (catalog: DataCatalog): DataCatalog => ({
 /** Narrows a measure only after proving the display unit has a declared meaning. */
 export const measureUnit = (measure: Measure): UnitDefinition =>
 	measure.unitDefinition ?? unitDefinitionFor(measure.unit);
+
+/** The explicit receipt returned when a caller asks to see canonical values. */
+export type CanonicalValueRepresentation = {
+	mode: "canonical";
+	sourceUnit: string;
+	unit: UnitDefinition;
+	calculation: {
+		method: "unit-normalisation";
+		scaleToCanonical: number;
+		note: string;
+	};
+};
+
+/**
+ * Describes an opt-in presentation calculation without changing a source
+ * observation or claiming that a publisher supplied the canonical value.
+ */
+export const canonicalValueRepresentation = (
+	measure: Measure,
+): CanonicalValueRepresentation => {
+	const unit = measureUnit(measure);
+	return {
+		mode: "canonical",
+		sourceUnit: measure.unit,
+		unit,
+		calculation: {
+			method: "unit-normalisation",
+			scaleToCanonical: unit.scaleToCanonical,
+			note: "Each numeric value and any publisher-supplied interval bound was multiplied by the declared scale. Source observations remain unchanged.",
+		},
+	};
+};
+
+/** Applies only the declared scale, preserving the source record object. */
+export const normaliseObservation = <T extends PopulationObservation>(
+	record: T,
+	unit: UnitDefinition,
+): T => ({
+	...record,
+	value: record.value * unit.scaleToCanonical,
+	...(record.confidenceInterval
+		? {
+				confidenceInterval: {
+					lower: record.confidenceInterval.lower * unit.scaleToCanonical,
+					upper: record.confidenceInterval.upper * unit.scaleToCanonical,
+				},
+			}
+		: {}),
+});

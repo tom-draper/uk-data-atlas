@@ -1767,6 +1767,13 @@ as `per` (for example, `premises`). The API does not rewrite any source artifact
 or observation value; clients can use this metadata to make compatible derived
 calculations explicit and reject incompatible inputs.
 
+For numeric observations, `GET /v1/data/{measure-id}?units=canonical` opts in
+to a served calculation: values and any publisher-supplied interval bounds are
+multiplied by that declared scale, and `valueRepresentation` records the exact
+unit and calculation. The default remains the untouched source values; the
+canonical representation currently uses JSON so a tabular download cannot be
+misread.
+
 This prevents a damaging API behaviour: summing percentages, averaging medians,
 or pretending that ranks can be converted between boundaries. The API may
 aggregate a count; it may derive a rate only when it has a suitable numerator
@@ -3382,7 +3389,7 @@ second inventory to maintain:
 
 **Map**
 
-- `GET /v1/data/{measure-id}` — Retrieve a measure's source-exact observations
+- `GET /v1/data/{measure-id}` — Retrieve source-exact observations, or an opt-in canonical-unit representation
 - `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
 - `GET /v1/areas:contains` — Find the areas containing a WGS84 point in one or more geographies
 - `GET /v1/areas:containsBatch` — Find the areas containing each of a bounded batch of points
