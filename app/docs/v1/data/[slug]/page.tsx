@@ -12,6 +12,7 @@ import {
 import { Request } from "@/components/docs/Example";
 import Facts from "@/components/docs/Facts";
 import { TextLink } from "@/components/docs/Prose";
+import { correctionsForMeasures } from "@/lib/corrections";
 import {
 	exportsFromDatasets,
 	loadCatalogue,
@@ -79,6 +80,9 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 			]),
 		),
 	];
+	const corrections = correctionsForMeasures(
+		facts.measures.map((measure) => measure.id),
+	);
 
 	return (
 		<DocPage
@@ -97,6 +101,14 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 				{ id: "coverage", title: "Areas and years" },
 				...(notes.length > 0
 					? [{ id: "notes", title: "Things to know" }]
+					: []),
+				...(corrections.length > 0
+					? [
+							{
+								id: "corrections",
+								title: "Corrections and improvements",
+							},
+						]
 					: []),
 				{ id: "request", title: "Request it" },
 				{ id: "source", title: "Source and licence" },
@@ -189,6 +201,41 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 							<List items={notes.slice(VISIBLE_NOTES)} />
 						</details>
 					)}
+				</>
+			)}
+
+			{corrections.length > 0 && (
+				<>
+					<H2 id="corrections">Corrections and improvements</H2>
+					<P>
+						These reviewed changes apply to what the API serves for
+						this data. The publisher&apos;s source files and the
+						source-exact downloads are not changed.
+					</P>
+					<Table
+						head={["Change", "What the API serves", "Applies when"]}
+						rows={corrections.map((record) => [
+							<span
+								key="title"
+								className="font-medium text-slate-900"
+							>
+								{record.title}
+							</span>,
+							record.change.served,
+							<code
+								key="request"
+								className="font-mono text-[12.5px] text-slate-600"
+							>
+								{record.scope.request}
+							</code>,
+						])}
+					/>
+					{sampleMeasure && (
+						<Request
+							url={`${API_BASE_URL}/corrections?measure=${encodeURIComponent(sampleMeasure)}`}
+						/>
+					)}
+					<EndpointRef id="listCorrections" />
 				</>
 			)}
 
