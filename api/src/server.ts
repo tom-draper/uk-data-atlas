@@ -54,6 +54,7 @@ import {
 } from "./relationshipPaths";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
+import { withUnitDefinitions } from "./unitRegistry";
 
 const registryPath = (apiRoot: string) =>
 	join(apiRoot, "public", "boundary-releases.json");
@@ -288,7 +289,7 @@ export const readDataCatalog = (apiRoot: string): DataCatalog => {
 	) {
 		throw new Error(`Invalid data catalogue at ${path}`);
 	}
-	return catalog;
+	return withUnitDefinitions(catalog);
 };
 
 export const readExportManifest = (apiRoot: string): ExportManifest => {
