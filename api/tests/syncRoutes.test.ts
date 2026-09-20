@@ -281,6 +281,77 @@ test("lists and compares archived Atlas releases by immutable artifact hash", ()
 	);
 });
 
+test("compares changed release resources by their published field paths on request", () => {
+	const previous: AtlasRelease = {
+		schemaVersion: 1,
+		releaseId: "sha256:previous-fields",
+		artifacts: [
+			{
+				id: "data-catalog",
+				path: "data-catalog.json",
+				contentHash: "sha256:before-catalog",
+			},
+		],
+		resources: { datasets: { jobs: "sha256:one" } },
+	};
+	const current: AtlasRelease = {
+		...previous,
+		releaseId: "sha256:current-fields",
+		artifacts: [
+			{
+				id: "data-catalog",
+				path: "data-catalog.json",
+				contentHash: "sha256:after-catalog",
+			},
+		],
+		resources: { datasets: { jobs: "sha256:two" } },
+	};
+	const body = (recordCount: number) =>
+		Buffer.from(
+			JSON.stringify({
+				datasets: [
+					{ id: "jobs", summary: { dataRecordCount: recordCount } },
+				],
+			}),
+		);
+	const response = handleSyncRoutes(
+		request(
+			`/v1/atlas-releases/compare?from=${previous.releaseId}&to=${current.releaseId}&detail=fields`,
+			{
+				atlasRelease: current,
+				atlasReleaseHistory: new Map([
+					[previous.releaseId, previous],
+					[current.releaseId, current],
+				]),
+				readReleaseArtifact: (releaseId, artifactId) =>
+					artifactId === "data-catalog"
+						? {
+								artifact:
+									(releaseId === previous.releaseId
+										? previous
+										: current).artifacts[0]!,
+								body: body(releaseId === previous.releaseId ? 10 : 12),
+							}
+						: undefined,
+			},
+		),
+	);
+	assert.equal(response?.status, 200);
+	assert.deepEqual(
+		(response?.body as { data: { semantic: unknown } }).data.semantic,
+		{
+			status: "available",
+			changes: [
+				{
+					kind: "datasets",
+					id: "jobs",
+					fields: ["summary.dataRecordCount"],
+				},
+			],
+		},
+	);
+});
+
 test("reports the atlas release as unavailable before it is built", () => {
 	const response = route("GET", "/v1/atlas-release", registry);
 	assert.equal(response.status, 503);

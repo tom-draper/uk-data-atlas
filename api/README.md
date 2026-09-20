@@ -1065,13 +1065,17 @@ Implementation and documentation tasks:
       alone does not tell a customer whether its analysis changed.
       `GET /v1/atlas-releases/compare` now names the datasets, measures,
       boundary releases, crosswalks, named locations, validation exceptions,
-      exports and lookups that changed between two releases; periods and
-      values are not yet compared, and there is no feed to subscribe to.
+      exports and lookups that changed between two releases; `detail=fields`
+      identifies changed metadata fields in those published resource entries.
+      Periods and values are not yet compared, and there is no feed to
+      subscribe to.
 - [ ] Expand release comparison from added/removed/changed artifacts to
       semantic diffs, with affected area and record counts where possible.
       Comparison now reaches resource level, naming each resource added,
-      removed or changed by its recorded fingerprint; it does not yet say
-      which fields, areas or records within a changed resource differ.
+      removed or changed by its recorded fingerprint. `detail=fields` names
+      the changed metadata fields in a changed resource when both retained
+      artifacts are available; it does not yet count affected areas or records
+      or infer any row-level revision.
 - [x] Serve an archived Atlas release or an equivalent immutable release-pinned
       download path, so an analysis can be reproduced as the Atlas published it
       at a stated time rather than merely inspecting its old manifest. Before a
@@ -3058,7 +3062,10 @@ delivery, change management and support, never from withholding OGL data.
       a sync client retrieves one through `GET
       /v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`.
 - [ ] Publish semantic release changes, freshness states, schema compatibility
-      changes and a public correction register for the beta resources.
+      changes and a public correction register for the beta resources. Release
+      comparison now has an opt-in `detail=fields` mode for changed resource
+      metadata; freshness, compatibility policy and correction records remain
+      to be published.
 - [ ] Provide stable Parquet/GeoParquet downloads and one DuckDB or dbt
       synchronisation reference that ingests only affected resources.
 - [ ] Add documented API-key quotas, cache/conditional request behaviour and

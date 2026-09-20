@@ -1,4 +1,5 @@
 import { compareAtlasReleases } from "./atlasReleaseComparison";
+import { semanticReleaseChanges } from "./atlasReleaseSemanticChanges";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -143,9 +144,29 @@ export const handleSyncRoutes = ({
 				"One or both requested Atlas releases are not archived by this API instance.",
 			);
 		}
+		const detail = parsedUrl.searchParams.get("detail") ?? "summary";
+		if (detail !== "summary" && detail !== "fields")
+			return problem(
+				400,
+				"Invalid Query",
+				"detail must be summary or fields.",
+			);
+		const comparison = compareAtlasReleases(from, to);
 		return {
 			status: 200,
-			body: envelope(releaseId, compareAtlasReleases(from, to)),
+			body: envelope(releaseId, {
+				...comparison,
+				...(detail === "fields"
+					? {
+							semantic: semanticReleaseChanges(
+								from,
+								to,
+								comparison.resources,
+								context.readReleaseArtifact,
+							),
+						}
+					: {}),
+			}),
 		};
 	}
 
