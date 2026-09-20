@@ -5196,6 +5196,71 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /corrections:
+    get:
+      operationId: listCorrections
+      tags: ["Governance"]
+      summary: List reviewed corrections and transformations applied by the API
+      x-likely-refusal:
+        status: 400
+        when: "The optional measure filter is repeated. One filter narrows the register; several do not mean an intersection or union."
+        x-example-request: "/v1/corrections?measure=ghg-emissions&measure=population-estimate"
+      description: >
+        The correction register records API-owned repairs, derived calculations
+        and normalisations separately from the publisher's artifacts. Each
+        record states its exact scope, source behaviour, served behaviour,
+        evidence and review status. A correction never overwrites the raw
+        source: a later revision supersedes its record, preserving the earlier
+        explanation for audit. The first record covers
+        the opt-in canonical-unit representation; default data responses
+        remain source-exact.
+      parameters:
+        - name: measure
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Return records applying to this measure, including records scoped to every measure.
+      responses:
+        "200":
+          description: Reviewed API-owned correction and transformation records.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/corrections?measure=ghg-emissions"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  records:
+                    - id: canonical-unit-presentation-v1
+                      kind: normalisation
+                      status: active
+                      title: Opt-in canonical measure-unit presentation
+                      scope:
+                        measureIds: ["*"]
+                        fields: [value, confidenceInterval.lower, confidenceInterval.upper]
+                        request: GET /v1/data/{measure-id}?units=canonical
+                      change:
+                        source: The default response preserves each publisher's value, label and interval bounds.
+                        served: On the explicit canonical request, each numeric value and any publisher-supplied interval bound is multiplied by the measure's declared scale; the response names the resulting unit and calculation.
+                        sourceArtifactsChanged: false
+                      evidence:
+                        - kind: method
+                          href: /v1/measures
+                          note: Every served measure declares its display unit and API-owned canonical unit definition.
+                      review:
+                        status: reviewed
+                        note: The transformation is opt-in, has a declared positive scale, and is refused for categorical observations.
+                  filters:
+                    measure: ghg-emissions
+                  note: These records describe API-owned changes to served values or semantics. They do not rewrite the publisher artifacts, which remain the source evidence.
+                meta:
+                  nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+
   /validation:
     get:
       operationId: getValidationReport

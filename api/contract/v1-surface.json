@@ -4957,6 +4957,42 @@
 				]
 			}
 		},
+		"GET /corrections": {
+			"operationId": "listCorrections",
+			"parameters": {
+				"query:measure": {
+					"required": false
+				}
+			},
+			"responses": {
+				"200 application/json": [
+					"apiVersion",
+					"atlasRelease",
+					"meta",
+					"meta.nextCursor"
+				],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /validation": {
 			"operationId": "getValidationReport",
 			"parameters": {

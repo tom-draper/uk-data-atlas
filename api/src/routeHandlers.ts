@@ -360,7 +360,7 @@ const routeFamilies: RouteFamily[] = [
 		name: "governance",
 		owns: (segments) =>
 			segments[0] === "v1" &&
-			["attribution", "relationship-candidates"].includes(
+			["attribution", "corrections", "relationship-candidates"].includes(
 				segments[1] ?? "",
 			),
 		handle: handleGovernanceRoutes,
