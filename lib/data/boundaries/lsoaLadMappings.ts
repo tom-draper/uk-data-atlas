@@ -1,45 +1,48 @@
 import { withCDN } from "../../helpers/cdn";
 import { BOUNDARY_CATALOG } from "./catalog";
 
-const LSOA_LAD_MAPPINGS_URL = withCDN(
-	"/data/precompiled/lsoa-lad-mappings.json",
-);
-
-export type LsoaLadMappings = {
+export type LsoaLadMapping = {
 	version: 1;
-	lsoaToLad: Record<number, Record<string, string>>;
+	year: number;
+	lsoaToLad: Record<string, string>;
 };
 
-let pending: Promise<LsoaLadMappings> | null = null;
+const pending = new Map<number, Promise<Record<string, string>>>();
+
+const lsoaLadMappingUrl = (year: number) =>
+	withCDN(`/data/precompiled/lsoa-lad-mappings-${year}.json`);
 
 /**
  * The small-area releases do not carry a local-authority parent in their
  * properties. This build-time lookup supplies that clean nesting relation
  * without using a named location's deliberately coarse bounding box.
  */
-export const fetchLsoaLadMappings = (): Promise<LsoaLadMappings> => {
-	if (!pending) {
-		pending = fetch(LSOA_LAD_MAPPINGS_URL)
-			.then(async (response) => {
-				if (!response.ok) {
-					throw new Error(
-						`Failed to fetch LSOA/LAD mappings: ${response.status} ${response.statusText}`,
-					);
-				}
-				return (await response.json()) as LsoaLadMappings;
-			})
-			.catch((error) => {
-				pending = null;
-				throw error;
-			});
-	}
-	return pending;
-};
-
-export const lsoaToLadForYear = (
-	mappings: LsoaLadMappings,
+export const fetchLsoaToLad = (
 	year: number,
-): Record<string, string> | undefined => mappings.lsoaToLad[year];
+): Promise<Record<string, string>> => {
+	const cached = pending.get(year);
+	if (cached) return cached;
+
+	const request = fetch(lsoaLadMappingUrl(year))
+		.then(async (response) => {
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch LSOA/LAD mappings: ${response.status} ${response.statusText}`,
+				);
+			}
+			const mapping = (await response.json()) as LsoaLadMapping;
+			if (mapping.year !== year || !mapping.lsoaToLad) {
+				throw new Error(`Invalid LSOA/LAD mapping for ${year}`);
+			}
+			return mapping.lsoaToLad;
+		})
+		.catch((error) => {
+			pending.delete(year);
+			throw error;
+		});
+	pending.set(year, request);
+	return request;
+};
 
 export const lsoaYearForBoundaryAsset = (asset: string): number | undefined => {
 	const year = Object.entries(BOUNDARY_CATALOG.lsoa.vintages).find(

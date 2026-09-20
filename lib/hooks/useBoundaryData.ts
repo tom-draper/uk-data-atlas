@@ -8,7 +8,10 @@ import {
 	useSyncExternalStore,
 } from "react";
 import type { BoundaryData, BoundaryGeojson } from "@lib/types";
-import type { BoundaryType } from "../data/boundaries/catalog";
+import {
+	BOUNDARY_CATALOG,
+	type BoundaryType,
+} from "../data/boundaries/catalog";
 import {
 	EMPTY_BOUNDARY_DATA,
 	fetchBoundaryPropertyGroup,
@@ -29,10 +32,7 @@ import {
 	fetchConstituencyLadOverlaps,
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
-import {
-	fetchLsoaLadMappings,
-	type LsoaLadMappings,
-} from "../data/boundaries/lsoaLadMappings";
+import { fetchLsoaToLad } from "../data/boundaries/lsoaLadMappings";
 import { getCachedFilteredBoundaryData } from "../data/boundaries/locationFilter";
 import {
 	DEFAULT_VISIBILITY,
@@ -54,8 +54,10 @@ export function useBoundaryData(
 	const [error, setError] = useState<Error | null>(null);
 	const [constituencyLadOverlaps, setConstituencyLadOverlaps] =
 		useState<ConstituencyLadOverlaps | null>(null);
-	const [lsoaLadMappings, setLsoaLadMappings] =
-		useState<LsoaLadMappings | null>(null);
+	const [lsoaToLadByYear, setLsoaToLadByYear] = useState<Record<
+		number,
+		Record<string, string>
+	> | null>(null);
 
 	// Kept separately because filtering is memoized independently of loading.
 	const getLadForWard = codeMapper?.getLadForWard;
@@ -105,13 +107,23 @@ export function useBoundaryData(
 					})
 				: Promise.resolve(null);
 			const lsoaMappings = wanted.includes("lsoa")
-				? fetchLsoaLadMappings().catch((error) => {
-						console.warn(
-							"[boundaries] Falling back to LSOA bbox filtering:",
-							error,
-						);
-						return null;
-					})
+				? Promise.all(
+						Object.keys(BOUNDARY_CATALOG.lsoa.vintages).map(
+							async (year) =>
+								[
+									Number(year),
+									await fetchLsoaToLad(Number(year)),
+								] as const,
+						),
+					)
+						.then((entries) => Object.fromEntries(entries))
+						.catch((error) => {
+							console.warn(
+								"[boundaries] Falling back to LSOA bbox filtering:",
+								error,
+							);
+							return null;
+						})
 				: Promise.resolve(null);
 
 			Promise.all([
@@ -138,7 +150,7 @@ export function useBoundaryData(
 						if (loadedOverlaps)
 							setConstituencyLadOverlaps(loadedOverlaps);
 						if (loadedLsoaMappings)
-							setLsoaLadMappings(loadedLsoaMappings);
+							setLsoaToLadByYear(loadedLsoaMappings);
 
 						for (const type of completedBoundaryTypes(
 							boundaryGroups,
@@ -199,15 +211,13 @@ export function useBoundaryData(
 
 	const filteredData = useMemo<BoundaryData>(() => {
 		if (isLoading) return EMPTY_BOUNDARY_DATA;
-		return getCachedFilteredBoundaryData(
-			rawData,
-			loc,
-			getLadForWard,
+		return getCachedFilteredBoundaryData(rawData, loc, {
+			relations: { getLadForWard },
 			constituencyLadOverlaps,
-			lsoaLadMappings,
-		);
+			lsoaToLadByYear,
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rawData, loc, constituencyLadOverlaps, lsoaLadMappings]);
+	}, [rawData, loc, constituencyLadOverlaps, lsoaToLadByYear]);
 
 	const wardCodes = useMemo(
 		() => extractWardCodes(rawData, isLoading),

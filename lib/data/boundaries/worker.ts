@@ -1,5 +1,6 @@
 import type { BoundaryGeojson } from "@lib/types";
 import type { BoundaryGeometryFilter } from "./boundaries";
+import type { BoundaryLocationRelations } from "./filter";
 
 interface WorkerResponse {
 	id: number;
@@ -7,7 +8,9 @@ interface WorkerResponse {
 	error?: string;
 }
 
-type WorkerFilter = Omit<BoundaryGeometryFilter, "getLadForWard">;
+type WorkerFilter = Omit<BoundaryGeometryFilter, "relations"> & {
+	relations?: Omit<BoundaryLocationRelations, "getLadForWard">;
+};
 
 let worker: Worker | null = null;
 let nextRequestId = 0;
@@ -59,11 +62,15 @@ export const fetchBoundaryInWorker = (
 	return new Promise((resolve, reject) => {
 		const id = nextRequestId++;
 		pending.set(id, { resolve, reject });
-		const { getLadForWard: _getLadForWard, ...workerFilter } = filter ?? {};
+		const { getLadForWard: _getLadForWard, ...workerRelations } =
+			filter?.relations ?? {};
 		currentWorker.postMessage({
 			id,
 			url,
-			filter: workerFilter as WorkerFilter,
+			filter: {
+				...filter,
+				relations: workerRelations,
+			} as WorkerFilter,
 		});
 	});
 };

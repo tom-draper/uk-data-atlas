@@ -4,11 +4,8 @@ import { decodeBoundaryData } from "./decode";
 import { fetchBoundaryInWorker } from "./worker";
 import type { Crosswalk } from "../gazetteer/types";
 import type { BoundaryType, BoundaryYear } from "./catalog";
-import { filterFeatures } from "./filter";
-import {
-	fetchLsoaLadMappings,
-	lsoaYearForBoundaryAsset,
-} from "./lsoaLadMappings";
+import { filterFeatures, type BoundaryLocationRelations } from "./filter";
+import { fetchLsoaToLad, lsoaYearForBoundaryAsset } from "./lsoaLadMappings";
 
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
@@ -104,9 +101,7 @@ export function fetchBoundaryProperties(
 export type BoundaryGeometryFilter = {
 	type: BoundaryType;
 	location: string | null;
-	getLadForWard?: (wardCode: string) => string | undefined;
-	constituencyLadOverlaps?: Crosswalk;
-	lsoaToLad?: Record<string, string>;
+	relations?: BoundaryLocationRelations;
 };
 
 export const geometryCacheKey = (
@@ -114,7 +109,7 @@ export const geometryCacheKey = (
 	filter?: BoundaryGeometryFilter,
 ) =>
 	filter
-		? `${path}\u0000${filter.type}\u0000${filter.location ?? ""}\u0000${filter.constituencyLadOverlaps ? "constituency-lad-overlaps" : filter.type === "lsoa" ? "lsoa-lad" : "bbox"}`
+		? `${path}\u0000${filter.type}\u0000${filter.location ?? ""}\u0000${filter.relations?.constituencyLadOverlaps ? "constituency-lad-overlaps" : filter.type === "lsoa" ? "lsoa-lad" : "bbox"}`
 		: path;
 
 /**
@@ -134,19 +129,16 @@ async function doFetchBoundaryFile(
 	const typedGeojson = decodeBoundaryData(await res.json());
 	const lsoaToLad =
 		filter?.type === "lsoa" && filter.location
-			? (filter.lsoaToLad ??
-				(await fetchLsoaLadMappings().catch(() => undefined))
-					?.lsoaToLad[lsoaYearForBoundaryAsset(path) ?? NaN])
+			? (filter.relations?.lsoaToLad ??
+				(await fetchLsoaToLad(
+					lsoaYearForBoundaryAsset(path) ?? NaN,
+				).catch(() => undefined)))
 			: undefined;
 	return filter
-		? filterFeatures(
-				typedGeojson,
-				filter.location,
-				filter.type,
-				filter.getLadForWard,
-				filter.constituencyLadOverlaps,
-				lsoaToLad,
-			)
+		? filterFeatures(typedGeojson, {
+				...filter,
+				relations: { ...filter.relations, lsoaToLad },
+			})
 		: typedGeojson;
 }
 

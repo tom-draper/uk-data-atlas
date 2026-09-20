@@ -28,11 +28,10 @@ describe("properties-only boundary filtering", () => {
 			["Somerset", "E06000066"],
 			["North Yorkshire", "E06000065"],
 		] as const) {
-			const filtered = filterFeatures(
-				boundaries,
+			const filtered = filterFeatures(boundaries, {
 				location,
-				"localAuthority",
-			);
+				type: "localAuthority",
+			});
 			expect(filtered.features).toHaveLength(1);
 			expect(filtered.features[0]?.properties).toMatchObject({
 				LAD24CD: code,
@@ -81,11 +80,10 @@ describe("properties-only boundary filtering", () => {
 			],
 		} as unknown as BoundaryGeojson;
 
-		const filtered = filterFeatures(
-			boundaries,
-			"Greater Manchester",
-			"constituency",
-		);
+		const filtered = filterFeatures(boundaries, {
+			location: "Greater Manchester",
+			type: "constituency",
+		});
 
 		expect(filtered.features).toHaveLength(1);
 		expect(filtered.features[0]?.properties).toMatchObject({
@@ -122,11 +120,10 @@ describe("properties-only boundary filtering", () => {
 			],
 		} as unknown as BoundaryGeojson;
 
-		const filtered = filterFeatures(
-			boundaries,
-			"Northern Ireland",
-			"superOutputArea",
-		);
+		const filtered = filterFeatures(boundaries, {
+			location: "Northern Ireland",
+			type: "superOutputArea",
+		});
 
 		expect(filtered.features).toHaveLength(1);
 		expect(filtered.features[0]?.properties).toMatchObject({
@@ -160,18 +157,18 @@ describe("properties-only boundary filtering", () => {
 			],
 		} as unknown as BoundaryGeojson;
 
-		const filtered = filterFeatures(
-			boundaries,
-			"Greater Manchester",
-			"constituency",
-			undefined,
-			{
-				E14000001: [
-					{ code: greaterManchester!.memberCodes[0]!, weight: 1 },
-				],
-				E14000002: [],
+		const filtered = filterFeatures(boundaries, {
+			location: "Greater Manchester",
+			type: "constituency",
+			relations: {
+				constituencyLadOverlaps: {
+					E14000001: [
+						{ code: greaterManchester!.memberCodes[0]!, weight: 1 },
+					],
+					E14000002: [],
+				},
 			},
-		);
+		});
 
 		expect(filtered.features).toHaveLength(1);
 		expect(filtered.features[0]?.properties).toMatchObject({
@@ -199,17 +196,16 @@ describe("properties-only boundary filtering", () => {
 			],
 		} as unknown as BoundaryGeojson;
 
-		const filtered = filterFeatures(
-			boundaries,
-			"Greater Manchester",
-			"lsoa",
-			undefined,
-			undefined,
-			{
-				E01000001: greaterManchester!.memberCodes[0]!,
-				E01000002: "E06000001",
+		const filtered = filterFeatures(boundaries, {
+			location: "Greater Manchester",
+			type: "lsoa",
+			relations: {
+				lsoaToLad: {
+					E01000001: greaterManchester!.memberCodes[0]!,
+					E01000002: "E06000001",
+				},
 			},
-		);
+		});
 
 		expect(filtered.features).toHaveLength(1);
 		expect(filtered.features[0]?.properties).toMatchObject({

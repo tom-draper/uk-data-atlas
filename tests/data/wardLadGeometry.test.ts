@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { wardLadFromGeometry } from "@/lib/data/boundaries/wardLadGeometry";
+import { areasLadFromGeometry } from "@/lib/data/boundaries/wardLadGeometry";
 import type { BoundaryGeojson } from "@/lib/types";
 
 type Features = BoundaryGeojson["features"];
@@ -25,9 +25,9 @@ const box = (west: number, south: number, east: number, north: number) => [
 ];
 
 const resolve = (wards: Features, lads: Features) =>
-	wardLadFromGeometry(wards, ["WDCD"], lads, ["LADCD"], () => true);
+	areasLadFromGeometry(wards, ["WDCD"], lads, ["LADCD"], () => true);
 
-describe("wardLadFromGeometry", () => {
+describe("areasLadFromGeometry", () => {
 	const lads = [
 		polygon("LAD_WEST", "LADCD", box(0, 0, 10, 10)),
 		polygon("LAD_EAST", "LADCD", box(10, 0, 20, 10)),
@@ -68,7 +68,7 @@ describe("wardLadFromGeometry", () => {
 		const wards = [polygon("W5", "WDCD", box(1, 1, 4, 4))] as Features;
 
 		expect(
-			wardLadFromGeometry(
+			areasLadFromGeometry(
 				wards,
 				["WDCD"],
 				lads,

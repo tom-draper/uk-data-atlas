@@ -5,10 +5,7 @@ import { boundaryCapabilityFor } from "./boundaries/capabilities";
 import { getProp } from "./boundaries/properties";
 import { withCDN } from "../helpers/cdn";
 import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
-import {
-	fetchLsoaLadMappings,
-	lsoaToLadForYear,
-} from "./boundaries/lsoaLadMappings";
+import { fetchLsoaToLad } from "./boundaries/lsoaLadMappings";
 
 export type DatasetLocationFilter = {
 	location: string;
@@ -243,7 +240,7 @@ const matcherFor = async (
 			const parentMap =
 				capability.locationScope.mapping === "wardToLad"
 					? await fetchWardToLad()
-					: lsoaToLadForYear(await fetchLsoaLadMappings(), year);
+					: await fetchLsoaToLad(year);
 			if (!parentMap) return null;
 			return (code) => memberCodes.has(parentMap[code] ?? "");
 		}
