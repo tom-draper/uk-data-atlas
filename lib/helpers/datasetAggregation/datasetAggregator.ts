@@ -6,6 +6,7 @@ import type {
 	BoundaryCodeDetector,
 	BoundaryCodeScope,
 } from "./ports";
+import { cacheKey } from "../cacheKey";
 
 /** Aggregates dataset records against the currently loaded boundary geometry. */
 export class DatasetAggregator {
@@ -31,7 +32,7 @@ export class DatasetAggregator {
 		datasetId: string | null,
 		aggregate: (features: Features, codeProp: PropertyKeys) => R,
 	): R {
-		return this.cached(`${key}-${location}-${datasetId}`, () =>
+		return this.cached(cacheKey(key, location, datasetId), () =>
 			aggregate(
 				geojson.features,
 				this.propertyDetector.detect(scope, geojson.features),
