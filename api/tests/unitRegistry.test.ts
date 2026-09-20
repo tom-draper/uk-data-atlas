@@ -3,7 +3,11 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { readDataCatalog } from "../src/server";
-import { unitDefinitionFor, withUnitDefinitions } from "../src/unitRegistry";
+import {
+	normaliseObservation,
+	unitDefinitionFor,
+	withUnitDefinitions,
+} from "../src/unitRegistry";
 import type { DataCatalog } from "../src/dataCatalog";
 
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -35,6 +39,23 @@ test("normalises scales and denominators without changing source-facing units or
 		scaleToCanonical: 0.01,
 		per: "premises",
 	});
+	assert.deepEqual(
+		normaliseObservation(
+			{
+				areaCode: "E06000001",
+				value: 7.8,
+				status: "observed",
+				confidenceInterval: { lower: 7.1, upper: 8.5 },
+			},
+			unitDefinitionFor("percent"),
+		),
+		{
+			areaCode: "E06000001",
+			value: 0.078,
+			status: "observed",
+			confidenceInterval: { lower: 0.071, upper: 0.085 },
+		},
+	);
 	const catalog = withUnitDefinitions({
 		schemaVersion: 1,
 		contentHash: "sha256:catalogue",

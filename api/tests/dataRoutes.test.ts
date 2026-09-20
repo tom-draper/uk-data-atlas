@@ -371,6 +371,14 @@ test("serves categorical winners without numeric operations", () => {
 		).status,
 		422,
 	);
+	assert.equal(
+		routeWithCatalog(
+			`/v1/data/${measureId}?period=2024&geography=ward&boundaryYear=2024&units=canonical`,
+			catalog,
+			[...measureObservations, winners],
+		).status,
+		422,
+	);
 });
 
 test("serves greenhouse gas emissions as a second source-exact measure", () => {
@@ -426,6 +434,42 @@ test("serves greenhouse gas emissions as a second source-exact measure", () => {
 	assert.equal(
 		routeWithData("/v1/data/not-a-measure?period=2024").status,
 		404,
+	);
+});
+
+test("normalises values only when the caller explicitly asks for canonical units", () => {
+	const response = routeWithData(
+		"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&units=canonical",
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? (response.body.data as never) : {};
+	assert.deepEqual((data as { records: unknown }).records, [
+		{ areaCode: "E06000001", value: 400_000, status: "observed" },
+	]);
+	assert.deepEqual(
+		(data as { valueRepresentation: unknown }).valueRepresentation,
+		{
+			mode: "canonical",
+			sourceUnit: "kt CO2e",
+			unit: { code: "t[CO2e]", scaleToCanonical: 1_000 },
+			calculation: {
+				method: "unit-normalisation",
+				scaleToCanonical: 1_000,
+				note: "Each numeric value and any publisher-supplied interval bound was multiplied by the declared scale. Source observations remain unchanged.",
+			},
+		},
+	);
+	assert.equal(
+		routeWithData(
+			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&units=canonical&format=csv",
+		).status,
+		422,
+	);
+	assert.equal(
+		routeWithData(
+			"/v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&units=not-a-unit-mode",
+		).status,
+		400,
 	);
 });
 

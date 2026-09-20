@@ -1,5 +1,10 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
+import {
+	canonicalValueRepresentation,
+	measureUnit,
+	normaliseObservation,
+} from "./unitRegistry";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
 	exportMeasureRecords,
@@ -107,6 +112,7 @@ export const handleDataRoutes = ({
 	const areaCode = parsedUrl.searchParams.get("areaCode");
 	const include = parsedUrl.searchParams.get("include");
 	const requestedFormat = parsedUrl.searchParams.get("format") ?? "json";
+	const unitMode = parsedUrl.searchParams.get("units") ?? "source";
 	if (
 		requestedFormat !== "json" &&
 		requestedFormat !== "csv" &&
@@ -117,6 +123,20 @@ export const handleDataRoutes = ({
 			"Invalid Query",
 			"format must be one of json, csv or ndjson.",
 			{ code: "invalid_format" },
+		);
+	}
+	if (unitMode !== "source" && unitMode !== "canonical") {
+		return problem(
+			400,
+			"Invalid Query",
+			"units must be source or canonical.",
+		);
+	}
+	if (unitMode === "canonical" && requestedFormat !== "json") {
+		return problem(
+			422,
+			"Operation Not Supported",
+			"Canonical unit values are currently available in the JSON representation only.",
 		);
 	}
 	if (measure.valueKind === "categorical" && requestedFormat !== "json") {
@@ -160,6 +180,18 @@ export const handleDataRoutes = ({
 		);
 	}
 	const sourceRecords = observations.records;
+	if (
+		unitMode === "canonical" &&
+		!sourceRecords.every(isNumericObservation)
+	) {
+		return problem(
+			422,
+			"Operation Not Supported",
+			"Categorical observations have no numeric unit value to normalise.",
+		);
+	}
+	const canonicalUnit =
+		unitMode === "canonical" ? measureUnit(measure) : undefined;
 	const provenance = sourceExactProvenance({
 		atlasRelease: releaseId,
 		measure,
@@ -227,6 +259,17 @@ export const handleDataRoutes = ({
 	const resolvedRecords = recordsWithAreas.filter(
 		(record) => record !== undefined,
 	);
+	const responseRecords = canonicalUnit
+		? resolvedRecords.map((record) => {
+				// The complete source partition was checked above. Retain this
+				// guard for TypeScript and for an area-enrichment regression.
+				if (!isNumericObservation(record))
+					throw new Error(
+						"A canonical unit representation was requested for a categorical record.",
+					);
+				return normaliseObservation(record, canonicalUnit);
+			})
+		: resolvedRecords;
 	const exportRecords = resolvedRecords.filter(
 		(record): record is MeasureExportRecord => isNumericObservation(record),
 	);
@@ -283,9 +326,12 @@ export const handleDataRoutes = ({
 				sourceGeography: source.sourceGeography,
 				...(geometry === undefined ? {} : { geometry }),
 				provenance,
+				...(unitMode === "canonical"
+					? { valueRepresentation: canonicalValueRepresentation(measure) }
+					: {}),
 				conversion: null,
 				aggregation: null,
-				records: resolvedRecords,
+				records: responseRecords,
 			},
 			nextCursor,
 		),

@@ -1534,7 +1534,7 @@ paths:
     get:
       operationId: getMeasureObservations
       tags: ["Map"]
-      summary: Retrieve a measure's source-exact observations
+      summary: Retrieve source-exact observations, or an opt-in canonical-unit representation
       x-likely-refusal:
         status: 400
         when: "The source partition is not named. A measure may publish several for one period, so `geography` and `boundaryYear` are required rather than one being chosen."
@@ -1639,7 +1639,12 @@ paths:
         `pm25-population-weighted` and its `-anthropogenic` part are Defra's
         published population-weighted concentrations.
         This route never selects a May/December boundary release, converts
-        values, or aggregates them. A caller may supply `release` only when the
+        values between geographies, or aggregates them. By default, it serves
+        the source-exact values. A caller may ask for `units=canonical` to
+        multiply numeric values and any published interval bounds by the
+        measure's declared canonical scale. That response identifies the
+        calculation and canonical unit; it never changes an observation
+        artifact. A caller may supply `release` only when the
         compatibility report proves that every source code is present; the
         response identifies that caller-selected code join.
         `GET /measures/{measure-id}` declares valid period/geography
@@ -1710,11 +1715,23 @@ paths:
             `lowerBound` and `upperBound`, empty where no interval is published. Tabular responses are paginated like the
             JSON ones, but carry the next page as a `Link` header with
             `rel="next"` because they have no envelope to hold a cursor.
+        - name: units
+          in: query
+          required: false
+          schema:
+            enum: [source, canonical]
+            default: source
+          description: >
+            `source` (the default) returns the published values and display
+            unit unchanged. `canonical` returns JSON numeric values multiplied
+            by the measure's declared `unitDefinition.scaleToCanonical`, plus a
+            `valueRepresentation` calculation receipt. It is unavailable for
+            categorical observations and tabular formats.
         - $ref: "#/components/parameters/PageLimit"
         - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
-          description: A cursor-paginated JSON page or a source-exact tabular export.
+          description: A cursor-paginated JSON page or a source-exact tabular export. Canonical values are an opt-in JSON representation.
           headers:
             Link:
               description: >
