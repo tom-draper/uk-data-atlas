@@ -4,6 +4,7 @@ import type {
 	PopulationDataset,
 	PopulationWardData,
 } from "../types/population";
+import { cacheKey } from "./cacheKey";
 
 const MAX_LAD_CACHE_ENTRIES = 50;
 const datasetCacheIds = new WeakMap<object, number>();
@@ -114,14 +115,14 @@ export function getAreaCachedValue<T>(
 	mappingGeneration: number,
 	compute: () => T,
 ): T {
-	const cacheKey = `${areaKey}:${datasetCacheId(dataset)}:${mappingGeneration}`;
-	if (!cache.has(cacheKey)) {
+	const key = cacheKey(areaKey, datasetCacheId(dataset), mappingGeneration);
+	if (!cache.has(key)) {
 		if (cache.size >= MAX_LAD_CACHE_ENTRIES) {
 			cache.delete(cache.keys().next().value!);
 		}
-		cache.set(cacheKey, new Map());
+		cache.set(key, new Map());
 	}
-	const yearCache = cache.get(cacheKey)!;
+	const yearCache = cache.get(key)!;
 	if (!yearCache.has(year)) {
 		yearCache.set(year, compute());
 	}

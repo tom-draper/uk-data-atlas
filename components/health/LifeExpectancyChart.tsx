@@ -193,6 +193,9 @@ export default function LifeExpectancyChart({
 					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
+					...(dataset.id === "hle"
+						? { view: "healthy-life-expectancy" }
+						: {}),
 				})
 			}
 		>

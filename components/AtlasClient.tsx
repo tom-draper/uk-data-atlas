@@ -10,6 +10,11 @@ import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
 import type { ActiveViz } from "@/lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
 import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
+import {
+	activeVizFromReference,
+	parseVisualizationRef,
+	writeVisualizationRef,
+} from "@/lib/helpers/visualization";
 
 const DEFAULT_ACTIVE_VIZ: ActiveViz = {
 	datasetId: "localElection2024",
@@ -17,39 +22,15 @@ const DEFAULT_ACTIVE_VIZ: ActiveViz = {
 	datasetYear: 2024,
 };
 
-const VIZ_VIEWS: readonly NonNullable<ActiveViz["view"]>[] = [
-	"age",
-	"density",
-	"gender",
-];
-
 const DEFAULT_LOCATION = "Greater Manchester";
 
-// The URL is the one place the visualisation is a flat string; everywhere else
-// it stays split into the dataset it shows and which of its views.
 function parseActiveVizFromParams(params: URLSearchParams): ActiveViz | null {
-	const datasetId = params.get("viz");
-	const datasetType = params.get("type");
-	const datasetYear = params.get("year");
-	if (!datasetId || !datasetType || !datasetYear) return null;
-	const year = parseInt(datasetYear, 10);
-	if (isNaN(year)) return null;
-	const view = VIZ_VIEWS.find(
-		(candidate) => candidate === params.get("view"),
-	);
-	return {
-		datasetId,
-		...(view ? { view } : {}),
-		datasetType: datasetType as ActiveViz["datasetType"],
-		datasetYear: year,
-	};
+	const reference = parseVisualizationRef(params);
+	return reference ? activeVizFromReference(reference) : null;
 }
 
 function writeActiveVizParams(params: URLSearchParams, viz: ActiveViz) {
-	params.set("viz", viz.datasetId);
-	params.set("type", viz.datasetType);
-	params.set("year", String(viz.datasetYear));
-	if (viz.view) params.set("view", viz.view);
+	writeVisualizationRef(params, viz);
 }
 
 function ErrorBanner({
@@ -158,12 +139,12 @@ export default function AtlasClient() {
 	};
 
 	useEffect(() => {
-		if (!getSearchParam("location")) {
-			const params = new URLSearchParams();
-			params.set("location", selectedLocation);
-			writeActiveVizParams(params, activeViz);
-			window.history.replaceState(null, "", `?${params.toString()}`);
-		}
+		const params = new URLSearchParams();
+		params.set("location", selectedLocation);
+		writeActiveVizParams(params, activeViz);
+		const canonicalSearch = `?${params.toString()}`;
+		if (window.location.search !== canonicalSearch)
+			window.history.replaceState(null, "", canonicalSearch);
 		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);

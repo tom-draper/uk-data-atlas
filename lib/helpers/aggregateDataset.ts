@@ -2,6 +2,7 @@ import type { Dataset } from "@lib/types/datasets";
 import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
 import { DatasetAggregator } from "./datasetAggregation";
+import { cacheKey } from "./cacheKey";
 
 type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
 type Aggregate = Record<string, unknown> | null;
@@ -44,7 +45,7 @@ const cacheDatasetId = (datasetId: string, dataset: object) => {
 		id = nextDataCacheId++;
 		dataCacheIds.set(identity, id);
 	}
-	return `${datasetId}:${id}`;
+	return cacheKey(datasetId, id);
 };
 
 function cachedAggregate<R>(
@@ -98,12 +99,16 @@ export function aggregateDataset<T extends BoundaryDataset, R>(
 	if (!aggregator)
 		return Object.keys(precomputed).length ? precomputed : null;
 
-	const cacheKey = `${config.boundaryType}:${config.keyBy ?? "year"}:${location ?? ""}`;
+	const aggregationKey = cacheKey(
+		config.boundaryType,
+		config.keyBy ?? "year",
+		location,
+	);
 	return cachedAggregate(
 		aggregator,
 		boundaryData,
 		config.datasets,
-		cacheKey,
+		aggregationKey,
 		() => {
 			const result: Record<string, R | null> = {};
 

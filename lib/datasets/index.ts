@@ -1,5 +1,5 @@
 import { CHART_DATASET_DEFINITIONS } from "./generated";
-import type { ChartDataset } from "./generated";
+import type { ChartDataset, ChartDatasetType } from "./generated";
 
 export { CHART_DATASET_DEFINITIONS } from "./generated";
 export type {
@@ -12,6 +12,21 @@ export type {
 	ChartPresentationRegistry,
 } from "./types";
 export type { ChartDatasetType } from "./generated";
+
+/** Public dataset identifiers are kebab-case, independently of TypeScript keys. */
+export function datasetSlug(datasetType: string) {
+	return datasetType.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+/** Resolve a public dataset identifier to the registry's internal key. */
+export function getChartDatasetTypeForSlug(
+	slug: string,
+): ChartDatasetType | null {
+	const definition = CHART_DATASET_DEFINITIONS.find(
+		(candidate) => datasetSlug(candidate.type) === slug,
+	);
+	return (definition?.type as ChartDatasetType | undefined) ?? null;
+}
 
 export function getChartDatasetDefinition(type: string) {
 	return CHART_DATASET_DEFINITIONS.find(

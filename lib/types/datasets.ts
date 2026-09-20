@@ -64,9 +64,9 @@ export type Datasets = {
  * Which visualisation of a dataset that backs several. Datasets with a single
  * visualisation leave it unset.
  */
-export type VizView = "age" | "density" | "gender";
+export type VizView = "age" | "density" | "gender" | "healthy-life-expectancy";
 
-/** The visualisation on the map: a dataset instance, and which of its views. */
+/** Internal map selection, adapted from the public VisualizationRef at the URL boundary. */
 export type ActiveViz = {
 	datasetId: string;
 	view?: VizView;
