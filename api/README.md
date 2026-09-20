@@ -3076,11 +3076,15 @@ delivery, change management and support, never from withholding OGL data.
       the prior release's manifest-declared artifacts and verifies their hashes;
       a sync client retrieves one through `GET
       /v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`.
-- [ ] Publish semantic release changes, freshness states, schema compatibility
-      changes and a public correction register for the beta resources. Release
-      comparison now has an opt-in `detail=fields` mode for changed resource
-      metadata; freshness, compatibility policy and correction records remain
-      to be published.
+- [x] Publish a public correction register for API-owned repairs, derived
+      calculations and normalisations. `GET /v1/corrections` records the exact
+      scope, source-versus-served behaviour, evidence and review state without
+      rewriting source artifacts; `?measure=` filters the register for a
+      measure. The initial record documents opt-in canonical unit values.
+- [ ] Publish freshness states and schema compatibility changes for the beta
+      resources. Release comparison now has an opt-in `detail=fields` mode for
+      changed resource metadata; freshness and compatibility policy remain to
+      be published.
 - [ ] Provide stable Parquet/GeoParquet downloads and one DuckDB or dbt
       synchronisation reference that ingests only affected resources.
 - [ ] Add documented API-key quotas, cache/conditional request behaviour and
@@ -3471,6 +3475,7 @@ second inventory to maintain:
 
 - `GET /v1/areas/{geography}/{release}/{code}/citation` — Assemble a citation bundle for one exact area identity
 - `GET /v1/relationship-candidates` — List discovered relationship candidates and their coverage gaps
+- `GET /v1/corrections` — List reviewed corrections and transformations applied by the API
 - `GET /v1/validation` — Report every release gate, including waived exceptions
 - `GET /v1/validation/boundary-releases/{geography}/{release}` — Get one boundary release's checks
 - `GET /v1/validation/crosswalks/{crosswalk-id}` — Get one crosswalk's checks

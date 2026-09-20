@@ -1,4 +1,5 @@
 import { attributionFor, attributionText } from "./attribution";
+import { correctionsForMeasure } from "./correctionRegister";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -15,6 +16,30 @@ export const handleGovernanceRoutes = ({
 		dataCatalog,
 		relationshipCandidateInventory,
 	} = context;
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "corrections"
+	) {
+		const measureIds = parsedUrl.searchParams.getAll("measure");
+		if (measureIds.length > 1) {
+			return problem(
+				400,
+				"Invalid Query",
+				"measure may be supplied at most once.",
+			);
+		}
+		const measureId = measureIds[0] ?? null;
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				records: correctionsForMeasure(measureId),
+				filters: { measure: measureId },
+				note: "These records describe API-owned changes to served values or semantics. They do not rewrite the publisher artifacts, which remain the source evidence.",
+			}),
+		};
+	}
 
 	if (
 		segments.length === 2 &&
