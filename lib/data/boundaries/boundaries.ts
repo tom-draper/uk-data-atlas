@@ -5,6 +5,10 @@ import { fetchBoundaryInWorker } from "./worker";
 import type { Crosswalk } from "../gazetteer/types";
 import type { BoundaryType, BoundaryYear } from "./catalog";
 import { filterFeatures } from "./filter";
+import {
+	fetchLsoaLadMappings,
+	lsoaYearForBoundaryAsset,
+} from "./lsoaLadMappings";
 
 export { BOUNDARY_CATALOG } from "./catalog";
 export type { BoundaryType, BoundaryYear } from "./catalog";
@@ -102,6 +106,7 @@ export type BoundaryGeometryFilter = {
 	location: string | null;
 	getLadForWard?: (wardCode: string) => string | undefined;
 	constituencyLadOverlaps?: Crosswalk;
+	lsoaToLad?: Record<string, string>;
 };
 
 export const geometryCacheKey = (
@@ -109,7 +114,7 @@ export const geometryCacheKey = (
 	filter?: BoundaryGeometryFilter,
 ) =>
 	filter
-		? `${path}\u0000${filter.type}\u0000${filter.location ?? ""}\u0000${filter.constituencyLadOverlaps ? "constituency-lad-overlaps" : "bbox"}`
+		? `${path}\u0000${filter.type}\u0000${filter.location ?? ""}\u0000${filter.constituencyLadOverlaps ? "constituency-lad-overlaps" : filter.type === "lsoa" ? "lsoa-lad" : "bbox"}`
 		: path;
 
 /**
@@ -127,6 +132,12 @@ async function doFetchBoundaryFile(
 	}
 
 	const typedGeojson = decodeBoundaryData(await res.json());
+	const lsoaToLad =
+		filter?.type === "lsoa" && filter.location
+			? (filter.lsoaToLad ??
+				(await fetchLsoaLadMappings().catch(() => undefined))
+					?.lsoaToLad[lsoaYearForBoundaryAsset(path) ?? NaN])
+			: undefined;
 	return filter
 		? filterFeatures(
 				typedGeojson,
@@ -134,6 +145,7 @@ async function doFetchBoundaryFile(
 				filter.type,
 				filter.getLadForWard,
 				filter.constituencyLadOverlaps,
+				lsoaToLad,
 			)
 		: typedGeojson;
 }

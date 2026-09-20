@@ -30,7 +30,10 @@ import {
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
-import { loadBoundaryMappings } from "../lib/data/boundaries/mappingLoader";
+import {
+	loadBoundaryMappings,
+	loadLsoaLadMappings,
+} from "../lib/data/boundaries/mappingLoader";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 
@@ -295,6 +298,12 @@ async function main() {
 			return data;
 		},
 	);
+	const lsoaLadMappings = loadLsoaLadMappings(readBoundaryAsset).then(
+		async (data) => {
+			await out("lsoa-lad-mappings", data);
+			return data;
+		},
+	);
 	// The collisions are written apart from the dataset that describes them, so
 	// the card can be drawn from the small file and the 6 MB of points is only
 	// fetched once someone selects the dataset. Counting them per location needs
@@ -310,6 +319,7 @@ async function main() {
 		roadSafety,
 		gazetteerCore,
 		boundaryMappings,
+		lsoaLadMappings,
 	]);
 
 	const failures = results.filter(

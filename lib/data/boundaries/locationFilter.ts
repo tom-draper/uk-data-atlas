@@ -6,6 +6,7 @@ import {
 	constituencyReleaseIdForYear,
 	type ConstituencyLadOverlaps,
 } from "./constituencyLadOverlaps";
+import type { LsoaLadMappings } from "./lsoaLadMappings";
 
 const LOCATION_BOUNDARY_CACHE_LIMIT = 20;
 const filteredBoundaryDataCache = new WeakMap<
@@ -15,6 +16,7 @@ const filteredBoundaryDataCache = new WeakMap<
 		{
 			data: BoundaryData;
 			constituencyLadOverlaps: ConstituencyLadOverlaps | null;
+			lsoaLadMappings: LsoaLadMappings | null;
 		}
 	>
 >();
@@ -26,6 +28,7 @@ const filterBoundaryGroup = (
 	location: string | null,
 	getLadForWard?: (wardCode: string) => string | undefined,
 	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
+	lsoaLadMappings: LsoaLadMappings | null = null,
 ): Record<number, BoundaryGeojson | null> => {
 	const filtered: Record<number, BoundaryGeojson | null> = {};
 	for (const [year, data] of Object.entries(group)) {
@@ -42,6 +45,7 @@ const filterBoundaryGroup = (
 					releaseId
 						? constituencyLadOverlaps?.releases[releaseId]
 						: undefined,
+					lsoaLadMappings?.lsoaToLad[Number(year)],
 				)
 			: null;
 	}
@@ -59,6 +63,7 @@ export const getCachedFilteredBoundaryData = (
 	location: string | null,
 	getLadForWard?: (wardCode: string) => string | undefined,
 	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
+	lsoaLadMappings: LsoaLadMappings | null = null,
 ): BoundaryData => {
 	let cache = filteredBoundaryDataCache.get(rawData);
 	if (!cache) {
@@ -67,7 +72,11 @@ export const getCachedFilteredBoundaryData = (
 	}
 	const cacheKey = location ?? "";
 	const cached = cache.get(cacheKey);
-	if (cached && cached.constituencyLadOverlaps === constituencyLadOverlaps) {
+	if (
+		cached &&
+		cached.constituencyLadOverlaps === constituencyLadOverlaps &&
+		cached.lsoaLadMappings === lsoaLadMappings
+	) {
 		cache.delete(cacheKey);
 		cache.set(cacheKey, cached);
 		return cached.data;
@@ -82,6 +91,7 @@ export const getCachedFilteredBoundaryData = (
 				location,
 				getLadForWard,
 				constituencyLadOverlaps,
+				lsoaLadMappings,
 			),
 		]),
 	) as BoundaryData;
@@ -90,6 +100,10 @@ export const getCachedFilteredBoundaryData = (
 		const oldestKey = cache.keys().next().value;
 		if (oldestKey !== undefined) cache.delete(oldestKey);
 	}
-	cache.set(cacheKey, { data, constituencyLadOverlaps });
+	cache.set(cacheKey, {
+		data,
+		constituencyLadOverlaps,
+		lsoaLadMappings,
+	});
 	return data;
 };
