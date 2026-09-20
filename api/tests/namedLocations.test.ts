@@ -18,6 +18,11 @@ test("compiles curated gazetteer locations as explicitly editorial definitions",
 						memberCodes: ["E08000002", "E08000001", "E08000001"],
 						bbox: [-2.5, 53.3, -2, 53.7],
 					},
+					"Example wards": {
+						memberGeography: "ward",
+						memberCodes: ["E05000001"],
+						bbox: [-2.5, 53.3, -2, 53.7],
+					},
 				},
 			}),
 		);
@@ -27,9 +32,18 @@ test("compiles curated gazetteer locations as explicitly editorial definitions",
 		assert.equal(inventory.source.gazetteerVersion, 3);
 		assert.deepEqual(inventory.locations, [
 			{
+				id: "example-wards",
+				label: "Example wards",
+				kind: "editorial-grouping",
+				memberGeography: "ward",
+				memberCodes: ["E05000001"],
+				bbox: [-2.5, 53.3, -2, 53.7],
+			},
+			{
 				id: "greater-manchester",
 				label: "Greater Manchester",
 				kind: "editorial-grouping",
+				memberGeography: "localAuthority",
 				memberCodes: ["E08000001", "E08000002"],
 				bbox: [-2.5, 53.3, -2, 53.7],
 			},

@@ -121,19 +121,30 @@ const aggregateAttempt = (
 	period: string | undefined,
 	dispatch: Dispatch,
 ): Attempt => {
-	// Curated locations are lists of local authority codes, and a country is
-	// summed from its authorities, so both need the measure at that level.
+	const memberGeography =
+		candidate.kind === "named-location"
+			? candidate.memberGeography
+			: "localAuthority";
+	if (!memberGeography) {
+		return {
+			candidate,
+			served: false,
+			reason: "The named location does not declare the geography of its member codes.",
+		};
+	}
+	// A named location is summed from its declared base geography; a country is
+	// summed from local authorities.
 	const [source] = newestFirst(
 		measure.sources.filter(
 			(candidateSource) =>
-				candidateSource.sourceGeography.type === "localAuthority",
+				candidateSource.sourceGeography.type === memberGeography,
 		),
 	);
 	if (!source) {
 		return {
 			candidate,
 			served: false,
-			reason: `${measure.id} is not published for local authorities, which a ${candidate.kind === "named-location" ? "curated location" : "country"} is summed from.`,
+			reason: `${measure.id} is not published for ${memberGeography}, which this ${candidate.kind === "named-location" ? "curated location" : "country"} is summed from.`,
 		};
 	}
 	const chosen = period ?? source.periods.at(-1)!;
@@ -141,7 +152,7 @@ const aggregateAttempt = (
 		return {
 			candidate,
 			served: false,
-			reason: `${measure.id} has no ${chosen} for local authorities; published: ${source.periods.join(", ")}.`,
+			reason: `${measure.id} has no ${chosen} for ${memberGeography}; published: ${source.periods.join(", ")}.`,
 		};
 	}
 	const { boundaryYear } = source.sourceGeography;
@@ -149,7 +160,7 @@ const aggregateAttempt = (
 		candidate.kind === "named-location"
 			? `locationId=${encodeURIComponent(candidate.code)}`
 			: `areaCode=${encodeURIComponent(candidate.code)}`;
-	const via = `/v1/data/${measure.id}/aggregate?${selector}&geography=localAuthority&boundaryYear=${boundaryYear}&period=${encodeURIComponent(chosen)}`;
+	const via = `/v1/data/${measure.id}/aggregate?${selector}&geography=${memberGeography}&boundaryYear=${boundaryYear}&period=${encodeURIComponent(chosen)}`;
 	const response = dispatch(via);
 	if (response.status !== 200) {
 		return { candidate, served: false, reason: detailOf(response.body) };
@@ -186,7 +197,7 @@ const aggregateAttempt = (
 			status: data.record.status,
 			value: data.record.value,
 		},
-		ground: `localAuthority@${boundaryYear}:${chosen}:${[...contributing].sort().join(",")}`,
+		ground: `${memberGeography}@${boundaryYear}:${chosen}:${[...contributing].sort().join(",")}`,
 	};
 };
 

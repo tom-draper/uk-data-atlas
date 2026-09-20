@@ -38,7 +38,9 @@ const candidate = (
 		match,
 		matchedLabel: code,
 		boundaryReleases: [],
-		...(memberCodes ? { memberCodes } : {}),
+		...(memberCodes
+			? { memberCodes, memberGeography: "localAuthority" }
+			: {}),
 	};
 };
 

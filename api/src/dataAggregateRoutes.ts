@@ -264,6 +264,13 @@ export const handleDataAggregateRoutes = ({
 	});
 	if (resolved.kind === "refusal") return refused(resolved.refusal);
 	const { source } = resolved.plan;
+	if (location && location.memberGeography !== source.sourceGeography.type)
+		return problem(
+			422,
+			"Operation Not Supported",
+			`${location.label} is defined as ${location.memberGeography} codes, but this source partition is ${source.sourceGeography.type}. No conversion was applied.`,
+			{ code: "conversion_not_available" },
+		);
 	// The boundary releases this partition is assessed to match, against
 	// which an aggregate's coverage can be judged. This is evidence about a
 	// partition rather than a choice of one, so it is read here; the resolver

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:09c37aa1dcf7d172efb7fc9b09e9310ba08bd4606941ca12b5694c8b802b0772",
-	"namedLocationInventoryHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149",
+	"contentHash": "sha256:a695f38c11847d176a2a432bcf649d9c822354368195e3f09f818e54b3a92c60",
+	"namedLocationInventoryHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c",
 	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"crosswalkId": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
 	"projections": [

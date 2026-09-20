@@ -89,6 +89,7 @@ const locations: NamedLocationInventory = {
 			id: "example",
 			label: "Example",
 			kind: "editorial-grouping",
+			memberGeography: "localAuthority",
 			memberCodes: ["E06000001", "E06000002"],
 			bbox: [0, 0, 1, 1],
 		},

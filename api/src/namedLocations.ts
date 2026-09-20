@@ -8,13 +8,18 @@ type GazetteerCore = {
 
 type GazetteerNamedLocation = {
 	memberCodes?: unknown;
+	memberGeography?: unknown;
 	bbox?: unknown;
 };
+
+export const DEFAULT_NAMED_LOCATION_MEMBER_GEOGRAPHY = "localAuthority";
 
 export type NamedLocation = {
 	id: string;
 	label: string;
 	kind: "editorial-grouping";
+	/** The geography whose codes define this editorial grouping. */
+	memberGeography: string;
 	memberCodes: string[];
 	bbox: [number, number, number, number];
 };
@@ -54,6 +59,13 @@ const memberCodes = (value: unknown): string[] | undefined =>
 		? [...new Set(value.map((code) => code.trim()))].sort()
 		: undefined;
 
+const memberGeography = (value: unknown): string | undefined =>
+	value === undefined
+		? DEFAULT_NAMED_LOCATION_MEMBER_GEOGRAPHY
+		: typeof value === "string" && value.trim().length > 0
+			? value.trim()
+			: undefined;
+
 /**
  * Compile the existing, curated Atlas location definitions into an API artifact.
  * They remain explicitly editorial groupings: this compiler adds no claim that a
@@ -76,8 +88,9 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 			const entry = value as GazetteerNamedLocation;
 			const id = idFor(label);
 			const members = memberCodes(entry.memberCodes);
+			const geography = memberGeography(entry.memberGeography);
 			const bounds = bbox(entry.bbox);
-			if (!id || !members || !bounds) {
+			if (!id || !members || !geography || !bounds) {
 				throw new Error(`${path}: named location ${label} is invalid`);
 			}
 			if (seenIds.has(id)) {
@@ -90,6 +103,7 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 				id,
 				label,
 				kind: "editorial-grouping" as const,
+				memberGeography: geography,
 				memberCodes: members,
 				bbox: bounds,
 			};

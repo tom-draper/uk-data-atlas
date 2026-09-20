@@ -94,6 +94,46 @@ test("publishes curated named locations and reports unresolved legacy members", 
 	});
 });
 
+test("uses a location's declared member geography for direct membership", () => {
+	const inventory = {
+		...namedLocationInventory,
+		locations: [
+			{
+				id: "example-wards",
+				label: "Example wards",
+				kind: "editorial-grouping" as const,
+				memberGeography: "ward",
+				memberCodes: ["E05000001"],
+				bbox: [-2.5, 53.3, -2, 53.7] as [number, number, number, number],
+			},
+		],
+	};
+	const lookup = new Map(inventory.locations.map((location) => [location.id, location]));
+	const response = routeRequest(
+		"GET",
+		"/v1/locations/example-wards/members?release=2025-01-en-ward",
+		{
+			boundaryRegistry: registry,
+			areaLookup,
+			namedLocationInventory: inventory,
+			namedLocationLookup: lookup,
+			geographyResolver: createGeographyResolver({
+				areaLookup,
+				namedLocationLookup: lookup,
+			}),
+		},
+	);
+	assert.equal(response.status, 200);
+	const data = ("data" in response.body && response.body.data) as {
+		geography: string;
+		membership: string;
+		members: { code: string }[];
+	};
+	assert.equal(data.geography, "ward");
+	assert.equal(data.membership, "direct-code-match");
+	assert.deepEqual(data.members.map((member) => member.code), ["E05000001"]);
+});
+
 test("resolves a named location into another geography through a crosswalk", () => {
 	// The shared inventory lists only the constituency lookup; this test needs
 	// the containment crosswalk advertised as well, since the route offers the

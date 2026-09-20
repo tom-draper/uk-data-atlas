@@ -1,11 +1,7 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { reconcileMembers } from "./memberReconciliation";
-import {
-	COVERS_MINIMUM_SHARE,
-} from "./locationMembership";
-
-const MEMBER_GEOGRAPHY = "localAuthority";
+import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 
 /** Discovery endpoints for the Atlas's curated named locations. */
 export const handleLocationRoutes = ({
@@ -69,8 +65,9 @@ export const handleLocationRoutes = ({
 				"Not Found",
 				"No named location matches that identity.",
 			);
+		const memberGeography = location.memberGeography;
 		const geography =
-			parsedUrl.searchParams.get("geography") ?? MEMBER_GEOGRAPHY;
+			parsedUrl.searchParams.get("geography") ?? memberGeography;
 		const boundaryRelease = parsedUrl.searchParams.get("release");
 		if (!boundaryRelease)
 			return problem(
@@ -86,7 +83,7 @@ export const handleLocationRoutes = ({
 				"Not Found",
 				"No compiled area release matches the requested member geography and release.",
 			);
-		if (geography === MEMBER_GEOGRAPHY) {
+		if (geography === memberGeography) {
 			const members = location.memberCodes.flatMap((code) => {
 				const area = areas.get(code);
 				return area
@@ -130,7 +127,7 @@ export const handleLocationRoutes = ({
 		const candidates = resolver.crosswalksToLocationMembers(
 			geography,
 			boundaryRelease,
-			MEMBER_GEOGRAPHY,
+			memberGeography,
 		);
 		const requested = parsedUrl.searchParams.get("via");
 		if (!requested)
@@ -138,7 +135,7 @@ export const handleLocationRoutes = ({
 				400,
 				"Invalid Query",
 				candidates.length === 0
-					? `A named location is curated as ${MEMBER_GEOGRAPHY} codes, and no published crosswalk maps ${geography}/${boundaryRelease} to a ${MEMBER_GEOGRAPHY} release, so its members cannot be resolved there.`
+					? `A named location is curated as ${memberGeography} codes, and no published crosswalk maps ${geography}/${boundaryRelease} to a ${memberGeography} release, so its members cannot be resolved there.`
 					: `Name the crosswalk to resolve members through, with via=. Published for ${geography}/${boundaryRelease}: ${candidates.map((candidate) => `${candidate.id} (${candidate.method}, to ${candidate.to.boundaryRelease})`).join("; ")}.`,
 			);
 		const summary = candidates.find(
@@ -148,7 +145,7 @@ export const handleLocationRoutes = ({
 			return problem(
 				404,
 				"Not Found",
-				`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${MEMBER_GEOGRAPHY} release.`,
+				`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${memberGeography} release.`,
 			);
 		if (!resolver.hasLocationProjectionStore())
 			return problem(
@@ -261,7 +258,7 @@ const locationParents = ({
 			400,
 			"Invalid Query",
 			candidates.length === 0
-				? `No published crosswalk runs from ${MEMBER_GEOGRAPHY} to ${geography}/${boundaryRelease}, so a location's parents there cannot be resolved.`
+				? `No published crosswalk runs from ${location.memberGeography} to ${geography}/${boundaryRelease}, so a location's parents there cannot be resolved.`
 				: `Name the crosswalk to resolve parents through, with via=. Published for ${geography}/${boundaryRelease}: ${candidates.map((candidate) => candidate.crosswalkId).join("; ")}.`,
 		);
 	const projection = candidates.some(
@@ -273,7 +270,7 @@ const locationParents = ({
 		return problem(
 			404,
 			"Not Found",
-			`No published crosswalk ${requested} runs from ${MEMBER_GEOGRAPHY} to ${geography}/${boundaryRelease}.`,
+			`No published crosswalk ${requested} runs from ${location.memberGeography} to ${geography}/${boundaryRelease}.`,
 		);
 	const parentAreas = areaLookup?.get(`${geography}/${boundaryRelease}`);
 	const memberAreas = areaLookup?.get(

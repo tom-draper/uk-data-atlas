@@ -98,7 +98,9 @@ export const handleAreaCapabilityRoutes = ({
 		href: `/v1/crosswalks/${crosswalk.id}`,
 	}));
 	const locations = (namedLocationInventory?.locations ?? []).filter(
-		(location) => location.memberCodes.includes(code),
+		(location) =>
+			location.memberGeography === geography &&
+			location.memberCodes.includes(code),
 	);
 	const data = (() => {
 		if (!dataCatalog || !measureCompatibilityInventory)

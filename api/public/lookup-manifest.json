@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f644a6515476120afd8ddb01582a471acd67952474552cb37e1e6764b4a829ff",
+	"contentHash": "sha256:f8700dd6f84dca3784731c6775a7fd1edca4e3e43a1969dc1aa681a08245219d",
 	"lookups": [
 		{
 			"id": "areas-combinedAuthority-2025-12-en-bgc",
@@ -8406,7 +8406,7 @@
 			"title": "Named location membership",
 			"source": {
 				"artifact": "named-locations.json",
-				"contentHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149"
+				"contentHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c"
 			},
 			"columns": [
 				{
@@ -8428,6 +8428,12 @@
 					"description": "How the location is defined; editorial-grouping is a curated grouping, not an official area."
 				},
 				{
+					"name": "memberGeography",
+					"type": "string",
+					"required": true,
+					"description": "The geography whose area codes define the location."
+				},
+				{
 					"name": "memberCode",
 					"type": "string",
 					"required": true,
@@ -8438,14 +8444,14 @@
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 37772,
-					"contentHash": "sha256:811a7324e90a1055e3521e1d699fd54bcd7a952e9faf390f271c78c356e992d1",
+					"bytes": 48573,
+					"contentHash": "sha256:dabd5bf1ee5a0026e91ed6acc1bdc02f6d3825d7b9578b33bbaf42600fd9846f",
 					"href": "/v1/lookups/named-location-members?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 74404,
-					"contentHash": "sha256:2c1035656190dc62a133490ca5b0eede2885bf692f21cf9076016c8ba4880c94",
+					"bytes": 99569,
+					"contentHash": "sha256:1499adf1ae3fc08efd5ba3b988d1f8b21425eef7693599750402321b72fa9d57",
 					"href": "/v1/lookups/named-location-members?format=ndjson"
 				}
 			}
