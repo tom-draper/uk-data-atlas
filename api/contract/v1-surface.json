@@ -5002,6 +5002,12 @@
 						"passed",
 						"waived"
 					]
+				},
+				"query:scope": {
+					"required": false,
+					"enum": [
+						"data"
+					]
 				}
 			},
 			"responses": {

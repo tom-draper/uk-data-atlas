@@ -379,6 +379,33 @@ test("serves the validation report, optionally only resources with waivers", () 
 	);
 });
 
+test("extracts a release-pinned quality audit for served data", () => {
+	const response = validationRoute(
+		"/v1/validation?scope=data",
+		validationReport,
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual("data" in response.body && response.body.data, {
+		schemaVersion: 1,
+		contentHash: "sha256:validation",
+		inputs: { boundaryRegistry: "sha256:registry" },
+		scope: "data",
+		summary: {
+			resourceCount: 1,
+			checkCount: 1,
+			passedCount: 1,
+			waivedCount: 0,
+		},
+		resources: [validationReport.resources[3]],
+		note: "This is the source-observation quality audit. It checks artifact integrity, duplicate area-period records, area-code resolution, declared country coverage, value semantics and published intervals. An unwaived failure prevents publication; any waiver remains visible here.",
+	});
+	assert.equal(
+		validationRoute("/v1/validation?scope=boundaries", validationReport)
+			.status,
+		400,
+	);
+});
+
 test("serves one resource's validation at the resource's own path", () => {
 	const release = validationRoute(
 		"/v1/validation/boundary-releases/ward/2025-01-en-ward",

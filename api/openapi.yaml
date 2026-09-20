@@ -5278,7 +5278,11 @@ paths:
         check either passes or is waived: the build fails on any exception
         without a recorded reason, and on any waiver that no longer matches
         an exception. Waived checks carry what was found and why it was
-        accepted.
+        accepted. Use `scope=data` for the source-observation quality audit:
+        artifact hashes and record counts, duplicate area-period records,
+        area-code resolution, country coverage, numeric semantics and
+        publisher-supplied interval bounds. It does not rewrite the source
+        observations it checks.
       parameters:
         - name: status
           in: query
@@ -5286,6 +5290,12 @@ paths:
           schema:
             enum: [passed, waived]
           description: Return only resources with this status.
+        - name: scope
+          in: query
+          required: false
+          schema:
+            enum: [data]
+          description: Return only the served source-observation quality audit, with a summary recalculated for those resources.
       responses:
         "200":
           description: The validation report for the current Atlas release.
