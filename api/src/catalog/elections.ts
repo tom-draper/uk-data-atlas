@@ -15,6 +15,25 @@ type ElectionMeasureField =
 	| { kind: "partyVotes"; party: string }
 	| { kind: "partyVoteShare"; party: string; denominator: string };
 
+/**
+ * LEAP source codes with the same official ward extent as the polling year's
+ * release under the Atlas's published 99% overlap rule. Materially different
+ * boundaries deliberately remain on the publisher's code.
+ */
+const servedLocalElectionWardCodeCorrections = new Map<string, string>([
+	["E05011348", "E05010919"],
+	["E05011349", "E05010920"],
+	["E05012969", "E05010931"],
+	["E05008537", "E05008939"],
+	["W05000868", "W05001012"],
+	["E05012841", "E05011382"],
+	["E05012842", "E05011383"],
+	["E05012647", "E05011386"],
+	["E05012648", "E05011392"],
+	["E05013830", "E05011393"],
+	["E05013831", "E05011412"],
+]);
+
 const electionCodeKind = (code: string) =>
 	/^[EW]05\d{6}$/.test(code)
 		? "ward"
@@ -34,6 +53,7 @@ const electionFieldPeriods = (
 	path: string,
 	geography: "constituency" | "ward",
 	field: ElectionMeasureField,
+	wardCodeCorrections: ReadonlyMap<string, string> = new Map(),
 ): Array<{
 	period: string;
 	boundaryYear: number;
@@ -126,8 +146,13 @@ const electionFieldPeriods = (
 													denominator
 												);
 											})();
+							const servedAreaCode =
+								wardCodeCorrections.get(areaCode) ?? areaCode;
 							return {
-								areaCode,
+								areaCode: servedAreaCode,
+								...(servedAreaCode === areaCode
+									? {}
+									: { sourceAreaCode: areaCode }),
 								value: number(
 									observed,
 									`${path}.${period}.${areaCode}.${
@@ -164,12 +189,17 @@ const electionFieldPeriods = (
 					.filter(
 						([areaCode, record]) =>
 							electionCodeKind(areaCode) === geography &&
-							typeof (record as { sourceWardCode?: unknown })
-								.sourceWardCode === "string",
+							(typeof (record as { sourceWardCode?: unknown })
+								.sourceWardCode === "string" ||
+								wardCodeCorrections.has(areaCode)),
 					)
 					.map(([areaCode, record]): [string, string] => [
-						(record as { sourceWardCode: string }).sourceWardCode,
-						areaCode,
+						typeof (record as { sourceWardCode?: unknown })
+							.sourceWardCode === "string"
+							? (record as { sourceWardCode: string })
+									.sourceWardCode
+							: areaCode,
+						wardCodeCorrections.get(areaCode) ?? areaCode,
 					])
 					.sort(([left], [right]) => left.localeCompare(right)),
 			};
@@ -184,6 +214,7 @@ const electionFieldPeriods = (
 const electionWinnerPeriods = (
 	path: string,
 	geography: "constituency" | "ward",
+	wardCodeCorrections: ReadonlyMap<string, string> = new Map(),
 ): Array<{
 	period: string;
 	boundaryYear: number;
@@ -210,9 +241,14 @@ const electionWinnerPeriods = (
 				records: Object.entries(results)
 					.flatMap(([areaCode, category]) => {
 						if (electionCodeKind(areaCode) !== geography) return [];
+						const servedAreaCode =
+							wardCodeCorrections.get(areaCode) ?? areaCode;
 						return [
 							{
-								areaCode,
+								areaCode: servedAreaCode,
+								...(servedAreaCode === areaCode
+									? {}
+									: { sourceAreaCode: areaCode }),
 								category: string(
 									category,
 									`${path}.${period}.results.${areaCode}`,
@@ -281,6 +317,7 @@ export const compileElections = (
 			measureId: string;
 			label: string;
 		};
+		wardCodeCorrections?: ReadonlyMap<string, string>;
 	}) => {
 		const dataset = datasets.find(
 			(candidate) => candidate.id === election.datasetId,
@@ -296,6 +333,7 @@ export const compileElections = (
 				kind: "field",
 				field: election.countField,
 			},
+			election.wardCodeCorrections,
 		);
 		const recordCount = countPeriods.reduce(
 			(total, period) => total + period.records.length,
@@ -456,6 +494,7 @@ export const compileElections = (
 				election.path,
 				election.geography,
 				metric.field,
+				election.wardCodeCorrections,
 			).filter(metric.filter ?? (() => true));
 			const byBoundaryYear = new Map<number, typeof periods>();
 			for (const period of periods) {
@@ -568,10 +607,12 @@ export const compileElections = (
 		path: string;
 		geography: "constituency" | "ward";
 		label: string;
+		wardCodeCorrections?: ReadonlyMap<string, string>;
 	}) => {
 		const periods = electionWinnerPeriods(
 			election.path,
 			election.geography,
+			election.wardCodeCorrections,
 		);
 		const byBoundaryYear = new Map<number, typeof periods>();
 		for (const period of periods) {
@@ -682,12 +723,14 @@ export const compileElections = (
 			partyVoteNote:
 				"Only the party's highest-polling candidate in a ward counts, so a party fielding several candidates in a multi-member ward is counted once. Independents are counted the same way, and every other party or group as its own party within Other candidates.",
 			turnoutPeriods: "reported",
+			wardCodeCorrections: servedLocalElectionWardCodeCorrections,
 		}),
 		...electionWinnerMeasures({
 			datasetId: "local-election",
 			path: localElectionPath,
 			geography: "ward",
 			label: "Local election",
+			wardCodeCorrections: servedLocalElectionWardCodeCorrections,
 		}),
 	];
 	const electionMeasureDefinitions = [

@@ -198,6 +198,8 @@ export type PopulationObservation = {
 /** A source-reported label, intentionally distinct from a numeric value. */
 export type CategoricalObservation = {
 	areaCode: string;
+	/** See PopulationObservation.sourceAreaCode. */
+	sourceAreaCode?: string;
 	category: string;
 	status: "observed";
 };

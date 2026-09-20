@@ -245,7 +245,7 @@ const writeSources = (
 				dataset("life-expectancy-series", 4, 2, 2021),
 				dataset("population-constituency", 4, 2, 2024),
 				dataset("general-election", 4, 2, 2019),
-				dataset("local-election", 5, 2, 2019),
+				dataset("local-election", 6, 2, 2019),
 				dataset("regional-gdp-itl1", 4, 2, 2025),
 				dataset("regional-gdp-itl2", 4, 2, 2025),
 				dataset("regional-gdp-itl3", 4, 2, 2025),
@@ -835,6 +835,11 @@ const writeSources = (
 						turnoutPercent: 0,
 						partyVotes: { LAB: 50, LD: 30 },
 					},
+					E05013831: {
+						totalVotes: 70,
+						turnoutPercent: 0,
+						partyVotes: { CON: 25, LAB: 45 },
+					},
 					E58000050: {
 						totalVotes: 50,
 						turnoutPercent: 0,
@@ -844,6 +849,7 @@ const writeSources = (
 				results: {
 					E05000001: "CON",
 					W05000001: "LAB",
+					E05013831: "LAB",
 					E58000050: "CON",
 				},
 			},
@@ -1094,11 +1100,43 @@ test("publishes source-exact election turnout and party vote counts", () => {
 		assert.equal(
 			measure("local-election-effective-votes")?.sources[0]?.coverage
 				.recordCount,
-			2,
+			3,
 		);
 		assert.match(
 			measure("local-election-effective-votes")?.notes?.[1] ?? "",
 			/county-electoral-division codes is excluded/,
+		);
+		const localVotes2019 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "local-election-con-votes" &&
+				artifact.sourceGeography.boundaryYear === 2019,
+		);
+		assert.deepEqual(
+			localVotes2019?.periods[0]?.records.find(
+				(record) => record.areaCode === "E05011412",
+			),
+			{
+				areaCode: "E05011412",
+				sourceAreaCode: "E05013831",
+				value: 25,
+				status: "observed",
+			},
+		);
+		const localWinners2019 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "local-election-winning-party" &&
+				artifact.sourceGeography.boundaryYear === 2019,
+		);
+		assert.deepEqual(
+			localWinners2019?.periods[0]?.records.find(
+				(record) => record.areaCode === "E05011412",
+			),
+			{
+				areaCode: "E05011412",
+				sourceAreaCode: "E05013831",
+				category: "LAB",
+				status: "observed",
+			},
 		);
 
 		// The archive's older local-election files lack turnout; zero is not a
