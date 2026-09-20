@@ -300,12 +300,11 @@ describe("location-scoped chart datasets", () => {
 					new Response(
 						JSON.stringify({
 							version: 1,
+							year: 2011,
 							lsoaToLad: {
-								2011: {
-									[includedCode]:
-										greaterManchester.memberCodes[0],
-									[overlappingNeighbour]: "E06000001",
-								},
+								[includedCode]:
+									greaterManchester.memberCodes[0],
+								[overlappingNeighbour]: "E06000001",
 							},
 						}),
 					),
@@ -342,10 +341,9 @@ describe("location-scoped chart datasets", () => {
 					new Response(
 						JSON.stringify({
 							version: 1,
+							year: 2011,
 							lsoaToLad: {
-								2011: {
-									E01000001: greaterManchester.memberCodes[0],
-								},
+								E01000001: greaterManchester.memberCodes[0],
 							},
 						}),
 						{ status: 200 },

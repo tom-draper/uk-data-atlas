@@ -13,6 +13,18 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 	"Northern Ireland": "N",
 };
 
+export type BoundaryLocationRelations = {
+	getLadForWard?: (wardCode: string) => string | undefined;
+	constituencyLadOverlaps?: Crosswalk;
+	lsoaToLad?: Record<string, string>;
+};
+
+export type BoundaryFeatureFilter = {
+	location: string | null;
+	type: BoundaryType;
+	relations?: BoundaryLocationRelations;
+};
+
 /** Fast AABB (Axis-Aligned Bounding Box) intersection check. */
 const isFeatureInBounds = (
 	feature: BoundaryGeojson["features"][number],
@@ -36,12 +48,9 @@ const isFeatureInBounds = (
 /** Filter features by the selected named location. */
 export const filterFeatures = (
 	geojson: BoundaryGeojson,
-	location: string | null,
-	type: BoundaryType,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	constituencyLadOverlaps?: Crosswalk,
-	lsoaToLad?: Record<string, string>,
+	{ location, type, relations = {} }: BoundaryFeatureFilter,
 ): BoundaryGeojson => {
+	const { getLadForWard, constituencyLadOverlaps, lsoaToLad } = relations;
 	// No filtering needed for UK-wide view
 	if (!location || location === "United Kingdom") {
 		return geojson;

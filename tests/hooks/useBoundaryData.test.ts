@@ -117,11 +117,8 @@ describe("getCachedFilteredBoundaryData", () => {
 		const filtered = getCachedFilteredBoundaryData(
 			rawData,
 			"Greater Manchester",
-			undefined,
-			null,
 			{
-				version: 1,
-				lsoaToLad: {
+				lsoaToLadByYear: {
 					2011: {
 						[includedCode]: greaterManchester.memberCodes[0]!,
 						[neighbouringCode]: "E06000001",

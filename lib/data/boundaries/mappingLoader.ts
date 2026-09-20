@@ -9,8 +9,8 @@ import {
 	extractWardLadMappings,
 	type PrecompiledBoundaryMappings,
 } from "./mappings";
-import { wardLadFromGeometry } from "./wardLadGeometry";
-import type { LsoaLadMappings } from "./lsoaLadMappings";
+import { areasLadFromGeometry } from "./wardLadGeometry";
+import type { LsoaLadMapping } from "./lsoaLadMappings";
 
 type BoundaryGroup = Record<number, BoundaryGeojson>;
 
@@ -55,7 +55,7 @@ async function loadBoundaryGroup(
  */
 export async function loadLsoaLadMappings(
 	read: (path: string) => Promise<string>,
-): Promise<LsoaLadMappings> {
+): Promise<Record<number, LsoaLadMapping>> {
 	const [lsoas, localAuthorities] = await Promise.all([
 		loadBoundaryGroup(read, "lsoa"),
 		loadBoundaryGroup(read, "localAuthority"),
@@ -68,7 +68,7 @@ export async function loadLsoaLadMappings(
 	const lsoaToLad = Object.fromEntries(
 		Object.entries(lsoas).map(([year, lsoa]) => [
 			Number(year),
-			wardLadFromGeometry(
+			areasLadFromGeometry(
 				lsoa.features,
 				BOUNDARY_CATALOG.lsoa.properties.code,
 				newestLocalAuthorities.features,
@@ -86,7 +86,12 @@ export async function loadLsoaLadMappings(
 		}
 	}
 
-	return { version: 1, lsoaToLad };
+	return Object.fromEntries(
+		Object.entries(lsoaToLad).map(([year, mapping]) => [
+			Number(year),
+			{ version: 1, year: Number(year), lsoaToLad: mapping },
+		]),
+	);
 }
 
 export async function loadBoundaryMappings(
@@ -132,7 +137,7 @@ export async function loadBoundaryMappings(
 	for (const boundary of Object.values(wards)) {
 		Object.assign(
 			wardToLad,
-			wardLadFromGeometry(
+			areasLadFromGeometry(
 				boundary.features,
 				BOUNDARY_CATALOG.ward.properties.code,
 				newestLocalAuthorities.features,

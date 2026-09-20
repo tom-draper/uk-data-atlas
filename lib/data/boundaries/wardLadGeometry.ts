@@ -125,16 +125,16 @@ const indexContainers = (
 };
 
 /**
- * Maps each named ward onto the local authority whose boundary contains it.
- * Wards already carrying an authority are not passed in; the caller keeps the
+ * Maps each small area onto the local authority whose boundary contains it.
+ * Areas already carrying an authority are not passed in; the caller keeps the
  * published answer wherever there is one.
  */
-export const wardLadFromGeometry = (
-	wards: BoundaryGeojson["features"],
-	wardCodeKeys: readonly string[],
+export const areasLadFromGeometry = (
+	areas: BoundaryGeojson["features"],
+	areaCodeKeys: readonly string[],
 	localAuthorities: BoundaryGeojson["features"],
 	localAuthorityCodeKeys: readonly string[],
-	needed: (wardCode: string) => boolean,
+	needed: (areaCode: string) => boolean,
 ): Record<string, string> => {
 	const containers = indexContainers(
 		localAuthorities,
@@ -142,13 +142,13 @@ export const wardLadFromGeometry = (
 	);
 	const resolved: Record<string, string> = {};
 
-	for (const ward of wards) {
-		const wardCode = ward.properties
-			? getProp(ward.properties, wardCodeKeys)
+	for (const area of areas) {
+		const areaCode = area.properties
+			? getProp(area.properties, areaCodeKeys)
 			: undefined;
-		if (!wardCode || !needed(wardCode) || resolved[wardCode]) continue;
+		if (!areaCode || !needed(areaCode) || resolved[areaCode]) continue;
 
-		const polygons = polygonsOf(ward.geometry);
+		const polygons = polygonsOf(area.geometry);
 		if (polygons.length === 0) continue;
 		const wardBbox = bboxOf(polygons);
 		const candidates = containers.filter((c) =>
@@ -175,7 +175,7 @@ export const wardLadFromGeometry = (
 				bestVotes = count;
 			}
 		}
-		if (best) resolved[wardCode] = best;
+		if (best) resolved[areaCode] = best;
 	}
 
 	return resolved;

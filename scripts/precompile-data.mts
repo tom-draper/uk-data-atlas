@@ -300,7 +300,11 @@ async function main() {
 	);
 	const lsoaLadMappings = loadLsoaLadMappings(readBoundaryAsset).then(
 		async (data) => {
-			await out("lsoa-lad-mappings", data);
+			await Promise.all(
+				Object.values(data).map((mapping) =>
+					out(`lsoa-lad-mappings-${mapping.year}`, mapping),
+				),
+			);
 			return data;
 		},
 	);
