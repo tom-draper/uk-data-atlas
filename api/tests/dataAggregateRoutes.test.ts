@@ -38,6 +38,7 @@ const aggregationNamedLocationLookup = createNamedLocationLookup({
 			id: "test-wards",
 			label: "Test wards",
 			kind: "editorial-grouping",
+			memberGeography: "ward",
 			memberCodes: ["E05000001", "W05000001"],
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
@@ -45,6 +46,7 @@ const aggregationNamedLocationLookup = createNamedLocationLookup({
 			id: "incomplete-test-wards",
 			label: "Incomplete test wards",
 			kind: "editorial-grouping",
+			memberGeography: "ward",
 			memberCodes: ["E05000001", "E05000999"],
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
@@ -417,6 +419,24 @@ test("aggregates an extensive measure only over a complete direct named-location
 		},
 	);
 
+	// A location's member geography is part of its identity. Do not silently
+	// treat ward codes as local-authority codes merely because that partition
+	// also serves this measure.
+	const wrongGeography = routeRequest(
+		"GET",
+		"/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=test-wards",
+		context,
+	);
+	assert.equal(wrongGeography.status, 422);
+	assert.equal(
+		"code" in wrongGeography.body && wrongGeography.body.code,
+		"conversion_not_available",
+	);
+	assert.match(
+		"detail" in wrongGeography.body ? wrongGeography.body.detail : "",
+		/defined as ward codes/,
+	);
+
 	// E05000999 names no area in any compiled release, so it matched nothing
 	// and could neither add to the sum nor be counted twice in it. The sum
 	// proceeds and names the code it passed over, rather than refusing a
@@ -485,6 +505,7 @@ test("sums a location whose members span several code vintages", () => {
 				id: "spanning",
 				label: "Spanning",
 				kind: "editorial-grouping",
+				memberGeography: "localAuthority",
 				// E06000001 is current and carries the observation; E08000999
 				// was superseded before this partition and E08000998 has yet
 				// to take effect.
@@ -495,6 +516,7 @@ test("sums a location whose members span several code vintages", () => {
 				id: "abolished",
 				label: "Abolished",
 				kind: "editorial-grouping",
+				memberGeography: "localAuthority",
 				memberCodes: ["E08000999"],
 				bbox: [-2.5, 53.3, -2, 53.7],
 			},
@@ -502,6 +524,7 @@ test("sums a location whose members span several code vintages", () => {
 				id: "extent",
 				label: "Extent",
 				kind: "editorial-grouping",
+				memberGeography: "localAuthority",
 				memberCodes: [],
 				bbox: [-2.5, 53.3, -2, 53.7],
 			},

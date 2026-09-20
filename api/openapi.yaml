@@ -5922,7 +5922,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
+                    href: /v1/atlas-releases/sha256:0daa596d402f70abc25bf79b711513ca5cad50f305b7faf1292c9b64ec9b6e0e
                     artifactCount: 338
                     current: true
                 meta:
@@ -6113,10 +6113,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
+                    href: /v1/atlas-releases/sha256:0daa596d402f70abc25bf79b711513ca5cad50f305b7faf1292c9b64ec9b6e0e
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
+                    href: /v1/atlas-releases/sha256:0daa596d402f70abc25bf79b711513ca5cad50f305b7faf1292c9b64ec9b6e0e
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []
@@ -6380,6 +6380,7 @@ paths:
                   - id: york
                     label: York
                     kind: editorial-grouping
+                    memberGeography: localAuthority
                     memberCodes:
                       - E06000014
                     bbox:
@@ -6414,6 +6415,7 @@ paths:
                   id: london
                   label: London
                   kind: editorial-grouping
+                  memberGeography: localAuthority
                   memberCodes:
                     - E09000001
                   bbox:
@@ -6444,8 +6446,8 @@ paths:
         about geometry.
 
 
-        A location is curated as local authority codes, so asking for
-        `geography=localAuthority` matches them directly and `membership` is
+        A location declares the geography of its member codes, so asking for
+        that geography matches them directly and `membership` is
         `direct-code-match`. Any other geography has to be reached through a
         published crosswalk, named with `via`: the wards of North Wales, the
         constituencies of Merseyside. Asking without `via` returns a 400 that
@@ -6464,7 +6466,7 @@ paths:
         partial.
 
 
-        Each member names the authority it was found `through`, and
+        Each member names the defining area it was found `through`, and
         `parentBoundaryRelease` names the release the location's own codes were
         resolved against, which is the release the crosswalk ends at rather
         than the one asked for. Each member's `relation` is `within` when the
@@ -6483,10 +6485,9 @@ paths:
           in: query
           schema:
             type: string
-            default: localAuthority
           description: >
-            The geography to resolve members in. Anything other than
-            `localAuthority` requires `via`.
+            The geography to resolve members in. Omit it to use the location's
+            declared `memberGeography`; any other geography requires `via`.
         - name: release
           in: query
           required: true
@@ -6500,14 +6501,15 @@ paths:
           schema: { type: string }
           description: >
             The published crosswalk to resolve through, required for any
-            geography other than `localAuthority`. Omit it to be told which are
-            available.
+            geography other than the location's `memberGeography`. Omit it to
+            be told which are available.
           example: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
       responses:
         "400":
           description: >
-            `release` is missing, or a geography other than `localAuthority`
-            was asked for without `via`. The detail lists the crosswalks
+            `release` is missing, or a geography other than the location's
+            `memberGeography` was asked for without `via`. The detail lists
+            the crosswalks
             published for that geography and release.
           content:
             application/problem+json:
@@ -6529,6 +6531,7 @@ paths:
                     id: north-wales
                     label: North Wales
                     kind: editorial-grouping
+                    memberGeography: localAuthority
                     memberCodes:
                       - W06000001
                     bbox:
@@ -6557,9 +6560,10 @@ paths:
       description: >
         The other direction from `members`: which regions, counties, combined
         authorities or countries a location lies in, and whether it takes in
-        each one whole. A location is curated as local authority codes, so a
-        parent geography is reached through a published crosswalk out of local
-        authorities, named with `via`; asking without it lists the crosswalks
+        each one whole. A location is defined by codes in its declared
+        `memberGeography`, so a parent geography is reached through a published
+        crosswalk out of that geography, named with `via`; asking without it
+        lists the crosswalks
         published for that geography and release.
 
 
@@ -6600,8 +6604,9 @@ paths:
           required: false
           schema: { type: string }
           description: >
-            The published crosswalk from local authorities to that geography.
-            Omit it to be told which are available.
+            The published crosswalk from the location's declared
+            `memberGeography` to that geography. Omit it to be told which are
+            available.
       responses:
         "200":
           description: The parents the location covers or meets, and any members placed in none.

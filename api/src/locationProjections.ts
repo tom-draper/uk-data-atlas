@@ -109,8 +109,9 @@ export const locationProjectionKey = (
 
 /**
  * Materialise every published route from a target geography into a named
- * location's direct local-authority members. This is deliberately a compiler
- * operation: request handlers only select a projection and join its area names.
+ * location's direct members in its declared geography. This is deliberately a
+ * compiler operation: request handlers only select a projection and join its
+ * area names.
  */
 const compileLocationProjectionArtifact = (
 	namedLocations: NamedLocationInventory,
@@ -118,9 +119,12 @@ const compileLocationProjectionArtifact = (
 	summary: CrosswalkInventory["crosswalks"][number],
 	crosswalk: CrosswalkArtifact,
 	areaLookup: AreaLookup,
-	memberGeography = "localAuthority",
 ): LocationProjectionArtifact | undefined => {
-	if (crosswalk.to.geography !== memberGeography) return undefined;
+	const memberGeography = crosswalk.to.geography;
+	const locations = namedLocations.locations.filter(
+		(location) => location.memberGeography === memberGeography,
+	);
+	if (locations.length === 0) return undefined;
 	const parents = areaLookup.get(
 		`${memberGeography}/${crosswalk.to.boundaryRelease}`,
 	);
@@ -129,7 +133,7 @@ const compileLocationProjectionArtifact = (
 			`${crosswalk.id}: cannot materialise location membership because ${memberGeography}/${crosswalk.to.boundaryRelease} has no compiled areas.`,
 		);
 	}
-	const projections = namedLocations.locations.map(
+	const projections = locations.map(
 		(location): LocationProjection => {
 			const parentCodes = new Set(
 				location.memberCodes.filter((code) => parents.has(code)),
@@ -220,14 +224,17 @@ const compileLocationParentArtifact = (
 	summary: CrosswalkInventory["crosswalks"][number],
 	crosswalk: CrosswalkArtifact,
 	areaLookup: AreaLookup,
-	memberGeography: string,
 ): LocationParentProjectionArtifact | undefined => {
+	const memberGeography = crosswalk.from.geography;
 	if (
-		crosswalk.from.geography !== memberGeography ||
 		crosswalk.to.geography === memberGeography ||
 		!isParentCrosswalk(crosswalk)
 	)
 		return undefined;
+	const locations = namedLocations.locations.filter(
+		(location) => location.memberGeography === memberGeography,
+	);
+	if (locations.length === 0) return undefined;
 	const members = areaLookup.get(
 		`${memberGeography}/${crosswalk.from.boundaryRelease}`,
 	);
@@ -236,7 +243,7 @@ const compileLocationParentArtifact = (
 			`${crosswalk.id}: cannot materialise location parents because ${memberGeography}/${crosswalk.from.boundaryRelease} has no compiled areas.`,
 		);
 	}
-	const parentProjections = namedLocations.locations
+	const parentProjections = locations
 		.map((location): LocationParentProjection => {
 			const memberCodes = new Set(
 				location.memberCodes.filter((code) => members.has(code)),
@@ -282,7 +289,6 @@ export const compileLocationProjections = (
 	crosswalkInventory: CrosswalkInventory,
 	crosswalks: Iterable<CrosswalkArtifact>,
 	areaLookup: AreaLookup,
-	memberGeography = "localAuthority",
 ) => {
 	const crosswalkById = new Map(
 		[...crosswalks].map((crosswalk) => [crosswalk.id, crosswalk]),
@@ -296,7 +302,6 @@ export const compileLocationProjections = (
 			summary,
 			crosswalk,
 			areaLookup,
-			memberGeography,
 		);
 		return artifact ? [artifact] : [];
 	});
@@ -326,7 +331,6 @@ export const compileLocationProjections = (
 			summary,
 			crosswalk,
 			areaLookup,
-			memberGeography,
 		);
 		return artifact ? [artifact] : [];
 	});

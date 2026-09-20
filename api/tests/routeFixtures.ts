@@ -301,6 +301,7 @@ export const namedLocationInventory: NamedLocationInventory = {
 			id: "greater-manchester",
 			label: "Greater Manchester",
 			kind: "editorial-grouping",
+			memberGeography: "localAuthority",
 			memberCodes: ["E08000000", "E08000001", "E08000998", "E08000999"],
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},

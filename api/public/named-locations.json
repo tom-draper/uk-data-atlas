@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149",
+	"contentHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c",
 	"source": {
 		"artifact": "data/precompiled/gazetteer.core.json",
 		"gazetteerVersion": 1
@@ -10,6 +10,7 @@
 			"id": "aberdeen",
 			"label": "Aberdeen",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000033"
 			],
@@ -24,6 +25,7 @@
 			"id": "aberystwyth",
 			"label": "Aberystwyth",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000008"
 			],
@@ -38,6 +40,7 @@
 			"id": "armagh-down-and-newry",
 			"label": "Armagh, Down and Newry",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000002",
 				"N09000010"
@@ -53,6 +56,7 @@
 			"id": "bangor",
 			"label": "Bangor",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000001"
 			],
@@ -67,6 +71,7 @@
 			"id": "barnsley",
 			"label": "Barnsley",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000016",
 				"E08000038"
@@ -82,6 +87,7 @@
 			"id": "basingstoke",
 			"label": "Basingstoke",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000084"
 			],
@@ -96,6 +102,7 @@
 			"id": "bath",
 			"label": "Bath",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000022"
 			],
@@ -110,6 +117,7 @@
 			"id": "belfast",
 			"label": "Belfast",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000003"
 			],
@@ -124,6 +132,7 @@
 			"id": "belfast-metropolitan-area",
 			"label": "Belfast Metropolitan Area",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000001",
 				"N09000003",
@@ -141,6 +150,7 @@
 			"id": "birmingham",
 			"label": "Birmingham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000025"
 			],
@@ -155,6 +165,7 @@
 			"id": "blackburn",
 			"label": "Blackburn",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000008"
 			],
@@ -169,6 +180,7 @@
 			"id": "blackpool",
 			"label": "Blackpool",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000009"
 			],
@@ -183,6 +195,7 @@
 			"id": "bolton",
 			"label": "Bolton",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000001"
 			],
@@ -197,6 +210,7 @@
 			"id": "bournemouth",
 			"label": "Bournemouth",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000058"
 			],
@@ -211,6 +225,7 @@
 			"id": "bradford",
 			"label": "Bradford",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000032"
 			],
@@ -225,6 +240,7 @@
 			"id": "brighton-and-hove",
 			"label": "Brighton and Hove",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000043"
 			],
@@ -239,6 +255,7 @@
 			"id": "bristol",
 			"label": "Bristol",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000023"
 			],
@@ -253,6 +270,7 @@
 			"id": "buckinghamshire",
 			"label": "Buckinghamshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000060",
 				"E07000004",
@@ -271,6 +289,7 @@
 			"id": "cambridge",
 			"label": "Cambridge",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000008"
 			],
@@ -285,6 +304,7 @@
 			"id": "canterbury",
 			"label": "Canterbury",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000106"
 			],
@@ -299,6 +319,7 @@
 			"id": "cardiff",
 			"label": "Cardiff",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000015"
 			],
@@ -313,6 +334,7 @@
 			"id": "cardiff-and-the-valleys",
 			"label": "Cardiff and The Valleys",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000015",
 				"W06000016",
@@ -333,6 +355,7 @@
 			"id": "carlisle",
 			"label": "Carlisle",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000028"
 			],
@@ -347,6 +370,7 @@
 			"id": "causeway-coast-and-antrim",
 			"label": "Causeway Coast and Antrim",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000004",
 				"N09000008"
@@ -362,6 +386,7 @@
 			"id": "central-belt",
 			"label": "Central Belt",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000005",
 				"S12000010",
@@ -389,6 +414,7 @@
 			"id": "cheltenham",
 			"label": "Cheltenham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000078"
 			],
@@ -403,6 +429,7 @@
 			"id": "cheshire",
 			"label": "Cheshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000006",
 				"E06000007",
@@ -420,6 +447,7 @@
 			"id": "chester",
 			"label": "Chester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000050"
 			],
@@ -434,6 +462,7 @@
 			"id": "chesterfield",
 			"label": "Chesterfield",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000034"
 			],
@@ -448,6 +477,7 @@
 			"id": "colchester",
 			"label": "Colchester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000071"
 			],
@@ -462,6 +492,7 @@
 			"id": "cornwall",
 			"label": "Cornwall",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000052"
 			],
@@ -476,6 +507,7 @@
 			"id": "coventry",
 			"label": "Coventry",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000026"
 			],
@@ -490,6 +522,7 @@
 			"id": "crawley",
 			"label": "Crawley",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000226"
 			],
@@ -504,6 +537,7 @@
 			"id": "darlington",
 			"label": "Darlington",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000005"
 			],
@@ -518,6 +552,7 @@
 			"id": "derby",
 			"label": "Derby",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000015"
 			],
@@ -532,6 +567,7 @@
 			"id": "derbyshire",
 			"label": "Derbyshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000015",
 				"E07000032",
@@ -553,6 +589,7 @@
 			"id": "devon",
 			"label": "Devon",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000052",
 				"E07000040",
@@ -575,6 +612,7 @@
 			"id": "doncaster",
 			"label": "Doncaster",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000017"
 			],
@@ -589,6 +627,7 @@
 			"id": "dorset",
 			"label": "Dorset",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000058",
 				"E06000059",
@@ -610,6 +649,7 @@
 			"id": "dudley",
 			"label": "Dudley",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000027"
 			],
@@ -624,6 +664,7 @@
 			"id": "dundee",
 			"label": "Dundee",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000042"
 			],
@@ -638,6 +679,7 @@
 			"id": "durham",
 			"label": "Durham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000047"
 			],
@@ -652,6 +694,7 @@
 			"id": "east-midlands",
 			"label": "East Midlands",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000015",
 				"E06000016",
@@ -707,6 +750,7 @@
 			"id": "east-of-england",
 			"label": "East of England",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000031",
 				"E06000032",
@@ -770,6 +814,7 @@
 			"id": "edinburgh",
 			"label": "Edinburgh",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000036"
 			],
@@ -784,6 +829,7 @@
 			"id": "england",
 			"label": "England",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [],
 			"bbox": [
 				-6.5,
@@ -796,6 +842,7 @@
 			"id": "essex",
 			"label": "Essex",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000033",
 				"E07000066",
@@ -821,6 +868,7 @@
 			"id": "exeter",
 			"label": "Exeter",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000041"
 			],
@@ -835,6 +883,7 @@
 			"id": "fife",
 			"label": "Fife",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000015",
 				"S12000047"
@@ -850,6 +899,7 @@
 			"id": "gateshead",
 			"label": "Gateshead",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000020",
 				"E08000037"
@@ -865,6 +915,7 @@
 			"id": "glasgow",
 			"label": "Glasgow",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000046",
 				"S12000049"
@@ -880,6 +931,7 @@
 			"id": "gloucester",
 			"label": "Gloucester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000081"
 			],
@@ -894,6 +946,7 @@
 			"id": "gloucestershire",
 			"label": "Gloucestershire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000078",
 				"E07000079",
@@ -913,6 +966,7 @@
 			"id": "grampian",
 			"label": "Grampian",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000020",
 				"S12000033",
@@ -929,6 +983,7 @@
 			"id": "greater-glasgow-and-clyde",
 			"label": "Greater Glasgow and Clyde",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000011",
 				"S12000018",
@@ -949,6 +1004,7 @@
 			"id": "greater-manchester",
 			"label": "Greater Manchester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000001",
 				"E08000002",
@@ -972,6 +1028,7 @@
 			"id": "guildford",
 			"label": "Guildford",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000209"
 			],
@@ -986,6 +1043,7 @@
 			"id": "halifax",
 			"label": "Halifax",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000033"
 			],
@@ -1000,6 +1058,7 @@
 			"id": "hampshire",
 			"label": "Hampshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000044",
 				"E06000045",
@@ -1025,6 +1084,7 @@
 			"id": "harrogate",
 			"label": "Harrogate",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000165"
 			],
@@ -1039,6 +1099,7 @@
 			"id": "hartlepool",
 			"label": "Hartlepool",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000001"
 			],
@@ -1053,6 +1114,7 @@
 			"id": "hereford",
 			"label": "Hereford",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000019"
 			],
@@ -1067,6 +1129,7 @@
 			"id": "hertfordshire",
 			"label": "Hertfordshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000095",
 				"E07000096",
@@ -1094,6 +1157,7 @@
 			"id": "huddersfield",
 			"label": "Huddersfield",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000034"
 			],
@@ -1108,6 +1172,7 @@
 			"id": "hull",
 			"label": "Hull",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000010"
 			],
@@ -1122,6 +1187,7 @@
 			"id": "inverness",
 			"label": "Inverness",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000017"
 			],
@@ -1136,6 +1202,7 @@
 			"id": "ipswich",
 			"label": "Ipswich",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000202"
 			],
@@ -1150,6 +1217,7 @@
 			"id": "kent",
 			"label": "Kent",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000035",
 				"E06000036",
@@ -1177,6 +1245,7 @@
 			"id": "lancashire",
 			"label": "Lancashire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000008",
 				"E06000009",
@@ -1205,6 +1274,7 @@
 			"id": "lancaster",
 			"label": "Lancaster",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000121"
 			],
@@ -1219,6 +1289,7 @@
 			"id": "leeds",
 			"label": "Leeds",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000035"
 			],
@@ -1233,6 +1304,7 @@
 			"id": "leicester",
 			"label": "Leicester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000016"
 			],
@@ -1247,6 +1319,7 @@
 			"id": "lincoln",
 			"label": "Lincoln",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000138"
 			],
@@ -1261,6 +1334,7 @@
 			"id": "lincolnshire",
 			"label": "Lincolnshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000012",
 				"E06000013",
@@ -1283,6 +1357,7 @@
 			"id": "lisburn",
 			"label": "Lisburn",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000007"
 			],
@@ -1297,6 +1372,7 @@
 			"id": "liverpool",
 			"label": "Liverpool",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000012"
 			],
@@ -1311,6 +1387,7 @@
 			"id": "london",
 			"label": "London",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E09000001",
 				"E09000002",
@@ -1357,6 +1434,7 @@
 			"id": "londonderry",
 			"label": "Londonderry",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000005"
 			],
@@ -1371,6 +1449,7 @@
 			"id": "lowlands",
 			"label": "Lowlands",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000006",
 				"S12000008",
@@ -1388,6 +1467,7 @@
 			"id": "luton",
 			"label": "Luton",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000032"
 			],
@@ -1402,6 +1482,7 @@
 			"id": "maidstone",
 			"label": "Maidstone",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000110"
 			],
@@ -1416,6 +1497,7 @@
 			"id": "manchester",
 			"label": "Manchester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000003"
 			],
@@ -1430,6 +1512,7 @@
 			"id": "mansfield",
 			"label": "Mansfield",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000174"
 			],
@@ -1444,6 +1527,7 @@
 			"id": "merseyside",
 			"label": "Merseyside",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000011",
 				"E08000012",
@@ -1462,6 +1546,7 @@
 			"id": "mid-wales",
 			"label": "Mid Wales",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000023",
 				"W06000024"
@@ -1477,6 +1562,7 @@
 			"id": "middlesbrough",
 			"label": "Middlesbrough",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000002"
 			],
@@ -1491,6 +1577,7 @@
 			"id": "milton-keynes",
 			"label": "Milton Keynes",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000042"
 			],
@@ -1505,6 +1592,7 @@
 			"id": "newcastle-upon-tyne",
 			"label": "Newcastle upon Tyne",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000021"
 			],
@@ -1519,6 +1607,7 @@
 			"id": "newport",
 			"label": "Newport",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000022"
 			],
@@ -1533,6 +1622,7 @@
 			"id": "newry",
 			"label": "Newry",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000010"
 			],
@@ -1547,6 +1637,7 @@
 			"id": "norfolk",
 			"label": "Norfolk",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000143",
 				"E07000144",
@@ -1567,6 +1658,7 @@
 			"id": "north-east",
 			"label": "North East",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000001",
 				"E06000002",
@@ -1594,6 +1686,7 @@
 			"id": "north-east-scotland",
 			"label": "North East Scotland",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000020",
 				"S12000033",
@@ -1610,6 +1703,7 @@
 			"id": "north-wales",
 			"label": "North Wales",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000001",
 				"W06000002",
@@ -1629,6 +1723,7 @@
 			"id": "north-west",
 			"label": "North West",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000006",
 				"E06000007",
@@ -1683,6 +1778,7 @@
 			"id": "north-yorkshire",
 			"label": "North Yorkshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000065",
 				"E07000163",
@@ -1704,6 +1800,7 @@
 			"id": "northampton",
 			"label": "Northampton",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000062"
 			],
@@ -1718,6 +1815,7 @@
 			"id": "northern-ireland",
 			"label": "Northern Ireland",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [],
 			"bbox": [
 				-8.3,
@@ -1730,6 +1828,7 @@
 			"id": "norwich",
 			"label": "Norwich",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000148"
 			],
@@ -1744,6 +1843,7 @@
 			"id": "nottingham",
 			"label": "Nottingham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000018"
 			],
@@ -1758,6 +1858,7 @@
 			"id": "oldham",
 			"label": "Oldham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000004"
 			],
@@ -1772,6 +1873,7 @@
 			"id": "oxford",
 			"label": "Oxford",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000178"
 			],
@@ -1786,6 +1888,7 @@
 			"id": "oxfordshire",
 			"label": "Oxfordshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000177",
 				"E07000178",
@@ -1804,6 +1907,7 @@
 			"id": "paisley",
 			"label": "Paisley",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000038"
 			],
@@ -1818,6 +1922,7 @@
 			"id": "pembrokeshire-coast",
 			"label": "Pembrokeshire Coast",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000009"
 			],
@@ -1832,6 +1937,7 @@
 			"id": "perth",
 			"label": "Perth",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000024",
 				"S12000048"
@@ -1847,6 +1953,7 @@
 			"id": "peterborough",
 			"label": "Peterborough",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000031"
 			],
@@ -1861,6 +1968,7 @@
 			"id": "plymouth",
 			"label": "Plymouth",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000026"
 			],
@@ -1875,6 +1983,7 @@
 			"id": "poole",
 			"label": "Poole",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000029"
 			],
@@ -1889,6 +1998,7 @@
 			"id": "portsmouth",
 			"label": "Portsmouth",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000044"
 			],
@@ -1903,6 +2013,7 @@
 			"id": "preston",
 			"label": "Preston",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000123"
 			],
@@ -1917,6 +2028,7 @@
 			"id": "reading",
 			"label": "Reading",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000038"
 			],
@@ -1931,6 +2043,7 @@
 			"id": "rochdale",
 			"label": "Rochdale",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000005"
 			],
@@ -1945,6 +2058,7 @@
 			"id": "rotherham",
 			"label": "Rotherham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000018"
 			],
@@ -1959,6 +2073,7 @@
 			"id": "salford",
 			"label": "Salford",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000006"
 			],
@@ -1973,6 +2088,7 @@
 			"id": "sandwell",
 			"label": "Sandwell",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000028"
 			],
@@ -1987,6 +2103,7 @@
 			"id": "scarborough",
 			"label": "Scarborough",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000168"
 			],
@@ -2001,6 +2118,7 @@
 			"id": "scotland",
 			"label": "Scotland",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [],
 			"bbox": [
 				-8.6,
@@ -2013,6 +2131,7 @@
 			"id": "scottish-borders",
 			"label": "Scottish Borders",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000026"
 			],
@@ -2027,6 +2146,7 @@
 			"id": "scottish-islands",
 			"label": "Scottish Islands",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000013",
 				"S12000023",
@@ -2043,6 +2163,7 @@
 			"id": "sheffield",
 			"label": "Sheffield",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000019",
 				"E08000039"
@@ -2058,6 +2179,7 @@
 			"id": "shrewsbury",
 			"label": "Shrewsbury",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000051"
 			],
@@ -2072,6 +2194,7 @@
 			"id": "slough",
 			"label": "Slough",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000039"
 			],
@@ -2086,6 +2209,7 @@
 			"id": "solihull",
 			"label": "Solihull",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000029"
 			],
@@ -2100,6 +2224,7 @@
 			"id": "somerset",
 			"label": "Somerset",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000066",
 				"E07000187",
@@ -2120,6 +2245,7 @@
 			"id": "south-east",
 			"label": "South East",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000035",
 				"E06000036",
@@ -2198,6 +2324,7 @@
 			"id": "south-east-wales",
 			"label": "South East Wales",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000013",
 				"W06000014",
@@ -2216,6 +2343,7 @@
 			"id": "south-shields",
 			"label": "South Shields",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000023"
 			],
@@ -2230,6 +2358,7 @@
 			"id": "south-wales",
 			"label": "South Wales",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000009",
 				"W06000010",
@@ -2256,6 +2385,7 @@
 			"id": "south-west",
 			"label": "South West",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000022",
 				"E06000023",
@@ -2296,6 +2426,7 @@
 			"id": "southampton",
 			"label": "Southampton",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000045"
 			],
@@ -2310,6 +2441,7 @@
 			"id": "southend-on-sea",
 			"label": "Southend-on-Sea",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000033"
 			],
@@ -2324,6 +2456,7 @@
 			"id": "staffordshire",
 			"label": "Staffordshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000021",
 				"E07000192",
@@ -2346,6 +2479,7 @@
 			"id": "stirling",
 			"label": "Stirling",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000030"
 			],
@@ -2360,6 +2494,7 @@
 			"id": "stockport",
 			"label": "Stockport",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000007"
 			],
@@ -2374,6 +2509,7 @@
 			"id": "stockton-on-tees",
 			"label": "Stockton-on-Tees",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000004"
 			],
@@ -2388,6 +2524,7 @@
 			"id": "stoke-on-trent",
 			"label": "Stoke-on-Trent",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000021"
 			],
@@ -2402,6 +2539,7 @@
 			"id": "suffolk",
 			"label": "Suffolk",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000200",
 				"E07000201",
@@ -2424,6 +2562,7 @@
 			"id": "sunderland",
 			"label": "Sunderland",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000024"
 			],
@@ -2438,6 +2577,7 @@
 			"id": "sussex",
 			"label": "Sussex",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000043",
 				"E07000061",
@@ -2464,6 +2604,7 @@
 			"id": "swansea",
 			"label": "Swansea",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000011"
 			],
@@ -2478,6 +2619,7 @@
 			"id": "swindon",
 			"label": "Swindon",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000030"
 			],
@@ -2492,6 +2634,7 @@
 			"id": "tayside",
 			"label": "Tayside",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000024",
 				"S12000041",
@@ -2509,6 +2652,7 @@
 			"id": "the-hebrides",
 			"label": "The Hebrides",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000013",
 				"S12000017"
@@ -2524,6 +2668,7 @@
 			"id": "the-highlands",
 			"label": "The Highlands",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"S12000017",
 				"S12000035"
@@ -2539,6 +2684,7 @@
 			"id": "the-valleys",
 			"label": "The Valleys",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000019",
 				"W06000020",
@@ -2557,6 +2703,7 @@
 			"id": "torquay",
 			"label": "Torquay",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000027"
 			],
@@ -2571,6 +2718,7 @@
 			"id": "united-kingdom",
 			"label": "United Kingdom",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [],
 			"bbox": [
 				-8.6,
@@ -2583,6 +2731,7 @@
 			"id": "wakefield",
 			"label": "Wakefield",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000036"
 			],
@@ -2597,6 +2746,7 @@
 			"id": "wales",
 			"label": "Wales",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [],
 			"bbox": [
 				-5.3,
@@ -2609,6 +2759,7 @@
 			"id": "walsall",
 			"label": "Walsall",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000030"
 			],
@@ -2623,6 +2774,7 @@
 			"id": "warrington",
 			"label": "Warrington",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000007"
 			],
@@ -2637,6 +2789,7 @@
 			"id": "west-midlands",
 			"label": "West Midlands",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000019",
 				"E06000020",
@@ -2679,6 +2832,7 @@
 			"id": "west-of-northern-ireland",
 			"label": "West of Northern Ireland",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"N09000005",
 				"N09000006",
@@ -2695,6 +2849,7 @@
 			"id": "west-wales",
 			"label": "West Wales",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000008",
 				"W06000010",
@@ -2711,6 +2866,7 @@
 			"id": "wigan",
 			"label": "Wigan",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000010"
 			],
@@ -2725,6 +2881,7 @@
 			"id": "winchester",
 			"label": "Winchester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000094"
 			],
@@ -2739,6 +2896,7 @@
 			"id": "wolverhampton",
 			"label": "Wolverhampton",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E08000031"
 			],
@@ -2753,6 +2911,7 @@
 			"id": "worcester",
 			"label": "Worcester",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E07000237"
 			],
@@ -2767,6 +2926,7 @@
 			"id": "wrexham",
 			"label": "Wrexham",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"W06000006"
 			],
@@ -2781,6 +2941,7 @@
 			"id": "york",
 			"label": "York",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000014"
 			],
@@ -2795,6 +2956,7 @@
 			"id": "yorkshire",
 			"label": "Yorkshire",
 			"kind": "editorial-grouping",
+			"memberGeography": "localAuthority",
 			"memberCodes": [
 				"E06000010",
 				"E06000011",

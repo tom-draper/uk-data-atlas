@@ -38,6 +38,8 @@ export type PlaceCandidate = {
 	boundaryReleases: string[];
 	/** For a named location, its curated member codes. */
 	memberCodes?: string[];
+	/** The geography of a named location's curated member codes. */
+	memberGeography?: string;
 };
 
 /**
@@ -136,6 +138,7 @@ type Grouped = {
 	names: Map<string, string>;
 	boundaryReleases: Set<string>;
 	memberCodes?: string[];
+	memberGeography?: string;
 };
 
 export type PlaceIndex = {
@@ -219,6 +222,7 @@ export const createPlaceIndex = (
 			names: new Map([["", location.label]]),
 			boundaryReleases: new Set(),
 			memberCodes: location.memberCodes,
+			memberGeography: location.memberGeography,
 		});
 		indexLabel(
 			location.label,
@@ -269,6 +273,9 @@ const toCandidate = (
 		matchedLabel: entry.label,
 		boundaryReleases,
 		...(grouped.memberCodes ? { memberCodes: grouped.memberCodes } : {}),
+		...(grouped.memberGeography
+			? { memberGeography: grouped.memberGeography }
+			: {}),
 	};
 };
 

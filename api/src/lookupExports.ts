@@ -199,6 +199,11 @@ export const namedLocationMembersTable = (
 			"string",
 			"How the location is defined; editorial-grouping is a curated grouping, not an official area.",
 		),
+		column(
+			"memberGeography",
+			"string",
+			"The geography whose area codes define the location.",
+		),
 		column("memberCode", "string", "The official code of one member area."),
 	],
 	rows: inventory.locations.flatMap((location) =>
@@ -206,6 +211,7 @@ export const namedLocationMembersTable = (
 			locationId: location.id,
 			label: location.label,
 			kind: location.kind,
+			memberGeography: location.memberGeography,
 			memberCode,
 		})),
 	),
