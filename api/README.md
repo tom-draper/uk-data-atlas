@@ -3016,14 +3016,30 @@ comparability when geography changes.
       API publishes reviewed support and returns a plan for the selected
       measure, source partition, period and exact target frame; an unsupported
       period is `not-comparable` rather than silently omitted.
-- [ ] Implement and validate one source-to-analysis conversion path for the
+- [x] Implement and validate one source-to-analysis conversion path for the
       selected measure/geography pair, including coverage, conservation,
-      rounding and refusal behaviour.
-- [ ] Return source-exact, derived and not-comparable observations distinctly.
-- [ ] Add a compact explanation receipt and release-pinned source evidence for
-      this result.
+      rounding and refusal behaviour. `road-collisions` is regrouped from
+      2021 LSOAs to the May 2023 local-authority release through an official,
+      one-parent containment lookup. It is exact rather than rounded: the
+      build verifies all 20,623 source records become 317 targets while the
+      total remains 46,649; any other period or source/frame pair is refused
+      or reported not-comparable.
+- [x] Return source-exact, derived and not-comparable observations distinctly.
+      `/v1/data/{measure-id}/series` remains source-exact unless its explicit
+      `analysisGeography` is reviewed; a reviewed result carries
+      `basis: derived`, while unsupported support returns a successful,
+      explicit `not-comparable` result instead of omitted values.
+- [x] Add a compact explanation receipt and release-pinned source evidence for
+      this result. `GET /v1/analysis-geography-validation` returns the exact
+      source artifact and crosswalk hashes, record counts and conserved totals
+      for each reviewed period, all inside the Atlas release envelope.
 - [ ] Supply an analyst reference implementation that creates one trend and
-      one comparison, including a deliberately refused example.
+      one comparison, including a deliberately refused example. The checked
+      conversion example in `examples/defensible-trend.ts` preflights the
+      available `2025-H1` result, retrieves its derived local-authority value,
+      retains the validation receipt and shows an unsupported period as
+      `not-comparable`. It cannot honestly produce a multi-period trend yet:
+      that needs a second reviewed source period on the same analysis frame.
 
 **Exit criterion:** an analyst can reproduce and defend a historical conclusion
 on the chosen analysis geography, and can see why the API refuses an unsafe

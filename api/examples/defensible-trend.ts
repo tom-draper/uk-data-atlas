@@ -1,19 +1,23 @@
 import { type AtlasClient, createClient, type Step } from "./client";
 
 /**
- * Defensible trend: compare a measure through time and be able to defend it,
- * including where the API refuses.
+ * Defensible trend: use a reviewed source-to-analysis conversion and retain
+ * the evidence needed to defend it, including where a period is not safe.
  *
- * A trend is only as good as the ground under it. Change here is measured
- * inside one source partition, whose periods the publisher restates on one set
- * of codes, so an area code means the same place at both ends. Where that does
- * not hold, the API refuses rather than producing a number.
+ * A trend is only as good as the ground under it. Here, collision counts from
+ * 2021 LSOAs are regrouped onto the named May 2023 local-authority frame only
+ * because the Atlas has reviewed the official containment lookup. Another
+ * period gets an explicit not-comparable result, never a guessed conversion.
  */
 export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const steps: Step[] = [];
-	const partition = "geography=localAuthority&boundaryYear=2023";
+	const measureId = "road-collisions";
+	const source = "geography=lsoa&boundaryYear=2021";
+	const analysisGeography = "localAuthority/2023-05-uk-bgc-v2";
+	const period = "2025-H1";
+	const areaCode = "E08000025";
 
-	// 1. Read what the measure claims about itself before using it.
+	// 1. Read the measure before asking it to cross a geography boundary.
 	const measure = await client.get<{
 		label: string;
 		aggregation: { kind: string };
@@ -21,83 +25,113 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			sourceGeography: { type: string; boundaryYear: number };
 			periods: string[];
 		}>;
-	}>("/v1/measures/population-estimate");
-	const source = measure.data.sources.find(
+	}>(`/v1/measures/${measureId}`);
+	const sourcePartition = measure.data.sources.find(
 		(candidate) =>
-			candidate.sourceGeography.type === "localAuthority" &&
-			candidate.sourceGeography.boundaryYear === 2023,
+			candidate.sourceGeography.type === "lsoa" &&
+			candidate.sourceGeography.boundaryYear === 2021,
 	);
-	if (!source) throw new Error("no local-authority partition to trend");
+	if (!sourcePartition) throw new Error("no LSOA collision partition to trend");
 	steps.push({
 		title: "Read the measure",
-		detail: `${measure.data.label} is ${measure.data.aggregation.kind}; this partition runs ${source.periods[0]} to ${source.periods.at(-1)}.`,
+		detail: `${measure.data.label} is ${measure.data.aggregation.kind}; the LSOA 2021 source includes ${sourcePartition.periods.join(", ")}.`,
 	});
 
-	// 2. One area through time, source-exact: no conversion, no aggregation.
-	const series = await client.get<{
-		series: Array<{ period: string; value: number }>;
-	}>(`/v1/data/population-estimate/series?areaCode=E08000025&${partition}`);
-	const first = series.data.series[0];
-	const last = series.data.series.at(-1);
-	steps.push({
-		title: "Take one area's series",
-		detail: `Birmingham ran ${first?.value.toLocaleString("en-GB")} in ${first?.period} to ${last?.value.toLocaleString("en-GB")} in ${last?.period}.`,
-	});
-
-	// 3. The same change, ranked against every other area, so a figure can be
-	//    put in context rather than quoted alone.
-	const change = await client.get<{
-		coverage: { areasRanked: number };
-		records: Array<{
-			areaCode: string;
-			rank: number;
-			relativeChange: number;
-		}>;
+	// 2. Preflight the exact source, period and analysis frame. The result names
+	// the crosswalk; the caller never asks the server to choose one implicitly.
+	const plan = await client.get<{
+		status: "available" | "not-comparable";
+		basis?: string;
+		conversion?: { id: string; method: string };
 	}>(
-		`/v1/data/population-estimate/change?${partition}&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025`,
+		`/v1/analysis:plan?measure=${measureId}&period=${period}&analysisGeography=${analysisGeography}&sourceGeography=lsoa&sourceBoundaryYear=2021`,
 	);
-	const ranked = change.data.records[0];
+	if (plan.data.status !== "available" || plan.data.basis !== "derived")
+		throw new Error("the reviewed collision conversion is not available");
 	steps.push({
-		title: "Rank the change",
-		detail: `Birmingham grew ${((ranked?.relativeChange ?? 0) * 100).toFixed(1)}% from 2011 to 2022, ${ranked?.rank} of ${change.data.coverage.areasRanked} authorities.`,
+		title: "Preflight the conversion",
+		detail: `${period} is available on ${analysisGeography} through ${plan.data.conversion?.id} (${plan.data.conversion?.method}).`,
 	});
 
-	// 4. A deliberate refusal. A median is not a quantity that combines, and
-	//    the API says so rather than averaging medians.
-	const refusedMedian = await client.refusal(
-		"/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001",
+	// 3. Fetch an explicitly derived value on the analysis frame. `areaCode` is
+	// a local-authority code here, not an LSOA code relabelled as one.
+	const series = await client.get<{
+		status: "available";
+		basis: "derived";
+		conversion: { id: string };
+		provenance: { source: { observations: { artifact: string; contentHash: string } } };
+		series: Array<{ period: string; value: number; status: "derived" }>;
+	}>(
+		`/v1/data/${measureId}/series?areaCode=${areaCode}&${source}&analysisGeography=${analysisGeography}`,
 	);
+	const collisionCount = series.data.series.find(
+		(record) => record.period === period,
+	);
+	if (!collisionCount || series.data.basis !== "derived")
+		throw new Error("the converted local-authority series is not derived");
 	steps.push({
-		title: "See a refusal, not a wrong number",
-		detail: `${refusedMedian.status} ${refusedMedian.code}: ${refusedMedian.detail}`,
+		title: "Retrieve the derived result",
+		detail: `${areaCode} has ${collisionCount.value.toLocaleString("en-GB")} reported collisions in ${period}, explicitly marked derived on ${analysisGeography}.`,
 	});
 
-	// 5. A second refusal, for the mistake this path exists to prevent:
-	//    change measured across two different sets of codes.
-	const refusedRelease = await client.refusal(
-		`/v1/data/population-estimate/change?${partition}&startPeriod=2011&endPeriod=2022&release=2023-05-uk-bgc-v2`,
-	);
-	steps.push({
-		title: "Keep geometry out of the trend",
-		detail: `${refusedRelease.status}: ${refusedRelease.detail}`,
-	});
-
-	// 6. The caveats travel with the measure, so they can be quoted beside it.
-	const quality = await client.get<{
-		sources: Array<{
-			sourceGeography: { type: string; boundaryYear: number };
-			sourceCoverage: { note: string };
+	// 4. The release-pinned receipt ties the source artifact and crosswalk to
+	// exact input/output totals, so the conversion can be independently cited.
+	const receipt = await client.get<{
+		supports: Array<{
+			measureId: string;
+			analysisGeography: { geography: string; boundaryRelease: string };
+			crosswalk: { id: string; contentHash: string };
+			observations: { artifact: string; contentHash: string };
+			periods: Array<{
+				period: string;
+				inputRecordCount: number;
+				outputRecordCount: number;
+				inputTotal: number;
+				outputTotal: number;
+			}>;
 		}>;
-	}>("/v1/measures/population-estimate/quality");
-	// The caveat that matters is the one on the partition the trend used.
-	const trended = quality.data.sources.find(
+	}>("/v1/analysis-geography-validation");
+	const evidence = receipt.data.supports.find(
 		(candidate) =>
-			candidate.sourceGeography.type === "localAuthority" &&
-			candidate.sourceGeography.boundaryYear === 2023,
+			candidate.measureId === measureId &&
+			candidate.analysisGeography.geography === "localAuthority" &&
+			candidate.analysisGeography.boundaryRelease === "2023-05-uk-bgc-v2" &&
+			candidate.crosswalk.id === series.data.conversion.id &&
+			candidate.observations.contentHash ===
+				series.data.provenance.source.observations.contentHash,
 	);
+	const validation = evidence?.periods.find(
+		(candidate) => candidate.period === period,
+	);
+	if (!evidence || !validation || validation.inputTotal !== validation.outputTotal)
+		throw new Error("the conversion receipt does not conserve the source total");
 	steps.push({
-		title: "Quote the caveat",
-		detail: trended?.sourceCoverage.note ?? "no coverage note",
+		title: "Retain the validation receipt",
+		detail: `${validation.inputRecordCount.toLocaleString("en-GB")} LSOA records became ${validation.outputRecordCount.toLocaleString("en-GB")} local-authority records; both totals are ${validation.outputTotal.toLocaleString("en-GB")}. Evidence: ${evidence.crosswalk.contentHash}; ${evidence.observations.artifact} ${evidence.observations.contentHash}.`,
+	});
+
+	// 5. A period outside the reviewed support is not quietly omitted or
+	// converted with a near-enough release. It is part of the honest result.
+	const unavailablePlan = await client.get<{
+		status: "available" | "not-comparable";
+		reason?: string;
+	}>(
+		`/v1/analysis:plan?measure=${measureId}&period=2024-H1&analysisGeography=${analysisGeography}&sourceGeography=lsoa&sourceBoundaryYear=2021`,
+	);
+	if (unavailablePlan.data.status !== "not-comparable")
+		throw new Error("an unsupported period must be not-comparable");
+	steps.push({
+		title: "Keep an unsafe period out",
+		detail: `2024-H1 is ${unavailablePlan.data.status}: ${unavailablePlan.data.reason}`,
+	});
+
+	// 6. Every response is tied to one immutable release; the receipt and value
+	// can therefore travel together with the claim.
+	if (receipt.atlasRelease !== series.atlasRelease)
+		throw new Error("the result and validation receipt use different releases");
+	steps.push({
+		title: "Pin the claim",
+		detail: `The derived value and its receipt are both from Atlas release ${series.atlasRelease}.`,
 	});
 	return steps;
 };
