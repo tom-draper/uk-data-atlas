@@ -5957,8 +5957,10 @@ paths:
         area identities, geometry sources, crosswalks, validation exceptions,
         named locations, exports and lookups added, removed and changed, by the
         fingerprints each release recorded. A changed resource differs
-        somewhere in its published entry; the comparison does not name the
-        field, and does not infer changes to individual records.
+        somewhere in its published entry. `detail=fields` names the changed
+        metadata fields for changed resources when both retained artifacts are
+        available. It never infers additions, removals or revisions of
+        individual observation records.
       parameters:
         - name: from
           in: query
@@ -5970,6 +5972,14 @@ paths:
           required: false
           description: Defaults to the current Atlas release.
           schema: { type: string }
+        - name: detail
+          in: query
+          required: false
+          description: >
+            `summary` is the default resource-fingerprint comparison.
+            `fields` additionally names changed fields in changed published
+            resource entries; it does not compare individual observation rows.
+          schema: { enum: [summary, fields], default: summary }
       responses:
         "200":
           description: The change summary between the two releases.
@@ -9430,6 +9440,41 @@ components:
             reason:
               type: string
 
+    SemanticResourceChange:
+      type: object
+      required: [kind, id, fields]
+      properties:
+        kind:
+          enum: [datasets, measures, boundaryReleases, areaIdentities, geometrySources, crosswalks, validationExceptions, namedLocations, exports, lookups]
+        id:
+          type: string
+        fields:
+          type: array
+          description: >
+            Changed dot paths in this published resource entry. Array-valued
+            fields are named as one path, and no observation-record paths are
+            inferred.
+          items: { type: string }
+
+    SemanticReleaseChanges:
+      oneOf:
+        - type: object
+          required: [status, changes]
+          properties:
+            status:
+              const: available
+            changes:
+              type: array
+              items:
+                $ref: "#/components/schemas/SemanticResourceChange"
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              const: unavailable
+            reason:
+              type: string
+
     AtlasReleaseComparison:
       type: object
       required: [from, to, summary, artifacts, resources, note]
@@ -9459,6 +9504,10 @@ components:
             namedLocations: { $ref: "#/components/schemas/ResourceChanges" }
             exports: { $ref: "#/components/schemas/ResourceChanges" }
             lookups: { $ref: "#/components/schemas/ResourceChanges" }
+        semantic:
+          allOf:
+            - $ref: "#/components/schemas/SemanticReleaseChanges"
+          description: Present only when `detail=fields` was requested.
         note:
           type: string
 

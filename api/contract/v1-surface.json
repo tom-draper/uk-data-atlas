@@ -5774,6 +5774,13 @@
 				},
 				"query:to": {
 					"required": false
+				},
+				"query:detail": {
+					"required": false,
+					"enum": [
+						"fields",
+						"summary"
+					]
 				}
 			},
 			"responses": {
@@ -5855,6 +5862,13 @@
 					"data.resources.validationExceptions.removed",
 					"data.resources.validationExceptions.status",
 					"data.resources.validationExceptions.unchanged",
+					"data.semantic",
+					"data.semantic.changes",
+					"data.semantic.changes[].fields",
+					"data.semantic.changes[].id",
+					"data.semantic.changes[].kind",
+					"data.semantic.reason",
+					"data.semantic.status",
 					"data.summary",
 					"data.to",
 					"meta",
