@@ -40,6 +40,7 @@ export const handleIndexRoutes = ({
 				"/v1/measures/{measure-id}/quality",
 				"/v1/measures/{measure-id}/conversion-support",
 				"/v1/analysis-geographies",
+				"/v1/analysis-geography-validation",
 				"/v1/analysis:plan",
 				"/v1/data/{measure-id}",
 				"/v1/data/{measure-id}/series",

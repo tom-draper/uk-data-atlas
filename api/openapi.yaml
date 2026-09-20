@@ -1450,6 +1450,22 @@ paths:
         "200": { description: Reviewed analysis geography support. }
         "503": { $ref: "#/components/responses/CatalogueUnavailable" }
 
+  /analysis-geography-validation:
+    get:
+      operationId: getAnalysisGeographyValidation
+      tags: ["Trend"]
+      summary: Get the validation receipt for reviewed conversions
+      x-likely-refusal:
+        status: 503
+        when: "The release was built without the analysis geography validation artifact."
+      description: >
+        Returns the release-pinned evidence behind every reviewed conversion:
+        its source observations, crosswalk hashes, record counts and the input
+        and output totals that proved exact conservation at build time.
+      responses:
+        "200": { description: The complete analysis geography validation receipt. }
+        "503": { $ref: "#/components/responses/CatalogueUnavailable" }
+
   /analysis:plan:
     get:
       operationId: planAnalysis

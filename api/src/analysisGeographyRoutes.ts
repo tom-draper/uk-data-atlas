@@ -38,6 +38,20 @@ export const handleAnalysisGeographyRoutes = ({
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const inventory = context.analysisGeographyInventory;
+	const validation = context.analysisGeographyValidationInventory;
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "analysis-geography-validation"
+	) {
+		return validation
+			? { status: 200, body: envelope(releaseId, validation) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the analysis geography validation inventory before retrieving its receipt.",
+				);
+	}
 	if (!inventory)
 		return problem(
 			503,

@@ -3361,6 +3361,7 @@ second inventory to maintain:
 **Trend**
 
 - `GET /v1/analysis-geographies` — List reviewed analysis geography conversions
+- `GET /v1/analysis-geography-validation` — Get the validation receipt for reviewed conversions
 - `GET /v1/analysis:plan` — Preflight a reviewed source-to-analysis conversion
 - `GET /v1/measures/{measure-id}/conversion-support` — Inspect reviewed conversion support for one measure and frame
 - `GET /v1/data/{measure-id}/aggregate` — Aggregate an extensive or explicitly weighted measure

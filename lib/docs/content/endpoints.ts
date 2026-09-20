@@ -179,6 +179,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Each entry names the source partition and the crosswalk, so you can inspect exactly what will be regrouped.",
 		],
 	},
+	getAnalysisGeographyValidation: {
+		title: "Inspect conversion validation",
+		intro: "Get the release-pinned receipt that proves each reviewed conversion was covered and conserved when the Atlas was built. It names the source and crosswalk artifacts, then shows input and output record counts and totals for every supported period.",
+		tips: [
+			"A receipt is evidence for a reviewed conversion, not permission to convert through any other crosswalk.",
+			"For a derived result, use the receipt's hashes together with the response's `source` and `conversion` fields to reproduce the check.",
+		],
+	},
 	planAnalysis: {
 		title: "Preflight an analysis conversion",
 		intro: "Check whether one published period can be compared on a named analysis boundary before retrieving data. The response is a plan: it selects no data and never silently chooses between source partitions.",
