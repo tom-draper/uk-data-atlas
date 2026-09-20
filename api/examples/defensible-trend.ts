@@ -14,7 +14,8 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const measureId = "road-collisions";
 	const source = "geography=lsoa&boundaryYear=2021";
 	const analysisGeography = "localAuthority/2023-05-uk-bgc-v2";
-	const period = "2025-H1";
+	const period = "2025";
+	const comparisonPeriod = "2024";
 	const areaCode = "E08000025";
 
 	// 1. Read the measure before asking it to cross a geography boundary.
@@ -31,7 +32,8 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			candidate.sourceGeography.type === "lsoa" &&
 			candidate.sourceGeography.boundaryYear === 2021,
 	);
-	if (!sourcePartition) throw new Error("no LSOA collision partition to trend");
+	if (!sourcePartition)
+		throw new Error("no LSOA collision partition to trend");
 	steps.push({
 		title: "Read the measure",
 		detail: `${measure.data.label} is ${measure.data.aggregation.kind}; the LSOA 2021 source includes ${sourcePartition.periods.join(", ")}.`,
@@ -59,7 +61,9 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		status: "available";
 		basis: "derived";
 		conversion: { id: string };
-		provenance: { source: { observations: { artifact: string; contentHash: string } } };
+		provenance: {
+			source: { observations: { artifact: string; contentHash: string } };
+		};
 		series: Array<{ period: string; value: number; status: "derived" }>;
 	}>(
 		`/v1/data/${measureId}/series?areaCode=${areaCode}&${source}&analysisGeography=${analysisGeography}`,
@@ -67,11 +71,16 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const collisionCount = series.data.series.find(
 		(record) => record.period === period,
 	);
-	if (!collisionCount || series.data.basis !== "derived")
+	const comparisonCount = series.data.series.find(
+		(record) => record.period === comparisonPeriod,
+	);
+	if (!collisionCount || !comparisonCount || series.data.basis !== "derived")
 		throw new Error("the converted local-authority series is not derived");
+	const absoluteChange = collisionCount.value - comparisonCount.value;
+	const relativeChange = absoluteChange / comparisonCount.value;
 	steps.push({
-		title: "Retrieve the derived result",
-		detail: `${areaCode} has ${collisionCount.value.toLocaleString("en-GB")} reported collisions in ${period}, explicitly marked derived on ${analysisGeography}.`,
+		title: "Compare the derived trend",
+		detail: `${areaCode} moved from ${comparisonCount.value.toLocaleString("en-GB")} reported collisions in ${comparisonPeriod} to ${collisionCount.value.toLocaleString("en-GB")} in ${period}: ${absoluteChange >= 0 ? "+" : ""}${absoluteChange.toLocaleString("en-GB")} (${(relativeChange * 100).toFixed(1)}%), explicitly derived on ${analysisGeography}.`,
 	});
 
 	// 4. The release-pinned receipt ties the source artifact and crosswalk to
@@ -95,7 +104,8 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		(candidate) =>
 			candidate.measureId === measureId &&
 			candidate.analysisGeography.geography === "localAuthority" &&
-			candidate.analysisGeography.boundaryRelease === "2023-05-uk-bgc-v2" &&
+			candidate.analysisGeography.boundaryRelease ===
+				"2023-05-uk-bgc-v2" &&
 			candidate.crosswalk.id === series.data.conversion.id &&
 			candidate.observations.contentHash ===
 				series.data.provenance.source.observations.contentHash,
@@ -103,8 +113,14 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const validation = evidence?.periods.find(
 		(candidate) => candidate.period === period,
 	);
-	if (!evidence || !validation || validation.inputTotal !== validation.outputTotal)
-		throw new Error("the conversion receipt does not conserve the source total");
+	if (
+		!evidence ||
+		!validation ||
+		validation.inputTotal !== validation.outputTotal
+	)
+		throw new Error(
+			"the conversion receipt does not conserve the source total",
+		);
 	steps.push({
 		title: "Retain the validation receipt",
 		detail: `${validation.inputRecordCount.toLocaleString("en-GB")} LSOA records became ${validation.outputRecordCount.toLocaleString("en-GB")} local-authority records; both totals are ${validation.outputTotal.toLocaleString("en-GB")}. Evidence: ${evidence.crosswalk.contentHash}; ${evidence.observations.artifact} ${evidence.observations.contentHash}.`,
@@ -116,19 +132,21 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		status: "available" | "not-comparable";
 		reason?: string;
 	}>(
-		`/v1/analysis:plan?measure=${measureId}&period=2024-H1&analysisGeography=${analysisGeography}&sourceGeography=lsoa&sourceBoundaryYear=2021`,
+		`/v1/analysis:plan?measure=${measureId}&period=2023&analysisGeography=${analysisGeography}&sourceGeography=lsoa&sourceBoundaryYear=2021`,
 	);
 	if (unavailablePlan.data.status !== "not-comparable")
 		throw new Error("an unsupported period must be not-comparable");
 	steps.push({
 		title: "Keep an unsafe period out",
-		detail: `2024-H1 is ${unavailablePlan.data.status}: ${unavailablePlan.data.reason}`,
+		detail: `2023 is ${unavailablePlan.data.status}: ${unavailablePlan.data.reason}`,
 	});
 
 	// 6. Every response is tied to one immutable release; the receipt and value
 	// can therefore travel together with the claim.
 	if (receipt.atlasRelease !== series.atlasRelease)
-		throw new Error("the result and validation receipt use different releases");
+		throw new Error(
+			"the result and validation receipt use different releases",
+		);
 	steps.push({
 		title: "Pin the claim",
 		detail: `The derived value and its receipt are both from Atlas release ${series.atlasRelease}.`,

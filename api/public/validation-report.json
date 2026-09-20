@@ -7,15 +7,15 @@
 		"crosswalkInventory": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 		"relationshipCandidates": "sha256:d9b3dee543c4ae537e611df067741c0d4ea2ee25ce0b8579de9181b48b946cfe",
 		"geographyInventory": "sha256:0ef0732a42b118652bd54976aab6bf625cc7ea27296b4fe9c5b017a7d955f2f6",
-		"dataCatalog": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
-		"exportManifest": "sha256:5d88f1e8b1f86f033a94901535d744f3aaf2aa97384f7737d3545558f6d4c9d7",
+		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
+		"exportManifest": "sha256:825869e7f0bad75660cf60f4cc86b0ec12eb1defc8bd72ba29b56fcf521182a9",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:d1d28a789ceb45d76889fabfac77d219903730338ae5af28a76686c193dc6ecf"
 	},
 	"summary": {
-		"resourceCount": 594,
-		"checkCount": 1920,
-		"passedCount": 1874,
+		"resourceCount": 598,
+		"checkCount": 1937,
+		"passedCount": 1891,
 		"waivedCount": 46,
 		"coverage": {
 			"boundaryReleases": 93,
@@ -25,7 +25,7 @@
 			"crosswalks": 29,
 			"weightedCrosswalks": 2,
 			"measures": 167,
-			"measureSources": 304
+			"measureSources": 308
 		}
 	},
 	"resources": [
@@ -5722,7 +5722,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 2
+						"sourceCount": 3
 					}
 				}
 			]
@@ -5736,7 +5736,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 2
+						"sourceCount": 3
 					}
 				}
 			]
@@ -5750,7 +5750,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 2
+						"sourceCount": 3
 					}
 				}
 			]
@@ -5764,7 +5764,7 @@
 					"id": "measure-definition",
 					"status": "passed",
 					"measured": {
-						"sourceCount": 2
+						"sourceCount": 3
 					}
 				}
 			]
@@ -17349,7 +17349,7 @@
 			]
 		},
 		{
-			"id": "exports/road-collisions-fatal-lsoa-2021-observations",
+			"id": "exports/road-collisions-fatal-local-authority-2024-observations",
 			"kind": "measure-source",
 			"status": "passed",
 			"checks": [
@@ -17358,54 +17358,14 @@
 					"status": "passed",
 					"measured": {
 						"periodCount": 1,
-						"recordCount": 20623
+						"recordCount": 350
 					}
 				},
 				{
 					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"areaCodeCount": 20623,
-						"boundaryRelease": "2021-12-ew-bgc-v5",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 20623,
-						"minimum": 0,
-						"maximum": 3
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/road-collisions-fatal-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 349
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 349,
+						"areaCodeCount": 350,
 						"boundaryRelease": "2024-05-uk-bgc",
 						"unresolvedCount": 0
 					}
@@ -17421,9 +17381,189 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 349,
+						"recordCount": 350,
 						"minimum": 0,
-						"maximum": 17
+						"maximum": 23
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/road-collisions-fatal-local-authority-2025-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 350
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 350,
+						"minimum": 0,
+						"maximum": 40
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/road-collisions-fatal-lsoa-2021-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 2,
+						"recordCount": 54377
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 31757,
+						"boundaryRelease": "2021-12-ew-bgc-v5",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 54377,
+						"minimum": 0,
+						"maximum": 5
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/road-collisions-local-authority-2024-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 350
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2024-05-uk-bgc",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 350,
+						"minimum": 2,
+						"maximum": 2296
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "road-collisions-fatal, road-collisions-serious, road-collisions-slight",
+						"comparedCount": 350,
+						"mismatchCount": 0,
+						"maxDifference": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/road-collisions-local-authority-2025-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 350
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 350,
+						"minimum": 2,
+						"maximum": 2307
+					}
+				},
+				{
+					"id": "components-sum-to-total",
+					"status": "passed",
+					"measured": {
+						"components": "road-collisions-fatal, road-collisions-serious, road-collisions-slight",
+						"comparedCount": 350,
+						"mismatchCount": 0,
+						"maxDifference": 0
 					}
 				}
 			]
@@ -17437,15 +17577,15 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 1,
-						"recordCount": 20623
+						"periodCount": 2,
+						"recordCount": 54377
 					}
 				},
 				{
 					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"areaCodeCount": 20623,
+						"areaCodeCount": 31757,
 						"boundaryRelease": "2021-12-ew-bgc-v5",
 						"unresolvedCount": 0
 					}
@@ -17461,9 +17601,9 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 20623,
+						"recordCount": 54377,
 						"minimum": 1,
-						"maximum": 49
+						"maximum": 126
 					}
 				},
 				{
@@ -17471,7 +17611,7 @@
 					"status": "passed",
 					"measured": {
 						"components": "road-collisions-fatal, road-collisions-serious, road-collisions-slight",
-						"comparedCount": 20623,
+						"comparedCount": 54377,
 						"mismatchCount": 0,
 						"maxDifference": 0
 					}
@@ -17479,7 +17619,7 @@
 			]
 		},
 		{
-			"id": "exports/road-collisions-observations",
+			"id": "exports/road-collisions-serious-local-authority-2024-observations",
 			"kind": "measure-source",
 			"status": "passed",
 			"checks": [
@@ -17488,14 +17628,14 @@
 					"status": "passed",
 					"measured": {
 						"periodCount": 1,
-						"recordCount": 349
+						"recordCount": 350
 					}
 				},
 				{
 					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"areaCodeCount": 349,
+						"areaCodeCount": 350,
 						"boundaryRelease": "2024-05-uk-bgc",
 						"unresolvedCount": 0
 					}
@@ -17511,19 +17651,49 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 349,
-						"minimum": 1,
-						"maximum": 1117
+						"recordCount": 350,
+						"minimum": 2,
+						"maximum": 459
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/road-collisions-serious-local-authority-2025-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 350
 					}
 				},
 				{
-					"id": "components-sum-to-total",
+					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"components": "road-collisions-fatal, road-collisions-serious, road-collisions-slight",
-						"comparedCount": 349,
-						"mismatchCount": 0,
-						"maxDifference": 0
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 350,
+						"minimum": 0,
+						"maximum": 418
 					}
 				}
 			]
@@ -17537,15 +17707,15 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 1,
-						"recordCount": 20623
+						"periodCount": 2,
+						"recordCount": 54377
 					}
 				},
 				{
 					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"areaCodeCount": 20623,
+						"areaCodeCount": 31757,
 						"boundaryRelease": "2021-12-ew-bgc-v5",
 						"unresolvedCount": 0
 					}
@@ -17561,15 +17731,15 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 20623,
+						"recordCount": 54377,
 						"minimum": 0,
-						"maximum": 13
+						"maximum": 36
 					}
 				}
 			]
 		},
 		{
-			"id": "exports/road-collisions-serious-observations",
+			"id": "exports/road-collisions-slight-local-authority-2024-observations",
 			"kind": "measure-source",
 			"status": "passed",
 			"checks": [
@@ -17578,14 +17748,14 @@
 					"status": "passed",
 					"measured": {
 						"periodCount": 1,
-						"recordCount": 349
+						"recordCount": 350
 					}
 				},
 				{
 					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"areaCodeCount": 349,
+						"areaCodeCount": 350,
 						"boundaryRelease": "2024-05-uk-bgc",
 						"unresolvedCount": 0
 					}
@@ -17601,9 +17771,49 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 349,
+						"recordCount": 350,
 						"minimum": 0,
-						"maximum": 210
+						"maximum": 1814
+					}
+				}
+			]
+		},
+		{
+			"id": "exports/road-collisions-slight-local-authority-2025-observations",
+			"kind": "measure-source",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"periodCount": 1,
+						"recordCount": 350
+					}
+				},
+				{
+					"id": "records-resolve",
+					"status": "passed",
+					"measured": {
+						"areaCodeCount": 350,
+						"boundaryRelease": "2025-05-uk-bgc-v2",
+						"unresolvedCount": 0
+					}
+				},
+				{
+					"id": "countries-declared",
+					"status": "passed",
+					"measured": {
+						"countries": "GB-ENG, GB-SCT, GB-WLS"
+					}
+				},
+				{
+					"id": "values-valid",
+					"status": "passed",
+					"measured": {
+						"recordCount": 350,
+						"minimum": 2,
+						"maximum": 1866
 					}
 				}
 			]
@@ -17617,15 +17827,15 @@
 					"id": "artifact-integrity",
 					"status": "passed",
 					"measured": {
-						"periodCount": 1,
-						"recordCount": 20623
+						"periodCount": 2,
+						"recordCount": 54377
 					}
 				},
 				{
 					"id": "records-resolve",
 					"status": "passed",
 					"measured": {
-						"areaCodeCount": 20623,
+						"areaCodeCount": 31757,
 						"boundaryRelease": "2021-12-ew-bgc-v5",
 						"unresolvedCount": 0
 					}
@@ -17641,49 +17851,9 @@
 					"id": "values-valid",
 					"status": "passed",
 					"measured": {
-						"recordCount": 20623,
+						"recordCount": 54377,
 						"minimum": 0,
-						"maximum": 38
-					}
-				}
-			]
-		},
-		{
-			"id": "exports/road-collisions-slight-observations",
-			"kind": "measure-source",
-			"status": "passed",
-			"checks": [
-				{
-					"id": "artifact-integrity",
-					"status": "passed",
-					"measured": {
-						"periodCount": 1,
-						"recordCount": 349
-					}
-				},
-				{
-					"id": "records-resolve",
-					"status": "passed",
-					"measured": {
-						"areaCodeCount": 349,
-						"boundaryRelease": "2024-05-uk-bgc",
-						"unresolvedCount": 0
-					}
-				},
-				{
-					"id": "countries-declared",
-					"status": "passed",
-					"measured": {
-						"countries": "GB-ENG, GB-SCT, GB-WLS"
-					}
-				},
-				{
-					"id": "values-valid",
-					"status": "passed",
-					"measured": {
-						"recordCount": 349,
-						"minimum": 1,
-						"maximum": 933
+						"maximum": 90
 					}
 				}
 			]
@@ -18579,5 +18749,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:8a41dfe390173a3af0b1b12bce53e62a7b23237d6726c0fecb45a9f23524b920"
+	"contentHash": "sha256:f175d9301927bb7ee6803b44063e544e22096beb3a35e02d0e4d623806561ff7"
 }

@@ -1,7 +1,7 @@
 {
 	"id": "road-safety",
-	"title": "Road casualty statistics: provisional collisions, 2025",
-	"description": "Provisional reported road collisions in Great Britain for 2025, one row per collision with location, severity and conditions.",
+	"title": "Road casualty statistics: final annual collisions, 2024-2025",
+	"description": "Final annual reported road collisions in Great Britain for 2024 and 2025, plus the retained provisional 2025 source used by the point map; one row per collision with location, severity and conditions.",
 	"topics": [
 		"transport",
 		"road-safety"
@@ -12,7 +12,7 @@
 		"name": "Open Government Licence v3.0",
 		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 	},
-	"temporalCoverage": "2025",
+	"temporalCoverage": "2024-2025",
 	"spatialCoverage": {
 		"countries": [
 			"GB-ENG",
@@ -22,9 +22,19 @@
 	},
 	"files": [
 		{
+			"path": "dft-road-casualty-statistics-collision-2024.csv",
+			"role": "source",
+			"note": "Final annual 2024 collision file, published by DfT."
+		},
+		{
+			"path": "dft-road-casualty-statistics-collision-2025.csv",
+			"role": "source",
+			"note": "Final annual 2025 collision file, published by DfT."
+		},
+		{
 			"path": "dft-road-casualty-statistics-collision-provisional-2025.csv",
 			"role": "source",
-			"note": "Published as dft-road-casualty-statistics-collision-provisional-2025.csv."
+			"note": "Provisional January-June 2025 collision file retained for the point-map source."
 		}
 	]
 }

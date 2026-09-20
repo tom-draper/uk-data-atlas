@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5f83996495679ce4d20204d2ea7110fd878fc544bdc6bbe4e348a9b4a1558452",
+	"contentHash": "sha256:4f6c6cfde58d6bdf00e91d0e3f5e4bb81f418886b9005948d6b9e13cea29d88d",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -2906,17 +2906,25 @@
 		{
 			"key": "transport/road-safety",
 			"metadataId": "road-safety",
-			"title": "Road casualty statistics: provisional collisions, 2025",
+			"title": "Road casualty statistics: final annual collisions, 2024-2025",
 			"publisher": "Department for Transport",
 			"sourceUrl": "https://www.gov.uk/government/statistical-data-sets/road-accidents-and-safety-statistics",
-			"temporalCoverage": "2025",
+			"temporalCoverage": "2024-2025",
 			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				},
+				{
+					"extension": ".csv",
+					"role": "source"
+				},
 				{
 					"extension": ".csv",
 					"role": "source"
 				}
 			],
-			"metadataHash": "sha256:19ed221152a06ccb3fd8eeb6df7c77b3c797c293de49a2a214b14509c0283317"
+			"metadataHash": "sha256:55f9260428f1d5ef75ef7c41c8940d412accc69012252448bcdac65aafc27eae"
 		},
 		{
 			"key": "transport/travel-to-work",

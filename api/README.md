@@ -656,19 +656,17 @@ only **available** when its endpoint, contract and provenance are published.
       partnerships span several authorities. Partnership counts exclude fraud
       and offences unassigned to any partnership, so they do not sum to force
       or national totals.
-- [x] Return provisional reported road collisions for January to June 2025
+- [x] Return final annual reported road collisions for 2024 and 2025
       through `GET /v1/data/road-collisions` and its fatal, serious and slight
-      subsets, for 349 of Great Britain's 350 local authorities on 2024 codes,
-      and in a second partition for the 20,623 December 2021 LSOAs in England
-      and Wales that have a collision; Scotland has no LSOAs.
+      subsets, in separate local-authority partitions on their published 2024
+      and 2025 code vintages, and in a common December 2021 LSOA partition for
+      England and Wales; Scotland has no LSOAs.
       Each collision is counted in the authority and LSOA the Department for
       Transport assigns it to in the published record, not by placing its
       coordinates in a boundary, so the counts are exact tallies of the source
-      rows and the three severities add up to the total in every area. An
-      LSOA with no collision records has no value rather than zero. The period
-      is `2025-H1`, a provisional half year. Collisions assigned to Heathrow
-      Airport are counted in no authority, and North Somerset has no records
-      in the file, so it has no value rather than zero. Serious and slight
+      rows and the three severities add up to the total in every area. An LSOA
+      with no collision records has no value rather than zero. Collisions
+      assigned to Heathrow Airport are counted in no authority. Serious and slight
       counts are as the police recorded them; the Department for Transport's
       adjusted severities, and casualty counts, are not served.
 - [x] Return ONS's final model-based unemployment estimates through
@@ -1198,8 +1196,9 @@ quality at every period.
       release-pinned analysis validation artifact now runs each reviewed source
       period through its converter and fails on a missing code, split, non-numeric
       record, non-exact method or changed partition total. The first receipt
-      records 20,623 2025-H1 LSOA road-collision observations and a conserved
-      total of 46,649 regrouped into 317 local authorities.
+      records both final annual LSOA partitions: 27,199 2024 observations
+      conserve a total of 96,759 into 318 local authorities, and 27,178 2025
+      observations conserve 97,418 into the same 318 authorities.
 - [x] Let a response state whether a change is observed on a common source
       geography, derived onto an analysis geography, or unavailable. Series
       responses use `derived` only after a reviewed conversion, and name the
@@ -2715,10 +2714,10 @@ available: GET /v1/measures/{measure-id}/conversion-support?analysisGeography={g
 available: GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}&sourceGeography={geography}&sourceBoundaryYear={year}
 ```
 
-The initial published pair is provisional reported road-collision counts on
-2021 LSOAs, exactly regrouped through the verified 2021 LSOA → May 2023 local
-authority containment lookup. It is a single-period conversion foundation,
-not yet the historical trend required for the Phase 2 exit criterion.
+The initial published pair is final annual 2024 and 2025 reported
+road-collision counts on 2021 LSOAs, exactly regrouped through the verified
+2021 LSOA → May 2023 local-authority containment lookup. Their common source
+partition makes the year-on-year comparison explicit and reproducible.
 
 ### The preflight is the plan, returned instead of acted on
 
@@ -3033,13 +3032,11 @@ comparability when geography changes.
       this result. `GET /v1/analysis-geography-validation` returns the exact
       source artifact and crosswalk hashes, record counts and conserved totals
       for each reviewed period, all inside the Atlas release envelope.
-- [ ] Supply an analyst reference implementation that creates one trend and
-      one comparison, including a deliberately refused example. The checked
-      conversion example in `examples/defensible-trend.ts` preflights the
-      available `2025-H1` result, retrieves its derived local-authority value,
-      retains the validation receipt and shows an unsupported period as
-      `not-comparable`. It cannot honestly produce a multi-period trend yet:
-      that needs a second reviewed source period on the same analysis frame.
+- [x] Supply an analyst reference implementation that creates one trend and
+      one comparison, including a deliberately refused example.
+      `examples/defensible-trend.ts` preflights the 2024–2025 conversion,
+      compares the derived local-authority values, retains their validation
+      receipt and shows an unsupported period as `not-comparable`.
 
 **Exit criterion:** an analyst can reproduce and defend a historical conclusion
 on the chosen analysis geography, and can see why the API refuses an unsafe

@@ -107,12 +107,18 @@ export const localAuthorityFieldWithGaps = (
 	 */
 	table: "data" | "partnerships" | "lsoas" = "data",
 	geography: SourceGeography["type"] = "localAuthority",
+	/** Required when the precompiled file holds more than one source period. */
+	selectedPeriod?: string,
 ) => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const entries = Object.entries(source);
-	if (entries.length !== 1)
-		throw new Error(`${path}: expected a single period`);
-	const [[period, value]] = entries as [[string, unknown]];
+	const selected = selectedPeriod
+		? entries.find(([period]) => period === selectedPeriod)
+		: entries.length === 1
+			? entries[0]
+			: undefined;
+	if (!selected) throw new Error(`${path}: expected a single period`);
+	const [period, value] = selected;
 	const entry = object(value, `${path}.${period}`);
 	if (entry.boundaryYear !== boundaryYear || entry.boundaryType !== geography)
 		throw new Error(

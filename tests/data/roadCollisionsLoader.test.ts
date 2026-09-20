@@ -11,7 +11,7 @@ const csv = (rows: Array<[string, string, string, string?]>) =>
 
 describe("road collisions by local authority", () => {
 	it("counts collisions by the authority DfT assigns and by severity", async () => {
-		const datasets = await loadRoadCollisionsByAuthority(async () =>
+		const datasets = await loadRoadCollisionsByAuthority(async (path) =>
 			csv([
 				["01/01/2025", "1", "E09000007", "E01000886"],
 				["15/02/2025", "3", "E09000007", "E01000886"],
@@ -19,13 +19,15 @@ describe("road collisions by local authority", () => {
 				["10/03/2025", "3", "EHEATHROW", "E01002444"],
 				["11/02/2025", "3", "EHEATHROW", "E01002443"],
 				["12/02/2025", "3", "E06000042"],
-			]),
+			]).replaceAll("2025", path.includes("2024") ? "2024" : "2025"),
 		);
 
-		expect(Object.keys(datasets)).toEqual(["2025"]);
+		expect(Object.keys(datasets)).toEqual(["2024", "2025"]);
+		expect(datasets[2024]?.period).toBe("January to March 2024");
+		expect(datasets[2024]?.boundaryYear).toBe(2024);
 		const dataset = datasets[2025];
 		expect(dataset.period).toBe("January to March 2025");
-		expect(dataset.boundaryYear).toBe(2024);
+		expect(dataset.boundaryYear).toBe(2025);
 		expect(dataset.data).toEqual({
 			E06000042: {
 				ladCode: "E06000042",
