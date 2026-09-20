@@ -1759,6 +1759,14 @@ Measures must declare:
 - coverage, known exclusions, suppression rules, and comparability notes;
 - source and Atlas transformation lineage.
 
+Every served measure also carries a `unitDefinition`. This is API-owned
+canonical metadata alongside—not instead of—the source-facing `unit` label:
+`£ million` is `GBP` with `scaleToCanonical: 1000000`, while `percent` is a
+`proportion` with `scaleToCanonical: 0.01`. An explicit denominator is carried
+as `per` (for example, `premises`). The API does not rewrite any source artifact
+or observation value; clients can use this metadata to make compatible derived
+calculations explicit and reject incompatible inputs.
+
 This prevents a damaging API behaviour: summing percentages, averaging medians,
 or pretending that ranks can be converted between boundaries. The API may
 aggregate a count; it may derive a rate only when it has a suitable numerator

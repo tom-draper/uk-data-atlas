@@ -112,6 +112,12 @@ export type Measure = {
 	valueKind:
 		"count" | "quantity" | "ratio" | "currency" | "ordinal" | "categorical";
 	unit: string;
+	/**
+	 * API-owned canonical semantics for the unchanged, source-facing `unit`
+	 * label. Present on every measure served by the API; source artifacts retain
+	 * their original values and labels.
+	 */
+	unitDefinition?: import("./unitRegistry").UnitDefinition;
 	aggregation: MeasureAggregation;
 	sources: MeasureSource[];
 	availability: {

@@ -1078,6 +1078,15 @@ paths:
       operationId: listMeasures
       tags: ["Data catalogue"]
       summary: List measures currently available to query
+      description: >
+        Each measure retains its source-facing `unit` label and adds an
+        API-owned `unitDefinition`. `unitDefinition.code` is the canonical
+        unit, `scaleToCanonical` multiplies a published numeric value into
+        that unit, and `per` names an explicit denominator when one is
+        published. For example, `£ million` is `GBP` with a scale of
+        1000000, and percent is `proportion` with a scale of 0.01. This is
+        descriptive metadata only: observation values and source artifacts
+        are not rewritten.
       x-likely-refusal:
         status: 503
         when: "Takes no input. Refused only when the server was started without the data catalogue built."
@@ -1097,6 +1106,9 @@ paths:
                     label: Population estimate
                     valueKind: count
                     unit: people
+                    unitDefinition:
+                      code: "1"
+                      scaleToCanonical: 1
                     aggregation:
                       kind: extensive
                       operation: sum
@@ -1140,6 +1152,12 @@ paths:
         national coverage.
 
 
+        `unit` remains the published display label. `unitDefinition` supplies
+        an API-owned canonical code, scale and (where applicable) denominator
+        for safe unit-aware calculations; it never changes the source artifact
+        or an observation value.
+
+
         Where another nation publishes its own answer to the same question,
         the measure carries `concept` and `elsewhere`. Each entry in
         `elsewhere` names that measure, the countries it covers, and whether
@@ -1166,6 +1184,9 @@ paths:
                   label: Population estimate
                   valueKind: count
                   unit: people
+                  unitDefinition:
+                    code: "1"
+                    scaleToCanonical: 1
                   aggregation:
                     kind: extensive
                     operation: sum
