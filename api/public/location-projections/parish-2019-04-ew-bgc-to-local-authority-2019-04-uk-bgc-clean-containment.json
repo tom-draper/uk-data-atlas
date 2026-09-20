@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:71b960e09a878ba34f9bff3da3a94d57d7345b9133c822f086bc22e608526ea8",
+	"contentHash": "sha256:aa538ae6af7352ee0933ea38588e91d7a281bd2595236c13f885f3fa7434245d",
 	"namedLocationInventoryHash": "sha256:f10fdbba3c8ee574ff8e3a12310f02f4beb50027d363ce109b85fc9284857149",
-	"crosswalkInventoryHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
 	"projections": [
 		{

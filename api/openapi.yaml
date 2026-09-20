@@ -5750,7 +5750,6 @@ paths:
                       constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
                       local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
                     validationExceptions:
-                      boundary-releases/ward/2025-05-uk-bgc-v2 candidates-reviewed: sha256:97e4075ffbe862495c7c4c4c6fe76b572d224d18187737b0a75906e27fc6305f
                       crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
                       exports/house-price-median-observations records-resolve: sha256:54165bd7f3d2e901e64f5f33f9ae949f51eacb5e4a2c1f3c1905d594fa0df487
                     namedLocations:
@@ -5789,8 +5788,8 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - releaseId: sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb
-                    href: /v1/atlas-releases/sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb
+                  - releaseId: sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
+                    href: /v1/atlas-releases/sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
                     artifactCount: 338
                     current: true
                 meta:
@@ -5826,7 +5825,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   schemaVersion: 1
-                  releaseId: sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb
+                  releaseId: sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
                   artifacts:
                     - id: boundary-registry
                       path: boundary-releases.json
@@ -5857,7 +5856,6 @@ paths:
                       constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
                       local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
                     validationExceptions:
-                      boundary-releases/ward/2025-05-uk-bgc-v2 candidates-reviewed: sha256:97e4075ffbe862495c7c4c4c6fe76b572d224d18187737b0a75906e27fc6305f
                       crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
                     namedLocations:
                       aberdeen: sha256:47f33490b901a4fc7f27e09b784369b9a23faa95a8a4e347fbac2d78a8eac3a5
@@ -5912,14 +5910,14 @@ paths:
               x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
               example:
                 apiVersion: v1
-                atlasRelease: "sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb"
+                atlasRelease: "sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d"
                 data:
                   from:
-                    releaseId: "sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb"
-                    href: /v1/atlas-releases/sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb
+                    releaseId: "sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d"
+                    href: /v1/atlas-releases/sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
                   to:
-                    releaseId: "sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb"
-                    href: /v1/atlas-releases/sha256:483714b20d7365c2ca4e25a12e2673b3565db541eb83bdc02e4f5493692540fb
+                    releaseId: "sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d"
+                    href: /v1/atlas-releases/sha256:9377970cfffdd2f92b153ba2ac76190812fc8925f5d65498d0e5149dfc0b1b5d
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []

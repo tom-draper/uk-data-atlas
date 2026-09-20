@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ee4e7feec2477fe68a36b88b6fdbbf303c3bef2fc67f50df195e64b2d4b56214",
-	"crosswalkInventoryHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+	"contentHash": "sha256:f7bbe29428c2cba3566248b23613798d96ad9bcb64afa4bf6667436e3ab5d8b8",
+	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"paths": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2/forward/identity",
@@ -894,6 +894,46 @@
 			]
 		},
 		{
+			"id": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "reverse",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
 			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -968,6 +1008,46 @@
 			"steps": [
 				{
 					"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
+					"direction": "reverse",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
 				}
