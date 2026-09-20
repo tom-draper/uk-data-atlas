@@ -393,6 +393,10 @@ export class GeographyResolver {
 		);
 	}
 
+	hasLocationProjectionStore(): boolean {
+		return this.inputs.locationProjectionStore !== undefined;
+	}
+
 	/** Crosswalks with materialised location parents in a geography release. */
 	locationParentCrosswalks(geography: string, boundaryRelease: string) {
 		return (

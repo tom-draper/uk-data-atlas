@@ -202,6 +202,26 @@ test("resolves a named location into another geography through a crosswalk", () 
 	assert.equal(data.partialMembers, 0);
 	assert.match(data.membershipNote, /wholly inside/);
 
+	const withoutProjections: RouteContext = {
+		...context,
+		geographyResolver: createGeographyResolver({
+			areaLookup,
+			crosswalkInventory: inventory,
+			crosswalkLookup,
+			namedLocationLookup,
+		}),
+	};
+	const missingProjection = routeRequest(
+		"GET",
+		"/v1/locations/greater-manchester/members?geography=ward&release=2025-01-en-ward&via=ward-to-local-authority-2025",
+		withoutProjections,
+	);
+	assert.equal(missingProjection.status, 503);
+	assert.match(
+		(missingProjection.body as { detail: string }).detail,
+		/location projection inventory/,
+	);
+
 	// A crosswalk that does not start from the requested geography and release
 	// is not silently substituted.
 	assert.equal(

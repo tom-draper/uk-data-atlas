@@ -3,10 +3,6 @@ import type { RouteRequest } from "./routing";
 import { reconcileMembers } from "./memberReconciliation";
 import {
 	COVERS_MINIMUM_SHARE,
-	crosswalksTo,
-	memberReach,
-	membersThroughCrosswalk,
-	membershipKindFor,
 } from "./locationMembership";
 
 const MEMBER_GEOGRAPHY = "localAuthority";
@@ -82,7 +78,7 @@ export const handleLocationRoutes = ({
 				"Invalid Query",
 				"release is required to resolve a named location's members.",
 			);
-		const { areaLookup, crosswalkInventory, crosswalkLookup } = context;
+		const { areaLookup } = context;
 		const areas = areaLookup?.get(`${geography}/${boundaryRelease}`);
 		if (!areaLookup || !areas)
 			return problem(
@@ -124,24 +120,18 @@ export const handleLocationRoutes = ({
 				}),
 			};
 		}
-		if (!crosswalkInventory || !crosswalkLookup)
+		const resolver = context.geographyResolver;
+		if (!resolver)
 			return problem(
 				503,
 				"Catalogue Unavailable",
-				"Build the crosswalk inventory before resolving a named location into another geography.",
+				"Build the geography resolver before resolving a named location into another geography.",
 			);
-		const candidates =
-			context.geographyResolver?.crosswalksToLocationMembers(
-				geography,
-				boundaryRelease,
-				MEMBER_GEOGRAPHY,
-			) ??
-			crosswalksTo(
-				crosswalkInventory,
-				geography,
-				boundaryRelease,
-				MEMBER_GEOGRAPHY,
-			);
+		const candidates = resolver.crosswalksToLocationMembers(
+			geography,
+			boundaryRelease,
+			MEMBER_GEOGRAPHY,
+		);
 		const requested = parsedUrl.searchParams.get("via");
 		if (!requested)
 			return problem(
@@ -154,95 +144,50 @@ export const handleLocationRoutes = ({
 		const summary = candidates.find(
 			(candidate) => candidate.id === requested,
 		);
-		const crosswalk = summary
-			? (context.geographyResolver?.crosswalk(requested) ??
-				crosswalkLookup.get(requested))
-			: undefined;
-		if (!summary || !crosswalk)
+		if (!summary)
 			return problem(
 				404,
 				"Not Found",
 				`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${MEMBER_GEOGRAPHY} release.`,
 			);
-		const projection = context.geographyResolver?.locationProjection(
+		if (!resolver.hasLocationProjectionStore())
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the location projection inventory before resolving a named location into another geography.",
+			);
+		const projection = resolver.locationProjection(
 			location.id,
 			geography,
 			boundaryRelease,
 			requested,
 		);
-		if (projection) {
-			return {
-				status: 200,
-				body: envelope(releaseId, {
-					location,
-					geography,
-					boundaryRelease,
-					membership: projection.membership,
-					membershipNote:
-						projection.membership === "fully-contained"
-							? "Each area is placed wholly inside one member by the publisher's own lookup, so membership is exact and no area is counted in part."
-							: "Areas are matched by area overlap. One straddling the edge of the location is returned with the share of it that lies inside, and marked partial; it is not a whole member of this location.",
-					via: projection.via,
-					members: projection.members.map((member) => ({
-						id: `${geography}/${boundaryRelease}/${member.code}`,
-						...(areas.get(member.code) ?? {
-							name: member.labels[0] ?? member.code,
-						}),
-						code: member.code,
-						through: {
-							id: `${projection.parentGeography}/${projection.parentBoundaryRelease}/${member.throughCode}`,
-							code: member.throughCode,
-						},
-						relation: member.relation,
-						...(member.weight === undefined
-							? {}
-							: { weight: member.weight }),
-						...(member.partial ? { partial: true } : {}),
-					})),
-					partialMembers: projection.partialMembers,
-					parentGeography: projection.parentGeography,
-					parentBoundaryRelease: projection.parentBoundaryRelease,
-					reach: projection.reach,
-					coverage: projection.coverage,
-				}),
-			};
-		}
-		const parentRelease = crosswalk.to.boundaryRelease;
-		const parents =
-			areaLookup.get(`${MEMBER_GEOGRAPHY}/${parentRelease}`) ?? new Map();
-		const parentCodes = new Set(
-			location.memberCodes.filter((code) => parents.has(code)),
-		);
-		const traversed = membersThroughCrosswalk(crosswalk, parentCodes);
-		const kind = membershipKindFor(crosswalk);
+		if (!projection)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`No materialised location projection is available through ${requested}. Rebuild the location projection inventory.`,
+			);
 		return {
 			status: 200,
 			body: envelope(releaseId, {
 				location,
 				geography,
 				boundaryRelease,
-				membership: kind,
+				membership: projection.membership,
 				membershipNote:
-					kind === "fully-contained"
+					projection.membership === "fully-contained"
 						? "Each area is placed wholly inside one member by the publisher's own lookup, so membership is exact and no area is counted in part."
 						: "Areas are matched by area overlap. One straddling the edge of the location is returned with the share of it that lies inside, and marked partial; it is not a whole member of this location.",
-				via: {
-					id: crosswalk.id,
-					method: crosswalk.method,
-					quality: crosswalk.quality,
-					weighting: crosswalk.weighting,
-					from: crosswalk.from,
-					to: crosswalk.to,
-					contentHash: summary.contentHash,
-				},
-				members: traversed.map((member) => ({
+				via: projection.via,
+				members: projection.members.map((member) => ({
 					id: `${geography}/${boundaryRelease}/${member.code}`,
 					...(areas.get(member.code) ?? {
 						name: member.labels[0] ?? member.code,
 					}),
 					code: member.code,
 					through: {
-						id: `${MEMBER_GEOGRAPHY}/${parentRelease}/${member.throughCode}`,
+						id: `${projection.parentGeography}/${projection.parentBoundaryRelease}/${member.throughCode}`,
 						code: member.throughCode,
 					},
 					relation: member.relation,
@@ -251,18 +196,11 @@ export const handleLocationRoutes = ({
 						: { weight: member.weight }),
 					...(member.partial ? { partial: true } : {}),
 				})),
-				partialMembers: traversed.filter((member) => member.partial)
-					.length,
-				parentGeography: MEMBER_GEOGRAPHY,
-				parentBoundaryRelease: parentRelease,
-				reach: memberReach(crosswalk, parentCodes),
-				coverage: reconcileMembers(
-					areaLookup,
-					MEMBER_GEOGRAPHY,
-					parentRelease,
-					location.memberCodes,
-					parentCodes,
-				),
+				partialMembers: projection.partialMembers,
+				parentGeography: projection.parentGeography,
+				parentBoundaryRelease: projection.parentBoundaryRelease,
+				reach: projection.reach,
+				coverage: projection.coverage,
 			}),
 		};
 	}
