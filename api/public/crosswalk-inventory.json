@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+	"contentHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -98,6 +98,25 @@
 			"contentHash": "sha256:36a3e0270fa4a0f380c54bd692270fe029cbb1f1213b2e5e9c01d193969e2e7b"
 		},
 		{
+			"id": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 8441,
+			"artifact": "crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:a21d766684fca7ae208398aa530ed16068d9ff4516d6dff9c046cff92f4cf717"
+		},
+		{
 			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
 			"from": {
 				"geography": "ward",
@@ -134,6 +153,25 @@
 			"recordCount": 8405,
 			"artifact": "crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
 			"contentHash": "sha256:00e936a48aa1cda9697cc8d00ec20de46242f8be3a84c5775494d70e2534df03"
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 8405,
+			"artifact": "crosswalks/ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment.json",
+			"contentHash": "sha256:bf2d7e3ca1a8917b6a9e7454133ca5628ae65891b2a366d54ab4d467fad0443e"
 		},
 		{
 			"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",

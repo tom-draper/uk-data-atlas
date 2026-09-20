@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"dataCatalogHash": "sha256:fdfd29dae216d3fbec60bffaecf2ebf58a5706e1aa329d709f9786b7ce63546f",
-	"crosswalkInventoryHash": "sha256:3f82db4a9ba362a7eaeab3878b46f28bae10dec1930541afd2f24af2422a1cd5",
+	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"supports": [
 		{
 			"measureId": "road-collisions",
@@ -25,5 +25,5 @@
 			"note": "Reported collision counts are extensive. Every published 2021 LSOA in this source has one verified May 2023 local-authority parent, so values are regrouped exactly; no area weighting is used."
 		}
 	],
-	"contentHash": "sha256:628dd2e7c1e67dbaf375dfd762c5a114ffa81264ef3403bf6f7a902bc8c9e296"
+	"contentHash": "sha256:f072d58abefea7aa79623ce819486b1a2903cebdc9768a37786a533b5d08f617"
 }

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:cbc933b9a0d523933aaa0b5e173244f2dda7ce12a787173e7a0fb405888ea627",
+	"contentHash": "sha256:0ef0732a42b118652bd54976aab6bf625cc7ea27296b4fe9c5b017a7d955f2f6",
 	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
 	"releases": [
 		{
@@ -853,6 +853,19 @@
 				"status": "available",
 				"crosswalks": [
 					{
+						"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2025-05-uk-bgc-v2"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
 						"id": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
 						"direction": "to",
 						"counterpart": {
@@ -1115,8 +1128,22 @@
 				"artifact": "areas/localAuthority/2023-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2023-05-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2339,6 +2366,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2462,6 +2502,19 @@
 						"counterpart": {
 							"geography": "localAuthority",
 							"boundaryRelease": "2023-05-uk-bgc-v2"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-12-uk-bgc"
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",

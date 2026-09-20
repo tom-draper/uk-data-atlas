@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5f19a0e6d79f61de251ad7464db3a6cb9579af20ac8fd9706de749e422c8bcff",
+	"contentHash": "sha256:d9b3dee543c4ae537e611df067741c0d4ea2ee25ce0b8579de9181b48b946cfe",
 	"candidates": [
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc",
@@ -358,7 +358,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment"
 		},
 		{
 			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc",
@@ -517,7 +518,8 @@
 					"missingValueFeatureCount": 0
 				},
 				"reasons": []
-			}
+			},
+			"publishedCrosswalkId": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment"
 		},
 		{
 			"id": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2",
