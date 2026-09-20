@@ -212,7 +212,7 @@ x-quick-starts:
         explain: Area identities, crosswalks and named-location membership as whole CSV or NDJSON files.
         request: "/v1/lookups/areas-localAuthority-2023-05-uk-bgc-v2?format=ndjson"
       - title: Reprocess only what moved
-        explain: When a new release is published, compare it with the one you pinned using `/atlas-releases/compare?from=`, and rebuild only the resources it names.
+        explain: When a new release is published, compare it with the one you pinned using `/atlas-releases/compare?from=&detail=fields`, and rebuild only the resources it names. Field detail identifies changed published resource metadata, never guessed observation-row revisions.
         request: "/v1/atlas-releases"
 servers:
   - url: http://127.0.0.1:3001/v1
