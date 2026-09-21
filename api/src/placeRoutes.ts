@@ -55,6 +55,10 @@ export const handlePlaceRoutes = ({
 				...(candidate.memberGeography
 					? { memberGeography: candidate.memberGeography }
 					: {}),
+				...(candidate.definitionRevision
+					? { definitionRevision: candidate.definitionRevision }
+					: {}),
+				...(candidate.validity ? { validity: candidate.validity } : {}),
 			})),
 			note: "Candidates are every place the name could mean, exact matches first and then names beginning with it. Equal matches are listed headline geographies first, a presentation order that asserts nothing about which was meant. Pass a candidate's place reference to a value request to ask about that place alone.",
 		}),

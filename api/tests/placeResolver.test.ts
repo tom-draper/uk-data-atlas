@@ -56,8 +56,10 @@ const namedLocations = {
 			id: "greater-manchester",
 			label: "Greater Manchester",
 			kind: "editorial-grouping",
+			definitionRevision: 1,
 			memberGeography: "localAuthority",
 			memberCodes: ["E08000003"],
+			validity: { from: null, to: null },
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
 	],
@@ -136,7 +138,9 @@ test("finds a curated location by its label and keeps its member codes", () => {
 	const [location] = resolvePlaces(index, "greater manchester");
 	assert.equal(location!.place, "location/greater-manchester");
 	assert.equal(location!.kind, "named-location");
+	assert.equal(location!.definitionRevision, 1);
 	assert.equal(location!.memberGeography, "localAuthority");
+	assert.deepEqual(location!.validity, { from: null, to: null });
 	assert.deepEqual(location!.memberCodes, ["E08000003"]);
 });
 

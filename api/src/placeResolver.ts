@@ -40,6 +40,9 @@ export type PlaceCandidate = {
 	memberCodes?: string[];
 	/** The geography of a named location's curated member codes. */
 	memberGeography?: string;
+	/** Definition provenance for a named location. */
+	definitionRevision?: number;
+	validity?: { from: string | null; to: string | null };
 };
 
 /**
@@ -139,6 +142,8 @@ type Grouped = {
 	boundaryReleases: Set<string>;
 	memberCodes?: string[];
 	memberGeography?: string;
+	definitionRevision?: number;
+	validity?: { from: string | null; to: string | null };
 };
 
 export type PlaceIndex = {
@@ -223,6 +228,8 @@ export const createPlaceIndex = (
 			boundaryReleases: new Set(),
 			memberCodes: location.memberCodes,
 			memberGeography: location.memberGeography,
+			definitionRevision: location.definitionRevision,
+			validity: location.validity,
 		});
 		indexLabel(
 			location.label,
@@ -276,6 +283,10 @@ const toCandidate = (
 		...(grouped.memberGeography
 			? { memberGeography: grouped.memberGeography }
 			: {}),
+		...(grouped.definitionRevision
+			? { definitionRevision: grouped.definitionRevision }
+			: {}),
+		...(grouped.validity ? { validity: grouped.validity } : {}),
 	};
 };
 

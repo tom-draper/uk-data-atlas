@@ -33,6 +33,7 @@ test("materialises named-location membership through a published crosswalk", () 
 		"ward-to-local-authority-2025",
 	);
 	assert.ok(projection);
+	assert.equal(projection.locationDefinitionRevision, 1);
 	assert.equal(projection.membership, "fully-contained");
 	assert.equal(projection.parentBoundaryRelease, "2025-01-uk-lad");
 	assert.deepEqual(projection.members, [

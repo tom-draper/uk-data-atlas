@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f8700dd6f84dca3784731c6775a7fd1edca4e3e43a1969dc1aa681a08245219d",
+	"contentHash": "sha256:48564abeb736dd9a505686873138b6bdf7b759fe7074b8f76ae510d7968f1bf0",
 	"lookups": [
 		{
 			"id": "areas-combinedAuthority-2025-12-en-bgc",
@@ -8406,7 +8406,7 @@
 			"title": "Named location membership",
 			"source": {
 				"artifact": "named-locations.json",
-				"contentHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c"
+				"contentHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d"
 			},
 			"columns": [
 				{
@@ -8428,6 +8428,12 @@
 					"description": "How the location is defined; editorial-grouping is a curated grouping, not an official area."
 				},
 				{
+					"name": "definitionRevision",
+					"type": "number",
+					"required": true,
+					"description": "The curated definition revision for this location."
+				},
+				{
 					"name": "memberGeography",
 					"type": "string",
 					"required": true,
@@ -8438,20 +8444,32 @@
 					"type": "string",
 					"required": true,
 					"description": "The official code of one member area."
+				},
+				{
+					"name": "validFrom",
+					"type": "string",
+					"required": false,
+					"description": "The first date this definition is known to apply, when supplied by the curator."
+				},
+				{
+					"name": "validTo",
+					"type": "string",
+					"required": false,
+					"description": "The first date this definition is known not to apply, when supplied by the curator."
 				}
 			],
 			"rowCount": 719,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 48573,
-					"contentHash": "sha256:dabd5bf1ee5a0026e91ed6acc1bdc02f6d3825d7b9578b33bbaf42600fd9846f",
+					"bytes": 51486,
+					"contentHash": "sha256:1607c2d287ea9589e19afa28040ba301866e009c52266a5bee95ac253b8ba407",
 					"href": "/v1/lookups/named-location-members?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 99569,
-					"contentHash": "sha256:1499adf1ae3fc08efd5ba3b988d1f8b21425eef7693599750402321b72fa9d57",
+					"bytes": 139114,
+					"contentHash": "sha256:903d833b30af6dfc1405c993d7cefe99dbc1f1766904ca51b9d8b13db062ce49",
 					"href": "/v1/lookups/named-location-members?format=ndjson"
 				}
 			}

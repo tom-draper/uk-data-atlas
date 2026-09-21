@@ -1,12 +1,13 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:af1683c9bf97880913341bbedd38ef2ddd5d9a305ee75bff138f977bdaef51bd",
-	"namedLocationInventoryHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c",
+	"contentHash": "sha256:bc97d9a9b3abb5efe8f7c91c5b0b8d54fd0c2ce9bc9032ba7843cbe27a9e0645",
+	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
 	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 	"projections": [
 		{
 			"locationId": "aberdeen",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -72,6 +73,7 @@
 		},
 		{
 			"locationId": "aberystwyth",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -129,6 +131,7 @@
 		},
 		{
 			"locationId": "armagh-down-and-newry",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -253,6 +256,7 @@
 		},
 		{
 			"locationId": "bangor",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -309,6 +313,7 @@
 		},
 		{
 			"locationId": "barnsley",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -395,6 +400,7 @@
 		},
 		{
 			"locationId": "basingstoke",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -481,6 +487,7 @@
 		},
 		{
 			"locationId": "bath",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -557,6 +564,7 @@
 		},
 		{
 			"locationId": "belfast-metropolitan-area",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -689,6 +697,7 @@
 		},
 		{
 			"locationId": "belfast",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -786,6 +795,7 @@
 		},
 		{
 			"locationId": "birmingham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -924,6 +934,7 @@
 		},
 		{
 			"locationId": "blackburn",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -990,6 +1001,7 @@
 		},
 		{
 			"locationId": "blackpool",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1056,6 +1068,7 @@
 		},
 		{
 			"locationId": "bolton",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1131,6 +1144,7 @@
 		},
 		{
 			"locationId": "bournemouth",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1225,6 +1239,7 @@
 		},
 		{
 			"locationId": "bradford",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1317,6 +1332,7 @@
 		},
 		{
 			"locationId": "brighton-and-hove",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1392,6 +1408,7 @@
 		},
 		{
 			"locationId": "bristol",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1485,6 +1502,7 @@
 		},
 		{
 			"locationId": "buckinghamshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1640,6 +1658,7 @@
 		},
 		{
 			"locationId": "cambridge",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1706,6 +1725,7 @@
 		},
 		{
 			"locationId": "canterbury",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1772,6 +1792,7 @@
 		},
 		{
 			"locationId": "cardiff-and-the-valleys",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -1939,6 +1960,7 @@
 		},
 		{
 			"locationId": "cardiff",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2025,6 +2047,7 @@
 		},
 		{
 			"locationId": "carlisle",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2088,6 +2111,7 @@
 		},
 		{
 			"locationId": "causeway-coast-and-antrim",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2164,6 +2188,7 @@
 		},
 		{
 			"locationId": "central-belt",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2508,6 +2533,7 @@
 		},
 		{
 			"locationId": "cheltenham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2574,6 +2600,7 @@
 		},
 		{
 			"locationId": "cheshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2731,6 +2758,7 @@
 		},
 		{
 			"locationId": "chester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2837,6 +2865,7 @@
 		},
 		{
 			"locationId": "chesterfield",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2903,6 +2932,7 @@
 		},
 		{
 			"locationId": "colchester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -2979,6 +3009,7 @@
 		},
 		{
 			"locationId": "cornwall",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3081,6 +3112,7 @@
 		},
 		{
 			"locationId": "coventry",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3155,6 +3187,7 @@
 		},
 		{
 			"locationId": "crawley",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3211,6 +3244,7 @@
 		},
 		{
 			"locationId": "darlington",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3277,6 +3311,7 @@
 		},
 		{
 			"locationId": "derby",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3352,6 +3387,7 @@
 		},
 		{
 			"locationId": "derbyshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3490,6 +3526,7 @@
 		},
 		{
 			"locationId": "devon",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3685,6 +3722,7 @@
 		},
 		{
 			"locationId": "doncaster",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3770,6 +3808,7 @@
 		},
 		{
 			"locationId": "dorset",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -3956,6 +3995,7 @@
 		},
 		{
 			"locationId": "dudley",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -4051,6 +4091,7 @@
 		},
 		{
 			"locationId": "dundee",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -4117,6 +4158,7 @@
 		},
 		{
 			"locationId": "durham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -4219,6 +4261,7 @@
 		},
 		{
 			"locationId": "east-midlands",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -4788,6 +4831,7 @@
 		},
 		{
 			"locationId": "east-of-england",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -5428,6 +5472,7 @@
 		},
 		{
 			"locationId": "edinburgh",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -5521,6 +5566,7 @@
 		},
 		{
 			"locationId": "england",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -5567,6 +5613,7 @@
 		},
 		{
 			"locationId": "essex",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -5771,6 +5818,7 @@
 		},
 		{
 			"locationId": "exeter",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -5837,6 +5885,7 @@
 		},
 		{
 			"locationId": "fife",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -5932,6 +5981,7 @@
 		},
 		{
 			"locationId": "gateshead",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6027,6 +6077,7 @@
 		},
 		{
 			"locationId": "glasgow",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6160,6 +6211,7 @@
 		},
 		{
 			"locationId": "gloucester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6226,6 +6278,7 @@
 		},
 		{
 			"locationId": "gloucestershire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6337,6 +6390,7 @@
 		},
 		{
 			"locationId": "grampian",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6439,6 +6493,7 @@
 		},
 		{
 			"locationId": "greater-glasgow-and-clyde",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6616,6 +6671,7 @@
 		},
 		{
 			"locationId": "greater-manchester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6906,6 +6962,7 @@
 		},
 		{
 			"locationId": "guildford",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -6982,6 +7039,7 @@
 		},
 		{
 			"locationId": "halifax",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7047,6 +7105,7 @@
 		},
 		{
 			"locationId": "hampshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7259,6 +7318,7 @@
 		},
 		{
 			"locationId": "harrogate",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7322,6 +7382,7 @@
 		},
 		{
 			"locationId": "hartlepool",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7378,6 +7439,7 @@
 		},
 		{
 			"locationId": "hereford",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7443,6 +7505,7 @@
 		},
 		{
 			"locationId": "hertfordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7632,6 +7695,7 @@
 		},
 		{
 			"locationId": "huddersfield",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7725,6 +7789,7 @@
 		},
 		{
 			"locationId": "hull",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7801,6 +7866,7 @@
 		},
 		{
 			"locationId": "inverness",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7886,6 +7952,7 @@
 		},
 		{
 			"locationId": "ipswich",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -7952,6 +8019,7 @@
 		},
 		{
 			"locationId": "kent",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8180,6 +8248,7 @@
 		},
 		{
 			"locationId": "lancashire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8400,6 +8469,7 @@
 		},
 		{
 			"locationId": "lancaster",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8467,6 +8537,7 @@
 		},
 		{
 			"locationId": "leeds",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8607,6 +8678,7 @@
 		},
 		{
 			"locationId": "leicester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8681,6 +8753,7 @@
 		},
 		{
 			"locationId": "lincoln",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8738,6 +8811,7 @@
 		},
 		{
 			"locationId": "lincolnshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8895,6 +8969,7 @@
 		},
 		{
 			"locationId": "lisburn",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -8992,6 +9067,7 @@
 		},
 		{
 			"locationId": "liverpool",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -9086,6 +9162,7 @@
 		},
 		{
 			"locationId": "london",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -9808,6 +9885,7 @@
 		},
 		{
 			"locationId": "londonderry",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -9884,6 +9962,7 @@
 		},
 		{
 			"locationId": "lowlands",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -9986,6 +10065,7 @@
 		},
 		{
 			"locationId": "luton",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10052,6 +10132,7 @@
 		},
 		{
 			"locationId": "maidstone",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10129,6 +10210,7 @@
 		},
 		{
 			"locationId": "manchester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10234,6 +10316,7 @@
 		},
 		{
 			"locationId": "mansfield",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10300,6 +10383,7 @@
 		},
 		{
 			"locationId": "merseyside",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10494,6 +10578,7 @@
 		},
 		{
 			"locationId": "mid-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10571,6 +10656,7 @@
 		},
 		{
 			"locationId": "middlesbrough",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10638,6 +10724,7 @@
 		},
 		{
 			"locationId": "milton-keynes",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10713,6 +10800,7 @@
 		},
 		{
 			"locationId": "newcastle-upon-tyne",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10809,6 +10897,7 @@
 		},
 		{
 			"locationId": "newport",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10875,6 +10964,7 @@
 		},
 		{
 			"locationId": "newry",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -10962,6 +11052,7 @@
 		},
 		{
 			"locationId": "norfolk",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -11100,6 +11191,7 @@
 		},
 		{
 			"locationId": "north-east-scotland",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -11202,6 +11294,7 @@
 		},
 		{
 			"locationId": "north-east",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -11509,6 +11602,7 @@
 		},
 		{
 			"locationId": "north-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -11629,6 +11723,7 @@
 		},
 		{
 			"locationId": "north-west",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -12430,6 +12525,7 @@
 		},
 		{
 			"locationId": "north-yorkshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -12655,6 +12751,7 @@
 		},
 		{
 			"locationId": "northampton",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -12740,6 +12837,7 @@
 		},
 		{
 			"locationId": "northern-ireland",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -12786,6 +12884,7 @@
 		},
 		{
 			"locationId": "norwich",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -12853,6 +12952,7 @@
 		},
 		{
 			"locationId": "nottingham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -12928,6 +13028,7 @@
 		},
 		{
 			"locationId": "oldham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13003,6 +13104,7 @@
 		},
 		{
 			"locationId": "oxford",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13069,6 +13171,7 @@
 		},
 		{
 			"locationId": "oxfordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13179,6 +13282,7 @@
 		},
 		{
 			"locationId": "paisley",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13255,6 +13359,7 @@
 		},
 		{
 			"locationId": "pembrokeshire-coast",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13321,6 +13426,7 @@
 		},
 		{
 			"locationId": "perth",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13408,6 +13514,7 @@
 		},
 		{
 			"locationId": "peterborough",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13474,6 +13581,7 @@
 		},
 		{
 			"locationId": "plymouth",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13549,6 +13657,7 @@
 		},
 		{
 			"locationId": "poole",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13607,6 +13716,7 @@
 		},
 		{
 			"locationId": "portsmouth",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13672,6 +13782,7 @@
 		},
 		{
 			"locationId": "preston",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13738,6 +13849,7 @@
 		},
 		{
 			"locationId": "reading",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13814,6 +13926,7 @@
 		},
 		{
 			"locationId": "rochdale",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13889,6 +14002,7 @@
 		},
 		{
 			"locationId": "rotherham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -13964,6 +14078,7 @@
 		},
 		{
 			"locationId": "salford",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14050,6 +14165,7 @@
 		},
 		{
 			"locationId": "sandwell",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14135,6 +14251,7 @@
 		},
 		{
 			"locationId": "scarborough",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14198,6 +14315,7 @@
 		},
 		{
 			"locationId": "scotland",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14244,6 +14362,7 @@
 		},
 		{
 			"locationId": "scottish-borders",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14310,6 +14429,7 @@
 		},
 		{
 			"locationId": "scottish-islands",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14375,6 +14495,7 @@
 		},
 		{
 			"locationId": "sheffield",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14488,6 +14609,7 @@
 		},
 		{
 			"locationId": "shrewsbury",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14572,6 +14694,7 @@
 		},
 		{
 			"locationId": "slough",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14638,6 +14761,7 @@
 		},
 		{
 			"locationId": "solihull",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14713,6 +14837,7 @@
 		},
 		{
 			"locationId": "somerset",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -14909,6 +15034,7 @@
 		},
 		{
 			"locationId": "south-east-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -15077,6 +15203,7 @@
 		},
 		{
 			"locationId": "south-east",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -15981,6 +16108,7 @@
 		},
 		{
 			"locationId": "south-shields",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -16047,6 +16175,7 @@
 		},
 		{
 			"locationId": "south-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -16313,6 +16442,7 @@
 		},
 		{
 			"locationId": "south-west",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -16877,6 +17007,7 @@
 		},
 		{
 			"locationId": "southampton",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -16952,6 +17083,7 @@
 		},
 		{
 			"locationId": "southend-on-sea",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17018,6 +17150,7 @@
 		},
 		{
 			"locationId": "staffordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17174,6 +17307,7 @@
 		},
 		{
 			"locationId": "stirling",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17231,6 +17365,7 @@
 		},
 		{
 			"locationId": "stockport",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17305,6 +17440,7 @@
 		},
 		{
 			"locationId": "stockton-on-tees",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17381,6 +17517,7 @@
 		},
 		{
 			"locationId": "stoke-on-trent",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17457,6 +17594,7 @@
 		},
 		{
 			"locationId": "suffolk",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17622,6 +17760,7 @@
 		},
 		{
 			"locationId": "sunderland",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17697,6 +17836,7 @@
 		},
 		{
 			"locationId": "sussex",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17897,6 +18037,7 @@
 		},
 		{
 			"locationId": "swansea",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -17972,6 +18113,7 @@
 		},
 		{
 			"locationId": "swindon",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18047,6 +18189,7 @@
 		},
 		{
 			"locationId": "tayside",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18151,6 +18294,7 @@
 		},
 		{
 			"locationId": "the-hebrides",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18245,6 +18389,7 @@
 		},
 		{
 			"locationId": "the-highlands",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18329,6 +18474,7 @@
 		},
 		{
 			"locationId": "the-valleys",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18433,6 +18579,7 @@
 		},
 		{
 			"locationId": "torquay",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18499,6 +18646,7 @@
 		},
 		{
 			"locationId": "united-kingdom",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18545,6 +18693,7 @@
 		},
 		{
 			"locationId": "wakefield",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18630,6 +18779,7 @@
 		},
 		{
 			"locationId": "wales",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18676,6 +18826,7 @@
 		},
 		{
 			"locationId": "walsall",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18761,6 +18912,7 @@
 		},
 		{
 			"locationId": "warrington",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -18836,6 +18988,7 @@
 		},
 		{
 			"locationId": "west-midlands",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19388,6 +19541,7 @@
 		},
 		{
 			"locationId": "west-of-northern-ireland",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19483,6 +19637,7 @@
 		},
 		{
 			"locationId": "west-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19586,6 +19741,7 @@
 		},
 		{
 			"locationId": "wigan",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19670,6 +19826,7 @@
 		},
 		{
 			"locationId": "winchester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19746,6 +19903,7 @@
 		},
 		{
 			"locationId": "wolverhampton",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19822,6 +19980,7 @@
 		},
 		{
 			"locationId": "worcester",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19878,6 +20037,7 @@
 		},
 		{
 			"locationId": "wrexham",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -19954,6 +20114,7 @@
 		},
 		{
 			"locationId": "york",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
@@ -20019,6 +20180,7 @@
 		},
 		{
 			"locationId": "yorkshire",
+			"locationDefinitionRevision": 1,
 			"geography": "constituency",
 			"boundaryRelease": "2024-07-uk-bgc",
 			"membership": "weighted-overlap",
