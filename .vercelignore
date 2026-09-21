@@ -7,7 +7,7 @@
 # app/api route would still deploy.
 #
 # The exceptions are the artifacts the docs pages read when the site builds:
-# the spec behind the API reference (lib/docs/openapi.ts) and the four
+# the spec behind the API reference (lib/docs/openapi.ts) and the five
 # catalogue files behind the data and geography pages (lib/docs/catalogue.ts).
 # Everything else the API serves from api/public stays out of the deployment.
 #
@@ -22,6 +22,7 @@
 !/api/public
 /api/public/*
 !/api/public/data-catalog.json
+!/api/public/export-manifest.json
 !/api/public/boundary-releases.json
 !/api/public/geography-inventory.json
 !/api/public/map-resources.json
