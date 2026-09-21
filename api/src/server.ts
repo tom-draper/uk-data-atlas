@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import type { AtlasRelease } from "./atlasRelease";
 import {
 	readArchivedAtlasReleaseArtifact,
 	readArchivedAtlasReleases,
@@ -12,8 +11,6 @@ import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
-import type { ValidationReport } from "./validationReport";
-import { type DataCatalog } from "./dataCatalog";
 import {
 	readMeasureObservations,
 	readPopulationLocalAuthorityObservations,
@@ -24,16 +21,10 @@ export {
 	readPopulationLocalAuthorityObservations,
 	readPopulationObservations,
 } from "./observationLoader";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
-import type { ExportManifest } from "./exportManifest";
-import type { LookupManifest } from "./lookupExports";
 import { createGeographyResolver } from "./geographyResolver";
 import { createRelationshipPathIndex } from "./relationshipPaths";
 import type { RouteContext } from "./routing";
-import type { AnalysisGeographyInventory } from "./analysisGeographies";
-import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
 import { createRemoteTerrainProvider } from "./terrainProvider";
-import { withUnitDefinitions } from "./unitRegistry";
 import {
 	readAreaInventory,
 	readAreaLookup,
@@ -69,15 +60,26 @@ export {
 	readLocationProjectionInventory,
 	readNamedLocationInventory,
 } from "./locationLoader";
-
-export const readAtlasRelease = (apiRoot: string): AtlasRelease => {
-	const path = join(apiRoot, "public", "atlas-release.json");
-	const release = JSON.parse(readFileSync(path, "utf8")) as AtlasRelease;
-	if (release.schemaVersion !== 1 || !Array.isArray(release.artifacts)) {
-		throw new Error(`Invalid atlas release manifest at ${path}`);
-	}
-	return release;
-};
+import {
+	readAnalysisGeographyInventory,
+	readAnalysisGeographyValidationInventory,
+	readAtlasRelease,
+	readDataCatalog,
+	readExportManifest,
+	readLookupManifest,
+	readMeasureCompatibility,
+	readValidationReport,
+} from "./catalogueManifestLoader";
+export {
+	readAnalysisGeographyInventory,
+	readAnalysisGeographyValidationInventory,
+	readAtlasRelease,
+	readDataCatalog,
+	readExportManifest,
+	readLookupManifest,
+	readMeasureCompatibility,
+	readValidationReport,
+} from "./catalogueManifestLoader";
 
 export const readRelationshipCandidateInventory = (
 	apiRoot: string,
@@ -88,104 +90,6 @@ export const readRelationshipCandidateInventory = (
 	) as RelationshipCandidateInventory;
 	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.candidates)) {
 		throw new Error(`Invalid relationship candidate inventory at ${path}`);
-	}
-	return inventory;
-};
-
-export const readValidationReport = (apiRoot: string): ValidationReport => {
-	const path = join(apiRoot, "public", "validation-report.json");
-	const report = JSON.parse(readFileSync(path, "utf8")) as ValidationReport;
-	if (report.schemaVersion !== 1 || !Array.isArray(report.resources)) {
-		throw new Error(`Invalid validation report at ${path}`);
-	}
-	return report;
-};
-
-export const readDataCatalog = (apiRoot: string): DataCatalog => {
-	const path = join(apiRoot, "public", "data-catalog.json");
-	const catalog = JSON.parse(readFileSync(path, "utf8")) as DataCatalog;
-	if (
-		catalog.schemaVersion !== 1 ||
-		!Array.isArray(catalog.datasets) ||
-		!Array.isArray(catalog.measures)
-	) {
-		throw new Error(`Invalid data catalogue at ${path}`);
-	}
-	return withUnitDefinitions(catalog);
-};
-
-export const readExportManifest = (apiRoot: string): ExportManifest => {
-	const path = join(apiRoot, "public", "export-manifest.json");
-	const manifest = JSON.parse(readFileSync(path, "utf8")) as ExportManifest;
-	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.exports)) {
-		throw new Error(`Invalid export manifest at ${path}`);
-	}
-	return manifest;
-};
-
-export const readLookupManifest = (apiRoot: string): LookupManifest => {
-	const path = join(apiRoot, "public", "lookup-manifest.json");
-	const manifest = JSON.parse(readFileSync(path, "utf8")) as LookupManifest;
-	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.lookups)) {
-		throw new Error(`Invalid lookup manifest at ${path}`);
-	}
-	return manifest;
-};
-
-export const readMeasureCompatibility = (
-	apiRoot: string,
-): MeasureCompatibilityInventory => {
-	const path = join(apiRoot, "public", "measure-compatibility.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as MeasureCompatibilityInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.measures)) {
-		throw new Error(`Invalid measure compatibility inventory at ${path}`);
-	}
-	return inventory;
-};
-
-export const readAnalysisGeographyInventory = (
-	apiRoot: string,
-	dataCatalog: DataCatalog,
-	crosswalkInventory: CrosswalkInventory,
-): AnalysisGeographyInventory => {
-	const path = join(apiRoot, "public", "analysis-geographies.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as AnalysisGeographyInventory;
-	if (
-		inventory.schemaVersion !== 1 ||
-		!Array.isArray(inventory.supports) ||
-		inventory.dataCatalogHash !== dataCatalog.contentHash ||
-		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
-	) {
-		throw new Error(`Invalid analysis geography inventory at ${path}`);
-	}
-	return inventory;
-};
-
-export const readAnalysisGeographyValidationInventory = (
-	apiRoot: string,
-	analysisGeographies: AnalysisGeographyInventory,
-	dataCatalog: DataCatalog,
-	crosswalkInventory: CrosswalkInventory,
-): AnalysisGeographyValidationInventory => {
-	const path = join(apiRoot, "public", "analysis-geography-validation.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as AnalysisGeographyValidationInventory;
-	if (
-		inventory.schemaVersion !== 1 ||
-		!Array.isArray(inventory.supports) ||
-		inventory.analysisGeographyInventoryHash !==
-			analysisGeographies.contentHash ||
-		inventory.dataCatalogHash !== dataCatalog.contentHash ||
-		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
-	) {
-		throw new Error(
-			`Invalid analysis geography validation inventory at ${path}`,
-		);
 	}
 	return inventory;
 };
