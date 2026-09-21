@@ -9,7 +9,7 @@ type LocationAggregate = {
 	unresolvedMemberCodes: string[];
 };
 
-type LocationCoverage = ReturnType<typeof reconcileMembersForYear>;
+export type LocationCoverage = ReturnType<typeof reconcileMembersForYear>;
 
 /** Validate a named location against the source partition's area vintage. */
 export const validateLocationAggregation = ({
