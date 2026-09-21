@@ -46,6 +46,8 @@ describe("ChartCards registry selection", () => {
 				"economics-planningApplications": true,
 				"economics-councilTax": true,
 				"economics-unemployment": true,
+				"economics-childPoverty": true,
+				"economics-fuelPoverty": true,
 				"economics-businessActivity": true,
 			}),
 		);
@@ -56,6 +58,8 @@ describe("ChartCards registry selection", () => {
 			"economics-planningApplications",
 			"economics-councilTax",
 			"economics-unemployment",
+			"economics-childPoverty",
+			"economics-fuelPoverty",
 			"economics-businessActivity",
 		]);
 	});
