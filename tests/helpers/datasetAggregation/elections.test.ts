@@ -10,9 +10,9 @@ import { CODE_KEY, features } from "./fixtures";
 describe("aggregateLocalElection", () => {
 	const data = {
 		W1: {
-			partyVotes: { LAB: 100, CON: 50, GREEN: 10 },
+			partyVotes: { LAB: 100, CON: 50, GREEN: 10, OTHER: 5 },
 			electorate: 1000,
-			totalVotes: 160,
+			totalVotes: 165,
 		},
 		W2: {
 			partyVotes: { LAB: 20, LD: 30 },
@@ -41,9 +41,10 @@ describe("aggregateLocalElection", () => {
 			SF: 0,
 			APNI: 0,
 			SDLP: 0,
+			OTHER: 5,
 		});
 		expect(stats.electorate).toBe(1500);
-		expect(stats.totalVotes).toBe(210);
+		expect(stats.totalVotes).toBe(215);
 	});
 
 	it("returns a zeroed tally when no covered ward has a result", () => {

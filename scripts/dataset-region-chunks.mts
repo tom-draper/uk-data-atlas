@@ -67,6 +67,7 @@ const LOCAL_ELECTION_PARTIES = [
 	"SF",
 	"APNI",
 	"SDLP",
+	"OTHER",
 ] as const;
 
 const countryForCode = (code: string): RegionChunkKey | null => {
