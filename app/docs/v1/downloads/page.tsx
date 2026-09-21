@@ -63,7 +63,7 @@ export default function DownloadsPage() {
 
 			<H2 id="boundaries">Boundaries</H2>
 			<P>
-				Open a geography to download its area-code tables and any
+				Download area-code tables and any
 				published GeoParquet or PMTiles boundary files, release by
 				release.
 			</P>

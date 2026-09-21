@@ -42,7 +42,10 @@ export default function MapGuidePage() {
 						Start from the name and pick the local authority from
 						the results. Its `code` is `E08000025`.
 					</P>
-					<Request url={`${API}/places?q=Birmingham`} />
+					<Request
+						url={`${API}/places?q=Birmingham`}
+						operationId="resolvePlaces"
+					/>
 				</Step>
 
 				<Step id="boundaries" title="Choose boundaries">
@@ -53,6 +56,7 @@ export default function MapGuidePage() {
 					</P>
 					<Request
 						url={`${API}/boundary-releases:resolve?geography=localAuthority&date=2023-06-30`}
+						operationId="resolveBoundaryReleaseForDate"
 					/>
 				</Step>
 
@@ -65,6 +69,7 @@ export default function MapGuidePage() {
 					</P>
 					<Request
 						url={`${API}/measures/population-estimate/compatibility`}
+						operationId="getMeasureCompatibility"
 					/>
 				</Step>
 
@@ -77,6 +82,7 @@ export default function MapGuidePage() {
 					</P>
 					<Request
 						url={`${API}/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023&release={release}&areaCode=E08000025`}
+						operationId="getMeasureObservations"
 					/>
 					<Callout tone="tip">
 						{
@@ -92,6 +98,7 @@ export default function MapGuidePage() {
 					</P>
 					<Request
 						url={`${API}/areas/localAuthority/{release}/E08000025/geometry?tier=medium`}
+						operationId="getAreaGeometry"
 					/>
 				</Step>
 
@@ -103,6 +110,7 @@ export default function MapGuidePage() {
 					</P>
 					<Request
 						url={`${API}/attribution?measure=population-estimate&boundaryRelease=localAuthority/{release}`}
+						operationId="getAttribution"
 					/>
 				</Step>
 			</Steps>

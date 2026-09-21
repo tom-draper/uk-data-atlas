@@ -56,6 +56,12 @@ export const USING_THE_API: NavLink[] = [
 export const GUIDES: NavLink[] = [
 	{ href: "/docs/v1/guides/map", title: "Draw a map" },
 	{ href: "/docs/v1/guides/trend", title: "Chart a trend" },
+	{ href: "/docs/v1/guides/coordinate", title: "Explore a coordinate" },
+	{
+		href: "/docs/v1/guides/batch-locations",
+		title: "Locate a batch of points",
+	},
+	{ href: "/docs/v1/guides/named-place", title: "Explore a named place" },
 	{ href: "/docs/v1/guides/sync", title: "Keep a copy in sync" },
 ];
 

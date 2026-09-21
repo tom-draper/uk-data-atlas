@@ -53,7 +53,10 @@ export default function SyncGuidePage() {
 						Record which Atlas release you're loading. Its
 						`releaseId` identifies exactly the data you have.
 					</P>
-					<Request url={`${API}/atlas-release`} />
+					<Request
+						url={`${API}/atlas-release`}
+						operationId="getAtlasRelease"
+					/>
 				</Step>
 
 				<Step id="download" title="Download a dataset">
@@ -62,8 +65,14 @@ export default function SyncGuidePage() {
 						file. Each entry gives its `id`, `recordCount` and
 						`contentHash`.
 					</P>
-					<Request url={`${API}/exports`} />
-					<Request url={`${API}/exports/total-jobs-observations`} />
+					<Request
+						url={`${API}/exports`}
+						operationId="listBulkExports"
+					/>
+					<Request
+						url={`${API}/exports/total-jobs-observations`}
+						operationId="downloadBulkExport"
+					/>
 				</Step>
 
 				<Step id="verify" title="Verify it">
@@ -92,6 +101,7 @@ export default function SyncGuidePage() {
 					</P>
 					<Request
 						url={`${API}/atlas-releases/compare?from={your-pinned-release-id}`}
+						operationId="compareAtlasReleases"
 					/>
 					<Callout tone="tip">
 						Leave out `to` to compare against the current release.
@@ -103,7 +113,10 @@ export default function SyncGuidePage() {
 						Finally, take the reference tables you'll join against,
 						such as area codes and names, as CSV or NDJSON.
 					</P>
-					<Request url={`${API}/lookups`} />
+					<Request
+						url={`${API}/lookups`}
+						operationId="listBulkLookups"
+					/>
 				</Step>
 			</Steps>
 		</DocPage>
