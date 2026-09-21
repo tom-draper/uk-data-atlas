@@ -1,10 +1,5 @@
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import {
-	readArchivedAtlasReleaseArtifact,
-	readArchivedAtlasReleases,
-	readAtlasReleaseArtifact,
-} from "./atlasReleaseHistory";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
@@ -68,6 +63,10 @@ import {
 } from "./catalogueManifestLoader";
 import { readMapAssets, readMapResources } from "./mapResourceLoader";
 import { createAreaGeometryCache } from "./geometryLoader";
+import {
+	createReleaseArtifactReader,
+	readAtlasReleaseHistory,
+} from "./releaseLoader";
 export {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
@@ -122,10 +121,9 @@ export const readApiCatalogues = (
 	const terrainCatalogue = readTerrainCatalogue(apiRoot);
 	const atlasRelease = readAtlasRelease(apiRoot);
 	const publicDirectory = join(apiRoot, "public");
-	const atlasReleaseHistory = new Map(
-		[...readArchivedAtlasReleases(publicDirectory), atlasRelease].map(
-			(release) => [release.releaseId, release],
-		),
+	const atlasReleaseHistory = readAtlasReleaseHistory(
+		publicDirectory,
+		atlasRelease,
 	);
 	const exportManifest = readExportManifest(apiRoot);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
@@ -191,17 +189,11 @@ export const readApiCatalogues = (
 		crosswalkLookup,
 		atlasRelease,
 		atlasReleaseHistory,
-		readReleaseArtifact: (requestedReleaseId, artifactId) => {
-			const release = atlasReleaseHistory.get(requestedReleaseId);
-			if (!release) return undefined;
-			return requestedReleaseId === atlasRelease.releaseId
-				? readAtlasReleaseArtifact(publicDirectory, release, artifactId)
-				: readArchivedAtlasReleaseArtifact(
-						publicDirectory,
-						release,
-						artifactId,
-					);
-		},
+		readReleaseArtifact: createReleaseArtifactReader(
+			publicDirectory,
+			atlasRelease,
+			atlasReleaseHistory,
+		),
 		relationshipCandidateInventory:
 			readRelationshipCandidateInventory(apiRoot),
 		validationReport: readValidationReport(apiRoot),
