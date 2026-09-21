@@ -1,5 +1,5 @@
-import { isNumericObservation, type MeasureSource } from "./dataCatalog";
-import { observationsFor } from "./observationArtifacts";
+import type { MeasureSource } from "./dataCatalog";
+import { numericObservationsFor } from "./numericObservations";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
 	aggregateCountryMembers,
@@ -287,25 +287,30 @@ export const handleDataAggregateRoutes = ({
 		};
 	})();
 	if (regional && "status" in regional) return regional;
-	const observations = observationsFor(measureId, source, period as string, {
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-	});
-	if (!observations)
+	const numericObservationResult = numericObservationsFor(
+		measureId,
+		source,
+		period as string,
+		{
+			populationObservations,
+			populationLocalAuthorityObservations,
+			measureObservations,
+		},
+	);
+	if (numericObservationResult.kind === "missing")
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 		);
-	const numericRecords = observations.records.filter(isNumericObservation);
-	if (numericRecords.length !== observations.records.length) {
+	if (numericObservationResult.kind === "non_numeric") {
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			`The observation artifact for ${measureId} does not contain numeric records required for aggregation.`,
 		);
 	}
+	const { observations, records: numericRecords } = numericObservationResult;
 	const byLocation = location
 		? aggregateLocationMembers(location, numericRecords)
 		: undefined;
@@ -517,7 +522,7 @@ export const handleDataAggregateRoutes = ({
 				`No source-exact ${weightMeasureId} partition is available to weight ${measureId}.`,
 			);
 		}
-		const weightObservations = observationsFor(
+		const weightObservationResult = numericObservationsFor(
 			weightMeasureId,
 			weightSource,
 			period as string,
@@ -527,22 +532,22 @@ export const handleDataAggregateRoutes = ({
 				measureObservations,
 			},
 		);
-		if (!weightObservations) {
+		if (weightObservationResult.kind === "missing") {
 			return problem(
 				503,
 				"Catalogue Unavailable",
 				`The weight artifact for ${weightMeasureId} is missing, or does not contain the catalogue's declared source period.`,
 			);
 		}
-		const weightRecords =
-			weightObservations.records.filter(isNumericObservation);
-		if (weightRecords.length !== weightObservations.records.length) {
+		if (weightObservationResult.kind === "non_numeric") {
 			return problem(
 				503,
 				"Catalogue Unavailable",
 				`The weight artifact for ${weightMeasureId} does not contain numeric records.`,
 			);
 		}
+		const { observations: weightObservations, records: weightRecords } =
+			weightObservationResult;
 		const weightAggregate = location
 			? aggregateLocationMembers(location, weightRecords)
 			: regional
