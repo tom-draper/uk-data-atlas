@@ -1,4 +1,3 @@
-import { numericObservationsFor } from "./numericObservations";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
 	aggregateCountryMembers,
@@ -18,6 +17,7 @@ import {
 	type AggregateWeighting,
 } from "./aggregateResponse";
 import { parseAggregateQuery } from "./aggregateQuery";
+import { readAggregateObservations } from "./aggregateObservations";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -148,29 +148,17 @@ export const handleDataAggregateRoutes = ({
 		areaLookup,
 	});
 	if (regional && "status" in regional) return regional;
-	const numericObservationResult = numericObservationsFor(
+	const numericObservationResult = readAggregateObservations({
 		measureId,
 		source,
-		period as string,
-		{
+		period: period as string,
+		artifacts: {
 			populationObservations,
 			populationLocalAuthorityObservations,
 			measureObservations,
 		},
-	);
-	if (numericObservationResult.kind === "missing")
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
-		);
-	if (numericObservationResult.kind === "non_numeric") {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			`The observation artifact for ${measureId} does not contain numeric records required for aggregation.`,
-		);
-	}
+	});
+	if ("status" in numericObservationResult) return numericObservationResult;
 	const { observations, records: numericRecords } = numericObservationResult;
 	const byLocation = location
 		? aggregateLocationMembers(location, numericRecords)
