@@ -1,5 +1,5 @@
 import { councilTaxDatasetDefinition } from "@/lib/data/catalog/definitions";
-import { indicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
+import { averageIndicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IndicatorDataset } from "@/lib/types/indicator";
 import type { ChartDatasetDefinition } from "./types";
 export const councilTaxDefinition: ChartDatasetDefinition<
@@ -13,7 +13,7 @@ export const councilTaxDefinition: ChartDatasetDefinition<
 		defaultVisible: true,
 		componentPath: "@/components/IndicatorChart",
 		calculateStats: (m, g, d, l, id) =>
-			m.aggregate(indicatorAggregation, g, d, l, id),
+			m.aggregate(averageIndicatorAggregation, g, d, l, id),
 		year: 2026,
 	},
 	map: {

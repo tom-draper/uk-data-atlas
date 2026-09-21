@@ -13,7 +13,7 @@ import {
 	collectBoundaryRecords,
 } from "./numeric";
 import { aggregateNHSWaiting } from "./health";
-import { aggregateIndicator } from "./indicator";
+import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import {
 	aggregateCrime,
@@ -218,4 +218,9 @@ export const indicatorAggregation = numericAggregation(
 	"indicator",
 	"any",
 	aggregateIndicator,
+);
+export const averageIndicatorAggregation = numericAggregation(
+	"average-indicator",
+	"any",
+	averageIndicator,
 );
