@@ -1050,6 +1050,83 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /coordinates:convert:
+    get:
+      operationId: convertCoordinate
+      tags: ["Map"]
+      summary: Normalise one supported coordinate to WGS 84
+      x-likely-refusal:
+        status: 400
+        when: "The coordinate is incomplete, mixed between forms, outside its declared CRS or uses a CRS the API does not transform."
+        x-example-request: "/v1/coordinates:convert?crs=EPSG:27700&gridref=TQ300008000"
+      description: >
+        Converts one horizontal coordinate to WGS 84 without reading a boundary
+        release. Supply default WGS 84 `lng` and `lat`, British National Grid
+        `easting` and `northing` or an Ordnance Survey `gridref` with
+        `crs=EPSG:27700`, or Irish Grid `easting` and `northing` with
+        `crs=EPSG:29902`.
+
+
+        The answer keeps the input form and named transformation. An Ordnance
+        Survey grid reference denotes a square, not a point: the coordinate is
+        the cell centre and uncertainty includes the square's half-diagonal.
+        This route only normalises horizontal position; it neither determines
+        altitude nor implies an administrative-area relationship.
+      parameters:
+        - name: lng
+          in: query
+          required: false
+          schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+          description: Longitude in WGS 84 decimal degrees, -180 to 180.
+        - name: lat
+          in: query
+          required: false
+          schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+          description: Latitude in WGS 84 decimal degrees, -90 to 90.
+        - $ref: "#/components/parameters/PointLookupCrs"
+        - $ref: "#/components/parameters/PointLookupEasting"
+        - $ref: "#/components/parameters/PointLookupNorthing"
+        - $ref: "#/components/parameters/PointLookupGridReference"
+        - $ref: "#/components/parameters/PointLookupAccuracy"
+      responses:
+        "200":
+          description: The normalised WGS 84 coordinate and transparent input precision.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CoordinateConversionEnvelope"
+              x-example-request: "/v1/coordinates:convert?crs=EPSG:27700&gridref=TQ3000080000"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:da4898229392e8fa52cd5098cf24c52f11abf454b0adcab178c6c82e30032c15
+                data:
+                  point:
+                    lng: -0.1283466
+                    lat: 51.5039953
+                    crs: EPSG:4326
+                    input:
+                      crs: EPSG:27700
+                      easting: 530000.5
+                      northing: 180000.5
+                      gridReference:
+                        value: TQ 30000 80000
+                        cellSizeM: 1
+                        position: cell-centre
+                      transformation:
+                        name: OSGB36 to WGS 84 (6)
+                        epsg: EPSG:1314
+                        accuracyM: 2
+                        areaOfUse: Great Britain onshore and the Isle of Man.
+                    precision:
+                      decimalPlaces:
+                        gridReference: { easting: 5, northing: 5 }
+                      uncertaintyM: 2.71
+                      basis: grid-reference-and-transformation
+                  targetCrs: EPSG:4326
+                  note: This is a horizontal-coordinate normalisation only. It does not determine altitude, vertical datum or an administrative area.
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+
   /datasets:
     get:
       operationId: listDatasets
@@ -8300,6 +8377,23 @@ components:
                 epsg: { type: string }
                 accuracyM: { type: number }
                 areaOfUse: { type: string }
+
+    CoordinateConversion:
+      type: object
+      required: [point, targetCrs, note]
+      properties:
+        point:
+          $ref: "#/components/schemas/LookupPoint"
+        targetCrs: { const: "EPSG:4326" }
+        note: { type: string }
+
+    CoordinateConversionEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/CoordinateConversion"
 
     PointCountry:
       type: object

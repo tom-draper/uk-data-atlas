@@ -33,6 +33,7 @@ export const handleIndexRoutes = ({
 				"/v1/geography-inventory",
 				"/v1/terrain",
 				"/v1/terrain/{terrain-id}",
+				"/v1/coordinates:convert",
 				"/v1/datasets",
 				"/v1/datasets/{dataset-id}",
 				"/v1/measures",
