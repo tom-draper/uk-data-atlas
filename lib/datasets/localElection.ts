@@ -20,7 +20,7 @@ const localElectionChart = (
 	group: "Local Election",
 	key: `localElection-${year}`,
 	label: `${year} Local Elections`,
-	defaultVisible: true,
+	defaultVisible: year > 2019,
 	componentPath: "@/components/elections/local/LocalElectionRegistryChart",
 	calculateStats,
 	year,

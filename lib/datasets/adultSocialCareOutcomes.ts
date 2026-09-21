@@ -10,7 +10,7 @@ export const adultSocialCareOutcomesDefinition: ChartDatasetDefinition<
 		group: "Health",
 		key: "health-adultSocialCareOutcomes",
 		label: "Social Care Quality of Life [2025]",
-		defaultVisible: true,
+		defaultVisible: false,
 		componentPath: "@/components/IndicatorChart",
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(averageIndicatorAggregation, g, d, l, id),

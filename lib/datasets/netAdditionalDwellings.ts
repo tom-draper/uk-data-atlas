@@ -10,7 +10,7 @@ export const netAdditionalDwellingsDefinition: ChartDatasetDefinition<
 		group: "Economics",
 		key: "economics-netAdditionalDwellings",
 		label: "Net Additional Dwellings [2025]",
-		defaultVisible: true,
+		defaultVisible: false,
 		componentPath: "@/components/IndicatorChart",
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(averageIndicatorAggregation, g, d, l, id),

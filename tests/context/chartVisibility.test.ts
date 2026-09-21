@@ -12,6 +12,25 @@ afterEach(() => {
 
 describe("chart visibility store", () => {
 	it(
+		"hides the 2016 to 2019 local election cards by default",
+		async () => {
+			const { DEFAULT_VISIBILITY } =
+				await import("@/lib/context/ChartVisibilityContext");
+			for (const year of [2016, 2017, 2018, 2019]) {
+				expect(DEFAULT_VISIBILITY[`localElection-${year}`]).toBe(false);
+			}
+			expect(DEFAULT_VISIBILITY["localElection-2021"]).toBe(true);
+			expect(DEFAULT_VISIBILITY["economics-netAdditionalDwellings"]).toBe(
+				false,
+			);
+			expect(DEFAULT_VISIBILITY["health-adultSocialCareOutcomes"]).toBe(
+				false,
+			);
+		},
+		COLD_IMPORT_TIMEOUT,
+	);
+
+	it(
 		"includes source text for every settings entry",
 		async () => {
 			const { CHART_CONFIG } =
