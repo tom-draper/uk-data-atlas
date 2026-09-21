@@ -6,7 +6,7 @@ import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handlePinnedRoutes } from "./pinnedRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
-import { handleTerrainRoutes } from "./terrainRoutes";
+import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinateRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
 import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
@@ -432,4 +432,18 @@ export const routeFamiliesOwning = (segments: string[]) =>
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 	const family = routeFamilies.find(({ owns }) => owns(request.segments));
 	return family?.handle(request);
+};
+
+export const handleRouteAsync = async (
+	request: RouteRequest,
+): Promise<ApiResponse | undefined> => {
+	if (
+		request.segments[0] === "v1" &&
+		request.segments[1] === "terrain" &&
+		request.segments[2] === "elevation" &&
+		request.segments[3] === "point"
+	) {
+		return handleTerrainRoutesAsync(request);
+	}
+	return handleRoute(request);
 };

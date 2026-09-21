@@ -28,6 +28,10 @@ export const SECTIONS: Record<string, SectionContent> = {
 		title: "Areas & boundaries",
 		intro: "Everything about the areas themselves: codes and names, boundary releases, map tiles, how areas nest and overlap, and how codes change over time.",
 	},
+	terrain: {
+		title: "Terrain",
+		intro: "Discover versioned terrain products and sample elevation with its interpolation method, coverage status, coordinate reference, datum and uncertainty.",
+	},
 	"data-catalogue": {
 		title: "Catalogue",
 		intro: "Discover what data exists: the source datasets, the measures built from them, and where each one can be used.",

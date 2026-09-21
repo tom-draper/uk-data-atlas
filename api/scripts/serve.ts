@@ -34,6 +34,10 @@ process.on("unhandledRejection", (reason) => {
 const loading = performance.now();
 const catalogues = readApiCatalogues(apiRoot, {
 	geometryCacheReleases: configuration.geometryCacheReleases,
+	terrainRemoteEndpoint: configuration.terrainRemoteEndpoint,
+	terrainCoverageEndpoint: configuration.terrainCoverageEndpoint,
+	terrainRemoteTimeoutMs: configuration.terrainRemoteTimeoutMs,
+	terrainRemoteConcurrency: configuration.terrainRemoteConcurrency,
 });
 const server = createApiServer(catalogues, configuration.server);
 

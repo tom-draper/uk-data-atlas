@@ -33,6 +33,7 @@ import type { ValidationReport } from "./validationReport";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
 import type { TerrainCatalogue } from "./terrainCatalogue";
+import type { AsyncTerrainProvider, TerrainProvider } from "./terrainProvider";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -64,6 +65,10 @@ export type RouteContext = {
 	dataCatalog?: DataCatalog;
 	/** Versioned terrain product definitions and their honest availability. */
 	terrainCatalogue?: TerrainCatalogue;
+	/** Optional versioned terrain source; absent means no elevation values are published. */
+	terrainProvider?: TerrainProvider;
+	/** Optional network-backed preview provider; requests are awaited by the HTTP server. */
+	terrainAsyncProvider?: AsyncTerrainProvider;
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
 	/** Every measure's observations bar the two population artifacts. */

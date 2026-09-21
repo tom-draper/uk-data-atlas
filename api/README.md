@@ -2313,6 +2313,10 @@ rather than falling back to the default.
 | `ATLAS_ACCESS_LOG` | `on` | Log every request, not only failures. |
 | `ATLAS_MAX_URL_LENGTH` | `4096` | Longest request target served. |
 | `ATLAS_SHUTDOWN_GRACE_SECONDS` | `10` | Time to finish open requests after `SIGTERM`. |
+| `ATLAS_TERRAIN_REMOTE_ENDPOINT` | unset | ArcGIS ImageServer `getSamples` endpoint for the non-persistent EA terrain preview provider. |
+| `ATLAS_TERRAIN_COVERAGE_ENDPOINT` | unset | Optional ArcGIS FeatureServer query endpoint used to verify exact coverage before sampling. |
+| `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS` | `5000` | Maximum time for one remote terrain request. |
+| `ATLAS_TERRAIN_REMOTE_CONCURRENCY` | `4` | Maximum concurrent remote terrain requests. |
 
 ### Deployment smoke test
 
@@ -3469,6 +3473,7 @@ second inventory to maintain:
 
 - `GET /v1/terrain` — Discover terrain product families and their availability
 - `GET /v1/terrain/{terrain-id}` — Get one terrain product definition
+- `GET /v1/terrain/elevation/point` — Get one terrain elevation point
 
 **Data catalogue**
 

@@ -1,4 +1,4 @@
-import { handleRoute } from "./routeHandlers";
+import { handleRoute, handleRouteAsync } from "./routeHandlers";
 import type { RouteContext } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 
@@ -46,5 +46,35 @@ export const route = (
 			segments: segments as string[],
 			dispatch: (nextUrl) => route("GET", nextUrl, context),
 		}) ?? problem(404, "Not Found", "No API resource matches that path.")
+	);
+};
+
+export const routeAsync = async (
+	method: string | undefined,
+	url: string | undefined,
+	context: RouteContext,
+): Promise<ApiResponse> => {
+	const releaseId =
+		context.atlasRelease?.releaseId ?? context.boundaryRegistry.contentHash;
+	if (method !== "GET") return route(method, url, context);
+	const parsedUrl = new URL(url ?? "/", "http://localhost");
+	const segments = parsedUrl.pathname
+		.split("/")
+		.filter(Boolean)
+		.map(decodePathSegment);
+	if (segments.some((segment) => segment === undefined))
+		return problem(
+			400,
+			"Invalid Path",
+			"The request path contains invalid encoding.",
+		);
+	return (
+		(await handleRouteAsync({
+			context,
+			releaseId,
+			parsedUrl,
+			segments: segments as string[],
+			dispatch: (nextUrl) => route("GET", nextUrl, context),
+		})) ?? problem(404, "Not Found", "No API resource matches that path.")
 	);
 };

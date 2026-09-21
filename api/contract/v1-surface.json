@@ -1137,6 +1137,122 @@
 				]
 			}
 		},
+		"GET /terrain/elevation/point": {
+			"operationId": "getTerrainElevationPoint",
+			"parameters": {
+				"query:x": {
+					"required": true
+				},
+				"query:y": {
+					"required": true
+				},
+				"query:interpolation": {
+					"required": false,
+					"enum": [
+						"bilinear",
+						"nearest"
+					]
+				},
+				"query:version": {
+					"required": false
+				}
+			},
+			"responses": {
+				"200 application/json": [
+					"apiVersion",
+					"atlasRelease",
+					"data",
+					"data.interpolation",
+					"data.source",
+					"data.source.contentHash",
+					"data.source.coverage",
+					"data.source.coverage.bbox",
+					"data.source.coverage.footprintHash",
+					"data.source.coverage.kind",
+					"data.source.crs",
+					"data.source.horizontalDatum",
+					"data.source.horizontalTransformation",
+					"data.source.id",
+					"data.source.noData",
+					"data.source.provenance",
+					"data.source.resolutionMetres",
+					"data.source.tileHash",
+					"data.source.uncertainty",
+					"data.source.uncertainty.metric",
+					"data.source.uncertainty.valueMetres",
+					"data.source.version",
+					"data.source.verticalDatum",
+					"data.source.verticalModel",
+					"data.status",
+					"data.unit",
+					"data.value",
+					"data.x",
+					"data.y",
+					"meta",
+					"meta.nextCursor"
+				],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /coordinates:convert": {
 			"operationId": "convertCoordinate",
 			"parameters": {
