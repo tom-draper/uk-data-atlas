@@ -23,6 +23,7 @@ import {
 } from "./aggregationMembership";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { calculateWeightedMean } from "./weightedMean";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -556,16 +557,11 @@ export const handleDataAggregateRoutes = ({
 							.reduce((total, record) => total + record.value, 0),
 					}
 				: aggregateCountryMembers(areaCode as string, weightRecords);
-		const valueCodes = new Set(
-			aggregate.members.map((record) => record.areaCode),
+		const weightedMean = calculateWeightedMean(
+			aggregate.members,
+			weightAggregate.members,
 		);
-		const weightsByCode = new Map(
-			weightAggregate.members.map((record) => [record.areaCode, record]),
-		);
-		if (
-			weightAggregate.members.length !== aggregate.members.length ||
-			[...valueCodes].some((code) => !weightsByCode.has(code))
-		) {
+		if (weightedMean.kind === "partial_coverage") {
 			return problem(
 				422,
 				"Operation Not Supported",
@@ -573,17 +569,7 @@ export const handleDataAggregateRoutes = ({
 				{ code: "partial_coverage" },
 			);
 		}
-		const totalWeight = weightAggregate.members.reduce(
-			(total, record) => total + record.value,
-			0,
-		);
-		if (
-			!Number.isFinite(totalWeight) ||
-			totalWeight <= 0 ||
-			weightAggregate.members.some(
-				(record) => !Number.isFinite(record.value) || record.value < 0,
-			)
-		) {
+		if (weightedMean.kind === "invalid_weights") {
 			return problem(
 				422,
 				"Operation Not Supported",
@@ -591,19 +577,12 @@ export const handleDataAggregateRoutes = ({
 				{ code: "aggregation_not_supported" },
 			);
 		}
-		aggregateValue =
-			aggregate.members.reduce(
-				(total, record) =>
-					total +
-					record.value *
-						(weightsByCode.get(record.areaCode)?.value ?? 0),
-				0,
-			) / totalWeight;
+		aggregateValue = weightedMean.value;
 		weighting = {
 			measure: weightMeasure,
 			source: weightSource,
 			observations: weightObservations,
-			total: totalWeight,
+			total: weightedMean.totalWeight,
 		};
 	}
 	const country = location
