@@ -12,7 +12,7 @@ export default function Home() {
 	return (
 		<div
 			style={{
-				backgroundImage: "url(/map-background.png)",
+				backgroundImage: "url(/map-background.webp)",
 				backgroundSize: "cover",
 				minHeight: "100vh",
 			}}
