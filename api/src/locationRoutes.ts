@@ -2,6 +2,7 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { reconcileMembers } from "./memberReconciliation";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
+import { notBuilt, unsupported } from "./capability";
 
 /** Discovery endpoints for the Atlas's curated named locations. */
 export const handleLocationRoutes = ({
@@ -50,6 +51,13 @@ export const handleLocationRoutes = ({
 					"No named location matches that identity.",
 				);
 	}
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "locations" &&
+		segments[3] === "capabilities"
+	)
+		return locationCapabilities({ context, releaseId, segments });
 	if (
 		segments.length === 4 &&
 		segments[0] === "v1" &&
@@ -209,6 +217,108 @@ export const handleLocationRoutes = ({
 	)
 		return locationParents({ context, releaseId, parsedUrl, segments });
 	return undefined;
+};
+
+/** Published direct and crosswalk views for a curated location definition. */
+const locationCapabilities = ({
+	context,
+	releaseId,
+	segments,
+}: Pick<RouteRequest, "context" | "releaseId" | "segments">): ApiResponse => {
+	const { geographyResolver, areaLookup } = context;
+	const location = geographyResolver?.namedLocation(segments[2]!);
+	if (!location)
+		return problem(
+			404,
+			"Not Found",
+			"No named location matches that identity.",
+		);
+	const direct = !areaLookup
+		? notBuilt("Build the area inventory before listing direct location views.")
+		: (() => {
+				const views = [...areaLookup.entries()]
+					.flatMap(([identity, areas]) => {
+						const [geography, boundaryRelease] = identity.split("/");
+						if (geography !== location.memberGeography) return [];
+						const resolvedMemberCount = location.memberCodes.filter(
+							(code) => areas.has(code),
+						).length;
+						return [
+							{
+								geography,
+								boundaryRelease,
+								status:
+									resolvedMemberCount === location.memberCodes.length
+										? ("available" as const)
+										: ("partial" as const),
+								memberCodeCount: location.memberCodes.length,
+								resolvedMemberCount,
+								href: `/v1/locations/${location.id}/members?release=${boundaryRelease}`,
+							},
+						];
+					})
+					.sort((left, right) =>
+						left.boundaryRelease.localeCompare(right.boundaryRelease),
+					);
+				return views.length > 0
+					? { status: "available" as const, views }
+					: unsupported(
+							`No compiled ${location.memberGeography} release is available for this location.`,
+						);
+			})();
+	const members = !geographyResolver?.hasLocationProjectionStore()
+		? notBuilt(
+				"Build the location projection inventory before listing crosswalk member views.",
+			)
+		: (() => {
+				const views = geographyResolver
+					.locationMemberProjectionShards(location.memberGeography)
+					.map(({ shard, summary }) => ({
+						geography: shard.geography,
+						boundaryRelease: shard.boundaryRelease,
+						via: {
+							id: summary.id,
+							method: summary.method,
+							quality: summary.quality,
+						},
+						href: `/v1/locations/${location.id}/members?geography=${shard.geography}&release=${shard.boundaryRelease}&via=${summary.id}`,
+					}));
+				return views.length > 0
+					? { status: "available" as const, views }
+					: unsupported(
+							`No published crosswalk projection reaches this location's ${location.memberGeography} members.`,
+						);
+			})();
+	const parents = !geographyResolver?.hasLocationProjectionStore()
+		? notBuilt(
+				"Build the location projection inventory before listing parent views.",
+			)
+		: (() => {
+				const views = geographyResolver
+					.locationParentProjectionShards(location.memberGeography)
+					.map(({ shard, summary }) => ({
+						geography: shard.geography,
+						boundaryRelease: shard.boundaryRelease,
+						via: {
+							id: summary.id,
+							method: summary.method,
+							quality: summary.quality,
+						},
+						href: `/v1/locations/${location.id}/parents?geography=${shard.geography}&release=${shard.boundaryRelease}&via=${summary.id}`,
+					}));
+				return views.length > 0
+					? { status: "available" as const, views }
+					: unsupported(
+							`No published parent projection starts from this location's ${location.memberGeography} members.`,
+						);
+			})();
+	return {
+		status: 200,
+		body: envelope(releaseId, {
+			location,
+			capabilities: { direct, members, parents },
+		}),
+	};
 };
 
 const RELATION_RULE = `A parent is covered when the location takes in all of it: for a containment lookup, every area the publisher places in the parent is a member; for an area-overlap crosswalk, the members cover at least ${COVERS_MINIMUM_SHARE} of its area. Otherwise the location only intersects it. locationWithin names the single parent holding every member, and is null when members fall in several parents or any is placed in none.`;

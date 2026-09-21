@@ -6183,6 +6183,37 @@
 				]
 			}
 		},
+		"GET /locations/{location-id}/capabilities": {
+			"operationId": "getNamedLocationCapabilities",
+			"parameters": {
+				"path:location-id": {
+					"required": true
+				}
+			},
+			"responses": {
+				"200 application/json": [],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /locations/{location-id}/members": {
 			"operationId": "getNamedLocationMembers",
 			"parameters": {

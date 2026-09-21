@@ -94,6 +94,42 @@ test("publishes curated named locations and reports unresolved legacy members", 
 	});
 });
 
+test("discovers a named location's direct and compiled-view capabilities", () => {
+	const response = routeWithNamedLocations(
+		"/v1/locations/greater-manchester/capabilities",
+	);
+	assert.equal(response.status, 200);
+	const data = ("data" in response.body && response.body.data) as {
+		location: { id: string };
+		capabilities: {
+			direct: {
+				status: string;
+				views: {
+					boundaryRelease: string;
+					status: string;
+					href: string;
+				}[];
+			};
+			members: { status: string; reason: string };
+			parents: { status: string; reason: string };
+		};
+	};
+	assert.equal(data.location.id, "greater-manchester");
+	assert.equal(data.capabilities.direct.status, "available");
+	assert.ok(
+		data.capabilities.direct.views.some(
+			(view) =>
+				view.boundaryRelease === "2025-01-uk-lad" &&
+				view.status === "partial" &&
+				view.href ===
+					"/v1/locations/greater-manchester/members?release=2025-01-uk-lad",
+		),
+	);
+	assert.equal(data.capabilities.members.status, "not-built");
+	assert.match(data.capabilities.members.reason, /projection inventory/);
+	assert.equal(data.capabilities.parents.status, "not-built");
+});
+
 test("uses a location's declared member geography for direct membership", () => {
 	const inventory = {
 		...namedLocationInventory,
@@ -244,6 +280,31 @@ test("resolves a named location into another geography through a crosswalk", () 
 	assert.equal(data.partialMembers, 0);
 	assert.match(data.membershipNote, /wholly inside/);
 
+	const capabilities = routeRequest(
+		"GET",
+		"/v1/locations/greater-manchester/capabilities",
+		context,
+	);
+	assert.equal(capabilities.status, 200);
+	const capabilityData = ("data" in capabilities.body &&
+		capabilities.body.data) as {
+		capabilities: {
+			members: {
+				status: string;
+				views: { geography: string; boundaryRelease: string; via: { id: string } }[];
+			};
+		};
+	};
+	assert.equal(capabilityData.capabilities.members.status, "available");
+	assert.ok(
+		capabilityData.capabilities.members.views.some(
+			(view) =>
+				view.geography === "ward" &&
+				view.boundaryRelease === "2025-01-en-ward" &&
+				view.via.id === "ward-to-local-authority-2025",
+		),
+	);
+
 	const withoutProjections: RouteContext = {
 		...context,
 		geographyResolver: createGeographyResolver({
@@ -340,9 +401,11 @@ test("says which parents a named location covers or meets", () => {
 	const context: RouteContext = {
 		boundaryRegistry: registry,
 		areaLookup,
+		crosswalkInventory: inventory,
 		namedLocationLookup,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
+			crosswalkInventory: inventory,
 			namedLocationLookup,
 			locationProjectionStore: new LocationProjectionStore(
 				compiled.inventory,
@@ -357,6 +420,34 @@ test("says which parents a named location covers or meets", () => {
 			),
 		}),
 	};
+	const capabilities = routeRequest(
+		"GET",
+		"/v1/locations/greater-manchester/capabilities",
+		context,
+	);
+	assert.equal(capabilities.status, 200);
+	const capabilityData = ("data" in capabilities.body &&
+		capabilities.body.data) as {
+		capabilities: {
+			parents: {
+				status: string;
+				views: { geography: string; boundaryRelease: string; via: { id: string } }[];
+			};
+		};
+	};
+	assert.equal(capabilityData.capabilities.parents.status, "available");
+	assert.deepEqual(capabilityData.capabilities.parents.views, [
+		{
+			geography: "region",
+			boundaryRelease: "2025-12-en",
+			via: {
+				id: "local-authority-to-region-2025",
+				method: "official-lookup",
+				quality: "publisher-supplied",
+			},
+			href: "/v1/locations/greater-manchester/parents?geography=region&release=2025-12-en&via=local-authority-to-region-2025",
+		},
+	]);
 	const ask = (query: string) =>
 		routeRequest(
 			"GET",

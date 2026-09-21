@@ -397,6 +397,40 @@ export class GeographyResolver {
 		return this.inputs.locationProjectionStore !== undefined;
 	}
 
+	/** Materialised routes into the declared member geography of a location. */
+	locationMemberProjectionShards(memberGeography: string) {
+		const store = this.inputs.locationProjectionStore;
+		const summaries = new Map(
+			(this.inputs.crosswalkInventory?.crosswalks ?? []).map((summary) => [
+				summary.id,
+				summary,
+			]),
+		);
+		return (store?.memberProjectionShards() ?? []).flatMap((shard) => {
+			const summary = summaries.get(shard.crosswalkId);
+			return summary?.to.geography === memberGeography
+				? [{ shard, summary }]
+				: [];
+		});
+	}
+
+	/** Materialised routes out of the declared member geography of a location. */
+	locationParentProjectionShards(memberGeography: string) {
+		const store = this.inputs.locationProjectionStore;
+		const summaries = new Map(
+			(this.inputs.crosswalkInventory?.crosswalks ?? []).map((summary) => [
+				summary.id,
+				summary,
+			]),
+		);
+		return (store?.parentProjectionShards() ?? []).flatMap((shard) => {
+			const summary = summaries.get(shard.crosswalkId);
+			return summary?.from.geography === memberGeography
+				? [{ shard, summary }]
+				: [];
+		});
+	}
+
 	/** Crosswalks with materialised location parents in a geography release. */
 	locationParentCrosswalks(geography: string, boundaryRelease: string) {
 		return (
