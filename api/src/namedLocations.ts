@@ -7,8 +7,11 @@ type GazetteerCore = {
 };
 
 type GazetteerNamedLocation = {
+	definitionRevision?: unknown;
 	memberCodes?: unknown;
 	memberGeography?: unknown;
+	validFrom?: unknown;
+	validTo?: unknown;
 	bbox?: unknown;
 };
 
@@ -18,9 +21,13 @@ export type NamedLocation = {
 	id: string;
 	label: string;
 	kind: "editorial-grouping";
+	/** Revision of this definition in the curated gazetteer. */
+	definitionRevision: number;
 	/** The geography whose codes define this editorial grouping. */
 	memberGeography: string;
 	memberCodes: string[];
+	/** Known temporal bounds of the definition; null means the source gives none. */
+	validity: { from: string | null; to: string | null };
 	bbox: [number, number, number, number];
 };
 
@@ -66,6 +73,23 @@ const memberGeography = (value: unknown): string | undefined =>
 			? value.trim()
 			: undefined;
 
+const revision = (value: unknown, fallback: number): number | undefined =>
+	value === undefined
+		? fallback
+		: typeof value === "number" && Number.isSafeInteger(value) && value > 0
+			? value
+			: undefined;
+
+const isoDate = (value: unknown): string | null | undefined => {
+	if (value === undefined) return null;
+	if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value))
+		return undefined;
+	const date = new Date(`${value}T00:00:00.000Z`);
+	return Number.isNaN(date.valueOf()) || date.toISOString().slice(0, 10) !== value
+		? undefined
+		: value;
+};
+
 /**
  * Compile the existing, curated Atlas location definitions into an API artifact.
  * They remain explicitly editorial groupings: this compiler adds no claim that a
@@ -81,16 +105,32 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 	) {
 		throw new Error(`Invalid gazetteer named locations at ${path}`);
 	}
+	const gazetteerVersion = source.version;
 
 	const seenIds = new Set<string>();
 	const locations = Object.entries(source.namedLocations)
 		.map(([label, value]) => {
 			const entry = value as GazetteerNamedLocation;
 			const id = idFor(label);
+			const definitionRevision = revision(
+				entry.definitionRevision,
+				gazetteerVersion,
+			);
 			const members = memberCodes(entry.memberCodes);
 			const geography = memberGeography(entry.memberGeography);
+			const validFrom = isoDate(entry.validFrom);
+			const validTo = isoDate(entry.validTo);
 			const bounds = bbox(entry.bbox);
-			if (!id || !members || !geography || !bounds) {
+			if (
+				!id ||
+				!definitionRevision ||
+				!members ||
+				!geography ||
+				validFrom === undefined ||
+				validTo === undefined ||
+				(validFrom !== null && validTo !== null && validFrom > validTo) ||
+				!bounds
+			) {
 				throw new Error(`${path}: named location ${label} is invalid`);
 			}
 			if (seenIds.has(id)) {
@@ -103,8 +143,10 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 				id,
 				label,
 				kind: "editorial-grouping" as const,
+				definitionRevision,
 				memberGeography: geography,
 				memberCodes: members,
+				validity: { from: validFrom, to: validTo },
 				bbox: bounds,
 			};
 		})

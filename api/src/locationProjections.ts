@@ -20,6 +20,8 @@ import type { NamedLocationInventory } from "./namedLocations";
 
 export type LocationProjection = {
 	locationId: string;
+	/** Curated location definition revision used to compile this projection. */
+	locationDefinitionRevision: number;
 	geography: string;
 	boundaryRelease: string;
 	membership: MembershipKind;
@@ -45,6 +47,8 @@ type ProjectionVia = LocationProjection["via"];
 /** A location seen from a coarser geography: which parents it covers or meets. */
 export type LocationParentProjection = ParentProjection & {
 	locationId: string;
+	/** Curated location definition revision used to compile this projection. */
+	locationDefinitionRevision: number;
 	geography: string;
 	boundaryRelease: string;
 	via: ProjectionVia;
@@ -141,6 +145,7 @@ const compileLocationProjectionArtifact = (
 			const members = membersThroughCrosswalk(crosswalk, parentCodes);
 			return {
 				locationId: location.id,
+				locationDefinitionRevision: location.definitionRevision,
 				geography: crosswalk.from.geography,
 				boundaryRelease: crosswalk.from.boundaryRelease,
 				membership: membershipKindFor(crosswalk),
@@ -250,6 +255,7 @@ const compileLocationParentArtifact = (
 			);
 			return {
 				locationId: location.id,
+				locationDefinitionRevision: location.definitionRevision,
 				geography: crosswalk.to.geography,
 				boundaryRelease: crosswalk.to.boundaryRelease,
 				via: viaFor(summary, crosswalk),

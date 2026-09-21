@@ -5922,7 +5922,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:0daa596d402f70abc25bf79b711513ca5cad50f305b7faf1292c9b64ec9b6e0e
+                    href: /v1/atlas-releases/sha256:1406a82996df26c11a1d86b86fb8da468f1bd2e4037eff6754c3d512e1dd727a
                     artifactCount: 338
                     current: true
                 meta:
@@ -6113,10 +6113,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:0daa596d402f70abc25bf79b711513ca5cad50f305b7faf1292c9b64ec9b6e0e
+                    href: /v1/atlas-releases/sha256:1406a82996df26c11a1d86b86fb8da468f1bd2e4037eff6754c3d512e1dd727a
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:0daa596d402f70abc25bf79b711513ca5cad50f305b7faf1292c9b64ec9b6e0e
+                    href: /v1/atlas-releases/sha256:1406a82996df26c11a1d86b86fb8da468f1bd2e4037eff6754c3d512e1dd727a
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []
@@ -6358,7 +6358,9 @@ paths:
         geographies do not name. It is not a generic geographic location and
         not an official administrative geography, and its membership holds
         only through a crosswalk the caller names. `q` matches an id or label
-        prefix.
+        prefix. `definitionRevision` identifies the curated definition used;
+        `validity` gives its known bounds, with null bounds when the curator
+        has not supplied dates.
       parameters:
         - name: q
           in: query
@@ -6380,9 +6382,11 @@ paths:
                   - id: york
                     label: York
                     kind: editorial-grouping
+                    definitionRevision: 1
                     memberGeography: localAuthority
                     memberCodes:
                       - E06000014
+                    validity: { from: null, to: null }
                     bbox:
                       - -1.15
                 meta:
@@ -6415,9 +6419,11 @@ paths:
                   id: london
                   label: London
                   kind: editorial-grouping
+                  definitionRevision: 1
                   memberGeography: localAuthority
                   memberCodes:
                     - E09000001
+                  validity: { from: null, to: null }
                   bbox:
                     - -0.5
                 meta:
@@ -6531,9 +6537,11 @@ paths:
                     id: north-wales
                     label: North Wales
                     kind: editorial-grouping
+                    definitionRevision: 1
                     memberGeography: localAuthority
                     memberCodes:
                       - W06000001
+                    validity: { from: null, to: null }
                     bbox:
                       - -4.8
                   geography: ward

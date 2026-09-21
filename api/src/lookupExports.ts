@@ -200,19 +200,39 @@ export const namedLocationMembersTable = (
 			"How the location is defined; editorial-grouping is a curated grouping, not an official area.",
 		),
 		column(
+			"definitionRevision",
+			"number",
+			"The curated definition revision for this location.",
+		),
+		column(
 			"memberGeography",
 			"string",
 			"The geography whose area codes define the location.",
 		),
 		column("memberCode", "string", "The official code of one member area."),
+		column(
+			"validFrom",
+			"string",
+			"The first date this definition is known to apply, when supplied by the curator.",
+			false,
+		),
+		column(
+			"validTo",
+			"string",
+			"The first date this definition is known not to apply, when supplied by the curator.",
+			false,
+		),
 	],
 	rows: inventory.locations.flatMap((location) =>
 		location.memberCodes.map((memberCode) => ({
 			locationId: location.id,
 			label: location.label,
 			kind: location.kind,
+			definitionRevision: location.definitionRevision,
 			memberGeography: location.memberGeography,
 			memberCode,
+			validFrom: location.validity.from,
+			validTo: location.validity.to,
 		})),
 	),
 });

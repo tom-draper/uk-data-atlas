@@ -40,6 +40,10 @@ export const describeCandidate = (candidate: PlaceCandidate) => ({
 	...(candidate.matchedLabel !== candidate.name
 		? { matchedLabel: candidate.matchedLabel }
 		: {}),
+	...(candidate.definitionRevision
+		? { definitionRevision: candidate.definitionRevision }
+		: {}),
+	...(candidate.validity ? { validity: candidate.validity } : {}),
 });
 
 export const describeAttempt = (attempt: Attempt) =>

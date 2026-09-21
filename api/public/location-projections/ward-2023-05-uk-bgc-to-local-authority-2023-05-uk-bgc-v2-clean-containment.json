@@ -1,12 +1,13 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:559f82394a25da7b4222d7132dc825bc95f2135c7b84953d8a5b9f0a8384e113",
-	"namedLocationInventoryHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c",
+	"contentHash": "sha256:8ac54e8b0efb3fc05a2857456503ef5f6c5fb7db7931c4322602170e06e3f466",
+	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
 	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
 	"projections": [
 		{
 			"locationId": "aberdeen",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -156,6 +157,7 @@
 		},
 		{
 			"locationId": "aberystwyth",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -473,6 +475,7 @@
 		},
 		{
 			"locationId": "armagh-down-and-newry",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -1174,6 +1177,7 @@
 		},
 		{
 			"locationId": "bangor",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -1331,6 +1335,7 @@
 		},
 		{
 			"locationId": "barnsley",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -1555,6 +1560,7 @@
 		},
 		{
 			"locationId": "basingstoke",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -1744,6 +1750,7 @@
 		},
 		{
 			"locationId": "bath",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -2053,6 +2060,7 @@
 		},
 		{
 			"locationId": "belfast-metropolitan-area",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -3538,6 +3546,7 @@
 		},
 		{
 			"locationId": "belfast",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -4063,6 +4072,7 @@
 		},
 		{
 			"locationId": "birmingham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -4660,6 +4670,7 @@
 		},
 		{
 			"locationId": "blackburn",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -4841,6 +4852,7 @@
 		},
 		{
 			"locationId": "blackpool",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -5054,6 +5066,7 @@
 		},
 		{
 			"locationId": "bolton",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -5259,6 +5272,7 @@
 		},
 		{
 			"locationId": "bournemouth",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -5568,6 +5582,7 @@
 		},
 		{
 			"locationId": "bradford",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -5853,6 +5868,7 @@
 		},
 		{
 			"locationId": "brighton-and-hove",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -6082,6 +6098,7 @@
 		},
 		{
 			"locationId": "bristol",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -6399,6 +6416,7 @@
 		},
 		{
 			"locationId": "buckinghamshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -6889,6 +6907,7 @@
 		},
 		{
 			"locationId": "cambridge",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -7046,6 +7065,7 @@
 		},
 		{
 			"locationId": "canterbury",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -7259,6 +7279,7 @@
 		},
 		{
 			"locationId": "cardiff-and-the-valleys",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -8880,6 +8901,7 @@
 		},
 		{
 			"locationId": "cardiff",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -9149,6 +9171,7 @@
 		},
 		{
 			"locationId": "carlisle",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -9210,6 +9233,7 @@
 		},
 		{
 			"locationId": "causeway-coast-and-antrim",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -9895,6 +9919,7 @@
 		},
 		{
 			"locationId": "central-belt",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -11051,6 +11076,7 @@
 		},
 		{
 			"locationId": "cheltenham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -11256,6 +11282,7 @@
 		},
 		{
 			"locationId": "cheshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -12397,6 +12424,7 @@
 		},
 		{
 			"locationId": "chester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -12802,6 +12830,7 @@
 		},
 		{
 			"locationId": "chesterfield",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -12975,6 +13004,7 @@
 		},
 		{
 			"locationId": "colchester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -13156,6 +13186,7 @@
 		},
 		{
 			"locationId": "cornwall",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -13897,6 +13928,7 @@
 		},
 		{
 			"locationId": "coventry",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -14086,6 +14118,7 @@
 		},
 		{
 			"locationId": "crawley",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -14235,6 +14268,7 @@
 		},
 		{
 			"locationId": "darlington",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -14440,6 +14474,7 @@
 		},
 		{
 			"locationId": "derby",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -14629,6 +14664,7 @@
 		},
 		{
 			"locationId": "derbyshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -15962,6 +15998,7 @@
 		},
 		{
 			"locationId": "devon",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -18047,6 +18084,7 @@
 		},
 		{
 			"locationId": "doncaster",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -18260,6 +18298,7 @@
 		},
 		{
 			"locationId": "dorset",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -19052,6 +19091,7 @@
 		},
 		{
 			"locationId": "dudley",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -19289,6 +19329,7 @@
 		},
 		{
 			"locationId": "dundee",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -19398,6 +19439,7 @@
 		},
 		{
 			"locationId": "durham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -19947,6 +19989,7 @@
 		},
 		{
 			"locationId": "east-midlands",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -26107,6 +26150,7 @@
 		},
 		{
 			"locationId": "east-of-england",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -33916,6 +33960,7 @@
 		},
 		{
 			"locationId": "edinburgh",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -34097,6 +34142,7 @@
 		},
 		{
 			"locationId": "england",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -34141,6 +34187,7 @@
 		},
 		{
 			"locationId": "essex",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -36058,6 +36105,7 @@
 		},
 		{
 			"locationId": "exeter",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -36207,6 +36255,7 @@
 		},
 		{
 			"locationId": "fife",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -36439,6 +36488,7 @@
 		},
 		{
 			"locationId": "gateshead",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -36669,6 +36719,7 @@
 		},
 		{
 			"locationId": "glasgow",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -36910,6 +36961,7 @@
 		},
 		{
 			"locationId": "gloucester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -37099,6 +37151,7 @@
 		},
 		{
 			"locationId": "gloucestershire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -38248,6 +38301,7 @@
 		},
 		{
 			"locationId": "grampian",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -38613,6 +38667,7 @@
 		},
 		{
 			"locationId": "greater-glasgow-and-clyde",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -39150,6 +39205,7 @@
 		},
 		{
 			"locationId": "greater-manchester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -40915,6 +40971,7 @@
 		},
 		{
 			"locationId": "guildford",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -41128,6 +41185,7 @@
 		},
 		{
 			"locationId": "halifax",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -41309,6 +41367,7 @@
 		},
 		{
 			"locationId": "hampshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -43010,6 +43069,7 @@
 		},
 		{
 			"locationId": "harrogate",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -43071,6 +43131,7 @@
 		},
 		{
 			"locationId": "hartlepool",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -43212,6 +43273,7 @@
 		},
 		{
 			"locationId": "hereford",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -43681,6 +43743,7 @@
 		},
 		{
 			"locationId": "hertfordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -45159,6 +45222,7 @@
 		},
 		{
 			"locationId": "huddersfield",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -45388,6 +45452,7 @@
 		},
 		{
 			"locationId": "hull",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -45601,6 +45666,7 @@
 		},
 		{
 			"locationId": "inverness",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -45814,6 +45880,7 @@
 		},
 		{
 			"locationId": "ipswich",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -45987,6 +46054,7 @@
 		},
 		{
 			"locationId": "kent",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -48464,6 +48532,7 @@
 		},
 		{
 			"locationId": "lancashire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -50741,6 +50810,7 @@
 		},
 		{
 			"locationId": "lancaster",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -51002,6 +51072,7 @@
 		},
 		{
 			"locationId": "leeds",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -51311,6 +51382,7 @@
 		},
 		{
 			"locationId": "leicester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -51524,6 +51596,7 @@
 		},
 		{
 			"locationId": "lincoln",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -51657,6 +51730,7 @@
 		},
 		{
 			"locationId": "lincolnshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -53214,6 +53288,7 @@
 		},
 		{
 			"locationId": "lisburn",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -53579,6 +53654,7 @@
 		},
 		{
 			"locationId": "liverpool",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -54136,6 +54212,7 @@
 		},
 		{
 			"locationId": "london",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -59813,6 +59890,7 @@
 		},
 		{
 			"locationId": "londonderry",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -60178,6 +60256,7 @@
 		},
 		{
 			"locationId": "lowlands",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -60527,6 +60606,7 @@
 		},
 		{
 			"locationId": "luton",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -60732,6 +60812,7 @@
 		},
 		{
 			"locationId": "maidstone",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -60985,6 +61066,7 @@
 		},
 		{
 			"locationId": "manchester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -61286,6 +61368,7 @@
 		},
 		{
 			"locationId": "mansfield",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -61619,6 +61702,7 @@
 		},
 		{
 			"locationId": "merseyside",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -62792,6 +62876,7 @@
 		},
 		{
 			"locationId": "mid-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -63405,6 +63490,7 @@
 		},
 		{
 			"locationId": "middlesbrough",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -63610,6 +63696,7 @@
 		},
 		{
 			"locationId": "milton-keynes",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -63807,6 +63894,7 @@
 		},
 		{
 			"locationId": "newcastle-upon-tyne",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -64060,6 +64148,7 @@
 		},
 		{
 			"locationId": "newport",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -64273,6 +64362,7 @@
 		},
 		{
 			"locationId": "newry",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -64646,6 +64736,7 @@
 		},
 		{
 			"locationId": "norfolk",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -66107,6 +66198,7 @@
 		},
 		{
 			"locationId": "north-east-scotland",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -66472,6 +66564,7 @@
 		},
 		{
 			"locationId": "north-east",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -69278,6 +69371,7 @@
 		},
 		{
 			"locationId": "north-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -71179,6 +71273,7 @@
 		},
 		{
 			"locationId": "north-west",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -77953,6 +78048,7 @@
 		},
 		{
 			"locationId": "north-yorkshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -78823,6 +78919,7 @@
 		},
 		{
 			"locationId": "northampton",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -79116,6 +79213,7 @@
 		},
 		{
 			"locationId": "northern-ireland",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -79160,6 +79258,7 @@
 		},
 		{
 			"locationId": "norwich",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -79309,6 +79408,7 @@
 		},
 		{
 			"locationId": "nottingham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -79514,6 +79614,7 @@
 		},
 		{
 			"locationId": "oldham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -79719,6 +79820,7 @@
 		},
 		{
 			"locationId": "oxford",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -79956,6 +80058,7 @@
 		},
 		{
 			"locationId": "oxfordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -80897,6 +81000,7 @@
 		},
 		{
 			"locationId": "paisley",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -81038,6 +81142,7 @@
 		},
 		{
 			"locationId": "pembrokeshire-coast",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -81555,6 +81660,7 @@
 		},
 		{
 			"locationId": "perth",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -81707,6 +81813,7 @@
 		},
 		{
 			"locationId": "peterborough",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -81928,6 +82035,7 @@
 		},
 		{
 			"locationId": "plymouth",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -82133,6 +82241,7 @@
 		},
 		{
 			"locationId": "poole",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -82189,6 +82298,7 @@
 		},
 		{
 			"locationId": "portsmouth",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -82346,6 +82456,7 @@
 		},
 		{
 			"locationId": "preston",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -82519,6 +82630,7 @@
 		},
 		{
 			"locationId": "reading",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -82692,6 +82804,7 @@
 		},
 		{
 			"locationId": "rochdale",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -82897,6 +83010,7 @@
 		},
 		{
 			"locationId": "rotherham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -83142,6 +83256,7 @@
 		},
 		{
 			"locationId": "salford",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -83347,6 +83462,7 @@
 		},
 		{
 			"locationId": "sandwell",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -83584,6 +83700,7 @@
 		},
 		{
 			"locationId": "scarborough",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -83645,6 +83762,7 @@
 		},
 		{
 			"locationId": "scotland",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -83689,6 +83807,7 @@
 		},
 		{
 			"locationId": "scottish-borders",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -83822,6 +83941,7 @@
 		},
 		{
 			"locationId": "scottish-islands",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -84059,6 +84179,7 @@
 		},
 		{
 			"locationId": "sheffield",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -84339,6 +84460,7 @@
 		},
 		{
 			"locationId": "shrewsbury",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -84888,6 +85010,7 @@
 		},
 		{
 			"locationId": "slough",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -85101,6 +85224,7 @@
 		},
 		{
 			"locationId": "solihull",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -85282,6 +85406,7 @@
 		},
 		{
 			"locationId": "somerset",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -85850,6 +85975,7 @@
 		},
 		{
 			"locationId": "south-east-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -87151,6 +87277,7 @@
 		},
 		{
 			"locationId": "south-east",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -97113,6 +97240,7 @@
 		},
 		{
 			"locationId": "south-shields",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -97302,6 +97430,7 @@
 		},
 		{
 			"locationId": "south-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -100747,6 +100876,7 @@
 		},
 		{
 			"locationId": "south-west",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -107220,6 +107350,7 @@
 		},
 		{
 			"locationId": "southampton",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -107401,6 +107532,7 @@
 		},
 		{
 			"locationId": "southend-on-sea",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -107582,6 +107714,7 @@
 		},
 		{
 			"locationId": "staffordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -109131,6 +109264,7 @@
 		},
 		{
 			"locationId": "stirling",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -109232,6 +109366,7 @@
 		},
 		{
 			"locationId": "stockport",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -109445,6 +109580,7 @@
 		},
 		{
 			"locationId": "stockton-on-tees",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -109706,6 +109842,7 @@
 		},
 		{
 			"locationId": "stoke-on-trent",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -110023,6 +110160,7 @@
 		},
 		{
 			"locationId": "suffolk",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -111217,6 +111355,7 @@
 		},
 		{
 			"locationId": "sunderland",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -111462,6 +111601,7 @@
 		},
 		{
 			"locationId": "sussex",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -113619,6 +113759,7 @@
 		},
 		{
 			"locationId": "swansea",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -113920,6 +114061,7 @@
 		},
 		{
 			"locationId": "swindon",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -114125,6 +114267,7 @@
 		},
 		{
 			"locationId": "tayside",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -114405,6 +114548,7 @@
 		},
 		{
 			"locationId": "the-hebrides",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -114706,6 +114850,7 @@
 		},
 		{
 			"locationId": "the-highlands",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -115007,6 +115152,7 @@
 		},
 		{
 			"locationId": "the-valleys",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -115876,6 +116022,7 @@
 		},
 		{
 			"locationId": "torquay",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -116049,6 +116196,7 @@
 		},
 		{
 			"locationId": "united-kingdom",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -116093,6 +116241,7 @@
 		},
 		{
 			"locationId": "wakefield",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -116306,6 +116455,7 @@
 		},
 		{
 			"locationId": "wales",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -116350,6 +116500,7 @@
 		},
 		{
 			"locationId": "walsall",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -116555,6 +116706,7 @@
 		},
 		{
 			"locationId": "warrington",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -116776,6 +116928,7 @@
 		},
 		{
 			"locationId": "west-midlands",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -122589,6 +122742,7 @@
 		},
 		{
 			"locationId": "west-of-northern-ireland",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -123594,6 +123748,7 @@
 		},
 		{
 			"locationId": "west-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -124575,6 +124730,7 @@
 		},
 		{
 			"locationId": "wigan",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -124820,6 +124976,7 @@
 		},
 		{
 			"locationId": "winchester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -124993,6 +125150,7 @@
 		},
 		{
 			"locationId": "wolverhampton",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -125198,6 +125356,7 @@
 		},
 		{
 			"locationId": "worcester",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -125363,6 +125522,7 @@
 		},
 		{
 			"locationId": "wrexham",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -125800,6 +125960,7 @@
 		},
 		{
 			"locationId": "york",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",
@@ -126013,6 +126174,7 @@
 		},
 		{
 			"locationId": "yorkshire",
+			"locationDefinitionRevision": 1,
 			"geography": "ward",
 			"boundaryRelease": "2023-05-uk-bgc",
 			"membership": "fully-contained",

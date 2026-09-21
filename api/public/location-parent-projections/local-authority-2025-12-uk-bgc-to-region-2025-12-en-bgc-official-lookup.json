@@ -1,12 +1,13 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:3b017b4b244c18233a5edc339974ca5e9ed9815b1cf2dc2f56f3161dca66df5a",
-	"namedLocationInventoryHash": "sha256:9379160e764a69a35bc3dbab9550760b707a600d32729c50f8d3f24435d9e93c",
+	"contentHash": "sha256:ccfac9dc9c20c35620924ef02ded4f80e4b1c5d11023cc98278a3fb6429db84c",
+	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
 	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
 	"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
 	"parentProjections": [
 		{
 			"locationId": "aberdeen",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -47,6 +48,7 @@
 		},
 		{
 			"locationId": "aberystwyth",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -87,6 +89,7 @@
 		},
 		{
 			"locationId": "armagh-down-and-newry",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -128,6 +131,7 @@
 		},
 		{
 			"locationId": "bangor",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -168,6 +172,7 @@
 		},
 		{
 			"locationId": "barnsley",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -239,6 +244,7 @@
 		},
 		{
 			"locationId": "basingstoke",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -289,6 +295,7 @@
 		},
 		{
 			"locationId": "bath",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -339,6 +346,7 @@
 		},
 		{
 			"locationId": "belfast",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -379,6 +387,7 @@
 		},
 		{
 			"locationId": "belfast-metropolitan-area",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -422,6 +431,7 @@
 		},
 		{
 			"locationId": "birmingham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -472,6 +482,7 @@
 		},
 		{
 			"locationId": "blackburn",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -522,6 +533,7 @@
 		},
 		{
 			"locationId": "blackpool",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -572,6 +584,7 @@
 		},
 		{
 			"locationId": "bolton",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -622,6 +635,7 @@
 		},
 		{
 			"locationId": "bournemouth",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -672,6 +686,7 @@
 		},
 		{
 			"locationId": "bradford",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -722,6 +737,7 @@
 		},
 		{
 			"locationId": "brighton-and-hove",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -772,6 +788,7 @@
 		},
 		{
 			"locationId": "bristol",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -822,6 +839,7 @@
 		},
 		{
 			"locationId": "buckinghamshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -925,6 +943,7 @@
 		},
 		{
 			"locationId": "cambridge",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -975,6 +994,7 @@
 		},
 		{
 			"locationId": "canterbury",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1025,6 +1045,7 @@
 		},
 		{
 			"locationId": "cardiff",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1065,6 +1086,7 @@
 		},
 		{
 			"locationId": "cardiff-and-the-valleys",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1111,6 +1133,7 @@
 		},
 		{
 			"locationId": "carlisle",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1166,6 +1189,7 @@
 		},
 		{
 			"locationId": "causeway-coast-and-antrim",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1207,6 +1231,7 @@
 		},
 		{
 			"locationId": "central-belt",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1281,6 +1306,7 @@
 		},
 		{
 			"locationId": "cheltenham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1331,6 +1357,7 @@
 		},
 		{
 			"locationId": "cheshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1384,6 +1411,7 @@
 		},
 		{
 			"locationId": "chester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1434,6 +1462,7 @@
 		},
 		{
 			"locationId": "chesterfield",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1484,6 +1513,7 @@
 		},
 		{
 			"locationId": "colchester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1534,6 +1564,7 @@
 		},
 		{
 			"locationId": "cornwall",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1584,6 +1615,7 @@
 		},
 		{
 			"locationId": "coventry",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1634,6 +1666,7 @@
 		},
 		{
 			"locationId": "crawley",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1684,6 +1717,7 @@
 		},
 		{
 			"locationId": "darlington",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1734,6 +1768,7 @@
 		},
 		{
 			"locationId": "derby",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1784,6 +1819,7 @@
 		},
 		{
 			"locationId": "derbyshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1841,6 +1877,7 @@
 		},
 		{
 			"locationId": "devon",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1899,6 +1936,7 @@
 		},
 		{
 			"locationId": "doncaster",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -1949,6 +1987,7 @@
 		},
 		{
 			"locationId": "dorset",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2067,6 +2106,7 @@
 		},
 		{
 			"locationId": "dudley",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2117,6 +2157,7 @@
 		},
 		{
 			"locationId": "dundee",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2157,6 +2198,7 @@
 		},
 		{
 			"locationId": "durham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2207,6 +2249,7 @@
 		},
 		{
 			"locationId": "east-midlands",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2390,6 +2433,7 @@
 		},
 		{
 			"locationId": "east-of-england",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2528,6 +2572,7 @@
 		},
 		{
 			"locationId": "edinburgh",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2568,6 +2613,7 @@
 		},
 		{
 			"locationId": "england",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2606,6 +2652,7 @@
 		},
 		{
 			"locationId": "essex",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2667,6 +2714,7 @@
 		},
 		{
 			"locationId": "exeter",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2717,6 +2765,7 @@
 		},
 		{
 			"locationId": "fife",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2768,6 +2817,7 @@
 		},
 		{
 			"locationId": "gateshead",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2827,6 +2877,7 @@
 		},
 		{
 			"locationId": "glasgow",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2879,6 +2930,7 @@
 		},
 		{
 			"locationId": "gloucester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2929,6 +2981,7 @@
 		},
 		{
 			"locationId": "gloucestershire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -2984,6 +3037,7 @@
 		},
 		{
 			"locationId": "grampian",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3026,6 +3080,7 @@
 		},
 		{
 			"locationId": "greater-glasgow-and-clyde",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3083,6 +3138,7 @@
 		},
 		{
 			"locationId": "greater-manchester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3142,6 +3198,7 @@
 		},
 		{
 			"locationId": "guildford",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3192,6 +3249,7 @@
 		},
 		{
 			"locationId": "halifax",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3242,6 +3300,7 @@
 		},
 		{
 			"locationId": "hampshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3303,6 +3362,7 @@
 		},
 		{
 			"locationId": "harrogate",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3358,6 +3418,7 @@
 		},
 		{
 			"locationId": "hartlepool",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3408,6 +3469,7 @@
 		},
 		{
 			"locationId": "hereford",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3458,6 +3520,7 @@
 		},
 		{
 			"locationId": "hertfordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3550,6 +3613,7 @@
 		},
 		{
 			"locationId": "huddersfield",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3600,6 +3664,7 @@
 		},
 		{
 			"locationId": "hull",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3650,6 +3715,7 @@
 		},
 		{
 			"locationId": "inverness",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3690,6 +3756,7 @@
 		},
 		{
 			"locationId": "ipswich",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3740,6 +3807,7 @@
 		},
 		{
 			"locationId": "kent",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3803,6 +3871,7 @@
 		},
 		{
 			"locationId": "lancashire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3867,6 +3936,7 @@
 		},
 		{
 			"locationId": "lancaster",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3917,6 +3987,7 @@
 		},
 		{
 			"locationId": "leeds",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -3967,6 +4038,7 @@
 		},
 		{
 			"locationId": "leicester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4017,6 +4089,7 @@
 		},
 		{
 			"locationId": "lincoln",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4067,6 +4140,7 @@
 		},
 		{
 			"locationId": "lincolnshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4135,6 +4209,7 @@
 		},
 		{
 			"locationId": "lisburn",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4175,6 +4250,7 @@
 		},
 		{
 			"locationId": "liverpool",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4225,6 +4301,7 @@
 		},
 		{
 			"locationId": "london",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4307,6 +4384,7 @@
 		},
 		{
 			"locationId": "londonderry",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4347,6 +4425,7 @@
 		},
 		{
 			"locationId": "lowlands",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4390,6 +4469,7 @@
 		},
 		{
 			"locationId": "luton",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4440,6 +4520,7 @@
 		},
 		{
 			"locationId": "maidstone",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4490,6 +4571,7 @@
 		},
 		{
 			"locationId": "manchester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4540,6 +4622,7 @@
 		},
 		{
 			"locationId": "mansfield",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4590,6 +4673,7 @@
 		},
 		{
 			"locationId": "merseyside",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4644,6 +4728,7 @@
 		},
 		{
 			"locationId": "mid-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4685,6 +4770,7 @@
 		},
 		{
 			"locationId": "middlesbrough",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4735,6 +4821,7 @@
 		},
 		{
 			"locationId": "milton-keynes",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4785,6 +4872,7 @@
 		},
 		{
 			"locationId": "newcastle-upon-tyne",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4835,6 +4923,7 @@
 		},
 		{
 			"locationId": "newport",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4875,6 +4964,7 @@
 		},
 		{
 			"locationId": "newry",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4915,6 +5005,7 @@
 		},
 		{
 			"locationId": "norfolk",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -4971,6 +5062,7 @@
 		},
 		{
 			"locationId": "north-east",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5049,6 +5141,7 @@
 		},
 		{
 			"locationId": "north-east-scotland",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5091,6 +5184,7 @@
 		},
 		{
 			"locationId": "north-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5136,6 +5230,7 @@
 		},
 		{
 			"locationId": "north-west",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5317,6 +5412,7 @@
 		},
 		{
 			"locationId": "north-yorkshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5480,6 +5576,7 @@
 		},
 		{
 			"locationId": "northampton",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5530,6 +5627,7 @@
 		},
 		{
 			"locationId": "northern-ireland",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5568,6 +5666,7 @@
 		},
 		{
 			"locationId": "norwich",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5618,6 +5717,7 @@
 		},
 		{
 			"locationId": "nottingham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5668,6 +5768,7 @@
 		},
 		{
 			"locationId": "oldham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5718,6 +5819,7 @@
 		},
 		{
 			"locationId": "oxford",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5768,6 +5870,7 @@
 		},
 		{
 			"locationId": "oxfordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5822,6 +5925,7 @@
 		},
 		{
 			"locationId": "paisley",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5862,6 +5966,7 @@
 		},
 		{
 			"locationId": "pembrokeshire-coast",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5902,6 +6007,7 @@
 		},
 		{
 			"locationId": "perth",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -5953,6 +6059,7 @@
 		},
 		{
 			"locationId": "peterborough",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6003,6 +6110,7 @@
 		},
 		{
 			"locationId": "plymouth",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6053,6 +6161,7 @@
 		},
 		{
 			"locationId": "poole",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6103,6 +6212,7 @@
 		},
 		{
 			"locationId": "portsmouth",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6153,6 +6263,7 @@
 		},
 		{
 			"locationId": "preston",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6203,6 +6314,7 @@
 		},
 		{
 			"locationId": "reading",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6253,6 +6365,7 @@
 		},
 		{
 			"locationId": "rochdale",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6303,6 +6416,7 @@
 		},
 		{
 			"locationId": "rotherham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6353,6 +6467,7 @@
 		},
 		{
 			"locationId": "salford",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6403,6 +6518,7 @@
 		},
 		{
 			"locationId": "sandwell",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6453,6 +6569,7 @@
 		},
 		{
 			"locationId": "scarborough",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6508,6 +6625,7 @@
 		},
 		{
 			"locationId": "scotland",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6546,6 +6664,7 @@
 		},
 		{
 			"locationId": "scottish-borders",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6586,6 +6705,7 @@
 		},
 		{
 			"locationId": "scottish-islands",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6628,6 +6748,7 @@
 		},
 		{
 			"locationId": "sheffield",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6699,6 +6820,7 @@
 		},
 		{
 			"locationId": "shrewsbury",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6749,6 +6871,7 @@
 		},
 		{
 			"locationId": "slough",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6799,6 +6922,7 @@
 		},
 		{
 			"locationId": "solihull",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6849,6 +6973,7 @@
 		},
 		{
 			"locationId": "somerset",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -6982,6 +7107,7 @@
 		},
 		{
 			"locationId": "south-east",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7145,6 +7271,7 @@
 		},
 		{
 			"locationId": "south-east-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7189,6 +7316,7 @@
 		},
 		{
 			"locationId": "south-shields",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7239,6 +7367,7 @@
 		},
 		{
 			"locationId": "south-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7291,6 +7420,7 @@
 		},
 		{
 			"locationId": "south-west",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7378,6 +7508,7 @@
 		},
 		{
 			"locationId": "southampton",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7428,6 +7559,7 @@
 		},
 		{
 			"locationId": "southend-on-sea",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7478,6 +7610,7 @@
 		},
 		{
 			"locationId": "staffordshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7536,6 +7669,7 @@
 		},
 		{
 			"locationId": "stirling",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7576,6 +7710,7 @@
 		},
 		{
 			"locationId": "stockport",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7626,6 +7761,7 @@
 		},
 		{
 			"locationId": "stockton-on-tees",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7676,6 +7812,7 @@
 		},
 		{
 			"locationId": "stoke-on-trent",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7726,6 +7863,7 @@
 		},
 		{
 			"locationId": "suffolk",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7825,6 +7963,7 @@
 		},
 		{
 			"locationId": "sunderland",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7875,6 +8014,7 @@
 		},
 		{
 			"locationId": "sussex",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7937,6 +8077,7 @@
 		},
 		{
 			"locationId": "swansea",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -7977,6 +8118,7 @@
 		},
 		{
 			"locationId": "swindon",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8027,6 +8169,7 @@
 		},
 		{
 			"locationId": "tayside",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8080,6 +8223,7 @@
 		},
 		{
 			"locationId": "the-hebrides",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8121,6 +8265,7 @@
 		},
 		{
 			"locationId": "the-highlands",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8162,6 +8307,7 @@
 		},
 		{
 			"locationId": "the-valleys",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8206,6 +8352,7 @@
 		},
 		{
 			"locationId": "torquay",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8256,6 +8403,7 @@
 		},
 		{
 			"locationId": "united-kingdom",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8294,6 +8442,7 @@
 		},
 		{
 			"locationId": "wakefield",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8344,6 +8493,7 @@
 		},
 		{
 			"locationId": "wales",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8382,6 +8532,7 @@
 		},
 		{
 			"locationId": "walsall",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8432,6 +8583,7 @@
 		},
 		{
 			"locationId": "warrington",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8482,6 +8634,7 @@
 		},
 		{
 			"locationId": "west-midlands",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8560,6 +8713,7 @@
 		},
 		{
 			"locationId": "west-of-northern-ireland",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8602,6 +8756,7 @@
 		},
 		{
 			"locationId": "west-wales",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8644,6 +8799,7 @@
 		},
 		{
 			"locationId": "wigan",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8694,6 +8850,7 @@
 		},
 		{
 			"locationId": "winchester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8744,6 +8901,7 @@
 		},
 		{
 			"locationId": "wolverhampton",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8794,6 +8952,7 @@
 		},
 		{
 			"locationId": "worcester",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8844,6 +9003,7 @@
 		},
 		{
 			"locationId": "wrexham",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8884,6 +9044,7 @@
 		},
 		{
 			"locationId": "york",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
@@ -8934,6 +9095,7 @@
 		},
 		{
 			"locationId": "yorkshire",
+			"locationDefinitionRevision": 1,
 			"geography": "region",
 			"boundaryRelease": "2025-12-en-bgc",
 			"via": {
