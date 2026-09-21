@@ -5,8 +5,6 @@ import {
 	readArchivedAtlasReleases,
 	readAtlasReleaseArtifact,
 } from "./atlasReleaseHistory";
-import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
-import { readGeometrySourceLookup } from "./geometrySources";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
@@ -69,6 +67,7 @@ import {
 	readValidationReport,
 } from "./catalogueManifestLoader";
 import { readMapAssets, readMapResources } from "./mapResourceLoader";
+import { createAreaGeometryCache } from "./geometryLoader";
 export {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
@@ -134,7 +133,6 @@ export const readApiCatalogues = (
 			"Export manifest was not built from the current data catalogue.",
 		);
 	}
-	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const mapResources = readMapResources(apiRoot);
 	const mapAssets = readMapAssets(apiRoot, mapResources);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
@@ -166,9 +164,8 @@ export const readApiCatalogues = (
 		namedLocationInventory,
 		crosswalkInventory,
 	);
-	const areaGeometryCache = new AreaGeometryCache(
-		resolve(apiRoot, ".."),
-		geometrySources,
+	const areaGeometryCache = createAreaGeometryCache(
+		apiRoot,
 		options.geometryCacheReleases,
 	);
 	const geographyResolver = createGeographyResolver({
