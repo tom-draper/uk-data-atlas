@@ -1,5 +1,4 @@
 import { refused, resolveObservations } from "./resolve/observationPlan";
-import { statisticPhrase } from "./aggregation";
 import { resolveAggregationTarget } from "./aggregationTarget";
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
@@ -22,6 +21,7 @@ import {
 	resolveAggregationLocation,
 	validateAggregationLocationSource,
 } from "./aggregationLocation";
+import { resolveAggregationMeasure } from "./aggregationMeasure";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -47,43 +47,17 @@ export const handleDataAggregateRoutes = ({
 		measureObservations,
 		measureCompatibilityInventory,
 	} = context;
-	if (!dataCatalog) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the data catalogue before aggregating observations.",
-		);
-	}
 	const measureId = segments[2] as string;
-	const measure = dataCatalog.measures.find(
-		(candidate) => candidate.id === measureId,
-	);
-	if (!measure)
-		return problem(
-			404,
-			"Not Found",
-			"No published measure serves aggregation at that path.",
-		);
-	const weightedAggregation =
-		measure.aggregation.kind === "intensive" &&
-		measure.aggregation.operation === "weighted-mean" &&
-		measure.aggregation.available
-			? measure.aggregation
-			: undefined;
-	const usesWeightedMean = weightedAggregation !== undefined;
-	const usesSum =
-		measure.aggregation.kind === "extensive" &&
-		measure.aggregation.available;
-	if (!usesSum && !usesWeightedMean) {
-		return problem(
-			422,
-			"Operation Not Supported",
-			measure.aggregation.kind === "non-aggregatable"
-				? `This measure is ${statisticPhrase(measure.aggregation.statistic)} and cannot be combined over areas. ${measure.aggregation.note}`
-				: "This measure is not available for aggregation.",
-			{ code: "aggregation_not_supported" },
-		);
-	}
+	const resolvedMeasure = resolveAggregationMeasure({
+		dataCatalog,
+		measureId,
+	});
+	if ("status" in resolvedMeasure) return resolvedMeasure;
+	const {
+		dataCatalog: availableDataCatalog,
+		measure,
+		weightedAggregation,
+	} = resolvedMeasure;
 	const query = parseAggregateQuery({ parsedUrl, measureId });
 	if ("status" in query) return query;
 	const {
@@ -206,7 +180,7 @@ export const handleDataAggregateRoutes = ({
 		}
 		const weightedSource = readWeightedSource({
 			context,
-			dataCatalog,
+			dataCatalog: availableDataCatalog,
 			weightMeasureId,
 			measureId,
 			period: period as string,
