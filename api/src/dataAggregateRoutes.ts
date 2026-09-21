@@ -4,7 +4,6 @@ import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
 	aggregateCountryMembers,
 	aggregateLocationMembers,
-	isCountryCode,
 	statisticPhrase,
 } from "./aggregation";
 import {
@@ -20,6 +19,7 @@ import { validateLocationAggregation } from "./locationAggregation";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
+import { parseAggregateQuery } from "./aggregateQuery";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -82,46 +82,19 @@ export const handleDataAggregateRoutes = ({
 			{ code: "aggregation_not_supported" },
 		);
 	}
-	if (
-		parsedUrl.searchParams.has("release") ||
-		parsedUrl.searchParams.has("conversion")
-	) {
-		return problem(
-			422,
-			"Operation Not Supported",
-			"This aggregation does not select a geometry release or convert observations.",
-		);
-	}
-	const period = parsedUrl.searchParams.get("period");
-	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	const locationId = parsedUrl.searchParams.get("locationId");
-	const areaCode = parsedUrl.searchParams.get("areaCode");
-	// `regionCode` is the original spelling of `targetCode`, from when regions
-	// were the only membership target. It still selects the same way.
-	const regionCode = parsedUrl.searchParams.get("regionCode");
-	const targetCode = parsedUrl.searchParams.get("targetCode") ?? regionCode;
-	if (
-		[
-			locationId,
-			areaCode,
-			regionCode,
-			parsedUrl.searchParams.get("targetCode"),
-		].filter(Boolean).length !== 1
-	) {
-		return problem(
-			400,
-			"Invalid Query",
-			"Supply exactly one of locationId, for a curated named location, areaCode, for a country, or targetCode with a membership crosswalk.",
-		);
-	}
-	if (areaCode && !isCountryCode(areaCode)) {
-		return problem(
-			400,
-			"Invalid Query",
-			"areaCode currently supports a country code only, such as E92000001. Use locationId for a curated named location.",
-		);
-	}
+	const query = parseAggregateQuery({ parsedUrl, measureId });
+	if ("status" in query) return query;
+	const {
+		period,
+		geography,
+		boundaryYear,
+		locationId,
+		areaCode,
+		regionCode,
+		targetCode,
+		crosswalkId,
+		sourceRelease,
+	} = query;
 	if (locationId && !namedLocationLookup) {
 		return problem(
 			503,
@@ -138,15 +111,8 @@ export const handleDataAggregateRoutes = ({
 			"Not Found",
 			"No named location matches locationId.",
 		);
-	// The three are documented as required here, so a caller who leaves one out
-	// is answered the same way whatever the measure. Which partition they name
-	// is the resolver's to decide.
-	if (period === null || geography === null || boundaryYear === null)
-		return problem(
-			400,
-			"Invalid Query",
-			`${measureId} has no published source for that period, geography and boundary year.`,
-		);
+	// The query parser has established these are present; which partition they
+	// name is the resolver's to decide.
 	const resolved = resolveObservations(context, {
 		measureId,
 		periods: [period],
@@ -175,8 +141,8 @@ export const handleDataAggregateRoutes = ({
 	const regional = resolveAggregationTarget({
 		targetCode,
 		regionCode,
-		crosswalkId: parsedUrl.searchParams.get("crosswalk"),
-		sourceRelease: parsedUrl.searchParams.get("sourceRelease"),
+		crosswalkId,
+		sourceRelease,
 		source,
 		compatibleReleases,
 		crosswalkLookup,
