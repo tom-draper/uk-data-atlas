@@ -1,4 +1,3 @@
-import type { MeasureSource } from "./dataCatalog";
 import { numericObservationsFor } from "./numericObservations";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import {
@@ -6,19 +5,18 @@ import {
 	aggregateLocationMembers,
 	statisticPhrase,
 } from "./aggregation";
-import {
-	sourceExactProvenance,
-	type ObservationArtifactReference,
-} from "./sourceExactProvenance";
-import { findCountryIdentity } from "./aggregationMembership";
 import { resolveAggregationTarget } from "./aggregationTarget";
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "./routeResponse";
 import { validateLocationAggregation } from "./locationAggregation";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
 import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
+import {
+	buildAggregateResponse,
+	type AggregateWeighting,
+} from "./aggregateResponse";
 import { parseAggregateQuery } from "./aggregateQuery";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
@@ -243,14 +241,7 @@ export const handleDataAggregateRoutes = ({
 			"Supply exactly one of locationId, areaCode or targetCode.",
 		);
 	let aggregateValue = aggregate.value;
-	let weighting:
-		| {
-				measure: (typeof dataCatalog.measures)[number];
-				source: MeasureSource;
-				observations: ObservationArtifactReference;
-				total: number;
-		  }
-		| undefined;
+	let weighting: AggregateWeighting | undefined;
 	if (weightedAggregation) {
 		const weightMeasureId = weightedAggregation.weight.measureId;
 		if (!weightMeasureId) {
@@ -294,147 +285,22 @@ export const handleDataAggregateRoutes = ({
 			total: weightedAggregate.totalWeight,
 		};
 	}
-	const country = location
-		? undefined
-		: findCountryIdentity(areaLookup, areaCode as string);
-	return {
-		status: 200,
-		body: envelope(releaseId, {
-			measure,
-			source,
-			period,
-			sourceGeography: source.sourceGeography,
-			...(location
-				? { location }
-				: regional
-					? {
-							target: regional.target,
-							// `region` predates `target` and still names a
-							// region, so a caller reading it keeps working.
-							...(regional.target.geography === "region"
-								? { region: regional.target }
-								: {}),
-						}
-					: { area: country }),
-			provenance: {
-				...sourceExactProvenance({
-					atlasRelease: releaseId,
-					measure,
-					source,
-					period: period as string,
-					observations,
-				}),
-				transformation: {
-					status: "not-applied",
-					note: "Input observations are source-exact; no geographic conversion was applied.",
-				},
-				...(weighting
-					? {
-							weight: sourceExactProvenance({
-								atlasRelease: releaseId,
-								measure: weighting.measure,
-								source: weighting.source,
-								period: period as string,
-								observations: weighting.observations,
-							}),
-						}
-					: {}),
-			},
-			aggregation: location
-				? {
-						operation: weighting ? "weighted-mean" : "sum",
-						membership: "direct-code-match",
-						inputRecordCount: aggregate.members.length,
-						...(weighting
-							? {
-									weight: {
-										description:
-											weightedAggregation?.weight
-												.description ?? "",
-										total: weighting.total,
-									},
-								}
-							: {}),
-						// Codes the sum passed over are named, so a value is
-						// never quietly partial. Those of another vintage
-						// have the code that replaced them standing in
-						// their place; legacy aliases name no compiled area
-						// at all and matched nothing.
-						...(locationCoverage &&
-						locationCoverage.unresolvedCount > 0
-							? {
-									memberCodesNotInPartition: {
-										otherVintage:
-											locationCoverage.unresolved
-												.filter(
-													(member) =>
-														member.status ===
-															"superseded" ||
-														member.status ===
-															"not-yet-current",
-												)
-												.map((member) => member.code),
-										legacyAliases:
-											locationCoverage.legacy.map(
-												(member) => member.code,
-											),
-									},
-								}
-							: {}),
-						note: weighting
-							? "Every curated location member code that names an area in this partition was found in both the source-exact value and weight partitions."
-							: "Every curated location member code that names an area in this partition was found in the published source partition.",
-					}
-				: regional
-					? {
-							operation: weighting ? "weighted-mean" : "sum",
-							membership: regional.claim,
-							inputRecordCount: aggregate.members.length,
-							crosswalk: {
-								id: regional.crosswalk.id,
-								method: regional.crosswalk.method,
-								quality: regional.crosswalk.quality,
-							},
-							...(weighting
-								? {
-										weight: {
-											description:
-												weightedAggregation?.weight
-													.description ?? "",
-											total: weighting.total,
-										},
-									}
-								: {}),
-							coverage: {
-								...coverage,
-								note: "Compares the source areas summed with every area the crosswalk places wholly in this region. `partial` means the partition publishes no value for some of them, so the total is not the region's.",
-							},
-							note: "Regional membership comes from the caller-selected crosswalk; every included local authority is wholly covered by this one region.",
-						}
-					: {
-							operation: weighting ? "weighted-mean" : "sum",
-							membership: "gss-country-code",
-							inputRecordCount: aggregate.members.length,
-							coverage: {
-								...coverage,
-								href: `/v1/measures/${measureId}/coverage`,
-								note: "The sum covers every area of this country published in this source partition. Each assessment compares those areas with the country's areas in a boundary release the partition is assessed to match; `partial` means the release holds areas the partition publishes no value for, so the total is not a national one.",
-							},
-							...(weighting
-								? {
-										weight: {
-											description:
-												weightedAggregation?.weight
-													.description ?? "",
-											total: weighting.total,
-										},
-									}
-								: {}),
-							note: weighting
-								? "Country membership follows the first character of the GSS area code, and every source-exact value has its published weight."
-								: "Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.",
-						},
-			record: { value: aggregateValue, status: "derived" },
-		}),
-	};
+	return buildAggregateResponse({
+		releaseId,
+		measure,
+		measureId,
+		source,
+		period: period as string,
+		observations,
+		aggregateValue,
+		aggregate,
+		location,
+		regional,
+		weighting,
+		weightDescription: weightedAggregation?.weight.description,
+		locationCoverage,
+		coverage,
+		areaLookup,
+		areaCode,
+	});
 };
