@@ -16,9 +16,9 @@ import { resolveAggregationTarget } from "./aggregationTarget";
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { calculateWeightedMean } from "./weightedMean";
 import { validateLocationAggregation } from "./locationAggregation";
 import { readWeightedSource } from "./weightedSource";
+import { calculateWeightedAggregate } from "./weightedAggregation";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -322,46 +322,20 @@ export const handleDataAggregateRoutes = ({
 		const { measure: weightMeasure, source: weightSource } = weightedSource;
 		const weightObservations = weightedSource.observations;
 		const weightRecords = weightedSource.records;
-		const weightAggregate = location
-			? aggregateLocationMembers(location, weightRecords)
-			: regional
-				? {
-						members: weightRecords.filter((record) =>
-							regional.memberCodes.has(record.areaCode),
-						),
-						value: weightRecords
-							.filter((record) =>
-								regional.memberCodes.has(record.areaCode),
-							)
-							.reduce((total, record) => total + record.value, 0),
-					}
-				: aggregateCountryMembers(areaCode as string, weightRecords);
-		const weightedMean = calculateWeightedMean(
-			aggregate.members,
-			weightAggregate.members,
-		);
-		if (weightedMean.kind === "partial_coverage") {
-			return problem(
-				422,
-				"Operation Not Supported",
-				"The published value and weight partitions do not cover the same source areas, so no partial weighted mean was calculated.",
-				{ code: "partial_coverage" },
-			);
-		}
-		if (weightedMean.kind === "invalid_weights") {
-			return problem(
-				422,
-				"Operation Not Supported",
-				"The published weights must be finite, non-negative and sum to more than zero.",
-				{ code: "aggregation_not_supported" },
-			);
-		}
-		aggregateValue = weightedMean.value;
+		const weightedAggregate = calculateWeightedAggregate({
+			aggregate,
+			weightRecords,
+			location,
+			regional,
+			areaCode: areaCode as string,
+		});
+		if ("status" in weightedAggregate) return weightedAggregate;
+		aggregateValue = weightedAggregate.value;
 		weighting = {
 			measure: weightMeasure,
 			source: weightSource,
 			observations: weightObservations,
-			total: weightedMean.totalWeight,
+			total: weightedAggregate.totalWeight,
 		};
 	}
 	const country = location
