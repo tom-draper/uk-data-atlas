@@ -1,9 +1,5 @@
 import { refused, resolveObservations } from "./resolve/observationPlan";
-import {
-	aggregateCountryMembers,
-	aggregateLocationMembers,
-	statisticPhrase,
-} from "./aggregation";
+import { statisticPhrase } from "./aggregation";
 import { resolveAggregationTarget } from "./aggregationTarget";
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
@@ -18,6 +14,10 @@ import {
 } from "./aggregateResponse";
 import { parseAggregateQuery } from "./aggregateQuery";
 import { readAggregateObservations } from "./aggregateObservations";
+import {
+	aggregateTargetMembers,
+	requireAggregateMembers,
+} from "./aggregateTargetMembers";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -160,50 +160,22 @@ export const handleDataAggregateRoutes = ({
 	});
 	if ("status" in numericObservationResult) return numericObservationResult;
 	const { observations, records: numericRecords } = numericObservationResult;
-	const byLocation = location
-		? aggregateLocationMembers(location, numericRecords)
-		: undefined;
+	const targetMembers = aggregateTargetMembers({
+		records: numericRecords,
+		location,
+		regional,
+		areaCode,
+	});
 	const locationCoverageResult = validateLocationAggregation({
 		location,
-		byLocation,
+		byLocation: targetMembers.byLocation,
 		areaLookup,
 		sourceGeography: source.sourceGeography,
 	});
 	if (locationCoverageResult && "status" in locationCoverageResult)
 		return locationCoverageResult;
 	const locationCoverage = locationCoverageResult;
-	const byCountry =
-		location || regional
-			? undefined
-			: aggregateCountryMembers(areaCode as string, numericRecords);
-	const byRegion = regional
-		? {
-				members: numericRecords.filter((record) =>
-					regional.memberCodes.has(record.areaCode),
-				),
-				value: numericRecords
-					.filter((record) =>
-						regional.memberCodes.has(record.areaCode),
-					)
-					.reduce((total, record) => total + record.value, 0),
-			}
-		: undefined;
-	// A country the partition does not reach would otherwise sum to zero,
-	// which reads as an observation rather than an absence.
-	if (byCountry && byCountry.members.length === 0) {
-		return problem(
-			422,
-			"Operation Not Supported",
-			"This source partition publishes no areas for that country, so there is nothing to sum.",
-		);
-	}
-	if (byRegion && regional && byRegion.members.length === 0) {
-		return problem(
-			422,
-			"Operation Not Supported",
-			`This source partition publishes no areas for that ${regional.target.geography}, so there is nothing to combine.`,
-		);
-	}
+	const { byCountry, byRegion } = targetMembers;
 	/*
 	 * A country or region total sums whatever the partition publishes, so a
 	 * partition holding values for only some areas, as a local election
@@ -221,13 +193,12 @@ export const handleDataAggregateRoutes = ({
 		sourceGeography: source.sourceGeography,
 		areaCode,
 	});
-	const aggregate = byLocation ?? byCountry ?? byRegion;
-	if (!aggregate)
-		return problem(
-			400,
-			"Invalid Query",
-			"Supply exactly one of locationId, areaCode or targetCode.",
-		);
+	const aggregateResult = requireAggregateMembers({
+		...targetMembers,
+		regional,
+	});
+	if ("status" in aggregateResult) return aggregateResult;
+	const aggregate = aggregateResult;
 	let aggregateValue = aggregate.value;
 	let weighting: AggregateWeighting | undefined;
 	if (weightedAggregation) {

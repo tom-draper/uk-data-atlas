@@ -1,11 +1,8 @@
 import type { NamedLocation } from "./namedLocations";
-import {
-	aggregateCountryMembers,
-	aggregateLocationMembers,
-	type AggregateMembers,
-} from "./aggregation";
+import type { AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type { PopulationObservation } from "./dataCatalog";
+import { aggregateRecordsForTarget } from "./aggregateTargetMembers";
 import { problem, type ApiResponse } from "./routeResponse";
 import { calculateWeightedMean } from "./weightedMean";
 
@@ -26,20 +23,19 @@ export const calculateWeightedAggregate = ({
 	regional?: AggregationTarget;
 	areaCode?: string;
 }): WeightedAggregateResult => {
-	const weightAggregate = location
-		? aggregateLocationMembers(location, weightRecords)
-		: regional
-			? {
-					members: weightRecords.filter((record) =>
-						regional.memberCodes.has(record.areaCode),
-					),
-					value: weightRecords
-						.filter((record) =>
-							regional.memberCodes.has(record.areaCode),
-						)
-						.reduce((total, record) => total + record.value, 0),
-				}
-			: aggregateCountryMembers(areaCode as string, weightRecords);
+	const weightAggregate = aggregateRecordsForTarget({
+		location,
+		regional,
+		areaCode,
+		records: weightRecords,
+	});
+	if (!weightAggregate) {
+		return problem(
+			400,
+			"Invalid Query",
+			"Supply exactly one of locationId, areaCode or targetCode.",
+		);
+	}
 	const weightedMean = calculateWeightedMean(
 		aggregate.members,
 		weightAggregate.members,
