@@ -19,7 +19,7 @@ import {
 } from "./operationTemplates";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { problem, type ApiResponse } from "./routeResponse";
-import { route } from "./routes";
+import { route, routeAsync } from "./routes";
 import type { RouteContext } from "./routing";
 import {
 	DEFAULT_MAX_URL_LENGTH,
@@ -137,7 +137,10 @@ export const createApiServer = (
 		};
 	};
 
-	const handle = (request: IncomingMessage, response: ServerResponse) => {
+	const handle = async (
+		request: IncomingMessage,
+		response: ServerResponse,
+	) => {
 		const startedAt = performance.now();
 		const incomingId = request.headers["x-request-id"];
 		const requestId =
@@ -172,6 +175,10 @@ export const createApiServer = (
 					answered = produce(routedMethod);
 					return answered;
 				});
+			const answerAsync = async (produce: () => Promise<ApiResponse>) => {
+				answered = await produce();
+				return httpResponse(request, () => answered!);
+			};
 			try {
 				if (target.length > maxUrlLength) {
 					result = answer(() =>
@@ -193,8 +200,12 @@ export const createApiServer = (
 				} else if (method === "OPTIONS") {
 					result = preflightResponse();
 				} else {
-					result = answer((routedMethod) =>
-						route(routedMethod, target, catalogues),
+					result = await answerAsync(() =>
+						routeAsync(
+							method === "HEAD" ? "GET" : method,
+							target,
+							catalogues,
+						),
 					);
 				}
 			} catch (error) {

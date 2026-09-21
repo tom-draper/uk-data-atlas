@@ -44,6 +44,10 @@ export type ServeConfiguration = {
 	geometryCacheReleases: number;
 	shutdownGraceSeconds: number;
 	server: ServerOptions;
+	terrainRemoteEndpoint?: string;
+	terrainCoverageEndpoint?: string;
+	terrainRemoteTimeoutMs: number;
+	terrainRemoteConcurrency: number;
 };
 
 const integer = (
@@ -104,6 +108,24 @@ export const readServeConfiguration = (
 			"ATLAS_SHUTDOWN_GRACE_SECONDS",
 			10,
 			0,
+		),
+		...(env.ATLAS_TERRAIN_REMOTE_ENDPOINT
+			? { terrainRemoteEndpoint: env.ATLAS_TERRAIN_REMOTE_ENDPOINT }
+			: {}),
+		...(env.ATLAS_TERRAIN_COVERAGE_ENDPOINT
+			? { terrainCoverageEndpoint: env.ATLAS_TERRAIN_COVERAGE_ENDPOINT }
+			: {}),
+		terrainRemoteTimeoutMs: integer(
+			env,
+			"ATLAS_TERRAIN_REMOTE_TIMEOUT_MS",
+			5000,
+			1,
+		),
+		terrainRemoteConcurrency: integer(
+			env,
+			"ATLAS_TERRAIN_REMOTE_CONCURRENCY",
+			4,
+			1,
 		),
 		server: {
 			...(capacity > 0

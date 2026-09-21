@@ -49,6 +49,32 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "See what's available for an area",
 		intro: "Give it one area and find out everything the Atlas can do with it: whether it has a shape, which relationships and named locations it belongs to, and which measures have data for it.",
 	},
+	convertCoordinate: {
+		title: "Convert a coordinate",
+		intro: "Convert between WGS 84 and the supported UK national grids while keeping the transformation and any precision caveat visible.",
+		tips: [
+			"Use `crs=EPSG:27700` for British National Grid easting/northing or a grid reference.",
+			"The result is a horizontal position; it does not infer elevation or a terrain value.",
+		],
+	},
+
+	// Terrain
+	getTerrainCatalogue: {
+		title: "Discover terrain products",
+		intro: "See which terrain product families exist and whether a versioned source is currently available.",
+	},
+	getTerrainProduct: {
+		title: "Inspect a terrain product",
+		intro: "Read one terrain product's measurement, coverage intent, dependencies and publication state.",
+	},
+	getTerrainElevationPoint: {
+		title: "Get terrain elevation",
+		intro: "Sample bare-earth elevation at an EPSG:27700 point and receive the interpolation method, source version, hash, datum and uncertainty alongside the value.",
+		tips: [
+			"`outside_coverage` and `nodata` are explicit successful results, not zeroes or guessed values.",
+			"A remote preview may be enabled without storing raster files locally.",
+		],
+	},
 
 	// Maps & spatial
 	getMeasureObservations: {
@@ -245,6 +271,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "List releases",
 		intro: "List the current Atlas release and the archived ones before it.",
 	},
+	downloadAtlasReleaseArtifact: {
+		title: "Download a release artifact",
+		intro: "Download one immutable artifact from a current or archived Atlas release, using the artifact id recorded in that release's manifest.",
+		tips: [
+			"Read the release manifest first so you can use its exact artifact id and verify the returned hash.",
+			"An archived release may return `410 Gone` when its manifest remains available but the artifact bytes are no longer retained.",
+		],
+	},
 	getArchivedAtlasRelease: {
 		title: "Get a release",
 		intro: "Get the manifest for one Atlas release, current or archived, by its `releaseId`.",
@@ -393,6 +427,10 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Get a named location",
 		intro: "Get one named location's description, the area codes it's made from and its bounds.",
 	},
+	getNamedLocationCapabilities: {
+		title: "See named location options",
+		intro: "Discover which direct and crosswalk-based views are available for a named location before requesting its members or parents.",
+	},
 	getNamedLocationParents: {
 		title: "Find what a named location sits in",
 		intro: "The other way round from listing its areas: which regions, counties or combined authorities a named location falls in, and whether it covers each one whole or only part of it.",
@@ -444,11 +482,18 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	// Trust & citation
 	getAreaCitation: {
 		title: "Cite an area",
-		intro: "Get everything you need to cite an area: the Atlas release, the boundary publisher and licence, fingerprints of the files involved and a ready-made attribution. Add `measure` to cite its data too.",
+		intro: "Get the artifact hashes, boundary publisher and licence, validation links and ready-made attribution for one exact area identity. Add `measure` or `crosswalk` to include the data or relationship that supports what you publish; the top-level `atlasRelease` identifies the API response build, not the boundary itself.",
 	},
 	listRelationshipCandidates: {
 		title: "List relationship candidates",
 		intro: "A behind-the-scenes report of relationships between areas found in the raw boundary files, and whether each has been published as a crosswalk yet.",
+	},
+	listCorrections: {
+		title: "List reviewed corrections",
+		intro: "See the reviewed API-owned corrections, derived calculations and normalisations that can affect a response, with their exact scope and evidence.",
+		tips: [
+			"The default data response remains source-exact; use the explicit request described by a correction to opt into a reviewed transformation.",
+		],
 	},
 	getValidationReport: {
 		title: "Get the validation report",

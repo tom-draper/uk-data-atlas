@@ -1050,6 +1050,61 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /terrain/elevation/point:
+    get:
+      operationId: getTerrainElevationPoint
+      tags: ["Terrain"]
+      summary: Get one terrain elevation point
+      description: >
+        Returns a bare-earth elevation sampled in British National Grid metres.
+        The answer identifies the exact source version and tile hash used. An
+        outside-coverage or no-data point is a successful response with an
+        explicit status; neither is converted into a plausible elevation.
+        This endpoint requires a configured terrain provider and does not
+        imply that the catalogue's planned products are published.
+      x-likely-refusal:
+        status: 400
+        when: "x or y is missing or is not a finite EPSG:27700 coordinate."
+        x-example-request: "/v1/terrain/elevation/point?x=not-a-number&y=180000"
+      parameters:
+        - name: x
+          in: query
+          required: true
+          schema: { type: number }
+          description: Easting in EPSG:27700 metres.
+        - name: y
+          in: query
+          required: true
+          schema: { type: number }
+          description: Northing in EPSG:27700 metres.
+        - name: interpolation
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [bilinear, nearest]
+            default: bilinear
+          description: Interpolation method applied to the source raster.
+        - name: version
+          in: query
+          required: false
+          schema: { type: string }
+          description: Exact source version; omitted selects the provider default.
+      responses:
+        "200":
+          description: Elevation value or explicit coverage/data absence.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TerrainPointEnvelope"
+              x-example-request: "/v1/terrain/elevation/point?x=530000&y=180000&interpolation=bilinear"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /coordinates:convert:
     get:
       operationId: convertCoordinate
@@ -4219,6 +4274,14 @@ paths:
         Per-area geometry hashes are not compiled yet and are reported as
         `not-published`. The boundary release's `metadataHash` pins its
         metadata, which names the source file but does not hash its contents.
+
+
+        The envelope's top-level `atlasRelease` is the release of the API
+        response itself. It is not a replacement for the boundary identity in
+        the path: use `data.identity.contentHash` for the compiled area
+        identity, `data.boundary.metadataHash` for the boundary metadata, and
+        the hashes under `data.measures`, `data.crosswalks` and `data.geometry`
+        for the other artifacts that support the cited result.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -4244,7 +4307,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/citation"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/citation?measure=population-estimate"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -4252,6 +4315,63 @@ paths:
                   id: localAuthority/2023-05-uk-bgc-v2/E08000025
                   geography: localAuthority
                   boundaryRelease: 2023-05-uk-bgc-v2
+                  atlasRelease:
+                    id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
+                    href: /v1/atlas-releases/sha256:50377c152fd57d55759ab7e0674e2697bf1174556be3bb952ae922b866644f11
+                  identity:
+                    status: available
+                    artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
+                    contentHash: sha256:areas-local-authority-2023
+                  boundary:
+                    id: localAuthority/2023-05-uk-bgc-v2
+                    title: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
+                    publisher: Office for National Statistics
+                    sourceUrl: https://geoportal.statistics.gov.uk/
+                    licence:
+                      name: Open Government Licence v3.0
+                    metadataHash: sha256:local-authority-2023-metadata
+                    href: /v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2
+                  geometry:
+                    status: available
+                  measures:
+                    - id: population-estimate
+                      label: Population estimate
+                      href: /v1/measures/population-estimate
+                      sources:
+                        - dataset:
+                            id: population-uk
+                            href: /v1/datasets/population-uk
+                          sourceGeography:
+                            type: localAuthority
+                            boundaryYear: 2023
+                          codeSetCompatibility:
+                            status: exact-code-set
+                            eligibleForCodeJoin: true
+                          periods:
+                            - period: "2022"
+                              artifact: population-local-authority-observations
+                              contentHash: sha256:population-observations-2022
+                              status: observed
+                  crosswalks: []
+                  validation:
+                    status: available
+                  resources:
+                    - kind: boundaryRelease
+                      id: localAuthority/2023-05-uk-bgc-v2
+                      label: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
+                      href: /v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2
+                      publisher: Office for National Statistics
+                      sourceUrl: https://geoportal.statistics.gov.uk/
+                      licence:
+                        name: Open Government Licence v3.0
+                  licences:
+                    - name: Open Government Licence v3.0
+                  text: |-
+                    Data: Population (Local Authority) — Office for National Statistics.
+                    Boundaries: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2) — Office for National Statistics.
+                    Licence: Open Government Licence v3.0.
+                    Compiled by the UK Data Atlas, release sha256:50377c152fd57d55759ab7e0674e2697bf1174556be3bb952ae922b866644f11.
+                  note: Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.
                 meta:
                   nextCursor: null
         "404":
@@ -7474,6 +7594,72 @@ components:
                 - type: string
                 - type: "null"
               description: Opaque cursor for the next page, or null at the end.
+
+    TerrainPointEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/TerrainPoint"
+
+    TerrainPoint:
+      type: object
+      required: [status, x, y, interpolation, unit, value, source]
+      properties:
+        status:
+          type: string
+          enum: [ok, outside_coverage, nodata]
+        x: { type: number }
+        y: { type: number }
+        interpolation:
+          type: string
+          enum: [bilinear, nearest]
+        unit:
+          const: metres
+        value:
+          type:
+            - number
+            - "null"
+        source:
+          type: object
+          required:
+            [id, version, tileHash, contentHash, crs, horizontalDatum, verticalDatum, resolutionMetres, noData, uncertainty, coverage]
+          properties:
+            id: { type: string }
+            version: { type: string }
+            provenance: { type: string, enum: [local, remote-preview] }
+            tileHash: { type: string }
+            contentHash: { type: string }
+            crs: { const: "EPSG:27700" }
+            horizontalDatum: { const: OSGB36 }
+            horizontalTransformation: { const: OSTN15 }
+            verticalDatum: { const: ODN }
+            verticalModel: { const: OSGM15 }
+            resolutionMetres: { type: number, exclusiveMinimum: 0 }
+            noData:
+              type:
+                - number
+                - "null"
+            uncertainty:
+              type: object
+              required: [metric, valueMetres]
+              properties:
+                metric:
+                  type: string
+                  enum: [rmse, stated_accuracy]
+                valueMetres: { type: number, minimum: 0 }
+            coverage:
+              type: object
+              required: [kind, bbox, footprintHash]
+              properties:
+                kind: { const: bbox }
+                bbox:
+                  type: array
+                  minItems: 4
+                  maxItems: 4
+                  items: { type: number }
+                footprintHash: { type: string }
 
     RootDocument:
       type: object
