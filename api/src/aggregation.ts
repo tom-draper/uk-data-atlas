@@ -1,6 +1,11 @@
 import type { PopulationObservation } from "./dataCatalog";
 import type { NamedLocation } from "./namedLocations";
 
+export type AggregateMembers = {
+	members: PopulationObservation[];
+	value: number;
+};
+
 export const aggregateLocationMembers = (
 	location: NamedLocation,
 	records: PopulationObservation[],
