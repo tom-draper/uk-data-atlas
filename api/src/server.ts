@@ -1,9 +1,9 @@
 export {
 	readApiCatalogues,
-	readRelationshipCandidateInventory,
 	type ApiCatalogues,
 	type CatalogueOptions,
 } from "./catalogueLoader";
+export { readRelationshipCandidateInventory } from "./governanceLoader";
 export * from "./boundaryLoader";
 export * from "./catalogueManifestLoader";
 export * from "./crosswalkLoader";

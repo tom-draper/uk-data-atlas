@@ -42,8 +42,8 @@ import {
 	createReleaseArtifactReader,
 	readAtlasReleaseHistory,
 } from "./releaseLoader";
-import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import { createTerrainAsyncProvider } from "./terrainLoader";
+import { readRelationshipCandidateInventory } from "./governanceLoader";
 
 export type ApiCatalogues = Omit<
 	Required<RouteContext>,
@@ -61,19 +61,6 @@ export type CatalogueOptions = {
 	terrainCoverageEndpoint?: string;
 	terrainRemoteTimeoutMs?: number;
 	terrainRemoteConcurrency?: number;
-};
-
-export const readRelationshipCandidateInventory = (
-	apiRoot: string,
-): RelationshipCandidateInventory => {
-	const path = join(apiRoot, "public", "relationship-candidates.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as RelationshipCandidateInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.candidates)) {
-		throw new Error(`Invalid relationship candidate inventory at ${path}`);
-	}
-	return inventory;
 };
 
 export const readApiCatalogues = (
