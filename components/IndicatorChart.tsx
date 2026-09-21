@@ -6,8 +6,7 @@ import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { IndicatorDataset } from "@/lib/types/indicator";
 import type { ActiveViz } from "@/lib/types";
 import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
-import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
-import { getSequentialColorForValue } from "@/lib/helpers/colorScale/datasetColors";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 type Display = {
 	label: string;
@@ -88,33 +87,27 @@ export default function IndicatorChart({
 	year,
 	setActiveViz,
 }: ChartComponentProps) {
-	const mapOptions = useCurrentMapOptions();
 	const dataset = (availableDatasets as Record<string, IndicatorDataset>)[
 		year
 	];
+	const valueDatasetType = dataset?.type as NumericMapOptionsKey | undefined;
+	const value = dataset
+		? selectedRecord(dataset, selectedArea)?.value
+		: undefined;
+	const aggregate = aggregatedData?.[year] as { value?: number } | undefined;
+	const resolvedValue =
+		value ?? (!selectedArea ? aggregate?.value : undefined);
+	const valueColor = useHeatmapValueColor(valueDatasetType, resolvedValue);
 	if (!dataset) return null;
 	const display = DISPLAY[dataset.type] ?? {
 		label: dataset.type,
 		unit: "",
 		maximum: 1,
 	};
-	const direct = selectedRecord(dataset, selectedArea);
-	const aggregate = aggregatedData?.[year] as { value?: number } | undefined;
-	const value =
-		direct?.value ?? (!selectedArea ? aggregate?.value : undefined);
-	const hasData = value !== undefined;
+	const hasData = resolvedValue !== undefined;
 	const digits = display.digits ?? 0;
-	const mapOptionKey = dataset.type as NumericMapOptionsKey;
-	const mapOption = mapOptions[mapOptionKey];
-	const valueColor = hasData
-		? getSequentialColorForValue(
-				value!,
-				mapOption.colorRange,
-				mapOptions.theme.id,
-			)
-		: null;
 	const formatted = hasData
-		? `${display.prefix ?? ""}${value!.toLocaleString("en-GB", { maximumFractionDigits: digits, minimumFractionDigits: digits })}`
+		? `${display.prefix ?? ""}${resolvedValue!.toLocaleString("en-GB", { maximumFractionDigits: digits, minimumFractionDigits: digits })}`
 		: "—";
 	return (
 		<ChartCard
@@ -140,7 +133,10 @@ export default function IndicatorChart({
 				secondary={display.secondary}
 				barWidth={
 					hasData
-						? Math.min(100, (value! / display.maximum) * 100)
+						? Math.min(
+								100,
+								(resolvedValue! / display.maximum) * 100,
+							)
 						: 0
 				}
 				barColor={valueColor ?? undefined}
