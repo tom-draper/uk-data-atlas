@@ -34,7 +34,10 @@ export default function TrendGuidePage() {
 						sources covers. Here we'll use the local authority
 						source on 2023 codes.
 					</P>
-					<Request url={`${API}/measures/population-estimate`} />
+					<Request
+						url={`${API}/measures/population-estimate`}
+						operationId="getMeasure"
+					/>
 				</Step>
 
 				<Step id="series" title="Get the series">
@@ -45,6 +48,7 @@ export default function TrendGuidePage() {
 					</P>
 					<Request
 						url={`${API}/data/population-estimate/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023`}
+						operationId="getSourceExactMeasureSeries"
 					/>
 				</Step>
 
@@ -58,6 +62,7 @@ export default function TrendGuidePage() {
 					</P>
 					<Request
 						url={`${API}/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025`}
+						operationId="getSourceExactMeasureChange"
 					/>
 				</Step>
 
@@ -70,6 +75,7 @@ export default function TrendGuidePage() {
 					</P>
 					<Request
 						url={`${API}/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001`}
+						operationId="aggregateSourceExactMeasure"
 					/>
 					<Callout tone="note">
 						Change is always measured within one set of area codes,
@@ -87,6 +93,7 @@ export default function TrendGuidePage() {
 					</P>
 					<Request
 						url={`${API}/measures/population-estimate/quality`}
+						operationId="getMeasureQuality"
 					/>
 				</Step>
 			</Steps>

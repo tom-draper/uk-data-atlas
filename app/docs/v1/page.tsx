@@ -9,6 +9,7 @@ import {
 	Quote,
 	Search,
 	Table2,
+	LocateFixed,
 } from "lucide-react";
 import CodePanel, { RequestSamples } from "@/components/docs/CodePanel";
 import {
@@ -108,6 +109,29 @@ export default function IntroductionPage() {
 					>
 						Time series, rankings and change between any two
 						periods.
+					</LinkCard>
+					<LinkCard
+						href="/docs/v1/guides/coordinate"
+						title="Explore a coordinate"
+						icon={<LocateFixed className="h-4 w-4" />}
+					>
+						Turn a latitude and longitude into the areas and
+						statistics it describes.
+					</LinkCard>
+					<LinkCard
+						href="/docs/v1/guides/batch-locations"
+						title="Locate a batch of points"
+					>
+						Match a spreadsheet of coordinates to areas, including
+						points outside coverage.
+					</LinkCard>
+					<LinkCard
+						href="/docs/v1/guides/named-place"
+						title="Explore a named place"
+						icon={<Search className="h-4 w-4" />}
+					>
+						Work from names like North Wales or Greater Manchester
+						without guessing their boundaries.
 					</LinkCard>
 					<LinkCard
 						href="/docs/v1/guides/sync"
