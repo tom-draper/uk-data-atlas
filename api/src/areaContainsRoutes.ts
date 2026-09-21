@@ -2,11 +2,13 @@ import {
 	CONTAINMENT_NOTE,
 	describeLookupRelease,
 	locatePoints,
-	parseLookupPoint,
+	parseLookupCoordinate,
+	parseLookupCrs,
 	parseLookupRequest,
 	MAX_STATED_ACCURACY_M,
 	parseStatedAccuracy,
 	type LookupPoint,
+	type LookupInputCrs,
 } from "./pointLookup";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -19,6 +21,18 @@ const unavailable = () =>
 		503,
 		"Catalogue Unavailable",
 		"Build the geography resolver and geometry source registry before point lookup.",
+	);
+
+const coordinateDescription = (crs: string) =>
+	crs === "EPSG:4326"
+		? "lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees"
+		: "easting and northing as plain decimal grid metres";
+
+const coordinateCrsProblem = () =>
+	problem(
+		400,
+		"Invalid Query",
+		"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 	);
 
 /** Areas of each requested geography that contain a WGS84 point. */
@@ -43,16 +57,23 @@ export const handleAreaContainsRoutes = ({
 			"Invalid Query",
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
-	const point = parseLookupPoint(
-		parsedUrl.searchParams.get("lng") ?? undefined,
-		parsedUrl.searchParams.get("lat") ?? undefined,
+	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));
+	if (!crs) return coordinateCrsProblem();
+	const point = parseLookupCoordinate(
+		crs,
+		{
+			lng: parsedUrl.searchParams.get("lng") ?? undefined,
+			lat: parsedUrl.searchParams.get("lat") ?? undefined,
+			easting: parsedUrl.searchParams.get("easting") ?? undefined,
+			northing: parsedUrl.searchParams.get("northing") ?? undefined,
+		},
 		accuracy,
 	);
 	if (!point)
 		return problem(
 			400,
 			"Invalid Query",
-			"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees.",
+			`${coordinateDescription(crs)} are required for ${crs}.`,
 		);
 	const { geographyResolver } = context;
 	if (!geographyResolver?.hasAreaGeometryCache()) return unavailable();
@@ -82,6 +103,7 @@ export const handleAreaContainsRoutes = ({
 
 const parseBatchPoints = (
 	values: string[],
+	crs: LookupInputCrs,
 	defaultAccuracyM: number | undefined,
 ): LookupPoint[] | ApiResponse => {
 	if (values.length === 0)
@@ -98,17 +120,23 @@ const parseBatchPoints = (
 		);
 	const points: LookupPoint[] = [];
 	for (const [index, value] of values.entries()) {
-		const [lng, lat, accuracyText, extra] = value.split(",");
+		const [first, second, accuracyText, extra] = value.split(",");
 		const accuracy = parseStatedAccuracy(accuracyText);
 		const point =
 			extra === undefined && accuracy !== null
-				? parseLookupPoint(lng, lat, accuracy ?? defaultAccuracyM)
+				? parseLookupCoordinate(
+						crs,
+						crs === "EPSG:4326"
+							? { lng: first, lat: second }
+							: { easting: first, northing: second },
+						accuracy ?? defaultAccuracyM,
+					)
 				: undefined;
 		if (!point)
 			return problem(
 				400,
 				"Invalid Query",
-				`point ${index} (${JSON.stringify(value)}) is not {lng},{lat} or {lng},{lat},{accuracy} in plain decimals: WGS 84 degrees with lng from -180 to 180 and lat from -90 to 90, and accuracy in metres up to ${MAX_STATED_ACCURACY_M}.`,
+				`point ${index} (${JSON.stringify(value)}) is not {${crs === "EPSG:4326" ? "lng},{lat" : "easting},{northing"} or {${crs === "EPSG:4326" ? "lng},{lat" : "easting},{northing"},{accuracy} in plain decimals for ${crs}; stated accuracy is in metres up to ${MAX_STATED_ACCURACY_M}.`,
 			);
 		points.push(point);
 	}
@@ -137,8 +165,11 @@ export const handleAreaContainsBatchRoutes = ({
 			"Invalid Query",
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
+	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));
+	if (!crs) return coordinateCrsProblem();
 	const points = parseBatchPoints(
 		parsedUrl.searchParams.getAll("point"),
+		crs,
 		accuracy,
 	);
 	if (!Array.isArray(points)) return points;

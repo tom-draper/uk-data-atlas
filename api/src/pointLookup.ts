@@ -12,7 +12,11 @@ import {
 	selectReleaseForDate,
 	type ReleaseReference,
 } from "./releaseForDate";
-import type { GeometryProvenance } from "./reprojection";
+import {
+	toWgs84Point,
+	type GeometryProvenance,
+	type GeometryTransformation,
+} from "./reprojection";
 import { problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
 
@@ -23,17 +27,32 @@ export type LookupPoint = {
 	lng: number;
 	lat: number;
 	crs: "EPSG:4326";
+	/** The coordinate as supplied, when it was transformed into WGS 84. */
+	input?: {
+		crs: "EPSG:27700" | "EPSG:29902";
+		easting: number;
+		northing: number;
+		transformation: GeometryTransformation;
+	};
 	precision: {
-		decimalPlaces: { lng: number; lat: number };
+		decimalPlaces:
+			| { lng: number; lat: number }
+			| { easting: number; northing: number };
 		/**
 		 * How far the true position may lie from the coordinate, in metres on
 		 * the ground: the caller's stated accuracy, or else half the last
 		 * written decimal place.
 		 */
 		uncertaintyM: number;
-		basis: "stated-accuracy" | "decimal-places";
+		basis:
+			| "stated-accuracy"
+			| "decimal-places"
+			| "stated-accuracy-and-transformation"
+			| "decimal-places-and-transformation";
 	};
 };
+
+export type LookupInputCrs = "EPSG:4326" | "EPSG:27700" | "EPSG:29902";
 
 /** The largest accuracy a caller may state, in metres. */
 export const MAX_STATED_ACCURACY_M = 100000;
@@ -53,6 +72,18 @@ const coordinatePart = (
 };
 
 const roundM = (metres: number) => Math.round(metres * 100) / 100;
+
+/** The deliberately small CRS vocabulary the public point endpoints accept. */
+export const parseLookupCrs = (
+	text: string | null,
+): LookupInputCrs | undefined => {
+	if (text === null) return "EPSG:4326";
+	return text === "EPSG:4326" ||
+		text === "EPSG:27700" ||
+		text === "EPSG:29902"
+		? text
+		: undefined;
+};
 
 /** A stated accuracy in metres; undefined when absent, null when malformed. */
 export const parseStatedAccuracy = (
@@ -107,6 +138,99 @@ export const parseLookupPoint = (
 		},
 	};
 };
+
+const projectedBounds: Record<
+	Exclude<LookupInputCrs, "EPSG:4326">,
+	{ easting: [number, number]; northing: [number, number] }
+> = {
+	// Bounds are deliberately wider than the transformation's stated area of
+	// use. A coordinate outside it still receives the transformation metadata;
+	// the subsequent country/area result says whether an Atlas geometry covers
+	// the point, rather than silently clipping a valid edge case.
+	"EPSG:27700": { easting: [-100000, 900000], northing: [-100000, 1400000] },
+	"EPSG:29902": { easting: [-100000, 500000], northing: [0, 600000] },
+};
+
+const projectedLookupPoint = (
+	crs: Exclude<LookupInputCrs, "EPSG:4326">,
+	eastingText: string | undefined,
+	northingText: string | undefined,
+	statedAccuracyM?: number,
+): LookupPoint | undefined => {
+	const bounds = projectedBounds[crs];
+	const easting = coordinatePart(
+		eastingText,
+		bounds.easting[0],
+		bounds.easting[1],
+	);
+	const northing = coordinatePart(
+		northingText,
+		bounds.northing[0],
+		bounds.northing[1],
+	);
+	if (!easting || !northing) return undefined;
+	const { position, transformation } = toWgs84Point(
+		[easting.value, northing.value],
+		crs,
+	);
+	const coordinateUncertainty =
+		statedAccuracyM ??
+		0.5 *
+			Math.max(
+				10 ** -easting.decimalPlaces,
+				10 ** -northing.decimalPlaces,
+			);
+	return {
+		lng: position[0],
+		lat: position[1],
+		crs: "EPSG:4326",
+		input: {
+			crs,
+			easting: easting.value,
+			northing: northing.value,
+			transformation: transformation!,
+		},
+		precision: {
+			decimalPlaces: {
+				easting: easting.decimalPlaces,
+				northing: northing.decimalPlaces,
+			},
+			// This is conservative: it does not present two independent accuracy
+			// declarations as though they can cancel one another out.
+			uncertaintyM: roundM(
+				coordinateUncertainty + transformation!.accuracyM,
+			),
+			basis:
+				statedAccuracyM === undefined
+					? "decimal-places-and-transformation"
+					: "stated-accuracy-and-transformation",
+		},
+	};
+};
+
+/** Parse a WGS 84, British National Grid or Irish Grid lookup coordinate. */
+export const parseLookupCoordinate = (
+	crs: LookupInputCrs,
+	values: {
+		lng?: string;
+		lat?: string;
+		easting?: string;
+		northing?: string;
+	},
+	statedAccuracyM?: number,
+): LookupPoint | undefined =>
+	crs === "EPSG:4326"
+		? values.easting === undefined && values.northing === undefined
+			? parseLookupPoint(values.lng, values.lat, statedAccuracyM)
+			: undefined
+		: values.lng === undefined && values.lat === undefined
+			? projectedLookupPoint(
+					crs,
+					values.easting,
+					values.northing,
+					statedAccuracyM,
+				)
+			: undefined;
 
 export type BoundaryResolution =
 	| {
