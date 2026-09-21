@@ -32,6 +32,7 @@ import type { ApiResponse } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
+import type { TerrainCatalogue } from "./terrainCatalogue";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -61,6 +62,8 @@ export type RouteContext = {
 	locationProjectionInventory?: LocationProjectionInventory;
 	locationProjectionStore?: LocationProjectionStore;
 	dataCatalog?: DataCatalog;
+	/** Versioned terrain product definitions and their honest availability. */
+	terrainCatalogue?: TerrainCatalogue;
 	populationObservations?: PopulationObservationArtifact;
 	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
 	/** Every measure's observations bar the two population artifacts. */

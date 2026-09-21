@@ -24,6 +24,7 @@ export const RESOURCE_KINDS = [
 	"namedLocations",
 	"exports",
 	"lookups",
+	"terrainLayers",
 ] as const;
 
 export type ResourceKind = (typeof RESOURCE_KINDS)[number];
@@ -75,6 +76,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "geography-inventory", path: "geography-inventory.json" },
 	{ id: "validation-report", path: "validation-report.json" },
 	{ id: "source-inventory", path: "source-inventory.json" },
+	{ id: "terrain-catalogue", path: "terrain-catalogue.json" },
 ];
 
 /**
@@ -227,6 +229,10 @@ export const releaseResources = (
 		),
 		lookups: fingerprints(
 			entriesOf(read("lookup-manifest.json"), "lookups"),
+			(entry) => String(entry.id),
+		),
+		terrainLayers: fingerprints(
+			entriesOf(read("terrain-catalogue.json"), "products"),
 			(entry) => String(entry.id),
 		),
 	};

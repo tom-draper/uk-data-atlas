@@ -33,6 +33,7 @@ const artifactForKind: Record<ResourceKind, string> = {
 	namedLocations: "named-locations",
 	exports: "export-manifest",
 	lookups: "lookup-manifest",
+	terrainLayers: "terrain-catalogue",
 };
 
 const entries = (value: unknown, key: string): JsonRecord[] => {
@@ -73,6 +74,10 @@ const resource = (
 			return entries(artifact, "exports").find((entry) => entry.id === id);
 		case "lookups":
 			return entries(artifact, "lookups").find((entry) => entry.id === id);
+		case "terrainLayers":
+			return entries(artifact, "products").find(
+				(entry) => entry.id === id,
+			);
 		case "validationExceptions": {
 			for (const entry of entries(artifact, "resources"))
 				for (const check of entries(entry, "checks"))
