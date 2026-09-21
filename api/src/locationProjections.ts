@@ -432,6 +432,20 @@ export class LocationProjectionStore {
 		);
 	}
 
+	/** Every materialised member projection shard, without loading its rows. */
+	memberProjectionShards() {
+		return [...this.shards.values()].sort((left, right) =>
+			left.crosswalkId.localeCompare(right.crosswalkId),
+		);
+	}
+
+	/** Every materialised parent projection shard, without loading its rows. */
+	parentProjectionShards() {
+		return [...this.parentShards.values()].sort((left, right) =>
+			left.crosswalkId.localeCompare(right.crosswalkId),
+		);
+	}
+
 	parents(
 		locationId: string,
 		crosswalkId: string,

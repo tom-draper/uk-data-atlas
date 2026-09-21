@@ -6431,6 +6431,46 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+  /locations/{location-id}/capabilities:
+    get:
+      operationId: getNamedLocationCapabilities
+      tags: ["Geography"]
+      summary: Discover the direct and crosswalk views published for a named location
+      x-likely-refusal:
+        status: 404
+        when: "The location id is not listed by `/v1/locations`."
+        x-example-request: "/v1/locations/greater-london/capabilities"
+      description: >
+        Lists the compiled releases where a location's declared member codes
+        can be read directly, plus each materialised crosswalk view into those
+        members and out to its parents. A view is a link with the exact
+        geography, release and crosswalk to request; the API never chooses a
+        crosswalk silently. `partial` direct views contain some, but not all,
+        listed member codes. A `not-built` result identifies a deployment that
+        has not loaded the projection inventory.
+      parameters:
+        - $ref: "#/components/parameters/LocationId"
+      responses:
+        "200":
+          description: The published direct, member and parent views for the location.
+          content:
+            application/json:
+              schema: { type: object }
+              x-example-request: "/v1/locations/london/capabilities"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  location:
+                    id: london
+                  capabilities:
+                    direct:
+                      status: available
+                meta:
+                  nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   /locations/{location-id}/members:
     get:
       operationId: getNamedLocationMembers

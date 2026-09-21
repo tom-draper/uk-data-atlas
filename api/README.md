@@ -3458,6 +3458,7 @@ second inventory to maintain:
 - `GET /v1/translations` — Translate one code through a published crosswalk in either direction
 - `GET /v1/locations` — List the curated area collections
 - `GET /v1/locations/{location-id}` — Get one curated area collection's definition
+- `GET /v1/locations/{location-id}/capabilities` — Discover the direct and crosswalk views published for a named location
 - `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
 - `GET /v1/locations/{location-id}/parents` — Find the areas of a coarser geography a named location covers or meets
 
