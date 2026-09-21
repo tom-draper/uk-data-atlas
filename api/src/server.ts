@@ -1,11 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import {
-	createAreaLookup,
-	type AreaInventory,
-	type AreaLookup,
-	type AreaReleaseArtifact,
-} from "./areaInventory";
 import type { AtlasRelease } from "./atlasRelease";
 import {
 	readArchivedAtlasReleaseArtifact,
@@ -16,12 +10,10 @@ import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
 import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
-import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
-import type { GeographyInventory } from "./geographyInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
 	createNamedLocationLookup,
@@ -57,79 +49,22 @@ import {
 } from "./relationshipPaths";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
-import type { TerrainCatalogue } from "./terrainCatalogue";
 import { createRemoteTerrainProvider } from "./terrainProvider";
 import { withUnitDefinitions } from "./unitRegistry";
-
-const registryPath = (apiRoot: string) =>
-	join(apiRoot, "public", "boundary-releases.json");
-
-export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry => {
-	const registry = JSON.parse(
-		readFileSync(registryPath(apiRoot), "utf8"),
-	) as BoundaryRegistry;
-	if (registry.schemaVersion !== 1 || !Array.isArray(registry.releases)) {
-		throw new Error(
-			`Invalid boundary registry at ${registryPath(apiRoot)}`,
-		);
-	}
-	return registry;
-};
-
-export const readGeographyInventory = (apiRoot: string): GeographyInventory => {
-	const path = join(apiRoot, "public", "geography-inventory.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as GeographyInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
-		throw new Error(`Invalid geography inventory at ${path}`);
-	}
-	return inventory;
-};
-
-export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
-	const path = join(apiRoot, "public", "terrain-catalogue.json");
-	const catalogue = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as TerrainCatalogue;
-	if (catalogue.schemaVersion !== 1 || !Array.isArray(catalogue.products)) {
-		throw new Error(`Invalid terrain catalogue at ${path}`);
-	}
-	return catalogue;
-};
-
-export const readAreaInventory = (apiRoot: string): AreaInventory => {
-	const inventoryPath = join(apiRoot, "public", "area-inventory.json");
-	const inventory = JSON.parse(
-		readFileSync(inventoryPath, "utf8"),
-	) as AreaInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
-		throw new Error(`Invalid area inventory at ${inventoryPath}`);
-	}
-	return inventory;
-};
-
-export const readAreaLookup = (
-	apiRoot: string,
-	inventory = readAreaInventory(apiRoot),
-): AreaLookup => {
-	const artifacts = inventory.releases.flatMap((release) => {
-		if (release.status !== "available") return [];
-		const path = join(apiRoot, "public", release.artifact);
-		const artifact = JSON.parse(
-			readFileSync(path, "utf8"),
-		) as AreaReleaseArtifact;
-		if (
-			artifact.schemaVersion !== 1 ||
-			artifact.contentHash !== release.contentHash ||
-			!Array.isArray(artifact.areas)
-		) {
-			throw new Error(`Invalid area release artifact at ${path}`);
-		}
-		return [artifact];
-	});
-	return createAreaLookup(artifacts);
-};
+import {
+	readAreaInventory,
+	readAreaLookup,
+	readBoundaryRegistry,
+	readGeographyInventory,
+	readTerrainCatalogue,
+} from "./boundaryLoader";
+export {
+	readAreaInventory,
+	readAreaLookup,
+	readBoundaryRegistry,
+	readGeographyInventory,
+	readTerrainCatalogue,
+} from "./boundaryLoader";
 
 export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory => {
 	const path = join(apiRoot, "public", "crosswalk-inventory.json");
