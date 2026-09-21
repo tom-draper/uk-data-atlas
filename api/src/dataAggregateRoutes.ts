@@ -7,7 +7,6 @@ import {
 	isCountryCode,
 	statisticPhrase,
 } from "./aggregation";
-import { reconcileMembersForYear } from "./memberReconciliation";
 import {
 	sourceExactProvenance,
 	type ObservationArtifactReference,
@@ -18,6 +17,7 @@ import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { calculateWeightedMean } from "./weightedMean";
+import { validateLocationAggregation } from "./locationAggregation";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -220,84 +220,15 @@ export const handleDataAggregateRoutes = ({
 	const byLocation = location
 		? aggregateLocationMembers(location, numericRecords)
 		: undefined;
-	/*
-	 * A curated location lists every code it has ever been made of, so
-	 * against any one partition some are always the wrong vintage: the
-	 * North West carries the six Cumbria districts and the two unitaries
-	 * that replaced them, and no release holds both. Refusing on any
-	 * unresolved code refused the location outright, for every vintage.
-	 *
-	 * What must hold is that nothing is missed and nothing counted twice.
-	 * A code absent because it is superseded has its successor resolving in
-	 * its place, and one not yet current has its predecessor; either way
-	 * the ground is covered exactly once, because a release's areas are a
-	 * partition and only codes in that release are summed. An absence the
-	 * vintage does not explain is still refused.
-	 */
-	const locationCoverage =
-		location && byLocation && areaLookup
-			? reconcileMembersForYear(
-					areaLookup,
-					source.sourceGeography.type,
-					source.sourceGeography.boundaryYear,
-					location.memberCodes,
-					new Set(
-						byLocation.members.map((record) => record.areaCode),
-					),
-				)
-			: undefined;
-	// Telling a vintage mismatch from a bad code needs the compiled releases
-	// to compare against. Without them, fall back to refusing any unresolved
-	// code rather than guessing which kind it is.
-	if (
-		location &&
-		byLocation &&
-		!areaLookup &&
-		byLocation.unresolvedMemberCodes.length > 0
-	) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area inventory before aggregating over a named location, so a member code of another vintage can be told from one that is wrong.",
-		);
-	}
-	if (locationCoverage && locationCoverage.unexplained.length > 0) {
-		return problem(
-			422,
-			"Operation Not Supported",
-			`The named location does not cover this source partition by direct code match: ${locationCoverage.unexplained
-				.map((member) => `${member.code} (${member.status})`)
-				.join(", ")}. No conversion or partial sum was applied.`,
-			{ code: "partial_coverage" },
-		);
-	}
-	if (byLocation && location && byLocation.members.length === 0) {
-		// A country is carried as a map extent with no member codes, and is
-		// summed by its own GSS code rather than by membership.
-		if (location.memberCodes.length === 0) {
-			return problem(
-				422,
-				"Operation Not Supported",
-				`${location.label} carries no member codes: it names an extent rather than a set of areas. Aggregate a country with areaCode, such as areaCode=E92000001 for England.`,
-			);
-		}
-		const resolvedElsewhere = [
-			...new Set(
-				(locationCoverage?.unresolved ?? []).flatMap(
-					(member) => member.presentIn,
-				),
-			),
-		].sort();
-		return problem(
-			422,
-			"Operation Not Supported",
-			`Every member code of ${location.label} is the wrong vintage for this source partition, which is on ${source.sourceGeography.boundaryYear} ${source.sourceGeography.type} codes${
-				resolvedElsewhere.length > 0
-					? `; they resolve against ${resolvedElsewhere.join(", ")}`
-					: ""
-			}. The place is no longer one of these areas in its own right.`,
-		);
-	}
+	const locationCoverageResult = validateLocationAggregation({
+		location,
+		byLocation,
+		areaLookup,
+		sourceGeography: source.sourceGeography,
+	});
+	if (locationCoverageResult && "status" in locationCoverageResult)
+		return locationCoverageResult;
+	const locationCoverage = locationCoverageResult;
 	const byCountry =
 		location || regional
 			? undefined
