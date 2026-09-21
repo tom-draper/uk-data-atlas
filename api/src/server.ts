@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
 	readArchivedAtlasReleaseArtifact,
@@ -7,8 +7,6 @@ import {
 } from "./atlasReleaseHistory";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
-import { openArchive } from "./mapResource/archiveReader";
-import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
@@ -70,6 +68,7 @@ import {
 	readMeasureCompatibility,
 	readValidationReport,
 } from "./catalogueManifestLoader";
+import { readMapAssets, readMapResources } from "./mapResourceLoader";
 export {
 	readAnalysisGeographyInventory,
 	readAnalysisGeographyValidationInventory,
@@ -137,6 +136,7 @@ export const readApiCatalogues = (
 	}
 	const geometrySources = readGeometrySourceLookup(apiRoot);
 	const mapResources = readMapResources(apiRoot);
+	const mapAssets = readMapAssets(apiRoot, mapResources);
 	const crosswalkLookup = readCrosswalkLookup(apiRoot, crosswalkInventory);
 	const analysisGeographyInventory = readAnalysisGeographyInventory(
 		apiRoot,
@@ -244,20 +244,7 @@ export const readApiCatalogues = (
 		exportManifest,
 		lookupManifest: readLookupManifest(apiRoot),
 		mapResources,
-		mapArchives: new Map(
-			mapResources.resources.map((resource) => [
-				resource.id,
-				openArchive(join(apiRoot, "public", resource.tiles.artifact)),
-			]),
-		),
-		mapFeatures: new Map(
-			mapResources.resources.flatMap((resource) =>
-				(resource.features ?? []).map((entry) => [
-					entry.artifact,
-					readFileSync(join(apiRoot, "public", entry.artifact)),
-				]),
-			),
-		),
+		...mapAssets,
 		populationObservations: readPopulationObservations(apiRoot),
 		populationLocalAuthorityObservations:
 			readPopulationLocalAuthorityObservations(apiRoot),
@@ -265,19 +252,6 @@ export const readApiCatalogues = (
 		measureCompatibilityInventory: readMeasureCompatibility(apiRoot),
 		analysisGeographyInventory,
 		analysisGeographyValidationInventory,
-	};
-};
-
-/**
- * The published map resources, when there are any. A server built without them
- * still serves everything else, and the map routes answer that the resource is
- * not published rather than the server failing to start.
- */
-const readMapResources = (apiRoot: string) => {
-	const path = join(apiRoot, "public", "map-resources.json");
-	if (!existsSync(path)) return { resources: [] };
-	return JSON.parse(readFileSync(path, "utf8")) as {
-		resources: MapResourceDescriptor[];
 	};
 };
 
