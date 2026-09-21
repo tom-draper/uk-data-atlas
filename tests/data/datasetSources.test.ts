@@ -1,11 +1,17 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { DATASET_SOURCES, datasetSourcesMarkdown } from "@/lib/data/catalog";
+import {
+	boundaryCoverageMarkdown,
+	DATASET_SOURCES,
+	datasetSourcesMarkdown,
+} from "@/lib/data/catalog";
 
 const readme = readFileSync(join(process.cwd(), "README.md"), "utf8");
 const start = "<!-- sources:start -->";
 const end = "<!-- sources:end -->";
+const boundariesStart = "<!-- boundaries:start -->";
+const boundariesEnd = "<!-- boundaries:end -->";
 
 describe("dataset sources", () => {
 	it("uses unique source names", () => {
@@ -21,5 +27,15 @@ describe("dataset sources", () => {
 		expect(readme.slice(startIndex + start.length, endIndex).trim()).toBe(
 			datasetSourcesMarkdown(),
 		);
+	});
+
+	it("keeps the README boundary inventory generated from the boundary catalogue", () => {
+		const startIndex = readme.indexOf(boundariesStart);
+		const endIndex = readme.indexOf(boundariesEnd);
+		expect(startIndex).toBeGreaterThanOrEqual(0);
+		expect(endIndex).toBeGreaterThan(startIndex);
+		expect(
+			readme.slice(startIndex + boundariesStart.length, endIndex).trim(),
+		).toBe(boundaryCoverageMarkdown());
 	});
 });

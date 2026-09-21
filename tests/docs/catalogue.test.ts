@@ -4,9 +4,11 @@ import {
 	loadCatalogue,
 	nationList,
 	periodRange,
+	releasesForGeography,
 	servedDatasetIds,
 	sourceSummaries,
 } from "@/lib/docs/catalogue";
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { DATA_PAGES, DATA_TOPICS } from "@/lib/docs/content/data";
 import { GEOGRAPHIES, GEOGRAPHY_GROUPS } from "@/lib/docs/content/geographies";
 import {
@@ -53,6 +55,17 @@ describe("geography pages", () => {
 		expect(Object.keys(GEOGRAPHIES).sort()).toEqual(
 			geographyIds(catalogue),
 		);
+	});
+
+	it("lists every map boundary release in its geography documentation", () => {
+		for (const [geography, family] of Object.entries(BOUNDARY_CATALOG)) {
+			expect(
+				releasesForGeography(catalogue, geography)
+					.map(({ id }) => id)
+					.sort(),
+				geography,
+			).toEqual(family.releases.map(({ id }) => id).sort());
+		}
 	});
 
 	it("link every geography data is published on", () => {

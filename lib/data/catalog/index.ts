@@ -14,7 +14,11 @@ export {
 	type SourceArtifact,
 } from "./ingestion";
 export { CATALOGUE_DATASET_DEFINITIONS } from "./registry";
-export { DATASET_SOURCES, datasetSourcesMarkdown } from "./sources";
+export {
+	DATASET_SOURCES,
+	boundaryCoverageMarkdown,
+	datasetSourcesMarkdown,
+} from "./sources";
 export type {
 	CatalogueDataset,
 	CatalogueDatasetRecords,
