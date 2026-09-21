@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseLookupCoordinate, parseLookupCrs } from "../src/pointLookup";
+import {
+	formatBritishGridReference,
+	parseLookupCoordinate,
+	parseLookupCrs,
+} from "../src/pointLookup";
 
 test("normalises British National Grid input while retaining its transformation", () => {
 	const point = parseLookupCoordinate(
@@ -97,4 +101,27 @@ test("decodes an Ordnance Survey grid-reference cell without implying point prec
 		}),
 		undefined,
 	);
+});
+
+test("formats a National Grid cell without overstating its uncertainty", () => {
+	assert.deepEqual(
+		formatBritishGridReference([530000, 180000], 2),
+		{
+			value: "TQ 3000 8000",
+			digits: 4,
+			cellSizeM: 10,
+			position: "containing-cell",
+		},
+	);
+	assert.deepEqual(
+		formatBritishGridReference([530000.5, 180000.5], 8, 5),
+		{
+			value: "TQ 300 800",
+			digits: 3,
+			cellSizeM: 100,
+			position: "containing-cell",
+		},
+	);
+	assert.equal(formatBritishGridReference([530000, 180000], 8000), undefined);
+	assert.equal(formatBritishGridReference([800000, 180000], 2), undefined);
 });

@@ -1,5 +1,6 @@
 import {
 	MAX_STATED_ACCURACY_M,
+	formatBritishGridReference,
 	isProjectedLookupPointInBounds,
 	parseLookupCoordinate,
 	parseLookupCrs,
@@ -48,6 +49,21 @@ export const handleCoordinateRoutes = ({
 			"Invalid Query",
 			"to must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 		);
+	const gridReferenceDigitsText = parsedUrl.searchParams.get("gridrefDigits");
+	if (gridReferenceDigitsText !== null && !/^[1-5]$/.test(gridReferenceDigitsText))
+		return problem(
+			400,
+			"Invalid Query",
+			"gridrefDigits must be an integer from 1 to 5.",
+		);
+	const gridReferenceDigits =
+		gridReferenceDigitsText === null ? 5 : Number(gridReferenceDigitsText);
+	if (gridReferenceDigitsText !== null && targetCrs !== "EPSG:27700")
+		return problem(
+			400,
+			"Invalid Query",
+			"gridrefDigits can only be used with to=EPSG:27700.",
+		);
 	const point = parseLookupCoordinate(
 		crs,
 		{
@@ -78,15 +94,26 @@ export const handleCoordinateRoutes = ({
 					targetCrs,
 				);
 				if (!isProjectedLookupPointInBounds(targetCrs, position)) return null;
+				const uncertaintyM =
+					Math.round(
+						(point.precision.uncertaintyM + transformation!.accuracyM) * 100,
+					) / 100;
+				const gridReference =
+					targetCrs === "EPSG:27700"
+						? formatBritishGridReference(
+								position,
+								uncertaintyM,
+								gridReferenceDigits,
+							)
+						: undefined;
 				return {
 					crs: targetCrs,
 					easting: position[0],
 					northing: position[1],
 					// This is the inverse of the named published operation.
 					transformation: { ...transformation!, direction: "inverse" as const },
-					uncertaintyM: Math.round(
-						(point.precision.uncertaintyM + transformation!.accuracyM) * 100,
-					) / 100,
+					uncertaintyM,
+					...(gridReference ? { gridReference } : {}),
 				};
 			})();
 	if (target === null)

@@ -1073,7 +1073,10 @@ paths:
         The answer keeps the input form and named transformation. An Ordnance
         Survey grid reference denotes a square, not a point: the coordinate is
         the cell centre and uncertainty includes the square's half-diagonal.
-        This route only converts horizontal position; it neither determines
+        A British National Grid target also supplies its containing National
+        Grid cell when one can represent the coordinate without overstating
+        uncertainty; `gridrefDigits` can request a coarser cell. This route
+        only converts horizontal position; it neither determines
         altitude nor implies an administrative-area relationship.
       parameters:
         - name: lng
@@ -1088,6 +1091,7 @@ paths:
           description: Latitude in WGS 84 decimal degrees, -90 to 90.
         - $ref: "#/components/parameters/PointLookupCrs"
         - $ref: "#/components/parameters/CoordinateTargetCrs"
+        - $ref: "#/components/parameters/BritishGridReferenceDigits"
         - $ref: "#/components/parameters/PointLookupEasting"
         - $ref: "#/components/parameters/PointLookupNorthing"
         - $ref: "#/components/parameters/PointLookupGridReference"
@@ -6921,6 +6925,16 @@ components:
         The requested output CRS. `point` is always WGS 84; choose a national
         grid here to add `target` with easting and northing. The API rejects a
         point that falls outside its supported range for the requested grid.
+    BritishGridReferenceDigits:
+      name: gridrefDigits
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 5, default: 5 }
+      description: >
+        With `to=EPSG:27700`, the maximum number of digits per coordinate in
+        `target.gridReference`. The API may return fewer digits when the input
+        or transformation uncertainty requires a coarser cell. It is invalid
+        with another target CRS.
     PointLookupEasting:
       name: easting
       in: query
@@ -8413,6 +8427,18 @@ components:
             uncertaintyM:
               type: number
               description: Input uncertainty plus the transformation's stated accuracy, in metres.
+            gridReference:
+              type: object
+              description: >
+                A British National Grid cell containing the target coordinate,
+                present only for an encodable EPSG:27700 target. Its cell is no
+                finer than the target uncertainty permits.
+              required: [value, digits, cellSizeM, position]
+              properties:
+                value: { type: string, example: "TQ 3000 8000" }
+                digits: { type: integer, minimum: 1, maximum: 5 }
+                cellSizeM: { type: number }
+                position: { const: containing-cell }
             transformation:
               type: object
               required: [name, epsg, accuracyM, areaOfUse, direction]

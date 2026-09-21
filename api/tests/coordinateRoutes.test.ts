@@ -11,12 +11,18 @@ const get = (url: string) =>
 			data?: {
 				point?: LookupPoint;
 				targetCrs?: string;
-				target?: {
+					target?: {
 					crs: string;
 					easting: number;
 					northing: number;
 					uncertaintyM: number;
 					transformation: { epsg: string; direction: string };
+					gridReference?: {
+						value: string;
+						digits: number;
+						cellSizeM: number;
+						position: string;
+					};
 				};
 			};
 		};
@@ -71,6 +77,19 @@ test("converts a normalised WGS84 point into a requested national grid", () => {
 		britishGrid.body.data?.target?.transformation.direction,
 		"inverse",
 	);
+	assert.deepEqual(britishGrid.body.data?.target?.gridReference, {
+		value: "TQ 3000 8000",
+		digits: 4,
+		cellSizeM: 10,
+		position: "containing-cell",
+	});
+	const coarserReference = get(
+		"/v1/coordinates:convert?lng=-0.12835394&lat=51.503990828&to=EPSG:27700&gridrefDigits=2",
+	);
+	assert.equal(
+		coarserReference.body.data?.target?.gridReference?.value,
+		"TQ 30 80",
+	);
 });
 
 test("refuses an ambiguous or unsupported coordinate conversion", () => {
@@ -87,6 +106,14 @@ test("refuses an ambiguous or unsupported coordinate conversion", () => {
 	);
 	assert.equal(
 		get("/v1/coordinates:convert?lng=0&lat=0&to=EPSG:27700").status,
+		400,
+	);
+	assert.equal(
+		get("/v1/coordinates:convert?lng=-0.1&lat=51.5&gridrefDigits=6").status,
+		400,
+	);
+	assert.equal(
+		get("/v1/coordinates:convert?lng=-0.1&lat=51.5&gridrefDigits=2").status,
 		400,
 	);
 });
