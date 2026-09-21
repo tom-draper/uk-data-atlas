@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { datasetIsNeeded } from "@/lib/hooks/useDatasets";
+import { datasetIsNeeded, datasetLoadPriority } from "@/lib/hooks/useDatasets";
 import { DEFAULT_VISIBILITY } from "@/lib/context/ChartVisibilityContext";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
@@ -72,5 +72,17 @@ describe("datasetIsNeeded", () => {
 				[key]: true,
 			}),
 		).toBe(true);
+	});
+
+	it("prioritises the active map, then visible cards", () => {
+		const active = definitionFor("simd");
+		const visible = definitionFor("localElection");
+		expect(
+			datasetLoadPriority(active, DEFAULT_VISIBILITY, active.type),
+		).toBe(0);
+		expect(datasetLoadPriority(visible, DEFAULT_VISIBILITY)).toBe(1);
+		expect(
+			datasetLoadPriority(definitionFor("simd"), DEFAULT_VISIBILITY),
+		).toBe(2);
 	});
 });
