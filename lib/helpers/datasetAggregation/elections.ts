@@ -49,6 +49,7 @@ export function aggregateLocalElection(
 			SF: 0,
 			APNI: 0,
 			SDLP: 0,
+			OTHER: 0,
 		},
 		electorate: 0,
 		totalVotes: 0,
@@ -71,6 +72,7 @@ export function aggregateLocalElection(
 		target.SF = (target.SF ?? 0) + (source.SF ?? 0);
 		target.APNI = (target.APNI ?? 0) + (source.APNI ?? 0);
 		target.SDLP = (target.SDLP ?? 0) + (source.SDLP ?? 0);
+		target.OTHER = (target.OTHER ?? 0) + (source.OTHER ?? 0);
 		stats.electorate += ward.electorate;
 		stats.totalVotes += ward.totalVotes;
 	}
