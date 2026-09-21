@@ -1,7 +1,5 @@
-import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
-import { validateLocationAggregation } from "./locationAggregation";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
 import {
@@ -11,15 +9,12 @@ import {
 import { parseAggregateQuery } from "./aggregateQuery";
 import { readAggregateObservations } from "./aggregateObservations";
 import {
-	aggregateTargetMembers,
-	requireAggregateMembers,
-} from "./aggregateTargetMembers";
-import {
 	resolveAggregationLocation,
 	validateAggregationLocationSource,
 } from "./aggregationLocation";
 import { resolveAggregationMeasure } from "./aggregationMeasure";
 import { resolveAggregationPartition } from "./aggregationPartition";
+import { prepareAggregateTarget } from "./aggregatePreparation";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -106,45 +101,17 @@ export const handleDataAggregateRoutes = ({
 	});
 	if ("status" in numericObservationResult) return numericObservationResult;
 	const { observations, records: numericRecords } = numericObservationResult;
-	const targetMembers = aggregateTargetMembers({
+	const preparedAggregate = prepareAggregateTarget({
 		records: numericRecords,
 		location,
 		regional,
 		areaCode,
-	});
-	const locationCoverageResult = validateLocationAggregation({
-		location,
-		byLocation: targetMembers.byLocation,
 		areaLookup,
-		sourceGeography: source.sourceGeography,
-	});
-	if (locationCoverageResult && "status" in locationCoverageResult)
-		return locationCoverageResult;
-	const locationCoverage = locationCoverageResult;
-	const { byCountry, byRegion } = targetMembers;
-	/*
-	 * A country or region total sums whatever the partition publishes, so a
-	 * partition holding values for only some areas, as a local election
-	 * does for the wards that went to the polls, still answers. It must
-	 * then say so, by comparing what was summed with the areas a matching
-	 * boundary release holds. A named location is not assessed here: its
-	 * members are reconciled above, and an unexplained gap is refused.
-	 */
-	const coverage = assessAggregationCoverage({
-		byCountry,
-		byRegion,
-		regional,
 		compatibleReleases,
-		areaLookup,
 		sourceGeography: source.sourceGeography,
-		areaCode,
 	});
-	const aggregateResult = requireAggregateMembers({
-		...targetMembers,
-		regional,
-	});
-	if ("status" in aggregateResult) return aggregateResult;
-	const aggregate = aggregateResult;
+	if ("status" in preparedAggregate) return preparedAggregate;
+	const { aggregate, locationCoverage, coverage } = preparedAggregate;
 	let aggregateValue = aggregate.value;
 	let weighting: AggregateWeighting | undefined;
 	if (weightedAggregation) {
