@@ -747,15 +747,24 @@ test("keeps the resolution contract's one exception the only one", () => {
 		"a route chooses its own partition; either it should ask the resolver, or the contract should say why it does not",
 	);
 
-	// And the resolver is really what the rest of them ask.
+	// And the resolver is really what the rest of them ask. Aggregate routes
+	// share a partition resolver, so that helper is checked separately below.
 	const asking = routes.filter((file) =>
 		readFileSync(resolve(apiRoot, "src", file), "utf8").includes(
 			"resolveObservations",
 		),
 	);
 	assert.ok(
-		asking.length >= 8,
+		asking.length >= 7,
 		`only ${asking.length} routes ask the resolver`,
+	);
+	assert.match(
+		readFileSync(
+			resolve(apiRoot, "src", "aggregationPartition.ts"),
+			"utf8",
+		),
+		/resolveObservations/,
+		"the shared aggregate partition resolver must ask the observation resolver",
 	);
 });
 
@@ -812,8 +821,8 @@ test("serves the analysis contract's reviewed-support routes", () => {
 	].map((match) => match[1]!.split("?")[0]!);
 	assert.equal(proposed.length, 3);
 	assert.deepEqual(
-		proposed.filter(
-			(path) => isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
+		proposed.filter((path) =>
+			isUnrouted(path.replace(/\{[^}]+\}/g, "placeholder")),
 		),
 		[],
 		"an available analysis route is not served",

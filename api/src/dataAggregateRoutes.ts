@@ -1,12 +1,9 @@
-import { refused, resolveObservations } from "./resolve/observationPlan";
-import { resolveAggregationTarget } from "./aggregationTarget";
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 import { validateLocationAggregation } from "./locationAggregation";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
-import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
 import {
 	buildAggregateResponse,
 	type AggregateWeighting,
@@ -22,6 +19,7 @@ import {
 	validateAggregationLocationSource,
 } from "./aggregationLocation";
 import { resolveAggregationMeasure } from "./aggregationMeasure";
+import { resolveAggregationPartition } from "./aggregationPartition";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -39,13 +37,11 @@ export const handleDataAggregateRoutes = ({
 		return undefined;
 	const {
 		areaLookup,
-		crosswalkLookup,
 		namedLocationLookup,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureObservations,
-		measureCompatibilityInventory,
 	} = context;
 	const measureId = segments[2] as string;
 	const resolvedMeasure = resolveAggregationMeasure({
@@ -80,41 +76,24 @@ export const handleDataAggregateRoutes = ({
 	const location = resolvedLocation;
 	// The query parser has established these are present; which partition they
 	// name is the resolver's to decide.
-	const resolved = resolveObservations(context, {
+	const partition = resolveAggregationPartition({
+		context,
 		measureId,
-		periods: [period],
+		period,
 		geography,
 		boundaryYear,
+		targetCode,
+		regionCode,
+		crosswalkId,
+		sourceRelease,
 	});
-	if (resolved.kind === "refusal") return refused(resolved.refusal);
-	const { source } = resolved.plan;
+	if ("status" in partition) return partition;
+	const { source, compatibleReleases, regional } = partition;
 	const locationSourceError = validateAggregationLocationSource({
 		location,
 		source,
 	});
 	if (locationSourceError) return locationSourceError;
-	// The boundary releases this partition is assessed to match, against
-	// which an aggregate's coverage can be judged. This is evidence about a
-	// partition rather than a choice of one, so it is read here; the resolver
-	// only reports compatibility for a release a caller actually named.
-	const compatibleReleases = compatibleReleasesForAggregation({
-		measureCompatibilityInventory,
-		measureId,
-		source,
-		period: period as string,
-	});
-	const regional = resolveAggregationTarget({
-		targetCode,
-		regionCode,
-		crosswalkId,
-		sourceRelease,
-		source,
-		compatibleReleases,
-		crosswalkLookup,
-		measureCompatibilityInventory,
-		areaLookup,
-	});
-	if (regional && "status" in regional) return regional;
 	const numericObservationResult = readAggregateObservations({
 		measureId,
 		source,
