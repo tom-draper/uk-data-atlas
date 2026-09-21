@@ -254,38 +254,15 @@ async function main() {
 		string,
 		{ data: unknown; layout?: DatasetPayloadLayout }
 	>();
-	const chartResults = CATALOGUE_DATASET_DEFINITIONS.map(
-		async (definition) => {
-			const { reader, artifacts } = createTrackedReader();
-			const compiled = await definition.precompile(reader);
-			const data = definition.coverageCountries
-				? Object.fromEntries(
-						Object.entries(compiled).map(([id, dataset]) => [
-							id,
-							{
-								...dataset,
-								coverageCountries: definition.coverageCountries,
-							},
-						]),
-					)
-				: compiled;
-			compiledDatasets.set(definition.precompiledFile, {
-				data,
-				layout: definition.payload,
-			});
-			const summary = validatePrecompiledDataset(definition, data);
-			const output = await out(definition.precompiledFile, data);
-			return {
-				type: definition.type,
-				output: definition.precompiledFile,
-				source: definition.source,
-				contract: definition.ingestion ?? {},
-				inputs: [...artifacts.values()],
-				summary,
-				compiled: output,
-			};
-		},
-	);
+	// Dataset loaders can hold large source strings, parsed rows, compiled
+	// records, and the JSON string being written at the same time. Starting all
+	// loaders with map(async ...) creates a large, avoidable memory spike. Keep
+	// the result metadata and compiled payloads, but only run one loader at a
+	// time so the peak is bounded by the largest individual dataset.
+	const chartResults: Awaited<ReturnType<typeof compileDataset>>[] = [];
+	for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
+		chartResults.push(await compileDataset(definition, compiledDatasets));
+	}
 	const gazetteerCore = loadGazetteerCore(readBoundaryAsset).then(
 		async (data) => {
 			await out("gazetteer.core", data);
@@ -347,6 +324,43 @@ async function main() {
 	});
 
 	console.log("Done.");
+}
+
+async function compileDataset(
+	definition: (typeof CATALOGUE_DATASET_DEFINITIONS)[number],
+	compiledDatasets: Map<
+		string,
+		{ data: unknown; layout?: DatasetPayloadLayout }
+	>,
+) {
+	const { reader, artifacts } = createTrackedReader();
+	const compiled = await definition.precompile(reader);
+	const data = definition.coverageCountries
+		? Object.fromEntries(
+				Object.entries(compiled).map(([id, dataset]) => [
+					id,
+					{
+						...dataset,
+						coverageCountries: definition.coverageCountries,
+					},
+				]),
+			)
+		: compiled;
+	compiledDatasets.set(definition.precompiledFile, {
+		data,
+		layout: definition.payload,
+	});
+	const summary = validatePrecompiledDataset(definition, data);
+	const output = await out(definition.precompiledFile, data);
+	return {
+		type: definition.type,
+		output: definition.precompiledFile,
+		source: definition.source,
+		contract: definition.ingestion ?? {},
+		inputs: [...artifacts.values()],
+		summary,
+		compiled: output,
+	};
 }
 
 await main();
