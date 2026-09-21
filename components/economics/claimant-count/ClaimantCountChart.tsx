@@ -9,6 +9,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface ClaimantCountChartProps {
 	activeDataset: Dataset | null;
@@ -19,13 +20,6 @@ interface ClaimantCountChartProps {
 	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-}
-
-function rateColor(rate: number): string {
-	if (rate <= 2.5) return "#16a34a";
-	if (rate <= 4) return "#eab308";
-	if (rate <= 6) return "#f97316";
-	return "#dc2626";
 }
 
 function computeStats(
@@ -81,7 +75,7 @@ export default function ClaimantCountChart({
 		activeDataset?.type === "claimantCount" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
-	const color = rateColor(stats?.totalRate ?? 0);
+	const color = useHeatmapValueColor("claimantCount", stats?.totalRate);
 
 	if (!dataset) return null;
 
@@ -111,7 +105,7 @@ export default function ClaimantCountChart({
 					stats ? `${stats.youthRate.toFixed(1)}% youth` : undefined
 				}
 				barWidth={barWidth}
-				barColor={color}
+				barColor={color ?? undefined}
 			/>
 		</ChartCard>
 	);

@@ -9,6 +9,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface Props {
 	activeDataset: Dataset | null;
@@ -20,14 +21,6 @@ interface Props {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const colorForRate = (rate: number) =>
-	rate >= 15
-		? "#dc2626"
-		: rate >= 10
-			? "#f97316"
-			: rate >= 7
-				? "#eab308"
-				: "#16a34a";
 const formatCount = (count: number) =>
 	count >= 1_000_000
 		? `${(count / 1_000_000).toFixed(1)}m`
@@ -58,7 +51,7 @@ export default function FuelPovertyChart({
 	const active =
 		activeDataset?.type === "fuelPoverty" &&
 		activeDataset.id === dataset?.id;
-	const accent = stats ? colorForRate(stats.fuelPovertyRate) : null;
+	const accent = useHeatmapValueColor("fuelPoverty", stats?.fuelPovertyRate);
 	if (!dataset) return null;
 	const barWidth = (Math.min(stats?.fuelPovertyRate ?? 0, 20) / 20) * 100;
 	return (

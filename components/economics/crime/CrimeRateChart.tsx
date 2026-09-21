@@ -10,6 +10,7 @@ import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -93,9 +94,7 @@ export default function CrimeRateChart({
 	// proportional so small authorities are not visually flattened to zero.
 	const intensity = Math.min(rawValue / maxThreshold, 1);
 
-	const color = hasData
-		? `hsl(${50 - intensity * 50}, ${50 + intensity * 40}%, 50%)`
-		: null;
+	const color = useHeatmapValueColor("crime", hasData ? crimeRate : null);
 
 	return (
 		<ChartCard
