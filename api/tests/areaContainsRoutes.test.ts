@@ -313,6 +313,24 @@ test("accepts British National Grid and Irish Grid coordinates at point endpoint
 	);
 	assert.equal(
 		get(
+			"/v1/areas:contains?crs=EPSG:27700&gridref=TQ3000080000&release=ward/2024-12-uk-bgc",
+		).data.point.input.gridReference.value,
+		"TQ 30000 80000",
+	);
+	assert.equal(
+		get(
+			"/v1/areas:containsBatch?crs=EPSG:27700&point=TQ3000080000,4&release=ward/2024-12-uk-bgc",
+		).data.points[0].point.precision.basis,
+		"stated-accuracy-and-grid-reference-and-transformation",
+	);
+	assert.equal(
+		get(
+			"/v1/areas:near?crs=EPSG:27700&gridref=TQ3000080000&release=ward/2024-12-uk-bgc",
+		).data.point.input.gridReference.position,
+		"cell-centre",
+	);
+	assert.equal(
+		get(
 			"/v1/areas:contains?crs=EPSG:3857&lng=0&lat=0&release=ward/2024-12-uk-bgc",
 		).status,
 		400,

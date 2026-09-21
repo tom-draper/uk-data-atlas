@@ -66,6 +66,7 @@ export const handleAreaNearRoutes = ({
 			lat: searchParams.get("lat") ?? undefined,
 			easting: searchParams.get("easting") ?? undefined,
 			northing: searchParams.get("northing") ?? undefined,
+			gridReference: searchParams.get("gridref") ?? undefined,
 		},
 		accuracy,
 	);
@@ -75,7 +76,9 @@ export const handleAreaNearRoutes = ({
 			"Invalid Query",
 			crs === "EPSG:4326"
 				? "lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."
-				: `easting and northing are required as plain decimal grid metres for ${crs}.`,
+				: crs === "EPSG:27700"
+					? "easting and northing, or gridref as an Ordnance Survey National Grid reference, are required for EPSG:27700."
+					: `easting and northing are required as plain decimal grid metres for ${crs}.`,
 		);
 	const limit = wholeNumber(searchParams.get("limit"), 1, 1, MAX_NEAR_LIMIT);
 	if (limit === undefined)

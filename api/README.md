@@ -323,7 +323,8 @@ only **available** when its endpoint, contract and provenance are published.
       `GET /v1/areas:containsBatch` answers the same for up to 100 points,
       reading each release once for the whole batch.
 - [x] Accept WGS 84, British National Grid and Irish Grid coordinates at the
-      point endpoints, retaining the declared input, named transformation and
+      point endpoints, including ordinary Ordnance Survey grid references such
+      as `TQ 30000 80000`; retain the declared input, named transformation and
       conservative combined coordinate/transformation uncertainty.
 - [ ] Keep terrain elevation as a separately versioned raster lookup, with its
       vertical datum, resolution and uncertainty; elevation is not part of

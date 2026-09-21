@@ -26,7 +26,9 @@ const unavailable = () =>
 const coordinateDescription = (crs: string) =>
 	crs === "EPSG:4326"
 		? "lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees"
-		: "easting and northing as plain decimal grid metres";
+		: crs === "EPSG:27700"
+			? "easting and northing as plain decimal grid metres, or gridref as an Ordnance Survey National Grid reference"
+			: "easting and northing as plain decimal grid metres";
 
 const coordinateCrsProblem = () =>
 	problem(
@@ -66,6 +68,7 @@ export const handleAreaContainsRoutes = ({
 			lat: parsedUrl.searchParams.get("lat") ?? undefined,
 			easting: parsedUrl.searchParams.get("easting") ?? undefined,
 			northing: parsedUrl.searchParams.get("northing") ?? undefined,
+			gridReference: parsedUrl.searchParams.get("gridref") ?? undefined,
 		},
 		accuracy,
 	);
@@ -120,15 +123,21 @@ const parseBatchPoints = (
 		);
 	const points: LookupPoint[] = [];
 	for (const [index, value] of values.entries()) {
-		const [first, second, accuracyText, extra] = value.split(",");
+		const parts = value.split(",");
+		const gridReference =
+			crs === "EPSG:27700" && /^[a-z]/i.test(parts[0] ?? "");
+		const coordinateParts = gridReference ? 1 : 2;
+		const accuracyText = parts[coordinateParts];
 		const accuracy = parseStatedAccuracy(accuracyText);
 		const point =
-			extra === undefined && accuracy !== null
+			parts.length <= coordinateParts + 1 && accuracy !== null
 				? parseLookupCoordinate(
 						crs,
-						crs === "EPSG:4326"
-							? { lng: first, lat: second }
-							: { easting: first, northing: second },
+						gridReference
+							? { gridReference: parts[0] }
+							: crs === "EPSG:4326"
+								? { lng: parts[0], lat: parts[1] }
+								: { easting: parts[0], northing: parts[1] },
 						accuracy ?? defaultAccuracyM,
 					)
 				: undefined;
@@ -136,7 +145,7 @@ const parseBatchPoints = (
 			return problem(
 				400,
 				"Invalid Query",
-				`point ${index} (${JSON.stringify(value)}) is not {${crs === "EPSG:4326" ? "lng},{lat" : "easting},{northing"} or {${crs === "EPSG:4326" ? "lng},{lat" : "easting},{northing"},{accuracy} in plain decimals for ${crs}; stated accuracy is in metres up to ${MAX_STATED_ACCURACY_M}.`,
+				`point ${index} (${JSON.stringify(value)}) is not ${crs === "EPSG:4326" ? "{lng},{lat}" : crs === "EPSG:27700" ? "{easting},{northing} or {gridref}" : "{easting},{northing}"}, optionally followed by ,{accuracy}; plain decimals are required except for an Ordnance Survey grid reference in EPSG:27700. Stated accuracy is in metres up to ${MAX_STATED_ACCURACY_M}.`,
 			);
 		points.push(point);
 	}

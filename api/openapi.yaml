@@ -3460,11 +3460,12 @@ paths:
 
 
         Supply WGS 84 `lng` and `lat` (the default), or set `crs=EPSG:27700`
-        and supply British National Grid `easting` and `northing`, or set
-        `crs=EPSG:29902` for Irish Grid metres. The answer is normalised to
-        WGS 84 and retains the input coordinate and named transformation; its
-        positional uncertainty conservatively includes that transformation's
-        stated accuracy.
+        and supply British National Grid `easting` and `northing` or an
+        Ordnance Survey `gridref` such as `TQ 30000 80000`. Set
+        `crs=EPSG:29902` for Irish Grid metres. A grid reference denotes a
+        square, so its answer uses the cell centre and includes its whole
+        half-diagonal as uncertainty. Every answer is normalised to WGS 84 and
+        retains the input coordinate and named transformation.
 
 
         Each geography's release is either pinned, as
@@ -3514,6 +3515,7 @@ paths:
         - $ref: "#/components/parameters/PointLookupCrs"
         - $ref: "#/components/parameters/PointLookupEasting"
         - $ref: "#/components/parameters/PointLookupNorthing"
+        - $ref: "#/components/parameters/PointLookupGridReference"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
@@ -3622,9 +3624,10 @@ paths:
       description: >
         The `areas:contains` lookup for up to 100 points at once, each given as
         `point={lng},{lat}` or `point={lng},{lat},{accuracy}` in the default
-        WGS 84, or as `point={easting},{northing}` with `crs=EPSG:27700` or
-        `EPSG:29902`. Geographies, release selection and statuses are exactly
-        as for a single point.
+        WGS 84, as `point={easting},{northing}` with `crs=EPSG:27700` or
+        `EPSG:29902`, or as one Ordnance Survey reference such as
+        `point=TQ3000080000` with `crs=EPSG:27700`. Geographies, release
+        selection and statuses are exactly as for a single point.
 
 
         Release-wide facts, including selection, coverage, resolution and
@@ -3653,7 +3656,9 @@ paths:
           description: >
             `{lng},{lat}` in plain decimal WGS 84 degrees, optionally followed
             by `,{accuracy}` in metres. With a grid `crs`, use
-            `{easting},{northing}` instead. Repeat for each point, up to 100.
+            `{easting},{northing}` instead; British National Grid also accepts
+            one Ordnance Survey grid reference such as `TQ3000080000`.
+            Repeat for each point, up to 100.
         - $ref: "#/components/parameters/PointLookupCrs"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
@@ -3752,8 +3757,9 @@ paths:
 
 
         The coordinate forms are the same as `areas:contains`: default WGS 84
-        `lng`/`lat`, British National Grid `easting`/`northing` with
-        `crs=EPSG:27700`, or Irish Grid metres with `crs=EPSG:29902`.
+        `lng`/`lat`, British National Grid `easting`/`northing` or an Ordnance
+        Survey `gridref` with `crs=EPSG:27700`, or Irish Grid metres with
+        `crs=EPSG:29902`.
 
 
         This is a distance answer, labelled `relation: distance`, and never a
@@ -3784,6 +3790,7 @@ paths:
         - $ref: "#/components/parameters/PointLookupCrs"
         - $ref: "#/components/parameters/PointLookupEasting"
         - $ref: "#/components/parameters/PointLookupNorthing"
+        - $ref: "#/components/parameters/PointLookupGridReference"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
@@ -6820,7 +6827,8 @@ components:
       description: >
         The input coordinate reference system. The default `EPSG:4326` uses
         `lng` and `lat`; `EPSG:27700` uses British National Grid `easting` and
-        `northing`; `EPSG:29902` uses Irish Grid `easting` and `northing`.
+        `northing` or an Ordnance Survey `gridref`; `EPSG:29902` uses Irish
+        Grid `easting` and `northing`.
     PointLookupEasting:
       name: easting
       in: query
@@ -6837,6 +6845,17 @@ components:
       description: >
         Northing in grid metres. Required with `crs=EPSG:27700` or
         `crs=EPSG:29902`; do not combine it with WGS 84 `lng`/`lat`.
+    PointLookupGridReference:
+      name: gridref
+      in: query
+      required: false
+      schema: { type: string, pattern: "^[A-Za-z]{2}(?:[\\s-]*\\d[\\d\\s-]*)?$" }
+      description: >
+        A two-letter Ordnance Survey National Grid reference, followed by an
+        even number of digits from 2 to 10, for example `TQ 30000 80000`.
+        Use only with `crs=EPSG:27700`; do not combine it with `easting` or
+        `northing`. A grid reference denotes a square, represented by its cell
+        centre with the cell's half-diagonal included in uncertainty.
     PointLookupGeography:
       name: geography
       in: query
@@ -8241,13 +8260,22 @@ components:
                   properties:
                     easting: { type: integer }
                     northing: { type: integer }
+                - type: object
+                  required: [gridReference]
+                  properties:
+                    gridReference:
+                      type: object
+                      required: [easting, northing]
+                      properties:
+                        easting: { type: integer }
+                        northing: { type: integer }
             uncertaintyM:
               type: number
               description: How far the true position may lie from the coordinate, in metres.
             basis:
               type: string
               enum:
-                [stated-accuracy, decimal-places, stated-accuracy-and-transformation, decimal-places-and-transformation]
+                [stated-accuracy, decimal-places, stated-accuracy-and-transformation, decimal-places-and-transformation, grid-reference-and-transformation, stated-accuracy-and-grid-reference-and-transformation]
         input:
           type: object
           description: Present when British National Grid or Irish Grid input was transformed to WGS 84.
@@ -8256,6 +8284,14 @@ components:
             crs: { enum: [EPSG:27700, EPSG:29902] }
             easting: { type: number }
             northing: { type: number }
+            gridReference:
+              type: object
+              description: Present when an Ordnance Survey National Grid reference was supplied.
+              required: [value, cellSizeM, position]
+              properties:
+                value: { type: string, example: "TQ 30000 80000" }
+                cellSizeM: { type: number }
+                position: { const: cell-centre }
             transformation:
               type: object
               required: [name, epsg, accuracyM, areaOfUse]

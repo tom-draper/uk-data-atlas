@@ -3060,6 +3060,9 @@
 				"query:northing": {
 					"required": false
 				},
+				"query:gridref": {
+					"required": false
+				},
 				"query:geography": {
 					"required": false,
 					"maxItems": 4
@@ -3094,6 +3097,10 @@
 					"data.point.input",
 					"data.point.input.crs",
 					"data.point.input.easting",
+					"data.point.input.gridReference",
+					"data.point.input.gridReference.cellSizeM",
+					"data.point.input.gridReference.position",
+					"data.point.input.gridReference.value",
 					"data.point.input.northing",
 					"data.point.input.transformation",
 					"data.point.input.transformation.accuracyM",
@@ -3106,6 +3113,9 @@
 					"data.point.precision.basis",
 					"data.point.precision.decimalPlaces",
 					"data.point.precision.decimalPlaces.easting",
+					"data.point.precision.decimalPlaces.gridReference",
+					"data.point.precision.decimalPlaces.gridReference.easting",
+					"data.point.precision.decimalPlaces.gridReference.northing",
 					"data.point.precision.decimalPlaces.lat",
 					"data.point.precision.decimalPlaces.lng",
 					"data.point.precision.decimalPlaces.northing",
@@ -3299,6 +3309,10 @@
 					"data.points[].point.input",
 					"data.points[].point.input.crs",
 					"data.points[].point.input.easting",
+					"data.points[].point.input.gridReference",
+					"data.points[].point.input.gridReference.cellSizeM",
+					"data.points[].point.input.gridReference.position",
+					"data.points[].point.input.gridReference.value",
 					"data.points[].point.input.northing",
 					"data.points[].point.input.transformation",
 					"data.points[].point.input.transformation.accuracyM",
@@ -3311,6 +3325,9 @@
 					"data.points[].point.precision.basis",
 					"data.points[].point.precision.decimalPlaces",
 					"data.points[].point.precision.decimalPlaces.easting",
+					"data.points[].point.precision.decimalPlaces.gridReference",
+					"data.points[].point.precision.decimalPlaces.gridReference.easting",
+					"data.points[].point.precision.decimalPlaces.gridReference.northing",
 					"data.points[].point.precision.decimalPlaces.lat",
 					"data.points[].point.precision.decimalPlaces.lng",
 					"data.points[].point.precision.decimalPlaces.northing",
@@ -3489,6 +3506,9 @@
 				"query:northing": {
 					"required": false
 				},
+				"query:gridref": {
+					"required": false
+				},
 				"query:geography": {
 					"required": false,
 					"maxItems": 4
@@ -3528,6 +3548,10 @@
 					"data.point.input",
 					"data.point.input.crs",
 					"data.point.input.easting",
+					"data.point.input.gridReference",
+					"data.point.input.gridReference.cellSizeM",
+					"data.point.input.gridReference.position",
+					"data.point.input.gridReference.value",
 					"data.point.input.northing",
 					"data.point.input.transformation",
 					"data.point.input.transformation.accuracyM",
@@ -3540,6 +3564,9 @@
 					"data.point.precision.basis",
 					"data.point.precision.decimalPlaces",
 					"data.point.precision.decimalPlaces.easting",
+					"data.point.precision.decimalPlaces.gridReference",
+					"data.point.precision.decimalPlaces.gridReference.easting",
+					"data.point.precision.decimalPlaces.gridReference.northing",
 					"data.point.precision.decimalPlaces.lat",
 					"data.point.precision.decimalPlaces.lng",
 					"data.point.precision.decimalPlaces.northing",

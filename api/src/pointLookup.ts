@@ -32,12 +32,19 @@ export type LookupPoint = {
 		crs: "EPSG:27700" | "EPSG:29902";
 		easting: number;
 		northing: number;
+		/** Present when an Ordnance Survey National Grid reference was supplied. */
+		gridReference?: {
+			value: string;
+			cellSizeM: number;
+			position: "cell-centre";
+		};
 		transformation: GeometryTransformation;
 	};
 	precision: {
 		decimalPlaces:
 			| { lng: number; lat: number }
-			| { easting: number; northing: number };
+			| { easting: number; northing: number }
+			| { gridReference: { easting: number; northing: number } };
 		/**
 		 * How far the true position may lie from the coordinate, in metres on
 		 * the ground: the caller's stated accuracy, or else half the last
@@ -48,7 +55,9 @@ export type LookupPoint = {
 			| "stated-accuracy"
 			| "decimal-places"
 			| "stated-accuracy-and-transformation"
-			| "decimal-places-and-transformation";
+			| "decimal-places-and-transformation"
+			| "grid-reference-and-transformation"
+			| "stated-accuracy-and-grid-reference-and-transformation";
 	};
 };
 
@@ -169,17 +178,95 @@ const projectedLookupPoint = (
 		bounds.northing[1],
 	);
 	if (!easting || !northing) return undefined;
+	return projectedLookupPointFromParts(
+		crs,
+		easting,
+		northing,
+		statedAccuracyM,
+	);
+};
+
+type ProjectedCoordinate = { value: number; decimalPlaces: number };
+
+type BritishGridReference = {
+	value: string;
+	easting: number;
+	northing: number;
+	cellSizeM: number;
+	digits: number;
+};
+
+const britishGridLetters = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+
+/**
+ * Decode the standard two-letter Ordnance Survey National Grid notation.
+ * A grid reference denotes a square, so its returned coordinate is the cell
+ * centre and the precision reports the whole half-diagonal, never a false
+ * point-level accuracy.
+ */
+const parseBritishGridReference = (
+	text: string | undefined,
+): BritishGridReference | undefined => {
+	const compact = text?.trim().toUpperCase().replace(/[\s-]/g, "") ?? "";
+	const match = /^([A-HJ-Z]{2})(\d{2,10})$/.exec(compact);
+	if (!match || match[2].length % 2 !== 0) return undefined;
+	const first = britishGridLetters.indexOf(match[1][0]!);
+	const second = britishGridLetters.indexOf(match[1][1]!);
+	if (first < 0 || second < 0) return undefined;
+	const digits = match[2];
+	const digitsPerCoordinate = digits.length / 2;
+	const cellSizeM = 10 ** (5 - digitsPerCoordinate);
+	const easting100km = ((first - 2 + 5) % 5) * 5 + (second % 5);
+	const northing100km =
+		19 - Math.floor(first / 5) * 5 - Math.floor(second / 5);
+	const eastingDigits = digits.slice(0, digitsPerCoordinate);
+	const northingDigits = digits.slice(digitsPerCoordinate);
+	const southWestEasting =
+		easting100km * 100000 + Number(eastingDigits) * cellSizeM;
+	const southWestNorthing =
+		northing100km * 100000 + Number(northingDigits) * cellSizeM;
+	const bounds = projectedBounds["EPSG:27700"];
+	const easting = southWestEasting + cellSizeM / 2;
+	const northing = southWestNorthing + cellSizeM / 2;
+	if (
+		easting < bounds.easting[0] ||
+		easting > bounds.easting[1] ||
+		northing < bounds.northing[0] ||
+		northing > bounds.northing[1]
+	)
+		return undefined;
+	return {
+		value: `${match[1]} ${eastingDigits} ${northingDigits}`,
+		easting,
+		northing,
+		cellSizeM,
+		digits: digitsPerCoordinate,
+	};
+};
+
+const projectedLookupPointFromParts = (
+	crs: Exclude<LookupInputCrs, "EPSG:4326">,
+	easting: ProjectedCoordinate,
+	northing: ProjectedCoordinate,
+	statedAccuracyM?: number,
+	gridReference?: BritishGridReference,
+): LookupPoint => {
 	const { position, transformation } = toWgs84Point(
 		[easting.value, northing.value],
 		crs,
 	);
 	const coordinateUncertainty =
-		statedAccuracyM ??
-		0.5 *
-			Math.max(
-				10 ** -easting.decimalPlaces,
-				10 ** -northing.decimalPlaces,
-			);
+		gridReference === undefined
+			? (statedAccuracyM ??
+				0.5 *
+					Math.max(
+						10 ** -easting.decimalPlaces,
+						10 ** -northing.decimalPlaces,
+					))
+			: Math.max(
+					statedAccuracyM ?? 0,
+					(gridReference.cellSizeM * Math.SQRT2) / 2,
+				);
 	return {
 		lng: position[0],
 		lat: position[1],
@@ -188,20 +275,40 @@ const projectedLookupPoint = (
 			crs,
 			easting: easting.value,
 			northing: northing.value,
+			...(gridReference
+				? {
+						gridReference: {
+							value: gridReference.value,
+							cellSizeM: gridReference.cellSizeM,
+							position: "cell-centre" as const,
+						},
+					}
+				: {}),
 			transformation: transformation!,
 		},
 		precision: {
-			decimalPlaces: {
-				easting: easting.decimalPlaces,
-				northing: northing.decimalPlaces,
-			},
+			decimalPlaces: gridReference
+				? {
+						gridReference: {
+							easting: gridReference.digits,
+							northing: gridReference.digits,
+						},
+					}
+				: {
+						easting: easting.decimalPlaces,
+						northing: northing.decimalPlaces,
+					},
 			// This is conservative: it does not present two independent accuracy
 			// declarations as though they can cancel one another out.
 			uncertaintyM: roundM(
 				coordinateUncertainty + transformation!.accuracyM,
 			),
-			basis:
-				statedAccuracyM === undefined
+			basis: gridReference
+				? statedAccuracyM !== undefined &&
+					statedAccuracyM > (gridReference.cellSizeM * Math.SQRT2) / 2
+					? "stated-accuracy-and-grid-reference-and-transformation"
+					: "grid-reference-and-transformation"
+				: statedAccuracyM === undefined
 					? "decimal-places-and-transformation"
 					: "stated-accuracy-and-transformation",
 		},
@@ -216,14 +323,19 @@ export const parseLookupCoordinate = (
 		lat?: string;
 		easting?: string;
 		northing?: string;
+		gridReference?: string;
 	},
 	statedAccuracyM?: number,
-): LookupPoint | undefined =>
-	crs === "EPSG:4326"
-		? values.easting === undefined && values.northing === undefined
+): LookupPoint | undefined => {
+	if (crs === "EPSG:4326")
+		return values.easting === undefined &&
+			values.northing === undefined &&
+			values.gridReference === undefined
 			? parseLookupPoint(values.lng, values.lat, statedAccuracyM)
-			: undefined
-		: values.lng === undefined && values.lat === undefined
+			: undefined;
+	if (values.lng !== undefined || values.lat !== undefined) return undefined;
+	if (crs !== "EPSG:27700" || values.gridReference === undefined)
+		return values.gridReference === undefined
 			? projectedLookupPoint(
 					crs,
 					values.easting,
@@ -231,6 +343,19 @@ export const parseLookupCoordinate = (
 					statedAccuracyM,
 				)
 			: undefined;
+	if (values.easting !== undefined || values.northing !== undefined)
+		return undefined;
+	const gridReference = parseBritishGridReference(values.gridReference);
+	return gridReference
+		? projectedLookupPointFromParts(
+				crs,
+				{ value: gridReference.easting, decimalPlaces: 0 },
+				{ value: gridReference.northing, decimalPlaces: 0 },
+				statedAccuracyM,
+				gridReference,
+			)
+		: undefined;
+};
 
 export type BoundaryResolution =
 	| {
