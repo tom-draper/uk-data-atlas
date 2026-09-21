@@ -10,10 +10,7 @@ import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { readGeometrySourceLookup } from "./geometrySources";
 import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
-import type {
-	CrosswalkArtifact,
-	CrosswalkInventory,
-} from "./crosswalkInventory";
+import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
 	createNamedLocationLookup,
@@ -42,11 +39,8 @@ import {
 	LocationProjectionArtifact,
 	type LocationProjectionInventory,
 } from "./locationProjections";
-import type { CrosswalkLookup, RouteContext } from "./routing";
-import {
-	createRelationshipPathIndex,
-	type RelationshipPathInventory,
-} from "./relationshipPaths";
+import { createRelationshipPathIndex } from "./relationshipPaths";
+import type { RouteContext } from "./routing";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
 import { createRemoteTerrainProvider } from "./terrainProvider";
@@ -66,37 +60,16 @@ export {
 	readTerrainCatalogue,
 } from "./boundaryLoader";
 
-export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory => {
-	const path = join(apiRoot, "public", "crosswalk-inventory.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as CrosswalkInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.crosswalks)) {
-		throw new Error(`Invalid crosswalk inventory at ${path}`);
-	}
-	return inventory;
-};
-
-export const readCrosswalkLookup = (
-	apiRoot: string,
-	inventory: CrosswalkInventory,
-): CrosswalkLookup =>
-	new Map(
-		inventory.crosswalks.map((crosswalk) => {
-			const path = join(apiRoot, "public", crosswalk.artifact);
-			const artifact = JSON.parse(
-				readFileSync(path, "utf8"),
-			) as CrosswalkArtifact;
-			if (
-				artifact.schemaVersion !== 1 ||
-				artifact.contentHash !== crosswalk.contentHash ||
-				!Array.isArray(artifact.records)
-			) {
-				throw new Error(`Invalid crosswalk artifact at ${path}`);
-			}
-			return [crosswalk.id, artifact];
-		}),
-	);
+import {
+	readCrosswalkInventory,
+	readCrosswalkLookup,
+	readRelationshipPathInventory,
+} from "./crosswalkLoader";
+export {
+	readCrosswalkInventory,
+	readCrosswalkLookup,
+	readRelationshipPathInventory,
+} from "./crosswalkLoader";
 
 export const readAtlasRelease = (apiRoot: string): AtlasRelease => {
 	const path = join(apiRoot, "public", "atlas-release.json");
@@ -149,24 +122,6 @@ export const readLocationProjectionInventory = (
 		inventory.crosswalkInventoryHash !== crosswalkInventory.contentHash
 	) {
 		throw new Error(`Invalid location projection inventory at ${path}`);
-	}
-	return inventory;
-};
-
-export const readRelationshipPathInventory = (
-	apiRoot: string,
-	crosswalks: CrosswalkInventory,
-): RelationshipPathInventory => {
-	const path = join(apiRoot, "public", "relationship-paths.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as RelationshipPathInventory;
-	if (
-		inventory.schemaVersion !== 1 ||
-		!Array.isArray(inventory.paths) ||
-		inventory.crosswalkInventoryHash !== crosswalks.contentHash
-	) {
-		throw new Error(`Invalid relationship path inventory at ${path}`);
 	}
 	return inventory;
 };
