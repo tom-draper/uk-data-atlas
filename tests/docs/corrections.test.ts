@@ -23,7 +23,11 @@ describe("correction register", () => {
 			),
 		);
 		expect(correctionsForMeasure("house-price-median")).toEqual(
-			correctionRecords,
+			correctionRecords.filter(
+				(record) =>
+					record.scope.measureIds.includes("*") ||
+					record.scope.measureIds.includes("house-price-median"),
+			),
 		);
 	});
 });
