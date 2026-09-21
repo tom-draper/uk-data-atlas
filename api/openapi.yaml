@@ -95,6 +95,8 @@ tags:
     description: "Keep a copy in step: whole observation exports, bulk lookup tables, and the immutable Atlas releases that pin them, with comparisons between releases."
   - name: "Geography"
     description: "Resolve and relate areas: boundary releases, area identities and their history, parents and children, crosswalks, code translation and curated named locations."
+  - name: "Terrain"
+    description: "Discover terrain products and their availability. Terrain values, raster tiles and contours are only served when a versioned source is published with its coordinate and vertical-reference metadata."
   - name: "Data catalogue"
     description: "What data exists: source datasets with their input hashes, and measures with their semantics, code compatibility, coverage and quality."
   - name: "Governance"
@@ -965,6 +967,86 @@ paths:
                       releaseCount: 1
                 meta:
                   nextCursor: null
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /terrain:
+    get:
+      operationId: getTerrainCatalogue
+      tags: ["Terrain"]
+      summary: Discover terrain product families and their availability
+      description: >
+        The terrain catalogue distinguishes bare-earth elevation (a digital
+        terrain model) from surface elevation (a digital surface model), and
+        declares slope, aspect, contours and hillshade separately. A product
+        marked `not-published` has no values, tiles or contours to fetch; it
+        exists so a client can discover the service boundary without treating
+        a planned layer as data. Before a product becomes available, its
+        version must state its CRS, vertical datum, resolution, processing,
+        uncertainty, licence and immutable content hash.
+      x-likely-refusal:
+        status: 503
+        when: "Takes no input. Refused only when the server was started without the terrain catalogue built."
+      responses:
+        "200":
+          description: Versioned terrain product definitions and their required metadata.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/terrain"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  schemaVersion: 1
+                  contentHash: sha256:4c7869c07f9e3e20de6f2b1af8a2a9a20e6cde1d4b68fdfeee3fb712f73b6611
+                  publicationRequirements:
+                    - vertical CRS or datum, including the geoid model where applicable
+                    - cell resolution or contour interval
+                    - uncertainty or stated accuracy
+                  products:
+                    - id: terrain-elevation
+                      label: Bare-earth elevation
+                      kind: raster
+                      measurement: Elevation of the terrain surface after buildings and vegetation are removed.
+                      unit: metres
+                      availability:
+                        status: not-published
+                        reason: No versioned terrain source has been ingested and validated for this product yet.
+                      intendedCoverage:
+                        countries: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+                meta:
+                  nextCursor: null
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /terrain/{terrain-id}:
+    get:
+      operationId: getTerrainProduct
+      tags: ["Terrain"]
+      summary: Get one terrain product definition
+      x-likely-refusal:
+        status: 404
+        when: "The id is guessed rather than listed. `GET /v1/terrain` gives the product ids."
+        x-example-request: "/v1/terrain/not-a-product"
+      parameters:
+        - name: terrain-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "A product id from `GET /v1/terrain`, such as `terrain-elevation` or `terrain-contours`."
+      responses:
+        "200":
+          description: One terrain product definition and availability state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              x-example-request: "/v1/terrain/terrain-contours"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -5922,7 +6004,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:1406a82996df26c11a1d86b86fb8da468f1bd2e4037eff6754c3d512e1dd727a
+                    href: /v1/atlas-releases/sha256:50377c152fd57d55759ab7e0674e2697bf1174556be3bb952ae922b866644f11
                     artifactCount: 338
                     current: true
                 meta:
@@ -6113,10 +6195,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:1406a82996df26c11a1d86b86fb8da468f1bd2e4037eff6754c3d512e1dd727a
+                    href: /v1/atlas-releases/sha256:50377c152fd57d55759ab7e0674e2697bf1174556be3bb952ae922b866644f11
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:1406a82996df26c11a1d86b86fb8da468f1bd2e4037eff6754c3d512e1dd727a
+                    href: /v1/atlas-releases/sha256:50377c152fd57d55759ab7e0674e2697bf1174556be3bb952ae922b866644f11
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []

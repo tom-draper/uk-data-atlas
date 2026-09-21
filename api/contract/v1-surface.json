@@ -1049,6 +1049,94 @@
 				]
 			}
 		},
+		"GET /terrain": {
+			"operationId": "getTerrainCatalogue",
+			"parameters": {},
+			"responses": {
+				"200 application/json": [
+					"apiVersion",
+					"atlasRelease",
+					"meta",
+					"meta.nextCursor"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /terrain/{terrain-id}": {
+			"operationId": "getTerrainProduct",
+			"parameters": {
+				"path:terrain-id": {
+					"required": true
+				}
+			},
+			"responses": {
+				"200 application/json": [
+					"apiVersion",
+					"atlasRelease",
+					"meta",
+					"meta.nextCursor"
+				],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /datasets": {
 			"operationId": "listDatasets",
 			"parameters": {},

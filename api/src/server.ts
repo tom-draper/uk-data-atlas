@@ -54,6 +54,7 @@ import {
 } from "./relationshipPaths";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
+import type { TerrainCatalogue } from "./terrainCatalogue";
 import { withUnitDefinitions } from "./unitRegistry";
 
 const registryPath = (apiRoot: string) =>
@@ -80,6 +81,17 @@ export const readGeographyInventory = (apiRoot: string): GeographyInventory => {
 		throw new Error(`Invalid geography inventory at ${path}`);
 	}
 	return inventory;
+};
+
+export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
+	const path = join(apiRoot, "public", "terrain-catalogue.json");
+	const catalogue = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as TerrainCatalogue;
+	if (catalogue.schemaVersion !== 1 || !Array.isArray(catalogue.products)) {
+		throw new Error(`Invalid terrain catalogue at ${path}`);
+	}
+	return catalogue;
 };
 
 export const readAreaInventory = (apiRoot: string): AreaInventory => {
@@ -462,6 +474,7 @@ export const readApiCatalogues = (
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
 	const crosswalkInventory = readCrosswalkInventory(apiRoot);
 	const dataCatalog = readDataCatalog(apiRoot);
+	const terrainCatalogue = readTerrainCatalogue(apiRoot);
 	const atlasRelease = readAtlasRelease(apiRoot);
 	const publicDirectory = join(apiRoot, "public");
 	const atlasReleaseHistory = new Map(
@@ -555,6 +568,7 @@ export const readApiCatalogues = (
 		locationProjectionInventory,
 		locationProjectionStore,
 		dataCatalog,
+		terrainCatalogue,
 		exportManifest,
 		lookupManifest: readLookupManifest(apiRoot),
 		mapResources,

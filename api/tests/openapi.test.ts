@@ -98,6 +98,7 @@ test("files every operation under exactly one declared task tag", () => {
 		"Trend",
 		"Sync",
 		"Geography",
+		"Terrain",
 		"Data catalogue",
 		"Governance",
 	]);

@@ -3462,6 +3462,11 @@ second inventory to maintain:
 - `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
 - `GET /v1/locations/{location-id}/parents` — Find the areas of a coarser geography a named location covers or meets
 
+**Terrain**
+
+- `GET /v1/terrain` — Discover terrain product families and their availability
+- `GET /v1/terrain/{terrain-id}` — Get one terrain product definition
+
 **Data catalogue**
 
 - `GET /v1/datasets` — List published source datasets and their lineage
