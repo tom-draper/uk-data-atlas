@@ -5,10 +5,7 @@ import {
 	aggregateCountryMembers,
 	aggregateLocationMembers,
 	isCountryCode,
-	assessCoverage,
 	statisticPhrase,
-	countryCodeFor,
-	summariseCoverage,
 } from "./aggregation";
 import { reconcileMembersForYear } from "./memberReconciliation";
 import {
@@ -17,6 +14,7 @@ import {
 } from "./sourceExactProvenance";
 import { findCountryIdentity } from "./aggregationMembership";
 import { resolveAggregationTarget } from "./aggregationTarget";
+import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { calculateWeightedMean } from "./weightedMean";
@@ -340,48 +338,15 @@ export const handleDataAggregateRoutes = ({
 	 * boundary release holds. A named location is not assessed here: its
 	 * members are reconciled above, and an unexplained gap is refused.
 	 */
-	const coverage = byCountry
-		? summariseCoverage(
-				compatibleReleases.flatMap((candidate) => {
-					const expected = [
-						...(areaLookup
-							?.get(
-								`${source.sourceGeography.type}/${candidate.boundaryRelease}`,
-							)
-							?.keys() ?? []),
-					].filter((code) => countryCodeFor(code) === areaCode);
-					return expected.length > 0
-						? [
-								assessCoverage(
-									candidate.boundaryRelease,
-									expected,
-									new Set(
-										byCountry.members.map(
-											(record) => record.areaCode,
-										),
-									),
-								),
-							]
-						: [];
-				}),
-				"No compiled boundary release is assessed as a matching code set for this source partition, so the areas it should hold for this country are not known.",
-			)
-		: byRegion && regional
-			? summariseCoverage(
-					[
-						assessCoverage(
-							regional.sourceRelease,
-							regional.memberCodes,
-							new Set(
-								byRegion.members.map(
-									(record) => record.areaCode,
-								),
-							),
-						),
-					],
-					"",
-				)
-			: undefined;
+	const coverage = assessAggregationCoverage({
+		byCountry,
+		byRegion,
+		regional,
+		compatibleReleases,
+		areaLookup,
+		sourceGeography: source.sourceGeography,
+		areaCode,
+	});
 	const aggregate = byLocation ?? byCountry ?? byRegion;
 	if (!aggregate)
 		return problem(
