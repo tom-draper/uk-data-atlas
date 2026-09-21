@@ -23,6 +23,7 @@ export type GeometryProvenance = {
 type Reprojection = {
 	transformation: GeometryTransformation;
 	toWgs84: (position: Position) => Position;
+	fromWgs84: (position: Position) => Position;
 };
 
 export const isWgs84 = (crs: string) =>
@@ -51,6 +52,10 @@ const irishGrid = proj4(
 // Seven decimal places of a degree is about a centimetre here, far finer
 // than the transformation's accuracy, and keeps responses free of float noise.
 const round = (value: number) => Math.round(value * 1e7) / 1e7;
+// Grid coordinates are conventionally expressed in metres. Keeping two
+// fractional places avoids projection-library float noise without suggesting
+// sub-centimetre transformation accuracy.
+const roundGrid = (value: number) => Math.round(value * 100) / 100;
 
 const REPROJECTIONS: Record<string, Reprojection> = {
 	"EPSG:27700": {
@@ -64,6 +69,10 @@ const REPROJECTIONS: Record<string, Reprojection> = {
 			const [lon, lat] = britishNationalGrid.forward(position);
 			return [round(lon), round(lat)];
 		},
+		fromWgs84: (position) => {
+			const [easting, northing] = britishNationalGrid.inverse(position);
+			return [roundGrid(easting), roundGrid(northing)];
+		},
 	},
 	"EPSG:29902": {
 		transformation: {
@@ -75,6 +84,10 @@ const REPROJECTIONS: Record<string, Reprojection> = {
 		toWgs84: (position) => {
 			const [lon, lat] = irishGrid.forward(position);
 			return [round(lon), round(lat)];
+		},
+		fromWgs84: (position) => {
+			const [easting, northing] = irishGrid.inverse(position);
+			return [roundGrid(easting), roundGrid(northing)];
 		},
 	},
 };
@@ -103,6 +116,25 @@ export const toWgs84Point = (
 		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
 	return {
 		position: reprojection.toWgs84(position),
+		transformation: reprojection.transformation,
+	};
+};
+
+/**
+ * Convert a normalised WGS 84 point into one of the supported national grids.
+ * The named EPSG transformation describes the inverse operation, so callers
+ * can retain its stated accuracy rather than treating the result as exact.
+ */
+export const fromWgs84Point = (
+	position: Position,
+	crs: string,
+): { position: Position; transformation?: GeometryTransformation } => {
+	if (isWgs84(crs)) return { position };
+	const reprojection = REPROJECTIONS[crs];
+	if (!reprojection)
+		throw new Error(`No transformation from WGS84 is available to ${crs}.`);
+	return {
+		position: reprojection.fromWgs84(position),
 		transformation: reprojection.transformation,
 	};
 };

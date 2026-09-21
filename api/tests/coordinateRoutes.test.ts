@@ -6,8 +6,20 @@ import { testContext } from "./routeFixtures";
 
 const get = (url: string) =>
 	routeRequest("GET", url, testContext()) as {
-		status: number;
-		body: { data?: { point?: LookupPoint; targetCrs?: string } };
+	status: number;
+		body: {
+			data?: {
+				point?: LookupPoint;
+				targetCrs?: string;
+				target?: {
+					crs: string;
+					easting: number;
+					northing: number;
+					uncertaintyM: number;
+					transformation: { epsg: string; direction: string };
+				};
+			};
+		};
 	};
 
 test("normalises supported coordinate inputs to WGS84 without a boundary release", () => {
@@ -42,6 +54,25 @@ test("normalises supported coordinate inputs to WGS84 without a boundary release
 	);
 });
 
+test("converts a normalised WGS84 point into a requested national grid", () => {
+	const britishGrid = get(
+		"/v1/coordinates:convert?lng=-0.12835394&lat=51.503990828&to=EPSG:27700",
+	);
+	assert.equal(britishGrid.status, 200);
+	assert.equal(britishGrid.body.data?.targetCrs, "EPSG:27700");
+	assert.equal(britishGrid.body.data?.target?.crs, "EPSG:27700");
+	assert.ok(Math.abs((britishGrid.body.data?.target?.easting ?? 0) - 530000) < 0.02);
+	assert.ok(Math.abs((britishGrid.body.data?.target?.northing ?? 0) - 180000) < 0.02);
+	assert.equal(
+		britishGrid.body.data?.target?.transformation.epsg,
+		"EPSG:1314",
+	);
+	assert.equal(
+		britishGrid.body.data?.target?.transformation.direction,
+		"inverse",
+	);
+});
+
 test("refuses an ambiguous or unsupported coordinate conversion", () => {
 	assert.equal(get("/v1/coordinates:convert?lng=0").status, 400);
 	assert.equal(
@@ -52,6 +83,10 @@ test("refuses an ambiguous or unsupported coordinate conversion", () => {
 		get(
 			"/v1/coordinates:convert?crs=EPSG:27700&gridref=TQ3000080000&easting=530000&northing=180000",
 		).status,
+		400,
+	);
+	assert.equal(
+		get("/v1/coordinates:convert?lng=0&lat=0&to=EPSG:27700").status,
 		400,
 	);
 });

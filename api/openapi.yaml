@@ -1054,14 +1054,17 @@ paths:
     get:
       operationId: convertCoordinate
       tags: ["Map"]
-      summary: Normalise one supported coordinate to WGS 84
+      summary: Convert one supported coordinate between WGS 84 and national grids
       x-likely-refusal:
         status: 400
         when: "The coordinate is incomplete, mixed between forms, outside its declared CRS or uses a CRS the API does not transform."
         x-example-request: "/v1/coordinates:convert?crs=EPSG:27700&gridref=TQ300008000"
       description: >
-        Converts one horizontal coordinate to WGS 84 without reading a boundary
-        release. Supply default WGS 84 `lng` and `lat`, British National Grid
+        Converts one horizontal coordinate without reading a boundary release.
+        Its `point` is always normalised to WGS 84. By default that is the full
+        response; select `to=EPSG:27700` or `to=EPSG:29902` to also receive a
+        British National Grid or Irish Grid coordinate. Supply default WGS 84
+        `lng` and `lat`, British National Grid
         `easting` and `northing` or an Ordnance Survey `gridref` with
         `crs=EPSG:27700`, or Irish Grid `easting` and `northing` with
         `crs=EPSG:29902`.
@@ -1070,7 +1073,7 @@ paths:
         The answer keeps the input form and named transformation. An Ordnance
         Survey grid reference denotes a square, not a point: the coordinate is
         the cell centre and uncertainty includes the square's half-diagonal.
-        This route only normalises horizontal position; it neither determines
+        This route only converts horizontal position; it neither determines
         altitude nor implies an administrative-area relationship.
       parameters:
         - name: lng
@@ -1084,13 +1087,14 @@ paths:
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: Latitude in WGS 84 decimal degrees, -90 to 90.
         - $ref: "#/components/parameters/PointLookupCrs"
+        - $ref: "#/components/parameters/CoordinateTargetCrs"
         - $ref: "#/components/parameters/PointLookupEasting"
         - $ref: "#/components/parameters/PointLookupNorthing"
         - $ref: "#/components/parameters/PointLookupGridReference"
         - $ref: "#/components/parameters/PointLookupAccuracy"
       responses:
         "200":
-          description: The normalised WGS 84 coordinate and transparent input precision.
+          description: The normalised WGS 84 coordinate, and an optional requested national-grid coordinate, with transparent precision.
           content:
             application/json:
               schema:
@@ -1123,7 +1127,7 @@ paths:
                       uncertaintyM: 2.71
                       basis: grid-reference-and-transformation
                   targetCrs: EPSG:4326
-                  note: This is a horizontal-coordinate normalisation only. It does not determine altitude, vertical datum or an administrative area.
+                  note: This is a horizontal-coordinate conversion only. It does not determine altitude, vertical datum or an administrative area.
         "400":
           $ref: "#/components/responses/InvalidQuery"
 
@@ -6906,6 +6910,17 @@ components:
         `lng` and `lat`; `EPSG:27700` uses British National Grid `easting` and
         `northing` or an Ordnance Survey `gridref`; `EPSG:29902` uses Irish
         Grid `easting` and `northing`.
+    CoordinateTargetCrs:
+      name: to
+      in: query
+      required: false
+      schema:
+        enum: [EPSG:4326, EPSG:27700, EPSG:29902]
+        default: EPSG:4326
+      description: >
+        The requested output CRS. `point` is always WGS 84; choose a national
+        grid here to add `target` with easting and northing. The API rejects a
+        point that falls outside its supported range for the requested grid.
     PointLookupEasting:
       name: easting
       in: query
@@ -8384,7 +8399,29 @@ components:
       properties:
         point:
           $ref: "#/components/schemas/LookupPoint"
-        targetCrs: { const: "EPSG:4326" }
+        targetCrs: { enum: [EPSG:4326, EPSG:27700, EPSG:29902] }
+        target:
+          type: object
+          description: >
+            Present when `to` requests a national grid. The named EPSG
+            transformation is used in its inverse direction from WGS 84.
+          required: [crs, easting, northing, transformation, uncertaintyM]
+          properties:
+            crs: { enum: [EPSG:27700, EPSG:29902] }
+            easting: { type: number }
+            northing: { type: number }
+            uncertaintyM:
+              type: number
+              description: Input uncertainty plus the transformation's stated accuracy, in metres.
+            transformation:
+              type: object
+              required: [name, epsg, accuracyM, areaOfUse, direction]
+              properties:
+                name: { type: string }
+                epsg: { type: string }
+                accuracyM: { type: number }
+                areaOfUse: { type: string }
+                direction: { const: inverse }
         note: { type: string }
 
     CoordinateConversionEnvelope:

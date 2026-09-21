@@ -160,6 +160,20 @@ const projectedBounds: Record<
 	"EPSG:29902": { easting: [-100000, 500000], northing: [0, 600000] },
 };
 
+/** Whether a projected coordinate is in the public lookup range for its CRS. */
+export const isProjectedLookupPointInBounds = (
+	crs: Exclude<LookupInputCrs, "EPSG:4326">,
+	[easting, northing]: [number, number],
+) => {
+	const bounds = projectedBounds[crs];
+	return (
+		easting >= bounds.easting[0] &&
+		easting <= bounds.easting[1] &&
+		northing >= bounds.northing[0] &&
+		northing <= bounds.northing[1]
+	);
+};
+
 const projectedLookupPoint = (
 	crs: Exclude<LookupInputCrs, "EPSG:4326">,
 	eastingText: string | undefined,
