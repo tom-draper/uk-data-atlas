@@ -12,6 +12,7 @@ type Display = {
 	prefix?: string;
 	digits?: number;
 	maximum: number;
+	secondary?: string;
 };
 
 const DISPLAY: Record<string, Display> = {
@@ -32,11 +33,12 @@ const DISPLAY: Record<string, Display> = {
 		maximum: 1_000_000,
 	},
 	councilTax: {
-		label: "Average Band D council tax",
+		label: "Council Tax",
 		unit: "",
 		prefix: "£",
 		maximum: 4_000,
 		digits: 0,
+		secondary: "Avg Band D",
 	},
 	waste: { label: "Collected waste", unit: "tonnes", maximum: 500_000 },
 	adultSocialCareActivity: {
@@ -122,6 +124,7 @@ export default function IndicatorChart({
 				hasData={hasData}
 				value={formatted}
 				unit={display.unit}
+				secondary={display.secondary}
 				barWidth={
 					hasData
 						? Math.min(100, (value! / display.maximum) * 100)
