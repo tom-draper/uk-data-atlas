@@ -78,6 +78,21 @@ const selectedRecord = (
 	return null;
 };
 
+const hoveredIndicatorValue = (record: unknown): number | undefined => {
+	if (typeof record !== "object" || record === null) return undefined;
+	const value = Reflect.get(record, "value");
+	return typeof value === "number" ? value : undefined;
+};
+
+/** Prefer the map hover record for the active card when no direct code matches. */
+export const resolveIndicatorValue = (
+	dataset: IndicatorDataset,
+	selectedArea: ChartComponentProps["selectedArea"],
+	isActive: boolean,
+): number | undefined =>
+	selectedRecord(dataset, selectedArea)?.value ??
+	(isActive ? hoveredIndicatorValue(selectedArea?.data) : undefined);
+
 /** Shared card for the newly added, count-like published indicators. */
 export default function IndicatorChart({
 	activeDataset,
@@ -91,8 +106,11 @@ export default function IndicatorChart({
 		year
 	];
 	const valueDatasetType = dataset?.type as NumericMapOptionsKey | undefined;
+	const isActive =
+		activeDataset?.type === dataset?.type &&
+		activeDataset.id === dataset?.id;
 	const value = dataset
-		? selectedRecord(dataset, selectedArea)?.value
+		? resolveIndicatorValue(dataset, selectedArea, isActive)
 		: undefined;
 	const aggregate = aggregatedData?.[year] as { value?: number } | undefined;
 	const resolvedValue =
@@ -113,10 +131,7 @@ export default function IndicatorChart({
 		<ChartCard
 			heading={`${display.label} [${dataset.year}]`}
 			accent={valueColor}
-			isActive={
-				activeDataset?.type === dataset.type &&
-				activeDataset.id === dataset.id
-			}
+			isActive={isActive}
 			title="Source and methodology are available in the data catalogue."
 			onClick={() =>
 				setActiveViz({
