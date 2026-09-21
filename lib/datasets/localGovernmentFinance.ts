@@ -10,7 +10,7 @@ export const localGovernmentFinanceDefinition: ChartDatasetDefinition<
 		group: "Economics",
 		key: "economics-localGovernmentFinance",
 		label: "Education Services Spending [2026]",
-		defaultVisible: true,
+		defaultVisible: false,
 		componentPath: "@/components/IndicatorChart",
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(indicatorAggregation, g, d, l, id),

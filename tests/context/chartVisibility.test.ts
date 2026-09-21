@@ -26,6 +26,9 @@ describe("chart visibility store", () => {
 			expect(DEFAULT_VISIBILITY["health-adultSocialCareOutcomes"]).toBe(
 				false,
 			);
+			expect(DEFAULT_VISIBILITY["economics-localGovernmentFinance"]).toBe(
+				false,
+			);
 		},
 		COLD_IMPORT_TIMEOUT,
 	);
