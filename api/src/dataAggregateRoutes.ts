@@ -1,5 +1,3 @@
-import type { AreaLookup } from "./areaInventory";
-import type { CrosswalkArtifact } from "./crosswalkInventory";
 import { isNumericObservation, type MeasureSource } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
 import { refused, resolveObservations } from "./resolve/observationPlan";
@@ -18,117 +16,13 @@ import {
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
 import { findArea } from "./areaResources";
+import {
+	findCountryIdentity,
+	fullMembership,
+	membershipClaimFor,
+} from "./aggregationMembership";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-
-/**
- * The canonical identity of a country code, from the newest compiled country
- * release. Countries are stable across releases, so the newest is a safe
- * choice, and the release is reported alongside the name.
- */
-const findCountryIdentity = (
-	areaLookup: AreaLookup | undefined,
-	code: string,
-) => {
-	const releases = [...(areaLookup?.keys() ?? [])]
-		.filter((key) => key.startsWith("country/"))
-		.sort()
-		.reverse();
-	for (const key of releases) {
-		const area = areaLookup?.get(key)?.get(code);
-		if (area) {
-			const boundaryRelease = key.slice("country/".length);
-			return {
-				id: `country/${boundaryRelease}/${code}`,
-				boundaryRelease,
-				...area,
-			};
-		}
-	}
-	return undefined;
-};
-
-/**
- * How a crosswalk establishes that a source area belongs wholly to one target,
- * which is what an extensive sum over that target rests on. The label travels
- * in the response so a caller can see which claim the total is standing on.
- *
- * A crosswalk carrying anything weaker stays conversion data: an identity
- * lookup relates two vintages of the same area rather than a membership, and
- * an area-overlap record that splits or partially covers its source is an
- * apportionment, never silently summed.
- */
-const MEMBERSHIP_CLAIMS = {
-	"area-overlap": "verified-full-area-overlap",
-	"clean-containment": "verified-clean-containment",
-	"official-lookup": "published-membership-lookup",
-} as const;
-
-const membershipClaimFor = (crosswalk: CrosswalkArtifact) => {
-	// An official lookup says what it relates; only a membership one is a
-	// set of parts. Clean containment and full overlap are membership by
-	// construction and carry no purpose of their own.
-	if (crosswalk.method === "official-lookup")
-		return crosswalk.relationshipPurpose === "membership"
-			? MEMBERSHIP_CLAIMS["official-lookup"]
-			: undefined;
-	return MEMBERSHIP_CLAIMS[
-		crosswalk.method as keyof typeof MEMBERSHIP_CLAIMS
-	];
-};
-
-/**
- * The source areas a crosswalk puts wholly inside one target. A source is a
- * member only when the target is its sole target, and, where the crosswalk
- * measures area, when the whole of it is covered. `unsafeSourceCount` counts
- * the ones that reach the target without meeting that bar, so a partial
- * membership is refused rather than quietly summed short.
- */
-const fullMembership = (crosswalk: CrosswalkArtifact, targetCode: string) => {
-	if (!membershipClaimFor(crosswalk)) return undefined;
-	const reaches = (targets: { code: string }[]) =>
-		targets.some((target) => target.code === targetCode);
-	// Branching on the method first keeps each arm's records typed, so the
-	// area measurements are read only where the crosswalk carries them.
-	const { matched, members } =
-		crosswalk.method === "area-overlap"
-			? (() => {
-					const matched = crosswalk.records.filter((record) =>
-						reaches(record.targets),
-					);
-					return {
-						matched: matched.length,
-						members: matched.flatMap((record) => {
-							const target = record.targets.find(
-								(candidate) => candidate.code === targetCode,
-							);
-							return record.targets.length === 1 &&
-								target &&
-								record.source.coverage === 1 &&
-								target.sourceShare === 1
-								? [record.source.code]
-								: [];
-						}),
-					};
-				})()
-			: (() => {
-					const matched = crosswalk.records.filter((record) =>
-						reaches(record.targets),
-					);
-					return {
-						matched: matched.length,
-						members: matched.flatMap((record) =>
-							record.targets.length === 1
-								? [record.source.code]
-								: [],
-						),
-					};
-				})();
-	return {
-		memberCodes: members,
-		unsafeSourceCount: matched - members.length,
-	};
-};
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({

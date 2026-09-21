@@ -1,23 +1,23 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { readFiniteNumber } from "./queryParameters";
 import {
 	TerrainRemoteError,
 	type TerrainInterpolation,
 } from "./terrainProvider";
 
-const parseNumber = (value: string | null) => {
-	if (value === null || value.trim() === "") return undefined;
-	const parsed = Number(value);
-	return Number.isFinite(parsed) ? parsed : undefined;
+type ElevationPointRequest = {
+	x: number;
+	y: number;
+	interpolation: TerrainInterpolation;
+	version?: string;
 };
 
-const handleElevationPoint = ({
-	context,
-	releaseId,
-	parsedUrl,
-}: RouteRequest): ApiResponse => {
-	const x = parseNumber(parsedUrl.searchParams.get("x"));
-	const y = parseNumber(parsedUrl.searchParams.get("y"));
+const parseElevationPointRequest = (
+	parsedUrl: URL,
+): ElevationPointRequest | ApiResponse => {
+	const x = readFiniteNumber(parsedUrl.searchParams.get("x"));
+	const y = readFiniteNumber(parsedUrl.searchParams.get("y"));
 	if (x === undefined || y === undefined)
 		return problem(
 			400,
@@ -32,6 +32,32 @@ const handleElevationPoint = ({
 			"Invalid Interpolation",
 			"interpolation must be bilinear or nearest.",
 		);
+	return {
+		x,
+		y,
+		interpolation,
+		version: parsedUrl.searchParams.get("version") ?? undefined,
+	};
+};
+
+const isElevationPointRoute = (segments: string[]) =>
+	segments.length === 4 &&
+	segments[0] === "v1" &&
+	segments[1] === "terrain" &&
+	segments[2] === "elevation" &&
+	segments[3] === "point";
+
+const terrainDispatch = () => {
+	throw new Error("Terrain point dispatch is not supported.");
+};
+
+const handleElevationPoint = ({
+	context,
+	releaseId,
+	parsedUrl,
+}: RouteRequest): ApiResponse => {
+	const request = parseElevationPointRequest(parsedUrl);
+	if ("status" in request) return request;
 	const provider = context.terrainProvider;
 	if (!provider)
 		return problem(
@@ -39,10 +65,7 @@ const handleElevationPoint = ({
 			"Terrain Data Unavailable",
 			"No versioned terrain source has been installed for this environment.",
 		);
-	const result = provider.point(x, y, {
-		interpolation: interpolation as TerrainInterpolation,
-		version: parsedUrl.searchParams.get("version") ?? undefined,
-	});
+	const result = provider.point(request.x, request.y, request);
 	if (!result)
 		return problem(
 			404,
@@ -59,36 +82,16 @@ export const handleTerrainRoutesAsync = async ({
 	parsedUrl,
 }: RouteRequest): Promise<ApiResponse | undefined> => {
 	if (segments[0] !== "v1" || segments[1] !== "terrain") return undefined;
-	if (
-		segments[2] !== "elevation" ||
-		segments[3] !== "point" ||
-		segments.length !== 4
-	)
+	if (!isElevationPointRoute(segments))
 		return handleTerrainRoutes({
 			context,
 			releaseId,
 			segments,
 			parsedUrl,
-			dispatch: () => {
-				throw new Error("Terrain point dispatch is not supported.");
-			},
+			dispatch: terrainDispatch,
 		});
-	const x = parseNumber(parsedUrl.searchParams.get("x"));
-	const y = parseNumber(parsedUrl.searchParams.get("y"));
-	if (x === undefined || y === undefined)
-		return problem(
-			400,
-			"Invalid Terrain Point",
-			"x and y must be finite EPSG:27700 coordinates.",
-		);
-	const interpolation =
-		parsedUrl.searchParams.get("interpolation") ?? "bilinear";
-	if (interpolation !== "bilinear" && interpolation !== "nearest")
-		return problem(
-			400,
-			"Invalid Interpolation",
-			"interpolation must be bilinear or nearest.",
-		);
+	const request = parseElevationPointRequest(parsedUrl);
+	if ("status" in request) return request;
 	const provider = context.terrainAsyncProvider;
 	if (!provider)
 		return handleTerrainRoutes({
@@ -96,16 +99,11 @@ export const handleTerrainRoutesAsync = async ({
 			releaseId,
 			segments,
 			parsedUrl,
-			dispatch: () => {
-				throw new Error("Terrain point dispatch is not supported.");
-			},
+			dispatch: terrainDispatch,
 		});
 	let result;
 	try {
-		result = await provider.point(x, y, {
-			interpolation: interpolation as TerrainInterpolation,
-			version: parsedUrl.searchParams.get("version") ?? undefined,
-		});
+		result = await provider.point(request.x, request.y, request);
 	} catch (error) {
 		if (error instanceof TerrainRemoteError)
 			return problem(
@@ -142,9 +140,7 @@ export const handleTerrainRoutes = ({
 			releaseId,
 			segments,
 			parsedUrl,
-			dispatch: () => {
-				throw new Error("Terrain point dispatch is not supported.");
-			},
+			dispatch: terrainDispatch,
 		});
 	const catalogue = context.terrainCatalogue;
 	if (!catalogue)
