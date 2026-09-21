@@ -58,3 +58,43 @@ test("reads Irish Grid precision conservatively and accepts no other input CRS",
 		undefined,
 	);
 });
+
+test("decodes an Ordnance Survey grid-reference cell without implying point precision", () => {
+	const point = parseLookupCoordinate("EPSG:27700", {
+		gridReference: "tq 30000 80000",
+	});
+	assert.deepEqual(point?.input, {
+		crs: "EPSG:27700",
+		easting: 530000.5,
+		northing: 180000.5,
+		gridReference: {
+			value: "TQ 30000 80000",
+			cellSizeM: 1,
+			position: "cell-centre",
+		},
+		transformation: {
+			name: "OSGB36 to WGS 84 (6)",
+			epsg: "EPSG:1314",
+			accuracyM: 2,
+			areaOfUse: "Great Britain onshore and the Isle of Man.",
+		},
+	});
+	assert.deepEqual(point?.precision, {
+		decimalPlaces: { gridReference: { easting: 5, northing: 5 } },
+		uncertaintyM: 2.71,
+		basis: "grid-reference-and-transformation",
+	});
+	assert.equal(
+		parseLookupCoordinate("EPSG:27700", {
+			gridReference: "TQ 300 80",
+		}),
+		undefined,
+	);
+	assert.equal(
+		parseLookupCoordinate("EPSG:27700", {
+			gridReference: "TQ3000080000",
+			easting: "530000",
+		}),
+		undefined,
+	);
+});
