@@ -2,7 +2,8 @@ import { DISTANCE_METHOD } from "./areaDistance";
 import {
 	MAX_STATED_ACCURACY_M,
 	describeLookupRelease,
-	parseLookupPoint,
+	parseLookupCoordinate,
+	parseLookupCrs,
 	parseLookupRequest,
 	parseStatedAccuracy,
 } from "./pointLookup";
@@ -51,16 +52,30 @@ export const handleAreaNearRoutes = ({
 			"Invalid Query",
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
-	const point = parseLookupPoint(
-		searchParams.get("lng") ?? undefined,
-		searchParams.get("lat") ?? undefined,
+	const crs = parseLookupCrs(searchParams.get("crs"));
+	if (!crs)
+		return problem(
+			400,
+			"Invalid Query",
+			"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
+		);
+	const point = parseLookupCoordinate(
+		crs,
+		{
+			lng: searchParams.get("lng") ?? undefined,
+			lat: searchParams.get("lat") ?? undefined,
+			easting: searchParams.get("easting") ?? undefined,
+			northing: searchParams.get("northing") ?? undefined,
+		},
 		accuracy,
 	);
 	if (!point)
 		return problem(
 			400,
 			"Invalid Query",
-			"lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees.",
+			crs === "EPSG:4326"
+				? "lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."
+				: `easting and northing are required as plain decimal grid metres for ${crs}.`,
 		);
 	const limit = wholeNumber(searchParams.get("limit"), 1, 1, MAX_NEAR_LIMIT);
 	if (limit === undefined)

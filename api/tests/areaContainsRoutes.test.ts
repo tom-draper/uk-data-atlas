@@ -279,6 +279,46 @@ test("reads a stated accuracy in place of the written precision", () => {
 	assert.equal(stated.results[0].matches[0].nearBoundary, true);
 });
 
+test("accepts British National Grid and Irish Grid coordinates at point endpoints", () => {
+	const bng = get(
+		"/v1/areas:contains?crs=EPSG:27700&easting=530000&northing=180000&release=ward/2024-12-uk-bgc",
+	);
+	assert.equal(bng.status, 200);
+	assert.deepEqual(bng.data.point.input, {
+		crs: "EPSG:27700",
+		easting: 530000,
+		northing: 180000,
+		transformation: {
+			name: "OSGB36 to WGS 84 (6)",
+			epsg: "EPSG:1314",
+			accuracyM: 2,
+			areaOfUse: "Great Britain onshore and the Isle of Man.",
+		},
+	});
+	assert.equal(
+		bng.data.point.precision.basis,
+		"decimal-places-and-transformation",
+	);
+	assert.equal(
+		get(
+			"/v1/areas:containsBatch?crs=EPSG:29902&point=333500,373500,4&release=ward/2024-12-uk-bgc",
+		).data.points[0].point.input.transformation.epsg,
+		"EPSG:1641",
+	);
+	assert.equal(
+		get(
+			"/v1/areas:near?crs=EPSG:27700&easting=530000&northing=180000&release=ward/2024-12-uk-bgc",
+		).data.point.input.crs,
+		"EPSG:27700",
+	);
+	assert.equal(
+		get(
+			"/v1/areas:contains?crs=EPSG:3857&lng=0&lat=0&release=ward/2024-12-uk-bgc",
+		).status,
+		400,
+	);
+});
+
 test("places a point outside every country boundary as outside coverage", () => {
 	const { data } = get(
 		`/v1/areas:contains?lng=0.5&lat=0.5&release=ward/2024-12-uk-bgc`,

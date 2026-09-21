@@ -3448,7 +3448,7 @@ paths:
     get:
       operationId: findContainingAreas
       tags: ["Map"]
-      summary: Find the areas containing a WGS84 point in one or more geographies
+      summary: Find the areas containing a point in one or more geographies
       x-likely-refusal:
         status: 400
         when: "A geography is named without a release or a date. The point is looked up in one release, which is never chosen for the caller."
@@ -3457,6 +3457,14 @@ paths:
         Tests a point against one boundary release of each requested geography,
         at most four in one request, and says for each what contains it or why
         nothing does.
+
+
+        Supply WGS 84 `lng` and `lat` (the default), or set `crs=EPSG:27700`
+        and supply British National Grid `easting` and `northing`, or set
+        `crs=EPSG:29902` for Irish Grid metres. The answer is normalised to
+        WGS 84 and retains the input coordinate and named transformation; its
+        positional uncertainty conservatively includes that transformation's
+        stated accuracy.
 
 
         Each geography's release is either pinned, as
@@ -3493,16 +3501,19 @@ paths:
       parameters:
         - name: lng
           in: query
-          required: true
+          required: false
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: >
             Longitude in WGS 84 decimal degrees, -180 to 180. Written as a plain
             decimal: its decimal places are read as its precision.
         - name: lat
           in: query
-          required: true
+          required: false
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: Latitude in WGS 84 decimal degrees, -90 to 90, as for `lng`.
+        - $ref: "#/components/parameters/PointLookupCrs"
+        - $ref: "#/components/parameters/PointLookupEasting"
+        - $ref: "#/components/parameters/PointLookupNorthing"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
@@ -3610,8 +3621,10 @@ paths:
         x-example-request: "/v1/areas:containsBatch"
       description: >
         The `areas:contains` lookup for up to 100 points at once, each given as
-        `point={lng},{lat}` or `point={lng},{lat},{accuracy}`. Geographies,
-        release selection and statuses are exactly as for a single point.
+        `point={lng},{lat}` or `point={lng},{lat},{accuracy}` in the default
+        WGS 84, or as `point={easting},{northing}` with `crs=EPSG:27700` or
+        `EPSG:29902`. Geographies, release selection and statuses are exactly
+        as for a single point.
 
 
         Release-wide facts, including selection, coverage, resolution and
@@ -3639,7 +3652,9 @@ paths:
           explode: true
           description: >
             `{lng},{lat}` in plain decimal WGS 84 degrees, optionally followed
-            by `,{accuracy}` in metres. Repeat for each point, up to 100.
+            by `,{accuracy}` in metres. With a grid `crs`, use
+            `{easting},{northing}` instead. Repeat for each point, up to 100.
+        - $ref: "#/components/parameters/PointLookupCrs"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
@@ -3725,7 +3740,7 @@ paths:
     get:
       operationId: findNearestAreas
       tags: ["Map"]
-      summary: Rank the areas nearest a WGS84 point by distance
+      summary: Rank the areas nearest a point by distance
       x-likely-refusal:
         status: 400
         when: "The coordinate is incomplete or out of range."
@@ -3734,6 +3749,11 @@ paths:
         Returns up to `limit` areas of each requested geography whose published
         geometry lies within `within` metres of the point, nearest first.
         Releases are selected exactly as for `areas:contains`.
+
+
+        The coordinate forms are the same as `areas:contains`: default WGS 84
+        `lng`/`lat`, British National Grid `easting`/`northing` with
+        `crs=EPSG:27700`, or Irish Grid metres with `crs=EPSG:29902`.
 
 
         This is a distance answer, labelled `relation: distance`, and never a
@@ -3753,14 +3773,17 @@ paths:
       parameters:
         - name: lng
           in: query
-          required: true
+          required: false
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: Longitude in WGS 84 decimal degrees, -180 to 180.
         - name: lat
           in: query
-          required: true
+          required: false
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: Latitude in WGS 84 decimal degrees, -90 to 90.
+        - $ref: "#/components/parameters/PointLookupCrs"
+        - $ref: "#/components/parameters/PointLookupEasting"
+        - $ref: "#/components/parameters/PointLookupNorthing"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
@@ -6787,6 +6810,33 @@ paths:
 
 components:
   parameters:
+    PointLookupCrs:
+      name: crs
+      in: query
+      required: false
+      schema:
+        enum: [EPSG:4326, EPSG:27700, EPSG:29902]
+        default: EPSG:4326
+      description: >
+        The input coordinate reference system. The default `EPSG:4326` uses
+        `lng` and `lat`; `EPSG:27700` uses British National Grid `easting` and
+        `northing`; `EPSG:29902` uses Irish Grid `easting` and `northing`.
+    PointLookupEasting:
+      name: easting
+      in: query
+      required: false
+      schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+      description: >
+        Easting in grid metres. Required with `crs=EPSG:27700` or
+        `crs=EPSG:29902`; do not combine it with WGS 84 `lng`/`lat`.
+    PointLookupNorthing:
+      name: northing
+      in: query
+      required: false
+      schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+      description: >
+        Northing in grid metres. Required with `crs=EPSG:27700` or
+        `crs=EPSG:29902`; do not combine it with WGS 84 `lng`/`lat`.
     PointLookupGeography:
       name: geography
       in: query
@@ -8180,17 +8230,40 @@ components:
           required: [decimalPlaces, uncertaintyM, basis]
           properties:
             decimalPlaces:
-              type: object
-              required: [lng, lat]
-              properties:
-                lng: { type: integer }
-                lat: { type: integer }
+              oneOf:
+                - type: object
+                  required: [lng, lat]
+                  properties:
+                    lng: { type: integer }
+                    lat: { type: integer }
+                - type: object
+                  required: [easting, northing]
+                  properties:
+                    easting: { type: integer }
+                    northing: { type: integer }
             uncertaintyM:
               type: number
               description: How far the true position may lie from the coordinate, in metres.
             basis:
               type: string
-              enum: [stated-accuracy, decimal-places]
+              enum:
+                [stated-accuracy, decimal-places, stated-accuracy-and-transformation, decimal-places-and-transformation]
+        input:
+          type: object
+          description: Present when British National Grid or Irish Grid input was transformed to WGS 84.
+          required: [crs, easting, northing, transformation]
+          properties:
+            crs: { enum: [EPSG:27700, EPSG:29902] }
+            easting: { type: number }
+            northing: { type: number }
+            transformation:
+              type: object
+              required: [name, epsg, accuracyM, areaOfUse]
+              properties:
+                name: { type: string }
+                epsg: { type: string }
+                accuracyM: { type: number }
+                areaOfUse: { type: string }
 
     PointCountry:
       type: object

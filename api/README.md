@@ -3395,9 +3395,9 @@ second inventory to maintain:
 
 - `GET /v1/data/{measure-id}` — Retrieve source-exact observations, or an opt-in canonical-unit representation
 - `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
-- `GET /v1/areas:contains` — Find the areas containing a WGS84 point in one or more geographies
+- `GET /v1/areas:contains` — Find the areas containing a point in one or more geographies
 - `GET /v1/areas:containsBatch` — Find the areas containing each of a bounded batch of points
-- `GET /v1/areas:near` — Rank the areas nearest a WGS84 point by distance
+- `GET /v1/areas:near` — Rank the areas nearest a point by distance
 - `GET /v1/areas/{geography}/{release}/{code}/children/geometry` — Get every child of an area as one GeoJSON FeatureCollection
 - `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
 - `GET /v1/areas/{geography}/{release}/{code}/overlap` — Measure how one area overlaps another

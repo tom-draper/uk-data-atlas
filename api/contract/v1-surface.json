@@ -3041,10 +3041,24 @@
 			"operationId": "findContainingAreas",
 			"parameters": {
 				"query:lng": {
-					"required": true
+					"required": false
 				},
 				"query:lat": {
-					"required": true
+					"required": false
+				},
+				"query:crs": {
+					"required": false,
+					"enum": [
+						"EPSG:27700",
+						"EPSG:29902",
+						"EPSG:4326"
+					]
+				},
+				"query:easting": {
+					"required": false
+				},
+				"query:northing": {
+					"required": false
 				},
 				"query:geography": {
 					"required": false,
@@ -3077,13 +3091,24 @@
 					"data.note",
 					"data.point",
 					"data.point.crs",
+					"data.point.input",
+					"data.point.input.crs",
+					"data.point.input.easting",
+					"data.point.input.northing",
+					"data.point.input.transformation",
+					"data.point.input.transformation.accuracyM",
+					"data.point.input.transformation.areaOfUse",
+					"data.point.input.transformation.epsg",
+					"data.point.input.transformation.name",
 					"data.point.lat",
 					"data.point.lng",
 					"data.point.precision",
 					"data.point.precision.basis",
 					"data.point.precision.decimalPlaces",
+					"data.point.precision.decimalPlaces.easting",
 					"data.point.precision.decimalPlaces.lat",
 					"data.point.precision.decimalPlaces.lng",
+					"data.point.precision.decimalPlaces.northing",
 					"data.point.precision.uncertaintyM",
 					"data.results",
 					"data.results[].boundaryRelease",
@@ -3230,6 +3255,14 @@
 					"required": true,
 					"maxItems": 100
 				},
+				"query:crs": {
+					"required": false,
+					"enum": [
+						"EPSG:27700",
+						"EPSG:29902",
+						"EPSG:4326"
+					]
+				},
 				"query:geography": {
 					"required": false,
 					"maxItems": 4
@@ -3263,13 +3296,24 @@
 					"data.points[].index",
 					"data.points[].point",
 					"data.points[].point.crs",
+					"data.points[].point.input",
+					"data.points[].point.input.crs",
+					"data.points[].point.input.easting",
+					"data.points[].point.input.northing",
+					"data.points[].point.input.transformation",
+					"data.points[].point.input.transformation.accuracyM",
+					"data.points[].point.input.transformation.areaOfUse",
+					"data.points[].point.input.transformation.epsg",
+					"data.points[].point.input.transformation.name",
 					"data.points[].point.lat",
 					"data.points[].point.lng",
 					"data.points[].point.precision",
 					"data.points[].point.precision.basis",
 					"data.points[].point.precision.decimalPlaces",
+					"data.points[].point.precision.decimalPlaces.easting",
 					"data.points[].point.precision.decimalPlaces.lat",
 					"data.points[].point.precision.decimalPlaces.lng",
+					"data.points[].point.precision.decimalPlaces.northing",
 					"data.points[].point.precision.uncertaintyM",
 					"data.points[].results",
 					"data.points[].results[].boundaryRelease",
@@ -3426,10 +3470,24 @@
 			"operationId": "findNearestAreas",
 			"parameters": {
 				"query:lng": {
-					"required": true
+					"required": false
 				},
 				"query:lat": {
-					"required": true
+					"required": false
+				},
+				"query:crs": {
+					"required": false,
+					"enum": [
+						"EPSG:27700",
+						"EPSG:29902",
+						"EPSG:4326"
+					]
+				},
+				"query:easting": {
+					"required": false
+				},
+				"query:northing": {
+					"required": false
 				},
 				"query:geography": {
 					"required": false,
@@ -3467,13 +3525,24 @@
 					"data.note",
 					"data.point",
 					"data.point.crs",
+					"data.point.input",
+					"data.point.input.crs",
+					"data.point.input.easting",
+					"data.point.input.northing",
+					"data.point.input.transformation",
+					"data.point.input.transformation.accuracyM",
+					"data.point.input.transformation.areaOfUse",
+					"data.point.input.transformation.epsg",
+					"data.point.input.transformation.name",
 					"data.point.lat",
 					"data.point.lng",
 					"data.point.precision",
 					"data.point.precision.basis",
 					"data.point.precision.decimalPlaces",
+					"data.point.precision.decimalPlaces.easting",
 					"data.point.precision.decimalPlaces.lat",
 					"data.point.precision.decimalPlaces.lng",
+					"data.point.precision.decimalPlaces.northing",
 					"data.point.precision.uncertaintyM",
 					"data.relation",
 					"data.results",

@@ -87,6 +87,26 @@ export const geometryProvenance = (crs: string): GeometryProvenance =>
 		? { sourceCrs: crs }
 		: { sourceCrs: crs, transformation: REPROJECTIONS[crs].transformation };
 
+/**
+ * Reproject one horizontal coordinate for a caller-facing point lookup. The
+ * returned transformation is part of the answer: a BNG or Irish Grid input is
+ * never silently treated as WGS 84, and its stated accuracy can be included
+ * in the positional tolerance beside the caller's own coordinate precision.
+ */
+export const toWgs84Point = (
+	position: Position,
+	crs: string,
+): { position: Position; transformation?: GeometryTransformation } => {
+	if (isWgs84(crs)) return { position };
+	const reprojection = REPROJECTIONS[crs];
+	if (!reprojection)
+		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
+	return {
+		position: reprojection.toWgs84(position),
+		transformation: reprojection.transformation,
+	};
+};
+
 const reprojectCoordinates = (
 	coordinates: unknown,
 	toWgs84: Reprojection["toWgs84"],
@@ -111,9 +131,8 @@ export const toWgs84Geometry = <T extends Geometry>(
 ): T => {
 	if (isWgs84(crs)) return geometry;
 	const reprojection = REPROJECTIONS[crs];
-	if (!reprojection) {
+	if (!reprojection)
 		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
-	}
 	const reproject = (value: Geometry): Geometry =>
 		value.type === "GeometryCollection"
 			? { ...value, geometries: (value.geometries ?? []).map(reproject) }
