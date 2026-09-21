@@ -1162,6 +1162,11 @@
 						"EPSG:4326"
 					]
 				},
+				"query:gridrefDigits": {
+					"required": false,
+					"minimum": 1,
+					"maximum": 5
+				},
 				"query:easting": {
 					"required": false
 				},
@@ -1213,6 +1218,11 @@
 					"data.target",
 					"data.target.crs",
 					"data.target.easting",
+					"data.target.gridReference",
+					"data.target.gridReference.cellSizeM",
+					"data.target.gridReference.digits",
+					"data.target.gridReference.position",
+					"data.target.gridReference.value",
 					"data.target.northing",
 					"data.target.transformation",
 					"data.target.transformation.accuracyM",

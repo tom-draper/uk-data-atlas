@@ -210,7 +210,64 @@ type BritishGridReference = {
 	digits: number;
 };
 
+export type FormattedBritishGridReference = {
+	value: string;
+	digits: number;
+	cellSizeM: number;
+	position: "containing-cell";
+};
+
 const britishGridLetters = "ABCDEFGHJKLMNOPQRSTUVWXYZ";
+
+/**
+ * Format a British National Grid coordinate as the square containing it. The
+ * returned reference is never finer than its positional uncertainty permits:
+ * an output cell's half-diagonal must cover that uncertainty. This avoids
+ * making a grid reference look more exact than its source coordinate.
+ */
+export const formatBritishGridReference = (
+	[easting, northing]: [number, number],
+	uncertaintyM: number,
+	maximumDigits = 5,
+): FormattedBritishGridReference | undefined => {
+	if (!Number.isFinite(uncertaintyM) || uncertaintyM < 0) return undefined;
+	const easting100km = Math.floor(easting / 100000);
+	const northing100km = Math.floor(northing / 100000);
+	if (
+		easting100km < 0 ||
+		easting100km > 6 ||
+		northing100km < 0 ||
+		northing100km > 12
+	)
+		return undefined;
+	let digits = Math.min(5, Math.max(1, maximumDigits));
+	while (
+		digits > 0 &&
+		(10 ** (5 - digits) * Math.SQRT2) / 2 < uncertaintyM
+	)
+		digits -= 1;
+	if (digits === 0) return undefined;
+	const firstRow = Math.floor((19 - northing100km) / 5);
+	const firstColumn = (Math.floor(easting100km / 5) + 2) % 5;
+	const secondRow = 19 - firstRow * 5 - northing100km;
+	const secondColumn = easting100km % 5;
+	const first = britishGridLetters[firstRow * 5 + firstColumn];
+	const second = britishGridLetters[secondRow * 5 + secondColumn];
+	if (!first || !second) return undefined;
+	const cellSizeM = 10 ** (5 - digits);
+	const eastingDigits = String(
+		Math.floor((easting - easting100km * 100000) / cellSizeM),
+	).padStart(digits, "0");
+	const northingDigits = String(
+		Math.floor((northing - northing100km * 100000) / cellSizeM),
+	).padStart(digits, "0");
+	return {
+		value: `${first}${second} ${eastingDigits} ${northingDigits}`,
+		digits,
+		cellSizeM,
+		position: "containing-cell",
+	};
+};
 
 /**
  * Decode the standard two-letter Ordnance Survey National Grid notation.
