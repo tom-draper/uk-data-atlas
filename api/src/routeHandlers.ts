@@ -7,6 +7,7 @@ import { handlePinnedRoutes } from "./pinnedRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleTerrainRoutes } from "./terrainRoutes";
+import { handleCoordinateRoutes } from "./coordinateRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
 import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
 import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
@@ -103,6 +104,14 @@ const routeFamilies: RouteFamily[] = [
 		name: "terrain",
 		owns: (segments) => segments[0] === "v1" && segments[1] === "terrain",
 		handle: handleTerrainRoutes,
+	},
+	{
+		name: "coordinates",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "coordinates:convert",
+		handle: handleCoordinateRoutes,
 	},
 	{
 		name: "measure-compatibility",
