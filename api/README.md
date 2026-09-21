@@ -3395,7 +3395,7 @@ second inventory to maintain:
 
 **Map**
 
-- `GET /v1/coordinates:convert` — Normalise one supported coordinate to WGS 84
+- `GET /v1/coordinates:convert` — Convert one supported coordinate between WGS 84 and national grids
 - `GET /v1/data/{measure-id}` — Retrieve source-exact observations, or an opt-in canonical-unit representation
 - `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
 - `GET /v1/areas:contains` — Find the areas containing a point in one or more geographies

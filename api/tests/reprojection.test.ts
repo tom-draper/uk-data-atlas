@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
 	canServeAsWgs84,
+	fromWgs84Point,
 	geometryProvenance,
 	toWgs84Geometry,
 } from "../src/reprojection";
@@ -37,6 +38,19 @@ test("matches PROJ for British National Grid points across Great Britain", () =>
 		// Output is rounded to 1e-7 degrees, about a centimetre.
 		assert.ok(Math.abs(coordinates[0] - lon) < 1e-7, `${grid} longitude`);
 		assert.ok(Math.abs(coordinates[1] - lat) < 1e-7, `${grid} latitude`);
+	}
+});
+
+test("round-trips normalised WGS84 points into both supported national grids", () => {
+	for (const [grid, wgs84] of REFERENCES) {
+		const { position } = fromWgs84Point(wgs84, "EPSG:27700");
+		assert.ok(Math.abs(position[0] - grid[0]) < 0.02, `${grid} easting`);
+		assert.ok(Math.abs(position[1] - grid[1]) < 0.02, `${grid} northing`);
+	}
+	for (const [grid, wgs84] of IRISH_GRID_REFERENCES) {
+		const { position } = fromWgs84Point(wgs84, "EPSG:29902");
+		assert.ok(Math.abs(position[0] - grid[0]) < 0.02, `${grid} easting`);
+		assert.ok(Math.abs(position[1] - grid[1]) < 0.02, `${grid} northing`);
 	}
 });
 

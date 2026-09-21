@@ -1154,6 +1154,14 @@
 						"EPSG:4326"
 					]
 				},
+				"query:to": {
+					"required": false,
+					"enum": [
+						"EPSG:27700",
+						"EPSG:29902",
+						"EPSG:4326"
+					]
+				},
 				"query:easting": {
 					"required": false
 				},
@@ -1202,6 +1210,17 @@
 					"data.point.precision.decimalPlaces.lng",
 					"data.point.precision.decimalPlaces.northing",
 					"data.point.precision.uncertaintyM",
+					"data.target",
+					"data.target.crs",
+					"data.target.easting",
+					"data.target.northing",
+					"data.target.transformation",
+					"data.target.transformation.accuracyM",
+					"data.target.transformation.areaOfUse",
+					"data.target.transformation.direction",
+					"data.target.transformation.epsg",
+					"data.target.transformation.name",
+					"data.target.uncertaintyM",
 					"data.targetCrs",
 					"meta",
 					"meta.nextCursor"
