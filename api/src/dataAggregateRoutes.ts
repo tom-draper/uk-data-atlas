@@ -15,12 +15,8 @@ import {
 	sourceExactProvenance,
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
-import { findArea } from "./areaResources";
-import {
-	findCountryIdentity,
-	fullMembership,
-	membershipClaimFor,
-} from "./aggregationMembership";
+import { findCountryIdentity } from "./aggregationMembership";
+import { resolveAggregationTarget } from "./aggregationTarget";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { calculateWeightedMean } from "./weightedMean";
@@ -187,105 +183,17 @@ export const handleDataAggregateRoutes = ({
 			candidate.status === "exact-code-set" ||
 			candidate.status === "code-set-compatible",
 	);
-	const regional = (() => {
-		if (!targetCode) return undefined;
-		const crosswalkId = parsedUrl.searchParams.get("crosswalk");
-		const sourceRelease = parsedUrl.searchParams.get("sourceRelease");
-		if (!crosswalkId || !sourceRelease) {
-			return problem(
-				400,
-				"Invalid Query",
-				"targetCode aggregation requires crosswalk and sourceRelease, so membership is explicit rather than inferred.",
-			);
-		}
-		if (!crosswalkLookup || !measureCompatibilityInventory) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build crosswalk and measure compatibility inventories before aggregating over a membership crosswalk.",
-			);
-		}
-		const compatibility = compatibleReleases.find(
-			(candidate) => candidate.boundaryRelease === sourceRelease,
-		);
-		if (!compatibility) {
-			return problem(
-				422,
-				"Operation Not Supported",
-				"The requested sourceRelease is not code-set compatible with this source partition.",
-				{ code: "conversion_not_available" },
-			);
-		}
-		const crosswalk = crosswalkLookup.get(crosswalkId);
-		if (
-			!crosswalk ||
-			crosswalk.from.geography !== source.sourceGeography.type ||
-			crosswalk.from.boundaryRelease !== sourceRelease
-		) {
-			return problem(
-				422,
-				"Operation Not Supported",
-				"That crosswalk does not map the caller-selected compatible source release.",
-				{ code: "conversion_not_available" },
-			);
-		}
-		// `regionCode` named its target geography; `targetCode` takes it from
-		// the crosswalk, so the caller cannot ask one geography for another's
-		// code.
-		if (regionCode && crosswalk.to.geography !== "region") {
-			return problem(
-				422,
-				"Operation Not Supported",
-				"That crosswalk does not map to regions. Use targetCode to aggregate onto another geography.",
-				{ code: "conversion_not_available" },
-			);
-		}
-		const claim = membershipClaimFor(crosswalk);
-		if (!claim) {
-			return problem(
-				422,
-				"Operation Not Supported",
-				`The ${crosswalk.method} crosswalk ${crosswalk.id} does not declare membership, so its records are conversion data rather than the parts of one area.`,
-				{ code: "conversion_not_available" },
-			);
-		}
-		const membership = fullMembership(crosswalk, targetCode);
-		if (!membership || membership.unsafeSourceCount > 0) {
-			return problem(
-				422,
-				"Operation Not Supported",
-				`The selected ${crosswalk.to.geography} is not represented by complete one-to-one source-area membership in that crosswalk.`,
-				{ code: "conversion_not_available" },
-			);
-		}
-		// A target the crosswalk never mentions would otherwise sum to zero,
-		// which reads as an observation rather than an absence.
-		if (membership.memberCodes.length === 0) {
-			return problem(
-				404,
-				"Not Found",
-				`${crosswalk.id} maps no ${crosswalk.from.geography} to ${targetCode}.`,
-			);
-		}
-		return {
-			crosswalk,
-			claim,
-			sourceRelease,
-			memberCodes: new Set(membership.memberCodes),
-			target: {
-				id: `${crosswalk.to.geography}/${crosswalk.to.boundaryRelease}/${targetCode}`,
-				geography: crosswalk.to.geography,
-				boundaryRelease: crosswalk.to.boundaryRelease,
-				code: targetCode,
-				...findArea(
-					areaLookup,
-					crosswalk.to.geography,
-					crosswalk.to.boundaryRelease,
-					targetCode,
-				),
-			},
-		};
-	})();
+	const regional = resolveAggregationTarget({
+		targetCode,
+		regionCode,
+		crosswalkId: parsedUrl.searchParams.get("crosswalk"),
+		sourceRelease: parsedUrl.searchParams.get("sourceRelease"),
+		source,
+		compatibleReleases,
+		crosswalkLookup,
+		measureCompatibilityInventory,
+		areaLookup,
+	});
 	if (regional && "status" in regional) return regional;
 	const numericObservationResult = numericObservationsFor(
 		measureId,
