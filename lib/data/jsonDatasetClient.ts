@@ -17,6 +17,8 @@ export type JsonDatasetRequest = {
 	key: string;
 	url: string;
 	enabled: boolean;
+	/** Lower values start first when the bounded loader opens a slot. */
+	priority?: number;
 	filter?: DatasetLocationFilter;
 	chunkUrls?: readonly string[];
 };
@@ -30,6 +32,7 @@ let worker: Worker | null = null;
 let nextId = 0;
 const pending = new Map<number, PendingRequest>();
 const SLICE_CACHE_LIMIT = 3;
+const MAX_CONCURRENT_DATASET_REQUESTS = 4;
 const completedSlices = new Map<string, CachedDatasetSlice<unknown>>();
 
 const abortError = () => new DOMException("Request cancelled", "AbortError");
@@ -149,17 +152,49 @@ export async function loadJsonDatasetSlice<T>(
 		return cached;
 	}
 
-	const pendingRequests = requests.filter((request) => request.enabled);
-	const results = await Promise.allSettled(
-		pendingRequests.map(async (request) => ({
-			key: request.key,
-			data: (await fetchViaWorker(
-				request.url,
-				request.filter,
-				request.chunkUrls,
-				signal,
-			)) as Record<string, T>,
-		})),
+	const pendingRequests = requests
+		.map((request, index) => ({ request, index }))
+		.filter(({ request }) => request.enabled)
+		.sort(
+			(left, right) =>
+				(left.request.priority ?? 0) - (right.request.priority ?? 0),
+		);
+	const results = new Array<
+		PromiseSettledResult<{ key: string; data: Record<string, T> }>
+	>(pendingRequests.length);
+	let nextRequest = 0;
+	const runNext = async () => {
+		while (nextRequest < pendingRequests.length) {
+			const slot = nextRequest++;
+			const request = pendingRequests[slot]!.request;
+			try {
+				results[slot] = {
+					status: "fulfilled",
+					value: {
+						key: request.key,
+						data: (await fetchViaWorker(
+							request.url,
+							request.filter,
+							request.chunkUrls,
+							signal,
+						)) as Record<string, T>,
+					},
+				};
+			} catch (reason) {
+				results[slot] = { status: "rejected", reason };
+			}
+		}
+	};
+	await Promise.all(
+		Array.from(
+			{
+				length: Math.min(
+					MAX_CONCURRENT_DATASET_REQUESTS,
+					pendingRequests.length,
+				),
+			},
+			() => runNext(),
+		),
 	);
 	const loaded: Record<string, Record<string, T>> = {};
 	const errors: string[] = [];

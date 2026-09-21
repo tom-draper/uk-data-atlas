@@ -52,6 +52,20 @@ export function datasetIsNeeded(
 	);
 }
 
+/** Prioritise the active map, then visible cards, then background datasets. */
+export function datasetLoadPriority(
+	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
+	visibility: Record<ChartKey, boolean>,
+	activeDatasetType?: string,
+): number {
+	if (definition.type === activeDatasetType) return 0;
+	return getChartDefinitions(definition).some(
+		(chart) => visibility[chart.key] ?? DEFAULT_VISIBILITY[chart.key],
+	)
+		? 1
+		: 2;
+}
+
 /**
  * The chart datasets for the current view.
  *
@@ -89,6 +103,11 @@ export function useDatasets(
 						),
 					) ?? undefined)
 				: undefined,
+			priority: datasetLoadPriority(
+				definition,
+				visibility,
+				activeDatasetType,
+			),
 			enabled: datasetIsNeeded(definition, visibility, activeDatasetType),
 		})),
 	);
