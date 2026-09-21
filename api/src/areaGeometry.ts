@@ -57,7 +57,18 @@ type CachedRelease = {
 	wgs84: Map<string, GeoJsonGeometry>;
 	/** WGS84 bounds, built lazily with the geometry used for containment. */
 	bounds: Map<string, GeometryBounds | undefined>;
+	/** Compact candidate index: codes in quarter-degree cells, never copied rings. */
+	spatialIndex?: SpatialIndex;
 };
+
+type SpatialIndex = {
+	cells: Map<string, string[]>;
+	/** Every code with a usable WGS84 envelope, for deliberately wide queries. */
+	codes: string[];
+};
+
+const SPATIAL_CELL_DEGREES = 0.25;
+const MAX_SPATIAL_QUERY_CELLS = 10_000;
 
 export type ContainingArea = {
 	code: string;
@@ -89,6 +100,9 @@ export type AreaGeometryCacheStats = {
 	loads: number;
 	evictions: number;
 	loadSeconds: number;
+	/** Releases for which the compact point/box candidate index is ready. */
+	spatialIndexes: Array<{ release: string; areas: number; cells: number }>;
+	spatialIndexBuilds: number;
 };
 
 export class AreaGeometryCache {
@@ -99,6 +113,7 @@ export class AreaGeometryCache {
 		loads: 0,
 		evictions: 0,
 		loadSeconds: 0,
+		spatialIndexBuilds: 0,
 	};
 	constructor(
 		private readonly repositoryRoot: string,
@@ -114,6 +129,18 @@ export class AreaGeometryCache {
 		return {
 			maxReleases: this.maxReleases,
 			loadedReleases: [...this.releases.keys()],
+			spatialIndexes: [...this.releases.entries()].flatMap(
+				([release, cached]) =>
+					cached.spatialIndex
+						? [
+								{
+									release,
+									areas: cached.spatialIndex.codes.length,
+									cells: cached.spatialIndex.cells.size,
+								},
+							]
+						: [],
+			),
 			...this.counts,
 		};
 	}
@@ -144,6 +171,124 @@ export class AreaGeometryCache {
 				return offset;
 			})
 			.filter((offset) => appliesTo(offset, code));
+	}
+	/** Transform one loaded geometry, caching it only when an exact operation needs it. */
+	private wgs84Geometry(
+		release: CachedRelease,
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+		cache: boolean,
+	): GeoJsonGeometry | undefined {
+		const geometry = release.geometries.get(code);
+		if (!geometry || isWgs84(release.crs)) return geometry;
+		const cached = release.wgs84.get(code);
+		if (cached) return cached;
+		const corrected = this.correctionsFor(
+			this.source(geography, boundaryRelease),
+			code,
+		).reduce((moved, offset) => offsetGeometry(offset, moved), geometry);
+		const reprojected = toWgs84Geometry(corrected, release.crs);
+		if (cache) release.wgs84.set(code, reprojected);
+		return reprojected;
+	}
+
+	/** Calculate one WGS84 envelope without retaining a second copy of its rings. */
+	private boundsFor(
+		release: CachedRelease,
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): GeometryBounds | undefined {
+		if (release.bounds.has(code)) return release.bounds.get(code);
+		const geometry = this.wgs84Geometry(
+			release,
+			geography,
+			boundaryRelease,
+			code,
+			false,
+		);
+		const bounds = geometry ? geometryBounds(geometry) : undefined;
+		release.bounds.set(code, bounds);
+		return bounds;
+	}
+
+	private cellRange(bounds: GeometryBounds) {
+		const west = Math.max(-180, bounds[0]);
+		const south = Math.max(-90, bounds[1]);
+		const east = Math.min(180, bounds[2]);
+		const north = Math.min(90, bounds[3]);
+		if (west > east || south > north) return undefined;
+		return {
+			west: Math.floor((west + 180) / SPATIAL_CELL_DEGREES),
+			south: Math.floor((south + 90) / SPATIAL_CELL_DEGREES),
+			east: Math.floor((east + 180) / SPATIAL_CELL_DEGREES),
+			north: Math.floor((north + 90) / SPATIAL_CELL_DEGREES),
+		};
+	}
+
+	private cellKeys(bounds: GeometryBounds): string[] | undefined {
+		const range = this.cellRange(bounds);
+		if (!range) return [];
+		const count =
+			(range.east - range.west + 1) * (range.north - range.south + 1);
+		if (count > MAX_SPATIAL_QUERY_CELLS) return undefined;
+		const keys: string[] = [];
+		for (let longitude = range.west; longitude <= range.east; longitude++)
+			for (
+				let latitude = range.south;
+				latitude <= range.north;
+				latitude++
+			)
+				keys.push(`${longitude}/${latitude}`);
+		return keys;
+	}
+
+	/** Build the release-local candidate index once, independently of exact reads. */
+	private spatialIndexFor(
+		geography: string,
+		boundaryRelease: string,
+	): { release: CachedRelease; index: SpatialIndex } | undefined {
+		// Calling get loads and validates the release without requiring a known
+		// code; the empty code can never turn into a result.
+		this.get(geography, boundaryRelease, "");
+		const identity = [geography, boundaryRelease].join("/");
+		const release = this.releases.get(identity);
+		if (!release) return undefined;
+		if (release.spatialIndex)
+			return { release, index: release.spatialIndex };
+		const cells = new Map<string, string[]>();
+		const codes: string[] = [];
+		for (const code of release.geometries.keys()) {
+			const bounds = this.boundsFor(
+				release,
+				geography,
+				boundaryRelease,
+				code,
+			);
+			if (!bounds) continue;
+			codes.push(code);
+			for (const key of this.cellKeys(bounds) ?? []) {
+				const candidates = cells.get(key) ?? [];
+				candidates.push(code);
+				cells.set(key, candidates);
+			}
+		}
+		release.spatialIndex = { cells, codes };
+		this.counts.spatialIndexBuilds += 1;
+		return { release, index: release.spatialIndex };
+	}
+
+	private spatialCandidates(
+		index: SpatialIndex,
+		bounds: GeometryBounds,
+	): Iterable<string> {
+		const keys = this.cellKeys(bounds);
+		if (keys === undefined) return index.codes;
+		const candidates = new Set<string>();
+		for (const key of keys)
+			for (const code of index.cells.get(key) ?? []) candidates.add(code);
+		return candidates;
 	}
 	/**
 	 * The geometry's source CRS, how it was transformed to WGS84, and, given
@@ -246,23 +391,13 @@ export class AreaGeometryCache {
 			this.releases.delete(identity);
 			this.releases.set(identity, release);
 		}
-		const geometry = release.geometries.get(code);
-		if (!geometry || isWgs84(release.crs)) return geometry;
-		let reprojected = release.wgs84.get(code);
-		if (!reprojected) {
-			// A declared correction moves the area in the publisher's own
-			// grid, before it is reprojected.
-			const corrected = this.correctionsFor(
-				this.source(geography, boundaryRelease),
-				code,
-			).reduce(
-				(moved, offset) => offsetGeometry(offset, moved),
-				geometry,
-			);
-			reprojected = toWgs84Geometry(corrected, release.crs);
-			release.wgs84.set(code, reprojected);
-		}
-		return reprojected;
+		return this.wgs84Geometry(
+			release,
+			geography,
+			boundaryRelease,
+			code,
+			true,
+		);
 	}
 	/**
 	 * Every area code the release publishes, in the order its source lists
@@ -278,30 +413,33 @@ export class AreaGeometryCache {
 		return release ? [...release.geometries.keys()] : [];
 	}
 	/**
-	 * Find areas containing a WGS84 point within one boundary release. Bounds are
-	 * cached before the exact polygon test, so repeated map clicks avoid scanning
-	 * every ring of every feature.
+	 * Find areas containing a WGS84 point within one boundary release. A compact
+	 * grid index first finds candidate bounds; exact polygon tests preserve the
+	 * published boundary semantics, including shared edges and holes.
 	 */
 	findContaining(
 		geography: string,
 		boundaryRelease: string,
 		point: Coordinate,
 	): ContainingArea[] {
-		// Calling get loads and validates the release without requiring a known
-		// code; the empty code can never turn into a result.
-		this.get(geography, boundaryRelease, "");
-		const identity = [geography, boundaryRelease].join("/");
-		const release = this.releases.get(identity);
-		if (!release) return [];
+		const indexed = this.spatialIndexFor(geography, boundaryRelease);
+		if (!indexed) return [];
+		const { release, index } = indexed;
 		const matches: ContainingArea[] = [];
-		for (const code of release.geometries.keys()) {
+		for (const code of this.spatialCandidates(index, [
+			point[0],
+			point[1],
+			point[0],
+			point[1],
+		])) {
 			const geometry = this.get(geography, boundaryRelease, code);
 			if (!geometry) continue;
-			let bounds = release.bounds.get(code);
-			if (bounds === undefined && !release.bounds.has(code)) {
-				bounds = geometryBounds(geometry);
-				release.bounds.set(code, bounds);
-			}
+			const bounds = this.boundsFor(
+				release,
+				geography,
+				boundaryRelease,
+				code,
+			);
 			if (!bounds || !pointInBounds(point, bounds)) continue;
 			const containment = containPoint(point, geometry);
 			if (containment !== "outside") matches.push({ code, containment });
@@ -313,8 +451,8 @@ export class AreaGeometryCache {
 
 	/**
 	 * The areas of one release nearest a WGS84 point, no further than
-	 * `withinM`, nearest first. Cached bounds rule out every area whose box is
-	 * already too far, so only areas near the point have their rings walked.
+	 * `withinM`, nearest first. The same compact grid narrows the work to areas
+	 * whose envelopes can reach the requested radius.
 	 */
 	findNearest(
 		geography: string,
@@ -322,21 +460,35 @@ export class AreaGeometryCache {
 		point: Coordinate,
 		withinM: number,
 	): NearbyArea[] {
-		// As in findContaining: load and validate the release without needing
-		// a known code.
-		this.get(geography, boundaryRelease, "");
-		const identity = [geography, boundaryRelease].join("/");
-		const release = this.releases.get(identity);
-		if (!release) return [];
+		const indexed = this.spatialIndexFor(geography, boundaryRelease);
+		if (!indexed) return [];
+		const { release, index } = indexed;
+		const latitudeDelta = withinM / 110000;
+		const furthestLatitude = Math.min(
+			89.999,
+			Math.abs(point[1]) + latitudeDelta,
+		);
+		const longitudeMetresPerDegree = Math.max(
+			0.001,
+			110000 * Math.cos((furthestLatitude * Math.PI) / 180),
+		);
+		const longitudeDelta = withinM / longitudeMetresPerDegree;
+		const searchBounds: GeometryBounds = [
+			Math.max(-180, point[0] - longitudeDelta),
+			Math.max(-90, point[1] - latitudeDelta),
+			Math.min(180, point[0] + longitudeDelta),
+			Math.min(90, point[1] + latitudeDelta),
+		];
 		const nearby: NearbyArea[] = [];
-		for (const code of release.geometries.keys()) {
+		for (const code of this.spatialCandidates(index, searchBounds)) {
 			const geometry = this.get(geography, boundaryRelease, code);
 			if (!geometry) continue;
-			let bounds = release.bounds.get(code);
-			if (bounds === undefined && !release.bounds.has(code)) {
-				bounds = geometryBounds(geometry);
-				release.bounds.set(code, bounds);
-			}
+			const bounds = this.boundsFor(
+				release,
+				geography,
+				boundaryRelease,
+				code,
+			);
 			if (!bounds || distanceToBoundsM(point, bounds) > withinM) continue;
 			const distanceM = distanceToGeometryM(point, geometry);
 			if (distanceM <= withinM) nearby.push({ code, distanceM });
@@ -363,21 +515,19 @@ export class AreaGeometryCache {
 		boundaryRelease: string,
 		box: GeometryBounds,
 	): IntersectingArea[] {
-		// As in findContaining: load and validate the release without needing
-		// a known code.
-		this.get(geography, boundaryRelease, "");
-		const identity = [geography, boundaryRelease].join("/");
-		const release = this.releases.get(identity);
-		if (!release) return [];
+		const indexed = this.spatialIndexFor(geography, boundaryRelease);
+		if (!indexed) return [];
+		const { release, index } = indexed;
 		const matches: IntersectingArea[] = [];
-		for (const code of release.geometries.keys()) {
+		for (const code of this.spatialCandidates(index, box)) {
 			const geometry = this.get(geography, boundaryRelease, code);
 			if (!geometry) continue;
-			let bounds = release.bounds.get(code);
-			if (bounds === undefined && !release.bounds.has(code)) {
-				bounds = geometryBounds(geometry);
-				release.bounds.set(code, bounds);
-			}
+			const bounds = this.boundsFor(
+				release,
+				geography,
+				boundaryRelease,
+				code,
+			);
 			if (!bounds || !boundsIntersect(bounds, box)) continue;
 			if (boundsWithin(bounds, box)) {
 				matches.push({ code, relation: "within", bounds });

@@ -234,11 +234,36 @@ export class ApiMetrics {
 						...sampled(
 							"counter",
 							"atlas_api_geometry_cache_events_total",
-							"Area reads answered from a loaded release, release loads and evictions since the server started.",
+							"Area reads answered from a loaded release, release loads, compact spatial-index builds and evictions since the server started.",
 							[
 								[{ event: "read" }, cache.reads],
 								[{ event: "load" }, cache.loads],
+								[
+									{ event: "spatial_index_build" },
+									cache.spatialIndexBuilds,
+								],
 								[{ event: "eviction" }, cache.evictions],
+							],
+						),
+						...sampled(
+							"gauge",
+							"atlas_api_geometry_spatial_index_entries",
+							"Area envelopes and occupied cells held by the compact spatial indexes.",
+							[
+								[
+									{ kind: "area" },
+									cache.spatialIndexes.reduce(
+										(total, index) => total + index.areas,
+										0,
+									),
+								],
+								[
+									{ kind: "cell" },
+									cache.spatialIndexes.reduce(
+										(total, index) => total + index.cells,
+										0,
+									),
+								],
 							],
 						),
 						...sampled(
