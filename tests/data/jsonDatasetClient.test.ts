@@ -50,4 +50,70 @@ describe("json dataset client", () => {
 			errors: ["Failed to fetch /broken.json: 503 Unavailable"],
 		});
 	});
+
+	it("limits concurrent requests while starting higher priorities first", async () => {
+		let active = 0;
+		let maximumActive = 0;
+		const started: string[] = [];
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockImplementation(async (url: string) => {
+				started.push(url);
+				active += 1;
+				maximumActive = Math.max(maximumActive, active);
+				await new Promise((resolve) => setTimeout(resolve, 2));
+				active -= 1;
+				return { ok: true, json: async () => ({}) };
+			}),
+		);
+
+		await loadJsonDatasetSlice(
+			[
+				{
+					key: "background",
+					url: "/background.json",
+					enabled: true,
+					priority: 2,
+				},
+				{
+					key: "active",
+					url: "/active.json",
+					enabled: true,
+					priority: 0,
+				},
+				{
+					key: "visible",
+					url: "/visible.json",
+					enabled: true,
+					priority: 1,
+				},
+				{
+					key: "other-1",
+					url: "/other-1.json",
+					enabled: true,
+					priority: 2,
+				},
+				{
+					key: "other-2",
+					url: "/other-2.json",
+					enabled: true,
+					priority: 2,
+				},
+				{
+					key: "other-3",
+					url: "/other-3.json",
+					enabled: true,
+					priority: 2,
+				},
+			],
+			"json-client-priority-test-slice",
+			new AbortController().signal,
+		);
+		expect(started.slice(0, 3)).toEqual([
+			"/active.json",
+			"/visible.json",
+			"/background.json",
+		]);
+		expect(maximumActive).toBeLessThanOrEqual(4);
+	});
 });
