@@ -77,11 +77,49 @@ future paid-data policy.
 | **Local authority collected waste management** | [Department for Environment, Food and Rural Affairs](https://www.gov.uk/government/statistics/local-authority-collected-waste-management-annual-results) | 2024-25 | [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | Local-authority collected waste in England; collection authorities only to avoid double counting. |
 | **Welsh Index of Multiple Deprivation** | [Welsh Government](https://www.gov.wales/welsh-index-multiple-deprivation) | 2019 | [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | Deprivation scores, ranks and deciles by lower super output area for Wales. |
 | **Workplace income** | [Office for National Statistics](https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/workplacebylocalauthorityashetable7) | 2025 | [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | Earnings estimates by local authority of workplace for England. |
-| **Westminster Parliamentary Wards (Boundaries)** | [ONS Open Geography Portal](https://geoportal.statistics.gov.uk/) | 2016–2026 | [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | Electoral ward boundaries. |
-| **Local Authority Districts (Boundaries)** | [ONS Open Geography Portal](https://geoportal.statistics.gov.uk/) | 2016–2025 | [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | Local authority district boundaries. |
-| **Westminster Parliamentary Constituencies (Boundaries)** | [ONS Open Geography Portal](https://geoportal.statistics.gov.uk/) | 2015, 2016, 2017, 2019, 2024 | [Open Government Licence v3.0](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/) | Parliamentary constituency boundaries. |
 <!-- sources:end -->
 
+## Boundaries
+
+The Atlas includes every boundary geography and release in the table below.
+Each linked geography has its full release history, source, licence and
+downloadable files in the [website documentation](https://ukdataatlas.com/docs/v1/geographies).
+
+<!-- boundaries:start -->
+| Geography | Releases | Release IDs |
+| --- | ---: | --- |
+| [Countries](https://ukdataatlas.com/docs/v1/geographies/countries) | 6 | `2025-12-uk-bgc`, `2024-12-uk-bgc`, `2023-12-uk-bgc`, `2022-12-uk-bgc`, `2021-12-uk-bgc`, `2020-12-uk-bgc` |
+| [Regions](https://ukdataatlas.com/docs/v1/geographies/regions) | 1 | `2025-12-en-bgc` |
+| [Counties and unitary authorities](https://ukdataatlas.com/docs/v1/geographies/counties-and-unitary-authorities) | 1 | `2025-12-uk-bgc` |
+| [Local authorities](https://ukdataatlas.com/docs/v1/geographies/local-authorities) | 18 | `2026-05-uk-bgc`, `2025-12-uk-bgc`, `2025-05-uk-bgc-v2`, `2024-12-uk-bgc`, `2024-05-uk-bgc`, `2023-12-uk-bgc`, `2023-05-uk-bgc-v2`, `2022-12-uk-bgc-v2`, `2021-12-uk-bgc`, `2020-12-uk-bgc`, `2019-12-uk-bgc`, `2019-04-uk-bgc`, `2018-12-uk-bgc`, `2017-12-gb-bgc`, `2016-12-gb-bgc`, `2011-12-gb-bgc`, `2009-12-gb-bgc`, `2008-12-gb-bgc` |
+| [Combined authorities](https://ukdataatlas.com/docs/v1/geographies/combined-authorities) | 1 | `2025-12-en-bgc` |
+| [Parishes](https://ukdataatlas.com/docs/v1/geographies/parishes) | 7 | `2026-05-ew-bgc`, `2025-05-ew-bgc`, `2024-12-ew-bgc`, `2023-12-ew-bgc`, `2022-12-ew-bgc-v3`, `2021-12-ew-bgc`, `2019-04-ew-bgc` |
+| [Local planning authorities](https://ukdataatlas.com/docs/v1/geographies/local-planning-authorities) | 1 | `2019-04-uk-bgc` |
+| [National parks](https://ukdataatlas.com/docs/v1/geographies/national-parks) | 1 | `2020-12-gb-bgc` |
+| [Westminster constituencies](https://ukdataatlas.com/docs/v1/geographies/westminster-constituencies) | 9 | `2024-07-uk-bgc`, `2022-12-uk-bgc`, `2021-12-uk-bgc`, `2020-12-uk-bgc`, `2019-12-uk-bgc`, `2018-12-uk-bgc`, `2017-12-uk-bgc`, `2016-12-uk-bgc`, `2015-12-gb-bgc` |
+| [Wards](https://ukdataatlas.com/docs/v1/geographies/wards) | 17 | `2026-05-uk-bgc`, `2025-12-uk-bgc`, `2025-05-uk-bgc-v2`, `2024-12-uk-bgc`, `2024-05-uk-bgc`, `2023-12-uk-bgc`, `2023-05-uk-bgc`, `2022-12-uk-bgc`, `2021-12-uk-bgc`, `2020-12-uk-bgc`, `2019-12-uk-bgc`, `2019-12-gb-bgc`, `2018-12-uk-bgc`, `2017-12-gb-bgc`, `2016-12-gb-bgc`, `2015-12-gb-bgc`, `2011-12-ew-bgc` |
+| [County electoral divisions](https://ukdataatlas.com/docs/v1/geographies/county-electoral-divisions) | 1 | `2023-05-en-bgc` |
+| [Scottish Parliament constituencies](https://ukdataatlas.com/docs/v1/geographies/scottish-parliament-constituencies) | 4 | `2026-05-sc-bgc`, `2022-12-sc-bgc`, `2021-05-sc-bgc`, `2016-05-sc-gcb` |
+| [Scottish Parliament regions](https://ukdataatlas.com/docs/v1/geographies/scottish-parliament-regions) | 1 | `2022-12-sc-bgc` |
+| [Senedd constituencies](https://ukdataatlas.com/docs/v1/geographies/senedd-constituencies) | 1 | `2022-12-w-bgc` |
+| [Senedd regions](https://ukdataatlas.com/docs/v1/geographies/senedd-regions) | 1 | `2022-12-w-bgc` |
+| [Lower layer super output areas (LSOAs)](https://ukdataatlas.com/docs/v1/geographies/lsoas) | 4 | `2021-12-ew-bgc-v5`, `2011-12-ew-bgc-v3`, `2011-12-w-bgc`, `2001-12-ew-bgc` |
+| [Middle layer super output areas (MSOAs)](https://ukdataatlas.com/docs/v1/geographies/msoas) | 1 | `2021-12-ew-bgc-v3` |
+| [Data zones](https://ukdataatlas.com/docs/v1/geographies/data-zones) | 2 | `2011-12-sc-bfc`, `2011-12-sc-nc` |
+| [Northern Ireland super output areas](https://ukdataatlas.com/docs/v1/geographies/northern-ireland-super-output-areas) | 1 | `2011-ni` |
+| [ITL1 regions](https://ukdataatlas.com/docs/v1/geographies/itl1) | 2 | `2025-01-uk-bgc`, `2021-01-uk-bgc` |
+| [ITL2 areas](https://ukdataatlas.com/docs/v1/geographies/itl2) | 2 | `2025-01-uk-bgc`, `2021-01-uk-bgc-v2` |
+| [ITL3 areas](https://ukdataatlas.com/docs/v1/geographies/itl3) | 2 | `2025-01-uk-bgc-v2`, `2021-01-uk-bgc-v3` |
+| [Travel to work areas](https://ukdataatlas.com/docs/v1/geographies/travel-to-work-areas) | 1 | `2011-12-uk-gcb` |
+| [Major towns and cities](https://ukdataatlas.com/docs/v1/geographies/major-towns-and-cities) | 1 | `2015-12-ew-bgc` |
+| [Integrated care boards](https://ukdataatlas.com/docs/v1/geographies/integrated-care-boards) | 1 | `2026-04-en-bgc` |
+| [Sub-ICB locations](https://ukdataatlas.com/docs/v1/geographies/sub-icb-locations) | 1 | `2026-04-en-bgc` |
+| [NHS England regions](https://ukdataatlas.com/docs/v1/geographies/nhs-england-regions) | 1 | `2022-07-en-bgc` |
+| [Welsh local health boards](https://ukdataatlas.com/docs/v1/geographies/local-health-boards) | 1 | `2023-12-w-bgc` |
+| [Police force areas](https://ukdataatlas.com/docs/v1/geographies/police-force-areas) | 1 | `2023-12-ew-bgc` |
+| [Community safety partnerships](https://ukdataatlas.com/docs/v1/geographies/community-safety-partnerships) | 1 | `2023-12-ew-bgc` |
+| [Fire and rescue authorities](https://ukdataatlas.com/docs/v1/geographies/fire-and-rescue-authorities) | 1 | `2021-05-ew-bgc` |
+<!-- boundaries:end -->
 
 
 #
