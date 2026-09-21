@@ -18,6 +18,7 @@ import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { calculateWeightedMean } from "./weightedMean";
 import { validateLocationAggregation } from "./locationAggregation";
+import { readWeightedSource } from "./weightedSource";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -304,54 +305,23 @@ export const handleDataAggregateRoutes = ({
 				{ code: "aggregation_not_supported" },
 			);
 		}
-		const weightMeasure = dataCatalog.measures.find(
-			(candidate) => candidate.id === weightMeasureId,
-		);
-		// The same rule picks the weight's partition, but not the same
-		// refusal: a weight this API declared and cannot find is a gap in the
-		// build rather than something the caller asked for wrongly, so the
-		// resolver chooses and this route still answers for it.
-		const weightPlan = resolveObservations(context, {
-			measureId: weightMeasureId,
-			periods: [period],
-			geography: source.sourceGeography.type,
-			boundaryYear: String(source.sourceGeography.boundaryYear),
-		});
-		const weightSource =
-			weightPlan.kind === "plan" ? weightPlan.plan.source : undefined;
-		if (!weightMeasure || !weightSource) {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				`No source-exact ${weightMeasureId} partition is available to weight ${measureId}.`,
-			);
-		}
-		const weightObservationResult = numericObservationsFor(
+		const weightedSource = readWeightedSource({
+			context,
+			dataCatalog,
 			weightMeasureId,
-			weightSource,
-			period as string,
-			{
+			measureId,
+			period: period as string,
+			source,
+			artifacts: {
 				populationObservations,
 				populationLocalAuthorityObservations,
 				measureObservations,
 			},
-		);
-		if (weightObservationResult.kind === "missing") {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				`The weight artifact for ${weightMeasureId} is missing, or does not contain the catalogue's declared source period.`,
-			);
-		}
-		if (weightObservationResult.kind === "non_numeric") {
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				`The weight artifact for ${weightMeasureId} does not contain numeric records.`,
-			);
-		}
-		const { observations: weightObservations, records: weightRecords } =
-			weightObservationResult;
+		});
+		if ("status" in weightedSource) return weightedSource;
+		const { measure: weightMeasure, source: weightSource } = weightedSource;
+		const weightObservations = weightedSource.observations;
+		const weightRecords = weightedSource.records;
 		const weightAggregate = location
 			? aggregateLocationMembers(location, weightRecords)
 			: regional
