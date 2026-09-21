@@ -19,6 +19,7 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { validateLocationAggregation } from "./locationAggregation";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
+import { compatibleReleasesForAggregation } from "./aggregationCompatibility";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -165,23 +166,12 @@ export const handleDataAggregateRoutes = ({
 	// which an aggregate's coverage can be judged. This is evidence about a
 	// partition rather than a choice of one, so it is read here; the resolver
 	// only reports compatibility for a release a caller actually named.
-	const compatibleReleases = (
-		measureCompatibilityInventory?.measures
-			.find((candidate) => candidate.measureId === measureId)
-			?.sources.find(
-				(candidate) =>
-					candidate.datasetId === source.datasetId &&
-					candidate.sourceGeography.type ===
-						source.sourceGeography.type &&
-					candidate.sourceGeography.boundaryYear ===
-						source.sourceGeography.boundaryYear &&
-					candidate.periods.includes(period as string),
-			)?.candidates ?? []
-	).filter(
-		(candidate) =>
-			candidate.status === "exact-code-set" ||
-			candidate.status === "code-set-compatible",
-	);
+	const compatibleReleases = compatibleReleasesForAggregation({
+		measureCompatibilityInventory,
+		measureId,
+		source,
+		period: period as string,
+	});
 	const regional = resolveAggregationTarget({
 		targetCode,
 		regionCode,
