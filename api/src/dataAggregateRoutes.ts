@@ -18,6 +18,10 @@ import {
 	aggregateTargetMembers,
 	requireAggregateMembers,
 } from "./aggregateTargetMembers";
+import {
+	resolveAggregationLocation,
+	validateAggregationLocationSource,
+} from "./aggregationLocation";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -93,22 +97,13 @@ export const handleDataAggregateRoutes = ({
 		crosswalkId,
 		sourceRelease,
 	} = query;
-	if (locationId && !namedLocationLookup) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the named location inventory before aggregating over a location.",
-		);
-	}
-	const location = locationId
-		? namedLocationLookup?.get(locationId)
-		: undefined;
-	if (locationId && !location)
-		return problem(
-			404,
-			"Not Found",
-			"No named location matches locationId.",
-		);
+	const resolvedLocation = resolveAggregationLocation({
+		locationId,
+		namedLocationLookup,
+	});
+	if (resolvedLocation && "status" in resolvedLocation)
+		return resolvedLocation;
+	const location = resolvedLocation;
 	// The query parser has established these are present; which partition they
 	// name is the resolver's to decide.
 	const resolved = resolveObservations(context, {
@@ -119,13 +114,11 @@ export const handleDataAggregateRoutes = ({
 	});
 	if (resolved.kind === "refusal") return refused(resolved.refusal);
 	const { source } = resolved.plan;
-	if (location && location.memberGeography !== source.sourceGeography.type)
-		return problem(
-			422,
-			"Operation Not Supported",
-			`${location.label} is defined as ${location.memberGeography} codes, but this source partition is ${source.sourceGeography.type}. No conversion was applied.`,
-			{ code: "conversion_not_available" },
-		);
+	const locationSourceError = validateAggregationLocationSource({
+		location,
+		source,
+	});
+	if (locationSourceError) return locationSourceError;
 	// The boundary releases this partition is assessed to match, against
 	// which an aggregate's coverage can be judged. This is evidence about a
 	// partition rather than a choice of one, so it is read here; the resolver
