@@ -322,15 +322,16 @@ only **available** when its endpoint, contract and provenance are published.
       lies within it, beside the geometry's source file, hash and CRS.
       `GET /v1/areas:containsBatch` answers the same for up to 100 points,
       reading each release once for the whole batch.
-- [ ] Accept a coordinate in a declared CRS other than WGS 84, such as British
-      National Grid eastings and northings, stating the transformation used.
+- [x] Accept WGS 84, British National Grid and Irish Grid coordinates at the
+      point endpoints, retaining the declared input, named transformation and
+      conservative combined coordinate/transformation uncertainty.
 - [ ] Keep terrain elevation as a separately versioned raster lookup, with its
       vertical datum, resolution and uncertainty; elevation is not part of
       administrative-area containment.
-- [ ] Serve point lookup from a compact per-release spatial index rather than
-      the parsed GeoJSON. A release costs 60 to 400 MB of heap once read, so
-      only two are held at a time, and a lookup across more geographies than
-      that re-reads the others on every request.
+- [x] Serve point, nearest-area and box lookup through a compact per-release
+      spatial candidate index before exact geometry tests. A release costs 60
+      to 400 MB of heap once read, so only two are held at a time, and a lookup
+      across more geographies than that re-reads the others on every request.
 - [x] Retrieve the areas that intersect a bounded bbox for a chosen release,
       through `GET /v1/areas:intersects?bbox=west,south,east,north`. Each match
       reports whether it lies `within` the box or merely `overlaps` it, both

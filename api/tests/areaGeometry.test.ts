@@ -352,3 +352,141 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("uses one compact spatial candidate index for point, nearby and box lookups", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeSource(root, "boundaries/ward/2025/wards.geojson", {
+			type: "FeatureCollection",
+			features: [
+				{
+					properties: { CD: "WEST" },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[-3, 50],
+								[-2, 50],
+								[-2, 51],
+								[-3, 50],
+							],
+						],
+					},
+				},
+				{
+					properties: { CD: "CENTRE" },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[-0.1, 51],
+								[0.1, 51],
+								[0.1, 51.2],
+								[-0.1, 51],
+							],
+						],
+					},
+				},
+				{
+					properties: { CD: "EAST" },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[2, 53],
+								[3, 53],
+								[3, 54],
+								[2, 53],
+							],
+						],
+					},
+				},
+			],
+		});
+		const cache = new AreaGeometryCache(
+			root,
+			new Map([
+				[
+					"ward/2025",
+					{
+						input: "boundaries/ward/2025/wards.geojson",
+						crs: "EPSG:4326",
+						codeProperty: "CD",
+					},
+				],
+			]),
+		);
+		assert.deepEqual(cache.findContaining("ward", "2025", [0, 51.05]), [
+			{ code: "CENTRE", containment: "interior" },
+		]);
+		assert.deepEqual(cache.findNearest("ward", "2025", [0, 51.05], 1000), [
+			{ code: "CENTRE", distanceM: 0 },
+		]);
+		assert.deepEqual(
+			cache
+				.findIntersecting("ward", "2025", [-0.2, 50.9, 0.2, 51.3])
+				.map(({ code, relation }) => ({ code, relation })),
+			[{ code: "CENTRE", relation: "within" }],
+		);
+		assert.deepEqual(
+			cache.stats().spatialIndexes.map(({ areas, cells }) => ({
+				areas,
+				cells,
+			})),
+			[{ areas: 3, cells: 52 }],
+		);
+		assert.equal(cache.stats().spatialIndexBuilds, 1);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("builds spatial candidates from transformed British National Grid envelopes", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		writeSource(root, "boundaries/ward/2016/wards.geojson", {
+			type: "FeatureCollection",
+			features: [
+				{
+					properties: { CD: "E05000001" },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[530000, 180000],
+								[530100, 180000],
+								[530100, 180100],
+								[530000, 180100],
+								[530000, 180000],
+							],
+						],
+					},
+				},
+			],
+		});
+		const cache = new AreaGeometryCache(
+			root,
+			new Map([
+				[
+					"ward/2016",
+					{
+						input: "boundaries/ward/2016/wards.geojson",
+						crs: "EPSG:27700",
+						codeProperty: "CD",
+					},
+				],
+			]),
+		);
+		const point = toWgs84Geometry(
+			{ type: "Point", coordinates: [530050, 180050] },
+			"EPSG:27700",
+		) as unknown as { coordinates: [number, number] };
+		assert.deepEqual(
+			cache.findContaining("ward", "2016", point.coordinates),
+			[{ code: "E05000001", containment: "interior" }],
+		);
+		assert.equal(cache.stats().spatialIndexBuilds, 1);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
