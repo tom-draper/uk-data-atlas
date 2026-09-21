@@ -26,6 +26,16 @@ export interface ChartCardsProps {
 	location: string | null;
 }
 
+const GROUP_START_CHARTS: Partial<Record<string, string[]>> = {
+	Economics: [
+		"economics-housePrice",
+		"economics-income",
+		"economics-planningApplications",
+		"economics-councilTax",
+		"economics-unemployment",
+	],
+};
+
 export function hasVisibleChart(
 	group: string,
 	visibility: Record<ChartKey, boolean>,
@@ -37,11 +47,19 @@ export function getVisibleChartDefinitions(
 	group: string,
 	visibility: Record<ChartKey, boolean>,
 ) {
+	const groupStart = GROUP_START_CHARTS[group] ?? [];
 	return CHART_DATASET_DEFINITIONS.flatMap((definition) =>
 		getChartDefinitions(definition)
 			.filter((chart) => chart.group === group && visibility[chart.key])
 			.map((chart) => ({ definition, chart })),
-	);
+	).sort((left, right) => {
+		const leftOrder = groupStart.indexOf(left.chart.key);
+		const rightOrder = groupStart.indexOf(right.chart.key);
+		const leftPriority = leftOrder === -1 ? groupStart.length : leftOrder;
+		const rightPriority =
+			rightOrder === -1 ? groupStart.length : rightOrder;
+		return leftPriority - rightPriority;
+	});
 }
 
 export default function ChartCards({
