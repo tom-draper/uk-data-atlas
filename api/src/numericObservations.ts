@@ -18,6 +18,11 @@ export type NumericObservationResult =
 	| { kind: "missing" }
 	| { kind: "non_numeric" };
 
+export type NumericObservationSuccess = Extract<
+	NumericObservationResult,
+	{ kind: "ok" }
+>;
+
 /** Resolve one source period and require the numeric records aggregation needs. */
 export const numericObservationsFor = (
 	measureId: string,
