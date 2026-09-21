@@ -13,6 +13,17 @@ import {
 
 type ColorRange = { min: number; max: number };
 
+/** Returns the theme colour used by a numeric heatmap for one value. */
+export function getSequentialColorForValue(
+	value: number,
+	range: ColorRange,
+	themeId: string,
+	invertColor = true,
+): string {
+	const normalized = normalizeValue(value, range.min, range.max);
+	return getThemeColor(invertColor ? 1 - normalized : normalized, themeId);
+}
+
 // Builds a MapLibre paint expression for numeric datasets. The source keeps the
 // raw value so changing a theme or range only changes paint, rather than
 // rebuilding and uploading every boundary feature.

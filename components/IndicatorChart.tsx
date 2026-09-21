@@ -5,6 +5,9 @@ import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { IndicatorDataset } from "@/lib/types/indicator";
 import type { ActiveViz } from "@/lib/types";
+import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
+import { getSequentialColorForValue } from "@/lib/helpers/colorScale/datasetColors";
 
 type Display = {
 	label: string;
@@ -85,6 +88,7 @@ export default function IndicatorChart({
 	year,
 	setActiveViz,
 }: ChartComponentProps) {
+	const mapOptions = useCurrentMapOptions();
 	const dataset = (availableDatasets as Record<string, IndicatorDataset>)[
 		year
 	];
@@ -100,13 +104,22 @@ export default function IndicatorChart({
 		direct?.value ?? (!selectedArea ? aggregate?.value : undefined);
 	const hasData = value !== undefined;
 	const digits = display.digits ?? 0;
+	const mapOptionKey = dataset.type as NumericMapOptionsKey;
+	const mapOption = mapOptions[mapOptionKey];
+	const valueColor = hasData
+		? getSequentialColorForValue(
+				value!,
+				mapOption.colorRange,
+				mapOptions.theme.id,
+			)
+		: null;
 	const formatted = hasData
 		? `${display.prefix ?? ""}${value!.toLocaleString("en-GB", { maximumFractionDigits: digits, minimumFractionDigits: digits })}`
 		: "—";
 	return (
 		<ChartCard
 			heading={`${display.label} [${dataset.year}]`}
-			accent={hasData ? "#0ea5e9" : null}
+			accent={valueColor}
 			isActive={
 				activeDataset?.type === dataset.type &&
 				activeDataset.id === dataset.id
@@ -130,7 +143,7 @@ export default function IndicatorChart({
 						? Math.min(100, (value! / display.maximum) * 100)
 						: 0
 				}
-				barColor="#0ea5e9"
+				barColor={valueColor ?? undefined}
 			/>
 		</ChartCard>
 	);

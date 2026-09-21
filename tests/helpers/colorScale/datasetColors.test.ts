@@ -3,6 +3,7 @@ import {
 	getColorForGenderRatio,
 	getGenderColorExpression,
 	getSequentialColorExpression,
+	getSequentialColorForValue,
 } from "@/lib/helpers/colorScale/datasetColors";
 import { themes } from "@/lib/helpers/colorScale/themes";
 
@@ -118,6 +119,23 @@ describe("getSequentialColorExpression", () => {
 			"#cccccc",
 			expect.stringMatching(/^rgb\(/),
 		]);
+	});
+});
+
+describe("getSequentialColorForValue", () => {
+	it("matches the heatmap endpoints for an inverted theme", () => {
+		const viridis = themes.find((theme) => theme.id === "viridis")!;
+
+		expect(
+			getSequentialColorForValue(10, { min: 10, max: 20 }, "viridis"),
+		).toBe(
+			`rgb(${parseInt(viridis.colors.at(-1)!.slice(1, 3), 16)}, ${parseInt(viridis.colors.at(-1)!.slice(3, 5), 16)}, ${parseInt(viridis.colors.at(-1)!.slice(5, 7), 16)})`,
+		);
+		expect(
+			getSequentialColorForValue(20, { min: 10, max: 20 }, "viridis"),
+		).toBe(
+			`rgb(${parseInt(viridis.colors[0].slice(1, 3), 16)}, ${parseInt(viridis.colors[0].slice(3, 5), 16)}, ${parseInt(viridis.colors[0].slice(5, 7), 16)})`,
+		);
 	});
 });
 
