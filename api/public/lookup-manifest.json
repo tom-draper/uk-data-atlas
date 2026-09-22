@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:096ebd397f31f85e7706e9a1370ed324f2c22a211e27f8493f21c074d96a92d1",
+	"contentHash": "sha256:2aed408c757c169fbce28a611ffd71c788293fc433965648c8fb7035b6e3db2b",
 	"lookups": [
 		{
 			"id": "areas-combinedAuthority-2025-12-en-bgc",
@@ -5345,33 +5345,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 1407,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 250981,
-					"contentHash": "sha256:e7299d94de1e7122d18c497f762802324b9f41548dd52363571ec8227bd528a4",
+					"bytes": 252399,
+					"contentHash": "sha256:a82f8cd06e63828c3b69ea421e08faf62ff8e20ec388feb404f54c52971adc2f",
 					"href": "/v1/lookups/crosswalk-constituency-2010-to-2024-official-lookup-v2?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 596701,
-					"contentHash": "sha256:908b28e2bc029e4cce3bbdd3baeaa15cf36af382450b152755a696c3964cdf99",
+					"bytes": 622027,
+					"contentHash": "sha256:bdd61b222419b984b5eacb3a50ed25c8a63b8566223b483e355236b9135c1ceb",
 					"href": "/v1/lookups/crosswalk-constituency-2010-to-2024-official-lookup-v2?format=ndjson"
 				}
 			}
@@ -5455,33 +5461,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 607,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 121778,
-					"contentHash": "sha256:3d7a1447f1d696523e475cce577c3d2f3ebab6244f1c1f8ca8457507984e0e89",
+					"bytes": 122396,
+					"contentHash": "sha256:73376ac636e8370be4ac1adda7bce08697bf86215a3f54119a263797d64d4bc0",
 					"href": "/v1/lookups/crosswalk-constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 270788,
-					"contentHash": "sha256:0ee35611ab0e7514908f02696bd293b33595a1dd3ba10d81da3a1b58064bdba6",
+					"bytes": 281714,
+					"contentHash": "sha256:6c81e2031843e01883c0d8597b1c2926360a899b8cb311b42facb3b4da354cea",
 					"href": "/v1/lookups/crosswalk-constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -5565,33 +5577,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 630,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 126581,
-					"contentHash": "sha256:7259aa539b23ed611c98017facb690967927cac0fd799748e82a871c77abf32d",
+					"bytes": 127222,
+					"contentHash": "sha256:f93ecf88bc1263626cbc41be51a9424ce8d22b82bad3160562c1fc08bef4f121",
 					"href": "/v1/lookups/crosswalk-constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 281233,
-					"contentHash": "sha256:22124c6908a1bfc3a8d538cc863f6e2387d7ab8491345ba8559fbcfb9cf8f8a1",
+					"bytes": 292573,
+					"contentHash": "sha256:e76ab74ee1d2af9a938fa0902420ee919a3ae55e5a0ec3f02ed0a4ad60c52ade",
 					"href": "/v1/lookups/crosswalk-constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -5675,33 +5693,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 641,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 128734,
-					"contentHash": "sha256:f0c5683ec3774590973a9716b09b17a07cb9ab10f2dcf6060efd98048af6159f",
+					"bytes": 129386,
+					"contentHash": "sha256:3935d40b6209fdcaa730ea450abe79cec8589ce3fe59fd024acae44244033fa4",
 					"href": "/v1/lookups/crosswalk-constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 286092,
-					"contentHash": "sha256:49a772ad133134f290329dedd99898c0eed082e91af53c1ffe456bd658b844ad",
+					"bytes": 297630,
+					"contentHash": "sha256:fabeb20d3fe0d30ea4b116649308d4f84d72f7f5d82b9f83c2bb5e9051547f28",
 					"href": "/v1/lookups/crosswalk-constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -5785,33 +5809,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 573,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 115155,
-					"contentHash": "sha256:2b4f362b0113eb44c1264d3a8d354135da3292d9622c22ad2b94d8a3b5b49825",
+					"bytes": 115739,
+					"contentHash": "sha256:80a0261233fecfdabf8f7429d192dafec0d911029509a6a3a2ad1551d561965c",
 					"href": "/v1/lookups/crosswalk-constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 255797,
-					"contentHash": "sha256:e91533fca8b1a1fc2d3aa9872ab7d318895db8cf8462b5da8f553202c805f72c",
+					"bytes": 266111,
+					"contentHash": "sha256:3992da00a5df4af4ecd4c42712979a7fae052fe43af728c45e012ab08d8c1266",
 					"href": "/v1/lookups/crosswalk-constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -5895,33 +5925,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 626,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 125486,
-					"contentHash": "sha256:967b46ab759586520381d97712c3af53bbed774f20ffaa69d82cc692f0792552",
+					"bytes": 126123,
+					"contentHash": "sha256:052e290dce1d11be8eea7fd557c13477104d3604065e4c2b50a2185cc9f1f110",
 					"href": "/v1/lookups/crosswalk-constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 279162,
-					"contentHash": "sha256:81e6b7b58e50b3e5a9405ea54c4ded0f52374f39d165fa56ff8582ddcd278bec",
+					"bytes": 290430,
+					"contentHash": "sha256:68a27c29f8ce66caf4ca914df3966407697aa94e6f8c184a6f4a2cd0240f19d3",
 					"href": "/v1/lookups/crosswalk-constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6005,33 +6041,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 650,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 130488,
-					"contentHash": "sha256:f29f874aaf028ef600ca7d0357152012c41443b5bd56cfdea2e0849b881b2853",
+					"bytes": 131149,
+					"contentHash": "sha256:0cf58a3309c1f96429629c63720645393623b2df88d3869bf272d61db1e5fa7f",
 					"href": "/v1/lookups/crosswalk-constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 290060,
-					"contentHash": "sha256:67e161ecac92a8a70b204c2d8cc1f984544effcbe4046ce34de8349cf8ba3e35",
+					"bytes": 301760,
+					"contentHash": "sha256:6575b0db689b0944a10657c3693ebdff0fd754a95f2011f58d125cb8c8d58f68",
 					"href": "/v1/lookups/crosswalk-constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6115,33 +6157,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 646,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 129678,
-					"contentHash": "sha256:04efa7d1c379e94eeb4ce647d9463ac06292821a63dabe32a139ae8641522fe3",
+					"bytes": 130335,
+					"contentHash": "sha256:04b3f959456124d2f4d5148b9d90a6f6442f8405b5c0f6de587e601137abee63",
 					"href": "/v1/lookups/crosswalk-constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 288266,
-					"contentHash": "sha256:87214130e35624165670ab1e99e6455a7d9e7727a1d81821ce234c0a714c954d",
+					"bytes": 299894,
+					"contentHash": "sha256:35ef415c99c5885d83f3c37738be1d7e8e4cda2441ccef0fccdf74cb86cafc21",
 					"href": "/v1/lookups/crosswalk-constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6225,34 +6273,156 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": true,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": true,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": true,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 948,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 218805,
-					"contentHash": "sha256:5e2afd3ace7e659f09c19a46a8477d489308a7fa5e729e4f31bae455a2a4ebf6",
+					"bytes": 219764,
+					"contentHash": "sha256:2672a2dcbdefa04e691ad98176976f780c75a63c8f542acf36c177d0ed3c6388",
 					"href": "/v1/lookups/crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 436571,
-					"contentHash": "sha256:70835128dbb495e3df3044d867a17c4b136b54e06906ce66887be1eb11020e50",
+					"bytes": 453635,
+					"contentHash": "sha256:e6a7024d614e7b82fb0bb7b3fbc4518685434b0a237746e11d92448c73fc10f4",
 					"href": "/v1/lookups/crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+			"kind": "crosswalk",
+			"title": "Crosswalk, constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+			"source": {
+				"artifact": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap.json",
+				"contentHash": "sha256:f7a3f22aae18a1a82b73b91d281d98427a89edf99edb67efa0a25f7b238ee03d"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": true,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": true,
+					"description": "The share of the source population inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": true,
+					"description": "The share of the target population inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": true,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": true,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 833,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 206228,
+					"contentHash": "sha256:7cc9428676dd65fc6a6cb6bbe66afa25ee864820ca09156887e66a40cc69f422",
+					"href": "/v1/lookups/crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 408410,
+					"contentHash": "sha256:f7314062592aea5647055f754197a60a0df809836d5145127b17a38c224c3878",
+					"href": "/v1/lookups/crosswalk-constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap?format=ndjson"
 				}
 			}
 		},
@@ -6335,33 +6505,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 3,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 697,
-					"contentHash": "sha256:acd1b1ccc7e80b76010203e2fdd8005d6bdf5de48fda4b3246c0483af3a6d192",
+					"bytes": 711,
+					"contentHash": "sha256:31dc8480fbdbb9c3284b64a8a6cd7cf3107975230a0bbdc5283ef57ef854293d",
 					"href": "/v1/lookups/crosswalk-country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 1259,
-					"contentHash": "sha256:2bb33ad31f0fe7fddd1b395c88c7e9f87ec220de0854c86fc874811de77328e8",
+					"bytes": 1313,
+					"contentHash": "sha256:041838194c0139cbe86d62eb87b8ce8c2cbc5f111781091c7be886fc77d96eff",
 					"href": "/v1/lookups/crosswalk-country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6445,33 +6621,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 4,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 868,
-					"contentHash": "sha256:b9614804720da0cc68ff29dba218c000750aa7e33317057de41d8d579e78aa27",
+					"bytes": 883,
+					"contentHash": "sha256:c4aba064b49ff1c68738f9bd3c33f261a560f4bda477442aab5ae53f0d920d1a",
 					"href": "/v1/lookups/crosswalk-country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 1676,
-					"contentHash": "sha256:af229f050083cdcae813fee6ee328c5b36974cb6b4c767379a2c78e17bd67728",
+					"bytes": 1748,
+					"contentHash": "sha256:3f34b3d1354b72f48b25abaff56c705e9f5086a80558fb586643c1f281b7f523",
 					"href": "/v1/lookups/crosswalk-country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6555,33 +6737,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 4,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 868,
-					"contentHash": "sha256:6b0cbe3bfbc785948808c3a8c56fa7222b17f6fc280acd6b81431897c0e2933a",
+					"bytes": 883,
+					"contentHash": "sha256:d3d4b7ceaaf4dccd31cba33a2899cceeb33bf9d9f889b511edb4941dfc1842b2",
 					"href": "/v1/lookups/crosswalk-country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 1676,
-					"contentHash": "sha256:05c86f38ddeac3695edd810c38e8962406696e5bbb249e8eeb710fbe2e9c9442",
+					"bytes": 1748,
+					"contentHash": "sha256:13aa9fcf115583a2648bb4cf89610d859bc5fa16426fb5fdfea5c52e0b78a668",
 					"href": "/v1/lookups/crosswalk-country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6665,33 +6853,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 1,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 363,
-					"contentHash": "sha256:96df5ffa6f62c37fce3706b13dc2d9d8d0de6913570e36b65680c910dc86f736",
+					"bytes": 375,
+					"contentHash": "sha256:53977bf6fb2e41cf2c9a205d78a3a407a461edf573445e635284de771837a89d",
 					"href": "/v1/lookups/crosswalk-country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 433,
-					"contentHash": "sha256:8a2e3542caf9d3edfef128f82c2d3e884c4e6c89ae0b7615301df4daaeced2ea",
+					"bytes": 451,
+					"contentHash": "sha256:ce9cd72e8c3fc3c96bdf30238a75445c1d5878cba9cb72f7ea90dc324d784d98",
 					"href": "/v1/lookups/crosswalk-country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6775,33 +6969,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 3,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 697,
-					"contentHash": "sha256:6553e861d36e95eaf2915b1a634a249f2bd93f054d23d313333482b89a404caf",
+					"bytes": 711,
+					"contentHash": "sha256:df8c716c272c251e33a1ea1bca68c2c62075529bf9ce2cc20f95a7208e236514",
 					"href": "/v1/lookups/crosswalk-country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 1259,
-					"contentHash": "sha256:b13735f388abd638ded668053ce64573c11e9922c33b3e397c67996f479965f1",
+					"bytes": 1313,
+					"contentHash": "sha256:dd91827e907cfbabdd42624a3ef753eddc86dd73922d13f891e72986eb5a3a50",
 					"href": "/v1/lookups/crosswalk-country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6885,33 +7085,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 6,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1204,
-					"contentHash": "sha256:6596db2cc780162a309db3407cc87e9143fce1b9e85b11d85f8cd8349181522d",
+					"bytes": 1221,
+					"contentHash": "sha256:38b68432a289c0959168d0464f7216b391b647569d734b9cfbeb316f492abaf0",
 					"href": "/v1/lookups/crosswalk-itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 2504,
-					"contentHash": "sha256:b17180cc35691c38e7c7b8a88111a8d9aa3215d053c64715d219ceb825586d70",
+					"bytes": 2612,
+					"contentHash": "sha256:4e71a1b66c2b65fe4e53fb7b18e112eaf6a1c7471f3da79e4adfea9e27a21c69",
 					"href": "/v1/lookups/crosswalk-itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -6995,33 +7201,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 16,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 3302,
-					"contentHash": "sha256:8c6550f20ef76458ff47570c40aa44a6e668a635c3e03011fca3384d411ae5d4",
+					"bytes": 3329,
+					"contentHash": "sha256:d30a74a308c2ec48fc3478d488b24a6555574657880eadd8f1698f4d3fc0d796",
 					"href": "/v1/lookups/crosswalk-itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 7050,
-					"contentHash": "sha256:e8b31dd504c24a480fd69c3f742d7a7b20d72454464ae93a71cc5acd50d4b14f",
+					"bytes": 7338,
+					"contentHash": "sha256:5b4983e83a3ff1797aeb305936bdabb7098e0e9bbc8192386d664ac931f001e4",
 					"href": "/v1/lookups/crosswalk-itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7105,33 +7317,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 41,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 7375,
-					"contentHash": "sha256:9b740be6c2b68eda25c20c34fd4d71298482e52a039b59aa046e36a4918e853f",
+					"bytes": 7427,
+					"contentHash": "sha256:153715685cd1686cff2d79ffa4da7dbd2fe541071c3d2dad6b985d17a5529047",
 					"href": "/v1/lookups/crosswalk-itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 17273,
-					"contentHash": "sha256:c4feb4208de947dc1e4875a3166eddc1471b4b4b16c82bc7ce05b1632cf86965",
+					"bytes": 18011,
+					"contentHash": "sha256:9424ce0b51aff1d15e8ea7fa4267875621087621c2c4caeb60641d5f24f0cbd8",
 					"href": "/v1/lookups/crosswalk-itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup?format=ndjson"
 				}
 			}
@@ -7215,33 +7433,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 85,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 15594,
-					"contentHash": "sha256:d98f0dee4cfe821bf4d458b8e36fa0fc50fdedfbf53be2d661f5d3cc04ee3a6b",
+					"bytes": 15690,
+					"contentHash": "sha256:f285efe6f96c9f2c2b78b99c2d83ba54be00cac43998c47e9f9b1243af2380a6",
 					"href": "/v1/lookups/crosswalk-itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 36320,
-					"contentHash": "sha256:735e9a57d5d9ae4d332088261f7ad3b6aceaad128063e79a36231c39daff1291",
+					"bytes": 37850,
+					"contentHash": "sha256:b47fcfa655c9049683b6165ca93cf92bef27b3241a95ff5f019b53cabaedddee",
 					"href": "/v1/lookups/crosswalk-itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7325,33 +7549,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 179,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 33413,
-					"contentHash": "sha256:ce62f84575404e42402de4115b6f2202fa24a44a9a8114bd3740230b119b0140",
+					"bytes": 33603,
+					"contentHash": "sha256:63c792f410eca0e102d14f4098fd2f1f88d3a94b0168b652105fed2425e1310f",
 					"href": "/v1/lookups/crosswalk-itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 77191,
-					"contentHash": "sha256:ea8012a5d7f41c98cc1a835d92d4e0b59fdda9436e384867befcf8e74ef90246",
+					"bytes": 80413,
+					"contentHash": "sha256:3a7f5f1fa9bd133339172a8180e66db1199e455983f32b9fc57e65989f39013c",
 					"href": "/v1/lookups/crosswalk-itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup?format=ndjson"
 				}
 			}
@@ -7435,33 +7665,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 347,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 65781,
-					"contentHash": "sha256:60b9ce1dab67b964f35495f9bd14b070a8c34a71f66bf8eae00f310af5af70ef",
+					"bytes": 66139,
+					"contentHash": "sha256:c1d18b30dbe8f53503005a0ac713311b88d9fbe0ce76723119f16cf39b63f3f8",
 					"href": "/v1/lookups/crosswalk-local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 150947,
-					"contentHash": "sha256:9b47d495840585b68f36feb3fd1ce6892be14d7f7b2aaf0c7cfcc2e1ae260800",
+					"bytes": 157193,
+					"contentHash": "sha256:83fd012c9437d518a83d0aeb01f883e8b40ef7b035dbbfaf19b563bd65ed402a",
 					"href": "/v1/lookups/crosswalk-local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7545,33 +7781,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 214,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 42652,
-					"contentHash": "sha256:1ea92b10efc6fd7463e730ab1929e76741296ea787df982334273e11d9f9bc37",
+					"bytes": 42877,
+					"contentHash": "sha256:80675a7b5c871e96e6e1cb6af01d74398927444fcf50cd68263eb4c81257d76c",
 					"href": "/v1/lookups/crosswalk-local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 95116,
-					"contentHash": "sha256:aff95be8c3bc0c548a2ca2be409c9236a3812d0dc20603ae2a2603d6833b5913",
+					"bytes": 98968,
+					"contentHash": "sha256:2859aa0819ad63d59e7c662bd7d42c8f8acd3e64fc394da07d60e54c9c2e7288",
 					"href": "/v1/lookups/crosswalk-local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7655,33 +7897,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 218,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 43482,
-					"contentHash": "sha256:1a2d99f0372458f6187af6a8a4ce6ee8954bce2b9ed4f2ddec26c2a6e60b1488",
+					"bytes": 43711,
+					"contentHash": "sha256:bdd6c1cf16d8ed7ffc94a8a8b377a7d9d990bc0697b7a9188cfffc765a55c4cf",
 					"href": "/v1/lookups/crosswalk-local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 96930,
-					"contentHash": "sha256:3f193965d6758534a8745a2ecae53e795ced6d6ce51eb6aba095b2997778358b",
+					"bytes": 100854,
+					"contentHash": "sha256:adf8756383f827906dea955fe9703a9662679693c4210b4de8575e95fc9aaee3",
 					"href": "/v1/lookups/crosswalk-local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7765,33 +8013,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 377,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 75191,
-					"contentHash": "sha256:bd3d70e3bb3d631f283e93a164e185fa5514e0268e68c438f1f25088179340c0",
+					"bytes": 75579,
+					"contentHash": "sha256:603dfdd95da71ed157bb8415fb9d63d90445439671b406f745ea0b2af9610ab6",
 					"href": "/v1/lookups/crosswalk-local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 167745,
-					"contentHash": "sha256:6a673c098cb888c92be941ddefb2a46d1f729f147130f692438434155ea99db3",
+					"bytes": 174531,
+					"contentHash": "sha256:9efdcde91d369ceabb22f49e17a4342e1f82c5c6869d58e4cdc551bfedd23a5a",
 					"href": "/v1/lookups/crosswalk-local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7875,33 +8129,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 373,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 74394,
-					"contentHash": "sha256:91c33cf3e8e57595a2d8ab72a315ccea43d04ecaf5e9298d6935473c0d94a864",
+					"bytes": 74778,
+					"contentHash": "sha256:6ad81cfd7fd464df9a1219414cc37682dc1cc959aa5208f70e804dc0374c19e6",
 					"href": "/v1/lookups/crosswalk-local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 165964,
-					"contentHash": "sha256:dabbae8da7959a1058e3cbecab2467a024b189989bee58eb66e3a99d1dba2988",
+					"bytes": 172678,
+					"contentHash": "sha256:1a9477e52a30a9fd1304b42a53bc21fec23d2f073a6ebfce9a4a54f69fedf582",
 					"href": "/v1/lookups/crosswalk-local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -7985,33 +8245,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 374,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 74826,
-					"contentHash": "sha256:cd8359f95f44bc56fd3f3157994e331aeff4551108b911c676ba92310942e85e",
+					"bytes": 75211,
+					"contentHash": "sha256:209969668488725ac970cede095a878d43c199736bbdd70eb014558570f6a008",
 					"href": "/v1/lookups/crosswalk-local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 166634,
-					"contentHash": "sha256:b2e091932305d1354fbb4d7f333a0f2fffbb115c5af8aa314477927eeb5b59e8",
+					"bytes": 173366,
+					"contentHash": "sha256:c8740f5b21d71e70822705c4c4c6088cc2a35490a08142ca2ba370764d830fe9",
 					"href": "/v1/lookups/crosswalk-local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8095,33 +8361,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 313,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 62649,
-					"contentHash": "sha256:fd8b738e0c4954f56f1356ec6957b17acf62af784555335f1a786f0dab88c08d",
+					"bytes": 62973,
+					"contentHash": "sha256:50ecdbd88905891ae64306c6c56057199b2f7a989c55c01b4bb393d2864a88d5",
 					"href": "/v1/lookups/crosswalk-local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 139455,
-					"contentHash": "sha256:a046abcd0818d4a948d56f398e91d81b039d7d556930e8bd007dfec6f7fa42c0",
+					"bytes": 145089,
+					"contentHash": "sha256:f80ccaeb4c14ae833988e7c732e786d70c98b1aaa4c2cbce1d2fa0086160a3fd",
 					"href": "/v1/lookups/crosswalk-local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8205,33 +8477,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 353,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 70737,
-					"contentHash": "sha256:2a845bd0961923bf728acdfc282f930afae56ca5b6b94bddbff546a4c551f7f4",
+					"bytes": 71101,
+					"contentHash": "sha256:ac0fdd38504b7dc79034c634b30b79ec81cbb7db9d6725fb896d2cc47f6160e5",
 					"href": "/v1/lookups/crosswalk-local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 157375,
-					"contentHash": "sha256:caa43ea20f18fe3d4576c943d71a5968d8ddb18f8132b2c232c99ebcc8072eea",
+					"bytes": 163729,
+					"contentHash": "sha256:65650ed332249e6c8b55d0632855a29ec774183f4a7dbbb72dd8a29cda9f00b0",
 					"href": "/v1/lookups/crosswalk-local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8315,33 +8593,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 369,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 73887,
-					"contentHash": "sha256:aca54172d1daa6cd86db48fe209459da3c56320a36356e8a29dbefc2b53839b0",
+					"bytes": 74267,
+					"contentHash": "sha256:84ea7149f5bcce016a183d61b9333890817de4934d59bf0ddf372feb2f490541",
 					"href": "/v1/lookups/crosswalk-local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 164461,
-					"contentHash": "sha256:e6d492d4ff9be4342f9e1027ede18df167a860a8254b2eab0d5f42b1f9ea0894",
+					"bytes": 171103,
+					"contentHash": "sha256:a7d47ed25f58067e1eff60769b76782b1ea581e16c8bfa0e60dced7fe453f661",
 					"href": "/v1/lookups/crosswalk-local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8425,33 +8709,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 374,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 77194,
-					"contentHash": "sha256:a09933f347c3e2bdd04ce812c4222a5e41d00e4e903e672561df9a6d810722d1",
+					"bytes": 77579,
+					"contentHash": "sha256:182ad233cb65ecdd8a8e6aa89a2f38d63818e30449c9ed01c75f35d74784ca4e",
 					"href": "/v1/lookups/crosswalk-local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 168998,
-					"contentHash": "sha256:369bf87178503458669575824f642142ccbe99380d05d4cafb5202e15d92022c",
+					"bytes": 175730,
+					"contentHash": "sha256:896cb60ccf9246fdd0749c7e9ef494c777d001b0201fc0ff250793585af6972e",
 					"href": "/v1/lookups/crosswalk-local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8535,33 +8825,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 374,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 76374,
-					"contentHash": "sha256:a990ec03d0429b3dba9a5b247e0951ccb30980f6bb0676c46837661777fe0ef6",
+					"bytes": 76759,
+					"contentHash": "sha256:8b976dc4e48fa4843729803992f2d55343c6f12f3d69b4745799146dc1ff3452",
 					"href": "/v1/lookups/crosswalk-local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 168178,
-					"contentHash": "sha256:bb5cd7bf4ce6eb27c9d0f64788628ceef2965286c33a0174e8bcf86a7318fabb",
+					"bytes": 174910,
+					"contentHash": "sha256:df59abe99d31ea85af095abb6603ef6227b93ffcb4aacd8e47150fdf4ad994bd",
 					"href": "/v1/lookups/crosswalk-local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup?format=ndjson"
 				}
 			}
@@ -8645,33 +8941,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 361,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 74579,
-					"contentHash": "sha256:3bc026425e4dda8a40f1ecfa0d8f9ed92a026c73ac0069d24fed4d6e7cc166bd",
+					"bytes": 74951,
+					"contentHash": "sha256:693ce35aecfd6db1b4033476a8788c1b4c193bd09fa80309d00fbd28653b5499",
 					"href": "/v1/lookups/crosswalk-local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 163185,
-					"contentHash": "sha256:4e10d408be47c08998ae9de7df4489116b091a38827caf1e635615c569ea92f8",
+					"bytes": 169683,
+					"contentHash": "sha256:5f4d3914689b62ec3d5b7ea97b508054d2d0a26fb4c65c3e01c311f4a93a95d6",
 					"href": "/v1/lookups/crosswalk-local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8755,33 +9057,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 348,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 69820,
-					"contentHash": "sha256:9887a4f523e5b5721e59897fd05542d609a3a432a7a5be70498cb30b70f55a2f",
+					"bytes": 70179,
+					"contentHash": "sha256:31883ba338cc30e938b9347f540796a5373a6dd9ee04e4ec60a5191169e1085a",
 					"href": "/v1/lookups/crosswalk-local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 155228,
-					"contentHash": "sha256:080d043a65753754254691ca1e194ff54efc9450c95610f3cd064291258d4bb7",
+					"bytes": 161492,
+					"contentHash": "sha256:c189a32b48c08e7c0e25ab8d03d23e93985c5c87f74b69e60cf4e25b8b41bab1",
 					"href": "/v1/lookups/crosswalk-local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8865,33 +9173,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 361,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 72413,
-					"contentHash": "sha256:8811ea71d2547671863c5c4ab15b2ea3efe71088d9cd297a46922fad54bcf95c",
+					"bytes": 72785,
+					"contentHash": "sha256:835da5cbb3c1a9bb773f277e8c7a4923d1ad352ff11650dd0f8fcb6c432f414c",
 					"href": "/v1/lookups/crosswalk-local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 161019,
-					"contentHash": "sha256:340a43a9c5fb1627a6d150a48b149fc8c9954ab95b1f63413d1d637841ff38fc",
+					"bytes": 167517,
+					"contentHash": "sha256:29593cfa426040cf548866ab50bd4a1523a54fef7379f6948d61c56e18f749c6",
 					"href": "/v1/lookups/crosswalk-local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -8975,33 +9289,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 361,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 71583,
-					"contentHash": "sha256:457496e47623674be28b79bb7a4b863f1dc69933ea765e4ace20b6418db550a5",
+					"bytes": 71955,
+					"contentHash": "sha256:af5f5298711c7e219af11e0c462d7c6cd5a316c433f300ca9996830b90b265d9",
 					"href": "/v1/lookups/crosswalk-local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 160189,
-					"contentHash": "sha256:b9957a17dd6fbbeb9aee2965eb51a0c3702edbe22eae3185708ffcb282410bc7",
+					"bytes": 166687,
+					"contentHash": "sha256:1b386145345b936890299c409b340184e9fe6bf74cb5920441e88e95dd5c8894",
 					"href": "/v1/lookups/crosswalk-local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup?format=ndjson"
 				}
 			}
@@ -9085,33 +9405,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 357,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 73747,
-					"contentHash": "sha256:99ef16a68a6ddb9238ee6a4311d50aeb19a3c017aba5995b97738677d1267b4e",
+					"bytes": 74115,
+					"contentHash": "sha256:f6a1e1880afbe5a4fd4b0f309ca7de456a4e818ab3fcef8e61276908a4721544",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 161369,
-					"contentHash": "sha256:cdc8d660011040524ccd77b61107967afcc805eca2ca76c53b76798145ee1248",
+					"bytes": 167795,
+					"contentHash": "sha256:b1a53a6ba10d300864fbfd4536fc16bcc1a54b56a2bd3bb5bae7817d4a8833bd",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -9195,33 +9521,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 360,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 72220,
-					"contentHash": "sha256:ab0501f6d22d96f3e9b0558dc42385f7976ba2cf2f904b193b94740f119fe3df",
+					"bytes": 72591,
+					"contentHash": "sha256:1c921da5389fddd6fe6bad4ff4ec053f4a056fc03dfd46b3e6310f1569847a1d",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 160580,
-					"contentHash": "sha256:4fc208a4908952e124475269200a90854d73e569ddaa440625abfded4fc17d82",
+					"bytes": 167060,
+					"contentHash": "sha256:06e99cef4ac161f13d2bbfe7f1c2d0b0a19c732d245c2d6a13e939d62156bacf",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -9305,33 +9637,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 106,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 23237,
-					"contentHash": "sha256:cb990af18a7588a2eeee88a26dfc85354119192d049b259cd95ca55e3869f86d",
+					"bytes": 23354,
+					"contentHash": "sha256:62d2cd0270bc0d295d83e4481d8b0545f8d4719875ecac7dd064ce93356c022f",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 49133,
-					"contentHash": "sha256:408d8ae37e63347fda973a69b35f31d933ffd2bd386eadb9a6ff44b909b9c92b",
+					"bytes": 51041,
+					"contentHash": "sha256:7d27bff93f3ab1c347ea0c531df3a5092f13a947dbfa3054268bc33f72b161d2",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup?format=ndjson"
 				}
 			}
@@ -9415,33 +9753,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 361,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 71327,
-					"contentHash": "sha256:a6a61a9cdc57de48bb5dcdc0f7be9f4ee1b584583dff20c7afe83ac0c29fcec2",
+					"bytes": 71699,
+					"contentHash": "sha256:9b0a02c339cafb76036dd083e800ba5480e554b36ecf64c5ae3e68eb39a3128f",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 159945,
-					"contentHash": "sha256:9296571952843aae2097fe97854952c0ed42f0245d6d94fa4c58230f13843917",
+					"bytes": 166443,
+					"contentHash": "sha256:ed65ecae532865d06014ff75b00fa09c0d89de901c6fd32af96aedd8c3222fef",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup?format=ndjson"
 				}
 			}
@@ -9525,33 +9869,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 361,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 84428,
-					"contentHash": "sha256:a64e5d56038ae85d9269c50d3f1cedc8c8ee3f2a5391fa7f9b5a8fc9853eb113",
+					"bytes": 84800,
+					"contentHash": "sha256:ca58b97bff928a6107ceaee08b9313f9fd50677878350bf00b4ce34407eae5e5",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 173034,
-					"contentHash": "sha256:db9f0cf4d0e44da18d9e6d2dc74af216d4a4b756936e281f8fa8db34b272bab4",
+					"bytes": 179532,
+					"contentHash": "sha256:62f09967a1dd49978b671c84e56abfa50d3e0edaf6786859fa1edc788ae5b53d",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup?format=ndjson"
 				}
 			}
@@ -9635,33 +9985,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": true,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": true,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": true,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 296,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 59802,
-					"contentHash": "sha256:23d7b622e6f0017c9802fd3a295761b1b24cc197315e88ee1ad500b901443fc0",
+					"bytes": 60109,
+					"contentHash": "sha256:37c6157fa6dad0ca389b444c4d177b4c50af3cbf0b6a2b8972499e5f5579d568",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 127698,
-					"contentHash": "sha256:3ccc6365b1d8ec995573eab7edb05f2e47de14514d1844a6c46ad7f015e98960",
+					"bytes": 133026,
+					"contentHash": "sha256:d6ec0c7f61e3845ae5d58c81b551b56cc24d4671e74c67ac45df7c0f4f9213bf",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap?format=ndjson"
 				}
 			}
@@ -9745,33 +10101,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 296,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 56052,
-					"contentHash": "sha256:0019427db4f747118ac18b5dc49b87e27cad9ea7160c9c4b0e0fd6350ad7145b",
+					"bytes": 56359,
+					"contentHash": "sha256:853e3beaf1b5378423d4b632baf2c4ee4386a5d7ae5ab35c787563026974b4ea",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 128684,
-					"contentHash": "sha256:8cbe2b9f60aecc82f1d0df5fcb79c0950929fece66bc3f04ce02957eccfd256a",
+					"bytes": 134012,
+					"contentHash": "sha256:5ff30c776f0d37da4369786df86c74aa31c7b0a957973e9a8fbdacf23594d27b",
 					"href": "/v1/lookups/crosswalk-local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup?format=ndjson"
 				}
 			}
@@ -9855,33 +10217,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 33391,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 6107759,
-					"contentHash": "sha256:4d8bb86ee35effd9ea1984db6f85383b6b9bad62211afcfbdc5f5be215a5b61e",
+					"bytes": 6141161,
+					"contentHash": "sha256:d328a87d9a32bad48fdc6c00a20fa05b6052f3f97b9c3d90748512710b81398e",
 					"href": "/v1/lookups/crosswalk-lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 14321469,
-					"contentHash": "sha256:b0e65772056be2f8ef943bfd0ee9a4c30571e15bc4d3e71238d5081c7728dcd7",
+					"bytes": 14922507,
+					"contentHash": "sha256:c3cdf2d37ca0fd9ad0078795103d4a0cb05d9083f450ac10fb007da01a7069fc",
 					"href": "/v1/lookups/crosswalk-lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity?format=ndjson"
 				}
 			}
@@ -9965,33 +10333,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 1909,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 346274,
-					"contentHash": "sha256:45106d92f4e2bdc1a57e3495a6a9e18986458e57c2400b3feb1932f4a251b5e0",
+					"bytes": 348194,
+					"contentHash": "sha256:98640b7d7465530a8344251ffcc157acc5c3db1a6d2008f53072df1918169da1",
 					"href": "/v1/lookups/crosswalk-lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 815712,
-					"contentHash": "sha256:60fe1226aa01c3e677e87c86a38f13d26fb9511a592edbb8b6b3d6cd51a4b4b0",
+					"bytes": 850074,
+					"contentHash": "sha256:9fc821875e8edd9d857a489c469bfa5358765f0bfdbf0b3c6b344069f02c3836",
 					"href": "/v1/lookups/crosswalk-lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -10075,33 +10449,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 35796,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 6420113,
-					"contentHash": "sha256:0c489da9cd07d190720a3e04d7edeeae6b78469fe2db3bd52862cbfdc2fa21d9",
+					"bytes": 6455920,
+					"contentHash": "sha256:434af991205b5e1e22b5bd02acc5e22386de66eb10e9b360a87548aca31cc94e",
 					"href": "/v1/lookups/crosswalk-lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 15225273,
-					"contentHash": "sha256:fc8abda1043403372b6f70d60e3902073aceb51a3a79ceaaa26bbfa68e7f88eb",
+					"bytes": 15869601,
+					"contentHash": "sha256:5fee570c1991cfb31252c5f4e1460e3b7fc3d8efceec4e80e5e056ff187dc214",
 					"href": "/v1/lookups/crosswalk-lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup?format=ndjson"
 				}
 			}
@@ -10185,33 +10565,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 35672,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 7296181,
-					"contentHash": "sha256:58d4cdb970590667137c82cd886fd18f55ec14b6c383fb15321a7c02d5194bcf",
+					"bytes": 7331864,
+					"contentHash": "sha256:0302aaffdaa574ff1a33b0cfdfc417b0043fcc31b2667bb2e7c7ff3e45d494a8",
 					"href": "/v1/lookups/crosswalk-lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 16070357,
-					"contentHash": "sha256:3cfd272001cbc44c1b3a0f9a7ee6db605d29c3fcd4ea1eee7ed86440279344b2",
+					"bytes": 16712453,
+					"contentHash": "sha256:d5fb0b3346ad082a3bc077ef6bc7b02de72e03a76737bedae1aa61578a13505f",
 					"href": "/v1/lookups/crosswalk-lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=ndjson"
 				}
 			}
@@ -10295,33 +10681,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 7264,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1478640,
-					"contentHash": "sha256:575c36a89aea72d6a60545326b36cd57dda4487e26a775a94071db4c13811059",
+					"bytes": 1485915,
+					"contentHash": "sha256:ef495f6c87dee5dbd09e2c11e6cc366889fc8154027380f59788be5f74a60657",
 					"href": "/v1/lookups/crosswalk-msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3265216,
-					"contentHash": "sha256:8d55b020e8105e9752ffd9d6e1e4099858c066e94bf0b291b8deabfd3137c3e8",
+					"bytes": 3395968,
+					"contentHash": "sha256:7d2c30c45c94a837943f1dbc21e4786a19813b0d6d55ec8112873273345cf764",
 					"href": "/v1/lookups/crosswalk-msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup?format=ndjson"
 				}
 			}
@@ -10405,33 +10797,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11317,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1971859,
-					"contentHash": "sha256:1eb05b7a61dd8baafe03cd00ee393a4292d4f8a9830870ed0337a94cc94473e5",
+					"bytes": 1983187,
+					"contentHash": "sha256:4e817ce2797f72edc9d94946d6c4ec85d6b17af22b4797555c6d16e5d0417eb1",
 					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 4754677,
-					"contentHash": "sha256:74cdaceacd1cd73c0da1b6cb721cada160f1b69bc2d15d65679773c15c7c5613",
+					"bytes": 4958383,
+					"contentHash": "sha256:52df3f95b7aaf4663aa57ae86555fa49039b6973562105350de90b10165eae29",
 					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -10515,33 +10913,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11556,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 2234201,
-					"contentHash": "sha256:8dedaf9d63ddf75f2925cf2f3a2eeaedd50a6fad59801d8574ae5f23096c67a7",
+					"bytes": 2245768,
+					"contentHash": "sha256:afcabad92c3dab7bc7d5ef21299d1a0e38233cb7630ee4de2f86145e72e2a3e2",
 					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 5075775,
-					"contentHash": "sha256:dd8896816c82e95133fd86b4690104448981ccbb8006ddf6f4e0819367190bc6",
+					"bytes": 5283783,
+					"contentHash": "sha256:f557393caa229d73ce4edea7530183ac4fde1327e41d3dc14e02fef9a6ffb294",
 					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -10625,33 +11029,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11556,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 2234201,
-					"contentHash": "sha256:ed7303480e04c0c082bd95db164a5465a71d85283b0283f986618c5e69a12637",
+					"bytes": 2245768,
+					"contentHash": "sha256:1150ecbb283f6519438c21eff80890637c39f62b07dc44254f5ca51637eeaa16",
 					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 5075775,
-					"contentHash": "sha256:d00199d0c804d29b9f221ac4eac04b022289446d7083b3572bbf6091b610e244",
+					"bytes": 5283783,
+					"contentHash": "sha256:139250d7b56b4e2c72ee156f92838d45cb63ce83c0f0a2722471e2392c3239e5",
 					"href": "/v1/lookups/crosswalk-parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -10735,33 +11145,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11486,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 2071128,
-					"contentHash": "sha256:5bd150c3059093a5a944bde39efd3a905b02b10d5ef3dba9c3bb884fccf14b1f",
+					"bytes": 2082625,
+					"contentHash": "sha256:41718e6bf84d8985ceca0744fb7fc1958ee0790b8a9001b6028a20be7e8f1a16",
 					"href": "/v1/lookups/crosswalk-parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 4895458,
-					"contentHash": "sha256:5b221d20c4225049e7c91223d7b13c46023905d5d2344182d70e75e5be20ee06",
+					"bytes": 5102206,
+					"contentHash": "sha256:61523fb372c3ab4d828c79e81db69f1bb9794235cdbab9bd75dec9c63046a7cd",
 					"href": "/v1/lookups/crosswalk-parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity?format=ndjson"
 				}
 			}
@@ -10845,33 +11261,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11338,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 2044195,
-					"contentHash": "sha256:0da41ea1a6fd8a73d48b302118ecd40cbce335280103bb93a768ee5f3a45632a",
+					"bytes": 2055544,
+					"contentHash": "sha256:80ddd97388dce7fb1196ebae55c73685c3ef68f4d2664c0306ddc60f3d032cb1",
 					"href": "/v1/lookups/crosswalk-parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 4832185,
-					"contentHash": "sha256:85ff39bd0598ec2c75d0e01244607dcf521d9325c78c929d863cff554d89238d",
+					"bytes": 5036269,
+					"contentHash": "sha256:a193e3b3dfcb245f91dea1e2a6d18ab545a0ded09c9a6acca1be654fee4de6c2",
 					"href": "/v1/lookups/crosswalk-parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -10955,33 +11377,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11432,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1993402,
-					"contentHash": "sha256:d562197c4d37174e78c5a1ef6eeb563ca060674b2aba75904b5cba4daa11e5c0",
+					"bytes": 2004845,
+					"contentHash": "sha256:803e53e88204b4f15d22a946761e7e0abf6cb6087eae92bd2a7e8b13eed85a86",
 					"href": "/v1/lookups/crosswalk-parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 4804476,
-					"contentHash": "sha256:c23c5618a5198dac3a757bbff7ffac309dfc9715fcd4762586a16e0c6f168918",
+					"bytes": 5010252,
+					"contentHash": "sha256:56051b717a89f8cefcb527411485edf0a023c7eaf60df784a502d91eb07d5f02",
 					"href": "/v1/lookups/crosswalk-parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11065,33 +11493,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11446,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1996097,
-					"contentHash": "sha256:289b89f6370d980e5e88275c68e39619e8f282c94299bc8fda43069189aa7c51",
+					"bytes": 2007554,
+					"contentHash": "sha256:048eb0cb32acd8966fceae85c7c017b2fb0e9a43225fdcea6ac3878b6556f6e0",
 					"href": "/v1/lookups/crosswalk-parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 4810611,
-					"contentHash": "sha256:ee446ce91f8dfa62ec0f7f690c44c257f601a501e6d9732a9f45db5ef2b58e7b",
+					"bytes": 5016639,
+					"contentHash": "sha256:391d9d197be9e1cd2da071827a417df6764f0af5fd98adabbfdf09c12e6b0729",
 					"href": "/v1/lookups/crosswalk-parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11175,33 +11609,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11499,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 2005250,
-					"contentHash": "sha256:57bcf3c9a3c1495ffd7800246635c21eec7652be68b5c30f4b0c8982055df983",
+					"bytes": 2016760,
+					"contentHash": "sha256:c945a2c77007ad51c61ed5585bb837bbfb6f61202a540e55fb388c594b4dfd19",
 					"href": "/v1/lookups/crosswalk-parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 4832806,
-					"contentHash": "sha256:b8ad2055b624e5006cb888c36b3215d268c432511e3ed3bd03ad129254796b12",
+					"bytes": 5039788,
+					"contentHash": "sha256:acdbd5d20e9fbf14916fef0792dcd37c50e5cac01a89c12cc7595cbaa68f3e22",
 					"href": "/v1/lookups/crosswalk-parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11285,33 +11725,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 11542,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 2239095,
-					"contentHash": "sha256:a6ac5ecd4351b6c188ed6cf55dc2b469914ca96146b7f84aab0cd32aa52b0e73",
+					"bytes": 2250648,
+					"contentHash": "sha256:366f54562aae63b971ffd111673d80f223a3e49ac8404cc29ea4eca1396e215b",
 					"href": "/v1/lookups/crosswalk-parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 5077243,
-					"contentHash": "sha256:b17550a8aac767e879d00cda43bc6df6a790f819a1c9069463d8a230dae0a103",
+					"bytes": 5284999,
+					"contentHash": "sha256:2a6b46cb9aca72ed59978121f9b073105ca84753314a09af7d0ed624d928fbb0",
 					"href": "/v1/lookups/crosswalk-parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -11395,33 +11841,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 54,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 15030,
-					"contentHash": "sha256:00c139faa8645c020d8428bdf98bc005b73f1679cfefb9743605271cab6d21ee",
+					"bytes": 15095,
+					"contentHash": "sha256:e7c87fc95fc34818095da2371739154d09de4194a88dc24920b526af4f96fd20",
 					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 28122,
-					"contentHash": "sha256:ec435dd00c365a679f6bf56a65f5ea0e27dc40045f85e2e0eecc976f58102105",
+					"bytes": 29094,
+					"contentHash": "sha256:ed6d05c6c65a3228f5c8e59aaabd45f8dbef748b3e18c2ec3a0abd213b3f7b89",
 					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11505,33 +11957,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 73,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 20103,
-					"contentHash": "sha256:b2f58b25f8e633177d07ef556f86daefc01d639626c00dfae74403ab69bf97aa",
+					"bytes": 20187,
+					"contentHash": "sha256:35dd9747d41b79da26e7f465730548a364d6a4efd8f6d196ce31baaa28231642",
 					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 37861,
-					"contentHash": "sha256:f12b2c57fa7e33d2a371cfd79468d0e21a153197d1f2c7511f4e1aa51c4bda8f",
+					"bytes": 39175,
+					"contentHash": "sha256:9a0c12a73f1c06692c75332ce0642cf01c80616db310c5a71623e420c0ae584a",
 					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11615,33 +12073,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 106,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 32052,
-					"contentHash": "sha256:d1e59c304d3522b704fdcc462f8d736ccc8c484bb6a391fd675c2ed106d6b945",
+					"bytes": 32169,
+					"contentHash": "sha256:4287bd484534e668138fab4001d54110b6d65c80ebf3af6653b0dc7d49618e1d",
 					"href": "/v1/lookups/crosswalk-sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 57928,
-					"contentHash": "sha256:6eefbd558489320a28465393cad527a4d34f216e8beee063a72397aded24baeb",
+					"bytes": 59836,
+					"contentHash": "sha256:d60aef48888f56613df47a942f265ab576b45fb3273d1f6e882a080199f9b8df",
 					"href": "/v1/lookups/crosswalk-sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -11725,33 +12189,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 6492,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1112666,
-					"contentHash": "sha256:934059e355c05fc93e0e4f8d2c0d5916e90ed740f28f47da13e8b8dad9b94057",
+					"bytes": 1119169,
+					"contentHash": "sha256:bc03e0cd6ae1496ebff6277d95068b826a6dc935ccf59a2d39ea5aeab6ec5b98",
 					"href": "/v1/lookups/crosswalk-ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 2709194,
-					"contentHash": "sha256:f5da9d567a4e59d0943c170f46bd168c83862144cdd4345d49037722e95bc298",
+					"bytes": 2826050,
+					"contentHash": "sha256:60e1cdd174c7df7e1936acae53cbe922832c4705e87e342b02584a3e329e4bf7",
 					"href": "/v1/lookups/crosswalk-ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11835,33 +12305,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8327,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1433938,
-					"contentHash": "sha256:3bf1a6a67d57d924045ce63db91f4b128129bb8f57da012de92e15945140fd8f",
+					"bytes": 1442276,
+					"contentHash": "sha256:748702485d197e8ead1252ba4c406b546a1a9731d09e0bfa32dc4b56f36c49d1",
 					"href": "/v1/lookups/crosswalk-ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3481720,
-					"contentHash": "sha256:efb8e93bcd670eb722d843a6a84a773b62e2009f16773dc62074756cc5bb84cb",
+					"bytes": 3631606,
+					"contentHash": "sha256:03b4ba7cd456c33806a95db0732c0b205634f7fc45e823aad914cd5679bc62ca",
 					"href": "/v1/lookups/crosswalk-ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -11945,33 +12421,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8734,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1662081,
-					"contentHash": "sha256:cf8f98b9c9a79ae17d2a2d8ef702ed53091569108dcbbb6138943f7aeb0b81b6",
+					"bytes": 1670826,
+					"contentHash": "sha256:2aa1e8a8366937e105622b4e033e74ff59414e763306c0e970a5cbe1022eeb87",
 					"href": "/v1/lookups/crosswalk-ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3809991,
-					"contentHash": "sha256:b1a1ee6f9b84f6464823afeb36a557fc6a87d4f8c29ba35031836cb0eba0acd3",
+					"bytes": 3967203,
+					"contentHash": "sha256:9186a5bb6fb5a5e63d4a3f53bcbe706a09a5dbc80756feee5c2be5e1d71149a1",
 					"href": "/v1/lookups/crosswalk-ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -12055,33 +12537,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8321,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1430983,
-					"contentHash": "sha256:0ad321f6bb1b5cac838fa7044797e5d2e8238c148cd9ad1b7546dd1569ef0614",
+					"bytes": 1439315,
+					"contentHash": "sha256:fd928b824d994cae2ce023907ae9c7eb50da0444607e45a6ea5ecfca6951404b",
 					"href": "/v1/lookups/crosswalk-ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3477333,
-					"contentHash": "sha256:3380203323261efda006f55859faa5c45a91675110781e74e8b844d21196626e",
+					"bytes": 3627111,
+					"contentHash": "sha256:3e2e14c07cb6c59709298b9777bcd8766d9e164ebbe77ef6f6003841283154c6",
 					"href": "/v1/lookups/crosswalk-ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12165,33 +12653,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8668,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1650124,
-					"contentHash": "sha256:ca78f95cfde1174afde978e04496f0e4612ee3a8249e214056d690038b437f44",
+					"bytes": 1658803,
+					"contentHash": "sha256:7f7d66a1e7089472d5cb159a27bc194f54e47e1b893fd498b25ee6e5ab140302",
 					"href": "/v1/lookups/crosswalk-ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3781800,
-					"contentHash": "sha256:38e19bba0825994507f410635b4a2b4b6e9d6fd5c80ad5b7ffdeb013c448b531",
+					"bytes": 3937824,
+					"contentHash": "sha256:9403f2a0e3a79597c6526aaf84453f647d871c44513938993e345065355a17c8",
 					"href": "/v1/lookups/crosswalk-ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -12275,33 +12769,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8191,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1412152,
-					"contentHash": "sha256:322374da76df5eaea9f9de1c4b9b4e78c8c7aa75e8d1b608f398ceed21b4af95",
+					"bytes": 1420354,
+					"contentHash": "sha256:38ad33865c4394418705121b1b15eb4c882b55eb023f4125eb3adb139bc1d757",
 					"href": "/v1/lookups/crosswalk-ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3426450,
-					"contentHash": "sha256:ae2db5e0c0df8ed1cf905cfad43c9b729b0687ffd00c3915e09c754a24707d3e",
+					"bytes": 3573888,
+					"contentHash": "sha256:219762aa4e5a7c6b3b70447f75333793b17f8c929c60fa164fc39bac110d4815",
 					"href": "/v1/lookups/crosswalk-ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12385,33 +12885,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 7383,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1270870,
-					"contentHash": "sha256:eac6a25d85be914d2742c568f5b9ab20928d09772595104b5e556648d2baf51d",
+					"bytes": 1278264,
+					"contentHash": "sha256:13639a6212b50afc37c16f0a577b3ee099d81202e18903fecabc808af25bcb71",
 					"href": "/v1/lookups/crosswalk-ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3086472,
-					"contentHash": "sha256:d423ec957e26fa448d75cd781aab11424cf5b5f0c25fbcef79039d4770919318",
+					"bytes": 3219366,
+					"contentHash": "sha256:a4b0f85732c0c147206debbf19cf175c4b68db77564d0f039aa5856c8ea1badc",
 					"href": "/v1/lookups/crosswalk-ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12495,33 +13001,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8424,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1457722,
-					"contentHash": "sha256:b311969b82eb3b2b9d1d1cac2206bd7c982c4bac4d73f90398f6cf06e0232bf0",
+					"bytes": 1466157,
+					"contentHash": "sha256:39e61d659e2c40d8d1eb56bdf289561fc8cc4ad9c90f1729d52cff4202694d47",
 					"href": "/v1/lookups/crosswalk-ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3529222,
-					"contentHash": "sha256:4bb952d22f1482b719e58567406c40efa6c592e05d51bec059ba7345c0a0d4ad",
+					"bytes": 3680854,
+					"contentHash": "sha256:9bc47cb4f621bc2b53c7590c97a06ea332e8130fb753f000b299de99225b2e3c",
 					"href": "/v1/lookups/crosswalk-ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12605,33 +13117,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8851,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1527922,
-					"contentHash": "sha256:4cafc281977c48c4dc924ab060dd58446429f2f2dfe9abdd47541c1f5854d985",
+					"bytes": 1536784,
+					"contentHash": "sha256:10bd143c9821922aa98863ea6051d27464db7dc5300bfb66f1612ea6e35f2917",
 					"href": "/v1/lookups/crosswalk-ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3704460,
-					"contentHash": "sha256:4c92d3ac213ed74ada820b8cb1ce45160bc3205fcadfc5e890b7f750dfce7b28",
+					"bytes": 3863778,
+					"contentHash": "sha256:b5a7e991e436be694306abc712ec17770a6f738bfcd1e651773882b5c3b875c4",
 					"href": "/v1/lookups/crosswalk-ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12715,33 +13233,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8180,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1410533,
-					"contentHash": "sha256:85de881d420ece9d6f618568511ad33de5d2cba07532164dda252c90387fb055",
+					"bytes": 1418724,
+					"contentHash": "sha256:af4fbc55595541c8b4ffa237ebd3567719533512b57a9da3eb63b98e43aea8b1",
 					"href": "/v1/lookups/crosswalk-ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3422089,
-					"contentHash": "sha256:50e64c7f754677ab03617d79edb2300563bfb5744070760ad39538211176224e",
+					"bytes": 3569329,
+					"contentHash": "sha256:fbb1bb81c22b4c4bd27460444dceae1ffd9af9c1ddf8fad4577763405c8183ba",
 					"href": "/v1/lookups/crosswalk-ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12825,33 +13349,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 6834,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1186971,
-					"contentHash": "sha256:8a35784a39ccc5136535cff57cedd82549e654682a1b008ffc4de3d86539e811",
+					"bytes": 1193816,
+					"contentHash": "sha256:3e6c431bfedf283d10d5c3dc15a057c52f766cd386f6074c7124cd9e4c1a3a65",
 					"href": "/v1/lookups/crosswalk-ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 2867317,
-					"contentHash": "sha256:2b97c8563861ee38d70e1fb80e1b7ed0688e4d88dcf95c2c2a1c1e30212c91f4",
+					"bytes": 2990329,
+					"contentHash": "sha256:d39af7a5267d316888ddcac10eddb95e8657f444e60e64a60d99abf1eb12834e",
 					"href": "/v1/lookups/crosswalk-ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -12935,33 +13465,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 7254,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1258732,
-					"contentHash": "sha256:635353afb9f2a9e797874c958d60ba7f623778c4929a290eac83a433e7aefd1f",
+					"bytes": 1265997,
+					"contentHash": "sha256:3f44f01584a357c5689fa9c909c0d1d050ba03f70e2b6730b8e82e7b9817f2cd",
 					"href": "/v1/lookups/crosswalk-ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3042428,
-					"contentHash": "sha256:fb4a1a0457076930729bf0e6864a84cd8d51a54de8449db7714a26cbe2c5a18b",
+					"bytes": 3173000,
+					"contentHash": "sha256:35708b3374c58094c1aaa980b4f2d61973d96f37cca297cd27dd115ad4d65ec8",
 					"href": "/v1/lookups/crosswalk-ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -13045,33 +13581,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8482,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1676233,
-					"contentHash": "sha256:7d9a3e281b6d0c38846b7ef6e0022895fc5e9092301d23955f1f009e9a25d2f0",
+					"bytes": 1684726,
+					"contentHash": "sha256:b8c8803f72e3ed8a2d2dc0fc9414b3fb2829d159377e1e8acfd57f999c467351",
 					"href": "/v1/lookups/crosswalk-ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3761835,
-					"contentHash": "sha256:e0e8ba7ddfffd455b828d4faa7fd2a96dc3b0e9b911c65dfc9cec387b1eda9c0",
+					"bytes": 3914511,
+					"contentHash": "sha256:6a78b958d5c5c475c9bc05288e9b29d1d5ff82062e27a6adb0a0186cd115bde4",
 					"href": "/v1/lookups/crosswalk-ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment?format=ndjson"
 				}
 			}
@@ -13155,33 +13697,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8440,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1467082,
-					"contentHash": "sha256:3e50acf8b2bd8d410f8c7f13783c98a26f8258c4d459eaa82addd1893f1b69f9",
+					"bytes": 1475533,
+					"contentHash": "sha256:2888ffd67a06f5c719f43dfe919ac74413611d58023ab041b584d06509bf72ba",
 					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3542342,
-					"contentHash": "sha256:b998ddab5824a9d37095d440d9927cca41650f88e2944733d33fa070c7779136",
+					"bytes": 3694262,
+					"contentHash": "sha256:8129f668c9850f234f275bf5b78638db9ab3ca6713eec1b55e8c2b67cb9a9637",
 					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -13265,33 +13813,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8441,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1670126,
-					"contentHash": "sha256:d0e93ad70db948f0a7ff2a7c877f6260b7bc49269e15b6018265515fcdd718cc",
+					"bytes": 1678578,
+					"contentHash": "sha256:314e26a0dba6e7e9f7a510207031c855bfa7ebfa356149e50fbf0b0cc02ab6d9",
 					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3745588,
-					"contentHash": "sha256:cccbc823b3681f20b949a51b2c37188cdc68ec577e6f49f0efc4f1abc4d87460",
+					"bytes": 3897526,
+					"contentHash": "sha256:04d7d5538b8f8073d3d61a18c68ec8a1865415a61f4a152f4a62175403cf5597",
 					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment?format=ndjson"
 				}
 			}
@@ -13375,33 +13929,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8441,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1619480,
-					"contentHash": "sha256:ecf5c6cd554ca0884ceeea621347f0a689a2d73b92f43a27f68a1393e1d817de",
+					"bytes": 1627932,
+					"contentHash": "sha256:0da9081a7475221ff8ee259990ec6010223df1e4c21dbd773abc1c2eae8d64f0",
 					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3694942,
-					"contentHash": "sha256:41d9ddf12ca33ae4da033963d1e5f485b5f14a235aaf69c207fd1c74d3b1aa3d",
+					"bytes": 3846880,
+					"contentHash": "sha256:13f48f4be84451e984890c2a1b9bf2c51d526bab657aee7e8ff89ee1082f838a",
 					"href": "/v1/lookups/crosswalk-ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -13485,33 +14045,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8030,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1396347,
-					"contentHash": "sha256:103fba9f288abb43eb26140ebc94a4e22352559197e23abe3351bccec0472870",
+					"bytes": 1404388,
+					"contentHash": "sha256:81ab9c32e0f609f34d85978bb4613f1c360eb3876438302faf13e2a0f3f7247c",
 					"href": "/v1/lookups/crosswalk-ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3370791,
-					"contentHash": "sha256:c97852138a03a2a1c2b2a2234c0f5fd127ee4bc0627d0a79e857a6cb05d42ca5",
+					"bytes": 3515331,
+					"contentHash": "sha256:5fab0a0a98f05c29500426ab9e6ec114267fb369e591060d409ba5370d62056d",
 					"href": "/v1/lookups/crosswalk-ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -13595,33 +14161,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8392,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1459826,
-					"contentHash": "sha256:2c3c4c9fba35163960db22d7d420a7bb23099133a97bb0bd6e84fb73e94622ae",
+					"bytes": 1468229,
+					"contentHash": "sha256:ea67ae334a02c4b98c158795317f971dae3f45b93aed94e65016e16ec65294fb",
 					"href": "/v1/lookups/crosswalk-ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3523278,
-					"contentHash": "sha256:1c92e427da30559fd94b3bd5da3aeadf1361a56b5e858b44d9ba4e17fde4b671",
+					"bytes": 3674334,
+					"contentHash": "sha256:7134274d947bdb0a8860e4d7716bdf11ebe5fe5f3023800f8f6482c920c33c9e",
 					"href": "/v1/lookups/crosswalk-ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -13705,33 +14277,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8070,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1452034,
-					"contentHash": "sha256:edc99b17474a0e889a39a0a7d5522e84a79caff13039eb218b8fab2131b32910",
+					"bytes": 1460115,
+					"contentHash": "sha256:b1d89d842ba070a6591cbd96fd9daf8a22106a4255c01c8294327b53e258d965",
 					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3436300,
-					"contentHash": "sha256:7654c8e06a1f5452fa598dfaf2fd44310b0f8fbc229b81fbcf2f12cb558ff788",
+					"bytes": 3581560,
+					"contentHash": "sha256:0b5c5f9d20b8babc9e390cc37e0c50b588cf6a4b20d8b39dcdc624d9ab77c83a",
 					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity?format=ndjson"
 				}
 			}
@@ -13815,33 +14393,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8396,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1611450,
-					"contentHash": "sha256:fe99a865afba09343b2ff6b04f08000d1547b66fe246400731c2eb68bd604ba9",
+					"bytes": 1619857,
+					"contentHash": "sha256:cccc2ae0bda9c022e19e9a77a22478b482d7f25f585aa36e7cea46f8e50739da",
 					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3675842,
-					"contentHash": "sha256:f3348de52339f402c3f4c012f2605275bf32621d49af14d25c5ac5a54b8a20f2",
+					"bytes": 3826970,
+					"contentHash": "sha256:051be3b052961744f6a5562e45ad258f6f7115036ae3ac7ae59ec074f997387f",
 					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -13925,33 +14509,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8396,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1611450,
-					"contentHash": "sha256:a1b03189e52841ecb91476475155d91ef0966fec95174ff1a4b2d75f3169ebe6",
+					"bytes": 1619857,
+					"contentHash": "sha256:a34ede5f3a3d332ea513e3a79ed0512d581def00fbbe99a167932cc1620913db",
 					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3675842,
-					"contentHash": "sha256:ea375c0a3513c4912d16ca41521cbca1d2232807ac61345060f9599c2f63a79f",
+					"bytes": 3826970,
+					"contentHash": "sha256:c32638c15f5ab995f6fd1b6bfe2d4ef78f4759ef466585941db379751a71f26a",
 					"href": "/v1/lookups/crosswalk-ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -14035,33 +14625,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8399,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1511726,
-					"contentHash": "sha256:eb01e54ee94fdb12b8655b43b109c1422b85fb03d2582742dd97ce106e415f61",
+					"bytes": 1520136,
+					"contentHash": "sha256:b5b5c0ecc116b53516e79872695cafe7cb0104492e9a9b5467e7ad626a68c803",
 					"href": "/v1/lookups/crosswalk-ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3576892,
-					"contentHash": "sha256:e26d5fd5d1fcdb2ff9b7955416614538a06b4a6c55130dd41e2c28237c930d94",
+					"bytes": 3728074,
+					"contentHash": "sha256:fc186c47631521303cd3333a81ee7bd83bba3ce24d5386729f201f30cdb4cd13",
 					"href": "/v1/lookups/crosswalk-ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -14145,33 +14741,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8405,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1663827,
-					"contentHash": "sha256:626e69659121e41e40d9bc9da0d53ca67c61bd83526bc3444b607524d7a5c9f3",
+					"bytes": 1672243,
+					"contentHash": "sha256:59568aae254aa068a378fb33dd7e552521871cb3484cd4104f2b039f6d0875f0",
 					"href": "/v1/lookups/crosswalk-ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3730429,
-					"contentHash": "sha256:69a5d99b50b7fdc2aa6ac5b7711ae66a26a89e769cb9d9ef981574a5f9b5e743",
+					"bytes": 3881719,
+					"contentHash": "sha256:c5dc3938c5491f294b6f8f6ca2e02e05b92f3154bcd1d3b73aadb926a10092d1",
 					"href": "/v1/lookups/crosswalk-ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -14255,33 +14857,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8038,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1399270,
-					"contentHash": "sha256:95660546859c230ec708f025fe955bf40eddb6dc87ea6a3467c4a5a281c1143f",
+					"bytes": 1407319,
+					"contentHash": "sha256:f908075051681074266a36406a328ab3325b700f64c641f0b12406b868e8bd02",
 					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3375646,
-					"contentHash": "sha256:bfdfd7f5d89731d2bcbe5d77121c8b863b134085fcf97794b292e5cc29eed84a",
+					"bytes": 3520330,
+					"contentHash": "sha256:e5302809b84de55f14400b92af50941d3e5905f586208e9aeb5f8f04ded522af",
 					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity?format=ndjson"
 				}
 			}
@@ -14365,33 +14973,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8405,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1663827,
-					"contentHash": "sha256:6924d2f5d233188af80099edafb9449c80a4e993a364bb0173d8665bddfa485b",
+					"bytes": 1672243,
+					"contentHash": "sha256:b844d86c36c0476422224ec34742ddbbc5fcbbd33fff3ea106f04ec96f0c67fa",
 					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3730429,
-					"contentHash": "sha256:497650237e737c3399cfa06cf102932566c4a3aa67c50fe519b56988c70d36b5",
+					"bytes": 3881719,
+					"contentHash": "sha256:a56bcadddb50971adff2774f44d4a0813dee9035896f9a4d43163f5197e9840f",
 					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=ndjson"
 				}
 			}
@@ -14475,33 +15089,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8405,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1613397,
-					"contentHash": "sha256:c5efa606d053b563d0c2f5e130eca63d90d08dd3bb8ac954cd994ce6ef336842",
+					"bytes": 1621813,
+					"contentHash": "sha256:bc01b8d5bb4bfd98b47f279250efa42e1cfc882321381a1071bb8925b63d7859",
 					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3679999,
-					"contentHash": "sha256:159a51bd0e823a9d6c83bc8edb1e0e1f37011cb0cf8aef563b6662f8c520b23d",
+					"bytes": 3831289,
+					"contentHash": "sha256:6a32c1970a7348d7f4b9e1a654e3f2e2fe640ba099b2af505670874c49c9b054",
 					"href": "/v1/lookups/crosswalk-ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -14585,33 +15205,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8413,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1615482,
-					"contentHash": "sha256:adbed77bac69fb8d4f567d8d59ecee24edec0e954fd1e2665cf9ce4ba8011f7b",
+					"bytes": 1623906,
+					"contentHash": "sha256:759214e99cef5ea14f100a406fc6c4a4d57bd7771c437fcb80e4bbad7eec027e",
 					"href": "/v1/lookups/crosswalk-ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3684028,
-					"contentHash": "sha256:98d73e1c570a3bb727e0c6e1796ba9e926ba809b02b89b52ab6cdbafe63e7ee1",
+					"bytes": 3835462,
+					"contentHash": "sha256:7d2f902476648f0a539b611a601de8eb9946147429a5d48da3b828dff4c7dc43",
 					"href": "/v1/lookups/crosswalk-ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment?format=ndjson"
 				}
 			}
@@ -14695,33 +15321,39 @@
 					"name": "sourceShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the source area inside the target, for an area overlap."
+					"description": "The share of the source area inside the target, for a weighted overlap."
 				},
 				{
 					"name": "targetShare",
 					"type": "number",
 					"required": false,
-					"description": "The share of the target area inside the source, for an area overlap."
+					"description": "The share of the target area inside the source, for a weighted overlap."
 				},
 				{
 					"name": "overlapAreaM2",
 					"type": "number",
 					"required": false,
-					"description": "The overlapping area in square metres, for an area overlap."
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
 				}
 			],
 			"rowCount": 8405,
 			"formats": {
 				"csv": {
 					"contentType": "text/csv; charset=utf-8",
-					"bytes": 1585766,
-					"contentHash": "sha256:7e3d10a84574a64c43e1dd874a1c52952d8adb0c73a503ab27af915e99ad62a8",
+					"bytes": 1594182,
+					"contentHash": "sha256:ffdb5bf8787fbb059afed4e0cdcf6ab848a88d09892cc60ab81165eaa7ee7d32",
 					"href": "/v1/lookups/crosswalk-ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=csv"
 				},
 				"ndjson": {
 					"contentType": "application/x-ndjson; charset=utf-8",
-					"bytes": 3652368,
-					"contentHash": "sha256:b0b0ed386840e620c4600feac9be2cbb6a4e331e92569ae43e5dc7b38095180a",
+					"bytes": 3803658,
+					"contentHash": "sha256:c22b13298d37f9beae2844c55afed9b81980ce2cd4ab3b77142ca6149e9fbe2f",
 					"href": "/v1/lookups/crosswalk-ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment?format=ndjson"
 				}
 			}

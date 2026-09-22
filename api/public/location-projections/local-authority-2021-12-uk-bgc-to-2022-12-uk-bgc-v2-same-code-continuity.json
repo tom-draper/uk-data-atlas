@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:10c87824e3d97f8b677cafba2125b2a0cd388c6b83fc6883877b2a928c7ad60c",
+	"contentHash": "sha256:bceab48a8acba3edf0d1c2dcf8cfd00f2086e54de8800c20640d0ff1774a03e9",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
 	"projections": [
 		{

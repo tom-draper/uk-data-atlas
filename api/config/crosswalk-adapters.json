@@ -1658,6 +1658,38 @@
 				"boundaryRelease": "2026-05-uk-bgc"
 			},
 			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+			"method": "population-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents",
+				"date": "2021-03-21",
+				"blocks": {
+					"geography": "lsoa",
+					"boundaryRelease": "2021-12-ew-bgc-v5"
+				}
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"pairs": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"sourceCodePattern": "^(E14|W07)",
+			"population": {
+				"input": "demographics/population/census-2021-lsoa/census2021-ts001-lsoa.csv",
+				"codeColumn": "geography code",
+				"valueColumn": "Residence type: Total; measures: Value"
+			},
+			"minimumCoverage": 0.99
 		}
 	]
 }

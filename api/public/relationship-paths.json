@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:50f631098710ae0450c119412aef39d6d224bfea5926f5bcc097a1d3347999a7",
-	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"contentHash": "sha256:cfd0cd16a6f6df5dc337e0236e5de6ea770208608e327f2b123a2a1eec3b664a",
+	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"paths": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2/forward/identity",
@@ -395,6 +395,50 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap/forward/apportion",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap/reverse/apportion",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -4034,7 +4078,7 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-combined-authority-2025-12-en-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-combined-authority-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4080,7 +4124,53 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2020-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-combined-authority-2025-12-en-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "combinedAuthority",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2020-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4156,7 +4246,83 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2021-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2020-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2021-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4226,7 +4392,77 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2022-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2021-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2022-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4290,7 +4526,71 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2023-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2022-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2023-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4348,7 +4648,65 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2024-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2023-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2024-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4400,7 +4758,59 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2025-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2024-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2025-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4446,7 +4856,53 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-country-2025-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4492,7 +4948,53 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "countyAndUnitaryAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4526,7 +5028,41 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2023-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2023-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4554,7 +5090,35 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2024-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2023-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2024-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4582,7 +5146,35 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2025-05-uk-bgc-v2/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2024-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2025-05-uk-bgc-v2/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4616,7 +5208,41 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2025-12-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2025-05-uk-bgc-v2/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2025-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4656,7 +5282,47 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2026-05-uk-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2025-12-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2026-05-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4702,7 +5368,53 @@
 			]
 		},
 		{
-			"id": "discovered/constituency-2024-07-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/constituency-2024-07-uk-bgc-to-local-authority-2026-05-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "constituency",
@@ -4719,6 +5431,52 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "forward",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/constituency-2024-07-uk-bgc-to-region-2025-12-en-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "forward",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				},
 				{
@@ -21754,7 +22512,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2011-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2011-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -21843,6 +22601,100 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2011-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2011-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -24262,7 +25114,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2011-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2011-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -25734,7 +26586,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -25817,6 +26669,94 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -28040,7 +28980,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2015-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2015-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -29370,7 +30310,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -29447,6 +30387,88 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -31508,7 +32530,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2016-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2016-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -32742,7 +33764,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -32813,6 +33835,82 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -34724,7 +35822,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2017-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2017-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -36016,7 +37114,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -36081,6 +37179,76 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -37854,7 +39022,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2018-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2018-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -39128,7 +40296,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2019-04-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2019-04-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -39187,6 +40355,70 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2019-04-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -40812,7 +42044,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2019-04-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2019-04-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -42056,7 +43288,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -42109,6 +43341,64 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -43662,7 +44952,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2019-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2019-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -44858,7 +46148,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -44905,6 +46195,58 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -46462,7 +47804,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2020-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2020-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -47592,7 +48934,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -47633,6 +48975,52 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -49184,7 +50572,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2021-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2021-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -50236,7 +51624,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2022-12-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2022-12-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -50271,6 +51659,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2022-12-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -51828,7 +53256,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2022-12-uk-bgc-v2-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2022-12-uk-bgc-v2-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -52756,7 +54184,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -52785,6 +54213,40 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -53976,7 +55438,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -54880,7 +56342,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -54903,6 +56365,34 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -56014,7 +57504,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2023-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2023-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -57892,7 +59382,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2024-05-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2024-05-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -58778,7 +60268,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -58801,6 +60291,34 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -59744,7 +61262,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2024-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2024-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -60666,7 +62184,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -60695,6 +62213,40 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -61572,7 +63124,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -62498,7 +64050,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2025-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2025-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -62533,6 +64085,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2025-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -64276,7 +65868,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/local-authority-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -64317,6 +65909,52 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -65182,7 +66820,7 @@
 			]
 		},
 		{
-			"id": "discovered/local-authority-2026-05-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/local-authority-2026-05-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "localAuthority",
@@ -66400,7 +68038,7 @@
 			]
 		},
 		{
-			"id": "discovered/lsoa-2021-12-ew-bgc-v5-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/lsoa-2021-12-ew-bgc-v5-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "lsoa",
@@ -66435,6 +68073,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/lsoa-2021-12-ew-bgc-v5-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -67194,7 +68872,7 @@
 			]
 		},
 		{
-			"id": "discovered/lsoa-2021-12-ew-bgc-v5-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/lsoa-2021-12-ew-bgc-v5-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "lsoa",
@@ -67368,7 +69046,7 @@
 			]
 		},
 		{
-			"id": "discovered/msoa-2021-12-ew-bgc-v3-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/msoa-2021-12-ew-bgc-v3-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "msoa",
@@ -67403,6 +69081,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/msoa-2021-12-ew-bgc-v3-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "msoa",
+				"boundaryRelease": "2021-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -68162,7 +69880,7 @@
 			]
 		},
 		{
-			"id": "discovered/msoa-2021-12-ew-bgc-v3-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/msoa-2021-12-ew-bgc-v3-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "msoa",
@@ -68348,7 +70066,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2019-04-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2019-04-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -68407,6 +70125,70 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2019-04-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -69906,7 +71688,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2019-04-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2019-04-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -70110,7 +71892,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2021-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2021-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -70175,6 +71957,76 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2021-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -71690,7 +73542,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2021-12-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2021-12-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -71876,7 +73728,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2022-12-ew-bgc-v3-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2022-12-ew-bgc-v3-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -71947,6 +73799,82 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2022-12-ew-bgc-v3-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -73456,7 +75384,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2022-12-ew-bgc-v3-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2022-12-ew-bgc-v3-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -73624,7 +75552,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2023-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2023-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -73689,6 +75617,76 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2023-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -75192,7 +77190,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2023-12-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2023-12-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -75342,7 +77340,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2024-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2024-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -75401,6 +77399,70 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2024-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -76898,7 +78960,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2024-12-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2024-12-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -77030,7 +79092,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2025-05-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2025-05-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -77083,6 +79145,64 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2025-05-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -78574,7 +80694,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2025-05-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2025-05-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -78688,7 +80808,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2026-05-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/parish-2026-05-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -78735,6 +80855,58 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/parish-2026-05-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2026-05-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -80232,7 +82404,7 @@
 			]
 		},
 		{
-			"id": "discovered/parish-2026-05-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/parish-2026-05-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "parish",
@@ -80300,7 +82472,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-combined-authority-2025-12-en-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-combined-authority-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80328,7 +82500,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-country-2020-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-country-2020-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80386,7 +82558,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-country-2021-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-country-2021-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80438,7 +82610,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-country-2022-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-country-2022-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80484,7 +82656,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-country-2023-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-country-2023-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80524,7 +82696,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-country-2024-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-country-2024-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80558,7 +82730,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-country-2025-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-country-2025-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80586,7 +82758,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-county-and-unitary-authority-2025-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-county-and-unitary-authority-2025-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80614,7 +82786,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2023-05-uk-bgc-v2/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2023-05-uk-bgc-v2/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80718,7 +82890,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2023-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2023-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80810,7 +82982,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2024-05-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2024-05-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80890,7 +83062,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2024-12-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2024-12-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -80958,7 +83130,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2025-05-uk-bgc-v2/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2025-05-uk-bgc-v2/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -81014,7 +83186,7 @@
 			]
 		},
 		{
-			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2026-05-uk-bgc/apportion",
+			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2026-05-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "region",
@@ -82766,7 +84938,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2011-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2011-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -82849,6 +85021,94 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2011-12-ew-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -84804,7 +87064,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2011-12-ew-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2011-12-ew-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -86106,7 +88366,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -86183,6 +88443,88 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2015-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -87972,7 +90314,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2015-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2015-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -89144,7 +91486,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -89215,6 +91557,82 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2016-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -90884,7 +93302,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2016-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2016-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -91960,7 +94378,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -92025,6 +94443,76 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2017-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -93674,7 +96162,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2017-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2017-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -94666,7 +97154,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -94725,6 +97213,70 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2018-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -96320,7 +98872,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2018-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2018-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -97246,7 +99798,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2019-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2019-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -97305,6 +99857,70 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2019-12-gb-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -98978,7 +101594,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2019-12-gb-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2019-12-gb-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -99968,7 +102584,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -100021,6 +102637,64 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2019-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -101550,7 +104224,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2019-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2019-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -102388,7 +105062,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -102435,6 +105109,58 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2020-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -103886,7 +106612,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2020-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2020-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -104710,7 +107436,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -104751,6 +107477,52 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2021-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -106112,7 +108884,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2021-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2021-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -106912,7 +109684,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2022-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2022-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -106947,6 +109719,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2022-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -108184,7 +110996,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2022-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2022-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -108972,7 +111784,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2023-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2023-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -109001,6 +111813,40 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2023-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -110192,7 +113038,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2023-05-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2023-05-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -110980,7 +113826,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -111015,6 +113861,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2023-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -112274,7 +115160,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2023-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2023-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -113074,7 +115960,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2024-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2024-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -113103,6 +115989,40 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2024-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -114362,7 +117282,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2024-05-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2024-05-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -115186,7 +118106,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -115209,6 +118129,34 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2024-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -116406,7 +119354,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2024-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2024-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -117266,7 +120214,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -117295,6 +120243,40 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2025-05-uk-bgc-v2-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -118516,7 +121498,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2025-05-uk-bgc-v2-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2025-05-uk-bgc-v2-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -119430,7 +122412,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2025-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2025-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -119465,6 +122447,46 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2025-12-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -120736,7 +123758,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2025-12-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2025-12-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -121706,7 +124728,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion",
+			"id": "discovered/ward-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",
@@ -121747,6 +124769,52 @@
 					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 					"direction": "reverse",
 					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/ward-2026-05-uk-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
 					"purpose": "apportion"
 				}
 			]
@@ -123200,7 +126268,7 @@
 			]
 		},
 		{
-			"id": "discovered/ward-2026-05-uk-bgc-to-region-2025-12-en-bgc/apportion",
+			"id": "discovered/ward-2026-05-uk-bgc-to-region-2025-12-en-bgc/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
 				"geography": "ward",

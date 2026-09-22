@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:341d6a9d80bda982fac051530ca4c92f97733e6307f21256c70315fd396ace27",
+	"contentHash": "sha256:95348c8467572c9d31d08ecc095034963d364154a5716dd97a74c5f2c88ae703",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -1630,6 +1630,21 @@
 				}
 			],
 			"metadataHash": "sha256:e966055d6ba8503e08ba36643ba81bff8f52c8efb3b70747d318065770601803"
+		},
+		{
+			"key": "demographics/population/census-2021-lsoa",
+			"metadataId": "census-2021-lsoa",
+			"title": "Census 2021 usual residents by LSOA",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.nomisweb.co.uk/sources/census_2021_bulk",
+			"temporalCoverage": "2021",
+			"files": [
+				{
+					"extension": ".csv",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:766312e50b118eda3388371248321292adf949909b68ddf09844fa3104aebb02"
 		},
 		{
 			"key": "demographics/population/england-wales",

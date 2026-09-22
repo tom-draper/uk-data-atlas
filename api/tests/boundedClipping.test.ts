@@ -34,7 +34,7 @@ test("clips in a worker and reports a clipper failure rather than throwing", () 
 		);
 		const failed = clipper.clip(
 			"intersection",
-			"not a polygon" as unknown as MultiPolygon,
+			{ type: "not a polygon" } as unknown as MultiPolygon,
 			square(0, 1),
 		);
 		assert.deepEqual(failed, {
@@ -45,6 +45,33 @@ test("clips in a worker and reports a clipper failure rather than throwing", () 
 		assert.equal(
 			clipper.clip("intersection", square(0, 1), square(0, 1)).status,
 			"clipped",
+		);
+	} finally {
+		clipper.close();
+	}
+});
+
+test("clips against a registered geometry, and keeps it across a restart", () => {
+	const clipper = new BoundedClipper(10_000);
+	try {
+		clipper.register("wide", square(0, 2));
+		const clipped = clipper.clip("intersection", square(1, 3), "wide");
+		assert.deepEqual(
+			clipped.status === "clipped" ? clipped.geometry : clipped,
+			square(1, 2),
+		);
+		// A timeout replaces the worker; registrations must follow it.
+		clipper.close();
+		assert.equal(
+			clipper.clip("intersection", "wide", square(1, 3)).status,
+			"clipped",
+		);
+		assert.deepEqual(
+			clipper.clip("intersection", "missing", square(0, 1)),
+			{
+				status: "failed",
+				reason: "No geometry is registered as missing.",
+			},
 		);
 	} finally {
 		clipper.close();

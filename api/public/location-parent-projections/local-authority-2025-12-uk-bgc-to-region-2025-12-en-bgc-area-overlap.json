@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:3e3bf4da9e3bef6f0126a92602fd1f265d25e3f67a522f514bdf47135d5ae30a",
+	"contentHash": "sha256:3ea5aac799d2e21f7c2f669bcf79e642490652d47c6d76ffccf1371cb53fe662",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
 	"parentProjections": [
 		{

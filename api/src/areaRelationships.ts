@@ -51,15 +51,20 @@ const relationFor = (
 	) {
 		return direction === "from" ? "within" : "contains";
 	}
-	if (method === "area-overlap") return "overlaps";
+	if (method === "area-overlap" || method === "population-overlap")
+		return "overlaps";
 	return direction === "from" ? "successor" : "predecessor";
 };
 
 const overlapFor = (
+	crosswalk: CrosswalkArtifact,
 	target: CrosswalkArtifact["records"][number]["targets"][number],
 	direction: "from" | "to",
 ): { overlap?: AreaOverlap } => {
-	if (!("overlapAreaM2" in target)) return {};
+	// Only an area overlap's shares are of area; a population overlap's are
+	// of people, and are read from its crosswalk rather than restated here.
+	if (crosswalk.method !== "area-overlap" || !("overlapAreaM2" in target))
+		return {};
 	return {
 		overlap: {
 			areaM2: target.overlapAreaM2,
@@ -114,7 +119,7 @@ export const createAreaRelationshipIndex = (
 						labels: target.labels,
 					},
 					crosswalk: crosswalkMetadata,
-					...overlapFor(target, "from"),
+					...overlapFor(crosswalk, target, "from"),
 				});
 				addRelationship(index, targetId, {
 					relation: relationFor(crosswalk, "to"),
@@ -126,7 +131,7 @@ export const createAreaRelationshipIndex = (
 						labels: record.source.labels,
 					},
 					crosswalk: crosswalkMetadata,
-					...overlapFor(target, "to"),
+					...overlapFor(crosswalk, target, "to"),
 				});
 			}
 		}

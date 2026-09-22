@@ -732,9 +732,11 @@ only **available** when its endpoint, contract and provenance are published.
       names. The response repeats that crosswalk's method, quality, weighting
       and content hash, and reports whether the result was an exact regrouping
       (every source wholly inside one target, partition total unchanged) or an
-      area-weighted estimate. An intensive measure is refused, as is a source
-      code the crosswalk does not carry or a split source with no published
-      weight. Population-weighted conversion is not yet offered.
+      area-weighted or population-weighted estimate. An intensive measure is
+      refused, as is a source code the crosswalk does not carry or a split
+      source with no published weight. Population weighting is offered for 2024
+      constituencies in England and Wales, through
+      `constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap`.
 
 ### Postcodes, homes and addresses — data required, later
 
@@ -3719,6 +3721,40 @@ geometry file holds no shapes, such as the names-and-codes 2011 data zone
 file. `pnpm tsx scripts/propose-same-code-continuity.ts --write` regenerates
 the adapters when a release is added.
 
+The fifth method, `population-overlap`, reweights an area overlap by where
+people live. An area weight assumes a source's residents are spread evenly
+over its land, and they rarely are: Luton is 21% of the land of Luton South
+and South Bedfordshire but holds 88% of its residents, so area weighting
+would put most of Luton's people in rural Bedfordshire. The building blocks
+are 2021 LSOAs with their Census 2021 usual residents (table TS001, under
+`data/demographics/population/census-2021-lsoa`). Each block's residents are
+split among the source and target pairs it falls in, in proportion to its
+area in each, so the assumption of evenness shrinks from a whole constituency
+to about 1,500 people.
+
+It keeps the pairs of the area overlap it names in `pairs`, so the two
+methods agree on which overlaps are real, and it counts rather than
+reassigns the people a block puts in a source but in none of its kept
+targets. The weighting states what was counted, its date and the blocks, so
+every weighted answer carries its denominator. On the constituency to May 2024
+local authority pairs, restricted to England and Wales because the blocks
+cover nothing else, all 59,597,601 residents are accounted for: 6,032 fall in
+border slivers and 12,393 outside every constituency, where the two files
+draw the coast differently, and no constituency keeps less than 99.9% of its
+people. Its records carry each pair's population, and `sourceShare` and
+`targetShare` are shares of people, not land. Converting through it reports
+`method: population-weighted`.
+
+The gain is measurable against data the Atlas already holds. Converting the
+2022 constituency population estimates to May 2024 local authorities, and
+comparing each authority with its own published estimate, the area weights
+are a median 8.8% out and the worst 99.5%, with 62 of 318 authorities within
+2%. The population weights are a median 0.3% out and 312 of 318 within 2%.
+That is a check on the weighting, not a published conversion: an authority
+that also draws people from a constituency outside England and Wales is not
+comparable this way. Scottish data zones and Northern Irish super
+output areas, with their own counts, would extend it to the rest of the UK.
+
 `public/relationship-paths.json` publishes every crosswalk as a one-step
 path in each direction, the reviewed compositions declared in
 `config/relationship-paths.json`, and the compositions the build's path search
@@ -3737,12 +3773,17 @@ step half as much again, under rules that keep what each purpose claims:
   up, which keep each weighted share whole.
 - No composition crosses a lookup that both splits and merges, such as 2011 to
   2021 LSOAs or the 2010 to 2024 constituencies.
+- An apportion path is kept once for each weighting basis, as
+  `…/apportion/by-area` and `…/apportion/by-population`. Population weighting
+  is the better estimate of anything that follows people, but its blocks cover
+  only England and Wales, so neither replaces the other; each states its own
+  coverage.
 
 Discovered paths are marked `origin: discovered`, and their trust is never
 more than `derived`, because no one reviewed the composition. Their coverage
 is end to end: the share of source areas that reach the target through every
 step, which a chain of same-code steps loses a few areas to at each change of
-vintage. On the current crosswalks the search closes at 2,122 discovered paths,
+vintage. On the current crosswalks the search closes at 2,179 discovered paths,
 the longest 21 steps, so its 24-step limit is a guard rather than a cut.
 
 Before publication, the crosswalk compiler validates every referenced code

@@ -98,7 +98,13 @@ export const areaIdentityTable = (release: {
 export const crosswalkTable = (
 	crosswalk: CrosswalkArtifact,
 	artifact: string,
-): LookupTable => ({
+): LookupTable => {
+	const weighted =
+		crosswalk.method === "area-overlap" ||
+		crosswalk.method === "population-overlap";
+	// A population overlap's shares are of people, not land.
+	const share = crosswalk.method === "population-overlap" ? "population" : "area";
+	return {
 	id: `crosswalk-${crosswalk.id}`,
 	kind: "crosswalk",
 	title: `Crosswalk, ${crosswalk.id}`,
@@ -130,25 +136,31 @@ export const crosswalkTable = (
 			"weight",
 			"number",
 			"The share of the source to apportion to this target, where the crosswalk provides weights.",
-			crosswalk.method === "area-overlap",
+			weighted,
 		),
 		column(
 			"sourceShare",
 			"number",
-			"The share of the source area inside the target, for an area overlap.",
-			crosswalk.method === "area-overlap",
+			`The share of the source ${share} inside the target, for a weighted overlap.`,
+			weighted,
 		),
 		column(
 			"targetShare",
 			"number",
-			"The share of the target area inside the source, for an area overlap.",
-			crosswalk.method === "area-overlap",
+			`The share of the target ${share} inside the source, for a weighted overlap.`,
+			weighted,
 		),
 		column(
 			"overlapAreaM2",
 			"number",
-			"The overlapping area in square metres, for an area overlap.",
-			crosswalk.method === "area-overlap",
+			"The overlapping area in square metres, for a weighted overlap.",
+			weighted,
+		),
+		column(
+			"population",
+			"number",
+			"The people in the overlap, from the crosswalk's population building blocks.",
+			crosswalk.method === "population-overlap",
 		),
 	],
 	rows: crosswalk.records.flatMap((record) =>
@@ -160,6 +172,7 @@ export const crosswalkTable = (
 							sourceShare: number;
 							targetShare: number;
 							overlapAreaM2: number;
+							population?: number;
 						})
 					: undefined;
 			return {
@@ -177,10 +190,12 @@ export const crosswalkTable = (
 				sourceShare: overlap?.sourceShare ?? null,
 				targetShare: overlap?.targetShare ?? null,
 				overlapAreaM2: overlap?.overlapAreaM2 ?? null,
+				population: overlap?.population ?? null,
 			};
 		}),
 	),
-});
+	};
+};
 
 /** Every curated named location, one row per member code. */
 export const namedLocationMembersTable = (

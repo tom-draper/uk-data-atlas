@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:c4199cf7f4d222becd1884b41999f5a347dfe8fa49a0232063d358a24c263aa5",
+	"contentHash": "sha256:9d1219d61d5c78c74cd2b1aad9fcadd99e0e7cc7adb713c4125cd52fbcf42abc",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"crosswalkId": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
 	"projections": [
 		{

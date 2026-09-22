@@ -41,7 +41,8 @@ export type TraversedMember = {
 export const membershipKindFor = (
 	crosswalk: CrosswalkArtifact,
 ): MembershipKind =>
-	crosswalk.method === "area-overlap"
+	crosswalk.method === "area-overlap" ||
+	crosswalk.method === "population-overlap"
 		? "weighted-overlap"
 		: "fully-contained";
 
@@ -198,6 +199,7 @@ export const isParentCrosswalk = (
 ) =>
 	crosswalk.method === "clean-containment" ||
 	crosswalk.method === "area-overlap" ||
+	crosswalk.method === "population-overlap" ||
 	crosswalk.relationshipPurpose === "membership";
 
 /**
@@ -242,7 +244,9 @@ export const parentsThroughCrosswalk = (
 			byParent.set(target.code, parent);
 		}
 	}
-	const overlap = crosswalk.method === "area-overlap";
+	const overlap =
+		crosswalk.method === "area-overlap" ||
+		crosswalk.method === "population-overlap";
 	const parents = [...byParent]
 		.filter(([, parent]) => parent.members.size > 0)
 		.map(([code, parent]): ParentRelation => {

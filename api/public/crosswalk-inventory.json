@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"contentHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -1700,6 +1700,33 @@
 			"recordCount": 8038,
 			"artifact": "crosswalks/ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity.json",
 			"contentHash": "sha256:893967753a8070d8d8a785c619db31ec6d7110bcaf6304950fdc3b820fdf9fa3"
+		},
+		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"method": "population-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents",
+				"date": "2021-03-21",
+				"blocks": {
+					"geography": "lsoa",
+					"boundaryRelease": "2021-12-ew-bgc-v5"
+				}
+			},
+			"recordCount": 575,
+			"artifact": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap.json",
+			"contentHash": "sha256:f7a3f22aae18a1a82b73b91d281d98427a89edf99edb67efa0a25f7b238ee03d"
 		}
 	]
 }
