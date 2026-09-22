@@ -93,6 +93,20 @@ export type ResolvedAreaNeighbour = Neighbour & {
 	area?: AreaRecord;
 };
 
+export type ResolvedSameCodeArea = AreaRecord & {
+	id: string;
+	geography: string;
+	boundaryRelease: string;
+	/** The identifier recurs; no unchanged-boundary claim is implied. */
+	status: "same-code-continuity";
+};
+
+export type ResolvedAreaHistory = {
+	area: AreaRecord;
+	relationships: AreaRelationship[];
+	sameCodeReleases: ResolvedSameCodeArea[];
+};
+
 export type ResolvedAreaNeighbours = {
 	geometry: GeoJsonGeometry;
 	neighbours: ResolvedAreaNeighbour[];
@@ -134,12 +148,34 @@ export class GeographyResolver {
 		string,
 		CrosswalkInventory["crosswalks"]
 	>();
+	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
 	private readonly derivedReleaseSources: Map<string, string>;
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
 		this.derivedReleaseSources = derivedReleaseSources(inputs.areaInventory);
 		if (inputs.areaLookup) {
 			this.areaSearchIndex = createAreaSearchIndex(inputs.areaLookup);
+			for (const [releaseIdentity, areas] of inputs.areaLookup) {
+				const [geography, boundaryRelease] = releaseIdentity.split("/", 2);
+				if (!geography || !boundaryRelease) continue;
+				for (const [code, area] of areas) {
+					const key = `${geography}/${code}`;
+					const candidates = this.sameCodeAreas.get(key) ?? [];
+					candidates.push({
+						id: areaId({ geography, boundaryRelease, code }),
+						geography,
+						boundaryRelease,
+						...area,
+						status: "same-code-continuity",
+					});
+					this.sameCodeAreas.set(key, candidates);
+				}
+			}
+			for (const candidates of this.sameCodeAreas.values()) {
+				candidates.sort((left, right) =>
+					left.boundaryRelease.localeCompare(right.boundaryRelease),
+				);
+			}
 		}
 		if (inputs.crosswalkLookup) {
 			this.areaRelationshipIndex = createAreaRelationshipIndex(
@@ -400,6 +436,23 @@ export class GeographyResolver {
 
 	relationships(identity: AreaIdentity): AreaRelationship[] {
 		return this.areaRelationshipIndex?.get(areaId(identity)) ?? [];
+	}
+
+	/** Published history edges plus explicitly qualified recurring identifiers. */
+	areaHistory(identity: AreaIdentity): ResolvedAreaHistory | undefined {
+		const area = this.area(identity);
+		if (!area) return undefined;
+		return {
+			area,
+			relationships: this.relationships(identity).filter(
+				({ relation }) => relation === "successor" || relation === "predecessor",
+			),
+			sameCodeReleases: (this.sameCodeAreas.get(
+				`${identity.geography}/${identity.code}`,
+			) ?? []).filter(
+				({ boundaryRelease }) => boundaryRelease !== identity.boundaryRelease,
+			),
+		};
 	}
 
 	namedLocation(id: string): NamedLocation | undefined {

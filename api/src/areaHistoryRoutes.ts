@@ -20,63 +20,28 @@ export const handleAreaHistoryRoutes = ({
 		string,
 		string,
 	];
-	const { areaLookup, geographyResolver } = context;
+	const { geographyResolver } = context;
 	if (!geographyResolver)
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the geography resolver before looking up area history.",
 		);
-	const area = geographyResolver.area({
+	const history = geographyResolver.areaHistory({
 		geography,
 		boundaryRelease,
 		code,
 	});
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const sameCodeReleases = [...(areaLookup?.entries() ?? [])]
-		.flatMap(([identity, areas]) => {
-			const [candidateGeography, candidateRelease] = identity.split(
-				"/",
-				2,
-			);
-			const candidate = areas.get(code);
-			return candidateGeography === geography &&
-				candidateRelease !== boundaryRelease &&
-				candidate
-				? [
-						{
-							id: `${identity}/${code}`,
-							geography,
-							boundaryRelease: candidateRelease!,
-							...candidate,
-							status: "same-code-continuity" as const,
-						},
-					]
-				: [];
-		})
-		.sort((left, right) =>
-			left.boundaryRelease.localeCompare(right.boundaryRelease),
-		);
-	const relationships = geographyResolver
-		.relationships({
-			geography,
-			boundaryRelease,
-			code,
-		})
-		.filter(
-			(relationship) =>
-				relationship.relation === "successor" ||
-				relationship.relation === "predecessor",
-		);
+	if (!history) return areaNotFound(context, geography, boundaryRelease, code);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
 			id: `${geography}/${boundaryRelease}/${code}`,
 			geography,
 			boundaryRelease,
-			...area,
-			relationships,
-			sameCodeReleases,
+			...history.area,
+			relationships: history.relationships,
+			sameCodeReleases: history.sameCodeReleases,
 			note: "Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.",
 		}),
 	};

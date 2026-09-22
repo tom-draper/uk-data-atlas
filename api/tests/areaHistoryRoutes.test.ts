@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
+import { createGeographyResolver } from "../src/geographyResolver";
 import { route, registry, geographyInventory } from "./routeFixtures";
 
 test("reports same-code continuity without calling it an exact historical match", () => {
@@ -46,5 +47,16 @@ test("reports same-code continuity without calling it an exact historical match"
 	assert.match(
 		(data as { note: string }).note,
 		/does not assert unchanged geometry/,
+	);
+	const resolver = createGeographyResolver({ areaLookup: historyLookup });
+	assert.deepEqual(
+		resolver
+			.areaHistory({
+				geography: "ward",
+				boundaryRelease: "2025-01-en-ward",
+				code: "E05000001",
+			})
+			?.sameCodeReleases.map(({ id }) => id),
+		["ward/2024-01-en-ward/E05000001"],
 	);
 });
