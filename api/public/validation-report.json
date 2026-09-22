@@ -1,28 +1,28 @@
 {
 	"schemaVersion": 1,
 	"inputs": {
-		"boundaryRegistry": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
-		"areaInventory": "sha256:330ce8e9601d355c161a27d417b93fbca85b06492f3078604d5bdc9949893c83",
-		"geometrySources": "sha256:b8b03409f34ee2ee38d7e3c64fd7fdb01256245d245fba80f376022d13d28d8c",
-		"crosswalkInventory": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
-		"relationshipCandidates": "sha256:d9b3dee543c4ae537e611df067741c0d4ea2ee25ce0b8579de9181b48b946cfe",
-		"geographyInventory": "sha256:0ef0732a42b118652bd54976aab6bf625cc7ea27296b4fe9c5b017a7d955f2f6",
+		"boundaryRegistry": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
+		"areaInventory": "sha256:540a0f11b94d5355619580c592e161fd3fbe02cbde404cf60c419f6202ffb37f",
+		"geometrySources": "sha256:9e6bb38492183c83dc232498b460574d3fffd5d2995fcc7744b3e93608f9fab2",
+		"crosswalkInventory": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
+		"relationshipCandidates": "sha256:ddba58ccf93e44edf2109a1f643e1a401bc5c1e9883fa4bc1fa11729c3c5cb68",
+		"geographyInventory": "sha256:ffc52ae83b5822d2cf71ab65672faed4fb17e9be8a6d3e16ae1a726b50893ed1",
 		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 		"exportManifest": "sha256:825869e7f0bad75660cf60f4cc86b0ec12eb1defc8bd72ba29b56fcf521182a9",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:d1d28a789ceb45d76889fabfac77d219903730338ae5af28a76686c193dc6ecf"
 	},
 	"summary": {
-		"resourceCount": 598,
-		"checkCount": 1937,
-		"passedCount": 1891,
+		"resourceCount": 600,
+		"checkCount": 1946,
+		"passedCount": 1900,
 		"waivedCount": 46,
 		"coverage": {
-			"boundaryReleases": 93,
-			"areaIdentities": 93,
-			"servableGeometry": 93,
-			"withRelationships": 34,
-			"crosswalks": 29,
+			"boundaryReleases": 94,
+			"areaIdentities": 94,
+			"servableGeometry": 94,
+			"withRelationships": 36,
+			"crosswalks": 30,
 			"weightedCrosswalks": 2,
 			"measures": 167,
 			"measureSources": 308
@@ -42,7 +42,7 @@
 					"id": "release-coverage",
 					"status": "passed",
 					"measured": {
-						"boundaryReleaseCount": 93
+						"boundaryReleaseCount": 94
 					}
 				}
 			]
@@ -989,6 +989,37 @@
 					"status": "passed",
 					"measured": {
 						"crs": "EPSG:4326"
+					}
+				},
+				{
+					"id": "candidates-reviewed",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "boundary-releases/localAuthority/2015-12-gb-bgc",
+			"kind": "boundary-release",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "licence-recorded",
+					"status": "passed"
+				},
+				{
+					"id": "area-identities",
+					"status": "passed",
+					"measured": {
+						"areaCount": 380
+					}
+				},
+				{
+					"id": "geometry-servable",
+					"status": "passed",
+					"measured": {
+						"crs": "EPSG:27700",
+						"transformation": "OSGB36 to WGS 84 (6)",
+						"transformationAccuracyM": 2
 					}
 				},
 				{
@@ -3361,6 +3392,36 @@
 					"status": "passed",
 					"measured": {
 						"recordCount": 106
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8734
 					}
 				},
 				{
@@ -18749,5 +18810,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:f175d9301927bb7ee6803b44063e544e22096beb3a35e02d0e4d623806561ff7"
+	"contentHash": "sha256:ed74f60e1445d881455cf716f1bdcf7aef4ebad2d98956bc2942114462dd14db"
 }

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
+	"contentHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -1055,6 +1055,30 @@
 				}
 			},
 			"metadataHash": "sha256:0e6fb09babbb678cff8497008fed10bbcb36cd08dce24ce121f8acdfa132f3c0"
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "localAuthority",
+			"title": "Local authority districts, December 2015 (Great Britain, generalised, clipped)",
+			"description": "Local authority districts as published for December 2015, covering Great Britain. Generalised to 20 m and clipped to the coastline.",
+			"temporalCoverage": "2015",
+			"coverage": {
+				"countries": [
+					"GB-ENG",
+					"GB-SCT",
+					"GB-WLS"
+				]
+			},
+			"source": {
+				"publisher": "Office for National Statistics",
+				"url": "https://www.arcgis.com/home/item.html?id=4ec398afc13e4fa6a72f31786ea13c2e",
+				"retrievedAt": "2026-09-22",
+				"licence": {
+					"name": "Open Government Licence v3.0",
+					"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+				}
+			},
+			"metadataHash": "sha256:952d3c1fc6ddf29fe281b83c082059621141ca36b79feee41d728ec669c3d4bb"
 		},
 		{
 			"id": "2011-12-gb-bgc",

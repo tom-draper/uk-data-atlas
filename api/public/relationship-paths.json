@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:f7bbe29428c2cba3566248b23613798d96ad9bcb64afa4bf6667436e3ab5d8b8",
-	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
+	"contentHash": "sha256:254b5af2b879d8b34563e5e6f32a5fa4be2d6d126697c6dd6c23882290a8b064",
+	"crosswalkInventoryHash": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
 	"paths": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2/forward/identity",
@@ -768,6 +768,46 @@
 			"steps": [
 				{
 					"crosswalkId": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
+					"direction": "reverse",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
+					"direction": "forward",
+					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "publisher-supplied",
+			"steps": [
+				{
+					"crosswalkId": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
 				}

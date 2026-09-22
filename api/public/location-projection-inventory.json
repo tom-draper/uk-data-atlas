@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b0794f63f4f430ee48b3ce656b17f0a3a9acf93355673358d2f16ebc00bfb973",
+	"contentHash": "sha256:6f55b5542d3b691d56101f27e26179af21d782cfcdd180e6dcce3d94db39fb84",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
+	"crosswalkInventoryHash": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
 	"shards": [
 		{
 			"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
@@ -10,7 +10,7 @@
 			"boundaryRelease": "2024-07-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap.json",
-			"contentHash": "sha256:bc97d9a9b3abb5efe8f7c91c5b0b8d54fd0c2ce9bc9032ba7843cbe27a9e0645"
+			"contentHash": "sha256:27550eea7be1353365a16bd3c4ad180e8b70aee2328499c7622aaeed028a358d"
 		},
 		{
 			"crosswalkId": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
@@ -18,7 +18,7 @@
 			"boundaryRelease": "2022-12-uk-bgc-v2",
 			"recordCount": 162,
 			"artifact": "location-projections/local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup.json",
-			"contentHash": "sha256:30ea171a6bfdaf0f081cbde55ab3f17d7aac3fde92311a3894f12455fd8336a1"
+			"contentHash": "sha256:cdf8b9aaa91c7e3381e89142a016a60e3ded45f2831d72f9c8797d5e43a60e77"
 		},
 		{
 			"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
@@ -26,7 +26,7 @@
 			"boundaryRelease": "2024-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup.json",
-			"contentHash": "sha256:02cbdfc4baf6efff6185fbb6a016d477467f513545b5f6d15e717722f74aac0a"
+			"contentHash": "sha256:8aae13beec56b646963d48ff83aaaa7e7737d3114c818181466db0a15a60205f"
 		},
 		{
 			"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
@@ -34,7 +34,7 @@
 			"boundaryRelease": "2021-12-ew-bgc-v5",
 			"recordCount": 162,
 			"artifact": "location-projections/lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup.json",
-			"contentHash": "sha256:6016bddb9fae41b0e0692063695ed19d49f5bab69795f98270d903b96b73c733"
+			"contentHash": "sha256:6d2af219acd78a5654552d35cc2a3bd3b51ee7bd8cccce669725a1add6153532"
 		},
 		{
 			"crosswalkId": "msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
@@ -42,7 +42,7 @@
 			"boundaryRelease": "2021-12-ew-bgc-v3",
 			"recordCount": 162,
 			"artifact": "location-projections/msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup.json",
-			"contentHash": "sha256:8d0343ac16a0104cdc01dad04887ebbee94f7396e423b9e5d43a1f335b70c42c"
+			"contentHash": "sha256:2f9bf2e811725121a067cf5f455c901cc3d34adff1ddb51fc32645cd89074140"
 		},
 		{
 			"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
@@ -50,7 +50,7 @@
 			"boundaryRelease": "2019-04-ew-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:6b8ba086532ad9b6ed754805af790ec340afc0a28d0408bc98f85ebd6dc7869d"
+			"contentHash": "sha256:9b99c8ea2f39b982fb5ae989b5d1db57e89cb23d71d669a8526cafc08961a807"
 		},
 		{
 			"crosswalkId": "parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment",
@@ -58,7 +58,7 @@
 			"boundaryRelease": "2019-04-ew-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:af5a1afb34372279eff9edb1400772f353d56e62ecd7e50540202bbe2ce2bd10"
+			"contentHash": "sha256:34135b1a73900c21ef8bceada79ae3c5667b80d58dc1564b6730d4ee658df431"
 		},
 		{
 			"crosswalkId": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
@@ -66,7 +66,15 @@
 			"boundaryRelease": "2026-05-ew-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:dac281bdec50effa4b2afa9bdd82fcae6cd748ed58e1057223dc302836b702f7"
+			"contentHash": "sha256:fca8765932cf9da0d19cce56a055b4d42afd60dd4753df90d0d50185d9048d3d"
+		},
+		{
+			"crosswalkId": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
+			"geography": "ward",
+			"boundaryRelease": "2015-12-gb-bgc",
+			"recordCount": 162,
+			"artifact": "location-projections/ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment.json",
+			"contentHash": "sha256:5df4194b91b6af23d1d051e91353e0b6d5c20ff375982e52f8b9862e71a94383"
 		},
 		{
 			"crosswalkId": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",
@@ -74,7 +82,7 @@
 			"boundaryRelease": "2016-12-gb-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment.json",
-			"contentHash": "sha256:59e0f6253f482e9c1b8a2193dc861ee2c9560cf64299dd4595e452272afe8f84"
+			"contentHash": "sha256:5d0a90613977405d957be08eb75c15281e1fef8c997a2c9e1a416ce93ed15b8b"
 		},
 		{
 			"crosswalkId": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
@@ -82,7 +90,7 @@
 			"boundaryRelease": "2022-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment.json",
-			"contentHash": "sha256:070094555226f37ba9e2eba9bfc0375b9e621d4c4abafcf4a460b6125b125c0c"
+			"contentHash": "sha256:9496420abe4ca334bd51dd1c352afa09f4e2ee0ff7fa55bf267875de75e6bcce"
 		},
 		{
 			"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
@@ -90,7 +98,7 @@
 			"boundaryRelease": "2023-05-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment.json",
-			"contentHash": "sha256:8ac54e8b0efb3fc05a2857456503ef5f6c5fb7db7931c4322602170e06e3f466"
+			"contentHash": "sha256:63cf246ebb18d04db28f8e41e28fd1c7dc98f5ac4937b04eeed8c75509821142"
 		},
 		{
 			"crosswalkId": "ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment",
@@ -98,7 +106,7 @@
 			"boundaryRelease": "2023-05-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2023-05-uk-bgc-to-local-authority-2023-12-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:d5d4df5ebde0cce3a53d93d06a207c94acdd7babedd2a78409a39b6fdb50105a"
+			"contentHash": "sha256:1236c9bf203e4a19e32c4b3f2eea9a8e61df8e62a71970564060d600abbf2144"
 		},
 		{
 			"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
@@ -106,7 +114,7 @@
 			"boundaryRelease": "2024-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:1a46fd2da470c5af820adb999fd2b87352d84f161af215eaa8e478232e64b940"
+			"contentHash": "sha256:833d76532b025b8fb06a7383177d98b3bb7e912e2b1b51676356af5bed2772ab"
 		},
 		{
 			"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
@@ -114,7 +122,7 @@
 			"boundaryRelease": "2024-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:e232e4d62f73897df4205b2c74a99bfc637b666ef548fae0e31f8373831808ad"
+			"contentHash": "sha256:2cecd5fb931ea9dd2b3ff4031165c78f2ae7b095eb1aac7c954d3fc31e7bf226"
 		},
 		{
 			"crosswalkId": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
@@ -122,7 +130,7 @@
 			"boundaryRelease": "2025-05-uk-bgc-v2",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:e68d3322d3274e6cc3424d97867730f34ca27b1f8f6c9e24aacee4420c592879"
+			"contentHash": "sha256:0ab77c2348e0402e25dcb4bb3d70428f228f0788f0e209b80da9c643361d5ad9"
 		},
 		{
 			"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
@@ -130,7 +138,7 @@
 			"boundaryRelease": "2025-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
-			"contentHash": "sha256:e1a33fa723645bf2331ad25748044182b4d2016e7fa6c144dabefba49a4486ae"
+			"contentHash": "sha256:0f3d96a01130da512c8bed0168256ba3b3b2de889e959457b7f1c77af9423267"
 		},
 		{
 			"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
@@ -138,7 +146,7 @@
 			"boundaryRelease": "2025-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:e3ef74af4267b484aac09a5b3a0dc0a2c759e115f11600a38c4a0eb7d6d657fb"
+			"contentHash": "sha256:3ae70443df6237c6749b32e4ae6c98964b2e2bae00860d743a4f867f5a914d08"
 		},
 		{
 			"crosswalkId": "ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
@@ -146,7 +154,7 @@
 			"boundaryRelease": "2026-05-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment.json",
-			"contentHash": "sha256:b4dec258ce3176e131fff7673770de1769f73945ebc255b09c2acc05f480b258"
+			"contentHash": "sha256:29eb532d53ca20ca1430dd214393c7f47ccad97682ac9211ad1214e0b54839e5"
 		},
 		{
 			"crosswalkId": "ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment",
@@ -154,7 +162,7 @@
 			"boundaryRelease": "2025-05-uk-bgc-v2",
 			"recordCount": 162,
 			"artifact": "location-projections/ward-to-local-authority-2025-05-uk-bgc-v2-clean-containment.json",
-			"contentHash": "sha256:4973a8c3b3078130ab4b87de6df56b58abcafa41c30e4b4f9343b575de45a5a1"
+			"contentHash": "sha256:35e0ea9932c45b55a0d351bda95741ed41c1c538f46b81325ef7a6b1217c42f2"
 		}
 	],
 	"parentShards": [
@@ -164,7 +172,7 @@
 			"boundaryRelease": "2025-12-en-bgc",
 			"recordCount": 162,
 			"artifact": "location-parent-projections/local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup.json",
-			"contentHash": "sha256:6e682f967c662ef2a0c430cb13747ae22b7ba4b002661baf77000ddc8e168ca2"
+			"contentHash": "sha256:f0e63758222af98defb48ad354faf2f4f049632c5fd25ca36c4d0643711f3ebb"
 		},
 		{
 			"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
@@ -172,7 +180,7 @@
 			"boundaryRelease": "2025-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-parent-projections/local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup.json",
-			"contentHash": "sha256:e11de8bd23c7ca5c3700bf87e005bd65cc65c5cf291163cc5f1e0ae1538e891a"
+			"contentHash": "sha256:e4c3130482c5e5b1f70d7f381a2eb1ec18fdca53fdd715b90adc7387ed6c12a5"
 		},
 		{
 			"crosswalkId": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
@@ -180,7 +188,7 @@
 			"boundaryRelease": "2025-12-uk-bgc",
 			"recordCount": 162,
 			"artifact": "location-parent-projections/local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup.json",
-			"contentHash": "sha256:e76c358925ccf823e5c9aa5b7c3312ae6ac19ecc793f054fe7d49ff9cf278bc5"
+			"contentHash": "sha256:9f987f44d0091e7a47d5a3b0bc0d7c5fa39dbee121e412d1c14dcb10c6657129"
 		},
 		{
 			"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
@@ -188,7 +196,7 @@
 			"boundaryRelease": "2025-12-en-bgc",
 			"recordCount": 162,
 			"artifact": "location-parent-projections/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap.json",
-			"contentHash": "sha256:66a52ae6d8f809c53626ef5a11f912e7a68e681fdd86ae9d11297db698743b1b"
+			"contentHash": "sha256:62b9c3c22d5580c532fb04b1d0693dde46bd9f8ebb2c1af6ba12c0ec3dd1fbed"
 		},
 		{
 			"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
@@ -196,7 +204,7 @@
 			"boundaryRelease": "2025-12-en-bgc",
 			"recordCount": 162,
 			"artifact": "location-parent-projections/local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup.json",
-			"contentHash": "sha256:ccfac9dc9c20c35620924ef02ded4f80e4b1c5d11023cc98278a3fb6429db84c"
+			"contentHash": "sha256:1a58aeb2b7600895346aa61a3d864797000a307f7e807a2c5519b97c930e29b4"
 		}
 	]
 }

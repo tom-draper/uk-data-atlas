@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b8b03409f34ee2ee38d7e3c64fd7fdb01256245d245fba80f376022d13d28d8c",
+	"contentHash": "sha256:9e6bb38492183c83dc232498b460574d3fffd5d2995fcc7744b3e93608f9fab2",
 	"releases": [
 		{
 			"id": "combinedAuthority/2025-12-en-bgc",
@@ -380,6 +380,14 @@
 			"inputHash": "sha256:533b0b39c34a3f1071125ac83041dc660c44686564e9f4bbaf8f5d6268ca1b4e",
 			"crs": "EPSG:27700",
 			"codeProperty": "LAD16CD"
+		},
+		{
+			"id": "localAuthority/2015-12-gb-bgc",
+			"status": "available",
+			"input": "boundaries/local-authority/2015-12-gb-bgc/LAD_Dec_2015_GB_BGC_2022.geojson",
+			"inputHash": "sha256:6ab472dcc59722cde42c80a36f7896754051d6ce41171c293c88fce2250febed",
+			"crs": "EPSG:27700",
+			"codeProperty": "lad15cd"
 		},
 		{
 			"id": "localAuthority/2011-12-gb-bgc",

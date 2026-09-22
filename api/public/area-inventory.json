@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:330ce8e9601d355c161a27d417b93fbca85b06492f3078604d5bdc9949893c83",
-	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
+	"contentHash": "sha256:540a0f11b94d5355619580c592e161fd3fbe02cbde404cf60c419f6202ffb37f",
+	"boundaryRegistryHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -442,6 +442,16 @@
 			"contentHash": "sha256:2ca2840c27a5bb8acadff68a7e48425c6a910b57b41a7b11dcc020d0eeaf3665",
 			"codeProperty": "LAD16CD",
 			"nameProperty": "LAD16NM"
+		},
+		{
+			"id": "2015-12-gb-bgc",
+			"geography": "localAuthority",
+			"status": "available",
+			"recordCount": 380,
+			"artifact": "areas/localAuthority/2015-12-gb-bgc.json",
+			"contentHash": "sha256:935ba2f6acf6d1b3a0bf7dfd4812d677bc08bf4d8137af51e27931cd7441abbd",
+			"codeProperty": "lad15cd",
+			"nameProperty": "lad15nm"
 		},
 		{
 			"id": "2011-12-gb-bgc",

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:0ef0732a42b118652bd54976aab6bf625cc7ea27296b4fe9c5b017a7d955f2f6",
-	"boundaryRegistryHash": "sha256:6b1d6245c050c64e31f44e7ae1f976e563061e1d19dc8d3ca8464c1a86657b33",
+	"contentHash": "sha256:ffc52ae83b5822d2cf71ab65672faed4fb17e9be8a6d3e16ae1a726b50893ed1",
+	"boundaryRegistryHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
 			"id": "2025-12-en-bgc",
@@ -1465,6 +1465,41 @@
 			}
 		},
 		{
+			"id": "2015-12-gb-bgc",
+			"geography": "localAuthority",
+			"countries": [
+				"GB-ENG",
+				"GB-SCT",
+				"GB-WLS"
+			],
+			"inputFormats": [
+				".geojson"
+			],
+			"areaIdentities": {
+				"status": "available",
+				"recordCount": 380,
+				"artifact": "areas/localAuthority/2015-12-gb-bgc.json"
+			},
+			"relationships": {
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
+			}
+		},
+		{
 			"id": "2011-12-gb-bgc",
 			"geography": "localAuthority",
 			"countries": [
@@ -2743,8 +2778,22 @@
 				"artifact": "areas/ward/2015-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "clean-containment",
+						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2881,7 +2930,7 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 18
+			"releaseCount": 19
 		},
 		{
 			"id": "localHealthBoard",
