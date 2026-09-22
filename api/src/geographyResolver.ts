@@ -199,6 +199,7 @@ export type GeographyHealth = {
 	areaCount: number;
 	relatedAreaCount: number;
 	gapCount: number;
+	countries: string[];
 };
 
 export type RelationshipRepair = {
@@ -1027,13 +1028,15 @@ export class GeographyResolver {
 				const [geography, boundaryRelease] = identity.split("/", 2) as [string, string];
 				const coverage = this.relationshipCoverage(geography, boundaryRelease, undefined, 1);
 				const areaCount = this.inputs.areaLookup?.get(identity)?.size ?? 0;
-				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount, relatedAreaCount: 0, gapCount: areaCount };
+				const countries = this.boundaryRelease(geography, boundaryRelease)?.coverage.countries ?? [];
+				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount, relatedAreaCount: 0, gapCount: areaCount, countries };
 				return {
 					geography, boundaryRelease,
 					status: coverage.relatedAreaCount === coverage.areaCount ? "available" as const : coverage.relatedAreaCount > 0 ? "partial" as const : "unsupported" as const,
 					areaCount: coverage.areaCount,
 					relatedAreaCount: coverage.relatedAreaCount,
 					gapCount: coverage.areaCount - coverage.relatedAreaCount,
+					countries,
 				};
 			})
 			.sort((left, right) => `${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`));

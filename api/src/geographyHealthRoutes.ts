@@ -5,8 +5,9 @@ export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, seg
 	if (segments.length !== 2 || segments[0] !== "v1" || segments[1] !== "geography-health") return undefined;
 	if (!context.geographyResolver) return problem(503, "Catalogue Unavailable", "Build the geography resolver before reporting release health.");
 	const geography = parsedUrl.searchParams.get("geography");
+	const country = parsedUrl.searchParams.get("country");
 	const releases = context.geographyResolver.geographyHealth().filter(
-		(release) => !geography || release.geography === geography,
+		(release) => (!geography || release.geography === geography) && (!country || release.countries.includes(country)),
 	);
 	const priority = { "not-built": 0, unsupported: 1, partial: 2, available: 3 } as const;
 	const priorities = [...releases].sort((left, right) =>
@@ -18,7 +19,7 @@ export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, seg
 		href: `/v1/relationship-coverage?geography=${release.geography}&release=${release.boundaryRelease}`,
 	}));
 	return { status: 200, body: envelope(releaseId, {
-		filters: { geography },
+		filters: { geography, country },
 		releases,
 		priorities,
 		priorityNote: "Relationship artifacts not built rank first, then releases with no evidence, then the largest partial coverage gaps.",

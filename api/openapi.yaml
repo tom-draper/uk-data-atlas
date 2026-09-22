@@ -5286,6 +5286,7 @@ paths:
       summary: Summarise relationship health across compiled releases
       parameters:
         - { name: geography, in: query, required: false, schema: { type: string } }
+        - { name: country, in: query, required: false, schema: { type: string, example: GB-SCT } }
       responses:
         "200":
           description: Release-level relationship coverage and gaps.
