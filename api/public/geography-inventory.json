@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:2956b0fa29fd41ab0554975ffd2beaa7de8f5f492088969c743d6c5ccc1ae31a",
+	"contentHash": "sha256:7a63c8013ecc6f96ac77d556daa865cd5e28ee522b3a5103488823dde51d2919",
 	"boundaryRegistryHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
@@ -125,8 +125,22 @@
 				"artifact": "areas/constituency/2022-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -147,8 +161,35 @@
 				"artifact": "areas/constituency/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2022-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -169,8 +210,35 @@
 				"artifact": "areas/constituency/2020-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -205,6 +273,32 @@
 						"weighting": {
 							"status": "not-provided"
 						}
+					},
+					{
+						"id": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2018-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -227,8 +321,35 @@
 				"artifact": "areas/constituency/2018-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2017-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -249,8 +370,35 @@
 				"artifact": "areas/constituency/2017-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2016-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2018-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -271,8 +419,35 @@
 				"artifact": "areas/constituency/2016-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2017-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -292,8 +467,22 @@
 				"artifact": "areas/constituency/2015-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2016-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -328,6 +517,19 @@
 						"weighting": {
 							"status": "not-provided"
 						}
+					},
+					{
+						"id": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2024-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -350,8 +552,35 @@
 				"artifact": "areas/country/2024-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -372,8 +601,35 @@
 				"artifact": "areas/country/2023-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2022-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2024-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -394,8 +650,35 @@
 				"artifact": "areas/country/2022-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -416,8 +699,35 @@
 				"artifact": "areas/country/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2022-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -438,8 +748,22 @@
 				"artifact": "areas/country/2020-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "country",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -614,8 +938,22 @@
 				"artifact": "areas/itl1/2025-01-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "itl1",
+							"boundaryRelease": "2021-01-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -650,6 +988,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl1",
+							"boundaryRelease": "2025-01-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -672,8 +1023,22 @@
 				"artifact": "areas/itl2/2025-01-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "itl2",
+							"boundaryRelease": "2021-01-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -721,6 +1086,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl2",
+							"boundaryRelease": "2025-01-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -743,8 +1121,22 @@
 				"artifact": "areas/itl3/2025-01-uk-bgc-v2.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "itl3",
+							"boundaryRelease": "2021-01-uk-bgc-v3"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -776,6 +1168,19 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl3",
+							"boundaryRelease": "2025-01-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -825,6 +1230,19 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -944,6 +1362,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-05-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2026-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1006,6 +1450,19 @@
 						"weighting": {
 							"status": "not-provided"
 						}
+					},
+					{
+						"id": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1054,6 +1511,19 @@
 						"quality": "publisher-supplied",
 						"weighting": {
 							"status": "not-provided"
+						}
+					},
+					{
+						"id": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
 						}
 					}
 				]
@@ -1106,6 +1576,32 @@
 							"basis": "area",
 							"normalisation": "per-source"
 						}
+					},
+					{
+						"id": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2024-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1139,6 +1635,32 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-05-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -1217,6 +1739,19 @@
 						"weighting": {
 							"status": "not-provided"
 						}
+					},
+					{
+						"id": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1266,6 +1801,19 @@
 						"weighting": {
 							"status": "not-provided"
 						}
+					},
+					{
+						"id": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1288,8 +1836,35 @@
 				"artifact": "areas/localAuthority/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2022-12-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1310,8 +1885,35 @@
 				"artifact": "areas/localAuthority/2020-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1343,6 +1945,32 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2019-04-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -1382,6 +2010,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2018-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1404,8 +2058,35 @@
 				"artifact": "areas/localAuthority/2018-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2017-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2019-04-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1425,8 +2106,35 @@
 				"artifact": "areas/localAuthority/2017-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2016-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2018-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1457,6 +2165,32 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2017-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -1495,6 +2229,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2011-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2016-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1516,8 +2276,22 @@
 				"artifact": "areas/localAuthority/2011-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1537,8 +2311,22 @@
 				"artifact": "areas/localAuthority/2009-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2008-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1558,8 +2346,22 @@
 				"artifact": "areas/localAuthority/2008-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2009-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1665,8 +2467,22 @@
 				"artifact": "areas/lsoa/2011-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2011-12-ew-bgc-v3"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1699,6 +2515,32 @@
 						"weighting": {
 							"status": "not-provided"
 						}
+					},
+					{
+						"id": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2001-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2011-12-w-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1719,8 +2561,22 @@
 				"artifact": "areas/lsoa/2001-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "lsoa",
+							"boundaryRelease": "2011-12-ew-bgc-v3"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1847,6 +2703,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2025-05-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1867,8 +2736,35 @@
 				"artifact": "areas/parish/2025-05-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2024-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2026-05-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1887,8 +2783,35 @@
 				"artifact": "areas/parish/2024-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2025-05-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1907,8 +2830,35 @@
 				"artifact": "areas/parish/2023-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2022-12-ew-bgc-v3"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2024-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1927,8 +2877,35 @@
 				"artifact": "areas/parish/2022-12-ew-bgc-v3.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2021-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1947,8 +2924,35 @@
 				"artifact": "areas/parish/2021-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2019-04-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2022-12-ew-bgc-v3"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -1991,6 +2995,19 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "parish",
+							"boundaryRelease": "2021-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -2100,8 +3117,22 @@
 				"artifact": "areas/scottishParliamentaryConstituency/2022-12-sc-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "scottishParliamentaryConstituency",
+							"boundaryRelease": "2021-05-sc-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2119,8 +3150,35 @@
 				"artifact": "areas/scottishParliamentaryConstituency/2021-05-sc-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "scottishParliamentaryConstituency",
+							"boundaryRelease": "2016-05-sc-gcb"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "scottishParliamentaryConstituency",
+							"boundaryRelease": "2022-12-sc-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2138,8 +3196,22 @@
 				"artifact": "areas/scottishParliamentaryConstituency/2016-05-sc-gcb.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "scottishParliamentaryConstituency",
+							"boundaryRelease": "2021-05-sc-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2316,6 +3388,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2362,6 +3447,32 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2025-05-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2026-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -2414,6 +3525,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2024-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2025-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2463,6 +3600,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2025-05-uk-bgc-v2"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2485,8 +3648,35 @@
 				"artifact": "areas/ward/2024-05-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2024-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2507,8 +3697,35 @@
 				"artifact": "areas/ward/2023-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2023-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2556,6 +3773,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2022-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2592,6 +3835,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2023-05-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2614,8 +3883,35 @@
 				"artifact": "areas/ward/2021-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2022-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2636,8 +3932,35 @@
 				"artifact": "areas/ward/2020-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2021-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2658,8 +3981,48 @@
 				"artifact": "areas/ward/2019-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2018-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2019-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2020-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2679,8 +4042,22 @@
 				"artifact": "areas/ward/2019-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2701,8 +4078,35 @@
 				"artifact": "areas/ward/2018-12-uk-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2017-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2019-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2722,8 +4126,35 @@
 				"artifact": "areas/ward/2017-12-gb-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2016-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2018-12-uk-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -2754,6 +4185,32 @@
 						},
 						"method": "clean-containment",
 						"quality": "publisher-supplied",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2017-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
 						}
@@ -2792,6 +4249,32 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+						"direction": "to",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2011-12-ew-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2016-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -2812,8 +4295,22 @@
 				"artifact": "areas/ward/2011-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+						"direction": "from",
+						"counterpart": {
+							"geography": "ward",
+							"boundaryRelease": "2015-12-gb-bgc"
+						},
+						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		}
 	],
@@ -2873,9 +4370,9 @@
 					"availableAreaCount": 5826
 				},
 				"relationships": {
-					"availableReleaseCount": 2,
-					"unsupportedReleaseCount": 7,
-					"crosswalkCount": 3
+					"availableReleaseCount": 9,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 17
 				}
 			}
 		},
@@ -2895,9 +4392,9 @@
 					"availableAreaCount": 24
 				},
 				"relationships": {
-					"availableReleaseCount": 1,
-					"unsupportedReleaseCount": 5,
-					"crosswalkCount": 1
+					"availableReleaseCount": 6,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 11
 				}
 			}
 		},
@@ -3016,9 +4513,9 @@
 					"availableAreaCount": 24
 				},
 				"relationships": {
-					"availableReleaseCount": 1,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 1
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 3
 				}
 			}
 		},
@@ -3038,9 +4535,9 @@
 					"availableAreaCount": 87
 				},
 				"relationships": {
-					"availableReleaseCount": 1,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 2
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 4
 				}
 			}
 		},
@@ -3060,9 +4557,9 @@
 					"availableAreaCount": 361
 				},
 				"relationships": {
-					"availableReleaseCount": 1,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 1
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 3
 				}
 			}
 		},
@@ -3082,9 +4579,9 @@
 					"availableAreaCount": 7117
 				},
 				"relationships": {
-					"availableReleaseCount": 12,
-					"unsupportedReleaseCount": 7,
-					"crosswalkCount": 27
+					"availableReleaseCount": 19,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 57
 				}
 			}
 		},
@@ -3143,9 +4640,9 @@
 					"availableAreaCount": 106712
 				},
 				"relationships": {
-					"availableReleaseCount": 2,
-					"unsupportedReleaseCount": 2,
-					"crosswalkCount": 3
+					"availableReleaseCount": 4,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 7
 				}
 			}
 		},
@@ -3243,9 +4740,9 @@
 					"availableAreaCount": 80855
 				},
 				"relationships": {
-					"availableReleaseCount": 2,
-					"unsupportedReleaseCount": 5,
-					"crosswalkCount": 3
+					"availableReleaseCount": 7,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 15
 				}
 			}
 		},
@@ -3301,9 +4798,9 @@
 					"availableAreaCount": 292
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 4,
-					"crosswalkCount": 0
+					"availableReleaseCount": 3,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 4
 				}
 			}
 		},
@@ -3440,9 +4937,9 @@
 					"availableAreaCount": 146045
 				},
 				"relationships": {
-					"availableReleaseCount": 8,
-					"unsupportedReleaseCount": 9,
-					"crosswalkCount": 12
+					"availableReleaseCount": 17,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 44
 				}
 			}
 		}

@@ -1,0 +1,128 @@
+{
+	"schemaVersion": 1,
+	"id": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+	"method": "same-code-continuity",
+	"quality": "derived",
+	"relationshipPurpose": "identity",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "country",
+		"boundaryRelease": "2023-12-uk-bgc"
+	},
+	"to": {
+		"geography": "country",
+		"boundaryRelease": "2024-12-uk-bgc"
+	},
+	"provenance": {
+		"inputs": [
+			{
+				"side": "from",
+				"input": "boundaries/country/2023-12-uk-bgc/Countries_December_2023_Boundaries_UK_BGC_7680513041963091487.geojson",
+				"inputHash": "sha256:42ae1c0394e599b9c2254ffef283c97f95899c17c6aa9f204fdb418650a1ffa5",
+				"sourceCrs": "EPSG:27700",
+				"transformation": {
+					"name": "OSGB36 to WGS 84 (6)",
+					"epsg": "EPSG:1314",
+					"accuracyM": 2,
+					"areaOfUse": "Great Britain onshore and the Isle of Man."
+				},
+				"corrections": [
+					{
+						"id": "northern-ireland-offset",
+						"description": "Moves Northern Ireland features in an ONS UK-wide British National Grid release to where the ONS's own WGS84 releases place them. In these files Northern Ireland sits a linear transform away from its true grid position: about 66 m east and 11 m south at Belfast, 50 m east and 21 m south at Enniskillen. Great Britain is unaffected. No published OSGB36 or TM65 transformation reproduces the shift, so it is corrected empirically."
+					}
+				]
+			},
+			{
+				"side": "to",
+				"input": "boundaries/country/2024-12-uk-bgc/Countries_December_2024_Boundaries_UK_BGC_-6819391823965546166.geojson",
+				"inputHash": "sha256:1575e023adc21dbb745c35ec042ca69eba972bfd140c13ee405337924db756a8",
+				"sourceCrs": "EPSG:27700",
+				"transformation": {
+					"name": "OSGB36 to WGS 84 (6)",
+					"epsg": "EPSG:1314",
+					"accuracyM": 2,
+					"areaOfUse": "Great Britain onshore and the Isle of Man."
+				},
+				"corrections": [
+					{
+						"id": "northern-ireland-offset",
+						"description": "Moves Northern Ireland features in an ONS UK-wide British National Grid release to where the ONS's own WGS84 releases place them. In these files Northern Ireland sits a linear transform away from its true grid position: about 66 m east and 11 m south at Belfast, 50 m east and 21 m south at Enniskillen. Great Britain is unaffected. No published OSGB36 or TM65 transformation reproduces the shift, so it is corrected empirically."
+					}
+				]
+			}
+		],
+		"areaProjection": "EPSG:6933",
+		"clipping": "polygon-clipping@0.15.7"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 4,
+				"referencedCodeCount": 1
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 4,
+				"referencedCodeCount": 1
+			}
+		},
+		"continuity": {
+			"sliverWidthM": 100,
+			"sourceAreaCount": 4,
+			"targetAreaCount": 4,
+			"sharedCodeCount": 4,
+			"continuousCount": 1,
+			"changedExtent": [
+				{
+					"code": "E92000001",
+					"relation": "indeterminate",
+					"widestDifferenceM": 131.7,
+					"sourceShare": 0.999982,
+					"targetShare": 0.999968
+				},
+				{
+					"code": "W92000004",
+					"relation": "indeterminate",
+					"widestDifferenceM": 111.4,
+					"sourceShare": 0.999984,
+					"targetShare": 0.999977
+				},
+				{
+					"code": "S92000003",
+					"relation": "indeterminate",
+					"widestDifferenceM": 60,
+					"sourceShare": 0.999985,
+					"targetShare": 0.999996
+				}
+			],
+			"unmeasured": []
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "N92000002",
+				"labels": [
+					"Northern Ireland"
+				]
+			},
+			"targets": [
+				{
+					"code": "N92000002",
+					"labels": [
+						"Northern Ireland"
+					],
+					"widestDifferenceM": 3.6,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:c8e65d6dd06621676ba13f67749001e2d0614cbf21f6648bba5704fad72426a4"
+}

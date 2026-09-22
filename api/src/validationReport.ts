@@ -13,6 +13,7 @@ export const VALIDATION_CHECKS = [
 	"weights-sum-to-one",
 	"area-coverage",
 	"sliver-separation",
+	"same-code-extent",
 	"measure-definition",
 	"records-resolve",
 	"countries-declared",

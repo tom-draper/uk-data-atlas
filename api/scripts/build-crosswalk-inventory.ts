@@ -5,12 +5,14 @@ import { fileURLToPath } from "node:url";
 import {
 	readCrosswalkAdapters,
 	type AreaOverlapCrosswalkAdapter,
+	type SameCodeContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import {
 	compileCrosswalks,
 	createCrosswalkInventory,
 	type AreaOverlapCrosswalkArtifact,
 	type CrosswalkArtifact,
+	type SameCodeContinuityCrosswalkArtifact,
 } from "../src/crosswalkInventory";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import {
@@ -47,23 +49,29 @@ const readCompiledAreaLookup = (outputDirectory: string) => {
 	return createAreaLookup(artifacts);
 };
 
+type GeometryCrosswalkAdapter =
+	AreaOverlapCrosswalkAdapter | SameCodeContinuityCrosswalkAdapter;
+
 /**
  * Geometry overlays are deliberately expensive. A prior artifact is safe to
  * reuse only when it passes its own hash check and its declared geometry
  * inputs and numeric rules still match the current adapter.
  */
-const reusableAreaOverlap = (
+const reusableGeometryCrosswalk = (
 	outputDirectory: string,
-	adapter: AreaOverlapCrosswalkAdapter,
+	adapter: GeometryCrosswalkAdapter,
 	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
-): AreaOverlapCrosswalkArtifact | undefined => {
+):
+	| AreaOverlapCrosswalkArtifact
+	| SameCodeContinuityCrosswalkArtifact
+	| undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
 	if (!existsSync(path)) return undefined;
 	try {
 		const artifact = JSON.parse(
 			readFileSync(path, "utf8"),
 		) as CrosswalkArtifact;
-		if (artifact.method !== "area-overlap") return undefined;
+		if (artifact.method !== adapter.method) return undefined;
 		const { contentHash, ...withoutHash } = artifact;
 		if (contentHash !== sha256(JSON.stringify(withoutHash)))
 			return undefined;
@@ -73,17 +81,32 @@ const reusableAreaOverlap = (
 			JSON.stringify(artifact.from) !== JSON.stringify(adapter.from) ||
 			JSON.stringify(artifact.to) !== JSON.stringify(adapter.to) ||
 			JSON.stringify(artifact.weighting) !==
-				JSON.stringify(adapter.weighting) ||
-			artifact.validation.overlap.sliverWidthM !== adapter.sliverWidthM ||
-			artifact.validation.overlap.minimumCoverage !==
-				adapter.minimumCoverage
+				JSON.stringify(adapter.weighting)
 		)
 			return undefined;
+		if (artifact.method === "area-overlap") {
+			const overlap = adapter as AreaOverlapCrosswalkAdapter;
+			if (
+				artifact.validation.overlap.sliverWidthM !==
+					overlap.sliverWidthM ||
+				artifact.validation.overlap.minimumCoverage !==
+					overlap.minimumCoverage
+			)
+				return undefined;
+		} else if (
+			artifact.method !== "same-code-continuity" ||
+			artifact.validation.continuity.sliverWidthM !== adapter.sliverWidthM
+		)
+			return undefined;
+		const sourceCodePattern =
+			adapter.method === "area-overlap"
+				? adapter.sourceCodePattern
+				: undefined;
 		const expected = [
-			["from", adapter.from, adapter.sourceCodePattern],
+			["from", adapter.from, sourceCodePattern],
 			["to", adapter.to, undefined],
 		] as const;
-		for (const [side, endpoint, sourceCodePattern] of expected) {
+		for (const [side, endpoint, pattern] of expected) {
 			const source = geometrySources.get(
 				`${endpoint.geography}/${endpoint.boundaryRelease}`,
 			);
@@ -95,7 +118,9 @@ const reusableAreaOverlap = (
 				!input ||
 				input.input !== source.input ||
 				input.inputHash !== source.inputHash ||
-				input.sourceCodePattern !== sourceCodePattern
+				("sourceCodePattern" in input
+					? input.sourceCodePattern
+					: undefined) !== pattern
 			)
 				return undefined;
 		}
@@ -120,9 +145,10 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	);
 	const reusable = new Map(
 		adapters.flatMap((adapter) =>
-			adapter.method === "area-overlap"
+			adapter.method === "area-overlap" ||
+			adapter.method === "same-code-continuity"
 				? (() => {
-						const artifact = reusableAreaOverlap(
+						const artifact = reusableGeometryCrosswalk(
 							outputDirectory,
 							adapter,
 							geometrySources,

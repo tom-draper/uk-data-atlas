@@ -1,0 +1,220 @@
+{
+	"schemaVersion": 1,
+	"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+	"method": "same-code-continuity",
+	"quality": "derived",
+	"relationshipPurpose": "identity",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "itl1",
+		"boundaryRelease": "2021-01-uk-bgc"
+	},
+	"to": {
+		"geography": "itl1",
+		"boundaryRelease": "2025-01-uk-bgc"
+	},
+	"provenance": {
+		"inputs": [
+			{
+				"side": "from",
+				"input": "boundaries/itl1/2021-01-uk-bgc/ITL1_JAN_2021_UK_BGC.geojson",
+				"inputHash": "sha256:b63c72a59cce2eedea1e11d85c4e6bbe2dce01faa321a184b87c34907a192c22",
+				"sourceCrs": "EPSG:4326"
+			},
+			{
+				"side": "to",
+				"input": "boundaries/itl1/2025-01-uk-bgc/ITL1_JAN_2025_UK_BGC.geojson",
+				"inputHash": "sha256:2ee80ac980be413d5d5338327f91f069c3407b5ff3d1b2331d5a457cf4c5fe7d",
+				"sourceCrs": "EPSG:4326"
+			}
+		],
+		"areaProjection": "EPSG:6933",
+		"clipping": "polygon-clipping@0.15.7"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 12,
+				"referencedCodeCount": 6
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 12,
+				"referencedCodeCount": 6
+			}
+		},
+		"continuity": {
+			"sliverWidthM": 100,
+			"sourceAreaCount": 12,
+			"targetAreaCount": 12,
+			"sharedCodeCount": 12,
+			"continuousCount": 6,
+			"changedExtent": [
+				{
+					"code": "TLC",
+					"relation": "indeterminate",
+					"widestDifferenceM": 131.7,
+					"sourceShare": 0.999891,
+					"targetShare": 0.999923
+				},
+				{
+					"code": "TLL",
+					"relation": "indeterminate",
+					"widestDifferenceM": 111.4,
+					"sourceShare": 0.999969,
+					"targetShare": 0.999962
+				},
+				{
+					"code": "TLD",
+					"relation": "indeterminate",
+					"widestDifferenceM": 107.6,
+					"sourceShare": 0.999919,
+					"targetShare": 0.999762
+				},
+				{
+					"code": "TLH",
+					"relation": "indeterminate",
+					"widestDifferenceM": 79.5,
+					"sourceShare": 0.999974,
+					"targetShare": 0.999971
+				},
+				{
+					"code": "TLM",
+					"relation": "indeterminate",
+					"widestDifferenceM": 74.9,
+					"sourceShare": 0.99998,
+					"targetShare": 0.999996
+				},
+				{
+					"code": "TLJ",
+					"relation": "indeterminate",
+					"widestDifferenceM": 68.8,
+					"sourceShare": 0.999958,
+					"targetShare": 0.999959
+				}
+			],
+			"unmeasured": []
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "TLE",
+				"labels": [
+					"Yorkshire and The Humber"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLE",
+					"labels": [
+						"Yorkshire and The Humber"
+					],
+					"widestDifferenceM": 15.7,
+					"sourceShare": 0.999975,
+					"targetShare": 0.999978
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLF",
+				"labels": [
+					"East Midlands (England)"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLF",
+					"labels": [
+						"East Midlands (England)"
+					],
+					"widestDifferenceM": 20.3,
+					"sourceShare": 0.999948,
+					"targetShare": 0.999957
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLG",
+				"labels": [
+					"West Midlands (England)"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLG",
+					"labels": [
+						"West Midlands (England)"
+					],
+					"widestDifferenceM": 20.3,
+					"sourceShare": 0.999928,
+					"targetShare": 0.999923
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLI",
+				"labels": [
+					"London"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLI",
+					"labels": [
+						"London"
+					],
+					"widestDifferenceM": 27.1,
+					"sourceShare": 0.999797,
+					"targetShare": 0.999847
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLK",
+				"labels": [
+					"South West (England)"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLK",
+					"labels": [
+						"South West (England)"
+					],
+					"widestDifferenceM": 40.4,
+					"sourceShare": 0.999958,
+					"targetShare": 0.999963
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "TLN",
+				"labels": [
+					"Northern Ireland"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLN",
+					"labels": [
+						"Northern Ireland"
+					],
+					"widestDifferenceM": 12.2,
+					"sourceShare": 0.999966,
+					"targetShare": 1
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:f48fbca1ddfddc4b526ceabc54b2ab4bcaba6f085d6b9c661935339b9b795cca"
+}

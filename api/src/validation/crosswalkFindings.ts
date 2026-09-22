@@ -227,5 +227,33 @@ export const crosswalkFindings = (
 			),
 		);
 	}
+
+	if (artifact.method === "same-code-continuity") {
+		// Recompute the identity claim from each published pair rather than
+		// trusting the compiler's own count.
+		const { continuity } = artifact.validation;
+		const broken = artifact.records
+			.filter(
+				(record) =>
+					record.targets.length !== 1 ||
+					record.targets[0]!.code !== record.source.code ||
+					record.targets[0]!.widestDifferenceM >=
+						continuity.sliverWidthM / 2,
+			)
+			.map((record) => record.source.code);
+		findings.push(
+			check(
+				"same-code-extent",
+				broken.length === 0 &&
+					continuity.continuousCount === artifact.records.length,
+				`Pairs that are not one same-code target differing by less than ${continuity.sliverWidthM / 2} m: ${listed(broken)}.`,
+				{
+					sliverWidthM: continuity.sliverWidthM,
+					sharedCodeCount: continuity.sharedCodeCount,
+					changedExtentCount: continuity.changedExtent.length,
+				},
+			),
+		);
+	}
 	return findings;
 };

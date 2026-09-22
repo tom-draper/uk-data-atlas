@@ -4,25 +4,25 @@
 		"boundaryRegistry": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 		"areaInventory": "sha256:540a0f11b94d5355619580c592e161fd3fbe02cbde404cf60c419f6202ffb37f",
 		"geometrySources": "sha256:9e6bb38492183c83dc232498b460574d3fffd5d2995fcc7744b3e93608f9fab2",
-		"crosswalkInventory": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
+		"crosswalkInventory": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
 		"relationshipCandidates": "sha256:ddba58ccf93e44edf2109a1f643e1a401bc5c1e9883fa4bc1fa11729c3c5cb68",
-		"geographyInventory": "sha256:2956b0fa29fd41ab0554975ffd2beaa7de8f5f492088969c743d6c5ccc1ae31a",
+		"geographyInventory": "sha256:7a63c8013ecc6f96ac77d556daa865cd5e28ee522b3a5103488823dde51d2919",
 		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 		"exportManifest": "sha256:825869e7f0bad75660cf60f4cc86b0ec12eb1defc8bd72ba29b56fcf521182a9",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:d1d28a789ceb45d76889fabfac77d219903730338ae5af28a76686c193dc6ecf"
 	},
 	"summary": {
-		"resourceCount": 600,
-		"checkCount": 1946,
-		"passedCount": 1900,
+		"resourceCount": 656,
+		"checkCount": 2226,
+		"passedCount": 2180,
 		"waivedCount": 46,
 		"coverage": {
 			"boundaryReleases": 94,
 			"areaIdentities": 94,
 			"servableGeometry": 94,
-			"withRelationships": 36,
-			"crosswalks": 30,
+			"withRelationships": 77,
+			"crosswalks": 86,
 			"weightedCrosswalks": 2,
 			"measures": 167,
 			"measureSources": 308
@@ -2877,6 +2877,251 @@
 			]
 		},
 		{
+			"id": "crosswalks/constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 607
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 626,
+						"changedExtentCount": 19
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 630
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 650,
+						"changedExtentCount": 20
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 641
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 650,
+						"changedExtentCount": 9
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 573
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 650,
+						"changedExtentCount": 77
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 626
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 650,
+						"changedExtentCount": 24
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 650
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 650,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 646
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 650,
+						"changedExtentCount": 4
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -2930,6 +3175,251 @@
 			]
 		},
 		{
+			"id": "crosswalks/country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 4,
+						"changedExtentCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 4
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 4,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 4
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 4,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 4,
+						"changedExtentCount": 3
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 3
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 4,
+						"changedExtentCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 6
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 12,
+						"changedExtentCount": 6
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 16
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 31,
+						"changedExtentCount": 15
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -2956,6 +3446,41 @@
 				{
 					"id": "single-parent",
 					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 85
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 122,
+						"changedExtentCount": 37
+					}
 				}
 			]
 		},
@@ -2990,6 +3515,356 @@
 			]
 		},
 		{
+			"id": "crosswalks/local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 347
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 370,
+						"changedExtentCount": 23
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 214
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 374,
+						"changedExtentCount": 160
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 218
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 380,
+						"changedExtentCount": 162
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 377
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 380,
+						"changedExtentCount": 3
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 373
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 378,
+						"changedExtentCount": 5
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 374
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 375,
+						"changedExtentCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 313
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 382,
+						"changedExtentCount": 69
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 353
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 378,
+						"changedExtentCount": 25
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 369
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 372,
+						"changedExtentCount": 3
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 374
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 374,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3016,6 +3891,111 @@
 			]
 		},
 		{
+			"id": "crosswalks/local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 361
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 361,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 348
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 361,
+						"changedExtentCount": 13
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 361
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 361,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3038,6 +4018,76 @@
 				{
 					"id": "targets-present",
 					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 357
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 361,
+						"changedExtentCount": 4
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 360
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 361,
+						"changedExtentCount": 1
+					}
 				}
 			]
 		},
@@ -3207,6 +4257,76 @@
 			]
 		},
 		{
+			"id": "crosswalks/lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 33391
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 33519,
+						"changedExtentCount": 128
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1909
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 1909,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3293,6 +4413,41 @@
 			]
 		},
 		{
+			"id": "crosswalks/parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11317
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 11408,
+						"changedExtentCount": 90
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3353,6 +4508,181 @@
 			]
 		},
 		{
+			"id": "crosswalks/parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11486
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 11489,
+						"changedExtentCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11338
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 11346,
+						"changedExtentCount": 6
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11432
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 11446,
+						"changedExtentCount": 14
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11446
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 11459,
+						"changedExtentCount": 13
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 11499
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 11504,
+						"changedExtentCount": 5
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3379,6 +4709,76 @@
 				{
 					"id": "single-parent",
 					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 54
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 71,
+						"changedExtentCount": 17
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 73
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 73,
+						"changedExtentCount": 0
+					}
 				}
 			]
 		},
@@ -3413,6 +4813,76 @@
 			]
 		},
 		{
+			"id": "crosswalks/ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 6492
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 6524,
+						"changedExtentCount": 32
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8327
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8352,
+						"changedExtentCount": 25
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3439,6 +4909,41 @@
 				{
 					"id": "single-parent",
 					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8321
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8324,
+						"changedExtentCount": 3
+					}
 				}
 			]
 		},
@@ -3473,6 +4978,251 @@
 			]
 		},
 		{
+			"id": "crosswalks/ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8191
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8196,
+						"changedExtentCount": 5
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 7383
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 7478,
+						"changedExtentCount": 95
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8424
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8425,
+						"changedExtentCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8851
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8887,
+						"changedExtentCount": 36
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8180
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8187,
+						"changedExtentCount": 7
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 6834
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 6834,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 7254
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 7260,
+						"changedExtentCount": 6
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3499,6 +5249,41 @@
 				{
 					"id": "single-parent",
 					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8440
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8441,
+						"changedExtentCount": 1
+					}
 				}
 			]
 		},
@@ -3563,6 +5348,111 @@
 			]
 		},
 		{
+			"id": "crosswalks/ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8030
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8050,
+						"changedExtentCount": 20
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8392
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8396,
+						"changedExtentCount": 4
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8070
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8070,
+						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3623,6 +5513,41 @@
 			]
 		},
 		{
+			"id": "crosswalks/ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8399
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8405,
+						"changedExtentCount": 6
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
 			"kind": "crosswalk",
 			"status": "passed",
@@ -3649,6 +5574,41 @@
 				{
 					"id": "single-parent",
 					"status": "passed"
+				}
+			]
+		},
+		{
+			"id": "crosswalks/ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 8038
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "same-code-extent",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"sharedCodeCount": 8042,
+						"changedExtentCount": 1
+					}
 				}
 			]
 		},
@@ -18810,5 +20770,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:4f16834b3a34007afbf76927b54c75349ad2c1fbf3775b2f65c4450dca872b84"
+	"contentHash": "sha256:6786d711dba46306046d9391e245cfe26424f85c1c90ac93cee180d156873507"
 }

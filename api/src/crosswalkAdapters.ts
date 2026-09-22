@@ -9,7 +9,10 @@ export type CrosswalkSideAdapter = {
 };
 
 export type CrosswalkMethod =
-	"official-lookup" | "clean-containment" | "area-overlap";
+	| "official-lookup"
+	| "clean-containment"
+	| "area-overlap"
+	| "same-code-continuity";
 export type CrosswalkQuality = "publisher-supplied" | "derived";
 export type PropertyRelationshipPurpose = "identity" | "membership";
 export type AreaOverlapWeighting = {
@@ -54,8 +57,28 @@ export type AreaOverlapCrosswalkAdapter = {
 	minimumCoverage: number;
 };
 
+// Same-code continuity adapters pair the codes two releases of one geography
+// share, and publish a pair as identity only where its two geometries differ
+// by no more than generalisation slivers.
+export type SameCodeContinuityCrosswalkAdapter = {
+	id: string;
+	method: "same-code-continuity";
+	quality: "derived";
+	relationshipPurpose: "identity";
+	weighting: { status: "not-applicable" };
+	from: { geography: string; boundaryRelease: string };
+	to: { geography: string; boundaryRelease: string };
+	/**
+	 * The sliver width, as area-overlap adapters declare it: a pair is
+	 * identity while its widest difference is under half of it.
+	 */
+	sliverWidthM: number;
+};
+
 export type CrosswalkAdapter =
-	PropertyCrosswalkAdapter | AreaOverlapCrosswalkAdapter;
+	| PropertyCrosswalkAdapter
+	| AreaOverlapCrosswalkAdapter
+	| SameCodeContinuityCrosswalkAdapter;
 
 type AdapterFile = { schemaVersion?: unknown; crosswalks?: unknown };
 
@@ -114,6 +137,23 @@ const validAreaOverlapAdapter = (
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;
 
+const validSameCodeContinuityAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is SameCodeContinuityCrosswalkAdapter =>
+	adapter.method === "same-code-continuity" &&
+	adapter.quality === "derived" &&
+	adapter.relationshipPurpose === "identity" &&
+	isRecord(adapter.weighting) &&
+	adapter.weighting.status === "not-applicable" &&
+	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
+	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	(adapter.from as { geography: string }).geography ===
+		(adapter.to as { geography: string }).geography &&
+	(adapter.from as { boundaryRelease: string }).boundaryRelease !==
+		(adapter.to as { boundaryRelease: string }).boundaryRelease &&
+	typeof adapter.sliverWidthM === "number" &&
+	adapter.sliverWidthM > 0;
+
 export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 	const file = JSON.parse(readFileSync(path, "utf8")) as AdapterFile;
 	if (file.schemaVersion !== 1 || !Array.isArray(file.crosswalks)) {
@@ -123,7 +163,11 @@ export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 		if (
 			!isRecord(adapter) ||
 			typeof adapter.id !== "string" ||
-			!(validPropertyAdapter(adapter) || validAreaOverlapAdapter(adapter))
+			!(
+				validPropertyAdapter(adapter) ||
+				validAreaOverlapAdapter(adapter) ||
+				validSameCodeContinuityAdapter(adapter)
+			)
 		) {
 			throw new Error(`Invalid crosswalk adapter at ${path}`);
 		}

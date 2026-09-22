@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
-import type { CrosswalkInventory } from "./crosswalkInventory";
+import type {
+	CrosswalkInventory,
+	CrosswalkMethod,
+} from "./crosswalkInventory";
 
 export type RelationshipPurpose = "identity" | "membership" | "apportion";
 
@@ -12,7 +15,7 @@ export type RelationshipPath = {
 	steps: Array<{
 		crosswalkId: string;
 		direction: "forward" | "reverse";
-		method: "official-lookup" | "clean-containment" | "area-overlap";
+		method: CrosswalkMethod;
 	}>;
 };
 
@@ -42,7 +45,9 @@ const purposeFor = (
 			? "membership"
 			: crosswalk.method === "area-overlap"
 				? "apportion"
-				: undefined);
+				: crosswalk.method === "same-code-continuity"
+					? "identity"
+					: undefined);
 
 /**
  * Compiles only already-published one-edge paths. Multi-edge paths must be
