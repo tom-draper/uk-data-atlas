@@ -24,4 +24,5 @@ test("filters the repair dashboard to one geography", () => {
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.releases.length, 1);
 	assert.equal(data.filters.geography, "ward");
+	assert.equal(data.priorities[0].geography, "ward");
 });
