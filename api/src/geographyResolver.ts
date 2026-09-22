@@ -44,6 +44,7 @@ import type {
 	RelationshipPath,
 	RelationshipPurpose,
 } from "./relationshipPaths";
+import type { CapabilityStatus } from "./capability";
 import type { GeometryProvenance } from "./reprojection";
 import {
 	derivedReleaseSources,
@@ -129,6 +130,45 @@ export type ResolvedAreaRelationshipSummary = {
 export type ResolvedAreaNeighbours = {
 	geometry: GeoJsonGeometry;
 	neighbours: ResolvedAreaNeighbour[];
+};
+
+type GeographyEndpoint = { geography: string; boundaryRelease: string };
+
+export type RelationshipPathStepCoverage = {
+	crosswalkId: string;
+	direction: "forward" | "reverse";
+	status: "complete" | "partial" | "not-built";
+	mappedSourceAreaCount?: number;
+	sourceAreaCount?: number;
+	share?: number;
+	missingPrerequisite?: string;
+};
+
+export type ResolvedRelationshipPath = RelationshipPath & {
+	coverage: {
+		status: "complete" | "partial" | "not-built";
+		mappedSourceAreaCount?: number;
+		sourceAreaCount?: number;
+		share?: number;
+		steps: RelationshipPathStepCoverage[];
+	};
+};
+
+export type RelationshipPrerequisite = {
+	id:
+		| "source-areas"
+		| "target-areas"
+		| "path-step-areas"
+		| "crosswalk-artifact"
+		| "relationship-path";
+	status: Extract<CapabilityStatus, "not-built" | "unsupported">;
+	reason: string;
+};
+
+export type ResolvedRelationshipCapability = {
+	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
+	paths: ResolvedRelationshipPath[];
+	missingPrerequisites: RelationshipPrerequisite[];
 };
 
 type AreaIdentity = {
@@ -670,6 +710,144 @@ export class GeographyResolver {
 				].join("/"),
 			) ?? []
 		);
+	}
+
+	/**
+	 * Explains whether an exact conversion is usable, including the source
+	 * coverage of each declared path and every artifact that is still needed to
+	 * make that claim. This keeps route handlers out of crosswalk internals.
+	 */
+	relationshipCapability(
+		from: GeographyEndpoint,
+		to: GeographyEndpoint,
+		purpose: RelationshipPurpose,
+	): ResolvedRelationshipCapability {
+		const missingPrerequisites: RelationshipPrerequisite[] = [];
+		const endpointAreaCount = (endpoint: GeographyEndpoint) => {
+			const lookupCount = this.inputs.areaLookup?.get(
+				`${endpoint.geography}/${endpoint.boundaryRelease}`,
+			)?.size;
+			if (lookupCount !== undefined) return lookupCount;
+			const release = this.inputs.areaInventory?.releases.find(
+				(candidate) =>
+					candidate.geography === endpoint.geography &&
+					candidate.id === endpoint.boundaryRelease,
+			);
+			return release?.status === "available" ? release.recordCount : undefined;
+		};
+		const sourceAreaCount = endpointAreaCount(from);
+		const targetAreaCount = endpointAreaCount(to);
+		if (sourceAreaCount === undefined) {
+			missingPrerequisites.push({
+				id: "source-areas",
+				status: "not-built",
+				reason: `No compiled area identity artifact is available for ${from.geography}/${from.boundaryRelease}.`,
+			});
+		}
+		if (targetAreaCount === undefined) {
+			missingPrerequisites.push({
+				id: "target-areas",
+				status: "not-built",
+				reason: `No compiled area identity artifact is available for ${to.geography}/${to.boundaryRelease}.`,
+			});
+		}
+		const paths = this.relationshipPaths(from, to, purpose);
+		if (paths.length === 0) {
+			missingPrerequisites.push({
+				id: "relationship-path",
+				status: "unsupported",
+				reason: `No declared ${purpose} path is published from ${from.geography}/${from.boundaryRelease} to ${to.geography}/${to.boundaryRelease}.`,
+			});
+		}
+		const resolvedPaths = paths.map((path) => {
+			const steps = path.steps.map((step) => {
+				const artifact = this.inputs.crosswalkLookup?.get(step.crosswalkId);
+				if (!artifact) {
+					const reason = `The crosswalk artifact ${step.crosswalkId} required by ${path.id} is not built.`;
+					if (!missingPrerequisites.some((item) => item.reason === reason)) {
+						missingPrerequisites.push({
+							id: "crosswalk-artifact",
+							status: "not-built",
+							reason,
+						});
+					}
+					return {
+						crosswalkId: step.crosswalkId,
+						direction: step.direction,
+						status: "not-built" as const,
+						missingPrerequisite: reason,
+					};
+				}
+				const mappedSourceAreaCount = new Set(
+					step.direction === "forward"
+						? artifact.records.map((record) => record.source.code)
+						: artifact.records.flatMap((record) =>
+							record.targets.map((target) => target.code),
+					),
+				).size;
+				const stepSource =
+					step.direction === "forward" ? artifact.from : artifact.to;
+				const stepSourceAreaCount = endpointAreaCount(stepSource);
+				if (stepSourceAreaCount === undefined) {
+					const reason = `No compiled area identity artifact is available for ${stepSource.geography}/${stepSource.boundaryRelease}.`;
+					if (!missingPrerequisites.some((item) => item.reason === reason)) {
+						missingPrerequisites.push({
+							id: "path-step-areas",
+							status: "not-built",
+							reason,
+						});
+					}
+					return {
+						crosswalkId: step.crosswalkId,
+						direction: step.direction,
+						status: "not-built" as const,
+						mappedSourceAreaCount,
+						missingPrerequisite: reason,
+					};
+				}
+				const share = mappedSourceAreaCount / stepSourceAreaCount;
+				return {
+					crosswalkId: step.crosswalkId,
+					direction: step.direction,
+					status: share === 1 ? ("complete" as const) : ("partial" as const),
+					mappedSourceAreaCount,
+					sourceAreaCount: stepSourceAreaCount,
+					share,
+				};
+			});
+			const firstStep = steps[0]!;
+			return {
+				...path,
+				coverage: {
+					status: steps.some((step) => step.status === "not-built")
+						? ("not-built" as const)
+						: steps.some((step) => step.status === "partial")
+							? ("partial" as const)
+							: ("complete" as const),
+					mappedSourceAreaCount: firstStep.mappedSourceAreaCount,
+					sourceAreaCount: firstStep.sourceAreaCount ?? sourceAreaCount,
+					share: firstStep.share,
+					steps,
+				},
+			} satisfies ResolvedRelationshipPath;
+		});
+		const hasUnbuilt = missingPrerequisites.some(
+			(item) => item.status === "not-built",
+		);
+		return {
+			status:
+				resolvedPaths.length === 0
+					? hasUnbuilt
+						? "not-built"
+						: "unsupported"
+					: resolvedPaths.some((path) => path.coverage.status === "partial")
+						? "partial"
+						: resolvedPaths.some((path) => path.coverage.status === "not-built")
+							? "not-built"
+							: "available",
+			paths: resolvedPaths,
+			missingPrerequisites,
+		};
 	}
 
 	/** Crosswalks from a target geography/release into a location's LAD members. */
