@@ -5230,7 +5230,11 @@
 		},
 		"GET /geography-health": {
 			"operationId": "getGeographyHealth",
-			"parameters": {},
+			"parameters": {
+				"query:geography": {
+					"required": false
+				}
+			},
 			"responses": {
 				"200 application/json": [],
 				"503 application/problem+json": [
