@@ -10,6 +10,7 @@ import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinateRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
 import { handleCoveragePlanRoutes } from "./coveragePlanRoutes";
+import { handleMeasureReconciliationRoutes } from "./measureReconciliationRoutes";
 import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
 import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
 import { handleDataRoutes } from "./dataRoutes";
@@ -127,6 +128,14 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "measures" &&
 			segments[3] === "compatibility",
 		handle: handleMeasureCompatibilityRoutes,
+	},
+	{
+		name: "measure-reconciliation",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "reconciliation",
+		handle: handleMeasureReconciliationRoutes,
 	},
 	{
 		name: "measure-coverage-plan",

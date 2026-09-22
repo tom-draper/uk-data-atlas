@@ -727,6 +727,13 @@ only **available** when its endpoint, contract and provenance are published.
       an implicit conversion, and a target the crosswalk never mentions is a
       404 rather than a sum of nothing. `regionCode` remains the original
       spelling for a region and is answered beside `target`.
+- [x] Check a measure against itself across two geographies, through
+      `GET /v1/measures/{measure-id}/reconciliation`. Adding the finer
+      partition up through a published crosswalk should reproduce the coarser
+      one; both figures are the publisher's, so a difference is evidence about
+      the crosswalk, the vintage or the data, and nothing is corrected. An
+      area whose finer parts are not all published is `incomplete`, which is a
+      gap rather than a disagreement.
 - [x] Answer a measure's coverage of one release country by country, through
       `GET /v1/measures/{measure-id}/coverage-plan`, so a gap in one nation is
       read before a ranking is, not after. Each country is `source-exact`,
@@ -3509,6 +3516,7 @@ second inventory to maintain:
 - `GET /v1/measures/{measure-id}` — Get one measure's semantics and availability
 - `GET /v1/measures/{measure-id}/compatibility` — Report source-code compatibility with compiled boundary releases
 - `GET /v1/measures/{measure-id}/coverage` — Report source and boundary code coverage for a measure
+- `GET /v1/measures/{measure-id}/reconciliation` — Check a measure against itself across two geographies
 - `GET /v1/measures/{measure-id}/coverage-plan` — Say what a measure can answer on one release, country by country
 - `GET /v1/measures/{measure-id}/quality` — Preflight source, status and boundary quality for a measure
 
@@ -3782,6 +3790,25 @@ release nothing relates at all. Of several releases of one parent geography
 it asks the nearest in vintage, and it gives up on a pair after a handful of
 children fail, because a pair that is not a hierarchy shows it immediately.
 The geometry decides; the search only chooses what to ask.
+
+Holding the same measure on two geographies is worth more than either alone:
+adding the finer one up through a published crosswalk should reproduce the
+coarser one, and where it does not, one of the three is wrong. The 2022 wards
+added into May 2023 local authorities agree with the published local
+authority figures for 299 of 318, a median 0.10% apart. The same check is how
+a weighting is judged: the 2024 constituencies added into May 2024 local
+authorities are a median 0.28% from the published figures by population
+weight against 8.8% by area weight, and 245 of 318 agree within half a
+percent against 44.
+
+An area whose finer parts are not all published is reported `incomplete` with
+the number missing, because a sum short of its parts is a gap rather than a
+disagreement, and it is left out of the typical difference. Where the
+compatibility inventory has assessed each partition against the release its
+end of the crosswalk uses, the comparison is `verified`; otherwise it rests
+on the codes the crosswalk carries and says so, because a partition of
+another vintage may still be the same areas. Nothing is corrected: the two
+figures are published side by side for a caller to judge.
 
 A measure's coverage of a release is answered a country at a time, because
 one word for a United Kingdom release hides the shape of the gap. On the May
