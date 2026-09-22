@@ -16,6 +16,7 @@ import {
 } from "./areaSearch";
 import {
 	createAreaRelationshipIndex,
+	type AreaRelation,
 	type AreaRelationship,
 	type AreaRelationshipIndex,
 } from "./areaRelationships";
@@ -109,6 +110,14 @@ export type ResolvedAreaHistory = {
 	area: AreaRecord;
 	relationships: AreaRelationship[];
 	sameCodeReleases: ResolvedSameCodeArea[];
+};
+
+export type ResolvedAreaRelationshipSummary = {
+	relationships: AreaRelationship[];
+	byRelation: Partial<Record<AreaRelation, number>>;
+	parentCount: number;
+	childCount: number;
+	crosswalks: AreaRelationship["crosswalk"][];
 };
 
 export type ResolvedAreaNeighbours = {
@@ -465,6 +474,33 @@ export class GeographyResolver {
 
 	relationships(identity: AreaIdentity): AreaRelationship[] {
 		return this.areaRelationshipIndex?.get(areaId(identity)) ?? [];
+	}
+
+	/** One consistent summary of an area's published relationship evidence. */
+	areaRelationshipSummary(
+		identity: AreaIdentity,
+	): ResolvedAreaRelationshipSummary {
+		const relationships = this.relationships(identity);
+		const byRelation = relationships.reduce<
+			Partial<Record<AreaRelation, number>>
+		>((counts, { relation }) => {
+			counts[relation] = (counts[relation] ?? 0) + 1;
+			return counts;
+		}, {});
+		return {
+			relationships,
+			byRelation,
+			parentCount: byRelation.within ?? 0,
+			childCount: byRelation.contains ?? 0,
+			crosswalks: [
+				...new Map(
+					relationships.map((relationship) => [
+						relationship.crosswalk.id,
+						relationship.crosswalk,
+					]),
+				).values(),
+			],
+		};
 	}
 
 	/** Published history edges plus explicitly qualified recurring identifiers. */

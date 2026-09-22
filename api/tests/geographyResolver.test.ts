@@ -86,6 +86,31 @@ test("builds immutable geography indexes once for route-level queries", () => {
 		"within",
 	);
 	assert.deepEqual(
+		resolver.areaRelationshipSummary({
+			geography: "ward",
+			boundaryRelease: "2025-01-en-ward",
+			code: "E05000001",
+		}),
+		{
+			relationships: resolver.relationships({
+				geography: "ward",
+				boundaryRelease: "2025-01-en-ward",
+				code: "E05000001",
+			}),
+			byRelation: { within: 1 },
+			parentCount: 1,
+			childCount: 0,
+			crosswalks: [
+				{
+					id: containmentCrosswalk.id,
+					method: "clean-containment",
+					quality: "publisher-supplied",
+					weighting: { status: "not-applicable" },
+				},
+			],
+		},
+	);
+	assert.deepEqual(
 		resolver
 			.crosswalksToLocationMembers(
 				"ward",

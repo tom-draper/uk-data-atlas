@@ -46,10 +46,7 @@ export const handleAreaDossierRoutes = ({
 			"The boundary registry does not describe this resolved area release.",
 		);
 	const baseHref = `/v1/areas/${geography}/${boundaryRelease}/${code}`;
-	const relationships = geographyResolver.relationships(identity);
-	const countRelation = (relation: string) =>
-		relationships.filter((candidate) => candidate.relation === relation)
-			.length;
+	const relationshipSummary = geographyResolver.areaRelationshipSummary(identity);
 	const geometry = (() => {
 		if (!geographyResolver.hasAreaGeometryCache())
 			return notBuilt(
@@ -102,31 +99,20 @@ export const handleAreaDossierRoutes = ({
 							href: `${baseHref}/relationships`,
 						}
 					: {
-							...(relationships.length > 0
+							...(relationshipSummary.relationships.length > 0
 								? { status: "available" as const }
 								: unsupported(
 										"No published crosswalk names this area.",
 									)),
 							href: `${baseHref}/relationships`,
-							count: relationships.length,
-							byRelation: Object.fromEntries(
-								[
-									...new Set(
-										relationships.map(
-											({ relation }) => relation,
-										),
-									),
-								].map((relation) => [
-									relation,
-									countRelation(relation),
-								]),
-							),
+							count: relationshipSummary.relationships.length,
+							byRelation: relationshipSummary.byRelation,
 							parents: {
-								count: countRelation("within"),
+								count: relationshipSummary.parentCount,
 								href: `${baseHref}/parents`,
 							},
 							children: {
-								count: countRelation("contains"),
+								count: relationshipSummary.childCount,
 								href: `${baseHref}/children`,
 							},
 						},

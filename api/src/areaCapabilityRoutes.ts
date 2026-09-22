@@ -78,18 +78,8 @@ export const handleAreaCapabilityRoutes = ({
 			};
 		}
 	})();
-	const relationships = geographyResolver.relationships(identity);
-	const relationCount = (relation: string) =>
-		relationships.filter((candidate) => candidate.relation === relation)
-			.length;
-	const crosswalks = [
-		...new Map(
-			relationships.map((relationship) => [
-				relationship.crosswalk.id,
-				relationship.crosswalk,
-			]),
-		).values(),
-	].map((crosswalk) => ({
+	const relationshipSummary = geographyResolver.areaRelationshipSummary(identity);
+	const crosswalks = relationshipSummary.crosswalks.map((crosswalk) => ({
 		...crosswalk,
 		href: `/v1/crosswalks/${crosswalk.id}`,
 	}));
@@ -159,32 +149,20 @@ export const handleAreaCapabilityRoutes = ({
 							"Build the crosswalk inventory before describing relationships.",
 						)
 					: {
-							...(relationships.length > 0
+							...(relationshipSummary.relationships.length > 0
 								? { status: "available" as const }
 								: unsupported(
 										"No published crosswalk names this area.",
 									)),
 							href: `/v1/areas/${geography}/${boundaryRelease}/${code}/relationships`,
-							count: relationships.length,
-							byRelation: Object.fromEntries(
-								[
-									...new Set(
-										relationships.map(
-											(relationship) =>
-												relationship.relation,
-										),
-									),
-								].map((relation) => [
-									relation,
-									relationCount(relation),
-								]),
-							),
+							count: relationshipSummary.relationships.length,
+							byRelation: relationshipSummary.byRelation,
 							parents: {
-								count: relationCount("within"),
+								count: relationshipSummary.parentCount,
 								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/parents`,
 							},
 							children: {
-								count: relationCount("contains"),
+								count: relationshipSummary.childCount,
 								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/children`,
 							},
 							crosswalks,
