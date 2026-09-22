@@ -56,11 +56,11 @@ const dryRuns = new WeakMap<RouteContext, Map<string, DryRun>>();
  * release, and a dry run of that exact conversion on the latest period that
  * does not refuse. A path is only offered once it is known to work.
  */
-const conversionsOnto = (
+export const conversionCoverageOnto = (
 	context: RouteContext,
 	measure: Measure,
 	target: Target,
-): MeasureConversionPath[] => {
+): Array<{ path: MeasureConversionPath; targets: Set<string> }> => {
 	const { crosswalkInventory, crosswalkLookup } = context;
 	if (!crosswalkInventory || !crosswalkLookup) return [];
 	let cache = dryRuns.get(context);
@@ -144,10 +144,18 @@ const conversionsOnto = (
 				const dryRun = cache.get(key);
 				if (!dryRun) return [];
 				if (target.code && !dryRun.targets.has(target.code)) return [];
-				return [dryRun.path];
+				return [dryRun];
 			}),
 	);
 };
+
+/** The conversions alone, for callers that do not need what each reaches. */
+const conversionsOnto = (
+	context: RouteContext,
+	measure: Measure,
+	target: Target,
+): MeasureConversionPath[] =>
+	conversionCoverageOnto(context, measure, target).map(({ path }) => path);
 
 /**
  * Whether the Atlas can give a measure on a geography release, or for one

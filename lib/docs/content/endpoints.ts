@@ -518,6 +518,15 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Cite an area",
 		intro: "Get the artifact hashes, boundary publisher and licence, validation links and ready-made attribution for one exact area identity. Add `measure` or `crosswalk` to include the data or relationship that supports what you publish; the top-level `atlasRelease` identifies the API response build, not the boundary itself.",
 	},
+	planMeasureCoverage: {
+		title: "See what a measure covers, country by country",
+		intro: 'Before you rank or map a measure across the UK, check what it actually covers. Ward population, for instance, is published for England and Wales and for neither Scotland nor Northern Ireland, so a ranking of UK wards would quietly leave two countries out. This tells you that first.',
+		tips: [
+			"Each country comes back as `source-exact`, `converted`, `partial` or `missing`, with the number of areas behind it.",
+			"A `missing` country says whether the measure exists elsewhere and only lacks a route onto this release, which tells you what would fix it.",
+			"Counts come from the areas a source or conversion really carries, and nothing is estimated to fill a gap.",
+		],
+	},
 	getGeographyHealth: {
 		title: "See relationship health across releases",
 		intro: "A release-by-release summary of how well connected the Atlas's geographies are: how many areas in each have published relationships, and how many are still on their own. Filter with `geography` or `country` to narrow it.",

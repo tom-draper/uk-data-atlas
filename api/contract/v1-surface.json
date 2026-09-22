@@ -1696,6 +1696,88 @@
 				]
 			}
 		},
+		"GET /measures/{measure-id}/coverage-plan": {
+			"operationId": "planMeasureCoverage",
+			"parameters": {
+				"path:measure-id": {
+					"required": true
+				},
+				"query:geography": {
+					"required": true
+				},
+				"query:release": {
+					"required": true
+				}
+			},
+			"responses": {
+				"200 application/json": [
+					"apiVersion",
+					"atlasRelease",
+					"meta",
+					"meta.nextCursor"
+				],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /measures/{measure-id}/quality": {
 			"operationId": "getMeasureQuality",
 			"parameters": {

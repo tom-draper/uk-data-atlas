@@ -1615,6 +1615,109 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /measures/{measure-id}/coverage-plan:
+    get:
+      operationId: planMeasureCoverage
+      tags: ["Data catalogue"]
+      summary: Say what a measure can answer on one release, country by country
+      x-likely-refusal:
+        status: 400
+        when: "`geography` or `release` is missing. A coverage plan answers one exact boundary release."
+        x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward"
+      description: >
+        A release-wide answer is one word for the whole of it, which hides the
+        shape of a gap: ward population is published for England and Wales and
+        for neither Scotland nor Northern Ireland, so a ranking of United
+        Kingdom wards silently leaves two countries out. This answers each
+        country on its own.
+
+
+        A country is `source-exact` when a partition published on the release
+        carries a value for every area of it there, `converted` when a
+        published crosswalk the convert route accepts reaches them all,
+        `partial` when either reaches some, and `missing` when neither reaches
+        any. The counts come from the areas a source or conversion actually
+        carries, not from declared coverage, and a `missing` country says
+        whether the measure exists elsewhere and only lacks a route onto this
+        release. No value is estimated to fill a gap.
+      parameters:
+        - $ref: "#/components/parameters/MeasureId"
+        - name: geography
+          in: query
+          required: true
+          schema: { type: string }
+          description: The geography of the boundary release to plan against.
+        - name: release
+          in: query
+          required: true
+          schema: { type: string }
+          description: The boundary release to plan against.
+      responses:
+        "200":
+          description: The measure's coverage of one release, country by country.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              examples:
+                wards:
+                  x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward&release=2023-05-uk-bgc"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    data:
+                      measure:
+                        id: population-estimate
+                        unit: people
+                      target:
+                        geography: ward
+                        boundaryRelease: 2023-05-uk-bgc
+                        areaCount: 8441
+                      countries:
+                        - country: GB-ENG
+                          areaCount: 6862
+                          coveredAreaCount: 6846
+                          status: partial
+                          source:
+                            datasetId: population
+                            geography: ward
+                            boundaryYear: 2023
+                            periods: ["2022"]
+                          reason: population publishes a value for 6846 of the 6862 ward areas of ward/2023-05-uk-bgc in GB-ENG.
+                        - country: GB-NIR
+                          areaCount: 462
+                          coveredAreaCount: 0
+                          status: missing
+                          reason: This measure covers GB-NIR on localAuthority 2023, but no published crosswalk converts that onto ward/2023-05-uk-bgc.
+                        - country: GB-SCT
+                          areaCount: 355
+                          coveredAreaCount: 0
+                          status: missing
+                          reason: This measure covers GB-SCT on localAuthority 2023, but no published crosswalk converts that onto ward/2023-05-uk-bgc.
+                        - country: GB-WLS
+                          areaCount: 762
+                          coveredAreaCount: 762
+                          status: source-exact
+                          source:
+                            datasetId: population
+                            geography: ward
+                            boundaryYear: 2023
+                            periods: ["2022"]
+                          reason: population publishes a value for every ward of ward/2023-05-uk-bgc in GB-WLS.
+                      summary:
+                        areaCount: 8441
+                        coveredAreaCount: 7608
+                        countriesServed: ["GB-ENG", "GB-WLS"]
+                        countriesMissing: ["GB-NIR", "GB-SCT"]
+                    meta:
+                      nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /measures/{measure-id}/quality:
     get:
       operationId: getMeasureQuality
