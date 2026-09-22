@@ -1,0 +1,12413 @@
+{
+	"schemaVersion": 1,
+	"id": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+	"method": "same-code-continuity",
+	"quality": "derived",
+	"relationshipPurpose": "identity",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "constituency",
+		"boundaryRelease": "2020-12-uk-bgc"
+	},
+	"to": {
+		"geography": "constituency",
+		"boundaryRelease": "2021-12-uk-bgc"
+	},
+	"provenance": {
+		"inputs": [
+			{
+				"side": "from",
+				"input": "boundaries/constituency/2020-12-uk-bgc/WPC_Dec_2020_UK_BGC_2022_6135968359695458764.geojson",
+				"inputHash": "sha256:a026da9d46048c94aae153caa00ed7fffc340189498041f2e4e1604cbedca53c",
+				"sourceCrs": "EPSG:4326"
+			},
+			{
+				"side": "to",
+				"input": "boundaries/constituency/2021-12-uk-bgc/Westminster_Parliamentary_Constituencies_Dec_2021_UK_BGC_2022_8503125933138445651.geojson",
+				"inputHash": "sha256:bcee26d4d1274427a163d20886ac53c979c7045f5cc074a5801b02fa1a8a0e1b",
+				"sourceCrs": "EPSG:4326"
+			}
+		],
+		"areaProjection": "EPSG:6933",
+		"clipping": "polygon-clipping@0.15.7"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 650,
+				"referencedCodeCount": 650
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 650,
+				"referencedCodeCount": 650
+			}
+		},
+		"continuity": {
+			"sliverWidthM": 100,
+			"sourceAreaCount": 650,
+			"targetAreaCount": 650,
+			"sharedCodeCount": 650,
+			"continuousCount": 650,
+			"changedExtent": [],
+			"unmeasured": []
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "E14000530",
+				"labels": [
+					"Aldershot"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000530",
+					"labels": [
+						"Aldershot"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000531",
+				"labels": [
+					"Aldridge-Brownhills"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000531",
+					"labels": [
+						"Aldridge-Brownhills"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000532",
+				"labels": [
+					"Altrincham and Sale West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000532",
+					"labels": [
+						"Altrincham and Sale West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000533",
+				"labels": [
+					"Amber Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000533",
+					"labels": [
+						"Amber Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000534",
+				"labels": [
+					"Arundel and South Downs"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000534",
+					"labels": [
+						"Arundel and South Downs"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000535",
+				"labels": [
+					"Ashfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000535",
+					"labels": [
+						"Ashfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000536",
+				"labels": [
+					"Ashford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000536",
+					"labels": [
+						"Ashford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000537",
+				"labels": [
+					"Ashton-under-Lyne"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000537",
+					"labels": [
+						"Ashton-under-Lyne"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000538",
+				"labels": [
+					"Aylesbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000538",
+					"labels": [
+						"Aylesbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000539",
+				"labels": [
+					"Banbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000539",
+					"labels": [
+						"Banbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000540",
+				"labels": [
+					"Barking"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000540",
+					"labels": [
+						"Barking"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000541",
+				"labels": [
+					"Barnsley Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000541",
+					"labels": [
+						"Barnsley Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000542",
+				"labels": [
+					"Barnsley East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000542",
+					"labels": [
+						"Barnsley East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000543",
+				"labels": [
+					"Barrow and Furness"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000543",
+					"labels": [
+						"Barrow and Furness"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000544",
+				"labels": [
+					"Basildon and Billericay"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000544",
+					"labels": [
+						"Basildon and Billericay"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000545",
+				"labels": [
+					"Basingstoke"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000545",
+					"labels": [
+						"Basingstoke"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000546",
+				"labels": [
+					"Bassetlaw"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000546",
+					"labels": [
+						"Bassetlaw"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000547",
+				"labels": [
+					"Bath"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000547",
+					"labels": [
+						"Bath"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000548",
+				"labels": [
+					"Batley and Spen"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000548",
+					"labels": [
+						"Batley and Spen"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000549",
+				"labels": [
+					"Battersea"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000549",
+					"labels": [
+						"Battersea"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000550",
+				"labels": [
+					"Beaconsfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000550",
+					"labels": [
+						"Beaconsfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000551",
+				"labels": [
+					"Beckenham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000551",
+					"labels": [
+						"Beckenham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000552",
+				"labels": [
+					"Bedford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000552",
+					"labels": [
+						"Bedford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000553",
+				"labels": [
+					"Bermondsey and Old Southwark"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000553",
+					"labels": [
+						"Bermondsey and Old Southwark"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000554",
+				"labels": [
+					"Berwick-upon-Tweed"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000554",
+					"labels": [
+						"Berwick-upon-Tweed"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000555",
+				"labels": [
+					"Bethnal Green and Bow"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000555",
+					"labels": [
+						"Bethnal Green and Bow"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000556",
+				"labels": [
+					"Beverley and Holderness"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000556",
+					"labels": [
+						"Beverley and Holderness"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000557",
+				"labels": [
+					"Bexhill and Battle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000557",
+					"labels": [
+						"Bexhill and Battle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000558",
+				"labels": [
+					"Bexleyheath and Crayford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000558",
+					"labels": [
+						"Bexleyheath and Crayford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000559",
+				"labels": [
+					"Birkenhead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000559",
+					"labels": [
+						"Birkenhead"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000560",
+				"labels": [
+					"Birmingham, Edgbaston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000560",
+					"labels": [
+						"Birmingham, Edgbaston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000561",
+				"labels": [
+					"Birmingham, Erdington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000561",
+					"labels": [
+						"Birmingham, Erdington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000562",
+				"labels": [
+					"Birmingham, Hall Green"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000562",
+					"labels": [
+						"Birmingham, Hall Green"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000563",
+				"labels": [
+					"Birmingham, Hodge Hill"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000563",
+					"labels": [
+						"Birmingham, Hodge Hill"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000564",
+				"labels": [
+					"Birmingham, Ladywood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000564",
+					"labels": [
+						"Birmingham, Ladywood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000565",
+				"labels": [
+					"Birmingham, Northfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000565",
+					"labels": [
+						"Birmingham, Northfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000566",
+				"labels": [
+					"Birmingham, Perry Barr"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000566",
+					"labels": [
+						"Birmingham, Perry Barr"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000567",
+				"labels": [
+					"Birmingham, Selly Oak"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000567",
+					"labels": [
+						"Birmingham, Selly Oak"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000568",
+				"labels": [
+					"Birmingham, Yardley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000568",
+					"labels": [
+						"Birmingham, Yardley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000569",
+				"labels": [
+					"Bishop Auckland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000569",
+					"labels": [
+						"Bishop Auckland"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000570",
+				"labels": [
+					"Blackburn"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000570",
+					"labels": [
+						"Blackburn"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000571",
+				"labels": [
+					"Blackley and Broughton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000571",
+					"labels": [
+						"Blackley and Broughton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000572",
+				"labels": [
+					"Blackpool North and Cleveleys"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000572",
+					"labels": [
+						"Blackpool North and Cleveleys"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000573",
+				"labels": [
+					"Blackpool South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000573",
+					"labels": [
+						"Blackpool South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000574",
+				"labels": [
+					"Blaydon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000574",
+					"labels": [
+						"Blaydon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000575",
+				"labels": [
+					"Blyth Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000575",
+					"labels": [
+						"Blyth Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000576",
+				"labels": [
+					"Bognor Regis and Littlehampton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000576",
+					"labels": [
+						"Bognor Regis and Littlehampton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000577",
+				"labels": [
+					"Bolsover"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000577",
+					"labels": [
+						"Bolsover"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000578",
+				"labels": [
+					"Bolton North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000578",
+					"labels": [
+						"Bolton North East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000579",
+				"labels": [
+					"Bolton South East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000579",
+					"labels": [
+						"Bolton South East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000580",
+				"labels": [
+					"Bolton West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000580",
+					"labels": [
+						"Bolton West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000581",
+				"labels": [
+					"Bootle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000581",
+					"labels": [
+						"Bootle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000582",
+				"labels": [
+					"Boston and Skegness"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000582",
+					"labels": [
+						"Boston and Skegness"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000583",
+				"labels": [
+					"Bosworth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000583",
+					"labels": [
+						"Bosworth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000584",
+				"labels": [
+					"Bournemouth East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000584",
+					"labels": [
+						"Bournemouth East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000585",
+				"labels": [
+					"Bournemouth West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000585",
+					"labels": [
+						"Bournemouth West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000586",
+				"labels": [
+					"Bracknell"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000586",
+					"labels": [
+						"Bracknell"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000587",
+				"labels": [
+					"Bradford East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000587",
+					"labels": [
+						"Bradford East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000588",
+				"labels": [
+					"Bradford South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000588",
+					"labels": [
+						"Bradford South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000589",
+				"labels": [
+					"Bradford West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000589",
+					"labels": [
+						"Bradford West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000590",
+				"labels": [
+					"Braintree"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000590",
+					"labels": [
+						"Braintree"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000591",
+				"labels": [
+					"Brent Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000591",
+					"labels": [
+						"Brent Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000592",
+				"labels": [
+					"Brent North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000592",
+					"labels": [
+						"Brent North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000593",
+				"labels": [
+					"Brentford and Isleworth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000593",
+					"labels": [
+						"Brentford and Isleworth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000594",
+				"labels": [
+					"Brentwood and Ongar"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000594",
+					"labels": [
+						"Brentwood and Ongar"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000595",
+				"labels": [
+					"Bridgwater and West Somerset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000595",
+					"labels": [
+						"Bridgwater and West Somerset"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000596",
+				"labels": [
+					"Brigg and Goole"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000596",
+					"labels": [
+						"Brigg and Goole"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000597",
+				"labels": [
+					"Brighton, Kemptown"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000597",
+					"labels": [
+						"Brighton, Kemptown"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000598",
+				"labels": [
+					"Brighton, Pavilion"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000598",
+					"labels": [
+						"Brighton, Pavilion"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000599",
+				"labels": [
+					"Bristol East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000599",
+					"labels": [
+						"Bristol East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000600",
+				"labels": [
+					"Bristol North West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000600",
+					"labels": [
+						"Bristol North West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000601",
+				"labels": [
+					"Bristol South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000601",
+					"labels": [
+						"Bristol South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000602",
+				"labels": [
+					"Bristol West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000602",
+					"labels": [
+						"Bristol West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000603",
+				"labels": [
+					"Broadland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000603",
+					"labels": [
+						"Broadland"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000604",
+				"labels": [
+					"Bromley and Chislehurst"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000604",
+					"labels": [
+						"Bromley and Chislehurst"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000605",
+				"labels": [
+					"Bromsgrove"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000605",
+					"labels": [
+						"Bromsgrove"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000606",
+				"labels": [
+					"Broxbourne"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000606",
+					"labels": [
+						"Broxbourne"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000607",
+				"labels": [
+					"Broxtowe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000607",
+					"labels": [
+						"Broxtowe"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000608",
+				"labels": [
+					"Buckingham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000608",
+					"labels": [
+						"Buckingham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000609",
+				"labels": [
+					"Burnley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000609",
+					"labels": [
+						"Burnley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000610",
+				"labels": [
+					"Burton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000610",
+					"labels": [
+						"Burton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000611",
+				"labels": [
+					"Bury North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000611",
+					"labels": [
+						"Bury North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000612",
+				"labels": [
+					"Bury South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000612",
+					"labels": [
+						"Bury South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000613",
+				"labels": [
+					"Bury St Edmunds"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000613",
+					"labels": [
+						"Bury St Edmunds"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000614",
+				"labels": [
+					"Calder Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000614",
+					"labels": [
+						"Calder Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000615",
+				"labels": [
+					"Camberwell and Peckham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000615",
+					"labels": [
+						"Camberwell and Peckham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000616",
+				"labels": [
+					"Camborne and Redruth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000616",
+					"labels": [
+						"Camborne and Redruth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000617",
+				"labels": [
+					"Cambridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000617",
+					"labels": [
+						"Cambridge"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000618",
+				"labels": [
+					"Cannock Chase"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000618",
+					"labels": [
+						"Cannock Chase"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000619",
+				"labels": [
+					"Canterbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000619",
+					"labels": [
+						"Canterbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000620",
+				"labels": [
+					"Carlisle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000620",
+					"labels": [
+						"Carlisle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000621",
+				"labels": [
+					"Carshalton and Wallington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000621",
+					"labels": [
+						"Carshalton and Wallington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000622",
+				"labels": [
+					"Castle Point"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000622",
+					"labels": [
+						"Castle Point"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000623",
+				"labels": [
+					"Central Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000623",
+					"labels": [
+						"Central Devon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000624",
+				"labels": [
+					"Central Suffolk and North Ipswich"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000624",
+					"labels": [
+						"Central Suffolk and North Ipswich"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000625",
+				"labels": [
+					"Charnwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000625",
+					"labels": [
+						"Charnwood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000626",
+				"labels": [
+					"Chatham and Aylesford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000626",
+					"labels": [
+						"Chatham and Aylesford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000627",
+				"labels": [
+					"Cheadle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000627",
+					"labels": [
+						"Cheadle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000628",
+				"labels": [
+					"Chelmsford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000628",
+					"labels": [
+						"Chelmsford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000629",
+				"labels": [
+					"Chelsea and Fulham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000629",
+					"labels": [
+						"Chelsea and Fulham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000630",
+				"labels": [
+					"Cheltenham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000630",
+					"labels": [
+						"Cheltenham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000631",
+				"labels": [
+					"Chesham and Amersham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000631",
+					"labels": [
+						"Chesham and Amersham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000632",
+				"labels": [
+					"Chesterfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000632",
+					"labels": [
+						"Chesterfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000633",
+				"labels": [
+					"Chichester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000633",
+					"labels": [
+						"Chichester"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000634",
+				"labels": [
+					"Chingford and Woodford Green"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000634",
+					"labels": [
+						"Chingford and Woodford Green"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000635",
+				"labels": [
+					"Chippenham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000635",
+					"labels": [
+						"Chippenham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000636",
+				"labels": [
+					"Chipping Barnet"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000636",
+					"labels": [
+						"Chipping Barnet"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000637",
+				"labels": [
+					"Chorley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000637",
+					"labels": [
+						"Chorley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000638",
+				"labels": [
+					"Christchurch"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000638",
+					"labels": [
+						"Christchurch"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000639",
+				"labels": [
+					"Cities of London and Westminster"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000639",
+					"labels": [
+						"Cities of London and Westminster"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000640",
+				"labels": [
+					"City of Chester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000640",
+					"labels": [
+						"City of Chester"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000641",
+				"labels": [
+					"City of Durham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000641",
+					"labels": [
+						"City of Durham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000642",
+				"labels": [
+					"Clacton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000642",
+					"labels": [
+						"Clacton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000643",
+				"labels": [
+					"Cleethorpes"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000643",
+					"labels": [
+						"Cleethorpes"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000644",
+				"labels": [
+					"Colchester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000644",
+					"labels": [
+						"Colchester"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000645",
+				"labels": [
+					"Colne Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000645",
+					"labels": [
+						"Colne Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000646",
+				"labels": [
+					"Congleton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000646",
+					"labels": [
+						"Congleton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000647",
+				"labels": [
+					"Copeland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000647",
+					"labels": [
+						"Copeland"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000648",
+				"labels": [
+					"Corby"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000648",
+					"labels": [
+						"Corby"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000649",
+				"labels": [
+					"Coventry North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000649",
+					"labels": [
+						"Coventry North East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000650",
+				"labels": [
+					"Coventry North West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000650",
+					"labels": [
+						"Coventry North West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000651",
+				"labels": [
+					"Coventry South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000651",
+					"labels": [
+						"Coventry South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000652",
+				"labels": [
+					"Crawley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000652",
+					"labels": [
+						"Crawley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000653",
+				"labels": [
+					"Crewe and Nantwich"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000653",
+					"labels": [
+						"Crewe and Nantwich"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000654",
+				"labels": [
+					"Croydon Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000654",
+					"labels": [
+						"Croydon Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000655",
+				"labels": [
+					"Croydon North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000655",
+					"labels": [
+						"Croydon North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000656",
+				"labels": [
+					"Croydon South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000656",
+					"labels": [
+						"Croydon South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000657",
+				"labels": [
+					"Dagenham and Rainham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000657",
+					"labels": [
+						"Dagenham and Rainham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000658",
+				"labels": [
+					"Darlington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000658",
+					"labels": [
+						"Darlington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000659",
+				"labels": [
+					"Dartford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000659",
+					"labels": [
+						"Dartford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000660",
+				"labels": [
+					"Daventry"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000660",
+					"labels": [
+						"Daventry"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000661",
+				"labels": [
+					"Denton and Reddish"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000661",
+					"labels": [
+						"Denton and Reddish"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000662",
+				"labels": [
+					"Derby North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000662",
+					"labels": [
+						"Derby North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000663",
+				"labels": [
+					"Derby South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000663",
+					"labels": [
+						"Derby South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000664",
+				"labels": [
+					"Derbyshire Dales"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000664",
+					"labels": [
+						"Derbyshire Dales"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000665",
+				"labels": [
+					"Devizes"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000665",
+					"labels": [
+						"Devizes"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000666",
+				"labels": [
+					"Dewsbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000666",
+					"labels": [
+						"Dewsbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000667",
+				"labels": [
+					"Don Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000667",
+					"labels": [
+						"Don Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000668",
+				"labels": [
+					"Doncaster Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000668",
+					"labels": [
+						"Doncaster Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000669",
+				"labels": [
+					"Doncaster North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000669",
+					"labels": [
+						"Doncaster North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000670",
+				"labels": [
+					"Dover"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000670",
+					"labels": [
+						"Dover"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000671",
+				"labels": [
+					"Dudley North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000671",
+					"labels": [
+						"Dudley North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000672",
+				"labels": [
+					"Dudley South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000672",
+					"labels": [
+						"Dudley South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000673",
+				"labels": [
+					"Dulwich and West Norwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000673",
+					"labels": [
+						"Dulwich and West Norwood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000674",
+				"labels": [
+					"Ealing Central and Acton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000674",
+					"labels": [
+						"Ealing Central and Acton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000675",
+				"labels": [
+					"Ealing North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000675",
+					"labels": [
+						"Ealing North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000676",
+				"labels": [
+					"Ealing, Southall"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000676",
+					"labels": [
+						"Ealing, Southall"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000677",
+				"labels": [
+					"Easington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000677",
+					"labels": [
+						"Easington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000678",
+				"labels": [
+					"East Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000678",
+					"labels": [
+						"East Devon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000679",
+				"labels": [
+					"East Ham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000679",
+					"labels": [
+						"East Ham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000680",
+				"labels": [
+					"East Hampshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000680",
+					"labels": [
+						"East Hampshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000681",
+				"labels": [
+					"East Surrey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000681",
+					"labels": [
+						"East Surrey"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000682",
+				"labels": [
+					"East Worthing and Shoreham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000682",
+					"labels": [
+						"East Worthing and Shoreham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000683",
+				"labels": [
+					"East Yorkshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000683",
+					"labels": [
+						"East Yorkshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000684",
+				"labels": [
+					"Eastbourne"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000684",
+					"labels": [
+						"Eastbourne"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000685",
+				"labels": [
+					"Eastleigh"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000685",
+					"labels": [
+						"Eastleigh"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000686",
+				"labels": [
+					"Eddisbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000686",
+					"labels": [
+						"Eddisbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000687",
+				"labels": [
+					"Edmonton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000687",
+					"labels": [
+						"Edmonton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000688",
+				"labels": [
+					"Ellesmere Port and Neston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000688",
+					"labels": [
+						"Ellesmere Port and Neston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000689",
+				"labels": [
+					"Elmet and Rothwell"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000689",
+					"labels": [
+						"Elmet and Rothwell"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000690",
+				"labels": [
+					"Eltham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000690",
+					"labels": [
+						"Eltham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000691",
+				"labels": [
+					"Enfield North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000691",
+					"labels": [
+						"Enfield North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000692",
+				"labels": [
+					"Enfield, Southgate"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000692",
+					"labels": [
+						"Enfield, Southgate"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000693",
+				"labels": [
+					"Epping Forest"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000693",
+					"labels": [
+						"Epping Forest"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000694",
+				"labels": [
+					"Epsom and Ewell"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000694",
+					"labels": [
+						"Epsom and Ewell"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000695",
+				"labels": [
+					"Erewash"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000695",
+					"labels": [
+						"Erewash"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000696",
+				"labels": [
+					"Erith and Thamesmead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000696",
+					"labels": [
+						"Erith and Thamesmead"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000697",
+				"labels": [
+					"Esher and Walton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000697",
+					"labels": [
+						"Esher and Walton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000698",
+				"labels": [
+					"Exeter"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000698",
+					"labels": [
+						"Exeter"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000699",
+				"labels": [
+					"Fareham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000699",
+					"labels": [
+						"Fareham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000700",
+				"labels": [
+					"Faversham and Mid Kent"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000700",
+					"labels": [
+						"Faversham and Mid Kent"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000701",
+				"labels": [
+					"Feltham and Heston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000701",
+					"labels": [
+						"Feltham and Heston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000702",
+				"labels": [
+					"Filton and Bradley Stoke"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000702",
+					"labels": [
+						"Filton and Bradley Stoke"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000703",
+				"labels": [
+					"Finchley and Golders Green"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000703",
+					"labels": [
+						"Finchley and Golders Green"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000704",
+				"labels": [
+					"Folkestone and Hythe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000704",
+					"labels": [
+						"Folkestone and Hythe"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000705",
+				"labels": [
+					"Forest of Dean"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000705",
+					"labels": [
+						"Forest of Dean"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000706",
+				"labels": [
+					"Fylde"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000706",
+					"labels": [
+						"Fylde"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000707",
+				"labels": [
+					"Gainsborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000707",
+					"labels": [
+						"Gainsborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000708",
+				"labels": [
+					"Garston and Halewood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000708",
+					"labels": [
+						"Garston and Halewood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000709",
+				"labels": [
+					"Gateshead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000709",
+					"labels": [
+						"Gateshead"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000710",
+				"labels": [
+					"Gedling"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000710",
+					"labels": [
+						"Gedling"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000711",
+				"labels": [
+					"Gillingham and Rainham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000711",
+					"labels": [
+						"Gillingham and Rainham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000712",
+				"labels": [
+					"Gloucester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000712",
+					"labels": [
+						"Gloucester"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000713",
+				"labels": [
+					"Gosport"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000713",
+					"labels": [
+						"Gosport"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000714",
+				"labels": [
+					"Grantham and Stamford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000714",
+					"labels": [
+						"Grantham and Stamford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000715",
+				"labels": [
+					"Gravesham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000715",
+					"labels": [
+						"Gravesham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000716",
+				"labels": [
+					"Great Grimsby"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000716",
+					"labels": [
+						"Great Grimsby"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000717",
+				"labels": [
+					"Great Yarmouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000717",
+					"labels": [
+						"Great Yarmouth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000718",
+				"labels": [
+					"Greenwich and Woolwich"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000718",
+					"labels": [
+						"Greenwich and Woolwich"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000719",
+				"labels": [
+					"Guildford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000719",
+					"labels": [
+						"Guildford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000720",
+				"labels": [
+					"Hackney North and Stoke Newington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000720",
+					"labels": [
+						"Hackney North and Stoke Newington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000721",
+				"labels": [
+					"Hackney South and Shoreditch"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000721",
+					"labels": [
+						"Hackney South and Shoreditch"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000722",
+				"labels": [
+					"Halesowen and Rowley Regis"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000722",
+					"labels": [
+						"Halesowen and Rowley Regis"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000723",
+				"labels": [
+					"Halifax"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000723",
+					"labels": [
+						"Halifax"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000724",
+				"labels": [
+					"Haltemprice and Howden"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000724",
+					"labels": [
+						"Haltemprice and Howden"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000725",
+				"labels": [
+					"Halton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000725",
+					"labels": [
+						"Halton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000726",
+				"labels": [
+					"Hammersmith"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000726",
+					"labels": [
+						"Hammersmith"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000727",
+				"labels": [
+					"Hampstead and Kilburn"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000727",
+					"labels": [
+						"Hampstead and Kilburn"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000728",
+				"labels": [
+					"Harborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000728",
+					"labels": [
+						"Harborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000729",
+				"labels": [
+					"Harlow"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000729",
+					"labels": [
+						"Harlow"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000730",
+				"labels": [
+					"Harrogate and Knaresborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000730",
+					"labels": [
+						"Harrogate and Knaresborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000731",
+				"labels": [
+					"Harrow East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000731",
+					"labels": [
+						"Harrow East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000732",
+				"labels": [
+					"Harrow West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000732",
+					"labels": [
+						"Harrow West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000733",
+				"labels": [
+					"Hartlepool"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000733",
+					"labels": [
+						"Hartlepool"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000734",
+				"labels": [
+					"Harwich and North Essex"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000734",
+					"labels": [
+						"Harwich and North Essex"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000735",
+				"labels": [
+					"Hastings and Rye"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000735",
+					"labels": [
+						"Hastings and Rye"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000736",
+				"labels": [
+					"Havant"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000736",
+					"labels": [
+						"Havant"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000737",
+				"labels": [
+					"Hayes and Harlington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000737",
+					"labels": [
+						"Hayes and Harlington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000738",
+				"labels": [
+					"Hazel Grove"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000738",
+					"labels": [
+						"Hazel Grove"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000739",
+				"labels": [
+					"Hemel Hempstead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000739",
+					"labels": [
+						"Hemel Hempstead"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000740",
+				"labels": [
+					"Hemsworth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000740",
+					"labels": [
+						"Hemsworth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000741",
+				"labels": [
+					"Hendon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000741",
+					"labels": [
+						"Hendon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000742",
+				"labels": [
+					"Henley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000742",
+					"labels": [
+						"Henley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000743",
+				"labels": [
+					"Hereford and South Herefordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000743",
+					"labels": [
+						"Hereford and South Herefordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000744",
+				"labels": [
+					"Hertford and Stortford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000744",
+					"labels": [
+						"Hertford and Stortford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000745",
+				"labels": [
+					"Hertsmere"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000745",
+					"labels": [
+						"Hertsmere"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000746",
+				"labels": [
+					"Hexham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000746",
+					"labels": [
+						"Hexham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000747",
+				"labels": [
+					"Heywood and Middleton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000747",
+					"labels": [
+						"Heywood and Middleton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000748",
+				"labels": [
+					"High Peak"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000748",
+					"labels": [
+						"High Peak"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000749",
+				"labels": [
+					"Hitchin and Harpenden"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000749",
+					"labels": [
+						"Hitchin and Harpenden"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000750",
+				"labels": [
+					"Holborn and St Pancras"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000750",
+					"labels": [
+						"Holborn and St Pancras"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000751",
+				"labels": [
+					"Hornchurch and Upminster"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000751",
+					"labels": [
+						"Hornchurch and Upminster"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000752",
+				"labels": [
+					"Hornsey and Wood Green"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000752",
+					"labels": [
+						"Hornsey and Wood Green"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000753",
+				"labels": [
+					"Horsham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000753",
+					"labels": [
+						"Horsham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000754",
+				"labels": [
+					"Houghton and Sunderland South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000754",
+					"labels": [
+						"Houghton and Sunderland South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000755",
+				"labels": [
+					"Hove"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000755",
+					"labels": [
+						"Hove"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000756",
+				"labels": [
+					"Huddersfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000756",
+					"labels": [
+						"Huddersfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000757",
+				"labels": [
+					"Huntingdon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000757",
+					"labels": [
+						"Huntingdon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000758",
+				"labels": [
+					"Hyndburn"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000758",
+					"labels": [
+						"Hyndburn"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000759",
+				"labels": [
+					"Ilford North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000759",
+					"labels": [
+						"Ilford North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000760",
+				"labels": [
+					"Ilford South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000760",
+					"labels": [
+						"Ilford South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000761",
+				"labels": [
+					"Ipswich"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000761",
+					"labels": [
+						"Ipswich"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000762",
+				"labels": [
+					"Isle of Wight"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000762",
+					"labels": [
+						"Isle of Wight"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000763",
+				"labels": [
+					"Islington North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000763",
+					"labels": [
+						"Islington North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000764",
+				"labels": [
+					"Islington South and Finsbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000764",
+					"labels": [
+						"Islington South and Finsbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000765",
+				"labels": [
+					"Jarrow"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000765",
+					"labels": [
+						"Jarrow"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000766",
+				"labels": [
+					"Keighley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000766",
+					"labels": [
+						"Keighley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000767",
+				"labels": [
+					"Kenilworth and Southam"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000767",
+					"labels": [
+						"Kenilworth and Southam"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000768",
+				"labels": [
+					"Kensington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000768",
+					"labels": [
+						"Kensington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000769",
+				"labels": [
+					"Kettering"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000769",
+					"labels": [
+						"Kettering"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000770",
+				"labels": [
+					"Kingston and Surbiton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000770",
+					"labels": [
+						"Kingston and Surbiton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000771",
+				"labels": [
+					"Kingston upon Hull East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000771",
+					"labels": [
+						"Kingston upon Hull East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000772",
+				"labels": [
+					"Kingston upon Hull North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000772",
+					"labels": [
+						"Kingston upon Hull North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000773",
+				"labels": [
+					"Kingston upon Hull West and Hessle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000773",
+					"labels": [
+						"Kingston upon Hull West and Hessle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000774",
+				"labels": [
+					"Kingswood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000774",
+					"labels": [
+						"Kingswood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000775",
+				"labels": [
+					"Knowsley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000775",
+					"labels": [
+						"Knowsley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000776",
+				"labels": [
+					"Lancaster and Fleetwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000776",
+					"labels": [
+						"Lancaster and Fleetwood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000777",
+				"labels": [
+					"Leeds Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000777",
+					"labels": [
+						"Leeds Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000778",
+				"labels": [
+					"Leeds East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000778",
+					"labels": [
+						"Leeds East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000779",
+				"labels": [
+					"Leeds North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000779",
+					"labels": [
+						"Leeds North East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000780",
+				"labels": [
+					"Leeds North West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000780",
+					"labels": [
+						"Leeds North West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000781",
+				"labels": [
+					"Leeds West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000781",
+					"labels": [
+						"Leeds West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000782",
+				"labels": [
+					"Leicester East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000782",
+					"labels": [
+						"Leicester East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000783",
+				"labels": [
+					"Leicester South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000783",
+					"labels": [
+						"Leicester South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000784",
+				"labels": [
+					"Leicester West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000784",
+					"labels": [
+						"Leicester West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000785",
+				"labels": [
+					"Leigh"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000785",
+					"labels": [
+						"Leigh"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000786",
+				"labels": [
+					"Lewes"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000786",
+					"labels": [
+						"Lewes"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000787",
+				"labels": [
+					"Lewisham East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000787",
+					"labels": [
+						"Lewisham East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000788",
+				"labels": [
+					"Lewisham West and Penge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000788",
+					"labels": [
+						"Lewisham West and Penge"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000789",
+				"labels": [
+					"Lewisham, Deptford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000789",
+					"labels": [
+						"Lewisham, Deptford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000790",
+				"labels": [
+					"Leyton and Wanstead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000790",
+					"labels": [
+						"Leyton and Wanstead"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000791",
+				"labels": [
+					"Lichfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000791",
+					"labels": [
+						"Lichfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000792",
+				"labels": [
+					"Lincoln"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000792",
+					"labels": [
+						"Lincoln"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000793",
+				"labels": [
+					"Liverpool, Riverside"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000793",
+					"labels": [
+						"Liverpool, Riverside"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000794",
+				"labels": [
+					"Liverpool, Walton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000794",
+					"labels": [
+						"Liverpool, Walton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000795",
+				"labels": [
+					"Liverpool, Wavertree"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000795",
+					"labels": [
+						"Liverpool, Wavertree"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000796",
+				"labels": [
+					"Liverpool, West Derby"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000796",
+					"labels": [
+						"Liverpool, West Derby"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000797",
+				"labels": [
+					"Loughborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000797",
+					"labels": [
+						"Loughborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000798",
+				"labels": [
+					"Louth and Horncastle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000798",
+					"labels": [
+						"Louth and Horncastle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000799",
+				"labels": [
+					"Ludlow"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000799",
+					"labels": [
+						"Ludlow"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000800",
+				"labels": [
+					"Luton North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000800",
+					"labels": [
+						"Luton North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000801",
+				"labels": [
+					"Luton South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000801",
+					"labels": [
+						"Luton South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000802",
+				"labels": [
+					"Macclesfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000802",
+					"labels": [
+						"Macclesfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000803",
+				"labels": [
+					"Maidenhead"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000803",
+					"labels": [
+						"Maidenhead"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000804",
+				"labels": [
+					"Maidstone and The Weald"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000804",
+					"labels": [
+						"Maidstone and The Weald"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000805",
+				"labels": [
+					"Makerfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000805",
+					"labels": [
+						"Makerfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000806",
+				"labels": [
+					"Maldon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000806",
+					"labels": [
+						"Maldon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000807",
+				"labels": [
+					"Manchester Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000807",
+					"labels": [
+						"Manchester Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000808",
+				"labels": [
+					"Manchester, Gorton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000808",
+					"labels": [
+						"Manchester, Gorton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000809",
+				"labels": [
+					"Manchester, Withington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000809",
+					"labels": [
+						"Manchester, Withington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000810",
+				"labels": [
+					"Mansfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000810",
+					"labels": [
+						"Mansfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000811",
+				"labels": [
+					"Meon Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000811",
+					"labels": [
+						"Meon Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000812",
+				"labels": [
+					"Meriden"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000812",
+					"labels": [
+						"Meriden"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000813",
+				"labels": [
+					"Mid Bedfordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000813",
+					"labels": [
+						"Mid Bedfordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000814",
+				"labels": [
+					"Mid Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000814",
+					"labels": [
+						"Mid Derbyshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000815",
+				"labels": [
+					"Mid Dorset and North Poole"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000815",
+					"labels": [
+						"Mid Dorset and North Poole"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000816",
+				"labels": [
+					"Mid Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000816",
+					"labels": [
+						"Mid Norfolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000817",
+				"labels": [
+					"Mid Sussex"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000817",
+					"labels": [
+						"Mid Sussex"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000818",
+				"labels": [
+					"Mid Worcestershire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000818",
+					"labels": [
+						"Mid Worcestershire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000819",
+				"labels": [
+					"Middlesbrough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000819",
+					"labels": [
+						"Middlesbrough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000820",
+				"labels": [
+					"Middlesbrough South and East Cleveland"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000820",
+					"labels": [
+						"Middlesbrough South and East Cleveland"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000821",
+				"labels": [
+					"Milton Keynes North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000821",
+					"labels": [
+						"Milton Keynes North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000822",
+				"labels": [
+					"Milton Keynes South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000822",
+					"labels": [
+						"Milton Keynes South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000823",
+				"labels": [
+					"Mitcham and Morden"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000823",
+					"labels": [
+						"Mitcham and Morden"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000824",
+				"labels": [
+					"Mole Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000824",
+					"labels": [
+						"Mole Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000825",
+				"labels": [
+					"Morecambe and Lunesdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000825",
+					"labels": [
+						"Morecambe and Lunesdale"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000826",
+				"labels": [
+					"Morley and Outwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000826",
+					"labels": [
+						"Morley and Outwood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000827",
+				"labels": [
+					"New Forest East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000827",
+					"labels": [
+						"New Forest East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000828",
+				"labels": [
+					"New Forest West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000828",
+					"labels": [
+						"New Forest West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000829",
+				"labels": [
+					"Newark"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000829",
+					"labels": [
+						"Newark"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000830",
+				"labels": [
+					"Newbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000830",
+					"labels": [
+						"Newbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000831",
+				"labels": [
+					"Newcastle upon Tyne Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000831",
+					"labels": [
+						"Newcastle upon Tyne Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000832",
+				"labels": [
+					"Newcastle upon Tyne East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000832",
+					"labels": [
+						"Newcastle upon Tyne East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000833",
+				"labels": [
+					"Newcastle upon Tyne North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000833",
+					"labels": [
+						"Newcastle upon Tyne North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000834",
+				"labels": [
+					"Newcastle-under-Lyme"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000834",
+					"labels": [
+						"Newcastle-under-Lyme"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000835",
+				"labels": [
+					"Newton Abbot"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000835",
+					"labels": [
+						"Newton Abbot"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000836",
+				"labels": [
+					"Normanton, Pontefract and Castleford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000836",
+					"labels": [
+						"Normanton, Pontefract and Castleford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000837",
+				"labels": [
+					"North Cornwall"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000837",
+					"labels": [
+						"North Cornwall"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000838",
+				"labels": [
+					"North Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000838",
+					"labels": [
+						"North Devon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000839",
+				"labels": [
+					"North Dorset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000839",
+					"labels": [
+						"North Dorset"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000840",
+				"labels": [
+					"North Durham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000840",
+					"labels": [
+						"North Durham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000841",
+				"labels": [
+					"North East Bedfordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000841",
+					"labels": [
+						"North East Bedfordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000842",
+				"labels": [
+					"North East Cambridgeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000842",
+					"labels": [
+						"North East Cambridgeshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000843",
+				"labels": [
+					"North East Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000843",
+					"labels": [
+						"North East Derbyshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000844",
+				"labels": [
+					"North East Hampshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000844",
+					"labels": [
+						"North East Hampshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000845",
+				"labels": [
+					"North East Hertfordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000845",
+					"labels": [
+						"North East Hertfordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000846",
+				"labels": [
+					"North East Somerset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000846",
+					"labels": [
+						"North East Somerset"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000847",
+				"labels": [
+					"North Herefordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000847",
+					"labels": [
+						"North Herefordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000848",
+				"labels": [
+					"North Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000848",
+					"labels": [
+						"North Norfolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000849",
+				"labels": [
+					"North Shropshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000849",
+					"labels": [
+						"North Shropshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000850",
+				"labels": [
+					"North Somerset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000850",
+					"labels": [
+						"North Somerset"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000851",
+				"labels": [
+					"North Swindon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000851",
+					"labels": [
+						"North Swindon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000852",
+				"labels": [
+					"North Thanet"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000852",
+					"labels": [
+						"North Thanet"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000853",
+				"labels": [
+					"North Tyneside"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000853",
+					"labels": [
+						"North Tyneside"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000854",
+				"labels": [
+					"North Warwickshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000854",
+					"labels": [
+						"North Warwickshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000855",
+				"labels": [
+					"North West Cambridgeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000855",
+					"labels": [
+						"North West Cambridgeshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000856",
+				"labels": [
+					"North West Durham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000856",
+					"labels": [
+						"North West Durham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000857",
+				"labels": [
+					"North West Hampshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000857",
+					"labels": [
+						"North West Hampshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000858",
+				"labels": [
+					"North West Leicestershire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000858",
+					"labels": [
+						"North West Leicestershire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000859",
+				"labels": [
+					"North West Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000859",
+					"labels": [
+						"North West Norfolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000860",
+				"labels": [
+					"North Wiltshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000860",
+					"labels": [
+						"North Wiltshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000861",
+				"labels": [
+					"Northampton North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000861",
+					"labels": [
+						"Northampton North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000862",
+				"labels": [
+					"Northampton South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000862",
+					"labels": [
+						"Northampton South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000863",
+				"labels": [
+					"Norwich North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000863",
+					"labels": [
+						"Norwich North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000864",
+				"labels": [
+					"Norwich South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000864",
+					"labels": [
+						"Norwich South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000865",
+				"labels": [
+					"Nottingham East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000865",
+					"labels": [
+						"Nottingham East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000866",
+				"labels": [
+					"Nottingham North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000866",
+					"labels": [
+						"Nottingham North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000867",
+				"labels": [
+					"Nottingham South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000867",
+					"labels": [
+						"Nottingham South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000868",
+				"labels": [
+					"Nuneaton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000868",
+					"labels": [
+						"Nuneaton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000869",
+				"labels": [
+					"Old Bexley and Sidcup"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000869",
+					"labels": [
+						"Old Bexley and Sidcup"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000870",
+				"labels": [
+					"Oldham East and Saddleworth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000870",
+					"labels": [
+						"Oldham East and Saddleworth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000871",
+				"labels": [
+					"Oldham West and Royton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000871",
+					"labels": [
+						"Oldham West and Royton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000872",
+				"labels": [
+					"Orpington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000872",
+					"labels": [
+						"Orpington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000873",
+				"labels": [
+					"Oxford East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000873",
+					"labels": [
+						"Oxford East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000874",
+				"labels": [
+					"Oxford West and Abingdon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000874",
+					"labels": [
+						"Oxford West and Abingdon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000875",
+				"labels": [
+					"Pendle"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000875",
+					"labels": [
+						"Pendle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000876",
+				"labels": [
+					"Penistone and Stocksbridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000876",
+					"labels": [
+						"Penistone and Stocksbridge"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000877",
+				"labels": [
+					"Penrith and The Border"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000877",
+					"labels": [
+						"Penrith and The Border"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000878",
+				"labels": [
+					"Peterborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000878",
+					"labels": [
+						"Peterborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000879",
+				"labels": [
+					"Plymouth, Moor View"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000879",
+					"labels": [
+						"Plymouth, Moor View"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000880",
+				"labels": [
+					"Plymouth, Sutton and Devonport"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000880",
+					"labels": [
+						"Plymouth, Sutton and Devonport"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000881",
+				"labels": [
+					"Poole"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000881",
+					"labels": [
+						"Poole"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000882",
+				"labels": [
+					"Poplar and Limehouse"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000882",
+					"labels": [
+						"Poplar and Limehouse"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000883",
+				"labels": [
+					"Portsmouth North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000883",
+					"labels": [
+						"Portsmouth North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000884",
+				"labels": [
+					"Portsmouth South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000884",
+					"labels": [
+						"Portsmouth South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000885",
+				"labels": [
+					"Preston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000885",
+					"labels": [
+						"Preston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000886",
+				"labels": [
+					"Pudsey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000886",
+					"labels": [
+						"Pudsey"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000887",
+				"labels": [
+					"Putney"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000887",
+					"labels": [
+						"Putney"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000888",
+				"labels": [
+					"Rayleigh and Wickford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000888",
+					"labels": [
+						"Rayleigh and Wickford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000889",
+				"labels": [
+					"Reading East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000889",
+					"labels": [
+						"Reading East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000890",
+				"labels": [
+					"Reading West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000890",
+					"labels": [
+						"Reading West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000891",
+				"labels": [
+					"Redcar"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000891",
+					"labels": [
+						"Redcar"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000892",
+				"labels": [
+					"Redditch"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000892",
+					"labels": [
+						"Redditch"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000893",
+				"labels": [
+					"Reigate"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000893",
+					"labels": [
+						"Reigate"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000894",
+				"labels": [
+					"Ribble Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000894",
+					"labels": [
+						"Ribble Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000895",
+				"labels": [
+					"Richmond (Yorks)"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000895",
+					"labels": [
+						"Richmond (Yorks)"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000896",
+				"labels": [
+					"Richmond Park"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000896",
+					"labels": [
+						"Richmond Park"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000897",
+				"labels": [
+					"Rochdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000897",
+					"labels": [
+						"Rochdale"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000898",
+				"labels": [
+					"Rochester and Strood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000898",
+					"labels": [
+						"Rochester and Strood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000899",
+				"labels": [
+					"Rochford and Southend East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000899",
+					"labels": [
+						"Rochford and Southend East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000900",
+				"labels": [
+					"Romford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000900",
+					"labels": [
+						"Romford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000901",
+				"labels": [
+					"Romsey and Southampton North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000901",
+					"labels": [
+						"Romsey and Southampton North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000902",
+				"labels": [
+					"Rossendale and Darwen"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000902",
+					"labels": [
+						"Rossendale and Darwen"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000903",
+				"labels": [
+					"Rother Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000903",
+					"labels": [
+						"Rother Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000904",
+				"labels": [
+					"Rotherham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000904",
+					"labels": [
+						"Rotherham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000905",
+				"labels": [
+					"Rugby"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000905",
+					"labels": [
+						"Rugby"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000906",
+				"labels": [
+					"Ruislip, Northwood and Pinner"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000906",
+					"labels": [
+						"Ruislip, Northwood and Pinner"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000907",
+				"labels": [
+					"Runnymede and Weybridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000907",
+					"labels": [
+						"Runnymede and Weybridge"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000908",
+				"labels": [
+					"Rushcliffe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000908",
+					"labels": [
+						"Rushcliffe"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000909",
+				"labels": [
+					"Rutland and Melton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000909",
+					"labels": [
+						"Rutland and Melton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000910",
+				"labels": [
+					"Saffron Walden"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000910",
+					"labels": [
+						"Saffron Walden"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000911",
+				"labels": [
+					"Salford and Eccles"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000911",
+					"labels": [
+						"Salford and Eccles"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000912",
+				"labels": [
+					"Salisbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000912",
+					"labels": [
+						"Salisbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000913",
+				"labels": [
+					"Scarborough and Whitby"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000913",
+					"labels": [
+						"Scarborough and Whitby"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000914",
+				"labels": [
+					"Scunthorpe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000914",
+					"labels": [
+						"Scunthorpe"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000915",
+				"labels": [
+					"Sedgefield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000915",
+					"labels": [
+						"Sedgefield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000916",
+				"labels": [
+					"Sefton Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000916",
+					"labels": [
+						"Sefton Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000917",
+				"labels": [
+					"Selby and Ainsty"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000917",
+					"labels": [
+						"Selby and Ainsty"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000918",
+				"labels": [
+					"Sevenoaks"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000918",
+					"labels": [
+						"Sevenoaks"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000919",
+				"labels": [
+					"Sheffield Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000919",
+					"labels": [
+						"Sheffield Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000920",
+				"labels": [
+					"Sheffield South East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000920",
+					"labels": [
+						"Sheffield South East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000921",
+				"labels": [
+					"Sheffield, Brightside and Hillsborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000921",
+					"labels": [
+						"Sheffield, Brightside and Hillsborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000922",
+				"labels": [
+					"Sheffield, Hallam"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000922",
+					"labels": [
+						"Sheffield, Hallam"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000923",
+				"labels": [
+					"Sheffield, Heeley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000923",
+					"labels": [
+						"Sheffield, Heeley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000924",
+				"labels": [
+					"Sherwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000924",
+					"labels": [
+						"Sherwood"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000925",
+				"labels": [
+					"Shipley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000925",
+					"labels": [
+						"Shipley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000926",
+				"labels": [
+					"Shrewsbury and Atcham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000926",
+					"labels": [
+						"Shrewsbury and Atcham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000927",
+				"labels": [
+					"Sittingbourne and Sheppey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000927",
+					"labels": [
+						"Sittingbourne and Sheppey"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000928",
+				"labels": [
+					"Skipton and Ripon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000928",
+					"labels": [
+						"Skipton and Ripon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000929",
+				"labels": [
+					"Sleaford and North Hykeham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000929",
+					"labels": [
+						"Sleaford and North Hykeham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000930",
+				"labels": [
+					"Slough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000930",
+					"labels": [
+						"Slough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000931",
+				"labels": [
+					"Solihull"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000931",
+					"labels": [
+						"Solihull"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000932",
+				"labels": [
+					"Somerton and Frome"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000932",
+					"labels": [
+						"Somerton and Frome"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000933",
+				"labels": [
+					"South Basildon and East Thurrock"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000933",
+					"labels": [
+						"South Basildon and East Thurrock"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000934",
+				"labels": [
+					"South Cambridgeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000934",
+					"labels": [
+						"South Cambridgeshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000935",
+				"labels": [
+					"South Derbyshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000935",
+					"labels": [
+						"South Derbyshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000936",
+				"labels": [
+					"South Dorset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000936",
+					"labels": [
+						"South Dorset"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000937",
+				"labels": [
+					"South East Cambridgeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000937",
+					"labels": [
+						"South East Cambridgeshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000938",
+				"labels": [
+					"South East Cornwall"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000938",
+					"labels": [
+						"South East Cornwall"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000939",
+				"labels": [
+					"South Holland and The Deepings"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000939",
+					"labels": [
+						"South Holland and The Deepings"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000940",
+				"labels": [
+					"South Leicestershire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000940",
+					"labels": [
+						"South Leicestershire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000941",
+				"labels": [
+					"South Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000941",
+					"labels": [
+						"South Norfolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000942",
+				"labels": [
+					"South Northamptonshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000942",
+					"labels": [
+						"South Northamptonshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000943",
+				"labels": [
+					"South Ribble"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000943",
+					"labels": [
+						"South Ribble"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000944",
+				"labels": [
+					"South Shields"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000944",
+					"labels": [
+						"South Shields"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000945",
+				"labels": [
+					"South Staffordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000945",
+					"labels": [
+						"South Staffordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000946",
+				"labels": [
+					"South Suffolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000946",
+					"labels": [
+						"South Suffolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000947",
+				"labels": [
+					"South Swindon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000947",
+					"labels": [
+						"South Swindon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000948",
+				"labels": [
+					"South Thanet"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000948",
+					"labels": [
+						"South Thanet"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000949",
+				"labels": [
+					"South West Bedfordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000949",
+					"labels": [
+						"South West Bedfordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000950",
+				"labels": [
+					"South West Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000950",
+					"labels": [
+						"South West Devon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000951",
+				"labels": [
+					"South West Hertfordshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000951",
+					"labels": [
+						"South West Hertfordshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000952",
+				"labels": [
+					"South West Norfolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000952",
+					"labels": [
+						"South West Norfolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000953",
+				"labels": [
+					"South West Surrey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000953",
+					"labels": [
+						"South West Surrey"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000954",
+				"labels": [
+					"South West Wiltshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000954",
+					"labels": [
+						"South West Wiltshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000955",
+				"labels": [
+					"Southampton, Itchen"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000955",
+					"labels": [
+						"Southampton, Itchen"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000956",
+				"labels": [
+					"Southampton, Test"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000956",
+					"labels": [
+						"Southampton, Test"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000957",
+				"labels": [
+					"Southend West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000957",
+					"labels": [
+						"Southend West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000958",
+				"labels": [
+					"Southport"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000958",
+					"labels": [
+						"Southport"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000959",
+				"labels": [
+					"Spelthorne"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000959",
+					"labels": [
+						"Spelthorne"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000960",
+				"labels": [
+					"St Albans"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000960",
+					"labels": [
+						"St Albans"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000961",
+				"labels": [
+					"St Austell and Newquay"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000961",
+					"labels": [
+						"St Austell and Newquay"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000962",
+				"labels": [
+					"St Helens North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000962",
+					"labels": [
+						"St Helens North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000963",
+				"labels": [
+					"St Helens South and Whiston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000963",
+					"labels": [
+						"St Helens South and Whiston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000964",
+				"labels": [
+					"St Ives"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000964",
+					"labels": [
+						"St Ives"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000965",
+				"labels": [
+					"Stafford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000965",
+					"labels": [
+						"Stafford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000966",
+				"labels": [
+					"Staffordshire Moorlands"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000966",
+					"labels": [
+						"Staffordshire Moorlands"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000967",
+				"labels": [
+					"Stalybridge and Hyde"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000967",
+					"labels": [
+						"Stalybridge and Hyde"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000968",
+				"labels": [
+					"Stevenage"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000968",
+					"labels": [
+						"Stevenage"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000969",
+				"labels": [
+					"Stockport"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000969",
+					"labels": [
+						"Stockport"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000970",
+				"labels": [
+					"Stockton North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000970",
+					"labels": [
+						"Stockton North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000971",
+				"labels": [
+					"Stockton South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000971",
+					"labels": [
+						"Stockton South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000972",
+				"labels": [
+					"Stoke-on-Trent Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000972",
+					"labels": [
+						"Stoke-on-Trent Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000973",
+				"labels": [
+					"Stoke-on-Trent North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000973",
+					"labels": [
+						"Stoke-on-Trent North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000974",
+				"labels": [
+					"Stoke-on-Trent South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000974",
+					"labels": [
+						"Stoke-on-Trent South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000975",
+				"labels": [
+					"Stone"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000975",
+					"labels": [
+						"Stone"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000976",
+				"labels": [
+					"Stourbridge"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000976",
+					"labels": [
+						"Stourbridge"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000977",
+				"labels": [
+					"Stratford-on-Avon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000977",
+					"labels": [
+						"Stratford-on-Avon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000978",
+				"labels": [
+					"Streatham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000978",
+					"labels": [
+						"Streatham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000979",
+				"labels": [
+					"Stretford and Urmston"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000979",
+					"labels": [
+						"Stretford and Urmston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000980",
+				"labels": [
+					"Stroud"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000980",
+					"labels": [
+						"Stroud"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000981",
+				"labels": [
+					"Suffolk Coastal"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000981",
+					"labels": [
+						"Suffolk Coastal"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000982",
+				"labels": [
+					"Sunderland Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000982",
+					"labels": [
+						"Sunderland Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000983",
+				"labels": [
+					"Surrey Heath"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000983",
+					"labels": [
+						"Surrey Heath"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000984",
+				"labels": [
+					"Sutton and Cheam"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000984",
+					"labels": [
+						"Sutton and Cheam"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000985",
+				"labels": [
+					"Sutton Coldfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000985",
+					"labels": [
+						"Sutton Coldfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000986",
+				"labels": [
+					"Tamworth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000986",
+					"labels": [
+						"Tamworth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000987",
+				"labels": [
+					"Tatton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000987",
+					"labels": [
+						"Tatton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000988",
+				"labels": [
+					"Taunton Deane"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000988",
+					"labels": [
+						"Taunton Deane"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000989",
+				"labels": [
+					"Telford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000989",
+					"labels": [
+						"Telford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000990",
+				"labels": [
+					"Tewkesbury"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000990",
+					"labels": [
+						"Tewkesbury"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000991",
+				"labels": [
+					"The Cotswolds"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000991",
+					"labels": [
+						"The Cotswolds"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000992",
+				"labels": [
+					"The Wrekin"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000992",
+					"labels": [
+						"The Wrekin"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000993",
+				"labels": [
+					"Thirsk and Malton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000993",
+					"labels": [
+						"Thirsk and Malton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000994",
+				"labels": [
+					"Thornbury and Yate"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000994",
+					"labels": [
+						"Thornbury and Yate"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000995",
+				"labels": [
+					"Thurrock"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000995",
+					"labels": [
+						"Thurrock"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000996",
+				"labels": [
+					"Tiverton and Honiton"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000996",
+					"labels": [
+						"Tiverton and Honiton"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000997",
+				"labels": [
+					"Tonbridge and Malling"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000997",
+					"labels": [
+						"Tonbridge and Malling"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000998",
+				"labels": [
+					"Tooting"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000998",
+					"labels": [
+						"Tooting"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14000999",
+				"labels": [
+					"Torbay"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14000999",
+					"labels": [
+						"Torbay"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001000",
+				"labels": [
+					"Torridge and West Devon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001000",
+					"labels": [
+						"Torridge and West Devon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001001",
+				"labels": [
+					"Totnes"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001001",
+					"labels": [
+						"Totnes"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001002",
+				"labels": [
+					"Tottenham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001002",
+					"labels": [
+						"Tottenham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001003",
+				"labels": [
+					"Truro and Falmouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001003",
+					"labels": [
+						"Truro and Falmouth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001004",
+				"labels": [
+					"Tunbridge Wells"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001004",
+					"labels": [
+						"Tunbridge Wells"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001005",
+				"labels": [
+					"Twickenham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001005",
+					"labels": [
+						"Twickenham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001006",
+				"labels": [
+					"Tynemouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001006",
+					"labels": [
+						"Tynemouth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001007",
+				"labels": [
+					"Uxbridge and South Ruislip"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001007",
+					"labels": [
+						"Uxbridge and South Ruislip"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001008",
+				"labels": [
+					"Vauxhall"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001008",
+					"labels": [
+						"Vauxhall"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001009",
+				"labels": [
+					"Wakefield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001009",
+					"labels": [
+						"Wakefield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001010",
+				"labels": [
+					"Wallasey"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001010",
+					"labels": [
+						"Wallasey"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001011",
+				"labels": [
+					"Walsall North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001011",
+					"labels": [
+						"Walsall North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001012",
+				"labels": [
+					"Walsall South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001012",
+					"labels": [
+						"Walsall South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001013",
+				"labels": [
+					"Walthamstow"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001013",
+					"labels": [
+						"Walthamstow"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001014",
+				"labels": [
+					"Wansbeck"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001014",
+					"labels": [
+						"Wansbeck"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001015",
+				"labels": [
+					"Wantage"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001015",
+					"labels": [
+						"Wantage"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001016",
+				"labels": [
+					"Warley"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001016",
+					"labels": [
+						"Warley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001017",
+				"labels": [
+					"Warrington North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001017",
+					"labels": [
+						"Warrington North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001018",
+				"labels": [
+					"Warrington South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001018",
+					"labels": [
+						"Warrington South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001019",
+				"labels": [
+					"Warwick and Leamington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001019",
+					"labels": [
+						"Warwick and Leamington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001020",
+				"labels": [
+					"Washington and Sunderland West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001020",
+					"labels": [
+						"Washington and Sunderland West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001021",
+				"labels": [
+					"Watford"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001021",
+					"labels": [
+						"Watford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001022",
+				"labels": [
+					"Waveney"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001022",
+					"labels": [
+						"Waveney"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001023",
+				"labels": [
+					"Wealden"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001023",
+					"labels": [
+						"Wealden"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001024",
+				"labels": [
+					"Weaver Vale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001024",
+					"labels": [
+						"Weaver Vale"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001025",
+				"labels": [
+					"Wellingborough"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001025",
+					"labels": [
+						"Wellingborough"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001026",
+				"labels": [
+					"Wells"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001026",
+					"labels": [
+						"Wells"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001027",
+				"labels": [
+					"Welwyn Hatfield"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001027",
+					"labels": [
+						"Welwyn Hatfield"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001028",
+				"labels": [
+					"Wentworth and Dearne"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001028",
+					"labels": [
+						"Wentworth and Dearne"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001029",
+				"labels": [
+					"West Bromwich East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001029",
+					"labels": [
+						"West Bromwich East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001030",
+				"labels": [
+					"West Bromwich West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001030",
+					"labels": [
+						"West Bromwich West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001031",
+				"labels": [
+					"West Dorset"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001031",
+					"labels": [
+						"West Dorset"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001032",
+				"labels": [
+					"West Ham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001032",
+					"labels": [
+						"West Ham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001033",
+				"labels": [
+					"West Lancashire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001033",
+					"labels": [
+						"West Lancashire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001034",
+				"labels": [
+					"West Suffolk"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001034",
+					"labels": [
+						"West Suffolk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001035",
+				"labels": [
+					"West Worcestershire"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001035",
+					"labels": [
+						"West Worcestershire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001036",
+				"labels": [
+					"Westminster North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001036",
+					"labels": [
+						"Westminster North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001037",
+				"labels": [
+					"Westmorland and Lonsdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001037",
+					"labels": [
+						"Westmorland and Lonsdale"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001038",
+				"labels": [
+					"Weston-Super-Mare"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001038",
+					"labels": [
+						"Weston-Super-Mare"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001039",
+				"labels": [
+					"Wigan"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001039",
+					"labels": [
+						"Wigan"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001040",
+				"labels": [
+					"Wimbledon"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001040",
+					"labels": [
+						"Wimbledon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001041",
+				"labels": [
+					"Winchester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001041",
+					"labels": [
+						"Winchester"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001042",
+				"labels": [
+					"Windsor"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001042",
+					"labels": [
+						"Windsor"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001043",
+				"labels": [
+					"Wirral South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001043",
+					"labels": [
+						"Wirral South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001044",
+				"labels": [
+					"Wirral West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001044",
+					"labels": [
+						"Wirral West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001045",
+				"labels": [
+					"Witham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001045",
+					"labels": [
+						"Witham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001046",
+				"labels": [
+					"Witney"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001046",
+					"labels": [
+						"Witney"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001047",
+				"labels": [
+					"Woking"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001047",
+					"labels": [
+						"Woking"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001048",
+				"labels": [
+					"Wokingham"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001048",
+					"labels": [
+						"Wokingham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001049",
+				"labels": [
+					"Wolverhampton North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001049",
+					"labels": [
+						"Wolverhampton North East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001050",
+				"labels": [
+					"Wolverhampton South East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001050",
+					"labels": [
+						"Wolverhampton South East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001051",
+				"labels": [
+					"Wolverhampton South West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001051",
+					"labels": [
+						"Wolverhampton South West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001052",
+				"labels": [
+					"Worcester"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001052",
+					"labels": [
+						"Worcester"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001053",
+				"labels": [
+					"Workington"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001053",
+					"labels": [
+						"Workington"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001054",
+				"labels": [
+					"Worsley and Eccles South"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001054",
+					"labels": [
+						"Worsley and Eccles South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001055",
+				"labels": [
+					"Worthing West"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001055",
+					"labels": [
+						"Worthing West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001056",
+				"labels": [
+					"Wycombe"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001056",
+					"labels": [
+						"Wycombe"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001057",
+				"labels": [
+					"Wyre and Preston North"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001057",
+					"labels": [
+						"Wyre and Preston North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001058",
+				"labels": [
+					"Wyre Forest"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001058",
+					"labels": [
+						"Wyre Forest"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001059",
+				"labels": [
+					"Wythenshawe and Sale East"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001059",
+					"labels": [
+						"Wythenshawe and Sale East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001060",
+				"labels": [
+					"Yeovil"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001060",
+					"labels": [
+						"Yeovil"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001061",
+				"labels": [
+					"York Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001061",
+					"labels": [
+						"York Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "E14001062",
+				"labels": [
+					"York Outer"
+				]
+			},
+			"targets": [
+				{
+					"code": "E14001062",
+					"labels": [
+						"York Outer"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000001",
+				"labels": [
+					"Belfast East"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000001",
+					"labels": [
+						"Belfast East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000002",
+				"labels": [
+					"Belfast North"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000002",
+					"labels": [
+						"Belfast North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000003",
+				"labels": [
+					"Belfast South"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000003",
+					"labels": [
+						"Belfast South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000004",
+				"labels": [
+					"Belfast West"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000004",
+					"labels": [
+						"Belfast West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000005",
+				"labels": [
+					"East Antrim"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000005",
+					"labels": [
+						"East Antrim"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000006",
+				"labels": [
+					"East Londonderry"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000006",
+					"labels": [
+						"East Londonderry"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000007",
+				"labels": [
+					"Fermanagh and South Tyrone"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000007",
+					"labels": [
+						"Fermanagh and South Tyrone"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000008",
+				"labels": [
+					"Foyle"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000008",
+					"labels": [
+						"Foyle"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000009",
+				"labels": [
+					"Lagan Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000009",
+					"labels": [
+						"Lagan Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000010",
+				"labels": [
+					"Mid Ulster"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000010",
+					"labels": [
+						"Mid Ulster"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000011",
+				"labels": [
+					"Newry and Armagh"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000011",
+					"labels": [
+						"Newry and Armagh"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000012",
+				"labels": [
+					"North Antrim"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000012",
+					"labels": [
+						"North Antrim"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000013",
+				"labels": [
+					"North Down"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000013",
+					"labels": [
+						"North Down"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000014",
+				"labels": [
+					"South Antrim"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000014",
+					"labels": [
+						"South Antrim"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000015",
+				"labels": [
+					"South Down"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000015",
+					"labels": [
+						"South Down"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000016",
+				"labels": [
+					"Strangford"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000016",
+					"labels": [
+						"Strangford"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000017",
+				"labels": [
+					"Upper Bann"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000017",
+					"labels": [
+						"Upper Bann"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "N06000018",
+				"labels": [
+					"West Tyrone"
+				]
+			},
+			"targets": [
+				{
+					"code": "N06000018",
+					"labels": [
+						"West Tyrone"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000001",
+				"labels": [
+					"Aberdeen North"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000001",
+					"labels": [
+						"Aberdeen North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000002",
+				"labels": [
+					"Aberdeen South"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000002",
+					"labels": [
+						"Aberdeen South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000003",
+				"labels": [
+					"Airdrie and Shotts"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000003",
+					"labels": [
+						"Airdrie and Shotts"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000004",
+				"labels": [
+					"Angus"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000004",
+					"labels": [
+						"Angus"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000005",
+				"labels": [
+					"Argyll and Bute"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000005",
+					"labels": [
+						"Argyll and Bute"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000006",
+				"labels": [
+					"Ayr, Carrick and Cumnock"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000006",
+					"labels": [
+						"Ayr, Carrick and Cumnock"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000007",
+				"labels": [
+					"Banff and Buchan"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000007",
+					"labels": [
+						"Banff and Buchan"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000008",
+				"labels": [
+					"Berwickshire, Roxburgh and Selkirk"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000008",
+					"labels": [
+						"Berwickshire, Roxburgh and Selkirk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000009",
+				"labels": [
+					"Caithness, Sutherland and Easter Ross"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000009",
+					"labels": [
+						"Caithness, Sutherland and Easter Ross"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000010",
+				"labels": [
+					"Central Ayrshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000010",
+					"labels": [
+						"Central Ayrshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000011",
+				"labels": [
+					"Coatbridge, Chryston and Bellshill"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000011",
+					"labels": [
+						"Coatbridge, Chryston and Bellshill"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000012",
+				"labels": [
+					"Cumbernauld, Kilsyth and Kirkintilloch East"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000012",
+					"labels": [
+						"Cumbernauld, Kilsyth and Kirkintilloch East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000013",
+				"labels": [
+					"Dumfries and Galloway"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000013",
+					"labels": [
+						"Dumfries and Galloway"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000014",
+				"labels": [
+					"Dumfriesshire, Clydesdale and Tweeddale"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000014",
+					"labels": [
+						"Dumfriesshire, Clydesdale and Tweeddale"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000015",
+				"labels": [
+					"Dundee East"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000015",
+					"labels": [
+						"Dundee East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000016",
+				"labels": [
+					"Dundee West"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000016",
+					"labels": [
+						"Dundee West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000017",
+				"labels": [
+					"Dunfermline and West Fife"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000017",
+					"labels": [
+						"Dunfermline and West Fife"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000018",
+				"labels": [
+					"East Dunbartonshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000018",
+					"labels": [
+						"East Dunbartonshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000019",
+				"labels": [
+					"East Kilbride, Strathaven and Lesmahagow"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000019",
+					"labels": [
+						"East Kilbride, Strathaven and Lesmahagow"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000020",
+				"labels": [
+					"East Lothian"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000020",
+					"labels": [
+						"East Lothian"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000021",
+				"labels": [
+					"East Renfrewshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000021",
+					"labels": [
+						"East Renfrewshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000022",
+				"labels": [
+					"Edinburgh East"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000022",
+					"labels": [
+						"Edinburgh East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000023",
+				"labels": [
+					"Edinburgh North and Leith"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000023",
+					"labels": [
+						"Edinburgh North and Leith"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000024",
+				"labels": [
+					"Edinburgh South"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000024",
+					"labels": [
+						"Edinburgh South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000025",
+				"labels": [
+					"Edinburgh South West"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000025",
+					"labels": [
+						"Edinburgh South West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000026",
+				"labels": [
+					"Edinburgh West"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000026",
+					"labels": [
+						"Edinburgh West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000027",
+				"labels": [
+					"Na h-Eileanan an Iar"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000027",
+					"labels": [
+						"Na h-Eileanan an Iar"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000028",
+				"labels": [
+					"Falkirk"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000028",
+					"labels": [
+						"Falkirk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000029",
+				"labels": [
+					"Glasgow Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000029",
+					"labels": [
+						"Glasgow Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000030",
+				"labels": [
+					"Glasgow East"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000030",
+					"labels": [
+						"Glasgow East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000031",
+				"labels": [
+					"Glasgow North"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000031",
+					"labels": [
+						"Glasgow North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000032",
+				"labels": [
+					"Glasgow North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000032",
+					"labels": [
+						"Glasgow North East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000033",
+				"labels": [
+					"Glasgow North West"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000033",
+					"labels": [
+						"Glasgow North West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000034",
+				"labels": [
+					"Glasgow South"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000034",
+					"labels": [
+						"Glasgow South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000035",
+				"labels": [
+					"Glasgow South West"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000035",
+					"labels": [
+						"Glasgow South West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000036",
+				"labels": [
+					"Glenrothes"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000036",
+					"labels": [
+						"Glenrothes"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000037",
+				"labels": [
+					"Gordon"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000037",
+					"labels": [
+						"Gordon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000038",
+				"labels": [
+					"Inverclyde"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000038",
+					"labels": [
+						"Inverclyde"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000039",
+				"labels": [
+					"Inverness, Nairn, Badenoch and Strathspey"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000039",
+					"labels": [
+						"Inverness, Nairn, Badenoch and Strathspey"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000040",
+				"labels": [
+					"Kilmarnock and Loudoun"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000040",
+					"labels": [
+						"Kilmarnock and Loudoun"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000041",
+				"labels": [
+					"Kirkcaldy and Cowdenbeath"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000041",
+					"labels": [
+						"Kirkcaldy and Cowdenbeath"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000042",
+				"labels": [
+					"Lanark and Hamilton East"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000042",
+					"labels": [
+						"Lanark and Hamilton East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000043",
+				"labels": [
+					"Linlithgow and East Falkirk"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000043",
+					"labels": [
+						"Linlithgow and East Falkirk"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000044",
+				"labels": [
+					"Livingston"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000044",
+					"labels": [
+						"Livingston"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000045",
+				"labels": [
+					"Midlothian"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000045",
+					"labels": [
+						"Midlothian"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000046",
+				"labels": [
+					"Moray"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000046",
+					"labels": [
+						"Moray"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000047",
+				"labels": [
+					"Motherwell and Wishaw"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000047",
+					"labels": [
+						"Motherwell and Wishaw"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000048",
+				"labels": [
+					"North Ayrshire and Arran"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000048",
+					"labels": [
+						"North Ayrshire and Arran"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000049",
+				"labels": [
+					"North East Fife"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000049",
+					"labels": [
+						"North East Fife"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000050",
+				"labels": [
+					"Ochil and South Perthshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000050",
+					"labels": [
+						"Ochil and South Perthshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000051",
+				"labels": [
+					"Orkney and Shetland"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000051",
+					"labels": [
+						"Orkney and Shetland"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000052",
+				"labels": [
+					"Paisley and Renfrewshire North"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000052",
+					"labels": [
+						"Paisley and Renfrewshire North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000053",
+				"labels": [
+					"Paisley and Renfrewshire South"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000053",
+					"labels": [
+						"Paisley and Renfrewshire South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000054",
+				"labels": [
+					"Perth and North Perthshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000054",
+					"labels": [
+						"Perth and North Perthshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000055",
+				"labels": [
+					"Ross, Skye and Lochaber"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000055",
+					"labels": [
+						"Ross, Skye and Lochaber"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000056",
+				"labels": [
+					"Rutherglen and Hamilton West"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000056",
+					"labels": [
+						"Rutherglen and Hamilton West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000057",
+				"labels": [
+					"Stirling"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000057",
+					"labels": [
+						"Stirling"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000058",
+				"labels": [
+					"West Aberdeenshire and Kincardine"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000058",
+					"labels": [
+						"West Aberdeenshire and Kincardine"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S14000059",
+				"labels": [
+					"West Dunbartonshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "S14000059",
+					"labels": [
+						"West Dunbartonshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000041",
+				"labels": [
+					"Ynys Môn"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000041",
+					"labels": [
+						"Ynys Môn"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000042",
+				"labels": [
+					"Delyn"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000042",
+					"labels": [
+						"Delyn"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000043",
+				"labels": [
+					"Alyn and Deeside"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000043",
+					"labels": [
+						"Alyn and Deeside"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000044",
+				"labels": [
+					"Wrexham"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000044",
+					"labels": [
+						"Wrexham"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000045",
+				"labels": [
+					"Llanelli"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000045",
+					"labels": [
+						"Llanelli"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000046",
+				"labels": [
+					"Gower"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000046",
+					"labels": [
+						"Gower"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000047",
+				"labels": [
+					"Swansea West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000047",
+					"labels": [
+						"Swansea West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000048",
+				"labels": [
+					"Swansea East"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000048",
+					"labels": [
+						"Swansea East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000049",
+				"labels": [
+					"Aberavon"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000049",
+					"labels": [
+						"Aberavon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000050",
+				"labels": [
+					"Cardiff Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000050",
+					"labels": [
+						"Cardiff Central"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000051",
+				"labels": [
+					"Cardiff North"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000051",
+					"labels": [
+						"Cardiff North"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000052",
+				"labels": [
+					"Rhondda"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000052",
+					"labels": [
+						"Rhondda"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000053",
+				"labels": [
+					"Torfaen"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000053",
+					"labels": [
+						"Torfaen"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000054",
+				"labels": [
+					"Monmouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000054",
+					"labels": [
+						"Monmouth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000055",
+				"labels": [
+					"Newport East"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000055",
+					"labels": [
+						"Newport East"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000056",
+				"labels": [
+					"Newport West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000056",
+					"labels": [
+						"Newport West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000057",
+				"labels": [
+					"Arfon"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000057",
+					"labels": [
+						"Arfon"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000058",
+				"labels": [
+					"Aberconwy"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000058",
+					"labels": [
+						"Aberconwy"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000059",
+				"labels": [
+					"Clwyd West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000059",
+					"labels": [
+						"Clwyd West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000060",
+				"labels": [
+					"Vale of Clwyd"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000060",
+					"labels": [
+						"Vale of Clwyd"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000061",
+				"labels": [
+					"Dwyfor Meirionnydd"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000061",
+					"labels": [
+						"Dwyfor Meirionnydd"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000062",
+				"labels": [
+					"Clwyd South"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000062",
+					"labels": [
+						"Clwyd South"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000063",
+				"labels": [
+					"Montgomeryshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000063",
+					"labels": [
+						"Montgomeryshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000064",
+				"labels": [
+					"Ceredigion"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000064",
+					"labels": [
+						"Ceredigion"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000065",
+				"labels": [
+					"Preseli Pembrokeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000065",
+					"labels": [
+						"Preseli Pembrokeshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000066",
+				"labels": [
+					"Carmarthen West and South Pembrokeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000066",
+					"labels": [
+						"Carmarthen West and South Pembrokeshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000067",
+				"labels": [
+					"Carmarthen East and Dinefwr"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000067",
+					"labels": [
+						"Carmarthen East and Dinefwr"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000068",
+				"labels": [
+					"Brecon and Radnorshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000068",
+					"labels": [
+						"Brecon and Radnorshire"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000069",
+				"labels": [
+					"Neath"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000069",
+					"labels": [
+						"Neath"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000070",
+				"labels": [
+					"Cynon Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000070",
+					"labels": [
+						"Cynon Valley"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000071",
+				"labels": [
+					"Merthyr Tydfil and Rhymney"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000071",
+					"labels": [
+						"Merthyr Tydfil and Rhymney"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000072",
+				"labels": [
+					"Blaenau Gwent"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000072",
+					"labels": [
+						"Blaenau Gwent"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000073",
+				"labels": [
+					"Bridgend"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000073",
+					"labels": [
+						"Bridgend"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000074",
+				"labels": [
+					"Ogmore"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000074",
+					"labels": [
+						"Ogmore"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000075",
+				"labels": [
+					"Pontypridd"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000075",
+					"labels": [
+						"Pontypridd"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000076",
+				"labels": [
+					"Caerphilly"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000076",
+					"labels": [
+						"Caerphilly"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000077",
+				"labels": [
+					"Islwyn"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000077",
+					"labels": [
+						"Islwyn"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000078",
+				"labels": [
+					"Vale of Glamorgan"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000078",
+					"labels": [
+						"Vale of Glamorgan"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000079",
+				"labels": [
+					"Cardiff West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000079",
+					"labels": [
+						"Cardiff West"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W07000080",
+				"labels": [
+					"Cardiff South and Penarth"
+				]
+			},
+			"targets": [
+				{
+					"code": "W07000080",
+					"labels": [
+						"Cardiff South and Penarth"
+					],
+					"widestDifferenceM": 0,
+					"sourceShare": 1,
+					"targetShare": 1
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:a7dca15ce496bfd1afdde8d66b078f7c379052d4b1130d71a94a5dbcbe52faae"
+}

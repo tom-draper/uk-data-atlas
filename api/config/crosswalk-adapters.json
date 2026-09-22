@@ -650,6 +650,1014 @@
 				"codeProperty": "LSOA21CD",
 				"nameProperty": "LSOA21NM"
 			}
+		},
+		{
+			"id": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2016-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2016-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2017-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2017-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2021-01-uk-bgc-v3"
+			},
+			"to": {
+				"geography": "itl3",
+				"boundaryRelease": "2025-01-uk-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2008-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2009-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2011-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-w-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2026-05-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2016-05-sc-gcb"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-gb-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+			"method": "same-code-continuity",
+			"quality": "derived",
+			"relationshipPurpose": "identity",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"sliverWidthM": 100
 		}
 	]
 }

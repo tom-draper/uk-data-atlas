@@ -49,7 +49,8 @@ export const handleTranslationRoutes = ({
 	const matches = [...crosswalkLookup.values()].flatMap((crosswalk) => {
 		const validForPurpose =
 			(purpose === "identity" &&
-				crosswalk.method === "official-lookup") ||
+				(crosswalk.method === "official-lookup" ||
+					crosswalk.method === "same-code-continuity")) ||
 			(purpose === "membership" &&
 				crosswalk.method === "clean-containment") ||
 			(purpose === "apportion" && crosswalk.method === "area-overlap");

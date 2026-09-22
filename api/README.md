@@ -142,7 +142,12 @@ only **available** when its endpoint, contract and provenance are published.
       membership, such as LAD → region, is related as within/contains rather
       than as succession.
 - [ ] Add official ward historical change lookups. Do not promote name-based
-      matching or same-code continuity to a public equivalence claim.
+      matching to a public equivalence claim, nor a shared code on its own.
+- [x] Publish derived `same-code-continuity` identity between consecutive
+      releases of one geography, where no piece of the difference between a
+      shared code's two geometries is wider than generalisation slivers.
+      Shared codes whose extent moved are listed as `changedExtent`, not
+      published, so a conversion needing one of them still refuses.
 - [x] Find and explain declared multi-step relationship paths, such as current
       ward → local authority → country or region. Every step's crosswalk,
       direction and method is returned; composition is published only after
@@ -1796,6 +1801,7 @@ Each relation includes a `method` and `quality`:
 | --- | --- | --- |
 | `official-lookup` | Publisher supplied an explicit correspondence | Preferred whenever available |
 | `same-geometry-recode` | 1:1 code/name change with unchanged geometry | Safe identity migration |
+| `same-code-continuity` | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
 | `clean-containment` | A published parent code or verified nesting relation | Membership and exact roll-up |
 | `area-overlap` | Geometry intersection, weighted by area | Land-area quantities; not people by default |
 | `population-overlap` | Fine-grained population building blocks apportioned across targets | Counts whose distribution follows resident population |
@@ -3669,6 +3675,44 @@ threshold, or if any constituency or authority is less than
 that a slightly different rule would change. Its remaining limit is the
 generalisation itself: a genuine overlap narrower than the threshold would be
 dropped with the slivers, and generalised files cannot tell the two apart.
+
+The fourth method, `same-code-continuity`, is also computed. GSS codes are
+meant to change when a boundary does, but a code can survive a realignment
+and a recycled code need not mean the same place, so a code two releases
+share is treated as evidence rather than as identity. Each shared code's two
+geometries are compared by their symmetric difference, judged by its widest
+piece: the same twice-area-over-perimeter width, and the same 100 m
+`sliverWidthM`, as the area-overlap slivers. Independently generalised
+boundaries disagree in strips a few metres wide, while a moved boundary
+leaves a piece hundreds of metres wide, whatever the area's size. A share of
+area cannot tell the two apart, because the same strip is a larger share of a
+small area: in a sample of 5,000 LSOAs shared by 2001 and 2011, the typical
+difference is 3 to 4% of the area, yet no piece of it is wider than 30 m.
+
+A pair is published when its widest difference is under half the sliver
+width. Within a factor of two of it the pair is `indeterminate`, and beyond
+that its extent `changed`; both are listed in
+`validation.continuity.changedExtent` with the width and each side's share,
+as repair evidence for a later area overlap or official lookup, and never
+treated as identity. A code the clipper cannot measure, even retried at a
+millimetre's precision, is listed as `unmeasured`. The clip runs in a worker
+under a 30-second deadline, because polygon-clipping can loop forever on
+near-coincident edges; one Northern Ireland constituency does. Only codes
+both releases identify are compared: the Welsh 2011 LSOA geometry file also
+holds English features. The crosswalks are `derived`, declare
+`relationshipPurpose: identity`, and relate their records as successor and
+predecessor.
+
+They chain each geography's releases in date order. Each date links to the
+next through its widest-coverage release, and same-month variants, such as
+the Great Britain and United Kingdom ward files of December 2019, link to
+that release. A pair already joined by a publisher identity lookup is left to
+that lookup, and a pair sharing fewer than half its codes is skipped, which
+leaves the 2024 constituency redistribution and the 2011 move to GSS local
+authority codes to methods that can describe them. So is a release whose
+geometry file holds no shapes, such as the names-and-codes 2011 data zone
+file. `pnpm tsx scripts/propose-same-code-continuity.ts --write` regenerates
+the adapters when a release is added.
 
 Before publication, the crosswalk compiler validates every referenced code
 against the compiled area artifact for that endpoint and fails on a missing

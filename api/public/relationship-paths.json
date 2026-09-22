@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:254b5af2b879d8b34563e5e6f32a5fa4be2d6d126697c6dd6c23882290a8b064",
-	"crosswalkInventoryHash": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
+	"contentHash": "sha256:cc8dc89657b7acfc82fa534884c973e2cfafb2e4d6942639b6650a66494c05a9",
+	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
 	"paths": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2/forward/identity",
@@ -40,6 +40,286 @@
 					"crosswalkId": "constituency-2010-to-2024-official-lookup-v2",
 					"direction": "reverse",
 					"method": "official-lookup"
+				}
+			]
+		},
+		{
+			"id": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2016-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2016-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2016-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2017-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2017-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2016-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2016-12-uk-bgc-to-2017-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2017-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2017-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2017-12-uk-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "constituency-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},
@@ -84,6 +364,206 @@
 			]
 		},
 		{
+			"id": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "country-2025-12-uk-bgc-to-ward-2025-12-uk-bgc-membership",
 			"purpose": "membership",
 			"from": {
@@ -105,6 +585,86 @@
 					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "itl2",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "itl2",
+				"boundaryRelease": "2021-01-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "itl2-2021-01-uk-bgc-v2-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},
@@ -149,6 +709,46 @@
 			]
 		},
 		{
+			"id": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2021-01-uk-bgc-v3"
+			},
+			"to": {
+				"geography": "itl3",
+				"boundaryRelease": "2025-01-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "itl3",
+				"boundaryRelease": "2025-01-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "itl3",
+				"boundaryRelease": "2021-01-uk-bgc-v3"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "itl3-2021-01-uk-bgc-v3-to-2025-01-uk-bgc-v2-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -185,6 +785,406 @@
 					"crosswalkId": "itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup",
 					"direction": "reverse",
 					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2008-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2009-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2009-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2008-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2008-12-gb-bgc-to-2009-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2011-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2011-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2011-12-gb-bgc-to-2015-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2018-12-uk-bgc-to-2019-04-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2019-04-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2021-12-uk-bgc-to-2022-12-uk-bgc-v2-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},
@@ -229,6 +1229,126 @@
 			]
 		},
 		{
+			"id": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup/forward/identity",
 			"purpose": "identity",
 			"from": {
@@ -265,6 +1385,86 @@
 					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
 					"direction": "reverse",
 					"method": "official-lookup"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},
@@ -469,6 +1669,86 @@
 			]
 		},
 		{
+			"id": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2001-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2001-12-ew-bgc-to-2011-12-ew-bgc-v3-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-w-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-w-bgc"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2011-12-ew-bgc-v3"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2011-12-ew-bgc-v3-to-2011-12-w-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "lsoa-2011-12-ew-bgc-v3-to-2021-12-ew-bgc-v5-official-lookup/forward/identity",
 			"purpose": "identity",
 			"from": {
@@ -589,6 +1869,46 @@
 			]
 		},
 		{
+			"id": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2019-04-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2019-04-ew-bgc-to-2021-12-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -669,6 +1989,206 @@
 			]
 		},
 		{
+			"id": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2021-12-ew-bgc-to-2022-12-ew-bgc-v3-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2022-12-ew-bgc-v3-to-2023-12-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2023-12-ew-bgc-to-2024-12-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2024-12-ew-bgc-to-2025-05-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2026-05-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2026-05-ew-bgc"
+			},
+			"to": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "parish-2025-05-ew-bgc-to-2026-05-ew-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -734,6 +2254,86 @@
 			]
 		},
 		{
+			"id": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2016-05-sc-gcb"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2016-05-sc-gcb"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -770,6 +2370,86 @@
 					"crosswalkId": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2011-12-ew-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2011-12-ew-bgc-to-2015-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},
@@ -814,6 +2494,46 @@
 			]
 		},
 		{
+			"id": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2016-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2016-12-gb-bgc-to-2017-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -854,6 +2574,286 @@
 			]
 		},
 		{
+			"id": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2017-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2017-12-gb-bgc-to-2018-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2018-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2018-12-uk-bgc-to-2019-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-gb-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-gb-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2019-12-gb-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2019-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2019-12-uk-bgc-to-2020-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2022-12-uk-bgc-to-2023-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -890,6 +2890,46 @@
 					"crosswalkId": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-05-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},
@@ -974,6 +3014,126 @@
 			]
 		},
 		{
+			"id": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -1054,6 +3214,46 @@
 			]
 		},
 		{
+			"id": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
 			"id": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment/forward/membership",
 			"purpose": "membership",
 			"from": {
@@ -1090,6 +3290,46 @@
 					"crosswalkId": "ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity/forward/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity/reverse/identity",
+			"purpose": "identity",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "ward",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity"
 				}
 			]
 		},

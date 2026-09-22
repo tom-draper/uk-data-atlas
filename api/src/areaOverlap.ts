@@ -16,6 +16,7 @@ import {
 	toWgs84Geometry,
 } from "./reprojection";
 import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
+import { readShapefileFeatures } from "./shapefile";
 import type { AreaOverlapCrosswalkAdapter } from "./crosswalkAdapters";
 import type {
 	AreaOverlapCrosswalkArtifact,
@@ -23,7 +24,7 @@ import type {
 } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
 
-const CLIPPING_VERSION = (
+export const CLIPPING_VERSION = (
 	createRequire(import.meta.url)("polygon-clipping/package.json") as {
 		version: string;
 	}
@@ -134,7 +135,7 @@ export const polygonWidthM = (polygon: Polygon) => {
 type Bounds = [number, number, number, number];
 
 type GeometryPiece = { geometry: Polygon; bounds: Bounds };
-type AreaGeometry = {
+export type AreaGeometry = {
 	pieces: GeometryPiece[];
 	bounds: Bounds;
 	areaM2: number;
@@ -191,7 +192,7 @@ const boundsOf = (multiPolygon: MultiPolygon): Bounds => {
 	return bounds;
 };
 
-const boundsIntersect = (left: Bounds, right: Bounds) =>
+export const boundsIntersect = (left: Bounds, right: Bounds) =>
 	left[0] <= right[2] &&
 	right[0] <= left[2] &&
 	left[1] <= right[3] &&
@@ -216,7 +217,7 @@ const toPolygons = (geometry: unknown, description: string): Polygon[] => {
 	);
 };
 
-const readGeometries = (
+export const readGeometries = (
 	repositoryRoot: string,
 	crosswalkId: string,
 	endpoint: { geography: string; boundaryRelease: string },
@@ -243,11 +244,18 @@ const readGeometries = (
 			`${crosswalkId}: ${identity} has a correction for a different CRS.`,
 		);
 	}
-	const content = readFileSync(
-		join(repositoryRoot, "data", source.input),
-		"utf8",
-	);
-	const collection = JSON.parse(content) as {
+	const inputPath = join(repositoryRoot, "data", source.input);
+	const content = readFileSync(inputPath);
+	// Shapefiles are read as the geometry cache reads them; the hash is of the
+	// input file's bytes either way, as the geometry source registry records.
+	const collection = (
+		inputPath.toLowerCase().endsWith(".shp")
+			? {
+					type: "FeatureCollection",
+					features: readShapefileFeatures(inputPath),
+				}
+			: JSON.parse(content.toString("utf8"))
+	) as {
 		type?: unknown;
 		features?: Array<{ properties?: unknown; geometry?: unknown }>;
 	};
@@ -270,6 +278,11 @@ const readGeometries = (
 			);
 		}
 		if (codePattern && !codePattern.test(code)) continue;
+		if (typeof feature.geometry !== "object" || feature.geometry === null) {
+			throw new Error(
+				`${crosswalkId}: ${source.input} feature ${index} (${code}) has no geometry.`,
+			);
+		}
 		const corrected = offsets
 			.filter((offset) => appliesTo(offset, code))
 			.reduce(
@@ -317,10 +330,10 @@ const readGeometries = (
 	};
 };
 
-const round = (value: number, places: number) =>
+export const round = (value: number, places: number) =>
 	Math.round(value * 10 ** places) / 10 ** places;
 
-const labelsFor = (
+export const labelsFor = (
 	crosswalkId: string,
 	areaLookup: AreaLookup | undefined,
 	endpoint: { geography: string; boundaryRelease: string },

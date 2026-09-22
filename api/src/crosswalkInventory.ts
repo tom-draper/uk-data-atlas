@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
+import { compileSameCodeContinuityCrosswalk } from "./sameCodeContinuity";
 import {
 	validateGeometryContainment,
 	type GeometryContainmentValidation,
@@ -14,6 +15,7 @@ import type {
 	CrosswalkSideAdapter,
 	CrosswalkWeighting,
 	PropertyCrosswalkAdapter,
+	SameCodeContinuityCrosswalkAdapter,
 } from "./crosswalkAdapters";
 import {
 	validateEndpoint,
@@ -120,8 +122,61 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 	records: Array<{ source: AreaOverlapSource; targets: AreaOverlapTarget[] }>;
 };
 
+export type SameCodeContinuityValidation = {
+	sliverWidthM: number;
+	sourceAreaCount: number;
+	targetAreaCount: number;
+	/** Codes present in both releases, whether or not published. */
+	sharedCodeCount: number;
+	/** Shared codes whose extent held, which are the published records. */
+	continuousCount: number;
+	/**
+	 * Shared codes left out because their geometries differ by more than
+	 * slivers: `changed` beyond twice the sliver width, `indeterminate` within
+	 * a factor of two of it, where the build will not decide.
+	 */
+	changedExtent: Array<{
+		code: string;
+		relation: "changed" | "indeterminate";
+		/** Width of the difference's widest piece, twice area over perimeter. */
+		widestDifferenceM: number;
+		sourceShare: number;
+		targetShare: number;
+	}>;
+	/** Shared codes the clipper could not intersect, so not published. */
+	unmeasured: Array<{ code: string; reason: string }>;
+};
+
+export type SameCodeContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
+	method: "same-code-continuity";
+	quality: "derived";
+	relationshipPurpose: "identity";
+	weighting: SameCodeContinuityCrosswalkAdapter["weighting"];
+	provenance: AreaOverlapCrosswalkArtifact["provenance"];
+	validation: {
+		sourceNameConflicts: Array<{ code: string; names: string[] }>;
+		endpoints: CrosswalkEndpoints;
+		continuity: SameCodeContinuityValidation;
+	};
+	records: Array<{
+		source: CrosswalkArea;
+		targets: Array<
+			CrosswalkArea & {
+				/** Width of the difference's widest piece, in metres. */
+				widestDifferenceM: number;
+				/** Overlap as a share of the source area. */
+				sourceShare: number;
+				/** Overlap as a share of the target area. */
+				targetShare: number;
+			}
+		>;
+	}>;
+};
+
 export type CrosswalkArtifact =
-	PropertyCrosswalkArtifact | AreaOverlapCrosswalkArtifact;
+	| PropertyCrosswalkArtifact
+	| AreaOverlapCrosswalkArtifact
+	| SameCodeContinuityCrosswalkArtifact;
 
 export type CrosswalkInventory = {
 	schemaVersion: 1;
@@ -316,7 +371,10 @@ export const compileCrosswalks = (
 	geometrySources?: GeometrySourceLookup,
 ): { inventory: CrosswalkInventory; artifacts: CrosswalkArtifact[] } => {
 	const artifacts = adapters.map((adapter): CrosswalkArtifact => {
-		if (adapter.method !== "area-overlap") {
+		if (
+			adapter.method !== "area-overlap" &&
+			adapter.method !== "same-code-continuity"
+		) {
 			return compilePropertyCrosswalk(
 				repositoryRoot,
 				adapter,
@@ -326,7 +384,15 @@ export const compileCrosswalks = (
 		}
 		if (!geometrySources) {
 			throw new Error(
-				`${adapter.id}: area-overlap crosswalks need the geometry source registry.`,
+				`${adapter.id}: ${adapter.method} crosswalks need the geometry source registry.`,
+			);
+		}
+		if (adapter.method === "same-code-continuity") {
+			return compileSameCodeContinuityCrosswalk(
+				repositoryRoot,
+				adapter,
+				geometrySources,
+				areaLookup,
 			);
 		}
 		return compileAreaOverlapCrosswalk(
