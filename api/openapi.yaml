@@ -5424,10 +5424,11 @@ paths:
         non-aggregatable measures are refused. The path capability remains
         separate from this measure-specific assessment.
 
-        The preflight also requires a published measure partition whose
-        geography and boundary year match the source release's declared
-        temporal coverage. A measure on a different vintage is explicitly
-        refused, with its published source partitions listed as alternatives.
+        The preflight also requires compiled evidence that a published
+        measure partition's area codes fit the exact source release. A
+        different or partial code set is explicitly refused, with published
+        source partitions listed as alternatives. Code compatibility does not
+        claim that releases have identical geometry.
 
         `available` means every path step has complete published coverage;
         `partial` means a published path leaves some areas unmapped; `not-built`

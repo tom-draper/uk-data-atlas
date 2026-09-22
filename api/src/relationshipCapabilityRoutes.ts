@@ -1,6 +1,6 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
 import type { DataCatalog } from "./dataCatalog";
-import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -21,7 +21,7 @@ const publishedSourcePartition = (
 
 const measureReadiness = (
 	catalog: DataCatalog | undefined,
-	boundaryRegistry: BoundaryRegistry,
+	compatibilityInventory: MeasureCompatibilityInventory | undefined,
 	measureId: string,
 	purpose: RelationshipPurpose,
 	from: { geography: string; boundaryRelease: string },
@@ -31,32 +31,47 @@ const measureReadiness = (
 	const measure = catalog.measures.find((candidate) => candidate.id === measureId);
 	if (!measure)
 		return { status: "unsupported" as const, reason: `No published measure matches ${measureId}.` };
-	const release = boundaryRegistry.releases.find(
-		(candidate) =>
-			candidate.geography === from.geography &&
-			candidate.id === from.boundaryRelease,
-	);
-	if (!release?.temporalCoverage)
+	if (!compatibilityInventory)
 		return {
 			measure: { id: measure.id, unit: measure.unit },
 			status: "not-built" as const,
-			reason: `The source release ${from.geography}/${from.boundaryRelease} has no temporal coverage metadata, so it cannot be matched to a published measure partition.`,
+			reason: "Build measure compatibility before assessing whether the source partition's codes fit the requested release.",
 		};
-	const matchingSources = measure.sources.filter(
+	const compatibility = compatibilityInventory.measures.find(
+		(candidate) => candidate.measureId === measure.id,
+	);
+	const matchingSources = compatibility?.sources.filter(
 		(source) =>
 			source.sourceGeography.type === from.geography &&
-			String(source.sourceGeography.boundaryYear) === release.temporalCoverage,
-	);
+			source.candidates.some(
+				(candidate) =>
+					candidate.boundaryRelease === from.boundaryRelease &&
+					(candidate.status === "exact-code-set" ||
+						candidate.status === "code-set-compatible"),
+			),
+	) ?? [];
 	if (matchingSources.length === 0)
 		return {
 			measure: { id: measure.id, unit: measure.unit },
 			status: "unsupported" as const,
-			reason: `${measure.id} has no published source partition for ${from.geography} boundary year ${release.temporalCoverage}.`,
+			reason: `${measure.id} has no published source partition whose codes are compatible with ${from.geography}/${from.boundaryRelease}.`,
 			publishedSourcePartitions: measure.sources
 				.filter((source) => source.sourceGeography.type === from.geography)
 				.map(publishedSourcePartition),
 		};
-	const sourcePartitions = matchingSources.map(publishedSourcePartition);
+	const sourcePartitions = matchingSources.map((source) => ({
+		...publishedSourcePartition(
+			measure.sources.find(
+				(candidate) =>
+					candidate.datasetId === source.datasetId &&
+					candidate.sourceGeography.type === source.sourceGeography.type &&
+					candidate.sourceGeography.boundaryYear === source.sourceGeography.boundaryYear,
+			)!,
+		),
+		compatibility: source.candidates.find(
+			(candidate) => candidate.boundaryRelease === from.boundaryRelease,
+		),
+	}));
 	if (purpose === "identity")
 		return { measure: { id: measure.id, unit: measure.unit }, sourcePartitions, status: "available" as const, operation: "identity-join", reason: "An identity path can align this measure's area identifiers without changing values." };
 	if (purpose === "membership" && measure.aggregation.kind === "intensive")
@@ -168,7 +183,7 @@ export const handleRelationshipCapabilityRoutes = ({
 					}),
 			paths: capability.paths,
 			missingPrerequisites: capability.missingPrerequisites,
-			...(measureId ? { measureReadiness: measureReadiness(context.dataCatalog, context.boundaryRegistry, measureId, purpose, from as { geography: string; boundaryRelease: string }) } : {}),
+			...(measureId ? { measureReadiness: measureReadiness(context.dataCatalog, context.measureCompatibilityInventory, measureId, purpose, from as { geography: string; boundaryRelease: string }) } : {}),
 		}),
 	};
 };
