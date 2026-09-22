@@ -67,6 +67,15 @@ test("reports an uncompiled discovery source as a build prerequisite", () => {
 	assert.equal(data.missingPrerequisites[0].id, "source-areas");
 });
 
+test("reports an unavailable resolver before attempting source discovery", () => {
+	const response = route(
+		"GET",
+		"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward",
+		{ boundaryRegistry: registry },
+	);
+	assert.equal(response.status, 503);
+});
+
 test("reports a complete conversion path with its measured source coverage", () => {
 	const response = route("GET", query, contextFor());
 	assert.equal(response.status, 200);
