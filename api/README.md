@@ -3463,6 +3463,7 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
 - `GET /v1/relationship-paths` — Find the published paths from one boundary release to another for a purpose
 - `GET /v1/relationship-capabilities` — Diagnose whether a geography conversion is usable and complete
+- `GET /v1/relationship-coverage` — Report relationship coverage and hierarchy gaps for one release
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk

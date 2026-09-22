@@ -171,6 +171,15 @@ export type ResolvedRelationshipCapability = {
 	missingPrerequisites: RelationshipPrerequisite[];
 };
 
+export type ResolvedRelationshipCoverage = {
+	areaCount: number;
+	relatedAreaCount: number;
+	relationshipCount: number;
+	byRelation: Partial<Record<AreaRelation, number>>;
+	crosswalkIds: string[];
+	uncoveredAreas: Array<AreaRecord & { id: string }>;
+};
+
 type AreaIdentity = {
 	geography: string;
 	boundaryRelease: string;
@@ -847,6 +856,51 @@ export class GeographyResolver {
 							: "available",
 			paths: resolvedPaths,
 			missingPrerequisites,
+		};
+	}
+
+	/** Release-level relationship coverage for finding holes in the hierarchy. */
+	relationshipCoverage(
+		geography: string,
+		boundaryRelease: string,
+		relation?: AreaRelation,
+		limit = 25,
+	): ResolvedRelationshipCoverage | undefined {
+		const areas = this.inputs.areaLookup?.get(
+			`${geography}/${boundaryRelease}`,
+		);
+		if (!areas || !this.areaRelationshipIndex) return undefined;
+		const byRelation: Partial<Record<AreaRelation, number>> = {};
+		const crosswalkIds = new Set<string>();
+		let relatedAreaCount = 0;
+		let relationshipCount = 0;
+		const uncoveredAreas: ResolvedRelationshipCoverage["uncoveredAreas"] = [];
+		for (const [code, area] of areas) {
+			const relationships = (this.areaRelationshipIndex.get(
+				areaId({ geography, boundaryRelease, code }),
+			) ?? []).filter((candidate) => !relation || candidate.relation === relation);
+			if (relationships.length > 0) {
+				relatedAreaCount += 1;
+				relationshipCount += relationships.length;
+				for (const candidate of relationships) {
+					byRelation[candidate.relation] =
+						(byRelation[candidate.relation] ?? 0) + 1;
+					crosswalkIds.add(candidate.crosswalk.id);
+				}
+			} else if (uncoveredAreas.length < limit) {
+				uncoveredAreas.push({
+					id: areaId({ geography, boundaryRelease, code }),
+					...area,
+				});
+			}
+		}
+		return {
+			areaCount: areas.size,
+			relatedAreaCount,
+			relationshipCount,
+			byRelation,
+			crosswalkIds: [...crosswalkIds].sort(),
+			uncoveredAreas,
 		};
 	}
 
