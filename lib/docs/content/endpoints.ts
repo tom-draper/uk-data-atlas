@@ -518,6 +518,16 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Cite an area",
 		intro: "Get the artifact hashes, boundary publisher and licence, validation links and ready-made attribution for one exact area identity. Add `measure` or `crosswalk` to include the data or relationship that supports what you publish; the top-level `atlasRelease` identifies the API response build, not the boundary itself.",
 	},
+	reconcileMeasure: {
+		title: "Check a measure against itself",
+		intro: "Where the same measure is published for both small areas and large ones, adding the small ones up should reproduce the large ones. This runs that check and shows the two figures side by side, so you can see where they disagree and by how much.",
+		tips: [
+			"Both numbers come from the publisher. A difference is a clue about the crosswalk, the boundary vintage or the data itself, and nothing here is corrected.",
+			"An area marked `incomplete` is one where some of its smaller parts have no value, so the sum was always going to fall short. That is a gap, not a disagreement.",
+			"It is also how weightings are judged: the same constituencies added into local authorities land a median 0.3% from the published figures by population weight, and 8.8% by area weight.",
+			"Leave `crosswalk` out to see which comparisons are possible for this measure.",
+		],
+	},
 	planMeasureCoverage: {
 		title: "See what a measure covers, country by country",
 		intro: 'Before you rank or map a measure across the UK, check what it actually covers. Ward population, for instance, is published for England and Wales and for neither Scotland nor Northern Ireland, so a ranking of UK wards would quietly leave two countries out. This tells you that first.',

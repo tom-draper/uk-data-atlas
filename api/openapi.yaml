@@ -1615,6 +1615,106 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /measures/{measure-id}/reconciliation:
+    get:
+      operationId: reconcileMeasure
+      tags: ["Data catalogue"]
+      summary: Check a measure against itself across two geographies
+      x-likely-refusal:
+        status: 400
+        when: "`crosswalk` is given without `period`. A reconciliation compares one period."
+        x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment"
+      description: >
+        Where the same measure is published on a fine geography and a coarse
+        one, adding the fine one up through a published crosswalk should
+        reproduce the coarse one. Both figures are the publisher's, so a
+        difference is evidence: about the crosswalk, the boundary vintage or
+        the data. Nothing is corrected; the two are reported side by side.
+
+
+        Each area is `agrees` within the published `tolerance`, `differs`
+        beyond it, or `incomplete` where the finer partition has no value for
+        some of the areas the crosswalk puts in this one, which is a gap rather
+        than a disagreement. `pairing` is `verified` where the compatibility
+        inventory has assessed each partition against the release its end of
+        the crosswalk uses, and `by-codes` where the pairing rests on the codes
+        the crosswalk carries.
+
+
+        Without `crosswalk`, the comparisons this measure's partitions allow
+        are listed rather than one being chosen. This is how a weighting is
+        judged: the same constituencies added into local authorities are a
+        median 0.3% from the published figures by population weight and 8.8%
+        by area weight.
+      parameters:
+        - $ref: "#/components/parameters/MeasureId"
+        - name: crosswalk
+          in: query
+          required: false
+          schema: { type: string }
+          description: The published crosswalk to add the finer partition up through.
+        - name: period
+          in: query
+          required: false
+          schema: { type: string }
+          description: Required with `crosswalk`; the period both partitions are compared for.
+      responses:
+        "200":
+          description: The two figures side by side, or the comparisons available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Envelope"
+              examples:
+                compared:
+                  x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap&period=2022"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    data:
+                      measure:
+                        id: population-estimate
+                        unit: people
+                      period: "2022"
+                      pairing: by-codes
+                      crosswalk:
+                        id: constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap
+                        method: population-overlap
+                        quality: derived
+                        href: /v1/crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap
+                      from:
+                        datasetId: population-constituency
+                        geography: constituency
+                        boundaryYear: 2024
+                      against:
+                        datasetId: population-uk
+                        geography: localAuthority
+                        boundaryYear: 2023
+                      method: population-weighted
+                      summary:
+                        comparedAreaCount: 318
+                        agreeingAreaCount: 245
+                        differingAreaCount: 73
+                        incompleteAreaCount: 0
+                        medianAbsoluteShare: 0.00275591
+                        publishedTotal: 60278591
+                        aggregatedTotal: 60238037.8025
+                      tolerance: 0.005
+                    meta:
+                      nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          description: The named crosswalk cannot carry the comparison.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /measures/{measure-id}/coverage-plan:
     get:
       operationId: planMeasureCoverage

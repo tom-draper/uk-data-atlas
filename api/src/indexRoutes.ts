@@ -43,6 +43,7 @@ export const handleIndexRoutes = ({
 				"/v1/measures/{measure-id}/compatibility",
 				"/v1/measures/{measure-id}/coverage",
 				"/v1/measures/{measure-id}/coverage-plan",
+				"/v1/measures/{measure-id}/reconciliation",
 				"/v1/measures/{measure-id}/quality",
 				"/v1/measures/{measure-id}/conversion-support",
 				"/v1/analysis-geographies",
