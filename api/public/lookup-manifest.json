@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:2aed408c757c169fbce28a611ffd71c788293fc433965648c8fb7035b6e3db2b",
+	"contentHash": "sha256:d7e16b5201e4f8ed89edb946fbd32137dd9dc2eeecbde582670a440c2d288e80",
 	"lookups": [
 		{
 			"id": "areas-combinedAuthority-2025-12-en-bgc",
@@ -5267,6 +5267,238 @@
 			}
 		},
 		{
+			"id": "crosswalk-community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment.json",
+				"contentHash": "sha256:6a8c746a9005dabd9d5c76a1f0d8230e95f7065db49f444f044b0269947615c8"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 314,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 84018,
+					"contentHash": "sha256:a72b41210aaa998c50baa3b6ffb1a2dc474a14d665ac082ccf98cabf5c4684b0",
+					"href": "/v1/lookups/crosswalk-community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 166407,
+					"contentHash": "sha256:62390a7cf71cd604b71e0f2e1b52d7aa1eb01ebc393c7cf1bbdcfa8ed5f4ff28",
+					"href": "/v1/lookups/crosswalk-community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment.json",
+				"contentHash": "sha256:1c0a8c43045c387cc2becc09a96260668b26566b786831a1ac8fde79ba2847bd"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 314,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 77653,
+					"contentHash": "sha256:cc9988119c8226689fde2666a3c10cd7b2a477b03c5d3de3bdf07915b3b10082",
+					"href": "/v1/lookups/crosswalk-community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 160040,
+					"contentHash": "sha256:0d6a2955fa52d2cfd51377322ca2da6f57372c9ab434b41f3df75baa8af36900",
+					"href": "/v1/lookups/crosswalk-community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
 			"id": "crosswalk-constituency-2010-to-2024-official-lookup-v2",
 			"kind": "crosswalk",
 			"title": "Crosswalk, constituency-2010-to-2024-official-lookup-v2",
@@ -7003,6 +7235,586 @@
 					"bytes": 1313,
 					"contentHash": "sha256:dd91827e907cfbabdd42624a3ef753eddc86dd73922d13f891e72986eb5a3a50",
 					"href": "/v1/lookups/crosswalk-country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment.json",
+				"contentHash": "sha256:1561f800bdc7e16c65ee36feb5da0189371534d10a6aa42103461651601d6856"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 1367,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 370111,
+					"contentHash": "sha256:57c83353ca50f8599aeacc6f4bd27b645713b9e81c218957e8dfe60bdbc70ce0",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 729387,
+					"contentHash": "sha256:99a9fda1929ad5d983e5fad61d6832c62eaff1d1871feed6dacc73b56cc84b04",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment.json",
+				"contentHash": "sha256:528017f7d826f3b8c45f783bad38cc3bba935841db9c9882a7afa4d93ae42fa3"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 1367,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 362529,
+					"contentHash": "sha256:83edcc47aa27431c784fe5f3f0f4200f8ec9d4da4fd9e583bc568d380e49e0ef",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 721805,
+					"contentHash": "sha256:7114cad44fcacf1bb98cdf57de78cbca2056729298aae37f8d77e11e17393552",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment.json",
+				"contentHash": "sha256:b4f1dd630c0cdef6a5c8b033b83911697e6f89662f8e0177ef1d34eaf52dae77"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 1367,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 334461,
+					"contentHash": "sha256:380daa9bc50074577392ebc3bc9d40d92531827b23b4d03900a27052096a99a7",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 693737,
+					"contentHash": "sha256:6bda0fc8f891bc7982979ec875b5db10d2e6d53559f845cc20290e041d8b15be",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment.json",
+				"contentHash": "sha256:937da9bcfd230cfacfd8d3a0237a8c9ffb6308153e4dc1eba795b563eea9ce08"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 1367,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 337282,
+					"contentHash": "sha256:7e673a84da08fc395b8989244fb1fef7e433751596dd4536eef54f78f74c3f37",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 696558,
+					"contentHash": "sha256:d63b9c76f1183bb596f21c1e40a03509ca7c68bbd25b9313053e3513d9f7105d",
+					"href": "/v1/lookups/crosswalk-county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment.json",
+				"contentHash": "sha256:6501fa89f9bc10bd4475924b9a5930cecc3922fd27248dc7db23c1cba7625ed3"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 47,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 10489,
+					"contentHash": "sha256:e104c9026f75b910b21ffd85aba265c16464a20839e15b4897f6096372fcedff",
+					"href": "/v1/lookups/crosswalk-fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 22663,
+					"contentHash": "sha256:311329735ff87353477db89848f8824346250dac649e86a46ba4c12f62792d3a",
+					"href": "/v1/lookups/crosswalk-fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment?format=ndjson"
 				}
 			}
 		},
@@ -11991,6 +12803,470 @@
 					"bytes": 39175,
 					"contentHash": "sha256:9a0c12a73f1c06692c75332ce0642cf01c80616db310c5a71623e420c0ae584a",
 					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment.json",
+				"contentHash": "sha256:d0a63be9af3be8c0927c6d847e06b4b0e7ef021ec871bcf39d95d944994f344c"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 73,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 21772,
+					"contentHash": "sha256:b2a64881bd856f441bda2d2858fff8927de68f794c14dc7bbe741f8e4a56936e",
+					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 40772,
+					"contentHash": "sha256:1559dddd85f06281f6c50501aa2e49b8f0e2eb38468d0f80b85739594c190591",
+					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment.json",
+				"contentHash": "sha256:ef85222a8fd02575be1e153f2a9c054d908aec50e88ee11655592f218ad89765"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 73,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 17465,
+					"contentHash": "sha256:c9bf8e2bcd6902026d768e7c9d91b337299b06396d5f79a575c5f35216f881b6",
+					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 36463,
+					"contentHash": "sha256:41c2d8492472c7db8f2e4b0d17e57b3290deb22629b558f6ca93463689da8fca",
+					"href": "/v1/lookups/crosswalk-scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment.json",
+				"contentHash": "sha256:273047cb0fea383234db625a39ba658a1a7d0b65639cf3d60025135c75657ab3"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 40,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 7893,
+					"contentHash": "sha256:b076405c83db88de5332b7e848cf82b9107d4615e17ad4b789199cd9f60e2248",
+					"href": "/v1/lookups/crosswalk-senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 18226,
+					"contentHash": "sha256:faac692437ec14363d39a27af39f49eda9097c5a1b4ef32767622784844382f9",
+					"href": "/v1/lookups/crosswalk-senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment?format=ndjson"
+				}
+			}
+		},
+		{
+			"id": "crosswalk-senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"title": "Crosswalk, senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+			"source": {
+				"artifact": "crosswalks/senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment.json",
+				"contentHash": "sha256:549b88f55a04e52a59aae38dc13b64c676eccdbf09a4227dbab11308c18d23f3"
+			},
+			"columns": [
+				{
+					"name": "crosswalkId",
+					"type": "string",
+					"required": true,
+					"description": "The crosswalk the row belongs to."
+				},
+				{
+					"name": "method",
+					"type": "string",
+					"required": true,
+					"description": "How the relationship was established, such as clean-containment or area-overlap."
+				},
+				{
+					"name": "fromGeography",
+					"type": "string",
+					"required": true,
+					"description": "The source side's geography."
+				},
+				{
+					"name": "fromBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The source side's release."
+				},
+				{
+					"name": "sourceCode",
+					"type": "string",
+					"required": true,
+					"description": "The source area's code."
+				},
+				{
+					"name": "sourceLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The source area's names in the input."
+				},
+				{
+					"name": "toGeography",
+					"type": "string",
+					"required": true,
+					"description": "The target side's geography."
+				},
+				{
+					"name": "toBoundaryRelease",
+					"type": "string",
+					"required": true,
+					"description": "The target side's release."
+				},
+				{
+					"name": "targetCode",
+					"type": "string",
+					"required": true,
+					"description": "The target area's code."
+				},
+				{
+					"name": "targetLabels",
+					"type": "string[]",
+					"required": true,
+					"description": "The target area's names in the input."
+				},
+				{
+					"name": "weight",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source to apportion to this target, where the crosswalk provides weights."
+				},
+				{
+					"name": "sourceShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the source area inside the target, for a weighted overlap."
+				},
+				{
+					"name": "targetShare",
+					"type": "number",
+					"required": false,
+					"description": "The share of the target area inside the source, for a weighted overlap."
+				},
+				{
+					"name": "overlapAreaM2",
+					"type": "number",
+					"required": false,
+					"description": "The overlapping area in square metres, for a weighted overlap."
+				},
+				{
+					"name": "population",
+					"type": "number",
+					"required": false,
+					"description": "The people in the overlap, from the crosswalk's population building blocks."
+				}
+			],
+			"rowCount": 40,
+			"formats": {
+				"csv": {
+					"contentType": "text/csv; charset=utf-8",
+					"bytes": 9928,
+					"contentHash": "sha256:f0abbde2f26c3413be4204c9c6ce36b39778c261e4be6c47353ad5704860ba71",
+					"href": "/v1/lookups/crosswalk-senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment?format=csv"
+				},
+				"ndjson": {
+					"contentType": "application/x-ndjson; charset=utf-8",
+					"bytes": 20261,
+					"contentHash": "sha256:764c019b88e2ce7c9ac54a4e05089ed319c3e88aca8a5f8ccf470809952176ca",
+					"href": "/v1/lookups/crosswalk-senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment?format=ndjson"
 				}
 			}
 		},

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:5750fbd1a1962a08afd1677bffee2bd6ec037107636061a9db53c55c18ee4758",
+	"contentHash": "sha256:89ba65c56fce72bfdd496d2c59d2724b17e0092ef19f3f2b0d9e8a8f61f12ec3",
 	"boundaryRegistryHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
@@ -52,8 +52,48 @@
 				"artifact": "areas/communitySafetyPartnership/2023-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "fireAndRescueAuthority",
+							"boundaryRelease": "2021-05-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "policeForceArea",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "countyElectoralDivision",
+							"boundaryRelease": "2023-05-en-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -838,8 +878,61 @@
 				"artifact": "areas/countyElectoralDivision/2023-05-en-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "communitySafetyPartnership",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "fireAndRescueAuthority",
+							"boundaryRelease": "2021-05-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2023-12-uk-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "policeForceArea",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -904,8 +997,48 @@
 				"artifact": "areas/fireAndRescueAuthority/2021-05-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl1",
+							"boundaryRelease": "2021-01-uk-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "communitySafetyPartnership",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "countyElectoralDivision",
+							"boundaryRelease": "2023-05-en-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -973,6 +1106,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "scottishParliamentaryConstituency",
+							"boundaryRelease": "2026-05-sc-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -1018,6 +1164,32 @@
 							"boundaryRelease": "2025-01-uk-bgc"
 						},
 						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "seneddConstituency",
+							"boundaryRelease": "2022-12-w-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "fireAndRescueAuthority",
+							"boundaryRelease": "2021-05-ew-bgc"
+						},
+						"method": "geometric-containment",
 						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
@@ -1702,6 +1874,19 @@
 							"boundaryRelease": "2024-05-uk-bgc"
 						},
 						"method": "same-code-continuity",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "countyElectoralDivision",
+							"boundaryRelease": "2023-05-en-bgc"
+						},
+						"method": "geometric-containment",
 						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
@@ -3073,8 +3258,35 @@
 				"artifact": "areas/policeForceArea/2023-12-ew-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "communitySafetyPartnership",
+							"boundaryRelease": "2023-12-ew-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "countyElectoralDivision",
+							"boundaryRelease": "2023-05-en-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -3140,8 +3352,22 @@
 				"artifact": "areas/scottishParliamentaryConstituency/2026-05-sc-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl1",
+							"boundaryRelease": "2025-01-uk-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -3219,6 +3445,19 @@
 						"weighting": {
 							"status": "not-applicable"
 						}
+					},
+					{
+						"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "scottishParliamentaryRegion",
+							"boundaryRelease": "2022-12-sc-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
 					}
 				]
 			}
@@ -3271,8 +3510,22 @@
 				"artifact": "areas/scottishParliamentaryRegion/2022-12-sc-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "scottishParliamentaryConstituency",
+							"boundaryRelease": "2021-05-sc-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -3290,8 +3543,35 @@
 				"artifact": "areas/seneddConstituency/2022-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "itl1",
+							"boundaryRelease": "2021-01-uk-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+						"direction": "from",
+						"counterpart": {
+							"geography": "seneddElectoralRegion",
+							"boundaryRelease": "2022-12-w-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -3309,8 +3589,22 @@
 				"artifact": "areas/seneddElectoralRegion/2022-12-w-bgc.json"
 			},
 			"relationships": {
-				"status": "unsupported",
-				"reason": "No published crosswalk references this boundary release yet."
+				"status": "available",
+				"crosswalks": [
+					{
+						"id": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+						"direction": "to",
+						"counterpart": {
+							"geography": "seneddConstituency",
+							"boundaryRelease": "2022-12-w-bgc"
+						},
+						"method": "geometric-containment",
+						"quality": "derived",
+						"weighting": {
+							"status": "not-applicable"
+						}
+					}
+				]
 			}
 		},
 		{
@@ -4390,9 +4684,9 @@
 					"availableAreaCount": 314
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 3
 				}
 			}
 		},
@@ -4475,9 +4769,9 @@
 					"availableAreaCount": 1367
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 4
 				}
 			}
 		},
@@ -4514,9 +4808,9 @@
 					"availableAreaCount": 47
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 3
 				}
 			}
 		},
@@ -4557,7 +4851,7 @@
 				"relationships": {
 					"availableReleaseCount": 2,
 					"unsupportedReleaseCount": 0,
-					"crosswalkCount": 3
+					"crosswalkCount": 6
 				}
 			}
 		},
@@ -4623,7 +4917,7 @@
 				"relationships": {
 					"availableReleaseCount": 19,
 					"unsupportedReleaseCount": 0,
-					"crosswalkCount": 58
+					"crosswalkCount": 59
 				}
 			}
 		},
@@ -4802,9 +5096,9 @@
 					"availableAreaCount": 43
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 2
 				}
 			}
 		},
@@ -4840,9 +5134,9 @@
 					"availableAreaCount": 292
 				},
 				"relationships": {
-					"availableReleaseCount": 3,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 4
+					"availableReleaseCount": 4,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 6
 				}
 			}
 		},
@@ -4859,9 +5153,9 @@
 					"availableAreaCount": 8
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
 				}
 			}
 		},
@@ -4878,9 +5172,9 @@
 					"availableAreaCount": 40
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 2
 				}
 			}
 		},
@@ -4897,9 +5191,9 @@
 					"availableAreaCount": 5
 				},
 				"relationships": {
-					"availableReleaseCount": 0,
-					"unsupportedReleaseCount": 1,
-					"crosswalkCount": 0
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
 				}
 			}
 		},

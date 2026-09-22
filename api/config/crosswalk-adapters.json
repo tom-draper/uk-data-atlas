@@ -1690,6 +1690,204 @@
 				"valueColumn": "Residence type: Total; measures: Value"
 			},
 			"minimumCoverage": 0.99
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "seneddElectoralRegion",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2026-05-sc-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "policeForceArea",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"method": "geometric-containment",
+			"quality": "derived",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "policeForceArea",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"sliverWidthM": 100
 		}
 	]
 }

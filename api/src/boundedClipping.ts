@@ -44,7 +44,7 @@ const CLIPPING_MODULE = createRequire(import.meta.url).resolve(
 	"polygon-clipping",
 );
 
-export type ClippingOperation = "intersection" | "xor";
+export type ClippingOperation = "intersection" | "xor" | "difference";
 
 /** A geometry, or the id of one registered with the clipper. */
 export type ClipOperand = MultiPolygon | string;

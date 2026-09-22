@@ -1810,6 +1810,7 @@ Each relation includes a `method` and `quality`:
 | `same-geometry-recode` | 1:1 code/name change with unchanged geometry | Safe identity migration |
 | `same-code-continuity` | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
 | `clean-containment` | A published parent code or verified nesting relation | Membership and exact roll-up |
+| `geometric-containment` | Every child sits within one parent, established from the two releases' geometry | Membership where no lookup carries the hierarchy; derived |
 | `area-overlap` | Geometry intersection, weighted by area | Land-area quantities; not people by default |
 | `population-overlap` | Fine-grained population building blocks apportioned across targets | Counts whose distribution follows resident population |
 | `inferred` | Carefully documented heuristic, for example recovered ward-to-LAD membership | Discovery/matching; requires a warning |
@@ -3754,6 +3755,26 @@ That is a check on the weighting, not a published conversion: an authority
 that also draws people from a constituency outside England and Wales is not
 comparable this way. Scottish data zones and Northern Irish super
 output areas, with their own counts, would extend it to the rest of the UK.
+
+The sixth method, `geometric-containment`, publishes a hierarchy no lookup
+carries. Each child of one release is measured against the parents of
+another, and belongs to the parent holding most of it; the claim is then
+tested by what it leaves outside, by the same widest-piece rule the
+area-overlap crosswalks use for slivers. A child reaching less than half the
+sliver width beyond its parent is within it, which is border noise; one
+reaching further straddles, and the build refuses the whole pair rather than
+publish a membership that is not one. A share of area could not make that
+call, because the same strip of disagreement is a larger share of a data zone
+than of a county.
+
+`pnpm tsx scripts/propose-geometric-containment.ts` searches for these
+hierarchies. It asks only pairs that could nest, where one release has more
+areas than the other, its countries are inside theirs, their vintages are
+within three years, nothing already relates them, and one of the two is a
+release nothing relates at all. Of several releases of one parent geography
+it asks the nearest in vintage, and it gives up on a pair after a handful of
+children fail, because a pair that is not a hierarchy shows it immediately.
+The geometry decides; the search only chooses what to ask.
 
 `public/relationship-paths.json` publishes every crosswalk as a one-step
 path in each direction, the reviewed compositions declared in

@@ -35,6 +35,7 @@ export const findCountryIdentity = (
 const MEMBERSHIP_CLAIMS = {
 	"area-overlap": "verified-full-area-overlap",
 	"clean-containment": "verified-clean-containment",
+	"geometric-containment": "verified-geometric-containment",
 	"official-lookup": "published-membership-lookup",
 } as const;
 

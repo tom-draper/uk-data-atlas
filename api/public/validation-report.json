@@ -4,25 +4,25 @@
 		"boundaryRegistry": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 		"areaInventory": "sha256:540a0f11b94d5355619580c592e161fd3fbe02cbde404cf60c419f6202ffb37f",
 		"geometrySources": "sha256:9e6bb38492183c83dc232498b460574d3fffd5d2995fcc7744b3e93608f9fab2",
-		"crosswalkInventory": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
+		"crosswalkInventory": "sha256:65354da51e9fd2cae2263d36bb187d8efcd7c11b855845d105c451c1f5e4d662",
 		"relationshipCandidates": "sha256:ddba58ccf93e44edf2109a1f643e1a401bc5c1e9883fa4bc1fa11729c3c5cb68",
-		"geographyInventory": "sha256:5750fbd1a1962a08afd1677bffee2bd6ec037107636061a9db53c55c18ee4758",
+		"geographyInventory": "sha256:89ba65c56fce72bfdd496d2c59d2724b17e0092ef19f3f2b0d9e8a8f61f12ec3",
 		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 		"exportManifest": "sha256:825869e7f0bad75660cf60f4cc86b0ec12eb1defc8bd72ba29b56fcf521182a9",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:d1d28a789ceb45d76889fabfac77d219903730338ae5af28a76686c193dc6ecf"
 	},
 	"summary": {
-		"resourceCount": 657,
-		"checkCount": 2232,
-		"passedCount": 2186,
+		"resourceCount": 668,
+		"checkCount": 2298,
+		"passedCount": 2252,
 		"waivedCount": 46,
 		"coverage": {
 			"boundaryReleases": 94,
 			"areaIdentities": 94,
 			"servableGeometry": 94,
-			"withRelationships": 77,
-			"crosswalks": 87,
+			"withRelationships": 85,
+			"crosswalks": 98,
 			"weightedCrosswalks": 3,
 			"measures": 167,
 			"measureSources": 308
@@ -2847,6 +2847,86 @@
 			]
 		},
 		{
+			"id": "crosswalks/community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 314
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 314,
+						"widestOutsideM": 31,
+						"minimumContainedShare": 0.999507
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 314
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 314,
+						"widestOutsideM": 13.3,
+						"minimumContainedShare": 0.999944
+					}
+				}
+			]
+		},
+		{
 			"id": "crosswalks/constituency-2010-to-2024-official-lookup-v2",
 			"kind": "crosswalk",
 			"status": "waived",
@@ -3391,6 +3471,206 @@
 						"sliverWidthM": 100,
 						"sharedCodeCount": 4,
 						"changedExtentCount": 1
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1367
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 1367,
+						"widestOutsideM": 16.2,
+						"minimumContainedShare": 0.988899
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1367
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 1367,
+						"widestOutsideM": 31.8,
+						"minimumContainedShare": 0.997149
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1367
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 1367,
+						"widestOutsideM": 16.2,
+						"minimumContainedShare": 0.988899
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 1367
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 1367,
+						"widestOutsideM": 15.7,
+						"minimumContainedShare": 0.997173
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 47
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 47,
+						"widestOutsideM": 0,
+						"minimumContainedShare": 0.999999
 					}
 				}
 			]
@@ -4824,6 +5104,166 @@
 						"sliverWidthM": 100,
 						"sharedCodeCount": 73,
 						"changedExtentCount": 0
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 73
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 73,
+						"widestOutsideM": 12.9,
+						"minimumContainedShare": 0.999903
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 73
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 73,
+						"widestOutsideM": 34.2,
+						"minimumContainedShare": 0.999949
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 40
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 40,
+						"widestOutsideM": 13.3,
+						"minimumContainedShare": 0.99964
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 40
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "single-parent",
+					"status": "passed"
+				},
+				{
+					"id": "containment-verified",
+					"status": "passed",
+					"measured": {
+						"sliverWidthM": 100,
+						"childCount": 40,
+						"widestOutsideM": 14.3,
+						"minimumContainedShare": 0.999829
 					}
 				}
 			]
@@ -20816,5 +21256,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:940637db6b81b2000ca51dc5735aa937def394040f8caf1809630f76ae0932dc"
+	"contentHash": "sha256:62382e851775b0f9c2df78c18888f8bbb4e074b60794dc3e35b94f8f388601ec"
 }

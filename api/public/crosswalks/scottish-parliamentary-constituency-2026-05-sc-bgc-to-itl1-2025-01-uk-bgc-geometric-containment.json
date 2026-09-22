@@ -1,0 +1,1376 @@
+{
+	"schemaVersion": 1,
+	"id": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+	"method": "geometric-containment",
+	"quality": "derived",
+	"relationshipPurpose": "membership",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "scottishParliamentaryConstituency",
+		"boundaryRelease": "2026-05-sc-bgc"
+	},
+	"to": {
+		"geography": "itl1",
+		"boundaryRelease": "2025-01-uk-bgc"
+	},
+	"provenance": {
+		"inputs": [
+			{
+				"side": "from",
+				"input": "boundaries/scottish-parliamentary-constituency/2026-05-sc-bgc/SPC_MAY_2026_SC_BGC_-4687613309834503802.geojson",
+				"inputHash": "sha256:b801c6d4eb7422a48305c476552c695cfe6a0008b33c5e52bc9f62681d445da3",
+				"sourceCrs": "EPSG:4326"
+			},
+			{
+				"side": "to",
+				"input": "boundaries/itl1/2025-01-uk-bgc/ITL1_JAN_2025_UK_BGC.geojson",
+				"inputHash": "sha256:2ee80ac980be413d5d5338327f91f069c3407b5ff3d1b2331d5a457cf4c5fe7d",
+				"sourceCrs": "EPSG:4326"
+			}
+		],
+		"areaProjection": "EPSG:6933",
+		"clipping": "polygon-clipping@0.15.7"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 73,
+				"referencedCodeCount": 73
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 12,
+				"referencedCodeCount": 1
+			}
+		},
+		"containment": {
+			"sliverWidthM": 100,
+			"childCount": 73,
+			"parentCount": 12,
+			"childlessParentCount": 11,
+			"minimumContainedShare": 0.999949,
+			"widestOutsideM": 34.2
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "S16000151",
+				"labels": [
+					"Aberdeen Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000152",
+				"labels": [
+					"Aberdeen Deeside and North Kincardine"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.3
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000153",
+				"labels": [
+					"Aberdeen Donside"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000154",
+				"labels": [
+					"Aberdeenshire East"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000155",
+				"labels": [
+					"Aberdeenshire West"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000156",
+				"labels": [
+					"Airdrie"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000157",
+				"labels": [
+					"Almond Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000158",
+				"labels": [
+					"Angus North and Mearns"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000159",
+				"labels": [
+					"Angus South"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.3
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000160",
+				"labels": [
+					"Argyll and Bute"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999998,
+					"outsideWidthM": 7.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000161",
+				"labels": [
+					"Ayr"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999998,
+					"outsideWidthM": 0.9
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000162",
+				"labels": [
+					"Banffshire and Buchan Coast"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999998,
+					"outsideWidthM": 7
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000163",
+				"labels": [
+					"Bathgate"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000164",
+				"labels": [
+					"Caithness, Sutherland and Ross"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 4.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000165",
+				"labels": [
+					"Carrick, Cumnock and Doon Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000166",
+				"labels": [
+					"Clackmannanshire and Dunblane"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000167",
+				"labels": [
+					"Clydebank and Milngavie"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000168",
+				"labels": [
+					"Clydesdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000169",
+				"labels": [
+					"Coatbridge and Chryston"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000170",
+				"labels": [
+					"Cowdenbeath"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000171",
+				"labels": [
+					"Cumbernauld and Kilsyth"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000172",
+				"labels": [
+					"Cunninghame North"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999949,
+					"outsideWidthM": 24.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000173",
+				"labels": [
+					"Cunninghame South"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999992,
+					"outsideWidthM": 1.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000174",
+				"labels": [
+					"Dumbarton"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.3
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000175",
+				"labels": [
+					"Dumfriesshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999992,
+					"outsideWidthM": 10
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000176",
+				"labels": [
+					"Dundee City East"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999978,
+					"outsideWidthM": 1.5
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000177",
+				"labels": [
+					"Dundee City West"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000178",
+				"labels": [
+					"Dunfermline"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000179",
+				"labels": [
+					"East Kilbride"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000180",
+				"labels": [
+					"East Lothian Coast and Lammermuirs"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000181",
+				"labels": [
+					"Eastwood"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000182",
+				"labels": [
+					"Edinburgh Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000183",
+				"labels": [
+					"Edinburgh Eastern, Musselburgh and Tranent"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000184",
+				"labels": [
+					"Edinburgh North Eastern and Leith"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000185",
+				"labels": [
+					"Edinburgh North Western"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000186",
+				"labels": [
+					"Edinburgh Northern"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000187",
+				"labels": [
+					"Edinburgh South Western"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000188",
+				"labels": [
+					"Edinburgh Southern"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000189",
+				"labels": [
+					"Ettrick, Roxburgh and Berwickshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999992,
+					"outsideWidthM": 10.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000190",
+				"labels": [
+					"Falkirk East and Linlithgow"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000191",
+				"labels": [
+					"Falkirk West"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000192",
+				"labels": [
+					"Fife North East"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.4
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000193",
+				"labels": [
+					"Galloway and West Dumfries"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 1.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000194",
+				"labels": [
+					"Glasgow Anniesland"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000195",
+				"labels": [
+					"Glasgow Baillieston and Shettleston"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000196",
+				"labels": [
+					"Glasgow Cathcart and Pollok"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000197",
+				"labels": [
+					"Glasgow Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999997,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000198",
+				"labels": [
+					"Glasgow Easterhouse and Springburn"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000199",
+				"labels": [
+					"Glasgow Kelvin and Maryhill"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000200",
+				"labels": [
+					"Glasgow Southside"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999999,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000201",
+				"labels": [
+					"Hamilton, Larkhall and Stonehouse"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000202",
+				"labels": [
+					"Inverclyde"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.2
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000203",
+				"labels": [
+					"Inverness and Nairn"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000204",
+				"labels": [
+					"Kilmarnock and Irvine Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000205",
+				"labels": [
+					"Kirkcaldy"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999999,
+					"outsideWidthM": 0.2
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000206",
+				"labels": [
+					"Mid Fife and Glenrothes"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000207",
+				"labels": [
+					"Midlothian North"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000208",
+				"labels": [
+					"Midlothian South, Tweeddale and Lauderdale"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000209",
+				"labels": [
+					"Moray"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 1.7
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000210",
+				"labels": [
+					"Motherwell and Wishaw"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000211",
+				"labels": [
+					"Na h-Eileanan an Iar"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999997,
+					"outsideWidthM": 5.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000212",
+				"labels": [
+					"Orkney Islands"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999976,
+					"outsideWidthM": 34.2
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000213",
+				"labels": [
+					"Paisley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000214",
+				"labels": [
+					"Perthshire North"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000215",
+				"labels": [
+					"Perthshire South and Kinross-shire"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000216",
+				"labels": [
+					"Renfrewshire North and Cardonald"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000217",
+				"labels": [
+					"Renfrewshire West and Levern Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000218",
+				"labels": [
+					"Rutherglen and Cambuslang"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000219",
+				"labels": [
+					"Shetland Islands"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 0.999993,
+					"outsideWidthM": 8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000220",
+				"labels": [
+					"Skye, Lochaber and Badenoch"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 6.6
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000221",
+				"labels": [
+					"Stirling"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000222",
+				"labels": [
+					"Strathkelvin and Bearsden"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "S16000223",
+				"labels": [
+					"Uddingston and Bellshill"
+				]
+			},
+			"targets": [
+				{
+					"code": "TLM",
+					"labels": [
+						"Scotland"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:ef85222a8fd02575be1e153f2a9c054d908aec50e88ee11655592f218ad89765"
+}

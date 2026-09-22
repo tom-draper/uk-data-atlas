@@ -1,8 +1,96 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:cfd0cd16a6f6df5dc337e0236e5de6ea770208608e327f2b123a2a1eec3b664a",
-	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
+	"contentHash": "sha256:51a86e92c4432d7f3b1764e2ce35bbe199ac577393955dc7fcf5162801a42be3",
+	"crosswalkInventoryHash": "sha256:65354da51e9fd2cae2263d36bb187d8efcd7c11b855845d105c451c1f5e4d662",
 	"paths": [
+		{
+			"id": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"to": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "policeForceArea",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "policeForceArea",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2/forward/identity",
 			"purpose": "identity",
@@ -687,6 +775,234 @@
 					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-community-safety-partnership-2023-12-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "policeForceArea",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "policeForceArea",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-police-force-area-2023-12-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/combined-authority-2025-12-en-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "combinedAuthority",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
 					"purpose": "membership"
 				}
 			]
@@ -2478,6 +2794,68 @@
 					"direction": "reverse",
 					"method": "clean-containment",
 					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/community-safety-partnership-2023-12-ew-bgc-to-itl1-2021-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/community-safety-partnership-2023-12-ew-bgc-to-itl1-2025-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
 				}
 			]
 		},
@@ -5654,6 +6032,88 @@
 			]
 		},
 		{
+			"id": "discovered/country-2020-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/country-2020-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
 			"purpose": "membership",
 			"from": {
@@ -8558,6 +9018,82 @@
 			]
 		},
 		{
+			"id": "discovered/country-2021-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/country-2021-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
 			"purpose": "membership",
 			"from": {
@@ -11252,6 +11788,76 @@
 			]
 		},
 		{
+			"id": "discovered/country-2022-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/country-2022-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
 			"purpose": "membership",
 			"from": {
@@ -13748,6 +14354,70 @@
 			]
 		},
 		{
+			"id": "discovered/country-2023-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/country-2023-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
 			"purpose": "membership",
 			"from": {
@@ -16058,6 +16728,64 @@
 			]
 		},
 		{
+			"id": "discovered/country-2024-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/country-2024-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
 			"purpose": "membership",
 			"from": {
@@ -18216,6 +18944,58 @@
 			]
 		},
 		{
+			"id": "discovered/country-2025-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/country-2025-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
 			"purpose": "membership",
 			"from": {
@@ -19973,6 +20753,58 @@
 					"crosswalkId": "ward-2026-05-uk-bgc-to-local-authority-2026-05-uk-bgc-clean-containment",
 					"direction": "reverse",
 					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-and-unitary-authority-2025-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyAndUnitaryAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "clean-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
 					"purpose": "membership"
 				}
 			]
@@ -21768,6 +22600,1058 @@
 			]
 		},
 		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-combined-authority-2025-12-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "combinedAuthority",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-constituency-2024-07-uk-bgc/apportion/by-area",
+			"purpose": "apportion",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+					"direction": "reverse",
+					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-constituency-2024-07-uk-bgc/apportion/by-population",
+			"purpose": "apportion",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+					"direction": "reverse",
+					"method": "population-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-country-2020-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2020-12-uk-bgc-to-2021-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-country-2021-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2021-12-uk-bgc-to-2022-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-country-2022-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2022-12-uk-bgc-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-country-2023-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "country-2023-12-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-country-2024-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "country-2024-12-uk-bgc-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-country-2025-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "country",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-county-and-unitary-authority-2025-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "countyAndUnitaryAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
+					"direction": "forward",
+					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-itl1-2021-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-itl1-2025-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-local-authority-2023-05-uk-bgc-v2/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-local-authority-2024-05-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-local-authority-2024-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-local-authority-2025-05-uk-bgc-v2/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-local-authority-2025-12-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-local-authority-2026-05-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-region-2025-12-en-bgc/apportion/by-area",
+			"purpose": "apportion",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap",
+					"direction": "forward",
+					"method": "area-overlap",
+					"purpose": "apportion"
+				}
+			]
+		},
+		{
+			"id": "discovered/county-electoral-division-2023-05-en-bgc-to-region-2025-12-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"to": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "forward",
+					"method": "official-lookup",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2025-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2021-01-uk-bgc-to-community-safety-partnership-2023-12-ew-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2021-01-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/itl1-2021-01-uk-bgc-to-itl2-2025-01-uk-bgc/membership",
 			"purpose": "membership",
 			"from": {
@@ -21854,6 +23738,130 @@
 					"direction": "forward",
 					"method": "same-code-continuity",
 					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2021-01-uk-bgc-to-scottish-parliamentary-constituency-2026-05-sc-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2026-05-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2025-01-uk-bgc-to-community-safety-partnership-2023-12-ew-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "communitySafetyPartnership",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "community-safety-partnership-2023-12-ew-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2025-01-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2025-01-uk-bgc-to-fire-and-rescue-authority-2021-05-ew-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
 				}
 			]
 		},
@@ -21990,6 +23998,34 @@
 					"direction": "forward",
 					"method": "same-code-continuity",
 					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/itl1-2025-01-uk-bgc-to-senedd-constituency-2022-12-w-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
 				}
 			]
 		},
@@ -54706,6 +56742,34 @@
 			]
 		},
 		{
+			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-05-uk-bgc-v2-to-2023-12-uk-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/local-authority-2023-05-uk-bgc-v2-to-local-authority-2024-05-uk-bgc/identity",
 			"purpose": "identity",
 			"from": {
@@ -58736,6 +60800,34 @@
 			]
 		},
 		{
+			"id": "discovered/local-authority-2024-05-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/local-authority-2024-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/identity",
 			"purpose": "identity",
 			"from": {
@@ -60652,6 +62744,40 @@
 			]
 		},
 		{
+			"id": "discovered/local-authority-2024-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/local-authority-2024-12-uk-bgc-to-local-authority-2023-05-uk-bgc-v2/identity",
 			"purpose": "identity",
 			"from": {
@@ -62538,6 +64664,46 @@
 			]
 		},
 		{
+			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/local-authority-2025-05-uk-bgc-v2-to-local-authority-2023-05-uk-bgc-v2/identity",
 			"purpose": "identity",
 			"from": {
@@ -64326,6 +66492,52 @@
 					"direction": "reverse",
 					"method": "same-code-continuity",
 					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2025-12-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-12-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
 				}
 			]
 		},
@@ -66241,6 +68453,58 @@
 					"crosswalkId": "local-authority-2025-12-uk-bgc-to-county-and-unitary-authority-2025-12-uk-bgc-official-lookup",
 					"direction": "forward",
 					"method": "clean-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/local-authority-2026-05-uk-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2026-05-uk-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-2026-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
 					"purpose": "membership"
 				}
 			]
@@ -82786,6 +85050,58 @@
 			]
 		},
 		{
+			"id": "discovered/region-2025-12-en-bgc-to-county-electoral-division-2023-05-en-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "region",
+				"boundaryRelease": "2025-12-en-bgc"
+			},
+			"to": {
+				"geography": "countyElectoralDivision",
+				"boundaryRelease": "2023-05-en-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "local-authority-2025-05-uk-bgc-v2-to-2025-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse",
+					"method": "official-lookup",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2024-05-uk-bgc-to-2024-12-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "local-authority-2023-12-uk-bgc-to-2024-05-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "county-electoral-division-2023-05-en-bgc-to-local-authority-2023-12-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/region-2025-12-en-bgc-to-local-authority-2023-05-uk-bgc-v2/apportion/by-area",
 			"purpose": "apportion",
 			"from": {
@@ -84804,6 +87120,34 @@
 			]
 		},
 		{
+			"id": "discovered/scottish-parliamentary-constituency-2016-05-sc-gcb-to-scottish-parliamentary-region-2022-12-sc-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2016-05-sc-gcb"
+			},
+			"to": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "discovered/scottish-parliamentary-constituency-2022-12-sc-bgc-to-scottish-parliamentary-constituency-2016-05-sc-gcb/identity",
 			"purpose": "identity",
 			"from": {
@@ -84826,6 +87170,146 @@
 				{
 					"crosswalkId": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
 					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/scottish-parliamentary-constituency-2022-12-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				},
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "discovered/scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2021-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2026-05-sc-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/scottish-parliamentary-region-2022-12-sc-bgc-to-scottish-parliamentary-constituency-2016-05-sc-gcb/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2016-05-sc-gcb"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2016-05-sc-gcb-to-2021-05-sc-bgc-same-code-continuity",
+					"direction": "reverse",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/scottish-parliamentary-region-2022-12-sc-bgc-to-scottish-parliamentary-constituency-2022-12-sc-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-2022-12-sc-bgc-same-code-continuity",
+					"direction": "forward",
+					"method": "same-code-continuity",
+					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "discovered/senedd-constituency-2022-12-w-bgc-to-itl1-2025-01-uk-bgc/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "discovered",
+			"steps": [
+				{
+					"crosswalkId": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				},
+				{
+					"crosswalkId": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity",
+					"direction": "forward",
 					"method": "same-code-continuity",
 					"purpose": "identity"
 				}
@@ -127356,6 +129840,50 @@
 			]
 		},
 		{
+			"id": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "fireAndRescueAuthority",
+				"boundaryRelease": "2021-05-ew-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "fire-and-rescue-authority-2021-05-ew-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
 			"id": "itl1-2021-01-uk-bgc-to-2025-01-uk-bgc-same-code-continuity/forward/identity",
 			"purpose": "identity",
 			"from": {
@@ -129272,6 +131800,182 @@
 					"direction": "reverse",
 					"method": "same-code-continuity",
 					"purpose": "identity"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryRegion",
+				"boundaryRelease": "2022-12-sc-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2021-05-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2021-05-sc-bgc-to-scottish-parliamentary-region-2022-12-sc-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2026-05-sc-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2025-01-uk-bgc"
+			},
+			"to": {
+				"geography": "scottishParliamentaryConstituency",
+				"boundaryRelease": "2026-05-sc-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "scottish-parliamentary-constituency-2026-05-sc-bgc-to-itl1-2025-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "itl1",
+				"boundaryRelease": "2021-01-uk-bgc"
+			},
+			"to": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment/forward/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "seneddElectoralRegion",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+					"direction": "forward",
+					"method": "geometric-containment",
+					"purpose": "membership"
+				}
+			]
+		},
+		{
+			"id": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment/reverse/membership",
+			"purpose": "membership",
+			"from": {
+				"geography": "seneddElectoralRegion",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"to": {
+				"geography": "seneddConstituency",
+				"boundaryRelease": "2022-12-w-bgc"
+			},
+			"quality": "derived",
+			"origin": "crosswalk",
+			"steps": [
+				{
+					"crosswalkId": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+					"direction": "reverse",
+					"method": "geometric-containment",
+					"purpose": "membership"
 				}
 			]
 		},

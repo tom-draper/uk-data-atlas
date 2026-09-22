@@ -4450,7 +4450,7 @@ paths:
                   boundaryRelease: 2023-05-uk-bgc-v2
                   atlasRelease:
                     id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
-                    href: /v1/atlas-releases/sha256:40f231f0380e547216a8d6187d88838d5c13b36182636a03dadb7f55a153935a
+                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
                   identity:
                     status: available
                     artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
@@ -4503,7 +4503,7 @@ paths:
                     Data: Population (Local Authority) — Office for National Statistics.
                     Boundaries: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2) — Office for National Statistics.
                     Licence: Open Government Licence v3.0.
-                    Compiled by the UK Data Atlas, release sha256:40f231f0380e547216a8d6187d88838d5c13b36182636a03dadb7f55a153935a.
+                    Compiled by the UK Data Atlas, release sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e.
                   note: Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.
                 meta:
                   nextCursor: null
@@ -4588,7 +4588,7 @@ paths:
                       code: E08000025
                       name: Birmingham
                       status: same-code-continuity
-                  note: Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.
+                  note: Lineage follows only published predecessor/successor edges and never infers a connection from a reused code. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.
                 meta:
                   nextCursor: null
         "404":
@@ -6586,7 +6586,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:40f231f0380e547216a8d6187d88838d5c13b36182636a03dadb7f55a153935a
+                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
                     artifactCount: 338
                     current: true
                 meta:
@@ -6777,10 +6777,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:40f231f0380e547216a8d6187d88838d5c13b36182636a03dadb7f55a153935a
+                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:40f231f0380e547216a8d6187d88838d5c13b36182636a03dadb7f55a153935a
+                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []

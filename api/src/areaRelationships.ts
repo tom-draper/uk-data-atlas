@@ -47,6 +47,7 @@ const relationFor = (
 	// states belonging, not succession.
 	if (
 		method === "clean-containment" ||
+		method === "geometric-containment" ||
 		relationshipPurpose === "membership"
 	) {
 		return direction === "from" ? "within" : "contains";
