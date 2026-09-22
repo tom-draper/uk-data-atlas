@@ -56,6 +56,17 @@ test("discovers every declared conversion from one source release", () => {
 	assert.equal(data.capabilities[0].paths[0].trust.level, "verified");
 });
 
+test("reports an uncompiled discovery source as a build prerequisite", () => {
+	const response = route(
+		"GET",
+		"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=missing-release",
+		contextFor(),
+	);
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.status, "not-built");
+	assert.equal(data.missingPrerequisites[0].id, "source-areas");
+});
+
 test("reports a complete conversion path with its measured source coverage", () => {
 	const response = route("GET", query, contextFor());
 	assert.equal(response.status, 200);

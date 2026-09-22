@@ -48,8 +48,25 @@ export const handleRelationshipCapabilityRoutes = ({
 		);
 	}
 	if (to.geography === null || to.boundaryRelease === null) {
+		const source = from as { geography: string; boundaryRelease: string };
+		if (!context.geographyResolver.hasAreaRelease(source.geography, source.boundaryRelease)) {
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					from,
+					status: "not-built" as const,
+					reason: `No compiled area identity artifact is available for ${source.geography}/${source.boundaryRelease}.`,
+					capabilities: [],
+					missingPrerequisites: [{
+						id: "source-areas",
+						status: "not-built" as const,
+						reason: `No compiled area identity artifact is available for ${source.geography}/${source.boundaryRelease}.`,
+					}],
+				}),
+			};
+		}
 		const capabilities = context.geographyResolver.relationshipCapabilitiesFrom(
-			from as { geography: string; boundaryRelease: string },
+			source,
 		);
 		return {
 			status: 200,
