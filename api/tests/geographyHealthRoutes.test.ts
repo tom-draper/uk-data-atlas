@@ -15,7 +15,7 @@ test("keeps identity coverage visible when relationship artifacts are not built"
 	const health = createGeographyResolver({ areaLookup }).geographyHealth();
 	assert.deepEqual(health.find((release) => release.geography === "ward"), {
 		geography: "ward", boundaryRelease: "2025-01-en-ward", status: "not-built",
-		areaCount: 2, relatedAreaCount: 0, gapCount: 2,
+		areaCount: 2, relatedAreaCount: 0, gapCount: 2, countries: [],
 	});
 });
 
@@ -26,4 +26,11 @@ test("filters the repair dashboard to one geography", () => {
 	assert.equal(data.filters.geography, "ward");
 	assert.equal(data.priorities[0].geography, "ward");
 	assert.equal(data.priorities[0].href, "/v1/relationship-coverage?geography=ward&release=2025-01-en-ward");
+});
+
+test("filters release health by boundary country coverage", () => {
+	const response = route("GET", "/v1/geography-health?country=GB-SCT", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup);
+	const data = (response.body as { data: any }).data;
+	assert.deepEqual(data.releases, []);
+	assert.equal(data.filters.country, "GB-SCT");
 });
