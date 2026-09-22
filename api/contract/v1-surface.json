@@ -4080,6 +4080,63 @@
 				]
 			}
 		},
+		"GET /areas/{geography}/{release}/{code}/dossier": {
+			"operationId": "getAreaDossier",
+			"parameters": {
+				"path:geography": {
+					"required": true
+				},
+				"path:release": {
+					"required": true
+				},
+				"path:code": {
+					"required": true
+				}
+			},
+			"responses": {
+				"200 application/json": [],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /areas/{geography}/{release}/{code}/capabilities": {
 			"operationId": "getAreaCapabilities",
 			"parameters": {

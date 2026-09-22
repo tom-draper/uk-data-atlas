@@ -271,6 +271,7 @@ paths:
                     - /v1/data/{measure-id}/aggregate
                     - /v1/areas
                     - /v1/areas/{geography}/{release}/{code}
+                    - /v1/areas/{geography}/{release}/{code}/dossier
                     - /v1/areas/{geography}/{release}/{code}/relationships
                     - /v1/areas/{geography}/{release}/{code}/capabilities
                     - /v1/areas/{geography}/{release}/{code}/citation
@@ -4095,6 +4096,43 @@ paths:
                           status: not-applicable
                 meta:
                   nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas/{geography}/{release}/{code}/dossier:
+    get:
+      operationId: getAreaDossier
+      tags: ["Start here"]
+      summary: Get the verified geography dossier for one exact area identity
+      x-likely-refusal:
+        status: 404
+        code: area_not_in_release
+        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
+        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/dossier"
+      description: >
+        The geography dossier is the starting point for an exact area. It
+        combines the compiled identity and boundary-release evidence with an
+        honest availability summary for geometry and published relationships,
+        then links to the detailed geometry, history, relationship, citation,
+        neighbourhood, overlap and data-capability resources.
+
+
+        It never infers an equivalence, a geometry, or a crosswalk. The data
+        capability link lists all measures that are directly available, partly
+        available or convertible for this exact identity.
+      parameters:
+        - $ref: "#/components/parameters/Geography"
+        - $ref: "#/components/parameters/Release"
+        - $ref: "#/components/parameters/AreaCode"
+      responses:
+        "200":
+          description: The exact area identity, boundary evidence and links to all verified geography resources.
+          content:
+            application/json:
+              schema: { type: object }
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/dossier"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
