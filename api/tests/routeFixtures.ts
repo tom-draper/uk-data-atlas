@@ -124,6 +124,7 @@ export const registry: BoundaryRegistry = {
 			id: "2025-01-en-ward",
 			geography: "ward",
 			title: "Ward boundaries",
+			temporalCoverage: "2023",
 			coverage: { countries: ["GB-ENG"] },
 			source: {
 				publisher: "ONS",
