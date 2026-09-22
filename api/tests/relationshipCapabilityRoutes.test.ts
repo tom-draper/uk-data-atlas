@@ -16,19 +16,21 @@ const contextFor = ({
 	lookup = areaLookup,
 	crosswalks = new Map([[containmentCrosswalk.id, containmentCrosswalk]]),
 	catalog,
+	boundaryRegistry = registry,
 }: {
 	lookup?: typeof areaLookup;
 	crosswalks?: Map<string, typeof containmentCrosswalk>;
 	catalog?: typeof dataCatalog;
+	boundaryRegistry?: typeof registry;
 } = {}) => ({
-	boundaryRegistry: registry,
+	boundaryRegistry,
 	areaLookup: lookup,
 	crosswalkInventory,
 	crosswalkLookup: crosswalks,
 	relationshipPathInventory,
 	dataCatalog: catalog,
 	geographyResolver: createGeographyResolver({
-		boundaryRegistry: registry,
+		boundaryRegistry,
 		areaLookup: lookup,
 		crosswalkInventory,
 		crosswalkLookup: crosswalks,
@@ -40,6 +42,22 @@ const contextFor = ({
 
 const query =
 	"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
+
+const intensiveQuery =
+	"/v1/relationship-capabilities?sourceGeography=localAuthority&sourceRelease=2025-01-uk-lad&targetGeography=ward&targetRelease=2025-01-en-ward&purpose=membership";
+
+const mobileSourceRegistry = {
+	...registry,
+	releases: [
+		...registry.releases,
+		{
+			...registry.releases[0],
+			id: "2025-01-uk-lad",
+			geography: "localAuthority",
+			temporalCoverage: "2024",
+		},
+	],
+};
 
 test("discovers every declared conversion from one source release", () => {
 	const response = route(
@@ -117,10 +135,54 @@ test("preflights an extensive measure against containment aggregation", () => {
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "available");
 	assert.equal(data.measureReadiness.operation, "containment-aggregation");
+	assert.deepEqual(data.measureReadiness.sourcePartitions, [
+		{
+			datasetId: "population",
+			boundaryYear: 2023,
+			periods: ["2022"],
+			coverage: {
+				kind: "partial",
+				countries: ["GB-ENG", "GB-WLS"],
+				recordCount: 2,
+				note: "England and Wales only.",
+			},
+		},
+	]);
+});
+
+test("refuses a measure whose source partition does not match the source release", () => {
+	const boundaryRegistry = {
+		...registry,
+		releases: registry.releases.map((release) => ({
+			...release,
+			temporalCoverage: "2025",
+		})),
+	};
+	const response = route(
+		"GET",
+		`${query}&measure=population-estimate`,
+		contextFor({ catalog: dataCatalog, boundaryRegistry }),
+	);
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.measureReadiness.status, "unsupported");
+	assert.match(data.measureReadiness.reason, /no published source partition/);
+	assert.deepEqual(data.measureReadiness.publishedSourcePartitions, [
+		{
+			datasetId: "population",
+			boundaryYear: 2023,
+			periods: ["2022"],
+			coverage: {
+				kind: "partial",
+				countries: ["GB-ENG", "GB-WLS"],
+				recordCount: 2,
+				note: "England and Wales only.",
+			},
+		},
+	]);
 });
 
 test("refuses an intensive measure when its required weighted mean is unavailable", () => {
-	const response = route("GET", `${query}&measure=mobile-5g-coverage`, contextFor({ catalog: dataCatalog }));
+	const response = route("GET", `${intensiveQuery}&measure=mobile-5g-coverage`, contextFor({ catalog: dataCatalog, boundaryRegistry: mobileSourceRegistry }));
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "unsupported");
 	assert.match(data.measureReadiness.reason, /weighted mean/);
@@ -138,7 +200,7 @@ test("names the required denominator for a supported intensive conversion", () =
 				: measure,
 		),
 	};
-	const response = route("GET", `${query}&measure=mobile-5g-coverage`, contextFor({ catalog }));
+	const response = route("GET", `${intensiveQuery}&measure=mobile-5g-coverage`, contextFor({ catalog, boundaryRegistry: mobileSourceRegistry }));
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "requires-conversion");
 	assert.equal(data.measureReadiness.operation, "weighted-mean");

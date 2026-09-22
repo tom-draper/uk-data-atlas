@@ -5424,6 +5424,11 @@ paths:
         non-aggregatable measures are refused. The path capability remains
         separate from this measure-specific assessment.
 
+        The preflight also requires a published measure partition whose
+        geography and boundary year match the source release's declared
+        temporal coverage. A measure on a different vintage is explicitly
+        refused, with its published source partitions listed as alternatives.
+
         `available` means every path step has complete published coverage;
         `partial` means a published path leaves some areas unmapped; `not-built`
         names a missing prerequisite; and `unsupported` means no declared path
