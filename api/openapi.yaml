@@ -270,6 +270,7 @@ paths:
                     - /v1/data/{measure-id}/compare
                     - /v1/data/{measure-id}/aggregate
                     - /v1/areas
+                    - /v1/areas:resolve
                     - /v1/areas/{geography}/{release}/{code}
                     - /v1/areas/{geography}/{release}/{code}/dossier
                     - /v1/areas/{geography}/{release}/{code}/relationships
@@ -3289,6 +3290,59 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /areas:resolve:
+    get:
+      operationId: resolveAreaIdentifier
+      tags: ["Start here"]
+      summary: Resolve a code, name or alias to every exact area identity it can mean
+      x-likely-refusal:
+        status: 400
+        when: "No `q` is supplied. The Atlas cannot resolve an omitted identifier."
+        x-example-request: "/v1/areas:resolve"
+      description: >
+        Resolves an official code, official name or supplied alias case
+        insensitively, returning every exact candidate and a link to each
+        candidate's geography dossier. It never selects a geography or a
+        boundary release from catalogue order. Each candidate identifies every
+        exact match it has — code, official name or supplied alias — so an
+        equal name and alias are both retained. An empty candidate list is an
+        honest no-match.
+
+
+        Optional geography and release filters narrow the candidate set. For
+        prefix matching, use `/areas`, whose paginated result is linked in
+        every response.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Official area code, exact official name or supplied alias.
+        - name: geography
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Restrict candidates to one geography type.
+        - name: release
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Restrict candidates to one boundary release.
+      responses:
+        "200":
+          description: Every exact identity the supplied identifier can mean, without an implicit choice.
+          content:
+            application/json:
+              schema: { type: object }
+              x-example-request: "/v1/areas:resolve?q=E08000025"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 

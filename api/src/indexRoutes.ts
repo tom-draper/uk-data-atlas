@@ -56,6 +56,7 @@ export const handleIndexRoutes = ({
 				"/v1/data/{measure-id}/aggregate",
 				"/v1/data/{measure-id}/convert",
 				"/v1/areas",
+				"/v1/areas:resolve",
 				"/v1/areas:contains",
 				"/v1/areas:containsBatch",
 				"/v1/areas:near",

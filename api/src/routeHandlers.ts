@@ -22,6 +22,7 @@ import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
 import { handleAnalysisGeographyRoutes } from "./analysisGeographyRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
+import { handleAreaResolveRoutes } from "./areaResolveRoutes";
 import {
 	handleAreaContainsBatchRoutes,
 	handleAreaContainsRoutes,
@@ -224,6 +225,14 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "data" &&
 			segments[3] === "convert",
 		handle: handleDataConversionRoutes,
+	},
+	{
+		name: "area-resolve",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas:resolve",
+		handle: handleAreaResolveRoutes,
 	},
 	{
 		name: "area-search",

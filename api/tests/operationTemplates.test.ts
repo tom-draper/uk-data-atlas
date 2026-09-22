@@ -23,6 +23,7 @@ test("labels a request by the operation it reached", () => {
 			"/v1/areas/ward/2023-05-uk-bgc/E05000001/dossier",
 			"/v1/areas/{geography}/{release}/{code}/dossier",
 		],
+		["/v1/areas:resolve", "/v1/areas:resolve"],
 		["/v1/areas:contains", "/v1/areas:contains"],
 		["/v1/boundary-releases:resolve", "/v1/boundary-releases:resolve"],
 		// A literal segment outranks a placeholder in the same place.
