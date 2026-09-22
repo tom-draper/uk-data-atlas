@@ -51,6 +51,7 @@ test("builds immutable geography indexes once for route-level queries", () => {
 		crosswalkLookup: new Map([
 			[containmentCrosswalk.id, containmentCrosswalk],
 		]),
+		namedLocationInventory,
 		namedLocationLookup,
 		locationProjectionStore: new LocationProjectionStore(
 			locationProjections.inventory,
@@ -98,6 +99,16 @@ test("builds immutable geography indexes once for route-level queries", () => {
 		resolver.namedLocation("greater-manchester")?.label,
 		"Greater Manchester",
 	);
+	assert.deepEqual(
+		resolver
+			.namedLocationsForArea({
+				geography: "localAuthority",
+				boundaryRelease: "2025-01-uk-lad",
+				code: "E08000001",
+			})
+			.map((location) => location.id),
+		["greater-manchester"],
+	);
 	assert.equal(
 		resolver.locationProjection(
 			"greater-manchester",
@@ -134,6 +145,7 @@ test("does not claim optional geography capabilities when their artifacts are ab
 	assert.equal(resolver.hasAreaRelationships(), false);
 	assert.equal(resolver.hasAreaGeometryCache(), false);
 	assert.equal(resolver.hasLocationProjectionStore(), false);
+	assert.equal(resolver.hasNamedLocationInventory(), false);
 	assert.equal(
 		resolver.selectReleaseForDate("ward", "2025-01"),
 		undefined,
@@ -149,6 +161,14 @@ test("does not claim optional geography capabilities when their artifacts are ab
 			},
 			"membership",
 		),
+		[],
+	);
+	assert.deepEqual(
+		resolver.namedLocationsForArea({
+			geography: "ward",
+			boundaryRelease: "2025-01-en-ward",
+			code: "E05000001",
+		}),
 		[],
 	);
 	assert.deepEqual(

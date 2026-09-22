@@ -23,8 +23,6 @@ export const handleAreaCapabilityRoutes = ({
 	)
 		return undefined;
 	const {
-		crosswalkLookup,
-		namedLocationInventory,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
@@ -80,9 +78,7 @@ export const handleAreaCapabilityRoutes = ({
 			};
 		}
 	})();
-	const relationships = crosswalkLookup
-		? geographyResolver.relationships({ geography, boundaryRelease, code })
-		: [];
+	const relationships = geographyResolver.relationships(identity);
 	const relationCount = (relation: string) =>
 		relationships.filter((candidate) => candidate.relation === relation)
 			.length;
@@ -97,11 +93,7 @@ export const handleAreaCapabilityRoutes = ({
 		...crosswalk,
 		href: `/v1/crosswalks/${crosswalk.id}`,
 	}));
-	const locations = (namedLocationInventory?.locations ?? []).filter(
-		(location) =>
-			location.memberGeography === geography &&
-			location.memberCodes.includes(code),
-	);
+	const locations = geographyResolver.namedLocationsForArea(identity);
 	const data = (() => {
 		if (!dataCatalog || !measureCompatibilityInventory)
 			return notBuilt(
@@ -162,7 +154,7 @@ export const handleAreaCapabilityRoutes = ({
 			...area,
 			capabilities: {
 				geometry,
-				relationships: !crosswalkLookup
+				relationships: !geographyResolver.hasAreaRelationships()
 					? notBuilt(
 							"Build the crosswalk inventory before describing relationships.",
 						)
@@ -197,7 +189,7 @@ export const handleAreaCapabilityRoutes = ({
 							},
 							crosswalks,
 						},
-				namedLocations: !namedLocationInventory
+				namedLocations: !geographyResolver.hasNamedLocationInventory()
 					? notBuilt(
 							"Build the named location inventory before describing location membership.",
 						)
