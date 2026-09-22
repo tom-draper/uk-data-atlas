@@ -618,6 +618,25 @@ export class GeographyResolver {
 		return ancestors;
 	}
 
+	/** Follow only declared containment edges down the published hierarchy. */
+	descendantLineage(identity: AreaIdentity, maximumDepth: number) {
+		const visited = new Set([areaId(identity)]);
+		const queue = [{ id: areaId(identity), depth: 0 }];
+		const descendants: Array<AreaRelationship & { depth: number }> = [];
+		while (queue.length > 0) {
+			const current = queue.shift()!;
+			if (current.depth >= maximumDepth) continue;
+			for (const relationship of (this.areaRelationshipIndex?.get(current.id) ?? []).filter((item) => item.relation === "contains")) {
+				descendants.push({ ...relationship, depth: current.depth + 1 });
+				if (!visited.has(relationship.counterpart.id)) {
+					visited.add(relationship.counterpart.id);
+					queue.push({ id: relationship.counterpart.id, depth: current.depth + 1 });
+				}
+			}
+		}
+		return descendants;
+	}
+
 	/** One consistent summary of an area's published relationship evidence. */
 	areaRelationshipSummary(
 		identity: AreaIdentity,

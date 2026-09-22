@@ -67,6 +67,8 @@ export const handleAreaRelationshipRoutes = ({
 			relationships,
 			...(segments[5] === "parents" && depth !== undefined
 				? { ancestors: geographyResolver.ancestorLineage({ geography, boundaryRelease, code }, depth) }
+				: segments[5] === "children" && depth !== undefined
+					? { descendants: geographyResolver.descendantLineage({ geography, boundaryRelease, code }, depth) }
 				: {}),
 		}),
 	};
