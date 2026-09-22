@@ -183,3 +183,102 @@ test("compiles a published parent-code containment with weighting marked not-app
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("checks every child geometry vertex against its published parent", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	const write = (path: string, value: unknown) => {
+		const fullPath = join(root, "data", path);
+		mkdirSync(join(fullPath, ".."), { recursive: true });
+		writeFileSync(fullPath, JSON.stringify(value));
+	};
+	write("lookups/ward-to-lad.geojson", {
+		type: "FeatureCollection",
+		features: [
+			{
+				properties: {
+					WDCD: "W1",
+					WDNM: "Child ward",
+					LADCD: "L1",
+					LADNM: "Parent authority",
+				},
+			},
+		],
+	});
+	write("boundaries/ward.geojson", {
+		type: "FeatureCollection",
+		features: [
+			{
+				properties: { WDCD: "W1" },
+				geometry: {
+					type: "Polygon",
+					coordinates: [[[0, 0], [0, 1], [1, 1], [0, 0]]],
+				},
+			},
+		],
+	});
+	write("boundaries/local-authority.geojson", {
+		type: "FeatureCollection",
+		features: [
+			{
+				properties: { LADCD: "L1" },
+				geometry: {
+					type: "Polygon",
+					coordinates: [[[-1, -1], [-1, 2], [2, 2], [-1, -1]]],
+				},
+			},
+		],
+	});
+	try {
+		const { artifacts } = compileCrosswalks(
+			root,
+			[
+				{
+					id: "ward-to-local-authority",
+					input: "lookups/ward-to-lad.geojson",
+					method: "clean-containment",
+					quality: "publisher-supplied",
+					weighting: { status: "not-applicable" },
+					from: {
+						geography: "ward",
+						boundaryRelease: "2025",
+						codeProperty: "WDCD",
+						nameProperty: "WDNM",
+					},
+					to: {
+						geography: "localAuthority",
+						boundaryRelease: "2025",
+						codeProperty: "LADCD",
+						nameProperty: "LADNM",
+					},
+				},
+			],
+			undefined,
+			new Map([
+				[
+					"ward/2025",
+					{
+						input: "boundaries/ward.geojson",
+						crs: "EPSG:4326",
+						codeProperty: "WDCD",
+					},
+				],
+				[
+					"localAuthority/2025",
+					{
+						input: "boundaries/local-authority.geojson",
+						crs: "EPSG:4326",
+						codeProperty: "LADCD",
+					},
+				],
+			]),
+		);
+		assert.deepEqual(artifacts[0].validation.geometryContainment, {
+			status: "verified",
+			sourceAreaCount: 1,
+			testedVertexCount: 4,
+			boundaryVertexCount: 3,
+		});
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});

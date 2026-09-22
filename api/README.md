@@ -125,10 +125,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Publish constituency → ward and LSOA 2021 → MSOA 2021 where an
       authoritative or carefully qualified mapping exists. ONS publishes ward
       → constituency only as a best fit, and LSOA → MSOA only for England.
-- [ ] Derive containment from geometry as a cross-check on the official
-      lookups, by testing a child's vertices against its expected parent
-      rather than clipping polygons, which is too slow and fragile on the ITL
-      and Scottish Parliament boundaries.
+- [x] Cross-check published clean-containment lookups against geometry by
+      testing every child's vertices against its declared parent. This is a
+      build-time validation gate, not a way to derive a relationship; missing
+      geometry is recorded as unavailable rather than guessed from shape.
 - [x] Add purpose-aware reverse translation rather than requiring a caller to
       reverse a directional crosswalk themselves. Results state `forward` or
       `reverse`, preserve the original crosswalk provenance, and normalise

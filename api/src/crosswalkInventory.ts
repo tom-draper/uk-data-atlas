@@ -2,6 +2,10 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
+import {
+	validateGeometryContainment,
+	type GeometryContainmentValidation,
+} from "./crosswalkGeometryValidation";
 import type {
 	AreaOverlapWeighting,
 	CrosswalkAdapter,
@@ -86,6 +90,8 @@ export type PropertyCrosswalkArtifact = CrosswalkArtifactBase & {
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;
 		endpoints: CrosswalkEndpoints;
+		/** Independent geometry check for published clean-containment mappings. */
+		geometryContainment?: GeometryContainmentValidation;
 	};
 	records: Array<{ source: CrosswalkArea; targets: CrosswalkArea[] }>;
 };
@@ -181,6 +187,7 @@ const compilePropertyCrosswalk = (
 	repositoryRoot: string,
 	adapter: PropertyCrosswalkAdapter,
 	areaLookup: AreaLookup | undefined,
+	geometrySources: GeometrySourceLookup | undefined,
 ): PropertyCrosswalkArtifact => {
 	const inputPath = join(repositoryRoot, "data", adapter.input);
 	const input = readFileSync(inputPath, "utf8");
@@ -254,6 +261,23 @@ const compilePropertyCrosswalk = (
 			areaLookup,
 		),
 	};
+	const compiledRecords = [...records.values()]
+		.map((record) => ({
+			source: record.source,
+			targets: [...record.targets.values()].sort((left, right) =>
+				left.code.localeCompare(right.code),
+			),
+		}))
+		.sort((left, right) => left.source.code.localeCompare(right.source.code));
+	const geometryContainment =
+		adapter.method === "clean-containment"
+			? validateGeometryContainment(repositoryRoot, geometrySources, {
+					crosswalkId: adapter.id,
+					from: adapter.from,
+					to: adapter.to,
+					records: compiledRecords,
+				})
+			: undefined;
 	const artifactWithoutHash = {
 		schemaVersion: 1 as const,
 		id: adapter.id,
@@ -272,17 +296,12 @@ const compilePropertyCrosswalk = (
 			boundaryRelease: adapter.to.boundaryRelease,
 		},
 		provenance: { input: adapter.input, inputHash: sha256(input) },
-		validation: { sourceNameConflicts, endpoints },
-		records: [...records.values()]
-			.map((record) => ({
-				source: record.source,
-				targets: [...record.targets.values()].sort((left, right) =>
-					left.code.localeCompare(right.code),
-				),
-			}))
-			.sort((left, right) =>
-				left.source.code.localeCompare(right.source.code),
-			),
+		validation: {
+			sourceNameConflicts,
+			endpoints,
+			...(geometryContainment ? { geometryContainment } : {}),
+		},
+		records: compiledRecords,
 	};
 	return {
 		...artifactWithoutHash,
@@ -302,6 +321,7 @@ export const compileCrosswalks = (
 				repositoryRoot,
 				adapter,
 				areaLookup,
+				geometrySources,
 			);
 		}
 		if (!geometrySources) {
