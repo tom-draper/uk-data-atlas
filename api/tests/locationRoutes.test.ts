@@ -48,6 +48,12 @@ test("publishes curated named locations and reports unresolved legacy members", 
 	assert.equal(members.status, 200);
 	assert.deepEqual("data" in members.body && members.body.data, {
 		location: namedLocationInventory.locations[0],
+		composition: {
+			kind: "declared-member-composite",
+			officialGeography: false,
+			status: "partial",
+			note: "This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members.",
+		},
 		geography: "localAuthority",
 		boundaryRelease: "2025-01-uk-lad",
 		membership: "direct-code-match",

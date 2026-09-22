@@ -108,6 +108,12 @@ export const handleLocationRoutes = ({
 				status: 200,
 				body: envelope(releaseId, {
 					location,
+					composition: {
+						kind: "declared-member-composite",
+						officialGeography: false,
+						status: resolvedCodes.size === location.memberCodes.length ? ("complete" as const) : ("partial" as const),
+						note: "This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members.",
+					},
 					geography,
 					boundaryRelease,
 					membership: "direct-code-match",
@@ -177,6 +183,12 @@ export const handleLocationRoutes = ({
 			status: 200,
 			body: envelope(releaseId, {
 				location,
+				composition: {
+					kind: "declared-member-composite",
+					officialGeography: false,
+					status: projection.partialMembers > 0 ? ("partial" as const) : ("complete" as const),
+					note: "This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas.",
+				},
 				geography,
 				boundaryRelease,
 				membership: projection.membership,
@@ -392,9 +404,15 @@ const locationParents = ({
 		`${projection.memberGeography}/${projection.memberBoundaryRelease}/${code}`;
 	return {
 		status: 200,
-		body: envelope(releaseId, {
-			location,
-			geography,
+			body: envelope(releaseId, {
+				location,
+				composition: {
+					kind: "declared-member-composite",
+					officialGeography: false,
+					status: projection.partialMembers > 0 ? ("partial" as const) : ("complete" as const),
+					note: "This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas.",
+				},
+				geography,
 			boundaryRelease,
 			via: projection.via,
 			memberGeography: projection.memberGeography,
