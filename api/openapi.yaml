@@ -914,16 +914,18 @@ paths:
     get:
       operationId: getGeographyInventory
       tags: ["Geography"]
-      summary: Report area identity and relationship (crosswalk) coverage per boundary release
+      summary: Report resolver identity and relationship coverage, including the compiled backlog by geography
       x-likely-refusal:
         status: 503
         when: "Takes no input. Refused only when the server was started without the geography inventory built."
       description: >
         For every boundary release, states whether an area identity artifact
         has been compiled and which published crosswalks reference it, or an
-        explicit reason why neither is available yet. This is the coverage
-        report described in the README's domain model, not a promise that
-        every release is fully supported.
+        explicit reason why neither is available yet. Each geography also has
+        stable identity and relationship totals, so clients can identify the
+        releases and geography families where a new source or reviewed
+        crosswalk would increase resolver coverage. This is a coverage report,
+        not a promise that every release is fully supported.
       responses:
         "200":
           description: The current geography inventory.
@@ -967,6 +969,15 @@ paths:
                       countries:
                         - GB-ENG
                       releaseCount: 1
+                      capabilities:
+                        areaIdentities:
+                          availableReleaseCount: 1
+                          unsupportedReleaseCount: 0
+                          availableAreaCount: 15
+                        relationships:
+                          availableReleaseCount: 1
+                          unsupportedReleaseCount: 0
+                          crosswalkCount: 1
                 meta:
                   nextCursor: null
         "503":
@@ -8341,7 +8352,7 @@ components:
           type: array
           items:
             type: object
-            required: [id, countries, releaseCount]
+            required: [id, countries, releaseCount, capabilities]
             properties:
               id:
                 type: string
@@ -8351,6 +8362,30 @@ components:
                   type: string
               releaseCount:
                 type: integer
+              capabilities:
+                type: object
+                required: [areaIdentities, relationships]
+                properties:
+                  areaIdentities:
+                    type: object
+                    required: [availableReleaseCount, unsupportedReleaseCount, availableAreaCount]
+                    properties:
+                      availableReleaseCount:
+                        type: integer
+                      unsupportedReleaseCount:
+                        type: integer
+                      availableAreaCount:
+                        type: integer
+                  relationships:
+                    type: object
+                    required: [availableReleaseCount, unsupportedReleaseCount, crosswalkCount]
+                    properties:
+                      availableReleaseCount:
+                        type: integer
+                      unsupportedReleaseCount:
+                        type: integer
+                      crosswalkCount:
+                        type: integer
 
     GeographyInventoryEnvelope:
       allOf:

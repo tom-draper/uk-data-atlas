@@ -6,7 +6,7 @@
 		"geometrySources": "sha256:9e6bb38492183c83dc232498b460574d3fffd5d2995fcc7744b3e93608f9fab2",
 		"crosswalkInventory": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
 		"relationshipCandidates": "sha256:ddba58ccf93e44edf2109a1f643e1a401bc5c1e9883fa4bc1fa11729c3c5cb68",
-		"geographyInventory": "sha256:ffc52ae83b5822d2cf71ab65672faed4fb17e9be8a6d3e16ae1a726b50893ed1",
+		"geographyInventory": "sha256:2956b0fa29fd41ab0554975ffd2beaa7de8f5f492088969c743d6c5ccc1ae31a",
 		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 		"exportManifest": "sha256:825869e7f0bad75660cf60f4cc86b0ec12eb1defc8bd72ba29b56fcf521182a9",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
@@ -18810,5 +18810,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:ed74f60e1445d881455cf716f1bdcf7aef4ebad2d98956bc2942114462dd14db"
+	"contentHash": "sha256:4f16834b3a34007afbf76927b54c75349ad2c1fbf3775b2f65c4450dca872b84"
 }

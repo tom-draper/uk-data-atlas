@@ -31,6 +31,17 @@ test("discovers source metadata and reports boundary compiler coverage", () => {
 	);
 	assert.ok(geographyInventory.geographies.length > 0);
 	assert.ok(
+		geographyInventory.geographies.every(
+			(geography) =>
+				geography.capabilities.areaIdentities.availableReleaseCount +
+					geography.capabilities.areaIdentities.unsupportedReleaseCount ===
+					geography.releaseCount &&
+				geography.capabilities.relationships.availableReleaseCount +
+					geography.capabilities.relationships.unsupportedReleaseCount ===
+					geography.releaseCount,
+		),
+	);
+	assert.ok(
 		geographyInventory.releases.every(
 			(release) => release.areaIdentities.status === "unsupported",
 		),
@@ -100,6 +111,17 @@ test("reports crosswalk relationship coverage and its gaps", () => {
 		status: "unsupported",
 		reason: "No published crosswalk references this boundary release yet.",
 	});
+	assert.deepEqual(
+		target &&
+			geographyInventory.geographies.find(
+				(geography) => geography.id === target.geography,
+			)?.capabilities.relationships,
+		{
+			availableReleaseCount: 1,
+			unsupportedReleaseCount: 8,
+			crosswalkCount: 1,
+		},
+	);
 });
 
 test("discovers new source metadata without a hard-coded dataset list", () => {

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:40f231f0380e547216a8d6187d88838d5c13b36182636a03dadb7f55a153935a",
+	"releaseId": "sha256:07993ec82c1320c4b7b07f15062197411792899ca367b8c1aa4b35250dc376b6",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -95,12 +95,12 @@
 		{
 			"id": "geography-inventory",
 			"path": "geography-inventory.json",
-			"contentHash": "sha256:48c4ce7e0371cabb66131aa1a03db0ab5c9d5e840eee7fcd218de166d33795a4"
+			"contentHash": "sha256:c34c9baff9a70a7f7e4cd50be41f447a0c667d74df5eebc24e328cbaaed62c55"
 		},
 		{
 			"id": "validation-report",
 			"path": "validation-report.json",
-			"contentHash": "sha256:0d5064d2b34967ca9ffe2c2c237d11cb33cc749561ed53b32e17ec6a5f948bb0"
+			"contentHash": "sha256:c0ae9f51c210e9d1a9f26b4fec48425064fa3e205f4585c5ab8c9ef97ba8191c"
 		},
 		{
 			"id": "source-inventory",

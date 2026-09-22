@@ -53,6 +53,19 @@ export type GeographyInventory = {
 		id: string;
 		countries: string[];
 		releaseCount: number;
+		/** A compiled backlog for completing this geography's resolver support. */
+		capabilities: {
+			areaIdentities: {
+				availableReleaseCount: number;
+				unsupportedReleaseCount: number;
+				availableAreaCount: number;
+			};
+			relationships: {
+				availableReleaseCount: number;
+				unsupportedReleaseCount: number;
+				crosswalkCount: number;
+			};
+		};
 	}>;
 };
 
@@ -151,23 +164,65 @@ export const createGeographyInventory = (
 				: relationshipsPending,
 		};
 	});
-	const geographyCountries = new Map<string, Set<string>>();
-	const geographyCounts = new Map<string, number>();
+	const geographyCapabilities = new Map<
+		string,
+		{
+			countries: Set<string>;
+			releaseCount: number;
+			areaIdentities: {
+				availableReleaseCount: number;
+				unsupportedReleaseCount: number;
+				availableAreaCount: number;
+			};
+			relationships: {
+				availableReleaseCount: number;
+				unsupportedReleaseCount: number;
+				crosswalkCount: number;
+			};
+		}
+	>();
 	for (const release of releases) {
-		const countries =
-			geographyCountries.get(release.geography) ?? new Set<string>();
-		release.countries.forEach((country) => countries.add(country));
-		geographyCountries.set(release.geography, countries);
-		geographyCounts.set(
-			release.geography,
-			(geographyCounts.get(release.geography) ?? 0) + 1,
-		);
+		const capability = geographyCapabilities.get(release.geography) ?? {
+			countries: new Set<string>(),
+			releaseCount: 0,
+			areaIdentities: {
+				availableReleaseCount: 0,
+				unsupportedReleaseCount: 0,
+				availableAreaCount: 0,
+			},
+			relationships: {
+				availableReleaseCount: 0,
+				unsupportedReleaseCount: 0,
+				crosswalkCount: 0,
+			},
+		};
+		release.countries.forEach((country) => capability.countries.add(country));
+		capability.releaseCount += 1;
+		if (release.areaIdentities.status === "available") {
+			capability.areaIdentities.availableReleaseCount += 1;
+			capability.areaIdentities.availableAreaCount +=
+				release.areaIdentities.recordCount;
+		} else {
+			capability.areaIdentities.unsupportedReleaseCount += 1;
+		}
+		if (release.relationships.status === "available") {
+			capability.relationships.availableReleaseCount += 1;
+			capability.relationships.crosswalkCount +=
+				release.relationships.crosswalks.length;
+		} else {
+			capability.relationships.unsupportedReleaseCount += 1;
+		}
+		geographyCapabilities.set(release.geography, capability);
 	}
-	const geographies = [...geographyCountries.entries()]
-		.map(([id, countries]) => ({
+	const geographies = [...geographyCapabilities.entries()]
+		.map(([id, capability]) => ({
 			id,
-			countries: [...countries].sort(),
-			releaseCount: geographyCounts.get(id) ?? 0,
+			countries: [...capability.countries].sort(),
+			releaseCount: capability.releaseCount,
+			capabilities: {
+				areaIdentities: capability.areaIdentities,
+				relationships: capability.relationships,
+			},
 		}))
 		.sort((left, right) => left.id.localeCompare(right.id));
 	const content = JSON.stringify({
