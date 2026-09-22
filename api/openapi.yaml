@@ -3303,13 +3303,14 @@ paths:
         when: "No `q` is supplied. The Atlas cannot resolve an omitted identifier."
         x-example-request: "/v1/areas:resolve"
       description: >
-        Resolves an official code, official name or supplied alias case
-        insensitively, returning every exact candidate and a link to each
-        candidate's geography dossier. It never selects a geography or a
-        boundary release from catalogue order. Each candidate identifies every
-        exact match it has — code, official name or supplied alias — so an
-        equal name and alias are both retained. An empty candidate list is an
-        honest no-match.
+        Resolves an official code, official name or supplied alias, returning
+        every exact candidate and a link to each candidate's geography dossier.
+        Codes match case insensitively. Names and aliases also set aside case,
+        accents, punctuation, ampersands and administrative titles such as
+        "City of"; each candidate states which rule matched. It never selects
+        a geography or a boundary release from catalogue order. An equal name
+        and alias are both retained. An empty candidate list is an honest
+        no-match.
 
 
         Optional geography and release filters narrow the candidate set. Give

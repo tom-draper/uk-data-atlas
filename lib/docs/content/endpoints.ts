@@ -356,6 +356,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Resolve an area identifier",
 		intro: "Look up an official area code, name or alias and get every exact area identity it could mean. The Atlas never guesses which geography or boundary release you intended.",
 		tips: [
+			"Names and aliases ignore case, accents, punctuation, ampersands and titles such as `City of`. The response says exactly which matching rule applied.",
 			"If a name or code exists in more than one boundary release, use `geography` and `release` to choose the exact identity.",
 			"Use `date` with `geography` to select the latest boundary release dated on or before a date. Use [List or search areas](/docs/v1/reference/geography/list-areas) for prefix matching.",
 		],

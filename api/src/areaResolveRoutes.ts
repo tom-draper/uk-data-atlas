@@ -4,10 +4,40 @@ import {
 	parseSelectionDate,
 	selectReleaseForDate,
 } from "./releaseForDate";
+import { normalisePlaceName, withoutTitle } from "./placeResolver";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
-type ExactMatch = "code-exact" | "name-exact" | "alias-exact";
+type ExactMatch =
+	| "code-exact"
+	| "name-exact"
+	| "alias-exact"
+	| "name-normalized-exact"
+	| "alias-normalized-exact"
+	| "name-exact-without-title"
+	| "alias-exact-without-title";
+
+const nameMatches = (
+	label: string,
+	query: string,
+	normalizedQuery: string,
+	{
+		exact,
+		normalized,
+		withoutAdministrativeTitle,
+	}: {
+		exact: ExactMatch;
+		normalized: ExactMatch;
+		withoutAdministrativeTitle: ExactMatch;
+	},
+): ExactMatch | undefined => {
+	if (label.toLocaleLowerCase() === query) return exact;
+	const normalised = normalisePlaceName(label);
+	if (normalised === normalizedQuery) return normalized;
+	return withoutTitle(normalised) === normalizedQuery
+		? withoutAdministrativeTitle
+		: undefined;
+};
 
 /**
  * Resolves one supplied identifier into every exact area identity it can mean.
@@ -112,19 +142,28 @@ export const handleAreaResolveRoutes = ({
 		boundaryRelease,
 	});
 	const normalized = q.toLocaleLowerCase();
+	const normalizedName = normalisePlaceName(q);
 	const candidates = areas.flatMap((area) => {
 		const matches: ExactMatch[] = [
 			...(area.code.toLocaleLowerCase() === normalized
 				? ["code-exact" as const]
 				: []),
-			...(area.name.toLocaleLowerCase() === normalized
-				? ["name-exact" as const]
-				: []),
-			...(area.aliases?.some(
-				(candidate) => candidate.toLocaleLowerCase() === normalized,
-			)
-				? ["alias-exact" as const]
-				: []),
+			...(() => {
+				const match = nameMatches(area.name, normalized, normalizedName, {
+					exact: "name-exact",
+					normalized: "name-normalized-exact",
+					withoutAdministrativeTitle: "name-exact-without-title",
+				});
+				return match ? [match] : [];
+			})(),
+			...(area.aliases ?? []).flatMap((alias) => {
+				const match = nameMatches(alias, normalized, normalizedName, {
+					exact: "alias-exact",
+					normalized: "alias-normalized-exact",
+					withoutAdministrativeTitle: "alias-exact-without-title",
+				});
+				return match ? [match] : [];
+			}),
 		];
 		return matches.length > 0 ? [{ area, matches }] : [];
 	});
@@ -167,7 +206,7 @@ export const handleAreaResolveRoutes = ({
 				href: `/v1/areas?${searchParams.toString()}`,
 				note: "Use search for prefix matching when no exact official code, name or supplied alias resolves.",
 			},
-			note: "Candidates are every exact match within the requested filters. `matches` states whether the identifier matched an official code, name or supplied alias; this endpoint never chooses between geography or boundary-release candidates.",
+			note: "Candidates are every exact match within the requested filters. `matches` says whether the identifier matched an official code, name or supplied alias, including when accents, punctuation or an administrative title were set aside; this endpoint never chooses between geography or boundary-release candidates.",
 		}),
 	};
 };

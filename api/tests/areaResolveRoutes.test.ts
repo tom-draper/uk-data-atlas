@@ -31,7 +31,7 @@ test("resolves an exact code to dossiers without choosing a release", () => {
 			href: "/v1/areas?q=e05000001",
 			note: "Use search for prefix matching when no exact official code, name or supplied alias resolves.",
 		},
-		note: "Candidates are every exact match within the requested filters. `matches` states whether the identifier matched an official code, name or supplied alias; this endpoint never chooses between geography or boundary-release candidates.",
+		note: "Candidates are every exact match within the requested filters. `matches` says whether the identifier matched an official code, name or supplied alias, including when accents, punctuation or an administrative title were set aside; this endpoint never chooses between geography or boundary-release candidates.",
 	});
 });
 
@@ -80,6 +80,48 @@ test("resolves an alias exactly and directs prefixes to the search resource", ()
 	};
 	assert.deepEqual(prefixData.candidates, []);
 	assert.equal(prefixData.search.href, "/v1/areas?q=Greater");
+});
+
+test("resolves normalised names and aliases without hiding the matching rule", () => {
+	const lookup = createAreaLookup([
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:normalised-name",
+			geography: "localAuthority",
+			boundaryRelease: "2025-01-uk-lad",
+			codeProperty: "LAD25CD",
+			nameProperty: "LAD25NM",
+			areas: [
+				{
+					code: "W06000001",
+					name: "Bristol, City of",
+					aliases: ["Ynys Môn & Vale"],
+				},
+			],
+		},
+	]);
+	const title = route(
+		"GET",
+		"/v1/areas:resolve?q=Bristol",
+		registry,
+		geographyInventory,
+		lookup,
+	);
+	const alias = route(
+		"GET",
+		"/v1/areas:resolve?q=ynys%20mon%20and%20vale",
+		registry,
+		geographyInventory,
+		lookup,
+	);
+	const matches = (response: typeof title) =>
+		(
+			("data" in response.body && response.body.data) as {
+				candidates: Array<{ matches: string[] }>;
+			}
+		).candidates[0]?.matches;
+	assert.deepEqual(matches(title), ["name-exact-without-title"]);
+	assert.deepEqual(matches(alias), ["alias-normalized-exact"]);
 });
 
 test("keeps an exact name and another area's equal alias as separate candidates", () => {
