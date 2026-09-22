@@ -5429,6 +5429,9 @@ paths:
         different or partial code set is explicitly refused, with published
         source partitions listed as alternatives. Code compatibility does not
         claim that releases have identical geometry.
+        A refused partial or non-overlapping source includes its code-set
+        counts and sample unmatched codes, so it can be repaired rather than
+        treated as an unexplained unavailable conversion.
 
         `available` means every path step has complete published coverage;
         `partial` means a published path leaves some areas unmapped; `not-built`

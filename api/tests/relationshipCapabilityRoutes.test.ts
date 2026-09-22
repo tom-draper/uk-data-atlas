@@ -230,6 +230,44 @@ test("refuses a measure whose source partition does not match the source release
 			},
 		},
 	]);
+	assert.deepEqual(data.measureReadiness.sourceCompatibility[0].candidates, []);
+});
+
+test("returns partial code-set evidence instead of concealing it behind a refusal", () => {
+	const compatibility = {
+		...compatibleMeasureInventory,
+		measures: compatibleMeasureInventory.measures.map((measure) => ({
+			...measure,
+			sources: measure.sources.map((source) => ({
+				...source,
+				candidates: source.candidates.map((candidate) =>
+					candidate.boundaryRelease === "2025-01-en-ward"
+						? {
+								...candidate,
+								status: "partial-code-overlap" as const,
+								matchingCodeCount: 1,
+								matchedSourceShare: 0.5,
+								unmatchedSourceCodeCount: 1,
+								unmatchedSourceCodeSample: ["W05000001"],
+							}
+						: candidate,
+				),
+			})),
+		})),
+	};
+	const response = route(
+		"GET",
+		`${query}&measure=population-estimate`,
+		contextFor({ catalog: dataCatalog, compatibility }),
+	);
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.measureReadiness.status, "unsupported");
+	assert.match(data.measureReadiness.reason, /partial-code-overlap/);
+	assert.equal(
+		data.measureReadiness.sourceCompatibility[0].candidates[0]
+			.unmatchedSourceCodeCount,
+		1,
+	);
 });
 
 test("reports missing source compatibility evidence as not built", () => {
