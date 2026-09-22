@@ -5322,7 +5322,11 @@ paths:
         boundary), `membership` (containment) or `apportion` (weighted
         overlap). It never builds or chooses a path at request time: each path
         is compiled from published crosswalks, in either direction, with every
-        step's method and the weakest step's quality.
+        step's method and purpose and the weakest step's quality. `origin`
+        says whether a path is one `crosswalk`, a reviewed `declared`
+        composition, or one the build's path search `discovered` under its
+        composition rules; a discovered path is published only where neither of
+        the others relates the same releases for the same purpose.
 
 
         `status` is `available` when at least one path is published and
@@ -5364,10 +5368,12 @@ paths:
                       paths:
                         - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/forward/membership
                           quality: publisher-supplied
+                          origin: crosswalk
                           steps:
                             - crosswalkId: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
                               direction: forward
                               method: clean-containment
+                              purpose: membership
                     meta:
                       nextCursor: null
                 unsupported:

@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"releaseId": "sha256:c66428ad683bf92053178dde028accc4b703b28de2239ac07d6288b6aaef4957",
+	"releaseId": "sha256:c59d1d80a3cd49659b3a43fa44e182e24c0beed96818ef9c26b141b06e617689",
 	"artifacts": [
 		{
 			"id": "boundary-registry",
@@ -85,7 +85,7 @@
 		{
 			"id": "relationship-paths",
 			"path": "relationship-paths.json",
-			"contentHash": "sha256:b32c7dcfd772b7f43b94190ffa7a927d1060b1784ac7d1828e22d576a1544618"
+			"contentHash": "sha256:581c1b0d7f6b78366078bf7f0ac609b6448f5a6ad59d89326cacbb99528763b8"
 		},
 		{
 			"id": "relationship-candidates",

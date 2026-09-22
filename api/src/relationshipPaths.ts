@@ -12,11 +12,52 @@ export type RelationshipPath = {
 	from: { geography: string; boundaryRelease: string };
 	to: { geography: string; boundaryRelease: string };
 	quality: "publisher-supplied" | "derived";
+	/**
+	 * `crosswalk` is one published crosswalk in either direction, `declared`
+	 * a reviewed composition, and `discovered` a composition the build's path
+	 * search found under the composition rules.
+	 */
+	origin: "crosswalk" | "declared" | "discovered";
 	steps: Array<{
 		crosswalkId: string;
 		direction: "forward" | "reverse";
 		method: CrosswalkMethod;
+		/** What this step contributes, which can differ from the path's. */
+		purpose: RelationshipPurpose;
 	}>;
+};
+
+/**
+ * Whether each source code of a crosswalk reaches exactly one target in each
+ * direction, which decides whether a step can carry an identity or a sum.
+ */
+export type CrosswalkShape = { forward: boolean; reverse: boolean };
+
+export const crosswalkShape = (artifact: {
+	records: Array<{
+		source: { code: string };
+		targets: Array<{ code: string }>;
+	}>;
+}): CrosswalkShape => {
+	const sourcesByTarget = new Map<string, number>();
+	for (const record of artifact.records)
+		for (const target of record.targets)
+			sourcesByTarget.set(
+				target.code,
+				(sourcesByTarget.get(target.code) ?? 0) + 1,
+			);
+	return {
+		forward: artifact.records.every(
+			(record) => record.targets.length === 1,
+		),
+		reverse: [...sourcesByTarget.values()].every((count) => count === 1),
+	};
+};
+
+/** The build's path search: the shape of each crosswalk, and a step limit. */
+export type RelationshipPathDiscovery = {
+	shapes: Map<string, CrosswalkShape>;
+	maximumSteps: number;
 };
 
 export type RelationshipPathInventory = {
@@ -49,13 +90,177 @@ const purposeFor = (
 					? "identity"
 					: undefined);
 
+type Endpoint = { geography: string; boundaryRelease: string };
+
+// Where a path under search stands: still an identity, summing up or listing
+// down a hierarchy, or already past its one weighted step.
+type SearchMode = "identity" | "up" | "down" | "apportion";
+
+const endpointKey = ({ geography, boundaryRelease }: Endpoint) =>
+	`${geography}/${boundaryRelease}`;
+
+const toKebabCase = (value: string) =>
+	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
 /**
- * Compiles only already-published one-edge paths. Multi-edge paths must be
- * declared and validated separately; they are never inferred from graph shape.
+ * The mode a path reaches by taking one more step, or undefined where the
+ * step would break what the path claims. An identity step keeps a path's
+ * mode only when it is one-to-one in its direction. One that merges but never
+ * splits, as a local government reorganisation does, puts each old area
+ * wholly inside a new one, so it is taken as a step up. Summing up and
+ * listing down cannot mix, and a path takes at most one weighted step, after
+ * which only steps that keep each area whole may follow.
+ */
+const nextMode = (
+	mode: SearchMode,
+	step: RelationshipPath["steps"][number],
+	shape: CrosswalkShape | undefined,
+): SearchMode | undefined => {
+	const onward =
+		shape?.[step.direction === "forward" ? "forward" : "reverse"] ?? false;
+	const back =
+		shape?.[step.direction === "forward" ? "reverse" : "forward"] ?? false;
+	const orientation =
+		step.purpose === "identity"
+			? onward && back
+				? undefined
+				: onward
+					? "up"
+					: "none"
+			: step.purpose === "membership"
+				? step.direction === "forward"
+					? "up"
+					: "down"
+				: "apportion";
+	if (orientation === undefined) return mode;
+	if (orientation === "none") return undefined;
+	if (orientation === "up" && !onward) return undefined;
+	if (orientation === "apportion")
+		return mode === "identity" || mode === "up" ? "apportion" : undefined;
+	if (mode === "identity") return orientation;
+	if (mode === orientation) return mode;
+	return mode === "apportion" && orientation === "up" ? mode : undefined;
+};
+
+const purposeOfMode = (mode: SearchMode): RelationshipPurpose =>
+	mode === "up" || mode === "down" ? "membership" : mode;
+
+/**
+ * The cheapest composition from each release to every release it reaches,
+ * for each purpose. A step costs one, and a derived step half as much again,
+ * so a publisher's lookup is preferred to a derived one of the same length.
+ * Ties break on the steps' ids, so the search is deterministic.
+ */
+const discoverPaths = (
+	edges: RelationshipPath[],
+	{ shapes, maximumSteps }: RelationshipPathDiscovery,
+): RelationshipPath[] => {
+	const outgoing = new Map<string, RelationshipPath[]>();
+	for (const edge of edges) {
+		const key = endpointKey(edge.from);
+		outgoing.set(key, [...(outgoing.get(key) ?? []), edge]);
+	}
+	type State = {
+		node: string;
+		endpoint: Endpoint;
+		mode: SearchMode;
+		cost: number;
+		steps: RelationshipPath[];
+		visited: Set<string>;
+		order: string;
+	};
+	const discovered: RelationshipPath[] = [];
+	const sources = [
+		...new Map(edges.map((edge) => [endpointKey(edge.from), edge.from])),
+	].sort(([left], [right]) => left.localeCompare(right));
+	for (const [origin, originEndpoint] of sources) {
+		const best = new Map<string, State>();
+		const queue: State[] = [
+			{
+				node: origin,
+				endpoint: originEndpoint,
+				mode: "identity",
+				cost: 0,
+				steps: [],
+				visited: new Set([origin]),
+				order: "",
+			},
+		];
+		const settled = new Set<string>();
+		while (queue.length > 0) {
+			queue.sort(
+				(left, right) =>
+					left.cost - right.cost ||
+					left.order.localeCompare(right.order),
+			);
+			const state = queue.shift()!;
+			const stateKey = `${state.node}|${state.mode}`;
+			if (settled.has(stateKey)) continue;
+			settled.add(stateKey);
+			if (state.steps.length > 1) {
+				const target = `${state.node}|${purposeOfMode(state.mode)}`;
+				const held = best.get(target);
+				if (
+					!held ||
+					state.cost < held.cost ||
+					(state.cost === held.cost && state.order < held.order)
+				)
+					best.set(target, state);
+			}
+			if (state.steps.length >= maximumSteps) continue;
+			for (const edge of outgoing.get(state.node) ?? []) {
+				const next = endpointKey(edge.to);
+				if (state.visited.has(next)) continue;
+				const step = edge.steps[0]!;
+				const mode = nextMode(
+					state.mode,
+					step,
+					shapes.get(step.crosswalkId),
+				);
+				if (!mode || settled.has(`${next}|${mode}`)) continue;
+				queue.push({
+					node: next,
+					endpoint: edge.to,
+					mode,
+					cost: state.cost + (edge.quality === "derived" ? 1.5 : 1),
+					steps: [...state.steps, edge],
+					visited: new Set([...state.visited, next]),
+					order: `${state.order}|${edge.id}`,
+				});
+			}
+		}
+		for (const state of best.values()) {
+			const purpose = purposeOfMode(state.mode);
+			const from = originEndpoint;
+			const to = state.endpoint;
+			discovered.push({
+				id: `discovered/${toKebabCase(from.geography)}-${from.boundaryRelease}-to-${toKebabCase(to.geography)}-${to.boundaryRelease}/${purpose}`,
+				purpose,
+				from,
+				to,
+				quality: state.steps.some((step) => step.quality === "derived")
+					? "derived"
+					: "publisher-supplied",
+				origin: "discovered",
+				steps: state.steps.flatMap((step) => step.steps),
+			});
+		}
+	}
+	return discovered;
+};
+
+/**
+ * Compiles every published crosswalk as a one-step path in each direction,
+ * and the reviewed multi-step compositions declared alongside them. Given the
+ * crosswalks' shapes, it also searches the graph for compositions that neither
+ * covers, under the rules in `nextMode`; those are marked `discovered`, and a
+ * crosswalk or declared path between the same releases for the same purpose
+ * always takes their place.
  */
 export const compileRelationshipPaths = (
 	crosswalks: CrosswalkInventory,
 	approved: ApprovedRelationshipPath[] = [],
+	discovery?: RelationshipPathDiscovery,
 ): RelationshipPathInventory => {
 	const direct = crosswalks.crosswalks.flatMap((crosswalk) => {
 		const purpose = purposeFor(crosswalk);
@@ -66,11 +271,13 @@ export const compileRelationshipPaths = (
 			from: direction === "forward" ? crosswalk.from : crosswalk.to,
 			to: direction === "forward" ? crosswalk.to : crosswalk.from,
 			quality: crosswalk.quality,
+			origin: "crosswalk",
 			steps: [
 				{
 					crosswalkId: crosswalk.id,
 					direction,
 					method: crosswalk.method,
+					purpose,
 				},
 			],
 		});
@@ -114,10 +321,25 @@ export const compileRelationshipPaths = (
 			quality: steps.some((step) => step.quality === "derived")
 				? ("derived" as const)
 				: ("publisher-supplied" as const),
+			origin: "declared" as const,
 			steps: steps.flatMap((step) => step.steps),
 		} satisfies RelationshipPath;
 	});
-	const paths = [...direct, ...composed];
+	const covered = new Set(
+		[...direct, ...composed].map(
+			(path) =>
+				`${endpointKey(path.from)}|${endpointKey(path.to)}|${path.purpose}`,
+		),
+	);
+	const discovered = discovery
+		? discoverPaths(direct, discovery).filter(
+				(path) =>
+					!covered.has(
+						`${endpointKey(path.from)}|${endpointKey(path.to)}|${path.purpose}`,
+					),
+			)
+		: [];
+	const paths = [...direct, ...composed, ...discovered];
 	if (new Set(paths.map((path) => path.id)).size !== paths.length) {
 		throw new Error("Relationship path ids must be unique.");
 	}
