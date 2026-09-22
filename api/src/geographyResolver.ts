@@ -1,4 +1,5 @@
-import type { AreaLookup, AreaRecord } from "./areaInventory";
+import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
+import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	AreaGeometryCache,
 	AreaGeometryCacheStats,
@@ -33,6 +34,11 @@ import type {
 	RelationshipPurpose,
 } from "./relationshipPaths";
 import type { GeometryProvenance } from "./reprojection";
+import {
+	derivedReleaseSources,
+	selectReleaseForDate,
+	type ReleaseSelection,
+} from "./releaseForDate";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -99,6 +105,8 @@ type AreaIdentity = {
 };
 
 export type GeographyResolverInputs = {
+	boundaryRegistry?: BoundaryRegistry;
+	areaInventory?: AreaInventory;
 	areaLookup?: AreaLookup;
 	crosswalkInventory?: CrosswalkInventory;
 	crosswalkLookup?: CrosswalkLookup;
@@ -126,8 +134,10 @@ export class GeographyResolver {
 		string,
 		CrosswalkInventory["crosswalks"]
 	>();
+	private readonly derivedReleaseSources: Map<string, string>;
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
+		this.derivedReleaseSources = derivedReleaseSources(inputs.areaInventory);
 		if (inputs.areaLookup) {
 			this.areaSearchIndex = createAreaSearchIndex(inputs.areaLookup);
 		}
@@ -162,6 +172,27 @@ export class GeographyResolver {
 			this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`) ??
 			false
 		);
+	}
+
+	/**
+	 * Select the best published boundary snapshot for a geography, date and
+	 * optional country. This is one resolver policy, shared by area resolution
+	 * and coordinate lookup; routes only validate their own request shape.
+	 */
+	selectReleaseForDate(
+		geography: string,
+		month: string,
+		country?: string,
+	): ReleaseSelection | undefined {
+		return this.inputs.boundaryRegistry
+			? selectReleaseForDate(
+					this.inputs.boundaryRegistry,
+					geography,
+					month,
+					country,
+					this.derivedReleaseSources,
+				)
+			: undefined;
 	}
 
 	hasAreaGeometryCache(): boolean {

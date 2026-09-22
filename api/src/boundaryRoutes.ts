@@ -1,9 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import {
-	derivedReleaseSources,
-	parseSelectionDate,
-	selectReleaseForDate,
-} from "./releaseForDate";
+import { parseSelectionDate } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -14,7 +10,7 @@ export const handleBoundaryRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { areaInventory, boundaryRegistry, geographyInventory } = context;
+	const { boundaryRegistry, geographyInventory, geographyResolver } = context;
 
 	if (
 		segments.length === 2 &&
@@ -82,13 +78,17 @@ export const handleBoundaryRoutes = ({
 				"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
 			);
 		const requestedMonth = selectionDate.month;
-		const selection = selectReleaseForDate(
-			boundaryRegistry,
+		const selection = geographyResolver?.selectReleaseForDate(
 			geography,
 			requestedMonth,
 			country,
-			derivedReleaseSources(areaInventory),
 		);
+		if (!selection)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geography resolver and boundary registry before selecting a release by date.",
+			);
 		if (selection.status === "none") {
 			return problem(404, "Not Found", selection.detail, {
 				code:

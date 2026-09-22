@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import { createGeographyResolver } from "../src/geographyResolver";
 import {
 	compileLocationProjections,
@@ -16,6 +17,25 @@ import {
 	namedLocationInventory,
 	namedLocationLookup,
 } from "./geographyFixtures";
+
+const releaseRegistry: BoundaryRegistry = {
+	schemaVersion: 1,
+	contentHash: "sha256:boundary-registry",
+	releases: [
+		{
+			id: "2024-05-uk-bgc",
+			geography: "ward",
+			title: "Ward boundaries",
+			coverage: { countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"] },
+			source: {
+				publisher: "ONS",
+				url: "https://example.com",
+				licence: { name: "Open Government Licence" },
+			},
+			metadataHash: "sha256:ward-boundaries",
+		},
+	],
+};
 
 test("builds immutable geography indexes once for route-level queries", () => {
 	const locationProjections = compileLocationProjections(
@@ -114,6 +134,10 @@ test("does not claim optional geography capabilities when their artifacts are ab
 	assert.equal(resolver.hasAreaRelationships(), false);
 	assert.equal(resolver.hasAreaGeometryCache(), false);
 	assert.equal(resolver.hasLocationProjectionStore(), false);
+	assert.equal(
+		resolver.selectReleaseForDate("ward", "2025-01"),
+		undefined,
+	);
 	assert.equal(resolver.geometryFor(ward), undefined);
 	assert.deepEqual(resolver.relationships(ward), []);
 	assert.deepEqual(
@@ -154,5 +178,15 @@ test("does not claim optional geography capabilities when their artifacts are ab
 			"local-authority-to-region-2025",
 		),
 		undefined,
+	);
+});
+
+test("owns date-based release selection when its boundary registry is compiled", () => {
+	const resolver = createGeographyResolver({ boundaryRegistry: releaseRegistry });
+	const selection = resolver.selectReleaseForDate("ward", "2025-01", "GB-SCT");
+	assert.equal(selection?.status, "selected");
+	assert.equal(
+		selection?.status === "selected" && selection.selected.id,
+		"2024-05-uk-bgc",
 	);
 });

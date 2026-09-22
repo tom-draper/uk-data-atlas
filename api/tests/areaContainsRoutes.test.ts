@@ -142,6 +142,7 @@ const context = (withGeometry = true): RouteContext => ({
 	boundaryRegistry,
 	areaLookup,
 	geographyResolver: createGeographyResolver({
+		boundaryRegistry,
 		areaLookup,
 		...(withGeometry
 			? {

@@ -1,9 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import {
-	derivedReleaseSources,
-	parseSelectionDate,
-	selectReleaseForDate,
-} from "./releaseForDate";
+import { parseSelectionDate } from "./releaseForDate";
 import { normalisePlaceName, withoutTitle } from "./placeResolver";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -101,14 +97,14 @@ export const handleAreaResolveRoutes = ({
 			"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 		);
 	const selection = date
-		? selectReleaseForDate(
-				context.boundaryRegistry,
-				geography!,
-				date.month,
-				country,
-				derivedReleaseSources(context.areaInventory),
-			)
+		? geographyResolver.selectReleaseForDate(geography!, date.month, country)
 		: undefined;
+	if (date && !selection)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the boundary registry in the geography resolver before selecting a release by date.",
+		);
 	if (selection?.status === "none")
 		return problem(404, "Not Found", selection.detail, {
 			code:
