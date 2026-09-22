@@ -43,6 +43,7 @@ import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
 import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipPathRoutes } from "./relationshipPathRoutes";
+import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
@@ -389,6 +390,14 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			segments[1] === "relationship-paths",
 		handle: handleRelationshipPathRoutes,
+	},
+	{
+		name: "relationship-capabilities",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "relationship-capabilities",
+		handle: handleRelationshipCapabilityRoutes,
 	},
 	{
 		name: "governance",

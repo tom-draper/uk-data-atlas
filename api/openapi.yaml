@@ -5346,6 +5346,68 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /relationship-capabilities:
+    get:
+      operationId: diagnoseRelationshipCapability
+      tags: ["Geography"]
+      summary: Diagnose whether a geography conversion is usable and complete
+      x-likely-refusal:
+        status: 400
+        when: "Part of the conversion question is missing. Both exact releases and a relationship purpose are required."
+        x-example-request: "/v1/relationship-capabilities?sourceGeography=ward"
+      description: >
+        Turns an exact conversion question into an operational answer. For each
+        declared path it reports the published steps, how many source areas the
+        first step maps, and whether every step covers its own source release.
+        It also explicitly names missing identity or crosswalk artifacts, so a
+        `not-built` answer is a repair queue rather than an ambiguous absence.
+
+
+        `available` means every path step has complete published coverage;
+        `partial` means a published path leaves some areas unmapped; `not-built`
+        names a missing prerequisite; and `unsupported` means no declared path
+        exists for the requested purpose. The endpoint does not infer paths.
+      parameters:
+        - { name: sourceGeography, in: query, required: true, schema: { type: string } }
+        - { name: sourceRelease, in: query, required: true, schema: { type: string } }
+        - { name: targetGeography, in: query, required: true, schema: { type: string } }
+        - { name: targetRelease, in: query, required: true, schema: { type: string } }
+        - name: purpose
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [identity, membership, apportion]
+      responses:
+        "200":
+          description: The conversion capability, coverage and missing prerequisites.
+          content:
+            application/json:
+              schema: { type: object }
+              examples:
+                available:
+                  x-example-request: "/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership"
+                  value:
+                    apiVersion: v1
+                    atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                    data:
+                      purpose: membership
+                      status: available
+                      paths:
+                        - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/forward/membership
+                          coverage:
+                            status: complete
+                            mappedSourceAreaCount: 8441
+                            sourceAreaCount: 8441
+                            share: 1
+                      missingPrerequisites: []
+                    meta:
+                      nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /crosswalks:
     get:
       operationId: listCrosswalks

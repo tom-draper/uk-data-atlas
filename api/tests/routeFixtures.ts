@@ -23,6 +23,7 @@ import type {
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
 import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
 
 const resolverFor = (
 	context: Pick<
@@ -35,6 +36,7 @@ const resolverFor = (
 		| "namedLocationInventory"
 		| "namedLocationLookup"
 		| "locationProjectionStore"
+		| "relationshipPathInventory"
 	>,
 	areaGeometryCache?: AreaGeometryCache,
 ) =>
@@ -49,6 +51,9 @@ const resolverFor = (
 				namedLocationInventory: context.namedLocationInventory,
 				namedLocationLookup: context.namedLocationLookup,
 				locationProjectionStore: context.locationProjectionStore,
+				relationshipPathIndex: context.relationshipPathInventory
+					? createRelationshipPathIndex(context.relationshipPathInventory)
+					: undefined,
 			})
 		: undefined;
 
@@ -75,6 +80,7 @@ export const route = (
 	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
 	measureObservations?: RouteContext["measureObservations"],
 	exportManifest?: RouteContext["exportManifest"],
+	relationshipPathInventory?: RouteContext["relationshipPathInventory"],
 ) =>
 	routeRequest(method, url, {
 		boundaryRegistry,
@@ -91,6 +97,7 @@ export const route = (
 				crosswalkLookup,
 				namedLocationInventory,
 				namedLocationLookup,
+				relationshipPathInventory,
 			},
 			areaGeometryCache,
 		),
