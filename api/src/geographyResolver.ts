@@ -192,6 +192,15 @@ export type ResolvedRelationshipCoverage = {
 	uncoveredAreas: Array<AreaRecord & { id: string }>;
 };
 
+export type GeographyHealth = {
+	geography: string;
+	boundaryRelease: string;
+	status: "available" | "partial" | "unsupported" | "not-built";
+	areaCount: number;
+	relatedAreaCount: number;
+	gapCount: number;
+};
+
 export type RelationshipRepair = {
 	candidate: RelationshipCandidateInventory["candidates"][number];
 	action: "publish-crosswalk" | "review-candidate" | "compile-target-release";
@@ -1008,6 +1017,25 @@ export class GeographyResolver {
 			crosswalkIds: [...crosswalkIds].sort(),
 			uncoveredAreas,
 		};
+	}
+
+	/** A release-by-release relationship health report for repair prioritisation. */
+	geographyHealth(): GeographyHealth[] {
+		if (!this.inputs.areaLookup) return [];
+		return [...this.inputs.areaLookup.keys()]
+			.map((identity) => {
+				const [geography, boundaryRelease] = identity.split("/", 2) as [string, string];
+				const coverage = this.relationshipCoverage(geography, boundaryRelease, undefined, 1);
+				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount: 0, relatedAreaCount: 0, gapCount: 0 };
+				return {
+					geography, boundaryRelease,
+					status: coverage.relatedAreaCount === coverage.areaCount ? "available" as const : coverage.relatedAreaCount > 0 ? "partial" as const : "unsupported" as const,
+					areaCount: coverage.areaCount,
+					relatedAreaCount: coverage.relatedAreaCount,
+					gapCount: coverage.areaCount - coverage.relatedAreaCount,
+				};
+			})
+			.sort((left, right) => `${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`));
 	}
 
 	/** A deterministic, review-only queue for repairing published relationship gaps. */

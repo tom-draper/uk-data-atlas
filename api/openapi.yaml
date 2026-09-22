@@ -5279,6 +5279,21 @@ paths:
         "503":
           $ref: "#/components/responses/GeometryUnavailable"
 
+  /geography-health:
+    get:
+      operationId: getGeographyHealth
+      tags: ["Geography"]
+      summary: Summarise relationship health across compiled releases
+      responses:
+        "200":
+          description: Release-level relationship coverage and gaps.
+          content:
+            application/json:
+              schema: { type: object }
+              x-example-request: "/v1/geography-health"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /relationship-paths:
     get:
       operationId: findRelationshipPaths
