@@ -3002,11 +3002,63 @@
 				},
 				"query:release": {
 					"required": false
+				},
+				"query:date": {
+					"required": false
+				},
+				"query:country": {
+					"required": false,
+					"enum": [
+						"GB-ENG",
+						"GB-NIR",
+						"GB-SCT",
+						"GB-WLS"
+					]
 				}
 			},
 			"responses": {
 				"200 application/json": [],
 				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"409 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",

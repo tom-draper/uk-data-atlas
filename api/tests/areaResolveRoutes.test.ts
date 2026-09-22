@@ -125,6 +125,63 @@ test("keeps an exact name and another area's equal alias as separate candidates"
 	);
 });
 
+test("selects a dated release before resolving an exact identifier", () => {
+	const response = route(
+		"GET",
+		"/v1/areas:resolve?q=E05000001&geography=ward&date=2025-02",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(response.status, 200);
+	const data = ("data" in response.body && response.body.data) as {
+		query: { value: string; geography: string; boundaryRelease: string };
+		selection: {
+			policy: string;
+			date: string;
+			selected: { id: string };
+			sameMonth: boolean;
+		};
+	};
+	assert.deepEqual(data.query, {
+		value: "E05000001",
+		geography: "ward",
+		boundaryRelease: "2025-01-en-ward",
+	});
+	assert.deepEqual(data.selection, {
+		policy: "latest-release-dated-on-or-before",
+		date: "2025-02",
+		selected: {
+			id: "2025-01-en-ward",
+			month: "2025-01",
+			title: "Ward boundaries",
+			countries: ["GB-ENG"],
+			href: "/v1/boundary-releases/ward/2025-01-en-ward",
+		},
+		sameMonth: false,
+		previous: null,
+		next: null,
+		setAside: [],
+		notCovering: [],
+		note: "Releases are snapshots dated to a month. The selected release is the latest dated on or before the requested date, not a claim about which boundaries were legally in force that day.",
+	});
+});
+
+test("requires an explicit geography when resolving an identifier by date", () => {
+	const response = route(
+		"GET",
+		"/v1/areas:resolve?q=E05000001&date=2025-02",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(response.status, 400);
+	assert.equal(
+		(response.body as { detail?: string }).detail,
+		"geography is required when resolving an area identifier by date.",
+	);
+});
+
 test("requires an identifier before resolving area candidates", () => {
 	const response = route(
 		"GET",

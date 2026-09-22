@@ -3312,9 +3312,12 @@ paths:
         honest no-match.
 
 
-        Optional geography and release filters narrow the candidate set. For
-        prefix matching, use `/areas`, whose paginated result is linked in
-        every response.
+        Optional geography and release filters narrow the candidate set. Give
+        `date` with a geography instead of a release to select the latest
+        dated release on or before that date; `country` can restrict this
+        selection. The response explains the selected snapshot and any
+        same-month releases set aside. For prefix matching, use `/areas`,
+        whose paginated result is linked in every response.
       parameters:
         - name: q
           in: query
@@ -3334,6 +3337,21 @@ paths:
           schema:
             type: string
           description: Restrict candidates to one boundary release.
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            Calendar date (`YYYY-MM-DD`) or month (`YYYY-MM`) used to select
+            a release. Requires `geography` and cannot be combined with
+            `release`.
+        - name: country
+          in: query
+          required: false
+          schema:
+            enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+          description: Restrict a date-selected release to one country.
       responses:
         "200":
           description: Every exact identity the supplied identifier can mean, without an implicit choice.
@@ -3343,6 +3361,14 @@ paths:
               x-example-request: "/v1/areas:resolve?q=E08000025"
         "400":
           $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: More than one equally suitable boundary release was selected for the requested date.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
