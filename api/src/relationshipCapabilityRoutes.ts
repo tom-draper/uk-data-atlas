@@ -21,6 +21,10 @@ const measureReadiness = (
 		return { status: "unsupported" as const, reason: `No published measure matches ${measureId}.` };
 	if (purpose === "identity")
 		return { measure: { id: measure.id, unit: measure.unit }, status: "available" as const, operation: "identity-join", reason: "An identity path can align this measure's area identifiers without changing values." };
+	if (purpose === "membership" && measure.aggregation.kind === "intensive")
+		return measure.aggregation.available
+			? { measure: { id: measure.id, unit: measure.unit }, status: "requires-conversion" as const, operation: "weighted-mean", weight: measure.aggregation.weight, reason: "This intensive measure requires the declared denominator; it must not be summed across members." }
+			: { measure: { id: measure.id, unit: measure.unit }, status: "unsupported" as const, reason: "This intensive measure requires a weighted mean, but no published aggregation operation is available." };
 	if (measure.aggregation.kind === "extensive" && measure.aggregation.available)
 		return { measure: { id: measure.id, unit: measure.unit }, status: "available" as const, operation: purpose === "membership" ? "containment-aggregation" : "weighted-allocation", reason: "This extensive measure may be summed or allocated using the declared relationship operation." };
 	return { measure: { id: measure.id, unit: measure.unit }, status: "unsupported" as const, reason: `This measure is ${measure.aggregation.kind}; ${purpose === "membership" ? "containment aggregation" : "weighted allocation"} is not published as a safe operation.` };

@@ -119,6 +119,13 @@ test("preflights an extensive measure against containment aggregation", () => {
 	assert.equal(data.measureReadiness.operation, "containment-aggregation");
 });
 
+test("refuses an intensive measure when its required weighted mean is unavailable", () => {
+	const response = route("GET", `${query}&measure=mobile-5g-coverage`, contextFor({ catalog: dataCatalog }));
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.measureReadiness.status, "unsupported");
+	assert.match(data.measureReadiness.reason, /weighted mean/);
+});
+
 test("reports partial coverage instead of silently treating a path as complete", () => {
 	const lookup = new Map(areaLookup);
 	lookup.set(
