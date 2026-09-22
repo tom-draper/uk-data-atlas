@@ -155,10 +155,17 @@ export class GeographyResolver {
 	>();
 	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
 	private readonly locationsByMemberArea = new Map<string, NamedLocation[]>();
+	private readonly boundaryReleases = new Map<
+		string,
+		BoundaryRegistry["releases"][number]
+	>();
 	private readonly derivedReleaseSources: Map<string, string>;
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
 		this.derivedReleaseSources = derivedReleaseSources(inputs.areaInventory);
+		for (const release of inputs.boundaryRegistry?.releases ?? []) {
+			this.boundaryReleases.set(`${release.geography}/${release.id}`, release);
+		}
 		if (inputs.areaLookup) {
 			this.areaSearchIndex = createAreaSearchIndex(inputs.areaLookup);
 			for (const [releaseIdentity, areas] of inputs.areaLookup) {
@@ -225,6 +232,11 @@ export class GeographyResolver {
 			this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`) ??
 			false
 		);
+	}
+
+	/** One published boundary release's metadata, indexed by its identity. */
+	boundaryRelease(geography: string, id: string) {
+		return this.boundaryReleases.get(`${geography}/${id}`);
 	}
 
 	/**

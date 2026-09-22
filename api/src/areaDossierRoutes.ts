@@ -25,7 +25,7 @@ export const handleAreaDossierRoutes = ({
 		string,
 		string,
 	];
-	const { geographyResolver, crosswalkLookup } = context;
+	const { geographyResolver } = context;
 	if (!geographyResolver)
 		return problem(
 			503,
@@ -35,10 +35,9 @@ export const handleAreaDossierRoutes = ({
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const boundary = context.boundaryRegistry.releases.find(
-		(candidate) =>
-			candidate.geography === geography &&
-			candidate.id === boundaryRelease,
+	const boundary = geographyResolver.boundaryRelease(
+		geography,
+		boundaryRelease,
 	);
 	if (!boundary)
 		return problem(
@@ -47,9 +46,7 @@ export const handleAreaDossierRoutes = ({
 			"The boundary registry does not describe this resolved area release.",
 		);
 	const baseHref = `/v1/areas/${geography}/${boundaryRelease}/${code}`;
-	const relationships = crosswalkLookup
-		? geographyResolver.relationships(identity)
-		: [];
+	const relationships = geographyResolver.relationships(identity);
 	const countRelation = (relation: string) =>
 		relationships.filter((candidate) => candidate.relation === relation)
 			.length;
@@ -97,7 +94,7 @@ export const handleAreaDossierRoutes = ({
 			},
 			availability: {
 				geometry: { ...geometry, href: `${baseHref}/geometry` },
-				relationships: !crosswalkLookup
+				relationships: !geographyResolver.hasAreaRelationships()
 					? {
 							...notBuilt(
 								"Build the crosswalk inventory before describing relationships.",

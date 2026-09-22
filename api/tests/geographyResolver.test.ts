@@ -203,6 +203,10 @@ test("does not claim optional geography capabilities when their artifacts are ab
 
 test("owns date-based release selection when its boundary registry is compiled", () => {
 	const resolver = createGeographyResolver({ boundaryRegistry: releaseRegistry });
+	assert.equal(
+		resolver.boundaryRelease("ward", "2024-05-uk-bgc")?.title,
+		"Ward boundaries",
+	);
 	const selection = resolver.selectReleaseForDate("ward", "2025-01", "GB-SCT");
 	assert.equal(selection?.status, "selected");
 	assert.equal(
