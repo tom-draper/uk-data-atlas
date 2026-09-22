@@ -70,6 +70,17 @@ export const handleAreaDossierRoutes = ({
 			);
 		}
 	})();
+	const relationships = !geographyResolver.hasAreaRelationships()
+		? notBuilt("Build the crosswalk inventory before describing relationships.")
+		: relationshipSummary.relationships.length > 0
+			? { status: "available" as const }
+			: unsupported("No published crosswalk names this area.");
+	const trustLevel =
+		geometry.status === "available" && relationships.status === "available"
+			? "verified"
+			: geometry.status === "available" || relationships.status === "available"
+				? "partial"
+				: "limited";
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -93,17 +104,11 @@ export const handleAreaDossierRoutes = ({
 				geometry: { ...geometry, href: `${baseHref}/geometry` },
 				relationships: !geographyResolver.hasAreaRelationships()
 					? {
-							...notBuilt(
-								"Build the crosswalk inventory before describing relationships.",
-							),
+							...relationships,
 							href: `${baseHref}/relationships`,
 						}
 					: {
-							...(relationshipSummary.relationships.length > 0
-								? { status: "available" as const }
-								: unsupported(
-										"No published crosswalk names this area.",
-									)),
+							...relationships,
 							href: `${baseHref}/relationships`,
 							count: relationshipSummary.relationships.length,
 							byRelation: relationshipSummary.byRelation,
@@ -124,6 +129,10 @@ export const handleAreaDossierRoutes = ({
 					href: `${baseHref}/history`,
 					note: "History distinguishes published predecessor and successor links from same-code continuity.",
 				},
+			},
+			trust: {
+				level: trustLevel,
+				note: "Identity is compiled from the named boundary release; this summary reports whether independent geometry and relationship evidence are also available.",
 			},
 			links: {
 				self: baseHref,

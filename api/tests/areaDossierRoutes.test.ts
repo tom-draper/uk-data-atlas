@@ -26,6 +26,10 @@ test("starts an exact geography query with an evidence-led area dossier", () => 
 		}),
 	);
 	assert.equal(response.status, 200);
+	assert.equal(
+		((response.body as { data: { trust: { level: string } } }).data.trust.level),
+		"limited",
+	);
 	const data = ("data" in response.body && response.body.data) as {
 		id: string;
 		name: string;
