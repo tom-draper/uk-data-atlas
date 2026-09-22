@@ -5408,6 +5408,37 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /relationship-coverage:
+    get:
+      operationId: reportRelationshipCoverage
+      tags: ["Geography"]
+      summary: Report relationship coverage and hierarchy gaps for one release
+      x-likely-refusal:
+        status: 400
+        when: "The geography or release is missing, or the relationship filter is not recognised."
+        x-example-request: "/v1/relationship-coverage?geography=ward"
+      description: >
+        Counts the compiled areas in one release with published relationships,
+        optionally of one kind, and returns a bounded list of uncovered areas.
+        This is release-level evidence for prioritising hierarchy and lineage
+        repairs; it does not infer missing relationships.
+      parameters:
+        - { name: geography, in: query, required: true, schema: { type: string } }
+        - { name: release, in: query, required: true, schema: { type: string } }
+        - { name: relation, in: query, required: false, schema: { type: string, enum: [within, contains, successor, predecessor, overlaps] } }
+        - { name: limit, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 100, default: 25 } }
+      responses:
+        "200":
+          description: Coverage counts and representative uncovered area identities.
+          content:
+            application/json:
+              schema: { type: object }
+              x-example-request: "/v1/relationship-coverage?geography=ward&release=2023-05-uk-bgc&relation=within"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /crosswalks:
     get:
       operationId: listCrosswalks
