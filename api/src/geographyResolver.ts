@@ -599,6 +599,25 @@ export class GeographyResolver {
 		return this.areaRelationshipIndex?.get(areaId(identity)) ?? [];
 	}
 
+	/** Follow only declared containment edges, never inferred geography hierarchy. */
+	ancestorLineage(identity: AreaIdentity, maximumDepth: number) {
+		const visited = new Set([areaId(identity)]);
+		const queue = [{ id: areaId(identity), depth: 0 }];
+		const ancestors: Array<AreaRelationship & { depth: number }> = [];
+		while (queue.length > 0) {
+			const current = queue.shift()!;
+			if (current.depth >= maximumDepth) continue;
+			for (const relationship of (this.areaRelationshipIndex?.get(current.id) ?? []).filter((item) => item.relation === "within")) {
+				ancestors.push({ ...relationship, depth: current.depth + 1 });
+				if (!visited.has(relationship.counterpart.id)) {
+					visited.add(relationship.counterpart.id);
+					queue.push({ id: relationship.counterpart.id, depth: current.depth + 1 });
+				}
+			}
+		}
+		return ancestors;
+	}
+
 	/** One consistent summary of an area's published relationship evidence. */
 	areaRelationshipSummary(
 		identity: AreaIdentity,
