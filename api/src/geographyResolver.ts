@@ -45,6 +45,7 @@ import type {
 	RelationshipPurpose,
 } from "./relationshipPaths";
 import type { CapabilityStatus } from "./capability";
+import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import type { GeometryProvenance } from "./reprojection";
 import {
 	derivedReleaseSources,
@@ -180,6 +181,11 @@ export type ResolvedRelationshipCoverage = {
 	uncoveredAreas: Array<AreaRecord & { id: string }>;
 };
 
+export type RelationshipRepair = {
+	candidate: RelationshipCandidateInventory["candidates"][number];
+	action: "publish-crosswalk" | "review-candidate" | "compile-target-release";
+};
+
 type AreaIdentity = {
 	geography: string;
 	boundaryRelease: string;
@@ -197,6 +203,7 @@ export type GeographyResolverInputs = {
 	namedLocationLookup?: NamedLocationLookup;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
+	relationshipCandidateInventory?: RelationshipCandidateInventory;
 };
 
 const areaId = ({ geography, boundaryRelease, code }: AreaIdentity) =>
@@ -902,6 +909,21 @@ export class GeographyResolver {
 			crosswalkIds: [...crosswalkIds].sort(),
 			uncoveredAreas,
 		};
+	}
+
+	/** A deterministic, review-only queue for repairing published relationship gaps. */
+	relationshipRepairs(): RelationshipRepair[] {
+		const actionFor = (candidate: RelationshipRepair["candidate"]): RelationshipRepair["action"] =>
+			candidate.status === "eligible"
+				? "publish-crosswalk"
+				: candidate.status === "needs-review"
+					? "review-candidate"
+					: "compile-target-release";
+		const order = { "publish-crosswalk": 0, "review-candidate": 1, "compile-target-release": 2 } as const;
+		return (this.inputs.relationshipCandidateInventory?.candidates ?? [])
+			.filter((candidate) => !candidate.publishedCrosswalkId)
+			.map((candidate) => ({ candidate, action: actionFor(candidate) }))
+			.sort((left, right) => order[left.action] - order[right.action] || left.candidate.id.localeCompare(right.candidate.id));
 	}
 
 	/** Crosswalks from a target geography/release into a location's LAD members. */

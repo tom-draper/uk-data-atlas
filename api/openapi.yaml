@@ -5740,6 +5740,29 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /relationship-repairs:
+    get:
+      operationId: listRelationshipRepairs
+      tags: ["Governance"]
+      summary: List the governed queue of relationship repairs
+      x-likely-refusal:
+        status: 503
+        when: "The relationship candidate inventory was not built."
+      description: >
+        Orders unpublished relationship candidates into publish, review and
+        target-release compilation work. This endpoint proposes no automatic
+        publication: every repair remains subject to adapter, validation and
+        release review.
+      responses:
+        "200":
+          description: Unpublished relationship candidates ordered by the next safe action.
+          content:
+            application/json:
+              schema: { type: object }
+              x-example-request: "/v1/relationship-repairs"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /corrections:
     get:
       operationId: listCorrections

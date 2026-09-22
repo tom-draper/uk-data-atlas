@@ -37,6 +37,7 @@ const resolverFor = (
 		| "namedLocationLookup"
 		| "locationProjectionStore"
 		| "relationshipPathInventory"
+		| "relationshipCandidateInventory"
 	>,
 	areaGeometryCache?: AreaGeometryCache,
 ) =>
@@ -54,6 +55,7 @@ const resolverFor = (
 				relationshipPathIndex: context.relationshipPathInventory
 					? createRelationshipPathIndex(context.relationshipPathInventory)
 					: undefined,
+				relationshipCandidateInventory: context.relationshipCandidateInventory,
 			})
 		: undefined;
 
@@ -98,6 +100,7 @@ export const route = (
 				namedLocationInventory,
 				namedLocationLookup,
 				relationshipPathInventory,
+				relationshipCandidateInventory,
 			},
 			areaGeometryCache,
 		),

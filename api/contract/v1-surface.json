@@ -5689,6 +5689,33 @@
 				]
 			}
 		},
+		"GET /relationship-repairs": {
+			"operationId": "listRelationshipRepairs",
+			"parameters": {},
+			"responses": {
+				"200 application/json": [],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /corrections": {
 			"operationId": "listCorrections",
 			"parameters": {
