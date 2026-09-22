@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createGeographyResolver } from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/routing";
 import { registry, areaLookup } from "./routeFixtures";
@@ -8,6 +9,10 @@ test("validates a batch of codes and names against one release", () => {
 	const context = {
 		boundaryRegistry: registry,
 		areaLookup,
+		geographyResolver: createGeographyResolver({
+			boundaryRegistry: registry,
+			areaLookup,
+		}),
 	} satisfies RouteContext;
 	const validate = (query: string) =>
 		routeRequest("GET", `/v1/areas:validate?${query}`, context);

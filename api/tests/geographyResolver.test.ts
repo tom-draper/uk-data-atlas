@@ -112,6 +112,18 @@ test("builds immutable geography indexes once for route-level queries", () => {
 	);
 	assert.deepEqual(
 		resolver
+			.validateAreas("ward", "2025-01-en-ward", ["E05000001"])
+			?.summary,
+		{
+			valueCount: 1,
+			byStatus: { valid: 1 },
+			duplicateCount: 0,
+			normalisedCount: 0,
+			joinable: true,
+		},
+	);
+	assert.deepEqual(
+		resolver
 			.crosswalksToLocationMembers(
 				"ward",
 				"2025-01-en-ward",
