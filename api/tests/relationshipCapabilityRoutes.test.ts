@@ -126,6 +126,29 @@ test("refuses an intensive measure when its required weighted mean is unavailabl
 	assert.match(data.measureReadiness.reason, /weighted mean/);
 });
 
+test("names the required denominator for a supported intensive conversion", () => {
+	const catalog = {
+		...dataCatalog,
+		measures: dataCatalog.measures.map((measure) =>
+			measure.id === "mobile-5g-coverage"
+				? {
+						...measure,
+						aggregation: { ...measure.aggregation, available: true },
+					}
+				: measure,
+		),
+	};
+	const response = route("GET", `${query}&measure=mobile-5g-coverage`, contextFor({ catalog }));
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.measureReadiness.status, "requires-conversion");
+	assert.equal(data.measureReadiness.operation, "weighted-mean");
+	assert.deepEqual(data.measureReadiness.weight, {
+		description: "The authority's premises count.",
+		datasetField: "premisesCount",
+	});
+	assert.match(data.measureReadiness.reason, /must not be summed/);
+});
+
 test("reports partial coverage instead of silently treating a path as complete", () => {
 	const lookup = new Map(areaLookup);
 	lookup.set(
