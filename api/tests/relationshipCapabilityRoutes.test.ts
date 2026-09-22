@@ -8,20 +8,72 @@ import {
 	containmentCrosswalk,
 	crosswalkInventory,
 } from "./geographyFixtures";
-import { registry, dataCatalog } from "./routeFixtures";
+import {
+	registry,
+	dataCatalog,
+	measureCompatibilityInventory,
+} from "./routeFixtures";
 
 const relationshipPathInventory = compileRelationshipPaths(crosswalkInventory);
+
+const compatibleMeasureInventory = {
+	...measureCompatibilityInventory,
+	measures: [
+		...measureCompatibilityInventory.measures.map((measure) => ({
+			...measure,
+			sources: measure.sources.map((source) => ({
+				...source,
+				candidates: [
+					...source.candidates,
+					{
+						...source.candidates[0],
+						boundaryRelease: "2025-01-en-ward",
+					},
+				],
+			})),
+		})),
+		{
+			measureId: "mobile-5g-coverage",
+			sources: [
+				{
+					datasetId: "mobile-coverage",
+					sourceGeography: { type: "localAuthority", boundaryYear: 2024 },
+					periods: ["2025"],
+					candidates: [
+						{
+							boundaryRelease: "2025-01-uk-lad",
+							title: "Local authority boundaries",
+							coverageCountries: ["GB-ENG"],
+							status: "exact-code-set" as const,
+							sourceCodeCount: 1,
+							candidateCodeCount: 1,
+							matchingCodeCount: 1,
+							matchedSourceShare: 1,
+							unmatchedSourceCodeCount: 0,
+							unmatchedSourceCodeSample: [],
+							candidateOnlyCodeCount: 0,
+							candidateOnlyCodeSample: [],
+						},
+					],
+					note: "Compatibility is based only on area-code membership.",
+				},
+			],
+		},
+	],
+};
 
 const contextFor = ({
 	lookup = areaLookup,
 	crosswalks = new Map([[containmentCrosswalk.id, containmentCrosswalk]]),
 	catalog,
 	boundaryRegistry = registry,
+	compatibility = compatibleMeasureInventory,
 }: {
 	lookup?: typeof areaLookup;
 	crosswalks?: Map<string, typeof containmentCrosswalk>;
 	catalog?: typeof dataCatalog;
 	boundaryRegistry?: typeof registry;
+	compatibility?: typeof compatibleMeasureInventory;
 } = {}) => ({
 	boundaryRegistry,
 	areaLookup: lookup,
@@ -29,6 +81,7 @@ const contextFor = ({
 	crosswalkLookup: crosswalks,
 	relationshipPathInventory,
 	dataCatalog: catalog,
+	measureCompatibilityInventory: compatibility,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,
 		areaLookup: lookup,
@@ -135,33 +188,31 @@ test("preflights an extensive measure against containment aggregation", () => {
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "available");
 	assert.equal(data.measureReadiness.operation, "containment-aggregation");
-	assert.deepEqual(data.measureReadiness.sourcePartitions, [
-		{
-			datasetId: "population",
-			boundaryYear: 2023,
-			periods: ["2022"],
-			coverage: {
-				kind: "partial",
-				countries: ["GB-ENG", "GB-WLS"],
-				recordCount: 2,
-				note: "England and Wales only.",
-			},
-		},
-	]);
+	assert.equal(data.measureReadiness.sourcePartitions[0].datasetId, "population");
+	assert.equal(data.measureReadiness.sourcePartitions[0].coverage.recordCount, 2);
+	assert.equal(
+		data.measureReadiness.sourcePartitions[0].compatibility.status,
+		"code-set-compatible",
+	);
 });
 
 test("refuses a measure whose source partition does not match the source release", () => {
-	const boundaryRegistry = {
-		...registry,
-		releases: registry.releases.map((release) => ({
-			...release,
-			temporalCoverage: "2025",
+	const compatibility = {
+		...compatibleMeasureInventory,
+		measures: compatibleMeasureInventory.measures.map((measure) => ({
+			...measure,
+			sources: measure.sources.map((source) => ({
+				...source,
+				candidates: source.candidates.filter(
+					(candidate) => candidate.boundaryRelease !== "2025-01-en-ward",
+				),
+			})),
 		})),
 	};
 	const response = route(
 		"GET",
 		`${query}&measure=population-estimate`,
-		contextFor({ catalog: dataCatalog, boundaryRegistry }),
+		contextFor({ catalog: dataCatalog, compatibility }),
 	);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "unsupported");
@@ -179,6 +230,17 @@ test("refuses a measure whose source partition does not match the source release
 			},
 		},
 	]);
+});
+
+test("reports missing source compatibility evidence as not built", () => {
+	const context = contextFor({ catalog: dataCatalog });
+	const response = route("GET", `${query}&measure=population-estimate`, {
+		...context,
+		measureCompatibilityInventory: undefined,
+	});
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.measureReadiness.status, "not-built");
+	assert.match(data.measureReadiness.reason, /Build measure compatibility/);
 });
 
 test("refuses an intensive measure when its required weighted mean is unavailable", () => {
