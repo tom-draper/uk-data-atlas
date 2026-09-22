@@ -5284,6 +5284,8 @@ paths:
       operationId: getGeographyHealth
       tags: ["Geography"]
       summary: Summarise relationship health across compiled releases
+      parameters:
+        - { name: geography, in: query, required: false, schema: { type: string } }
       responses:
         "200":
           description: Release-level relationship coverage and gaps.

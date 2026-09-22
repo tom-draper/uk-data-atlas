@@ -18,3 +18,10 @@ test("keeps identity coverage visible when relationship artifacts are not built"
 		areaCount: 2, relatedAreaCount: 0, gapCount: 2,
 	});
 });
+
+test("filters the repair dashboard to one geography", () => {
+	const response = route("GET", "/v1/geography-health?geography=ward", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup);
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.releases.length, 1);
+	assert.equal(data.filters.geography, "ward");
+});
