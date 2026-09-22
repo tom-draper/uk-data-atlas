@@ -62,6 +62,7 @@ export const handleIndexRoutes = ({
 				"/v1/areas:intersects",
 				"/v1/areas:validate",
 				"/v1/areas/{geography}/{release}/{code}",
+				"/v1/areas/{geography}/{release}/{code}/dossier",
 				"/v1/areas/{geography}/{release}/{code}/history",
 				"/v1/areas/{geography}/{release}/{code}/parents",
 				"/v1/areas/{geography}/{release}/{code}/children",

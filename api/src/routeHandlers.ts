@@ -30,6 +30,7 @@ import { handleAreaNearRoutes } from "./areaNearRoutes";
 import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
 import { handleAreaValidationRoutes } from "./areaValidationRoutes";
 import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
+import { handleAreaDossierRoutes } from "./areaDossierRoutes";
 import { handleAreaHistoryRoutes } from "./areaHistoryRoutes";
 import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
 import { handleAreaChildGeometryRoutes } from "./areaChildGeometryRoutes";
@@ -271,6 +272,15 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "areas" &&
 			segments.length === 5,
 		handle: handleAreaIdentityRoutes,
+	},
+	{
+		name: "area-dossier",
+		owns: (segments) =>
+			segments.length === 6 &&
+			segments[0] === "v1" &&
+			segments[1] === "areas" &&
+			segments[5] === "dossier",
+		handle: handleAreaDossierRoutes,
 	},
 	{
 		name: "area-history",
