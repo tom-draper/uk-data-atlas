@@ -143,9 +143,10 @@ only **available** when its endpoint, contract and provenance are published.
       than as succession.
 - [ ] Add official ward historical change lookups. Do not promote name-based
       matching or same-code continuity to a public equivalence claim.
-- [ ] Find and explain a multi-step relationship path, for example 2019 ward →
-      current LAD → constituency. Return every step's method, release and
-      quality rather than collapsing it to an undocumented answer.
+- [x] Find and explain declared multi-step relationship paths, such as current
+      ward → local authority → country or region. Every step's crosswalk,
+      direction and method is returned; composition is published only after
+      review, never inferred from graph shape.
 - [ ] Complete the standard small-area hierarchies with explicit national
       coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
       and Northern Irish super output area equivalents.
