@@ -148,6 +148,11 @@ export type RelationshipPathStepCoverage = {
 };
 
 export type ResolvedRelationshipPath = RelationshipPath & {
+	operations: {
+		permitted: string[];
+		prohibited: string[];
+		note: string;
+	};
 	trust: {
 		level: "verified" | "derived" | "partial" | "not-built";
 		reasons: string[];
@@ -883,6 +888,24 @@ export class GeographyResolver {
 								};
 			return {
 				...path,
+				operations:
+					path.purpose === "identity"
+						? {
+								permitted: ["identity-join", "code-translation"],
+								prohibited: ["weighted-allocation", "containment-aggregation"],
+								note: "Use this path to identify the declared equivalent area; it does not supply weights or membership.",
+							}
+						: path.purpose === "membership"
+							? {
+								permitted: ["containment-aggregation", "membership-join"],
+								prohibited: ["weighted-allocation"],
+								note: "Use this path to group members under a parent. It does not allocate a source value across overlapping targets.",
+							}
+							: {
+								permitted: ["weighted-allocation"],
+								prohibited: ["identity-join"],
+								note: "Use this path only for measures whose semantics permit the published overlap weighting.",
+							},
 				trust,
 				coverage: {
 					status: coverageStatus,
