@@ -46,6 +46,7 @@ test("starts an exact geography query with an evidence-led area dossier", () => 
 	assert.equal(data.name, "Compatible ward");
 	assert.deepEqual(data.boundary, {
 		title: "Wards, May 2023",
+		temporalCoverage: "2023",
 		coverage: { countries: ["GB-ENG"] },
 		source: {
 			publisher: "ONS",
