@@ -43,6 +43,10 @@ test("reports a complete conversion path with its measured source coverage", () 
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.status, "available");
+	assert.deepEqual(data.paths[0].trust, {
+		level: "verified",
+		reasons: ["Every path step is publisher-supplied and has complete compiled coverage."],
+	});
 	assert.deepEqual(data.missingPrerequisites, []);
 	assert.deepEqual(data.paths[0].coverage, {
 		status: "complete",
@@ -75,6 +79,7 @@ test("reports partial coverage instead of silently treating a path as complete",
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.status, "partial");
+	assert.equal(data.paths[0].trust.level, "partial");
 	assert.equal(data.paths[0].coverage.share, 0.5);
 	assert.match(data.reason, /incomplete coverage/);
 });
@@ -85,6 +90,7 @@ test("names a missing crosswalk artifact as a prerequisite", () => {
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.status, "not-built");
 	assert.equal(data.paths[0].coverage.status, "not-built");
+	assert.equal(data.paths[0].trust.level, "not-built");
 	assert.deepEqual(data.missingPrerequisites, [
 		{
 			id: "crosswalk-artifact",
