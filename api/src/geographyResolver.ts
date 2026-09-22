@@ -117,6 +117,8 @@ export type ResolvedSameCodeArea = AreaRecord & {
 export type ResolvedAreaHistory = {
 	area: AreaRecord;
 	relationships: AreaRelationship[];
+	/** Every declared historical edge reachable without revisiting an area. */
+	lineage: Array<AreaRelationship & { depth: number }>;
 	sameCodeReleases: ResolvedSameCodeArea[];
 };
 
@@ -605,15 +607,33 @@ export class GeographyResolver {
 		};
 	}
 
-	/** Published history edges plus explicitly qualified recurring identifiers. */
-	areaHistory(identity: AreaIdentity): ResolvedAreaHistory | undefined {
+	/** Published history graph plus explicitly qualified recurring identifiers. */
+	areaHistory(identity: AreaIdentity, maximumDepth = 8): ResolvedAreaHistory | undefined {
 		const area = this.area(identity);
 		if (!area) return undefined;
+		const historical = (area: string) =>
+			(this.areaRelationshipIndex?.get(area) ?? []).filter(
+				({ relation }) => relation === "successor" || relation === "predecessor",
+			);
+		const origin = areaId(identity);
+		const visited = new Set([origin]);
+		const queue = [{ id: origin, depth: 0 }];
+		const lineage: ResolvedAreaHistory["lineage"] = [];
+		while (queue.length > 0) {
+			const current = queue.shift()!;
+			if (current.depth >= maximumDepth) continue;
+			for (const relationship of historical(current.id)) {
+				lineage.push({ ...relationship, depth: current.depth + 1 });
+				if (!visited.has(relationship.counterpart.id)) {
+					visited.add(relationship.counterpart.id);
+					queue.push({ id: relationship.counterpart.id, depth: current.depth + 1 });
+				}
+			}
+		}
 		return {
 			area,
-			relationships: this.relationships(identity).filter(
-				({ relation }) => relation === "successor" || relation === "predecessor",
-			),
+			relationships: historical(origin),
+			lineage,
 			sameCodeReleases: (this.sameCodeAreas.get(
 				`${identity.geography}/${identity.code}`,
 			) ?? []).filter(
