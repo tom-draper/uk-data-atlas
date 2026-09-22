@@ -24,14 +24,21 @@ export const areaNotFound = (
 	boundaryRelease?: string,
 	code?: string,
 ): ApiResponse => {
-	const { detail, ...absence } = explainAreaAbsence(
-		context.boundaryRegistry,
-		context.areaInventory,
-		context.areaLookup,
+	const resolved = context.geographyResolver?.explainAreaAbsence(
 		geography ?? "",
 		boundaryRelease ?? "",
 		code ?? "",
 	);
+	const { detail, ...absence } =
+		resolved ??
+		explainAreaAbsence(
+			context.boundaryRegistry,
+			context.areaInventory,
+			context.areaLookup,
+			geography ?? "",
+			boundaryRelease ?? "",
+			code ?? "",
+		);
 	return problem(404, "Not Found", detail, absence);
 };
 

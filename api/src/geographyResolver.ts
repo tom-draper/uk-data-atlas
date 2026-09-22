@@ -1,4 +1,5 @@
 import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
+import { explainAreaAbsence, type AreaAbsence } from "./areaAbsence";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	AreaGeometryCache,
@@ -246,6 +247,29 @@ export class GeographyResolver {
 	/** One published boundary release's metadata, indexed by its identity. */
 	boundaryRelease(geography: string, id: string) {
 		return this.boundaryReleases.get(`${geography}/${id}`);
+	}
+
+	/**
+	 * Explain an unresolved area identity using the resolver's compiled
+	 * boundary and identity inputs. Undefined means this resolver was built
+	 * without a boundary registry, so a caller can report its own deployment
+	 * limitation rather than inventing an absence.
+	 */
+	explainAreaAbsence(
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): AreaAbsence | undefined {
+		return this.inputs.boundaryRegistry
+			? explainAreaAbsence(
+					this.inputs.boundaryRegistry,
+					this.inputs.areaInventory,
+					this.inputs.areaLookup,
+					geography,
+					boundaryRelease,
+					code,
+				)
+			: undefined;
 	}
 
 	/**
