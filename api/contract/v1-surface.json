@@ -5365,6 +5365,9 @@
 						"identity",
 						"membership"
 					]
+				},
+				"query:measure": {
+					"required": false
 				}
 			},
 			"responses": {

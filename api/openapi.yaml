@@ -5416,6 +5416,13 @@ paths:
         callers cannot mistake containment membership for weighted allocation
         or an identity lookup.
 
+        Add `measure` to an exact conversion question to preflight the value
+        operation as well. Extensive measures can be summed for membership or
+        allocated for apportionment only when that operation is published. An
+        intensive measure names its required denominator and returns
+        `requires-conversion` rather than authorising a sum; categorical and
+        non-aggregatable measures are refused. The path capability remains
+        separate from this measure-specific assessment.
 
         `available` means every path step has complete published coverage;
         `partial` means a published path leaves some areas unmapped; `not-built`
@@ -5432,6 +5439,13 @@ paths:
           schema:
             type: string
             enum: [identity, membership, apportion]
+        - name: measure
+          in: query
+          required: false
+          schema: { type: string }
+          description: >
+            A published measure id to preflight against an exact target
+            conversion. Requires targetGeography, targetRelease and purpose.
       responses:
         "200":
           description: The conversion capability, coverage and missing prerequisites.
