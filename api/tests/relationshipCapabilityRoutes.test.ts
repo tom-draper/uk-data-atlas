@@ -38,6 +38,24 @@ const contextFor = ({
 const query =
 	"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
 
+test("discovers every declared conversion from one source release", () => {
+	const response = route(
+		"GET",
+		"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward",
+		contextFor(),
+	);
+	assert.equal(response.status, 200);
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.status, "available");
+	assert.equal(data.capabilities.length, 1);
+	assert.deepEqual(data.capabilities[0].to, {
+		geography: "localAuthority",
+		boundaryRelease: "2025-01-uk-lad",
+	});
+	assert.equal(data.capabilities[0].purpose, "membership");
+	assert.equal(data.capabilities[0].paths[0].trust.level, "verified");
+});
+
 test("reports a complete conversion path with its measured source coverage", () => {
 	const response = route("GET", query, contextFor());
 	assert.equal(response.status, 200);
