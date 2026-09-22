@@ -13,7 +13,10 @@ export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, seg
 		priority[left.status] - priority[right.status] ||
 		right.gapCount - left.gapCount ||
 		`${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`),
-	);
+	).map((release) => ({
+		...release,
+		href: `/v1/relationship-coverage?geography=${release.geography}&release=${release.boundaryRelease}`,
+	}));
 	return { status: 200, body: envelope(releaseId, {
 		filters: { geography },
 		releases,
