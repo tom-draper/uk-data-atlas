@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
+	"contentHash": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
 	"crosswalks": [
 		{
 			"id": "constituency-2010-to-2024-official-lookup-v2",
@@ -172,6 +172,25 @@
 			"recordCount": 8405,
 			"artifact": "crosswalks/ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment.json",
 			"contentHash": "sha256:bf2d7e3ca1a8917b6a9e7454133ca5628ae65891b2a366d54ab4d467fad0443e"
+		},
+		{
+			"id": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment",
+			"from": {
+				"geography": "ward",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc"
+			},
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"recordCount": 8734,
+			"artifact": "crosswalks/ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment.json",
+			"contentHash": "sha256:d69f9d25b6263f7a2c956210a5fac962a6fb0f77ed7cf8d654570531e65860e8"
 		},
 		{
 			"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc-clean-containment",

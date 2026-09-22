@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:6e682f967c662ef2a0c430cb13747ae22b7ba4b002661baf77000ddc8e168ca2",
+	"contentHash": "sha256:f0e63758222af98defb48ad354faf2f4f049632c5fd25ca36c4d0643711f3ebb",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:0c403d62c3853164eb0fc2f682257f822bcb40662841dccf4c6bdc9aa3c99d26",
+	"crosswalkInventoryHash": "sha256:88c6e651c24731142e36d76f558f1ebe2f554f6cb9697a8e33bd9ce351630ef4",
 	"crosswalkId": "local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup",
 	"parentProjections": [
 		{
@@ -224,6 +224,7 @@
 						"name": "Barnsley",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -851,6 +852,7 @@
 						"name": "Aylesbury Vale",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -864,6 +866,7 @@
 						"name": "Chiltern",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -877,6 +880,7 @@
 						"name": "South Bucks",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -890,6 +894,7 @@
 						"name": "Wycombe",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -1123,6 +1128,7 @@
 						"name": "Carlisle",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -1234,6 +1240,7 @@
 						"name": "North Lanarkshire",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1245,6 +1252,7 @@
 						"name": "Glasgow City",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1932,6 +1940,7 @@
 						"name": "Christchurch",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1943,6 +1952,7 @@
 						"name": "East Dorset",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1954,6 +1964,7 @@
 						"name": "North Dorset",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1965,6 +1976,7 @@
 						"name": "Purbeck",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1976,6 +1988,7 @@
 						"name": "West Dorset",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -1987,6 +2000,7 @@
 						"name": "Weymouth and Portland",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -2238,6 +2252,7 @@
 						"name": "Corby",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2252,6 +2267,7 @@
 						"name": "Daventry",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2266,6 +2282,7 @@
 						"name": "East Northamptonshire",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2280,6 +2297,7 @@
 						"name": "Kettering",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2294,6 +2312,7 @@
 						"name": "Northampton",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2308,6 +2327,7 @@
 						"name": "South Northamptonshire",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2322,6 +2342,7 @@
 						"name": "Wellingborough",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -2465,6 +2486,7 @@
 						"name": "Forest Heath",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -2701,6 +2723,7 @@
 						"name": "Fife",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc"
 						]
@@ -2813,6 +2836,7 @@
 						"name": "Glasgow City",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -3001,6 +3025,7 @@
 						"name": "Glasgow City",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -3256,6 +3281,7 @@
 						"name": "Harrogate",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5101,6 +5127,7 @@
 						"name": "Allerdale",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5117,6 +5144,7 @@
 						"name": "Barrow-in-Furness",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5133,6 +5161,7 @@
 						"name": "Carlisle",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5149,6 +5178,7 @@
 						"name": "Copeland",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5165,6 +5195,7 @@
 						"name": "Eden",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5181,6 +5212,7 @@
 						"name": "South Lakeland",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5249,6 +5281,7 @@
 						"name": "Craven",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5265,6 +5298,7 @@
 						"name": "Hambleton",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5281,6 +5315,7 @@
 						"name": "Harrogate",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5297,6 +5332,7 @@
 						"name": "Richmondshire",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5313,6 +5349,7 @@
 						"name": "Ryedale",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5329,6 +5366,7 @@
 						"name": "Scarborough",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5345,6 +5383,7 @@
 						"name": "Selby",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -5794,6 +5833,7 @@
 						"name": "Perth & Kinross",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc"
 						]
@@ -5936,6 +5976,7 @@
 						"name": "Poole",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -6324,6 +6365,7 @@
 						"name": "Scarborough",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6515,6 +6557,7 @@
 						"name": "Sheffield",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6710,6 +6753,7 @@
 						"name": "Mendip",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6726,6 +6770,7 @@
 						"name": "Sedgemoor",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6742,6 +6787,7 @@
 						"name": "South Somerset",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6758,6 +6804,7 @@
 						"name": "Taunton Deane",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -6769,6 +6816,7 @@
 						"name": "West Somerset",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -6894,6 +6942,7 @@
 						"name": "Aylesbury Vale",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6907,6 +6956,7 @@
 						"name": "Chiltern",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6920,6 +6970,7 @@
 						"name": "South Bucks",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -6933,6 +6984,7 @@
 						"name": "Wycombe",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -7183,6 +7235,7 @@
 						"name": "Bournemouth",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -7555,6 +7608,7 @@
 						"name": "Forest Heath",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -7566,6 +7620,7 @@
 						"name": "St Edmundsbury",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -7577,6 +7632,7 @@
 						"name": "Suffolk Coastal",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -7588,6 +7644,7 @@
 						"name": "Waveney",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc"
@@ -7829,6 +7886,7 @@
 						"name": "Perth & Kinross",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc"
 						]
@@ -8776,6 +8834,7 @@
 						"name": "Craven",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8792,6 +8851,7 @@
 						"name": "Hambleton",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8808,6 +8868,7 @@
 						"name": "Harrogate",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8824,6 +8885,7 @@
 						"name": "Richmondshire",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8840,6 +8902,7 @@
 						"name": "Ryedale",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8856,6 +8919,7 @@
 						"name": "Scarborough",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8872,6 +8936,7 @@
 						"name": "Selby",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8888,6 +8953,7 @@
 						"name": "Barnsley",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",
@@ -8908,6 +8974,7 @@
 						"name": "Sheffield",
 						"presentIn": [
 							"2011-12-gb-bgc",
+							"2015-12-gb-bgc",
 							"2016-12-gb-bgc",
 							"2017-12-gb-bgc",
 							"2018-12-uk-bgc",

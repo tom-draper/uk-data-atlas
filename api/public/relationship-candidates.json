@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:d9b3dee543c4ae537e611df067741c0d4ea2ee25ce0b8579de9181b48b946cfe",
+	"contentHash": "sha256:ddba58ccf93e44edf2109a1f643e1a401bc5c1e9883fa4bc1fa11729c3c5cb68",
 	"candidates": [
 		{
 			"id": "parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc",
@@ -163,7 +163,7 @@
 			"publishedCrosswalkId": "sub-integrated-care-board-location-to-integrated-care-board-2026-04-en-bgc-clean-containment"
 		},
 		{
-			"id": "ward-2015-12-gb-bgc-to-local-authority-unavailable",
+			"id": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc",
 			"input": "boundaries/ward/2015-12-gb-bgc/Wards_December_2015_GCB_in_Great_Britain_2022_8754526311494082379.geojson",
 			"from": {
 				"geography": "ward",
@@ -173,10 +173,11 @@
 			},
 			"to": {
 				"geography": "localAuthority",
+				"boundaryRelease": "2015-12-gb-bgc",
 				"codeProperty": "lad15cd",
 				"nameProperty": "lad15nm"
 			},
-			"status": "not-available",
+			"status": "eligible",
 			"validation": {
 				"endpoints": {
 					"from": {
@@ -185,8 +186,9 @@
 						"referencedCodeCount": 8734
 					},
 					"to": {
-						"status": "not-available",
-						"reason": "No compiled target release has lad15cd/lad15nm fields."
+						"status": "verified",
+						"availableAreaCount": 380,
+						"referencedCodeCount": 380
 					}
 				},
 				"relationship": {
@@ -196,10 +198,9 @@
 					"multiTargetSourceCount": 0,
 					"missingValueFeatureCount": 0
 				},
-				"reasons": [
-					"No compiled target release has lad15cd/lad15nm fields."
-				]
-			}
+				"reasons": []
+			},
+			"publishedCrosswalkId": "ward-2015-12-gb-bgc-to-local-authority-2015-12-gb-bgc-clean-containment"
 		},
 		{
 			"id": "ward-2016-12-gb-bgc-to-local-authority-2016-12-gb-bgc",

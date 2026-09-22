@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:4f6c6cfde58d6bdf00e91d0e3f5e4bb81f418886b9005948d6b9e13cea29d88d",
+	"contentHash": "sha256:341d6a9d80bda982fac051530ca4c92f97733e6307f21256c70315fd396ace27",
 	"sources": [
 		{
 			"key": "boundaries/combined-authority/2025-12-en-bgc",
@@ -549,6 +549,22 @@
 				}
 			],
 			"metadataHash": "sha256:2ce04895927ff84ecf47c70580b0affbff8f0c7576ad5bf1b118352490b59803"
+		},
+		{
+			"key": "boundaries/local-authority/2015-12-gb-bgc",
+			"metadataId": "2015-12-gb-bgc",
+			"kind": "boundary",
+			"title": "Local authority districts, December 2015 (Great Britain, generalised, clipped)",
+			"publisher": "Office for National Statistics",
+			"sourceUrl": "https://www.arcgis.com/home/item.html?id=4ec398afc13e4fa6a72f31786ea13c2e",
+			"temporalCoverage": "2015",
+			"files": [
+				{
+					"extension": ".geojson",
+					"role": "source"
+				}
+			],
+			"metadataHash": "sha256:952d3c1fc6ddf29fe281b83c082059621141ca36b79feee41d728ec669c3d4bb"
 		},
 		{
 			"key": "boundaries/local-authority/2016-12-gb-bgc",
