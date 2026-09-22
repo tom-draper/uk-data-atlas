@@ -148,6 +148,10 @@ export type RelationshipPathStepCoverage = {
 };
 
 export type ResolvedRelationshipPath = RelationshipPath & {
+	trust: {
+		level: "verified" | "derived" | "partial" | "not-built";
+		reasons: string[];
+	};
 	coverage: {
 		status: "complete" | "partial" | "not-built";
 		mappedSourceAreaCount?: number;
@@ -852,14 +856,36 @@ export class GeographyResolver {
 				};
 			});
 			const firstStep = steps[0]!;
+			const coverageStatus = steps.some((step) => step.status === "not-built")
+				? ("not-built" as const)
+				: steps.some((step) => step.status === "partial")
+					? ("partial" as const)
+					: ("complete" as const);
+			const trust =
+				coverageStatus === "not-built"
+					? {
+							level: "not-built" as const,
+							reasons: ["A required crosswalk or area identity artifact is not built."],
+						}
+					: coverageStatus === "partial"
+						? {
+								level: "partial" as const,
+								reasons: ["The declared path does not cover every source area."],
+							}
+						: path.quality === "derived"
+							? {
+									level: "derived" as const,
+									reasons: ["At least one path step is derived rather than publisher-supplied."],
+								}
+							: {
+									level: "verified" as const,
+									reasons: ["Every path step is publisher-supplied and has complete compiled coverage."],
+								};
 			return {
 				...path,
+				trust,
 				coverage: {
-					status: steps.some((step) => step.status === "not-built")
-						? ("not-built" as const)
-						: steps.some((step) => step.status === "partial")
-							? ("partial" as const)
-							: ("complete" as const),
+					status: coverageStatus,
 					mappedSourceAreaCount: firstStep.mappedSourceAreaCount,
 					sourceAreaCount: firstStep.sourceAreaCount ?? sourceAreaCount,
 					share: firstStep.share,

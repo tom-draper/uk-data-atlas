@@ -5373,6 +5373,10 @@ paths:
         It also explicitly names missing identity or crosswalk artifacts, so a
         `not-built` answer is a repair queue rather than an ambiguous absence.
 
+        Each path also carries a trust assessment: `verified` requires
+        publisher-supplied complete steps; `derived`, `partial` and `not-built`
+        make the limiting evidence explicit.
+
 
         `available` means every path step has complete published coverage;
         `partial` means a published path leaves some areas unmapped; `not-built`
@@ -5406,6 +5410,9 @@ paths:
                       status: available
                       paths:
                         - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/forward/membership
+                          trust:
+                            level: verified
+                            reasons: [Every path step is publisher-supplied and has complete compiled coverage.]
                           coverage:
                             status: complete
                             mappedSourceAreaCount: 8441
