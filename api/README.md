@@ -150,8 +150,12 @@ only **available** when its endpoint, contract and provenance are published.
       published, so a conversion needing one of them still refuses.
 - [x] Find and explain declared multi-step relationship paths, such as current
       ward → local authority → country or region. Every step's crosswalk,
-      direction and method is returned; composition is published only after
-      review, never inferred from graph shape.
+      direction and method is returned.
+- [x] Discover multi-step paths at build time under explicit composition
+      rules, marked `origin: discovered` and never trusted beyond `derived`.
+      A published crosswalk or a reviewed declaration between the same
+      releases for the same purpose always takes precedence, and coverage is
+      measured end to end, so a long chain states what it loses.
 - [ ] Complete the standard small-area hierarchies with explicit national
       coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
       and Northern Irish super output area equivalents.
@@ -191,8 +195,9 @@ only **available** when its endpoint, contract and provenance are published.
       derived from; and data zones, published clipped and unclipped in the
       same month, are a 409 listing both rather than a guess.
 - [ ] Find published conversion paths between two area identities and rank
-      them by source authority and exactness; support small, declared multi-step
-      crosswalk composition without hiding intermediate mappings.
+      them by source authority and exactness. Multi-step composition, declared
+      or discovered, is published without hiding intermediate mappings; the
+      ranking between several paths for one pair is still to do.
 - [x] Compile named-location projections, so a request such as Greater
       Manchester → wards or North Wales → constituencies is an indexed read of
       a published result, not a runtime graph walk or polygon calculation.
@@ -3713,6 +3718,32 @@ authority codes to methods that can describe them. So is a release whose
 geometry file holds no shapes, such as the names-and-codes 2011 data zone
 file. `pnpm tsx scripts/propose-same-code-continuity.ts --write` regenerates
 the adapters when a release is added.
+
+`public/relationship-paths.json` publishes every crosswalk as a one-step
+path in each direction, the reviewed compositions declared in
+`config/relationship-paths.json`, and the compositions the build's path search
+finds between every pair of releases that neither covers. The search takes
+the cheapest composition for each purpose, a step costing one and a derived
+step half as much again, under rules that keep what each purpose claims:
+
+- An identity path may take only identity steps that are one-to-one in the
+  direction travelled, which the build reads from each crosswalk's records.
+- An identity step that merges but never splits, such as the December 2022 to
+  May 2023 local authority reorganisation, puts each old area wholly inside a
+  new one, so it counts as a step up. Local authorities of 2011 therefore
+  reach those of 2026 as membership, not identity.
+- A membership path goes all the way up or all the way down; it never mixes.
+- An apportion path takes exactly one weighted step, and after it only steps
+  up, which keep each weighted share whole.
+- No composition crosses a lookup that both splits and merges, such as 2011 to
+  2021 LSOAs or the 2010 to 2024 constituencies.
+
+Discovered paths are marked `origin: discovered`, and their trust is never
+more than `derived`, because no one reviewed the composition. Their coverage
+is end to end: the share of source areas that reach the target through every
+step, which a chain of same-code steps loses a few areas to at each change of
+vintage. On the current crosswalks the search closes at 2,122 discovered paths,
+the longest 21 steps, so its 24-step limit is a guard rather than a cut.
 
 Before publication, the crosswalk compiler validates every referenced code
 against the compiled area artifact for that endpoint and fails on a missing

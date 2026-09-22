@@ -252,6 +252,8 @@ export class GeographyResolver {
 		BoundaryRegistry["releases"][number]
 	>();
 	private readonly derivedReleaseSources: Map<string, string>;
+	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
+	private readonly pathReachCache = new Map<string, number>();
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
 		this.derivedReleaseSources = derivedReleaseSources(inputs.areaInventory);
@@ -805,6 +807,58 @@ export class GeographyResolver {
 		);
 	}
 
+	/** Each source code of one crosswalk direction and the codes it reaches. */
+	private stepTargets(
+		artifact: CrosswalkArtifact,
+		direction: "forward" | "reverse",
+	): Map<string, string[]> {
+		const key = `${artifact.id}/${direction}`;
+		const cached = this.stepTargetCache.get(key);
+		if (cached) return cached;
+		const targets = new Map<string, string[]>();
+		for (const record of artifact.records) {
+			for (const target of record.targets) {
+				const [from, to] =
+					direction === "forward"
+						? [record.source.code, target.code]
+						: [target.code, record.source.code];
+				const reached = targets.get(from) ?? [];
+				reached.push(to);
+				targets.set(from, reached);
+			}
+		}
+		this.stepTargetCache.set(key, targets);
+		return targets;
+	}
+
+	/**
+	 * How many of a path's source areas reach its target through every step.
+	 * Walking back from the last step, each step keeps the codes with a target
+	 * the next step still carries, so the pass is linear in the records.
+	 */
+	private pathReach(path: RelationshipPath, from: GeographyEndpoint) {
+		const cached = this.pathReachCache.get(path.id);
+		if (cached !== undefined) return cached;
+		let carried: Set<string> | undefined;
+		for (const step of [...path.steps].reverse()) {
+			const artifact = this.inputs.crosswalkLookup?.get(step.crosswalkId);
+			if (!artifact) return undefined;
+			const kept = new Set<string>();
+			for (const [code, targets] of this.stepTargets(artifact, step.direction))
+				if (!carried || targets.some((target) => carried!.has(target)))
+					kept.add(code);
+			carried = kept;
+		}
+		const sources = this.inputs.areaLookup?.get(
+			`${from.geography}/${from.boundaryRelease}`,
+		);
+		const reach = sources
+			? [...(carried ?? [])].filter((code) => sources.has(code)).length
+			: (carried?.size ?? 0);
+		this.pathReachCache.set(path.id, reach);
+		return reach;
+	}
+
 	/**
 	 * Explains whether an exact conversion is usable, including the source
 	 * coverage of each declared path and every artifact that is still needed to
@@ -871,12 +925,9 @@ export class GeographyResolver {
 						missingPrerequisite: reason,
 					};
 				}
-				const mappedSourceAreaCount = new Set(
-					step.direction === "forward"
-						? artifact.records.map((record) => record.source.code)
-						: artifact.records.flatMap((record) =>
-							record.targets.map((target) => target.code),
-					),
+				const mappedSourceAreaCount = this.stepTargets(
+					artifact,
+					step.direction,
 				).size;
 				const stepSource =
 					step.direction === "forward" ? artifact.from : artifact.to;
@@ -908,12 +959,21 @@ export class GeographyResolver {
 					share,
 				};
 			});
-			const firstStep = steps[0]!;
-			const coverageStatus = steps.some((step) => step.status === "not-built")
-				? ("not-built" as const)
-				: steps.some((step) => step.status === "partial")
-					? ("partial" as const)
-					: ("complete" as const);
+			// A composed path loses whatever any step drops, so its coverage is the
+			// share of source areas that reach the target through every step.
+			const reached = steps.some((step) => step.status === "not-built")
+				? undefined
+				: this.pathReach(path, from);
+			const share =
+				reached !== undefined && sourceAreaCount
+					? reached / sourceAreaCount
+					: undefined;
+			const coverageStatus =
+				reached === undefined
+					? ("not-built" as const)
+					: share === 1
+						? ("complete" as const)
+						: ("partial" as const);
 			const trust =
 				coverageStatus === "not-built"
 					? {
@@ -925,6 +985,16 @@ export class GeographyResolver {
 								level: "partial" as const,
 								reasons: ["The declared path does not cover every source area."],
 							}
+						: path.origin === "discovered"
+							? {
+									level: "derived" as const,
+									reasons: [
+										"The build's path search composed this path under its composition rules; no one has reviewed it.",
+										...(path.quality === "derived"
+											? ["At least one path step is derived rather than publisher-supplied."]
+											: []),
+									],
+								}
 						: path.quality === "derived"
 							? {
 									level: "derived" as const,
@@ -957,9 +1027,9 @@ export class GeographyResolver {
 				trust,
 				coverage: {
 					status: coverageStatus,
-					mappedSourceAreaCount: firstStep.mappedSourceAreaCount,
-					sourceAreaCount: firstStep.sourceAreaCount ?? sourceAreaCount,
-					share: firstStep.share,
+					mappedSourceAreaCount: reached,
+					sourceAreaCount,
+					share,
 					steps,
 				},
 			} satisfies ResolvedRelationshipPath;
