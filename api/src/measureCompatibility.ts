@@ -150,6 +150,46 @@ const candidateFor = (
  * This deliberately establishes code compatibility only: a matching code set
  * says nothing about whether two releases have identical geometry.
  */
+type Measure = DataCatalog["measures"][number];
+
+/** What a measure publishes for one source partition, as routes report it. */
+export const publishedSourcePartition = (
+	source: Measure["sources"][number],
+) => ({
+	datasetId: source.datasetId,
+	boundaryYear: source.sourceGeography.boundaryYear,
+	periods: source.periods,
+	coverage: source.coverage,
+});
+
+/** Every partition a measure publishes for one geography. */
+export const publishedSourcePartitionsFor = (
+	measure: Measure,
+	geography: string,
+) =>
+	measure.sources
+		.filter((source) => source.sourceGeography.type === geography)
+		.map(publishedSourcePartition);
+
+/**
+ * The partition a compatibility summary was compiled from. The summary keeps
+ * only the identity of its source, so the measure is asked for the rest
+ * rather than a route reaching into the catalogue itself.
+ */
+export const publishedSourcePartitionOf = (
+	measure: Measure,
+	source: MeasureCompatibilitySource,
+) => {
+	const published = measure.sources.find(
+		(candidate) =>
+			candidate.datasetId === source.datasetId &&
+			candidate.sourceGeography.type === source.sourceGeography.type &&
+			candidate.sourceGeography.boundaryYear ===
+				source.sourceGeography.boundaryYear,
+	);
+	return published ? publishedSourcePartition(published) : undefined;
+};
+
 /** The key a measure's observation artifact is recorded under in `inputs`. */
 export const observationPartitionKey = ({
 	measureId,

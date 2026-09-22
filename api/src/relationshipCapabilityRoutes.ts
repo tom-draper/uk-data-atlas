@@ -1,6 +1,10 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
 import type { DataCatalog } from "./dataCatalog";
-import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import {
+	publishedSourcePartitionOf,
+	publishedSourcePartitionsFor,
+	type MeasureCompatibilityInventory,
+} from "./measureCompatibility";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -9,15 +13,6 @@ const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"membership",
 	"apportion",
 ];
-
-const publishedSourcePartition = (
-	source: DataCatalog["measures"][number]["sources"][number],
-) => ({
-	datasetId: source.datasetId,
-	boundaryYear: source.sourceGeography.boundaryYear,
-	periods: source.periods,
-	coverage: source.coverage,
-});
 
 const measureReadiness = (
 	catalog: DataCatalog | undefined,
@@ -71,21 +66,15 @@ const measureReadiness = (
 				statuses.length > 0
 					? `${measure.id} has ${[...new Set(statuses)].join(" and ")} source-code compatibility with ${from.geography}/${from.boundaryRelease}; a complete code set is required.`
 					: `${measure.id} has no published source partition whose codes are compatible with ${from.geography}/${from.boundaryRelease}.`,
-			publishedSourcePartitions: measure.sources
-				.filter((source) => source.sourceGeography.type === from.geography)
-				.map(publishedSourcePartition),
+			publishedSourcePartitions: publishedSourcePartitionsFor(
+				measure,
+				from.geography,
+			),
 			sourceCompatibility,
 		};
 	}
 	const sourcePartitions = matchingSources.map((source) => ({
-		...publishedSourcePartition(
-			measure.sources.find(
-				(candidate) =>
-					candidate.datasetId === source.datasetId &&
-					candidate.sourceGeography.type === source.sourceGeography.type &&
-					candidate.sourceGeography.boundaryYear === source.sourceGeography.boundaryYear,
-			)!,
-		),
+		...publishedSourcePartitionOf(measure, source)!,
 		compatibility: source.candidates.find(
 			(candidate) => candidate.boundaryRelease === from.boundaryRelease,
 		),

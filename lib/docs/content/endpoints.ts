@@ -426,6 +426,23 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"If nothing is published for your purpose but something is for another, `alternatives` points you to it.",
 		],
 	},
+	diagnoseRelationshipCapability: {
+		title: "Check whether a conversion will work",
+		intro: "Ask whether you can get from one boundary release to another, and get an operational answer: the steps involved, how much of the source they actually cover, and what is missing when they don't. Give only a source and you get every conversion available from it.",
+		tips: [
+			"`trust` says how far to lean on a path: `verified` is publisher-supplied and complete, while `derived`, `partial` and `not-built` each name what limits it.",
+			"`operations` says what the path may be used for, so containment isn't mistaken for a weighted split or an identity match.",
+			"A `not-built` answer lists the artifacts still needed, so it's a to-do list rather than a dead end.",
+		],
+	},
+	reportRelationshipCoverage: {
+		title: "Find gaps in one release",
+		intro: "Counts how many areas in a release have published relationships, and lists ones that have none. Useful for seeing what is still missing before relying on a release.",
+		tips: [
+			"Narrow it with `relation` to ask about one kind of link, such as `within` or `successor`.",
+			"It reports what is published and never guesses at a relationship that isn't.",
+		],
+	},
 	translateAreaCode: {
 		title: "Translate an area code",
 		intro: "Turn a code in one geography into its match in another: a ward into its local authority, or an old constituency into its 2024 successor.",
@@ -500,6 +517,20 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	getAreaCitation: {
 		title: "Cite an area",
 		intro: "Get the artifact hashes, boundary publisher and licence, validation links and ready-made attribution for one exact area identity. Add `measure` or `crosswalk` to include the data or relationship that supports what you publish; the top-level `atlasRelease` identifies the API response build, not the boundary itself.",
+	},
+	getGeographyHealth: {
+		title: "See relationship health across releases",
+		intro: "A release-by-release summary of how well connected the Atlas's geographies are: how many areas in each have published relationships, and how many are still on their own. Filter with `geography` or `country` to narrow it.",
+		tips: [
+			"A good place to start when deciding whether the geography you need is well enough connected for the conversion you have in mind.",
+		],
+	},
+	listRelationshipRepairs: {
+		title: "List relationship repairs to do",
+		intro: "The queue of relationships that could be published but haven't been yet, ordered by the next safe step: publish a crosswalk, review a candidate, or compile a missing release.",
+		tips: [
+			"Nothing here is published automatically. Each repair still goes through the usual adapter, validation and release review.",
+		],
 	},
 	listRelationshipCandidates: {
 		title: "List relationship candidates",

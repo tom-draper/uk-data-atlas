@@ -5297,6 +5297,15 @@ paths:
       operationId: getGeographyHealth
       tags: ["Geography"]
       summary: Summarise relationship health across compiled releases
+      x-likely-refusal:
+        status: 503
+        when: "The geography resolver was not built, so there is no relationship evidence to summarise."
+      description: >
+        Reports, release by release, how many compiled areas carry a published
+        relationship and how many carry none, and orders the releases by the
+        repair worth doing first: relationship artifacts that are not built,
+        then releases with no evidence at all, then the largest partial gaps.
+        It counts what is published and infers no relationship.
       parameters:
         - { name: geography, in: query, required: false, schema: { type: string } }
         - { name: country, in: query, required: false, schema: { type: string, example: GB-SCT } }
