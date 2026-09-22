@@ -40,6 +40,16 @@ const measureReadiness = (
 	const compatibility = compatibilityInventory.measures.find(
 		(candidate) => candidate.measureId === measure.id,
 	);
+	const sourceCompatibility = compatibility?.sources
+		.filter((source) => source.sourceGeography.type === from.geography)
+		.map((source) => ({
+			datasetId: source.datasetId,
+			boundaryYear: source.sourceGeography.boundaryYear,
+			periods: source.periods,
+			candidates: source.candidates.filter(
+				(candidate) => candidate.boundaryRelease === from.boundaryRelease,
+			),
+		})) ?? [];
 	const matchingSources = compatibility?.sources.filter(
 		(source) =>
 			source.sourceGeography.type === from.geography &&
@@ -50,15 +60,23 @@ const measureReadiness = (
 						candidate.status === "code-set-compatible"),
 			),
 	) ?? [];
-	if (matchingSources.length === 0)
+	if (matchingSources.length === 0) {
+		const statuses = sourceCompatibility.flatMap((source) =>
+			source.candidates.map((candidate) => candidate.status),
+		);
 		return {
 			measure: { id: measure.id, unit: measure.unit },
 			status: "unsupported" as const,
-			reason: `${measure.id} has no published source partition whose codes are compatible with ${from.geography}/${from.boundaryRelease}.`,
+			reason:
+				statuses.length > 0
+					? `${measure.id} has ${[...new Set(statuses)].join(" and ")} source-code compatibility with ${from.geography}/${from.boundaryRelease}; a complete code set is required.`
+					: `${measure.id} has no published source partition whose codes are compatible with ${from.geography}/${from.boundaryRelease}.`,
 			publishedSourcePartitions: measure.sources
 				.filter((source) => source.sourceGeography.type === from.geography)
 				.map(publishedSourcePartition),
+			sourceCompatibility,
 		};
+	}
 	const sourcePartitions = matchingSources.map((source) => ({
 		...publishedSourcePartition(
 			measure.sources.find(
