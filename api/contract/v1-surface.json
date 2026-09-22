@@ -2991,6 +2991,63 @@
 				]
 			}
 		},
+		"GET /areas:resolve": {
+			"operationId": "resolveAreaIdentifier",
+			"parameters": {
+				"query:q": {
+					"required": true
+				},
+				"query:geography": {
+					"required": false
+				},
+				"query:release": {
+					"required": false
+				}
+			},
+			"responses": {
+				"200 application/json": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /areas": {
 			"operationId": "listAreas",
 			"parameters": {

@@ -3395,6 +3395,7 @@ second inventory to maintain:
 - `GET /v1/docs` — The human documentation landing page
 - `GET /v1/places` — Find every place a name could mean
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
+- `GET /v1/areas:resolve` — Resolve a code, name or alias to every exact area identity it can mean
 - `GET /v1/areas/{geography}/{release}/{code}/dossier` — Get the verified geography dossier for one exact area identity
 - `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity
 
