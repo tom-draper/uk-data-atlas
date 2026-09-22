@@ -25,4 +25,5 @@ test("filters the repair dashboard to one geography", () => {
 	assert.equal(data.releases.length, 1);
 	assert.equal(data.filters.geography, "ward");
 	assert.equal(data.priorities[0].geography, "ward");
+	assert.equal(data.priorities[0].href, "/v1/relationship-coverage?geography=ward&release=2025-01-en-ward");
 });
