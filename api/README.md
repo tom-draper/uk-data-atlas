@@ -3461,6 +3461,7 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/history` — Explain a code's published historical relationships and same-code continuity
 - `GET /v1/areas/{geography}/{release}/{code}/parents` — List published clean-containment parents for an area
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
+- `GET /v1/geography-health` — Summarise relationship health across compiled releases
 - `GET /v1/relationship-paths` — Find the published paths from one boundary release to another for a purpose
 - `GET /v1/relationship-capabilities` — Diagnose whether a geography conversion is usable and complete
 - `GET /v1/relationship-coverage` — Report relationship coverage and hierarchy gaps for one release
