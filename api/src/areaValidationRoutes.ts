@@ -1,9 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import {
-	MAX_BATCH_VALUES,
-	summariseBatch,
-	validateBatch,
-} from "./batchValidation";
+import { MAX_BATCH_VALUES } from "./batchValidation";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -20,7 +16,7 @@ export const handleAreaValidationRoutes = ({
 		segments[1] !== "areas:validate"
 	)
 		return undefined;
-	const { areaLookup } = context;
+	const { geographyResolver } = context;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const values = parsedUrl.searchParams.getAll("value");
@@ -42,21 +38,26 @@ export const handleAreaValidationRoutes = ({
 			"Invalid Query",
 			`At most ${MAX_BATCH_VALUES} values can be validated in one request; this one has ${values.length}.`,
 		);
-	if (!areaLookup?.has(`${geography}/${boundaryRelease}`))
-		return areaNotFound(context, geography, boundaryRelease);
-	const results = validateBatch(
-		areaLookup,
+	if (!geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver before validating area identities.",
+		);
+	const validated = geographyResolver.validateAreas(
 		geography,
 		boundaryRelease,
 		values,
 	);
+	if (!validated)
+		return areaNotFound(context, geography, boundaryRelease);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
 			geography,
 			boundaryRelease,
-			summary: summariseBatch(results),
-			values: results,
+			summary: validated.summary,
+			values: validated.values,
 			note: 'Codes are checked against this exact release; one it does not hold says whether other releases or geographies do. Names match only exactly, through a published alias, or with an administrative title such as "City of" set aside, and a name meaning several areas lists them all rather than choosing. Anything trimmed or re-cased to read a value is listed in normalised. joinable is true only when every value names exactly one area of this release.',
 		}),
 	};

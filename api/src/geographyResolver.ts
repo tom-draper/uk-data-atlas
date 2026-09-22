@@ -1,5 +1,10 @@
 import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
 import { explainAreaAbsence, type AreaAbsence } from "./areaAbsence";
+import {
+	summariseBatch,
+	validateBatch,
+	type ValidatedValue,
+} from "./batchValidation";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	AreaGeometryCache,
@@ -270,6 +275,23 @@ export class GeographyResolver {
 					code,
 				)
 			: undefined;
+	}
+
+	/** Validate candidate codes and names against one exact compiled release. */
+	validateAreas(
+		geography: string,
+		boundaryRelease: string,
+		values: string[],
+	): { values: ValidatedValue[]; summary: ReturnType<typeof summariseBatch> } | undefined {
+		if (!this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`))
+			return undefined;
+		const validated = validateBatch(
+			this.inputs.areaLookup,
+			geography,
+			boundaryRelease,
+			values,
+		);
+		return { values: validated, summary: summariseBatch(validated) };
 	}
 
 	/**
