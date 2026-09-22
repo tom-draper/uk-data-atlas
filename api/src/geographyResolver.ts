@@ -28,7 +28,11 @@ import {
 	type LocationProjectionStore,
 	type LocationProjection,
 } from "./locationProjections";
-import type { NamedLocation, NamedLocationLookup } from "./namedLocations";
+import type {
+	NamedLocation,
+	NamedLocationInventory,
+	NamedLocationLookup,
+} from "./namedLocations";
 import type {
 	RelationshipPath,
 	RelationshipPurpose,
@@ -125,6 +129,7 @@ export type GeographyResolverInputs = {
 	crosswalkInventory?: CrosswalkInventory;
 	crosswalkLookup?: CrosswalkLookup;
 	areaGeometryCache?: AreaGeometryCache;
+	namedLocationInventory?: NamedLocationInventory;
 	namedLocationLookup?: NamedLocationLookup;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
@@ -149,6 +154,7 @@ export class GeographyResolver {
 		CrosswalkInventory["crosswalks"]
 	>();
 	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
+	private readonly locationsByMemberArea = new Map<string, NamedLocation[]>();
 	private readonly derivedReleaseSources: Map<string, string>;
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
@@ -181,6 +187,17 @@ export class GeographyResolver {
 			this.areaRelationshipIndex = createAreaRelationshipIndex(
 				inputs.crosswalkLookup.values(),
 			);
+		}
+		for (const location of inputs.namedLocationInventory?.locations ?? []) {
+			for (const code of location.memberCodes) {
+				const key = `${location.memberGeography}/${code}`;
+				const locations = this.locationsByMemberArea.get(key) ?? [];
+				locations.push(location);
+				this.locationsByMemberArea.set(key, locations);
+			}
+		}
+		for (const locations of this.locationsByMemberArea.values()) {
+			locations.sort((left, right) => left.id.localeCompare(right.id));
 		}
 		for (const crosswalk of inputs.crosswalkInventory?.crosswalks ?? []) {
 			const key = [
@@ -457,6 +474,17 @@ export class GeographyResolver {
 
 	namedLocation(id: string): NamedLocation | undefined {
 		return this.inputs.namedLocationLookup?.get(id);
+	}
+
+	hasNamedLocationInventory(): boolean {
+		return this.inputs.namedLocationInventory !== undefined;
+	}
+
+	/** Curated locations that directly include this area's published code. */
+	namedLocationsForArea(identity: AreaIdentity): NamedLocation[] {
+		return this.locationsByMemberArea.get(
+			`${identity.geography}/${identity.code}`,
+		) ?? [];
 	}
 
 	crosswalk(id: string): CrosswalkArtifact | undefined {

@@ -128,6 +128,7 @@ export const readApiCatalogues = (
 		crosswalkInventory,
 		crosswalkLookup,
 		areaGeometryCache,
+		namedLocationInventory,
 		namedLocationLookup,
 		locationProjectionStore,
 		relationshipPathIndex: createRelationshipPathIndex(
