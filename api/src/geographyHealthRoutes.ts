@@ -8,9 +8,17 @@ export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, seg
 	const releases = context.geographyResolver.geographyHealth().filter(
 		(release) => !geography || release.geography === geography,
 	);
+	const priority = { "not-built": 0, unsupported: 1, partial: 2, available: 3 } as const;
+	const priorities = [...releases].sort((left, right) =>
+		priority[left.status] - priority[right.status] ||
+		right.gapCount - left.gapCount ||
+		`${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`),
+	);
 	return { status: 200, body: envelope(releaseId, {
 		filters: { geography },
 		releases,
+		priorities,
+		priorityNote: "Relationship artifacts not built rank first, then releases with no evidence, then the largest partial coverage gaps.",
 		summary: releases.reduce<Record<string, number>>((summary, release) => ({ ...summary, [release.status]: (summary[release.status] ?? 0) + 1 }), {}),
 	}) };
 };
