@@ -1026,7 +1026,8 @@ export class GeographyResolver {
 			.map((identity) => {
 				const [geography, boundaryRelease] = identity.split("/", 2) as [string, string];
 				const coverage = this.relationshipCoverage(geography, boundaryRelease, undefined, 1);
-				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount: 0, relatedAreaCount: 0, gapCount: 0 };
+				const areaCount = this.inputs.areaLookup?.get(identity)?.size ?? 0;
+				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount, relatedAreaCount: 0, gapCount: areaCount };
 				return {
 					geography, boundaryRelease,
 					status: coverage.relatedAreaCount === coverage.areaCount ? "available" as const : coverage.relatedAreaCount > 0 ? "partial" as const : "unsupported" as const,
