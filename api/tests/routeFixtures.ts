@@ -28,6 +28,8 @@ const resolverFor = (
 	context: Pick<
 		RouteContext,
 		| "areaLookup"
+		| "areaInventory"
+		| "boundaryRegistry"
 		| "crosswalkInventory"
 		| "crosswalkLookup"
 		| "namedLocationLookup"
@@ -35,8 +37,10 @@ const resolverFor = (
 	>,
 	areaGeometryCache?: AreaGeometryCache,
 ) =>
-	context.areaLookup
+	context.boundaryRegistry
 		? createGeographyResolver({
+				boundaryRegistry: context.boundaryRegistry,
+				areaInventory: context.areaInventory,
 				areaLookup: context.areaLookup,
 				crosswalkInventory: context.crosswalkInventory,
 				crosswalkLookup: context.crosswalkLookup,
@@ -79,6 +83,7 @@ export const route = (
 		atlasRelease,
 		geographyResolver: resolverFor(
 			{
+				boundaryRegistry,
 				areaLookup,
 				crosswalkInventory,
 				crosswalkLookup,

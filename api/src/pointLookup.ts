@@ -6,10 +6,8 @@ import type {
 	ResolvedContainingArea,
 } from "./geographyResolver";
 import {
-	derivedReleaseSources,
 	parseSelectionDate,
 	releaseMonth,
-	selectReleaseForDate,
 	type ReleaseReference,
 } from "./releaseForDate";
 import {
@@ -582,8 +580,7 @@ export const parseLookupRequest = (
 			"Invalid Query",
 			`No release is selected for ${unselected.join(", ")}. Pin one as release={geography}/{release}, or give a date to use the latest release dated on or before it.`,
 		);
-	const { boundaryRegistry, areaInventory, geographyResolver } = context;
-	const derived = derivedReleaseSources(areaInventory);
+	const { boundaryRegistry, geographyResolver } = context;
 	const releases: LookupRelease[] = [];
 	for (const geography of geographies) {
 		const pinnedRelease = pinned.get(geography);
@@ -607,13 +604,16 @@ export const parseLookupRequest = (
 			});
 			continue;
 		}
-		const selected = selectReleaseForDate(
-			boundaryRegistry,
+		const selected = geographyResolver?.selectReleaseForDate(
 			geography,
 			date.month,
-			undefined,
-			derived,
 		);
+		if (!selected)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geography resolver and boundary registry before selecting a release by date.",
+			);
 		const selection = {
 			policy: "latest-release-dated-on-or-before" as const,
 			date: date.date,

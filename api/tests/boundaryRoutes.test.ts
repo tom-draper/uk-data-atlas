@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createGeographyResolver } from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/routing";
 import { route, registry, geographyInventory } from "./routeFixtures";
@@ -45,7 +46,7 @@ test("publishes the geography compiler coverage", () => {
 });
 
 test("resolves the boundary release to use for a date", () => {
-	const context = {
+	const context: RouteContext = {
 		boundaryRegistry: {
 			...registry,
 			releases: [
@@ -53,7 +54,10 @@ test("resolves the boundary release to use for a date", () => {
 				{ ...registry.releases[0]!, id: "2023-05-en-ward" },
 			],
 		},
-	} satisfies RouteContext;
+	};
+	context.geographyResolver = createGeographyResolver({
+		boundaryRegistry: context.boundaryRegistry,
+	});
 	const resolve = (query: string) =>
 		routeRequest("GET", `/v1/boundary-releases:resolve?${query}`, context);
 
