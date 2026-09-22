@@ -77,7 +77,11 @@ export const handleAreaDossierRoutes = ({
 			: unsupported("No published crosswalk names this area.");
 	const trustLevel =
 		geometry.status === "available" && relationships.status === "available"
-			? "verified"
+			? relationshipSummary.crosswalks.some(
+					(crosswalk) => crosswalk.quality === "derived",
+				)
+				? "derived"
+				: "verified"
 			: geometry.status === "available" || relationships.status === "available"
 				? "partial"
 				: "limited";
@@ -132,7 +136,7 @@ export const handleAreaDossierRoutes = ({
 			},
 			trust: {
 				level: trustLevel,
-				note: "Identity is compiled from the named boundary release; this summary reports whether independent geometry and relationship evidence are also available.",
+				note: "Identity is compiled from the named boundary release; this summary reports whether independent geometry and relationship evidence are also available. Derived crosswalk evidence is never presented as publisher-supplied verification.",
 			},
 			links: {
 				self: baseHref,
