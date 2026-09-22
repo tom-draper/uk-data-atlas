@@ -91,6 +91,17 @@ test("offers focused parent and child containment routes", () => {
 		crosswalkLookup,
 	);
 	assert.equal(parents.status, 200);
+	const lineage = route(
+		"GET",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/parents?depth=2",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
+	const lineageData = ("data" in lineage.body && lineage.body.data) as { ancestors: Array<{ depth: number }> };
+	assert.equal(lineageData.ancestors[0]?.depth, 1);
 	const parentData = "data" in parents.body ? parents.body.data : undefined;
 	assert.ok(parentData && typeof parentData === "object");
 	assert.equal(
