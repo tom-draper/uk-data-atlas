@@ -47,6 +47,12 @@ export const handleRelationshipCapabilityRoutes = ({
 			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together.",
 		);
 	}
+	if (!context.geographyResolver)
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the area, crosswalk and relationship path inventories before diagnosing conversion capabilities.",
+		);
 	if (to.geography === null || to.boundaryRelease === null) {
 		const source = from as { geography: string; boundaryRelease: string };
 		if (!context.geographyResolver.hasAreaRelease(source.geography, source.boundaryRelease)) {
@@ -79,12 +85,6 @@ export const handleRelationshipCapabilityRoutes = ({
 		};
 	}
 	const purpose = purposeParameter as RelationshipPurpose;
-	if (!context.geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area, crosswalk and relationship path inventories before diagnosing conversion capabilities.",
-		);
 	const capability = context.geographyResolver.relationshipCapability(
 		from as { geography: string; boundaryRelease: string },
 		to as { geography: string; boundaryRelease: string },
