@@ -1,4 +1,5 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
+import type { DataCatalog } from "./dataCatalog";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -7,6 +8,23 @@ const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"membership",
 	"apportion",
 ];
+
+const measureReadiness = (
+	catalog: DataCatalog | undefined,
+	measureId: string,
+	purpose: RelationshipPurpose,
+) => {
+	if (!catalog)
+		return { status: "not-built" as const, reason: "Build the data catalogue before assessing a measure's conversion semantics." };
+	const measure = catalog.measures.find((candidate) => candidate.id === measureId);
+	if (!measure)
+		return { status: "unsupported" as const, reason: `No published measure matches ${measureId}.` };
+	if (purpose === "identity")
+		return { measure: { id: measure.id, unit: measure.unit }, status: "available" as const, operation: "identity-join", reason: "An identity path can align this measure's area identifiers without changing values." };
+	if (measure.aggregation.kind === "extensive" && measure.aggregation.available)
+		return { measure: { id: measure.id, unit: measure.unit }, status: "available" as const, operation: purpose === "membership" ? "containment-aggregation" : "weighted-allocation", reason: "This extensive measure may be summed or allocated using the declared relationship operation." };
+	return { measure: { id: measure.id, unit: measure.unit }, status: "unsupported" as const, reason: `This measure is ${measure.aggregation.kind}; ${purpose === "membership" ? "containment aggregation" : "weighted allocation"} is not published as a safe operation.` };
+};
 
 /**
  * Answers a conversion question as an operational capability: paths, their
@@ -33,6 +51,7 @@ export const handleRelationshipCapabilityRoutes = ({
 		boundaryRelease: parsedUrl.searchParams.get("targetRelease"),
 	};
 	const purposeParameter = parsedUrl.searchParams.get("purpose");
+	const measureId = parsedUrl.searchParams.get("measure");
 	if (
 		!from.geography ||
 		!from.boundaryRelease ||
@@ -40,6 +59,7 @@ export const handleRelationshipCapabilityRoutes = ({
 		((to.geography !== null || to.boundaryRelease !== null) &&
 			!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)) ||
 		((to.geography === null && to.boundaryRelease === null) && purposeParameter !== null)
+		|| ((to.geography === null || to.boundaryRelease === null) && measureId !== null)
 	) {
 		return problem(
 			400,
@@ -106,6 +126,7 @@ export const handleRelationshipCapabilityRoutes = ({
 					}),
 			paths: capability.paths,
 			missingPrerequisites: capability.missingPrerequisites,
+			...(measureId ? { measureReadiness: measureReadiness(context.dataCatalog, measureId, purpose) } : {}),
 		}),
 	};
 };

@@ -8,22 +8,25 @@ import {
 	containmentCrosswalk,
 	crosswalkInventory,
 } from "./geographyFixtures";
-import { registry } from "./routeFixtures";
+import { registry, dataCatalog } from "./routeFixtures";
 
 const relationshipPathInventory = compileRelationshipPaths(crosswalkInventory);
 
 const contextFor = ({
 	lookup = areaLookup,
 	crosswalks = new Map([[containmentCrosswalk.id, containmentCrosswalk]]),
+	catalog,
 }: {
 	lookup?: typeof areaLookup;
 	crosswalks?: Map<string, typeof containmentCrosswalk>;
+	catalog?: typeof dataCatalog;
 } = {}) => ({
 	boundaryRegistry: registry,
 	areaLookup: lookup,
 	crosswalkInventory,
 	crosswalkLookup: crosswalks,
 	relationshipPathInventory,
+	dataCatalog: catalog,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry: registry,
 		areaLookup: lookup,
@@ -107,6 +110,13 @@ test("reports a complete conversion path with its measured source coverage", () 
 			},
 		],
 	});
+});
+
+test("preflights an extensive measure against containment aggregation", () => {
+	const response = route("GET", `${query}&measure=population-estimate`, contextFor({ catalog: dataCatalog }));
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.measureReadiness.status, "available");
+	assert.equal(data.measureReadiness.operation, "containment-aggregation");
 });
 
 test("reports partial coverage instead of silently treating a path as complete", () => {

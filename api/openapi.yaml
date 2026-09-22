@@ -5341,6 +5341,11 @@ paths:
           schema:
             type: string
             enum: [identity, membership, apportion]
+        - name: measure
+          in: query
+          required: false
+          schema: { type: string }
+          description: On an exact conversion request, preflight this measure's semantics against the relationship operation.
       responses:
         "200":
           description: The published paths, or why there are none.
