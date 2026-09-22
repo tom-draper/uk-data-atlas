@@ -352,6 +352,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Check geography coverage",
 		intro: "For every boundary release, see whether its areas have been compiled and which crosswalks connect it to others, or the reason they haven't yet.",
 	},
+	resolveAreaIdentifier: {
+		title: "Resolve an area identifier",
+		intro: "Look up an official area code, name or alias and get every exact area identity it could mean. The Atlas never guesses which geography or boundary release you intended.",
+		tips: [
+			"If a name or code exists in more than one boundary release, use `geography` and `release` to choose the exact identity.",
+			"Use `date` with `geography` to select the latest boundary release dated on or before a date. Use [List or search areas](/docs/v1/reference/geography/list-areas) for prefix matching.",
+		],
+	},
 	listAreas: {
 		title: "List or search areas",
 		intro: "Browse or search areas by code, name or alias, optionally narrowed to one geography and boundary release.",
@@ -369,6 +377,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	getArea: {
 		title: "Get an area",
 		intro: "Look up one area by its geography, boundary release and code, and get its name and any aliases.",
+	},
+	getAreaDossier: {
+		title: "Get an area's dossier",
+		intro: "Start with one exact area identity and get its boundary evidence, availability summary and verified links to its geometry, relationships, history, citation and data options.",
+		tips: [
+			"Resolve a code, name or alias first with [Resolve an area identifier](/docs/v1/reference/start-here/resolve-area-identifier) when you do not already know its geography and boundary release.",
+			"A dossier only reports published evidence. It never assumes that matching codes or nearby shapes are the same area.",
+		],
 	},
 	getAreaRelationships: {
 		title: "Get an area's relationships",
