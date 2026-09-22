@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:ffc52ae83b5822d2cf71ab65672faed4fb17e9be8a6d3e16ae1a726b50893ed1",
+	"contentHash": "sha256:2956b0fa29fd41ab0554975ffd2beaa7de8f5f492088969c743d6c5ccc1ae31a",
 	"boundaryRegistryHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
@@ -2823,7 +2823,19 @@
 			"countries": [
 				"GB-ENG"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 15
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "communitySafetyPartnership",
@@ -2831,7 +2843,19 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 314
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "constituency",
@@ -2841,7 +2865,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 9
+			"releaseCount": 9,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 9,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 5826
+				},
+				"relationships": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 7,
+					"crosswalkCount": 3
+				}
+			}
 		},
 		{
 			"id": "country",
@@ -2851,7 +2887,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 6
+			"releaseCount": 6,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 6,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 24
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 5,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "countyAndUnitaryAuthority",
@@ -2861,21 +2909,57 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 218
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "countyElectoralDivision",
 			"countries": [
 				"GB-ENG"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 1367
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "dataZone",
 			"countries": [
 				"GB-SCT"
 			],
-			"releaseCount": 2
+			"releaseCount": 2,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 13952
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 2,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "fireAndRescueAuthority",
@@ -2883,14 +2967,38 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 47
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "integratedCareBoard",
 			"countries": [
 				"GB-ENG"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 36
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "itl1",
@@ -2900,7 +3008,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 2
+			"releaseCount": 2,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 24
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "itl2",
@@ -2910,7 +3030,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 2
+			"releaseCount": 2,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 87
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 2
+				}
+			}
 		},
 		{
 			"id": "itl3",
@@ -2920,7 +3052,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 2
+			"releaseCount": 2,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 361
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "localAuthority",
@@ -2930,14 +3074,38 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 19
+			"releaseCount": 19,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 19,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 7117
+				},
+				"relationships": {
+					"availableReleaseCount": 12,
+					"unsupportedReleaseCount": 7,
+					"crosswalkCount": 27
+				}
+			}
 		},
 		{
 			"id": "localHealthBoard",
 			"countries": [
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 7
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "localPlanningAuthority",
@@ -2947,7 +3115,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 400
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "lsoa",
@@ -2955,7 +3135,19 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 4
+			"releaseCount": 4,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 4,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 106712
+				},
+				"relationships": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 2,
+					"crosswalkCount": 3
+				}
+			}
 		},
 		{
 			"id": "majorTownAndCity",
@@ -2963,7 +3155,19 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 112
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "msoa",
@@ -2971,7 +3175,19 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 7264
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "nationalPark",
@@ -2980,14 +3196,38 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 15
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "nhsEnglandRegion",
 			"countries": [
 				"GB-ENG"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 7
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "parish",
@@ -2995,7 +3235,19 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 7
+			"releaseCount": 7,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 7,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 80855
+				},
+				"relationships": {
+					"availableReleaseCount": 2,
+					"unsupportedReleaseCount": 5,
+					"crosswalkCount": 3
+				}
+			}
 		},
 		{
 			"id": "policeForceArea",
@@ -3003,56 +3255,152 @@
 				"GB-ENG",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 43
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "region",
 			"countries": [
 				"GB-ENG"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 9
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 2
+				}
+			}
 		},
 		{
 			"id": "scottishParliamentaryConstituency",
 			"countries": [
 				"GB-SCT"
 			],
-			"releaseCount": 4
+			"releaseCount": 4,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 4,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 292
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 4,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "scottishParliamentaryRegion",
 			"countries": [
 				"GB-SCT"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 8
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "seneddConstituency",
 			"countries": [
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 40
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "seneddElectoralRegion",
 			"countries": [
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 5
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "subIntegratedCareBoardLocation",
 			"countries": [
 				"GB-ENG"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 106
+				},
+				"relationships": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"crosswalkCount": 1
+				}
+			}
 		},
 		{
 			"id": "superOutputArea",
 			"countries": [
 				"GB-NIR"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 890
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "travelToWorkArea",
@@ -3062,7 +3410,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 1
+			"releaseCount": 1,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 1,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 228
+				},
+				"relationships": {
+					"availableReleaseCount": 0,
+					"unsupportedReleaseCount": 1,
+					"crosswalkCount": 0
+				}
+			}
 		},
 		{
 			"id": "ward",
@@ -3072,7 +3432,19 @@
 				"GB-SCT",
 				"GB-WLS"
 			],
-			"releaseCount": 17
+			"releaseCount": 17,
+			"capabilities": {
+				"areaIdentities": {
+					"availableReleaseCount": 17,
+					"unsupportedReleaseCount": 0,
+					"availableAreaCount": 146045
+				},
+				"relationships": {
+					"availableReleaseCount": 8,
+					"unsupportedReleaseCount": 9,
+					"crosswalkCount": 12
+				}
+			}
 		}
 	]
 }
