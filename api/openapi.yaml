@@ -5364,10 +5364,12 @@ paths:
       summary: Diagnose whether a geography conversion is usable and complete
       x-likely-refusal:
         status: 400
-        when: "Part of the conversion question is missing. Both exact releases and a relationship purpose are required."
+        when: "The source release is missing, or only part of an exact target conversion was supplied."
         x-example-request: "/v1/relationship-capabilities?sourceGeography=ward"
       description: >
-        Turns an exact conversion question into an operational answer. For each
+        With only a source geography/release, discovers every declared target
+        and purpose. With a complete target conversion, turns that exact
+        question into an operational answer. For each
         declared path it reports the published steps, how many source areas the
         first step maps, and whether every step covers its own source release.
         It also explicitly names missing identity or crosswalk artifacts, so a
@@ -5385,11 +5387,11 @@ paths:
       parameters:
         - { name: sourceGeography, in: query, required: true, schema: { type: string } }
         - { name: sourceRelease, in: query, required: true, schema: { type: string } }
-        - { name: targetGeography, in: query, required: true, schema: { type: string } }
-        - { name: targetRelease, in: query, required: true, schema: { type: string } }
+        - { name: targetGeography, in: query, required: false, schema: { type: string } }
+        - { name: targetRelease, in: query, required: false, schema: { type: string } }
         - name: purpose
           in: query
-          required: true
+          required: false
           schema:
             type: string
             enum: [identity, membership, apportion]

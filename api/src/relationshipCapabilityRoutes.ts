@@ -36,15 +36,30 @@ export const handleRelationshipCapabilityRoutes = ({
 	if (
 		!from.geography ||
 		!from.boundaryRelease ||
-		!to.geography ||
-		!to.boundaryRelease ||
-		!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)
+		((to.geography === null) !== (to.boundaryRelease === null)) ||
+		((to.geography !== null || to.boundaryRelease !== null) &&
+			!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)) ||
+		((to.geography === null && to.boundaryRelease === null) && purposeParameter !== null)
 	) {
 		return problem(
 			400,
 			"Invalid Query",
-			"sourceGeography, sourceRelease, targetGeography, targetRelease and purpose (identity, membership or apportion) are required.",
+			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together.",
 		);
+	}
+	if (to.geography === null || to.boundaryRelease === null) {
+		const capabilities = context.geographyResolver.relationshipCapabilitiesFrom(
+			from as { geography: string; boundaryRelease: string },
+		);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				from,
+				status: capabilities.length > 0 ? "available" as const : "unsupported" as const,
+				...(capabilities.length > 0 ? {} : { reason: `No declared conversion paths start at ${from.geography}/${from.boundaryRelease}.` }),
+				capabilities,
+			}),
+		};
 	}
 	const purpose = purposeParameter as RelationshipPurpose;
 	if (!context.geographyResolver)

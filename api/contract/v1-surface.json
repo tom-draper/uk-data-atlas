@@ -5306,13 +5306,13 @@
 					"required": true
 				},
 				"query:targetGeography": {
-					"required": true
+					"required": false
 				},
 				"query:targetRelease": {
-					"required": true
+					"required": false
 				},
 				"query:purpose": {
-					"required": true,
+					"required": false,
 					"enum": [
 						"apportion",
 						"identity",

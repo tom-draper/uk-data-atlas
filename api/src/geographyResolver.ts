@@ -912,6 +912,36 @@ export class GeographyResolver {
 		};
 	}
 
+	/** Every declared conversion starting at one exact release, grouped safely by endpoint and purpose. */
+	relationshipCapabilitiesFrom(from: GeographyEndpoint) {
+		const discovered = new Map<
+			string,
+			{ to: GeographyEndpoint; purpose: RelationshipPurpose }
+		>();
+		for (const paths of this.inputs.relationshipPathIndex?.values() ?? []) {
+			for (const path of paths) {
+				if (
+					path.from.geography !== from.geography ||
+					path.from.boundaryRelease !== from.boundaryRelease
+				)
+					continue;
+				const key = [path.to.geography, path.to.boundaryRelease, path.purpose].join("/");
+				discovered.set(key, { to: path.to, purpose: path.purpose });
+			}
+		}
+		return [...discovered.values()]
+			.map(({ to, purpose }) => ({
+				to,
+				purpose,
+				...this.relationshipCapability(from, to, purpose),
+			}))
+			.sort((left, right) =>
+				[left.to.geography, left.to.boundaryRelease, left.purpose]
+					.join("/")
+					.localeCompare([right.to.geography, right.to.boundaryRelease, right.purpose].join("/")),
+			);
+	}
+
 	/** Release-level relationship coverage for finding holes in the hierarchy. */
 	relationshipCoverage(
 		geography: string,
