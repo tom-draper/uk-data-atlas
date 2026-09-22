@@ -5379,6 +5379,10 @@ paths:
         publisher-supplied complete steps; `derived`, `partial` and `not-built`
         make the limiting evidence explicit.
 
+        `operations` states the permitted use of the relationship purpose, so
+        callers cannot mistake containment membership for weighted allocation
+        or an identity lookup.
+
 
         `available` means every path step has complete published coverage;
         `partial` means a published path leaves some areas unmapped; `not-built`
@@ -5412,6 +5416,9 @@ paths:
                       status: available
                       paths:
                         - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/forward/membership
+                          operations:
+                            permitted: [containment-aggregation, membership-join]
+                            prohibited: [weighted-allocation]
                           trust:
                             level: verified
                             reasons: [Every path step is publisher-supplied and has complete compiled coverage.]

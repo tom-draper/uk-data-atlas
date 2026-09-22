@@ -85,6 +85,11 @@ test("reports a complete conversion path with its measured source coverage", () 
 		level: "verified",
 		reasons: ["Every path step is publisher-supplied and has complete compiled coverage."],
 	});
+	assert.deepEqual(data.paths[0].operations, {
+		permitted: ["containment-aggregation", "membership-join"],
+		prohibited: ["weighted-allocation"],
+		note: "Use this path to group members under a parent. It does not allocate a source value across overlapping targets.",
+	});
 	assert.deepEqual(data.missingPrerequisites, []);
 	assert.deepEqual(data.paths[0].coverage, {
 		status: "complete",
