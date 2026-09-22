@@ -13,6 +13,7 @@ export type CrosswalkMethod =
 	| "clean-containment"
 	| "area-overlap"
 	| "population-overlap"
+	| "geometric-containment"
 	| "same-code-continuity";
 export type CrosswalkQuality = "publisher-supplied" | "derived";
 export type PropertyRelationshipPurpose = "identity" | "membership";
@@ -112,10 +113,25 @@ export type PopulationOverlapCrosswalkAdapter = {
 	minimumCoverage: number;
 };
 
+// Geometric-containment adapters establish a hierarchy from the geometry of
+// two releases, where no publisher lookup carries it.
+export type GeometricContainmentCrosswalkAdapter = {
+	id: string;
+	method: "geometric-containment";
+	quality: "derived";
+	relationshipPurpose: "membership";
+	weighting: { status: "not-applicable" };
+	from: { geography: string; boundaryRelease: string };
+	to: { geography: string; boundaryRelease: string };
+	/** A child reaching further than half of this beyond its parent is not within it. */
+	sliverWidthM: number;
+};
+
 export type CrosswalkAdapter =
 	| PropertyCrosswalkAdapter
 	| AreaOverlapCrosswalkAdapter
 	| PopulationOverlapCrosswalkAdapter
+	| GeometricContainmentCrosswalkAdapter
 	| SameCodeContinuityCrosswalkAdapter;
 
 type AdapterFile = { schemaVersion?: unknown; crosswalks?: unknown };
@@ -197,6 +213,19 @@ const validPopulationOverlapAdapter = (
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;
 
+const validGeometricContainmentAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is GeometricContainmentCrosswalkAdapter =>
+	adapter.method === "geometric-containment" &&
+	adapter.quality === "derived" &&
+	adapter.relationshipPurpose === "membership" &&
+	isRecord(adapter.weighting) &&
+	adapter.weighting.status === "not-applicable" &&
+	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
+	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	typeof adapter.sliverWidthM === "number" &&
+	adapter.sliverWidthM > 0;
+
 const validSameCodeContinuityAdapter = (
 	adapter: Record<string, unknown>,
 ): adapter is SameCodeContinuityCrosswalkAdapter =>
@@ -227,6 +256,7 @@ export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 				validPropertyAdapter(adapter) ||
 				validAreaOverlapAdapter(adapter) ||
 				validPopulationOverlapAdapter(adapter) ||
+				validGeometricContainmentAdapter(adapter) ||
 				validSameCodeContinuityAdapter(adapter)
 			)
 		) {

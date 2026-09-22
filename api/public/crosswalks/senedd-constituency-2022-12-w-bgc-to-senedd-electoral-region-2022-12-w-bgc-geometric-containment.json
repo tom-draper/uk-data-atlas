@@ -1,0 +1,782 @@
+{
+	"schemaVersion": 1,
+	"id": "senedd-constituency-2022-12-w-bgc-to-senedd-electoral-region-2022-12-w-bgc-geometric-containment",
+	"method": "geometric-containment",
+	"quality": "derived",
+	"relationshipPurpose": "membership",
+	"weighting": {
+		"status": "not-applicable"
+	},
+	"from": {
+		"geography": "seneddConstituency",
+		"boundaryRelease": "2022-12-w-bgc"
+	},
+	"to": {
+		"geography": "seneddElectoralRegion",
+		"boundaryRelease": "2022-12-w-bgc"
+	},
+	"provenance": {
+		"inputs": [
+			{
+				"side": "from",
+				"input": "boundaries/senedd-constituency/2022-12-w-bgc/SENC_DEC_2022_WA_BGC.geojson",
+				"inputHash": "sha256:f4fa11a8d23f26a18969a600b83c569e593d05e8e3008891c8c93a9b8bf6cf79",
+				"sourceCrs": "EPSG:4326"
+			},
+			{
+				"side": "to",
+				"input": "boundaries/senedd-electoral-region/2022-12-w-bgc/SENER_DEC_2022_WA_BGC.geojson",
+				"inputHash": "sha256:fcfda71a7942179db34df81dc86ee8116dbbdeb512d438e2fdd69eed6b4fc989",
+				"sourceCrs": "EPSG:4326"
+			}
+		],
+		"areaProjection": "EPSG:6933",
+		"clipping": "polygon-clipping@0.15.7"
+	},
+	"validation": {
+		"sourceNameConflicts": [],
+		"endpoints": {
+			"from": {
+				"status": "verified",
+				"availableAreaCount": 40,
+				"referencedCodeCount": 40
+			},
+			"to": {
+				"status": "verified",
+				"availableAreaCount": 5,
+				"referencedCodeCount": 5
+			}
+		},
+		"containment": {
+			"sliverWidthM": 100,
+			"childCount": 40,
+			"parentCount": 5,
+			"childlessParentCount": 0,
+			"minimumContainedShare": 0.999829,
+			"widestOutsideM": 14.3
+		}
+	},
+	"records": [
+		{
+			"source": {
+				"code": "W09000001",
+				"labels": [
+					"Ynys Môn"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000002",
+				"labels": [
+					"Arfon"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 2.6
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000003",
+				"labels": [
+					"Aberconwy"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 0.999973,
+					"outsideWidthM": 10.1
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000004",
+				"labels": [
+					"Clwyd West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 0.999993,
+					"outsideWidthM": 8.5
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000005",
+				"labels": [
+					"Vale of Clwyd"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000006",
+				"labels": [
+					"Delyn"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 0.99996,
+					"outsideWidthM": 14.3
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000007",
+				"labels": [
+					"Alyn and Deeside"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 0.999935,
+					"outsideWidthM": 12.9
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000008",
+				"labels": [
+					"Wrexham"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 0.999829,
+					"outsideWidthM": 12.6
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000009",
+				"labels": [
+					"Clwyd South"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000001",
+					"labels": [
+						"North Wales"
+					],
+					"containedShare": 0.999975,
+					"outsideWidthM": 9
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000010",
+				"labels": [
+					"Dwyfor Meirionnydd"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 0.999993,
+					"outsideWidthM": 8.5
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000011",
+				"labels": [
+					"Montgomeryshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 0.999987,
+					"outsideWidthM": 9.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000012",
+				"labels": [
+					"Ceredigion"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0.4
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000014",
+				"labels": [
+					"Preseli Pembrokeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 0.999999,
+					"outsideWidthM": 4.2
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000015",
+				"labels": [
+					"Carmarthen East and Dinefwr"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 0.999995,
+					"outsideWidthM": 7.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000016",
+				"labels": [
+					"Carmarthen West and South Pembrokeshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 1.7
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000017",
+				"labels": [
+					"Llanelli"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000018",
+				"labels": [
+					"Gower"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000019",
+				"labels": [
+					"Swansea West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000020",
+				"labels": [
+					"Swansea East"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000021",
+				"labels": [
+					"Neath"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 0.999904,
+					"outsideWidthM": 9.7
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000022",
+				"labels": [
+					"Aberavon"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000023",
+				"labels": [
+					"Bridgend"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 0.999965,
+					"outsideWidthM": 8.9
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000025",
+				"labels": [
+					"Rhondda"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 0.999969,
+					"outsideWidthM": 8.3
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000026",
+				"labels": [
+					"Cynon Valley"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 0.999897,
+					"outsideWidthM": 9.2
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000029",
+				"labels": [
+					"Cardiff West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000031",
+				"labels": [
+					"Cardiff Central"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000034",
+				"labels": [
+					"Monmouth"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 0.99998,
+					"outsideWidthM": 8.4
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000035",
+				"labels": [
+					"Caerphilly"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 0.999873,
+					"outsideWidthM": 9.9
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000036",
+				"labels": [
+					"Islwyn"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000037",
+				"labels": [
+					"Torfaen"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000038",
+				"labels": [
+					"Blaenau Gwent"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 0.999989,
+					"outsideWidthM": 2.3
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000039",
+				"labels": [
+					"Newport West"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 0.999981,
+					"outsideWidthM": 5.9
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000040",
+				"labels": [
+					"Newport East"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 1,
+					"outsideWidthM": 0
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000041",
+				"labels": [
+					"Brecon and Radnorshire"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000006",
+					"labels": [
+						"Mid and West Wales"
+					],
+					"containedShare": 0.999981,
+					"outsideWidthM": 10.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000042",
+				"labels": [
+					"Cardiff North"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 0.999908,
+					"outsideWidthM": 9.4
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000043",
+				"labels": [
+					"Cardiff South and Penarth"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 0.999995,
+					"outsideWidthM": 2.7
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000044",
+				"labels": [
+					"Merthyr Tydfil and Rhymney"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000008",
+					"labels": [
+						"South Wales East"
+					],
+					"containedShare": 0.99999,
+					"outsideWidthM": 5.2
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000045",
+				"labels": [
+					"Ogmore"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000009",
+					"labels": [
+						"South Wales West"
+					],
+					"containedShare": 0.999919,
+					"outsideWidthM": 12.6
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000046",
+				"labels": [
+					"Pontypridd"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 0.999893,
+					"outsideWidthM": 9.8
+				}
+			]
+		},
+		{
+			"source": {
+				"code": "W09000047",
+				"labels": [
+					"Vale of Glamorgan"
+				]
+			},
+			"targets": [
+				{
+					"code": "W10000007",
+					"labels": [
+						"South Wales Central"
+					],
+					"containedShare": 0.99995,
+					"outsideWidthM": 12.5
+				}
+			]
+		}
+	],
+	"contentHash": "sha256:549b88f55a04e52a59aae38dc13b64c676eccdbf09a4227dbab11308c18d23f3"
+}

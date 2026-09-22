@@ -82,7 +82,8 @@ const purposeFor = (
 	crosswalk.relationshipPurpose ??
 	(crosswalk.method === "official-lookup"
 		? "identity"
-		: crosswalk.method === "clean-containment"
+		: crosswalk.method === "clean-containment" ||
+			  crosswalk.method === "geometric-containment"
 			? "membership"
 			: crosswalk.method === "area-overlap" ||
 				  crosswalk.method === "population-overlap"

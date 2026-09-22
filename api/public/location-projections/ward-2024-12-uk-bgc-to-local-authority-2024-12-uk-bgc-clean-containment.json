@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:9e5b2243de03c3e19de54ad229e8fcd4b6b90a8d9c2af6f92ab19674d007bbcc",
+	"contentHash": "sha256:44e573bc039f2d4d9d2191af885a61855849f9078c46b752070e186de94e7788",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
+	"crosswalkInventoryHash": "sha256:65354da51e9fd2cae2263d36bb187d8efcd7c11b855845d105c451c1f5e4d662",
 	"crosswalkId": "ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment",
 	"projections": [
 		{

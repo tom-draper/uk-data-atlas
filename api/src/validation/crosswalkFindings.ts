@@ -106,7 +106,10 @@ export const crosswalkFindings = (
 		),
 	);
 
-	if (artifact.method === "clean-containment") {
+	if (
+		artifact.method === "clean-containment" ||
+		artifact.method === "geometric-containment"
+	) {
 		const multiParent = artifact.records
 			.filter((record) => record.targets.length !== 1)
 			.map((record) => record.source.code);
@@ -149,6 +152,44 @@ export const crosswalkFindings = (
 				{
 					maxDeviation: Number(maxDeviation.toPrecision(3)),
 					tolerance: WEIGHT_SUM_TOLERANCE,
+				},
+			),
+		);
+	}
+
+	if (artifact.method === "geometric-containment") {
+		// Recompute the claim from each published pair: a child belongs to its
+		// parent only while what it leaves outside is no wider than a sliver.
+		const { containment } = artifact.validation;
+		const reaching = artifact.records
+			.filter(
+				(record) =>
+					record.targets[0]!.outsideWidthM >= containment.sliverWidthM / 2,
+			)
+			.map(
+				(record) =>
+					`${record.source.code} (${record.targets[0]!.outsideWidthM} m)`,
+			);
+		findings.push(
+			check(
+				"containment-verified",
+				reaching.length === 0 &&
+					artifact.records.length === containment.childCount,
+				[
+					reaching.length > 0
+						? `Children reaching more than ${containment.sliverWidthM / 2} m beyond their parent: ${listed(reaching)}.`
+						: undefined,
+					artifact.records.length === containment.childCount
+						? undefined
+						: `The release has ${containment.childCount} areas but ${artifact.records.length} are published.`,
+				]
+					.filter(Boolean)
+					.join(" "),
+				{
+					sliverWidthM: containment.sliverWidthM,
+					childCount: containment.childCount,
+					widestOutsideM: containment.widestOutsideM,
+					minimumContainedShare: containment.minimumContainedShare,
 				},
 			),
 		);

@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
+import { compileGeometricContainmentCrosswalk } from "./geometricContainment";
 import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
 import { compileSameCodeContinuityCrosswalk } from "./sameCodeContinuity";
 import {
@@ -15,6 +16,7 @@ import type {
 	CrosswalkQuality,
 	CrosswalkSideAdapter,
 	CrosswalkWeighting,
+	GeometricContainmentCrosswalkAdapter,
 	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	SameCodeContinuityCrosswalkAdapter,
@@ -183,6 +185,41 @@ export type PopulationOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 	}>;
 };
 
+export type GeometricContainmentValidation = {
+	sliverWidthM: number;
+	childCount: number;
+	parentCount: number;
+	childlessParentCount: number;
+	/** The smallest share of any child's area inside its parent. */
+	minimumContainedShare: number;
+	/** The widest piece any child leaves outside its parent, in metres. */
+	widestOutsideM: number;
+};
+
+export type GeometricContainmentCrosswalkArtifact = CrosswalkArtifactBase & {
+	method: "geometric-containment";
+	quality: "derived";
+	relationshipPurpose: "membership";
+	weighting: GeometricContainmentCrosswalkAdapter["weighting"];
+	provenance: AreaOverlapCrosswalkArtifact["provenance"];
+	validation: {
+		sourceNameConflicts: Array<{ code: string; names: string[] }>;
+		endpoints: CrosswalkEndpoints;
+		containment: GeometricContainmentValidation;
+	};
+	records: Array<{
+		source: CrosswalkArea;
+		targets: Array<
+			CrosswalkArea & {
+				/** Share of the child's area inside this parent. */
+				containedShare: number;
+				/** Width of the widest piece it leaves outside, in metres. */
+				outsideWidthM: number;
+			}
+		>;
+	}>;
+};
+
 export type SameCodeContinuityValidation = {
 	sliverWidthM: number;
 	sourceAreaCount: number;
@@ -238,6 +275,7 @@ export type CrosswalkArtifact =
 	| PropertyCrosswalkArtifact
 	| AreaOverlapCrosswalkArtifact
 	| PopulationOverlapCrosswalkArtifact
+	| GeometricContainmentCrosswalkArtifact
 	| SameCodeContinuityCrosswalkArtifact;
 
 export type CrosswalkInventory = {
@@ -455,6 +493,14 @@ export const compileCrosswalks = (
 			if (!geometrySources) {
 				throw new Error(
 					`${adapter.id}: ${adapter.method} crosswalks need the geometry source registry.`,
+				);
+			}
+			if (adapter.method === "geometric-containment") {
+				return compileGeometricContainmentCrosswalk(
+					repositoryRoot,
+					adapter,
+					geometrySources,
+					areaLookup,
 				);
 			}
 			if (adapter.method === "same-code-continuity") {
