@@ -1,4 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
+import { normalisePlaceName } from "./placeResolver";
 
 export type AreaSearchResult = {
 	id: string;
@@ -29,13 +30,16 @@ export const createAreaSearchIndex = (
 		})
 		.sort((left, right) => left.id.localeCompare(right.id));
 
-const matchesAreaQuery = (area: AreaSearchResult, query: string) => {
-	const normalized = query.toLocaleLowerCase();
+const matchesAreaQuery = (
+	area: AreaSearchResult,
+	codeQuery: string,
+	nameQuery: string,
+) => {
 	return (
-		area.code.toLocaleLowerCase().startsWith(normalized) ||
-		area.name.toLocaleLowerCase().startsWith(normalized) ||
+		area.code.toLocaleLowerCase().startsWith(codeQuery) ||
+		normalisePlaceName(area.name).startsWith(nameQuery) ||
 		area.aliases?.some((alias) =>
-			alias.toLocaleLowerCase().startsWith(normalized),
+			normalisePlaceName(alias).startsWith(nameQuery),
 		) === true
 	);
 };
@@ -58,12 +62,17 @@ export const searchAreas = (
 			(geography == null || area.geography === geography) &&
 			(boundaryRelease == null ||
 				area.boundaryRelease === boundaryRelease),
-	);
+		);
 	if (!query) return filtered;
+	const codeQuery = query.toLocaleLowerCase();
+	const nameQuery = normalisePlaceName(query);
+	if (!nameQuery) return [];
 	const exact = filtered.filter(
-		(area) => area.code.toLocaleLowerCase() === query.toLocaleLowerCase(),
+		(area) => area.code.toLocaleLowerCase() === codeQuery,
 	);
 	return exact.length > 0
 		? exact
-		: filtered.filter((area) => matchesAreaQuery(area, query));
+		: filtered.filter((area) =>
+				matchesAreaQuery(area, codeQuery, nameQuery),
+			);
 };

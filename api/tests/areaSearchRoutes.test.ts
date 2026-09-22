@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createAreaLookup } from "../src/areaInventory";
 import {
 	route,
 	registry,
@@ -86,4 +87,41 @@ test("searches and paginates compiled area identities", () => {
 		},
 	]);
 	assert.equal("meta" in second.body && second.body.meta.nextCursor, null);
+});
+
+test("searches names and aliases with the resolver's published normalisation", () => {
+	const lookup = createAreaLookup([
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:normalised-search",
+			geography: "localAuthority",
+			boundaryRelease: "2025-01-uk-lad",
+			codeProperty: "LAD25CD",
+			nameProperty: "LAD25NM",
+			areas: [
+				{
+					code: "W06000001",
+					name: "Bristol, City of",
+					aliases: ["Ynys Môn & Vale"],
+				},
+			],
+		},
+	]);
+	const response = route(
+		"GET",
+		"/v1/areas?q=ynys%20mon%20and",
+		registry,
+		geographyInventory,
+		lookup,
+	);
+	assert.deepEqual("data" in response.body && response.body.data, [
+		{
+			id: "localAuthority/2025-01-uk-lad/W06000001",
+			geography: "localAuthority",
+			boundaryRelease: "2025-01-uk-lad",
+			code: "W06000001",
+			name: "Bristol, City of",
+			aliases: ["Ynys Môn & Vale"],
+		},
+	]);
 });
