@@ -4529,14 +4529,20 @@ paths:
         when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
         x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/history"
       description: >
-        Returns published predecessor and successor relationships plus every
-        other release of the same geography that contains the same code.
+        Returns a bounded traversal of published predecessor and successor
+        relationships plus every other release of the same geography that
+        contains the same code.
         Same-code continuity is not evidence of unchanged geometry or a
         one-to-one historical equivalent.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
         - $ref: "#/components/parameters/AreaCode"
+        - name: depth
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 20, default: 8 }
+          description: Maximum number of declared historical edges to follow.
       responses:
         "200":
           description: Area history, including a warning about same-code continuity.
@@ -4567,6 +4573,11 @@ paths:
                         quality: publisher-supplied
                         weighting:
                           status: not-provided
+                  lineage:
+                    - relation: predecessor
+                      depth: 1
+                      counterpart:
+                        id: localAuthority/2022-12-uk-bgc-v2/E08000025
                   sameCodeReleases:
                     - id: localAuthority/2016-12-gb-bgc/E08000025
                       geography: localAuthority
