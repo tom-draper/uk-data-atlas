@@ -2362,6 +2362,9 @@ paths:
         regrouping and the partition total is unchanged. `area-weighted` means
         some sources were split in proportion to overlapping area, which is an
         estimate that assumes the measure is spread evenly across each source.
+        `population-weighted` means they were split by where each source's
+        residents live, counted from the crosswalk's population building
+        blocks, which assumes the measure follows resident population.
 
         A source code the crosswalk does not carry, or a split source with no
         published weight, is rejected rather than partially converted.

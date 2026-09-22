@@ -84,7 +84,8 @@ const purposeFor = (
 		? "identity"
 		: crosswalk.method === "clean-containment"
 			? "membership"
-			: crosswalk.method === "area-overlap"
+			: crosswalk.method === "area-overlap" ||
+				  crosswalk.method === "population-overlap"
 				? "apportion"
 				: crosswalk.method === "same-code-continuity"
 					? "identity"
@@ -150,6 +151,11 @@ const purposeOfMode = (mode: SearchMode): RelationshipPurpose =>
  * for each purpose. A step costs one, and a derived step half as much again,
  * so a publisher's lookup is preferred to a derived one of the same length.
  * Ties break on the steps' ids, so the search is deterministic.
+ *
+ * An apportion path is kept once per weighting basis. A population weight is
+ * the better estimate for anything that follows people, but its building
+ * blocks may cover fewer sources than the area weight does, so neither may
+ * replace the other: both are published, each with its own coverage.
  */
 const discoverPaths = (
 	edges: RelationshipPath[],
@@ -164,6 +170,8 @@ const discoverPaths = (
 		node: string;
 		endpoint: Endpoint;
 		mode: SearchMode;
+		/** The basis of the path's weighted step, once it has taken one. */
+		weighting?: "area" | "population";
 		cost: number;
 		steps: RelationshipPath[];
 		visited: Set<string>;
@@ -194,11 +202,11 @@ const discoverPaths = (
 					left.order.localeCompare(right.order),
 			);
 			const state = queue.shift()!;
-			const stateKey = `${state.node}|${state.mode}`;
+			const stateKey = `${state.node}|${state.mode}|${state.weighting ?? ""}`;
 			if (settled.has(stateKey)) continue;
 			settled.add(stateKey);
 			if (state.steps.length > 1) {
-				const target = `${state.node}|${purposeOfMode(state.mode)}`;
+				const target = `${state.node}|${purposeOfMode(state.mode)}|${state.weighting ?? ""}`;
 				const held = best.get(target);
 				if (
 					!held ||
@@ -217,11 +225,19 @@ const discoverPaths = (
 					step,
 					shapes.get(step.crosswalkId),
 				);
-				if (!mode || settled.has(`${next}|${mode}`)) continue;
+				const weighting =
+					step.method === "population-overlap"
+						? "population"
+						: step.method === "area-overlap"
+							? "area"
+							: state.weighting;
+				if (!mode || settled.has(`${next}|${mode}|${weighting ?? ""}`))
+					continue;
 				queue.push({
 					node: next,
 					endpoint: edge.to,
 					mode,
+					weighting,
 					cost: state.cost + (edge.quality === "derived" ? 1.5 : 1),
 					steps: [...state.steps, edge],
 					visited: new Set([...state.visited, next]),
@@ -234,7 +250,7 @@ const discoverPaths = (
 			const from = originEndpoint;
 			const to = state.endpoint;
 			discovered.push({
-				id: `discovered/${toKebabCase(from.geography)}-${from.boundaryRelease}-to-${toKebabCase(to.geography)}-${to.boundaryRelease}/${purpose}`,
+				id: `discovered/${toKebabCase(from.geography)}-${from.boundaryRelease}-to-${toKebabCase(to.geography)}-${to.boundaryRelease}/${purpose}${state.weighting ? `/by-${state.weighting}` : ""}`,
 				purpose,
 				from,
 				to,

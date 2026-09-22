@@ -14,6 +14,7 @@ export const VALIDATION_CHECKS = [
 	"area-coverage",
 	"sliver-separation",
 	"same-code-extent",
+	"population-coverage",
 	"measure-definition",
 	"records-resolve",
 	"countries-declared",

@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:b90a709504b6caaa5858e16c6f27495e48d809104d89c7560fe54cd811316213",
+	"contentHash": "sha256:9e140d0cf929b8c9ae5b148cc384263934a10242988b96287225082978beb0ad",
 	"namedLocationInventoryHash": "sha256:a8e79f144c98ec194838d11b583186f3bace83b4619fd31cfee805600084ec8d",
-	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"crosswalkId": "local-authority-2015-12-gb-bgc-to-2016-12-gb-bgc-same-code-continuity",
 	"projections": [
 		{

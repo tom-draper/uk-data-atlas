@@ -219,7 +219,9 @@ export const handleDataConversionRoutes = ({
 					note:
 						converted.method === "exact"
 							? "Every source area sits wholly within one target, so this is a regrouping and the partition total is unchanged."
-							: "Sources split across targets were apportioned by overlapping area. This is an estimate: it assumes the measure is spread evenly across each source area.",
+							: converted.method === "population-weighted"
+								? "Sources split across targets were apportioned by where their residents live, counted from the crosswalk's population building blocks. This is an estimate: it assumes the measure follows resident population."
+								: "Sources split across targets were apportioned by overlapping area. This is an estimate: it assumes the measure is spread evenly across each source area.",
 				},
 				aggregation: null,
 				records: page,

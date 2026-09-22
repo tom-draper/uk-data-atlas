@@ -11,14 +11,26 @@ import type { MultiPolygon } from "polygon-clipping";
 // the calling thread cannot be interrupted. The clip runs in a worker instead;
 // the caller blocks on a shared flag with a deadline, so the API stays
 // synchronous and a runaway clip costs one worker rather than the build.
+// Large geometries clipped many times, such as a constituency against each of
+// its LSOAs, are registered once and named by reference rather than copied to
+// the worker for every clip.
 const WORKER = `
 const { workerData } = require("node:worker_threads");
 const polygonClipping = require(workerData.clipping);
 const signal = new Int32Array(workerData.signal);
-workerData.port.on("message", ({ operation, first, second }) => {
+const registered = new Map();
+const resolve = (geometry) =>
+	typeof geometry === "string" ? registered.get(geometry) : geometry;
+workerData.port.on("message", ({ register, operation, first, second }) => {
+	if (register) {
+		registered.set(register.id, register.geometry);
+		return;
+	}
 	let result;
 	try {
-		result = { geometry: polygonClipping[operation](first, second) };
+		result = {
+			geometry: polygonClipping[operation](resolve(first), resolve(second)),
+		};
 	} catch (error) {
 		result = { error: error instanceof Error ? error.message : String(error) };
 	}
@@ -34,6 +46,9 @@ const CLIPPING_MODULE = createRequire(import.meta.url).resolve(
 
 export type ClippingOperation = "intersection" | "xor";
 
+/** A geometry, or the id of one registered with the clipper. */
+export type ClipOperand = MultiPolygon | string;
+
 export type BoundedClip =
 	| { status: "clipped"; geometry: MultiPolygon }
 	| { status: "failed"; reason: string };
@@ -42,8 +57,16 @@ export class BoundedClipper {
 	private worker?: Worker;
 	private port?: MessagePort;
 	private readonly signal = new Int32Array(new SharedArrayBuffer(4));
+	// Kept here too, so a worker replaced after a timeout can be given them.
+	private readonly registered = new Map<string, MultiPolygon>();
 
 	constructor(private readonly timeoutMs: number) {}
+
+	/** Keep a geometry in the worker, to be named by `id` in later clips. */
+	register(id: string, geometry: MultiPolygon) {
+		this.registered.set(id, geometry);
+		this.port?.postMessage({ register: { id, geometry } });
+	}
 
 	private start() {
 		const { port1, port2 } = new MessageChannel();
@@ -58,13 +81,21 @@ export class BoundedClipper {
 		});
 		this.worker.unref();
 		this.port = port1;
+		for (const [id, geometry] of this.registered)
+			port1.postMessage({ register: { id, geometry } });
 	}
 
 	clip(
 		operation: ClippingOperation,
-		first: MultiPolygon,
-		second: MultiPolygon,
+		first: ClipOperand,
+		second: ClipOperand,
 	): BoundedClip {
+		for (const operand of [first, second])
+			if (typeof operand === "string" && !this.registered.has(operand))
+				return {
+					status: "failed",
+					reason: `No geometry is registered as ${operand}.`,
+				};
 		if (!this.worker) this.start();
 		Atomics.store(this.signal, 0, 0);
 		this.port!.postMessage({ operation, first, second });

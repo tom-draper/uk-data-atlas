@@ -4,26 +4,26 @@
 		"boundaryRegistry": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 		"areaInventory": "sha256:540a0f11b94d5355619580c592e161fd3fbe02cbde404cf60c419f6202ffb37f",
 		"geometrySources": "sha256:9e6bb38492183c83dc232498b460574d3fffd5d2995fcc7744b3e93608f9fab2",
-		"crosswalkInventory": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+		"crosswalkInventory": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 		"relationshipCandidates": "sha256:ddba58ccf93e44edf2109a1f643e1a401bc5c1e9883fa4bc1fa11729c3c5cb68",
-		"geographyInventory": "sha256:7a63c8013ecc6f96ac77d556daa865cd5e28ee522b3a5103488823dde51d2919",
+		"geographyInventory": "sha256:5750fbd1a1962a08afd1677bffee2bd6ec037107636061a9db53c55c18ee4758",
 		"dataCatalog": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
 		"exportManifest": "sha256:825869e7f0bad75660cf60f4cc86b0ec12eb1defc8bd72ba29b56fcf521182a9",
 		"measureTotals": "sha256:be95439a27cec9c9daa1414a4990c8df4d56745748bef5b4dc7f7f426790383b",
 		"waivers": "sha256:d1d28a789ceb45d76889fabfac77d219903730338ae5af28a76686c193dc6ecf"
 	},
 	"summary": {
-		"resourceCount": 656,
-		"checkCount": 2226,
-		"passedCount": 2180,
+		"resourceCount": 657,
+		"checkCount": 2232,
+		"passedCount": 2186,
 		"waivedCount": 46,
 		"coverage": {
 			"boundaryReleases": 94,
 			"areaIdentities": 94,
 			"servableGeometry": 94,
 			"withRelationships": 77,
-			"crosswalks": 86,
-			"weightedCrosswalks": 2,
+			"crosswalks": 87,
+			"weightedCrosswalks": 3,
 			"measures": 167,
 			"measureSources": 308
 		}
@@ -3170,6 +3170,52 @@
 						"widestSliverWidthM": 15.1,
 						"narrowestOverlapWidthM": 332.1,
 						"sliverPairCount": 1381
+					}
+				}
+			]
+		},
+		{
+			"id": "crosswalks/constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+			"kind": "crosswalk",
+			"status": "passed",
+			"checks": [
+				{
+					"id": "artifact-integrity",
+					"status": "passed",
+					"measured": {
+						"recordCount": 575
+					}
+				},
+				{
+					"id": "endpoints-verified",
+					"status": "passed"
+				},
+				{
+					"id": "source-names-consistent",
+					"status": "passed"
+				},
+				{
+					"id": "targets-present",
+					"status": "passed"
+				},
+				{
+					"id": "weights-sum-to-one",
+					"status": "passed",
+					"measured": {
+						"maxDeviation": 0.000001,
+						"tolerance": 0.00001
+					}
+				},
+				{
+					"id": "population-coverage",
+					"status": "passed",
+					"measured": {
+						"minimumCoverage": 0.99,
+						"minimumSourceCoverage": 0.999051,
+						"blockPopulation": 59597601,
+						"sliverPopulation": 6032,
+						"outsidePopulation": 12393,
+						"unmeasuredBlockCount": 0
 					}
 				}
 			]
@@ -20770,5 +20816,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:6786d711dba46306046d9391e245cfe26424f85c1c90ac93cee180d156873507"
+	"contentHash": "sha256:940637db6b81b2000ca51dc5735aa937def394040f8caf1809630f76ae0932dc"
 }

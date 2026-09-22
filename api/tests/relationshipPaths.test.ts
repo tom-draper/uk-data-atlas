@@ -337,3 +337,38 @@ test("leaves a pair to its crosswalk or declared path, within the step limit", (
 		),
 	);
 });
+
+test("keeps an apportion path for each weighting basis", () => {
+	const both: CrosswalkInventory = {
+		...graph,
+		crosswalks: [
+			...graph.crosswalks,
+			edge(
+				"c-l2-people",
+				"constituency/1",
+				"authority/2",
+				"population-overlap",
+				"derived",
+			),
+		],
+	};
+	const paths = compileRelationshipPaths(both, [], {
+		shapes: new Map([
+			...shapes,
+			["c-l2-people", { forward: false, reverse: false }],
+		]),
+		maximumSteps: 8,
+	}).paths.filter((path) =>
+		path.id.startsWith("discovered/constituency-1-to-region-1/"),
+	);
+	assert.deepEqual(
+		paths.map((path) => [path.id, path.steps[0]?.crosswalkId]),
+		[
+			["discovered/constituency-1-to-region-1/apportion/by-area", "c-l2"],
+			[
+				"discovered/constituency-1-to-region-1/apportion/by-population",
+				"c-l2-people",
+			],
+		],
+	);
+});

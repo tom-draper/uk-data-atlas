@@ -119,7 +119,10 @@ export const crosswalkFindings = (
 		);
 	}
 
-	if (artifact.method === "area-overlap") {
+	if (
+		artifact.method === "area-overlap" ||
+		artifact.method === "population-overlap"
+	) {
 		const deviations = artifact.records.map((record) => ({
 			code: record.source.code,
 			deviation: Math.abs(
@@ -149,6 +152,64 @@ export const crosswalkFindings = (
 				},
 			),
 		);
+	}
+
+	if (artifact.method === "population-overlap") {
+		// Recompute each source's kept share from its published pairs, and
+		// check every block's people are accounted for exactly once.
+		const { population } = artifact.validation;
+		const below = artifact.records
+			.map(
+				(record) =>
+					[
+						record.source.code,
+						record.targets.reduce(
+							(total, target) => total + target.sourceShare,
+							0,
+						),
+					] as const,
+			)
+			.filter(
+				([, coverage]) => coverage + 5e-6 < population.minimumCoverage,
+			)
+			.map(([code, coverage]) => `${code} (${coverage.toFixed(4)})`);
+		const accounted =
+			population.assignedPopulation +
+			population.sliverPopulation +
+			population.outsidePopulation +
+			population.unmeasuredBlocks.reduce(
+				(total, block) => total + block.population,
+				0,
+			);
+		// Each of the four totals is rounded to a whole person.
+		const balanced = Math.abs(accounted - population.blockPopulation) <= 2;
+		findings.push(
+			check(
+				"population-coverage",
+				below.length === 0 && balanced,
+				[
+					below.length > 0
+						? `Sources below ${population.minimumCoverage} of their population: ${listed(below)}.`
+						: undefined,
+					balanced
+						? undefined
+						: `Blocks hold ${population.blockPopulation} people but ${accounted} are accounted for.`,
+				]
+					.filter(Boolean)
+					.join(" "),
+				{
+					minimumCoverage: population.minimumCoverage,
+					minimumSourceCoverage: population.minimumSourceCoverage,
+					blockPopulation: population.blockPopulation,
+					sliverPopulation: population.sliverPopulation,
+					outsidePopulation: population.outsidePopulation,
+					unmeasuredBlockCount: population.unmeasuredBlocks.length,
+				},
+			),
+		);
+	}
+
+	if (artifact.method === "area-overlap") {
 
 		// Recompute coverage from the published shares rather than trusting
 		// the compiler's own minimums, and count targets that no source

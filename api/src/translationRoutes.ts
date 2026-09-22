@@ -53,7 +53,9 @@ export const handleTranslationRoutes = ({
 					crosswalk.method === "same-code-continuity")) ||
 			(purpose === "membership" &&
 				crosswalk.method === "clean-containment") ||
-			(purpose === "apportion" && crosswalk.method === "area-overlap");
+			(purpose === "apportion" &&
+				(crosswalk.method === "area-overlap" ||
+					crosswalk.method === "population-overlap"));
 		if (!validForPurpose) return [];
 		const crosswalkSummary = {
 			id: crosswalk.id,
@@ -91,7 +93,10 @@ export const handleTranslationRoutes = ({
 			crosswalk.from.boundaryRelease !== target.boundaryRelease
 		)
 			return [];
-		if (crosswalk.method === "area-overlap") {
+		if (
+			crosswalk.method === "area-overlap" ||
+			crosswalk.method === "population-overlap"
+		) {
 			const reverseRecords = crosswalk.records.flatMap((record) => {
 				const matchedTarget = record.targets.find(
 					(candidate) => candidate.code === source.code,

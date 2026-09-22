@@ -8,10 +8,16 @@ import type { PopulationObservation } from "./dataCatalog";
  * conversion is a regrouping and the total is unchanged. `area-weighted` means
  * a source was split across targets in proportion to overlapping area, which
  * is an estimate: it assumes the measure is spread evenly across the source,
- * and population and most social measures are not.
+ * and population and most social measures are not. `population-weighted`
+ * means the split followed where the source's residents live, counted from
+ * small building blocks, which assumes the measure follows population.
  */
 /** How a crosswalk moves values: one to one, or split by a published weight. */
-export const CONVERSION_METHODS = ["exact", "area-weighted"] as const;
+export const CONVERSION_METHODS = [
+	"exact",
+	"area-weighted",
+	"population-weighted",
+] as const;
 
 export type ConversionMethod = (typeof CONVERSION_METHODS)[number];
 
@@ -95,7 +101,12 @@ export const convertObservations = (
 		};
 	}
 	const method: ConversionMethod =
-		split.length === 0 ? "exact" : "area-weighted";
+		split.length === 0
+			? "exact"
+			: "basis" in artifact.weighting &&
+				  artifact.weighting.basis === "population"
+				? "population-weighted"
+				: "area-weighted";
 
 	const totals = new Map<string, { value: number; inputAreaCount: number }>();
 	for (const record of records) {

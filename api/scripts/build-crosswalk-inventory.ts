@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
 	readCrosswalkAdapters,
 	type AreaOverlapCrosswalkAdapter,
+	type PopulationOverlapCrosswalkAdapter,
 	type SameCodeContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import {
@@ -130,6 +131,77 @@ const reusableGeometryCrosswalk = (
 	}
 };
 
+/**
+ * A population overlap is reusable only while everything it was computed
+ * from is unchanged: its rules, the area overlap it reweights (which must
+ * itself be reused, and by hash), and the block geometry and counts.
+ */
+const reusablePopulationOverlap = (
+	repositoryRoot: string,
+	outputDirectory: string,
+	adapter: PopulationOverlapCrosswalkAdapter,
+	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
+	pairs: CrosswalkArtifact | undefined,
+): CrosswalkArtifact | undefined => {
+	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
+	if (!pairs || !existsSync(path)) return undefined;
+	try {
+		const artifact = JSON.parse(
+			readFileSync(path, "utf8"),
+		) as CrosswalkArtifact;
+		if (artifact.method !== "population-overlap") return undefined;
+		const { contentHash, ...withoutHash } = artifact;
+		const blocks = geometrySources.get(
+			`${adapter.weighting.blocks.geography}/${adapter.weighting.blocks.boundaryRelease}`,
+		);
+		const populationHash = sha256(
+			readFileSync(
+				join(repositoryRoot, "data", adapter.population.input),
+				"utf8",
+			),
+		);
+		const sameSource = (side: "from" | "to", pattern?: string) => {
+			const endpoint = adapter[side];
+			const source = geometrySources.get(
+				`${endpoint.geography}/${endpoint.boundaryRelease}`,
+			);
+			const input = artifact.provenance.inputs.find(
+				(candidate) => candidate.side === side,
+			);
+			return (
+				source !== undefined &&
+				input?.input === source.input &&
+				input.inputHash === source.inputHash &&
+				input.sourceCodePattern === pattern
+			);
+		};
+		return contentHash === sha256(JSON.stringify(withoutHash)) &&
+			JSON.stringify(artifact.weighting) ===
+				JSON.stringify(adapter.weighting) &&
+			JSON.stringify(artifact.from) === JSON.stringify(adapter.from) &&
+			JSON.stringify(artifact.to) === JSON.stringify(adapter.to) &&
+			artifact.validation.population.minimumCoverage ===
+				adapter.minimumCoverage &&
+			artifact.provenance.pairs.crosswalkId === pairs.id &&
+			artifact.provenance.pairs.contentHash === pairs.contentHash &&
+			blocks !== undefined &&
+			artifact.provenance.blocks.input === blocks.input &&
+			artifact.provenance.blocks.inputHash === blocks.inputHash &&
+			artifact.provenance.population.input === adapter.population.input &&
+			artifact.provenance.population.inputHash === populationHash &&
+			artifact.provenance.population.codeColumn ===
+				adapter.population.codeColumn &&
+			artifact.provenance.population.valueColumn ===
+				adapter.population.valueColumn &&
+			sameSource("from", adapter.sourceCodePattern) &&
+			sameSource("to")
+			? artifact
+			: undefined;
+	} catch {
+		return undefined;
+	}
+};
+
 export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
 	if (!existsSync(outputDirectory)) {
@@ -143,7 +215,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const geometrySources = readGeometrySourceLookup(
 		join(repositoryRoot, "api"),
 	);
-	const reusable = new Map(
+	const reusable = new Map<string, CrosswalkArtifact>(
 		adapters.flatMap((adapter) =>
 			adapter.method === "area-overlap" ||
 			adapter.method === "same-code-continuity"
@@ -160,12 +232,24 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 				: [],
 		),
 	);
+	for (const adapter of adapters) {
+		if (adapter.method !== "population-overlap") continue;
+		const artifact = reusablePopulationOverlap(
+			repositoryRoot,
+			outputDirectory,
+			adapter,
+			geometrySources,
+			reusable.get(adapter.pairs),
+		);
+		if (artifact) reusable.set(adapter.id, artifact);
+	}
 	const pending = adapters.filter((adapter) => !reusable.has(adapter.id));
 	const compiled = compileCrosswalks(
 		repositoryRoot,
 		pending,
 		readCompiledAreaLookup(outputDirectory),
 		geometrySources,
+		reusable,
 	);
 	const artifactById = new Map([
 		...reusable,

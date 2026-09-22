@@ -12,6 +12,7 @@ export type CrosswalkMethod =
 	| "official-lookup"
 	| "clean-containment"
 	| "area-overlap"
+	| "population-overlap"
 	| "same-code-continuity";
 export type CrosswalkQuality = "publisher-supplied" | "derived";
 export type PropertyRelationshipPurpose = "identity" | "membership";
@@ -20,10 +21,27 @@ export type AreaOverlapWeighting = {
 	basis: "area";
 	normalisation: "per-source";
 };
+/**
+ * Weights from resident population rather than land: each source's people,
+ * counted from fine building blocks split by area, divided among its targets.
+ * The denominator and its date travel with every weighted answer.
+ */
+export type PopulationOverlapWeighting = {
+	status: "provided";
+	basis: "population";
+	normalisation: "per-source";
+	/** What was counted, such as Census 2021 usual residents. */
+	population: string;
+	/** The reference date of the count. */
+	date: string;
+	/** The building blocks the count was published for. */
+	blocks: { geography: string; boundaryRelease: string };
+};
 export type CrosswalkWeighting =
 	| { status: "not-provided" }
 	| { status: "not-applicable" }
-	| AreaOverlapWeighting;
+	| AreaOverlapWeighting
+	| PopulationOverlapWeighting;
 
 // Property adapters read an explicit source/target code pair from each
 // feature of one published file.
@@ -75,9 +93,29 @@ export type SameCodeContinuityCrosswalkAdapter = {
 	sliverWidthM: number;
 };
 
+// Population-overlap adapters reweight the pairs a published area-overlap
+// crosswalk established, by the population of building blocks in each pair.
+export type PopulationOverlapCrosswalkAdapter = {
+	id: string;
+	method: "population-overlap";
+	quality: "derived";
+	weighting: PopulationOverlapWeighting;
+	from: { geography: string; boundaryRelease: string };
+	to: { geography: string; boundaryRelease: string };
+	/** The area-overlap crosswalk whose source/target pairs are reweighted. */
+	pairs: string;
+	/** Limit the sources to those the building blocks cover. */
+	sourceCodePattern?: string;
+	/** A CSV under data/ with one population count per building block. */
+	population: { input: string; codeColumn: string; valueColumn: string };
+	/** Share of each source's population the kept pairs must hold. */
+	minimumCoverage: number;
+};
+
 export type CrosswalkAdapter =
 	| PropertyCrosswalkAdapter
 	| AreaOverlapCrosswalkAdapter
+	| PopulationOverlapCrosswalkAdapter
 	| SameCodeContinuityCrosswalkAdapter;
 
 type AdapterFile = { schemaVersion?: unknown; crosswalks?: unknown };
@@ -137,6 +175,28 @@ const validAreaOverlapAdapter = (
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;
 
+const validPopulationOverlapAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is PopulationOverlapCrosswalkAdapter =>
+	adapter.method === "population-overlap" &&
+	adapter.quality === "derived" &&
+	isRecord(adapter.weighting) &&
+	adapter.weighting.status === "provided" &&
+	adapter.weighting.basis === "population" &&
+	adapter.weighting.normalisation === "per-source" &&
+	typeof adapter.weighting.population === "string" &&
+	typeof adapter.weighting.date === "string" &&
+	hasStrings(adapter.weighting.blocks, ["geography", "boundaryRelease"]) &&
+	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
+	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	typeof adapter.pairs === "string" &&
+	(adapter.sourceCodePattern === undefined ||
+		typeof adapter.sourceCodePattern === "string") &&
+	hasStrings(adapter.population, ["input", "codeColumn", "valueColumn"]) &&
+	typeof adapter.minimumCoverage === "number" &&
+	adapter.minimumCoverage > 0 &&
+	adapter.minimumCoverage <= 1;
+
 const validSameCodeContinuityAdapter = (
 	adapter: Record<string, unknown>,
 ): adapter is SameCodeContinuityCrosswalkAdapter =>
@@ -166,6 +226,7 @@ export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 			!(
 				validPropertyAdapter(adapter) ||
 				validAreaOverlapAdapter(adapter) ||
+				validPopulationOverlapAdapter(adapter) ||
 				validSameCodeContinuityAdapter(adapter)
 			)
 		) {

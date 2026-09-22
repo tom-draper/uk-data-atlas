@@ -1,3 +1,4 @@
+import type { ConversionMethod } from "./conversion";
 import { areaMeasureSources } from "./areaResources";
 import { notBuilt, unsupported } from "./capability";
 import { convertObservations } from "./conversion";
@@ -17,7 +18,7 @@ export type MeasureConversionPath = {
 		boundaryYear: number;
 		period: string;
 	};
-	method: "exact" | "area-weighted";
+	method: ConversionMethod;
 	href: string;
 };
 

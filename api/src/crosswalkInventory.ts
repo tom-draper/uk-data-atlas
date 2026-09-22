@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
+import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
 import { compileSameCodeContinuityCrosswalk } from "./sameCodeContinuity";
 import {
 	validateGeometryContainment,
@@ -14,6 +15,7 @@ import type {
 	CrosswalkQuality,
 	CrosswalkSideAdapter,
 	CrosswalkWeighting,
+	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	SameCodeContinuityCrosswalkAdapter,
 } from "./crosswalkAdapters";
@@ -122,6 +124,65 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 	records: Array<{ source: AreaOverlapSource; targets: AreaOverlapTarget[] }>;
 };
 
+export type PopulationOverlapValidation = {
+	minimumCoverage: number;
+	blockCount: number;
+	/** Every block's count, and where it went: kept pairs, slivers, outside. */
+	blockPopulation: number;
+	assignedPopulation: number;
+	/** People in a source but in no kept pair: where borders disagree. */
+	sliverPopulation: number;
+	/** People in blocks outside every source the adapter admits. */
+	outsidePopulation: number;
+	/** Blocks the clipper could not measure, and their population. */
+	unmeasuredBlocks: Array<{ code: string; population: number; reason: string }>;
+	minimumSourceCoverage: number;
+};
+
+export type PopulationOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
+	method: "population-overlap";
+	quality: "derived";
+	weighting: PopulationOverlapWeighting;
+	provenance: {
+		pairs: { crosswalkId: string; contentHash: string };
+		inputs: AreaOverlapCrosswalkArtifact["provenance"]["inputs"];
+		blocks: { input: string; inputHash: string } & GeometryProvenance;
+		population: {
+			input: string;
+			inputHash: string;
+			codeColumn: string;
+			valueColumn: string;
+		};
+		areaProjection: "EPSG:6933";
+		clipping: string;
+	};
+	validation: {
+		sourceNameConflicts: Array<{ code: string; names: string[] }>;
+		endpoints: CrosswalkEndpoints;
+		population: PopulationOverlapValidation;
+	};
+	records: Array<{
+		source: CrosswalkArea & {
+			population: number;
+			/** Share of the source's population in its published targets. */
+			coverage: number;
+		};
+		targets: Array<
+			CrosswalkArea & {
+				/** Share of the source's covered population; weights sum to 1. */
+				weight: number;
+				population: number;
+				/** The pair's population as a share of the source's. */
+				sourceShare: number;
+				/** The pair's population as a share of the target's, from every source. */
+				targetShare: number;
+				/** The pair's area, from the area-overlap crosswalk it reweights. */
+				overlapAreaM2: number;
+			}
+		>;
+	}>;
+};
+
 export type SameCodeContinuityValidation = {
 	sliverWidthM: number;
 	sourceAreaCount: number;
@@ -176,6 +237,7 @@ export type SameCodeContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
 export type CrosswalkArtifact =
 	| PropertyCrosswalkArtifact
 	| AreaOverlapCrosswalkArtifact
+	| PopulationOverlapCrosswalkArtifact
 	| SameCodeContinuityCrosswalkArtifact;
 
 export type CrosswalkInventory = {
@@ -364,43 +426,66 @@ const compilePropertyCrosswalk = (
 	};
 };
 
+/**
+ * Compile adapters in order. A population overlap reweights an area overlap,
+ * so it reads that artifact from the ones compiled before it or from `prior`,
+ * the artifacts a build reuses rather than recompiles.
+ */
 export const compileCrosswalks = (
 	repositoryRoot: string,
 	adapters: CrosswalkAdapter[],
 	areaLookup?: AreaLookup,
 	geometrySources?: GeometrySourceLookup,
+	prior: ReadonlyMap<string, CrosswalkArtifact> = new Map(),
 ): { inventory: CrosswalkInventory; artifacts: CrosswalkArtifact[] } => {
+	const compiled = new Map(prior);
 	const artifacts = adapters.map((adapter): CrosswalkArtifact => {
-		if (
-			adapter.method !== "area-overlap" &&
-			adapter.method !== "same-code-continuity"
-		) {
-			return compilePropertyCrosswalk(
-				repositoryRoot,
-				adapter,
-				areaLookup,
-				geometrySources,
-			);
-		}
-		if (!geometrySources) {
-			throw new Error(
-				`${adapter.id}: ${adapter.method} crosswalks need the geometry source registry.`,
-			);
-		}
-		if (adapter.method === "same-code-continuity") {
-			return compileSameCodeContinuityCrosswalk(
-				repositoryRoot,
-				adapter,
-				geometrySources,
-				areaLookup,
-			);
-		}
-		return compileAreaOverlapCrosswalk(
-			repositoryRoot,
-			adapter,
-			geometrySources,
-			areaLookup,
-		);
+		const artifact = ((): CrosswalkArtifact => {
+			if (
+				adapter.method === "official-lookup" ||
+				adapter.method === "clean-containment"
+			) {
+				return compilePropertyCrosswalk(
+					repositoryRoot,
+					adapter,
+					areaLookup,
+					geometrySources,
+				);
+			}
+			if (!geometrySources) {
+				throw new Error(
+					`${adapter.id}: ${adapter.method} crosswalks need the geometry source registry.`,
+				);
+			}
+			if (adapter.method === "same-code-continuity") {
+				return compileSameCodeContinuityCrosswalk(
+					repositoryRoot,
+					adapter,
+					geometrySources,
+					areaLookup,
+				);
+			}
+			if (adapter.method === "population-overlap") {
+				return compilePopulationOverlapCrosswalk(
+					repositoryRoot,
+					adapter,
+					geometrySources,
+					areaLookup,
+					compiled.get(adapter.pairs),
+				);
+			}
+			if (adapter.method === "area-overlap") {
+				return compileAreaOverlapCrosswalk(
+					repositoryRoot,
+					adapter,
+					geometrySources,
+					areaLookup,
+				);
+			}
+			throw new Error(`${adapter.id}: no compiler for ${adapter.method}.`);
+		})();
+		compiled.set(artifact.id, artifact);
+		return artifact;
 	});
 	return { inventory: createCrosswalkInventory(artifacts), artifacts };
 };

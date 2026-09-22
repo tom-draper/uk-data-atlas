@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"contentHash": "sha256:7a63c8013ecc6f96ac77d556daa865cd5e28ee522b3a5103488823dde51d2919",
+	"contentHash": "sha256:5750fbd1a1962a08afd1677bffee2bd6ec037107636061a9db53c55c18ee4758",
 	"boundaryRegistryHash": "sha256:8211dd8dc40a0760ed6f69719b5d1a3580afdae0e49a4cbe401c84713d391f96",
 	"releases": [
 		{
@@ -102,6 +102,27 @@
 							"status": "provided",
 							"basis": "area",
 							"normalisation": "per-source"
+						}
+					},
+					{
+						"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+						"direction": "from",
+						"counterpart": {
+							"geography": "localAuthority",
+							"boundaryRelease": "2024-05-uk-bgc"
+						},
+						"method": "population-overlap",
+						"quality": "derived",
+						"weighting": {
+							"status": "provided",
+							"basis": "population",
+							"normalisation": "per-source",
+							"population": "Census 2021 usual residents",
+							"date": "2021-03-21",
+							"blocks": {
+								"geography": "lsoa",
+								"boundaryRelease": "2021-12-ew-bgc-v5"
+							}
 						}
 					}
 				]
@@ -1601,6 +1622,27 @@
 						"quality": "derived",
 						"weighting": {
 							"status": "not-applicable"
+						}
+					},
+					{
+						"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap",
+						"direction": "to",
+						"counterpart": {
+							"geography": "constituency",
+							"boundaryRelease": "2024-07-uk-bgc"
+						},
+						"method": "population-overlap",
+						"quality": "derived",
+						"weighting": {
+							"status": "provided",
+							"basis": "population",
+							"normalisation": "per-source",
+							"population": "Census 2021 usual residents",
+							"date": "2021-03-21",
+							"blocks": {
+								"geography": "lsoa",
+								"boundaryRelease": "2021-12-ew-bgc-v5"
+							}
 						}
 					}
 				]
@@ -4372,7 +4414,7 @@
 				"relationships": {
 					"availableReleaseCount": 9,
 					"unsupportedReleaseCount": 0,
-					"crosswalkCount": 17
+					"crosswalkCount": 18
 				}
 			}
 		},
@@ -4581,7 +4623,7 @@
 				"relationships": {
 					"availableReleaseCount": 19,
 					"unsupportedReleaseCount": 0,
-					"crosswalkCount": 57
+					"crosswalkCount": 58
 				}
 			}
 		},

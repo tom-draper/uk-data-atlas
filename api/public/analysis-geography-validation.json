@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"analysisGeographyInventoryHash": "sha256:1aeec3ece5a03a54cf6e114ad587c44b0cc43e24e58f8b02175999e8378dea36",
+	"analysisGeographyInventoryHash": "sha256:7ccc564586c1407b4c0e093306dd11be184940b8409e7784c3b9ff791c0ca091",
 	"dataCatalogHash": "sha256:0497540bccdc04526d7fec50d38eb2f0df6bb9aa307dfab16e35af65784d409f",
-	"crosswalkInventoryHash": "sha256:f69928ebc6835945edf55253a3ace2a4e3ae2673ae5dc809e1739f5d230f69ab",
+	"crosswalkInventoryHash": "sha256:661b7a53b176fc967184d084d751c049fa8b1990f37475e5f4ae199991fc6abb",
 	"supports": [
 		{
 			"measureId": "road-collisions",
@@ -47,5 +47,5 @@
 			]
 		}
 	],
-	"contentHash": "sha256:44d9435033c48fddb671b3d9f0393d0f11886efe3ba9fdf99c7af00626b4f7ad"
+	"contentHash": "sha256:bed6aa8b3668b80a3dfa3e2fc7a3bfe2e41735e1a142da6afa7a75cb860378d3"
 }
