@@ -9,6 +9,7 @@ import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
 import { handleCoordinateRoutes } from "./coordinateRoutes";
 import { handleMeasureCompatibilityRoutes } from "./measureCompatibilityRoutes";
+import { handleCoveragePlanRoutes } from "./coveragePlanRoutes";
 import { handleMeasureCoverageRoutes } from "./measureCoverageRoutes";
 import { handleMeasureQualityRoutes } from "./measureQualityRoutes";
 import { handleDataRoutes } from "./dataRoutes";
@@ -126,6 +127,14 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "measures" &&
 			segments[3] === "compatibility",
 		handle: handleMeasureCompatibilityRoutes,
+	},
+	{
+		name: "measure-coverage-plan",
+		owns: (segments) =>
+			segments[0] === "v1" &&
+			segments[1] === "measures" &&
+			segments[3] === "coverage-plan",
+		handle: handleCoveragePlanRoutes,
 	},
 	{
 		name: "measure-coverage",

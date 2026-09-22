@@ -727,6 +727,12 @@ only **available** when its endpoint, contract and provenance are published.
       an implicit conversion, and a target the crosswalk never mentions is a
       404 rather than a sum of nothing. `regionCode` remains the original
       spelling for a region and is answered beside `target`.
+- [x] Answer a measure's coverage of one release country by country, through
+      `GET /v1/measures/{measure-id}/coverage-plan`, so a gap in one nation is
+      read before a ranking is, not after. Each country is `source-exact`,
+      `converted`, `partial` or `missing`, counted from the areas a source or
+      conversion carries rather than from declared coverage, and a missing
+      country says whether only the route onto the release is absent.
 - [x] Convert an extensive measure across releases through
       `GET /v1/data/{measure-id}/convert`, using only the crosswalk the caller
       names. The response repeats that crosswalk's method, quality, weighting
@@ -3503,6 +3509,7 @@ second inventory to maintain:
 - `GET /v1/measures/{measure-id}` — Get one measure's semantics and availability
 - `GET /v1/measures/{measure-id}/compatibility` — Report source-code compatibility with compiled boundary releases
 - `GET /v1/measures/{measure-id}/coverage` — Report source and boundary code coverage for a measure
+- `GET /v1/measures/{measure-id}/coverage-plan` — Say what a measure can answer on one release, country by country
 - `GET /v1/measures/{measure-id}/quality` — Preflight source, status and boundary quality for a measure
 
 **Governance**
@@ -3775,6 +3782,18 @@ release nothing relates at all. Of several releases of one parent geography
 it asks the nearest in vintage, and it gives up on a pair after a handful of
 children fail, because a pair that is not a hierarchy shows it immediately.
 The geometry decides; the search only chooses what to ask.
+
+A measure's coverage of a release is answered a country at a time, because
+one word for a United Kingdom release hides the shape of the gap. On the May
+2023 wards, population is `source-exact` for Wales, 762 of 762, `partial` for
+England, 6,846 of 6,862, and `missing` for Scotland, 0 of 355, and Northern
+Ireland, 0 of 462; the two missing countries are reported with the fact that
+the measure covers them on 2023 local authorities and only lacks a crosswalk
+onto wards. The counts come from the codes a partition's observations carry,
+or the codes a dry-run conversion reaches, so a partition that names a
+country it holds no area of is not credited with it, and an area whose code
+names no country is counted apart rather than dropped. A ranking of UK wards
+would leave two countries out; this is how a caller learns that first.
 
 `public/relationship-paths.json` publishes every crosswalk as a one-step
 path in each direction, the reviewed compositions declared in
