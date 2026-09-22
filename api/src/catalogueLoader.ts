@@ -105,6 +105,7 @@ export const readApiCatalogues = (
 		apiRoot,
 		crosswalkInventory,
 	);
+	const relationshipCandidateInventory = readRelationshipCandidateInventory(apiRoot);
 	const namedLocationLookup = createNamedLocations(namedLocationInventory);
 	const locationProjectionInventory = readLocationProjectionInventory(
 		apiRoot,
@@ -134,6 +135,7 @@ export const readApiCatalogues = (
 		relationshipPathIndex: createRelationshipPathIndex(
 			relationshipPathInventory,
 		),
+		relationshipCandidateInventory,
 	});
 	return {
 		openapiDocument: readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
@@ -152,8 +154,7 @@ export const readApiCatalogues = (
 			atlasRelease,
 			atlasReleaseHistory,
 		),
-		relationshipCandidateInventory:
-			readRelationshipCandidateInventory(apiRoot),
+		relationshipCandidateInventory,
 		validationReport: readValidationReport(apiRoot),
 		namedLocationInventory,
 		namedLocationLookup,

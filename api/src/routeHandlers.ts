@@ -45,6 +45,7 @@ import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipPathRoutes } from "./relationshipPathRoutes";
 import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
+import { handleRelationshipRepairRoutes } from "./relationshipRepairRoutes";
 import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
@@ -404,6 +405,11 @@ const routeFamilies: RouteFamily[] = [
 		name: "relationship-coverage",
 		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "relationship-coverage",
 		handle: handleRelationshipCoverageRoutes,
+	},
+	{
+		name: "relationship-repairs",
+		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "relationship-repairs",
+		handle: handleRelationshipRepairRoutes,
 	},
 	{
 		name: "governance",

@@ -3494,6 +3494,7 @@ second inventory to maintain:
 
 - `GET /v1/areas/{geography}/{release}/{code}/citation` — Assemble a citation bundle for one exact area identity
 - `GET /v1/relationship-candidates` — List discovered relationship candidates and their coverage gaps
+- `GET /v1/relationship-repairs` — List the governed queue of relationship repairs
 - `GET /v1/corrections` — List reviewed corrections and transformations applied by the API
 - `GET /v1/validation` — Report every release gate, including waived exceptions
 - `GET /v1/validation/boundary-releases/{geography}/{release}` — Get one boundary release's checks
