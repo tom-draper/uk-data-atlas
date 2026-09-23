@@ -9,18 +9,7 @@ import {
 import type { BoundaryRegistry } from "../boundaryRegistry";
 import { createPlaceIndex, resolvePlaces } from "../placeResolver";
 import type { PlaceIndex } from "../placeResolver";
-import type { CrosswalkInventory } from "../crosswalkInventory";
-import { crosswalksTo } from "../locationMembership";
-import { reconcileMembers, reconcileMembersForYear } from "../memberReconciliation";
-import type {
-	LocationProjectionStore,
-	LocationProjection,
-} from "../locationProjections";
-import type {
-	NamedLocation,
-	NamedLocationInventory,
-	NamedLocationLookup,
-} from "../namedLocations";
+import type { NamedLocationInventory } from "../namedLocations";
 import {
 	createAreaSearchIndex,
 	searchAreas,
@@ -50,27 +39,19 @@ export type AreasResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
 	areaInventory?: AreaInventory;
 	areaLookup?: AreaLookup;
-	crosswalkInventory?: CrosswalkInventory;
 	namedLocationInventory?: NamedLocationInventory;
-	namedLocationLookup?: NamedLocationLookup;
-	locationProjectionStore?: LocationProjectionStore;
 };
 
-/** Identity, release and location indexes over immutable compiled artifacts. */
+/** Area identity, release and place indexes over immutable compiled artifacts. */
 export class AreasResolver {
 	private readonly areaSearchIndex?: AreaSearchIndex;
 	private placeIndex?: PlaceIndex;
 	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
-	private readonly locationsByMemberArea = new Map<string, NamedLocation[]>();
 	private readonly boundaryReleases = new Map<
 		string,
 		BoundaryRegistry["releases"][number]
 	>();
 	private readonly derivedSources: Map<string, string>;
-	private readonly crosswalksBySource = new Map<
-		string,
-		CrosswalkInventory["crosswalks"]
-	>();
 
 	constructor(private readonly inputs: AreasResolverInputs) {
 		this.derivedSources = derivedReleaseSources(inputs.areaInventory);
@@ -99,27 +80,6 @@ export class AreasResolver {
 					left.boundaryRelease.localeCompare(right.boundaryRelease),
 				);
 		}
-		for (const location of inputs.namedLocationInventory?.locations ?? [])
-			for (const code of location.memberCodes) {
-				const key = `${location.memberGeography}/${code}`;
-				const locations = this.locationsByMemberArea.get(key) ?? [];
-				locations.push(location);
-				this.locationsByMemberArea.set(key, locations);
-			}
-		for (const locations of this.locationsByMemberArea.values())
-			locations.sort((left, right) => left.id.localeCompare(right.id));
-		for (const crosswalk of inputs.crosswalkInventory?.crosswalks ?? []) {
-			const key = [
-				crosswalk.from.geography,
-				crosswalk.from.boundaryRelease,
-				crosswalk.to.geography,
-			].join("/");
-			const candidates = this.crosswalksBySource.get(key) ?? [];
-			candidates.push(crosswalk);
-			this.crosswalksBySource.set(key, candidates);
-		}
-		for (const candidates of this.crosswalksBySource.values())
-			candidates.sort((left, right) => left.id.localeCompare(right.id));
 	}
 
 	area(identity: AreaIdentity): AreaRecord | undefined {
@@ -130,33 +90,6 @@ export class AreasResolver {
 
 	releaseAreas(geography: string, boundaryRelease: string) {
 		return this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
-	}
-
-	locationReleaseViews(memberGeography: string, memberCodes: string[]) {
-		if (!this.inputs.areaLookup) return [];
-		return [...this.inputs.areaLookup]
-			.flatMap(([identity, areas]) => {
-				const [geography, boundaryRelease] = identity.split("/", 2);
-				if (geography !== memberGeography || !boundaryRelease) return [];
-				return [{
-					geography,
-					boundaryRelease,
-					resolvedMemberCount: memberCodes.filter((code) => areas.has(code)).length,
-				}];
-			})
-			.sort((left, right) => left.boundaryRelease.localeCompare(right.boundaryRelease));
-	}
-
-	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) {
-		return this.inputs.areaLookup
-			? reconcileMembers(this.inputs.areaLookup, geography, boundaryRelease, memberCodes, resolvedCodes)
-			: undefined;
-	}
-
-	reconcileMembersForYear(geography: string, boundaryYear: number, memberCodes: string[], resolvedCodes: Set<string>) {
-		return this.inputs.areaLookup
-			? reconcileMembersForYear(this.inputs.areaLookup, geography, boundaryYear, memberCodes, resolvedCodes)
-			: undefined;
 	}
 
 	countryIdentity(code: string) {
@@ -226,66 +159,4 @@ export class AreasResolver {
 	searchAreas(query: { geography?: string | null; boundaryRelease?: string | null; query?: string }) {
 		return this.areaSearchIndex ? searchAreas(this.areaSearchIndex, query) : [];
 	}
-
-	namedLocation(id: string): NamedLocation | undefined { return this.inputs.namedLocationLookup?.get(id); }
-	namedLocations() { return this.inputs.namedLocationInventory?.locations ?? []; }
-	hasNamedLocationInventory(): boolean { return this.inputs.namedLocationInventory !== undefined; }
-	namedLocationsForArea(identity: AreaIdentity): NamedLocation[] {
-		return this.locationsByMemberArea.get(`${identity.geography}/${identity.code}`) ?? [];
-	}
-	locationProjection(locationId: string, geography: string, boundaryRelease: string, crosswalkId: string): LocationProjection | undefined {
-		return this.inputs.locationProjectionStore?.get(locationId, geography, boundaryRelease, crosswalkId);
-	}
-	hasLocationProjectionStore(): boolean { return this.inputs.locationProjectionStore !== undefined; }
-	locationMemberProjectionShards(memberGeography: string) {
-		const summaries = new Map((this.inputs.crosswalkInventory?.crosswalks ?? []).map((summary) => [summary.id, summary]));
-		return (this.inputs.locationProjectionStore?.memberProjectionShards() ?? []).flatMap((shard) => {
-			const summary = summaries.get(shard.crosswalkId);
-			return summary?.to.geography === memberGeography ? [{ shard, summary }] : [];
-		});
-	}
-	locationParentProjectionShards(memberGeography: string) {
-		const summaries = new Map((this.inputs.crosswalkInventory?.crosswalks ?? []).map((summary) => [summary.id, summary]));
-		return (this.inputs.locationProjectionStore?.parentProjectionShards() ?? []).flatMap((shard) => {
-			const summary = summaries.get(shard.crosswalkId);
-			return summary?.from.geography === memberGeography ? [{ shard, summary }] : [];
-		});
-	}
-	locationParentCrosswalks(geography: string, boundaryRelease: string) {
-		return this.inputs.locationProjectionStore?.parentCrosswalks(geography, boundaryRelease) ?? [];
-	}
-	locationParents(locationId: string, crosswalkId: string) { return this.inputs.locationProjectionStore?.parents(locationId, crosswalkId); }
-	crosswalksToLocationMembers(geography: string, boundaryRelease: string, memberGeography: string) {
-		return this.crosswalksBySource.get([geography, boundaryRelease, memberGeography].join("/")) ??
-			(this.inputs.crosswalkInventory ? crosswalksTo(this.inputs.crosswalkInventory, geography, boundaryRelease, memberGeography) : []);
-	}
-	crosswalkSummary(id: string) {
-		return this.inputs.crosswalkInventory?.crosswalks.find(
-			(crosswalk) => crosswalk.id === id,
-		);
-	}
-
-	crosswalkSummaryForArtifact(artifact: string) {
-		return this.inputs.crosswalkInventory?.crosswalks.find(
-			(crosswalk) => crosswalk.artifact === artifact,
-		);
-	}
-
-	areaIdentityRelease(geography: string, boundaryRelease: string) {
-		return this.inputs.areaInventory?.releases.find(
-			(release) => release.geography === geography && release.id === boundaryRelease,
-		);
-	}
-
-	areaIdentityReleaseForArtifact(artifact: string) {
-		return this.inputs.areaInventory?.releases.find(
-			(release) => release.status === "available" && release.artifact === artifact,
-		);
-	}
-
-	namedLocationMembershipInventory() {
-		const inventory = this.inputs.namedLocationInventory;
-		return inventory ? { contentHash: inventory.contentHash, locations: inventory.locations } : undefined;
-	}
-	crosswalkSummaries() { return this.inputs.crosswalkInventory?.crosswalks ?? []; }
 }
