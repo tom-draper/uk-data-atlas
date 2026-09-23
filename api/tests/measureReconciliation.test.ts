@@ -463,3 +463,19 @@ test("lists only a composed path that reconciles, between releases the partition
 	assert.equal(followed.pairing, "verified");
 	assert.equal(followed.summary.agreeingAreaCount, 1);
 });
+
+test("links each listed comparison to the latest period both partitions publish", () => {
+	// The finer partition lists its periods newest first.
+	const [wards, districts] = measure.sources;
+	const unordered = {
+		...measure,
+		sources: [
+			{ ...wards!, periods: ["2022", "2021"] },
+			{ ...districts!, periods: ["2021", "2022"] },
+		],
+	};
+	const [entry] = availableReconciliations(contextWith([agreeing]), unordered);
+
+	assert.deepEqual(entry?.periods, ["2021", "2022"]);
+	assert.match(entry?.href ?? "", /&period=2022$/);
+});
