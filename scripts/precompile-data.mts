@@ -5,7 +5,7 @@
  * Run via: pnpm precompile
  * Also runs automatically before pnpm dev and pnpm build.
  */
-import { readFile, mkdir, rename, stat, writeFile } from "fs/promises";
+import { cp, readFile, mkdir, rename, rm, stat, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
@@ -44,6 +44,7 @@ const SOURCE_DATA = join(ROOT, "data");
 // gitignored and only used by the local dev/build server.
 const OUT_DIR = join(SOURCE_DATA, "precompiled");
 const PUBLIC_OUT_DIR = join(PUBLIC_DATA, "precompiled");
+const RUNTIME_OUT_DIR = join(OUT_DIR, "runtime");
 
 // Read source datasets directly. public/data only contains files that must be
 // served to the browser during local development.
@@ -173,6 +174,20 @@ const mirrorPrecompiledArtifact = async (name: string) => {
 	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), contents);
 };
 
+/**
+ * A deployment needs the compiled TopoJSON and property sidecars, but not the
+ * multi-gigabyte GeoJSON source files used to make them. Keep that browser
+ * runtime snapshot beside the committed chart payloads so Vercel can build
+ * from Git alone without downloading the raw data release.
+ */
+const snapshotRuntimeBoundaryAssets = async () => {
+	const source = join(PUBLIC_DATA, "boundaries");
+	const destination = join(RUNTIME_OUT_DIR, "boundaries");
+	await rm(destination, { recursive: true, force: true });
+	await mkdir(RUNTIME_OUT_DIR, { recursive: true });
+	await cp(source, destination, { recursive: true });
+};
+
 const createTrackedReader = () => {
 	const artifacts = new Map<string, SourceArtifact>();
 	const track = async (
@@ -232,6 +247,7 @@ async function main() {
 	await mkdir(OUT_DIR, { recursive: true });
 	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 	await compileBoundaryAssets();
+	await snapshotRuntimeBoundaryAssets();
 	await mirrorPrecompiledArtifact("constituency-lad-overlaps");
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all

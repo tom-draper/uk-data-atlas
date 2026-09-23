@@ -20,6 +20,27 @@ and boundary files retain their own source licences; see
 [DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution, attribution and
 future paid-data policy.
 
+## Data releases
+
+Raw source data is published as immutable GitHub Release assets under a data
+tag such as `data-2026-09-23`, independent of the website version. The first
+migration is fully scripted: install and authenticate the GitHub CLI, then run
+`pnpm data:publish data-YYYY-MM-DD`, `pnpm precompile`, and commit the created
+`data-release.json` together with `data/precompiled/`. The publisher creates
+checksum-verified `.tar.gz` shards below GitHub's 2 GiB per-asset limit; no
+manual upload or domain-by-domain split is needed.
+
+A fresh development checkout runs `pnpm precompile`, which restores the pinned
+raw snapshot into `data/` before compiling. Production builds instead reuse
+the committed chart payloads and compiled boundary runtime snapshot, so they do
+not download or compile the raw release. To stop tracking the old raw files
+after the first release has been tested, run `git rm -r --cached data`, then
+`git add -f data/precompiled data-release.json` before committing.
+
+Install the opt-in commit hook with `pnpm hooks:install`; it runs `pnpm
+precompile` and stages `data/precompiled/` for every commit. Set
+`SKIP_ATLAS_PRECOMPILE=1` only for an emergency documentation-only commit.
+
 ## Datasets
 
 <!-- sources:start -->
@@ -91,7 +112,7 @@ downloadable files in the [website documentation](https://ukdataatlas.com/docs/v
 | [Countries](https://ukdataatlas.com/docs/v1/geographies/countries) | 6 | `2025-12-uk-bgc`, `2024-12-uk-bgc`, `2023-12-uk-bgc`, `2022-12-uk-bgc`, `2021-12-uk-bgc`, `2020-12-uk-bgc` |
 | [Regions](https://ukdataatlas.com/docs/v1/geographies/regions) | 1 | `2025-12-en-bgc` |
 | [Counties and unitary authorities](https://ukdataatlas.com/docs/v1/geographies/counties-and-unitary-authorities) | 1 | `2025-12-uk-bgc` |
-| [Local authorities](https://ukdataatlas.com/docs/v1/geographies/local-authorities) | 19 | `2026-05-uk-bgc`, `2025-12-uk-bgc`, `2025-05-uk-bgc-v2`, `2024-12-uk-bgc`, `2024-05-uk-bgc`, `2023-12-uk-bgc`, `2023-05-uk-bgc-v2`, `2022-12-uk-bgc-v2`, `2021-12-uk-bgc`, `2020-12-uk-bgc`, `2019-12-uk-bgc`, `2019-04-uk-bgc`, `2018-12-uk-bgc`, `2017-12-gb-bgc`, `2016-12-gb-bgc`, `2015-12-gb-bgc`, `2011-12-gb-bgc`, `2009-12-gb-bgc`, `2008-12-gb-bgc` |
+| [Local authorities](https://ukdataatlas.com/docs/v1/geographies/local-authorities) | 18 | `2026-05-uk-bgc`, `2025-12-uk-bgc`, `2025-05-uk-bgc-v2`, `2024-12-uk-bgc`, `2024-05-uk-bgc`, `2023-12-uk-bgc`, `2023-05-uk-bgc-v2`, `2022-12-uk-bgc-v2`, `2021-12-uk-bgc`, `2020-12-uk-bgc`, `2019-12-uk-bgc`, `2019-04-uk-bgc`, `2018-12-uk-bgc`, `2017-12-gb-bgc`, `2016-12-gb-bgc`, `2011-12-gb-bgc`, `2009-12-gb-bgc`, `2008-12-gb-bgc` |
 | [Combined authorities](https://ukdataatlas.com/docs/v1/geographies/combined-authorities) | 1 | `2025-12-en-bgc` |
 | [Parishes](https://ukdataatlas.com/docs/v1/geographies/parishes) | 7 | `2026-05-ew-bgc`, `2025-05-ew-bgc`, `2024-12-ew-bgc`, `2023-12-ew-bgc`, `2022-12-ew-bgc-v3`, `2021-12-ew-bgc`, `2019-04-ew-bgc` |
 | [Local planning authorities](https://ukdataatlas.com/docs/v1/geographies/local-planning-authorities) | 1 | `2019-04-uk-bgc` |
