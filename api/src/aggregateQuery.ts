@@ -10,6 +10,7 @@ export type AggregateQuery = {
 	regionCode: string | null;
 	targetCode: string | null;
 	crosswalkId: string | null;
+	pathId: string | null;
 	sourceRelease: string | null;
 };
 
@@ -74,6 +75,7 @@ export const parseAggregateQuery = ({
 		regionCode,
 		targetCode,
 		crosswalkId: parsedUrl.searchParams.get("crosswalk"),
+		pathId: parsedUrl.searchParams.get("path"),
 		sourceRelease: parsedUrl.searchParams.get("sourceRelease"),
 	};
 };

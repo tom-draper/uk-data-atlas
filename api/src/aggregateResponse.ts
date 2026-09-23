@@ -145,17 +145,39 @@ export const buildAggregateResponse = ({
 							operation,
 							membership: regional.claim,
 							inputRecordCount: aggregate.members.length,
-							crosswalk: {
-								id: regional.crosswalk.id,
-								method: regional.crosswalk.method,
-								quality: regional.crosswalk.quality,
-							},
+							...(regional.path
+								? {
+										path: {
+											id: regional.path.id,
+											steps: regional.path.steps.map(
+												({ crosswalk, claim }) => ({
+													membership: claim,
+													crosswalk: {
+														id: crosswalk.id,
+														method: crosswalk.method,
+														quality: crosswalk.quality,
+													},
+												}),
+											),
+										},
+									}
+								: {
+										crosswalk: {
+											id: regional.crosswalk!.id,
+											method: regional.crosswalk!.method,
+											quality: regional.crosswalk!.quality,
+										},
+									}),
 							...(weight ? { weight } : {}),
 							coverage: {
 								...coverage,
-								note: "Compares the source areas summed with every area the crosswalk places wholly in this region. `partial` means the partition publishes no value for some of them, so the total is not the region's.",
+								note: regional.path
+									? "Compares the source areas summed with every area the path carries wholly into this target. `partial` means the partition publishes no value for some of them, so the total is not the target's."
+									: "Compares the source areas summed with every area the crosswalk places wholly in this region. `partial` means the partition publishes no value for some of them, so the total is not the region's.",
 							},
-							note: "Regional membership comes from the caller-selected crosswalk; every included local authority is wholly covered by this one region.",
+							note: regional.path
+								? "Membership comes from the caller-selected published path; every step carries each included source area wholly into one area, and the last of those is this target."
+								: "Regional membership comes from the caller-selected crosswalk; every included local authority is wholly covered by this one region.",
 						}
 					: {
 							operation,

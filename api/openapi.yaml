@@ -2416,6 +2416,19 @@ paths:
         and is answered with `region` beside `target` in the response; it
         refuses a crosswalk that maps to any other geography.
 
+
+        A published relationship path may be named with `path` in place of
+        `crosswalk`, to reach a target no single crosswalk maps to, such as
+        wards summed into a region through their local authorities. Every step
+        must run forward and declare membership, as a crosswalk must, or be a
+        same-code continuity step, which carries an area onto itself in a later
+        release; an identity lookup or a reversed step is refused. A source
+        area is a member only if every step carries it wholly into one area and
+        the last of those is the target, and any source that reaches the target
+        another way refuses the whole sum. `aggregation.membership` is then
+        `composed-membership-path`, and `aggregation.path` lists each step's
+        crosswalk and membership claim.
+
         This route does not select a boundary release or perform a code or
         geometry conversion.
       parameters:
@@ -2473,7 +2486,16 @@ paths:
           schema:
             type: string
           description: >
-            A membership crosswalk returned by `GET /crosswalks`.
+            A membership crosswalk returned by `GET /crosswalks`. Name either
+            this or `path` with `targetCode`.
+        - name: path
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            A relationship path id from `GET /relationship-paths` whose every
+            step establishes membership, in place of `crosswalk`.
       responses:
         "200":
           description: A derived sum with its direct-code membership evidence and source provenance.
