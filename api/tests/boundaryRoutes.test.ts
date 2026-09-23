@@ -189,6 +189,126 @@ test("compares release code sets without claiming that differences are geography
 	);
 });
 
+test("summarises published release mappings as directional cardinality evidence", () => {
+	const boundaryRegistry = {
+		...registry,
+		releases: [
+			{ ...registry.releases[0]!, id: "2024-05-en-ward" },
+			{ ...registry.releases[0]!, id: "2025-05-en-ward" },
+		],
+	};
+	const areaLookup = createAreaLookup([
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:wards-2024",
+			geography: "ward",
+			boundaryRelease: "2024-05-en-ward",
+			codeProperty: "WD24CD",
+			nameProperty: "WD24NM",
+			areas: [
+				{ code: "A", name: "Earlier A" },
+				{ code: "B", name: "Earlier B" },
+				{ code: "C", name: "Earlier C" },
+			],
+		},
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:wards-2025",
+			geography: "ward",
+			boundaryRelease: "2025-05-en-ward",
+			codeProperty: "WD25CD",
+			nameProperty: "WD25NM",
+			areas: [
+				{ code: "X", name: "Later X" },
+				{ code: "Y", name: "Later Y" },
+				{ code: "Z", name: "Later Z" },
+			],
+		},
+	]);
+	const lookup: CrosswalkArtifact = {
+		schemaVersion: 1,
+		contentHash: "sha256:published-ward-change",
+		id: "published-ward-change",
+		method: "official-lookup",
+		quality: "publisher-supplied",
+		relationshipPurpose: "identity",
+		weighting: { status: "not-applicable" },
+		from: { geography: "ward", boundaryRelease: "2024-05-en-ward" },
+		to: { geography: "ward", boundaryRelease: "2025-05-en-ward" },
+		provenance: { input: "published-lookup.csv", inputHash: "sha256:lookup" },
+		validation: {
+			sourceNameConflicts: [],
+			endpoints: {
+				from: { status: "verified", availableAreaCount: 3, referencedCodeCount: 3 },
+				to: { status: "verified", availableAreaCount: 3, referencedCodeCount: 3 },
+			},
+		},
+		records: [
+			{
+				source: { code: "A", labels: ["Earlier A"] },
+				targets: [
+					{ code: "X", labels: ["Later X"] },
+					{ code: "Y", labels: ["Later Y"] },
+				],
+			},
+			{
+				source: { code: "B", labels: ["Earlier B"] },
+				targets: [{ code: "Y", labels: ["Later Y"] }],
+			},
+			{
+				source: { code: "C", labels: ["Earlier C"] },
+				targets: [{ code: "Z", labels: ["Later Z"] }],
+			},
+		],
+	};
+	const context: RouteContext = {
+		boundaryRegistry,
+		areaLookup,
+		crosswalkLookup: new Map([[lookup.id, lookup]]),
+		geographyResolver: createGeographyResolver({
+			boundaryRegistry,
+			areaLookup,
+			crosswalkLookup: new Map([[lookup.id, lookup]]),
+		}),
+	};
+	const response = routeRequest(
+		"GET",
+		"/v1/boundary-releases:compare?geography=ward&from=2024-05-en-ward&to=2025-05-en-ward",
+		context,
+	);
+	assert.equal(response.status, 200);
+	const relationship = (response.body as { data: any }).data
+		.publishedRelationships[0];
+	assert.deepEqual(relationship.mapping, {
+		shape: "many-to-many",
+		fromCodeCount: 3,
+		toCodeCount: 3,
+		pairCount: 4,
+		from: { noTargetCount: 0, oneTargetCount: 2, multipleTargetCount: 1 },
+		to: { oneSourceCount: 2, multipleSourceCount: 1 },
+		examples: {
+			oneToMany: [{ fromCode: "A", toCodes: ["X", "Y"] }],
+			manyToOne: [{ toCode: "Y", fromCodes: ["A", "B"] }],
+		},
+		note: "Cardinality describes codes in this crosswalk's published records, viewed from the requested release to the other release. It does not establish a legal boundary change or account for release codes absent from the records.",
+	});
+	assert.equal(relationship.direction, "forward");
+
+	const reverse = routeRequest(
+		"GET",
+		"/v1/boundary-releases:compare?geography=ward&from=2025-05-en-ward&to=2024-05-en-ward",
+		context,
+	);
+	assert.equal(reverse.status, 200);
+	const reverseRelationship = (reverse.body as { data: any }).data
+		.publishedRelationships[0];
+	assert.equal(reverseRelationship.direction, "reverse");
+	assert.deepEqual(reverseRelationship.mapping.examples, {
+		oneToMany: [{ fromCode: "Y", toCodes: ["A", "B"] }],
+		manyToOne: [{ toCode: "A", fromCodes: ["X", "Y"] }],
+	});
+});
+
 test("reports published same-code continuity findings separately from code-set evidence", () => {
 	const boundaryRegistry = {
 		...registry,
@@ -235,8 +355,18 @@ test("reports published same-code continuity findings separately from code-set e
 		to: { geography: "ward", boundaryRelease: "2025-05-en-ward" },
 		provenance: {
 			inputs: [
-				{ side: "from", input: "wards-2024.geojson", inputHash: "sha256:2024" },
-				{ side: "to", input: "wards-2025.geojson", inputHash: "sha256:2025" },
+				{
+					side: "from",
+					input: "wards-2024.geojson",
+					inputHash: "sha256:2024",
+					sourceCrs: "EPSG:27700",
+				},
+				{
+					side: "to",
+					input: "wards-2025.geojson",
+					inputHash: "sha256:2025",
+					sourceCrs: "EPSG:27700",
+				},
 			],
 			areaProjection: "EPSG:6933",
 			clipping: "fixture",
