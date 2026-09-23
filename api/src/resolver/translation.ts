@@ -87,9 +87,6 @@ export const directTranslationPaths = (
 		return [];
 	});
 
-/** Pure direct-path discovery for a set of artifacts and an exact direction. */
-export const translationPaths = directTranslationPaths;
-
 /**
  * Deterministic preference for executing a translation: single published
  * crosswalks first, then reviewed and then discovered compositions, favouring
@@ -190,9 +187,6 @@ export const buildTranslationSteps = (
 	}
 	return steps;
 };
-
-/** Alias for consumers that need an artifact-direction step index directly. */
-export const translationSteps = buildTranslationSteps;
 
 /** Each source code of one crosswalk direction and the codes it reaches. */
 export const buildStepTargets = (
@@ -317,6 +311,10 @@ export class CrosswalkTranslator {
 
 	constructor(private readonly inputs: CrosswalkTranslatorInputs) {}
 
+	hasCrosswalks() {
+		return this.inputs.crosswalkLookup !== undefined;
+	}
+
 	artifact(id: string): CrosswalkArtifact | undefined {
 		return this.inputs.crosswalkLookup?.get(id);
 	}
@@ -385,15 +383,6 @@ export class CrosswalkTranslator {
 						purpose,
 					),
 		);
-	}
-
-	/** The route choices used by translation, with direct-artifact fallback. */
-	translationPaths(
-		from: GeographyEndpoint,
-		to: GeographyEndpoint,
-		purpose: RelationshipPurpose,
-	): RelationshipPath[] {
-		return this.paths(from, to, purpose);
 	}
 
 	/** Build each crosswalk direction once. */

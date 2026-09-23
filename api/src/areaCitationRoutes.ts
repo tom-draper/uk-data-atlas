@@ -4,6 +4,7 @@ import { measureCoverage } from "./measureCoverage";
 import { areaMeasureSources, areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { releaseKey } from "./geographyKeys";
 
 /** A citation for one area: the artifacts that serve it, pinned by hash, with their attribution and licences. */
 export const handleAreaCitationRoutes = ({
@@ -50,7 +51,7 @@ export const handleAreaCitationRoutes = ({
 	const crosswalkIds = [
 		...new Set(parsedUrl.searchParams.getAll("crosswalk")),
 	];
-	const releaseIdentity = `${geography}/${boundaryRelease}`;
+	const releaseIdentity = releaseKey(geography, boundaryRelease);
 	// Resolved here only to refuse unknown resources; the bundle's own
 	// attribution is narrowed below to what this area actually draws on.
 	const requested = attributionFor(

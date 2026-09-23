@@ -88,6 +88,10 @@ export class AreasResolver {
 			?.get(identity.code);
 	}
 
+	hasAreas() {
+		return this.inputs.areaLookup !== undefined;
+	}
+
 	releaseAreas(geography: string, boundaryRelease: string) {
 		return this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
 	}

@@ -18,6 +18,7 @@ import {
 	type MapFeature,
 } from "./tileset";
 import { buildArchive, type ArchiveTile } from "./pmtiles";
+import { releaseKey } from "../geographyKeys";
 
 /**
  * One boundary release compiled into everything a map needs: the archive of
@@ -211,7 +212,7 @@ export const compileMapResource = (
 		licence: release.source.licence,
 		href: `/v1/attribution?boundaryReleases=${geography}/${boundaryRelease}`,
 	};
-	const id = `${geography}/${boundaryRelease}`;
+	const id = releaseKey(geography, boundaryRelease);
 	const features = [...compiledTiers].map(([tier, compiled]) => {
 		const body = buildGeoParquet(
 			[...compiled.areas].map(([code, geometry]) => ({

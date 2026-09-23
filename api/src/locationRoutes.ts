@@ -370,9 +370,9 @@ const locationParents = ({
 		projection.memberBoundaryRelease,
 	);
 	const parentId = (code: string) =>
-		`${geography}/${boundaryRelease}/${code}`;
+		areaKey(geography, boundaryRelease, code);
 	const memberId = (code: string) =>
-		`${projection.memberGeography}/${projection.memberBoundaryRelease}/${code}`;
+		areaKey(projection.memberGeography, projection.memberBoundaryRelease, code);
 	return {
 		status: 200,
 			body: envelope(releaseId, {

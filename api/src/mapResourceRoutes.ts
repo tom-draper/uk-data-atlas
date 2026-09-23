@@ -1,5 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { featureIds } from "./mapResource/compileMapResource";
+import { releaseKey } from "./geographyKeys";
 import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
 import { refused, resolveObservations } from "./observationResolution/observationPlan";
@@ -136,7 +137,7 @@ export const handleMapResourceRoutes = ({
 	const release = asArchive
 		? segments[3]!.slice(0, -".pmtiles".length)
 		: segments[3]!;
-	const id = `${geography}/${release}`;
+	const id = releaseKey(geography, release);
 	const resource = mapResources.resources.find((entry) => entry.id === id);
 	if (!resource) return notFound(geography, release);
 	// A request that arrived pinned keeps its links pinned, so a renderer
