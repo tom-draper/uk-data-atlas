@@ -41,8 +41,8 @@ export const resolveAggregationMeasure = ({
 	const weightedAggregation =
 		measure.aggregation.kind === "intensive" &&
 		measure.aggregation.operation === "weighted-mean" &&
-		measure.aggregation.available
-			? measure.aggregation
+		measure.aggregation.available === true
+			? { ...measure.aggregation, available: true as const }
 			: undefined;
 	const usesSum =
 		measure.aggregation.kind === "extensive" &&

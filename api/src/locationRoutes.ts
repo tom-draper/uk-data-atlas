@@ -379,7 +379,7 @@ const locationParents = ({
 				composition: {
 					kind: "declared-member-composite",
 					officialGeography: false,
-					status: projection.partialMembers > 0 ? ("partial" as const) : ("complete" as const),
+					status: projection.unplaced.length > 0 ? ("partial" as const) : ("complete" as const),
 					note: "This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas.",
 				},
 				geography,

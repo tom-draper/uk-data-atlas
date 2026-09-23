@@ -72,9 +72,9 @@ export const handleDataAggregateRoutes = ({
 	const partition = resolveAggregationPartition({
 		context,
 		measureId,
-		period,
-		geography,
-		boundaryYear,
+		period: period!,
+		geography: geography!,
+		boundaryYear: boundaryYear!,
 		targetCode,
 		regionCode,
 		crosswalkId,
