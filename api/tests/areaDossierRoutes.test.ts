@@ -62,7 +62,7 @@ test("starts an exact geography query with an evidence-led area dossier", () => 
 	});
 	assert.deepEqual(data.availability.relationships, {
 		status: "not-built",
-		reason: "Build the crosswalk inventory before describing relationships.",
+		reason: "Build the crosswalk inventory before serving area relationships.",
 		href: "/v1/areas/ward/2023-05-uk-bgc/E05000001/relationships",
 	});
 	assert.equal(
