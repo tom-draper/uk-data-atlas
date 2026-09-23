@@ -306,23 +306,22 @@ async function download(force) {
 			"No data-release.json is committed and no local source data is available.",
 		);
 	}
+	let marker: { tag?: unknown } | null = null;
 	try {
-		const marker = JSON.parse(await readFile(LOCAL_MARKER, "utf8"));
-		if (!force && marker.tag === config.tag) {
-			console.log(
-				`Raw data ${config.tag} is already present; skipping download.`,
-			);
-			return;
-		}
+		marker = JSON.parse(await readFile(LOCAL_MARKER, "utf8"));
 	} catch (error) {
-		if (error?.code !== "ENOENT" && !force) throw error;
+		if (error?.code !== "ENOENT")
+			console.log("Raw data marker is unreadable; restoring the pinned release.");
 	}
-	if (!force && (await hasLocalSources())) {
-		console.log(
-			"Local source data is present without a release marker; leaving it untouched.",
-		);
+	if (
+		!force &&
+		marker?.tag === config.tag &&
+		(await hasLocalSources())
+	) {
+		console.log(`Raw data ${config.tag} is already present; skipping download.`);
 		return;
 	}
+	console.log(`Synchronizing raw data from ${config.tag}...`);
 
 	const workspace = join(STAGING, `download-${config.tag}`);
 	await rm(workspace, { recursive: true, force: true });
@@ -351,7 +350,11 @@ async function download(force) {
 		await replaceSources(workspace);
 		await writeFile(
 			LOCAL_MARKER,
-			`${JSON.stringify({ tag: config.tag }, null, "\t")}\n`,
+			`${JSON.stringify(
+				{ version: 1, tag: config.tag, repository: config.repository },
+				null,
+				"\t",
+			)}\n`,
 		);
 		console.log(`Restored raw data release ${config.tag}.`);
 	} finally {

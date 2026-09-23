@@ -40,6 +40,10 @@ compile the raw release. To stop tracking the old raw files after the first
 release has been tested, run `git rm -r --cached data`, then
 `git add public/data data-release.json` before committing.
 
+`pnpm data:download` treats the committed `data-release.json` as authoritative:
+it skips only when `data/.source-release.json` matches the pinned tag. A missing,
+invalid, or older marker replaces local raw data with the pinned snapshot.
+
 Install the opt-in commit hook with `pnpm hooks:install`; it runs `pnpm
 precompile` and stages `public/data/` for every commit. Set
 `SKIP_ATLAS_PRECOMPILE=1` only for an emergency documentation-only commit.
