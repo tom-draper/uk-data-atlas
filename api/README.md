@@ -755,6 +755,8 @@ only **available** when its endpoint, contract and provenance are published.
       direction, weights multiply along the path, and the whole path is
       refused if any step would drop a value or split one without a weight.
       The response lists each step's crosswalk and direction.
+      `GET /v1/measures/{measure-id}/reconciliation` takes `path` the same
+      way, adding the finer partition up through every step.
 
 ### Postcodes, homes and addresses — data required, later
 

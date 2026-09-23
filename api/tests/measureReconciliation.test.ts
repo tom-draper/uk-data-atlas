@@ -8,6 +8,8 @@ import {
 	availableReconciliations,
 	reconcileMeasure,
 } from "../src/measureReconciliation";
+import { createGeographyResolver } from "../src/geographyResolver";
+import { createRelationshipPathIndex } from "../src/relationshipPaths";
 import type { RouteContext } from "../src/routing";
 import type {
 	DataCatalog,
@@ -145,7 +147,12 @@ const contextWith = (artifacts: PropertyCrosswalkArtifact[]): RouteContext => ({
 });
 
 const reconcile = (artifact: PropertyCrosswalkArtifact) =>
-	reconcileMeasure(contextWith([artifact]), measure, artifact.id, "2022");
+	reconcileMeasure(
+		contextWith([artifact]),
+		measure,
+		{ crosswalk: artifact.id },
+		"2022",
+	);
 
 test("reports the two published figures side by side", () => {
 	const result = reconcile(agreeing);
@@ -207,7 +214,7 @@ test("refuses a measure whose values do not add over areas", () => {
 	const result = reconcileMeasure(
 		contextWith([agreeing]),
 		intensive,
-		agreeing.id,
+		{ crosswalk: agreeing.id },
 		"2022",
 	);
 	assert.ok("refusal" in result);
@@ -240,5 +247,78 @@ test("lists the comparisons a measure allows, and needs a period to run one", ()
 	assert.match(
 		(withoutPeriod.body as { detail: string }).detail,
 		/period is required/,
+	);
+});
+
+test("adds the finer partition up through every step of a named path", () => {
+	// A code-vintage step onto the release the containment crosswalk starts at.
+	const vintage: PropertyCrosswalkArtifact = {
+		...crosswalk("wards-2022-to-2023", [
+			["E05000001", "E05000001"],
+			["E05000002", "E05000002"],
+		]),
+		method: "official-lookup",
+		from: { geography: "ward", boundaryRelease: "2022-05-uk-bgc" },
+		to: agreeing.from,
+	};
+	const crosswalkLookup = new Map(
+		[vintage, agreeing].map((artifact) => [artifact.id, artifact]),
+	);
+	const context: RouteContext = {
+		...contextWith([vintage, agreeing]),
+		geographyResolver: createGeographyResolver({
+			crosswalkLookup,
+			relationshipPathIndex: createRelationshipPathIndex({
+				schemaVersion: 1,
+				contentHash: "sha256:paths",
+				crosswalkInventoryHash: "sha256:crosswalks",
+				paths: [
+					{
+						id: "ward-2022-to-local-authority",
+						purpose: "membership",
+						from: vintage.from,
+						to: agreeing.to,
+						quality: "publisher-supplied",
+						origin: "declared",
+						steps: [vintage, agreeing].map((artifact) => ({
+							crosswalkId: artifact.id,
+							direction: "forward" as const,
+							method: artifact.method,
+							purpose: "membership" as const,
+						})),
+					},
+				],
+			}),
+		}),
+	};
+
+	const result = reconcileMeasure(
+		context,
+		measure,
+		{ path: "ward-2022-to-local-authority" },
+		"2022",
+	);
+	assert.ok(!("refusal" in result));
+	if ("refusal" in result) return;
+	assert.equal(result.crosswalk, undefined);
+	assert.deepEqual(
+		result.path?.steps.map(({ crosswalk: step, direction }) => [step.id, direction]),
+		[
+			["wards-2022-to-2023", "forward"],
+			["wards-agree", "forward"],
+		],
+	);
+	assert.deepEqual(
+		result.areas.map(({ areaCode, aggregated, status }) => [areaCode, aggregated, status]),
+		[["E06000001", 280, "agrees"]],
+	);
+
+	assert.match(
+		(
+			reconcileMeasure(context, measure, { path: "not-published" }, "2022") as {
+				refusal: string;
+			}
+		).refusal,
+		/No published relationship path is named not-published/,
 	);
 });

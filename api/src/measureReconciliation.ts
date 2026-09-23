@@ -1,4 +1,9 @@
-import { convertObservations, type ConversionMethod } from "./conversion";
+import {
+	componentsThroughSteps,
+	convertThroughSteps,
+	type ConversionMethod,
+	type ConversionStep,
+} from "./conversion";
 import {
 	isNumericObservation,
 	type DataCatalog,
@@ -6,6 +11,8 @@ import {
 } from "./dataCatalog";
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
+import type { RelationshipPath } from "./relationshipPaths";
+import { buildTranslationSteps } from "./resolver/translation";
 import type { RouteContext } from "./routing";
 
 type Measure = DataCatalog["measures"][number];
@@ -41,7 +48,16 @@ export type MeasureReconciliation = {
 	 * pairing rests on the codes the crosswalk carries.
 	 */
 	pairing: "verified" | "by-codes";
-	crosswalk: { id: string; method: string; quality: string; href: string };
+	/** The crosswalk added up through, when one was named. */
+	crosswalk?: CrosswalkReference;
+	/** The published relationship path added up through, when one was named. */
+	path?: {
+		id: string;
+		purpose: RelationshipPath["purpose"];
+		origin: RelationshipPath["origin"];
+		quality: RelationshipPath["quality"];
+		steps: Array<{ direction: "forward" | "reverse"; crosswalk: CrosswalkReference }>;
+	};
 	/** The partition added up, and the one it is compared against. */
 	from: { datasetId: string; geography: string; boundaryYear: number };
 	against: { datasetId: string; geography: string; boundaryYear: number };
@@ -64,6 +80,89 @@ export type MeasureReconciliation = {
 	};
 	tolerance: number;
 	note: string;
+};
+
+type CrosswalkReference = {
+	id: string;
+	method: string;
+	quality: string;
+	href: string;
+};
+
+const crosswalkReference = (crosswalk: {
+	id: string;
+	method: string;
+	quality: string;
+}): CrosswalkReference => ({
+	id: crosswalk.id,
+	method: crosswalk.method,
+	quality: crosswalk.quality,
+	href: `/v1/crosswalks/${crosswalk.id}`,
+});
+
+/** The crosswalk or published path a caller names to add one geography up through. */
+export type ReconciliationRouteRequest = { crosswalk: string } | { path: string };
+
+type ReconciliationRoute = {
+	/** How refusals name the route, such as `crosswalk x` or `path y`. */
+	label: string;
+	from: { geography: string; boundaryRelease: string };
+	to: { geography: string; boundaryRelease: string };
+	steps: ConversionStep[];
+	reference: Pick<MeasureReconciliation, "crosswalk" | "path">;
+};
+
+const resolveRoute = (
+	context: RouteContext,
+	request: ReconciliationRouteRequest,
+): ReconciliationRoute | { refusal: string } => {
+	if ("crosswalk" in request) {
+		const summary = context.crosswalkInventory?.crosswalks.find(
+			(candidate) => candidate.id === request.crosswalk,
+		);
+		const crosswalk = context.crosswalkLookup?.get(request.crosswalk);
+		if (!summary || !crosswalk)
+			return { refusal: `No published crosswalk is named ${request.crosswalk}.` };
+		return {
+			label: request.crosswalk,
+			from: summary.from,
+			to: summary.to,
+			steps: [
+				{
+					artifact: crosswalk,
+					direction: "forward",
+					steps: buildTranslationSteps(crosswalk, "forward"),
+				},
+			],
+			reference: { crosswalk: crosswalkReference(summary) },
+		};
+	}
+	const path = context.geographyResolver?.relationshipPath(request.path);
+	if (!path)
+		return { refusal: `No published relationship path is named ${request.path}.` };
+	const indexed = context.geographyResolver!.indexedPathSteps(path);
+	if ("missingCrosswalkId" in indexed)
+		return {
+			refusal: `The crosswalk ${indexed.missingCrosswalkId} required by path ${path.id} is not built.`,
+		};
+	return {
+		label: `path ${path.id}`,
+		from: path.from,
+		to: path.to,
+		steps: indexed.steps,
+		reference: {
+			path: {
+				id: path.id,
+				purpose: path.purpose,
+				origin: path.origin,
+				quality: path.quality,
+				steps: indexed.steps.map(({ artifact, direction }) => ({
+					direction,
+					crosswalk: crosswalkReference(artifact),
+				})),
+			},
+		},
+	};
 };
 
 const numericRecords = (
@@ -122,16 +221,12 @@ const joinablePartitions = (context: RouteContext, measure: Measure) => {
 export const reconcileMeasure = (
 	context: RouteContext,
 	measure: Measure,
-	crosswalkId: string,
+	request: ReconciliationRouteRequest,
 	period: string,
 ): MeasureReconciliation | { refusal: string } => {
-	const { crosswalkInventory, crosswalkLookup } = context;
-	const summary = crosswalkInventory?.crosswalks.find(
-		(candidate) => candidate.id === crosswalkId,
-	);
-	const crosswalk = crosswalkLookup?.get(crosswalkId);
-	if (!summary || !crosswalk)
-		return { refusal: `No published crosswalk is named ${crosswalkId}.` };
+	const route = resolveRoute(context, request);
+	if ("refusal" in route) return route;
+	const { label } = route;
 	if (measure.aggregation.kind !== "extensive")
 		return {
 			refusal: `${measure.id} is ${measure.aggregation.kind}; only a measure whose values add over areas can be reconciled by adding one geography up into another.`,
@@ -177,21 +272,19 @@ export const reconcileMeasure = (
 			? { source: best.source, pairing: "by-codes" as const }
 			: undefined;
 	};
-	const sourceCodes = new Set(
-		crosswalk.records.map((record) => record.source.code),
-	);
-	const targetCodes = new Set(
-		crosswalk.records.flatMap((record) =>
-			record.targets.map((target) => target.code),
-		),
-	);
-	const fine = partition(summary.from, sourceCodes);
-	const coarse = partition(summary.to, targetCodes);
+	// Which areas of the finer geography the route puts in each coarser
+	// one, so a sum short of its parts is reported as short rather than as a
+	// disagreement with the publisher.
+	const componentsOf = componentsThroughSteps(route.steps);
+	const sourceCodes = new Set(route.steps[0]?.steps.keys() ?? []);
+	const targetCodes = new Set(componentsOf.keys());
+	const fine = partition(route.from, sourceCodes);
+	const coarse = partition(route.to, targetCodes);
 	const from = fine?.source;
 	const against = coarse?.source;
 	if (!from || !against)
 		return {
-			refusal: `${measure.id} is not published for ${period} on partitions whose codes ${crosswalkId} carries on both sides, so there is nothing to compare through it.`,
+			refusal: `${measure.id} is not published for ${period} on partitions whose codes ${label} carries on both sides, so there is nothing to compare through it.`,
 		};
 	const fineRecords = numericRecords(measure.id, from, period, artifacts);
 	const coarseRecords = numericRecords(
@@ -202,27 +295,16 @@ export const reconcileMeasure = (
 	);
 	if (!fineRecords || !coarseRecords)
 		return {
-			refusal: `No numeric observations are published for ${period} on both sides of ${crosswalkId}.`,
+			refusal: `No numeric observations are published for ${period} on both sides of ${label}.`,
 		};
-	const carried = sourceCodes;
-	// Which areas of the finer geography the crosswalk puts in each coarser
-	// one, so a sum short of its parts is reported as short rather than as a
-	// disagreement with the publisher.
-	const componentsOf = new Map<string, Set<string>>();
-	for (const record of crosswalk.records)
-		for (const target of record.targets) {
-			const held = componentsOf.get(target.code) ?? new Set<string>();
-			held.add(record.source.code);
-			componentsOf.set(target.code, held);
-		}
 	const valued = new Set(fineRecords.map((record) => record.areaCode));
-	const converted = convertObservations(
-		crosswalk,
-		fineRecords.filter((record) => carried.has(record.areaCode)),
+	const converted = convertThroughSteps(
+		route.steps,
+		fineRecords.filter((record) => sourceCodes.has(record.areaCode)),
 	);
 	if (converted.status !== "converted")
 		return {
-			refusal: `The ${summary.from.geography} partition does not convert through ${crosswalkId}: ${converted.reason}`,
+			refusal: `The ${route.from.geography} partition does not convert through ${label}: ${converted.reason}`,
 		};
 	const published = new Map(
 		coarseRecords.map((record) => [record.areaCode, record.value]),
@@ -279,12 +361,7 @@ export const reconcileMeasure = (
 			fine!.pairing === "verified" && coarse!.pairing === "verified"
 				? "verified"
 				: "by-codes",
-		crosswalk: {
-			id: summary.id,
-			method: summary.method,
-			quality: summary.quality,
-			href: `/v1/crosswalks/${summary.id}`,
-		},
+		...route.reference,
 		from: {
 			datasetId: from.datasetId,
 			geography: from.sourceGeography.type,

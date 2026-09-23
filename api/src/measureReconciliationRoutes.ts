@@ -37,28 +37,35 @@ export const handleMeasureReconciliationRoutes = ({
 		);
 	const available = availableReconciliations(context, measure);
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
+	const pathId = parsedUrl.searchParams.get("path");
 	const period = parsedUrl.searchParams.get("period");
-	// Without a crosswalk, the comparisons this measure's partitions allow are
-	// listed rather than one being chosen for the caller.
-	if (!crosswalkId)
+	if (crosswalkId && pathId)
+		return problem(
+			400,
+			"Invalid Query",
+			"Name either crosswalk or path, not both. A path already names every crosswalk it uses.",
+		);
+	// Without a crosswalk or path, the comparisons this measure's partitions
+	// allow are listed rather than one being chosen for the caller.
+	if (!crosswalkId && !pathId)
 		return {
 			status: 200,
 			body: envelope(releaseId, {
 				measure: { id: measure.id, unit: measure.unit },
 				available,
-				note: "Name a crosswalk and period to compare the finer partition, added up through it, with the coarser partition's own published values.",
+				note: "Name a crosswalk, or a published relationship path, and a period to compare the finer partition, added up through it, with the coarser partition's own published values.",
 			}),
 		};
 	if (!period)
 		return problem(
 			400,
 			"Invalid Query",
-			"period is required with crosswalk: a reconciliation compares one period.",
+			`period is required with ${crosswalkId ? "crosswalk" : "path"}: a reconciliation compares one period.`,
 		);
 	const reconciliation = reconcileMeasure(
 		context,
 		measure,
-		crosswalkId,
+		crosswalkId ? { crosswalk: crosswalkId } : { path: pathId! },
 		period,
 	);
 	if ("refusal" in reconciliation)
