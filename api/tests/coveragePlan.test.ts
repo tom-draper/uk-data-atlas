@@ -6,7 +6,6 @@ import type {
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
-import type { RouteContext } from "../src/routing";
 import {
 	containmentCrosswalk,
 	dataCatalog,
@@ -16,6 +15,7 @@ import {
 	populationObservations,
 	registry,
 	routeWithData,
+	testContext,
 } from "./routeFixtures";
 
 // The ward population source holds one English and one Welsh ward. The
@@ -65,7 +65,7 @@ const crosswalk: PropertyCrosswalkArtifact = {
 	})),
 };
 
-const context: RouteContext = {
+const context = testContext({
 	boundaryRegistry: registry,
 	areaLookup,
 	dataCatalog,
@@ -91,7 +91,7 @@ const context: RouteContext = {
 			},
 		],
 	} satisfies CrosswalkInventory,
-};
+});
 
 const population = dataCatalog.measures.find(
 	(measure) => measure.id === "population-estimate",

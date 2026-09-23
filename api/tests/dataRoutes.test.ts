@@ -7,15 +7,16 @@ import type {
 	DataCatalog,
 } from "../src/dataCatalog";
 import {
-	registry,
 	compatibleWardAreaLookup,
 	dataCatalog,
-	measureObservations,
-	populationObservations,
-	populationLocalAuthorityObservations,
 	measureCompatibilityInventory,
-	routeWithData,
+	measureObservations,
+	populationLocalAuthorityObservations,
+	populationObservations,
+	registry,
 	routeWithCatalog,
+	routeWithData,
+	testContext,
 } from "./routeFixtures";
 
 const populationProvenance = (
@@ -183,14 +184,14 @@ test("publishes datasets, measures and source-exact population observations", ()
 	const withArea = routeRequest(
 		"GET",
 		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&areaCode=E05000001&include=area",
-		{
+		testContext({
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
 			dataCatalog,
 			populationObservations,
 			populationLocalAuthorityObservations,
 			measureCompatibilityInventory,
-		},
+		}),
 	);
 	assert.equal(withArea.status, 200);
 	const data = "data" in withArea.body ? withArea.body.data : undefined;

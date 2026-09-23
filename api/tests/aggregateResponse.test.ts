@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createGeographyResolver } from "../src/geographyResolver";
 import type { AggregationTarget } from "../src/aggregationTarget";
 import type { Measure, MeasureSource } from "../src/dataCatalog";
 import { buildAggregateResponse } from "../src/aggregateResponse";
+
+// These cases need no compiled areas, so the resolver is empty.
+const geographyResolver = createGeographyResolver({});
 
 const measure = {
 	id: "measure.example",
@@ -38,6 +42,7 @@ const responseData = (response: ReturnType<typeof buildAggregateResponse>) =>
 test("builds country response metadata", () => {
 	const data = responseData(
 		buildAggregateResponse({
+			geographyResolver,
 			releaseId: "atlas-2024",
 			measure,
 			measureId: measure.id,
@@ -83,6 +88,7 @@ test("builds regional target and weighting metadata", () => {
 	} as AggregationTarget;
 	const data = responseData(
 		buildAggregateResponse({
+			geographyResolver,
 			releaseId: "atlas-2024",
 			measure,
 			measureId: measure.id,
@@ -119,6 +125,7 @@ test("builds regional target and weighting metadata", () => {
 test("builds named-location membership metadata", () => {
 	const data = responseData(
 		buildAggregateResponse({
+			geographyResolver,
 			releaseId: "atlas-2024",
 			measure,
 			measureId: measure.id,

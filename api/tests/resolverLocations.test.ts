@@ -132,7 +132,8 @@ test("selects projection shards by the crosswalk end that holds the members", ()
 			.map(({ shard }) => shard.crosswalkId),
 		["lad-to-region"],
 	);
-	assert.deepEqual(resolver.locationMemberProjectionShards("region"), []);
+	// No crosswalk with a shard ends on wards.
+	assert.deepEqual(resolver.locationMemberProjectionShards("ward"), []);
 });
 
 test("lists crosswalks onto member areas from one exact release, in id order", () => {

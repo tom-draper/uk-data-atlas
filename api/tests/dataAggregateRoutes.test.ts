@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "../src/routing";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
-import { createNamedLocationLookup } from "../src/namedLocations";
+import {
+	createNamedLocationLookup,
+	type NamedLocationInventory,
+} from "../src/namedLocations";
 import type {
 	MeasureObservationArtifact,
 	MeasureSource,
@@ -12,21 +14,22 @@ import type {
 } from "../src/dataCatalog";
 import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 import {
-	registry,
 	areaLookup,
-	namedLocationAreaLookup,
 	crosswalkArtifact,
 	crosswalkLookup,
 	dataCatalog,
-	measureObservations,
-	populationObservations,
-	populationLocalAuthorityObservations,
 	measureCompatibilityInventory,
-	routeWithData,
+	measureObservations,
+	namedLocationAreaLookup,
+	populationLocalAuthorityObservations,
+	populationObservations,
+	registry,
 	routeWithCatalog,
+	routeWithData,
+	testContext,
 } from "./routeFixtures";
 
-const aggregationNamedLocationLookup = createNamedLocationLookup({
+const aggregationNamedLocations: NamedLocationInventory = {
 	schemaVersion: 1,
 	contentHash: "sha256:aggregation-locations",
 	source: {
@@ -55,7 +58,8 @@ const aggregationNamedLocationLookup = createNamedLocationLookup({
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
 	],
-});
+};
+const aggregationNamedLocationLookup = createNamedLocationLookup(aggregationNamedLocations);
 
 test("aggregates a region through an explicit complete crosswalk", () => {
 	const crosswalkId = "local-authority-to-region-fixture";
@@ -377,17 +381,19 @@ test("refuses to combine a median, and says why", () => {
 });
 
 test("aggregates an extensive measure only over a complete direct named-location match", () => {
-	const context: RouteContext = {
+	const inputs = {
 		boundaryRegistry: registry,
 		// The compiled releases are what tell a member code of another vintage
 		// from one that is simply wrong, so aggregation needs them.
 		areaLookup,
+		namedLocationInventory: aggregationNamedLocations,
 		namedLocationLookup: aggregationNamedLocationLookup,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureObservations,
 	};
+	const context = testContext(inputs);
 	const response = routeRequest(
 		"GET",
 		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards",
@@ -473,7 +479,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	const unverifiable = routeRequest(
 		"GET",
 		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
-		{ ...context, areaLookup: undefined },
+		testContext({ ...inputs, areaLookup: undefined }),
 	);
 	assert.equal(unverifiable.status, 503);
 
@@ -497,7 +503,7 @@ test("sums a location whose members span several code vintages", () => {
 	// became another. The location lists both, and no release holds both, so
 	// demanding that every listed code resolve refuses the location outright,
 	// for every vintage there is.
-	const locations = createNamedLocationLookup({
+	const spanningLocations: NamedLocationInventory = {
 		schemaVersion: 1,
 		contentHash: "sha256:vintage-locations",
 		source: {
@@ -539,18 +545,20 @@ test("sums a location whose members span several code vintages", () => {
 				bbox: [-2.5, 53.3, -2, 53.7],
 			},
 		],
-	});
-	const context: RouteContext = {
+	};
+	const locations = createNamedLocationLookup(spanningLocations);
+	const context = testContext({
 		boundaryRegistry: registry,
 		// The lookup spanning three vintages, which is what lets a superseded
 		// code be told from a wrong one.
 		areaLookup: namedLocationAreaLookup,
+		namedLocationInventory: spanningLocations,
 		namedLocationLookup: locations,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureObservations,
-	};
+	});
 	const response = routeRequest(
 		"GET",
 		"/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=spanning",
@@ -591,7 +599,7 @@ test("sums a location whose members span several code vintages", () => {
 test("flags a country total that leaves out areas a matching release holds", () => {
 	const url =
 		"/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&areaCode=E92000001";
-	const context = {
+	const context = testContext({
 		boundaryRegistry: registry,
 		areaLookup: createAreaLookup([
 			{
@@ -648,7 +656,7 @@ test("flags a country total that leaves out areas a matching release holds", () 
 				},
 			],
 		},
-	} satisfies RouteContext;
+	});
 	const coverageOf = (response: ReturnType<typeof routeRequest>) => {
 		assert.equal(response.status, 200);
 		return (

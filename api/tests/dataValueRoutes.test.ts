@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
 import { route as routeRequest } from "../src/routes";
-import type { RouteContext } from "../src/routing";
 import {
-	registry,
 	dataCatalog,
 	measureObservations,
-	populationObservations,
 	populationLocalAuthorityObservations,
+	populationObservations,
+	registry,
+	testContext,
 } from "./routeFixtures";
 
 test("answers a measure for a place named in words", () => {
@@ -27,14 +27,14 @@ test("answers a measure for a place named in words", () => {
 			],
 		},
 	]);
-	const context: RouteContext = {
+	const context = testContext({
 		boundaryRegistry: registry,
 		areaLookup: namedAreas,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureObservations,
-	};
+	});
 	const get = (url: string) => routeRequest("GET", url, context);
 
 	const places = get("/v1/places?q=antrim%20%26%20newtownabbey");
