@@ -26,7 +26,7 @@
 		"start": "tsx scripts/serve.ts",
 		"smoke": "tsx scripts/smoke.ts",
 		"contract:surface": "tsx scripts/build-api-surface.ts",
-		"test": "tsx --test tests/*.test.ts",
+		"test": "tsx --test --test-concurrency=2 tests/*.test.ts",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"build:relationship-candidates": "tsx scripts/build-relationship-candidates.ts",
 		"build:geometry-source-registry": "tsx scripts/build-geometry-source-registry.ts",
