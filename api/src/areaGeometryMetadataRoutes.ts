@@ -42,12 +42,8 @@ export const handleAreaGeometryMetadataRoutes = ({
 	};
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!geographyResolver.hasAreaGeometryCache())
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geometry source registry before retrieving geometry.",
-		);
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
 	try {
 		const resolved = geographyResolver.areaGeometry(identity);
 		if (!resolved)

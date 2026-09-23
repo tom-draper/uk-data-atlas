@@ -79,7 +79,8 @@ export const handleAreaContainsRoutes = ({
 			`${coordinateDescription(crs)} are required for ${crs}.`,
 		);
 	const geographyResolver = geographyResolverFor(context);
-	if (!geographyResolver.hasAreaGeometryCache()) return unavailable();
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;
 	const [{ country, results }] = locatePoints(
@@ -183,7 +184,8 @@ export const handleAreaContainsBatchRoutes = ({
 	);
 	if (!Array.isArray(points)) return points;
 	const geographyResolver = geographyResolverFor(context);
-	if (!geographyResolver.hasAreaGeometryCache()) return unavailable();
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;
 	const located = locatePoints(context, geographyResolver, request, points);

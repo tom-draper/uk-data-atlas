@@ -79,7 +79,7 @@ export const handleBoundaryRoutes = ({
 				"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
 			);
 		const requestedMonth = selectionDate.month;
-		const selection = geographyResolver?.selectReleaseForDate(
+		const selection = geographyResolver.selectReleaseForDate(
 			geography,
 			requestedMonth,
 			country,
@@ -158,6 +158,8 @@ export const handleBoundaryRoutes = ({
 				"Invalid Query",
 				"from and to must name different boundary releases.",
 			);
+		const unavailable = geographyResolver.requires("areas");
+		if (unavailable) return unavailable;
 		if (!geographyResolver.hasAreaRelease(geography, from))
 			return areaNotFound(context, geography, from);
 		if (!geographyResolver.hasAreaRelease(geography, to))

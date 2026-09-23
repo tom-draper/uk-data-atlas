@@ -93,12 +93,8 @@ export const handleAreaNearRoutes = ({
 			`within must be a whole number of metres from 1 to ${MAX_NEAR_WITHIN_M}.`,
 		);
 	const geographyResolver = geographyResolverFor(context);
-	if (!geographyResolver.hasAreaGeometryCache())
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver and geometry source registry before nearest-area lookup.",
-		);
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, searchParams);
 	if ("status" in request) return request;
 	const results = request.releases.map((lookupRelease) => {

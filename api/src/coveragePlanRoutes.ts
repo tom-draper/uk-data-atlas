@@ -17,13 +17,15 @@ export const handleCoveragePlanRoutes = ({
 		segments[3] !== "coverage-plan"
 	)
 		return undefined;
-	const { dataCatalog, measureCompatibilityInventory, areaLookup } = context;
-	if (!dataCatalog || !measureCompatibilityInventory || !areaLookup)
+	const { dataCatalog, measureCompatibilityInventory } = context;
+	const unavailable = context.geographyResolver.requires("areas");
+	if (!dataCatalog || !measureCompatibilityInventory)
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the data catalogue, measure compatibility and area identities before planning a measure's coverage.",
 		);
+	if (unavailable) return unavailable;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	if (!geography || !boundaryRelease)
@@ -41,7 +43,7 @@ export const handleCoveragePlanRoutes = ({
 			"Not Found",
 			"No published measure matches that id.",
 		);
-	if (!areaLookup.has(`${geography}/${boundaryRelease}`))
+	if (!context.geographyResolver.hasAreaRelease(geography, boundaryRelease))
 		return areaNotFound(context, geography, boundaryRelease);
 	const plan = coveragePlan(context, measure, { geography, boundaryRelease });
 	if (!plan)

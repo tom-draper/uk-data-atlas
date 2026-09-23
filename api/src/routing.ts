@@ -1,4 +1,4 @@
-import type { AreaInventory, AreaLookup } from "./areaInventory";
+import type { AreaInventory } from "./areaInventory";
 import type { AtlasRelease, AtlasReleaseArtifactRef } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
@@ -14,10 +14,7 @@ import type {
 import type { ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { LookupManifest } from "./lookupExports";
-import {
-	createGeographyResolver,
-	type GeographyResolver,
-} from "./geographyResolver";
+import type { GeographyResolver } from "./geographyResolver";
 import type {
 	LocationProjectionInventory,
 	LocationProjectionStore,
@@ -25,15 +22,9 @@ import type {
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { MapArchive } from "./mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
-import type {
-	NamedLocationInventory,
-	NamedLocationLookup,
-} from "./namedLocations";
+import type { NamedLocationInventory } from "./namedLocations";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
-import {
-	createRelationshipPathIndex,
-	type RelationshipPathInventory,
-} from "./relationshipPaths";
+import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { ApiResponse } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
@@ -49,9 +40,7 @@ export type RouteContext = {
 	geographyInventory?: GeographyInventory;
 	/** Each boundary release's identity artifact and its content hash. */
 	areaInventory?: AreaInventory;
-	areaLookup?: AreaLookup;
 	crosswalkInventory?: CrosswalkInventory;
-	crosswalkLookup?: CrosswalkLookup;
 	atlasRelease?: AtlasRelease;
 	atlasReleaseHistory?: Map<string, AtlasRelease>;
 	/** Read bytes from an immutable current or archived release artifact. */
@@ -60,12 +49,11 @@ export type RouteContext = {
 		artifactId: string,
 	) => { artifact: AtlasReleaseArtifactRef; body: Buffer } | undefined;
 	/** Compiled geography indexes and domain operations for this Atlas release. */
-	geographyResolver?: GeographyResolver;
+	geographyResolver: GeographyResolver;
 	relationshipPathInventory?: RelationshipPathInventory;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 	validationReport?: ValidationReport;
 	namedLocationInventory?: NamedLocationInventory;
-	namedLocationLookup?: NamedLocationLookup;
 	locationProjectionInventory?: LocationProjectionInventory;
 	locationProjectionStore?: LocationProjectionStore;
 	dataCatalog?: DataCatalog;
@@ -96,36 +84,9 @@ export type RouteContext = {
 	mapFeatures?: Map<string, Buffer>;
 };
 
-const derivedResolvers = new WeakMap<RouteContext, GeographyResolver>();
-
-/**
- * The resolver is the route boundary for compiled geography artifacts. The
- * production loader supplies it eagerly; focused callers receive the same
- * immutable facade lazily, rather than making every route handle its absence.
- */
-export const geographyResolverFor = (
-	context: RouteContext,
-): GeographyResolver => {
-	if (context.geographyResolver) return context.geographyResolver;
-	const cached = derivedResolvers.get(context);
-	if (cached) return cached;
-	const resolver = createGeographyResolver({
-		boundaryRegistry: context.boundaryRegistry,
-		areaInventory: context.areaInventory,
-		areaLookup: context.areaLookup,
-		crosswalkInventory: context.crosswalkInventory,
-		crosswalkLookup: context.crosswalkLookup,
-		namedLocationInventory: context.namedLocationInventory,
-		namedLocationLookup: context.namedLocationLookup,
-		locationProjectionStore: context.locationProjectionStore,
-		relationshipPathIndex: context.relationshipPathInventory
-			? createRelationshipPathIndex(context.relationshipPathInventory)
-			: undefined,
-		relationshipCandidateInventory: context.relationshipCandidateInventory,
-	});
-	derivedResolvers.set(context, resolver);
-	return resolver;
-};
+/** Route handlers always use the eagerly constructed facade on their context. */
+export const geographyResolverFor = (context: RouteContext): GeographyResolver =>
+	context.geographyResolver;
 
 export type RouteRequest = {
 	context: RouteContext;

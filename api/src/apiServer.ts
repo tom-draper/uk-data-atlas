@@ -89,7 +89,7 @@ export const createApiServer = (
 		readOperationTemplates(catalogues.openapiDocument ?? ""),
 	);
 	const metrics = new ApiMetrics(releaseId, () =>
-		catalogues.geographyResolver?.geometryCacheStats(),
+		catalogues.geographyResolver.geometryCacheStats(),
 	);
 	const limiter = options.rateLimit
 		? new RateLimiter(options.rateLimit)
@@ -115,7 +115,7 @@ export const createApiServer = (
 				atlasRelease: releaseId,
 				uptimeSeconds: Math.round((Date.now() - started) / 1000),
 				geometryCache:
-					catalogues.geographyResolver?.geometryCacheStats() ?? null,
+					catalogues.geographyResolver.geometryCacheStats() ?? null,
 			});
 		if (
 			options.metricsToken &&

@@ -25,7 +25,6 @@ export const handleAreaCitationRoutes = ({
 		boundaryRegistry: registry,
 		areaInventory,
 		crosswalkInventory,
-		crosswalkLookup,
 		atlasRelease,
 		validationReport,
 		dataCatalog,
@@ -225,7 +224,7 @@ export const handleAreaCitationRoutes = ({
 					note: "No hash of the geometry source is recorded for this release. The boundary release's metadataHash pins its metadata, which names the source file but does not hash its contents.",
 				};
 	const geometry = (() => {
-		if (!geographyResolver.hasAreaGeometryCache())
+		if (geographyResolver.requires("geometry"))
 			return {
 				status: "not-published" as const,
 				href: geometryHref,
@@ -262,7 +261,7 @@ export const handleAreaCitationRoutes = ({
 		const entry = crosswalkInventory.crosswalks.find(
 			(candidate) => candidate.id === id,
 		) as CrosswalkInventory["crosswalks"][number];
-		const artifact = crosswalkLookup?.get(id);
+		const artifact = geographyResolver.crosswalk(id);
 		return {
 			id,
 			method: entry.method,

@@ -28,12 +28,8 @@ export const handleAreaRelationshipRoutes = ({
 		code,
 	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!geographyResolver.hasAreaRelationships())
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the crosswalk inventory before looking up area membership.",
-		);
+	const unavailable = geographyResolver.requires("relationships");
+	if (unavailable) return unavailable;
 	const allRelationships = geographyResolver.relationships({
 		geography,
 		boundaryRelease,

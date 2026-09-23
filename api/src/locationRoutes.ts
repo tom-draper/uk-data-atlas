@@ -1,8 +1,10 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { geographyResolverFor, type RouteRequest } from "./routing";
-import { reconcileMembers } from "./memberReconciliation";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
+
+const requirementDetail = (response: ApiResponse | undefined) =>
+	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
 
 /** Discovery endpoints for the Atlas's curated named locations. */
 export const handleLocationRoutes = ({
@@ -17,12 +19,10 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
+		const unavailable = context.geographyResolver.requires("named-locations");
+		if (unavailable) return unavailable;
 		if (!namedLocationInventory)
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the named location inventory before listing locations.",
-			);
+			return context.geographyResolver.requires("named-locations")!;
 		const query = parsedUrl.searchParams
 			.get("q")
 			?.trim()
@@ -79,9 +79,9 @@ export const handleLocationRoutes = ({
 				"Invalid Query",
 				"release is required to resolve a named location's members.",
 			);
-		const { areaLookup } = context;
-		const areas = areaLookup?.get(`${geography}/${boundaryRelease}`);
-		if (!areaLookup || !areas)
+		const geographyResolver = geographyResolverFor(context);
+		const areas = geographyResolver.releaseAreas(geography, boundaryRelease);
+		if (!areas)
 			return problem(
 				404,
 				"Not Found",
@@ -117,8 +117,7 @@ export const handleLocationRoutes = ({
 					unresolvedMemberCodes: location.memberCodes.filter(
 						(code) => !resolvedCodes.has(code),
 					),
-					coverage: reconcileMembers(
-						areaLookup,
+					coverage: geographyResolver.reconcileMembers(
 						geography,
 						boundaryRelease,
 						location.memberCodes,
@@ -151,12 +150,8 @@ export const handleLocationRoutes = ({
 				"Not Found",
 				`No published crosswalk ${requested} maps ${geography}/${boundaryRelease} to a ${memberGeography} release.`,
 			);
-		if (!resolver.hasLocationProjectionStore())
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the location projection inventory before resolving a named location into another geography.",
-			);
+		const unavailable = resolver.requires("location-projections");
+		if (unavailable) return unavailable;
 		const projection = resolver.locationProjection(
 			location.id,
 			geography,
@@ -227,7 +222,6 @@ const locationCapabilities = ({
 	releaseId,
 	segments,
 }: Pick<RouteRequest, "context" | "releaseId" | "segments">): ApiResponse => {
-	const { areaLookup } = context;
 	const geographyResolver = geographyResolverFor(context);
 	const location = geographyResolver.namedLocation(segments[2]!);
 	if (!location)
@@ -236,10 +230,11 @@ const locationCapabilities = ({
 			"Not Found",
 			"No named location matches that identity.",
 		);
-	const direct = !areaLookup
+	const areaEntries = geographyResolver.releaseAreaEntries();
+	const direct = areaEntries.length === 0
 		? notBuilt("Build the area inventory before listing direct location views.")
 		: (() => {
-				const views = [...areaLookup.entries()]
+				const views = areaEntries
 					.flatMap(([identity, areas]) => {
 						const [geography, boundaryRelease] = identity.split("/");
 						if (geography !== location.memberGeography) return [];
@@ -269,9 +264,10 @@ const locationCapabilities = ({
 							`No compiled ${location.memberGeography} release is available for this location.`,
 						);
 			})();
-	const members = !geographyResolver.hasLocationProjectionStore()
+	const memberAvailability = geographyResolver.requires("location-projections");
+	const members = memberAvailability
 		? notBuilt(
-				"Build the location projection inventory before listing crosswalk member views.",
+				requirementDetail(memberAvailability),
 			)
 		: (() => {
 				const views = geographyResolver
@@ -292,9 +288,10 @@ const locationCapabilities = ({
 							`No published crosswalk projection reaches this location's ${location.memberGeography} members.`,
 						);
 			})();
-	const parents = !geographyResolver.hasLocationProjectionStore()
+	const parentAvailability = geographyResolver.requires("location-projections");
+	const parents = parentAvailability
 		? notBuilt(
-				"Build the location projection inventory before listing parent views.",
+				requirementDetail(parentAvailability),
 			)
 		: (() => {
 				const views = geographyResolver
@@ -339,7 +336,6 @@ const locationParents = ({
 	RouteRequest,
 	"context" | "releaseId" | "parsedUrl" | "segments"
 >): ApiResponse => {
-	const { areaLookup } = context;
 	const geographyResolver = geographyResolverFor(context);
 	const location = geographyResolver.namedLocation(segments[2]!);
 	if (!location)
@@ -380,9 +376,10 @@ const locationParents = ({
 			"Not Found",
 			`No published crosswalk ${requested} runs from ${location.memberGeography} to ${geography}/${boundaryRelease}.`,
 		);
-	const parentAreas = areaLookup?.get(`${geography}/${boundaryRelease}`);
-	const memberAreas = areaLookup?.get(
-		`${projection.memberGeography}/${projection.memberBoundaryRelease}`,
+	const parentAreas = geographyResolver.releaseAreas(geography, boundaryRelease);
+	const memberAreas = geographyResolver.releaseAreas(
+		projection.memberGeography,
+		projection.memberBoundaryRelease,
 	);
 	const parentId = (code: string) =>
 		`${geography}/${boundaryRelease}/${code}`;

@@ -1,24 +1,20 @@
 import type { MeasureSource } from "./dataCatalog";
-import type { NamedLocation, NamedLocationLookup } from "./namedLocations";
+import type { NamedLocation } from "./namedLocations";
+import type { GeographyResolver } from "./geographyResolver";
 import { problem, type ApiResponse } from "./routeResponse";
 
 /** Resolve a curated location query and its catalogue failure responses. */
 export const resolveAggregationLocation = ({
 	locationId,
-	namedLocationLookup,
+	geographyResolver,
 }: {
 	locationId: string | null;
-	namedLocationLookup?: NamedLocationLookup;
+	geographyResolver: GeographyResolver;
 }): NamedLocation | ApiResponse | undefined => {
 	if (!locationId) return undefined;
-	if (!namedLocationLookup) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the named location inventory before aggregating over a location.",
-		);
-	}
-	const location = namedLocationLookup.get(locationId);
+	const unavailable = geographyResolver.requires("named-locations");
+	if (unavailable) return unavailable;
+	const location = geographyResolver.namedLocation(locationId);
 	return (
 		location ??
 		problem(404, "Not Found", "No named location matches locationId.")

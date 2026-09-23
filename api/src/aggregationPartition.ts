@@ -56,9 +56,8 @@ export const resolveAggregationPartition = ({
 		sourceRelease,
 		source,
 		compatibleReleases,
-		crosswalkLookup: context.crosswalkLookup,
+		geographyResolver: context.geographyResolver,
 		measureCompatibilityInventory: context.measureCompatibilityInventory,
-		areaLookup: context.areaLookup,
 	});
 	if (regional && "status" in regional) return regional;
 	return { source, compatibleReleases, regional };
