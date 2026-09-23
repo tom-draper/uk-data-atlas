@@ -22,6 +22,30 @@ test("translates codes only through a crosswalk valid for the requested purpose"
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
+	assert.deepEqual(
+		(data as { paths: Array<{ id: string; origin: string }> }).paths,
+		[
+			{
+				id: "constituency-2010-to-2024/forward/identity",
+				purpose: "identity",
+				from: { geography: "constituency", boundaryRelease: "2010" },
+				to: {
+					geography: "constituency",
+					boundaryRelease: "2024-07-uk-bgc",
+				},
+				quality: "publisher-supplied",
+				origin: "crosswalk",
+				steps: [
+					{
+						crosswalkId: "constituency-2010-to-2024",
+						direction: "forward",
+						method: "official-lookup",
+						purpose: "identity",
+					},
+				],
+			},
+		],
+	);
 	assert.deepEqual((data as { matches: unknown }).matches, [
 		{
 			crosswalk: {

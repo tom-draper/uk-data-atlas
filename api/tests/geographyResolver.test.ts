@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import type {
+	CrosswalkArtifact,
+	CrosswalkInventory,
+} from "../src/crosswalkInventory";
 import { createGeographyResolver } from "../src/geographyResolver";
 import {
 	compileLocationProjections,
@@ -258,5 +262,107 @@ test("owns date-based release selection when its boundary registry is compiled",
 			detail: "No boundary release is published for the geography unknown.",
 			links: { geographies: "/v1/geographies" },
 		},
+	);
+});
+
+test("executes a declared multi-step translation through the resolver", () => {
+	const wardToAuthority: CrosswalkArtifact = {
+		schemaVersion: 1,
+		contentHash: "sha256:ward-authority",
+		id: "ward-to-authority",
+		method: "clean-containment",
+		quality: "publisher-supplied",
+		weighting: { status: "not-applicable" },
+		from: { geography: "ward", boundaryRelease: "2025" },
+		to: { geography: "localAuthority", boundaryRelease: "2025" },
+		provenance: { input: "ward-authority.csv", inputHash: "sha256:ward-authority-input" },
+		validation: {
+			sourceNameConflicts: [],
+			endpoints: {
+				from: { status: "not-available", reason: "Fixture." },
+				to: { status: "not-available", reason: "Fixture." },
+			},
+		},
+		records: [
+			{
+				source: { code: "W1", labels: ["Ward one"] },
+				targets: [{ code: "L1", labels: ["Authority one"] }],
+			},
+		],
+	};
+	const authorityToRegion: CrosswalkArtifact = {
+		schemaVersion: 1,
+		contentHash: "sha256:authority-region",
+		id: "authority-to-region",
+		method: "official-lookup",
+		quality: "publisher-supplied",
+		relationshipPurpose: "membership",
+		weighting: { status: "not-provided" },
+		from: { geography: "localAuthority", boundaryRelease: "2025" },
+		to: { geography: "region", boundaryRelease: "2025" },
+		provenance: { input: "authority-region.csv", inputHash: "sha256:authority-region-input" },
+		validation: {
+			sourceNameConflicts: [],
+			endpoints: {
+				from: { status: "not-available", reason: "Fixture." },
+				to: { status: "not-available", reason: "Fixture." },
+			},
+		},
+		records: [
+			{
+				source: { code: "L1", labels: ["Authority one"] },
+				targets: [{ code: "R1", labels: ["Region one"] }],
+			},
+		],
+	};
+	const crosswalks: CrosswalkInventory = {
+		schemaVersion: 1,
+		contentHash: "sha256:translation-paths",
+		crosswalks: [wardToAuthority, authorityToRegion].map((crosswalk) => ({
+			id: crosswalk.id,
+			from: crosswalk.from,
+			to: crosswalk.to,
+			method: crosswalk.method,
+			quality: crosswalk.quality,
+			...(crosswalk.relationshipPurpose
+				? { relationshipPurpose: crosswalk.relationshipPurpose }
+				: {}),
+			weighting: crosswalk.weighting,
+			recordCount: crosswalk.records.length,
+			artifact: `crosswalks/${crosswalk.id}.json`,
+			contentHash: crosswalk.contentHash,
+		})),
+	};
+	const paths = compileRelationshipPaths(crosswalks, [
+		{
+			id: "ward-to-region",
+			purpose: "membership",
+			steps: [
+				{ crosswalkId: wardToAuthority.id, direction: "forward" },
+				{ crosswalkId: authorityToRegion.id, direction: "forward" },
+			],
+		},
+	]);
+	const resolver = createGeographyResolver({
+		crosswalkLookup: new Map([
+			[wardToAuthority.id, wardToAuthority],
+			[authorityToRegion.id, authorityToRegion],
+		]),
+		relationshipPathIndex: createRelationshipPathIndex(paths),
+	});
+
+	assert.deepEqual(
+		resolver.translateArea(
+			{ geography: "ward", boundaryRelease: "2025", code: "W1" },
+			{ geography: "region", boundaryRelease: "2025" },
+			"membership",
+		),
+		[
+			{
+				path: paths.paths.find((path) => path.id === "ward-to-region")!,
+				source: { code: "W1", labels: ["Ward one"] },
+				targets: [{ code: "R1", labels: ["Region one"] }],
+			},
+		],
 	);
 });

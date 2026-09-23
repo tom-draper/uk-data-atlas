@@ -28,6 +28,7 @@ import {
 } from "./areaRelationships";
 import type {
 	CrosswalkArtifact,
+	CrosswalkArea,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import { crosswalksTo } from "./locationMembership";
@@ -147,6 +148,26 @@ export type ResolvedAreaNeighbours = {
 
 type GeographyEndpoint = { geography: string; boundaryRelease: string };
 
+export type AreaIdentity = GeographyEndpoint & { code: string };
+
+type CrosswalkSource = CrosswalkArtifact["records"][number]["source"];
+type CrosswalkTarget = CrosswalkArtifact["records"][number]["targets"][number];
+type TranslationTarget = CrosswalkSource | CrosswalkTarget;
+type TranslationStep = {
+	source: CrosswalkSource;
+	targets: TranslationTarget[];
+	sourceCoverage?: number;
+};
+
+export type ResolvedAreaTranslation = {
+	/** The published direct or composed route that produced these targets. */
+	path: RelationshipPath;
+	source: CrosswalkSource;
+	targets: TranslationTarget[];
+	/** Present when a reverse overlap route was normalised to the queried area. */
+	sourceCoverage?: number;
+};
+
 export type RelationshipPathStepCoverage = {
 	crosswalkId: string;
 	direction: "forward" | "reverse";
@@ -234,12 +255,6 @@ export type RelationshipRepair = {
 	action: "publish-crosswalk" | "review-candidate" | "compile-target-release";
 };
 
-type AreaIdentity = {
-	geography: string;
-	boundaryRelease: string;
-	code: string;
-};
-
 export type GeographyResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
 	areaInventory?: AreaInventory;
@@ -256,6 +271,43 @@ export type GeographyResolverInputs = {
 
 const areaId = ({ geography, boundaryRelease, code }: AreaIdentity) =>
 	[geography, boundaryRelease, code].join("/");
+
+const relationshipPurposeFor = (
+	crosswalk: CrosswalkArtifact,
+): RelationshipPurpose | undefined =>
+	crosswalk.relationshipPurpose ??
+		(crosswalk.method === "official-lookup"
+			? "identity"
+			: crosswalk.method === "clean-containment" ||
+				  crosswalk.method === "geometric-containment"
+				? "membership"
+				: crosswalk.method === "area-overlap" ||
+					  crosswalk.method === "population-overlap"
+					? "apportion"
+					: crosswalk.method === "same-code-continuity"
+						? "identity"
+						: undefined);
+
+const directRelationshipPath = (
+	crosswalk: CrosswalkArtifact,
+	direction: "forward" | "reverse",
+	purpose: RelationshipPurpose,
+): RelationshipPath => ({
+	id: `${crosswalk.id}/${direction}/${purpose}`,
+	purpose,
+	from: direction === "forward" ? crosswalk.from : crosswalk.to,
+	to: direction === "forward" ? crosswalk.to : crosswalk.from,
+	quality: crosswalk.quality,
+	origin: "crosswalk",
+	steps: [
+		{
+			crosswalkId: crosswalk.id,
+			direction,
+			method: crosswalk.method,
+			purpose,
+		},
+	],
+});
 
 /**
  * Read-only geography intelligence over one immutable Atlas release.
@@ -280,6 +332,11 @@ export class GeographyResolver {
 	>();
 	private readonly derivedReleaseSources: Map<string, string>;
 	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
+	/** Directional record indexes make code translation an indexed read. */
+	private readonly translationStepCache = new Map<
+		string,
+		Map<string, TranslationStep>
+	>();
 	private readonly pathReachCache = new Map<string, number>();
 	private reachByRelease?: Map<string, GeographyReach>;
 
@@ -849,6 +906,210 @@ export class GeographyResolver {
 				].join("/"),
 			) ?? []
 		);
+	}
+
+	/**
+	 * Published paths are the authority for a conversion. A small direct-path
+	 * fallback keeps a resolver useful when a consumer has loaded crosswalk
+	 * artifacts but not the separately compiled path inventory, such as a
+	 * focused test or an intentionally small deployment.
+	 */
+	private translationPaths(
+		from: GeographyEndpoint,
+		to: GeographyEndpoint,
+		purpose: RelationshipPurpose,
+	): RelationshipPath[] {
+		const published = this.relationshipPaths(from, to, purpose);
+		const paths =
+			published.length > 0
+				? published
+				: [...(this.inputs.crosswalkLookup?.values() ?? [])].flatMap(
+						(crosswalk) => {
+							if (relationshipPurposeFor(crosswalk) !== purpose) return [];
+							const forward =
+								crosswalk.from.geography === from.geography &&
+								crosswalk.from.boundaryRelease === from.boundaryRelease &&
+								crosswalk.to.geography === to.geography &&
+								crosswalk.to.boundaryRelease === to.boundaryRelease;
+							const reverse =
+								crosswalk.to.geography === from.geography &&
+								crosswalk.to.boundaryRelease === from.boundaryRelease &&
+								crosswalk.from.geography === to.geography &&
+								crosswalk.from.boundaryRelease === to.boundaryRelease;
+							return forward
+								? [directRelationshipPath(crosswalk, "forward", purpose)]
+								: reverse
+									? [directRelationshipPath(crosswalk, "reverse", purpose)]
+									: [];
+					},
+					);
+		return [...paths].sort((left, right) => {
+			const origin = { crosswalk: 0, declared: 1, discovered: 2 } as const;
+			const quality = { "publisher-supplied": 0, derived: 1 } as const;
+			return (
+				origin[left.origin] - origin[right.origin] ||
+				quality[left.quality] - quality[right.quality] ||
+				left.steps.length - right.steps.length ||
+				left.id.localeCompare(right.id)
+			);
+		});
+	}
+
+	/** Build each crosswalk direction once; routes never scan its records. */
+	private translationSteps(
+		artifact: CrosswalkArtifact,
+		direction: "forward" | "reverse",
+	): Map<string, TranslationStep> {
+		const key = `${artifact.id}/${direction}`;
+		const cached = this.translationStepCache.get(key);
+		if (cached) return cached;
+		const steps = new Map<string, TranslationStep>();
+		if (direction === "forward") {
+			for (const record of artifact.records)
+				steps.set(record.source.code, {
+					source: record.source,
+					targets: record.targets,
+				});
+		} else if (
+			artifact.method === "area-overlap" ||
+			artifact.method === "population-overlap"
+		) {
+			const recordsByTarget = new Map<
+				string,
+				Array<{
+					record: CrosswalkArtifact["records"][number];
+					target: CrosswalkTarget;
+				}>
+			>();
+			for (const record of artifact.records) {
+				for (const target of record.targets) {
+					const records = recordsByTarget.get(target.code) ?? [];
+					records.push({ record, target });
+					recordsByTarget.set(target.code, records);
+				}
+			}
+			for (const [code, records] of recordsByTarget) {
+				const sourceCoverage = records.reduce(
+					(sum, { target }) => sum + target.targetShare,
+					0,
+				);
+				if (sourceCoverage <= 0) continue;
+				steps.set(code, {
+					source: {
+						code,
+						labels: [
+							...new Set(records.flatMap(({ target }) => target.labels)),
+						].sort(),
+					},
+					sourceCoverage,
+					targets: records.map(({ record, target }) => ({
+						...record.source,
+						weight: target.targetShare / sourceCoverage,
+						overlapAreaM2: target.overlapAreaM2,
+						sourceShare: target.targetShare,
+						targetShare: target.sourceShare,
+					})),
+				});
+			}
+		} else {
+			const targetsBySource = new Map<string, TranslationTarget[]>();
+			const labelsBySource = new Map<string, string[]>();
+			for (const record of artifact.records) {
+				for (const target of record.targets) {
+					const targets = targetsBySource.get(target.code) ?? [];
+					targets.push(record.source);
+					targetsBySource.set(target.code, targets);
+					const labels = labelsBySource.get(target.code) ?? [];
+					labels.push(...target.labels);
+					labelsBySource.set(target.code, labels);
+				}
+			}
+			for (const [code, targets] of targetsBySource)
+				steps.set(code, {
+					source: {
+						code,
+						labels: [...new Set(labelsBySource.get(code) ?? [])].sort(),
+					},
+					targets,
+				});
+		}
+		this.translationStepCache.set(key, steps);
+		return steps;
+	}
+
+	/**
+	 * Translate one exact area through every published path that has a result for
+	 * it. Direct paths retain the long-standing crosswalk response shape; a
+	 * composed path carries its full route so callers can inspect every step.
+	 */
+	translateArea(
+		source: AreaIdentity,
+		to: GeographyEndpoint,
+		purpose: RelationshipPurpose,
+	): ResolvedAreaTranslation[] {
+		return this.translationPaths(source, to, purpose).flatMap((path) => {
+			const first = path.steps[0];
+			if (!first) return [];
+			const firstArtifact = this.inputs.crosswalkLookup?.get(first.crosswalkId);
+			if (!firstArtifact) return [];
+			const firstStep = this.translationSteps(
+				firstArtifact,
+				first.direction,
+			).get(source.code);
+			if (!firstStep) return [];
+			if (path.steps.length === 1)
+				return [{ path, ...firstStep }];
+
+			let targets = firstStep.targets;
+			for (const step of path.steps.slice(1)) {
+				const artifact = this.inputs.crosswalkLookup?.get(step.crosswalkId);
+				if (!artifact) return [];
+				const steps = this.translationSteps(artifact, step.direction);
+				targets = targets.flatMap((target) => {
+					const translated = steps.get(target.code);
+					if (!translated) return [];
+					return translated.targets.map((next) =>
+						purpose === "apportion"
+							? {
+								...next,
+								weight:
+									("weight" in target ? target.weight : 1) *
+									("weight" in next ? next.weight : 1),
+							}
+							: next,
+					);
+				});
+				if (targets.length === 0) return [];
+			}
+			const combined = new Map<string, TranslationTarget>();
+			for (const target of targets) {
+				const previous = combined.get(target.code);
+				if (!previous) {
+					combined.set(target.code, target);
+					continue;
+				}
+				combined.set(target.code, {
+					...previous,
+					labels: [...new Set([...previous.labels, ...target.labels])].sort(),
+					...(purpose === "apportion"
+						? {
+								weight:
+									("weight" in previous ? previous.weight : 0) +
+									("weight" in target ? target.weight : 0),
+							}
+						: {}),
+				});
+			}
+			return [
+				{
+					path,
+					source: firstStep.source,
+					targets: [...combined.values()].sort((left, right) =>
+						left.code.localeCompare(right.code),
+					),
+				},
+			];
+		});
 	}
 
 	/** Each source code of one crosswalk direction and the codes it reaches. */

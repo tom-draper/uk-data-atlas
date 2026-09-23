@@ -7047,7 +7047,7 @@ paths:
     get:
       operationId: translateAreaCode
       tags: ["Geography"]
-      summary: Translate one code through a published crosswalk in either direction
+      summary: Translate one code through a published conversion path in either direction
       x-likely-refusal:
         status: 422
         when: "No crosswalk is published for this source, target and purpose. A shared code is never taken as proof of the same area."
@@ -7055,12 +7055,14 @@ paths:
       description: >
         `identity` permits publisher-supplied historical lookups only,
         `membership` permits clean containment only, and `apportion` permits
-        area-overlap crosswalks only. The route finds a valid directional
-        crosswalk in either direction and marks every result `forward` or
-        `reverse`, retaining the original artifact's provenance. Reverse
-        area-overlap weights are normalised against the queried target and
-        report its source coverage. The route does not treat a shared code
-        across releases as proof of unchanged geography.
+        area-overlap crosswalks only. The resolver selects every published
+        path with that purpose, ranking direct paths before reviewed and then
+        discovered compositions. `paths` records every step used. A direct
+        result retains its directional crosswalk and provenance; a composed
+        result carries its full `path` instead, so it cannot be mistaken for
+        a direct lookup. Reverse area-overlap weights are normalised against
+        the queried target and report its source coverage. The route does not
+        treat a shared code across releases as proof of unchanged geography.
       parameters:
         - name: sourceGeography
           in: query
@@ -7117,6 +7119,18 @@ paths:
                     geography: localAuthority
                     boundaryRelease: 2024-12-uk-bgc
                   purpose: membership
+                  paths:
+                    - id: ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment/forward/membership
+                      purpose: membership
+                      from: { geography: ward, boundaryRelease: 2024-12-uk-bgc }
+                      to: { geography: localAuthority, boundaryRelease: 2024-12-uk-bgc }
+                      quality: publisher-supplied
+                      origin: crosswalk
+                      steps:
+                        - crosswalkId: ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment
+                          direction: forward
+                          method: clean-containment
+                          purpose: membership
                   matches:
                     - crosswalk:
                         id: ward-2024-12-uk-bgc-to-local-authority-2024-12-uk-bgc-clean-containment
