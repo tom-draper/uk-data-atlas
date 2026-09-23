@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+# This is intentionally opt-out for the rare documentation-only emergency.
+# The normal path keeps committed browser assets in sync with their raw inputs.
+if [ "${SKIP_ATLAS_PRECOMPILE:-}" = "1" ]; then
+	exit 0
+fi
+
+pnpm precompile
+git add data/precompiled

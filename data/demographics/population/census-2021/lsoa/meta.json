@@ -1,5 +1,5 @@
 {
-	"id": "census-2021-lsoa",
+	"id": "lsoa",
 	"title": "Census 2021 usual residents by LSOA",
 	"description": "Census 2021 usual residents in England and Wales for each 2021 lower layer super output area, in total and split between households and communal establishments. ONS table TS001, as at Census Day, 21 March 2021. Used as the population building blocks that weight population-overlap crosswalks.",
 	"topics": ["demographics", "population", "census"],

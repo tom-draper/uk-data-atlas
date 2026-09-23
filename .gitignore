@@ -62,6 +62,14 @@ next-env.d.ts
 # atomic-write temp files from precompile
 data/precompiled/*.tmp
 
+# Raw sources live in immutable GitHub Release assets. The compact browser
+# payloads and compiled map assets below remain committed for Vercel builds.
+/data/*
+!/data/precompiled/
+!/data/precompiled/**
+data/precompiled/*.tmp
+/.data-release/
+
 AGENTS.md
 CLAUDE.md
 
