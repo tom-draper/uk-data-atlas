@@ -35,7 +35,10 @@ test("SpatialResolver joins cached geometry to area identity and provenance", ()
 		geometry,
 		geometrySource: provenance,
 	});
-	assert.equal(resolver.areaGeometry({ ...identity, code: "missing" }), undefined);
+	assert.equal(
+		resolver.areaGeometry({ ...identity, code: "missing" }),
+		undefined,
+	);
 });
 
 test("SpatialResolver reports absent cache data without inventing geometry", () => {
