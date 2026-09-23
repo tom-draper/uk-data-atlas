@@ -76,8 +76,12 @@ export type ApprovedRelationshipPath = {
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
-const purposeFor = (
-	crosswalk: CrosswalkInventory["crosswalks"][number],
+/** The purpose a crosswalk declares, or the one its method implies. */
+export const relationshipPurposeFor = (
+	crosswalk: Pick<
+		CrosswalkInventory["crosswalks"][number],
+		"method" | "relationshipPurpose"
+	>,
 ): RelationshipPurpose | undefined =>
 	crosswalk.relationshipPurpose ??
 	(crosswalk.method === "official-lookup"
@@ -280,7 +284,7 @@ export const compileRelationshipPaths = (
 	discovery?: RelationshipPathDiscovery,
 ): RelationshipPathInventory => {
 	const direct = crosswalks.crosswalks.flatMap((crosswalk) => {
-		const purpose = purposeFor(crosswalk);
+		const purpose = relationshipPurposeFor(crosswalk);
 		if (!purpose) return [];
 		const path = (direction: "forward" | "reverse"): RelationshipPath => ({
 			id: `${crosswalk.id}/${direction}/${purpose}`,

@@ -30,7 +30,6 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkArea,
 	CrosswalkInventory,
-	SameCodeContinuityCrosswalkArtifact,
 } from "./crosswalkInventory";
 import { crosswalksTo } from "./locationMembership";
 import {
@@ -46,16 +45,52 @@ import type {
 	RelationshipPath,
 	RelationshipPurpose,
 } from "./relationshipPaths";
-import type { CapabilityStatus } from "./capability";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import type { GeometryProvenance } from "./reprojection";
+import {
+	ConversionCapabilities,
+	type GeographyReach,
+	type RelationshipOperation,
+	type ResolvedConversionPlan,
+	type ResolvedRelationshipCapability,
+} from "./resolver/conversionCapability";
+import {
+	compareBoundaryReleases,
+	type BoundaryReleaseComparison,
+} from "./resolver/releaseComparison";
+import {
+	CrosswalkTranslator,
+	type AreaIdentity,
+	type CrosswalkLookup,
+	type GeographyEndpoint,
+	type ResolvedAreaTranslation,
+} from "./resolver/translation";
 import {
 	derivedReleaseSources,
 	selectReleaseForDate,
 	type ReleaseSelection,
 } from "./releaseForDate";
 
-export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
+export {
+	RELATIONSHIP_OPERATIONS,
+	type GeographyReach,
+	type RelationshipOperation,
+	type RelationshipPathStepCoverage,
+	type RelationshipPrerequisite,
+	type ResolvedConversionPlan,
+	type ResolvedRelationshipCapability,
+	type ResolvedRelationshipPath,
+} from "./resolver/conversionCapability";
+export type {
+	BoundaryExtentChange,
+	BoundaryReleaseComparison,
+	PublishedRelationshipMapping,
+} from "./resolver/releaseComparison";
+export type {
+	AreaIdentity,
+	CrosswalkLookup,
+	ResolvedAreaTranslation,
+} from "./resolver/translation";
 
 export type ResolvedContainingArea = AreaRecord & {
 	id: string;
@@ -147,106 +182,6 @@ export type ResolvedAreaNeighbours = {
 	neighbours: ResolvedAreaNeighbour[];
 };
 
-type GeographyEndpoint = { geography: string; boundaryRelease: string };
-
-export type AreaIdentity = GeographyEndpoint & { code: string };
-
-type CrosswalkSource = CrosswalkArtifact["records"][number]["source"];
-type CrosswalkTarget = CrosswalkArtifact["records"][number]["targets"][number];
-type OverlapCrosswalkArtifact = Extract<
-	CrosswalkArtifact,
-	{ method: "area-overlap" | "population-overlap" }
->;
-type OverlapCrosswalkTarget =
-	OverlapCrosswalkArtifact["records"][number]["targets"][number];
-type TranslationTarget = CrosswalkSource | CrosswalkTarget;
-type TranslationStep = {
-	source: CrosswalkSource;
-	targets: TranslationTarget[];
-	sourceCoverage?: number;
-};
-
-export type ResolvedAreaTranslation = {
-	/** The published direct or composed route that produced these targets. */
-	path: RelationshipPath;
-	source: CrosswalkSource;
-	targets: TranslationTarget[];
-	/** Present when a reverse overlap route was normalised to the queried area. */
-	sourceCoverage?: number;
-};
-
-export type RelationshipPathStepCoverage = {
-	crosswalkId: string;
-	direction: "forward" | "reverse";
-	status: "complete" | "partial" | "not-built";
-	mappedSourceAreaCount?: number;
-	sourceAreaCount?: number;
-	share?: number;
-	missingPrerequisite?: string;
-};
-
-export type ResolvedRelationshipPath = RelationshipPath & {
-	/** Deterministic preference among paths for the same conversion request. */
-	rank: {
-		position: number;
-		reasons: string[];
-	};
-	operations: {
-		permitted: string[];
-		prohibited: string[];
-		note: string;
-	};
-	trust: {
-		level: "verified" | "derived" | "partial" | "not-built";
-		reasons: string[];
-	};
-	coverage: {
-		status: "complete" | "partial" | "not-built";
-		mappedSourceAreaCount?: number;
-		sourceAreaCount?: number;
-		share?: number;
-		steps: RelationshipPathStepCoverage[];
-	};
-};
-
-export const RELATIONSHIP_OPERATIONS = [
-	"identity-join",
-	"code-translation",
-	"containment-aggregation",
-	"membership-join",
-	"weighted-allocation",
-] as const;
-
-export type RelationshipOperation = (typeof RELATIONSHIP_OPERATIONS)[number];
-
-export type RelationshipPrerequisite = {
-	id:
-		| "source-areas"
-		| "target-areas"
-		| "path-step-areas"
-		| "crosswalk-artifact"
-		| "relationship-path";
-	status: Extract<CapabilityStatus, "not-built" | "unsupported">;
-	reason: string;
-};
-
-export type ResolvedRelationshipCapability = {
-	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
-	paths: ResolvedRelationshipPath[];
-	missingPrerequisites: RelationshipPrerequisite[];
-};
-
-/** A deterministic, inspectable choice for a requested geography conversion. */
-export type ResolvedConversionPlan = {
-	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
-	purpose: RelationshipPurpose;
-	operation?: RelationshipOperation;
-	selectedPath?: ResolvedRelationshipPath;
-	alternatives: ResolvedRelationshipPath[];
-	missingPrerequisites: RelationshipPrerequisite[];
-	reason?: string;
-};
-
 export type ResolvedRelationshipCoverage = {
 	areaCount: number;
 	relatedAreaCount: number;
@@ -254,22 +189,6 @@ export type ResolvedRelationshipCoverage = {
 	byRelation: Partial<Record<AreaRelation, number>>;
 	crosswalkIds: string[];
 	uncoveredAreas: Array<AreaRecord & { id: string }>;
-};
-
-/**
- * Where a release can actually carry data, which is not the same question as
- * whether its areas have relationships. A release whose only published paths
- * lead to other vintages of its own geography is joined up with its own
- * history and converts onto nothing new.
- */
-export type GeographyReach = {
-	status: "connected" | "vintage-only" | "isolated";
-	/** Other geographies a published path converts this release onto. */
-	reaches: string[];
-	/** Other geographies a published path converts onto this release. */
-	reachedFrom: string[];
-	/** Paths to and from other vintages of this release's own geography. */
-	vintagePathCount: number;
 };
 
 export type GeographyHealth = {
@@ -281,87 +200,6 @@ export type GeographyHealth = {
 	gapCount: number;
 	countries: string[];
 	reach: GeographyReach;
-};
-
-export type BoundaryExtentChange = {
-	code: string;
-	relation: "changed" | "indeterminate";
-	widestDifferenceM: number;
-	fromShare: number;
-	toShare: number;
-};
-
-/**
- * The cardinality of codes in a published crosswalk, viewed in the direction
- * requested by a release comparison. This describes its records, rather than
- * inferring a legal boundary change from them.
- */
-export type PublishedRelationshipMapping = {
-	shape:
-		| "no-mappings"
-		| "one-to-one"
-		| "one-to-many"
-		| "many-to-one"
-		| "many-to-many";
-	fromCodeCount: number;
-	toCodeCount: number;
-	pairCount: number;
-	from: {
-		noTargetCount: number;
-		oneTargetCount: number;
-		multipleTargetCount: number;
-	};
-	to: {
-		oneSourceCount: number;
-		multipleSourceCount: number;
-	};
-	examples: {
-		oneToMany: Array<{ fromCode: string; toCodes: string[] }>;
-		manyToOne: Array<{ toCode: string; fromCodes: string[] }>;
-	};
-	note: string;
-};
-
-export type BoundaryReleaseComparison = {
-	geography: string;
-	from: GeographyEndpoint;
-	to: GeographyEndpoint;
-	summary: {
-		fromAreaCount: number;
-		toAreaCount: number;
-		sharedCodeCount: number;
-		codesOnlyInFromCount: number;
-		codesOnlyInToCount: number;
-		continuousCodeCount: number;
-		changedExtentCount: number;
-		indeterminateExtentCount: number;
-		unmeasuredCodeCount: number;
-		unassessedSharedCodeCount: number;
-		publishedRelationshipCount: number;
-	};
-	codes: {
-		onlyInFrom: Array<AreaRecord & { id: string }>;
-		onlyInTo: Array<AreaRecord & { id: string }>;
-	};
-	continuity:
-		| {
-				status: "available";
-				crosswalks: string[];
-				changedExtent: BoundaryExtentChange[];
-				unmeasured: Array<{ code: string; reason: string }>;
-				unassessedSharedCodes: string[];
-			}
-		| { status: "not-published"; reason: string };
-	publishedRelationships: Array<{
-		id: string;
-		direction: "forward" | "reverse";
-		method: CrosswalkArtifact["method"];
-		quality: CrosswalkArtifact["quality"];
-		relationshipPurpose?: "identity" | "membership";
-		weighting: CrosswalkArtifact["weighting"];
-		recordCount: number;
-		mapping: PublishedRelationshipMapping;
-	}>;
 };
 
 export type RelationshipRepair = {
@@ -386,149 +224,6 @@ export type GeographyResolverInputs = {
 const areaId = ({ geography, boundaryRelease, code }: AreaIdentity) =>
 	[geography, boundaryRelease, code].join("/");
 
-const relationshipPurposeFor = (
-	crosswalk: CrosswalkArtifact,
-): RelationshipPurpose | undefined =>
-	crosswalk.relationshipPurpose ??
-		(crosswalk.method === "official-lookup"
-			? "identity"
-			: crosswalk.method === "clean-containment"
-				? "membership"
-				: crosswalk.method === "area-overlap" ||
-					  crosswalk.method === "population-overlap"
-					? "apportion"
-					: crosswalk.method === "same-code-continuity"
-						? "identity"
-						: undefined);
-
-const directRelationshipPath = (
-	crosswalk: CrosswalkArtifact,
-	direction: "forward" | "reverse",
-	purpose: RelationshipPurpose,
-): RelationshipPath => ({
-	id: `${crosswalk.id}/${direction}/${purpose}`,
-	purpose,
-	from: direction === "forward" ? crosswalk.from : crosswalk.to,
-	to: direction === "forward" ? crosswalk.to : crosswalk.from,
-	quality: crosswalk.quality,
-	origin: "crosswalk",
-	steps: [
-		{
-			crosswalkId: crosswalk.id,
-			direction,
-			method: crosswalk.method,
-			purpose,
-		},
-	],
-});
-
-const operationsForPurpose = (
-	purpose: RelationshipPurpose,
-): ResolvedRelationshipPath["operations"] =>
-	purpose === "identity"
-		? {
-				permitted: ["identity-join", "code-translation"],
-				prohibited: ["weighted-allocation", "containment-aggregation"],
-				note: "Use this path to identify the declared equivalent area; it does not supply weights or membership.",
-			}
-		: purpose === "membership"
-			? {
-					permitted: ["containment-aggregation", "membership-join"],
-					prohibited: ["weighted-allocation"],
-					note: "Use this path to group members under a parent. It does not allocate a source value across overlapping targets.",
-				}
-			: {
-					permitted: ["weighted-allocation"],
-					prohibited: ["identity-join"],
-					note: "Use this path only for measures whose semantics permit the published overlap weighting.",
-			};
-
-const summarisePublishedRelationshipMapping = (
-	crosswalk: CrosswalkArtifact,
-	direction: "forward" | "reverse",
-	limit: number,
-): PublishedRelationshipMapping => {
-	const targetsByFrom = new Map<string, Set<string>>();
-	const sourcesByTo = new Map<string, Set<string>>();
-	for (const record of crosswalk.records) {
-		const fromCode =
-			direction === "forward" ? record.source.code : undefined;
-		if (fromCode && !targetsByFrom.has(fromCode))
-			targetsByFrom.set(fromCode, new Set());
-		for (const target of record.targets) {
-			const viewedFrom =
-				direction === "forward" ? record.source.code : target.code;
-			const viewedTo =
-				direction === "forward" ? target.code : record.source.code;
-			const targets = targetsByFrom.get(viewedFrom) ?? new Set<string>();
-			targets.add(viewedTo);
-			targetsByFrom.set(viewedFrom, targets);
-			const sources = sourcesByTo.get(viewedTo) ?? new Set<string>();
-			sources.add(viewedFrom);
-			sourcesByTo.set(viewedTo, sources);
-		}
-	}
-	const fromEntries = [...targetsByFrom].sort(([left], [right]) =>
-		left.localeCompare(right),
-	);
-	const toEntries = [...sourcesByTo].sort(([left], [right]) =>
-		left.localeCompare(right),
-	);
-	const from = {
-		noTargetCount: fromEntries.filter(([, targets]) => targets.size === 0)
-			.length,
-		oneTargetCount: fromEntries.filter(([, targets]) => targets.size === 1)
-			.length,
-		multipleTargetCount: fromEntries.filter(([, targets]) => targets.size > 1)
-			.length,
-	};
-	const to = {
-		oneSourceCount: toEntries.filter(([, sources]) => sources.size === 1)
-			.length,
-		multipleSourceCount: toEntries.filter(([, sources]) => sources.size > 1)
-			.length,
-	};
-	const pairCount = fromEntries.reduce(
-		(count, [, targets]) => count + targets.size,
-		0,
-	);
-	const shape =
-		pairCount === 0
-			? "no-mappings"
-			: from.multipleTargetCount > 0 && to.multipleSourceCount > 0
-				? "many-to-many"
-				: from.multipleTargetCount > 0
-					? "one-to-many"
-					: to.multipleSourceCount > 0
-						? "many-to-one"
-						: "one-to-one";
-	return {
-		shape,
-		fromCodeCount: fromEntries.length,
-		toCodeCount: toEntries.length,
-		pairCount,
-		from,
-		to,
-		examples: {
-			oneToMany: fromEntries
-				.filter(([, targets]) => targets.size > 1)
-				.slice(0, limit)
-				.map(([fromCode, targets]) => ({
-					fromCode,
-					toCodes: [...targets].sort(),
-				})),
-			manyToOne: toEntries
-				.filter(([, sources]) => sources.size > 1)
-				.slice(0, limit)
-				.map(([toCode, sources]) => ({
-					toCode,
-					fromCodes: [...sources].sort(),
-				})),
-		},
-		note: "Cardinality describes codes in this crosswalk's published records, viewed from the requested release to the other release. It does not establish a legal boundary change or account for release codes absent from the records.",
-	};
-};
-
 /**
  * Read-only geography intelligence over one immutable Atlas release.
  *
@@ -551,16 +246,12 @@ export class GeographyResolver {
 		BoundaryRegistry["releases"][number]
 	>();
 	private readonly derivedReleaseSources: Map<string, string>;
-	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
-	/** Directional record indexes make code translation an indexed read. */
-	private readonly translationStepCache = new Map<
-		string,
-		Map<string, TranslationStep>
-	>();
-	private readonly pathReachCache = new Map<string, number>();
-	private reachByRelease?: Map<string, GeographyReach>;
+	private readonly translator: CrosswalkTranslator;
+	private readonly capabilities: ConversionCapabilities;
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
+		this.translator = new CrosswalkTranslator(inputs);
+		this.capabilities = new ConversionCapabilities(inputs, this.translator);
 		this.derivedReleaseSources = derivedReleaseSources(inputs.areaInventory);
 		for (const release of inputs.boundaryRegistry?.releases ?? []) {
 			this.boundaryReleases.set(`${release.geography}/${release.id}`, release);
@@ -1111,150 +802,11 @@ export class GeographyResolver {
 	}
 
 	relationshipPaths(
-		from: { geography: string; boundaryRelease: string },
-		to: { geography: string; boundaryRelease: string },
-		purpose: RelationshipPurpose,
-	) {
-		return (
-			this.inputs.relationshipPathIndex?.get(
-				[
-					from.geography,
-					from.boundaryRelease,
-					to.geography,
-					to.boundaryRelease,
-					purpose,
-				].join("/"),
-			) ?? []
-		);
-	}
-
-	/**
-	 * Published paths are the authority for a conversion. A small direct-path
-	 * fallback keeps a resolver useful when a consumer has loaded crosswalk
-	 * artifacts but not the separately compiled path inventory, such as a
-	 * focused test or an intentionally small deployment.
-	 */
-	private translationPaths(
 		from: GeographyEndpoint,
 		to: GeographyEndpoint,
 		purpose: RelationshipPurpose,
-	): RelationshipPath[] {
-		const published = this.relationshipPaths(from, to, purpose);
-		const paths =
-			published.length > 0
-				? published
-				: [...(this.inputs.crosswalkLookup?.values() ?? [])].flatMap(
-						(crosswalk) => {
-							if (relationshipPurposeFor(crosswalk) !== purpose) return [];
-							const forward =
-								crosswalk.from.geography === from.geography &&
-								crosswalk.from.boundaryRelease === from.boundaryRelease &&
-								crosswalk.to.geography === to.geography &&
-								crosswalk.to.boundaryRelease === to.boundaryRelease;
-							const reverse =
-								crosswalk.to.geography === from.geography &&
-								crosswalk.to.boundaryRelease === from.boundaryRelease &&
-								crosswalk.from.geography === to.geography &&
-								crosswalk.from.boundaryRelease === to.boundaryRelease;
-							return forward
-								? [directRelationshipPath(crosswalk, "forward", purpose)]
-								: reverse
-									? [directRelationshipPath(crosswalk, "reverse", purpose)]
-									: [];
-					},
-					);
-		return [...paths].sort((left, right) => {
-			const origin = { crosswalk: 0, declared: 1, discovered: 2 } as const;
-			const quality = { "publisher-supplied": 0, derived: 1 } as const;
-			return (
-				origin[left.origin] - origin[right.origin] ||
-				quality[left.quality] - quality[right.quality] ||
-				left.steps.length - right.steps.length ||
-				left.id.localeCompare(right.id)
-			);
-		});
-	}
-
-	/** Build each crosswalk direction once; routes never scan its records. */
-	private translationSteps(
-		artifact: CrosswalkArtifact,
-		direction: "forward" | "reverse",
-	): Map<string, TranslationStep> {
-		const key = `${artifact.id}/${direction}`;
-		const cached = this.translationStepCache.get(key);
-		if (cached) return cached;
-		const steps = new Map<string, TranslationStep>();
-		if (direction === "forward") {
-			for (const record of artifact.records)
-				steps.set(record.source.code, {
-					source: record.source,
-					targets: record.targets,
-				});
-		} else if (
-			artifact.method === "area-overlap" ||
-			artifact.method === "population-overlap"
-		) {
-			const recordsByTarget = new Map<
-				string,
-				Array<{
-					record: CrosswalkArtifact["records"][number];
-					target: OverlapCrosswalkTarget;
-				}>
-			>();
-			for (const record of artifact.records) {
-				for (const target of record.targets) {
-					const records = recordsByTarget.get(target.code) ?? [];
-					records.push({ record, target });
-					recordsByTarget.set(target.code, records);
-				}
-			}
-			for (const [code, records] of recordsByTarget) {
-				const sourceCoverage = records.reduce(
-					(sum, { target }) => sum + target.targetShare,
-					0,
-				);
-				if (sourceCoverage <= 0) continue;
-				steps.set(code, {
-					source: {
-						code,
-						labels: [
-							...new Set(records.flatMap(({ target }) => target.labels)),
-						].sort(),
-					},
-					sourceCoverage,
-					targets: records.map(({ record, target }) => ({
-						...record.source,
-						weight: target.targetShare / sourceCoverage,
-						overlapAreaM2: target.overlapAreaM2,
-						sourceShare: target.targetShare,
-						targetShare: target.sourceShare,
-					})),
-				});
-			}
-		} else {
-			const targetsBySource = new Map<string, TranslationTarget[]>();
-			const labelsBySource = new Map<string, string[]>();
-			for (const record of artifact.records) {
-				for (const target of record.targets) {
-					const targets = targetsBySource.get(target.code) ?? [];
-					targets.push(record.source);
-					targetsBySource.set(target.code, targets);
-					const labels = labelsBySource.get(target.code) ?? [];
-					labels.push(...target.labels);
-					labelsBySource.set(target.code, labels);
-				}
-			}
-			for (const [code, targets] of targetsBySource)
-				steps.set(code, {
-					source: {
-						code,
-						labels: [...new Set(labelsBySource.get(code) ?? [])].sort(),
-					},
-					targets,
-				});
-		}
-		this.translationStepCache.set(key, steps);
-		return steps;
+	) {
+		return this.translator.publishedPaths(from, to, purpose);
 	}
 
 	/**
@@ -1267,394 +819,35 @@ export class GeographyResolver {
 		to: GeographyEndpoint,
 		purpose: RelationshipPurpose,
 	): ResolvedAreaTranslation[] {
-		return this.translationPaths(source, to, purpose).flatMap((path) => {
-			const first = path.steps[0];
-			if (!first) return [];
-			const firstArtifact = this.inputs.crosswalkLookup?.get(first.crosswalkId);
-			if (!firstArtifact) return [];
-			const firstStep = this.translationSteps(
-				firstArtifact,
-				first.direction,
-			).get(source.code);
-			if (!firstStep) return [];
-			if (path.steps.length === 1)
-				return [{ path, ...firstStep }];
-
-			let targets = firstStep.targets;
-			for (const step of path.steps.slice(1)) {
-				const artifact = this.inputs.crosswalkLookup?.get(step.crosswalkId);
-				if (!artifact) return [];
-				const steps = this.translationSteps(artifact, step.direction);
-				targets = targets.flatMap((target) => {
-					const translated = steps.get(target.code);
-					if (!translated) return [];
-					return translated.targets.map((next) =>
-						purpose === "apportion"
-							? {
-								...next,
-								weight:
-									("weight" in target ? target.weight : 1) *
-									("weight" in next ? next.weight : 1),
-							}
-							: next,
-					);
-				});
-				if (targets.length === 0) return [];
-			}
-			const combined = new Map<string, TranslationTarget>();
-			for (const target of targets) {
-				const previous = combined.get(target.code);
-				if (!previous) {
-					combined.set(target.code, target);
-					continue;
-				}
-				combined.set(target.code, {
-					...previous,
-					labels: [...new Set([...previous.labels, ...target.labels])].sort(),
-					...(purpose === "apportion"
-						? {
-								weight:
-									("weight" in previous ? previous.weight : 0) +
-									("weight" in target ? target.weight : 0),
-							}
-						: {}),
-				});
-			}
-			return [
-				{
-					path,
-					source: firstStep.source,
-					targets: [...combined.values()].sort((left, right) =>
-						left.code.localeCompare(right.code),
-					),
-				},
-			];
-		});
-	}
-
-	/** Each source code of one crosswalk direction and the codes it reaches. */
-	private stepTargets(
-		artifact: CrosswalkArtifact,
-		direction: "forward" | "reverse",
-	): Map<string, string[]> {
-		const key = `${artifact.id}/${direction}`;
-		const cached = this.stepTargetCache.get(key);
-		if (cached) return cached;
-		const targets = new Map<string, string[]>();
-		for (const record of artifact.records) {
-			for (const target of record.targets) {
-				const [from, to] =
-					direction === "forward"
-						? [record.source.code, target.code]
-						: [target.code, record.source.code];
-				const reached = targets.get(from) ?? [];
-				reached.push(to);
-				targets.set(from, reached);
-			}
-		}
-		this.stepTargetCache.set(key, targets);
-		return targets;
-	}
-
-	/**
-	 * How many of a path's source areas reach its target through every step.
-	 * Walking back from the last step, each step keeps the codes with a target
-	 * the next step still carries, so the pass is linear in the records.
-	 */
-	private pathReach(path: RelationshipPath, from: GeographyEndpoint) {
-		const cached = this.pathReachCache.get(path.id);
-		if (cached !== undefined) return cached;
-		let carried: Set<string> | undefined;
-		for (const step of [...path.steps].reverse()) {
-			const artifact = this.inputs.crosswalkLookup?.get(step.crosswalkId);
-			if (!artifact) return undefined;
-			const kept = new Set<string>();
-			for (const [code, targets] of this.stepTargets(artifact, step.direction))
-				if (!carried || targets.some((target) => carried!.has(target)))
-					kept.add(code);
-			carried = kept;
-		}
-		const sources = this.inputs.areaLookup?.get(
-			`${from.geography}/${from.boundaryRelease}`,
-		);
-		const reach = sources
-			? [...(carried ?? [])].filter((code) => sources.has(code)).length
-			: (carried?.size ?? 0);
-		this.pathReachCache.set(path.id, reach);
-		return reach;
+		return this.translator.translateArea(source, to, purpose);
 	}
 
 	/**
 	 * Explains whether an exact conversion is usable, including the source
-	 * coverage of each declared path and every artifact that is still needed to
-	 * make that claim. This keeps route handlers out of crosswalk internals.
+	 * coverage of each declared path and every artifact still needed to make
+	 * that claim. This keeps route handlers out of crosswalk internals.
 	 */
 	relationshipCapability(
 		from: GeographyEndpoint,
 		to: GeographyEndpoint,
 		purpose: RelationshipPurpose,
 	): ResolvedRelationshipCapability {
-		const missingPrerequisites: RelationshipPrerequisite[] = [];
-		const endpointAreaCount = (endpoint: GeographyEndpoint) => {
-			const lookupCount = this.inputs.areaLookup?.get(
-				`${endpoint.geography}/${endpoint.boundaryRelease}`,
-			)?.size;
-			if (lookupCount !== undefined) return lookupCount;
-			const release = this.inputs.areaInventory?.releases.find(
-				(candidate) =>
-					candidate.geography === endpoint.geography &&
-					candidate.id === endpoint.boundaryRelease,
-			);
-			return release?.status === "available" ? release.recordCount : undefined;
-		};
-		const sourceAreaCount = endpointAreaCount(from);
-		const targetAreaCount = endpointAreaCount(to);
-		if (sourceAreaCount === undefined) {
-			missingPrerequisites.push({
-				id: "source-areas",
-				status: "not-built",
-				reason: `No compiled area identity artifact is available for ${from.geography}/${from.boundaryRelease}.`,
-			});
-		}
-		if (targetAreaCount === undefined) {
-			missingPrerequisites.push({
-				id: "target-areas",
-				status: "not-built",
-				reason: `No compiled area identity artifact is available for ${to.geography}/${to.boundaryRelease}.`,
-			});
-		}
-		const paths = this.relationshipPaths(from, to, purpose);
-		if (paths.length === 0) {
-			missingPrerequisites.push({
-				id: "relationship-path",
-				status: "unsupported",
-				reason: `No declared ${purpose} path is published from ${from.geography}/${from.boundaryRelease} to ${to.geography}/${to.boundaryRelease}.`,
-			});
-		}
-		const resolvedPaths = paths.map((path) => {
-			const steps = path.steps.map((step) => {
-				const artifact = this.inputs.crosswalkLookup?.get(step.crosswalkId);
-				if (!artifact) {
-					const reason = `The crosswalk artifact ${step.crosswalkId} required by ${path.id} is not built.`;
-					if (!missingPrerequisites.some((item) => item.reason === reason)) {
-						missingPrerequisites.push({
-							id: "crosswalk-artifact",
-							status: "not-built",
-							reason,
-						});
-					}
-					return {
-						crosswalkId: step.crosswalkId,
-						direction: step.direction,
-						status: "not-built" as const,
-						missingPrerequisite: reason,
-					};
-				}
-				const mappedSourceAreaCount = this.stepTargets(
-					artifact,
-					step.direction,
-				).size;
-				const stepSource =
-					step.direction === "forward" ? artifact.from : artifact.to;
-				const stepSourceAreaCount = endpointAreaCount(stepSource);
-				if (stepSourceAreaCount === undefined) {
-					const reason = `No compiled area identity artifact is available for ${stepSource.geography}/${stepSource.boundaryRelease}.`;
-					if (!missingPrerequisites.some((item) => item.reason === reason)) {
-						missingPrerequisites.push({
-							id: "path-step-areas",
-							status: "not-built",
-							reason,
-						});
-					}
-					return {
-						crosswalkId: step.crosswalkId,
-						direction: step.direction,
-						status: "not-built" as const,
-						mappedSourceAreaCount,
-						missingPrerequisite: reason,
-					};
-				}
-				const share = mappedSourceAreaCount / stepSourceAreaCount;
-				return {
-					crosswalkId: step.crosswalkId,
-					direction: step.direction,
-					status: share === 1 ? ("complete" as const) : ("partial" as const),
-					mappedSourceAreaCount,
-					sourceAreaCount: stepSourceAreaCount,
-					share,
-				};
-			});
-			// A composed path loses whatever any step drops, so its coverage is the
-			// share of source areas that reach the target through every step.
-			const reached = steps.some((step) => step.status === "not-built")
-				? undefined
-				: this.pathReach(path, from);
-			const share =
-				reached !== undefined && sourceAreaCount
-					? reached / sourceAreaCount
-					: undefined;
-			const coverageStatus =
-				reached === undefined
-					? ("not-built" as const)
-					: share === 1
-						? ("complete" as const)
-						: ("partial" as const);
-			const trust =
-				coverageStatus === "not-built"
-					? {
-							level: "not-built" as const,
-							reasons: ["A required crosswalk or area identity artifact is not built."],
-						}
-					: coverageStatus === "partial"
-						? {
-								level: "partial" as const,
-								reasons: ["The declared path does not cover every source area."],
-							}
-						: path.origin === "discovered"
-							? {
-									level: "derived" as const,
-									reasons: [
-										"The build's path search composed this path under its composition rules; no one has reviewed it.",
-										...(path.quality === "derived"
-											? ["At least one path step is derived rather than publisher-supplied."]
-											: []),
-									],
-								}
-						: path.quality === "derived"
-							? {
-									level: "derived" as const,
-									reasons: ["At least one path step is derived rather than publisher-supplied."],
-								}
-							: {
-									level: "verified" as const,
-									reasons: ["Every path step is publisher-supplied and has complete compiled coverage."],
-								};
-			return {
-				...path,
-				operations: operationsForPurpose(path.purpose),
-				trust,
-				coverage: {
-					status: coverageStatus,
-					mappedSourceAreaCount: reached,
-					sourceAreaCount,
-					share,
-					steps,
-				},
-			} satisfies Omit<ResolvedRelationshipPath, "rank">;
-		});
-		const hasUnbuilt = missingPrerequisites.some(
-			(item) => item.status === "not-built",
-		);
-		const coverageOrder = { complete: 0, partial: 1, "not-built": 2 } as const;
-		const trustOrder = { verified: 0, derived: 1, partial: 2, "not-built": 3 } as const;
-		const originOrder = { crosswalk: 0, declared: 1, discovered: 2 } as const;
-		const rankedPaths = [...resolvedPaths]
-			.sort(
-				(left, right) =>
-					coverageOrder[left.coverage.status] -
-						coverageOrder[right.coverage.status] ||
-					trustOrder[left.trust.level] - trustOrder[right.trust.level] ||
-					originOrder[left.origin] - originOrder[right.origin] ||
-					left.steps.length - right.steps.length ||
-					left.id.localeCompare(right.id),
-			)
-			.map((path, index) => ({
-				...path,
-				rank: {
-					position: index + 1,
-					reasons: [
-						`${path.coverage.status} source coverage`,
-						`${path.trust.level} evidence`,
-						`${path.origin} path`,
-						`${path.steps.length} ${path.steps.length === 1 ? "step" : "steps"}`,
-					],
-				},
-			}));
-		return {
-			status:
-				rankedPaths.length === 0
-					? hasUnbuilt
-						? "not-built"
-						: "unsupported"
-					: rankedPaths.some((path) => path.coverage.status === "complete")
-						? "available"
-						: rankedPaths.some((path) => path.coverage.status === "partial")
-						? "partial"
-						: rankedPaths.some((path) => path.coverage.status === "not-built")
-							? "not-built"
-							: "available",
-			paths: rankedPaths,
-			missingPrerequisites,
-		};
+		return this.capabilities.relationshipCapability(from, to, purpose);
 	}
 
-	/**
-	 * Choose the best published path for an exact conversion without executing
-	 * it. The selected path is the first deterministic rank, and every other
-	 * usable or incomplete option remains visible as an alternative.
-	 */
+	/** The best published path for an exact conversion, with its alternatives. */
 	conversionPlan(
 		from: GeographyEndpoint,
 		to: GeographyEndpoint,
 		purpose: RelationshipPurpose,
 		operation?: RelationshipOperation,
 	): ResolvedConversionPlan {
-		const capability = this.relationshipCapability(from, to, purpose);
-		const [selectedPath, ...alternatives] = capability.paths;
-		const operationPermitted =
-			!operation ||
-			!selectedPath ||
-			selectedPath.operations.permitted.includes(operation);
-		const status = operationPermitted
-			? capability.status
-			: ("unsupported" as const);
-		const reason = !operationPermitted
-			? `${operation} is not permitted for a ${purpose} conversion; the selected path permits ${selectedPath!.operations.permitted.join(" and ")} instead.`
-			: status === "available"
-				? undefined
-				: capability.missingPrerequisites[0]?.reason ??
-					status === "partial"
-						? "The best published path does not cover every source area."
-						: "No published conversion path can satisfy this request.";
-		return {
-			status,
-			purpose,
-			...(operation ? { operation } : {}),
-			...(selectedPath ? { selectedPath } : {}),
-			alternatives,
-			missingPrerequisites: capability.missingPrerequisites,
-			...(reason ? { reason } : {}),
-		};
+		return this.capabilities.conversionPlan(from, to, purpose, operation);
 	}
 
-	/** Every declared conversion starting at one exact release, grouped safely by endpoint and purpose. */
+	/** Every declared conversion starting at one exact release. */
 	relationshipCapabilitiesFrom(from: GeographyEndpoint) {
-		const discovered = new Map<
-			string,
-			{ to: GeographyEndpoint; purpose: RelationshipPurpose }
-		>();
-		for (const paths of this.inputs.relationshipPathIndex?.values() ?? []) {
-			for (const path of paths) {
-				if (
-					path.from.geography !== from.geography ||
-					path.from.boundaryRelease !== from.boundaryRelease
-				)
-					continue;
-				const key = [path.to.geography, path.to.boundaryRelease, path.purpose].join("/");
-				discovered.set(key, { to: path.to, purpose: path.purpose });
-			}
-		}
-		return [...discovered.values()]
-			.map(({ to, purpose }) => ({
-				to,
-				purpose,
-				...this.relationshipCapability(from, to, purpose),
-			}))
-			.sort((left, right) =>
-				[left.to.geography, left.to.boundaryRelease, left.purpose]
-					.join("/")
-					.localeCompare([right.to.geography, right.to.boundaryRelease, right.purpose].join("/")),
-			);
+		return this.capabilities.relationshipCapabilitiesFrom(from);
 	}
 
 	/** Release-level relationship coverage for finding holes in the hierarchy. */
@@ -1703,56 +896,8 @@ export class GeographyResolver {
 	}
 
 	/**
-	 * What each release can convert onto, and be converted from, by published
-	 * path. Built once from the path inventory, because the answer for one
-	 * release depends on every path in it.
-	 */
-	private conversionReach(): Map<string, GeographyReach> {
-		if (this.reachByRelease) return this.reachByRelease;
-		const reach = new Map<string, GeographyReach>();
-		const entry = (geography: string, boundaryRelease: string) => {
-			const key = `${geography}/${boundaryRelease}`;
-			const existing = reach.get(key);
-			if (existing) return existing;
-			const created: GeographyReach = { status: "isolated", reaches: [], reachedFrom: [], vintagePathCount: 0 };
-			reach.set(key, created);
-			return created;
-		};
-		const add = (into: string[], geography: string) => {
-			if (!into.includes(geography)) into.push(geography);
-		};
-		for (const paths of this.inputs.relationshipPathIndex?.values() ?? []) {
-			for (const path of paths) {
-				const source = entry(path.from.geography, path.from.boundaryRelease);
-				const target = entry(path.to.geography, path.to.boundaryRelease);
-				// A path between two vintages of one geography is continuity. It
-				// keeps a code's history joined up without reaching anything new.
-				if (path.from.geography === path.to.geography) {
-					source.vintagePathCount += 1;
-					target.vintagePathCount += 1;
-					continue;
-				}
-				add(source.reaches, path.to.geography);
-				add(target.reachedFrom, path.from.geography);
-			}
-		}
-		for (const found of reach.values()) {
-			found.reaches.sort();
-			found.reachedFrom.sort();
-			found.status = found.reaches.length > 0 || found.reachedFrom.length > 0
-				? "connected"
-				: found.vintagePathCount > 0
-					? "vintage-only"
-					: "isolated";
-		}
-		this.reachByRelease = reach;
-		return reach;
-	}
-
-	/**
 	 * Compare two compiled releases of one geography without promoting code-set
-	 * differences into geographical change claims. Same-code continuity is only
-	 * reported where its dedicated geometry comparison has published evidence.
+	 * differences into geographical change claims.
 	 */
 	compareBoundaryReleases(
 		geography: string,
@@ -1760,168 +905,19 @@ export class GeographyResolver {
 		toRelease: string,
 		limit = 25,
 	): BoundaryReleaseComparison | undefined {
-		const from = { geography, boundaryRelease: fromRelease };
-		const to = { geography, boundaryRelease: toRelease };
-		const fromAreas = this.inputs.areaLookup?.get(
-			`${geography}/${fromRelease}`,
-		);
-		const toAreas = this.inputs.areaLookup?.get(`${geography}/${toRelease}`);
-		if (!fromAreas || !toAreas) return undefined;
-		const onlyInFrom = [...fromAreas]
-			.filter(([code]) => !toAreas.has(code))
-			.map(([code, area]) => ({
-				id: areaId({ ...from, code }),
-				...area,
-			}));
-		const onlyInTo = [...toAreas]
-			.filter(([code]) => !fromAreas.has(code))
-			.map(([code, area]) => ({
-				id: areaId({ ...to, code }),
-				...area,
-			}));
-		const sharedCodes = [...fromAreas.keys()]
-			.filter((code) => toAreas.has(code))
-			.sort();
-		const between: Array<{
-			crosswalk: CrosswalkArtifact;
-			direction: "forward" | "reverse";
-		}> = [];
-		for (const crosswalk of this.inputs.crosswalkLookup?.values() ?? []) {
-			const forward =
-				crosswalk.from.geography === geography &&
-				crosswalk.from.boundaryRelease === fromRelease &&
-				crosswalk.to.geography === geography &&
-				crosswalk.to.boundaryRelease === toRelease;
-			const reverse =
-				crosswalk.to.geography === geography &&
-				crosswalk.to.boundaryRelease === fromRelease &&
-				crosswalk.from.geography === geography &&
-				crosswalk.from.boundaryRelease === toRelease;
-			if (forward) between.push({ crosswalk, direction: "forward" });
-			else if (reverse) between.push({ crosswalk, direction: "reverse" });
-		}
-		between.sort((left, right) =>
-			left.crosswalk.id.localeCompare(right.crosswalk.id),
-		);
-		const continuityArtifacts = between.filter(
-			(
-				entry,
-			): entry is {
-				crosswalk: SameCodeContinuityCrosswalkArtifact;
-				direction: "forward" | "reverse";
-			} => entry.crosswalk.method === "same-code-continuity",
-		);
-		const continuousCodes = new Set<string>();
-		const changedExtent = new Map<string, BoundaryExtentChange>();
-		const unmeasured = new Map<string, string>();
-		for (const { crosswalk, direction } of continuityArtifacts) {
-			for (const record of crosswalk.records)
-				for (const target of record.targets)
-					continuousCodes.add(
-						direction === "forward" ? record.source.code : target.code,
-					);
-			for (const finding of crosswalk.validation.continuity.changedExtent) {
-				const current = changedExtent.get(finding.code);
-				const candidate = {
-					code: finding.code,
-					relation: finding.relation,
-					widestDifferenceM: finding.widestDifferenceM,
-					fromShare:
-						direction === "forward"
-							? finding.sourceShare
-							: finding.targetShare,
-					toShare:
-						direction === "forward"
-							? finding.targetShare
-							: finding.sourceShare,
-				};
-				if (!current || candidate.widestDifferenceM > current.widestDifferenceM)
-					changedExtent.set(finding.code, candidate);
-			}
-			for (const finding of crosswalk.validation.continuity.unmeasured)
-				unmeasured.set(finding.code, finding.reason);
-		}
-		const assessed = new Set([
-			...continuousCodes,
-			...changedExtent.keys(),
-			...unmeasured.keys(),
-		]);
-		const unassessedSharedCodes = sharedCodes.filter((code) => !assessed.has(code));
-		const changed = [...changedExtent.values()].sort(
-			(left, right) =>
-				right.widestDifferenceM - left.widestDifferenceM ||
-				left.code.localeCompare(right.code),
-		);
-		const publishedRelationships = between
-			.filter(({ crosswalk }) => crosswalk.method !== "same-code-continuity")
-			.map(({ crosswalk, direction }) => ({
-				id: crosswalk.id,
-				direction,
-				method: crosswalk.method,
-				quality: crosswalk.quality,
-				...(crosswalk.relationshipPurpose
-					? { relationshipPurpose: crosswalk.relationshipPurpose }
-					: {}),
-				weighting: crosswalk.weighting,
-				recordCount: crosswalk.records.length,
-				mapping: summarisePublishedRelationshipMapping(
-					crosswalk,
-					direction,
-					limit,
-				),
-			}));
-		return {
+		return compareBoundaryReleases(
+			this.inputs,
 			geography,
-			from,
-			to,
-			summary: {
-				fromAreaCount: fromAreas.size,
-				toAreaCount: toAreas.size,
-				sharedCodeCount: sharedCodes.length,
-				codesOnlyInFromCount: onlyInFrom.length,
-				codesOnlyInToCount: onlyInTo.length,
-				continuousCodeCount: continuousCodes.size,
-				changedExtentCount: changed.filter(
-					({ relation }) => relation === "changed",
-				).length,
-				indeterminateExtentCount: changed.filter(
-					({ relation }) => relation === "indeterminate",
-				).length,
-				unmeasuredCodeCount: unmeasured.size,
-				unassessedSharedCodeCount: unassessedSharedCodes.length,
-				publishedRelationshipCount: publishedRelationships.length,
-			},
-			codes: {
-				onlyInFrom: onlyInFrom.slice(0, limit),
-				onlyInTo: onlyInTo.slice(0, limit),
-			},
-			continuity:
-				continuityArtifacts.length > 0
-					? {
-						status: "available",
-						crosswalks: continuityArtifacts.map(
-							({ crosswalk }) => crosswalk.id,
-						),
-						changedExtent: changed.slice(0, limit),
-						unmeasured: [...unmeasured]
-							.map(([code, reason]) => ({ code, reason }))
-							.sort((left, right) => left.code.localeCompare(right.code))
-							.slice(0, limit),
-						unassessedSharedCodes: unassessedSharedCodes.slice(0, limit),
-					}
-					: {
-						status: "not-published",
-						reason:
-							"No same-code continuity crosswalk has compared these releases' shared identifiers.",
-					},
-			publishedRelationships,
-		};
+			fromRelease,
+			toRelease,
+			limit,
+		);
 	}
 
 	/** A release-by-release relationship health report for repair prioritisation. */
 	geographyHealth(): GeographyHealth[] {
 		if (!this.inputs.areaLookup) return [];
-		const reach = this.conversionReach();
+		const reach = this.capabilities.conversionReach();
 		return [...this.inputs.areaLookup.keys()]
 			.map((identity) => {
 				const [geography, boundaryRelease] = identity.split("/", 2) as [string, string];
