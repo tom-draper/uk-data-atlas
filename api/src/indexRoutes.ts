@@ -29,6 +29,7 @@ export const handleIndexRoutes = ({
 				"/v1/atlas-releases/{release-id}/map-resources/{geography}/{release}",
 				"/v1/boundary-releases",
 				"/v1/boundary-releases:resolve",
+				"/v1/boundary-releases:compare",
 				"/v1/boundary-releases/{geography}/{release}",
 				"/v1/geography-inventory",
 				"/v1/geography-health",

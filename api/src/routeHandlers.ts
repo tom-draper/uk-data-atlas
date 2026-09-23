@@ -97,6 +97,7 @@ const routeFamilies: RouteFamily[] = [
 				"geography-inventory",
 				"boundary-releases",
 				"boundary-releases:resolve",
+				"boundary-releases:compare",
 			].includes(segments[1] ?? ""),
 		handle: handleBoundaryRoutes,
 	},

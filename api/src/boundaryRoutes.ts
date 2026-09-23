@@ -132,6 +132,66 @@ export const handleBoundaryRoutes = ({
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
+		segments[1] === "boundary-releases:compare"
+	) {
+		const geography = parsedUrl.searchParams.get("geography")?.trim();
+		const from = parsedUrl.searchParams.get("from")?.trim();
+		const to = parsedUrl.searchParams.get("to")?.trim();
+		const limitText = parsedUrl.searchParams.get("limit");
+		const limit = limitText === null ? 25 : Number(limitText);
+		if (!geography || !from || !to)
+			return problem(
+				400,
+				"Invalid Query",
+				"geography, from and to are required boundary release ids.",
+			);
+		if (!Number.isInteger(limit) || limit < 1 || limit > 100)
+			return problem(
+				400,
+				"Invalid Query",
+				"limit must be an integer from 1 to 100.",
+			);
+		if (from === to)
+			return problem(
+				400,
+				"Invalid Query",
+				"from and to must name different boundary releases.",
+			);
+		if (!geographyResolver)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the geography resolver before comparing boundary releases.",
+			);
+		if (!geographyResolver.hasAreaRelease(geography, from))
+			return areaNotFound(context, geography, from);
+		if (!geographyResolver.hasAreaRelease(geography, to))
+			return areaNotFound(context, geography, to);
+		const comparison = geographyResolver.compareBoundaryReleases(
+			geography,
+			from,
+			to,
+			limit,
+		);
+		if (!comparison)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the compiled area identities before comparing boundary releases.",
+			);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...comparison,
+				limit,
+				note: "Code-set differences are reported as identifiers present in only one release, not as proof that a place was added or removed. Same-code continuity is available only where a dedicated geometric comparison published it; changed, indeterminate and unmeasured extents remain evidence for review rather than a conversion claim.",
+			}),
+		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
 		segments[1] === "boundary-releases"
 	)
 		return {

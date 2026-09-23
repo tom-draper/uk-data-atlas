@@ -250,6 +250,55 @@ export type GeographyHealth = {
 	reach: GeographyReach;
 };
 
+export type BoundaryExtentChange = {
+	code: string;
+	relation: "changed" | "indeterminate";
+	widestDifferenceM: number;
+	fromShare: number;
+	toShare: number;
+};
+
+export type BoundaryReleaseComparison = {
+	geography: string;
+	from: GeographyEndpoint;
+	to: GeographyEndpoint;
+	summary: {
+		fromAreaCount: number;
+		toAreaCount: number;
+		sharedCodeCount: number;
+		codesOnlyInFromCount: number;
+		codesOnlyInToCount: number;
+		continuousCodeCount: number;
+		changedExtentCount: number;
+		indeterminateExtentCount: number;
+		unmeasuredCodeCount: number;
+		unassessedSharedCodeCount: number;
+		publishedRelationshipCount: number;
+	};
+	codes: {
+		onlyInFrom: Array<AreaRecord & { id: string }>;
+		onlyInTo: Array<AreaRecord & { id: string }>;
+	};
+	continuity:
+		| {
+				status: "available";
+				crosswalks: string[];
+				changedExtent: BoundaryExtentChange[];
+				unmeasured: Array<{ code: string; reason: string }>;
+				unassessedSharedCodes: string[];
+			}
+		| { status: "not-published"; reason: string };
+	publishedRelationships: Array<{
+		id: string;
+		direction: "forward" | "reverse";
+		method: CrosswalkArtifact["method"];
+		quality: CrosswalkArtifact["quality"];
+		relationshipPurpose?: "identity" | "membership";
+		weighting: CrosswalkArtifact["weighting"];
+		recordCount: number;
+	}>;
+};
+
 export type RelationshipRepair = {
 	candidate: RelationshipCandidateInventory["candidates"][number];
 	action: "publish-crosswalk" | "review-candidate" | "compile-target-release";
@@ -1478,6 +1527,163 @@ export class GeographyResolver {
 		}
 		this.reachByRelease = reach;
 		return reach;
+	}
+
+	/**
+	 * Compare two compiled releases of one geography without promoting code-set
+	 * differences into geographical change claims. Same-code continuity is only
+	 * reported where its dedicated geometry comparison has published evidence.
+	 */
+	compareBoundaryReleases(
+		geography: string,
+		fromRelease: string,
+		toRelease: string,
+		limit = 25,
+	): BoundaryReleaseComparison | undefined {
+		const from = { geography, boundaryRelease: fromRelease };
+		const to = { geography, boundaryRelease: toRelease };
+		const fromAreas = this.inputs.areaLookup?.get(
+			`${geography}/${fromRelease}`,
+		);
+		const toAreas = this.inputs.areaLookup?.get(`${geography}/${toRelease}`);
+		if (!fromAreas || !toAreas) return undefined;
+		const onlyInFrom = [...fromAreas]
+			.filter(([code]) => !toAreas.has(code))
+			.map(([code, area]) => ({
+				id: areaId({ ...from, code }),
+				...area,
+			}));
+		const onlyInTo = [...toAreas]
+			.filter(([code]) => !fromAreas.has(code))
+			.map(([code, area]) => ({
+				id: areaId({ ...to, code }),
+				...area,
+			}));
+		const sharedCodes = [...fromAreas.keys()]
+			.filter((code) => toAreas.has(code))
+			.sort();
+		const between = [...(this.inputs.crosswalkLookup?.values() ?? [])]
+			.flatMap((crosswalk) => {
+				const forward =
+					crosswalk.from.geography === geography &&
+					crosswalk.from.boundaryRelease === fromRelease &&
+					crosswalk.to.geography === geography &&
+					crosswalk.to.boundaryRelease === toRelease;
+				const reverse =
+					crosswalk.to.geography === geography &&
+					crosswalk.to.boundaryRelease === fromRelease &&
+					crosswalk.from.geography === geography &&
+					crosswalk.from.boundaryRelease === toRelease;
+				return forward
+					? [{ crosswalk, direction: "forward" as const }]
+					: reverse
+						? [{ crosswalk, direction: "reverse" as const }]
+						: [];
+			})
+			.sort((left, right) => left.crosswalk.id.localeCompare(right.crosswalk.id));
+		const continuityArtifacts = between.filter(
+			({ crosswalk }) => crosswalk.method === "same-code-continuity",
+		);
+		const continuousCodes = new Set<string>();
+		const changedExtent = new Map<string, BoundaryExtentChange>();
+		const unmeasured = new Map<string, string>();
+		for (const { crosswalk, direction } of continuityArtifacts) {
+			for (const record of crosswalk.records)
+				for (const target of record.targets)
+					continuousCodes.add(
+						direction === "forward" ? record.source.code : target.code,
+					);
+			for (const finding of crosswalk.validation.continuity.changedExtent) {
+				const current = changedExtent.get(finding.code);
+				const candidate = {
+					code: finding.code,
+					relation: finding.relation,
+					widestDifferenceM: finding.widestDifferenceM,
+					fromShare:
+						direction === "forward"
+							? finding.sourceShare
+							: finding.targetShare,
+					toShare:
+						direction === "forward"
+							? finding.targetShare
+							: finding.sourceShare,
+				};
+				if (!current || candidate.widestDifferenceM > current.widestDifferenceM)
+					changedExtent.set(finding.code, candidate);
+			}
+			for (const finding of crosswalk.validation.continuity.unmeasured)
+				unmeasured.set(finding.code, finding.reason);
+		}
+		const assessed = new Set([
+			...continuousCodes,
+			...changedExtent.keys(),
+			...unmeasured.keys(),
+		]);
+		const unassessedSharedCodes = sharedCodes.filter((code) => !assessed.has(code));
+		const changed = [...changedExtent.values()].sort(
+			(left, right) =>
+				right.widestDifferenceM - left.widestDifferenceM ||
+				left.code.localeCompare(right.code),
+		);
+		const publishedRelationships = between
+			.filter(({ crosswalk }) => crosswalk.method !== "same-code-continuity")
+			.map(({ crosswalk, direction }) => ({
+				id: crosswalk.id,
+				direction,
+				method: crosswalk.method,
+				quality: crosswalk.quality,
+				...(crosswalk.relationshipPurpose
+					? { relationshipPurpose: crosswalk.relationshipPurpose }
+					: {}),
+				weighting: crosswalk.weighting,
+				recordCount: crosswalk.records.length,
+			}));
+		return {
+			geography,
+			from,
+			to,
+			summary: {
+				fromAreaCount: fromAreas.size,
+				toAreaCount: toAreas.size,
+				sharedCodeCount: sharedCodes.length,
+				codesOnlyInFromCount: onlyInFrom.length,
+				codesOnlyInToCount: onlyInTo.length,
+				continuousCodeCount: continuousCodes.size,
+				changedExtentCount: changed.filter(
+					({ relation }) => relation === "changed",
+				).length,
+				indeterminateExtentCount: changed.filter(
+					({ relation }) => relation === "indeterminate",
+				).length,
+				unmeasuredCodeCount: unmeasured.size,
+				unassessedSharedCodeCount: unassessedSharedCodes.length,
+				publishedRelationshipCount: publishedRelationships.length,
+			},
+			codes: {
+				onlyInFrom: onlyInFrom.slice(0, limit),
+				onlyInTo: onlyInTo.slice(0, limit),
+			},
+			continuity:
+				continuityArtifacts.length > 0
+					? {
+						status: "available",
+						crosswalks: continuityArtifacts.map(
+							({ crosswalk }) => crosswalk.id,
+						),
+						changedExtent: changed.slice(0, limit),
+						unmeasured: [...unmeasured]
+							.map(([code, reason]) => ({ code, reason }))
+							.sort((left, right) => left.code.localeCompare(right.code))
+							.slice(0, limit),
+						unassessedSharedCodes: unassessedSharedCodes.slice(0, limit),
+					}
+					: {
+						status: "not-published",
+						reason:
+							"No same-code continuity crosswalk has compared these releases' shared identifiers.",
+					},
+			publishedRelationships,
+		};
 	}
 
 	/** A release-by-release relationship health report for repair prioritisation. */
