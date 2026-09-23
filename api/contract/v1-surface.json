@@ -5708,6 +5708,84 @@
 				]
 			}
 		},
+		"GET /conversion-plan": {
+			"operationId": "planGeographyConversion",
+			"parameters": {
+				"query:sourceGeography": {
+					"required": true
+				},
+				"query:sourceRelease": {
+					"required": true
+				},
+				"query:targetGeography": {
+					"required": true
+				},
+				"query:targetRelease": {
+					"required": true
+				},
+				"query:purpose": {
+					"required": true,
+					"enum": [
+						"apportion",
+						"identity",
+						"membership"
+					]
+				},
+				"query:operation": {
+					"required": false,
+					"enum": [
+						"code-translation",
+						"containment-aggregation",
+						"identity-join",
+						"membership-join",
+						"weighted-allocation"
+					]
+				}
+			},
+			"responses": {
+				"200 application/json": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
 		"GET /relationship-coverage": {
 			"operationId": "reportRelationshipCoverage",
 			"parameters": {

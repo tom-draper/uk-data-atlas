@@ -44,6 +44,7 @@ import { handleAreaCitationRoutes } from "./areaCitationRoutes";
 import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
 import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
+import { handleConversionPlanRoutes } from "./conversionPlanRoutes";
 import { handleRelationshipPathRoutes } from "./relationshipPathRoutes";
 import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
@@ -404,6 +405,14 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			segments[1] === "translations",
 		handle: handleTranslationRoutes,
+	},
+	{
+		name: "conversion-plan",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "conversion-plan",
+		handle: handleConversionPlanRoutes,
 	},
 	{
 		name: "geography-health",

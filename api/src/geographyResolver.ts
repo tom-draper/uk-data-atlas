@@ -209,6 +209,16 @@ export type ResolvedRelationshipPath = RelationshipPath & {
 	};
 };
 
+export const RELATIONSHIP_OPERATIONS = [
+	"identity-join",
+	"code-translation",
+	"containment-aggregation",
+	"membership-join",
+	"weighted-allocation",
+] as const;
+
+export type RelationshipOperation = (typeof RELATIONSHIP_OPERATIONS)[number];
+
 export type RelationshipPrerequisite = {
 	id:
 		| "source-areas"
@@ -224,6 +234,17 @@ export type ResolvedRelationshipCapability = {
 	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
 	paths: ResolvedRelationshipPath[];
 	missingPrerequisites: RelationshipPrerequisite[];
+};
+
+/** A deterministic, inspectable choice for a requested geography conversion. */
+export type ResolvedConversionPlan = {
+	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
+	purpose: RelationshipPurpose;
+	operation?: RelationshipOperation;
+	selectedPath?: ResolvedRelationshipPath;
+	alternatives: ResolvedRelationshipPath[];
+	missingPrerequisites: RelationshipPrerequisite[];
+	reason?: string;
 };
 
 export type ResolvedRelationshipCoverage = {
@@ -368,6 +389,27 @@ const directRelationshipPath = (
 		},
 	],
 });
+
+const operationsForPurpose = (
+	purpose: RelationshipPurpose,
+): ResolvedRelationshipPath["operations"] =>
+	purpose === "identity"
+		? {
+				permitted: ["identity-join", "code-translation"],
+				prohibited: ["weighted-allocation", "containment-aggregation"],
+				note: "Use this path to identify the declared equivalent area; it does not supply weights or membership.",
+			}
+		: purpose === "membership"
+			? {
+					permitted: ["containment-aggregation", "membership-join"],
+					prohibited: ["weighted-allocation"],
+					note: "Use this path to group members under a parent. It does not allocate a source value across overlapping targets.",
+				}
+			: {
+					permitted: ["weighted-allocation"],
+					prohibited: ["identity-join"],
+					note: "Use this path only for measures whose semantics permit the published overlap weighting.",
+				};
 
 /**
  * Read-only geography intelligence over one immutable Atlas release.
@@ -1371,24 +1413,7 @@ export class GeographyResolver {
 								};
 			return {
 				...path,
-				operations:
-					path.purpose === "identity"
-						? {
-								permitted: ["identity-join", "code-translation"],
-								prohibited: ["weighted-allocation", "containment-aggregation"],
-								note: "Use this path to identify the declared equivalent area; it does not supply weights or membership.",
-							}
-						: path.purpose === "membership"
-							? {
-								permitted: ["containment-aggregation", "membership-join"],
-								prohibited: ["weighted-allocation"],
-								note: "Use this path to group members under a parent. It does not allocate a source value across overlapping targets.",
-							}
-							: {
-								permitted: ["weighted-allocation"],
-								prohibited: ["identity-join"],
-								note: "Use this path only for measures whose semantics permit the published overlap weighting.",
-							},
+				operations: operationsForPurpose(path.purpose),
 				trust,
 				coverage: {
 					status: coverageStatus,
@@ -1442,6 +1467,45 @@ export class GeographyResolver {
 							: "available",
 			paths: rankedPaths,
 			missingPrerequisites,
+		};
+	}
+
+	/**
+	 * Choose the best published path for an exact conversion without executing
+	 * it. The selected path is the first deterministic rank, and every other
+	 * usable or incomplete option remains visible as an alternative.
+	 */
+	conversionPlan(
+		from: GeographyEndpoint,
+		to: GeographyEndpoint,
+		purpose: RelationshipPurpose,
+		operation?: RelationshipOperation,
+	): ResolvedConversionPlan {
+		const capability = this.relationshipCapability(from, to, purpose);
+		const [selectedPath, ...alternatives] = capability.paths;
+		const operationPermitted =
+			!operation ||
+			!selectedPath ||
+			selectedPath.operations.permitted.includes(operation);
+		const status = operationPermitted
+			? capability.status
+			: ("unsupported" as const);
+		const reason = !operationPermitted
+			? `${operation} is not permitted for a ${purpose} conversion; the selected path permits ${selectedPath!.operations.permitted.join(" and ")} instead.`
+			: status === "available"
+				? undefined
+				: capability.missingPrerequisites[0]?.reason ??
+					status === "partial"
+						? "The best published path does not cover every source area."
+						: "No published conversion path can satisfy this request.";
+		return {
+			status,
+			purpose,
+			...(operation ? { operation } : {}),
+			...(selectedPath ? { selectedPath } : {}),
+			alternatives,
+			missingPrerequisites: capability.missingPrerequisites,
+			...(reason ? { reason } : {}),
 		};
 	}
 
