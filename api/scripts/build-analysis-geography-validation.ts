@@ -5,6 +5,7 @@ import { validateAnalysisGeographies } from "../src/analysisGeographyValidation"
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
 import type { CrosswalkArtifact, CrosswalkInventory } from "../src/crosswalkInventory";
 import type { AnyMeasureObservationArtifact, DataCatalog } from "../src/dataCatalog";
+import type { MeasureTableArtifact } from "../src/observationTables";
 
 export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "api", "public");
@@ -40,10 +41,14 @@ export const buildAnalysisGeographyValidation = (repositoryRoot: string) => {
 				const artifact = source.observationArtifact ?? `${measure.id}-observations`;
 				const path = join(directory, `${artifact}.json`);
 				if (!existsSync(path)) return [];
+				// A table is kept whole: the validator reads each measure's
+				// column from it, since several measures share the one name.
 				return [
 					[
 						artifact,
-						JSON.parse(readFileSync(path, "utf8")) as AnyMeasureObservationArtifact,
+						JSON.parse(readFileSync(path, "utf8")) as
+							| AnyMeasureObservationArtifact
+							| MeasureTableArtifact,
 					] as const,
 				];
 			}),

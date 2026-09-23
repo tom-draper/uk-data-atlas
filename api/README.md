@@ -638,6 +638,26 @@ only **available** when its endpoint, contract and provenance are published.
       nineteen ethnic groups are exhaustive, so they sum to the resident
       population without a separate total, give or take the few residents
       ONS perturbation moves between tables.
+- [ ] Return Census 2021 small-area tables on 2021 LSOAs and MSOAs for England
+      and Wales (compiled by `pnpm --dir api build`; not yet in a published
+      release): usual residents (TS001, `usual-residents-*`), age in five-year
+      bands (TS007A, `age-*`), household composition (TS003,
+      `household-composition-*`), tenure (TS054, `tenure-*`), economic
+      activity (TS066, `economic-activity-*`) and general health (TS037,
+      `general-health-*`), and ethnic group (TS021) as LSOA and MSOA
+      partitions of the existing `ethnicity-*` measures. Only leaf categories
+      are served, with a `-total` where the table has one, and the build
+      refuses a file whose categories do not sum exactly to its total. Each
+      table is stored once per geography as a shared table artifact (15 MB for
+      all fourteen, against about 190 MB as one artifact per measure), read
+      once and expanded per measure only when asked for; each measure still
+      exports the whole table it lives in. LSOAs nest in MSOAs through the
+      official exact-fit lookup
+      `lsoa-2021-12-ew-bgc-v5-to-msoa-2021-12-ew-bgc-v3-official-lookup`, so a
+      small-area count converts or aggregates up exactly. The 2011 to 2021
+      LSOA lookup keeps ONS's change indicator on each pair as `change`:
+      `unchanged`, `split`, `merged` or `complex`, checked against the
+      lookup's own shape.
 - [x] Return Ofcom's July 2025 fixed broadband availability through
       `GET /v1/data/broadband-{superfast,ultrafast,full-fibre,gigabit}-availability`:
       shares of premises for every authority in all four nations. A share is

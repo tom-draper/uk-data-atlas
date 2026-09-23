@@ -12,6 +12,7 @@ import {
 } from "./dataCatalog";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { observationTableOf } from "./observationTables";
 
 /** Immutable observation exports and rendered lookup artifacts. */
 export const handleBulkRoutes = ({
@@ -109,7 +110,8 @@ export const handleBulkRoutes = ({
 			body: envelope(releaseId, listedExport),
 			representation: {
 				contentType: "application/json",
-				body: `${JSON.stringify(artifact)}\n`,
+				// A table-backed export is the whole table, the artifact read.
+				body: `${JSON.stringify(observationTableOf(artifact) ?? artifact)}\n`,
 				headers: {
 					"content-disposition": `attachment; filename=\"${listedExport.artifact}.json\"`,
 				},

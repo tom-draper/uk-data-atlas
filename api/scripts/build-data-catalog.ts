@@ -54,6 +54,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		adultSocialCareOutcomes: precompiled("adult-social-care-outcomes.json"),
 		planningApplications: precompiled("planning-applications.json"),
 		electricVehicleChargers: precompiled("electric-vehicle-chargers.json"),
+		censusSmallAreaRoot: repositoryRoot,
 	};
 	const missing = Object.values(inputs).filter(
 		(path): path is string => !path || !existsSync(path),
@@ -82,6 +83,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		lifeExpectancyObservations,
 		populationConstituencyObservations,
 		electionObservations,
+		censusTables,
 	} = compileDataCatalog(inputs);
 	const catalogPath = join(outputDirectory, "data-catalog.json");
 	const observationsPath = join(
@@ -145,6 +147,13 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		writeFileSync(path, `${JSON.stringify(observations)}\n`);
 		return path;
 	});
+	// A table serves several measures, which each name it, so it is written
+	// once under its own name.
+	const tablePaths = censusTables.map((table) => {
+		const path = join(outputDirectory, `${table.id}.json`);
+		writeFileSync(path, `${JSON.stringify(table)}\n`);
+		return path;
+	});
 	writeFileSync(
 		observationsPath,
 		`${JSON.stringify(populationObservations)}\n`,
@@ -158,7 +167,7 @@ export const buildDataCatalog = (repositoryRoot: string) => {
 		observationsPath,
 		localAuthorityObservationsPath,
 		ghgEmissionsObservationsPath,
-		measureObservationPaths,
+		measureObservationPaths: [...measureObservationPaths, ...tablePaths],
 		measureRecordCount: [
 			jobsObservations,
 			...mobileCoverageObservations,

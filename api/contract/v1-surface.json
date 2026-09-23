@@ -2218,6 +2218,7 @@
 						"dataZone",
 						"localAuthority",
 						"lsoa",
+						"msoa",
 						"superOutputArea",
 						"ward"
 					]
@@ -2348,6 +2349,7 @@
 						"dataZone",
 						"localAuthority",
 						"lsoa",
+						"msoa",
 						"superOutputArea",
 						"ward"
 					]
@@ -2488,6 +2490,7 @@
 						"dataZone",
 						"localAuthority",
 						"lsoa",
+						"msoa",
 						"superOutputArea",
 						"ward"
 					]
@@ -2609,6 +2612,7 @@
 						"dataZone",
 						"localAuthority",
 						"lsoa",
+						"msoa",
 						"superOutputArea",
 						"ward"
 					]
@@ -2728,6 +2732,7 @@
 						"dataZone",
 						"localAuthority",
 						"lsoa",
+						"msoa",
 						"superOutputArea",
 						"ward"
 					]
@@ -3172,6 +3177,7 @@
 						"dataZone",
 						"localAuthority",
 						"lsoa",
+						"msoa",
 						"superOutputArea",
 						"ward"
 					]
@@ -6597,6 +6603,7 @@
 					"data.exports[].schema.fields[].required",
 					"data.exports[].schema.fields[].type",
 					"data.exports[].schema.layout",
+					"data.exports[].schema.measures",
 					"data.exports[].schema.recordType",
 					"data.exports[].schema.version",
 					"data.exports[].sourceGeography",

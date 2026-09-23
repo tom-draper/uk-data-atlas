@@ -8,6 +8,10 @@ import {
 	type PopulationLocalAuthorityObservationArtifact,
 	type PopulationObservationArtifact,
 } from "./dataCatalog";
+import {
+	readSourceObservations,
+	type MeasureTableArtifact,
+} from "./observationTables";
 
 export const readPopulationObservations = (
 	apiRoot: string,
@@ -59,19 +63,21 @@ export const readPopulationLocalAuthorityObservations = (
 export const readMeasureObservations = (
 	apiRoot: string,
 	dataCatalog: DataCatalog,
-): AnyMeasureObservationArtifact[] =>
-	dataCatalog.measures.flatMap((measure) =>
+): AnyMeasureObservationArtifact[] => {
+	// A table serves every measure that names it, so it is read once.
+	const tables = new Map<string, MeasureTableArtifact>();
+	return dataCatalog.measures.flatMap((measure) =>
 		measure.sources
 			.filter((source) => !isLegacyPopulationSource(measure.id, source))
 			.map((source) => {
-				const path = join(
-					apiRoot,
-					"public",
-					`${observationArtifactName(measure.id, source)}.json`,
+				const name = observationArtifactName(measure.id, source);
+				const path = join(apiRoot, "public", `${name}.json`);
+				const observations = readSourceObservations(
+					join(apiRoot, "public"),
+					name,
+					measure.id,
+					tables,
 				);
-				const observations = JSON.parse(
-					readFileSync(path, "utf8"),
-				) as AnyMeasureObservationArtifact;
 				if (
 					observations.schemaVersion !== 1 ||
 					observations.measureId !== measure.id ||
@@ -86,3 +92,4 @@ export const readMeasureObservations = (
 				return observations;
 			}),
 	);
+};

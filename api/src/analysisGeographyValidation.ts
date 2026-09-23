@@ -11,6 +11,11 @@ import {
 	type ConversionResult,
 } from "./conversion";
 import { buildTranslationSteps } from "./resolver/translation";
+import {
+	isMeasureTable,
+	tableMeasureObservations,
+	type MeasureTableArtifact,
+} from "./observationTables";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import type {
 	AnalysisGeographyInventory,
@@ -66,7 +71,10 @@ export const validateAnalysisGeographies = (
 	analysisGeographies: AnalysisGeographyInventory,
 	dataCatalog: DataCatalog,
 	crosswalkLookup: Map<string, CrosswalkArtifact>,
-	observationsByArtifact: Map<string, AnyMeasureObservationArtifact>,
+	observationsByArtifact: Map<
+		string,
+		AnyMeasureObservationArtifact | MeasureTableArtifact
+	>,
 ): AnalysisGeographyValidationInventory => {
 	const supports = analysisGeographies.supports.map((support) => {
 		const measure = dataCatalog.measures.find(
@@ -82,7 +90,11 @@ export const validateAnalysisGeographies = (
 		if (!measure || !source)
 			throw new Error(`${support.measureId}: reviewed source is not published.`);
 		const artifactName = observationArtifactName(measure.id, source);
-		const observations = observationsByArtifact.get(artifactName);
+		const stored = observationsByArtifact.get(artifactName);
+		const observations =
+			stored && isMeasureTable(stored)
+				? tableMeasureObservations(stored, measure.id)
+				: stored;
 		if (!observations)
 			throw new Error(
 				`${support.measureId}: observation artifact ${artifactName} is not built.`,

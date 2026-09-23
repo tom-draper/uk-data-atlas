@@ -3,9 +3,11 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import {
 	type DataCatalog,
+	type MeasureSource,
 	isLegacyPopulationSource,
 	observationArtifactName,
 } from "./dataCatalog";
+import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
 
 export type ExportField = {
 	name: string;
@@ -40,8 +42,13 @@ export type BulkExport = {
 	/** The artifact's shape and record fields, read from the artifact itself. */
 	schema: {
 		version: number;
-		/** `periods` holds one block per period; `single-period` predates it. */
-		layout: "periods" | "single-period";
+		/**
+		 * `periods` holds one block per period; `single-period` predates it;
+		 * `table` holds one row per area with a value for each of `measures`.
+		 */
+		layout: "periods" | "single-period" | "table";
+		/** For a `table`, the measure each value column serves, in order. */
+		measures?: string[];
 		recordType: "numeric" | "categorical";
 		fields: ExportField[];
 	};
@@ -74,6 +81,8 @@ const FIELD_DESCRIPTIONS: Record<string, string> = {
 		"The publisher-supplied code when a reviewed code-only correction changes areaCode; absent otherwise.",
 	value: "The numeric value, in the measure's unit.",
 	category: "A source-reported label, such as a winning party.",
+	values:
+		"In a table, one value for each of the table's measures, in the order `schema.measures` lists them; null where none is published.",
 	status: "`observed` for a value the publisher reported, `derived` for one this API computed.",
 	confidenceInterval:
 		"The publisher's interval around the value, with `lower` and `upper` bounds.",
@@ -126,6 +135,54 @@ const recordFields = (
 	});
 };
 
+const provenanceOf = (
+	measure: DataCatalog["measures"][number],
+	source: MeasureSource,
+): BulkExport["provenance"] => ({
+	measure: `/v1/measures/${measure.id}`,
+	datasets: [
+		{ id: source.datasetId, role: "source" },
+		...(measure.derivedFrom?.datasetIds ?? [])
+			.filter((id) => id !== source.datasetId)
+			.map((id) => ({ id, role: "derived-from" as const })),
+	],
+});
+
+/** The export of one measure whose artifact is a table it shares. */
+const tableExport = (
+	measure: DataCatalog["measures"][number],
+	source: MeasureSource,
+	table: MeasureTableArtifact,
+	bytes: number,
+): BulkExport => {
+	const id = `${measure.id}-${source.sourceGeography.type}-${source.sourceGeography.boundaryYear}`;
+	return {
+		id,
+		measureId: measure.id,
+		datasetId: source.datasetId,
+		periods: source.periods,
+		sourceGeography: source.sourceGeography,
+		format: "json",
+		artifact: table.id,
+		contentHash: table.contentHash,
+		bytes,
+		href: `/v1/exports/${id}`,
+		recordCount: table.records.length,
+		recordCountByPeriod: { [table.period]: table.records.length },
+		schema: {
+			version: table.schemaVersion,
+			layout: "table",
+			recordType: "numeric",
+			measures: table.measures,
+			fields: [
+				{ name: "areaCode", type: "string", required: true },
+				{ name: "values", type: "number", required: true },
+			],
+		},
+		provenance: provenanceOf(measure, source),
+	};
+};
+
 const exportDataset = (dataCatalog: DataCatalog, id: string): ExportDataset => {
 	const dataset = dataCatalog.datasets.find(
 		(candidate) => candidate.id === id,
@@ -169,7 +226,12 @@ export const compileExportManifest = (
 					);
 				}
 				const content = readFileSync(path, "utf8");
-				const parsed = JSON.parse(content) as ArtifactRecords;
+				const table = JSON.parse(content) as unknown;
+				// A table is several measures' artifact, so each of them
+				// exports the whole table under an id of its own.
+				if (isMeasureTable(table))
+					return tableExport(measure, source, table, statSync(path).size);
+				const parsed = table as ArtifactRecords;
 				if (typeof parsed.contentHash !== "string") {
 					throw new Error(`${artifact}.json has no content hash.`);
 				}
@@ -213,18 +275,7 @@ export const compileExportManifest = (
 							: "numeric",
 						fields,
 					},
-					provenance: {
-						measure: `/v1/measures/${measure.id}`,
-						datasets: [
-							{ id: source.datasetId, role: "source" },
-							...(measure.derivedFrom?.datasetIds ?? [])
-								.filter((id) => id !== source.datasetId)
-								.map((id) => ({
-									id,
-									role: "derived-from" as const,
-								})),
-						],
-					},
+					provenance: provenanceOf(measure, source),
 				};
 			}),
 		)
