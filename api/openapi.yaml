@@ -7230,7 +7230,10 @@ paths:
         discovered compositions. `paths` records every step used. A direct
         result retains its directional crosswalk and provenance; a composed
         result carries its full `path` instead, so it cannot be mistaken for
-        a direct lookup. Reverse area-overlap weights are normalised against
+        a direct lookup. A composed result's targets carry only their code,
+        labels and, for `apportion`, the weight multiplied along the path: a
+        step's shares, overlap area and population describe the areas that
+        step joins, not the queried one. Reverse area-overlap weights are normalised against
         the queried target and report its source coverage. The route does not
         treat a shared code across releases as proof of unchanged geography.
       parameters:

@@ -245,6 +245,14 @@ test("multiplies apportion weights along a path and sums them where routes meet"
 		["T", 0.8],
 		["U", 0.2],
 	]);
+	// Step shares describe intermediate areas, so a composed result drops them.
+	assert.deepEqual(
+		translation.targets.map((target) => Object.keys(target).sort()),
+		[
+			["code", "labels", "weight"],
+			["code", "labels", "weight"],
+		],
+	);
 	const total = translation.targets.reduce(
 		(sum, target) => sum + ("weight" in target ? target.weight : 0),
 		0,
