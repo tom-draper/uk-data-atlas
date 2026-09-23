@@ -235,7 +235,7 @@ async function publish(tag) {
 		"--title",
 		tag.slice("data-".length),
 		"--notes",
-		`Datasets release ${tag.slice("data-".length)}`,
+		`Immutable source-data snapshot for UK Data Atlas, dated ${tag.slice("data-".length)}.`,
 		"--latest=false",
 	]);
 
