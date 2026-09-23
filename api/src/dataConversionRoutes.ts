@@ -139,7 +139,7 @@ export const handleDataConversionRoutes = ({
 				"Not Found",
 				"No published relationship path matches that id.",
 			);
-		const indexed = geographyResolver!.indexedPathSteps(path);
+		const indexed = geographyResolver.indexedPathSteps(path);
 		if ("missingCrosswalkId" in indexed)
 			return problem(
 				503,

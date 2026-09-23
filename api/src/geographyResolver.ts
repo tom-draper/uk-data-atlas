@@ -65,12 +65,12 @@ export class GeographyResolver {
 	/** Return the shared 503 response when a route's required geography input is absent. */
 	requires(requirement: GeographyRequirement): ApiResponse | undefined {
 		const available: Record<GeographyRequirement, boolean> = {
-			areas: this.inputs.areaLookup !== undefined,
+			areas: this.areas.hasAreas(),
 			geometry: this.spatial.hasAreaGeometryCache(),
 			relationships: this.lineage.hasAreaRelationships(),
 			"named-locations": this.locations.hasNamedLocationInventory(),
 			"location-projections": this.locations.hasLocationProjectionStore(),
-			crosswalks: this.inputs.crosswalkLookup !== undefined,
+			crosswalks: this.translator.hasCrosswalks(),
 		};
 		if (available[requirement]) return undefined;
 		const descriptions: Record<GeographyRequirement, string> = {
