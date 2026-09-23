@@ -155,8 +155,8 @@ async function createArchives(tag) {
 	const files = await filesUnder(DATA);
 	if (files.length === 0) fail("data/ has no source files to publish.");
 	const output = join(STAGING, tag);
-	await rm(output, { recursive: true, force: true });
 	await mkdir(output, { recursive: true });
+	const tar = gnuTar();
 	const shards = shardFiles(files);
 	const digits = String(shards.length).length;
 	const assets = [];
@@ -170,20 +170,28 @@ async function createArchives(tag) {
 				1024 ** 3
 			).toFixed(2)} GiB before compression)...`,
 		);
-		run(gnuTar(), [
-			"--create",
-			"--gzip",
-			"--file",
-			path,
-			"--directory",
-			DATA,
-			"--sort=name",
-			"--mtime=@0",
-			"--owner=0",
-			"--group=0",
-			"--numeric-owner",
-			...shard.map((file) => file.path),
-		]);
+		const reusable = Boolean(
+			capture(tar, ["--list", "--gzip", "--file", path]),
+		);
+		if (reusable) {
+			console.log(`  reusing verified ${name}`);
+		} else {
+			await rm(path, { force: true });
+			run(tar, [
+				"--create",
+				"--gzip",
+				"--file",
+				path,
+				"--directory",
+				DATA,
+				"--sort=name",
+				"--mtime=@0",
+				"--owner=0",
+				"--group=0",
+				"--numeric-owner",
+				...shard.map((file) => file.path),
+			]);
+		}
 		const bytes = await fileSize(path);
 		if (bytes >= 2 * 1024 ** 3)
 			fail(
