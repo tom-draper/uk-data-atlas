@@ -1,6 +1,7 @@
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { DataCatalog } from "./dataCatalog";
+import { releaseKey } from "./geographyKeys";
 
 export type Licence = { name: string; url?: string };
 
@@ -90,7 +91,7 @@ export const attributionFor = (
 			unknown.push(requestedAs);
 			return;
 		}
-		const id = `${release.geography}/${release.id}`;
+		const id = releaseKey(release.geography, release.id);
 		if (resources.some((resource) => resource.id === id)) return;
 		resources.push({
 			kind: "boundaryRelease",
@@ -136,8 +137,8 @@ export const attributionFor = (
 			continue;
 		}
 		const endpoints = [
-			`${crosswalk.from.geography}/${crosswalk.from.boundaryRelease}`,
-			`${crosswalk.to.geography}/${crosswalk.to.boundaryRelease}`,
+			releaseKey(crosswalk.from.geography, crosswalk.from.boundaryRelease),
+			releaseKey(crosswalk.to.geography, crosswalk.to.boundaryRelease),
 		];
 		for (const endpoint of endpoints)
 			addBoundaryRelease(endpoint, `crosswalk=${id}`);

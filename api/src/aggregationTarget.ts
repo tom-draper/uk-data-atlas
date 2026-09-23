@@ -7,6 +7,7 @@ import type {
 import { fullMembership, membershipClaimFor } from "./aggregationMembership";
 import type { GeographyResolver } from "./geographyResolver";
 import { problem, type ApiResponse } from "./routeResponse";
+import { areaKey } from "./geographyKeys";
 
 export type AggregationTarget = {
 	crosswalk: CrosswalkArtifact;
@@ -120,7 +121,7 @@ export const resolveAggregationTarget = ({
 		sourceRelease,
 		memberCodes: new Set(membership.memberCodes),
 		target: {
-			id: `${crosswalk.to.geography}/${crosswalk.to.boundaryRelease}/${targetCode}`,
+			id: areaKey(crosswalk.to.geography, crosswalk.to.boundaryRelease, targetCode),
 			geography: crosswalk.to.geography,
 			boundaryRelease: crosswalk.to.boundaryRelease,
 			code: targetCode,

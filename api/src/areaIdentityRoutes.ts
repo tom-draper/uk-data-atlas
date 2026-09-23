@@ -1,6 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { areaKey } from "./geographyKeys";
 
 /** One compiled area identity in one explicit geography release. */
 export const handleAreaIdentityRoutes = ({
@@ -27,7 +28,7 @@ export const handleAreaIdentityRoutes = ({
 		return {
 			status: 200,
 			body: envelope(releaseId, {
-				id: `${geography}/${boundaryRelease}/${area.code}`,
+				id: areaKey(geography, boundaryRelease, area.code),
 				geography,
 				boundaryRelease,
 				...area,

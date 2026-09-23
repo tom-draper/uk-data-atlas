@@ -4,13 +4,14 @@ import type {
 	SameCodeContinuityCrosswalkArtifact,
 } from "../crosswalkInventory";
 import type { CrosswalkLookup, GeographyEndpoint } from "./translation";
+import { areaKey, releaseKey } from "../geographyKeys";
 
 const areaId = ({
 	geography,
 	boundaryRelease,
 	code,
 }: GeographyEndpoint & { code: string }) =>
-	[geography, boundaryRelease, code].join("/");
+	areaKey(geography, boundaryRelease, code);
 
 export type BoundaryExtentChange = {
 	code: string;
@@ -199,9 +200,9 @@ sources: ReleaseComparisonSources,
 	const from = { geography, boundaryRelease: fromRelease };
 	const to = { geography, boundaryRelease: toRelease };
 	const fromAreas = sources.areaLookup?.get(
-		`${geography}/${fromRelease}`,
+		releaseKey(geography, fromRelease),
 	);
-	const toAreas = sources.areaLookup?.get(`${geography}/${toRelease}`);
+	const toAreas = sources.areaLookup?.get(releaseKey(geography, toRelease));
 	if (!fromAreas || !toAreas) return undefined;
 	const onlyInFrom = [...fromAreas]
 		.filter(([code]) => !toAreas.has(code))

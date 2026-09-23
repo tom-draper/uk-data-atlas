@@ -1,5 +1,6 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { releaseKey } from "./geographyKeys";
 
 export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, segments }: RouteRequest): ApiResponse | undefined => {
 	if (segments.length !== 2 || segments[0] !== "v1" || segments[1] !== "geography-health") return undefined;
@@ -24,7 +25,7 @@ export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, seg
 		reachPriority[left.reach.status] - reachPriority[right.reach.status] ||
 		priority[left.status] - priority[right.status] ||
 		right.gapCount - left.gapCount ||
-		`${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`),
+		releaseKey(left.geography, left.boundaryRelease).localeCompare(releaseKey(right.geography, right.boundaryRelease)),
 	).map((release) => ({
 		...release,
 		href: `/v1/relationship-coverage?geography=${release.geography}&release=${release.boundaryRelease}`,

@@ -2,6 +2,7 @@ import { areaNotFound } from "./areaResources";
 import { notBuilt, unsupported } from "./capability";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { areaKey } from "./geographyKeys";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
@@ -87,7 +88,7 @@ export const handleAreaDossierRoutes = ({
 	return {
 		status: 200,
 		body: envelope(releaseId, {
-			id: `${geography}/${boundaryRelease}/${code}`,
+			id: areaKey(geography, boundaryRelease, code),
 			geography,
 			boundaryRelease,
 			...area,

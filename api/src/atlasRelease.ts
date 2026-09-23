@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { releaseKey } from "./geographyKeys";
 import {
 	isLegacyPopulationSource,
 	observationArtifactName,
@@ -166,7 +167,7 @@ export const releaseResources = (
 			: undefined;
 	};
 	const identity = (entry: Record<string, unknown>) =>
-		`${String(entry.geography)}/${String(entry.id)}`;
+		releaseKey(String(entry.geography), String(entry.id));
 	const catalogue = read("data-catalog.json");
 	const validation = read("validation-report.json");
 	return {

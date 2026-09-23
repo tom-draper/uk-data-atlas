@@ -1,6 +1,7 @@
 import type { AreaLookup } from "../areaInventory";
 import type { CrosswalkArtifact } from "../crosswalkInventory";
 import type { AreaIdentity, GeographyEndpoint } from "./areas";
+import { releaseKey } from "../geographyKeys";
 import {
 	relationshipPurposeFor,
 	type RelationshipPath,
@@ -43,7 +44,7 @@ export type ResolvedAreaTranslation = {
 };
 
 const endpointKey = (endpoint: GeographyEndpoint) =>
-	`${endpoint.geography}/${endpoint.boundaryRelease}`;
+	releaseKey(endpoint.geography, endpoint.boundaryRelease);
 
 const sameEndpoint = (left: GeographyEndpoint, right: GeographyEndpoint) =>
 	left.geography === right.geography &&

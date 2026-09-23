@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { AreaReleaseArtifact } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import { releaseKey } from "./geographyKeys";
 import {
 	type DataCatalog,
 	findMeasureObservations,
@@ -210,7 +211,7 @@ export const compileMeasureCompatibility = (
 	}
 	const artifactsByIdentity = new Map(
 		areaArtifacts.map((artifact) => [
-			`${artifact.geography}/${artifact.boundaryRelease}`,
+			releaseKey(artifact.geography, artifact.boundaryRelease),
 			artifact,
 		]),
 	);
@@ -232,7 +233,7 @@ export const compileMeasureCompatibility = (
 				)
 				.flatMap((release) => {
 					const artifact = artifactsByIdentity.get(
-						`${release.geography}/${release.id}`,
+						releaseKey(release.geography, release.id),
 					);
 					return artifact
 						? [candidateFor(codes, artifact, release)]
@@ -267,7 +268,7 @@ export const compileMeasureCompatibility = (
 	const areaArtifactHashes = Object.fromEntries(
 		compatibleArtifacts
 			.map((artifact) => [
-				`${artifact.geography}/${artifact.boundaryRelease}`,
+				releaseKey(artifact.geography, artifact.boundaryRelease),
 				artifact.contentHash,
 			])
 			.sort(([left], [right]) => left.localeCompare(right)),

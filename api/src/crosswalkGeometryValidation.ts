@@ -1,6 +1,7 @@
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { containPoint, ringsOf } from "./areaContainment";
 import type { CrosswalkArea } from "./crosswalkInventory";
+import { releaseKey } from "./geographyKeys";
 
 export type GeometryContainmentValidation =
 	| {
@@ -38,7 +39,7 @@ export const validateGeometryContainment = (
 		};
 	}
 	for (const endpoint of [from, to]) {
-		if (!geometrySources.has(`${endpoint.geography}/${endpoint.boundaryRelease}`)) {
+		if (!geometrySources.has(releaseKey(endpoint.geography, endpoint.boundaryRelease))) {
 			return {
 				status: "not-available",
 				reason: `No geometry source is available for ${endpoint.geography}/${endpoint.boundaryRelease}.`,

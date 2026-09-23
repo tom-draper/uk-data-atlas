@@ -3,6 +3,7 @@ import type {
 	CrosswalkInventory,
 	CrosswalkMethod,
 } from "./crosswalkInventory";
+import { releaseKey } from "./geographyKeys";
 
 export type RelationshipPurpose = "identity" | "membership" | "apportion";
 
@@ -103,7 +104,7 @@ type Endpoint = { geography: string; boundaryRelease: string };
 type SearchMode = "identity" | "up" | "down" | "apportion";
 
 const endpointKey = ({ geography, boundaryRelease }: Endpoint) =>
-	`${geography}/${boundaryRelease}`;
+	releaseKey(geography, boundaryRelease);
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

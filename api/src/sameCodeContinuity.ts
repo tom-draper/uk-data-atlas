@@ -15,6 +15,7 @@ import {
 import type { SameCodeContinuityCrosswalkAdapter } from "./crosswalkAdapters";
 import type { SameCodeContinuityCrosswalkArtifact } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
+import { releaseKey } from "./geographyKeys";
 
 // About a millimetre. Rounding only feeds a retry, when polygon-clipping's
 // sweep line fails on near-coincident edges.
@@ -107,10 +108,10 @@ export const compileSameCodeContinuityCrosswalk = (
 		geometrySources,
 	);
 	const sourceAreas = areaLookup?.get(
-		`${adapter.from.geography}/${adapter.from.boundaryRelease}`,
+		releaseKey(adapter.from.geography, adapter.from.boundaryRelease),
 	);
 	const targetAreas = areaLookup?.get(
-		`${adapter.to.geography}/${adapter.to.boundaryRelease}`,
+		releaseKey(adapter.to.geography, adapter.to.boundaryRelease),
 	);
 	type Continuity =
 		SameCodeContinuityCrosswalkArtifact["validation"]["continuity"];

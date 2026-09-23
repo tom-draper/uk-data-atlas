@@ -1,4 +1,5 @@
 import type { AreaLookup } from "./areaInventory";
+import { releaseKey } from "./geographyKeys";
 
 export type CrosswalkEndpointValidation =
 	| {
@@ -15,7 +16,7 @@ export const validateEndpoint = (
 	codes: Set<string>,
 	areaLookup: AreaLookup | undefined,
 ): CrosswalkEndpointValidation => {
-	const identity = `${endpoint.geography}/${endpoint.boundaryRelease}`;
+	const identity = releaseKey(endpoint.geography, endpoint.boundaryRelease);
 	const areas = areaLookup?.get(identity);
 	if (!areas) {
 		return {

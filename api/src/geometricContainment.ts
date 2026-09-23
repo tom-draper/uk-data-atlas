@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
+import { releaseKey } from "./geographyKeys";
 import type { AreaLookup } from "./areaInventory";
 import {
 	boundsIntersect,
@@ -92,7 +93,7 @@ export const measureContainment = (
 	cache?: Map<string, ReturnType<typeof readGeometries>>,
 ): ContainmentMeasurement => {
 	const release = (endpoint: { geography: string; boundaryRelease: string }) => {
-		const key = `${endpoint.geography}/${endpoint.boundaryRelease}`;
+		const key = releaseKey(endpoint.geography, endpoint.boundaryRelease);
 		const held = cache?.get(key);
 		if (held) return held;
 		const read = readGeometries(
