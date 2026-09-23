@@ -1,0 +1,38 @@
+{
+	"id": "ts054",
+	"title": "Census 2021 tenure",
+	"description": "Households in England and Wales by tenure. ONS table TS054. As at Census Day, 21 March 2021.",
+	"topics": [
+		"housing",
+		"tenure",
+		"census"
+	],
+	"publisher": "Office for National Statistics",
+	"sourceUrl": "https://www.nomisweb.co.uk/sources/census_2021_bulk",
+	"retrieved": "2026-09-23",
+	"temporalCoverage": "2021",
+	"spatialCoverage": {
+		"geography": "lsoa",
+		"vintage": 2021,
+		"countries": [
+			"GB-ENG",
+			"GB-WLS"
+		]
+	},
+	"licence": {
+		"name": "Open Government Licence v3.0",
+		"url": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+	},
+	"files": [
+		{
+			"path": "census2021-ts054-lsoa.csv",
+			"role": "source",
+			"note": "35,672 2021 lower layer super output areas. The LSOA file from the Nomis bulk download https://www.nomisweb.co.uk/output/census/2021/census2021-ts054.zip, unchanged."
+		},
+		{
+			"path": "census2021-ts054-msoa.csv",
+			"role": "source",
+			"note": "7,264 2021 middle layer super output areas. The MSOA file from the Nomis bulk download https://www.nomisweb.co.uk/output/census/2021/census2021-ts054.zip, unchanged."
+		}
+	]
+}

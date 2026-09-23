@@ -35,6 +35,8 @@ export type SourceGeography = {
 		| "constituency"
 		| "communitySafetyPartnership"
 		| "lsoa"
+		// England and Wales's middle layer, which nests whole LSOAs.
+		| "msoa"
 		| "dataZone"
 		| "superOutputArea"
 		// The three International Territorial Level tiers, which economic

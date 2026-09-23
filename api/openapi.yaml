@@ -7986,7 +7986,7 @@ components:
       in: query
       required: true
       schema:
-        enum: [ward, localAuthority, constituency, lsoa, dataZone, superOutputArea]
+        enum: [ward, localAuthority, constituency, lsoa, msoa, dataZone, superOutputArea]
       description: >
         The geography the publisher observed the values on. With `boundaryYear`
         it selects one source partition of the measure; it never converts
@@ -10759,7 +10759,16 @@ components:
             version:
               type: integer
             layout:
-              enum: [periods, single-period]
+              enum: [periods, single-period, table]
+              description: >
+                `table` is an artifact several measures share, such as a
+                census table: one row per area, the area code and then a value
+                for each measure in `measures` order, null where none is
+                published. Each of its measures exports the whole table.
+            measures:
+              type: array
+              items: { type: string }
+              description: For a `table`, the measure each value column serves, in order.
             recordType:
               enum: [numeric, categorical]
             fields:

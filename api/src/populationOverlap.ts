@@ -65,7 +65,7 @@ const boundsOf = (geometry: MultiPolygon): AreaGeometry["bounds"] => {
 };
 
 /** Split one CSV line, honouring double-quoted fields. */
-const csvFields = (line: string) => {
+export const csvFields = (line: string) => {
 	const fields: string[] = [];
 	let field = "";
 	let quoted = false;

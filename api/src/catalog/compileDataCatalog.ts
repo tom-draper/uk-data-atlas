@@ -29,6 +29,9 @@ import { compileCrime } from "./crime";
 import { compileUnemployment } from "./unemployment";
 import { compileAirQuality } from "./airQuality";
 import { compileCensus } from "./census";
+import { compileCensusSmallArea } from "./censusSmallArea";
+import type { MeasureTableArtifact } from "../observationTables";
+import type { MeasureSource } from "../dataCatalog";
 import { compileMobileCoverage } from "./mobileCoverage";
 import { compileJobs } from "./jobs";
 import { compileEmissions } from "./emissions";
@@ -87,6 +90,11 @@ export type DataCatalogInputs = {
 	adultSocialCareOutcomes?: string;
 	planningApplications?: string;
 	electricVehicleChargers?: string;
+	/**
+	 * The repository root, whose data/ directory holds the Census 2021
+	 * small-area tables compiled straight from their Nomis files.
+	 */
+	censusSmallAreaRoot?: string;
 };
 
 /**
@@ -139,6 +147,7 @@ export const compileDataCatalog = ({
 	adultSocialCareOutcomes: adultSocialCareOutcomesPath,
 	planningApplications: planningApplicationsPath,
 	electricVehicleChargers: electricVehicleChargersPath,
+	censusSmallAreaRoot,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
 	populationObservations: PopulationObservationArtifact;
@@ -157,6 +166,7 @@ export const compileDataCatalog = ({
 	lifeExpectancyObservations: MeasureObservationArtifact[];
 	populationConstituencyObservations: MeasureObservationArtifact;
 	electionObservations: AnyMeasureObservationArtifact[];
+	censusTables: MeasureTableArtifact[];
 } => {
 	const manifest = JSON.parse(
 		readFileSync(manifestPath, "utf8"),
@@ -167,9 +177,13 @@ export const compileDataCatalog = ({
 	) {
 		throw new Error(`${manifestPath} is not a dataset manifest`);
 	}
-	const datasets = manifest.datasets
-		.map(compileDataset)
-		.sort((left, right) => left.id.localeCompare(right.id));
+	const censusSmallArea = censusSmallAreaRoot
+		? compileCensusSmallArea(censusSmallAreaRoot)
+		: undefined;
+	const datasets = [
+		...manifest.datasets.map(compileDataset),
+		...(censusSmallArea?.datasets ?? []),
+	].sort((left, right) => left.id.localeCompare(right.id));
 	if (
 		new Set(datasets.map((dataset) => dataset.id)).size !== datasets.length
 	) {
@@ -287,6 +301,17 @@ export const compileDataCatalog = ({
 		generalElectionPath,
 		localElectionPath,
 	);
+	// Small-area census partitions of a census question already published by
+	// local authority join that measure, rather than standing beside it.
+	for (const measure of census.measures) {
+		const partitions = censusSmallArea?.partitions.get(measure.id);
+		if (partitions) (measure.sources as MeasureSource[]).push(...partitions);
+	}
+	const unclaimed = [...(censusSmallArea?.partitions.keys() ?? [])].filter(
+		(measureId) => !census.measures.some((measure) => measure.id === measureId),
+	);
+	if (unclaimed.length > 0)
+		throw new Error(`No census measure takes the small-area partitions of ${unclaimed.join(", ")}.`);
 	const measures = withNationalVariants([
 		population.measure,
 		...elections.measures,
@@ -303,6 +328,7 @@ export const compileDataCatalog = ({
 		...indicatorMeasures,
 		...unemployment.measures,
 		...census.measures,
+		...(censusSmallArea?.measures ?? []),
 	]);
 	const catalogContent = JSON.stringify({
 		schemaVersion: 1,
@@ -324,6 +350,7 @@ export const compileDataCatalog = ({
 			datasets,
 			measures,
 		},
+		censusTables: censusSmallArea?.tables ?? [],
 		populationConstituencyObservations: population.constituencyObservations,
 		populationObservations: population.wardObservations,
 		populationLocalAuthorityObservations:

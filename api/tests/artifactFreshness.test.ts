@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "../src/measureCompatibility";
+import { isMeasureTable } from "../src/observationTables";
 import {
 	readMeasureTotals,
 	readValidationWaivers,
@@ -137,7 +138,16 @@ test("builds measure compatibility from the current observations and areas", () 
 	const { inputs } = read("measure-compatibility.json");
 	const observationHashes = new Map(
 		compiled.flatMap(({ artifact }) =>
-			typeof artifact.measureId === "string" &&
+			// A table is the artifact of every measure it serves.
+			isMeasureTable(artifact)
+				? artifact.measures.map((measureId) => [
+						observationPartitionKey({
+							measureId,
+							sourceGeography: artifact.sourceGeography,
+						}),
+						artifact.contentHash,
+					])
+				: typeof artifact.measureId === "string" &&
 			artifact.sourceGeography &&
 			Array.isArray(artifact.periods)
 				? [
