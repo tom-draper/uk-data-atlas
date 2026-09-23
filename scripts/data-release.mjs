@@ -233,9 +233,9 @@ async function publish(tag) {
 		"--target",
 		target,
 		"--title",
-		`Data snapshot ${tag.slice("data-".length)}`,
+		tag.slice("data-".length),
 		"--notes",
-		"Immutable raw-data snapshot for local precompilation. This is intentionally independent of the website version.",
+		`Datasets release ${tag.slice("data-".length)}`,
 		"--latest=false",
 	]);
 
