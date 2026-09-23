@@ -54,7 +54,11 @@ test("AreasResolver stays empty when area identities are unavailable", () => {
 	const resolver = new AreasResolver({});
 	assert.equal(resolver.hasAreas(), false);
 	assert.equal(
-		resolver.area({ geography: "ward", boundaryRelease: "2024", code: "W001" }),
+		resolver.area({
+			geography: "ward",
+			boundaryRelease: "2024",
+			code: "W001",
+		}),
 		undefined,
 	);
 	assert.equal(resolver.areaCodes("ward", "2024"), undefined);

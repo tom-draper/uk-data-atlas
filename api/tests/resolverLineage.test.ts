@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CrosswalkArtifact, PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
+import type {
+	CrosswalkArtifact,
+	PropertyCrosswalkArtifact,
+} from "../src/crosswalkInventory";
 import { LineageResolver } from "../src/resolver/lineage";
 
 const relation = (
@@ -19,8 +22,16 @@ const relation = (
 	validation: {
 		sourceNameConflicts: [],
 		endpoints: {
-			from: { status: "verified", availableAreaCount: 1, referencedCodeCount: 1 },
-			to: { status: "verified", availableAreaCount: 1, referencedCodeCount: 1 },
+			from: {
+				status: "verified",
+				availableAreaCount: 1,
+				referencedCodeCount: 1,
+			},
+			to: {
+				status: "verified",
+				availableAreaCount: 1,
+				referencedCodeCount: 1,
+			},
 		},
 	},
 	records,
@@ -48,18 +59,13 @@ test("LineageResolver reports each edge once at its shortest depth", () => {
 		{ geography: "ward", boundaryRelease: "2024", code: "O" },
 		5,
 	);
-	const zParent = lineage.filter(
-		(edge) => edge.crosswalk.id === "z-parent",
-	);
+	const zParent = lineage.filter((edge) => edge.crosswalk.id === "z-parent");
 
 	assert.equal(zParent.length, 1);
 	assert.equal(zParent[0]?.from, "ward/2024/Z");
 	assert.equal(zParent[0]?.counterpart.id, "ward/2024/P");
 	assert.equal(zParent[0]?.depth, 2);
-	assert.equal(
-		lineage.find((edge) => edge.crosswalk.id === "a-z")?.depth,
-		2,
-	);
+	assert.equal(lineage.find((edge) => edge.crosswalk.id === "a-z")?.depth, 2);
 	assert.deepEqual(
 		resolver
 			.ancestorLineage(
@@ -72,7 +78,11 @@ test("LineageResolver reports each edge once at its shortest depth", () => {
 });
 
 test("LineageResolver returns no relationships when no graph is loaded", () => {
-	const resolver = new LineageResolver(undefined, () => undefined, () => []);
+	const resolver = new LineageResolver(
+		undefined,
+		() => undefined,
+		() => [],
+	);
 	const identity = { geography: "ward", boundaryRelease: "2024", code: "O" };
 
 	assert.equal(resolver.hasAreaRelationships(), false);
@@ -104,7 +114,10 @@ test("LineageResolver keeps only succession in an area's history", () => {
 	];
 	const resolver = new LineageResolver(
 		new Map(
-			[succession, containment].map((crosswalk) => [crosswalk.id, crosswalk]),
+			[succession, containment].map((crosswalk) => [
+				crosswalk.id,
+				crosswalk,
+			]),
 		),
 		(identity) => ({ code: identity.code, name: identity.code }),
 		() => sameCodeReleases,
@@ -123,8 +136,9 @@ test("LineageResolver keeps only succession in an area's history", () => {
 		[["ward-2020-to-2024", "ward/2020/W0"]],
 	);
 	assert.ok(
-		history.relationships.every(({ relation: kind }) =>
-			kind === "successor" || kind === "predecessor",
+		history.relationships.every(
+			({ relation: kind }) =>
+				kind === "successor" || kind === "predecessor",
 		),
 	);
 	assert.deepEqual(
@@ -137,10 +151,17 @@ test("LineageResolver keeps only succession in an area's history", () => {
 	assert.deepEqual(
 		resolver
 			.descendantLineage(
-				{ geography: "localAuthority", boundaryRelease: "2024", code: "L1" },
+				{
+					geography: "localAuthority",
+					boundaryRelease: "2024",
+					code: "L1",
+				},
 				3,
 			)
-			.map(({ crosswalk, counterpart }) => [crosswalk.id, counterpart.id]),
+			.map(({ crosswalk, counterpart }) => [
+				crosswalk.id,
+				counterpart.id,
+			]),
 		[["ward-to-authority", "ward/2024/W1"]],
 	);
 });

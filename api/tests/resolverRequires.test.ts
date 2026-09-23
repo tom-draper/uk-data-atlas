@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AreaGeometryCache } from "../src/areaGeometry";
-import { createGeographyResolver, type GeographyRequirement } from "../src/geographyResolver";
+import {
+	createGeographyResolver,
+	type GeographyRequirement,
+} from "../src/geographyResolver";
 import type { LocationProjectionStore } from "../src/locationProjections";
 import { areaLookup, namedLocationInventory } from "./geographyFixtures";
 
@@ -19,10 +22,14 @@ test("requires returns the standard 503 for each unavailable capability", () => 
 	const details: Record<GeographyRequirement, string> = {
 		areas: "Build the area inventory before serving geography data.",
 		geometry: "Build the geometry source registry before serving geometry.",
-		relationships: "Build the crosswalk inventory before serving area relationships.",
-		"named-locations": "Build the named location inventory before serving locations.",
-		"location-projections": "Build the location projection inventory before serving location projections.",
-		crosswalks: "Build the crosswalk artifacts before serving crosswalk data.",
+		relationships:
+			"Build the crosswalk inventory before serving area relationships.",
+		"named-locations":
+			"Build the named location inventory before serving locations.",
+		"location-projections":
+			"Build the location projection inventory before serving location projections.",
+		crosswalks:
+			"Build the crosswalk artifacts before serving crosswalk data.",
 	};
 
 	for (const requirement of requirements) {
