@@ -582,6 +582,29 @@
 			}
 		},
 		{
+			"id": "lsoa-2021-12-ew-bgc-v5-to-msoa-2021-12-ew-bgc-v3-official-lookup",
+			"input": "lookups/lsoa-to-msoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			},
+			"to": {
+				"geography": "msoa",
+				"boundaryRelease": "2021-12-ew-bgc-v3",
+				"codeProperty": "MSOA21CD",
+				"nameProperty": "MSOA21NM",
+				"aliasProperty": "MSOA21NMW"
+			}
+		},
+		{
 			"id": "local-authority-2022-12-uk-bgc-v2-to-2023-05-uk-bgc-v2-official-lookup",
 			"input": "lookups/local-authority-changes/2022-12-to-2023-05-uk/LAD22_LAD23_UK_LU_v1.geojson",
 			"method": "official-lookup",

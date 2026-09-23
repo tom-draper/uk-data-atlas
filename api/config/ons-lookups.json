@@ -54,5 +54,20 @@
 		"title": "2011 LSOA to 2021 LSOA changes (England and Wales)",
 		"description": "Official ONS lookup from 2011 Lower Layer Super Output Areas to 2021 LSOAs, with a change indicator: U unchanged, S split, M merged, X a complex redistribution.",
 		"temporalCoverage": "2021-03-21"
+	},
+	{
+		"service": "OA_LSOA_MSOA_EW_DEC_2021_LU_v3",
+		"directory": "lsoa-to-msoa/2021-12-ew",
+		"title": "2021 LSOA to 2021 MSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2021 Output Areas to Lower and Middle Layer Super Output Areas, December 2021, stored at LSOA level: every 2021 LSOA lies wholly in one 2021 MSOA.",
+		"temporalCoverage": "2021-12",
+		"distinctColumns": [
+			"LSOA21CD",
+			"LSOA21NM",
+			"LSOA21NMW",
+			"MSOA21CD",
+			"MSOA21NM",
+			"MSOA21NMW"
+		]
 	}
 ]
