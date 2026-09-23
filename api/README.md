@@ -750,6 +750,11 @@ only **available** when its endpoint, contract and provenance are published.
       source with no published weight. Population weighting is offered for 2024
       constituencies in England and Wales, through
       `constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap`.
+- [x] Convert through a published relationship path with `path` in place of
+      `crosswalk`. Values are carried through every step in its declared
+      direction, weights multiply along the path, and the whole path is
+      refused if any step would drop a value or split one without a weight.
+      The response lists each step's crosswalk and direction.
 
 ### Postcodes, homes and addresses — data required, later
 
@@ -3448,7 +3453,7 @@ second inventory to maintain:
 - `GET /v1/analysis:plan` — Preflight a reviewed source-to-analysis conversion
 - `GET /v1/measures/{measure-id}/conversion-support` — Inspect reviewed conversion support for one measure and frame
 - `GET /v1/data/{measure-id}/aggregate` — Aggregate an extensive or explicitly weighted measure
-- `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure onto a published crosswalk's target areas
+- `GET /v1/data/{measure-id}/convert` — Regroup an extensive measure through a published crosswalk or relationship path
 - `GET /v1/data/{measure-id}/series` — Retrieve a source-exact or reviewed derived time series
 - `GET /v1/data/{measure-id}/rankings` — Rank areas within one source-exact measure partition
 - `GET /v1/data/{measure-id}/change` — Rank areas by change between two periods of one measure partition

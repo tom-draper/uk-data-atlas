@@ -1,8 +1,11 @@
+import type { CrosswalkArtifact } from "./crosswalkInventory";
 import { isNumericObservation } from "./dataCatalog";
+import type { RelationshipPath } from "./relationshipPaths";
+import { buildTranslationSteps } from "./resolver/translation";
 import { observationsFor } from "./observationArtifacts";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import { statisticPhrase } from "./aggregation";
-import { convertObservations } from "./conversion";
+import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import {
 	cursorFor,
@@ -13,7 +16,19 @@ import {
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
-/** Observations regrouped onto another geography through one caller-selected crosswalk. */
+const crosswalkSummary = (artifact: CrosswalkArtifact) => ({
+	id: artifact.id,
+	href: `/v1/crosswalks/${artifact.id}`,
+	method: artifact.method,
+	quality: artifact.quality,
+	weighting: artifact.weighting,
+	contentHash: artifact.contentHash,
+});
+
+/**
+ * Observations regrouped onto another geography through one caller-selected
+ * crosswalk, or through every step of a caller-selected published path.
+ */
 export const handleDataConversionRoutes = ({
 	context,
 	releaseId,
@@ -29,6 +44,7 @@ export const handleDataConversionRoutes = ({
 		return undefined;
 	const {
 		crosswalkLookup,
+		geographyResolver,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
@@ -74,19 +90,63 @@ export const handleDataConversionRoutes = ({
 		);
 	}
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
-	if (!crosswalkId)
+	const pathId = parsedUrl.searchParams.get("path");
+	if (crosswalkId && pathId)
 		return problem(
 			400,
 			"Invalid Query",
-			"crosswalk is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published ones.",
+			"Name either crosswalk or path, not both. A path already names every crosswalk it uses.",
 		);
-	const artifact = crosswalkLookup.get(crosswalkId);
-	if (!artifact)
+	if (!crosswalkId && !pathId)
 		return problem(
-			404,
-			"Not Found",
-			"No published crosswalk matches that id.",
+			400,
+			"Invalid Query",
+			"crosswalk or path is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published crosswalks and /v1/relationship-paths the published paths.",
 		);
+	// Either way the caller names the route: one crosswalk forward, or every
+	// step of a published relationship path.
+	let route: {
+		from: { geography: string; boundaryRelease: string };
+		to: { geography: string; boundaryRelease: string };
+		steps: ConversionStep[];
+		path?: RelationshipPath;
+	};
+	if (crosswalkId) {
+		const artifact = crosswalkLookup.get(crosswalkId);
+		if (!artifact)
+			return problem(
+				404,
+				"Not Found",
+				"No published crosswalk matches that id.",
+			);
+		route = {
+			from: artifact.from,
+			to: artifact.to,
+			steps: [
+				{
+					artifact,
+					direction: "forward",
+					steps: buildTranslationSteps(artifact, "forward"),
+				},
+			],
+		};
+	} else {
+		const path = geographyResolver?.relationshipPath(pathId!);
+		if (!path)
+			return problem(
+				404,
+				"Not Found",
+				"No published relationship path matches that id.",
+			);
+		const indexed = geographyResolver!.indexedPathSteps(path);
+		if ("missingCrosswalkId" in indexed)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				`The crosswalk ${indexed.missingCrosswalkId} required by path ${path.id} is not built.`,
+			);
+		route = { from: path.from, to: path.to, steps: indexed.steps, path };
+	}
 	const period = parsedUrl.searchParams.get("period");
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
@@ -107,11 +167,11 @@ export const handleDataConversionRoutes = ({
 	});
 	if (resolved.kind === "refusal") return refused(resolved.refusal);
 	const { source } = resolved.plan;
-	if (artifact.from.geography !== source.sourceGeography.type) {
+	if (route.from.geography !== source.sourceGeography.type) {
 		return problem(
 			422,
 			"Operation Not Supported",
-			`That crosswalk starts at ${artifact.from.geography}, but this source partition is published on ${source.sourceGeography.type} areas.`,
+			`That ${route.path ? "path" : "crosswalk"} starts at ${route.from.geography}, but this source partition is published on ${source.sourceGeography.type} areas.`,
 			{
 				code: "conversion_not_available",
 				absence: "crosswalk-geography-mismatch",
@@ -137,7 +197,7 @@ export const handleDataConversionRoutes = ({
 			`The observation artifact for ${measureId} does not contain numeric records required for conversion.`,
 		);
 	}
-	const converted = convertObservations(artifact, numericRecords);
+	const converted = convertThroughSteps(route.steps, numericRecords);
 	if (converted.status === "refused") {
 		return problem(422, "Operation Not Supported", converted.reason, {
 			code: "conversion_not_available",
@@ -188,8 +248,8 @@ export const handleDataConversionRoutes = ({
 				period,
 				sourceGeography: source.sourceGeography,
 				targetGeography: {
-					type: artifact.to.geography,
-					boundaryRelease: artifact.to.boundaryRelease,
+					type: route.to.geography,
+					boundaryRelease: route.to.boundaryRelease,
 				},
 				provenance: {
 					...sourceExactProvenance({
@@ -201,18 +261,26 @@ export const handleDataConversionRoutes = ({
 					}),
 					transformation: {
 						status: "applied" as const,
-						note: "Input observations are source-exact; the values below were regrouped onto the crosswalk's target areas.",
+						note: route.path
+							? "Input observations are source-exact; the values below were carried through every step of the named path onto its target areas."
+							: "Input observations are source-exact; the values below were regrouped onto the crosswalk's target areas.",
 					},
 				},
 				conversion: {
-					crosswalk: {
-						id: artifact.id,
-						href: `/v1/crosswalks/${artifact.id}`,
-						method: artifact.method,
-						quality: artifact.quality,
-						weighting: artifact.weighting,
-						contentHash: artifact.contentHash,
-					},
+					...(route.path
+						? {
+								path: {
+									id: route.path.id,
+									purpose: route.path.purpose,
+									origin: route.path.origin,
+									quality: route.path.quality,
+									steps: route.steps.map(({ artifact, direction }) => ({
+										direction,
+										crosswalk: crosswalkSummary(artifact),
+									})),
+								},
+							}
+						: { crosswalk: crosswalkSummary(route.steps[0]!.artifact) }),
 					method: converted.method,
 					inputRecordCount: converted.inputRecordCount,
 					outputRecordCount: converted.records.length,

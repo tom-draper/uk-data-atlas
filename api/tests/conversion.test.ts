@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { convertObservations } from "../src/conversion";
+import {
+	convertObservations,
+	convertThroughSteps,
+	type ConversionStep,
+} from "../src/conversion";
 import type { CrosswalkArtifact } from "../src/crosswalkInventory";
+import { buildTranslationSteps } from "../src/resolver/translation";
 
 const artifact = (records: CrosswalkArtifact["records"]): CrosswalkArtifact =>
 	({
@@ -139,4 +144,177 @@ test("refuses to apportion a split source with no weight", () => {
 	);
 	assert.equal(result.absence, "unweighted-split");
 	assert.deepEqual(result.areaSample, ["E05000001"]);
+});
+
+const indexed = (
+	crosswalk: CrosswalkArtifact,
+	direction: "forward" | "reverse" = "forward",
+): ConversionStep => ({
+	artifact: crosswalk,
+	direction,
+	steps: buildTranslationSteps(crosswalk, direction),
+});
+
+const overlap = (
+	id: string,
+	basis: "area" | "population",
+	records: Array<[string, Array<[string, number, number]>]>,
+): CrosswalkArtifact =>
+	({
+		...artifact([]),
+		id,
+		method: basis === "area" ? "area-overlap" : "population-overlap",
+		quality: "derived",
+		weighting: { status: "published", basis },
+		records: records.map(([source, targets]) => ({
+			source: { code: source, labels: [] },
+			targets: targets.map(([code, weight, targetShare]) => ({
+				code,
+				labels: [],
+				weight,
+				overlapAreaM2: weight,
+				sourceShare: weight,
+				targetShare,
+			})),
+		})),
+	}) as unknown as CrosswalkArtifact;
+
+test("multiplies published weights through every step of a path", () => {
+	const first = overlap("first", "area", [
+		["A", [["X", 0.6, 1], ["Y", 0.4, 1]]],
+	]);
+	const second = overlap("second", "population", [
+		["X", [["T", 1, 0.5]]],
+		["Y", [["T", 0.5, 0.5], ["U", 0.5, 1]]],
+	]);
+
+	const result = convertThroughSteps(
+		[indexed(first), indexed(second)],
+		[observed("A", 1000)],
+	);
+
+	assert.equal(result.status, "converted");
+	if (result.status !== "converted") return;
+	// Area weighting at any split step makes the whole path area-weighted.
+	assert.equal(result.method, "area-weighted");
+	assert.deepEqual(
+		result.records.map((record) => [record.areaCode, Math.round(record.value)]),
+		[
+			["T", 800],
+			["U", 200],
+		],
+	);
+	assert.deepEqual(
+		result.records.map((record) => record.inputAreaCount),
+		[1, 1],
+	);
+});
+
+test("stays exact through steps that only regroup", () => {
+	const second = artifact([
+		{
+			source: { code: "E06000001", labels: [] },
+			targets: [{ code: "E12000001", labels: [] }],
+		},
+		{
+			source: { code: "E06000002", labels: [] },
+			targets: [{ code: "E12000001", labels: [] }],
+		},
+	]);
+
+	const result = convertThroughSteps(
+		[indexed(contained), indexed(second)],
+		[observed("E05000001", 100), observed("E05000002", 250), observed("E05000003", 40)],
+	);
+
+	assert.equal(result.status, "converted");
+	if (result.status !== "converted") return;
+	assert.equal(result.method, "exact");
+	assert.deepEqual(result.records, [
+		{ areaCode: "E12000001", value: 390, status: "derived", inputAreaCount: 3 },
+	]);
+});
+
+test("apportions through a reversed overlap by the queried area's covered share", () => {
+	// Published from A to B: B1 is 30% A1 and 50% A2, with 20% unpublished.
+	const published = overlap("a-to-b", "area", [
+		["A1", [["B1", 1, 0.3]]],
+		["A2", [["B1", 0.5, 0.5], ["B2", 0.5, 1]]],
+	]);
+
+	const result = convertThroughSteps(
+		[indexed(published, "reverse")],
+		[observed("B1", 800)],
+	);
+
+	assert.equal(result.status, "converted");
+	if (result.status !== "converted") return;
+	assert.deepEqual(
+		result.records.map((record) => [record.areaCode, Math.round(record.value)]),
+		[
+			["A1", 300],
+			["A2", 500],
+		],
+	);
+});
+
+test("refuses a path whose later step does not carry a reached area", () => {
+	const second = artifact([
+		{
+			source: { code: "E06000001", labels: [] },
+			targets: [{ code: "E12000001", labels: [] }],
+		},
+	]);
+
+	const result = convertThroughSteps(
+		[indexed(contained), indexed(second)],
+		[observed("E05000001", 100), observed("E05000003", 40)],
+	);
+
+	assert.equal(result.status, "refused");
+	if (result.status !== "refused") return;
+	assert.equal(result.absence, "source-areas-not-mapped");
+	assert.deepEqual(result.areaSample, ["E05000003"]);
+	assert.match(result.reason, /Step 2 of the path, crosswalk test-crosswalk/);
+});
+
+test("refuses a path that splits without a weight at a later step", () => {
+	const second = artifact([
+		{
+			source: { code: "E06000001", labels: [] },
+			targets: [
+				{ code: "E12000001", labels: [] },
+				{ code: "E12000002", labels: [] },
+			],
+		},
+	]);
+
+	const result = convertThroughSteps(
+		[indexed(contained), indexed(second)],
+		[observed("E05000001", 100)],
+	);
+
+	assert.equal(result.status, "refused");
+	if (result.status !== "refused") return;
+	assert.equal(result.absence, "unweighted-split");
+	assert.deepEqual(result.areaSample, ["E05000001"]);
+	assert.match(result.reason, /at step 2 of the path/);
+});
+
+test("names a path population-weighted only when every split step is", () => {
+	const first = overlap("first", "population", [["A", [["X", 0.5, 1], ["Y", 0.5, 1]]]]);
+	const second = overlap("second", "population", [
+		["X", [["T", 1, 1]]],
+		["Y", [["T", 1, 1]]],
+	]);
+
+	const result = convertThroughSteps(
+		[indexed(first), indexed(second)],
+		[observed("A", 10)],
+	);
+
+	assert.equal(result.status, "converted");
+	if (result.status !== "converted") return;
+	assert.equal(result.method, "population-weighted");
+	assert.deepEqual(result.records.map((record) => record.value), [10]);
 });

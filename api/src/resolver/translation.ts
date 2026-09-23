@@ -26,6 +26,13 @@ export type TranslationStep = {
 	sourceCoverage?: number;
 };
 
+/** One crosswalk direction of a path, indexed by the code it starts at. */
+export type IndexedPathStep = {
+	artifact: CrosswalkArtifact;
+	direction: StepDirection;
+	steps: Map<string, TranslationStep>;
+};
+
 export type ResolvedAreaTranslation = {
 	/** The published direct or composed route that produced these targets. */
 	path: RelationshipPath;
@@ -279,6 +286,7 @@ export class CrosswalkTranslator {
 	>();
 	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
 	private readonly pathReachCache = new Map<string, number>();
+	private pathsById?: Map<string, RelationshipPath>;
 
 	constructor(private readonly inputs: CrosswalkTranslatorInputs) {}
 
@@ -296,6 +304,36 @@ export class CrosswalkTranslator {
 				[endpointKey(from), endpointKey(to), purpose].join("/"),
 			) ?? []
 		);
+	}
+
+	/** A published path by id, from any source and target. */
+	path(id: string): RelationshipPath | undefined {
+		if (!this.pathsById) {
+			this.pathsById = new Map();
+			for (const paths of this.inputs.relationshipPathIndex?.values() ?? [])
+				for (const path of paths) this.pathsById.set(path.id, path);
+		}
+		return this.pathsById.get(id);
+	}
+
+	/**
+	 * Every step of a path with its cached direction index, or the first
+	 * crosswalk the path needs that is not loaded.
+	 */
+	indexedSteps(
+		path: RelationshipPath,
+	): { steps: IndexedPathStep[] } | { missingCrosswalkId: string } {
+		const steps: IndexedPathStep[] = [];
+		for (const { crosswalkId, direction } of path.steps) {
+			const artifact = this.artifact(crosswalkId);
+			if (!artifact) return { missingCrosswalkId: crosswalkId };
+			steps.push({
+				artifact,
+				direction,
+				steps: this.translationSteps(artifact, direction),
+			});
+		}
+		return { steps };
 	}
 
 	/**

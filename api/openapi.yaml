@@ -2591,17 +2591,26 @@ paths:
     get:
       operationId: convertSourceExactMeasure
       tags: ["Trend"]
-      summary: Regroup an extensive measure onto a published crosswalk's target areas
+      summary: Regroup an extensive measure through a published crosswalk or relationship path
       x-likely-refusal:
         status: 400
-        when: "No `crosswalk` is named. This route never chooses a conversion path; `/v1/relationship-paths` finds the published ones."
+        when: "Neither `crosswalk` nor `path` is named. This route never chooses a conversion path; `/v1/relationship-paths` finds the published ones."
         x-example-request: "/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023"
       description: >
         Converts a source partition onto another geography or code vintage
-        using the crosswalk the caller names. The route never selects a
-        conversion path: `GET /crosswalks` lists the published ones, and the
-        response repeats the chosen crosswalk's method, quality, weighting and
+        using the crosswalk, or the published relationship path, the caller
+        names. Exactly one of `crosswalk` and `path` is required. The route
+        never selects a conversion path: `GET /crosswalks` lists the published
+        crosswalks and `GET /relationship-paths` the published paths, and the
+        response repeats each crosswalk's method, quality, weighting and
         content hash.
+
+
+        A `path` carries values through every one of its steps in order, in
+        the direction each step declares. Weights multiply along the path, so
+        a source split at one step and split again at the next is apportioned
+        by the product of the two published weights. A path is refused as a
+        whole if any step would drop a value or split one without a weight.
 
 
         The crosswalk decides the target areas, so this route selects no
@@ -2614,7 +2623,9 @@ paths:
         a rank cannot be regrouped by summing, and weighting one by area
         produces a number with no meaning.
 
-        The reported `method` distinguishes the two outcomes. `exact` means
+        The reported `method` distinguishes the outcomes. Across a path it
+        describes every step together: `exact` only if no step splits a
+        source, and `population-weighted` only if every splitting step is. `exact` means
         every source area sits wholly within one target, so the conversion is a
         regrouping and the partition total is unchanged. `area-weighted` means
         some sources were split in proportion to overlapping area, which is an
@@ -2629,10 +2640,21 @@ paths:
         - $ref: "#/components/parameters/MeasureId"
         - name: crosswalk
           in: query
-          required: true
+          required: false
           schema:
             type: string
-          description: A crosswalk id returned by `GET /crosswalks`.
+          description: >
+            A crosswalk id returned by `GET /crosswalks`, applied forward.
+            Required unless `path` is named; naming both is refused.
+        - name: path
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            A relationship path id returned by `GET /relationship-paths`,
+            applied through every step. Required unless `crosswalk` is named;
+            naming both is refused.
         - $ref: "#/components/parameters/SourcePeriod"
         - $ref: "#/components/parameters/SourceGeography"
         - $ref: "#/components/parameters/SourceBoundaryYear"
