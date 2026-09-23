@@ -7,6 +7,7 @@ import {
 } from "../src/analysisGeographies";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import type { DataCatalog } from "../src/dataCatalog";
+import type { RelationshipPathInventory } from "../src/relationshipPaths";
 
 export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "api", "public");
@@ -14,12 +15,19 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const crosswalkPath = join(directory, "crosswalk-inventory.json");
 	if (!existsSync(catalogPath) || !existsSync(crosswalkPath))
 		throw new Error("Build the data catalogue and crosswalk inventory before analysis geographies.");
+	// Read only if built: a path-backed support needs it, and compiling
+	// refuses one without it.
+	const pathsPath = join(directory, "relationship-paths.json");
+	const relationshipPaths = existsSync(pathsPath)
+		? (JSON.parse(readFileSync(pathsPath, "utf8")) as RelationshipPathInventory)
+		: undefined;
 	const inventory = compileAnalysisGeographies(
 		readAnalysisGeographySupport(
 			join(repositoryRoot, "api", "config", "analysis-geographies.json"),
 		),
 		JSON.parse(readFileSync(catalogPath, "utf8")) as DataCatalog,
 		JSON.parse(readFileSync(crosswalkPath, "utf8")) as CrosswalkInventory,
+		relationshipPaths,
 	);
 	const outputPath = join(directory, "analysis-geographies.json");
 	writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);

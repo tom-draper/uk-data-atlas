@@ -1,3 +1,4 @@
+import { analysisConversion } from "./analysisGeographies";
 import { unsupported } from "./capability";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -71,7 +72,7 @@ export const handleAnalysisGeographyRoutes = ({
 					measureId: support.measureId,
 					source: support.source,
 					basis: "derived" as const,
-					conversion: support.crosswalk,
+					conversion: analysisConversion(support),
 					note: support.note,
 				})),
 			}),
@@ -152,9 +153,9 @@ export const handleAnalysisGeographyRoutes = ({
 			status: "available" as const,
 			basis: "derived" as const,
 			source: support.source,
-			conversion: support.crosswalk,
+			conversion: analysisConversion(support),
 			note: support.note,
-			result: `/v1/data/${requestedMeasure}/convert?period=${encodeURIComponent(period)}&geography=${support.source.geography}&boundaryYear=${support.source.boundaryYear}&crosswalk=${encodeURIComponent(support.crosswalk.id)}`,
+			result: `/v1/data/${requestedMeasure}/convert?period=${encodeURIComponent(period)}&geography=${support.source.geography}&boundaryYear=${support.source.boundaryYear}&${support.path ? "path" : "crosswalk"}=${encodeURIComponent(analysisConversion(support).id)}`,
 		}),
 	};
 };

@@ -1252,6 +1252,12 @@ quality at every period.
       geography, derived onto an analysis geography, or unavailable. Series
       responses use `derived` only after a reviewed conversion, and name the
       source, frame and crosswalk alongside it.
+- [x] Let a reviewed analysis conversion name a published relationship path
+      with `pathId` in `config/analysis-geographies.json` in place of
+      `crosswalkId`. The build records the path's steps, validates the
+      conversion as exact and conserving through every step, and series
+      responses name the path and each crosswalk it runs through. Relationship
+      paths now build before analysis geographies.
 
 Candidate read-only routes:
 

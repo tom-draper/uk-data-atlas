@@ -146,3 +146,103 @@ test("gates a reviewed analysis pair on exact coverage and conservation", () => 
 		/source-areas-not-mapped|does not carry/,
 	);
 });
+
+test("gates a reviewed path on exact coverage and conservation through every step", () => {
+	const authorityToRegion = {
+		...crosswalk,
+		contentHash: "sha256:authority-region",
+		id: "fixture-authority-to-region",
+		from: crosswalk.to,
+		to: { geography: "region", boundaryRelease: "2023-05-en-rgn" },
+		records: [
+			{
+				source: { code: "E08000001", labels: ["Target"] },
+				targets: [{ code: "E12000002", labels: ["Region"] }],
+			},
+		],
+	} as unknown as CrosswalkArtifact;
+	const [reviewed] = analysisGeographies.supports;
+	const pathSupport = (second: CrosswalkArtifact): AnalysisGeographyInventory => ({
+		...analysisGeographies,
+		supports: [
+			{
+				...reviewed!,
+				analysisGeography: second.to,
+				crosswalk: undefined,
+				path: {
+					id: "fixture-path",
+					purpose: "membership",
+					origin: "declared",
+					quality: "publisher-supplied",
+					steps: [crosswalk, second].map((artifact) => ({
+						crosswalk: {
+							id: artifact.id,
+							method: artifact.method,
+							quality: artifact.quality,
+						},
+						direction: "forward" as const,
+					})),
+				},
+			},
+		],
+	});
+	const values = observations([
+		{ areaCode: "E01000001", value: 40 },
+		{ areaCode: "E01000002", value: 60 },
+	]);
+
+	const validated = validateAnalysisGeographies(
+		pathSupport(authorityToRegion),
+		catalogue,
+		new Map([
+			[crosswalk.id, crosswalk],
+			[authorityToRegion.id, authorityToRegion],
+		]),
+		values,
+	);
+	const [support] = validated.supports;
+	assert.equal(support?.crosswalk, undefined);
+	assert.deepEqual(support?.path, {
+		id: "fixture-path",
+		crosswalks: [
+			{ id: crosswalk.id, contentHash: "sha256:crosswalk", direction: "forward" },
+			{
+				id: authorityToRegion.id,
+				contentHash: "sha256:authority-region",
+				direction: "forward",
+			},
+		],
+	});
+	assert.deepEqual(support?.periods[0], {
+		period: "2025",
+		method: "exact",
+		inputRecordCount: 2,
+		outputRecordCount: 1,
+		inputTotal: 100,
+		outputTotal: 100,
+	});
+
+	// A later step that drops the authority would lose every value.
+	const dropping = {
+		...authorityToRegion,
+		records: [
+			{
+				source: { code: "E08000999", labels: [] },
+				targets: [{ code: "E12000002", labels: [] }],
+			},
+		],
+	} as unknown as CrosswalkArtifact;
+	assert.throws(
+		() =>
+			validateAnalysisGeographies(
+				pathSupport(dropping),
+				catalogue,
+				new Map([
+					[crosswalk.id, crosswalk],
+					[dropping.id, dropping],
+				]),
+				values,
+			),
+		/Step 2 of the path/,
+	);
+});

@@ -3,7 +3,9 @@ import {
 	type MeasureSource,
 	type PopulationObservation,
 } from "./dataCatalog";
-import { convertObservations } from "./conversion";
+import { analysisConversion } from "./analysisGeographies";
+import { convertThroughSteps, type ConversionStep } from "./conversion";
+import { buildTranslationSteps } from "./resolver/translation";
 import { observationsFor } from "./observationArtifacts";
 import { resolveObservations } from "./observationResolution/observationPlan";
 import {
@@ -169,15 +171,30 @@ export const handleDataSeriesRoutes = ({
 						"No reviewed conversion is published from the requested source partition to that analysis geography.",
 				}),
 			};
-		const crosswalk = context.geographyResolver.crosswalk(
-			support.crosswalk.id,
-		);
-		if (!crosswalk)
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				`The reviewed crosswalk ${support.crosswalk.id} is not built.`,
-			);
+		// The steps are the reviewed ones the validation receipt checked: one
+		// crosswalk forward, or every step of the reviewed path.
+		const conversion = analysisConversion(support);
+		const reviewedSteps = support.path
+			? support.path.steps.map(({ crosswalk, direction }) => ({
+					id: crosswalk.id,
+					direction,
+				}))
+			: [{ id: support.crosswalk!.id, direction: "forward" as const }];
+		const steps: ConversionStep[] = [];
+		for (const { id, direction } of reviewedSteps) {
+			const artifact = context.geographyResolver.crosswalk(id);
+			if (!artifact)
+				return problem(
+					503,
+					"Catalogue Unavailable",
+					`The reviewed crosswalk ${id} is not built.`,
+				);
+			steps.push({
+				artifact,
+				direction,
+				steps: buildTranslationSteps(artifact, direction),
+			});
+		}
 		let conversionFailure: string | undefined;
 		const series = available.flatMap(({ period, observations }) => {
 			if (!support.source.periods.includes(period)) return [];
@@ -186,10 +203,10 @@ export const handleDataSeriesRoutes = ({
 					`${measureId}/${period} has non-numeric records despite its reviewed extensive conversion.`;
 				return [];
 			}
-			const converted = convertObservations(crosswalk, observations.records);
+			const converted = convertThroughSteps(steps, observations.records);
 			if (converted.status !== "converted") {
 				conversionFailure =
-					`${measureId}/${period} no longer satisfies reviewed conversion ${support.crosswalk.id}: ${converted.reason}`;
+					`${measureId}/${period} no longer satisfies reviewed conversion ${conversion.id}: ${converted.reason}`;
 				return [];
 			}
 			const record = converted.records.find(
@@ -222,12 +239,14 @@ export const handleDataSeriesRoutes = ({
 				status: "available" as const,
 				basis: "derived" as const,
 				source,
-				conversion: support.crosswalk,
+				conversion,
 				provenance: {
 					atlasRelease: { id: releaseId, href: "/v1/atlas-release" },
 					transformation: {
 						status: "applied" as const,
-						note: "Each source-exact period was regrouped on the reviewed crosswalk; every returned value is derived on the named analysis geography.",
+						note: support.path
+							? "Each source-exact period was carried through every step of the reviewed path; every returned value is derived on the named analysis geography."
+							: "Each source-exact period was regrouped on the reviewed crosswalk; every returned value is derived on the named analysis geography.",
 					},
 					source: {
 						dataset: {

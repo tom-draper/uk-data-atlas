@@ -1967,6 +1967,9 @@ paths:
       description: >
         Lists the measure/source/frame conversions that the Atlas has reviewed
         as safe to perform. A published crosswalk alone is not sufficient.
+        A reviewed conversion is one crosswalk, or a published relationship
+        path whose `conversion.method` is `relationship-path` and whose
+        `conversion.steps` list each crosswalk and direction it runs through.
       parameters:
         - name: measure
           in: query
@@ -1987,7 +1990,9 @@ paths:
       description: >
         Returns the release-pinned evidence behind every reviewed conversion:
         its source observations, crosswalk hashes, record counts and the input
-        and output totals that proved exact conservation at build time.
+        and output totals that proved exact conservation at build time. A
+        path-backed conversion lists the hash and direction of every crosswalk
+        in its `path`, and was proved exact through every step.
       responses:
         "200": { description: The complete analysis geography validation receipt. }
         "503": { $ref: "#/components/responses/CatalogueUnavailable" }

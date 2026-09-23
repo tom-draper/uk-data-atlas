@@ -5,7 +5,12 @@ import {
 	type AnyMeasureObservationArtifact,
 	type DataCatalog,
 } from "./dataCatalog";
-import { convertObservations } from "./conversion";
+import {
+	convertObservations,
+	convertThroughSteps,
+	type ConversionResult,
+} from "./conversion";
+import { buildTranslationSteps } from "./resolver/translation";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import type {
 	AnalysisGeographyInventory,
@@ -22,7 +27,17 @@ export type AnalysisGeographyValidationInventory = {
 		measureId: string;
 		analysisGeography: AnalysisGeographySupport["analysisGeography"];
 		source: AnalysisGeographySupport["source"];
-		crosswalk: { id: string; contentHash: string };
+		/** The reviewed crosswalk, for a one-crosswalk support. */
+		crosswalk?: { id: string; contentHash: string };
+		/** Every crosswalk of the reviewed path, for a path-backed support. */
+		path?: {
+			id: string;
+			crosswalks: Array<{
+				id: string;
+				contentHash: string;
+				direction: "forward" | "reverse";
+			}>;
+		};
 		observations: { artifact: string; contentHash: string };
 		periods: Array<{
 			period: string;
@@ -72,9 +87,32 @@ export const validateAnalysisGeographies = (
 			throw new Error(
 				`${support.measureId}: observation artifact ${artifactName} is not built.`,
 			);
-		const crosswalk = crosswalkLookup.get(support.crosswalk.id);
-		if (!crosswalk)
-			throw new Error(`${support.crosswalk.id}: reviewed crosswalk is not built.`);
+		// A path is carried through every step in its declared direction; a
+		// single crosswalk forward, exactly as the series route applies it.
+		const routeSteps = (
+			support.path
+				? support.path.steps.map(({ crosswalk, direction }) => ({
+						id: crosswalk.id,
+						direction,
+					}))
+				: [{ id: support.crosswalk!.id, direction: "forward" as const }]
+		).map(({ id, direction }) => {
+			const artifact = crosswalkLookup.get(id);
+			if (!artifact) throw new Error(`${id}: reviewed crosswalk is not built.`);
+			return { artifact, direction };
+		});
+		// Indexed once per support, since every period converts through them.
+		const indexedSteps = routeSteps.map(({ artifact, direction }) => ({
+			artifact,
+			direction,
+			steps: buildTranslationSteps(artifact, direction),
+		}));
+		const convert = (
+			records: Parameters<typeof convertObservations>[1],
+		): ConversionResult =>
+			support.path
+				? convertThroughSteps(indexedSteps, records)
+				: convertObservations(routeSteps[0]!.artifact, records);
 		const periods = support.source.periods.map((period) => {
 			const sourcePeriod = observations.periods.find(
 				(candidate) => candidate.period === period,
@@ -87,7 +125,7 @@ export const validateAnalysisGeographies = (
 				throw new Error(
 					`${support.measureId}/${period}: reviewed conversion has non-numeric observations.`,
 				);
-			const converted = convertObservations(crosswalk, sourcePeriod.records);
+			const converted = convert(sourcePeriod.records);
 			if (converted.status !== "converted")
 				throw new Error(
 					`${support.measureId}/${period}: reviewed conversion failed: ${converted.reason}`,
@@ -115,7 +153,23 @@ export const validateAnalysisGeographies = (
 			measureId: support.measureId,
 			analysisGeography: support.analysisGeography,
 			source: support.source,
-			crosswalk: { id: crosswalk.id, contentHash: crosswalk.contentHash },
+			...(support.path
+				? {
+						path: {
+							id: support.path.id,
+							crosswalks: routeSteps.map(({ artifact, direction }) => ({
+								id: artifact.id,
+								contentHash: artifact.contentHash,
+								direction,
+							})),
+						},
+					}
+				: {
+						crosswalk: {
+							id: routeSteps[0]!.artifact.id,
+							contentHash: routeSteps[0]!.artifact.contentHash,
+						},
+					}),
 			observations: {
 				artifact: artifactName,
 				contentHash: observations.contentHash,
