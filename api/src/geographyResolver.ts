@@ -30,6 +30,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkArea,
 	CrosswalkInventory,
+	SameCodeContinuityCrosswalkArtifact,
 } from "./crosswalkInventory";
 import { crosswalksTo } from "./locationMembership";
 import {
@@ -152,6 +153,12 @@ export type AreaIdentity = GeographyEndpoint & { code: string };
 
 type CrosswalkSource = CrosswalkArtifact["records"][number]["source"];
 type CrosswalkTarget = CrosswalkArtifact["records"][number]["targets"][number];
+type OverlapCrosswalkArtifact = Extract<
+	CrosswalkArtifact,
+	{ method: "area-overlap" | "population-overlap" }
+>;
+type OverlapCrosswalkTarget =
+	OverlapCrosswalkArtifact["records"][number]["targets"][number];
 type TranslationTarget = CrosswalkSource | CrosswalkTarget;
 type TranslationStep = {
 	source: CrosswalkSource;
@@ -332,8 +339,7 @@ const relationshipPurposeFor = (
 	crosswalk.relationshipPurpose ??
 		(crosswalk.method === "official-lookup"
 			? "identity"
-			: crosswalk.method === "clean-containment" ||
-				  crosswalk.method === "geometric-containment"
+			: crosswalk.method === "clean-containment"
 				? "membership"
 				: crosswalk.method === "area-overlap" ||
 					  crosswalk.method === "population-overlap"
@@ -1032,7 +1038,7 @@ export class GeographyResolver {
 				string,
 				Array<{
 					record: CrosswalkArtifact["records"][number];
-					target: CrosswalkTarget;
+					target: OverlapCrosswalkTarget;
 				}>
 			>();
 			for (const record of artifact.records) {
@@ -1594,27 +1600,34 @@ export class GeographyResolver {
 		const sharedCodes = [...fromAreas.keys()]
 			.filter((code) => toAreas.has(code))
 			.sort();
-		const between = [...(this.inputs.crosswalkLookup?.values() ?? [])]
-			.flatMap((crosswalk) => {
-				const forward =
-					crosswalk.from.geography === geography &&
-					crosswalk.from.boundaryRelease === fromRelease &&
-					crosswalk.to.geography === geography &&
-					crosswalk.to.boundaryRelease === toRelease;
-				const reverse =
-					crosswalk.to.geography === geography &&
-					crosswalk.to.boundaryRelease === fromRelease &&
-					crosswalk.from.geography === geography &&
-					crosswalk.from.boundaryRelease === toRelease;
-				return forward
-					? [{ crosswalk, direction: "forward" as const }]
-					: reverse
-						? [{ crosswalk, direction: "reverse" as const }]
-						: [];
-			})
-			.sort((left, right) => left.crosswalk.id.localeCompare(right.crosswalk.id));
+		const between: Array<{
+			crosswalk: CrosswalkArtifact;
+			direction: "forward" | "reverse";
+		}> = [];
+		for (const crosswalk of this.inputs.crosswalkLookup?.values() ?? []) {
+			const forward =
+				crosswalk.from.geography === geography &&
+				crosswalk.from.boundaryRelease === fromRelease &&
+				crosswalk.to.geography === geography &&
+				crosswalk.to.boundaryRelease === toRelease;
+			const reverse =
+				crosswalk.to.geography === geography &&
+				crosswalk.to.boundaryRelease === fromRelease &&
+				crosswalk.from.geography === geography &&
+				crosswalk.from.boundaryRelease === toRelease;
+			if (forward) between.push({ crosswalk, direction: "forward" });
+			else if (reverse) between.push({ crosswalk, direction: "reverse" });
+		}
+		between.sort((left, right) =>
+			left.crosswalk.id.localeCompare(right.crosswalk.id),
+		);
 		const continuityArtifacts = between.filter(
-			({ crosswalk }) => crosswalk.method === "same-code-continuity",
+			(
+				entry,
+			): entry is {
+				crosswalk: SameCodeContinuityCrosswalkArtifact;
+				direction: "forward" | "reverse";
+			} => entry.crosswalk.method === "same-code-continuity",
 		);
 		const continuousCodes = new Set<string>();
 		const changedExtent = new Map<string, BoundaryExtentChange>();
