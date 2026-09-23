@@ -57,6 +57,16 @@ const capture = (command, args) => {
 	return result.stdout.trim();
 };
 
+const gnuTar = () => {
+	for (const command of process.platform === "darwin" ? ["gtar", "tar"] : ["tar", "gtar"]) {
+		if ((capture(command, ["--version"]) ?? "").includes("GNU tar"))
+			return command;
+	}
+	fail(
+		"GNU tar is required for reproducible data-release archives. On macOS, install it with: brew install gnu-tar",
+	);
+};
+
 const sha256 = async (path) =>
 	createHash("sha256")
 		.update(await readFile(path))
@@ -160,7 +170,7 @@ async function createArchives(tag) {
 				1024 ** 3
 			).toFixed(2)} GiB before compression)...`,
 		);
-		run("tar", [
+		run(gnuTar(), [
 			"--create",
 			"--gzip",
 			"--file",
