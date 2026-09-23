@@ -20,6 +20,13 @@ export type LookupSource = {
 	title: string;
 	description: string;
 	temporalCoverage: string;
+	/**
+	 * Keep only these columns, one row per distinct combination, ordered by
+	 * the first. A lookup published at a finer level than it is used, such as
+	 * one row per Output Area for an LSOA-to-MSOA relationship, is stored at
+	 * the level used rather than committing every finer row.
+	 */
+	distinctColumns?: string[];
 };
 
 type Feature = { properties: Record<string, unknown> };
@@ -42,6 +49,7 @@ export const fetchOnsLookup = async (
 	retrieved = new Date().toISOString().slice(0, 10),
 ) => {
 	const layer = `${SERVICES}/${source.service}/FeatureServer/0`;
+	if (source.distinctColumns) return fetchDistinct(repositoryRoot, source, layer, retrieved);
 	const { count } = await fetchJson(
 		`${layer}/query?where=1%3D1&returnCountOnly=true&f=json`,
 	);
@@ -62,6 +70,61 @@ export const fetchOnsLookup = async (
 		throw new Error(
 			`${source.service}: expected ${count} rows, received ${features.length}`,
 		);
+	return writeLookup(repositoryRoot, source, {
+		features,
+		sourceUrl: `${layer}/query?where=1%3D1&outFields=*&f=geojson`,
+		note: `Exported from the ONS Open Geography Portal feature service, ${count} rows paged in ObjectId order.`,
+		retrieved,
+	});
+};
+
+/**
+ * The service counts every row whatever columns are asked for, so a distinct
+ * projection is paged until a short page, and each row is checked unique.
+ */
+const fetchDistinct = async (
+	repositoryRoot: string,
+	source: LookupSource,
+	layer: string,
+	retrieved: string,
+) => {
+	const columns = source.distinctColumns!;
+	const query = `where=1%3D1&outFields=${columns.join(",")}&returnDistinctValues=true&orderByFields=${columns[0]}`;
+	const features: Feature[] = [];
+	for (let offset = 0; ; offset += PAGE) {
+		const page = await fetchJson(
+			`${layer}/query?${query}&resultOffset=${offset}&resultRecordCount=${PAGE}&f=geojson`,
+		);
+		if (!Array.isArray(page.features))
+			throw new Error(`${source.service}: page at ${offset} has no features`);
+		features.push(...page.features);
+		if (page.features.length < PAGE) break;
+	}
+	const keys = new Set(
+		features.map((feature) =>
+			JSON.stringify(columns.map((column) => feature.properties[column])),
+		),
+	);
+	if (keys.size !== features.length)
+		throw new Error(`${source.service}: distinct rows repeat`);
+	return writeLookup(repositoryRoot, source, {
+		features,
+		sourceUrl: `${layer}/query?${query}&f=geojson`,
+		note: `Exported from the ONS Open Geography Portal feature service as the ${features.length} distinct rows of ${columns.join(", ")}, ordered by ${columns[0]}. The finer rows the service publishes are not stored.`,
+		retrieved,
+	});
+};
+
+const writeLookup = (
+	repositoryRoot: string,
+	source: LookupSource,
+	{
+		features,
+		sourceUrl,
+		note,
+		retrieved,
+	}: { features: Feature[]; sourceUrl: string; note: string; retrieved: string },
+) => {
 	const directory = join(repositoryRoot, "data", "lookups", source.directory);
 	mkdirSync(directory, { recursive: true });
 	const file = `${source.service}.geojson`;
@@ -78,7 +141,7 @@ export const fetchOnsLookup = async (
 				title: source.title,
 				description: source.description,
 				publisher: "Office for National Statistics",
-				sourceUrl: `${layer}/query?where=1%3D1&outFields=*&f=geojson`,
+				sourceUrl,
 				retrieved,
 				temporalCoverage: source.temporalCoverage,
 				licence: {
@@ -89,7 +152,7 @@ export const fetchOnsLookup = async (
 					{
 						path: file,
 						role: "source",
-						note: `Exported from the ONS Open Geography Portal feature service, ${count} rows paged in ObjectId order.`,
+						note,
 					},
 				],
 			},
@@ -97,7 +160,7 @@ export const fetchOnsLookup = async (
 			"\t",
 		)}\n`,
 	);
-	return { path: join(directory, file), rows: count };
+	return { path: join(directory, file), rows: features.length };
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
