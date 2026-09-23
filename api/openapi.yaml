@@ -1702,7 +1702,13 @@ paths:
 
 
         Without `crosswalk` or `path`, the comparisons this measure's
-        partitions allow are listed rather than one being chosen. This is how a weighting is
+        partitions allow are listed rather than one being chosen. Published
+        paths are listed more narrowly than crosswalks, since there are far
+        more of them: a path of several steps is listed only between releases
+        the measure's partitions are verified to join, and only where it
+        reconciles the latest shared period, so a listed `href` does not
+        answer with a refusal. At most one path is listed for each pair of
+        releases and purpose, the best-ranked of the first few tried. This is how a weighting is
         judged: the same constituencies added into local authorities are a
         median 0.3% from the published figures by population weight and 8.8%
         by area weight.

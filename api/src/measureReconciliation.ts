@@ -13,12 +13,16 @@ import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RelationshipPath } from "./relationshipPaths";
 import { buildTranslationSteps } from "./resolver/translation";
+import { releaseKey } from "./geographyKeys";
 import type { RouteContext } from "./routing";
 
 type Measure = DataCatalog["measures"][number];
 
 /** How far apart two published figures may be and still be called agreeing. */
 export const RECONCILIATION_TOLERANCE = 0.005;
+
+/** How many ranked paths the index tries per pair of releases. */
+const MAX_LISTED_PATH_ATTEMPTS = 5;
 
 export type ReconciledArea = {
 	areaCode: string;
@@ -203,6 +207,38 @@ const joinablePartitions = (context: RouteContext, measure: Measure) => {
 		),
 	);
 };
+
+/** The releases each geography's partitions of a measure are verified to join. */
+const joinableReleases = (context: RouteContext, measure: Measure) => {
+	const releases = new Map<string, Set<string>>();
+	const coverage =
+		context.dataCatalog && context.measureCompatibilityInventory
+			? measureCoverage(
+					context.dataCatalog,
+					context.measureCompatibilityInventory,
+					measure.id,
+				)
+			: undefined;
+	for (const source of coverage?.sources ?? []) {
+		const held = releases.get(source.sourceGeography.type) ?? new Set<string>();
+		for (const candidate of source.boundaryCoverage)
+			if (candidate.eligibleForCodeJoin) held.add(candidate.boundaryRelease);
+		releases.set(source.sourceGeography.type, held);
+	}
+	return releases;
+};
+
+/**
+ * Whether a path can carry a sum at all: a reversed step splits each area
+ * among its parts, which only an overlap's published weights can apportion.
+ */
+const summable = (path: RelationshipPath) =>
+	path.steps.every(
+		(step) =>
+			step.direction === "forward" ||
+			step.method === "area-overlap" ||
+			step.method === "population-overlap",
+	);
 
 /**
  * Check a measure against itself across two geographies.
@@ -420,20 +456,24 @@ export const availableReconciliations = (
 		held.push(source);
 		geographies.set(source.sourceGeography.type, held);
 	}
-	return context.geographyResolver.crosswalkSummaries().flatMap(
+	// The periods both geographies publish, in the finer one's order.
+	const sharedPeriods = (fromGeography: string, toGeography: string) => {
+		const coarse = geographies.get(toGeography) ?? [];
+		return (geographies.get(fromGeography) ?? []).flatMap((source) =>
+			source.periods.filter((period) =>
+				coarse.some((candidate) => candidate.periods.includes(period)),
+			),
+		);
+	};
+	const crosswalks = context.geographyResolver.crosswalkSummaries().flatMap(
 		(crosswalk) => {
 			// A crosswalk within one geography relates two vintages of the
 			// same areas; adding a partition up through it would compare it
 			// with itself.
 			if (crosswalk.from.geography === crosswalk.to.geography) return [];
-			const fine = geographies.get(crosswalk.from.geography) ?? [];
-			const coarse = geographies.get(crosswalk.to.geography) ?? [];
-			const periods = fine.flatMap((source) =>
-				source.periods.filter((period) =>
-					coarse.some((candidate) =>
-						candidate.periods.includes(period),
-					),
-				),
+			const periods = sharedPeriods(
+				crosswalk.from.geography,
+				crosswalk.to.geography,
 			);
 			return periods.length > 0
 				? [
@@ -452,4 +492,71 @@ export const availableReconciliations = (
 				: [];
 		},
 	);
+	// Composed paths are listed more narrowly than crosswalks, because there
+	// are far more of them and most cannot carry this measure. Only paths
+	// between releases its partitions are verified to join are tried, in the
+	// resolver's rank order, and the first that reconciles the latest shared
+	// period is listed for each pair of releases and purpose. A path that
+	// drops a partition code, such as a continuity step that leaves out
+	// changed areas, is refused by the conversion and so is never offered.
+	// A single-step path is its crosswalk, which is already listed.
+	const joins = joinableReleases(context, measure);
+	const endpoints = new Map<string, RelationshipPath>();
+	for (const path of context.geographyResolver.publishedRelationshipPaths()) {
+		if (
+			path.steps.length < 2 ||
+			path.from.geography === path.to.geography ||
+			!joins.get(path.from.geography)?.has(path.from.boundaryRelease) ||
+			!joins.get(path.to.geography)?.has(path.to.boundaryRelease) ||
+			sharedPeriods(path.from.geography, path.to.geography).length === 0
+		)
+			continue;
+		endpoints.set(
+			[
+				releaseKey(path.from.geography, path.from.boundaryRelease),
+				releaseKey(path.to.geography, path.to.boundaryRelease),
+				path.purpose,
+			].join("|"),
+			path,
+		);
+	}
+	const paths = [...endpoints.entries()]
+		.sort(([left], [right]) => left.localeCompare(right))
+		.flatMap(([, { from, to, purpose }]) => {
+			const periods = [...new Set(sharedPeriods(from.geography, to.geography))].sort();
+			const latest = periods.at(-1)!;
+			const path = context.geographyResolver
+				.relationshipCapability(from, to, purpose)
+				.paths.filter(
+					(candidate) => candidate.steps.length > 1 && summable(candidate),
+				)
+				// Each attempt converts the whole partition, so only the best
+				// few are tried; the ranking puts complete coverage first.
+				.slice(0, MAX_LISTED_PATH_ATTEMPTS)
+				.find(
+					(candidate) =>
+						!("refusal" in
+							reconcileMeasure(context, measure, { path: candidate.id }, latest)),
+				);
+			if (!path) return [];
+			return [
+				{
+					path: {
+						id: path.id,
+						purpose: path.purpose,
+						origin: path.origin,
+						quality: path.quality,
+						steps: path.steps.map(({ crosswalkId, direction }) => ({
+							crosswalkId,
+							direction,
+						})),
+					},
+					from: path.from,
+					against: path.to,
+					periods,
+					href: `/v1/measures/${measure.id}/reconciliation?path=${encodeURIComponent(path.id)}&period=${latest}`,
+				},
+			];
+		});
+	return [...crosswalks, ...paths];
 };

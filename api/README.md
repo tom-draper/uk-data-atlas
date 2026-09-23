@@ -756,7 +756,9 @@ only **available** when its endpoint, contract and provenance are published.
       refused if any step would drop a value or split one without a weight.
       The response lists each step's crosswalk and direction.
       `GET /v1/measures/{measure-id}/reconciliation` takes `path` the same
-      way, adding the finer partition up through every step.
+      way, adding the finer partition up through every step, and lists a
+      path only between releases the partitions are verified to join and
+      only where it reconciles the latest shared period.
 - [x] Aggregate onto a membership target through a published path with
       `path` in place of `crosswalk`, such as wards into a region through
       their local authorities. Every step must run forward and declare

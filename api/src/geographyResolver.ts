@@ -138,6 +138,7 @@ export class GeographyResolver {
 
 	relationshipPaths(from: GeographyEndpoint, to: GeographyEndpoint, purpose: Parameters<CrosswalkTranslator["publishedPaths"]>[2]) { return this.translator.publishedPaths(from, to, purpose); }
 	relationshipPath(id: string): RelationshipPath | undefined { return this.translator.path(id); }
+	publishedRelationshipPaths(): RelationshipPath[] { return this.translator.allPaths(); }
 	indexedPathSteps(path: RelationshipPath) { return this.translator.indexedSteps(path); }
 	translateArea(source: AreaIdentity, to: GeographyEndpoint, purpose: Parameters<CrosswalkTranslator["translateArea"]>[2]): ResolvedAreaTranslation[] { return this.translator.translateArea(source, to, purpose); }
 
