@@ -28,7 +28,8 @@ const PRECOMPILED = join(ROOT, "public", "data", "datasets");
 const CONFIG = join(ROOT, "data-release.json");
 const LOCAL_MARKER = join(DATA, ".source-release.json");
 const STAGING = join(ROOT, ".data-release");
-const MAX_ARCHIVE_BYTES = Math.floor(1.75 * 1024 ** 3);
+const MAX_UPLOAD_BYTES = 2 * 1024 ** 3;
+const FALLBACK_SHARD_BYTES = Math.floor(1.75 * 1024 ** 3);
 const DATA_TAG_PATTERN = /^data-\d{4}-\d{2}-\d{2}(?:-[a-z0-9][a-z0-9.-]*)?$/;
 
 const fail = (message) => {
@@ -58,7 +59,9 @@ const capture = (command, args) => {
 };
 
 const gnuTar = () => {
-	for (const command of process.platform === "darwin" ? ["gtar", "tar"] : ["tar", "gtar"]) {
+	for (const command of process.platform === "darwin"
+		? ["gtar", "tar"]
+		: ["tar", "gtar"]) {
 		if ((capture(command, ["--version"]) ?? "").includes("GNU tar"))
 			return command;
 	}
@@ -77,8 +80,7 @@ const fileSize = async (path) => (await stat(path)).size;
 async function filesUnder(directory, prefix = "") {
 	const files = [];
 	for (const entry of await readdir(directory, { withFileTypes: true })) {
-		if (entry.name === ".source-release.json")
-			continue;
+		if (entry.name === ".source-release.json") continue;
 		const entryPath = join(directory, entry.name);
 		const archivePath = join(prefix, entry.name);
 		if (entry.isDirectory())
@@ -97,11 +99,10 @@ function shardFiles(files) {
 	let shard = [];
 	let shardBytes = 0;
 	for (const file of files.sort((a, b) => a.path.localeCompare(b.path))) {
-		if (file.bytes > MAX_ARCHIVE_BYTES)
-			fail(
-				`${file.path} is ${(file.bytes / 1024 ** 3).toFixed(2)} GiB, larger than the safe per-asset limit. Split this file before publishing.`,
-			);
-		if (shard.length > 0 && shardBytes + file.bytes > MAX_ARCHIVE_BYTES) {
+		if (
+			shard.length > 0 &&
+			shardBytes + file.bytes > FALLBACK_SHARD_BYTES
+		) {
 			shards.push(shard);
 			shard = [];
 			shardBytes = 0;
@@ -157,49 +158,66 @@ async function createArchives(tag) {
 	const output = join(STAGING, tag);
 	await mkdir(output, { recursive: true });
 	const tar = gnuTar();
-	const shards = shardFiles(files);
-	const digits = String(shards.length).length;
-	const assets = [];
+	let shards = [
+		files.sort((left, right) => left.path.localeCompare(right.path)),
+	];
+	for (;;) {
+		const digits = String(shards.length).length;
+		const assets = [];
+		let needsFallback = false;
 
-	for (const [index, shard] of shards.entries()) {
-		const name = `${tag}.${String(index + 1).padStart(digits, "0")}.tar.gz`;
-		const path = join(output, name);
-		console.log(
-			`Creating ${name} from ${shard.length} files (${(
-				shard.reduce((total, file) => total + file.bytes, 0) /
-				1024 ** 3
-			).toFixed(2)} GiB before compression)...`,
-		);
-		const reusable = Boolean(
-			capture(tar, ["--list", "--gzip", "--file", path]),
-		);
-		if (reusable) {
-			console.log(`  reusing verified ${name}`);
-		} else {
-			await rm(path, { force: true });
-			run(tar, [
-				"--create",
-				"--gzip",
-				"--file",
-				path,
-				"--directory",
-				DATA,
-				"--sort=name",
-				"--mtime=@0",
-				"--owner=0",
-				"--group=0",
-				"--numeric-owner",
-				...shard.map((file) => file.path),
-			]);
-		}
-		const bytes = await fileSize(path);
-		if (bytes >= 2 * 1024 ** 3)
-			fail(
-				`${name} is ${(bytes / 1024 ** 3).toFixed(2)} GiB; it cannot be uploaded to GitHub.`,
+		for (const [index, shard] of shards.entries()) {
+			const name =
+				shards.length === 1
+					? `${tag}.tar.gz`
+					: `${tag}.${String(index + 1).padStart(digits, "0")}.tar.gz`;
+			const path = join(output, name);
+			console.log(
+				`Creating ${name} from ${shard.length} files (${(
+					shard.reduce((total, file) => total + file.bytes, 0) /
+					1024 ** 3
+				).toFixed(2)} GiB before compression)...`,
 			);
-		assets.push({ name, bytes, sha256: await sha256(path), path });
+			const reusable = Boolean(
+				capture(tar, ["--list", "--gzip", "--file", path]),
+			);
+			if (reusable) {
+				console.log(`  reusing verified ${name}`);
+			} else {
+				await rm(path, { force: true });
+				run(tar, [
+					"--create",
+					"--gzip",
+					"--file",
+					path,
+					"--directory",
+					DATA,
+					"--sort=name",
+					"--mtime=@0",
+					"--owner=0",
+					"--group=0",
+					"--numeric-owner",
+					...shard.map((file) => file.path),
+				]);
+			}
+			const bytes = await fileSize(path);
+			if (bytes >= MAX_UPLOAD_BYTES) {
+				if (shards.length > 1)
+					fail(
+						`${name} is ${(bytes / 1024 ** 3).toFixed(2)} GiB; split its source files further before publishing.`,
+					);
+				console.log(
+					`${name} exceeds GitHub's 2 GiB limit after compression; splitting it into fallback shards.`,
+				);
+				await rm(path, { force: true });
+				shards = shardFiles(files);
+				needsFallback = true;
+				break;
+			}
+			assets.push({ name, bytes, sha256: await sha256(path), path });
+		}
+		if (!needsFallback) return assets;
 	}
-	return assets;
 }
 
 async function publish(tag) {
@@ -278,8 +296,7 @@ async function downloadFile(url, destination) {
 async function replaceSources(staging) {
 	await mkdir(DATA, { recursive: true });
 	for (const entry of await readdir(DATA, { withFileTypes: true })) {
-		if (entry.name === ".source-release.json")
-			continue;
+		if (entry.name === ".source-release.json") continue;
 		await rm(join(DATA, entry.name), { recursive: true, force: true });
 	}
 	for (const entry of await readdir(staging)) {
@@ -306,19 +323,19 @@ async function download(force) {
 			"No data-release.json is committed and no local source data is available.",
 		);
 	}
-	let marker: { tag?: unknown } | null = null;
+	let marker = null;
 	try {
 		marker = JSON.parse(await readFile(LOCAL_MARKER, "utf8"));
 	} catch (error) {
 		if (error?.code !== "ENOENT")
-			console.log("Raw data marker is unreadable; restoring the pinned release.");
+			console.log(
+				"Raw data marker is unreadable; restoring the pinned release.",
+			);
 	}
-	if (
-		!force &&
-		marker?.tag === config.tag &&
-		(await hasLocalSources())
-	) {
-		console.log(`Raw data ${config.tag} is already present; skipping download.`);
+	if (!force && marker?.tag === config.tag && (await hasLocalSources())) {
+		console.log(
+			`Raw data ${config.tag} is already present; skipping download.`,
+		);
 		return;
 	}
 	console.log(`Synchronizing raw data from ${config.tag}...`);
