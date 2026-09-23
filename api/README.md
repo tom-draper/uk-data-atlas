@@ -3737,6 +3737,22 @@ geometry file holds no shapes, such as the names-and-codes 2011 data zone
 file. `pnpm tsx scripts/propose-same-code-continuity.ts --write` regenerates
 the adapters when a release is added.
 
+Chaining the releases makes an area's history long, and every crosswalk
+publishes its link from both ends, as a successor edge on one area and a
+predecessor edge on the other. A walk that counts both reports one link
+twice: before this was corrected, 337,722 of the 342,680 areas with any
+history claimed more edges than there were areas to reach, and the 2019
+Hampstead and Kilburn constituency reported 352 edges over 180 areas. The
+resolver now walks the graph once, in one shared traversal used by area
+history, ancestors and descendants: each area is reached once at its shortest
+depth, and each published link is reported once, keyed by its crosswalk and
+its pair of ends, whichever end the walk arrives from. Each entry names the
+area the walk stood on as `from`, so a chain several hops long can be read
+back in order rather than inferred from depth alone. The 4,218 areas that
+still report more edges than areas reached are genuine: a merge or a split
+gives two ways to arrive at the same area, and both are evidence worth
+keeping.
+
 The fifth method, `population-overlap`, reweights an area overlap by where
 people live. An area weight assumes a source's residents are spread evenly
 over its land, and they rarely are: Luton is 21% of the land of Luton South

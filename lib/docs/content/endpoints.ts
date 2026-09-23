@@ -396,6 +396,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "Trace an area through time: what it replaced, what replaced it, and which other boundary releases use the same code.",
 		tips: [
 			"The same code in two releases doesn't guarantee the same boundary, so treat it as a clue, not proof.",
+			"Each lineage entry names the area the step came from, so a chain several hops long reads back in order. A link is listed once, however far round the graph you reach it.",
 		],
 	},
 	getAreaParents: {
@@ -427,7 +428,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		],
 	},
 	diagnoseRelationshipCapability: {
-		title: "Check whether a conversion will work",
+		title: "Check a conversion works",
 		intro: "Ask whether you can get from one boundary release to another, and get an operational answer: the steps involved, how much of the source they actually cover, and what is missing when they don't. Give only a source and you get every conversion available from it.",
 		tips: [
 			"`trust` says how far to lean on a path: `verified` is publisher-supplied and complete, while `derived`, `partial` and `not-built` each name what limits it.",
@@ -529,7 +530,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		],
 	},
 	planMeasureCoverage: {
-		title: "See what a measure covers, country by country",
+		title: "Plan coverage by country",
 		intro: 'Before you rank or map a measure across the UK, check what it actually covers. Ward population, for instance, is published for England and Wales and for neither Scotland nor Northern Ireland, so a ranking of UK wards would quietly leave two countries out. This tells you that first.',
 		tips: [
 			"Each country comes back as `source-exact`, `converted`, `partial` or `missing`, with the number of areas behind it.",
@@ -538,7 +539,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		],
 	},
 	getGeographyHealth: {
-		title: "See relationship health across releases",
+		title: "Check relationship health",
 		intro: "A release-by-release summary of how well connected the Atlas's geographies are: how many areas in each have published relationships, and how many are still on their own. Filter with `geography` or `country` to narrow it.",
 		tips: [
 			"A good place to start when deciding whether the geography you need is well enough connected for the conversion you have in mind.",

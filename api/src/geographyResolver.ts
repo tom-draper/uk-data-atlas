@@ -114,11 +114,21 @@ export type ResolvedSameCodeArea = AreaRecord & {
 	status: "same-code-continuity";
 };
 
+/**
+ * A published edge as a walk of the graph found it: `from` is the area the
+ * walk stood on, `counterpart` the area it reached, and `depth` the number of
+ * edges from the area that was asked about.
+ */
+export type TraversedRelationship = AreaRelationship & {
+	from: string;
+	depth: number;
+};
+
 export type ResolvedAreaHistory = {
 	area: AreaRecord;
 	relationships: AreaRelationship[];
-	/** Every declared historical edge reachable without revisiting an area. */
-	lineage: Array<AreaRelationship & { depth: number }>;
+	/** Every declared historical edge reachable, each reported once. */
+	lineage: TraversedRelationship[];
 	sameCodeReleases: ResolvedSameCodeArea[];
 };
 
@@ -601,42 +611,67 @@ export class GeographyResolver {
 		return this.areaRelationshipIndex?.get(areaId(identity)) ?? [];
 	}
 
-	/** Follow only declared containment edges, never inferred geography hierarchy. */
-	ancestorLineage(identity: AreaIdentity, maximumDepth: number) {
-		const visited = new Set([areaId(identity)]);
-		const queue = [{ id: areaId(identity), depth: 0 }];
-		const ancestors: Array<AreaRelationship & { depth: number }> = [];
+	/**
+	 * Breadth-first walk of the published relationship graph, following only the
+	 * relations asked for. Each area is reached once, at its shortest depth, and
+	 * each edge is reported once: a crosswalk that publishes a link from both
+	 * ends, as predecessor and successor edges are, states one fact, not two.
+	 */
+	private traverse(
+		identity: AreaIdentity,
+		follow: (relation: AreaRelation) => boolean,
+		maximumDepth: number,
+	): TraversedRelationship[] {
+		const origin = areaId(identity);
+		const visited = new Set([origin]);
+		const reported = new Set<string>();
+		const queue = [{ id: origin, depth: 0 }];
+		const edges: TraversedRelationship[] = [];
 		while (queue.length > 0) {
 			const current = queue.shift()!;
 			if (current.depth >= maximumDepth) continue;
-			for (const relationship of (this.areaRelationshipIndex?.get(current.id) ?? []).filter((item) => item.relation === "within")) {
-				ancestors.push({ ...relationship, depth: current.depth + 1 });
+			for (const relationship of this.areaRelationshipIndex?.get(
+				current.id,
+			) ?? []) {
+				if (!follow(relationship.relation)) continue;
+				const ends = [current.id, relationship.counterpart.id].sort();
+				const edge = `${relationship.crosswalk.id}|${ends[0]}|${ends[1]}`;
+				if (!reported.has(edge)) {
+					reported.add(edge);
+					edges.push({
+						...relationship,
+						from: current.id,
+						depth: current.depth + 1,
+					});
+				}
 				if (!visited.has(relationship.counterpart.id)) {
 					visited.add(relationship.counterpart.id);
-					queue.push({ id: relationship.counterpart.id, depth: current.depth + 1 });
+					queue.push({
+						id: relationship.counterpart.id,
+						depth: current.depth + 1,
+					});
 				}
 			}
 		}
-		return ancestors;
+		return edges;
+	}
+
+	/** Follow only declared containment edges, never inferred geography hierarchy. */
+	ancestorLineage(identity: AreaIdentity, maximumDepth: number) {
+		return this.traverse(
+			identity,
+			(relation) => relation === "within",
+			maximumDepth,
+		);
 	}
 
 	/** Follow only declared containment edges down the published hierarchy. */
 	descendantLineage(identity: AreaIdentity, maximumDepth: number) {
-		const visited = new Set([areaId(identity)]);
-		const queue = [{ id: areaId(identity), depth: 0 }];
-		const descendants: Array<AreaRelationship & { depth: number }> = [];
-		while (queue.length > 0) {
-			const current = queue.shift()!;
-			if (current.depth >= maximumDepth) continue;
-			for (const relationship of (this.areaRelationshipIndex?.get(current.id) ?? []).filter((item) => item.relation === "contains")) {
-				descendants.push({ ...relationship, depth: current.depth + 1 });
-				if (!visited.has(relationship.counterpart.id)) {
-					visited.add(relationship.counterpart.id);
-					queue.push({ id: relationship.counterpart.id, depth: current.depth + 1 });
-				}
-			}
-		}
-		return descendants;
+		return this.traverse(
+			identity,
+			(relation) => relation === "contains",
+			maximumDepth,
+		);
 	}
 
 	/** One consistent summary of an area's published relationship evidence. */
@@ -675,20 +710,11 @@ export class GeographyResolver {
 				({ relation }) => relation === "successor" || relation === "predecessor",
 			);
 		const origin = areaId(identity);
-		const visited = new Set([origin]);
-		const queue = [{ id: origin, depth: 0 }];
-		const lineage: ResolvedAreaHistory["lineage"] = [];
-		while (queue.length > 0) {
-			const current = queue.shift()!;
-			if (current.depth >= maximumDepth) continue;
-			for (const relationship of historical(current.id)) {
-				lineage.push({ ...relationship, depth: current.depth + 1 });
-				if (!visited.has(relationship.counterpart.id)) {
-					visited.add(relationship.counterpart.id);
-					queue.push({ id: relationship.counterpart.id, depth: current.depth + 1 });
-				}
-			}
-		}
+		const lineage = this.traverse(
+			identity,
+			(relation) => relation === "successor" || relation === "predecessor",
+			maximumDepth,
+		);
 		return {
 			area,
 			relationships: historical(origin),
