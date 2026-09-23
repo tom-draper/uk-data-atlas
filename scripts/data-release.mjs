@@ -212,6 +212,8 @@ async function publish(tag) {
 			"GitHub CLI (gh) is required to publish. Install it, then run gh auth login.",
 		);
 	const repository = repositoryFromOrigin();
+	const target = capture("git", ["rev-parse", "HEAD"]);
+	if (!target) fail("Could not resolve the release target commit.");
 	if (capture("gh", ["release", "view", tag, "--repo", repository]))
 		fail(
 			`GitHub release ${tag} already exists. Releases are immutable snapshots; choose a new data tag.`,
@@ -229,7 +231,7 @@ async function publish(tag) {
 		"--repo",
 		repository,
 		"--target",
-		"HEAD",
+		target,
 		"--title",
 		`Data snapshot ${tag.slice("data-".length)}`,
 		"--notes",
