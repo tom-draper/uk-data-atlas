@@ -20,6 +20,7 @@ import {
 	dataCatalog,
 	registry,
 	routeWithData,
+	testContext,
 } from "./routeFixtures";
 
 // A measure of its own, so the figures are chosen rather than inherited:
@@ -122,7 +123,8 @@ const incomplete = crosswalk("wards-incomplete", [
 	["E05000999", "E06000001"],
 ]);
 
-const contextWith = (artifacts: PropertyCrosswalkArtifact[]): RouteContext => ({
+const contextWith = (artifacts: PropertyCrosswalkArtifact[]): RouteContext =>
+	testContext({
 	boundaryRegistry: registry,
 	dataCatalog: catalog,
 	measureObservations: observations,
@@ -144,7 +146,7 @@ const contextWith = (artifacts: PropertyCrosswalkArtifact[]): RouteContext => ({
 			contentHash: artifact.contentHash,
 		})),
 	} satisfies CrosswalkInventory,
-});
+	});
 
 const reconcile = (artifact: PropertyCrosswalkArtifact) =>
 	reconcileMeasure(

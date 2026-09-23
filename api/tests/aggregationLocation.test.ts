@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createGeographyResolver } from "../src/geographyResolver";
 import type { MeasureSource } from "../src/dataCatalog";
 import {
 	resolveAggregationLocation,
@@ -31,22 +32,40 @@ const source = (geography: string) =>
 	}) as MeasureSource;
 
 test("resolves a named location and reports lookup failures", () => {
-	assert.equal(resolveAggregationLocation({ locationId: null }), undefined);
+	const withLocation = createGeographyResolver({
+		namedLocationInventory: {
+			schemaVersion: 1,
+			contentHash: "sha256:locations",
+			source: {
+				artifact: "data/precompiled/gazetteer.core.json",
+				gazetteerVersion: 1,
+			},
+			locations: [location],
+		},
+		namedLocationLookup: new Map([[location.id, location]]),
+	});
+	assert.equal(resolveAggregationLocation({
+			locationId: null,
+			geographyResolver: withLocation,
+		}), undefined);
 	assert.equal(
-		resolveAggregationLocation({ locationId: "example" })?.status,
+		resolveAggregationLocation({
+			locationId: "example",
+			geographyResolver: createGeographyResolver({}),
+		})?.status,
 		503,
 	);
 	assert.equal(
 		resolveAggregationLocation({
 			locationId: "missing",
-			namedLocationLookup: new Map([[location.id, location]]),
+			geographyResolver: withLocation,
 		})?.status,
 		404,
 	);
 	assert.deepEqual(
 		resolveAggregationLocation({
 			locationId: location.id,
-			namedLocationLookup: new Map([[location.id, location]]),
+			geographyResolver: withLocation,
 		}),
 		location,
 	);

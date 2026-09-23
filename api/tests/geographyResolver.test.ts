@@ -183,10 +183,14 @@ test("does not claim optional geography capabilities when their artifacts are ab
 	};
 
 	assert.equal(resolver.hasAreaRelease("ward", "2025-01-en-ward"), true);
-	assert.equal(resolver.hasAreaRelationships(), false);
-	assert.equal(resolver.hasAreaGeometryCache(), false);
-	assert.equal(resolver.hasLocationProjectionStore(), false);
-	assert.equal(resolver.hasNamedLocationInventory(), false);
+	assert.equal(resolver.requires("areas"), undefined);
+	for (const requirement of [
+		"relationships",
+		"geometry",
+		"location-projections",
+		"named-locations",
+	] as const)
+		assert.equal(resolver.requires(requirement)?.status, 503, requirement);
 	assert.equal(
 		resolver.selectReleaseForDate("ward", "2025-01"),
 		undefined,

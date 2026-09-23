@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createGeographyResolver } from "../src/geographyResolver";
 import { prepareAggregateTarget } from "../src/aggregatePreparation";
+
+// These cases need no compiled areas, so the resolver is empty.
+const geographyResolver = createGeographyResolver({});
 
 const sourceGeography = { type: "localAuthority", boundaryYear: 2024 };
 
@@ -20,6 +24,7 @@ test("prepares country and named-location aggregates", () => {
 		{ areaCode: "E1", value: 10, status: "observed" as const },
 	];
 	const country = prepareAggregateTarget({
+		geographyResolver,
 		records,
 		areaCode: "E92000001",
 		compatibleReleases: [],
@@ -31,6 +36,7 @@ test("prepares country and named-location aggregates", () => {
 	assert.equal(country.coverage?.status, "not-assessed");
 
 	const named = prepareAggregateTarget({
+		geographyResolver,
 		records,
 		location,
 		areaCode: null,
@@ -45,6 +51,7 @@ test("prepares country and named-location aggregates", () => {
 
 test("refuses a country with no published members", () => {
 	const result = prepareAggregateTarget({
+		geographyResolver,
 		records: [],
 		areaCode: "E92000001",
 		compatibleReleases: [],

@@ -1,6 +1,9 @@
 import { createAreaLookup } from "../src/areaInventory";
 import type { AreaGeometryCache } from "../src/areaGeometry";
-import { createGeographyResolver } from "../src/geographyResolver";
+import {
+	createGeographyResolver,
+	type GeographyResolverInputs,
+} from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
 import type { CrosswalkLookup, RouteContext } from "../src/routing";
 import type { AtlasRelease } from "../src/atlasRelease";
@@ -25,39 +28,34 @@ import type {
 import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 import { createRelationshipPathIndex } from "../src/relationshipPaths";
 
-const resolverFor = (
-	context: Pick<
-		RouteContext,
-		| "areaLookup"
-		| "areaInventory"
-		| "boundaryRegistry"
-		| "crosswalkInventory"
-		| "crosswalkLookup"
-		| "namedLocationInventory"
-		| "namedLocationLookup"
-		| "locationProjectionStore"
-		| "relationshipPathInventory"
-		| "relationshipCandidateInventory"
-	>,
-	areaGeometryCache?: AreaGeometryCache,
-) =>
-	context.boundaryRegistry
-		? createGeographyResolver({
-				boundaryRegistry: context.boundaryRegistry,
-				areaInventory: context.areaInventory,
-				areaLookup: context.areaLookup,
-				crosswalkInventory: context.crosswalkInventory,
-				crosswalkLookup: context.crosswalkLookup,
-				areaGeometryCache,
-				namedLocationInventory: context.namedLocationInventory,
-				namedLocationLookup: context.namedLocationLookup,
-				locationProjectionStore: context.locationProjectionStore,
-				relationshipPathIndex: context.relationshipPathInventory
-					? createRelationshipPathIndex(context.relationshipPathInventory)
-					: undefined,
-				relationshipCandidateInventory: context.relationshipCandidateInventory,
-			})
-		: undefined;
+/**
+ * What a test context is built from: route resources, plus the raw lookups
+ * the geography resolver indexes. Routes only ever see the resolver.
+ */
+export type TestContextInputs = Partial<RouteContext> & {
+	areaLookup?: GeographyResolverInputs["areaLookup"];
+	crosswalkLookup?: GeographyResolverInputs["crosswalkLookup"];
+	namedLocationLookup?: GeographyResolverInputs["namedLocationLookup"];
+	areaGeometryCache?: GeographyResolverInputs["areaGeometryCache"];
+};
+
+const resolverFor = (inputs: TestContextInputs) =>
+	createGeographyResolver({
+		boundaryRegistry: inputs.boundaryRegistry,
+		geographyInventory: inputs.geographyInventory,
+		areaInventory: inputs.areaInventory,
+		areaLookup: inputs.areaLookup,
+		crosswalkInventory: inputs.crosswalkInventory,
+		crosswalkLookup: inputs.crosswalkLookup,
+		areaGeometryCache: inputs.areaGeometryCache,
+		namedLocationInventory: inputs.namedLocationInventory,
+		namedLocationLookup: inputs.namedLocationLookup,
+		locationProjectionStore: inputs.locationProjectionStore,
+		relationshipPathIndex: inputs.relationshipPathInventory
+			? createRelationshipPathIndex(inputs.relationshipPathInventory)
+			: undefined,
+		relationshipCandidateInventory: inputs.relationshipCandidateInventory,
+	});
 
 // Most tests exercise one narrow dependency combination. This fixture adapter
 // keeps those cases concise while ensuring the production router only accepts
@@ -67,15 +65,15 @@ export const route = (
 	url: string | undefined,
 	boundaryRegistry: BoundaryRegistry,
 	geographyInventory?: RouteContext["geographyInventory"],
-	areaLookup?: RouteContext["areaLookup"],
+	areaLookup?: TestContextInputs["areaLookup"],
 	crosswalkInventory?: RouteContext["crosswalkInventory"],
-	crosswalkLookup?: RouteContext["crosswalkLookup"],
+	crosswalkLookup?: TestContextInputs["crosswalkLookup"],
 	atlasRelease?: RouteContext["atlasRelease"],
 	areaGeometryCache?: AreaGeometryCache,
 	relationshipCandidateInventory?: RouteContext["relationshipCandidateInventory"],
 	validationReport?: RouteContext["validationReport"],
 	namedLocationInventory?: RouteContext["namedLocationInventory"],
-	namedLocationLookup?: RouteContext["namedLocationLookup"],
+	namedLocationLookup?: TestContextInputs["namedLocationLookup"],
 	dataCatalog?: RouteContext["dataCatalog"],
 	populationObservations?: RouteContext["populationObservations"],
 	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
@@ -84,37 +82,30 @@ export const route = (
 	exportManifest?: RouteContext["exportManifest"],
 	relationshipPathInventory?: RouteContext["relationshipPathInventory"],
 ) =>
-	routeRequest(method, url, {
-		boundaryRegistry,
-		geographyInventory,
-		areaLookup,
-		crosswalkInventory,
-		crosswalkLookup,
-		atlasRelease,
-		geographyResolver: resolverFor(
-			{
-				boundaryRegistry,
-				areaLookup,
-				crosswalkInventory,
-				crosswalkLookup,
-				namedLocationInventory,
-				namedLocationLookup,
-				relationshipPathInventory,
-				relationshipCandidateInventory,
-			},
+	routeRequest(
+		method,
+		url,
+		testContext({
+			boundaryRegistry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			atlasRelease,
 			areaGeometryCache,
-		),
-		relationshipCandidateInventory,
-		validationReport,
-		namedLocationInventory,
-		namedLocationLookup,
-		dataCatalog,
+			relationshipCandidateInventory,
+			validationReport,
+			namedLocationInventory,
+			namedLocationLookup,
+			relationshipPathInventory,
+			dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
-		measureCompatibilityInventory,
-		measureObservations,
-		exportManifest,
-	});
+			measureCompatibilityInventory,
+			measureObservations,
+			exportManifest,
+		}),
+	);
 
 export const registry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -136,16 +127,31 @@ export const registry: BoundaryRegistry = {
 	],
 };
 
+/**
+ * A route context whose resolver indexes the given inputs. The raw lookups
+ * go only to the resolver, as they do in the catalogue loader.
+ */
 export const testContext = (
-	overrides: Partial<RouteContext> = {},
+	inputs: TestContextInputs = {},
 	areaGeometryCache?: AreaGeometryCache,
 ): RouteContext => {
-	const context = { boundaryRegistry: registry, ...overrides };
+	const {
+		areaLookup: _areaLookup,
+		crosswalkLookup: _crosswalkLookup,
+		namedLocationLookup: _namedLocationLookup,
+		areaGeometryCache: _areaGeometryCache,
+		...resources
+	} = inputs;
+	const withRegistry = { boundaryRegistry: registry, ...inputs };
 	return {
-		...context,
+		...resources,
+		boundaryRegistry: withRegistry.boundaryRegistry,
 		geographyResolver:
-			context.geographyResolver ??
-			resolverFor(context, areaGeometryCache),
+			inputs.geographyResolver ??
+			resolverFor({
+				...withRegistry,
+				areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
+			}),
 	};
 };
 
@@ -744,7 +750,7 @@ export const routeWithCatalog = (
 	catalog: DataCatalog,
 	observations: RouteContext["measureObservations"],
 	overrides: Pick<
-		RouteContext,
+		TestContextInputs,
 		| "crosswalkLookup"
 		| "measureCompatibilityInventory"
 		| "analysisGeographyInventory"

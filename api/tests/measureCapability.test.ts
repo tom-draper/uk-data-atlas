@@ -6,7 +6,6 @@ import type {
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
 import { measureCapability } from "../src/measureCapability";
-import type { RouteContext } from "../src/routing";
 import {
 	containmentCrosswalk,
 	dataCatalog,
@@ -15,6 +14,7 @@ import {
 	populationLocalAuthorityObservations,
 	populationObservations,
 	registry,
+	testContext,
 } from "./routeFixtures";
 
 // The ward population source holds E05000001 and W05000001. One crosswalk
@@ -41,7 +41,7 @@ const complete = crosswalk("wards-to-lad-a", "2023-a", [
 ]);
 const incomplete = crosswalk("wards-to-lad-b", "2023-b", ["E05000001"]);
 
-const context: RouteContext = {
+const context = testContext({
 	boundaryRegistry: registry,
 	dataCatalog,
 	measureCompatibilityInventory,
@@ -67,7 +67,7 @@ const context: RouteContext = {
 			contentHash: artifact.contentHash,
 		})),
 	} satisfies CrosswalkInventory,
-};
+});
 
 const population = dataCatalog.measures.find(
 	(measure) => measure.id === "population-estimate",
@@ -148,7 +148,7 @@ test("never converts a measure whose values do not add over areas", () => {
 
 test("says when the catalogue it would read is not built", () => {
 	const capability = measureCapability(
-		{ boundaryRegistry: registry },
+		testContext({ boundaryRegistry: registry }),
 		population,
 		{ geography: "ward", boundaryRelease: "2023-05-uk-bgc" },
 	);
