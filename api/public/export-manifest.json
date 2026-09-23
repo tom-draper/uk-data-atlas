@@ -117,7 +117,7 @@
 					"sha256": "9f9dd416dde70973ee75091c1a4c4235c19a95f18b519f2c0dcb53e480324a33"
 				},
 				{
-					"path": "demographics/population/uk/myebtablesuk20112024.xlsx#MYEB1",
+					"path": "demographics/population/mid-year-estimates/uk/myebtablesuk20112024.xlsx#MYEB1",
 					"sha256": "aec8a5343f3f71ee062cc5b0e3f137087f89e1a1ccd0725cc6ffd2c77ba5d0f1"
 				}
 			],
@@ -527,7 +527,7 @@
 			},
 			"inputs": [
 				{
-					"path": "demographics/population/wards/sapewardstablefinal.xlsx#Mid-2022 Ward 2023",
+					"path": "demographics/population/small-area-estimates/wards/sapewardstablefinal.xlsx#Mid-2022 Ward 2023",
 					"sha256": "f1d7fe57c4e3a59257cb22f382154106cfa3e86354e057d278d824aa094fc55d"
 				}
 			],
@@ -542,11 +542,11 @@
 			},
 			"inputs": [
 				{
-					"path": "demographics/population-constituency/sapepconstablefinal.xlsx#Mid-2021 PCON 2025",
+					"path": "demographics/population/small-area-estimates/constituency/sapepconstablefinal.xlsx#Mid-2021 PCON 2025",
 					"sha256": "04e69e31ba3bd5bc23a913c8123288b407f6fb00f102ca1f87a22b9318259a1a"
 				},
 				{
-					"path": "demographics/population-constituency/sapepconstablefinal.xlsx#Mid-2022 PCON 2025",
+					"path": "demographics/population/small-area-estimates/constituency/sapepconstablefinal.xlsx#Mid-2022 PCON 2025",
 					"sha256": "d19fffdedc642fbb05c42d6382d90665e08e7a17855d0c3fecbdb371e712e8a0"
 				}
 			],
@@ -561,7 +561,7 @@
 			},
 			"inputs": [
 				{
-					"path": "demographics/population/uk/myebtablesuk20112024.xlsx#MYEB1",
+					"path": "demographics/population/mid-year-estimates/uk/myebtablesuk20112024.xlsx#MYEB1",
 					"sha256": "aec8a5343f3f71ee062cc5b0e3f137087f89e1a1ccd0725cc6ffd2c77ba5d0f1"
 				}
 			],
