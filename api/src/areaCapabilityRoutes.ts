@@ -9,6 +9,9 @@ import { measureCapability } from "./measureCapability";
 import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
+const requirementDetail = (response: ApiResponse | undefined) =>
+	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
+
 /** What the API can answer for one area: its geometry, relationships, named locations and measure coverage. */
 export const handleAreaCapabilityRoutes = ({
 	context,
@@ -40,10 +43,11 @@ export const handleAreaCapabilityRoutes = ({
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
-		if (!geographyResolver.hasAreaGeometryCache())
+		const unavailable = geographyResolver.requires("geometry");
+		if (unavailable)
 			return {
 				...notBuilt(
-					"Build the geometry source registry before serving geometry.",
+					requirementDetail(unavailable),
 				),
 				href: geometryHref,
 			};
@@ -138,9 +142,9 @@ export const handleAreaCapabilityRoutes = ({
 			...area,
 			capabilities: {
 				geometry,
-				relationships: !geographyResolver.hasAreaRelationships()
+				relationships: geographyResolver.requires("relationships")
 					? notBuilt(
-							"Build the crosswalk inventory before describing relationships.",
+							requirementDetail(geographyResolver.requires("relationships")),
 						)
 					: {
 							...(relationshipSummary.relationships.length > 0
@@ -161,9 +165,9 @@ export const handleAreaCapabilityRoutes = ({
 							},
 							crosswalks,
 						},
-				namedLocations: !geographyResolver.hasNamedLocationInventory()
+				namedLocations: geographyResolver.requires("named-locations")
 					? notBuilt(
-							"Build the named location inventory before describing location membership.",
+							 requirementDetail(geographyResolver.requires("named-locations")),
 						)
 					: {
 							...(locations.length > 0

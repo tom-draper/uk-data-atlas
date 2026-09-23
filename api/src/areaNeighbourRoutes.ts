@@ -39,12 +39,8 @@ export const handleAreaNeighbourRoutes = ({
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!geographyResolver.hasAreaGeometryCache())
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geometry source registry before finding neighbours.",
-		);
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
 	const touches = parsedUrl.searchParams.get("touches") ?? "edge";
 	if (touches !== "edge" && touches !== "any")
 		return problem(

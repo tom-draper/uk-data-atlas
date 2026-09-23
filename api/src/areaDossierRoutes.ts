@@ -3,6 +3,9 @@ import { notBuilt, unsupported } from "./capability";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { geographyResolverFor, type RouteRequest } from "./routing";
 
+const requirementDetail = (response: ApiResponse | undefined) =>
+	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
+
 /**
  * A single, evidence-led starting point for an exact area identity. Detailed
  * geometry, relationships, history and data stay in their dedicated resources
@@ -42,9 +45,10 @@ export const handleAreaDossierRoutes = ({
 	const baseHref = `/v1/areas/${geography}/${boundaryRelease}/${code}`;
 	const relationshipSummary = geographyResolver.areaRelationshipSummary(identity);
 	const geometry = (() => {
-		if (!geographyResolver.hasAreaGeometryCache())
+		const unavailable = geographyResolver.requires("geometry");
+		if (unavailable)
 			return notBuilt(
-				"Build the geometry source registry before serving geometry.",
+				requirementDetail(unavailable),
 			);
 		try {
 			const resolved = geographyResolver.areaGeometry(identity);
@@ -64,8 +68,9 @@ export const handleAreaDossierRoutes = ({
 			);
 		}
 	})();
-	const relationships = !geographyResolver.hasAreaRelationships()
-		? notBuilt("Build the crosswalk inventory before describing relationships.")
+	const relationshipUnavailable = geographyResolver.requires("relationships");
+	const relationships = relationshipUnavailable
+		? notBuilt(requirementDetail(relationshipUnavailable))
 		: relationshipSummary.relationships.length > 0
 			? { status: "available" as const }
 			: unsupported("No published crosswalk names this area.");
@@ -100,7 +105,7 @@ export const handleAreaDossierRoutes = ({
 			},
 			availability: {
 				geometry: { ...geometry, href: `${baseHref}/geometry` },
-				relationships: !geographyResolver.hasAreaRelationships()
+				relationships: relationshipUnavailable
 					? {
 							...relationships,
 							href: `${baseHref}/relationships`,

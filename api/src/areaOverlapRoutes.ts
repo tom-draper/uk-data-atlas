@@ -55,12 +55,8 @@ export const handleAreaOverlapRoutes = ({
 	const otherArea = geographyResolver.area(otherIdentity);
 	if (!otherArea)
 		return areaNotFound(context, otherGeography, otherRelease, otherCode);
-	if (!geographyResolver.hasAreaGeometryCache())
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geometry source registry before measuring an overlap.",
-		);
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
 	try {
 		const resolved = geographyResolver.areaGeometry(identity);
 		const otherResolved = geographyResolver.areaGeometry(otherIdentity);

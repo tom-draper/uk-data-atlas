@@ -87,12 +87,10 @@ export const coveragePlan = (
 	measure: Measure,
 	target: { geography: string; boundaryRelease: string },
 ): CoveragePlan | undefined => {
-	const { dataCatalog, measureCompatibilityInventory, areaLookup } = context;
-	if (!dataCatalog || !measureCompatibilityInventory || !areaLookup)
+	const { dataCatalog, measureCompatibilityInventory } = context;
+	if (!dataCatalog || !measureCompatibilityInventory)
 		return undefined;
-	const areas = areaLookup.get(
-		`${target.geography}/${target.boundaryRelease}`,
-	);
+	const areas = context.geographyResolver.releaseAreas(target.geography, target.boundaryRelease);
 	if (!areas) return undefined;
 	const targetByCountry = countriesOf(areas.keys());
 	const coverage = measureCoverage(

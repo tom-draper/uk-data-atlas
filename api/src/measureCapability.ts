@@ -61,8 +61,8 @@ export const conversionCoverageOnto = (
 	measure: Measure,
 	target: Target,
 ): Array<{ path: MeasureConversionPath; targets: Set<string> }> => {
-	const { crosswalkInventory, crosswalkLookup } = context;
-	if (!crosswalkInventory || !crosswalkLookup) return [];
+	const { crosswalkInventory } = context;
+	if (!crosswalkInventory) return [];
 	let cache = dryRuns.get(context);
 	if (!cache) {
 		cache = new Map();
@@ -94,7 +94,7 @@ export const conversionCoverageOnto = (
 					summary.id,
 				].join("/");
 				if (!cache.has(key)) {
-					const crosswalk = crosswalkLookup.get(summary.id);
+					const crosswalk = context.geographyResolver.crosswalk(summary.id);
 					const observations = observationsFor(
 						measure.id,
 						source,

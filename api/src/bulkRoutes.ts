@@ -22,9 +22,7 @@ export const handleBulkRoutes = ({
 }: RouteRequest): ApiResponse | undefined => {
 	const {
 		areaInventory,
-		areaLookup,
 		crosswalkInventory,
-		crosswalkLookup,
 		dataCatalog,
 		exportManifest,
 		lookupManifest,
@@ -177,7 +175,7 @@ export const handleBulkRoutes = ({
 				);
 				const areas =
 					release &&
-					areaLookup?.get(`${release.geography}/${release.id}`);
+					context.geographyResolver.releaseAreas(release.geography, release.id);
 				return release && areas && release.status === "available"
 					? areaIdentityTable({
 							geography: release.geography,
@@ -192,7 +190,7 @@ export const handleBulkRoutes = ({
 				const summary = crosswalkInventory?.crosswalks.find(
 					(candidate) => candidate.artifact === entry.source.artifact,
 				);
-				const crosswalk = summary && crosswalkLookup?.get(summary.id);
+				const crosswalk = summary && context.geographyResolver.crosswalk(summary.id);
 				return crosswalk && summary
 					? crosswalkTable(crosswalk, summary.artifact)
 					: undefined;

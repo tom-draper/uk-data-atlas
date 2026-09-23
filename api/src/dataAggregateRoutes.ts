@@ -30,9 +30,8 @@ export const handleDataAggregateRoutes = ({
 		segments[3] !== "aggregate"
 	)
 		return undefined;
+	const areaLookup = new Map(context.geographyResolver.releaseAreaEntries());
 	const {
-		areaLookup,
-		namedLocationLookup,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
@@ -64,7 +63,7 @@ export const handleDataAggregateRoutes = ({
 	} = query;
 	const resolvedLocation = resolveAggregationLocation({
 		locationId,
-		namedLocationLookup,
+		geographyResolver: context.geographyResolver,
 	});
 	if (resolvedLocation && "status" in resolvedLocation)
 		return resolvedLocation;

@@ -14,12 +14,15 @@ export const handleCrosswalkRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { crosswalkInventory, crosswalkLookup } = context;
+	const { crosswalkInventory } = context;
+	const resolver = context.geographyResolver;
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
 		segments[1] === "crosswalks"
 	) {
+		const unavailable = resolver.requires("crosswalks");
+		if (unavailable) return unavailable;
 		return crosswalkInventory
 			? {
 					status: 200,
@@ -36,7 +39,7 @@ export const handleCrosswalkRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "crosswalks"
 	) {
-		const crosswalk = crosswalkLookup?.get(segments[2]!);
+		const crosswalk = resolver.crosswalk(segments[2]!);
 		if (!crosswalk)
 			return problem(
 				404,
@@ -52,7 +55,7 @@ export const handleCrosswalkRoutes = ({
 		segments[1] === "crosswalks" &&
 		segments[3] === "records"
 	) {
-		const crosswalk = crosswalkLookup?.get(segments[2]!);
+		const crosswalk = resolver.crosswalk(segments[2]!);
 		if (!crosswalk)
 			return problem(
 				404,

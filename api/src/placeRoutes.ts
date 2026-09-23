@@ -1,5 +1,4 @@
-import { resolvePlaces } from "./placeResolver";
-import { describeCandidate, placeIndexFor } from "./placeResponses";
+import { describeCandidate } from "./placeResponses";
 import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -31,17 +30,9 @@ export const handlePlaceRoutes = ({
 			"Invalid Query",
 			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 		);
-	if (!context.areaLookup)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area inventory before resolving place names.",
-		);
-	const candidates = resolvePlaces(
-		placeIndexFor(context.areaLookup, context.namedLocationInventory),
-		query,
-		limit,
-	);
+	const unavailable = context.geographyResolver.requires("areas");
+	if (unavailable) return unavailable;
+	const candidates = context.geographyResolver.places(query, limit);
 	return {
 		status: 200,
 		body: envelope(releaseId, {

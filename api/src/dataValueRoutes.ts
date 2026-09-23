@@ -1,10 +1,5 @@
-import { resolvePlaces } from "./placeResolver";
 import { valueForPlace } from "./placeValue";
-import {
-	describeAttempt,
-	describeCandidate,
-	placeIndexFor,
-} from "./placeResponses";
+import { describeAttempt, describeCandidate } from "./placeResponses";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -23,7 +18,7 @@ export const handleDataValueRoutes = ({
 		segments[3] !== "value"
 	)
 		return undefined;
-	const { areaLookup, namedLocationInventory, dataCatalog } = context;
+	const { dataCatalog } = context;
 	if (!dataCatalog) {
 		return problem(
 			503,
@@ -50,19 +45,10 @@ export const handleDataValueRoutes = ({
 			"place is required: a place name such as North West, an area code, or a place reference from /v1/places.",
 		);
 	}
-	if (!areaLookup) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area inventory before answering for a place.",
-		);
-	}
+	const unavailable = context.geographyResolver.requires("areas");
+	if (unavailable) return unavailable;
 	const period = parsedUrl.searchParams.get("period")?.trim() || undefined;
-	const candidates = resolvePlaces(
-		placeIndexFor(areaLookup, namedLocationInventory),
-		place,
-		12,
-	);
+	const candidates = context.geographyResolver.places(place, 12);
 	// Each candidate goes to the route that already serves its kind of
 	// place, so the value and every refusal are exactly what that route
 	// gives when called directly.

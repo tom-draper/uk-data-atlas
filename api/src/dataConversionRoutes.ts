@@ -43,20 +43,21 @@ export const handleDataConversionRoutes = ({
 	)
 		return undefined;
 	const {
-		crosswalkLookup,
 		geographyResolver,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureObservations,
 	} = context;
-	if (!dataCatalog || !crosswalkLookup) {
+	const unavailable = geographyResolver.requires("crosswalks");
+	if (!dataCatalog) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the data catalogue and crosswalks before converting observations.",
 		);
 	}
+	if (unavailable) return unavailable;
 	const measureId = segments[2] as string;
 	const measure = dataCatalog.measures.find(
 		(candidate) => candidate.id === measureId,
@@ -112,7 +113,7 @@ export const handleDataConversionRoutes = ({
 		path?: RelationshipPath;
 	};
 	if (crosswalkId) {
-		const artifact = crosswalkLookup.get(crosswalkId);
+		const artifact = geographyResolver.crosswalk(crosswalkId);
 		if (!artifact)
 			return problem(
 				404,
@@ -131,7 +132,7 @@ export const handleDataConversionRoutes = ({
 			],
 		};
 	} else {
-		const path = geographyResolver?.relationshipPath(pathId!);
+		const path = geographyResolver.relationshipPath(pathId!);
 		if (!path)
 			return problem(
 				404,

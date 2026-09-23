@@ -12,6 +12,9 @@ import { LineageResolver } from "./resolver/lineage";
 import { compareBoundaryReleases, type BoundaryReleaseComparison } from "./resolver/releaseComparison";
 import { SpatialResolver } from "./resolver/spatial";
 import { CrosswalkTranslator, type CrosswalkLookup, type ResolvedAreaTranslation } from "./resolver/translation";
+import { problem, type ApiResponse } from "./routeResponse";
+
+export type GeographyRequirement = "areas" | "geometry" | "relationships" | "named-locations" | "location-projections" | "crosswalks";
 
 export { RELATIONSHIP_OPERATIONS, type GeographyReach, type RelationshipOperation, type RelationshipPathStepCoverage, type RelationshipPrerequisite, type ResolvedConversionPlan, type ResolvedRelationshipCapability, type ResolvedRelationshipPath } from "./resolver/capability";
 export type { BoundaryExtentChange, BoundaryReleaseComparison, PublishedRelationshipMapping } from "./resolver/releaseComparison";
@@ -51,7 +54,36 @@ export class GeographyResolver {
 		this.capability = new CapabilityResolver(inputs, this.translator, (identity) => this.lineage.relationships(identity), () => this.lineage.hasAreaRelationships(), (geography, release) => this.areas.boundaryRelease(geography, release));
 	}
 
+	/** Return the shared 503 response when a route's required geography input is absent. */
+	requires(requirement: GeographyRequirement): ApiResponse | undefined {
+		const available: Record<GeographyRequirement, boolean> = {
+			areas: this.inputs.areaLookup !== undefined,
+			geometry: this.spatial.hasAreaGeometryCache(),
+			relationships: this.lineage.hasAreaRelationships(),
+			"named-locations": this.areas.hasNamedLocationInventory(),
+			"location-projections": this.areas.hasLocationProjectionStore(),
+			crosswalks: this.inputs.crosswalkLookup !== undefined,
+		};
+		if (available[requirement]) return undefined;
+		const descriptions: Record<GeographyRequirement, string> = {
+			areas: "Build the area identities before serving geography data.",
+			geometry: "Build the area geometry cache before serving geometry data.",
+			relationships: "Build the crosswalk inventory before serving area relationships.",
+			"named-locations": "Build the named location inventory before serving locations.",
+			"location-projections": "Build the location projection store before serving projections.",
+			crosswalks: "Build the crosswalk artifacts before serving crosswalk data.",
+		};
+		return problem(503, "Catalogue Unavailable", descriptions[requirement]);
+	}
+
 	area(identity: AreaIdentity): AreaRecord | undefined { return this.areas.area(identity); }
+	releaseAreas(geography: string, boundaryRelease: string) { return this.areas.releaseAreas(geography, boundaryRelease); }
+	releaseAreaEntries() { return this.areas.releaseAreaEntries(); }
+	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) { return this.areas.reconcileMembers(geography, boundaryRelease, memberCodes, resolvedCodes); }
+	areaReleaseKeys() { return this.areas.areaReleaseKeys(); }
+	places(query: string, limit = 10) {
+		return this.areas.places(query, limit);
+	}
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean { return this.areas.hasAreaRelease(geography, boundaryRelease); }
 	areaCodes(geography: string, boundaryRelease: string) { return this.areas.areaCodes(geography, boundaryRelease); }
 	boundaryRelease(geography: string, id: string) { return this.areas.boundaryRelease(geography, id); }
@@ -61,7 +93,6 @@ export class GeographyResolver {
 	selectReleaseForDate(geography: string, month: string, country?: string) { return this.areas.selectReleaseForDate(geography, month, country); }
 	searchAreas(query: { geography?: string | null; boundaryRelease?: string | null; query?: string }) { return this.areas.searchAreas(query); }
 
-	hasAreaGeometryCache(): boolean { return this.spatial.hasAreaGeometryCache(); }
 	geometryCacheStats() { return this.spatial.geometryCacheStats(); }
 	geometryFor(identity: AreaIdentity) { return this.spatial.geometryFor(identity); }
 	areaGeometry(identity: AreaIdentity) { return this.spatial.areaGeometry(identity); }
@@ -71,7 +102,6 @@ export class GeographyResolver {
 	releaseGeometrySource(geography: string, boundaryRelease: string) { return this.spatial.releaseGeometrySource(geography, boundaryRelease); }
 	intersectingAreas(geography: string, boundaryRelease: string, box: Parameters<SpatialResolver["intersectingAreas"]>[2]) { return this.spatial.intersectingAreas(geography, boundaryRelease, box); }
 
-	hasAreaRelationships(): boolean { return this.lineage.hasAreaRelationships(); }
 	relationships(identity: AreaIdentity) { return this.lineage.relationships(identity); }
 	ancestorLineage(identity: AreaIdentity, maximumDepth: number) { return this.lineage.ancestorLineage(identity, maximumDepth); }
 	descendantLineage(identity: AreaIdentity, maximumDepth: number) { return this.lineage.descendantLineage(identity, maximumDepth); }
@@ -79,13 +109,11 @@ export class GeographyResolver {
 	areaHistory(identity: AreaIdentity, maximumDepth = 8) { return this.lineage.areaHistory(identity, maximumDepth); }
 
 	namedLocation(id: string) { return this.areas.namedLocation(id); }
-	hasNamedLocationInventory(): boolean { return this.areas.hasNamedLocationInventory(); }
 	namedLocationsForArea(identity: AreaIdentity) { return this.areas.namedLocationsForArea(identity); }
 	crosswalk(id: string): CrosswalkArtifact | undefined { return this.translator.artifact(id); }
 	crosswalkSummary(id: string) { return this.areas.crosswalkSummary(id); }
 	crosswalkSummaries() { return this.areas.crosswalkSummaries(); }
 	locationProjection(locationId: string, geography: string, boundaryRelease: string, crosswalkId: string) { return this.areas.locationProjection(locationId, geography, boundaryRelease, crosswalkId); }
-	hasLocationProjectionStore(): boolean { return this.areas.hasLocationProjectionStore(); }
 	locationMemberProjectionShards(memberGeography: string) { return this.areas.locationMemberProjectionShards(memberGeography); }
 	locationParentProjectionShards(memberGeography: string) { return this.areas.locationParentProjectionShards(memberGeography); }
 	locationParentCrosswalks(geography: string, boundaryRelease: string) { return this.areas.locationParentCrosswalks(geography, boundaryRelease); }

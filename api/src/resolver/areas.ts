@@ -6,8 +6,11 @@ import {
 	type ValidatedValue,
 } from "../batchValidation";
 import type { BoundaryRegistry } from "../boundaryRegistry";
+import { createPlaceIndex, resolvePlaces } from "../placeResolver";
+import type { PlaceIndex } from "../placeResolver";
 import type { CrosswalkInventory } from "../crosswalkInventory";
 import { crosswalksTo } from "../locationMembership";
+import { reconcileMembers } from "../memberReconciliation";
 import type {
 	LocationProjectionStore,
 	LocationProjection,
@@ -55,6 +58,7 @@ export type AreasResolverInputs = {
 /** Identity, release and location indexes over immutable compiled artifacts. */
 export class AreasResolver {
 	private readonly areaSearchIndex?: AreaSearchIndex;
+	private placeIndex?: PlaceIndex;
 	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
 	private readonly locationsByMemberArea = new Map<string, NamedLocation[]>();
 	private readonly boundaryReleases = new Map<
@@ -121,6 +125,31 @@ export class AreasResolver {
 		return this.inputs.areaLookup
 			?.get(`${identity.geography}/${identity.boundaryRelease}`)
 			?.get(identity.code);
+	}
+
+	releaseAreas(geography: string, boundaryRelease: string) {
+		return this.inputs.areaLookup?.get(`${geography}/${boundaryRelease}`);
+	}
+
+	releaseAreaEntries() {
+		return [...(this.inputs.areaLookup?.entries() ?? [])];
+	}
+
+	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) {
+		return this.inputs.areaLookup
+			? reconcileMembers(this.inputs.areaLookup, geography, boundaryRelease, memberCodes, resolvedCodes)
+			: undefined;
+	}
+
+	areaReleaseKeys() {
+		return [...(this.inputs.areaLookup?.keys() ?? [])];
+	}
+
+	places(query: string, limit: number) {
+		if (!this.inputs.areaLookup) return [];
+		if (!this.placeIndex)
+			this.placeIndex = createPlaceIndex(this.inputs.areaLookup, this.inputs.namedLocationInventory);
+		return resolvePlaces(this.placeIndex, query, limit);
 	}
 
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {

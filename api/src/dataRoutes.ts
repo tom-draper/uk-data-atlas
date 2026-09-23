@@ -22,7 +22,6 @@ import {
 	nextPageHref,
 	readPageSize,
 } from "./pagination";
-import { findArea } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -36,7 +35,6 @@ export const handleDataRoutes = ({
 	if (segments.length !== 3 || segments[0] !== "v1" || segments[1] !== "data")
 		return undefined;
 	const {
-		areaLookup,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
@@ -160,12 +158,9 @@ export const handleDataRoutes = ({
 			"include=area requires a caller-selected compatible release.",
 		);
 	}
-	if (include === "area" && !areaLookup) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area inventory before including canonical area identities.",
-		);
+	if (include === "area") {
+		const unavailable = context.geographyResolver.requires("areas");
+		if (unavailable) return unavailable;
 	}
 	const observations = observationsFor(measureId, source, period as string, {
 		populationObservations,
@@ -233,12 +228,11 @@ export const handleDataRoutes = ({
 	const recordsWithAreas =
 		include === "area"
 			? records.map((record) => {
-					const area = findArea(
-						areaLookup,
-						source.sourceGeography.type,
-						geometry?.boundaryRelease ?? "",
-						record.areaCode,
-					);
+					const area = context.geographyResolver.area({
+						geography: source.sourceGeography.type,
+						boundaryRelease: geometry?.boundaryRelease ?? "",
+						code: record.areaCode,
+					});
 					if (!area) return undefined;
 					return {
 						...record,

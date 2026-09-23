@@ -1,13 +1,11 @@
-import type { AreaLookup } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import type { MeasureSource } from "./dataCatalog";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
 } from "./measureCompatibility";
-import { findArea } from "./areaResources";
 import { fullMembership, membershipClaimFor } from "./aggregationMembership";
-import type { CrosswalkLookup } from "./routing";
+import type { GeographyResolver } from "./geographyResolver";
 import { problem, type ApiResponse } from "./routeResponse";
 
 export type AggregationTarget = {
@@ -32,9 +30,8 @@ export const resolveAggregationTarget = ({
 	sourceRelease,
 	source,
 	compatibleReleases,
-	crosswalkLookup,
+	geographyResolver,
 	measureCompatibilityInventory,
-	areaLookup,
 }: {
 	targetCode: string | null;
 	regionCode: string | null;
@@ -42,9 +39,8 @@ export const resolveAggregationTarget = ({
 	sourceRelease: string | null;
 	source: MeasureSource;
 	compatibleReleases: CompatibilityCandidate[];
-	crosswalkLookup?: CrosswalkLookup;
+	geographyResolver: GeographyResolver;
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
-	areaLookup?: AreaLookup;
 }): AggregationTarget | ApiResponse | undefined => {
 	if (!targetCode) return undefined;
 	if (!crosswalkId || !sourceRelease) {
@@ -54,7 +50,7 @@ export const resolveAggregationTarget = ({
 			"targetCode aggregation requires crosswalk and sourceRelease, so membership is explicit rather than inferred.",
 		);
 	}
-	if (!crosswalkLookup || !measureCompatibilityInventory) {
+	if (!measureCompatibilityInventory) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
@@ -72,7 +68,7 @@ export const resolveAggregationTarget = ({
 			{ code: "conversion_not_available" },
 		);
 	}
-	const crosswalk = crosswalkLookup.get(crosswalkId);
+	const crosswalk = geographyResolver.crosswalk(crosswalkId);
 	if (
 		!crosswalk ||
 		crosswalk.from.geography !== source.sourceGeography.type ||
@@ -128,12 +124,7 @@ export const resolveAggregationTarget = ({
 			geography: crosswalk.to.geography,
 			boundaryRelease: crosswalk.to.boundaryRelease,
 			code: targetCode,
-			...findArea(
-				areaLookup,
-				crosswalk.to.geography,
-				crosswalk.to.boundaryRelease,
-				targetCode,
-			),
+			...geographyResolver.area({ geography: crosswalk.to.geography, boundaryRelease: crosswalk.to.boundaryRelease, code: targetCode }),
 		},
 	};
 };

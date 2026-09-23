@@ -23,7 +23,6 @@ export const handleAreaChildGeometryRoutes = ({
 		segments[6] !== "geometry"
 	)
 		return undefined;
-	const { crosswalkLookup } = context;
 	const geographyResolver = geographyResolverFor(context);
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
@@ -36,18 +35,10 @@ export const handleAreaChildGeometryRoutes = ({
 		code,
 	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!crosswalkLookup)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the crosswalk inventory before looking up area membership.",
-		);
-	if (!geographyResolver.hasAreaGeometryCache())
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geometry source registry before retrieving geometry.",
-		);
+	const relationshipsUnavailable = geographyResolver.requires("relationships");
+	if (relationshipsUnavailable) return relationshipsUnavailable;
+	const geometryUnavailable = geographyResolver.requires("geometry");
+	if (geometryUnavailable) return geometryUnavailable;
 	const requestedTier = parsedUrl.searchParams.get("tier") ?? "full";
 	if (!isGeometryTier(requestedTier))
 		return problem(

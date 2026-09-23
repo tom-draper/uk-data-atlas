@@ -19,13 +19,15 @@ export const handleMeasureReconciliationRoutes = ({
 		segments[3] !== "reconciliation"
 	)
 		return undefined;
-	const { dataCatalog, crosswalkInventory, crosswalkLookup } = context;
-	if (!dataCatalog || !crosswalkInventory || !crosswalkLookup)
+	const { dataCatalog, crosswalkInventory } = context;
+	const unavailable = context.geographyResolver.requires("crosswalks");
+	if (!dataCatalog || !crosswalkInventory)
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the data catalogue and crosswalks before reconciling a measure.",
 		);
+	if (unavailable) return unavailable;
 	const measure = dataCatalog.measures.find(
 		(candidate) => candidate.id === segments[2],
 	);
