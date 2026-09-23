@@ -159,6 +159,15 @@ test("reports a complete conversion path with its measured source coverage", () 
 		level: "verified",
 		reasons: ["Every path step is publisher-supplied and has complete compiled coverage."],
 	});
+	assert.deepEqual(data.paths[0].rank, {
+		position: 1,
+		reasons: [
+			"complete source coverage",
+			"verified evidence",
+			"crosswalk path",
+			"1 step",
+		],
+	});
 	assert.deepEqual(data.paths[0].operations, {
 		permitted: ["containment-aggregation", "membership-join"],
 		prohibited: ["weighted-allocation"],

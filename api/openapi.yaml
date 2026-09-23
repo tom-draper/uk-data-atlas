@@ -5719,6 +5719,11 @@ paths:
         publisher-supplied complete steps; `derived`, `partial` and `not-built`
         make the limiting evidence explicit.
 
+        Paths are ranked deterministically without hiding alternatives:
+        complete coverage first, then strength of evidence, published-path
+        origin and step count. `rank.reasons` makes that ordering inspectable
+        to callers rather than treating catalogue order as a recommendation.
+
         `operations` states the permitted use of the relationship purpose, so
         callers cannot mistake containment membership for weighted allocation
         or an identity lookup.
@@ -5785,6 +5790,9 @@ paths:
                           trust:
                             level: verified
                             reasons: [Every path step is publisher-supplied and has complete compiled coverage.]
+                          rank:
+                            position: 1
+                            reasons: [complete source coverage, verified evidence, crosswalk path, 1 step]
                           coverage:
                             status: complete
                             mappedSourceAreaCount: 8441

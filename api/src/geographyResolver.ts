@@ -179,6 +179,11 @@ export type RelationshipPathStepCoverage = {
 };
 
 export type ResolvedRelationshipPath = RelationshipPath & {
+	/** Deterministic preference among paths for the same conversion request. */
+	rank: {
+		position: number;
+		reasons: string[];
+	};
 	operations: {
 		permitted: string[];
 		prohibited: string[];
@@ -1386,23 +1391,50 @@ export class GeographyResolver {
 					share,
 					steps,
 				},
-			} satisfies ResolvedRelationshipPath;
+			} satisfies Omit<ResolvedRelationshipPath, "rank">;
 		});
 		const hasUnbuilt = missingPrerequisites.some(
 			(item) => item.status === "not-built",
 		);
+		const coverageOrder = { complete: 0, partial: 1, "not-built": 2 } as const;
+		const trustOrder = { verified: 0, derived: 1, partial: 2, "not-built": 3 } as const;
+		const originOrder = { crosswalk: 0, declared: 1, discovered: 2 } as const;
+		const rankedPaths = [...resolvedPaths]
+			.sort(
+				(left, right) =>
+					coverageOrder[left.coverage.status] -
+						coverageOrder[right.coverage.status] ||
+					trustOrder[left.trust.level] - trustOrder[right.trust.level] ||
+					originOrder[left.origin] - originOrder[right.origin] ||
+					left.steps.length - right.steps.length ||
+					left.id.localeCompare(right.id),
+			)
+			.map((path, index) => ({
+				...path,
+				rank: {
+					position: index + 1,
+					reasons: [
+						`${path.coverage.status} source coverage`,
+						`${path.trust.level} evidence`,
+						`${path.origin} path`,
+						`${path.steps.length} ${path.steps.length === 1 ? "step" : "steps"}`,
+					],
+				},
+			}));
 		return {
 			status:
-				resolvedPaths.length === 0
+				rankedPaths.length === 0
 					? hasUnbuilt
 						? "not-built"
 						: "unsupported"
-					: resolvedPaths.some((path) => path.coverage.status === "partial")
+					: rankedPaths.some((path) => path.coverage.status === "complete")
+						? "available"
+						: rankedPaths.some((path) => path.coverage.status === "partial")
 						? "partial"
-						: resolvedPaths.some((path) => path.coverage.status === "not-built")
+						: rankedPaths.some((path) => path.coverage.status === "not-built")
 							? "not-built"
 							: "available",
-			paths: resolvedPaths,
+			paths: rankedPaths,
 			missingPrerequisites,
 		};
 	}
