@@ -215,6 +215,11 @@ const weightOf = (target: TranslationTarget, missing: number) =>
  * multiply along the route and sum where routes meet the same target; other
  * purposes only merge labels. `stepsFor` returns undefined when a step's
  * artifact is not loaded, which leaves the path without a result.
+ *
+ * A composed path reports each target's code, labels and composed weight
+ * only. A step's shares, overlap area and population describe the pair of
+ * areas that step joins, which after the first step is not the queried area,
+ * so carrying them through would misstate the result.
  */
 export const executeTranslationPath = (
 	path: RelationshipPath,
@@ -237,11 +242,13 @@ export const executeTranslationPath = (
 		targets = targets.flatMap((target) => {
 			const translated = steps.get(target.code);
 			if (!translated) return [];
-			return translated.targets.map((next) =>
-				path.purpose === "apportion"
-					? { ...next, weight: weightOf(target, 1) * weightOf(next, 1) }
-					: next,
-			);
+			return translated.targets.map((next): TranslationTarget => ({
+				code: next.code,
+				labels: next.labels,
+				...(path.purpose === "apportion"
+					? { weight: weightOf(target, 1) * weightOf(next, 1) }
+					: {}),
+			}));
 		});
 		if (targets.length === 0) return undefined;
 	}
