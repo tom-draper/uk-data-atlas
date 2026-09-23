@@ -1,6 +1,6 @@
 import type { AreaRelation } from "./areaRelationships";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 const RELATIONS: AreaRelation[] = [
 	"within",
@@ -20,7 +20,7 @@ export const handleRelationshipCoverageRoutes = ({ context, releaseId, parsedUrl
 	const limit = limitParameter === null ? 25 : Number(limitParameter);
 	if (!geography || !boundaryRelease || (relationParameter !== null && !RELATIONS.includes(relationParameter as AreaRelation)) || !Number.isInteger(limit) || limit < 1 || limit > 100)
 		return problem(400, "Invalid Query", "geography and release are required; relation must be within, contains, successor, predecessor or overlaps; limit must be an integer from 1 to 100.");
-	const coverage = geographyResolverFor(context).relationshipCoverage(geography, boundaryRelease, relationParameter as AreaRelation | undefined, limit);
+	const coverage = context.geographyResolver.relationshipCoverage(geography, boundaryRelease, relationParameter as AreaRelation | undefined, limit);
 	if (!coverage) return problem(503, "Catalogue Unavailable", "Build the area identity and relationship artifacts for this release before reporting relationship coverage.");
 	const status = coverage.relatedAreaCount === coverage.areaCount ? "available" : coverage.relatedAreaCount > 0 ? "partial" : "unsupported";
 	return { status: 200, body: envelope(releaseId, {

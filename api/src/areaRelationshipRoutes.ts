@@ -1,6 +1,6 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** Published direct containment relationships in either direction. */
 export const handleAreaRelationshipRoutes = ({
@@ -21,7 +21,7 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 		string,
 	];
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const area = geographyResolver.area({
 		geography,
 		boundaryRelease,

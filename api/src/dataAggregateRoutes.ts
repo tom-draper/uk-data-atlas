@@ -30,7 +30,6 @@ export const handleDataAggregateRoutes = ({
 		segments[3] !== "aggregate"
 	)
 		return undefined;
-	const areaLookup = new Map(context.geographyResolver.releaseAreaEntries());
 	const {
 		dataCatalog,
 		populationObservations,
@@ -105,7 +104,7 @@ export const handleDataAggregateRoutes = ({
 		location,
 		regional,
 		areaCode,
-		areaLookup,
+		geographyResolver: context.geographyResolver,
 		compatibleReleases,
 		sourceGeography: source.sourceGeography,
 	});
@@ -171,7 +170,7 @@ export const handleDataAggregateRoutes = ({
 		weightDescription: weightedAggregation?.weight.description,
 		locationCoverage,
 		coverage,
-		areaLookup,
+		geographyResolver: context.geographyResolver,
 		areaCode,
 	});
 };

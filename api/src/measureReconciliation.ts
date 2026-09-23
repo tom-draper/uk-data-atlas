@@ -13,7 +13,7 @@ import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RelationshipPath } from "./relationshipPaths";
 import { buildTranslationSteps } from "./resolver/translation";
-import { geographyResolverFor, type RouteContext } from "./routing";
+import type { RouteContext } from "./routing";
 
 type Measure = DataCatalog["measures"][number];
 
@@ -116,7 +116,7 @@ const resolveRoute = (
 	context: RouteContext,
 	request: ReconciliationRouteRequest,
 ): ReconciliationRoute | { refusal: string } => {
-	const resolver = geographyResolverFor(context);
+	const resolver = context.geographyResolver;
 	if ("crosswalk" in request) {
 		const summary = resolver.crosswalkSummary(request.crosswalk);
 		const crosswalk = resolver.crosswalk(request.crosswalk);
@@ -420,7 +420,7 @@ export const availableReconciliations = (
 		held.push(source);
 		geographies.set(source.sourceGeography.type, held);
 	}
-	return geographyResolverFor(context).crosswalkSummaries().flatMap(
+	return context.geographyResolver.crosswalkSummaries().flatMap(
 		(crosswalk) => {
 			// A crosswalk within one geography relates two vintages of the
 			// same areas; adding a partition up through it would compare it

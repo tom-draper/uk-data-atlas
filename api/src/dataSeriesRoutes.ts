@@ -10,7 +10,7 @@ import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const parseAnalysisGeography = (value: string) => {
@@ -169,7 +169,7 @@ export const handleDataSeriesRoutes = ({
 						"No reviewed conversion is published from the requested source partition to that analysis geography.",
 				}),
 			};
-		const crosswalk = geographyResolverFor(context).crosswalk(
+		const crosswalk = context.geographyResolver.crosswalk(
 			support.crosswalk.id,
 		);
 		if (!crosswalk)

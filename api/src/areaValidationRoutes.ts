@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { MAX_BATCH_VALUES } from "./batchValidation";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** Validate many area codes or names against one published boundary release. */
 export const handleAreaValidationRoutes = ({
@@ -16,7 +16,7 @@ export const handleAreaValidationRoutes = ({
 		segments[1] !== "areas:validate"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const values = parsedUrl.searchParams.getAll("value");

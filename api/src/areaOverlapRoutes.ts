@@ -1,6 +1,6 @@
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
 import { areaNotFound } from "./areaResources";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** Travels with an overlap, so the relation reported can be read against the rule that decided it. */
@@ -25,7 +25,7 @@ export const handleAreaOverlapRoutes = ({
 		segments[5] !== "overlap"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,

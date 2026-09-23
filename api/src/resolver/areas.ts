@@ -10,7 +10,7 @@ import { createPlaceIndex, resolvePlaces } from "../placeResolver";
 import type { PlaceIndex } from "../placeResolver";
 import type { CrosswalkInventory } from "../crosswalkInventory";
 import { crosswalksTo } from "../locationMembership";
-import { reconcileMembers } from "../memberReconciliation";
+import { reconcileMembers, reconcileMembersForYear } from "../memberReconciliation";
 import type {
 	LocationProjectionStore,
 	LocationProjection,
@@ -131,8 +131,19 @@ export class AreasResolver {
 		return this.inputs.areaLookup?.get(`${geography}/${boundaryRelease}`);
 	}
 
-	releaseAreaEntries() {
-		return [...(this.inputs.areaLookup?.entries() ?? [])];
+	locationReleaseViews(memberGeography: string, memberCodes: string[]) {
+		if (!this.inputs.areaLookup) return [];
+		return [...this.inputs.areaLookup]
+			.flatMap(([identity, areas]) => {
+				const [geography, boundaryRelease] = identity.split("/", 2);
+				if (geography !== memberGeography || !boundaryRelease) return [];
+				return [{
+					geography,
+					boundaryRelease,
+					resolvedMemberCount: memberCodes.filter((code) => areas.has(code)).length,
+				}];
+			})
+			.sort((left, right) => left.boundaryRelease.localeCompare(right.boundaryRelease));
 	}
 
 	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) {
@@ -141,8 +152,22 @@ export class AreasResolver {
 			: undefined;
 	}
 
-	areaReleaseKeys() {
-		return [...(this.inputs.areaLookup?.keys() ?? [])];
+	reconcileMembersForYear(geography: string, boundaryYear: number, memberCodes: string[], resolvedCodes: Set<string>) {
+		return this.inputs.areaLookup
+			? reconcileMembersForYear(this.inputs.areaLookup, geography, boundaryYear, memberCodes, resolvedCodes)
+			: undefined;
+	}
+
+	countryIdentity(code: string) {
+		for (const identity of [...(this.inputs.areaLookup?.keys() ?? [])]
+			.filter((key) => key.startsWith("country/"))
+			.sort()
+			.reverse()) {
+			const boundaryRelease = identity.slice("country/".length);
+			const area = this.area({ geography: "country", boundaryRelease, code });
+			if (area) return { id: `country/${boundaryRelease}/${code}`, boundaryRelease, ...area };
+		}
+		return undefined;
 	}
 
 	places(query: string, limit: number) {
@@ -202,6 +227,7 @@ export class AreasResolver {
 	}
 
 	namedLocation(id: string): NamedLocation | undefined { return this.inputs.namedLocationLookup?.get(id); }
+	namedLocations() { return this.inputs.namedLocationInventory?.locations ?? []; }
 	hasNamedLocationInventory(): boolean { return this.inputs.namedLocationInventory !== undefined; }
 	namedLocationsForArea(identity: AreaIdentity): NamedLocation[] {
 		return this.locationsByMemberArea.get(`${identity.geography}/${identity.code}`) ?? [];
@@ -236,6 +262,29 @@ export class AreasResolver {
 		return this.inputs.crosswalkInventory?.crosswalks.find(
 			(crosswalk) => crosswalk.id === id,
 		);
+	}
+
+	crosswalkSummaryForArtifact(artifact: string) {
+		return this.inputs.crosswalkInventory?.crosswalks.find(
+			(crosswalk) => crosswalk.artifact === artifact,
+		);
+	}
+
+	areaIdentityRelease(geography: string, boundaryRelease: string) {
+		return this.inputs.areaInventory?.releases.find(
+			(release) => release.geography === geography && release.id === boundaryRelease,
+		);
+	}
+
+	areaIdentityReleaseForArtifact(artifact: string) {
+		return this.inputs.areaInventory?.releases.find(
+			(release) => release.status === "available" && release.artifact === artifact,
+		);
+	}
+
+	namedLocationMembershipInventory() {
+		const inventory = this.inputs.namedLocationInventory;
+		return inventory ? { contentHash: inventory.contentHash, locations: inventory.locations } : undefined;
 	}
 	crosswalkSummaries() { return this.inputs.crosswalkInventory?.crosswalks ?? []; }
 }

@@ -1,6 +1,6 @@
 import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "./areaResources";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /**
@@ -33,7 +33,7 @@ export const handleAreaGeometryMetadataRoutes = ({
 		segments[6] !== "metadata"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5);
 	const identity = {
 		geography: geography as string,

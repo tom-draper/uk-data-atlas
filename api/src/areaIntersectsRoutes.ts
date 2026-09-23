@@ -4,7 +4,7 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /**
@@ -29,7 +29,7 @@ export const handleAreaIntersectsRoutes = ({
 		segments[1] !== "areas:intersects"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const raw = parsedUrl.searchParams.get("bbox");
 	const parts = (raw ?? "").split(",").map((part) => Number(part.trim()));
 	const [west, south, east, north] = parts;

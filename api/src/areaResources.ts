@@ -3,7 +3,7 @@ import type { DataCatalog } from "./dataCatalog";
 import type { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import { problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteContext } from "./routing";
+import type { RouteContext } from "./routing";
 
 export const findArea = (
 	areaLookup: AreaLookup | undefined,
@@ -23,7 +23,7 @@ export const areaNotFound = (
 	boundaryRelease?: string,
 	code?: string,
 ): ApiResponse => {
-	const resolved = geographyResolverFor(context).explainAreaAbsence(
+	const resolved = context.geographyResolver.explainAreaAbsence(
 		geography ?? "",
 		boundaryRelease ?? "",
 		code ?? "",

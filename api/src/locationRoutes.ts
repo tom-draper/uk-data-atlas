@@ -1,5 +1,5 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
 
@@ -13,7 +13,6 @@ export const handleLocationRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { namedLocationInventory } = context;
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
@@ -21,13 +20,12 @@ export const handleLocationRoutes = ({
 	) {
 		const unavailable = context.geographyResolver.requires("named-locations");
 		if (unavailable) return unavailable;
-		if (!namedLocationInventory)
-			return context.geographyResolver.requires("named-locations")!;
+		const namedLocations = context.geographyResolver.namedLocations();
 		const query = parsedUrl.searchParams
 			.get("q")
 			?.trim()
 			.toLocaleLowerCase();
-		const locations = namedLocationInventory.locations.filter(
+		const locations = namedLocations.filter(
 			(location) =>
 				!query ||
 				location.id.startsWith(query) ||
@@ -40,7 +38,7 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
-		const location = geographyResolverFor(context).namedLocation(segments[2]!);
+		const location = context.geographyResolver.namedLocation(segments[2]!);
 		return location
 			? { status: 200, body: envelope(releaseId, location) }
 			: problem(
@@ -62,7 +60,7 @@ export const handleLocationRoutes = ({
 		segments[1] === "locations" &&
 		segments[3] === "members"
 	) {
-		const location = geographyResolverFor(context).namedLocation(segments[2]!);
+		const location = context.geographyResolver.namedLocation(segments[2]!);
 		if (!location)
 			return problem(
 				404,
@@ -79,7 +77,7 @@ export const handleLocationRoutes = ({
 				"Invalid Query",
 				"release is required to resolve a named location's members.",
 			);
-		const geographyResolver = geographyResolverFor(context);
+		const geographyResolver = context.geographyResolver;
 		const areas = geographyResolver.releaseAreas(geography, boundaryRelease);
 		if (!areas)
 			return problem(
@@ -126,7 +124,7 @@ export const handleLocationRoutes = ({
 				}),
 			};
 		}
-		const resolver = geographyResolverFor(context);
+		const resolver = context.geographyResolver;
 		const candidates = resolver.crosswalksToLocationMembers(
 			geography,
 			boundaryRelease,
@@ -222,7 +220,7 @@ const locationCapabilities = ({
 	releaseId,
 	segments,
 }: Pick<RouteRequest, "context" | "releaseId" | "segments">): ApiResponse => {
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const location = geographyResolver.namedLocation(segments[2]!);
 	if (!location)
 		return problem(
@@ -230,34 +228,23 @@ const locationCapabilities = ({
 			"Not Found",
 			"No named location matches that identity.",
 		);
-	const areaEntries = geographyResolver.releaseAreaEntries();
-	const direct = areaEntries.length === 0
-		? notBuilt("Build the area inventory before listing direct location views.")
+	const areaAvailability = geographyResolver.requires("areas");
+	const direct = areaAvailability
+		? notBuilt(requirementDetail(areaAvailability))
 		: (() => {
-				const views = areaEntries
-					.flatMap(([identity, areas]) => {
-						const [geography, boundaryRelease] = identity.split("/");
-						if (geography !== location.memberGeography) return [];
-						const resolvedMemberCount = location.memberCodes.filter(
-							(code) => areas.has(code),
-						).length;
-						return [
-							{
-								geography,
-								boundaryRelease,
-								status:
-									resolvedMemberCount === location.memberCodes.length
-										? ("available" as const)
-										: ("partial" as const),
-								memberCodeCount: location.memberCodes.length,
-								resolvedMemberCount,
-								href: `/v1/locations/${location.id}/members?release=${boundaryRelease}`,
-							},
-						];
-					})
-					.sort((left, right) =>
-						left.boundaryRelease.localeCompare(right.boundaryRelease),
-					);
+				const views = geographyResolver
+					.locationReleaseViews(location.memberGeography, location.memberCodes)
+					.map(({ geography, boundaryRelease, resolvedMemberCount }) => ({
+						geography,
+						boundaryRelease,
+						status:
+							resolvedMemberCount === location.memberCodes.length
+								? ("available" as const)
+								: ("partial" as const),
+						memberCodeCount: location.memberCodes.length,
+						resolvedMemberCount,
+						href: `/v1/locations/${location.id}/members?release=${boundaryRelease}`,
+					}));
 				return views.length > 0
 					? { status: "available" as const, views }
 					: unsupported(
@@ -336,7 +323,7 @@ const locationParents = ({
 	RouteRequest,
 	"context" | "releaseId" | "parsedUrl" | "segments"
 >): ApiResponse => {
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const location = geographyResolver.namedLocation(segments[2]!);
 	if (!location)
 		return problem(

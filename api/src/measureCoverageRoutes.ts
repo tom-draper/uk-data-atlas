@@ -2,7 +2,7 @@ import { areaNotFound } from "./areaResources";
 import { measureCapability } from "./measureCapability";
 import { measureCoverage } from "./measureCoverage";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** Published code-set coverage assessments for a measure. */
 export const handleMeasureCoverageRoutes = ({
@@ -46,7 +46,7 @@ export const handleMeasureCoverageRoutes = ({
 		);
 	if (geography === null || boundaryRelease === null)
 		return { status: 200, body: envelope(releaseId, coverage) };
-	if (!geographyResolverFor(context).hasAreaRelease(geography, boundaryRelease))
+	if (!context.geographyResolver.hasAreaRelease(geography, boundaryRelease))
 		return areaNotFound(context, geography, boundaryRelease);
 	const measure = dataCatalog.measures.find(
 		(candidate) => candidate.id === segments[2],

@@ -1,4 +1,4 @@
-import type { AreaLookup } from "./areaInventory";
+import type { GeographyResolver } from "./geographyResolver";
 import type { MeasureSource } from "./dataCatalog";
 import {
 	assessCoverage,
@@ -19,7 +19,7 @@ export const assessAggregationCoverage = ({
 	byRegion,
 	regional,
 	compatibleReleases,
-	areaLookup,
+	geographyResolver,
 	sourceGeography,
 	areaCode,
 }: {
@@ -27,25 +27,23 @@ export const assessAggregationCoverage = ({
 	byRegion?: AggregatedMembers;
 	regional?: AggregationTarget;
 	compatibleReleases: CompatibilityCandidate[];
-	areaLookup?: AreaLookup;
+	geographyResolver: GeographyResolver;
 	sourceGeography: MeasureSource["sourceGeography"];
 	areaCode: string | null;
 }): AggregateCoverage | undefined =>
 	byCountry
 		? summariseCoverage(
 				compatibleReleases.flatMap((candidate) => {
-					const expected = [
-						...(areaLookup
-							?.get(
-								`${sourceGeography.type}/${candidate.boundaryRelease}`,
-							)
-							?.keys() ?? []),
-					].filter((code) => countryCodeFor(code) === areaCode);
-					return expected.length > 0
+					const expected = geographyResolver.areaCodes(
+						sourceGeography.type,
+						candidate.boundaryRelease,
+					) ?? [];
+					const inCountry = expected.filter((code) => countryCodeFor(code) === areaCode);
+					return inCountry.length > 0
 						? [
 								assessCoverage(
 									candidate.boundaryRelease,
-									expected,
+									inCountry,
 									new Set(
 										byCountry.members.map(
 											(record) => record.areaCode,

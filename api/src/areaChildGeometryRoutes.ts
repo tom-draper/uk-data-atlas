@@ -5,7 +5,7 @@ import {
 	simplifyGeometry,
 } from "./simplifyGeometry";
 import { areaNotFound } from "./areaResources";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** The geometry of every area a published relationship places inside one area, as a feature collection. */
@@ -23,7 +23,7 @@ export const handleAreaChildGeometryRoutes = ({
 		segments[6] !== "geometry"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,

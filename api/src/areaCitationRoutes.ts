@@ -1,10 +1,8 @@
-import type { BoundaryRegistry } from "./boundaryRegistry";
-import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { DataCatalog } from "./dataCatalog";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
 import { areaMeasureSources, areaNotFound } from "./areaResources";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** A citation for one area: the artifacts that serve it, pinned by hash, with their attribution and licences. */
@@ -22,9 +20,6 @@ export const handleAreaCitationRoutes = ({
 	)
 		return undefined;
 	const {
-		boundaryRegistry: registry,
-		areaInventory,
-		crosswalkInventory,
 		atlasRelease,
 		validationReport,
 		dataCatalog,
@@ -33,7 +28,7 @@ export const handleAreaCitationRoutes = ({
 		measureObservations,
 		measureCompatibilityInventory,
 	} = context;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
@@ -42,13 +37,15 @@ export const handleAreaCitationRoutes = ({
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	if (!dataCatalog || !crosswalkInventory) {
+	if (!dataCatalog) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
 			"Build the data catalogue and crosswalk inventory before citing an area.",
 		);
 	}
+	const unavailable = geographyResolver.requires("crosswalks");
+	if (unavailable) return unavailable;
 	const measureIds = [...new Set(parsedUrl.searchParams.getAll("measure"))];
 	const crosswalkIds = [
 		...new Set(parsedUrl.searchParams.getAll("crosswalk")),
@@ -64,8 +61,8 @@ export const handleAreaCitationRoutes = ({
 			crosswalks: crosswalkIds,
 		},
 		dataCatalog,
-		registry,
-		crosswalkInventory,
+		geographyResolver.boundaryReleasesFor(),
+		geographyResolver.crosswalkSummaries(),
 	);
 	if (requested.status === "unknown") {
 		return problem(
@@ -189,8 +186,8 @@ export const handleAreaCitationRoutes = ({
 			crosswalks: crosswalkIds,
 		},
 		dataCatalog,
-		registry,
-		crosswalkInventory,
+		geographyResolver.boundaryReleasesFor(),
+		geographyResolver.crosswalkSummaries(),
 	);
 	if (attribution.status === "unknown") {
 		return problem(
@@ -200,16 +197,8 @@ export const handleAreaCitationRoutes = ({
 		);
 	}
 
-	const release = registry.releases.find(
-		(candidate) =>
-			candidate.geography === geography &&
-			candidate.id === boundaryRelease,
-	) as BoundaryRegistry["releases"][number];
-	const identityArtifact = areaInventory?.releases.find(
-		(candidate) =>
-			candidate.geography === geography &&
-			candidate.id === boundaryRelease,
-	);
+	const release = geographyResolver.boundaryRelease(geography, boundaryRelease)!;
+	const identityArtifact = geographyResolver.areaIdentityRelease(geography, boundaryRelease);
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometryHash = (inputHash?: string) =>
 		inputHash
@@ -258,9 +247,7 @@ export const handleAreaCitationRoutes = ({
 	})();
 
 	const crosswalks = crosswalkIds.map((id) => {
-		const entry = crosswalkInventory.crosswalks.find(
-			(candidate) => candidate.id === id,
-		) as CrosswalkInventory["crosswalks"][number];
+		const entry = geographyResolver.crosswalkSummary(id)!;
 		const artifact = geographyResolver.crosswalk(id);
 		return {
 			id,

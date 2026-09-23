@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { parseSelectionDate } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** Published boundary releases and the geography catalogues built from them. */
 export const handleBoundaryRoutes = ({
@@ -10,8 +10,7 @@ export const handleBoundaryRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { boundaryRegistry, geographyInventory } = context;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 
 	if (
 		segments.length === 2 &&
@@ -20,9 +19,9 @@ export const handleBoundaryRoutes = ({
 	) {
 		const releasesByGeography = new Map<
 			string,
-			typeof boundaryRegistry.releases
+			ReturnType<typeof geographyResolver.boundaryReleasesFor>
 		>();
-		for (const release of boundaryRegistry.releases) {
+		for (const release of geographyResolver.boundaryReleasesFor()) {
 			const releases = releasesByGeography.get(release.geography) ?? [];
 			releases.push(release);
 			releasesByGeography.set(release.geography, releases);
@@ -42,6 +41,7 @@ export const handleBoundaryRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "geography-inventory"
 	) {
+		const geographyInventory = geographyResolver.geographyInventory();
 		return geographyInventory
 			? { status: 200, body: envelope(releaseId, geographyInventory) }
 			: problem(
@@ -193,7 +193,7 @@ export const handleBoundaryRoutes = ({
 	)
 		return {
 			status: 200,
-			body: envelope(releaseId, boundaryRegistry.releases),
+			body: envelope(releaseId, geographyResolver.boundaryReleasesFor()),
 		};
 
 	if (
@@ -201,11 +201,7 @@ export const handleBoundaryRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "boundary-releases"
 	) {
-		const release = boundaryRegistry.releases.find(
-			(candidate) =>
-				candidate.geography === segments[2] &&
-				candidate.id === segments[3],
-		);
+		const release = geographyResolver.boundaryRelease(segments[2]!, segments[3]!);
 		if (release) return { status: 200, body: envelope(releaseId, release) };
 		return areaNotFound(context, segments[2], segments[3]);
 	}

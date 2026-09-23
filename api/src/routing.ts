@@ -84,10 +84,6 @@ export type RouteContext = {
 	mapFeatures?: Map<string, Buffer>;
 };
 
-/** Route handlers always use the eagerly constructed facade on their context. */
-export const geographyResolverFor = (context: RouteContext): GeographyResolver =>
-	context.geographyResolver;
-
 export type RouteRequest = {
 	context: RouteContext;
 	releaseId: string;

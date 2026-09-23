@@ -1,5 +1,5 @@
-import type { AreaLookup } from "./areaInventory";
-import { reconcileMembersForYear } from "./memberReconciliation";
+import type { GeographyResolver } from "./geographyResolver";
+import type { reconcileMembersForYear } from "./memberReconciliation";
 import type { NamedLocation } from "./namedLocations";
 import { problem, type ApiResponse } from "./routeResponse";
 
@@ -15,31 +15,25 @@ export type LocationCoverage = ReturnType<typeof reconcileMembersForYear>;
 export const validateLocationAggregation = ({
 	location,
 	byLocation,
-	areaLookup,
+	geographyResolver,
 	sourceGeography,
 }: {
 	location?: NamedLocation;
 	byLocation?: LocationAggregate;
-	areaLookup?: AreaLookup;
+	geographyResolver: GeographyResolver;
 	sourceGeography: { type: string; boundaryYear: number };
 }): LocationCoverage | ApiResponse | undefined => {
 	if (!location || !byLocation) return undefined;
-	const locationCoverage = areaLookup
-		? reconcileMembersForYear(
-				areaLookup,
+	const unavailable = geographyResolver.requires("areas");
+	const locationCoverage = !unavailable
+		? geographyResolver.reconcileMembersForYear(
 				sourceGeography.type,
 				sourceGeography.boundaryYear,
 				location.memberCodes,
 				new Set(byLocation.members.map((record) => record.areaCode)),
 			)
 		: undefined;
-	if (!areaLookup && byLocation.unresolvedMemberCodes.length > 0) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area inventory before aggregating over a named location, so a member code of another vintage can be told from one that is wrong.",
-		);
-	}
+	if (unavailable && byLocation.unresolvedMemberCodes.length > 0) return unavailable;
 	if (locationCoverage && locationCoverage.unexplained.length > 0) {
 		return problem(
 			422,
