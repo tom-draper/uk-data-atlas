@@ -3827,7 +3827,7 @@ over its land, and they rarely are: Luton is 21% of the land of Luton South
 and South Bedfordshire but holds 88% of its residents, so area weighting
 would put most of Luton's people in rural Bedfordshire. The building blocks
 are 2021 LSOAs with their Census 2021 usual residents (table TS001, under
-`data/demographics/population/census-2021-lsoa`). Each block's residents are
+`data/demographics/population/census-2021/lsoa`). Each block's residents are
 split among the source and target pairs it falls in, in proportion to its
 area in each, so the assumption of evenness shrinks from a whole constituency
 to about 1,500 people.

@@ -1709,7 +1709,7 @@
 			"pairs": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
 			"sourceCodePattern": "^(E14|W07)",
 			"population": {
-				"input": "demographics/population/census-2021-lsoa/census2021-ts001-lsoa.csv",
+				"input": "demographics/population/census-2021/lsoa/census2021-ts001-lsoa.csv",
 				"codeColumn": "geography code",
 				"valueColumn": "Residence type: Total; measures: Value"
 			},
