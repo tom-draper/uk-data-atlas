@@ -3479,6 +3479,7 @@ second inventory to maintain:
 - `GET /v1/geographies` — List geography types with their latest boundary release
 - `GET /v1/boundary-releases` — List every compiled boundary release
 - `GET /v1/boundary-releases:resolve` — Select the boundary release to use for a date
+- `GET /v1/boundary-releases:compare` — Compare two releases of one geography without inferring geography change from codes
 - `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release's metadata
 - `GET /v1/geography-inventory` — Report resolver identity and relationship coverage, including the compiled backlog by geography
 - `GET /v1/areas` — List or search compiled area identities
@@ -3495,7 +3496,7 @@ second inventory to maintain:
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
-- `GET /v1/translations` — Translate one code through a published crosswalk in either direction
+- `GET /v1/translations` — Translate one code through a published conversion path in either direction
 - `GET /v1/locations` — List the curated area collections
 - `GET /v1/locations/{location-id}` — Get one curated area collection's definition
 - `GET /v1/locations/{location-id}/capabilities` — Discover the direct and crosswalk views published for a named location
