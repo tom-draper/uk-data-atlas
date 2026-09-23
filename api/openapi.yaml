@@ -882,8 +882,9 @@ paths:
         same-code-continuity crosswalk measured their geometry. Its changed,
         indeterminate and unmeasured findings remain review evidence, not
         conversion claims. Other published crosswalks between the releases are
-        named separately, so a recode or split can be inspected without a
-        runtime polygon comparison.
+        named separately with their directional code cardinality and bounded
+        split/merge-shaped examples. These describe published records, not a
+        legal boundary-change finding, and need no runtime polygon comparison.
       parameters:
         - name: geography
           in: query

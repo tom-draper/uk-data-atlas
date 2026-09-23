@@ -291,6 +291,37 @@ export type BoundaryExtentChange = {
 	toShare: number;
 };
 
+/**
+ * The cardinality of codes in a published crosswalk, viewed in the direction
+ * requested by a release comparison. This describes its records, rather than
+ * inferring a legal boundary change from them.
+ */
+export type PublishedRelationshipMapping = {
+	shape:
+		| "no-mappings"
+		| "one-to-one"
+		| "one-to-many"
+		| "many-to-one"
+		| "many-to-many";
+	fromCodeCount: number;
+	toCodeCount: number;
+	pairCount: number;
+	from: {
+		noTargetCount: number;
+		oneTargetCount: number;
+		multipleTargetCount: number;
+	};
+	to: {
+		oneSourceCount: number;
+		multipleSourceCount: number;
+	};
+	examples: {
+		oneToMany: Array<{ fromCode: string; toCodes: string[] }>;
+		manyToOne: Array<{ toCode: string; fromCodes: string[] }>;
+	};
+	note: string;
+};
+
 export type BoundaryReleaseComparison = {
 	geography: string;
 	from: GeographyEndpoint;
@@ -329,6 +360,7 @@ export type BoundaryReleaseComparison = {
 		relationshipPurpose?: "identity" | "membership";
 		weighting: CrosswalkArtifact["weighting"];
 		recordCount: number;
+		mapping: PublishedRelationshipMapping;
 	}>;
 };
 
@@ -409,7 +441,93 @@ const operationsForPurpose = (
 					permitted: ["weighted-allocation"],
 					prohibited: ["identity-join"],
 					note: "Use this path only for measures whose semantics permit the published overlap weighting.",
-				};
+			};
+
+const summarisePublishedRelationshipMapping = (
+	crosswalk: CrosswalkArtifact,
+	direction: "forward" | "reverse",
+	limit: number,
+): PublishedRelationshipMapping => {
+	const targetsByFrom = new Map<string, Set<string>>();
+	const sourcesByTo = new Map<string, Set<string>>();
+	for (const record of crosswalk.records) {
+		const fromCode =
+			direction === "forward" ? record.source.code : undefined;
+		if (fromCode && !targetsByFrom.has(fromCode))
+			targetsByFrom.set(fromCode, new Set());
+		for (const target of record.targets) {
+			const viewedFrom =
+				direction === "forward" ? record.source.code : target.code;
+			const viewedTo =
+				direction === "forward" ? target.code : record.source.code;
+			const targets = targetsByFrom.get(viewedFrom) ?? new Set<string>();
+			targets.add(viewedTo);
+			targetsByFrom.set(viewedFrom, targets);
+			const sources = sourcesByTo.get(viewedTo) ?? new Set<string>();
+			sources.add(viewedFrom);
+			sourcesByTo.set(viewedTo, sources);
+		}
+	}
+	const fromEntries = [...targetsByFrom].sort(([left], [right]) =>
+		left.localeCompare(right),
+	);
+	const toEntries = [...sourcesByTo].sort(([left], [right]) =>
+		left.localeCompare(right),
+	);
+	const from = {
+		noTargetCount: fromEntries.filter(([, targets]) => targets.size === 0)
+			.length,
+		oneTargetCount: fromEntries.filter(([, targets]) => targets.size === 1)
+			.length,
+		multipleTargetCount: fromEntries.filter(([, targets]) => targets.size > 1)
+			.length,
+	};
+	const to = {
+		oneSourceCount: toEntries.filter(([, sources]) => sources.size === 1)
+			.length,
+		multipleSourceCount: toEntries.filter(([, sources]) => sources.size > 1)
+			.length,
+	};
+	const pairCount = fromEntries.reduce(
+		(count, [, targets]) => count + targets.size,
+		0,
+	);
+	const shape =
+		pairCount === 0
+			? "no-mappings"
+			: from.multipleTargetCount > 0 && to.multipleSourceCount > 0
+				? "many-to-many"
+				: from.multipleTargetCount > 0
+					? "one-to-many"
+					: to.multipleSourceCount > 0
+						? "many-to-one"
+						: "one-to-one";
+	return {
+		shape,
+		fromCodeCount: fromEntries.length,
+		toCodeCount: toEntries.length,
+		pairCount,
+		from,
+		to,
+		examples: {
+			oneToMany: fromEntries
+				.filter(([, targets]) => targets.size > 1)
+				.slice(0, limit)
+				.map(([fromCode, targets]) => ({
+					fromCode,
+					toCodes: [...targets].sort(),
+				})),
+			manyToOne: toEntries
+				.filter(([, sources]) => sources.size > 1)
+				.slice(0, limit)
+				.map(([toCode, sources]) => ({
+					toCode,
+					fromCodes: [...sources].sort(),
+				})),
+		},
+		note: "Cardinality describes codes in this crosswalk's published records, viewed from the requested release to the other release. It does not establish a legal boundary change or account for release codes absent from the records.",
+	};
+};
 
 /**
  * Read-only geography intelligence over one immutable Atlas release.
@@ -1746,6 +1864,11 @@ export class GeographyResolver {
 					: {}),
 				weighting: crosswalk.weighting,
 				recordCount: crosswalk.records.length,
+				mapping: summarisePublishedRelationshipMapping(
+					crosswalk,
+					direction,
+					limit,
+				),
 			}));
 		return {
 			geography,
