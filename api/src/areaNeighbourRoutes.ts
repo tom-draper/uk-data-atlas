@@ -1,6 +1,6 @@
 import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "./areaResources";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /**
@@ -30,18 +30,12 @@ export const handleAreaNeighbourRoutes = ({
 		segments[5] !== "neighbours"
 	)
 		return undefined;
-	const { geographyResolver } = context;
+	const geographyResolver = geographyResolverFor(context);
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before finding neighbours.",
-		);
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);

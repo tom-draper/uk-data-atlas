@@ -127,8 +127,21 @@ export class AreasResolver {
 		return this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`) ?? false;
 	}
 
+	areaCodes(geography: string, boundaryRelease: string): string[] | undefined {
+		const areas = this.inputs.areaLookup?.get(`${geography}/${boundaryRelease}`);
+		return areas ? [...areas.keys()] : undefined;
+	}
+
 	boundaryRelease(geography: string, id: string) {
 		return this.boundaryReleases.get(`${geography}/${id}`);
+	}
+
+	boundaryReleasesFor(geography?: string): BoundaryRegistry["releases"] {
+		return (geography
+			? [...this.boundaryReleases.values()].filter(
+				(release) => release.geography === geography,
+			)
+			: [...this.boundaryReleases.values()]) as BoundaryRegistry["releases"];
 	}
 
 	sameCode(identity: AreaIdentity): ResolvedSameCodeArea[] {
@@ -190,4 +203,10 @@ export class AreasResolver {
 		return this.crosswalksBySource.get([geography, boundaryRelease, memberGeography].join("/")) ??
 			(this.inputs.crosswalkInventory ? crosswalksTo(this.inputs.crosswalkInventory, geography, boundaryRelease, memberGeography) : []);
 	}
+	crosswalkSummary(id: string) {
+		return this.inputs.crosswalkInventory?.crosswalks.find(
+			(crosswalk) => crosswalk.id === id,
+		);
+	}
+	crosswalkSummaries() { return this.inputs.crosswalkInventory?.crosswalks ?? []; }
 }

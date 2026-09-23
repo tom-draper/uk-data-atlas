@@ -1,5 +1,5 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const PURPOSES: RelationshipPurpose[] = [
@@ -25,13 +25,7 @@ export const handleTranslationRoutes = ({
 		segments[1] !== "translations"
 	)
 		return undefined;
-	if (!context.geographyResolver || !context.crosswalkLookup) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver and crosswalk inventory before translating area codes.",
-		);
-	}
+	const geographyResolver = geographyResolverFor(context);
 	const source = {
 		geography: parsedUrl.searchParams.get("sourceGeography"),
 		boundaryRelease: parsedUrl.searchParams.get("sourceRelease"),
@@ -65,7 +59,7 @@ export const handleTranslationRoutes = ({
 		geography: string;
 		boundaryRelease: string;
 	};
-	const translations = context.geographyResolver.translateArea(
+	const translations = geographyResolver.translateArea(
 		resolvedSource,
 		resolvedTarget,
 		purpose as RelationshipPurpose,
@@ -82,7 +76,8 @@ export const handleTranslationRoutes = ({
 						if (path.steps.length !== 1)
 							return { path, ...translation };
 						const step = path.steps[0]!;
-						const crosswalk = context.crosswalkLookup!.get(step.crosswalkId)!;
+						const crosswalk = geographyResolver.crosswalk(step.crosswalkId);
+						if (!crosswalk) return { path, ...translation };
 						return {
 							crosswalk: {
 								id: crosswalk.id,

@@ -1,6 +1,6 @@
 import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "./areaResources";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /**
@@ -33,14 +33,8 @@ export const handleAreaGeometryMetadataRoutes = ({
 		segments[6] !== "metadata"
 	)
 		return undefined;
-	const { geographyResolver } = context;
+	const geographyResolver = geographyResolverFor(context);
 	const [geography, boundaryRelease, code] = segments.slice(2, 5);
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before retrieving geometry.",
-		);
 	const identity = {
 		geography: geography as string,
 		boundaryRelease: boundaryRelease as string,

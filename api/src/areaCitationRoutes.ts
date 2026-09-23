@@ -4,7 +4,7 @@ import type { DataCatalog } from "./dataCatalog";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
 import { areaMeasureSources, areaNotFound } from "./areaResources";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** A citation for one area: the artifacts that serve it, pinned by hash, with their attribution and licences. */
@@ -33,19 +33,13 @@ export const handleAreaCitationRoutes = ({
 		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
-		geographyResolver,
 	} = context;
+	const geographyResolver = geographyResolverFor(context);
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before citing an area.",
-		);
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);

@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { parseSelectionDate } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 /** Published boundary releases and the geography catalogues built from them. */
 export const handleBoundaryRoutes = ({
@@ -10,7 +10,8 @@ export const handleBoundaryRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { boundaryRegistry, geographyInventory, geographyResolver } = context;
+	const { boundaryRegistry, geographyInventory } = context;
+	const geographyResolver = geographyResolverFor(context);
 
 	if (
 		segments.length === 2 &&
@@ -156,12 +157,6 @@ export const handleBoundaryRoutes = ({
 				400,
 				"Invalid Query",
 				"from and to must name different boundary releases.",
-			);
-		if (!geographyResolver)
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the geography resolver before comparing boundary releases.",
 			);
 		if (!geographyResolver.hasAreaRelease(geography, from))
 			return areaNotFound(context, geography, from);

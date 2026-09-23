@@ -4,7 +4,7 @@ import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
 import { refused, resolveObservations } from "./resolve/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";
 
 /**
@@ -268,14 +268,17 @@ export const handleMapResourceRoutes = ({
 		// codes. Numbering the observations instead would drift the moment a
 		// measure covered fewer areas than the release holds, and the values
 		// would land on the wrong shapes.
-		const inRelease = context.areaLookup?.get(id);
-		if (!inRelease)
+		const [geography, boundaryRelease] = id.split("/", 2);
+		const areaCodes = geography && boundaryRelease
+			? geographyResolverFor(context).areaCodes(geography, boundaryRelease)
+			: undefined;
+		if (!areaCodes)
 			return problem(
 				503,
 				"Catalogue Unavailable",
 				`The area identities for ${id} are not loaded, so values cannot be numbered to match the tiles.`,
 			);
-		const numbered = featureIds([...inRelease.keys()]);
+		const numbered = featureIds(areaCodes);
 		const values = observations.records.flatMap((record) =>
 			isNumericObservation(record)
 				? [

@@ -13,7 +13,7 @@ import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RelationshipPath } from "./relationshipPaths";
 import { buildTranslationSteps } from "./resolver/translation";
-import type { RouteContext } from "./routing";
+import { geographyResolverFor, type RouteContext } from "./routing";
 
 type Measure = DataCatalog["measures"][number];
 
@@ -116,11 +116,10 @@ const resolveRoute = (
 	context: RouteContext,
 	request: ReconciliationRouteRequest,
 ): ReconciliationRoute | { refusal: string } => {
+	const resolver = geographyResolverFor(context);
 	if ("crosswalk" in request) {
-		const summary = context.crosswalkInventory?.crosswalks.find(
-			(candidate) => candidate.id === request.crosswalk,
-		);
-		const crosswalk = context.crosswalkLookup?.get(request.crosswalk);
+		const summary = resolver.crosswalkSummary(request.crosswalk);
+		const crosswalk = resolver.crosswalk(request.crosswalk);
 		if (!summary || !crosswalk)
 			return { refusal: `No published crosswalk is named ${request.crosswalk}.` };
 		return {
@@ -137,10 +136,10 @@ const resolveRoute = (
 			reference: { crosswalk: crosswalkReference(summary) },
 		};
 	}
-	const path = context.geographyResolver?.relationshipPath(request.path);
+	const path = resolver.relationshipPath(request.path);
 	if (!path)
 		return { refusal: `No published relationship path is named ${request.path}.` };
-	const indexed = context.geographyResolver!.indexedPathSteps(path);
+	const indexed = resolver.indexedPathSteps(path);
 	if ("missingCrosswalkId" in indexed)
 		return {
 			refusal: `The crosswalk ${indexed.missingCrosswalkId} required by path ${path.id} is not built.`,
@@ -421,7 +420,7 @@ export const availableReconciliations = (
 		held.push(source);
 		geographies.set(source.sourceGeography.type, held);
 	}
-	return (context.crosswalkInventory?.crosswalks ?? []).flatMap(
+	return geographyResolverFor(context).crosswalkSummaries().flatMap(
 		(crosswalk) => {
 			// A crosswalk within one geography relates two vintages of the
 			// same areas; adding a partition up through it would compare it

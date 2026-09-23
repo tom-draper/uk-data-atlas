@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { notBuilt, unsupported } from "./capability";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 /**
  * A single, evidence-led starting point for an exact area identity. Detailed
@@ -25,13 +25,7 @@ export const handleAreaDossierRoutes = ({
 		string,
 		string,
 	];
-	const { geographyResolver } = context;
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before compiling an area dossier.",
-		);
+	const geographyResolver = geographyResolverFor(context);
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);

@@ -1,6 +1,6 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 /** Published predecessor/successor links and explicitly qualified same-code continuity. */
 export const handleAreaHistoryRoutes = ({
@@ -21,13 +21,7 @@ export const handleAreaHistoryRoutes = ({
 		string,
 		string,
 	];
-	const { geographyResolver } = context;
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before looking up area history.",
-		);
+	const geographyResolver = geographyResolverFor(context);
 	const depthParameter = parsedUrl.searchParams.get("depth");
 	const depth = depthParameter === null ? 8 : Number(depthParameter);
 	if (!Number.isInteger(depth) || depth < 1 || depth > 20)

@@ -1,6 +1,6 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 /** Published direct containment relationships in either direction. */
 export const handleAreaRelationshipRoutes = ({
@@ -21,13 +21,7 @@ export const handleAreaRelationshipRoutes = ({
 		string,
 		string,
 	];
-	const { geographyResolver } = context;
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before looking up area membership.",
-		);
+	const geographyResolver = geographyResolverFor(context);
 	const area = geographyResolver.area({
 		geography,
 		boundaryRelease,
