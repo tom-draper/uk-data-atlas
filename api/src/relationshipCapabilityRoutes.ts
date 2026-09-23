@@ -6,7 +6,7 @@ import {
 	type MeasureCompatibilityInventory,
 } from "./measureCompatibility";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"identity",
@@ -131,7 +131,7 @@ export const handleRelationshipCapabilityRoutes = ({
 			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together.",
 		);
 	}
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	if (to.geography === null || to.boundaryRelease === null) {
 		const source = from as { geography: string; boundaryRelease: string };
 		if (!geographyResolver.hasAreaRelease(source.geography, source.boundaryRelease)) {

@@ -1,5 +1,5 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const PURPOSES: RelationshipPurpose[] = [
@@ -25,7 +25,7 @@ export const handleTranslationRoutes = ({
 		segments[1] !== "translations"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const source = {
 		geography: parsedUrl.searchParams.get("sourceGeography"),
 		boundaryRelease: parsedUrl.searchParams.get("sourceRelease"),

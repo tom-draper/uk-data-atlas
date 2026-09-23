@@ -5,7 +5,7 @@ import {
 	readPageSize,
 } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** Search compiled area identities with stable cursor pagination. */
 export const handleAreaSearchRoutes = ({
@@ -20,7 +20,7 @@ export const handleAreaSearchRoutes = ({
 		segments[1] !== "areas"
 	)
 		return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const query = parsedUrl.searchParams.get("q")?.trim();

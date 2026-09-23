@@ -1,5 +1,6 @@
 import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import type { GeographyInventory } from "./geographyInventory";
 import type { AreaGeometryCache } from "./areaGeometry";
 import type { CrosswalkArtifact, CrosswalkInventory } from "./crosswalkInventory";
 import type { LocationProjectionStore } from "./locationProjections";
@@ -26,6 +27,7 @@ export type { ResolvedRelationshipCoverage, GeographyHealth, RelationshipRepair 
 
 export type GeographyResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
+	geographyInventory?: GeographyInventory;
 	areaInventory?: AreaInventory;
 	areaLookup?: AreaLookup;
 	crosswalkInventory?: CrosswalkInventory;
@@ -76,11 +78,14 @@ export class GeographyResolver {
 		return problem(503, "Catalogue Unavailable", descriptions[requirement]);
 	}
 
+	geographyInventory() { return this.inputs.geographyInventory; }
+
 	area(identity: AreaIdentity): AreaRecord | undefined { return this.areas.area(identity); }
 	releaseAreas(geography: string, boundaryRelease: string) { return this.areas.releaseAreas(geography, boundaryRelease); }
-	releaseAreaEntries() { return this.areas.releaseAreaEntries(); }
+	locationReleaseViews(memberGeography: string, memberCodes: string[]) { return this.areas.locationReleaseViews(memberGeography, memberCodes); }
 	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) { return this.areas.reconcileMembers(geography, boundaryRelease, memberCodes, resolvedCodes); }
-	areaReleaseKeys() { return this.areas.areaReleaseKeys(); }
+	reconcileMembersForYear(geography: string, boundaryYear: number, memberCodes: string[], resolvedCodes: Set<string>) { return this.areas.reconcileMembersForYear(geography, boundaryYear, memberCodes, resolvedCodes); }
+	countryIdentity(code: string) { return this.areas.countryIdentity(code); }
 	places(query: string, limit = 10) {
 		return this.areas.places(query, limit);
 	}
@@ -109,10 +114,15 @@ export class GeographyResolver {
 	areaHistory(identity: AreaIdentity, maximumDepth = 8) { return this.lineage.areaHistory(identity, maximumDepth); }
 
 	namedLocation(id: string) { return this.areas.namedLocation(id); }
+	namedLocations() { return this.areas.namedLocations(); }
 	namedLocationsForArea(identity: AreaIdentity) { return this.areas.namedLocationsForArea(identity); }
 	crosswalk(id: string): CrosswalkArtifact | undefined { return this.translator.artifact(id); }
 	crosswalkSummary(id: string) { return this.areas.crosswalkSummary(id); }
+	crosswalkSummaryForArtifact(artifact: string) { return this.areas.crosswalkSummaryForArtifact(artifact); }
 	crosswalkSummaries() { return this.areas.crosswalkSummaries(); }
+	areaIdentityRelease(geography: string, boundaryRelease: string) { return this.areas.areaIdentityRelease(geography, boundaryRelease); }
+	areaIdentityReleaseForArtifact(artifact: string) { return this.areas.areaIdentityReleaseForArtifact(artifact); }
+	namedLocationMembershipInventory() { return this.areas.namedLocationMembershipInventory(); }
 	locationProjection(locationId: string, geography: string, boundaryRelease: string, crosswalkId: string) { return this.areas.locationProjection(locationId, geography, boundaryRelease, crosswalkId); }
 	locationMemberProjectionShards(memberGeography: string) { return this.areas.locationMemberProjectionShards(memberGeography); }
 	locationParentProjectionShards(memberGeography: string) { return this.areas.locationParentProjectionShards(memberGeography); }

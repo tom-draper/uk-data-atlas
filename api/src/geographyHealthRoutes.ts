@@ -1,9 +1,9 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, segments }: RouteRequest): ApiResponse | undefined => {
 	if (segments.length !== 2 || segments[0] !== "v1" || segments[1] !== "geography-health") return undefined;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const geography = parsedUrl.searchParams.get("geography");
 	const country = parsedUrl.searchParams.get("country");
 	const reach = parsedUrl.searchParams.get("reach");

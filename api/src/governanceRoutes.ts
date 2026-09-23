@@ -11,8 +11,6 @@ export const handleGovernanceRoutes = ({
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const {
-		boundaryRegistry,
-		crosswalkInventory,
 		dataCatalog,
 		relationshipCandidateInventory,
 	} = context;
@@ -46,13 +44,15 @@ export const handleGovernanceRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "attribution"
 	) {
-		if (!dataCatalog || !crosswalkInventory) {
+		if (!dataCatalog) {
 			return problem(
 				503,
 				"Catalogue Unavailable",
 				"Build the data catalogue and crosswalk inventory before generating attribution.",
 			);
 		}
+		const unavailable = context.geographyResolver.requires("crosswalks");
+		if (unavailable) return unavailable;
 		const request = {
 			datasets: parsedUrl.searchParams.getAll("dataset"),
 			measures: parsedUrl.searchParams.getAll("measure"),
@@ -69,8 +69,8 @@ export const handleGovernanceRoutes = ({
 		const attribution = attributionFor(
 			request,
 			dataCatalog,
-			boundaryRegistry,
-			crosswalkInventory,
+			context.geographyResolver.boundaryReleasesFor(),
+			context.geographyResolver.crosswalkSummaries(),
 		);
 		if (attribution.status === "unknown") {
 			return problem(

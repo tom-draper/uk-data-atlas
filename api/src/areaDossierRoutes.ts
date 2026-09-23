@@ -1,7 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { notBuilt, unsupported } from "./capability";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
@@ -28,7 +28,7 @@ export const handleAreaDossierRoutes = ({
 		string,
 		string,
 	];
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);

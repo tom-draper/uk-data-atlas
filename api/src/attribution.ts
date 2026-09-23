@@ -47,9 +47,15 @@ const licenceKey = (licence: Licence) => `${licence.name} ${licence.url ?? ""}`;
 export const attributionFor = (
 	request: AttributionRequest,
 	dataCatalog: DataCatalog,
-	boundaryRegistry: BoundaryRegistry,
-	crosswalkInventory: CrosswalkInventory,
+	boundarySource: BoundaryRegistry | BoundaryRegistry["releases"],
+	crosswalkSource: CrosswalkInventory | CrosswalkInventory["crosswalks"],
 ): AttributionResult => {
+	const boundaryReleases = Array.isArray(boundarySource)
+		? boundarySource
+		: boundarySource.releases;
+	const crosswalks = Array.isArray(crosswalkSource)
+		? crosswalkSource
+		: crosswalkSource.crosswalks;
 	const resources: AttributedResource[] = [];
 	const unknown: string[] = [];
 
@@ -76,7 +82,7 @@ export const attributionFor = (
 	const addBoundaryRelease = (identity: string, requestedAs: string) => {
 		const [geography, ...rest] = identity.split("/");
 		const releaseId = rest.join("/");
-		const release = boundaryRegistry.releases.find(
+		const release = boundaryReleases.find(
 			(candidate) =>
 				candidate.geography === geography && candidate.id === releaseId,
 		);
@@ -122,7 +128,7 @@ export const attributionFor = (
 	// A crosswalk is compiled by the Atlas from boundary files, so it carries no
 	// licence of its own; its endpoints are attributed instead.
 	for (const id of request.crosswalks) {
-		const crosswalk = crosswalkInventory.crosswalks.find(
+		const crosswalk = crosswalks.find(
 			(candidate) => candidate.id === id,
 		);
 		if (!crosswalk) {

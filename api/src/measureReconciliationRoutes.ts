@@ -19,9 +19,9 @@ export const handleMeasureReconciliationRoutes = ({
 		segments[3] !== "reconciliation"
 	)
 		return undefined;
-	const { dataCatalog, crosswalkInventory } = context;
+	const { dataCatalog } = context;
 	const unavailable = context.geographyResolver.requires("crosswalks");
-	if (!dataCatalog || !crosswalkInventory)
+	if (!dataCatalog)
 		return problem(
 			503,
 			"Catalogue Unavailable",

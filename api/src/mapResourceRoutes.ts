@@ -4,7 +4,7 @@ import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
 import { refused, resolveObservations } from "./observationResolution/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";
 
 /**
@@ -270,7 +270,7 @@ export const handleMapResourceRoutes = ({
 		// would land on the wrong shapes.
 		const [geography, boundaryRelease] = id.split("/", 2);
 		const areaCodes = geography && boundaryRelease
-			? geographyResolverFor(context).areaCodes(geography, boundaryRelease)
+			? context.geographyResolver.areaCodes(geography, boundaryRelease)
 			: undefined;
 		if (!areaCodes)
 			return problem(

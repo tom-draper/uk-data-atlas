@@ -14,7 +14,6 @@ export const handleCrosswalkRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { crosswalkInventory } = context;
 	const resolver = context.geographyResolver;
 	if (
 		segments.length === 2 &&
@@ -23,16 +22,10 @@ export const handleCrosswalkRoutes = ({
 	) {
 		const unavailable = resolver.requires("crosswalks");
 		if (unavailable) return unavailable;
-		return crosswalkInventory
-			? {
-					status: 200,
-					body: envelope(releaseId, crosswalkInventory.crosswalks),
-				}
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the crosswalk inventory before starting the API.",
-				);
+		return {
+			status: 200,
+			body: envelope(releaseId, resolver.crosswalkSummaries()),
+		};
 	}
 	if (
 		segments.length === 3 &&

@@ -61,8 +61,8 @@ export const conversionCoverageOnto = (
 	measure: Measure,
 	target: Target,
 ): Array<{ path: MeasureConversionPath; targets: Set<string> }> => {
-	const { crosswalkInventory } = context;
-	if (!crosswalkInventory) return [];
+	const crosswalks = context.geographyResolver.crosswalkSummaries();
+	if (context.geographyResolver.requires("crosswalks")) return [];
 	let cache = dryRuns.get(context);
 	if (!cache) {
 		cache = new Map();
@@ -75,7 +75,7 @@ export const conversionCoverageOnto = (
 		measureObservations: context.measureObservations,
 	};
 	return measure.sources.flatMap((source) =>
-		crosswalkInventory.crosswalks
+		crosswalks
 			.filter(
 				(crosswalk) =>
 					crosswalk.from.geography === source.sourceGeography.type &&

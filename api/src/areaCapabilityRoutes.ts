@@ -6,7 +6,7 @@ import {
 	type CapabilityStatus,
 } from "./capability";
 import { measureCapability } from "./measureCapability";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
@@ -32,7 +32,7 @@ export const handleAreaCapabilityRoutes = ({
 		measureObservations,
 		measureCompatibilityInventory,
 	} = context;
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,

@@ -7,7 +7,7 @@ const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"apportion",
 ];
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** Discover published conversion paths without attempting an implicit conversion. */
 export const handleRelationshipPathRoutes = ({
@@ -46,7 +46,7 @@ export const handleRelationshipPathRoutes = ({
 			"sourceGeography, sourceRelease, targetGeography, targetRelease and purpose (identity, membership or apportion) are required.",
 		);
 	}
-	const resolver = geographyResolverFor(context);
+	const resolver = context.geographyResolver;
 	const endpoints = [
 		from as { geography: string; boundaryRelease: string },
 		to as { geography: string; boundaryRelease: string },

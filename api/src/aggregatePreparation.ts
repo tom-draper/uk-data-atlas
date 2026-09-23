@@ -1,7 +1,7 @@
 import { assessAggregationCoverage } from "./aggregationCoverage";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
-import type { AreaLookup } from "./areaInventory";
+import type { GeographyResolver } from "./geographyResolver";
 import type { MeasureSource } from "./dataCatalog";
 import {
 	aggregateTargetMembers,
@@ -26,7 +26,7 @@ export const prepareAggregateTarget = ({
 	location,
 	regional,
 	areaCode,
-	areaLookup,
+	geographyResolver,
 	compatibleReleases,
 	sourceGeography,
 }: {
@@ -34,7 +34,7 @@ export const prepareAggregateTarget = ({
 	location?: NamedLocation;
 	regional?: AggregationTarget;
 	areaCode: string | null;
-	areaLookup?: AreaLookup;
+	geographyResolver: GeographyResolver;
 	compatibleReleases: CompatibilityCandidate[];
 	sourceGeography: MeasureSource["sourceGeography"];
 }): PreparedAggregate | ApiResponse => {
@@ -47,7 +47,7 @@ export const prepareAggregateTarget = ({
 	const locationCoverageResult = validateLocationAggregation({
 		location,
 		byLocation: targetMembers.byLocation,
-		areaLookup,
+		geographyResolver,
 		sourceGeography,
 	});
 	if (locationCoverageResult && "status" in locationCoverageResult)
@@ -57,7 +57,7 @@ export const prepareAggregateTarget = ({
 		byRegion: targetMembers.byRegion,
 		regional,
 		compatibleReleases,
-		areaLookup,
+		geographyResolver,
 		sourceGeography,
 		areaCode,
 	});

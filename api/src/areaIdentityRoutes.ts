@@ -1,6 +1,6 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import { geographyResolverFor, type RouteRequest } from "./routing";
+import type { RouteRequest } from "./routing";
 
 /** One compiled area identity in one explicit geography release. */
 export const handleAreaIdentityRoutes = ({
@@ -17,7 +17,7 @@ export const handleAreaIdentityRoutes = ({
 	const [geography, boundaryRelease, code] = segments.slice(2);
 	if (!geography || !boundaryRelease || !code)
 		return problem(400, "Invalid Path", "An area identity is incomplete.");
-	const geographyResolver = geographyResolverFor(context);
+	const geographyResolver = context.geographyResolver;
 	const area = geographyResolver.area({
 		geography,
 		boundaryRelease,

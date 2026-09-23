@@ -199,7 +199,7 @@ export const crosswalkTable = (
 
 /** Every curated named location, one row per member code. */
 export const namedLocationMembersTable = (
-	inventory: NamedLocationInventory,
+	inventory: Pick<NamedLocationInventory, "contentHash" | "locations">,
 	artifact: string,
 ): LookupTable => ({
 	id: "named-location-members",

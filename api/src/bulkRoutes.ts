@@ -21,13 +21,10 @@ export const handleBulkRoutes = ({
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const {
-		areaInventory,
-		crosswalkInventory,
 		dataCatalog,
 		exportManifest,
 		lookupManifest,
 		measureObservations,
-		namedLocationInventory,
 		populationLocalAuthorityObservations,
 		populationObservations,
 	} = context;
@@ -168,11 +165,7 @@ export const handleBulkRoutes = ({
 			);
 		const table = (() => {
 			if (entry.kind === "area-identities") {
-				const release = areaInventory?.releases.find(
-					(candidate) =>
-						candidate.status === "available" &&
-						candidate.artifact === entry.source.artifact,
-				);
+				const release = context.geographyResolver.areaIdentityReleaseForArtifact(entry.source.artifact);
 				const areas =
 					release &&
 					context.geographyResolver.releaseAreas(release.geography, release.id);
@@ -187,14 +180,13 @@ export const handleBulkRoutes = ({
 					: undefined;
 			}
 			if (entry.kind === "crosswalk") {
-				const summary = crosswalkInventory?.crosswalks.find(
-					(candidate) => candidate.artifact === entry.source.artifact,
-				);
+				const summary = context.geographyResolver.crosswalkSummaryForArtifact(entry.source.artifact);
 				const crosswalk = summary && context.geographyResolver.crosswalk(summary.id);
 				return crosswalk && summary
 					? crosswalkTable(crosswalk, summary.artifact)
 					: undefined;
 			}
+			const namedLocationInventory = context.geographyResolver.namedLocationMembershipInventory();
 			return namedLocationInventory
 				? namedLocationMembersTable(
 						namedLocationInventory,

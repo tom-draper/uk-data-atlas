@@ -1,8 +1,7 @@
-import type { AreaLookup } from "./areaInventory";
+import type { GeographyResolver } from "./geographyResolver";
 import type { AggregateCoverage, AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type { Measure, MeasureSource } from "./dataCatalog";
-import { findCountryIdentity } from "./aggregationMembership";
 import type { LocationCoverage } from "./locationAggregation";
 import type { NamedLocation } from "./namedLocations";
 import type { ObservationArtifactReference } from "./sourceExactProvenance";
@@ -32,7 +31,7 @@ export const buildAggregateResponse = ({
 	weightDescription,
 	locationCoverage,
 	coverage,
-	areaLookup,
+	geographyResolver,
 	areaCode,
 }: {
 	releaseId: string;
@@ -49,12 +48,12 @@ export const buildAggregateResponse = ({
 	weightDescription?: string;
 	locationCoverage?: LocationCoverage;
 	coverage?: AggregateCoverage;
-	areaLookup?: AreaLookup;
+	geographyResolver: GeographyResolver;
 	areaCode: string | null;
 }): ApiResponse => {
 	const country = location
 		? undefined
-		: findCountryIdentity(areaLookup, areaCode as string);
+		: geographyResolver.countryIdentity(areaCode as string);
 	const operation = weighting ? "weighted-mean" : "sum";
 	const weight = weighting
 		? {

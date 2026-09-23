@@ -68,6 +68,7 @@ export const readApiCatalogues = (
 	options: CatalogueOptions = {},
 ): ApiCatalogues => {
 	const boundaryRegistry = readBoundaryRegistry(apiRoot);
+	const geographyInventory = readGeographyInventory(apiRoot);
 	const areaInventory = readAreaInventory(apiRoot);
 	const areaLookup = readAreaLookup(apiRoot, areaInventory);
 	const namedLocationInventory = readNamedLocationInventory(apiRoot);
@@ -124,6 +125,7 @@ export const readApiCatalogues = (
 	);
 	const geographyResolver = createGeographyResolver({
 		boundaryRegistry,
+		geographyInventory,
 		areaInventory,
 		areaLookup,
 		crosswalkInventory,
@@ -140,7 +142,7 @@ export const readApiCatalogues = (
 	return {
 		openapiDocument: readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 		boundaryRegistry,
-		geographyInventory: readGeographyInventory(apiRoot),
+		geographyInventory,
 		areaInventory,
 		geographyResolver,
 		relationshipPathInventory,
