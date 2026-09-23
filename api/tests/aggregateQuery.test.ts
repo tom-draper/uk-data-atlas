@@ -22,6 +22,7 @@ test("parses a country aggregation query", () => {
 			regionCode: null,
 			targetCode: null,
 			crosswalkId: null,
+			pathId: null,
 			sourceRelease: null,
 		},
 	);

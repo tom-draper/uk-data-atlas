@@ -49,50 +49,121 @@ export const membershipClaimFor = (crosswalk: CrosswalkArtifact) => {
 	];
 };
 
+/**
+ * A step a composed membership path may take: one that establishes
+ * membership, or same-code continuity, whose records are published only where
+ * a code's extent held and so carry an area onto itself in a later release.
+ * An identity lookup is not one: it names a successor, not the same extent.
+ */
+const pathStepClaimFor = (crosswalk: CrosswalkArtifact) =>
+	crosswalk.method === "same-code-continuity"
+		? "verified-same-code-continuity"
+		: membershipClaimFor(crosswalk);
+
+/**
+ * Each source code of one crosswalk, the codes its records reach, and the
+ * single target it lies wholly within, where the record establishes that.
+ */
+const stepEdges = (crosswalk: CrosswalkArtifact) => {
+	const edges = new Map<string, { reaches: string[]; whole?: string }>();
+	for (const record of crosswalk.records) {
+		const [only] = record.targets;
+		const whole =
+			record.targets.length === 1 &&
+			only &&
+			(crosswalk.method !== "area-overlap" ||
+				("coverage" in record.source &&
+					record.source.coverage === 1 &&
+					"sourceShare" in only &&
+					only.sourceShare === 1))
+				? only.code
+				: undefined;
+		const reaches = record.targets.map((target) => target.code);
+		const existing = edges.get(record.source.code);
+		// A code with several records reaches all of them and lies wholly in
+		// one target only if every record agrees on it.
+		edges.set(
+			record.source.code,
+			existing
+				? {
+						reaches: [...existing.reaches, ...reaches],
+						whole:
+							existing.whole === whole ? whole : undefined,
+					}
+				: { reaches, whole },
+		);
+	}
+	return edges;
+};
+
+/**
+ * The source areas a chain of forward crosswalks puts wholly inside one
+ * target. A source is a member only if every step carries it wholly into one
+ * area and the last of those is the target; one that reaches the target any
+ * other way, such as through a split, is counted as unsafe, because summing
+ * it would claim all of a value only part of which belongs there.
+ */
+export const membershipThroughSteps = (
+	crosswalks: readonly CrosswalkArtifact[],
+	targetCode: string,
+) => {
+	const [first] = crosswalks;
+	if (!first) return undefined;
+	const edges = crosswalks.map(stepEdges);
+	let matched = 0;
+	const members: string[] = [];
+	for (const record of first.records) {
+		let reached = new Set([record.source.code]);
+		let whole: string | undefined = record.source.code;
+		for (const step of edges) {
+			const next = new Set<string>();
+			for (const code of reached)
+				for (const target of step.get(code)?.reaches ?? []) next.add(target);
+			reached = next;
+			whole = whole === undefined ? undefined : step.get(whole)?.whole;
+		}
+		if (!reached.has(targetCode)) continue;
+		matched += 1;
+		if (whole === targetCode) members.push(record.source.code);
+	}
+	return { memberCodes: members, unsafeSourceCount: matched - members.length };
+};
+
 /** The source areas a crosswalk puts wholly inside one target. */
 export const fullMembership = (
 	crosswalk: CrosswalkArtifact,
 	targetCode: string,
-) => {
-	if (!membershipClaimFor(crosswalk)) return undefined;
-	const reaches = (targets: { code: string }[]) =>
-		targets.some((target) => target.code === targetCode);
-	const { matched, members } =
-		crosswalk.method === "area-overlap"
-			? (() => {
-					const matched = crosswalk.records.filter((record) =>
-						reaches(record.targets),
-					);
-					return {
-						matched: matched.length,
-						members: matched.flatMap((record) => {
-							const target = record.targets.find(
-								(candidate) => candidate.code === targetCode,
-							);
-							return record.targets.length === 1 &&
-								target &&
-								record.source.coverage === 1 &&
-								target.sourceShare === 1
-								? [record.source.code]
-								: [];
-						}),
-					};
-				})()
-			: (() => {
-					const matched = crosswalk.records.filter((record) =>
-						reaches(record.targets),
-					);
-					return {
-						matched: matched.length,
-						members: matched.flatMap((record) =>
-							record.targets.length === 1
-								? [record.source.code]
-								: [],
-						),
-					};
-				})();
-	return {
-		memberCodes: members,
-		unsafeSourceCount: matched - members.length,
-	};
+) =>
+	membershipClaimFor(crosswalk)
+		? membershipThroughSteps([crosswalk], targetCode)
+		: undefined;
+
+/**
+ * Why a path establishes membership, step by step, or the first step that
+ * does not. Every step must run forward and carry a membership claim or
+ * same-code continuity: a reversed containment lists an area's parts, and no
+ * other step says a whole area lies inside another.
+ */
+export const pathMembershipClaims = (
+	steps: ReadonlyArray<{
+		artifact: CrosswalkArtifact;
+		direction: "forward" | "reverse";
+	}>,
+):
+	| { claims: string[] }
+	| { refusal: string } => {
+	const claims: string[] = [];
+	for (const [index, { artifact, direction }] of steps.entries()) {
+		if (direction !== "forward")
+			return {
+				refusal: `Step ${index + 1} of the path runs ${artifact.id} in reverse, which lists an area's parts rather than the area each part belongs to.`,
+			};
+		const claim = pathStepClaimFor(artifact);
+		if (!claim)
+			return {
+				refusal: `Step ${index + 1} of the path, the ${artifact.method} crosswalk ${artifact.id}, does not declare membership, so its records are conversion data rather than the parts of one area.`,
+			};
+		claims.push(claim);
+	}
+	return { claims };
 };

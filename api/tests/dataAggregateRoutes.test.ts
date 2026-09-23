@@ -855,3 +855,128 @@ test("keeps regionCode pointing only at regions", () => {
 		/does not map to regions/,
 	);
 });
+
+// The combined authority sits wholly in one region, so a path through it
+// reaches a target no single fixture crosswalk maps to.
+const combinedToRegion = (overrides: Partial<CrosswalkArtifact> = {}) =>
+	containmentCrosswalk("combined-authority-to-region-fixture", {
+		method: "official-lookup" as const,
+		relationshipPurpose: "membership",
+		from: { geography: "combinedAuthority", boundaryRelease: "2025-12-en-cauth" },
+		to: { geography: "region", boundaryRelease: "2025-12-en-rgn" },
+		records: [
+			{
+				source: { code: "E47000001", labels: ["Fixture combined"] },
+				targets: [{ code: "E12000001", labels: ["Fixture region"] }],
+			},
+		],
+		...overrides,
+	} as Partial<CrosswalkArtifact>);
+
+const aggregateThrough = (
+	query: string,
+	steps: Array<[CrosswalkArtifact, "forward" | "reverse"]>,
+) =>
+	routeWithCatalog(
+		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&sourceRelease=2025-12-uk-lad&${query}`,
+		dataCatalog,
+		measureObservations,
+		{
+			crosswalkLookup: new Map([
+				...crosswalkLookup,
+				...steps.map(([crosswalk]) => [crosswalk.id, crosswalk] as const),
+			]),
+			measureCompatibilityInventory: containmentCompatibility,
+			relationshipPathInventory: {
+				schemaVersion: 1,
+				contentHash: "sha256:paths",
+				crosswalkInventoryHash: "sha256:crosswalks",
+				paths: [
+					{
+						id: "authority-to-region-fixture",
+						purpose: "membership",
+						from: steps[0]![0].from,
+						to: steps.at(-1)![0].to,
+						quality: "publisher-supplied",
+						origin: "declared",
+						steps: steps.map(([crosswalk, direction]) => ({
+							crosswalkId: crosswalk.id,
+							direction,
+							method: crosswalk.method,
+							purpose: "membership" as const,
+						})),
+					},
+				],
+			},
+		},
+	);
+
+test("sums a target reached through every step of a published membership path", () => {
+	const steps: Array<[CrosswalkArtifact, "forward"]> = [
+		[containmentCrosswalk("lad-to-combined-authority-path"), "forward"],
+		[combinedToRegion(), "forward"],
+	];
+	const response = aggregateThrough(
+		"regionCode=E12000001&path=authority-to-region-fixture",
+		steps,
+	);
+	assert.equal(response.status, 200);
+	const data = ("data" in response.body ? response.body.data : {}) as {
+		record: unknown;
+		target: Record<string, unknown>;
+		region?: Record<string, unknown>;
+		aggregation: {
+			membership: string;
+			crosswalk?: unknown;
+			path: { id: string; steps: Array<{ membership: string; crosswalk: { id: string } }> };
+		};
+	};
+	assert.deepEqual(data.record, { value: 400, status: "derived" });
+	assert.equal(data.aggregation.membership, "composed-membership-path");
+	assert.equal(data.aggregation.crosswalk, undefined);
+	assert.deepEqual(
+		data.aggregation.path.steps.map(({ membership, crosswalk }) => [
+			crosswalk.id,
+			membership,
+		]),
+		[
+			["lad-to-combined-authority-path", "verified-clean-containment"],
+			["combined-authority-to-region-fixture", "published-membership-lookup"],
+		],
+	);
+	assert.equal(data.target.id, "region/2025-12-en-rgn/E12000001");
+	assert.equal(data.region?.code, "E12000001");
+
+	assert.equal(
+		aggregateThrough(
+			`targetCode=E12000001&path=authority-to-region-fixture&crosswalk=${steps[0][0].id}`,
+			steps,
+		).status,
+		400,
+	);
+});
+
+test("refuses a path with a step that does not establish membership", () => {
+	const detailOf = (response: ReturnType<typeof routeWithCatalog>) =>
+		"detail" in response.body ? String(response.body.detail) : "";
+	const identity = aggregateThrough(
+		"targetCode=E12000001&path=authority-to-region-fixture",
+		[
+			[containmentCrosswalk("lad-to-combined-authority-identity"), "forward"],
+			[combinedToRegion({ relationshipPurpose: "identity" }), "forward"],
+		],
+	);
+	assert.equal(identity.status, 422);
+	assert.match(detailOf(identity), /Step 2 of the path.*does not declare membership/);
+
+	// Reversed containment lists a region's parts, not the region each is in.
+	const reversed = aggregateThrough(
+		"targetCode=E12000001&path=authority-to-region-fixture",
+		[
+			[containmentCrosswalk("lad-to-combined-authority-reversed"), "forward"],
+			[combinedToRegion(), "reverse"],
+		],
+	);
+	assert.equal(reversed.status, 422);
+	assert.match(detailOf(reversed), /Step 2 of the path runs .* in reverse/);
+});

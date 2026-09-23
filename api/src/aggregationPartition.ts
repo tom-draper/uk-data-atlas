@@ -23,6 +23,7 @@ export const resolveAggregationPartition = ({
 	targetCode,
 	regionCode,
 	crosswalkId,
+	pathId,
 	sourceRelease,
 }: {
 	context: RouteContext;
@@ -33,6 +34,7 @@ export const resolveAggregationPartition = ({
 	targetCode: string | null;
 	regionCode: string | null;
 	crosswalkId: string | null;
+	pathId: string | null;
 	sourceRelease: string | null;
 }): AggregationPartition | ApiResponse => {
 	const resolved = resolveObservations(context, {
@@ -53,6 +55,7 @@ export const resolveAggregationPartition = ({
 		targetCode,
 		regionCode,
 		crosswalkId,
+		pathId,
 		sourceRelease,
 		source,
 		compatibleReleases,

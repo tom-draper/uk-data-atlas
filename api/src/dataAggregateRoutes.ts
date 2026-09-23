@@ -58,6 +58,7 @@ export const handleDataAggregateRoutes = ({
 		regionCode,
 		targetCode,
 		crosswalkId,
+		pathId,
 		sourceRelease,
 	} = query;
 	const resolvedLocation = resolveAggregationLocation({
@@ -78,6 +79,7 @@ export const handleDataAggregateRoutes = ({
 		targetCode,
 		regionCode,
 		crosswalkId,
+		pathId,
 		sourceRelease,
 	});
 	if ("status" in partition) return partition;

@@ -755,6 +755,7 @@ export const routeWithCatalog = (
 		| "measureCompatibilityInventory"
 		| "analysisGeographyInventory"
 		| "exportManifest"
+		| "relationshipPathInventory"
 	> = {},
 ) =>
 	routeRequest(
@@ -774,6 +775,7 @@ export const routeWithCatalog = (
 		analysisGeographyInventory: overrides.analysisGeographyInventory,
 		measureObservations: observations,
 			exportManifest: overrides.exportManifest,
+			relationshipPathInventory: overrides.relationshipPathInventory,
 		}),
 	);
 

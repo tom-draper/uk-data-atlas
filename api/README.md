@@ -757,6 +757,12 @@ only **available** when its endpoint, contract and provenance are published.
       The response lists each step's crosswalk and direction.
       `GET /v1/measures/{measure-id}/reconciliation` takes `path` the same
       way, adding the finer partition up through every step.
+- [x] Aggregate onto a membership target through a published path with
+      `path` in place of `crosswalk`, such as wards into a region through
+      their local authorities. Every step must run forward and declare
+      membership, or be same-code continuity; a source is summed only if every
+      step carries it wholly into one area ending at the target, and any
+      source that reaches the target another way refuses the sum.
 
 ### Postcodes, homes and addresses — data required, later
 
