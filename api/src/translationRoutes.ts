@@ -1,7 +1,18 @@
+import type { RelationshipPurpose } from "./relationshipPaths";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
-/** An area code translated to another geography or release, only through a published crosswalk fit for the stated purpose. */
+const PURPOSES: RelationshipPurpose[] = [
+	"identity",
+	"membership",
+	"apportion",
+];
+
+/**
+ * Translate one code through the resolver's published conversion graph. A
+ * direct path retains the original crosswalk record shape; composed paths
+ * name every step rather than presenting a derived target as a direct lookup.
+ */
 export const handleTranslationRoutes = ({
 	context,
 	releaseId,
@@ -14,12 +25,11 @@ export const handleTranslationRoutes = ({
 		segments[1] !== "translations"
 	)
 		return undefined;
-	const { crosswalkLookup } = context;
-	if (!crosswalkLookup) {
+	if (!context.geographyResolver || !context.crosswalkLookup) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
-			"Build the crosswalk inventory before translating area codes.",
+			"Build the geography resolver and crosswalk inventory before translating area codes.",
 		);
 	}
 	const source = {
@@ -38,7 +48,7 @@ export const handleTranslationRoutes = ({
 		!source.code ||
 		!target.geography ||
 		!target.boundaryRelease ||
-		!["identity", "membership", "apportion"].includes(purpose)
+		!PURPOSES.includes(purpose as RelationshipPurpose)
 	) {
 		return problem(
 			400,
@@ -46,140 +56,50 @@ export const handleTranslationRoutes = ({
 			"sourceGeography, sourceRelease, code, targetGeography and targetRelease are required; purpose must be identity, membership or apportion.",
 		);
 	}
-	const matches = [...crosswalkLookup.values()].flatMap((crosswalk) => {
-		const validForPurpose =
-			(purpose === "identity" &&
-				(crosswalk.method === "official-lookup" ||
-					crosswalk.method === "same-code-continuity")) ||
-			(purpose === "membership" &&
-				crosswalk.method === "clean-containment") ||
-			(purpose === "apportion" &&
-				(crosswalk.method === "area-overlap" ||
-					crosswalk.method === "population-overlap"));
-		if (!validForPurpose) return [];
-		const crosswalkSummary = {
-			id: crosswalk.id,
-			method: crosswalk.method,
-			quality: crosswalk.quality,
-			weighting: crosswalk.weighting,
-			provenance: crosswalk.provenance,
-		};
-		if (
-			crosswalk.from.geography === source.geography &&
-			crosswalk.from.boundaryRelease === source.boundaryRelease &&
-			crosswalk.to.geography === target.geography &&
-			crosswalk.to.boundaryRelease === target.boundaryRelease
-		) {
-			const record = crosswalk.records.find(
-				(candidate) => candidate.source.code === source.code,
-			);
-			return record
-				? [
-						{
-							crosswalk: {
-								...crosswalkSummary,
-								direction: "forward",
-							},
-							source: record.source,
-							targets: record.targets,
-						},
-					]
-				: [];
-		}
-		if (
-			crosswalk.to.geography !== source.geography ||
-			crosswalk.to.boundaryRelease !== source.boundaryRelease ||
-			crosswalk.from.geography !== target.geography ||
-			crosswalk.from.boundaryRelease !== target.boundaryRelease
-		)
-			return [];
-		if (
-			crosswalk.method === "area-overlap" ||
-			crosswalk.method === "population-overlap"
-		) {
-			const reverseRecords = crosswalk.records.flatMap((record) => {
-				const matchedTarget = record.targets.find(
-					(candidate) => candidate.code === source.code,
-				);
-				return matchedTarget ? [{ record, matchedTarget }] : [];
-			});
-			if (reverseRecords.length === 0) return [];
-			const reverseSource = {
-				code: source.code,
-				labels: [
-					...new Set(
-						reverseRecords.flatMap(
-							({ matchedTarget }) => matchedTarget.labels,
-						),
-					),
-				].sort(),
-			};
-			const coverage = reverseRecords.reduce(
-				(sum, { matchedTarget }) => sum + matchedTarget.targetShare,
-				0,
-			);
-			return coverage > 0
-				? [
-						{
-							crosswalk: {
-								...crosswalkSummary,
-								direction: "reverse",
-							},
-							source: reverseSource,
-							sourceCoverage: coverage,
-							targets: reverseRecords.map(
-								({ record, matchedTarget }) => ({
-									...record.source,
-									weight:
-										matchedTarget.targetShare / coverage,
-									overlapAreaM2: matchedTarget.overlapAreaM2,
-									// These shares are expressed against the reversed direction.
-									sourceShare: matchedTarget.targetShare,
-									targetShare: matchedTarget.sourceShare,
-								}),
-							),
-						},
-					]
-				: [];
-		}
-		const reverseRecords = crosswalk.records.flatMap((record) => {
-			const matchedTarget = record.targets.find(
-				(candidate) => candidate.code === source.code,
-			);
-			return matchedTarget ? [{ record, matchedTarget }] : [];
-		});
-		if (reverseRecords.length === 0) return [];
-		const reverseSource = {
-			code: source.code,
-			labels: [
-				...new Set(
-					reverseRecords.flatMap(
-						({ matchedTarget }) => matchedTarget.labels,
-					),
-				),
-			].sort(),
-		};
-		return [
-			{
-				crosswalk: { ...crosswalkSummary, direction: "reverse" },
-				source: reverseSource,
-				targets: reverseRecords.map(({ record }) => record.source),
-			},
-		];
-	});
-	return matches.length > 0
+	const resolvedSource = source as {
+		geography: string;
+		boundaryRelease: string;
+		code: string;
+	};
+	const resolvedTarget = target as {
+		geography: string;
+		boundaryRelease: string;
+	};
+	const translations = context.geographyResolver.translateArea(
+		resolvedSource,
+		resolvedTarget,
+		purpose as RelationshipPurpose,
+	);
+	return translations.length > 0
 		? {
 				status: 200,
 				body: envelope(releaseId, {
 					source,
 					target,
 					purpose,
-					matches,
+					paths: translations.map(({ path }) => path),
+					matches: translations.map(({ path, ...translation }) => {
+						if (path.steps.length !== 1)
+							return { path, ...translation };
+						const step = path.steps[0]!;
+						const crosswalk = context.crosswalkLookup!.get(step.crosswalkId)!;
+						return {
+							crosswalk: {
+								id: crosswalk.id,
+								method: crosswalk.method,
+								quality: crosswalk.quality,
+								weighting: crosswalk.weighting,
+								provenance: crosswalk.provenance,
+								direction: step.direction,
+							},
+							...translation,
+						};
+					}),
 				}),
 			}
 		: problem(
 				422,
 				"Conversion Unavailable",
-				"No published crosswalk supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity.",
+				"No published conversion path supports this source, target and purpose. Same codes across releases are not treated as proof of geographic identity.",
 			);
 };
