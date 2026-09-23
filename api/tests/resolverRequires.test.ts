@@ -17,11 +17,11 @@ const requirements: GeographyRequirement[] = [
 test("requires returns the standard 503 for each unavailable capability", () => {
 	const resolver = createGeographyResolver({});
 	const details: Record<GeographyRequirement, string> = {
-		areas: "Build the area identities before serving geography data.",
-		geometry: "Build the area geometry cache before serving geometry data.",
+		areas: "Build the area inventory before serving geography data.",
+		geometry: "Build the geometry source registry before serving geometry.",
 		relationships: "Build the crosswalk inventory before serving area relationships.",
 		"named-locations": "Build the named location inventory before serving locations.",
-		"location-projections": "Build the location projection store before serving projections.",
+		"location-projections": "Build the location projection inventory before serving location projections.",
 		crosswalks: "Build the crosswalk artifacts before serving crosswalk data.",
 	};
 
