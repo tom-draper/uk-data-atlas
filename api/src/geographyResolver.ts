@@ -8,9 +8,11 @@ import type { NamedLocationInventory, NamedLocationLookup } from "./namedLocatio
 import type { RelationshipPath } from "./relationshipPaths";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import { AreasResolver, type AreaIdentity, type GeographyEndpoint } from "./resolver/areas";
+import { CatalogueResolver } from "./resolver/catalogue";
 import { CapabilityResolver } from "./resolver/capability";
 import { LineageResolver } from "./resolver/lineage";
 import { compareBoundaryReleases, type BoundaryReleaseComparison } from "./resolver/releaseComparison";
+import { LocationsResolver } from "./resolver/locations";
 import { SpatialResolver } from "./resolver/spatial";
 import { CrosswalkTranslator, type CrosswalkLookup, type ResolvedAreaTranslation } from "./resolver/translation";
 import { problem, type ApiResponse } from "./routeResponse";
@@ -43,6 +45,8 @@ export type GeographyResolverInputs = {
 /** Read-only public facade over focused immutable-artifact resolvers. */
 export class GeographyResolver {
 	private readonly areas: AreasResolver;
+	private readonly catalogue: CatalogueResolver;
+	private readonly locations: LocationsResolver;
 	private readonly spatial: SpatialResolver;
 	private readonly lineage: LineageResolver;
 	private readonly translator: CrosswalkTranslator;
@@ -50,6 +54,8 @@ export class GeographyResolver {
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
 		this.areas = new AreasResolver(inputs);
+		this.catalogue = new CatalogueResolver(inputs);
+		this.locations = new LocationsResolver(inputs, this.catalogue);
 		this.spatial = new SpatialResolver(inputs.areaGeometryCache, (identity) => this.areas.area(identity));
 		this.lineage = new LineageResolver(inputs.crosswalkLookup, (identity) => this.areas.area(identity), (identity) => this.areas.sameCode(identity));
 		this.translator = new CrosswalkTranslator(inputs);
@@ -62,8 +68,8 @@ export class GeographyResolver {
 			areas: this.inputs.areaLookup !== undefined,
 			geometry: this.spatial.hasAreaGeometryCache(),
 			relationships: this.lineage.hasAreaRelationships(),
-			"named-locations": this.areas.hasNamedLocationInventory(),
-			"location-projections": this.areas.hasLocationProjectionStore(),
+			"named-locations": this.locations.hasNamedLocationInventory(),
+			"location-projections": this.locations.hasLocationProjectionStore(),
 			crosswalks: this.inputs.crosswalkLookup !== undefined,
 		};
 		if (available[requirement]) return undefined;
@@ -82,9 +88,9 @@ export class GeographyResolver {
 
 	area(identity: AreaIdentity): AreaRecord | undefined { return this.areas.area(identity); }
 	releaseAreas(geography: string, boundaryRelease: string) { return this.areas.releaseAreas(geography, boundaryRelease); }
-	locationReleaseViews(memberGeography: string, memberCodes: string[]) { return this.areas.locationReleaseViews(memberGeography, memberCodes); }
-	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) { return this.areas.reconcileMembers(geography, boundaryRelease, memberCodes, resolvedCodes); }
-	reconcileMembersForYear(geography: string, boundaryYear: number, memberCodes: string[], resolvedCodes: Set<string>) { return this.areas.reconcileMembersForYear(geography, boundaryYear, memberCodes, resolvedCodes); }
+	locationReleaseViews(memberGeography: string, memberCodes: string[]) { return this.locations.locationReleaseViews(memberGeography, memberCodes); }
+	reconcileMembers(geography: string, boundaryRelease: string, memberCodes: string[], resolvedCodes: Set<string>) { return this.locations.reconcileMembers(geography, boundaryRelease, memberCodes, resolvedCodes); }
+	reconcileMembersForYear(geography: string, boundaryYear: number, memberCodes: string[], resolvedCodes: Set<string>) { return this.locations.reconcileMembersForYear(geography, boundaryYear, memberCodes, resolvedCodes); }
 	countryIdentity(code: string) { return this.areas.countryIdentity(code); }
 	places(query: string, limit = 10) {
 		return this.areas.places(query, limit);
@@ -113,22 +119,22 @@ export class GeographyResolver {
 	areaRelationshipSummary(identity: AreaIdentity) { return this.lineage.areaRelationshipSummary(identity); }
 	areaHistory(identity: AreaIdentity, maximumDepth = 8) { return this.lineage.areaHistory(identity, maximumDepth); }
 
-	namedLocation(id: string) { return this.areas.namedLocation(id); }
-	namedLocations() { return this.areas.namedLocations(); }
-	namedLocationsForArea(identity: AreaIdentity) { return this.areas.namedLocationsForArea(identity); }
+	namedLocation(id: string) { return this.locations.namedLocation(id); }
+	namedLocations() { return this.locations.namedLocations(); }
+	namedLocationsForArea(identity: AreaIdentity) { return this.locations.namedLocationsForArea(identity); }
 	crosswalk(id: string): CrosswalkArtifact | undefined { return this.translator.artifact(id); }
-	crosswalkSummary(id: string) { return this.areas.crosswalkSummary(id); }
-	crosswalkSummaryForArtifact(artifact: string) { return this.areas.crosswalkSummaryForArtifact(artifact); }
-	crosswalkSummaries() { return this.areas.crosswalkSummaries(); }
-	areaIdentityRelease(geography: string, boundaryRelease: string) { return this.areas.areaIdentityRelease(geography, boundaryRelease); }
-	areaIdentityReleaseForArtifact(artifact: string) { return this.areas.areaIdentityReleaseForArtifact(artifact); }
-	namedLocationMembershipInventory() { return this.areas.namedLocationMembershipInventory(); }
-	locationProjection(locationId: string, geography: string, boundaryRelease: string, crosswalkId: string) { return this.areas.locationProjection(locationId, geography, boundaryRelease, crosswalkId); }
-	locationMemberProjectionShards(memberGeography: string) { return this.areas.locationMemberProjectionShards(memberGeography); }
-	locationParentProjectionShards(memberGeography: string) { return this.areas.locationParentProjectionShards(memberGeography); }
-	locationParentCrosswalks(geography: string, boundaryRelease: string) { return this.areas.locationParentCrosswalks(geography, boundaryRelease); }
-	locationParents(locationId: string, crosswalkId: string) { return this.areas.locationParents(locationId, crosswalkId); }
-	crosswalksToLocationMembers(geography: string, boundaryRelease: string, memberGeography: string) { return this.areas.crosswalksToLocationMembers(geography, boundaryRelease, memberGeography); }
+	crosswalkSummary(id: string) { return this.catalogue.crosswalkSummary(id); }
+	crosswalkSummaryForArtifact(artifact: string) { return this.catalogue.crosswalkSummaryForArtifact(artifact); }
+	crosswalkSummaries() { return this.catalogue.crosswalkSummaries(); }
+	areaIdentityRelease(geography: string, boundaryRelease: string) { return this.catalogue.areaIdentityRelease(geography, boundaryRelease); }
+	areaIdentityReleaseForArtifact(artifact: string) { return this.catalogue.areaIdentityReleaseForArtifact(artifact); }
+	namedLocationMembershipInventory() { return this.catalogue.namedLocationMembershipInventory(); }
+	locationProjection(locationId: string, geography: string, boundaryRelease: string, crosswalkId: string) { return this.locations.locationProjection(locationId, geography, boundaryRelease, crosswalkId); }
+	locationMemberProjectionShards(memberGeography: string) { return this.locations.locationMemberProjectionShards(memberGeography); }
+	locationParentProjectionShards(memberGeography: string) { return this.locations.locationParentProjectionShards(memberGeography); }
+	locationParentCrosswalks(geography: string, boundaryRelease: string) { return this.locations.locationParentCrosswalks(geography, boundaryRelease); }
+	locationParents(locationId: string, crosswalkId: string) { return this.locations.locationParents(locationId, crosswalkId); }
+	crosswalksToLocationMembers(geography: string, boundaryRelease: string, memberGeography: string) { return this.locations.crosswalksToLocationMembers(geography, boundaryRelease, memberGeography); }
 
 	relationshipPaths(from: GeographyEndpoint, to: GeographyEndpoint, purpose: Parameters<CrosswalkTranslator["publishedPaths"]>[2]) { return this.translator.publishedPaths(from, to, purpose); }
 	relationshipPath(id: string): RelationshipPath | undefined { return this.translator.path(id); }
