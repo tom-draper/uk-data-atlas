@@ -672,7 +672,8 @@
 				"boundaryRelease": "2021-12-ew-bgc-v5",
 				"codeProperty": "LSOA21CD",
 				"nameProperty": "LSOA21NM"
-			}
+			},
+			"changeProperty": "CHGIND"
 		},
 		{
 			"id": "constituency-2015-12-gb-bgc-to-2016-12-uk-bgc-same-code-continuity",

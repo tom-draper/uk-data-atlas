@@ -98,8 +98,26 @@ export type PropertyCrosswalkArtifact = CrosswalkArtifactBase & {
 		endpoints: CrosswalkEndpoints;
 		/** Independent geometry check for published clean-containment mappings. */
 		geometryContainment?: GeometryContainmentValidation;
+		/** Pairs by the publisher's change indicator, where it gives one. */
+		changes?: Record<CrosswalkChange, number>;
 	};
-	records: Array<{ source: CrosswalkArea; targets: CrosswalkArea[] }>;
+	records: Array<{
+		source: CrosswalkArea;
+		targets: Array<CrosswalkArea & { change?: CrosswalkChange }>;
+	}>;
+};
+
+/**
+ * How the publisher says a code became its successor: kept whole, split into
+ * several, merged with others, or redistributed in a way that is neither.
+ */
+export type CrosswalkChange = "unchanged" | "split" | "merged" | "complex";
+
+const CHANGE_INDICATORS: Record<string, CrosswalkChange> = {
+	U: "unchanged",
+	S: "split",
+	M: "merged",
+	X: "complex",
 };
 
 export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
@@ -338,6 +356,40 @@ const mergeArea = (
 	labels: [...new Set([...left.labels, ...right.labels])].sort(),
 });
 
+/**
+ * A change indicator must agree with the lookup's own shape, or it would
+ * mislabel a pair: unchanged is one-to-one both ways, a split source reaches
+ * several targets, and a merged target is reached from several sources.
+ */
+const checkChanges = (
+	crosswalkId: string,
+	records: Map<string, { targets: Map<string, CrosswalkArea> }>,
+	changes: Map<string, CrosswalkChange>,
+) => {
+	const sourcesByTarget = new Map<string, number>();
+	for (const record of records.values())
+		for (const target of record.targets.keys())
+			sourcesByTarget.set(target, (sourcesByTarget.get(target) ?? 0) + 1);
+	const disagreements = [...changes].flatMap(([pair, change]) => {
+		const [source, target] = pair.split("|") as [string, string];
+		const targets = records.get(source)?.targets.size ?? 0;
+		const sources = sourcesByTarget.get(target) ?? 0;
+		const agrees =
+			change === "unchanged"
+				? targets === 1 && sources === 1
+				: change === "split"
+					? targets > 1
+					: change === "merged"
+						? sources > 1
+						: true;
+		return agrees ? [] : [`${pair} is ${change}`];
+	});
+	if (disagreements.length > 0)
+		throw new Error(
+			`${crosswalkId}: change indicators disagree with the lookup: ${disagreements.slice(0, 5).join(", ")}`,
+		);
+};
+
 const compilePropertyCrosswalk = (
 	repositoryRoot: string,
 	adapter: PropertyCrosswalkAdapter,
@@ -360,6 +412,8 @@ const compilePropertyCrosswalk = (
 		{ source: CrosswalkArea; targets: Map<string, CrosswalkArea> }
 	>();
 	const sourcePrimaryNames = new Map<string, Set<string>>();
+	// Keyed by source and target, since a pair's change is the publisher's.
+	const changes = new Map<string, CrosswalkChange>();
 	for (const [index, feature] of source.features.entries()) {
 		if (
 			typeof feature.properties !== "object" ||
@@ -391,7 +445,21 @@ const compilePropertyCrosswalk = (
 			source: record ? mergeArea(record.source, sourceArea) : sourceArea,
 			targets,
 		});
+		if (adapter.changeProperty) {
+			const indicator = properties[adapter.changeProperty];
+			const change = CHANGE_INDICATORS[String(indicator)];
+			if (!change)
+				throw new Error(
+					`${adapter.id}: feature ${index} has change indicator ${String(indicator)}, not U, S, M or X`,
+				);
+			const pair = `${sourceArea.code}|${targetArea.code}`;
+			const previous = changes.get(pair);
+			if (previous && previous !== change)
+				throw new Error(`${adapter.id}: ${pair} is both ${previous} and ${change}`);
+			changes.set(pair, change);
+		}
 	}
+	if (adapter.changeProperty) checkChanges(adapter.id, records, changes);
 	const sourceNameConflicts = [...sourcePrimaryNames.entries()]
 		.filter(([, names]) => names.size > 1)
 		.map(([code, names]) => ({ code, names: [...names].sort() }))
@@ -419,9 +487,12 @@ const compilePropertyCrosswalk = (
 	const compiledRecords = [...records.values()]
 		.map((record) => ({
 			source: record.source,
-			targets: [...record.targets.values()].sort((left, right) =>
-				left.code.localeCompare(right.code),
-			),
+			targets: [...record.targets.values()]
+				.map((target) => {
+					const change = changes.get(`${record.source.code}|${target.code}`);
+					return change ? { ...target, change } : target;
+				})
+				.sort((left, right) => left.code.localeCompare(right.code)),
 		}))
 		.sort((left, right) => left.source.code.localeCompare(right.source.code));
 	const geometryContainment =
@@ -455,6 +526,16 @@ const compilePropertyCrosswalk = (
 			sourceNameConflicts,
 			endpoints,
 			...(geometryContainment ? { geometryContainment } : {}),
+			...(adapter.changeProperty
+				? {
+						changes: Object.fromEntries(
+							Object.values(CHANGE_INDICATORS).map((change) => [
+								change,
+								[...changes.values()].filter((value) => value === change).length,
+							]),
+						) as Record<CrosswalkChange, number>,
+					}
+				: {}),
 		},
 		records: compiledRecords,
 	};
