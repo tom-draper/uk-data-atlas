@@ -471,10 +471,11 @@ export const availableReconciliations = (
 			// same areas; adding a partition up through it would compare it
 			// with itself.
 			if (crosswalk.from.geography === crosswalk.to.geography) return [];
-			const periods = sharedPeriods(
-				crosswalk.from.geography,
-				crosswalk.to.geography,
-			);
+			const periods = [
+				...new Set(
+					sharedPeriods(crosswalk.from.geography, crosswalk.to.geography),
+				),
+			].sort();
 			return periods.length > 0
 				? [
 						{
@@ -485,7 +486,8 @@ export const availableReconciliations = (
 							},
 							from: crosswalk.from,
 							against: crosswalk.to,
-							periods: [...new Set(periods)].sort(),
+							periods,
+							// The latest period both partitions publish.
 							href: `/v1/measures/${measure.id}/reconciliation?crosswalk=${crosswalk.id}&period=${periods.at(-1)}`,
 						},
 					]
