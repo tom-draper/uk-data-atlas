@@ -1,5 +1,5 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { reconcileMembers } from "./memberReconciliation";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
@@ -11,7 +11,7 @@ export const handleLocationRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const { namedLocationInventory, namedLocationLookup } = context;
+	const { namedLocationInventory } = context;
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
@@ -40,9 +40,7 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
-		const location =
-			context.geographyResolver?.namedLocation(segments[2]!) ??
-			namedLocationLookup?.get(segments[2]!);
+		const location = geographyResolverFor(context).namedLocation(segments[2]!);
 		return location
 			? { status: 200, body: envelope(releaseId, location) }
 			: problem(
@@ -64,9 +62,7 @@ export const handleLocationRoutes = ({
 		segments[1] === "locations" &&
 		segments[3] === "members"
 	) {
-		const location =
-			context.geographyResolver?.namedLocation(segments[2]!) ??
-			namedLocationLookup?.get(segments[2]!);
+		const location = geographyResolverFor(context).namedLocation(segments[2]!);
 		if (!location)
 			return problem(
 				404,
@@ -131,13 +127,7 @@ export const handleLocationRoutes = ({
 				}),
 			};
 		}
-		const resolver = context.geographyResolver;
-		if (!resolver)
-			return problem(
-				503,
-				"Catalogue Unavailable",
-				"Build the geography resolver before resolving a named location into another geography.",
-			);
+		const resolver = geographyResolverFor(context);
 		const candidates = resolver.crosswalksToLocationMembers(
 			geography,
 			boundaryRelease,
@@ -237,8 +227,9 @@ const locationCapabilities = ({
 	releaseId,
 	segments,
 }: Pick<RouteRequest, "context" | "releaseId" | "segments">): ApiResponse => {
-	const { geographyResolver, areaLookup } = context;
-	const location = geographyResolver?.namedLocation(segments[2]!);
+	const { areaLookup } = context;
+	const geographyResolver = geographyResolverFor(context);
+	const location = geographyResolver.namedLocation(segments[2]!);
 	if (!location)
 		return problem(
 			404,
@@ -278,7 +269,7 @@ const locationCapabilities = ({
 							`No compiled ${location.memberGeography} release is available for this location.`,
 						);
 			})();
-	const members = !geographyResolver?.hasLocationProjectionStore()
+	const members = !geographyResolver.hasLocationProjectionStore()
 		? notBuilt(
 				"Build the location projection inventory before listing crosswalk member views.",
 			)
@@ -301,7 +292,7 @@ const locationCapabilities = ({
 							`No published crosswalk projection reaches this location's ${location.memberGeography} members.`,
 						);
 			})();
-	const parents = !geographyResolver?.hasLocationProjectionStore()
+	const parents = !geographyResolver.hasLocationProjectionStore()
 		? notBuilt(
 				"Build the location projection inventory before listing parent views.",
 			)
@@ -348,13 +339,8 @@ const locationParents = ({
 	RouteRequest,
 	"context" | "releaseId" | "parsedUrl" | "segments"
 >): ApiResponse => {
-	const { geographyResolver, areaLookup } = context;
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before resolving a location's parents.",
-		);
+	const { areaLookup } = context;
+	const geographyResolver = geographyResolverFor(context);
 	const location = geographyResolver.namedLocation(segments[2]!);
 	if (!location)
 		return problem(

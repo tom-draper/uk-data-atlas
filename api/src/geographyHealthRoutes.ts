@@ -1,15 +1,15 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 export const handleGeographyHealthRoutes = ({ context, releaseId, parsedUrl, segments }: RouteRequest): ApiResponse | undefined => {
 	if (segments.length !== 2 || segments[0] !== "v1" || segments[1] !== "geography-health") return undefined;
-	if (!context.geographyResolver) return problem(503, "Catalogue Unavailable", "Build the geography resolver before reporting release health.");
+	const geographyResolver = geographyResolverFor(context);
 	const geography = parsedUrl.searchParams.get("geography");
 	const country = parsedUrl.searchParams.get("country");
 	const reach = parsedUrl.searchParams.get("reach");
 	if (reach && !["connected", "vintage-only", "isolated"].includes(reach))
 		return problem(400, "Invalid Query", "reach must be connected, vintage-only or isolated.");
-	const releases = context.geographyResolver.geographyHealth().filter(
+	const releases = geographyResolver.geographyHealth().filter(
 		(release) =>
 			(!geography || release.geography === geography) &&
 			(!country || release.countries.includes(country)) &&

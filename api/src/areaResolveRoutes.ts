@@ -2,7 +2,7 @@ import { areaNotFound } from "./areaResources";
 import { parseSelectionDate } from "./releaseForDate";
 import { normalisePlaceName, withoutTitle } from "./placeResolver";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 type ExactMatch =
 	| "code-exact"
@@ -59,13 +59,7 @@ export const handleAreaResolveRoutes = ({
 			"Invalid Query",
 			"q is required: an official area code, name or supplied alias.",
 		);
-	const { geographyResolver } = context;
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before resolving an area identifier.",
-		);
+	const geographyResolver = geographyResolverFor(context);
 	const geography = parsedUrl.searchParams.get("geography")?.trim() || null;
 	const requestedRelease =
 		parsedUrl.searchParams.get("release")?.trim() || null;

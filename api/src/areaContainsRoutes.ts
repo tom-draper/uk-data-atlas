@@ -11,7 +11,7 @@ import {
 	type LookupInputCrs,
 } from "./pointLookup";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
 export const MAX_BATCH_POINTS = 100;
@@ -78,8 +78,8 @@ export const handleAreaContainsRoutes = ({
 			"Invalid Query",
 			`${coordinateDescription(crs)} are required for ${crs}.`,
 		);
-	const { geographyResolver } = context;
-	if (!geographyResolver?.hasAreaGeometryCache()) return unavailable();
+	const geographyResolver = geographyResolverFor(context);
+	if (!geographyResolver.hasAreaGeometryCache()) return unavailable();
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;
 	const [{ country, results }] = locatePoints(
@@ -182,8 +182,8 @@ export const handleAreaContainsBatchRoutes = ({
 		accuracy,
 	);
 	if (!Array.isArray(points)) return points;
-	const { geographyResolver } = context;
-	if (!geographyResolver?.hasAreaGeometryCache()) return unavailable();
+	const geographyResolver = geographyResolverFor(context);
+	if (!geographyResolver.hasAreaGeometryCache()) return unavailable();
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;
 	const located = locatePoints(context, geographyResolver, request, points);

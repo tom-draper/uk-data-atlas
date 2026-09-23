@@ -14,7 +14,10 @@ import type {
 import type { ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { LookupManifest } from "./lookupExports";
-import type { GeographyResolver } from "./geographyResolver";
+import {
+	createGeographyResolver,
+	type GeographyResolver,
+} from "./geographyResolver";
 import type {
 	LocationProjectionInventory,
 	LocationProjectionStore,
@@ -27,7 +30,10 @@ import type {
 	NamedLocationLookup,
 } from "./namedLocations";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
-import type { RelationshipPathInventory } from "./relationshipPaths";
+import {
+	createRelationshipPathIndex,
+	type RelationshipPathInventory,
+} from "./relationshipPaths";
 import type { ApiResponse } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
@@ -88,6 +94,37 @@ export type RouteContext = {
 	mapArchives?: Map<string, MapArchive>;
 	/** Each map resource tier's GeoParquet file, keyed by its artifact path. */
 	mapFeatures?: Map<string, Buffer>;
+};
+
+const derivedResolvers = new WeakMap<RouteContext, GeographyResolver>();
+
+/**
+ * The resolver is the route boundary for compiled geography artifacts. The
+ * production loader supplies it eagerly; focused callers receive the same
+ * immutable facade lazily, rather than making every route handle its absence.
+ */
+export const geographyResolverFor = (
+	context: RouteContext,
+): GeographyResolver => {
+	if (context.geographyResolver) return context.geographyResolver;
+	const cached = derivedResolvers.get(context);
+	if (cached) return cached;
+	const resolver = createGeographyResolver({
+		boundaryRegistry: context.boundaryRegistry,
+		areaInventory: context.areaInventory,
+		areaLookup: context.areaLookup,
+		crosswalkInventory: context.crosswalkInventory,
+		crosswalkLookup: context.crosswalkLookup,
+		namedLocationInventory: context.namedLocationInventory,
+		namedLocationLookup: context.namedLocationLookup,
+		locationProjectionStore: context.locationProjectionStore,
+		relationshipPathIndex: context.relationshipPathInventory
+			? createRelationshipPathIndex(context.relationshipPathInventory)
+			: undefined,
+		relationshipCandidateInventory: context.relationshipCandidateInventory,
+	});
+	derivedResolvers.set(context, resolver);
+	return resolver;
 };
 
 export type RouteRequest = {

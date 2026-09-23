@@ -8,7 +8,7 @@ import {
 	parseStatedAccuracy,
 } from "./pointLookup";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { readBoundedWholeNumber } from "./queryParameters";
 
 export const MAX_NEAR_LIMIT = 10;
@@ -92,8 +92,8 @@ export const handleAreaNearRoutes = ({
 			"Invalid Query",
 			`within must be a whole number of metres from 1 to ${MAX_NEAR_WITHIN_M}.`,
 		);
-	const { geographyResolver } = context;
-	if (!geographyResolver?.hasAreaGeometryCache())
+	const geographyResolver = geographyResolverFor(context);
+	if (!geographyResolver.hasAreaGeometryCache())
 		return problem(
 			503,
 			"Catalogue Unavailable",

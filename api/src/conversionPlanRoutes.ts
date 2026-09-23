@@ -4,7 +4,7 @@ import {
 } from "./geographyResolver";
 import type { RelationshipPurpose } from "./relationshipPaths";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"identity",
@@ -55,13 +55,7 @@ export const handleConversionPlanRoutes = ({
 			"sourceGeography, sourceRelease, targetGeography, targetRelease and purpose (identity, membership or apportion) are required; operation must be a supported relationship operation when supplied.",
 		);
 	}
-	if (!context.geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area, crosswalk and relationship path inventories before planning a conversion.",
-		);
-	const plan = context.geographyResolver.conversionPlan(
+	const plan = geographyResolverFor(context).conversionPlan(
 		from as { geography: string; boundaryRelease: string },
 		to as { geography: string; boundaryRelease: string },
 		purpose as RelationshipPurpose,

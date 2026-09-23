@@ -4,7 +4,7 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /**
@@ -29,7 +29,7 @@ export const handleAreaIntersectsRoutes = ({
 		segments[1] !== "areas:intersects"
 	)
 		return undefined;
-	const { geographyResolver } = context;
+	const geographyResolver = geographyResolverFor(context);
 	const raw = parsedUrl.searchParams.get("bbox");
 	const parts = (raw ?? "").split(",").map((part) => Number(part.trim()));
 	const [west, south, east, north] = parts;
@@ -74,13 +74,6 @@ export const handleAreaIntersectsRoutes = ({
 			400,
 			"Invalid Query",
 			`limit must be a whole number from 1 to ${MAX_INTERSECTS_LIMIT}.`,
-		);
-	}
-	if (!geographyResolver) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before box lookup.",
 		);
 	}
 	if (!geographyResolver.hasAreaRelease(geography, boundaryRelease)) {

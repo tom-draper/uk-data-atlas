@@ -5,7 +5,7 @@ import {
 	simplifyGeometry,
 } from "./simplifyGeometry";
 import { areaNotFound } from "./areaResources";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** The geometry of every area a published relationship places inside one area, as a feature collection. */
@@ -23,18 +23,13 @@ export const handleAreaChildGeometryRoutes = ({
 		segments[6] !== "geometry"
 	)
 		return undefined;
-	const { crosswalkLookup, geographyResolver } = context;
+	const { crosswalkLookup } = context;
+	const geographyResolver = geographyResolverFor(context);
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,
 		string,
 		string,
 	];
-	if (!geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the geography resolver before retrieving child geometry.",
-		);
 	const area = geographyResolver.area({
 		geography,
 		boundaryRelease,

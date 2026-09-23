@@ -7,7 +7,7 @@ const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"apportion",
 ];
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 /** Discover published conversion paths without attempting an implicit conversion. */
 export const handleRelationshipPathRoutes = ({
@@ -46,13 +46,7 @@ export const handleRelationshipPathRoutes = ({
 			"sourceGeography, sourceRelease, targetGeography, targetRelease and purpose (identity, membership or apportion) are required.",
 		);
 	}
-	if (!context.geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the relationship path inventory before discovering conversion paths.",
-		);
-	const resolver = context.geographyResolver;
+	const resolver = geographyResolverFor(context);
 	const endpoints = [
 		from as { geography: string; boundaryRelease: string },
 		to as { geography: string; boundaryRelease: string },

@@ -1,10 +1,9 @@
-import { explainAreaAbsence } from "./areaAbsence";
 import type { AreaLookup } from "./areaInventory";
 import type { DataCatalog } from "./dataCatalog";
 import type { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import { problem, type ApiResponse } from "./routeResponse";
-import type { CrosswalkLookup, RouteContext } from "./routing";
+import { geographyResolverFor, type RouteContext } from "./routing";
 
 export const findArea = (
 	areaLookup: AreaLookup | undefined,
@@ -24,21 +23,14 @@ export const areaNotFound = (
 	boundaryRelease?: string,
 	code?: string,
 ): ApiResponse => {
-	const resolved = context.geographyResolver?.explainAreaAbsence(
+	const resolved = geographyResolverFor(context).explainAreaAbsence(
 		geography ?? "",
 		boundaryRelease ?? "",
 		code ?? "",
 	);
-	const { detail, ...absence } =
-		resolved ??
-		explainAreaAbsence(
-			context.boundaryRegistry,
-			context.areaInventory,
-			context.areaLookup,
-			geography ?? "",
-			boundaryRelease ?? "",
-			code ?? "",
-		);
+	const { detail, ...absence } = resolved ?? {
+		detail: "No compiled boundary registry is available to explain this area identity.",
+	};
 	return problem(404, "Not Found", detail, absence);
 };
 

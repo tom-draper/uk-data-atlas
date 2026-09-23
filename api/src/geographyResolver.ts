@@ -53,7 +53,9 @@ export class GeographyResolver {
 
 	area(identity: AreaIdentity): AreaRecord | undefined { return this.areas.area(identity); }
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean { return this.areas.hasAreaRelease(geography, boundaryRelease); }
+	areaCodes(geography: string, boundaryRelease: string) { return this.areas.areaCodes(geography, boundaryRelease); }
 	boundaryRelease(geography: string, id: string) { return this.areas.boundaryRelease(geography, id); }
+	boundaryReleasesFor(geography?: string) { return this.areas.boundaryReleasesFor(geography); }
 	explainAreaAbsence(geography: string, boundaryRelease: string, code: string) { return this.areas.explainAreaAbsence(geography, boundaryRelease, code); }
 	validateAreas(geography: string, boundaryRelease: string, values: string[]) { return this.areas.validateAreas(geography, boundaryRelease, values); }
 	selectReleaseForDate(geography: string, month: string, country?: string) { return this.areas.selectReleaseForDate(geography, month, country); }
@@ -80,6 +82,8 @@ export class GeographyResolver {
 	hasNamedLocationInventory(): boolean { return this.areas.hasNamedLocationInventory(); }
 	namedLocationsForArea(identity: AreaIdentity) { return this.areas.namedLocationsForArea(identity); }
 	crosswalk(id: string): CrosswalkArtifact | undefined { return this.translator.artifact(id); }
+	crosswalkSummary(id: string) { return this.areas.crosswalkSummary(id); }
+	crosswalkSummaries() { return this.areas.crosswalkSummaries(); }
 	locationProjection(locationId: string, geography: string, boundaryRelease: string, crosswalkId: string) { return this.areas.locationProjection(locationId, geography, boundaryRelease, crosswalkId); }
 	hasLocationProjectionStore(): boolean { return this.areas.hasLocationProjectionStore(); }
 	locationMemberProjectionShards(memberGeography: string) { return this.areas.locationMemberProjectionShards(memberGeography); }

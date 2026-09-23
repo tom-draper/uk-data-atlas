@@ -6,7 +6,7 @@ import {
 	type MeasureCompatibilityInventory,
 } from "./measureCompatibility";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 
 const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"identity",
@@ -131,15 +131,10 @@ export const handleRelationshipCapabilityRoutes = ({
 			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together.",
 		);
 	}
-	if (!context.geographyResolver)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the area, crosswalk and relationship path inventories before diagnosing conversion capabilities.",
-		);
+	const geographyResolver = geographyResolverFor(context);
 	if (to.geography === null || to.boundaryRelease === null) {
 		const source = from as { geography: string; boundaryRelease: string };
-		if (!context.geographyResolver.hasAreaRelease(source.geography, source.boundaryRelease)) {
+		if (!geographyResolver.hasAreaRelease(source.geography, source.boundaryRelease)) {
 			return {
 				status: 200,
 				body: envelope(releaseId, {
@@ -155,7 +150,7 @@ export const handleRelationshipCapabilityRoutes = ({
 				}),
 			};
 		}
-		const capabilities = context.geographyResolver.relationshipCapabilitiesFrom(
+		const capabilities = geographyResolver.relationshipCapabilitiesFrom(
 			source,
 		);
 		return {
@@ -169,7 +164,7 @@ export const handleRelationshipCapabilityRoutes = ({
 		};
 	}
 	const purpose = purposeParameter as RelationshipPurpose;
-	const capability = context.geographyResolver.relationshipCapability(
+	const capability = geographyResolver.relationshipCapability(
 		from as { geography: string; boundaryRelease: string },
 		to as { geography: string; boundaryRelease: string },
 		purpose,

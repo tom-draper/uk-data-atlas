@@ -10,7 +10,7 @@ import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
-import type { RouteRequest } from "./routing";
+import { geographyResolverFor, type RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const parseAnalysisGeography = (value: string) => {
@@ -140,8 +140,7 @@ export const handleDataSeriesRoutes = ({
 				"analysisGeography must be one geography/release pair.",
 			);
 		const inventory = context.analysisGeographyInventory;
-		const crosswalkLookup = context.crosswalkLookup;
-		if (!inventory || !crosswalkLookup)
+		if (!inventory)
 			return problem(
 				503,
 				"Catalogue Unavailable",
@@ -170,7 +169,9 @@ export const handleDataSeriesRoutes = ({
 						"No reviewed conversion is published from the requested source partition to that analysis geography.",
 				}),
 			};
-		const crosswalk = crosswalkLookup.get(support.crosswalk.id);
+		const crosswalk = geographyResolverFor(context).crosswalk(
+			support.crosswalk.id,
+		);
 		if (!crosswalk)
 			return problem(
 				503,

@@ -16,7 +16,7 @@ import {
 	type GeometryTransformation,
 } from "./reprojection";
 import { problem, type ApiResponse } from "./routeResponse";
-import type { RouteContext } from "./routing";
+import { geographyResolverFor, type RouteContext } from "./routing";
 
 /** A lookup reads one release per geography, and each is held in memory. */
 export const MAX_LOOKUP_GEOGRAPHIES = 4;
@@ -778,12 +778,13 @@ const countryRelease = (
 	context: RouteContext,
 	month: string | undefined,
 ): string | undefined => {
-	const dated = context.boundaryRegistry.releases
+	const resolver = geographyResolverFor(context);
+	const dated = resolver.boundaryReleasesFor("country")
 		.filter(
 			(release) =>
 				release.geography === "country" &&
 				releaseMonth(release.id) !== undefined &&
-				context.geographyResolver?.hasAreaRelease(
+				resolver.hasAreaRelease(
 					"country",
 					release.id,
 				),
