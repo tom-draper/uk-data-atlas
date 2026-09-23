@@ -202,6 +202,22 @@ export type ResolvedRelationshipCoverage = {
 	uncoveredAreas: Array<AreaRecord & { id: string }>;
 };
 
+/**
+ * Where a release can actually carry data, which is not the same question as
+ * whether its areas have relationships. A release whose only published paths
+ * lead to other vintages of its own geography is joined up with its own
+ * history and converts onto nothing new.
+ */
+export type GeographyReach = {
+	status: "connected" | "vintage-only" | "isolated";
+	/** Other geographies a published path converts this release onto. */
+	reaches: string[];
+	/** Other geographies a published path converts onto this release. */
+	reachedFrom: string[];
+	/** Paths to and from other vintages of this release's own geography. */
+	vintagePathCount: number;
+};
+
 export type GeographyHealth = {
 	geography: string;
 	boundaryRelease: string;
@@ -210,6 +226,7 @@ export type GeographyHealth = {
 	relatedAreaCount: number;
 	gapCount: number;
 	countries: string[];
+	reach: GeographyReach;
 };
 
 export type RelationshipRepair = {
@@ -264,6 +281,7 @@ export class GeographyResolver {
 	private readonly derivedReleaseSources: Map<string, string>;
 	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
 	private readonly pathReachCache = new Map<string, number>();
+	private reachByRelease?: Map<string, GeographyReach>;
 
 	constructor(private readonly inputs: GeographyResolverInputs) {
 		this.derivedReleaseSources = derivedReleaseSources(inputs.areaInventory);
@@ -1154,16 +1172,65 @@ export class GeographyResolver {
 		};
 	}
 
+	/**
+	 * What each release can convert onto, and be converted from, by published
+	 * path. Built once from the path inventory, because the answer for one
+	 * release depends on every path in it.
+	 */
+	private conversionReach(): Map<string, GeographyReach> {
+		if (this.reachByRelease) return this.reachByRelease;
+		const reach = new Map<string, GeographyReach>();
+		const entry = (geography: string, boundaryRelease: string) => {
+			const key = `${geography}/${boundaryRelease}`;
+			const existing = reach.get(key);
+			if (existing) return existing;
+			const created: GeographyReach = { status: "isolated", reaches: [], reachedFrom: [], vintagePathCount: 0 };
+			reach.set(key, created);
+			return created;
+		};
+		const add = (into: string[], geography: string) => {
+			if (!into.includes(geography)) into.push(geography);
+		};
+		for (const paths of this.inputs.relationshipPathIndex?.values() ?? []) {
+			for (const path of paths) {
+				const source = entry(path.from.geography, path.from.boundaryRelease);
+				const target = entry(path.to.geography, path.to.boundaryRelease);
+				// A path between two vintages of one geography is continuity. It
+				// keeps a code's history joined up without reaching anything new.
+				if (path.from.geography === path.to.geography) {
+					source.vintagePathCount += 1;
+					target.vintagePathCount += 1;
+					continue;
+				}
+				add(source.reaches, path.to.geography);
+				add(target.reachedFrom, path.from.geography);
+			}
+		}
+		for (const found of reach.values()) {
+			found.reaches.sort();
+			found.reachedFrom.sort();
+			found.status = found.reaches.length > 0 || found.reachedFrom.length > 0
+				? "connected"
+				: found.vintagePathCount > 0
+					? "vintage-only"
+					: "isolated";
+		}
+		this.reachByRelease = reach;
+		return reach;
+	}
+
 	/** A release-by-release relationship health report for repair prioritisation. */
 	geographyHealth(): GeographyHealth[] {
 		if (!this.inputs.areaLookup) return [];
+		const reach = this.conversionReach();
 		return [...this.inputs.areaLookup.keys()]
 			.map((identity) => {
 				const [geography, boundaryRelease] = identity.split("/", 2) as [string, string];
 				const coverage = this.relationshipCoverage(geography, boundaryRelease, undefined, 1);
 				const areaCount = this.inputs.areaLookup?.get(identity)?.size ?? 0;
 				const countries = this.boundaryRelease(geography, boundaryRelease)?.coverage.countries ?? [];
-				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount, relatedAreaCount: 0, gapCount: areaCount, countries };
+				const found = reach.get(identity) ?? { status: "isolated" as const, reaches: [], reachedFrom: [], vintagePathCount: 0 };
+				if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount, relatedAreaCount: 0, gapCount: areaCount, countries, reach: found };
 				return {
 					geography, boundaryRelease,
 					status: coverage.relatedAreaCount === coverage.areaCount ? "available" as const : coverage.relatedAreaCount > 0 ? "partial" as const : "unsupported" as const,
@@ -1171,6 +1238,7 @@ export class GeographyResolver {
 					relatedAreaCount: coverage.relatedAreaCount,
 					gapCount: coverage.areaCount - coverage.relatedAreaCount,
 					countries,
+					reach: found,
 				};
 			})
 			.sort((left, right) => `${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`));

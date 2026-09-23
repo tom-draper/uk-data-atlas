@@ -5512,24 +5512,46 @@ paths:
       tags: ["Geography"]
       summary: Summarise relationship health across compiled releases
       x-likely-refusal:
-        status: 503
-        when: "The geography resolver was not built, so there is no relationship evidence to summarise."
+        status: 400
+        when: "`reach` is not one of the three answers the report gives."
+        x-example-request: "/v1/geography-health?reach=nowhere"
       description: >
         Reports, release by release, how many compiled areas carry a published
-        relationship and how many carry none, and orders the releases by the
-        repair worth doing first: relationship artifacts that are not built,
-        then releases with no evidence at all, then the largest partial gaps.
+        relationship and how many carry none, and whether anything can actually
+        be converted onto or off the release.
         It counts what is published and infers no relationship.
+
+
+        `status` answers the first question and `reach` the second, and they
+        can disagree: a release whose every area carries a relationship is
+        `available`, but if its only published paths lead to other vintages of
+        its own geography its reach is `vintage-only` and no data can be
+        carried onto another geography. `isolated` means no published path
+        leaves or arrives at all. `reaches` and `reachedFrom` name the other
+        geographies involved.
+
+
+        Releases are ordered by the repair worth doing first: those that
+        convert onto nothing, then those reaching only their own vintages,
+        then unbuilt relationship artifacts, releases with no evidence, and
+        the largest partial gaps.
       parameters:
         - { name: geography, in: query, required: false, schema: { type: string } }
         - { name: country, in: query, required: false, schema: { type: string, example: GB-SCT } }
+        - name: reach
+          in: query
+          required: false
+          schema: { type: string, enum: [connected, vintage-only, isolated] }
+          description: Show only the releases whose conversion reach is this.
       responses:
         "200":
-          description: Release-level relationship coverage and gaps.
+          description: Release-level relationship coverage, conversion reach and gaps.
           content:
             application/json:
               schema: { type: object }
               x-example-request: "/v1/geography-health"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 

@@ -3753,6 +3753,31 @@ still report more edges than areas reached are genuine: a merge or a split
 gives two ways to arrive at the same area, and both are evidence worth
 keeping.
 
+Release health reports two things, because they answer different questions
+and can disagree. `status` counts how many of a release's areas carry a
+published relationship. `reach` asks whether anything can be converted onto
+or off the release at all, and a path between two vintages of one geography
+does not count: it keeps a code's history joined up without reaching
+anything new. Of the 94 compiled releases, 72 are `connected`, 13 reach only
+their own vintages, and 9 are `isolated`. The nine are already visible as
+`unsupported`, but five releases are `available` on every area and still
+convert onto no other geography: the 2019, 2020 and 2021 constituencies, and
+the 2011 LSOAs for England and Wales and for Wales. The same-code work
+chained each of those to its neighbouring vintages, which is what made them
+look healthy.
+
+Their bridges out exist and are not being used. An official lookup relates
+the 2019 constituencies to the 2024 ones, the 2024 constituencies apportion
+onto May 2024 authorities, an official lookup relates the 2011 LSOAs to the
+2021 LSOAs, and those sit cleanly inside May 2023 authorities. Both lookups
+are many-to-many, so `crosswalkShape` reports neither direction as
+one-to-one, and the composition rules stop an identity step there rather
+than carry it onward. That is the rule working as written, since a
+redistribution is not an identity, but it leaves 37,962 areas' worth of
+release converting onto nothing. Treating a many-to-many identity lookup as
+an apportionment step would open these routes, and is a composition change
+to review rather than infer.
+
 The fifth method, `population-overlap`, reweights an area overlap by where
 people live. An area weight assumes a source's residents are spread evenly
 over its land, and they rarely are: Luton is 21% of the land of Luton South
