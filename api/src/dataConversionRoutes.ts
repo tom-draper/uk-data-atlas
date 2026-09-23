@@ -3,7 +3,7 @@ import { isNumericObservation } from "./dataCatalog";
 import type { RelationshipPath } from "./relationshipPaths";
 import { buildTranslationSteps } from "./resolver/translation";
 import { observationsFor } from "./observationArtifacts";
-import { refused, resolveObservations } from "./resolve/observationPlan";
+import { refused, resolveObservations } from "./observationResolution/observationPlan";
 import { statisticPhrase } from "./aggregation";
 import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { sourceExactProvenance } from "./sourceExactProvenance";

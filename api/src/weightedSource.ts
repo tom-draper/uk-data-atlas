@@ -3,7 +3,7 @@ import {
 	numericObservationsFor,
 	type NumericObservationSuccess,
 } from "./numericObservations";
-import { resolveObservations } from "./resolve/observationPlan";
+import { resolveObservations } from "./observationResolution/observationPlan";
 import type { RouteContext } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 
