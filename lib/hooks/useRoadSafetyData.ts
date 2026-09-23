@@ -3,8 +3,8 @@ import { CustomDataset, CustomPoint } from "../types/custom";
 import { withCDN } from "../helpers/cdn";
 import { useJsonDataLoader } from "./useJsonDataLoader";
 
-const DATASETS_URL = withCDN("/data/precompiled/road-safety.json");
-const POINTS_URL = withCDN("/data/precompiled/road-safety-points.json");
+const DATASETS_URL = withCDN("/data/datasets/road-safety.json");
+const POINTS_URL = withCDN("/data/datasets/road-safety-points.json");
 
 /**
  * The collision dataset, whose points are fetched only once it is selected.

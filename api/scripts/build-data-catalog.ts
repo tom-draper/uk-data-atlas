@@ -9,7 +9,7 @@ import { observationArtifactName } from "../src/dataCatalog";
 
 export const buildDataCatalog = (repositoryRoot: string) => {
 	const precompiled = (file: string) =>
-		join(repositoryRoot, "data", "precompiled", file);
+		join(repositoryRoot, "public", "data", "datasets", file);
 	const inputs: DataCatalogInputs = {
 		manifest: precompiled("dataset-manifest.json"),
 		population: precompiled("population.json"),

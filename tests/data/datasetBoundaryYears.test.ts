@@ -15,7 +15,7 @@ import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
  * failure looks exactly like a dead button, so assert the link here instead.
  */
 describe("every chart dataset has a boundary to draw on", () => {
-	const precompiled = join(process.cwd(), "data", "precompiled");
+	const precompiled = join(process.cwd(), "public", "data", "datasets");
 
 	for (const definition of CHART_DATASET_DEFINITIONS) {
 		it(`${definition.type} resolves every boundary year it declares`, () => {

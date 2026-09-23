@@ -17,10 +17,7 @@ import type { Crosswalk } from "../lib/data/gazetteer/types";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
-const OUT_DIRS = [
-	join(ROOT, "data", "precompiled"),
-	join(PUBLIC_DATA, "precompiled"),
-];
+const OUT_DIR = join(PUBLIC_DATA, "datasets");
 const rel = (p: string) => p.slice(p.indexOf("/data/") + "/data/".length);
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
@@ -115,8 +112,7 @@ async function main() {
 	}
 
 	const json = JSON.stringify(overlaps);
-	for (const dir of OUT_DIRS)
-		await writeFile(join(dir, "constituency-lad-overlaps.json"), json);
+	await writeFile(join(OUT_DIR, "constituency-lad-overlaps.json"), json);
 	console.log(
 		`  constituency-lad-overlaps.json: ${(Buffer.byteLength(json) / 1024).toFixed(0)} KB raw, ${(gzipSync(json).length / 1024).toFixed(0)} KB gz`,
 	);

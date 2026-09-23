@@ -24,7 +24,7 @@ const catalog = (...measures: Measure[]) =>
 		schemaVersion: 1,
 		contentHash: "sha256:catalog",
 		source: {
-			artifact: "data/precompiled/dataset-manifest.json",
+		artifact: "data/datasets/dataset-manifest.json",
 			manifestVersion: 1,
 		},
 		datasets: [],

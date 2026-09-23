@@ -105,10 +105,10 @@ const locationPopulationSummary = (data: Record<string, unknown>) => {
 	);
 };
 const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/precompiled/boundary-mappings.json",
+	"/data/datasets/boundary-mappings.json",
 );
 const CONSTITUENCY_LAD_OVERLAPS_URL = withCDN(
-	"/data/precompiled/constituency-lad-overlaps.json",
+	"/data/datasets/constituency-lad-overlaps.json",
 );
 
 let wardToLadPending: Promise<Record<string, string>> | null = null;

@@ -6,8 +6,9 @@ import { compileNamedLocations } from "../src/namedLocations";
 export const buildNamedLocations = (repositoryRoot: string) => {
 	const source = join(
 		repositoryRoot,
+		"public",
 		"data",
-		"precompiled",
+		"datasets",
 		"gazetteer.core.json",
 	);
 	if (!existsSync(source)) {

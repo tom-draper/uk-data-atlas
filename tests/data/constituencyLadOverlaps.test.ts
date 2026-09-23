@@ -10,7 +10,7 @@ import { gazetteer } from "@/lib/data/gazetteer/static";
 
 const overlaps = JSON.parse(
 	readFileSync(
-		join(process.cwd(), "data/precompiled/constituency-lad-overlaps.json"),
+		join(process.cwd(), "public/data/datasets/constituency-lad-overlaps.json"),
 		"utf8",
 	),
 ) as ConstituencyLadOverlaps;

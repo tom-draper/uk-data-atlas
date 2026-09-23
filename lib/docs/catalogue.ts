@@ -9,8 +9,9 @@ import path from "node:path";
 
 const DOCS_CATALOGUE = path.join(
 	process.cwd(),
+	"public",
 	"data",
-	"precompiled",
+	"datasets",
 	"docs-catalogue.json",
 );
 

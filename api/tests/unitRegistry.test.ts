@@ -60,7 +60,7 @@ test("normalises scales and denominators without changing source-facing units or
 		schemaVersion: 1,
 		contentHash: "sha256:catalogue",
 		source: {
-			artifact: "data/precompiled/dataset-manifest.json",
+		artifact: "data/datasets/dataset-manifest.json",
 			manifestVersion: 1,
 		},
 		datasets: [],

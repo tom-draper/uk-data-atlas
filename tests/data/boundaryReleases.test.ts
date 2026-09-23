@@ -44,7 +44,7 @@ const sourceBoundaryReleases = readdirSync(
 
 const docsCatalogue = JSON.parse(
 	readFileSync(
-		join(process.cwd(), "data", "precompiled", "docs-catalogue.json"),
+		join(process.cwd(), "public", "data", "datasets", "docs-catalogue.json"),
 		"utf8",
 	),
 ) as {
