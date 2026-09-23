@@ -42,25 +42,21 @@ const sourceBoundaryReleases = readdirSync(
 		: [],
 );
 
-const apiBoundaryReleases = JSON.parse(
+const docsCatalogue = JSON.parse(
 	readFileSync(
-		join(process.cwd(), "api", "public", "boundary-releases.json"),
-		"utf8",
-	),
-) as { releases: Array<{ geography: string; id: string }> };
-
-const apiAreaInventory = JSON.parse(
-	readFileSync(
-		join(process.cwd(), "api", "public", "area-inventory.json"),
+		join(process.cwd(), "data", "precompiled", "docs-catalogue.json"),
 		"utf8",
 	),
 ) as {
-	releases: Array<{
+	releases: Array<{ geography: string; id: string }>;
+	areaAvailability: Array<{
 		geography: string;
 		id: string;
 		status: "available" | "not-compiled";
 	}>;
 };
+
+const apiAreaInventory = { releases: docsCatalogue.areaAvailability };
 
 describe("boundary releases", () => {
 	it("makes every source release explicitly held or available from both products", () => {
@@ -68,7 +64,7 @@ describe("boundary releases", () => {
 			catalogued.map(({ type, release }) => [identity(type, release.id), release]),
 		);
 		const apiRegistry = new Set(
-			apiBoundaryReleases.releases.map((release) =>
+			docsCatalogue.releases.map((release) =>
 				identity(release.geography, release.id),
 			),
 		);

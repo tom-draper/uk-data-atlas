@@ -26,7 +26,10 @@ Raw source data is published as immutable GitHub Release assets under a data
 tag such as `data-2026-09-23`, independent of the website version. The first
 migration is fully scripted: install and authenticate the GitHub CLI, then run
 `pnpm data:publish data-YYYY-MM-DD`, `pnpm precompile`, and commit the created
-`data-release.json` together with `data/precompiled/`. The publisher creates
+`data-release.json` together with `data/precompiled/`. After changing API
+catalogue data, run `pnpm --dir api build` too; it refreshes the committed
+`data/precompiled/docs-catalogue.json` snapshot used by the website's static
+docs. The publisher creates
 checksum-verified `.tar.gz` shards below GitHub's 2 GiB per-asset limit; no
 manual upload or domain-by-domain split is needed.
 

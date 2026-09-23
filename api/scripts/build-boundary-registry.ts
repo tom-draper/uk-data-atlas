@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
@@ -166,11 +172,7 @@ export const buildBoundaryRegistry = (repositoryRoot: string) => {
 	const registry = createBoundaryRegistry(repositoryRoot);
 	const outputDirectory = join(repositoryRoot, "api", "public");
 	const outputPath = join(outputDirectory, "boundary-releases.json");
-	if (!existsSync(outputDirectory)) {
-		throw new Error(
-			`Create the API public directory before building: ${outputDirectory}`,
-		);
-	}
+	mkdirSync(outputDirectory, { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(registry, null, "\t")}\n`);
 	return { outputPath, releaseCount: registry.releases.length };
 };
