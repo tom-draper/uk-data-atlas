@@ -12,7 +12,7 @@ import {
 } from "./mappings";
 
 const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/precompiled/boundary-mappings.json",
+	"/data/datasets/boundary-mappings.json",
 );
 
 /** The mutable boundary-code lookup populated from precompiled mappings. */

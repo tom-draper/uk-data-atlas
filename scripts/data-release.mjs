@@ -24,7 +24,7 @@ import { spawn, spawnSync } from "node:child_process";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const DATA = join(ROOT, "data");
-const PRECOMPILED = join(DATA, "precompiled");
+const PRECOMPILED = join(ROOT, "public", "data", "datasets");
 const CONFIG = join(ROOT, "data-release.json");
 const LOCAL_MARKER = join(DATA, ".source-release.json");
 const STAGING = join(ROOT, ".data-release");
@@ -67,10 +67,7 @@ const fileSize = async (path) => (await stat(path)).size;
 async function filesUnder(directory, prefix = "") {
 	const files = [];
 	for (const entry of await readdir(directory, { withFileTypes: true })) {
-		if (
-			entry.name === "precompiled" ||
-			entry.name === ".source-release.json"
-		)
+		if (entry.name === ".source-release.json")
 			continue;
 		const entryPath = join(directory, entry.name);
 		const archivePath = join(prefix, entry.name);
@@ -136,7 +133,7 @@ async function readConfig() {
 async function hasLocalSources() {
 	try {
 		return (await readdir(DATA)).some(
-			(name) => name !== "precompiled" && name !== ".source-release.json",
+			(name) => name !== ".source-release.json",
 		);
 	} catch (error) {
 		if (error?.code === "ENOENT") return false;
@@ -230,7 +227,7 @@ async function publish(tag) {
 	};
 	await writeFile(CONFIG, `${JSON.stringify(config, null, "\t")}\n`);
 	console.log(
-		`Wrote ${relative(ROOT, CONFIG)}. Commit it with data/precompiled/.`,
+		`Wrote ${relative(ROOT, CONFIG)}. Commit it with public/data/.`,
 	);
 }
 
@@ -261,10 +258,7 @@ async function downloadFile(url, destination) {
 async function replaceSources(staging) {
 	await mkdir(DATA, { recursive: true });
 	for (const entry of await readdir(DATA, { withFileTypes: true })) {
-		if (
-			entry.name === "precompiled" ||
-			entry.name === ".source-release.json"
-		)
+		if (entry.name === ".source-release.json")
 			continue;
 		await rm(join(DATA, entry.name), { recursive: true, force: true });
 	}
@@ -349,10 +343,10 @@ async function verifyPrecompiled() {
 	try {
 		await stat(join(PRECOMPILED, "dataset-manifest.json"));
 		await stat(join(PRECOMPILED, "docs-catalogue.json"));
-		await stat(join(PRECOMPILED, "runtime", "boundaries"));
+		await stat(join(ROOT, "public", "data", "boundaries"));
 	} catch {
 		fail(
-			"Committed precompiled data is incomplete. Run pnpm precompile locally and commit data/precompiled/.",
+			"Committed browser data is incomplete. Run pnpm precompile locally and commit public/data/.",
 		);
 	}
 }

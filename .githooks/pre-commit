@@ -8,4 +8,4 @@ if [ "${SKIP_ATLAS_PRECOMPILE:-}" = "1" ]; then
 fi
 
 pnpm precompile
-git add data/precompiled
+git add public/data/datasets public/data/boundaries

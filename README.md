@@ -26,22 +26,22 @@ Raw source data is published as immutable GitHub Release assets under a data
 tag such as `data-2026-09-23`, independent of the website version. The first
 migration is fully scripted: install and authenticate the GitHub CLI, then run
 `pnpm data:publish data-YYYY-MM-DD`, `pnpm precompile`, and commit the created
-`data-release.json` together with `data/precompiled/`. After changing API
+`data-release.json` together with `public/data/`. After changing API
 catalogue data, run `pnpm --dir api build` too; it refreshes the committed
-`data/precompiled/docs-catalogue.json` snapshot used by the website's static
+`public/data/datasets/docs-catalogue.json` snapshot used by the website's static
 docs. The publisher creates
 checksum-verified `.tar.gz` shards below GitHub's 2 GiB per-asset limit; no
 manual upload or domain-by-domain split is needed.
 
 A fresh development checkout runs `pnpm precompile`, which restores the pinned
 raw snapshot into `data/` before compiling. Production builds instead reuse
-the committed chart payloads and compiled boundary runtime snapshot, so they do
-not download or compile the raw release. To stop tracking the old raw files
-after the first release has been tested, run `git rm -r --cached data`, then
-`git add -f data/precompiled data-release.json` before committing.
+the committed browser payloads in `public/data/`, so they do not download or
+compile the raw release. To stop tracking the old raw files after the first
+release has been tested, run `git rm -r --cached data`, then
+`git add public/data data-release.json` before committing.
 
 Install the opt-in commit hook with `pnpm hooks:install`; it runs `pnpm
-precompile` and stages `data/precompiled/` for every commit. Set
+precompile` and stages `public/data/` for every commit. Set
 `SKIP_ATLAS_PRECOMPILE=1` only for an emergency documentation-only commit.
 
 ## Datasets
