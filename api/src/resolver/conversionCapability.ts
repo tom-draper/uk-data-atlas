@@ -5,6 +5,7 @@ import type {
 	RelationshipPurpose,
 } from "../relationshipPaths";
 import type { CrosswalkTranslator, GeographyEndpoint } from "./translation";
+import { releaseKey } from "../geographyKeys";
 
 export type RelationshipPathStepCoverage = {
 	crosswalkId: string;
@@ -251,7 +252,7 @@ export const buildConversionReach = (
 ): Map<string, GeographyReach> => {
 	const reach = new Map<string, GeographyReach>();
 	const entry = (geography: string, boundaryRelease: string) => {
-		const key = `${geography}/${boundaryRelease}`;
+		const key = releaseKey(geography, boundaryRelease);
 		const existing = reach.get(key);
 		if (existing) return existing;
 		const created: GeographyReach = { status: "isolated", reaches: [], reachedFrom: [], vintagePathCount: 0 };
@@ -324,7 +325,7 @@ export class ConversionCapabilities {
 	/** Compiled area count, falling back to the inventory when not loaded. */
 	private areaCount(endpoint: GeographyEndpoint): number | undefined {
 		const lookupCount = this.inputs.areaLookup?.get(
-			`${endpoint.geography}/${endpoint.boundaryRelease}`,
+			releaseKey(endpoint.geography, endpoint.boundaryRelease),
 		)?.size;
 		if (lookupCount !== undefined) return lookupCount;
 		const release = this.inputs.areaInventory?.releases.find(

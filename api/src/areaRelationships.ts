@@ -4,6 +4,7 @@ import type {
 	CrosswalkQuality,
 	CrosswalkWeighting,
 } from "./crosswalkInventory";
+import { areaKey } from "./geographyKeys";
 
 export type AreaRelation =
 	"within" | "contains" | "successor" | "predecessor" | "overlaps";
@@ -37,7 +38,7 @@ export type AreaRelationship = {
 export type AreaRelationshipIndex = Map<string, AreaRelationship[]>;
 
 const areaId = (geography: string, boundaryRelease: string, code: string) =>
-	[geography, boundaryRelease, code].join("/");
+	areaKey(geography, boundaryRelease, code);
 
 const relationFor = (
 	{ method, relationshipPurpose }: CrosswalkArtifact,

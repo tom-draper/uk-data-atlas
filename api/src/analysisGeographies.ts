@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import type { DataCatalog } from "./dataCatalog";
+import { releaseKey } from "./geographyKeys";
 
 export type AnalysisGeographySupport = {
 	measureId: string;
@@ -143,8 +144,8 @@ export const compileAnalysisGeographies = (
 	);
 	if (duplicate) throw new Error(`Duplicate analysis support for ${duplicate.measureId}.`);
 	supports.sort((left, right) =>
-		`${left.measureId}/${left.analysisGeography.geography}/${left.analysisGeography.boundaryRelease}`.localeCompare(
-			`${right.measureId}/${right.analysisGeography.geography}/${right.analysisGeography.boundaryRelease}`,
+		`${left.measureId}/${releaseKey(left.analysisGeography.geography, left.analysisGeography.boundaryRelease)}`.localeCompare(
+			`${right.measureId}/${releaseKey(right.analysisGeography.geography, right.analysisGeography.boundaryRelease)}`,
 		),
 	);
 	const withoutHash = {

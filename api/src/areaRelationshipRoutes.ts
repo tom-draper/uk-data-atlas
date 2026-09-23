@@ -1,6 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { areaKey } from "./geographyKeys";
 
 /** Published direct containment relationships in either direction. */
 export const handleAreaRelationshipRoutes = ({
@@ -50,7 +51,7 @@ export const handleAreaRelationshipRoutes = ({
 	return {
 		status: 200,
 		body: envelope(releaseId, {
-			id: `${geography}/${boundaryRelease}/${code}`,
+			id: areaKey(geography, boundaryRelease, code),
 			geography,
 			boundaryRelease,
 			...area,

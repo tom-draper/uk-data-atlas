@@ -7,6 +7,7 @@ import {
 } from "./capability";
 import { measureCapability } from "./measureCapability";
 import type { RouteRequest } from "./routing";
+import { areaKey } from "./geographyKeys";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
@@ -136,7 +137,7 @@ export const handleAreaCapabilityRoutes = ({
 	return {
 		status: 200,
 		body: envelope(releaseId, {
-			id: `${geography}/${boundaryRelease}/${code}`,
+			id: areaKey(geography, boundaryRelease, code),
 			geography,
 			boundaryRelease,
 			...area,

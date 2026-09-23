@@ -2,6 +2,7 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
+import { areaKey } from "./geographyKeys";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
@@ -91,7 +92,7 @@ export const handleLocationRoutes = ({
 				return area
 					? [
 							{
-								id: `${geography}/${boundaryRelease}/${code}`,
+								id: areaKey(geography, boundaryRelease, code),
 								...area,
 							},
 						]
@@ -181,13 +182,13 @@ export const handleLocationRoutes = ({
 						: "Areas are matched by area overlap. One straddling the edge of the location is returned with the share of it that lies inside, and marked partial; it is not a whole member of this location.",
 				via: projection.via,
 				members: projection.members.map((member) => ({
-					id: `${geography}/${boundaryRelease}/${member.code}`,
+					id: areaKey(geography, boundaryRelease, member.code),
 					...(areas.get(member.code) ?? {
 						name: member.labels[0] ?? member.code,
 					}),
 					code: member.code,
 					through: {
-						id: `${projection.parentGeography}/${projection.parentBoundaryRelease}/${member.throughCode}`,
+						id: areaKey(projection.parentGeography, projection.parentBoundaryRelease, member.throughCode),
 						code: member.throughCode,
 					},
 					relation: member.relation,

@@ -6,6 +6,7 @@ import { isNumericObservation, type DataCatalog } from "./dataCatalog";
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RouteContext } from "./routing";
+import { releaseKey } from "./geographyKeys";
 
 type Measure = DataCatalog["measures"][number];
 type Target = { geography: string; boundaryRelease: string; code?: string };
@@ -182,7 +183,7 @@ export const measureCapability = (
 		measureCompatibilityInventory,
 		measure.id,
 	);
-	const release = `${target.geography}/${target.boundaryRelease}`;
+	const release = releaseKey(target.geography, target.boundaryRelease);
 	if (target.code !== undefined) {
 		const sources = areaMeasureSources(
 			measure,

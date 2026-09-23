@@ -2,12 +2,13 @@ import type { BoundaryRegistry } from "../boundaryRegistry";
 import { canServeAsWgs84, geometryProvenance } from "../reprojection";
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
+import { releaseKey } from "../geographyKeys";
 
 export const boundaryReleaseFindings = (
 	inputs: ValidationInputs,
 	release: BoundaryRegistry["releases"][number],
 ): Finding[] => {
-	const identity = `${release.geography}/${release.id}`;
+	const identity = releaseKey(release.geography, release.id);
 	const { source } = release;
 	const missingProvenance = [
 		["publisher", source.publisher],

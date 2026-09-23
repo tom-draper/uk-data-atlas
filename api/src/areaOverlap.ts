@@ -10,6 +10,7 @@ import polygonClipping, {
 } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
+import { releaseKey } from "./geographyKeys";
 import {
 	canServeAsWgs84,
 	geometryProvenance,
@@ -224,7 +225,7 @@ export const readGeometries = (
 	geometrySources: GeometrySourceLookup,
 	codePattern?: RegExp,
 ) => {
-	const identity = `${endpoint.geography}/${endpoint.boundaryRelease}`;
+	const identity = releaseKey(endpoint.geography, endpoint.boundaryRelease);
 	const source = geometrySources.get(identity);
 	if (!source) {
 		throw new Error(
@@ -339,7 +340,7 @@ export const labelsFor = (
 	endpoint: { geography: string; boundaryRelease: string },
 	code: string,
 ) => {
-	const identity = `${endpoint.geography}/${endpoint.boundaryRelease}`;
+	const identity = releaseKey(endpoint.geography, endpoint.boundaryRelease);
 	const area = areaLookup?.get(identity)?.get(code);
 	if (!area) {
 		throw new Error(

@@ -1,5 +1,6 @@
 import type { AreaInventory, AreaLookup } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import { releaseKey } from "./geographyKeys";
 import {
 	explainCodeInRelease,
 	type MemberCodeStatus,
@@ -84,7 +85,7 @@ export const explainAreaAbsence = (
 			})),
 		};
 	}
-	const releaseAreas = areaLookup?.get(`${geography}/${boundaryRelease}`);
+	const releaseAreas = areaLookup?.get(releaseKey(geography, boundaryRelease));
 	if (!releaseAreas) {
 		const inventoried = areaInventory?.releases.find(
 			(release) =>

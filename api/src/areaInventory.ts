@@ -7,6 +7,7 @@ import type {
 	AreaSourceAdapterManifest,
 } from "./areaSourceAdapters";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import { releaseKey } from "./geographyKeys";
 import { readDbfRecords } from "./dbf";
 
 type FeatureCollection = {
@@ -73,7 +74,7 @@ export const createAreaLookup = (
 ): AreaLookup =>
 	new Map(
 		artifacts.map((artifact) => [
-			`${artifact.geography}/${artifact.boundaryRelease}`,
+			releaseKey(artifact.geography, artifact.boundaryRelease),
 			new Map(artifact.areas.map((area) => [area.code, area])),
 		]),
 	);
@@ -303,7 +304,7 @@ export const compileAreas = (
 ): CompiledAreas => {
 	const artifacts: AreaReleaseArtifact[] = [];
 	const releases = boundaryRegistry.releases.map((release) => {
-		const identity = `${release.geography}/${release.id}`;
+		const identity = releaseKey(release.geography, release.id);
 		const sourceAdapter = sourceAdapters[identity];
 		const directory = join(
 			repositoryRoot,

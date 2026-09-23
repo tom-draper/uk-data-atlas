@@ -8,6 +8,7 @@ import type {
 	CrosswalkWeighting,
 } from "./crosswalkInventory";
 import type { SourceInventory } from "./sourceInventory";
+import { releaseKey } from "./geographyKeys";
 
 export type GeographyRelationship = {
 	id: string;
@@ -97,7 +98,7 @@ const crosswalksByRelease = (
 			["to", crosswalk.to, crosswalk.from],
 		];
 		for (const [direction, side, counterpart] of sides) {
-			const key = `${side.geography}/${side.boundaryRelease}`;
+			const key = releaseKey(side.geography, side.boundaryRelease);
 			const relationships = map.get(key) ?? [];
 			relationships.push({
 				id: crosswalk.id,
@@ -121,7 +122,7 @@ export const createGeographyInventory = (
 ): GeographyInventory => {
 	const areasByRelease = new Map(
 		areaInventory?.releases.map((release) => [
-			`${release.geography}/${release.id}`,
+			releaseKey(release.geography, release.id),
 			release,
 		]) ?? [],
 	);
@@ -134,10 +135,10 @@ export const createGeographyInventory = (
 			`boundaries/${toKebabCase(release.geography)}/${release.id}`,
 		);
 		const areaRelease = areasByRelease.get(
-			`${release.geography}/${release.id}`,
+			releaseKey(release.geography, release.id),
 		);
 		const relationships = relationshipsByRelease.get(
-			`${release.geography}/${release.id}`,
+			releaseKey(release.geography, release.id),
 		);
 		return {
 			id: release.id,

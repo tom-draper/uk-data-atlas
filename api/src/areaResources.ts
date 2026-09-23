@@ -4,13 +4,14 @@ import type { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import { problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
+import { releaseKey } from "./geographyKeys";
 
 export const findArea = (
 	areaLookup: AreaLookup | undefined,
 	geography: string,
 	boundaryRelease: string,
 	code: string,
-) => areaLookup?.get(`${geography}/${boundaryRelease}`)?.get(code);
+) => areaLookup?.get(releaseKey(geography, boundaryRelease))?.get(code);
 
 /**
  * A 404 for an area identity that says why it resolves to nothing: an

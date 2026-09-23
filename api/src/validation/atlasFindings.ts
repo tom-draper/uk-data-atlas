@@ -1,5 +1,6 @@
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
+import { releaseKey } from "../geographyKeys";
 
 export const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 	const registryHash = inputs.boundaryRegistry.contentHash;
@@ -14,14 +15,14 @@ export const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 		inputs.dataCatalog.contentHash;
 	const releaseIds = new Set(
 		inputs.boundaryRegistry.releases.map(
-			(release) => `${release.geography}/${release.id}`,
+			(release) => releaseKey(release.geography, release.id),
 		),
 	);
 	const inventories: Array<[string, string[]]> = [
 		[
 			"area inventory",
 			inputs.areaInventory.releases.map(
-				(release) => `${release.geography}/${release.id}`,
+				(release) => releaseKey(release.geography, release.id),
 			),
 		],
 		[
@@ -33,7 +34,7 @@ export const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 		[
 			"geography inventory",
 			inputs.geographyInventory.releases.map(
-				(release) => `${release.geography}/${release.id}`,
+				(release) => releaseKey(release.geography, release.id),
 			),
 		],
 	];

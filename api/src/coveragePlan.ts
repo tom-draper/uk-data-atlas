@@ -7,6 +7,7 @@ import {
 import { measureCoverage } from "./measureCoverage";
 import { observationsFor } from "./observationArtifacts";
 import type { RouteContext } from "./routing";
+import { releaseKey } from "./geographyKeys";
 
 type Measure = DataCatalog["measures"][number];
 
@@ -172,7 +173,7 @@ export const coveragePlan = (
 	const countries = [...targetByCountry]
 		.sort(([left], [right]) => left.localeCompare(right))
 		.map(([country, codes]): CoverageCountryPlan => {
-			const release = `${target.geography}/${target.boundaryRelease}`;
+			const release = releaseKey(target.geography, target.boundaryRelease);
 			const source = served.get(country);
 			if (source && source.codes.size === codes.size)
 				return {

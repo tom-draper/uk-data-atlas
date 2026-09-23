@@ -4,6 +4,7 @@ import {
 	type MemberCodeStatus,
 } from "./memberReconciliation";
 import { normalisePlaceName, withoutTitle } from "./placeResolver";
+import { areaKey, releaseKey } from "./geographyKeys";
 
 /**
  * Checking a column of codes or names against one exact boundary release,
@@ -141,11 +142,11 @@ export const validateBatch = (
 	boundaryRelease: string,
 	values: string[],
 ): ValidatedValue[] => {
-	const areas = areaLookup.get(`${geography}/${boundaryRelease}`);
+	const areas = areaLookup.get(releaseKey(geography, boundaryRelease));
 	if (!areas)
 		throw new Error(`${geography}/${boundaryRelease} is not compiled.`);
 	const ref = (area: AreaRecord): AreaRef => ({
-		id: `${geography}/${boundaryRelease}/${area.code}`,
+		id: areaKey(geography, boundaryRelease, area.code),
 		code: area.code,
 		name: area.name,
 	});

@@ -1,5 +1,6 @@
 import type { AtlasRelease, ResourceKind } from "./atlasRelease";
 import type { ResourceChanges } from "./atlasReleaseComparison";
+import { releaseKey } from "./geographyKeys";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -47,7 +48,7 @@ const entries = (value: unknown, key: string): JsonRecord[] => {
 };
 
 const identity = (entry: JsonRecord) =>
-	`${String(entry.geography)}/${String(entry.id)}`;
+	releaseKey(String(entry.geography), String(entry.id));
 
 const resource = (
 	kind: ResourceKind,

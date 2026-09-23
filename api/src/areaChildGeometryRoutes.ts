@@ -7,6 +7,7 @@ import {
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { areaKey, releaseKey } from "./geographyKeys";
 
 /** The geometry of every area a published relationship places inside one area, as a feature collection. */
 export const handleAreaChildGeometryRoutes = ({
@@ -64,7 +65,7 @@ export const handleAreaChildGeometryRoutes = ({
 		...new Set(
 			contained.map(
 				({ counterpart }) =>
-					`${counterpart.geography}/${counterpart.boundaryRelease}`,
+					releaseKey(counterpart.geography, counterpart.boundaryRelease),
 			),
 		),
 	].sort();
@@ -72,14 +73,14 @@ export const handleAreaChildGeometryRoutes = ({
 		? contained.filter(
 				({ counterpart }) =>
 					counterpart.geography === childGeography ||
-					`${counterpart.geography}/${counterpart.boundaryRelease}` ===
+					releaseKey(counterpart.geography, counterpart.boundaryRelease) ===
 						childGeography,
 			)
 		: contained;
 	const chosenLayers = new Set(
 		children.map(
 			({ counterpart }) =>
-				`${counterpart.geography}/${counterpart.boundaryRelease}`,
+				releaseKey(counterpart.geography, counterpart.boundaryRelease),
 		),
 	);
 	if (childGeography && children.length === 0)
@@ -176,7 +177,7 @@ export const handleAreaChildGeometryRoutes = ({
 			type: "FeatureCollection",
 			id: `${geography}/${boundaryRelease}/${code}/children`,
 			parent: {
-				id: `${geography}/${boundaryRelease}/${code}`,
+				id: areaKey(geography, boundaryRelease, code),
 				geography,
 				boundaryRelease,
 				...area,

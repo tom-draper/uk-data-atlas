@@ -2,6 +2,7 @@ import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { areaKey } from "./geographyKeys";
 
 /**
  * Travels with a neighbour list, because the answer rests on a property of the
@@ -68,7 +69,7 @@ export const handleAreaNeighbourRoutes = ({
 		return {
 			status: 200,
 			body: envelope(releaseId, {
-				id: `${geography}/${boundaryRelease}/${code}`,
+				id: areaKey(geography, boundaryRelease, code),
 				geography,
 				boundaryRelease,
 				...area,

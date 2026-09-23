@@ -12,6 +12,7 @@ import {
 	type ResolvedRelationshipCapability,
 } from "./conversionCapability";
 import type { CrosswalkTranslator } from "./translation";
+import { releaseKey } from "../geographyKeys";
 import { areaId } from "./areas";
 
 export {
@@ -81,7 +82,7 @@ export class CapabilityResolver {
 	relationshipCapabilitiesFrom(from: GeographyEndpoint) { return this.conversions.relationshipCapabilitiesFrom(from); }
 
 	relationshipCoverage(geography: string, boundaryRelease: string, relation?: AreaRelation, limit = 25): ResolvedRelationshipCoverage | undefined {
-		const areas = this.inputs.areaLookup?.get(`${geography}/${boundaryRelease}`);
+		const areas = this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
 		if (!areas || !this.hasRelationships()) return undefined;
 		const byRelation: Partial<Record<AreaRelation, number>> = {};
 		const crosswalkIds = new Set<string>();
@@ -113,7 +114,7 @@ export class CapabilityResolver {
 			const found = reach.get(identity) ?? { status: "isolated" as const, reaches: [], reachedFrom: [], vintagePathCount: 0 };
 			if (!coverage) return { geography, boundaryRelease, status: "not-built" as const, areaCount, relatedAreaCount: 0, gapCount: areaCount, countries, reach: found };
 			return { geography, boundaryRelease, status: coverage.relatedAreaCount === coverage.areaCount ? "available" as const : coverage.relatedAreaCount > 0 ? "partial" as const : "unsupported" as const, areaCount: coverage.areaCount, relatedAreaCount: coverage.relatedAreaCount, gapCount: coverage.areaCount - coverage.relatedAreaCount, countries, reach: found };
-	}).sort((left, right) => `${left.geography}/${left.boundaryRelease}`.localeCompare(`${right.geography}/${right.boundaryRelease}`));
+	}).sort((left, right) => releaseKey(left.geography, left.boundaryRelease).localeCompare(releaseKey(right.geography, right.boundaryRelease)));
 	}
 
 	relationshipRepairs(): RelationshipRepair[] {

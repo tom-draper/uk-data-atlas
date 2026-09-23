@@ -1,4 +1,5 @@
 import type { AreaInventory, AreaLookup, AreaRecord } from "../areaInventory";
+import { areaKey, releaseKey } from "../geographyKeys";
 import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence";
 import {
 	summariseBatch,
@@ -35,7 +36,7 @@ export type GeographyEndpoint = { geography: string; boundaryRelease: string };
 export type AreaIdentity = GeographyEndpoint & { code: string };
 
 export const areaId = ({ geography, boundaryRelease, code }: AreaIdentity) =>
-	[geography, boundaryRelease, code].join("/");
+	areaKey(geography, boundaryRelease, code);
 
 export type ResolvedSameCodeArea = AreaRecord & {
 	id: string;
@@ -74,7 +75,7 @@ export class AreasResolver {
 	constructor(private readonly inputs: AreasResolverInputs) {
 		this.derivedSources = derivedReleaseSources(inputs.areaInventory);
 		for (const release of inputs.boundaryRegistry?.releases ?? [])
-			this.boundaryReleases.set(`${release.geography}/${release.id}`, release);
+			this.boundaryReleases.set(releaseKey(release.geography, release.id), release);
 		if (inputs.areaLookup) {
 			this.areaSearchIndex = createAreaSearchIndex(inputs.areaLookup);
 			for (const [releaseIdentity, areas] of inputs.areaLookup) {
@@ -123,12 +124,12 @@ export class AreasResolver {
 
 	area(identity: AreaIdentity): AreaRecord | undefined {
 		return this.inputs.areaLookup
-			?.get(`${identity.geography}/${identity.boundaryRelease}`)
+			?.get(releaseKey(identity.geography, identity.boundaryRelease))
 			?.get(identity.code);
 	}
 
 	releaseAreas(geography: string, boundaryRelease: string) {
-		return this.inputs.areaLookup?.get(`${geography}/${boundaryRelease}`);
+		return this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
 	}
 
 	locationReleaseViews(memberGeography: string, memberCodes: string[]) {
@@ -165,7 +166,7 @@ export class AreasResolver {
 			.reverse()) {
 			const boundaryRelease = identity.slice("country/".length);
 			const area = this.area({ geography: "country", boundaryRelease, code });
-			if (area) return { id: `country/${boundaryRelease}/${code}`, boundaryRelease, ...area };
+			if (area) return { id: areaKey("country", boundaryRelease, code), boundaryRelease, ...area };
 		}
 		return undefined;
 	}
@@ -178,16 +179,16 @@ export class AreasResolver {
 	}
 
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {
-		return this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`) ?? false;
+		return this.inputs.areaLookup?.has(releaseKey(geography, boundaryRelease)) ?? false;
 	}
 
 	areaCodes(geography: string, boundaryRelease: string): string[] | undefined {
-		const areas = this.inputs.areaLookup?.get(`${geography}/${boundaryRelease}`);
+		const areas = this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
 		return areas ? [...areas.keys()] : undefined;
 	}
 
 	boundaryRelease(geography: string, id: string) {
-		return this.boundaryReleases.get(`${geography}/${id}`);
+		return this.boundaryReleases.get(releaseKey(geography, id));
 	}
 
 	boundaryReleasesFor(geography?: string): BoundaryRegistry["releases"] {
@@ -211,7 +212,7 @@ export class AreasResolver {
 	}
 
 	validateAreas(geography: string, boundaryRelease: string, values: string[]): { values: ValidatedValue[]; summary: ReturnType<typeof summariseBatch> } | undefined {
-		if (!this.inputs.areaLookup?.has(`${geography}/${boundaryRelease}`)) return undefined;
+		if (!this.inputs.areaLookup?.has(releaseKey(geography, boundaryRelease))) return undefined;
 		const validated = validateBatch(this.inputs.areaLookup, geography, boundaryRelease, values);
 		return { values: validated, summary: summariseBatch(validated) };
 	}

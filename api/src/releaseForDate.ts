@@ -1,5 +1,6 @@
 import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
+import { releaseKey } from "./geographyKeys";
 
 type BoundaryRelease = BoundaryRegistry["releases"][number];
 
@@ -36,8 +37,8 @@ export const derivedReleaseSources = (
 			release.status === "available" && release.derivedFrom
 				? [
 						[
-							`${release.geography}/${release.id}`,
-							`${release.derivedFrom.source.geography}/${release.derivedFrom.source.boundaryRelease}`,
+							releaseKey(release.geography, release.id),
+							releaseKey(release.derivedFrom.source.geography, release.derivedFrom.source.boundaryRelease),
 						] as const,
 					]
 				: [],
@@ -184,11 +185,11 @@ export const selectReleaseForDate = (
 		(release) =>
 			candidates.some(
 				(source) =>
-					derivedFrom.get(`${geography}/${release.id}`) ===
-					`${geography}/${source.id}`,
+					derivedFrom.get(releaseKey(geography, release.id)) ===
+					releaseKey(geography, source.id),
 			),
 		(release) =>
-			`Derived from ${derivedFrom.get(`${geography}/${release.id}`)}, which is also dated ${chosenMonth}.`,
+			`Derived from ${derivedFrom.get(releaseKey(geography, release.id))}, which is also dated ${chosenMonth}.`,
 	);
 	const reach = (release: ReleaseReference) =>
 		country ? 0 : release.countries.length;
