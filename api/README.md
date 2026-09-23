@@ -3492,6 +3492,7 @@ second inventory to maintain:
 - `GET /v1/geography-health` — Summarise relationship health across compiled releases
 - `GET /v1/relationship-paths` — Find the published paths from one boundary release to another for a purpose
 - `GET /v1/relationship-capabilities` — Diagnose whether a geography conversion is usable and complete
+- `GET /v1/conversion-plan` — Select a published conversion path and preflight its intended operation
 - `GET /v1/relationship-coverage` — Report relationship coverage and hierarchy gaps for one release
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata

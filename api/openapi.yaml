@@ -5806,6 +5806,79 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /conversion-plan:
+    get:
+      operationId: planGeographyConversion
+      tags: ["Geography"]
+      summary: Select a published conversion path and preflight its intended operation
+      x-likely-refusal:
+        status: 400
+        when: "The source, target or relationship purpose is missing, or `operation` is not recognised."
+        x-example-request: "/v1/conversion-plan?sourceGeography=ward&sourceRelease=2023-05-uk-bgc"
+      description: >
+        Produces a deterministic conversion decision without translating codes
+        or values. The resolver chooses the highest-ranked published path:
+        complete source coverage first, then evidence strength, path origin and
+        step count. It returns every remaining path as an alternative, with
+        its coverage, trust and rank.
+
+        `operation` preflights the caller's intention before work begins.
+        `identity-join` and `code-translation` require an identity path;
+        `containment-aggregation` and `membership-join` require membership;
+        `weighted-allocation` requires apportionment. A plan never upgrades a
+        partial path, infers a crosswalk or treats reused codes as continuity.
+      parameters:
+        - { name: sourceGeography, in: query, required: true, schema: { type: string } }
+        - { name: sourceRelease, in: query, required: true, schema: { type: string } }
+        - { name: targetGeography, in: query, required: true, schema: { type: string } }
+        - { name: targetRelease, in: query, required: true, schema: { type: string } }
+        - name: purpose
+          in: query
+          required: true
+          schema: { type: string, enum: [identity, membership, apportion] }
+        - name: operation
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [identity-join, code-translation, containment-aggregation, membership-join, weighted-allocation]
+          description: The operation the caller intends to perform after planning.
+      responses:
+        "200":
+          description: The selected conversion path, ranked alternatives and any blocking evidence gap.
+          content:
+            application/json:
+              schema: { type: object }
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
+                data:
+                  from: { geography: ward, boundaryRelease: 2023-05-uk-bgc }
+                  to: { geography: localAuthority, boundaryRelease: 2023-05-uk-bgc-v2 }
+                  purpose: membership
+                  operation: containment-aggregation
+                  status: available
+                  selectedPath:
+                    id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/forward/membership
+                    rank:
+                      position: 1
+                      reasons: [complete source coverage, verified evidence, crosswalk path, 1 step]
+                    operations:
+                      permitted: [containment-aggregation, membership-join]
+                      prohibited: [weighted-allocation]
+                    trust:
+                      level: verified
+                      reasons: [Every path step is publisher-supplied and has complete compiled coverage.]
+                    coverage: { status: complete, mappedSourceAreaCount: 8441, sourceAreaCount: 8441, share: 1 }
+                  alternatives: []
+                  missingPrerequisites: []
+                meta:
+                  nextCursor: null
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /relationship-coverage:
     get:
       operationId: reportRelationshipCoverage

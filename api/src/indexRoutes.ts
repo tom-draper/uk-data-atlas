@@ -80,6 +80,7 @@ export const handleIndexRoutes = ({
 				"/v1/areas/{geography}/{release}/{code}/geometry",
 				"/v1/areas/{geography}/{release}/{code}/geometry/metadata",
 				"/v1/translations",
+				"/v1/conversion-plan",
 				"/v1/attribution",
 				"/v1/corrections",
 				"/v1/locations",
