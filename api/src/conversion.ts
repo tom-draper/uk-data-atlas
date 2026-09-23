@@ -188,3 +188,31 @@ export const convertObservations = (
 		],
 		records,
 	);
+
+/**
+ * Which codes a route starts at end up in each code it finishes at, ignoring
+ * weights: the parts a converted value for that code was built from.
+ */
+export const componentsThroughSteps = (
+	path: readonly ConversionStep[],
+): Map<string, Set<string>> => {
+	const components = new Map<string, Set<string>>();
+	const [first] = path;
+	if (!first) return components;
+	for (const source of first.steps.keys()) {
+		let reached = new Set([source]);
+		for (const step of path) {
+			const next = new Set<string>();
+			for (const code of reached)
+				for (const target of step.steps.get(code)?.targets ?? [])
+					next.add(target.code);
+			reached = next;
+		}
+		for (const code of reached) {
+			const held = components.get(code) ?? new Set<string>();
+			held.add(source);
+			components.set(code, held);
+		}
+	}
+	return components;
+};

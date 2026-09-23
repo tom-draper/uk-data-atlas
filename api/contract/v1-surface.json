@@ -1787,6 +1787,9 @@
 				"query:crosswalk": {
 					"required": false
 				},
+				"query:path": {
+					"required": false
+				},
 				"query:period": {
 					"required": false
 				}

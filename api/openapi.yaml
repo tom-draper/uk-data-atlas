@@ -1695,8 +1695,14 @@ paths:
         the crosswalk carries.
 
 
-        Without `crosswalk`, the comparisons this measure's partitions allow
-        are listed rather than one being chosen. This is how a weighting is
+        A published relationship path may be named with `path` in place of
+        `crosswalk`, adding the finer partition up through every one of its
+        steps; the response then carries `path`, listing each step's crosswalk
+        and direction, instead of `crosswalk`. Naming both is refused.
+
+
+        Without `crosswalk` or `path`, the comparisons this measure's
+        partitions allow are listed rather than one being chosen. This is how a weighting is
         judged: the same constituencies added into local authorities are a
         median 0.3% from the published figures by population weight and 8.8%
         by area weight.
@@ -1707,11 +1713,18 @@ paths:
           required: false
           schema: { type: string }
           description: The published crosswalk to add the finer partition up through.
+        - name: path
+          in: query
+          required: false
+          schema: { type: string }
+          description: >
+            A relationship path id from `GET /relationship-paths` to add the
+            finer partition up through, in place of `crosswalk`.
         - name: period
           in: query
           required: false
           schema: { type: string }
-          description: Required with `crosswalk`; the period both partitions are compared for.
+          description: Required with `crosswalk` or `path`; the period both partitions are compared for.
       responses:
         "200":
           description: The two figures side by side, or the comparisons available.
