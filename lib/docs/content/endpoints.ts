@@ -543,6 +543,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "A release-by-release summary of how well connected the Atlas's geographies are: how many areas in each have published relationships, and how many are still on their own. Filter with `geography` or `country` to narrow it.",
 		tips: [
 			"A good place to start when deciding whether the geography you need is well enough connected for the conversion you have in mind.",
+			"`status` and `reach` answer different questions. A release can have a relationship on every area and still convert onto nothing: if its only paths lead to other vintages of its own geography, `reach` is `vintage-only`. Filter with `reach=isolated` to see the releases nothing reaches at all.",
 		],
 	},
 	listRelationshipRepairs: {

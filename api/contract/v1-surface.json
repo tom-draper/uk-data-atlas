@@ -5430,10 +5430,38 @@
 				},
 				"query:country": {
 					"required": false
+				},
+				"query:reach": {
+					"required": false,
+					"enum": [
+						"connected",
+						"isolated",
+						"vintage-only"
+					]
 				}
 			},
 			"responses": {
 				"200 application/json": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
 				"503 application/problem+json": [
 					"absence",
 					"areaCount",
