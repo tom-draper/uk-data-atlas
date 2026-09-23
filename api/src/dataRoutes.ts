@@ -5,7 +5,7 @@ import {
 	measureUnit,
 	normaliseObservation,
 } from "./unitRegistry";
-import { refused, resolveObservations } from "./resolve/observationPlan";
+import { refused, resolveObservations } from "./observationResolution/observationPlan";
 import {
 	exportMeasureRecords,
 	type MeasureExportRecord,

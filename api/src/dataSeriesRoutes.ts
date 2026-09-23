@@ -5,7 +5,7 @@ import {
 } from "./dataCatalog";
 import { convertObservations } from "./conversion";
 import { observationsFor } from "./observationArtifacts";
-import { resolveObservations } from "./resolve/observationPlan";
+import { resolveObservations } from "./observationResolution/observationPlan";
 import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,

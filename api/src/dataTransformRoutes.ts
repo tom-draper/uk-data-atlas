@@ -1,7 +1,7 @@
 import { compareObservations } from "./comparison";
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import { refused, resolveObservations } from "./resolve/observationPlan";
+import { refused, resolveObservations } from "./observationResolution/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { sourceExactProvenance } from "./sourceExactProvenance";

@@ -2,7 +2,7 @@ import { isNumericObservation } from "./dataCatalog";
 import { featureIds } from "./mapResource/compileMapResource";
 import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
-import { refused, resolveObservations } from "./resolve/observationPlan";
+import { refused, resolveObservations } from "./observationResolution/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { geographyResolverFor, type RouteRequest } from "./routing";
 import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";

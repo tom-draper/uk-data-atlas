@@ -1,6 +1,6 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import { resolveObservations } from "./resolve/observationPlan";
+import { resolveObservations } from "./observationResolution/observationPlan";
 import { rankObservations, readRankingOrder } from "./ranking";
 import {
 	changeRefusal,
