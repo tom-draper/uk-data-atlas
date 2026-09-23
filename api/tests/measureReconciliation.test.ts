@@ -9,7 +9,11 @@ import {
 	reconcileMeasure,
 } from "../src/measureReconciliation";
 import { createGeographyResolver } from "../src/geographyResolver";
-import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import {
+	createRelationshipPathIndex,
+	type RelationshipPath,
+} from "../src/relationshipPaths";
+import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 import type { RouteContext } from "../src/routing";
 import type {
 	DataCatalog,
@@ -232,7 +236,10 @@ test("lists the comparisons a measure allows, and needs a period to run one", ()
 		measure,
 	);
 	assert.deepEqual(
-		available.map(({ crosswalk: named, periods }) => [named.id, periods]),
+		available.map((entry) => [
+			"crosswalk" in entry ? entry.crosswalk.id : entry.path.id,
+			entry.periods,
+		]),
 		[
 			["wards-agree", ["2022"]],
 			["wards-differ", ["2022"]],
@@ -323,4 +330,136 @@ test("adds the finer partition up through every step of a named path", () => {
 		).refusal,
 		/No published relationship path is named not-published/,
 	);
+});
+
+test("lists only a composed path that reconciles, between releases the partitions join", () => {
+	const vintage: PropertyCrosswalkArtifact = {
+		...crosswalk("wards-2022-to-2023", [
+			["E05000001", "E05000001"],
+			["E05000002", "E05000002"],
+		]),
+		method: "official-lookup",
+		from: { geography: "ward", boundaryRelease: "2022-05-uk-bgc" },
+		to: agreeing.from,
+	};
+	// A later step that leaves out the second ward, as a continuity step
+	// leaves out a changed area, so the conversion refuses to lose its 180.
+	const dropping: PropertyCrosswalkArtifact = {
+		...crosswalk("wards-to-district-partial", [["E05000001", "E06000001"]]),
+		from: agreeing.from,
+		to: agreeing.to,
+	};
+	const districtToWard: PropertyCrosswalkArtifact = {
+		...crosswalk("district-to-ward", [["E06000001", "E05000001"]]),
+		from: { geography: "localAuthority", boundaryRelease: "2023-05-uk-bgc-v2" },
+		to: vintage.from,
+	};
+	const artifacts = [vintage, dropping, agreeing, districtToWard];
+	const path = (
+		id: string,
+		steps: Array<[PropertyCrosswalkArtifact, "forward" | "reverse"]>,
+	): RelationshipPath => ({
+		id,
+		purpose: "membership",
+		from: vintage.from,
+		to: agreeing.to,
+		quality: "publisher-supplied",
+		origin: "declared",
+		steps: steps.map(([artifact, direction]) => ({
+			crosswalkId: artifact.id,
+			direction,
+			method: artifact.method,
+			purpose: "membership" as const,
+		})),
+	});
+	const candidate = (
+		boundaryRelease: string,
+	): MeasureCompatibilityInventory["measures"][number]["sources"][number]["candidates"][number] => ({
+		boundaryRelease,
+		title: boundaryRelease,
+		coverageCountries: ["GB-ENG"],
+		status: "exact-code-set",
+		sourceCodeCount: 1,
+		candidateCodeCount: 1,
+		matchingCodeCount: 1,
+		matchedSourceShare: 1,
+		unmatchedSourceCodeCount: 0,
+		unmatchedSourceCodeSample: [],
+		candidateOnlyCodeCount: 0,
+		candidateOnlyCodeSample: [],
+	});
+	const context = testContext({
+		boundaryRegistry: registry,
+		dataCatalog: catalog,
+		measureObservations: observations,
+		crosswalkLookup: new Map(artifacts.map((artifact) => [artifact.id, artifact])),
+		crosswalkInventory: {
+			schemaVersion: 1,
+			contentHash: "sha256:crosswalks",
+			crosswalks: [],
+		},
+		// Each partition is verified against the release its end of the path uses.
+		measureCompatibilityInventory: {
+			schemaVersion: 1,
+			contentHash: "sha256:compatibility",
+			measures: [
+				{
+					measureId: measure.id,
+					sources: measure.sources.map((source) => ({
+						datasetId: source.datasetId,
+						sourceGeography: source.sourceGeography,
+						periods: source.periods,
+						note: "Fixture.",
+						candidates: [
+							candidate(
+								source.sourceGeography.type === "ward"
+									? vintage.from.boundaryRelease
+									: agreeing.to.boundaryRelease,
+							),
+						],
+					})),
+				},
+			],
+		} as unknown as MeasureCompatibilityInventory,
+		relationshipPathInventory: {
+			schemaVersion: 1,
+			contentHash: "sha256:paths",
+			crosswalkInventoryHash: "sha256:crosswalks",
+			paths: [
+				// Ranked ahead by id, but a reversed containment splits a
+				// district among its wards, which nothing here can weight.
+				path("a-reversed", [
+					[vintage, "forward"],
+					[districtToWard, "reverse"],
+				]),
+				// Ranked ahead by id, but it drops a ward, so it cannot reconcile.
+				path("b-dropping", [
+					[vintage, "forward"],
+					[dropping, "forward"],
+				]),
+				path("c-reconciles", [
+					[vintage, "forward"],
+					[agreeing, "forward"],
+				]),
+			],
+		},
+	});
+
+	const listed = availableReconciliations(context, measure).filter(
+		(entry) => "path" in entry,
+	);
+	assert.deepEqual(
+		listed.map((entry) => ("path" in entry ? entry.path.id : undefined)),
+		["c-reconciles"],
+	);
+	const [entry] = listed;
+	assert.equal(
+		entry?.href,
+		`/v1/measures/${measure.id}/reconciliation?path=c-reconciles&period=2022`,
+	);
+	const followed = reconcileMeasure(context, measure, { path: "c-reconciles" }, "2022");
+	assert.ok(!("refusal" in followed));
+	if ("refusal" in followed) return;
+	assert.equal(followed.pairing, "verified");
+	assert.equal(followed.summary.agreeingAreaCount, 1);
 });

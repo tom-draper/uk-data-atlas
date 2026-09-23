@@ -331,6 +331,11 @@ export class CrosswalkTranslator {
 		);
 	}
 
+	/** Every published path, in the inventory's order. */
+	allPaths(): RelationshipPath[] {
+		return [...(this.inputs.relationshipPathIndex?.values() ?? [])].flat();
+	}
+
 	/** A published path by id, from any source and target. */
 	path(id: string): RelationshipPath | undefined {
 		if (!this.pathsById) {
