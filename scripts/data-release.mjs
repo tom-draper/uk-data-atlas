@@ -9,11 +9,11 @@
  */
 import { createHash } from "node:crypto";
 import {
-	copyFile,
 	cp,
 	mkdir,
 	readFile,
 	readdir,
+	rename,
 	rm,
 	stat,
 	writeFile,
@@ -294,20 +294,26 @@ async function downloadFile(url, destination) {
 }
 
 async function replaceSources(staging) {
-	await mkdir(DATA, { recursive: true });
-	for (const entry of await readdir(DATA, { withFileTypes: true })) {
-		if (entry.name === ".source-release.json") continue;
-		await rm(join(DATA, entry.name), { recursive: true, force: true });
+	const replacement = join(STAGING, `restore-${process.pid}`);
+	const previous = join(STAGING, `previous-${process.pid}`);
+	await rm(replacement, { recursive: true, force: true });
+	await rm(previous, { recursive: true, force: true });
+	await cp(staging, replacement, { recursive: true });
+
+	let hadPrevious = true;
+	try {
+		await rename(DATA, previous);
+	} catch (error) {
+		if (error?.code === "ENOENT") hadPrevious = false;
+		else throw error;
 	}
-	for (const entry of await readdir(staging)) {
-		const source = join(staging, entry);
-		const destination = join(DATA, entry);
-		if (entry.isDirectory()) {
-			await cp(source, destination, { recursive: true });
-		} else {
-			await copyFile(source, destination);
-		}
+	try {
+		await rename(replacement, DATA);
+	} catch (error) {
+		if (hadPrevious) await rename(previous, DATA);
+		throw error;
 	}
+	if (hadPrevious) await rm(previous, { recursive: true, force: true });
 }
 
 async function download(force) {
