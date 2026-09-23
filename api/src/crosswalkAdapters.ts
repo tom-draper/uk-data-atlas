@@ -59,6 +59,11 @@ export type PropertyCrosswalkAdapter = {
 	weighting: { status: "not-provided" } | { status: "not-applicable" };
 	from: CrosswalkSideAdapter;
 	to: CrosswalkSideAdapter;
+	/**
+	 * The column holding ONS's change indicator for each pair, as its code
+	 * change lookups publish it: U unchanged, S split, M merged, X complex.
+	 */
+	changeProperty?: string;
 };
 
 // Area-overlap adapters intersect two compiled releases' geometries, read
@@ -169,6 +174,8 @@ const validPropertyAdapter = (
 		)) &&
 	isRecord(adapter.weighting) &&
 	PROPERTY_WEIGHTING_STATUSES.includes(adapter.weighting.status as string) &&
+	(adapter.changeProperty === undefined ||
+		typeof adapter.changeProperty === "string") &&
 	validSide(adapter.from) &&
 	validSide(adapter.to);
 

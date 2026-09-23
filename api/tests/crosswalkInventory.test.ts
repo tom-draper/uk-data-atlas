@@ -282,3 +282,83 @@ test("checks every child geometry vertex against its published parent", () => {
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("keeps the publisher's change indicator on each pair, checked against the lookup", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	const input = "lookups/lsoa-changes/fixture.geojson";
+	const write = (rows: Array<[string, string, string]>) => {
+		const path = join(root, "data", input);
+		mkdirSync(join(path, ".."), { recursive: true });
+		writeFileSync(
+			path,
+			JSON.stringify({
+				type: "FeatureCollection",
+				features: rows.map(([from, to, change]) => ({
+					properties: { OLDCD: from, OLDNM: from, NEWCD: to, NEWNM: to, CHGIND: change },
+				})),
+			}),
+		);
+	};
+	const compile = () =>
+		compileCrosswalks(root, [
+			{
+				id: "lsoa-changes-fixture",
+				input,
+				method: "official-lookup",
+				quality: "publisher-supplied",
+				weighting: { status: "not-provided" },
+				changeProperty: "CHGIND",
+				from: {
+					geography: "lsoa",
+					boundaryRelease: "2011",
+					codeProperty: "OLDCD",
+					nameProperty: "OLDNM",
+				},
+				to: {
+					geography: "lsoa",
+					boundaryRelease: "2021",
+					codeProperty: "NEWCD",
+					nameProperty: "NEWNM",
+				},
+			},
+		]).artifacts[0]!;
+
+	try {
+		// A kept whole, B split into two, C and D merged into one.
+		write([
+			["A", "A2", "U"],
+			["B", "B2", "S"],
+			["B", "B3", "S"],
+			["C", "CD", "M"],
+			["D", "CD", "M"],
+		]);
+		const artifact = compile();
+		assert.deepEqual(
+			artifact.records.map(({ source, targets }) => [
+				source.code,
+				targets.map((target) => [target.code, "change" in target ? target.change : undefined]),
+			]),
+			[
+				["A", [["A2", "unchanged"]]],
+				["B", [["B2", "split"], ["B3", "split"]]],
+				["C", [["CD", "merged"]]],
+				["D", [["CD", "merged"]]],
+			],
+		);
+		assert.deepEqual(
+			"changes" in artifact.validation ? artifact.validation.changes : undefined,
+			{ unchanged: 1, split: 2, merged: 2, complex: 0 },
+		);
+
+		// A pair called unchanged that is really one of a split is refused.
+		write([
+			["B", "B2", "U"],
+			["B", "B3", "S"],
+		]);
+		assert.throws(compile, /change indicators disagree with the lookup: B\|B2 is unchanged/);
+		write([["A", "A2", "Q"]]);
+		assert.throws(compile, /change indicator Q, not U, S, M or X/);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
