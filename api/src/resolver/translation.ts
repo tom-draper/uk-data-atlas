@@ -1,5 +1,6 @@
 import type { AreaLookup } from "../areaInventory";
 import type { CrosswalkArtifact } from "../crosswalkInventory";
+import type { AreaIdentity, GeographyEndpoint } from "./areas";
 import {
 	relationshipPurposeFor,
 	type RelationshipPath,
@@ -7,8 +8,7 @@ import {
 } from "../relationshipPaths";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
-export type GeographyEndpoint = { geography: string; boundaryRelease: string };
-export type AreaIdentity = GeographyEndpoint & { code: string };
+export type { AreaIdentity, GeographyEndpoint } from "./areas";
 export type StepDirection = "forward" | "reverse";
 
 type CrosswalkSource = CrosswalkArtifact["records"][number]["source"];
@@ -85,6 +85,9 @@ export const directTranslationPaths = (
 			return [directRelationshipPath(crosswalk, "reverse", purpose)];
 		return [];
 	});
+
+/** Pure direct-path discovery for a set of artifacts and an exact direction. */
+export const translationPaths = directTranslationPaths;
 
 /**
  * Deterministic preference for executing a translation: single published
@@ -187,6 +190,9 @@ export const buildTranslationSteps = (
 	return steps;
 };
 
+/** Alias for consumers that need an artifact-direction step index directly. */
+export const translationSteps = buildTranslationSteps;
+
 /** Each source code of one crosswalk direction and the codes it reaches. */
 export const buildStepTargets = (
 	artifact: CrosswalkArtifact,
@@ -275,6 +281,19 @@ export const executeTranslationPath = (
 		),
 	};
 };
+
+/** Translate through supplied paths without owning any resolver state. */
+export const translateArea = (
+	paths: readonly RelationshipPath[],
+	source: AreaIdentity,
+	stepsFor: (
+		step: RelationshipPath["steps"][number],
+	) => Map<string, TranslationStep> | undefined,
+): ResolvedAreaTranslation[] =>
+	paths.flatMap((path) => {
+		const translation = executeTranslationPath(path, source.code, stepsFor);
+		return translation ? [translation] : [];
+	});
 
 export type CrosswalkTranslatorInputs = {
 	crosswalkLookup?: CrosswalkLookup;
@@ -367,6 +386,15 @@ export class CrosswalkTranslator {
 		);
 	}
 
+	/** The route choices used by translation, with direct-artifact fallback. */
+	translationPaths(
+		from: GeographyEndpoint,
+		to: GeographyEndpoint,
+		purpose: RelationshipPurpose,
+	): RelationshipPath[] {
+		return this.paths(from, to, purpose);
+	}
+
 	/** Build each crosswalk direction once. */
 	translationSteps(
 		artifact: CrosswalkArtifact,
@@ -404,13 +432,10 @@ export class CrosswalkTranslator {
 		to: GeographyEndpoint,
 		purpose: RelationshipPurpose,
 	): ResolvedAreaTranslation[] {
-		return this.paths(source, to, purpose).flatMap((path) => {
-			const translation = executeTranslationPath(path, source.code, (step) => {
+		return translateArea(this.paths(source, to, purpose), source, (step) => {
 				const artifact = this.artifact(step.crosswalkId);
 				return artifact && this.translationSteps(artifact, step.direction);
 			});
-			return translation ? [translation] : [];
-		});
 	}
 
 	/**
