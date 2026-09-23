@@ -147,3 +147,75 @@ test("returns a reviewed derived series on an explicit analysis geography", () =
 		"not-comparable",
 	);
 });
+
+test("returns a reviewed derived series through every step of a reviewed path", () => {
+	const authorityToRegion: PropertyCrosswalkArtifact = {
+		...crosswalkArtifact,
+		id: "local-authority-2023-to-region-2023",
+		from: analysisCrosswalk.to,
+		to: { geography: "region", boundaryRelease: "2023-05-en-rgn" },
+		records: [
+			{
+				source: { code: "E08000001", labels: ["Example authority"] },
+				targets: [{ code: "E12000002", labels: ["Example region"] }],
+			},
+		],
+	};
+	const summary = (artifact: PropertyCrosswalkArtifact) => ({
+		id: artifact.id,
+		method: artifact.method,
+		quality: artifact.quality,
+	});
+	const [reviewed] = analysisInventory.supports;
+	const inventory: AnalysisGeographyInventory = {
+		...analysisInventory,
+		relationshipPathInventoryHash: "sha256:paths",
+		supports: [
+			{
+				...reviewed!,
+				analysisGeography: authorityToRegion.to,
+				crosswalk: undefined,
+				path: {
+					id: "lsoa-2011-to-region-2023",
+					purpose: "membership",
+					origin: "declared",
+					quality: "publisher-supplied",
+					steps: [analysisCrosswalk, authorityToRegion].map((artifact) => ({
+						crosswalk: summary(artifact),
+						direction: "forward" as const,
+					})),
+				},
+			},
+		],
+	};
+	const response = routeWithCatalog(
+		"/v1/data/small-area-fixture/series?areaCode=E12000002&geography=lsoa&boundaryYear=2011&analysisGeography=region/2023-05-en-rgn",
+		dataCatalog,
+		measureObservations,
+		{
+			crosswalkLookup: new Map([
+				[analysisCrosswalk.id, analysisCrosswalk],
+				[authorityToRegion.id, authorityToRegion],
+			]),
+			analysisGeographyInventory: inventory,
+		},
+	);
+	assert.equal(response.status, 200);
+	const data = (response.body as { data: Record<string, any> }).data;
+	assert.deepEqual(
+		data.series.map(({ period, value }: { period: string; value: number }) => [
+			period,
+			value,
+		]),
+		[["2019", 3100]],
+	);
+	assert.equal(data.conversion.method, "relationship-path");
+	assert.equal(data.conversion.id, "lsoa-2011-to-region-2023");
+	assert.deepEqual(
+		data.conversion.steps.map(
+			({ crosswalk }: { crosswalk: { id: string } }) => crosswalk.id,
+		),
+		[analysisCrosswalk.id, authorityToRegion.id],
+	);
+	assert.match(data.provenance.transformation.note, /every step of the reviewed path/);
+});

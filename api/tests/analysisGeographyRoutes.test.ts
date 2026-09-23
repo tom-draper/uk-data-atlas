@@ -47,7 +47,7 @@ const validation: AnalysisGeographyValidationInventory = {
 			analysisGeography: inventory.supports[0]!.analysisGeography,
 			source: inventory.supports[0]!.source,
 			crosswalk: {
-				id: inventory.supports[0]!.crosswalk.id,
+				id: inventory.supports[0]!.crosswalk!.id,
 				contentHash: "sha256:crosswalk",
 			},
 			observations: {
