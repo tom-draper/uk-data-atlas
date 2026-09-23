@@ -4738,6 +4738,10 @@ paths:
         Returns a bounded traversal of published predecessor and successor
         relationships plus every other release of the same geography that
         contains the same code.
+        Each lineage entry names the area the walk stood on as `from` and the
+        area it reached as `counterpart`. A link a crosswalk publishes from
+        both ends is one edge and is reported once, whichever end the walk
+        reaches it from.
         Same-code continuity is not evidence of unchanged geometry or a
         one-to-one historical equivalent.
       parameters:
@@ -4782,6 +4786,7 @@ paths:
                   lineage:
                     - relation: predecessor
                       depth: 1
+                      from: localAuthority/2023-05-uk-bgc-v2/E08000025
                       counterpart:
                         id: localAuthority/2022-12-uk-bgc-v2/E08000025
                   sameCodeReleases:
@@ -4815,7 +4820,10 @@ paths:
           in: query
           required: false
           schema: { type: integer, minimum: 1, maximum: 20 }
-          description: Follow declared containment ancestors up to this many hops.
+          description: >
+            Follow declared containment ancestors up to this many hops. Each
+            entry in `ancestors` names the area the hop left as `from`, so a
+            multi-hop chain can be read back in order.
       responses:
         "200":
           description: The area and its `within` relationships.
@@ -4859,7 +4867,10 @@ paths:
           in: query
           required: false
           schema: { type: integer, minimum: 1, maximum: 20 }
-          description: Follow declared containment descendants up to this many hops.
+          description: >
+            Follow declared containment descendants up to this many hops. Each
+            entry in `descendants` names the area the hop left as `from`, so a
+            multi-hop chain can be read back in order.
       responses:
         "200":
           description: The area and its `contains` relationships.
