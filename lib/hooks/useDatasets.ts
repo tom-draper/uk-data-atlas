@@ -86,7 +86,7 @@ export function useDatasets(
 		CHART_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
 			url: withCDN(
-				`/data/precompiled/${definition.precompiledFile}.json`,
+				`/data/datasets/${definition.precompiledFile}.json`,
 			),
 			filter: {
 				location: selectedLocation,

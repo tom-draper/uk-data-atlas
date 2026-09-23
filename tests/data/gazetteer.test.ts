@@ -5,7 +5,7 @@ import { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
 import type { Crosswalk, GazetteerCore } from "@/lib/data/gazetteer/types";
 import { LOCATIONS } from "@/lib/data/locations";
 
-const PRECOMPILED = join(process.cwd(), "data", "precompiled");
+const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
 const core = JSON.parse(
 	readFileSync(join(PRECOMPILED, "gazetteer.core.json"), "utf8"),
 ) as GazetteerCore;

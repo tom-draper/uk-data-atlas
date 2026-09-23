@@ -2,12 +2,18 @@ import fs from "node:fs";
 import path from "node:path";
 
 /**
- * The data and boundaries the API serves, read from the API's compiled
- * artifacts in `api/public` when the site builds. The data and geography
- * pages are generated from these, so they describe exactly what the API has.
+ * The API catalogue projection used by static docs. It is generated after an
+ * API build, carries hashes of its source artifacts, and is committed with
+ * the other website precompiled data.
  */
 
-const PUBLIC_DIR = path.join(process.cwd(), "api", "public");
+const DOCS_CATALOGUE = path.join(
+	process.cwd(),
+	"public",
+	"data",
+	"datasets",
+	"docs-catalogue.json",
+);
 
 export interface Licence {
 	name: string;
@@ -86,56 +92,54 @@ export interface Catalogue {
 	mapResources: Set<string>;
 }
 
-function readJson<T>(file: string): T {
-	return JSON.parse(fs.readFileSync(path.join(PUBLIC_DIR, file), "utf8"));
+interface DocsCatalogueSnapshot {
+	schemaVersion: 1;
+	sourceArtifacts: Array<{ path: string; sha256: string }>;
+	datasets: CatalogueDataset[];
+	measures: CatalogueMeasure[];
+	exports: CatalogueExport[];
+	releases: BoundaryRelease[];
+	areaCounts: Record<string, number>;
+	mapResourceIds: string[];
+}
+
+function readSnapshot(): DocsCatalogueSnapshot {
+	const snapshot = JSON.parse(
+		fs.readFileSync(DOCS_CATALOGUE, "utf8"),
+	) as DocsCatalogueSnapshot;
+	if (
+		snapshot.schemaVersion !== 1 ||
+		!Array.isArray(snapshot.datasets) ||
+		!Array.isArray(snapshot.measures) ||
+		!Array.isArray(snapshot.exports) ||
+		!Array.isArray(snapshot.releases) ||
+		!Array.isArray(snapshot.mapResourceIds)
+	) {
+		throw new Error(`Invalid docs catalogue snapshot at ${DOCS_CATALOGUE}`);
+	}
+	return snapshot;
 }
 
 let cached: Catalogue | null = null;
 
 export function loadCatalogue(): Catalogue {
 	if (cached) return cached;
-	const catalog = readJson<{
-		datasets: CatalogueDataset[];
-		measures: CatalogueMeasure[];
-	}>("data-catalog.json");
-	const exportsManifest = readJson<{ exports: CatalogueExport[] }>(
-		"export-manifest.json",
-	);
-	const registry = readJson<{ releases: BoundaryRelease[] }>(
-		"boundary-releases.json",
-	);
-	const inventory = readJson<{
-		releases: {
-			id: string;
-			geography: string;
-			areaIdentities?: { status: string; recordCount?: number };
-		}[];
-	}>("geography-inventory.json");
-	const maps = readJson<{ resources: { id: string }[] }>(
-		"map-resources.json",
-	);
+	const snapshot = readSnapshot();
 
 	cached = {
-		datasets: catalog.datasets,
+		datasets: snapshot.datasets,
 		// Some sources report a period count rather than listing periods.
-		measures: catalog.measures.map((measure) => ({
+		measures: snapshot.measures.map((measure) => ({
 			...measure,
 			sources: measure.sources.map((source) => ({
 				...source,
 				periods: Array.isArray(source.periods) ? source.periods : [],
 			})),
 		})),
-		exports: exportsManifest.exports,
-		releases: registry.releases,
-		areaCounts: new Map(
-			inventory.releases
-				.filter((r) => r.areaIdentities?.recordCount !== undefined)
-				.map((r) => [
-					`${r.geography}/${r.id}`,
-					r.areaIdentities?.recordCount ?? 0,
-				]),
-		),
-		mapResources: new Set(maps.resources.map((r) => r.id)),
+		exports: snapshot.exports,
+		releases: snapshot.releases,
+		areaCounts: new Map(Object.entries(snapshot.areaCounts)),
+		mapResources: new Set(snapshot.mapResourceIds),
 	};
 	return cached;
 }

@@ -19,10 +19,7 @@ import {
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
-const OUT_DIRS = [
-	join(ROOT, "data", "precompiled"),
-	join(PUBLIC_DATA, "precompiled"),
-];
+const OUT_DIR = join(PUBLIC_DATA, "datasets");
 const rel = (p: string) => p.slice(p.indexOf("/data/") + "/data/".length);
 
 type Feat = GeoJSON.Feature<GeoJSON.Geometry, Record<string, unknown>>;
@@ -93,8 +90,7 @@ async function main() {
 		console.log(`  ${bt}: ${sizes(byYear)}`);
 
 	const json = JSON.stringify(index);
-	for (const dir of OUT_DIRS)
-		await writeFile(join(dir, "gazetteer.matchindex.json"), json);
+	await writeFile(join(OUT_DIR, "gazetteer.matchindex.json"), json);
 	console.log("Done.");
 }
 

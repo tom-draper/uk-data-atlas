@@ -17,7 +17,7 @@ export function useMatchIndex(enabled: boolean): {
 	loading: boolean;
 } {
 	const { datasets, loading } = useJsonDataLoader<MatchIndex>(
-		withCDN("/data/precompiled/gazetteer.matchindex.json"),
+		withCDN("/data/datasets/gazetteer.matchindex.json"),
 		enabled,
 	);
 

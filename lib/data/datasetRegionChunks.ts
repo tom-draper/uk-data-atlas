@@ -61,4 +61,4 @@ export const regionChunksForLocation = (
 };
 
 export const regionChunkPath = (precompiledFile: string, region: string) =>
-	`/data/precompiled/chunks/${precompiledFile}/${region}.json`;
+	`/data/datasets/chunks/${precompiledFile}/${region}.json`;

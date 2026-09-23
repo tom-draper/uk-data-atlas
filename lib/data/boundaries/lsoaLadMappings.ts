@@ -10,7 +10,7 @@ export type LsoaLadMapping = {
 const pending = new Map<number, Promise<Record<string, string>>>();
 
 const lsoaLadMappingUrl = (year: number) =>
-	withCDN(`/data/precompiled/lsoa-lad-mappings-${year}.json`);
+	withCDN(`/data/datasets/lsoa-lad-mappings-${year}.json`);
 
 /**
  * The small-area releases do not carry a local-authority parent in their

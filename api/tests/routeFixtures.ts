@@ -318,7 +318,7 @@ export const namedLocationInventory: NamedLocationInventory = {
 	schemaVersion: 1,
 	contentHash: "sha256:named-locations",
 	source: {
-		artifact: "data/precompiled/gazetteer.core.json",
+		artifact: "data/datasets/gazetteer.core.json",
 		gazetteerVersion: 1,
 	},
 	locations: [
@@ -343,7 +343,7 @@ export const dataCatalog: DataCatalog = {
 	schemaVersion: 1,
 	contentHash: "sha256:data-catalog",
 	source: {
-		artifact: "data/precompiled/dataset-manifest.json",
+		artifact: "data/datasets/dataset-manifest.json",
 		manifestVersion: 1,
 	},
 	datasets: [

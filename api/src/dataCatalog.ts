@@ -169,7 +169,7 @@ export type DataCatalog = {
 	schemaVersion: 1;
 	contentHash: string;
 	source: {
-		artifact: "data/precompiled/dataset-manifest.json";
+		artifact: "data/datasets/dataset-manifest.json";
 		manifestVersion: number;
 	};
 	datasets: DatasetCatalogueEntry[];

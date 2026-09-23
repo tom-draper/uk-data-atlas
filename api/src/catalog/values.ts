@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 
-/** A parsed file from the website's data/precompiled, keyed by period or edition. */
+/** A parsed file from the website's data/datasets, keyed by period or edition. */
 export type PrecompiledFile = Record<string, unknown>;
 
 export const sha256 = (content: string) =>

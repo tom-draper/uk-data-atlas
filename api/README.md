@@ -22,7 +22,7 @@ source of apparently authoritative numbers.
 
 This document proposes a public API at `https://api.ukdataatlas.com/v1`. It is
 an implementation proposal, not a promise that every listed endpoint is ready.
-The present `data/precompiled` files and browser-facing TopoJSON are internal
+The present `public/data/datasets` files and browser-facing TopoJSON are internal
 build products; their shape and filenames must remain free to change.
 
 ## Capability checklist
