@@ -1,5 +1,10 @@
 import type { CrosswalkArtifact } from "./crosswalkInventory";
 import type { PopulationObservation } from "./dataCatalog";
+import {
+	buildTranslationSteps,
+	type IndexedPathStep,
+	type TranslationStep,
+} from "./resolver/translation";
 
 /**
  * How a converted value was arrived at.
@@ -46,83 +51,110 @@ export type ConversionResult =
 			areaSample: string[];
 	  };
 
-const targetsOf = (artifact: CrosswalkArtifact) =>
-	new Map(
-		artifact.records.map((record) => [record.source.code, record.targets]),
-	);
+export type ConversionStep = IndexedPathStep;
+
+type Refusal = Extract<ConversionResult, { status: "refused" }>;
+
+const refusal = (
+	absence: Refusal["absence"],
+	codes: string[],
+	reason: string,
+): Refusal => ({
+	status: "refused",
+	absence,
+	areaCount: codes.length,
+	areaSample: codes.slice(0, 10),
+	reason,
+});
+
+const weightOf = (target: TranslationStep["targets"][number]) =>
+	typeof (target as { weight?: unknown }).weight === "number"
+		? (target as { weight: number }).weight
+		: undefined;
+
+const populationWeighted = ({ artifact }: ConversionStep) =>
+	"basis" in artifact.weighting && artifact.weighting.basis === "population";
 
 /**
- * Regroup source-exact observations onto a crosswalk's target areas.
+ * Carry source-exact observations through one or more crosswalk directions
+ * onto the last step's areas. Each source keeps a distribution over the codes
+ * it has reached; a split multiplies it by the step's published weights.
  *
- * Refuses rather than returning a partial answer. A source code the crosswalk
- * does not carry would silently drop its value out of the total, and a split
- * source with no published weight would need an assumption this API has no
- * basis to make.
+ * Refuses rather than returning a partial answer. A code a step does not
+ * carry would silently drop its value out of the total, and a split with no
+ * published weight would need an assumption this API has no basis to make.
  */
-export const convertObservations = (
-	artifact: CrosswalkArtifact,
+export const convertThroughSteps = (
+	path: readonly ConversionStep[],
 	records: PopulationObservation[],
 ): ConversionResult => {
-	const crosswalk = targetsOf(artifact);
-
-	const unmatched = records
-		.filter((record) => !crosswalk.has(record.areaCode))
-		.map((record) => record.areaCode);
-	if (unmatched.length > 0) {
-		return {
-			status: "refused",
-			absence: "source-areas-not-mapped",
-			areaCount: unmatched.length,
-			areaSample: unmatched.slice(0, 10),
-			reason: `The crosswalk does not carry ${unmatched.length} of the source partition's area codes, starting with ${unmatched.slice(0, 3).join(", ")}. No partial conversion was applied.`,
-		};
+	let reached = records.map(
+		(record) => new Map<string, number>([[record.areaCode, 1]]),
+	);
+	const splitSteps: ConversionStep[] = [];
+	for (const [index, step] of path.entries()) {
+		// Sets keep each source once, in partition order.
+		const unmapped = new Set<string>();
+		const unweighted = new Set<string>();
+		let split = false;
+		reached = reached.map((distribution, recordIndex) => {
+			const source = records[recordIndex]!.areaCode;
+			const next = new Map<string, number>();
+			for (const [code, share] of distribution) {
+				const translated = step.steps.get(code);
+				if (!translated) {
+					unmapped.add(source);
+					continue;
+				}
+				const { targets } = translated;
+				if (targets.length !== 1) {
+					split = true;
+					if (targets.some((target) => weightOf(target) === undefined)) {
+						unweighted.add(source);
+						continue;
+					}
+				}
+				for (const target of targets)
+					next.set(
+						target.code,
+						(next.get(target.code) ?? 0) + share * (weightOf(target) ?? 1),
+					);
+			}
+			return next;
+		});
+		if (unmapped.size > 0) {
+			const codes = [...unmapped];
+			return refusal(
+				"source-areas-not-mapped",
+				codes,
+				index === 0
+					? `The crosswalk does not carry ${codes.length} of the source partition's area codes, starting with ${codes.slice(0, 3).join(", ")}. No partial conversion was applied.`
+					: `Step ${index + 1} of the path, crosswalk ${step.artifact.id}, does not carry the areas reached from ${codes.length} of the source partition's area codes, starting with ${codes.slice(0, 3).join(", ")}. No partial conversion was applied.`,
+			);
+		}
+		if (unweighted.size > 0)
+			return refusal(
+				"unweighted-split",
+				[...unweighted],
+				`${unweighted.size} source areas are split across several targets with no published weight${path.length > 1 ? ` at step ${index + 1} of the path, crosswalk ${step.artifact.id}` : ""}. Apportioning them would require an assumption the crosswalk does not support.`,
+			);
+		if (split) splitSteps.push(step);
 	}
 
-	const split = records.filter(
-		(record) => (crosswalk.get(record.areaCode)?.length ?? 0) !== 1,
-	);
-	const unweighted = split.filter((record) =>
-		crosswalk
-			.get(record.areaCode)
-			?.some(
-				(target) =>
-					typeof (target as { weight?: unknown }).weight !== "number",
-			),
-	);
-	if (unweighted.length > 0) {
-		return {
-			status: "refused",
-			absence: "unweighted-split",
-			areaCount: unweighted.length,
-			areaSample: unweighted
-				.slice(0, 10)
-				.map((record) => record.areaCode),
-			reason: `${unweighted.length} source areas are split across several targets with no published weight. Apportioning them would require an assumption the crosswalk does not support.`,
-		};
-	}
 	const method: ConversionMethod =
-		split.length === 0
+		splitSteps.length === 0
 			? "exact"
-			: "basis" in artifact.weighting &&
-				  artifact.weighting.basis === "population"
+			: splitSteps.every(populationWeighted)
 				? "population-weighted"
 				: "area-weighted";
-
 	const totals = new Map<string, { value: number; inputAreaCount: number }>();
-	for (const record of records) {
-		const targets = crosswalk.get(record.areaCode) ?? [];
-		for (const target of targets) {
-			const weight =
-				method === "exact"
-					? 1
-					: ((target as { weight?: number }).weight ?? 0);
-			const running = totals.get(target.code) ?? {
-				value: 0,
-				inputAreaCount: 0,
-			};
-			running.value += record.value * weight;
+	for (const [recordIndex, distribution] of reached.entries()) {
+		const record = records[recordIndex]!;
+		for (const [code, weight] of distribution) {
+			const running = totals.get(code) ?? { value: 0, inputAreaCount: 0 };
+			running.value += method === "exact" ? record.value : record.value * weight;
 			running.inputAreaCount += 1;
-			totals.set(target.code, running);
+			totals.set(code, running);
 		}
 	}
 
@@ -140,3 +172,19 @@ export const convertObservations = (
 			.sort((left, right) => left.areaCode.localeCompare(right.areaCode)),
 	};
 };
+
+/** Regroup source-exact observations onto one crosswalk's target areas. */
+export const convertObservations = (
+	artifact: CrosswalkArtifact,
+	records: PopulationObservation[],
+): ConversionResult =>
+	convertThroughSteps(
+		[
+			{
+				artifact,
+				direction: "forward",
+				steps: buildTranslationSteps(artifact, "forward"),
+			},
+		],
+		records,
+	);

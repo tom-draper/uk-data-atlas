@@ -2467,7 +2467,10 @@
 					"required": true
 				},
 				"query:crosswalk": {
-					"required": true
+					"required": false
+				},
+				"query:path": {
+					"required": false
 				},
 				"query:period": {
 					"required": true

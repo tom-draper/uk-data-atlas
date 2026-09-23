@@ -809,6 +809,16 @@ export class GeographyResolver {
 		return this.translator.publishedPaths(from, to, purpose);
 	}
 
+	/** A published relationship path by id. */
+	relationshipPath(id: string): RelationshipPath | undefined {
+		return this.translator.path(id);
+	}
+
+	/** A path's steps with their cached crosswalk indexes, ready to convert values. */
+	indexedPathSteps(path: RelationshipPath) {
+		return this.translator.indexedSteps(path);
+	}
+
 	/**
 	 * Translate one exact area through every published path that has a result for
 	 * it. Direct paths retain the long-standing crosswalk response shape; a
