@@ -184,7 +184,8 @@ test("compiles a published parent-code containment with weighting marked not-app
 	}
 });
 
-test("checks every child geometry vertex against its published parent", () => {
+/** One ward inside one authority, the authority's outer ring given. */
+const compileContainment = (parentRing: number[][]) => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const write = (path: string, value: unknown) => {
 		const fullPath = join(root, "data", path);
@@ -223,7 +224,7 @@ test("checks every child geometry vertex against its published parent", () => {
 				properties: { LADCD: "L1" },
 				geometry: {
 					type: "Polygon",
-					coordinates: [[[-1, -1], [-1, 2], [2, 2], [-1, -1]]],
+					coordinates: [parentRing],
 				},
 			},
 		],
@@ -272,15 +273,67 @@ test("checks every child geometry vertex against its published parent", () => {
 				],
 			]),
 		);
-		assert.deepEqual(artifacts[0].validation.geometryContainment, {
+		return artifacts[0]!.validation.geometryContainment;
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+};
+
+test("checks every child geometry vertex against its published parent", () => {
+	assert.deepEqual(
+		compileContainment([
+			[-1, -1],
+			[-1, 2],
+			[2, 2],
+			[-1, -1],
+		]),
+		{
 			status: "verified",
 			sourceAreaCount: 1,
 			testedVertexCount: 4,
 			boundaryVertexCount: 3,
-		});
-	} finally {
-		rmSync(root, { recursive: true, force: true });
-	}
+			toleranceM: 50,
+			toleratedVertexCount: 0,
+			widestOutsideM: 0,
+		},
+	);
+});
+
+test("tolerates generalisation noise at a shared edge but not a real overhang", () => {
+	// The ward's corner at (0, 0) lies 0.0002 degrees, about 22 m, outside a
+	// parent edge that runs along latitude 0.0002.
+	const nearly = compileContainment([
+		[-1, 0.0002],
+		[-1, 2],
+		[2, 2],
+		[2, 0.0002],
+		[-1, 0.0002],
+	]);
+	// The ring closes on that corner, so it is tested twice.
+	assert.equal(
+		nearly &&
+			"toleratedVertexCount" in nearly &&
+			nearly.toleratedVertexCount,
+		2,
+	);
+	assert.equal(
+		nearly &&
+			"widestOutsideM" in nearly &&
+			Math.round(nearly.widestOutsideM),
+		22,
+	);
+	// About 110 m outside is more than the tolerance, so the lookup is refused.
+	assert.throws(
+		() =>
+			compileContainment([
+				[-1, 0.001],
+				[-1, 2],
+				[2, 2],
+				[2, 0.001],
+				[-1, 0.001],
+			]),
+		/W1 has a vertex more than 50 m outside declared parent L1/,
+	);
 });
 
 test("keeps the publisher's change indicator on each pair, checked against the lookup", () => {

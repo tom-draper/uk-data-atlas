@@ -1,5 +1,6 @@
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { containPoint, ringsOf } from "./areaContainment";
+import { boundaryDistanceWithinM } from "./areaDistance";
 import type { CrosswalkArea } from "./crosswalkInventory";
 import { releaseKey } from "./geographyKeys";
 
@@ -9,8 +10,23 @@ export type GeometryContainmentValidation =
 			sourceAreaCount: number;
 			testedVertexCount: number;
 			boundaryVertexCount: number;
+			/** How far outside its parent a vertex may lie and still be within. */
+			toleranceM: number;
+			/** Vertices outside their parent, but within the tolerance of it. */
+			toleratedVertexCount: number;
+			/** The furthest any tolerated vertex lies outside its parent. */
+			widestOutsideM: number;
 		}
 	| { status: "not-available"; reason: string };
+
+/**
+ * How far outside its declared parent a child's vertex may lie. Generalised
+ * boundaries are simplified separately for each geography, so a shared edge
+ * does not coincide exactly: an exact test fails on noise of a metre or two.
+ * Half the 100 m sliver width every geometric crosswalk uses is the same
+ * line geometric containment draws between within and indeterminate.
+ */
+export const CONTAINMENT_TOLERANCE_M = 50;
 
 /**
  * Independently check a publisher's clean-containment lookup against the two
@@ -49,6 +65,8 @@ export const validateGeometryContainment = (
 	const cache = new AreaGeometryCache(repositoryRoot, geometrySources, 2);
 	let testedVertexCount = 0;
 	let boundaryVertexCount = 0;
+	let toleratedVertexCount = 0;
+	let widestOutsideM = 0;
 	for (const record of records) {
 		if (record.targets.length !== 1) {
 			throw new Error(
@@ -68,9 +86,17 @@ export const validateGeometryContainment = (
 				testedVertexCount += 1;
 				const containment = containPoint(vertex, parent);
 				if (containment === "outside") {
-					throw new Error(
-						`${crosswalkId}: ${record.source.code} has a vertex outside declared parent ${target.code}.`,
+					const outsideM = boundaryDistanceWithinM(
+						vertex,
+						parent,
+						CONTAINMENT_TOLERANCE_M,
 					);
+					if (outsideM === undefined)
+						throw new Error(
+							`${crosswalkId}: ${record.source.code} has a vertex more than ${CONTAINMENT_TOLERANCE_M} m outside declared parent ${target.code}.`,
+						);
+					toleratedVertexCount += 1;
+					widestOutsideM = Math.max(widestOutsideM, outsideM);
 				}
 				if (containment === "boundary") boundaryVertexCount += 1;
 			}
@@ -81,5 +107,8 @@ export const validateGeometryContainment = (
 		sourceAreaCount: records.length,
 		testedVertexCount,
 		boundaryVertexCount,
+		toleranceM: CONTAINMENT_TOLERANCE_M,
+		toleratedVertexCount,
+		widestOutsideM: Math.round(widestOutsideM * 10) / 10,
 	};
 };

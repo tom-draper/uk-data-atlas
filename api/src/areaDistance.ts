@@ -76,6 +76,46 @@ export const distanceToBoundaryM = (
 	return nearest;
 };
 
+/**
+ * Metres from a point to the nearest edge of a geometry, when some edge is
+ * within `withinM`; undefined otherwise. Edges whose bounding box is further
+ * than that are skipped without projecting them, so checking many points
+ * against a detailed boundary stays cheap.
+ */
+export const boundaryDistanceWithinM = (
+	point: Coordinate,
+	geometry: GeoJsonGeometry,
+	withinM: number,
+): number | undefined => {
+	const scale = metresPerDegree(point[1]);
+	const reachX = withinM / scale.longitude;
+	const reachY = withinM / scale.latitude;
+	const toPlane = planar(point);
+	let nearest: number | undefined;
+	for (const ring of ringsOf(geometry))
+		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+			const [startX, startY] = ring[j]!;
+			const [endX, endY] = ring[i]!;
+			if (
+				Math.min(startX, endX) > point[0] + reachX ||
+				Math.max(startX, endX) < point[0] - reachX ||
+				Math.min(startY, endY) > point[1] + reachY ||
+				Math.max(startY, endY) < point[1] - reachY
+			)
+				continue;
+			const distance = segmentDistance(
+				toPlane(ring[j]!),
+				toPlane(ring[i]!),
+			);
+			if (
+				distance <= withinM &&
+				(nearest === undefined || distance < nearest)
+			)
+				nearest = distance;
+		}
+	return nearest;
+};
+
 /** Metres from a point to an area: zero when the point is on or inside it. */
 export const distanceToGeometryM = (
 	point: Coordinate,
