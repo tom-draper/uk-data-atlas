@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"tag": "data-2026-09-23",
+	"repository": "tom-draper/uk-data-atlas",
+	"assets": [
+		{
+			"name": "data-2026-09-23.1.tar.gz",
+			"bytes": 665909868,
+			"sha256": "b777792d6e7d560375429b862fcea9ea5ee9cc563ed1918ad73ba2ede2fe002f"
+		},
+		{
+			"name": "data-2026-09-23.2.tar.gz",
+			"bytes": 569838424,
+			"sha256": "b3fd7ae8855832b210b548181aeaba06c29d3583405699d95a5ba8ff511e4c27"
+		}
+	]
+}

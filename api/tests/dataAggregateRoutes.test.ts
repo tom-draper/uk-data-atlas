@@ -33,7 +33,7 @@ const aggregationNamedLocations: NamedLocationInventory = {
 	schemaVersion: 1,
 	contentHash: "sha256:aggregation-locations",
 	source: {
-		artifact: "data/precompiled/gazetteer.core.json",
+		artifact: "data/datasets/gazetteer.core.json",
 		gazetteerVersion: 1,
 	},
 	locations: [
@@ -507,7 +507,7 @@ test("sums a location whose members span several code vintages", () => {
 		schemaVersion: 1,
 		contentHash: "sha256:vintage-locations",
 		source: {
-			artifact: "data/precompiled/gazetteer.core.json",
+			artifact: "data/datasets/gazetteer.core.json",
 			gazetteerVersion: 1,
 		},
 		locations: [

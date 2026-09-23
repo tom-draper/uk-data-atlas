@@ -26,7 +26,7 @@ describe("dataset region chunks", () => {
 
 	it("uses the static chunk path", () => {
 		expect(regionChunkPath("population", "E12000002")).toBe(
-			"/data/precompiled/chunks/population/E12000002.json",
+			"/data/datasets/chunks/population/E12000002.json",
 		);
 	});
 
@@ -34,7 +34,7 @@ describe("dataset region chunks", () => {
 		const root = process.cwd();
 		const populationPayload = JSON.parse(
 			readFileSync(
-				join(root, "data", "precompiled", "population.json"),
+				join(root, "public", "data", "datasets", "population.json"),
 				"utf8",
 			),
 		) as Record<string, { data: Record<string, unknown> }>;
@@ -45,8 +45,9 @@ describe("dataset region chunks", () => {
 				readFileSync(
 					join(
 						root,
+						"public",
 						"data",
-						"precompiled",
+						"datasets",
 						"chunks",
 						"population",
 						`${region}.json`,

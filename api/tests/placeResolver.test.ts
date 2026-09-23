@@ -48,7 +48,7 @@ const namedLocations = {
 	schemaVersion: 1,
 	contentHash: "sha256:locations",
 	source: {
-		artifact: "data/precompiled/gazetteer.core.json",
+		artifact: "data/datasets/gazetteer.core.json",
 		gazetteerVersion: 1,
 	},
 	locations: [

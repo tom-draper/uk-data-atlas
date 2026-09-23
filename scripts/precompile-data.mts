@@ -40,10 +40,9 @@ import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
 const SOURCE_DATA = join(ROOT, "data");
-// Committed output. The public mirror below is
-// gitignored and only used by the local dev/build server.
-const OUT_DIR = join(SOURCE_DATA, "precompiled");
-const PUBLIC_OUT_DIR = join(PUBLIC_DATA, "precompiled");
+// Browser-ready output is committed exactly where Next serves it from. Raw
+// inputs remain in data/, which is restored from the pinned data release.
+const OUT_DIR = join(PUBLIC_DATA, "datasets");
 
 // Read source datasets directly. public/data only contains files that must be
 // served to the browser during local development.
@@ -151,26 +150,13 @@ const writeAtomically = async (path: string, contents: string) => {
 
 const out = async (name: string, data: unknown) => {
 	const json = JSON.stringify(data);
-	// Committed source of truth (pushed to the CDN repo) + gitignored copy the
-	// local dev/build server serves from public/.
 	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
-	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
 	console.log(`  precompiled: ${name}.json (${kb} KB)`);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
 		sha256: createHash("sha256").update(json).digest("hex"),
 	};
-};
-
-/**
- * A small, separately generated geography artifact that the client fetches
- * alongside boundary properties. Keep the tracked copy authoritative and
- * mirror it for the local dev/build server like the normal precompiled data.
- */
-const mirrorPrecompiledArtifact = async (name: string) => {
-	const contents = await readFile(join(OUT_DIR, `${name}.json`), "utf8");
-	await writeAtomically(join(PUBLIC_OUT_DIR, `${name}.json`), contents);
 };
 
 const createTrackedReader = () => {
@@ -230,9 +216,7 @@ async function verifyDescribedFiles(
 async function main() {
 	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
-	await mkdir(PUBLIC_OUT_DIR, { recursive: true });
 	await compileBoundaryAssets();
-	await mirrorPrecompiledArtifact("constituency-lad-overlaps");
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder

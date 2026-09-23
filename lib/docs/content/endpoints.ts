@@ -344,6 +344,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "Which local authority boundaries should you use for June 2023? Give a geography and a date and get an exact boundary release id back, along with the releases just before and after it.",
 		tips: ["Add `country` to only consider releases that cover it."],
 	},
+	compareBoundaryReleases: {
+		title: "Compare boundary releases",
+		intro: "Compare two releases of one geography and see which codes are shared, added or absent. Where published same-code evidence exists, it also reports whether an area's boundary stayed continuous, changed or remains indeterminate.",
+		tips: [
+			"Code changes alone do not prove that a boundary changed. The response keeps code-set differences separate from measured continuity evidence.",
+			"Use `limit` to cap the examples returned for each finding; it does not change the release-level totals.",
+		],
+	},
 	getBoundaryRelease: {
 		title: "Get a boundary release",
 		intro: "Get the details of one boundary release: who published it, under what licence, and which countries it covers.",
@@ -425,6 +433,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		tips: [
 			"`purpose` matters: `identity` for old codes to new, `membership` for what sits inside what, and `apportion` for areas that overlap.",
 			"If nothing is published for your purpose but something is for another, `alternatives` points you to it.",
+		],
+	},
+	planGeographyConversion: {
+		title: "Plan a geography conversion",
+		intro: "Choose a published path between two boundary releases before translating codes or values. It selects the best-supported route for your intended operation and shows the alternatives and any evidence gaps.",
+		tips: [
+			"Set `purpose` to `identity`, `membership` or `apportion`; a path for one purpose is not automatically suitable for another.",
+			"Use `operation` to check whether the chosen path permits an identity join, aggregation, membership join or weighted allocation before doing the work.",
 		],
 	},
 	diagnoseRelationshipCapability: {

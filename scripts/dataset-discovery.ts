@@ -15,8 +15,7 @@ export interface DiscoveredDataset {
 	meta: DatasetMeta;
 }
 
-// Compiled output and served copies are not source datasets.
-const SKIP_DIRECTORIES = new Set(["precompiled", "node_modules"]);
+const SKIP_DIRECTORIES = new Set(["node_modules"]);
 
 async function* walk(dir: string): AsyncGenerator<string> {
 	const entries = await readdir(dir, { withFileTypes: true });

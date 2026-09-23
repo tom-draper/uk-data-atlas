@@ -35,7 +35,7 @@ export type NamedLocationInventory = {
 	schemaVersion: 1;
 	contentHash: string;
 	source: {
-		artifact: "data/precompiled/gazetteer.core.json";
+		artifact: "data/datasets/gazetteer.core.json";
 		gazetteerVersion: number;
 	};
 	locations: NamedLocation[];
@@ -155,7 +155,7 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 	const content = JSON.stringify({
 		schemaVersion: 1,
 		source: {
-			artifact: "data/precompiled/gazetteer.core.json",
+			artifact: "data/datasets/gazetteer.core.json",
 			gazetteerVersion: source.version,
 		},
 		locations,
@@ -164,7 +164,7 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 		schemaVersion: 1,
 		contentHash: sha256(content),
 		source: {
-			artifact: "data/precompiled/gazetteer.core.json",
+			artifact: "data/datasets/gazetteer.core.json",
 			gazetteerVersion: source.version,
 		},
 		locations,

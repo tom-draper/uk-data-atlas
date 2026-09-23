@@ -333,7 +333,7 @@ export const compileDataCatalog = ({
 	const catalogContent = JSON.stringify({
 		schemaVersion: 1,
 		source: {
-			artifact: "data/precompiled/dataset-manifest.json",
+			artifact: "data/datasets/dataset-manifest.json",
 			manifestVersion: manifest.version,
 		},
 		datasets,
@@ -344,7 +344,7 @@ export const compileDataCatalog = ({
 			schemaVersion: 1,
 			contentHash: sha256(catalogContent),
 			source: {
-				artifact: "data/precompiled/dataset-manifest.json",
+				artifact: "data/datasets/dataset-manifest.json",
 				manifestVersion: manifest.version,
 			},
 			datasets,

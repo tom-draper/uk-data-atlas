@@ -13,7 +13,7 @@ export type ConstituencyLadOverlaps = {
 	releases: Record<string, Crosswalk>;
 };
 
-const URL = withCDN("/data/precompiled/constituency-lad-overlaps.json");
+const URL = withCDN("/data/datasets/constituency-lad-overlaps.json");
 let cached: ConstituencyLadOverlaps | null = null;
 let pending: Promise<ConstituencyLadOverlaps> | null = null;
 

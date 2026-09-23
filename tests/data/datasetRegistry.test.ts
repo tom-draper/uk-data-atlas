@@ -24,7 +24,7 @@ const CHART_PENDING_TYPES = new Set(
 	).map((definition) => definition.type),
 );
 
-const PRECOMPILED = join(process.cwd(), "data", "precompiled");
+const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
 
 type ManifestEntry = {
 	type: string;
