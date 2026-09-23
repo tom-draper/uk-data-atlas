@@ -7,7 +7,7 @@ export type TerrainLoaderOptions = {
 	terrainRemoteEndpoint?: string;
 	terrainCoverageEndpoint?: string;
 	terrainRemoteTimeoutMs?: number;
-	terainRemoteConcurrency?: number;
+	terrainRemoteConcurrency?: number;
 };
 
 /** Create the optional remote preview without implying a persisted raster. */
