@@ -53,7 +53,7 @@ const table = (content: string, name: string, maxColumns = 64) =>
 export async function loadBusinessActivity(
 	read: (path: string, sheet: string) => Promise<string>,
 ) {
-	const { data: rows } = await parseCsv<Record<string, string>>(
+	const { data: rows } = await parseCsv<string[]>(
 		await read(
 			source(
 				"economics/business-activity/ukbusinessworkbook2025new.xlsx",
@@ -63,7 +63,7 @@ export async function loadBusinessActivity(
 		{ header: false },
 	);
 	const records: Record<string, IndicatorRecord> = {};
-	for (const row of rows as unknown as string[][]) {
+	for (const row of rows) {
 		const [label, ...values] = row;
 		const match = /^([EWSN]\d+)\s*:\s*(.+)$/.exec(label ?? "");
 		if (!match || !mapAuthorityCode(match[1]!)) continue;
