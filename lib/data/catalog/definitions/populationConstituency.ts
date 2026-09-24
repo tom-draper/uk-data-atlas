@@ -6,7 +6,7 @@ import type { PopulationConstituencyDataset } from "@/lib/types/populationConsti
 import type { DatasetDefinition } from "../types";
 
 const WORKBOOK =
-	"demographics/population/small-area-estimates/constituency/sapepconstablefinal.xlsx";
+	"demographics/population/small-area-estimates/population-constituency-estimates/sapepconstablefinal.xlsx";
 
 export const populationConstituencyDatasetDefinition: DatasetDefinition<PopulationConstituencyDataset> =
 	{

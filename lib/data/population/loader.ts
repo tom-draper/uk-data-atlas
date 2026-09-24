@@ -93,7 +93,7 @@ export async function loadPopulation(
 	const { malesData, femalesData, totalData } =
 		await parsePopulationDataCombined(
 			await readSheet(
-				"demographics/population/small-area-estimates/wards/sapewardstablefinal.xlsx",
+				"demographics/population/small-area-estimates/population-ward-estimates/sapewardstablefinal.xlsx",
 				"Mid-2022 Ward 2023",
 			),
 		);
