@@ -34,21 +34,31 @@ const operationFor = (request: string) =>
 
 /** The rows of the README table that starts with `header`. */
 const readmeTable = (header: string) => {
-	const start = readme.indexOf(`\n${header}\n`);
+	const cells = (line: string) =>
+		line
+			.trim()
+			.split("|")
+			.slice(1, -1)
+			.map((cell) => cell.trim());
+	const expectedHeader = cells(header);
+	const rows = readme.split("\n");
+	const start = rows.findIndex(
+		(line) =>
+			line.trim().startsWith("|") &&
+			JSON.stringify(cells(line)) === JSON.stringify(expectedHeader),
+	);
 	assert.notEqual(start, -1, `the README has no table headed ${header}`);
-	return readme
-		.slice(start + header.length + 2)
-		.split("\n")
-		.slice(1)
-		.filter((line, index, lines) =>
-			lines.slice(0, index + 1).every((row) => row.startsWith("|")),
-		)
-		.map((line) =>
-			line
-				.split("|")
-				.slice(1, -1)
-				.map((cell) => cell.trim()),
-		);
+	const tableRows: string[][] = [];
+	for (const line of rows.slice(start + 1)) {
+		if (!line.trim().startsWith("|")) break;
+		const row = cells(line);
+		if (
+			!row.every((cell) => /^:?-{3,}:?$/.test(cell.replaceAll(" ", "")))
+		) {
+			tableRows.push(row);
+		}
+	}
+	return tableRows;
 };
 
 test("publishes the three golden-path quick starts", () => {
