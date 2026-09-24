@@ -15,6 +15,7 @@ import {
 } from "./areaOverlap";
 import { BoundedClipper } from "./boundedClipping";
 import type { GeometricContainmentCrosswalkAdapter } from "./crosswalkAdapters";
+import type { GeographyKind } from "./geography";
 import type { GeometricContainmentCrosswalkArtifact } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
 
@@ -79,8 +80,8 @@ export type ContainmentMeasurement = {
 export const measureContainment = (
 	repositoryRoot: string,
 	crosswalkId: string,
-	from: { geography: string; boundaryRelease: string },
-	to: { geography: string; boundaryRelease: string },
+	from: { geography: GeographyKind; boundaryRelease: string },
+	to: { geography: GeographyKind; boundaryRelease: string },
 	geometrySources: GeometrySourceLookup,
 	sliverWidthM: number,
 	/**
@@ -93,7 +94,7 @@ export const measureContainment = (
 	cache?: Map<string, ReturnType<typeof readGeometries>>,
 ): ContainmentMeasurement => {
 	const release = (endpoint: {
-		geography: string;
+		geography: GeographyKind;
 		boundaryRelease: string;
 	}) => {
 		const key = releaseKey(endpoint.geography, endpoint.boundaryRelease);

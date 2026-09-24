@@ -19,6 +19,7 @@ import {
 import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
 import { readShapefileFeatures } from "./shapefile";
 import type { AreaOverlapCrosswalkAdapter } from "./crosswalkAdapters";
+import type { GeographyKind } from "./geography";
 import type {
 	AreaOverlapCrosswalkArtifact,
 	AreaOverlapTarget,
@@ -221,7 +222,7 @@ const toPolygons = (geometry: unknown, description: string): Polygon[] => {
 export const readGeometries = (
 	repositoryRoot: string,
 	crosswalkId: string,
-	endpoint: { geography: string; boundaryRelease: string },
+	endpoint: { geography: GeographyKind; boundaryRelease: string },
 	geometrySources: GeometrySourceLookup,
 	codePattern?: RegExp,
 ) => {

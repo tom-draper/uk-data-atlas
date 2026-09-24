@@ -65,15 +65,15 @@ const writeFixture = (root: string, counts = "B1,900\nB2,100\nB3,200\n") => {
 
 const geometrySources: GeometrySourceLookup = new Map([
 	[
-		"source/1",
+		"ward/1",
 		{ input: "sources.geojson", crs: "EPSG:4326", codeProperty: "CD" },
 	],
 	[
-		"target/1",
+		"localAuthority/1",
 		{ input: "targets.geojson", crs: "EPSG:4326", codeProperty: "CD" },
 	],
 	[
-		"block/1",
+		"lsoa/1",
 		{ input: "blocks.geojson", crs: "EPSG:4326", codeProperty: "CD" },
 	],
 ]);
@@ -81,8 +81,8 @@ const geometrySources: GeometrySourceLookup = new Map([
 const areaLookup = createAreaLookup(
 	(
 		[
-			["source", ["S"]],
-			["target", ["T1", "T2"]],
+			["ward", ["S"]],
+			["localAuthority", ["T1", "T2"]],
 		] as const
 	).map(([geography, codes]) => ({
 		schemaVersion: 1 as const,
@@ -104,8 +104,8 @@ const areaOverlap: AreaOverlapCrosswalkAdapter = {
 		basis: "area",
 		normalisation: "per-source",
 	},
-	from: { geography: "source", boundaryRelease: "1" },
-	to: { geography: "target", boundaryRelease: "1" },
+	from: { geography: "ward", boundaryRelease: "1" },
+	to: { geography: "localAuthority", boundaryRelease: "1" },
 	sliverWidthM: 100,
 	minimumCoverage: 0.99,
 };
@@ -122,7 +122,7 @@ const populationOverlap = (
 		normalisation: "per-source",
 		population: "Usual residents",
 		date: "2021-03-21",
-		blocks: { geography: "block", boundaryRelease: "1" },
+		blocks: { geography: "lsoa", boundaryRelease: "1" },
 	},
 	from: areaOverlap.from,
 	to: areaOverlap.to,

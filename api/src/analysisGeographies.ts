@@ -1,7 +1,12 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import type { CrosswalkInventory } from "./crosswalkInventory";
+import type {
+	CrosswalkInventory,
+	CrosswalkMethod,
+	CrosswalkQuality,
+} from "./crosswalkInventory";
 import type { DataCatalog } from "./dataCatalog";
+import { isGeographyKind, type GeographyKind } from "./geography";
 import { releaseKey } from "./geographyKeys";
 import type {
 	RelationshipPath,
@@ -24,7 +29,11 @@ export type AnalysisGeographySupport = {
 	note: string;
 };
 
-type CrosswalkSummary = { id: string; method: string; quality: string };
+type CrosswalkSummary = {
+	id: string;
+	method: CrosswalkMethod;
+	quality: CrosswalkQuality;
+};
 
 export type AnalysisGeographyPath = {
 	id: string;
@@ -58,10 +67,14 @@ export const analysisConversion = (support: AnalysisGeographySupport) =>
 			}
 		: support.crosswalk!;
 
-type SupportConfig = {
+export type AnalysisGeographySupportConfig = {
 	measureId: string;
-	analysisGeography: { geography: string; boundaryRelease: string };
-	source: { datasetId: string; geography: string; boundaryYear: number };
+	analysisGeography: { geography: GeographyKind; boundaryRelease: string };
+	source: {
+		datasetId: string;
+		geography: GeographyKind;
+		boundaryYear: number;
+	};
 	/** Exactly one of a crosswalk and a published relationship path. */
 	crosswalkId?: string;
 	pathId?: string;
@@ -74,7 +87,10 @@ const sha256 = (content: string) =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
 
-const readSupport = (value: unknown, path: string): SupportConfig => {
+const readSupport = (
+	value: unknown,
+	path: string,
+): AnalysisGeographySupportConfig => {
 	if (!isRecord(value))
 		throw new Error(`${path}: support must be an object.`);
 	const analysis = value.analysisGeography;
@@ -88,11 +104,11 @@ const readSupport = (value: unknown, path: string): SupportConfig => {
 		(value.pathId !== undefined && typeof value.pathId !== "string") ||
 		typeof value.note !== "string" ||
 		!isRecord(analysis) ||
-		typeof analysis.geography !== "string" ||
+		!isGeographyKind(analysis.geography) ||
 		typeof analysis.boundaryRelease !== "string" ||
 		!isRecord(source) ||
 		typeof source.datasetId !== "string" ||
-		typeof source.geography !== "string" ||
+		!isGeographyKind(source.geography) ||
 		typeof source.boundaryYear !== "number"
 	) {
 		throw new Error(
@@ -117,7 +133,9 @@ const readSupport = (value: unknown, path: string): SupportConfig => {
 	};
 };
 
-export const readAnalysisGeographySupport = (path: string): SupportConfig[] => {
+export const readAnalysisGeographySupport = (
+	path: string,
+): AnalysisGeographySupportConfig[] => {
 	const file = JSON.parse(readFileSync(path, "utf8")) as unknown;
 	if (
 		!isRecord(file) ||
@@ -136,7 +154,7 @@ export const readAnalysisGeographySupport = (path: string): SupportConfig[] => {
  * must be extensive and every endpoint must name the exact source partition.
  */
 export const compileAnalysisGeographies = (
-	config: SupportConfig[],
+	config: AnalysisGeographySupportConfig[],
 	dataCatalog: DataCatalog,
 	crosswalkInventory: CrosswalkInventory,
 	relationshipPaths?: RelationshipPathInventory,

@@ -69,6 +69,19 @@ test("rejects an adapter whose quality or weighting contradicts its method", () 
 	}
 });
 
+test("rejects a crosswalk endpoint with an unknown geography kind", () => {
+	assert.throws(
+		() =>
+			read([
+				{
+					...areaOverlap,
+					from: { ...areaOverlap.from, geography: "local-authority" },
+				},
+			]),
+		/Invalid crosswalk adapter/,
+	);
+});
+
 test("rejects area-overlap thresholds outside their range", () => {
 	for (const adapter of [
 		{ ...areaOverlap, sliverWidthM: 0 },
