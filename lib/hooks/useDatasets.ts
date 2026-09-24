@@ -11,6 +11,8 @@ import { Datasets } from "../types/datasets";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
 import {
 	CHART_DATASET_DEFINITIONS,
+	isChartDatasetPayload,
+	type ChartDataset,
 	type ChartDatasetType,
 } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
@@ -29,6 +31,15 @@ export interface UseDatasetsResult {
 	loading: boolean;
 	errors: string[];
 }
+
+const parseChartDataset = (value: unknown, datasetType?: string): ChartDataset => {
+	if (!isChartDatasetPayload(value, datasetType)) {
+		throw new Error(
+			`Invalid compiled dataset payload for ${datasetType ?? "unknown dataset"}`,
+		);
+	}
+	return value;
+};
 
 /**
  * Whether a dataset is worth fetching: a visible card reads it, or the map is
@@ -108,6 +119,7 @@ export function useDatasets(
 			),
 			enabled: datasetIsNeeded(definition, visibility, activeDatasetType),
 		})),
+		parseChartDataset,
 	);
 	const chartDatasetRecords = Object.fromEntries(
 		CHART_DATASET_DEFINITIONS.map((definition) => [

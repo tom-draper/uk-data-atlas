@@ -41,10 +41,15 @@ const rememberGeometry = (cacheKey: string, data: BoundaryGeojson) => {
 const PROPERTIES_CACHE = new Map<string, BoundaryGeojson>();
 const PROPERTIES_PENDING = new Map<string, Promise<BoundaryGeojson>>();
 
-type PropertiesFile = {
-	release?: string;
-	features?: Record<string, unknown>[];
-};
+type PropertiesFile = { features: Record<string, unknown>[] };
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isPropertiesFile = (value: unknown): value is PropertiesFile =>
+	isRecord(value) &&
+	Array.isArray(value.features) &&
+	value.features.every(isRecord);
 
 /**
  * A sidecar read as a boundary collection whose features carry no geometry, so
@@ -52,8 +57,7 @@ type PropertiesFile = {
  * unchanged wherever they would take a decoded file.
  */
 const decodeProperties = (json: unknown): BoundaryGeojson => {
-	const records = (json as PropertiesFile)?.features;
-	if (!Array.isArray(records)) {
+	if (!isPropertiesFile(json)) {
 		throw new Error("Properties file contains no features");
 	}
 	return {
@@ -62,7 +66,7 @@ const decodeProperties = (json: unknown): BoundaryGeojson => {
 			type: "name",
 			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
 		},
-		features: records.map((properties, index) => ({
+		features: json.features.map((properties, index) => ({
 			type: "Feature" as const,
 			id: index + 1,
 			geometry: null,

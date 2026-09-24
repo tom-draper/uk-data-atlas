@@ -7,7 +7,7 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
-import type { BoundaryData, BoundaryGeojson } from "@lib/types";
+import type { BoundaryData } from "@lib/types";
 import {
 	BOUNDARY_CATALOG,
 	type BoundaryType,
@@ -19,7 +19,6 @@ import {
 import {
 	completedBoundaryTypes,
 	mergeBoundaryGroups,
-	type BoundaryGroupResult,
 } from "../data/boundaries/loadState";
 import {
 	deriveBoundaryMappings,
@@ -70,11 +69,9 @@ export function useBoundaryData(
 		getVisibilitySnapshot,
 		() => DEFAULT_VISIBILITY,
 	);
-	const requiredKey = useMemo(
+	const requiredTypes = useMemo(
 		() =>
-			[...requiredBoundaryTypes(visibility, [activeBoundaryType])]
-				.sort()
-				.join(","),
+			[...requiredBoundaryTypes(visibility, [activeBoundaryType])].sort(),
 		[visibility, activeBoundaryType],
 	);
 	const loadedTypes = useRef(new Set<BoundaryType>());
@@ -91,9 +88,7 @@ export function useBoundaryData(
 				: Promise.resolve(false);
 
 			// Fetch only what is newly required; anything already held stays.
-			const wanted = requiredKey
-				? (requiredKey.split(",") as BoundaryType[])
-				: [];
+			const wanted = requiredTypes;
 			const missing = wanted.filter(
 				(type) => !loadedTypes.current.has(type),
 			);
@@ -146,31 +141,22 @@ export function useBoundaryData(
 						loadedLsoaMappings,
 					]) => {
 						if (!mounted) return;
-						const boundaryGroups = groups as BoundaryGroupResult[];
 						if (loadedOverlaps)
 							setConstituencyLadOverlaps(loadedOverlaps);
 						if (loadedLsoaMappings)
 							setLsoaToLadByYear(loadedLsoaMappings);
 
-						for (const type of completedBoundaryTypes(
-							boundaryGroups,
-						))
+						for (const type of completedBoundaryTypes(groups))
 							loadedTypes.current.add(type);
-						const fetched = Object.fromEntries(
-							boundaryGroups.map(([type, { data }]) => [
-								type,
-								data,
-							]),
-						) as Partial<
-							Record<
-								BoundaryType,
-								Record<number, BoundaryGeojson>
-							>
-						>;
+						const fetched: Parameters<
+							typeof deriveBoundaryMappings
+						>[0] = {};
+						for (const [type, { data }] of groups)
+							fetched[type] = data;
 
 						// Whatever did load is still worth drawing, so keep it and
 						// report the gaps alongside rather than instead.
-						const failures = boundaryGroups.flatMap(
+						const failures = groups.flatMap(
 							([, { failures: groupFailures }]) => groupFailures,
 						);
 						if (failures.length > 0) {
@@ -179,7 +165,7 @@ export function useBoundaryData(
 
 						startTransition(() => {
 							setRawData((previous) =>
-								mergeBoundaryGroups(previous, boundaryGroups),
+								mergeBoundaryGroups(previous, groups),
 							);
 							setIsLoading(false);
 						});
@@ -205,7 +191,7 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [requiredKey, codeMapper]);
+	}, [requiredTypes, codeMapper]);
 
 	const loc = selectedLocation || null;
 
