@@ -12,40 +12,6 @@
 
 <img width="2750" height="2076" alt="UK-Data-Atlas-12-31-2025_03_41_PM (1)" src="https://github.com/user-attachments/assets/fb52d8fa-40ac-4497-a598-335a33486d5a" />
 
-## Licensing
-
-The source code is released under the [MIT License](./LICENSE). The datasets
-and boundary files retain their own source licences; see
-[DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution, attribution and
-future paid-data policy.
-
-## Data releases
-
-Raw source data is published as immutable GitHub Release assets under a data
-tag such as `data-2026-09-23`, independent of the website version. The first
-migration is fully scripted: install and authenticate the GitHub CLI, then run
-`pnpm data:publish data-YYYY-MM-DD`, `pnpm precompile`, and commit the created
-`data-release.json` together with `public/data/`. After changing API
-catalogue data, run `pnpm --dir api build` too; it refreshes the committed
-`public/data/datasets/docs-catalogue.json` snapshot used by the website's static
-docs. The publisher creates
-checksum-verified `.tar.gz` shards below GitHub's 2 GiB per-asset limit; no
-manual upload or domain-by-domain split is needed.
-
-A fresh development checkout runs `pnpm precompile`, which restores the pinned
-raw snapshot into `data/` before compiling. Production builds instead reuse
-the committed browser payloads in `public/data/`, so they do not download or
-compile the raw release. To stop tracking the old raw files after the first
-release has been tested, run `git rm -r --cached data`, then
-`git add public/data data-release.json` before committing.
-
-`pnpm data:download` treats the committed `data-release.json` as authoritative:
-it skips only when `data/.source-release.json` matches the pinned tag. A missing,
-invalid, or older marker replaces local raw data with the pinned snapshot.
-
-Install the opt-in commit hook with `pnpm hooks:install`; it runs `pnpm
-precompile` and stages `public/data/` for every commit. Set
-`SKIP_ATLAS_PRECOMPILE=1` only for an emergency documentation-only commit.
 
 ## Datasets
 
@@ -110,10 +76,6 @@ precompile` and stages `public/data/` for every commit. Set
 
 ## Boundaries
 
-The Atlas includes every boundary geography and release in the table below.
-Each linked geography has its full release history, source, licence and
-downloadable files in the [website documentation](https://ukdataatlas.com/docs/v1/geographies).
-
 <!-- boundaries:start -->
 
 | Geography                                                                                                              | Releases | Release IDs                                                                                                                                                                                                                                                                                                                                 |
@@ -153,5 +115,11 @@ downloadable files in the [website documentation](https://ukdataatlas.com/docs/v
 <!-- boundaries:end -->
 
 #
+
+## Licence
+
+The source code is released under the [MIT License](./LICENSE). The datasets
+and boundary files retain their own source licences; see
+[DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution and attribution.
 
 Inspired by <a href="https://redistricter.com/">Redistricter</a> by <a href="https://www.colindm.com/">Colin Miller</a>.
