@@ -31,11 +31,14 @@ describe("datasetIsNeeded", () => {
 
 	// A link carries the visualisation, not the reader's chart settings, so the
 	// dataset the map is drawing has to load whether or not its card is shown.
-	// These six are the ones that ship hidden, and so the ones that used to open
-	// as an empty map.
+	// These are the datasets whose cards ship hidden, and so the ones that used
+	// to open as an empty map.
 	it("fetches the dataset the map is drawing even while its card is hidden", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
+			"adultSocialCareOutcomes",
 			"brexitConstituency",
+			"localGovernmentFinance",
+			"netAdditionalDwellings",
 			"nimdm",
 			"schoolPerformanceGap",
 			"simd",
