@@ -48,7 +48,25 @@ export function useJsonDatasetLoaders<T>(
 	return { datasets, loading, errors };
 }
 
-export function useJsonDataLoader<T>(url: string, enabled = true) {
+export type JsonDatasetParser<T> = (value: unknown) => T;
+
+const parseDatasetRecord = <T>(
+	value: unknown,
+	parseDataset: JsonDatasetParser<T>,
+): Record<string, T> => {
+	if (typeof value !== "object" || value === null || Array.isArray(value))
+		throw new Error("Expected a JSON object containing datasets.");
+
+	return Object.fromEntries(
+		Object.entries(value).map(([id, dataset]) => [id, parseDataset(dataset)]),
+	);
+};
+
+export function useJsonDataLoader<T>(
+	url: string,
+	parseDataset: JsonDatasetParser<T>,
+	enabled = true,
+) {
 	const [datasets, setDatasets] = useState<Record<string, T>>({});
 	const [loading, setLoading] = useState(enabled);
 	const [error, setError] = useState("");
@@ -71,14 +89,17 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 		loadJsonDataset(url, controller.signal)
 			.then((data) => {
 				if (!active) return;
+				const parsedDatasets = parseDatasetRecord(data, parseDataset);
 				loadedUrl.current = url;
-				setDatasets(data as Record<string, T>);
+				setDatasets(parsedDatasets);
 				setLoading(false);
 			})
-			.catch((err: Error) => {
+			.catch((reason: unknown) => {
 				if (!active) return;
 				if (loadedUrl.current === url) loadedUrl.current = null;
-				setError(err.message);
+				setError(
+					reason instanceof Error ? reason.message : String(reason),
+				);
 				setLoading(false);
 			});
 
@@ -86,7 +107,7 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 			active = false;
 			controller.abort();
 		};
-	}, [enabled, url]);
+	}, [enabled, parseDataset, url]);
 
 	return { datasets, loading, error };
 }
