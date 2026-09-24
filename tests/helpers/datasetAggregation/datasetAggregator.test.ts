@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
+import {
+	createBoundaryAggregationSpec,
+	DatasetAggregator,
+} from "@/lib/helpers/datasetAggregation";
 import type {
-	AggregationCache,
 	BoundaryAggregationSpec,
 	BoundaryCodeDetector,
 } from "@/lib/helpers/datasetAggregation/ports";
@@ -13,14 +15,6 @@ const geojson = {
 	crs: { type: "name", properties: { name: "EPSG:4326" } },
 	features: features(["E1", "E2"]),
 } as BoundaryGeojson;
-
-const cache = (): AggregationCache => {
-	const values = new Map<string, unknown>();
-	return {
-		get: (key) => values.get(key),
-		set: (key, value) => values.set(key, value),
-	};
-};
 
 describe("DatasetAggregator", () => {
 	it("applies a specification with the detected code property and caches by context", () => {
@@ -45,15 +39,12 @@ describe("DatasetAggregator", () => {
 		const specification: BoundaryAggregationSpec<
 			Record<string, number>,
 			number
-		> = {
-			cacheKey: "example",
-			scope: "localAuthority",
+		> = createBoundaryAggregationSpec(
+			"example",
+			"localAuthority",
 			aggregate,
-		};
-		const aggregator = new DatasetAggregator(
-			{ detect } as BoundaryCodeDetector,
-			cache(),
 		);
+		const aggregator = new DatasetAggregator({ detect } as BoundaryCodeDetector);
 
 		expect(
 			aggregator.aggregate(

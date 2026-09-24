@@ -1,8 +1,9 @@
-import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
+import type { MapInstance } from "@/lib/types/mapInstance";
 import type { MapLayer } from "./layers";
 
 export class LineLayerController {
-	constructor(private readonly map: MapLibreMap) {}
+	constructor(private readonly map: MapInstance) {}
 
 	update(layer: Extract<MapLayer, { kind: "line" }>): void {
 		if (!this.map.isStyleLoaded()) return;

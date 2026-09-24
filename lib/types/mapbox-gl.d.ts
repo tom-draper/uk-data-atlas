@@ -1,21 +1,25 @@
-// Fallback type declarations for mapbox-gl when the package is not installed.
-// When mapbox-gl is installed (npm install mapbox-gl), its bundled types take
-// precedence and this file is ignored.
+// Fallback type declarations for the optional Mapbox provider. Keep this
+// surface aligned with the methods consumed through MapInstance.
 declare module "mapbox-gl" {
-	class Map {
-		constructor(options: {
+	type MapboxPopup = Omit<
+		import("./mapInstance").MapPopup,
+		"addTo"
+	> & {
+		addTo(map: import("./mapInstance").MapEngine): MapboxPopup;
+	};
+
+	const mapboxgl: {
+		Map: new (options: {
 			container: HTMLElement;
 			style: string;
 			center: [number, number];
 			zoom: number;
 			maxBounds?: [number, number, number, number];
 			preserveDrawingBuffer?: boolean;
-		});
-		remove(): void;
-	}
-
-	const mapboxgl: {
-		Map: typeof Map;
+		}) => import("./mapInstance").MapEngine;
+		Popup: new (
+			options?: import("./mapInstance").MapPopupOptions,
+		) => MapboxPopup;
 		accessToken: string;
 	};
 

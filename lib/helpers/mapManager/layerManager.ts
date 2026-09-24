@@ -1,6 +1,6 @@
-import type { Map as MapLibreMap } from "maplibre-gl";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
+import type { MapInstance } from "@/lib/types/mapInstance";
 import type { MapLayer } from "./layers";
 import type { FillPaintConfig } from "./expressions";
 import { valuePaint } from "../mapRendering/fillPaint";
@@ -17,7 +17,7 @@ export class LayerManager {
 	private readonly points: PointLayerController;
 	private readonly lines: LineLayerController;
 
-	constructor(private readonly map: MapLibreMap) {
+	constructor(private readonly map: MapInstance) {
 		this.boundaries = new BoundaryLayerController(map);
 		this.points = new PointLayerController(map);
 		this.lines = new LineLayerController(map);
