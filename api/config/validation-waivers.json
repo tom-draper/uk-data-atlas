@@ -80,6 +80,13 @@
 			"check": "records-resolve",
 			"reason": "The publisher's workbook gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, among otherwise December 2020 codes. Values stay on the codes the publisher used.",
 			"resources": ["exports/house-price-median-observations"]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "The publisher lookup incorrectly assigns E05014284 to Ryedale; the Atlas corrects it to Scarborough, matching the ward label and the majority of its geometry. The published ward geometry still crosses the Scarborough, Ryedale and East Riding boundaries, so its remaining 7.0 km overhang is recorded but waived pending a corrected boundary source.",
+			"resources": [
+				"crosswalks/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment"
+			]
 		}
 	]
 }

@@ -65,6 +65,7 @@ test("adds fingerprints to an archived release only when its artifacts match", (
 			join(directory, "data-catalog.json"),
 			'{"datasets":[1]}\n',
 		);
+		assert.doesNotThrow(() => archiveCurrentAtlasRelease(directory));
 		assert.equal(
 			readArchivedAtlasReleaseArtifact(
 				directory,

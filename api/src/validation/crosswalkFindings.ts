@@ -123,6 +123,32 @@ export const crosswalkFindings = (
 	}
 
 	if (
+		artifact.method === "clean-containment" &&
+		artifact.validation.geometryContainment?.status === "checked"
+	) {
+		const containment = artifact.validation.geometryContainment;
+		const outside = containment.outsideToleranceAreas;
+		findings.push(
+			check(
+				"containment-verified",
+				outside.length === 0,
+				`Source vertices lie more than ${containment.toleranceM} m outside their declared parents: ${listed(
+					outside.map(
+						({ code, parent, outsideM }) =>
+							`${code} (${outsideM} m outside ${parent})`,
+					),
+				)}.`,
+				{
+					toleranceM: containment.toleranceM,
+					sourceAreaCount: containment.sourceAreaCount,
+					outsideToleranceAreaCount: outside.length,
+					widestOutsideM: containment.widestOutsideM,
+				},
+			),
+		);
+	}
+
+	if (
 		artifact.method === "area-overlap" ||
 		artifact.method === "population-overlap"
 	) {

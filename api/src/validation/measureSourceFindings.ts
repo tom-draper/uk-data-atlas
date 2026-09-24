@@ -4,6 +4,7 @@ import { countryForCode } from "../catalog/countries";
 import type { BulkExport } from "../exportManifest";
 import { type Finding, sha256, listed, check } from "./findings";
 import type { MeasureTotal, ValidationInputs } from "./inputs";
+import { observationTableOf } from "../observationTables";
 import {
 	sameGeography,
 	describeGeography,
@@ -163,7 +164,10 @@ export const measureSourceFindings = (
 		0,
 	);
 
-	const { contentHash, ...content } = artifact;
+	const table = observationTableOf(artifact);
+	const storedArtifact = table ?? artifact;
+	const { contentHash: storedHash, ...content } = storedArtifact;
+	const contentHash = artifact.contentHash;
 	const repeated = periods.flatMap((period) => {
 		const seen = new Set<string>();
 		return period.records.flatMap((record) => {
@@ -176,7 +180,8 @@ export const measureSourceFindings = (
 	const latestCount = periods.at(-1)?.records.length ?? 0;
 	const periodIds = periods.map((period) => period.period);
 	const integrityProblems = [
-		sha256(JSON.stringify(content)) === contentHash
+		storedHash === contentHash &&
+		sha256(JSON.stringify(content)) === storedHash
 			? undefined
 			: "its content does not reproduce its hash",
 		entry.contentHash === contentHash

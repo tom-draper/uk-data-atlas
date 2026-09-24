@@ -87,6 +87,13 @@
 				"boundaryRelease": "2022-12-uk-bgc-v2",
 				"codeProperty": "LAD22CD",
 				"nameProperty": "LAD22NM"
+			},
+			"targetCodeCorrections": {
+				"E05014284": {
+					"publishedTargetCode": "E07000167",
+					"correctedTargetCode": "E07000168",
+					"reason": "The ward is named Hunmanby & Sherburn (part Scarborough), and its 2022 geometry is 13.5 km outside Ryedale. Correct its erroneous LAD22CD to Scarborough."
+				}
 			}
 		},
 		{

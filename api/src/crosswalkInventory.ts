@@ -5,6 +5,7 @@ import { compileAreaOverlapCrosswalk } from "./areaOverlap";
 import { compileGeometricContainmentCrosswalk } from "./geometricContainment";
 import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
 import { compileSameCodeContinuityCrosswalk } from "./sameCodeContinuity";
+import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import {
 	validateGeometryContainment,
 	type GeometryContainmentValidation,
@@ -25,9 +26,9 @@ import {
 	validateEndpoint,
 	type CrosswalkEndpointValidation,
 } from "./crosswalkValidation";
-import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
 import type { GeometryProvenance } from "./reprojection";
+import { releaseKey } from "./geographyKeys";
 
 export type {
 	CrosswalkMethod,
@@ -92,7 +93,16 @@ export type PropertyCrosswalkArtifact = CrosswalkArtifactBase & {
 	method: PropertyCrosswalkAdapter["method"];
 	quality: PropertyCrosswalkAdapter["quality"];
 	weighting: PropertyCrosswalkAdapter["weighting"];
-	provenance: { input: string; inputHash: string };
+	provenance: {
+		input: string;
+		inputHash: string;
+		corrections?: Array<{
+			sourceCode: string;
+			publishedTargetCode: string;
+			correctedTargetCode: string;
+			reason: string;
+		}>;
+	};
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;
 		endpoints: CrosswalkEndpoints;
@@ -399,6 +409,7 @@ const compilePropertyCrosswalk = (
 	adapter: PropertyCrosswalkAdapter,
 	areaLookup: AreaLookup | undefined,
 	geometrySources: GeometrySourceLookup | undefined,
+	geometryCache?: AreaGeometryCache,
 ): PropertyCrosswalkArtifact => {
 	const inputPath = join(repositoryRoot, "data", adapter.input);
 	const input = readFileSync(inputPath, "utf8");
@@ -416,6 +427,7 @@ const compilePropertyCrosswalk = (
 		{ source: CrosswalkArea; targets: Map<string, CrosswalkArea> }
 	>();
 	const sourcePrimaryNames = new Map<string, Set<string>>();
+	const appliedTargetCorrections = new Set<string>();
 	// Keyed by source and target, since a pair's change is the publisher's.
 	const changes = new Map<string, CrosswalkChange>();
 	for (const [index, feature] of source.features.entries()) {
@@ -429,7 +441,37 @@ const compilePropertyCrosswalk = (
 		}
 		const properties = feature.properties as Record<string, unknown>;
 		const sourceArea = area(properties, adapter.from, adapter.id, index);
-		const targetArea = area(properties, adapter.to, adapter.id, index);
+		const publishedTarget = area(properties, adapter.to, adapter.id, index);
+		const correction = adapter.targetCodeCorrections?.[sourceArea.code];
+		let targetArea = publishedTarget;
+		if (correction) {
+			if (publishedTarget.code !== correction.publishedTargetCode)
+				throw new Error(
+					`${adapter.id}: ${sourceArea.code} publishes target ${publishedTarget.code}, but its correction expects ${correction.publishedTargetCode}.`,
+				);
+			const correctedTarget = areaLookup
+				?.get(
+					releaseKey(
+						adapter.to.geography,
+						adapter.to.boundaryRelease,
+					),
+				)
+				?.get(correction.correctedTargetCode);
+			if (!correctedTarget)
+				throw new Error(
+					`${adapter.id}: corrected target ${correction.correctedTargetCode} for ${sourceArea.code} does not exist in ${adapter.to.geography}/${adapter.to.boundaryRelease}.`,
+				);
+			targetArea = {
+				code: correctedTarget.code,
+				labels: [
+					correctedTarget.name,
+					...(correctedTarget.aliases ?? []),
+				]
+					.filter(Boolean)
+					.sort(),
+			};
+			appliedTargetCorrections.add(sourceArea.code);
+		}
 		const sourceName = stringValue(
 			properties[adapter.from.nameProperty],
 			`${adapter.from.nameProperty} at ${adapter.id} feature ${index}`,
@@ -465,6 +507,13 @@ const compilePropertyCrosswalk = (
 			changes.set(pair, change);
 		}
 	}
+	const unappliedCorrections = Object.keys(
+		adapter.targetCodeCorrections ?? {},
+	).filter((code) => !appliedTargetCorrections.has(code));
+	if (unappliedCorrections.length > 0)
+		throw new Error(
+			`${adapter.id}: target corrections do not name source codes in the input: ${unappliedCorrections.join(", ")}.`,
+		);
 	if (adapter.changeProperty) checkChanges(adapter.id, records, changes);
 	const sourceNameConflicts = [...sourcePrimaryNames.entries()]
 		.filter(([, names]) => names.size > 1)
@@ -507,12 +556,17 @@ const compilePropertyCrosswalk = (
 		);
 	const geometryContainment =
 		adapter.method === "clean-containment"
-			? validateGeometryContainment(repositoryRoot, geometrySources, {
-					crosswalkId: adapter.id,
-					from: adapter.from,
-					to: adapter.to,
-					records: compiledRecords,
-				})
+			? validateGeometryContainment(
+					repositoryRoot,
+					geometrySources,
+					{
+						crosswalkId: adapter.id,
+						from: adapter.from,
+						to: adapter.to,
+						records: compiledRecords,
+					},
+					geometryCache,
+				)
 			: undefined;
 	const artifactWithoutHash = {
 		schemaVersion: 1 as const,
@@ -531,7 +585,20 @@ const compilePropertyCrosswalk = (
 			geography: adapter.to.geography,
 			boundaryRelease: adapter.to.boundaryRelease,
 		},
-		provenance: { input: adapter.input, inputHash: sha256(input) },
+		provenance: {
+			input: adapter.input,
+			inputHash: sha256(input),
+			...(adapter.targetCodeCorrections
+				? {
+						corrections: Object.entries(
+							adapter.targetCodeCorrections,
+						).map(([sourceCode, correction]) => ({
+							sourceCode,
+							...correction,
+						})),
+					}
+				: {}),
+		},
 		validation: {
 			sourceNameConflicts,
 			endpoints,
@@ -570,6 +637,9 @@ export const compileCrosswalks = (
 	prior: ReadonlyMap<string, CrosswalkArtifact> = new Map(),
 ): { inventory: CrosswalkInventory; artifacts: CrosswalkArtifact[] } => {
 	const compiled = new Map(prior);
+	const geometryCache = geometrySources
+		? new AreaGeometryCache(repositoryRoot, geometrySources, 2)
+		: undefined;
 	const artifacts = adapters.map((adapter): CrosswalkArtifact => {
 		const artifact = ((): CrosswalkArtifact => {
 			if (
@@ -581,6 +651,7 @@ export const compileCrosswalks = (
 					adapter,
 					areaLookup,
 					geometrySources,
+					geometryCache,
 				);
 			}
 			if (!geometrySources) {

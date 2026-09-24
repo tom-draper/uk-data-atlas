@@ -64,6 +64,15 @@ export type PropertyCrosswalkAdapter = {
 	 * change lookups publish it: U unchanged, S split, M merged, X complex.
 	 */
 	changeProperty?: string;
+	/** Reviewed fixes for a publisher-supplied target code in a property lookup. */
+	targetCodeCorrections?: Record<
+		string,
+		{
+			publishedTargetCode: string;
+			correctedTargetCode: string;
+			reason: string;
+		}
+	>;
 };
 
 // Area-overlap adapters intersect two compiled releases' geometries, read
@@ -176,6 +185,16 @@ const validPropertyAdapter = (
 	PROPERTY_WEIGHTING_STATUSES.includes(adapter.weighting.status as string) &&
 	(adapter.changeProperty === undefined ||
 		typeof adapter.changeProperty === "string") &&
+	(adapter.targetCodeCorrections === undefined ||
+		(isRecord(adapter.targetCodeCorrections) &&
+			Object.values(adapter.targetCodeCorrections).every(
+				(correction) =>
+					isRecord(correction) &&
+					typeof correction.publishedTargetCode === "string" &&
+					typeof correction.correctedTargetCode === "string" &&
+					typeof correction.reason === "string" &&
+					correction.reason.trim().length > 0,
+			))) &&
 	validSide(adapter.from) &&
 	validSide(adapter.to);
 
