@@ -85,7 +85,9 @@ export const explainAreaAbsence = (
 			})),
 		};
 	}
-	const releaseAreas = areaLookup?.get(releaseKey(geography, boundaryRelease));
+	const releaseAreas = areaLookup?.get(
+		releaseKey(geography, boundaryRelease),
+	);
 	if (!releaseAreas) {
 		const inventoried = areaInventory?.releases.find(
 			(release) =>

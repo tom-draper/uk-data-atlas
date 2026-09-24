@@ -3,7 +3,10 @@ import { isNumericObservation } from "./dataCatalog";
 import type { RelationshipPath } from "./relationshipPaths";
 import { buildTranslationSteps } from "./resolver/translation";
 import { observationsFor } from "./observationArtifacts";
-import { refused, resolveObservations } from "./observationResolution/observationPlan";
+import {
+	refused,
+	resolveObservations,
+} from "./observationResolution/observationPlan";
 import { statisticPhrase } from "./aggregation";
 import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { sourceExactProvenance } from "./sourceExactProvenance";
@@ -275,13 +278,20 @@ export const handleDataConversionRoutes = ({
 									purpose: route.path.purpose,
 									origin: route.path.origin,
 									quality: route.path.quality,
-									steps: route.steps.map(({ artifact, direction }) => ({
-										direction,
-										crosswalk: crosswalkSummary(artifact),
-									})),
+									steps: route.steps.map(
+										({ artifact, direction }) => ({
+											direction,
+											crosswalk:
+												crosswalkSummary(artifact),
+										}),
+									),
 								},
 							}
-						: { crosswalk: crosswalkSummary(route.steps[0]!.artifact) }),
+						: {
+								crosswalk: crosswalkSummary(
+									route.steps[0]!.artifact,
+								),
+							}),
 					method: converted.method,
 					inputRecordCount: converted.inputRecordCount,
 					outputRecordCount: converted.records.length,

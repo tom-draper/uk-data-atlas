@@ -31,7 +31,8 @@ export class CatalogueResolver {
 	areaIdentityRelease(geography: string, boundaryRelease: string) {
 		return this.inputs.areaInventory?.releases.find(
 			(release) =>
-				release.geography === geography && release.id === boundaryRelease,
+				release.geography === geography &&
+				release.id === boundaryRelease,
 		);
 	}
 
@@ -45,7 +46,10 @@ export class CatalogueResolver {
 	namedLocationMembershipInventory() {
 		const inventory = this.inputs.namedLocationInventory;
 		return inventory
-			? { contentHash: inventory.contentHash, locations: inventory.locations }
+			? {
+					contentHash: inventory.contentHash,
+					locations: inventory.locations,
+				}
 			: undefined;
 	}
 }

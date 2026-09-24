@@ -155,7 +155,8 @@ export const buildAggregateResponse = ({
 													crosswalk: {
 														id: crosswalk.id,
 														method: crosswalk.method,
-														quality: crosswalk.quality,
+														quality:
+															crosswalk.quality,
 													},
 												}),
 											),
@@ -165,7 +166,8 @@ export const buildAggregateResponse = ({
 										crosswalk: {
 											id: regional.crosswalk!.id,
 											method: regional.crosswalk!.method,
-											quality: regional.crosswalk!.quality,
+											quality:
+												regional.crosswalk!.quality,
 										},
 									}),
 							...(weight ? { weight } : {}),

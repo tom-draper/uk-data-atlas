@@ -1,5 +1,8 @@
 import type { AreaLookup } from "../areaInventory";
-import { reconcileMembers, reconcileMembersForYear } from "../memberReconciliation";
+import {
+	reconcileMembers,
+	reconcileMembersForYear,
+} from "../memberReconciliation";
 import type {
 	LocationProjection,
 	LocationProjectionStore,
@@ -19,7 +22,8 @@ export type LocationsResolverInputs = {
 	locationProjectionStore?: LocationProjectionStore;
 };
 
-const memberAreaKey = (geography: string, code: string) => `${geography}/${code}`;
+const memberAreaKey = (geography: string, code: string) =>
+	`${geography}/${code}`;
 
 /** Named-location membership and its materialised projections. */
 export class LocationsResolver {
@@ -80,10 +84,9 @@ export class LocationsResolver {
 
 	locationMemberProjectionShards(memberGeography: string) {
 		const summaries = new Map(
-			this.catalogue.crosswalkSummaries().map((summary) => [
-				summary.id,
-				summary,
-			]),
+			this.catalogue
+				.crosswalkSummaries()
+				.map((summary) => [summary.id, summary]),
 		);
 		return (
 			this.inputs.locationProjectionStore?.memberProjectionShards() ?? []
@@ -97,10 +100,9 @@ export class LocationsResolver {
 
 	locationParentProjectionShards(memberGeography: string) {
 		const summaries = new Map(
-			this.catalogue.crosswalkSummaries().map((summary) => [
-				summary.id,
-				summary,
-			]),
+			this.catalogue
+				.crosswalkSummaries()
+				.map((summary) => [summary.id, summary]),
 		);
 		return (
 			this.inputs.locationProjectionStore?.parentProjectionShards() ?? []
@@ -122,7 +124,10 @@ export class LocationsResolver {
 	}
 
 	locationParents(locationId: string, crosswalkId: string) {
-		return this.inputs.locationProjectionStore?.parents(locationId, crosswalkId);
+		return this.inputs.locationProjectionStore?.parents(
+			locationId,
+			crosswalkId,
+		);
 	}
 
 	locationReleaseViews(memberGeography: string, memberCodes: string[]) {
@@ -130,7 +135,8 @@ export class LocationsResolver {
 		return [...this.inputs.areaLookup]
 			.flatMap(([identity, areas]) => {
 				const [geography, boundaryRelease] = identity.split("/", 2);
-				if (geography !== memberGeography || !boundaryRelease) return [];
+				if (geography !== memberGeography || !boundaryRelease)
+					return [];
 				return [
 					{
 						geography,

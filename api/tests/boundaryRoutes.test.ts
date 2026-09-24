@@ -176,8 +176,7 @@ test("compares release code sets without claiming that differences are geography
 	});
 	assert.deepEqual(data.continuity, {
 		status: "not-published",
-		reason:
-			"No same-code continuity crosswalk has compared these releases' shared identifiers.",
+		reason: "No same-code continuity crosswalk has compared these releases' shared identifiers.",
 	});
 	assert.equal(
 		routeRequest(
@@ -235,12 +234,23 @@ test("summarises published release mappings as directional cardinality evidence"
 		weighting: { status: "not-applicable" },
 		from: { geography: "ward", boundaryRelease: "2024-05-en-ward" },
 		to: { geography: "ward", boundaryRelease: "2025-05-en-ward" },
-		provenance: { input: "published-lookup.csv", inputHash: "sha256:lookup" },
+		provenance: {
+			input: "published-lookup.csv",
+			inputHash: "sha256:lookup",
+		},
 		validation: {
 			sourceNameConflicts: [],
 			endpoints: {
-				from: { status: "verified", availableAreaCount: 3, referencedCodeCount: 3 },
-				to: { status: "verified", availableAreaCount: 3, referencedCodeCount: 3 },
+				from: {
+					status: "verified",
+					availableAreaCount: 3,
+					referencedCodeCount: 3,
+				},
+				to: {
+					status: "verified",
+					availableAreaCount: 3,
+					referencedCodeCount: 3,
+				},
 			},
 		},
 		records: [
@@ -374,8 +384,16 @@ test("reports published same-code continuity findings separately from code-set e
 		validation: {
 			sourceNameConflicts: [],
 			endpoints: {
-				from: { status: "verified", availableAreaCount: 2, referencedCodeCount: 1 },
-				to: { status: "verified", availableAreaCount: 2, referencedCodeCount: 1 },
+				from: {
+					status: "verified",
+					availableAreaCount: 2,
+					referencedCodeCount: 1,
+				},
+				to: {
+					status: "verified",
+					availableAreaCount: 2,
+					referencedCodeCount: 1,
+				},
 			},
 			continuity: {
 				sliverWidthM: 100,

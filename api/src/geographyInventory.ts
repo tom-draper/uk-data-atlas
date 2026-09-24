@@ -197,7 +197,9 @@ export const createGeographyInventory = (
 				crosswalkCount: 0,
 			},
 		};
-		release.countries.forEach((country) => capability.countries.add(country));
+		release.countries.forEach((country) =>
+			capability.countries.add(country),
+		);
 		capability.releaseCount += 1;
 		if (release.areaIdentities.status === "available") {
 			capability.areaIdentities.availableReleaseCount += 1;

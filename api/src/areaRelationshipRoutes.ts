@@ -46,8 +46,15 @@ export const handleAreaRelationshipRoutes = ({
 				);
 	const depthParameter = parsedUrl.searchParams.get("depth");
 	const depth = depthParameter === null ? undefined : Number(depthParameter);
-	if (depth !== undefined && (!Number.isInteger(depth) || depth < 1 || depth > 20))
-		return problem(400, "Invalid Query", "depth must be an integer from 1 to 20.");
+	if (
+		depth !== undefined &&
+		(!Number.isInteger(depth) || depth < 1 || depth > 20)
+	)
+		return problem(
+			400,
+			"Invalid Query",
+			"depth must be an integer from 1 to 20.",
+		);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -57,10 +64,20 @@ export const handleAreaRelationshipRoutes = ({
 			...area,
 			relationships,
 			...(segments[5] === "parents" && depth !== undefined
-				? { ancestors: geographyResolver.ancestorLineage({ geography, boundaryRelease, code }, depth) }
+				? {
+						ancestors: geographyResolver.ancestorLineage(
+							{ geography, boundaryRelease, code },
+							depth,
+						),
+					}
 				: segments[5] === "children" && depth !== undefined
-					? { descendants: geographyResolver.descendantLineage({ geography, boundaryRelease, code }, depth) }
-				: {}),
+					? {
+							descendants: geographyResolver.descendantLineage(
+								{ geography, boundaryRelease, code },
+								depth,
+							),
+						}
+					: {}),
 		}),
 	};
 };

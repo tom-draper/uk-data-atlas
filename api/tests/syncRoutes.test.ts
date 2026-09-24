@@ -326,11 +326,13 @@ test("compares changed release resources by their published field paths on reque
 				readReleaseArtifact: (releaseId, artifactId) =>
 					artifactId === "data-catalog"
 						? {
-								artifact:
-									(releaseId === previous.releaseId
-										? previous
-										: current).artifacts[0]!,
-								body: body(releaseId === previous.releaseId ? 10 : 12),
+								artifact: (releaseId === previous.releaseId
+									? previous
+									: current
+								).artifacts[0]!,
+								body: body(
+									releaseId === previous.releaseId ? 10 : 12,
+								),
 							}
 						: undefined,
 			},

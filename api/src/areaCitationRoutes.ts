@@ -198,8 +198,14 @@ export const handleAreaCitationRoutes = ({
 		);
 	}
 
-	const release = geographyResolver.boundaryRelease(geography, boundaryRelease)!;
-	const identityArtifact = geographyResolver.areaIdentityRelease(geography, boundaryRelease);
+	const release = geographyResolver.boundaryRelease(
+		geography,
+		boundaryRelease,
+	)!;
+	const identityArtifact = geographyResolver.areaIdentityRelease(
+		geography,
+		boundaryRelease,
+	);
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometryHash = (inputHash?: string) =>
 		inputHash

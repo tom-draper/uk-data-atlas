@@ -148,11 +148,18 @@ test("uses a location's declared member geography for direct membership", () => 
 				memberGeography: "ward",
 				memberCodes: ["E05000001"],
 				validity: { from: null, to: null },
-				bbox: [-2.5, 53.3, -2, 53.7] as [number, number, number, number],
+				bbox: [-2.5, 53.3, -2, 53.7] as [
+					number,
+					number,
+					number,
+					number,
+				],
 			},
 		],
 	};
-	const lookup = new Map(inventory.locations.map((location) => [location.id, location]));
+	const lookup = new Map(
+		inventory.locations.map((location) => [location.id, location]),
+	);
 	const response = routeRequest(
 		"GET",
 		"/v1/locations/example-wards/members?release=2025-01-en-ward",
@@ -175,7 +182,10 @@ test("uses a location's declared member geography for direct membership", () => 
 	};
 	assert.equal(data.geography, "ward");
 	assert.equal(data.membership, "direct-code-match");
-	assert.deepEqual(data.members.map((member) => member.code), ["E05000001"]);
+	assert.deepEqual(
+		data.members.map((member) => member.code),
+		["E05000001"],
+	);
 });
 
 test("resolves a named location into another geography through a crosswalk", () => {
@@ -297,7 +307,11 @@ test("resolves a named location into another geography through a crosswalk", () 
 		capabilities: {
 			members: {
 				status: string;
-				views: { geography: string; boundaryRelease: string; via: { id: string } }[];
+				views: {
+					geography: string;
+					boundaryRelease: string;
+					via: { id: string };
+				}[];
 			};
 		};
 	};
@@ -437,7 +451,11 @@ test("says which parents a named location covers or meets", () => {
 		capabilities: {
 			parents: {
 				status: string;
-				views: { geography: string; boundaryRelease: string; via: { id: string } }[];
+				views: {
+					geography: string;
+					boundaryRelease: string;
+					via: { id: string };
+				}[];
 			};
 		};
 	};

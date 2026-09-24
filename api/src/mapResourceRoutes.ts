@@ -3,7 +3,10 @@ import { featureIds } from "./mapResource/compileMapResource";
 import { releaseKey } from "./geographyKeys";
 import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
-import { refused, resolveObservations } from "./observationResolution/observationPlan";
+import {
+	refused,
+	resolveObservations,
+} from "./observationResolution/observationPlan";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";
@@ -270,9 +273,13 @@ export const handleMapResourceRoutes = ({
 		// measure covered fewer areas than the release holds, and the values
 		// would land on the wrong shapes.
 		const [geography, boundaryRelease] = id.split("/", 2);
-		const areaCodes = geography && boundaryRelease
-			? context.geographyResolver.areaCodes(geography, boundaryRelease)
-			: undefined;
+		const areaCodes =
+			geography && boundaryRelease
+				? context.geographyResolver.areaCodes(
+						geography,
+						boundaryRelease,
+					)
+				: undefined;
 		if (!areaCodes)
 			return problem(
 				503,

@@ -81,8 +81,7 @@ const FIELD_DESCRIPTIONS: Record<string, string> = {
 		"The publisher-supplied code when a reviewed code-only correction changes areaCode; absent otherwise.",
 	value: "The numeric value, in the measure's unit.",
 	category: "A source-reported label, such as a winning party.",
-	values:
-		"In a table, one value for each of the table's measures, in the order `schema.measures` lists them; null where none is published.",
+	values: "In a table, one value for each of the table's measures, in the order `schema.measures` lists them; null where none is published.",
 	status: "`observed` for a value the publisher reported, `derived` for one this API computed.",
 	confidenceInterval:
 		"The publisher's interval around the value, with `lower` and `upper` bounds.",
@@ -230,7 +229,12 @@ export const compileExportManifest = (
 				// A table is several measures' artifact, so each of them
 				// exports the whole table under an id of its own.
 				if (isMeasureTable(table))
-					return tableExport(measure, source, table, statSync(path).size);
+					return tableExport(
+						measure,
+						source,
+						table,
+						statSync(path).size,
+					);
 				const parsed = table as ArtifactRecords;
 				if (typeof parsed.contentHash !== "string") {
 					throw new Error(`${artifact}.json has no content hash.`);

@@ -16,7 +16,10 @@ test("serves an exhaustive canonical definition beside every existing display un
 	const catalog = readDataCatalog(apiRoot);
 	assert.ok(catalog.measures.length > 0);
 	for (const measure of catalog.measures) {
-		assert.ok(measure.unitDefinition, `${measure.id} has no unit definition`);
+		assert.ok(
+			measure.unitDefinition,
+			`${measure.id} has no unit definition`,
+		);
 		assert.equal(measure.unitDefinition?.scaleToCanonical > 0, true);
 		assert.deepEqual(
 			measure.unitDefinition,
@@ -60,7 +63,7 @@ test("normalises scales and denominators without changing source-facing units or
 		schemaVersion: 1,
 		contentHash: "sha256:catalogue",
 		source: {
-		artifact: "data/datasets/dataset-manifest.json",
+			artifact: "data/datasets/dataset-manifest.json",
 			manifestVersion: 1,
 		},
 		datasets: [],
@@ -70,7 +73,11 @@ test("normalises scales and denominators without changing source-facing units or
 				label: "Example",
 				valueKind: "currency",
 				unit: "£ thousand",
-				aggregation: { kind: "extensive", operation: "sum", available: true },
+				aggregation: {
+					kind: "extensive",
+					operation: "sum",
+					available: true,
+				},
 				sources: [],
 				availability: {
 					sourceExact: true,

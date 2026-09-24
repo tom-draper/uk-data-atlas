@@ -57,24 +57,38 @@ const resource = (
 ): JsonRecord | undefined => {
 	switch (kind) {
 		case "datasets":
-			return entries(artifact, "datasets").find((entry) => entry.id === id);
+			return entries(artifact, "datasets").find(
+				(entry) => entry.id === id,
+			);
 		case "measures":
-			return entries(artifact, "measures").find((entry) => entry.id === id);
+			return entries(artifact, "measures").find(
+				(entry) => entry.id === id,
+			);
 		case "boundaryReleases":
 		case "areaIdentities":
 			return entries(artifact, "releases").find(
 				(entry) => identity(entry) === id,
 			);
 		case "geometrySources":
-			return entries(artifact, "releases").find((entry) => entry.id === id);
+			return entries(artifact, "releases").find(
+				(entry) => entry.id === id,
+			);
 		case "crosswalks":
-			return entries(artifact, "crosswalks").find((entry) => entry.id === id);
+			return entries(artifact, "crosswalks").find(
+				(entry) => entry.id === id,
+			);
 		case "namedLocations":
-			return entries(artifact, "locations").find((entry) => entry.id === id);
+			return entries(artifact, "locations").find(
+				(entry) => entry.id === id,
+			);
 		case "exports":
-			return entries(artifact, "exports").find((entry) => entry.id === id);
+			return entries(artifact, "exports").find(
+				(entry) => entry.id === id,
+			);
 		case "lookups":
-			return entries(artifact, "lookups").find((entry) => entry.id === id);
+			return entries(artifact, "lookups").find(
+				(entry) => entry.id === id,
+			);
 		case "terrainLayers":
 			return entries(artifact, "products").find(
 				(entry) => entry.id === id,
@@ -127,7 +141,12 @@ const changedFields = (
 			after !== null &&
 			!Array.isArray(after)
 		) {
-			changedFields(before as JsonRecord, after as JsonRecord, path, into);
+			changedFields(
+				before as JsonRecord,
+				after as JsonRecord,
+				path,
+				into,
+			);
 		} else {
 			into.add(path);
 		}
@@ -153,8 +172,7 @@ export const semanticReleaseChanges = (
 	if (!readArtifact)
 		return {
 			status: "unavailable",
-			reason:
-				"This API instance cannot read the retained release artifacts needed for field-level comparison.",
+			reason: "This API instance cannot read the retained release artifacts needed for field-level comparison.",
 		};
 	const changes: SemanticResourceChange[] = [];
 	for (const [kind, comparison] of Object.entries(resources) as Array<
@@ -196,7 +214,8 @@ export const semanticReleaseChanges = (
 		status: "available",
 		changes: changes.sort(
 			(left, right) =>
-				left.kind.localeCompare(right.kind) || left.id.localeCompare(right.id),
+				left.kind.localeCompare(right.kind) ||
+				left.id.localeCompare(right.id),
 		),
 	};
 };

@@ -34,11 +34,14 @@ export const assessAggregationCoverage = ({
 	byCountry
 		? summariseCoverage(
 				compatibleReleases.flatMap((candidate) => {
-					const expected = geographyResolver.areaCodes(
-						sourceGeography.type,
-						candidate.boundaryRelease,
-					) ?? [];
-					const inCountry = expected.filter((code) => countryCodeFor(code) === areaCode);
+					const expected =
+						geographyResolver.areaCodes(
+							sourceGeography.type,
+							candidate.boundaryRelease,
+						) ?? [];
+					const inCountry = expected.filter(
+						(code) => countryCodeFor(code) === areaCode,
+					);
 					return inCountry.length > 0
 						? [
 								assessCoverage(

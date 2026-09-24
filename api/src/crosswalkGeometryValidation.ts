@@ -16,7 +16,7 @@ export type GeometryContainmentValidation =
 			toleratedVertexCount: number;
 			/** The furthest any tolerated vertex lies outside its parent. */
 			widestOutsideM: number;
-		}
+	  }
 	| { status: "not-available"; reason: string };
 
 /**
@@ -55,7 +55,11 @@ export const validateGeometryContainment = (
 		};
 	}
 	for (const endpoint of [from, to]) {
-		if (!geometrySources.has(releaseKey(endpoint.geography, endpoint.boundaryRelease))) {
+		if (
+			!geometrySources.has(
+				releaseKey(endpoint.geography, endpoint.boundaryRelease),
+			)
+		) {
 			return {
 				status: "not-available",
 				reason: `No geometry source is available for ${endpoint.geography}/${endpoint.boundaryRelease}.`,
@@ -74,7 +78,11 @@ export const validateGeometryContainment = (
 			);
 		}
 		const target = record.targets[0]!;
-		const child = cache.get(from.geography, from.boundaryRelease, record.source.code);
+		const child = cache.get(
+			from.geography,
+			from.boundaryRelease,
+			record.source.code,
+		);
 		const parent = cache.get(to.geography, to.boundaryRelease, target.code);
 		if (!child || !parent) {
 			throw new Error(

@@ -11,7 +11,9 @@ import { areaKey } from "./geographyKeys";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
-	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
+	response && "detail" in response.body
+		? response.body.detail
+		: "Catalogue data is unavailable.";
 
 /** What the API can answer for one area: its geometry, relationships, named locations and measure coverage. */
 export const handleAreaCapabilityRoutes = ({
@@ -47,9 +49,7 @@ export const handleAreaCapabilityRoutes = ({
 		const unavailable = geographyResolver.requires("geometry");
 		if (unavailable)
 			return {
-				...notBuilt(
-					requirementDetail(unavailable),
-				),
+				...notBuilt(requirementDetail(unavailable)),
 				href: geometryHref,
 			};
 		try {
@@ -77,7 +77,8 @@ export const handleAreaCapabilityRoutes = ({
 			};
 		}
 	})();
-	const relationshipSummary = geographyResolver.areaRelationshipSummary(identity);
+	const relationshipSummary =
+		geographyResolver.areaRelationshipSummary(identity);
 	const crosswalks = relationshipSummary.crosswalks.map((crosswalk) => ({
 		...crosswalk,
 		href: `/v1/crosswalks/${crosswalk.id}`,
@@ -145,7 +146,9 @@ export const handleAreaCapabilityRoutes = ({
 				geometry,
 				relationships: geographyResolver.requires("relationships")
 					? notBuilt(
-							requirementDetail(geographyResolver.requires("relationships")),
+							requirementDetail(
+								geographyResolver.requires("relationships"),
+							),
 						)
 					: {
 							...(relationshipSummary.relationships.length > 0
@@ -168,7 +171,9 @@ export const handleAreaCapabilityRoutes = ({
 						},
 				namedLocations: geographyResolver.requires("named-locations")
 					? notBuilt(
-							 requirementDetail(geographyResolver.requires("named-locations")),
+							requirementDetail(
+								geographyResolver.requires("named-locations"),
+							),
 						)
 					: {
 							...(locations.length > 0

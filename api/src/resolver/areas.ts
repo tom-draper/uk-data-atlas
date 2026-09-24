@@ -56,11 +56,17 @@ export class AreasResolver {
 	constructor(private readonly inputs: AreasResolverInputs) {
 		this.derivedSources = derivedReleaseSources(inputs.areaInventory);
 		for (const release of inputs.boundaryRegistry?.releases ?? [])
-			this.boundaryReleases.set(releaseKey(release.geography, release.id), release);
+			this.boundaryReleases.set(
+				releaseKey(release.geography, release.id),
+				release,
+			);
 		if (inputs.areaLookup) {
 			this.areaSearchIndex = createAreaSearchIndex(inputs.areaLookup);
 			for (const [releaseIdentity, areas] of inputs.areaLookup) {
-				const [geography, boundaryRelease] = releaseIdentity.split("/", 2);
+				const [geography, boundaryRelease] = releaseIdentity.split(
+					"/",
+					2,
+				);
 				if (!geography || !boundaryRelease) continue;
 				for (const [code, area] of areas) {
 					const key = `${geography}/${code}`;
@@ -93,7 +99,9 @@ export class AreasResolver {
 	}
 
 	releaseAreas(geography: string, boundaryRelease: string) {
-		return this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
+		return this.inputs.areaLookup?.get(
+			releaseKey(geography, boundaryRelease),
+		);
 	}
 
 	countryIdentity(code: string) {
@@ -102,8 +110,17 @@ export class AreasResolver {
 			.sort()
 			.reverse()) {
 			const boundaryRelease = identity.slice("country/".length);
-			const area = this.area({ geography: "country", boundaryRelease, code });
-			if (area) return { id: areaKey("country", boundaryRelease, code), boundaryRelease, ...area };
+			const area = this.area({
+				geography: "country",
+				boundaryRelease,
+				code,
+			});
+			if (area)
+				return {
+					id: areaKey("country", boundaryRelease, code),
+					boundaryRelease,
+					...area,
+				};
 		}
 		return undefined;
 	}
@@ -111,16 +128,28 @@ export class AreasResolver {
 	places(query: string, limit: number) {
 		if (!this.inputs.areaLookup) return [];
 		if (!this.placeIndex)
-			this.placeIndex = createPlaceIndex(this.inputs.areaLookup, this.inputs.namedLocationInventory);
+			this.placeIndex = createPlaceIndex(
+				this.inputs.areaLookup,
+				this.inputs.namedLocationInventory,
+			);
 		return resolvePlaces(this.placeIndex, query, limit);
 	}
 
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {
-		return this.inputs.areaLookup?.has(releaseKey(geography, boundaryRelease)) ?? false;
+		return (
+			this.inputs.areaLookup?.has(
+				releaseKey(geography, boundaryRelease),
+			) ?? false
+		);
 	}
 
-	areaCodes(geography: string, boundaryRelease: string): string[] | undefined {
-		const areas = this.inputs.areaLookup?.get(releaseKey(geography, boundaryRelease));
+	areaCodes(
+		geography: string,
+		boundaryRelease: string,
+	): string[] | undefined {
+		const areas = this.inputs.areaLookup?.get(
+			releaseKey(geography, boundaryRelease),
+		);
 		return areas ? [...areas.keys()] : undefined;
 	}
 
@@ -129,38 +158,88 @@ export class AreasResolver {
 	}
 
 	boundaryReleasesFor(geography?: string): BoundaryRegistry["releases"] {
-		return (geography
-			? [...this.boundaryReleases.values()].filter(
-				(release) => release.geography === geography,
-			)
-			: [...this.boundaryReleases.values()]) as BoundaryRegistry["releases"];
+		return (
+			geography
+				? [...this.boundaryReleases.values()].filter(
+						(release) => release.geography === geography,
+					)
+				: [...this.boundaryReleases.values()]
+		) as BoundaryRegistry["releases"];
 	}
 
 	sameCode(identity: AreaIdentity): ResolvedSameCodeArea[] {
-		return (this.sameCodeAreas.get(`${identity.geography}/${identity.code}`) ?? []).filter(
-			({ boundaryRelease }) => boundaryRelease !== identity.boundaryRelease,
+		return (
+			this.sameCodeAreas.get(`${identity.geography}/${identity.code}`) ??
+			[]
+		).filter(
+			({ boundaryRelease }) =>
+				boundaryRelease !== identity.boundaryRelease,
 		);
 	}
 
-	explainAreaAbsence(geography: string, boundaryRelease: string, code: string): AreaAbsence | undefined {
+	explainAreaAbsence(
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): AreaAbsence | undefined {
 		return this.inputs.boundaryRegistry
-			? explainAreaAbsence(this.inputs.boundaryRegistry, this.inputs.areaInventory, this.inputs.areaLookup, geography, boundaryRelease, code)
+			? explainAreaAbsence(
+					this.inputs.boundaryRegistry,
+					this.inputs.areaInventory,
+					this.inputs.areaLookup,
+					geography,
+					boundaryRelease,
+					code,
+				)
 			: undefined;
 	}
 
-	validateAreas(geography: string, boundaryRelease: string, values: string[]): { values: ValidatedValue[]; summary: ReturnType<typeof summariseBatch> } | undefined {
-		if (!this.inputs.areaLookup?.has(releaseKey(geography, boundaryRelease))) return undefined;
-		const validated = validateBatch(this.inputs.areaLookup, geography, boundaryRelease, values);
+	validateAreas(
+		geography: string,
+		boundaryRelease: string,
+		values: string[],
+	):
+		| {
+				values: ValidatedValue[];
+				summary: ReturnType<typeof summariseBatch>;
+		  }
+		| undefined {
+		if (
+			!this.inputs.areaLookup?.has(releaseKey(geography, boundaryRelease))
+		)
+			return undefined;
+		const validated = validateBatch(
+			this.inputs.areaLookup,
+			geography,
+			boundaryRelease,
+			values,
+		);
 		return { values: validated, summary: summariseBatch(validated) };
 	}
 
-	selectReleaseForDate(geography: string, month: string, country?: string): ReleaseSelection | undefined {
+	selectReleaseForDate(
+		geography: string,
+		month: string,
+		country?: string,
+	): ReleaseSelection | undefined {
 		return this.inputs.boundaryRegistry
-			? selectReleaseForDate(this.inputs.boundaryRegistry, geography, month, country, this.derivedSources)
+			? selectReleaseForDate(
+					this.inputs.boundaryRegistry,
+					geography,
+					month,
+					country,
+					this.derivedSources,
+				)
 			: undefined;
 	}
 
-	searchAreas(query: { geography?: string | null; boundaryRelease?: string | null; query?: string }) {
-		return this.areaSearchIndex ? searchAreas(this.areaSearchIndex, query) : [];
+	searchAreas(query: {
+		geography?: string | null;
+		boundaryRelease?: string | null;
+		query?: string;
+	}) {
+		return this.areaSearchIndex
+			? searchAreas(this.areaSearchIndex, query)
+			: [];
 	}
 }

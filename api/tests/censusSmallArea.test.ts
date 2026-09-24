@@ -9,8 +9,12 @@ import {
 	compileCensusSmallArea,
 } from "../src/catalog/censusSmallArea";
 
-const tenure = CENSUS_SMALL_AREA_TABLES.find((table) => table.table === "ts054")!;
-const ethnicity = CENSUS_SMALL_AREA_TABLES.find((table) => table.table === "ts021")!;
+const tenure = CENSUS_SMALL_AREA_TABLES.find(
+	(table) => table.table === "ts054",
+)!;
+const ethnicity = CENSUS_SMALL_AREA_TABLES.find(
+	(table) => table.table === "ts021",
+)!;
 
 type Row = { code: string; values: Record<string, number> };
 
@@ -20,7 +24,13 @@ const repository = (
 	rows: { lsoa: Row[]; msoa: Row[] },
 ) => {
 	const root = mkdtempSync(join(tmpdir(), "census-small-area-"));
-	const directory = join(root, "data", "demographics", "census-2021-small-area", table.table);
+	const directory = join(
+		root,
+		"data",
+		"demographics",
+		"census-2021-small-area",
+		table.table,
+	);
 	mkdirSync(directory, { recursive: true });
 	writeFileSync(
 		join(directory, "meta.json"),
@@ -32,7 +42,12 @@ const repository = (
 			licence: { name: "Open Government Licence v3.0" },
 		}),
 	);
-	const columns = [...new Set([table.totalColumn, ...table.categories.map(([, column]) => column)])];
+	const columns = [
+		...new Set([
+			table.totalColumn,
+			...table.categories.map(([, column]) => column),
+		]),
+	];
 	for (const geography of ["lsoa", "msoa"] as const) {
 		const lines = [
 			["date", "geography", "geography code", ...columns],
@@ -42,15 +57,22 @@ const repository = (
 				code,
 				...columns.map((column) => String(values[column] ?? 0)),
 			]),
-		].map((fields) => fields.map((field) => JSON.stringify(field)).join(","));
-		writeFileSync(join(directory, `census2021-${table.table}-${geography}.csv`), `${lines.join("\n")}\n`);
+		].map((fields) =>
+			fields.map((field) => JSON.stringify(field)).join(","),
+		);
+		writeFileSync(
+			join(directory, `census2021-${table.table}-${geography}.csv`),
+			`${lines.join("\n")}\n`,
+		);
 	}
 	return root;
 };
 
 /** Every leaf of the table at one, and the total their sum. */
 const balanced = (table: typeof tenure, code: string): Row => {
-	const leaves = table.categories.filter(([, column]) => column !== table.totalColumn);
+	const leaves = table.categories.filter(
+		([, column]) => column !== table.totalColumn,
+	);
 	return {
 		code,
 		values: {
@@ -70,11 +92,19 @@ test("compiles a census table into one shared artifact per small-area geography"
 		const [lsoa, msoa] = compiled.tables;
 
 		assert.equal(lsoa?.id, censusTableArtifactName("ts054", "lsoa"));
-		assert.deepEqual(lsoa?.measures, tenure.categories.map(([suffix]) => `tenure-${suffix}`));
-		assert.deepEqual(lsoa?.records.map(([code]) => code), ["E01000001", "W01000001"]);
+		assert.deepEqual(
+			lsoa?.measures,
+			tenure.categories.map(([suffix]) => `tenure-${suffix}`),
+		);
+		assert.deepEqual(
+			lsoa?.records.map(([code]) => code),
+			["E01000001", "W01000001"],
+		);
 		assert.equal(msoa?.sourceGeography.type, "msoa");
 
-		const owned = compiled.measures.find((measure) => measure.id === "tenure-owned-outright")!;
+		const owned = compiled.measures.find(
+			(measure) => measure.id === "tenure-owned-outright",
+		)!;
 		assert.equal(owned.aggregation.kind, "extensive");
 		assert.deepEqual(
 			owned.sources.map((source) => [
@@ -108,7 +138,9 @@ test("adds a census question already published by authority as partitions of it"
 
 		assert.deepEqual(compiled.measures, []);
 		assert.deepEqual(
-			compiled.partitions.get("ethnicity-indian")?.map((source) => source.sourceGeography.type),
+			compiled.partitions
+				.get("ethnicity-indian")
+				?.map((source) => source.sourceGeography.type),
 			["lsoa", "msoa"],
 		);
 	} finally {
@@ -120,16 +152,31 @@ test("refuses a file whose categories do not make up its total, or whose codes a
 	const unbalanced = balanced(tenure, "E01000001");
 	unbalanced.values[tenure.totalColumn] = 1;
 	for (const [rows, message] of [
-		[{ lsoa: [unbalanced], msoa: [] }, /categories sum to 8, not the total 1/],
-		[{ lsoa: [balanced(tenure, "E02000001")], msoa: [] }, /E02000001 is not a 2021 LSOAs code/],
 		[
-			{ lsoa: [balanced(tenure, "E01000001"), balanced(tenure, "E01000001")], msoa: [] },
+			{ lsoa: [unbalanced], msoa: [] },
+			/categories sum to 8, not the total 1/,
+		],
+		[
+			{ lsoa: [balanced(tenure, "E02000001")], msoa: [] },
+			/E02000001 is not a 2021 LSOAs code/,
+		],
+		[
+			{
+				lsoa: [
+					balanced(tenure, "E01000001"),
+					balanced(tenure, "E01000001"),
+				],
+				msoa: [],
+			},
 			/E01000001 repeats/,
 		],
 	] as const) {
 		const root = repository(tenure, rows);
 		try {
-			assert.throws(() => compileCensusSmallArea(root, [tenure]), message);
+			assert.throws(
+				() => compileCensusSmallArea(root, [tenure]),
+				message,
+			);
 		} finally {
 			rmSync(root, { recursive: true, force: true });
 		}

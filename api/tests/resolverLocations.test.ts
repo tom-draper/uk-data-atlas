@@ -61,15 +61,26 @@ const crosswalkInventory: CrosswalkInventory = {
 	crosswalks: [
 		summary("ward-to-lad-b", ["ward", "2024"], ["localAuthority", "2024"]),
 		summary("ward-to-lad-a", ["ward", "2024"], ["localAuthority", "2024"]),
-		summary("ward-2023-to-lad", ["ward", "2023"], ["localAuthority", "2024"]),
-		summary("lad-to-region", ["localAuthority", "2024"], ["region", "2024"]),
+		summary(
+			"ward-2023-to-lad",
+			["ward", "2023"],
+			["localAuthority", "2024"],
+		),
+		summary(
+			"lad-to-region",
+			["localAuthority", "2024"],
+			["region", "2024"],
+		),
 	],
 };
 
 const catalogue = new CatalogueResolver({ crosswalkInventory });
 
 test("indexes named locations by member geography and code, in id order", () => {
-	const resolver = new LocationsResolver({ namedLocationInventory }, catalogue);
+	const resolver = new LocationsResolver(
+		{ namedLocationInventory },
+		catalogue,
+	);
 
 	// Membership is by code within a geography, whatever the release.
 	assert.deepEqual(
@@ -176,8 +187,16 @@ test("counts a location's resolved members in each release of its geography", ()
 			"E08000003",
 		]),
 		[
-			{ geography: "localAuthority", boundaryRelease: "2019", resolvedMemberCount: 1 },
-			{ geography: "localAuthority", boundaryRelease: "2024", resolvedMemberCount: 2 },
+			{
+				geography: "localAuthority",
+				boundaryRelease: "2019",
+				resolvedMemberCount: 1,
+			},
+			{
+				geography: "localAuthority",
+				boundaryRelease: "2024",
+				resolvedMemberCount: 2,
+			},
 		],
 	);
 });
@@ -194,11 +213,25 @@ test("stays empty without location inputs", () => {
 	assert.equal(resolver.hasLocationProjectionStore(), false);
 	assert.deepEqual(resolver.namedLocations(), []);
 	assert.deepEqual(resolver.namedLocationsForArea(identity), []);
-	assert.deepEqual(resolver.locationMemberProjectionShards("localAuthority"), []);
-	assert.deepEqual(resolver.locationParentCrosswalks("localAuthority", "2024"), []);
-	assert.deepEqual(resolver.locationReleaseViews("localAuthority", ["E08000001"]), []);
+	assert.deepEqual(
+		resolver.locationMemberProjectionShards("localAuthority"),
+		[],
+	);
+	assert.deepEqual(
+		resolver.locationParentCrosswalks("localAuthority", "2024"),
+		[],
+	);
+	assert.deepEqual(
+		resolver.locationReleaseViews("localAuthority", ["E08000001"]),
+		[],
+	);
 	assert.equal(
-		resolver.reconcileMembers("localAuthority", "2024", ["E08000001"], new Set()),
+		resolver.reconcileMembers(
+			"localAuthority",
+			"2024",
+			["E08000001"],
+			new Set(),
+		),
 		undefined,
 	);
 });
@@ -232,13 +265,20 @@ test("finds catalogue summaries by id and artifact", () => {
 		},
 	});
 
-	assert.equal(resolver.crosswalkSummary("lad-to-region")?.to.geography, "region");
 	assert.equal(
-		resolver.crosswalkSummaryForArtifact("crosswalks/ward-to-lad-a.json")?.id,
+		resolver.crosswalkSummary("lad-to-region")?.to.geography,
+		"region",
+	);
+	assert.equal(
+		resolver.crosswalkSummaryForArtifact("crosswalks/ward-to-lad-a.json")
+			?.id,
 		"ward-to-lad-a",
 	);
 	assert.equal(resolver.crosswalkSummary("missing"), undefined);
-	assert.equal(resolver.areaIdentityRelease("ward", "2019")?.status, "not-compiled");
+	assert.equal(
+		resolver.areaIdentityRelease("ward", "2019")?.status,
+		"not-compiled",
+	);
 	assert.equal(
 		resolver.areaIdentityReleaseForArtifact("areas/ward-2024.json")?.id,
 		"2024",
@@ -247,6 +287,9 @@ test("finds catalogue summaries by id and artifact", () => {
 		contentHash: "sha256:locations",
 		locations: namedLocationInventory.locations,
 	});
-	assert.equal(new CatalogueResolver({}).namedLocationMembershipInventory(), undefined);
+	assert.equal(
+		new CatalogueResolver({}).namedLocationMembershipInventory(),
+		undefined,
+	);
 	assert.deepEqual(new CatalogueResolver({}).crosswalkSummaries(), []);
 });

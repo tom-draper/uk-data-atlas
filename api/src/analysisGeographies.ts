@@ -75,14 +75,16 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
 
 const readSupport = (value: unknown, path: string): SupportConfig => {
-	if (!isRecord(value)) throw new Error(`${path}: support must be an object.`);
+	if (!isRecord(value))
+		throw new Error(`${path}: support must be an object.`);
 	const analysis = value.analysisGeography;
 	const source = value.source;
 	if (
 		typeof value.measureId !== "string" ||
 		(typeof value.crosswalkId === "string") ===
 			(typeof value.pathId === "string") ||
-		(value.crosswalkId !== undefined && typeof value.crosswalkId !== "string") ||
+		(value.crosswalkId !== undefined &&
+			typeof value.crosswalkId !== "string") ||
 		(value.pathId !== undefined && typeof value.pathId !== "string") ||
 		typeof value.note !== "string" ||
 		!isRecord(analysis) ||
@@ -117,7 +119,11 @@ const readSupport = (value: unknown, path: string): SupportConfig => {
 
 export const readAnalysisGeographySupport = (path: string): SupportConfig[] => {
 	const file = JSON.parse(readFileSync(path, "utf8")) as unknown;
-	if (!isRecord(file) || file.schemaVersion !== 1 || !Array.isArray(file.supports))
+	if (
+		!isRecord(file) ||
+		file.schemaVersion !== 1 ||
+		!Array.isArray(file.supports)
+	)
 		throw new Error(`Invalid analysis geography configuration at ${path}.`);
 	return file.supports.map((support, index) =>
 		readSupport(support, `${path} support ${index}`),
@@ -140,20 +146,31 @@ export const compileAnalysisGeographies = (
 			(candidate) => candidate.id === id,
 		);
 		if (!crosswalk) throw new Error(`${id}: crosswalk is not published.`);
-		return { id: crosswalk.id, method: crosswalk.method, quality: crosswalk.quality };
+		return {
+			id: crosswalk.id,
+			method: crosswalk.method,
+			quality: crosswalk.quality,
+		};
 	};
 	const supports: AnalysisGeographySupport[] = config.map((configured) => {
 		const measure = dataCatalog.measures.find(
 			(candidate) => candidate.id === configured.measureId,
 		);
-		if (!measure) throw new Error(`${configured.measureId}: measure is not published.`);
+		if (!measure)
+			throw new Error(
+				`${configured.measureId}: measure is not published.`,
+			);
 		if (measure.aggregation.kind !== "extensive")
-			throw new Error(`${configured.measureId}: only extensive measures may be analysis conversions.`);
+			throw new Error(
+				`${configured.measureId}: only extensive measures may be analysis conversions.`,
+			);
 		const source = measure.sources.find(
 			(candidate) =>
 				candidate.datasetId === configured.source.datasetId &&
-				candidate.sourceGeography.type === configured.source.geography &&
-				candidate.sourceGeography.boundaryYear === configured.source.boundaryYear,
+				candidate.sourceGeography.type ===
+					configured.source.geography &&
+				candidate.sourceGeography.boundaryYear ===
+					configured.source.boundaryYear,
 		);
 		if (!source)
 			throw new Error(
@@ -169,9 +186,12 @@ export const compileAnalysisGeographies = (
 			if (
 				from.geography !== source.sourceGeography.type ||
 				to.geography !== configured.analysisGeography.geography ||
-				to.boundaryRelease !== configured.analysisGeography.boundaryRelease
+				to.boundaryRelease !==
+					configured.analysisGeography.boundaryRelease
 			)
-				throw new Error(`${routeId}: does not connect the declared analysis support.`);
+				throw new Error(
+					`${routeId}: does not connect the declared analysis support.`,
+				);
 		};
 		const base = {
 			measureId: configured.measureId,
@@ -183,7 +203,9 @@ export const compileAnalysisGeographies = (
 				(candidate) => candidate.id === configured.crosswalkId,
 			);
 			if (!crosswalk)
-				throw new Error(`${configured.crosswalkId}: crosswalk is not published.`);
+				throw new Error(
+					`${configured.crosswalkId}: crosswalk is not published.`,
+				);
 			connects(configured.crosswalkId, crosswalk.from, crosswalk.to);
 			return {
 				...base,
@@ -197,9 +219,14 @@ export const compileAnalysisGeographies = (
 		}
 		const pathId = configured.pathId!;
 		if (!relationshipPaths)
-			throw new Error(`${pathId}: build the relationship paths before a path-backed analysis support.`);
-		const path = relationshipPaths.paths.find((candidate) => candidate.id === pathId);
-		if (!path) throw new Error(`${pathId}: relationship path is not published.`);
+			throw new Error(
+				`${pathId}: build the relationship paths before a path-backed analysis support.`,
+			);
+		const path = relationshipPaths.paths.find(
+			(candidate) => candidate.id === pathId,
+		);
+		if (!path)
+			throw new Error(`${pathId}: relationship path is not published.`);
 		connects(pathId, path.from, path.to);
 		return {
 			...base,
@@ -221,12 +248,17 @@ export const compileAnalysisGeographies = (
 			supports.findIndex(
 				(candidate) =>
 					candidate.measureId === support.measureId &&
-					candidate.analysisGeography.geography === support.analysisGeography.geography &&
-					candidate.analysisGeography.boundaryRelease === support.analysisGeography.boundaryRelease &&
+					candidate.analysisGeography.geography ===
+						support.analysisGeography.geography &&
+					candidate.analysisGeography.boundaryRelease ===
+						support.analysisGeography.boundaryRelease &&
 					candidate.source.datasetId === support.source.datasetId,
 			) !== index,
 	);
-	if (duplicate) throw new Error(`Duplicate analysis support for ${duplicate.measureId}.`);
+	if (duplicate)
+		throw new Error(
+			`Duplicate analysis support for ${duplicate.measureId}.`,
+		);
 	supports.sort((left, right) =>
 		`${left.measureId}/${releaseKey(left.analysisGeography.geography, left.analysisGeography.boundaryRelease)}`.localeCompare(
 			`${right.measureId}/${releaseKey(right.analysisGeography.geography, right.analysisGeography.boundaryRelease)}`,

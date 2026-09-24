@@ -80,7 +80,7 @@ export type BoundaryReleaseComparison = {
 				changedExtent: BoundaryExtentChange[];
 				unmeasured: Array<{ code: string; reason: string }>;
 				unassessedSharedCodes: string[];
-			}
+		  }
 		| { status: "not-published"; reason: string };
 	publishedRelationships: Array<{
 		id: string;
@@ -135,8 +135,9 @@ const summarisePublishedRelationshipMapping = (
 			.length,
 		oneTargetCount: fromEntries.filter(([, targets]) => targets.size === 1)
 			.length,
-		multipleTargetCount: fromEntries.filter(([, targets]) => targets.size > 1)
-			.length,
+		multipleTargetCount: fromEntries.filter(
+			([, targets]) => targets.size > 1,
+		).length,
 	};
 	const to = {
 		oneSourceCount: toEntries.filter(([, sources]) => sources.size === 1)
@@ -191,7 +192,7 @@ const summarisePublishedRelationshipMapping = (
  * reported where its dedicated geometry comparison has published evidence.
  */
 export const compareBoundaryReleases = (
-sources: ReleaseComparisonSources,
+	sources: ReleaseComparisonSources,
 	geography: string,
 	fromRelease: string,
 	toRelease: string,
@@ -272,7 +273,10 @@ sources: ReleaseComparisonSources,
 						? finding.targetShare
 						: finding.sourceShare,
 			};
-			if (!current || candidate.widestDifferenceM > current.widestDifferenceM)
+			if (
+				!current ||
+				candidate.widestDifferenceM > current.widestDifferenceM
+			)
 				changedExtent.set(finding.code, candidate);
 		}
 		for (const finding of crosswalk.validation.continuity.unmeasured)
@@ -283,7 +287,9 @@ sources: ReleaseComparisonSources,
 		...changedExtent.keys(),
 		...unmeasured.keys(),
 	]);
-	const unassessedSharedCodes = sharedCodes.filter((code) => !assessed.has(code));
+	const unassessedSharedCodes = sharedCodes.filter(
+		(code) => !assessed.has(code),
+	);
 	const changed = [...changedExtent.values()].sort(
 		(left, right) =>
 			right.widestDifferenceM - left.widestDifferenceM ||
@@ -335,22 +341,26 @@ sources: ReleaseComparisonSources,
 		continuity:
 			continuityArtifacts.length > 0
 				? {
-					status: "available",
-					crosswalks: continuityArtifacts.map(
-						({ crosswalk }) => crosswalk.id,
-					),
-					changedExtent: changed.slice(0, limit),
-					unmeasured: [...unmeasured]
-						.map(([code, reason]) => ({ code, reason }))
-						.sort((left, right) => left.code.localeCompare(right.code))
-						.slice(0, limit),
-					unassessedSharedCodes: unassessedSharedCodes.slice(0, limit),
-				}
+						status: "available",
+						crosswalks: continuityArtifacts.map(
+							({ crosswalk }) => crosswalk.id,
+						),
+						changedExtent: changed.slice(0, limit),
+						unmeasured: [...unmeasured]
+							.map(([code, reason]) => ({ code, reason }))
+							.sort((left, right) =>
+								left.code.localeCompare(right.code),
+							)
+							.slice(0, limit),
+						unassessedSharedCodes: unassessedSharedCodes.slice(
+							0,
+							limit,
+						),
+					}
 				: {
-					status: "not-published",
-					reason:
-						"No same-code continuity crosswalk has compared these releases' shared identifiers.",
-				},
+						status: "not-published",
+						reason: "No same-code continuity crosswalk has compared these releases' shared identifiers.",
+					},
 		publishedRelationships,
 	};
 };

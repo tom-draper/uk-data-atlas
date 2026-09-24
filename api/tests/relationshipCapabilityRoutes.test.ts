@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createGeographyResolver } from "../src/geographyResolver";
-import { compileRelationshipPaths, createRelationshipPathIndex } from "../src/relationshipPaths";
+import {
+	compileRelationshipPaths,
+	createRelationshipPathIndex,
+} from "../src/relationshipPaths";
 import { route } from "../src/routes";
 import {
 	areaLookup,
@@ -37,7 +40,10 @@ const compatibleMeasureInventory = {
 			sources: [
 				{
 					datasetId: "mobile-coverage",
-					sourceGeography: { type: "localAuthority", boundaryYear: 2024 },
+					sourceGeography: {
+						type: "localAuthority",
+						boundaryYear: 2024,
+					},
 					periods: ["2025"],
 					candidates: [
 						{
@@ -148,7 +154,9 @@ test("reports a complete conversion path with its measured source coverage", () 
 	assert.equal(data.status, "available");
 	assert.deepEqual(data.paths[0].trust, {
 		level: "verified",
-		reasons: ["Every path step is publisher-supplied and has complete compiled coverage."],
+		reasons: [
+			"Every path step is publisher-supplied and has complete compiled coverage.",
+		],
 	});
 	assert.deepEqual(data.paths[0].rank, {
 		position: 1,
@@ -184,12 +192,22 @@ test("reports a complete conversion path with its measured source coverage", () 
 });
 
 test("preflights an extensive measure against containment aggregation", () => {
-	const response = route("GET", `${query}&measure=population-estimate`, contextFor({ catalog: dataCatalog }));
+	const response = route(
+		"GET",
+		`${query}&measure=population-estimate`,
+		contextFor({ catalog: dataCatalog }),
+	);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "available");
 	assert.equal(data.measureReadiness.operation, "containment-aggregation");
-	assert.equal(data.measureReadiness.sourcePartitions[0].datasetId, "population");
-	assert.equal(data.measureReadiness.sourcePartitions[0].coverage.recordCount, 2);
+	assert.equal(
+		data.measureReadiness.sourcePartitions[0].datasetId,
+		"population",
+	);
+	assert.equal(
+		data.measureReadiness.sourcePartitions[0].coverage.recordCount,
+		2,
+	);
 	assert.equal(
 		data.measureReadiness.sourcePartitions[0].compatibility.status,
 		"code-set-compatible",
@@ -204,7 +222,8 @@ test("refuses a measure whose source partition does not match the source release
 			sources: measure.sources.map((source) => ({
 				...source,
 				candidates: source.candidates.filter(
-					(candidate) => candidate.boundaryRelease !== "2025-01-en-ward",
+					(candidate) =>
+						candidate.boundaryRelease !== "2025-01-en-ward",
 				),
 			})),
 		})),
@@ -230,7 +249,10 @@ test("refuses a measure whose source partition does not match the source release
 			},
 		},
 	]);
-	assert.deepEqual(data.measureReadiness.sourceCompatibility[0].candidates, []);
+	assert.deepEqual(
+		data.measureReadiness.sourceCompatibility[0].candidates,
+		[],
+	);
 });
 
 test("returns partial code-set evidence instead of concealing it behind a refusal", () => {
@@ -282,7 +304,14 @@ test("reports missing source compatibility evidence as not built", () => {
 });
 
 test("refuses an intensive measure when its required weighted mean is unavailable", () => {
-	const response = route("GET", `${intensiveQuery}&measure=mobile-5g-coverage`, contextFor({ catalog: dataCatalog, boundaryRegistry: mobileSourceRegistry }));
+	const response = route(
+		"GET",
+		`${intensiveQuery}&measure=mobile-5g-coverage`,
+		contextFor({
+			catalog: dataCatalog,
+			boundaryRegistry: mobileSourceRegistry,
+		}),
+	);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "unsupported");
 	assert.match(data.measureReadiness.reason, /weighted mean/);
@@ -295,12 +324,19 @@ test("names the required denominator for a supported intensive conversion", () =
 			measure.id === "mobile-5g-coverage"
 				? {
 						...measure,
-						aggregation: { ...measure.aggregation, available: true },
+						aggregation: {
+							...measure.aggregation,
+							available: true,
+						},
 					}
 				: measure,
 		),
 	};
-	const response = route("GET", `${intensiveQuery}&measure=mobile-5g-coverage`, contextFor({ catalog, boundaryRegistry: mobileSourceRegistry }));
+	const response = route(
+		"GET",
+		`${intensiveQuery}&measure=mobile-5g-coverage`,
+		contextFor({ catalog, boundaryRegistry: mobileSourceRegistry }),
+	);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.measureReadiness.status, "requires-conversion");
 	assert.equal(data.measureReadiness.operation, "weighted-mean");
@@ -359,8 +395,7 @@ test("makes an undeclared purpose an explicit relationship-path prerequisite", (
 		{
 			id: "relationship-path",
 			status: "unsupported",
-			reason:
-				"No declared identity path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad.",
+			reason: "No declared identity path is published from ward/2025-01-en-ward to localAuthority/2025-01-uk-lad.",
 		},
 	]);
 });

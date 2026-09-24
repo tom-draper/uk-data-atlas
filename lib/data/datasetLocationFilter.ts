@@ -104,9 +104,7 @@ const locationPopulationSummary = (data: Record<string, unknown>) => {
 		}),
 	);
 };
-const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/datasets/boundary-mappings.json",
-);
+const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
 const CONSTITUENCY_LAD_OVERLAPS_URL = withCDN(
 	"/data/datasets/constituency-lad-overlaps.json",
 );

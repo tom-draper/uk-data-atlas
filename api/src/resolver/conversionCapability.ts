@@ -63,14 +63,20 @@ export type RelationshipPrerequisite = {
 };
 
 export type ResolvedRelationshipCapability = {
-	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
+	status: Extract<
+		CapabilityStatus,
+		"available" | "partial" | "unsupported" | "not-built"
+	>;
 	paths: ResolvedRelationshipPath[];
 	missingPrerequisites: RelationshipPrerequisite[];
 };
 
 /** A deterministic, inspectable choice for a requested geography conversion. */
 export type ResolvedConversionPlan = {
-	status: Extract<CapabilityStatus, "available" | "partial" | "unsupported" | "not-built">;
+	status: Extract<
+		CapabilityStatus,
+		"available" | "partial" | "unsupported" | "not-built"
+	>;
 	purpose: RelationshipPurpose;
 	operation?: RelationshipOperation;
 	selectedPath?: ResolvedRelationshipPath;
@@ -114,7 +120,7 @@ const operationsForPurpose = (
 					permitted: ["weighted-allocation"],
 					prohibited: ["identity-join"],
 					note: "Use this path only for measures whose semantics permit the published overlap weighting.",
-			};
+				};
 
 type PathCoverageStatus = ResolvedRelationshipPath["coverage"]["status"];
 type ResolvedPathCandidate = Omit<ResolvedRelationshipPath, "rank">;
@@ -166,7 +172,12 @@ export const rankResolvedPaths = (
 	paths: readonly ResolvedPathCandidate[],
 ): ResolvedRelationshipPath[] => {
 	const coverageOrder = { complete: 0, partial: 1, "not-built": 2 } as const;
-	const trustOrder = { verified: 0, derived: 1, partial: 2, "not-built": 3 } as const;
+	const trustOrder = {
+		verified: 0,
+		derived: 1,
+		partial: 2,
+		"not-built": 3,
+	} as const;
 	const originOrder = { crosswalk: 0, declared: 1, discovered: 2 } as const;
 	return [...paths]
 		.sort(
@@ -255,7 +266,12 @@ export const buildConversionReach = (
 		const key = releaseKey(geography, boundaryRelease);
 		const existing = reach.get(key);
 		if (existing) return existing;
-		const created: GeographyReach = { status: "isolated", reaches: [], reachedFrom: [], vintagePathCount: 0 };
+		const created: GeographyReach = {
+			status: "isolated",
+			reaches: [],
+			reachedFrom: [],
+			vintagePathCount: 0,
+		};
 		reach.set(key, created);
 		return created;
 	};
@@ -264,7 +280,10 @@ export const buildConversionReach = (
 	};
 	for (const paths of pathGroups) {
 		for (const path of paths) {
-			const source = entry(path.from.geography, path.from.boundaryRelease);
+			const source = entry(
+				path.from.geography,
+				path.from.boundaryRelease,
+			);
 			const target = entry(path.to.geography, path.to.boundaryRelease);
 			// A path between two vintages of one geography is continuity. It
 			// keeps a code's history joined up without reaching anything new.
@@ -280,11 +299,12 @@ export const buildConversionReach = (
 	for (const found of reach.values()) {
 		found.reaches.sort();
 		found.reachedFrom.sort();
-		found.status = found.reaches.length > 0 || found.reachedFrom.length > 0
-			? "connected"
-			: found.vintagePathCount > 0
-				? "vintage-only"
-				: "isolated";
+		found.status =
+			found.reaches.length > 0 || found.reachedFrom.length > 0
+				? "connected"
+				: found.vintagePathCount > 0
+					? "vintage-only"
+					: "isolated";
 	}
 	return reach;
 };
@@ -333,7 +353,9 @@ export class ConversionCapabilities {
 				candidate.geography === endpoint.geography &&
 				candidate.id === endpoint.boundaryRelease,
 		);
-		return release?.status === "available" ? release.recordCount : undefined;
+		return release?.status === "available"
+			? release.recordCount
+			: undefined;
 	}
 
 	/** How much of each step's source release its crosswalk maps. */
@@ -350,13 +372,19 @@ export class ConversionCapabilities {
 				status: "not-built",
 				reason: `The crosswalk artifact ${crosswalkId} required by ${path.id} is not built.`,
 			});
-			return { crosswalkId, direction, status: "not-built", missingPrerequisite: reason };
+			return {
+				crosswalkId,
+				direction,
+				status: "not-built",
+				missingPrerequisite: reason,
+			};
 		}
 		const mappedSourceAreaCount = this.translator.stepTargets(
 			artifact,
 			direction,
 		).size;
-		const stepSource = direction === "forward" ? artifact.from : artifact.to;
+		const stepSource =
+			direction === "forward" ? artifact.from : artifact.to;
 		const sourceAreaCount = this.areaCount(stepSource);
 		if (sourceAreaCount === undefined) {
 			const reason = missing.add({
@@ -401,7 +429,11 @@ export class ConversionCapabilities {
 				? reached / sourceAreaCount
 				: undefined;
 		const status: PathCoverageStatus =
-			reached === undefined ? "not-built" : share === 1 ? "complete" : "partial";
+			reached === undefined
+				? "not-built"
+				: share === 1
+					? "complete"
+					: "partial";
 		return {
 			...path,
 			operations: operationsForPurpose(path.purpose),
@@ -429,9 +461,17 @@ export class ConversionCapabilities {
 		const missing = new PrerequisiteLog();
 		const sourceAreaCount = this.areaCount(from);
 		if (sourceAreaCount === undefined)
-			missing.add({ id: "source-areas", status: "not-built", reason: areasMissingReason(from) });
+			missing.add({
+				id: "source-areas",
+				status: "not-built",
+				reason: areasMissingReason(from),
+			});
 		if (this.areaCount(to) === undefined)
-			missing.add({ id: "target-areas", status: "not-built", reason: areasMissingReason(to) });
+			missing.add({
+				id: "target-areas",
+				status: "not-built",
+				reason: areasMissingReason(to),
+			});
 		const paths = this.translator.publishedPaths(from, to, purpose);
 		if (paths.length === 0)
 			missing.add({
@@ -440,7 +480,9 @@ export class ConversionCapabilities {
 				reason: `No declared ${purpose} path is published from ${from.geography}/${from.boundaryRelease} to ${to.geography}/${to.boundaryRelease}.`,
 			});
 		const rankedPaths = rankResolvedPaths(
-			paths.map((path) => this.assessPath(path, sourceAreaCount, missing)),
+			paths.map((path) =>
+				this.assessPath(path, sourceAreaCount, missing),
+			),
 		);
 		return {
 			status: capabilityStatus(rankedPaths, missing.items),
@@ -475,7 +517,11 @@ export class ConversionCapabilities {
 					path.from.boundaryRelease !== from.boundaryRelease
 				)
 					continue;
-				const key = [path.to.geography, path.to.boundaryRelease, path.purpose].join("/");
+				const key = [
+					path.to.geography,
+					path.to.boundaryRelease,
+					path.purpose,
+				].join("/");
 				discovered.set(key, { to: path.to, purpose: path.purpose });
 			}
 		}
@@ -488,7 +534,13 @@ export class ConversionCapabilities {
 			.sort((left, right) =>
 				[left.to.geography, left.to.boundaryRelease, left.purpose]
 					.join("/")
-					.localeCompare([right.to.geography, right.to.boundaryRelease, right.purpose].join("/")),
+					.localeCompare(
+						[
+							right.to.geography,
+							right.to.boundaryRelease,
+							right.purpose,
+						].join("/"),
+					),
 			);
 	}
 

@@ -92,7 +92,10 @@ export const measureContainment = (
 	/** Reuse releases already read, when many pairs share a side. */
 	cache?: Map<string, ReturnType<typeof readGeometries>>,
 ): ContainmentMeasurement => {
-	const release = (endpoint: { geography: string; boundaryRelease: string }) => {
+	const release = (endpoint: {
+		geography: string;
+		boundaryRelease: string;
+	}) => {
 		const key = releaseKey(endpoint.geography, endpoint.boundaryRelease);
 		const held = cache?.get(key);
 		if (held) return held;

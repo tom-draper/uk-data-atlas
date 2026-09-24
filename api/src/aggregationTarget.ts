@@ -95,7 +95,8 @@ export const resolveAggregationTarget = ({
 		to: { geography: string; boundaryRelease: string };
 		crosswalks: CrosswalkArtifact[];
 		/** Why the route establishes membership, or why it cannot. */
-		claim: () => { claim: string; path?: AggregationTarget["path"] } | ApiResponse;
+		claim: () =>
+			{ claim: string; path?: AggregationTarget["path"] } | ApiResponse;
 		pathId?: string;
 	};
 	if (crosswalkId) {
@@ -190,7 +191,11 @@ export const resolveAggregationTarget = ({
 		sourceRelease,
 		memberCodes: new Set(membership.memberCodes),
 		target: {
-			id: areaKey(route.to.geography, route.to.boundaryRelease, targetCode),
+			id: areaKey(
+				route.to.geography,
+				route.to.boundaryRelease,
+				targetCode,
+			),
 			geography: route.to.geography,
 			boundaryRelease: route.to.boundaryRelease,
 			code: targetCode,

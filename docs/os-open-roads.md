@@ -14,20 +14,21 @@ browser.
    database are ignored by Git.
 3. Start the local CORS-enabled vector-tile service in one terminal:
 
-   ```sh
-   pnpm roads:serve
-   ```
+    ```sh
+    pnpm roads:serve
+    ```
 
-   This uses Docker and TileServer GL at `http://localhost:8080`. The supplied
-   MBTiles use the `road_link` source layer and provide road tiles from zoom 9
-   through 14.
+    This uses Docker and TileServer GL at `http://localhost:8080`. The supplied
+    MBTiles use the `road_link` source layer and provide road tiles from zoom 9
+    through 14.
+
 4. Put the resulting values in local `.env` (already configured for the local
    server) and restart `pnpm dev` after changing them:
 
-   ```dotenv
-   NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL=http://localhost:8080/data/oproad_gb/{z}/{x}/{y}.pbf
-   NEXT_PUBLIC_OS_OPEN_ROADS_SOURCE_LAYER=road_link
-   ```
+    ```dotenv
+    NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL=http://localhost:8080/data/oproad_gb/{z}/{x}/{y}.pbf
+    NEXT_PUBLIC_OS_OPEN_ROADS_SOURCE_LAYER=road_link
+    ```
 
 For production, host the MBTiles (or an equivalent PMTiles/vector-tile
 conversion) behind a public CORS-enabled tile service and replace the local URL

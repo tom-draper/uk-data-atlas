@@ -14,15 +14,15 @@ export const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 		inputs.exportManifest.dataCatalogHash !==
 		inputs.dataCatalog.contentHash;
 	const releaseIds = new Set(
-		inputs.boundaryRegistry.releases.map(
-			(release) => releaseKey(release.geography, release.id),
+		inputs.boundaryRegistry.releases.map((release) =>
+			releaseKey(release.geography, release.id),
 		),
 	);
 	const inventories: Array<[string, string[]]> = [
 		[
 			"area inventory",
-			inputs.areaInventory.releases.map(
-				(release) => releaseKey(release.geography, release.id),
+			inputs.areaInventory.releases.map((release) =>
+				releaseKey(release.geography, release.id),
 			),
 		],
 		[
@@ -33,8 +33,8 @@ export const atlasFindings = (inputs: ValidationInputs): Finding[] => {
 		],
 		[
 			"geography inventory",
-			inputs.geographyInventory.releases.map(
-				(release) => releaseKey(release.geography, release.id),
+			inputs.geographyInventory.releases.map((release) =>
+				releaseKey(release.geography, release.id),
 			),
 		],
 	];

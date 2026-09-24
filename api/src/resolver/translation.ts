@@ -80,9 +80,15 @@ export const directTranslationPaths = (
 ): RelationshipPath[] =>
 	[...crosswalks].flatMap((crosswalk) => {
 		if (relationshipPurposeFor(crosswalk) !== purpose) return [];
-		if (sameEndpoint(crosswalk.from, from) && sameEndpoint(crosswalk.to, to))
+		if (
+			sameEndpoint(crosswalk.from, from) &&
+			sameEndpoint(crosswalk.to, to)
+		)
 			return [directRelationshipPath(crosswalk, "forward", purpose)];
-		if (sameEndpoint(crosswalk.to, from) && sameEndpoint(crosswalk.from, to))
+		if (
+			sameEndpoint(crosswalk.to, from) &&
+			sameEndpoint(crosswalk.from, to)
+		)
 			return [directRelationshipPath(crosswalk, "reverse", purpose)];
 		return [];
 	});
@@ -150,7 +156,9 @@ export const buildTranslationSteps = (
 				source: {
 					code,
 					labels: [
-						...new Set(records.flatMap(({ target }) => target.labels)),
+						...new Set(
+							records.flatMap(({ target }) => target.labels),
+						),
 					].sort(),
 				},
 				sourceCoverage,
@@ -340,7 +348,8 @@ export class CrosswalkTranslator {
 	path(id: string): RelationshipPath | undefined {
 		if (!this.pathsById) {
 			this.pathsById = new Map();
-			for (const paths of this.inputs.relationshipPathIndex?.values() ?? [])
+			for (const paths of this.inputs.relationshipPathIndex?.values() ??
+				[])
 				for (const path of paths) this.pathsById.set(path.id, path);
 		}
 		return this.pathsById.get(id);
@@ -427,10 +436,16 @@ export class CrosswalkTranslator {
 		to: GeographyEndpoint,
 		purpose: RelationshipPurpose,
 	): ResolvedAreaTranslation[] {
-		return translateArea(this.paths(source, to, purpose), source, (step) => {
+		return translateArea(
+			this.paths(source, to, purpose),
+			source,
+			(step) => {
 				const artifact = this.artifact(step.crosswalkId);
-				return artifact && this.translationSteps(artifact, step.direction);
-			});
+				return (
+					artifact && this.translationSteps(artifact, step.direction)
+				);
+			},
+		);
 	}
 
 	/**
@@ -446,7 +461,10 @@ export class CrosswalkTranslator {
 			const artifact = this.artifact(step.crosswalkId);
 			if (!artifact) return undefined;
 			const kept = new Set<string>();
-			for (const [code, targets] of this.stepTargets(artifact, step.direction))
+			for (const [code, targets] of this.stepTargets(
+				artifact,
+				step.direction,
+			))
 				if (!carried || targets.some((target) => carried!.has(target)))
 					kept.add(code);
 			carried = kept;

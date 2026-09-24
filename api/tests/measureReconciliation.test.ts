@@ -129,27 +129,27 @@ const incomplete = crosswalk("wards-incomplete", [
 
 const contextWith = (artifacts: PropertyCrosswalkArtifact[]): RouteContext =>
 	testContext({
-	boundaryRegistry: registry,
-	dataCatalog: catalog,
-	measureObservations: observations,
-	crosswalkLookup: new Map(
-		artifacts.map((artifact) => [artifact.id, artifact]),
-	),
-	crosswalkInventory: {
-		schemaVersion: 1,
-		contentHash: "sha256:crosswalks",
-		crosswalks: artifacts.map((artifact) => ({
-			id: artifact.id,
-			from: artifact.from,
-			to: artifact.to,
-			method: artifact.method,
-			quality: artifact.quality,
-			weighting: artifact.weighting,
-			recordCount: artifact.records.length,
-			artifact: `crosswalks/${artifact.id}.json`,
-			contentHash: artifact.contentHash,
-		})),
-	} satisfies CrosswalkInventory,
+		boundaryRegistry: registry,
+		dataCatalog: catalog,
+		measureObservations: observations,
+		crosswalkLookup: new Map(
+			artifacts.map((artifact) => [artifact.id, artifact]),
+		),
+		crosswalkInventory: {
+			schemaVersion: 1,
+			contentHash: "sha256:crosswalks",
+			crosswalks: artifacts.map((artifact) => ({
+				id: artifact.id,
+				from: artifact.from,
+				to: artifact.to,
+				method: artifact.method,
+				quality: artifact.quality,
+				weighting: artifact.weighting,
+				recordCount: artifact.records.length,
+				artifact: `crosswalks/${artifact.id}.json`,
+				contentHash: artifact.contentHash,
+			})),
+		} satisfies CrosswalkInventory,
 	});
 
 const reconcile = (artifact: PropertyCrosswalkArtifact) =>
@@ -311,20 +311,32 @@ test("adds the finer partition up through every step of a named path", () => {
 	if ("refusal" in result) return;
 	assert.equal(result.crosswalk, undefined);
 	assert.deepEqual(
-		result.path?.steps.map(({ crosswalk: step, direction }) => [step.id, direction]),
+		result.path?.steps.map(({ crosswalk: step, direction }) => [
+			step.id,
+			direction,
+		]),
 		[
 			["wards-2022-to-2023", "forward"],
 			["wards-agree", "forward"],
 		],
 	);
 	assert.deepEqual(
-		result.areas.map(({ areaCode, aggregated, status }) => [areaCode, aggregated, status]),
+		result.areas.map(({ areaCode, aggregated, status }) => [
+			areaCode,
+			aggregated,
+			status,
+		]),
 		[["E06000001", 280, "agrees"]],
 	);
 
 	assert.match(
 		(
-			reconcileMeasure(context, measure, { path: "not-published" }, "2022") as {
+			reconcileMeasure(
+				context,
+				measure,
+				{ path: "not-published" },
+				"2022",
+			) as {
 				refusal: string;
 			}
 		).refusal,
@@ -351,7 +363,10 @@ test("lists only a composed path that reconciles, between releases the partition
 	};
 	const districtToWard: PropertyCrosswalkArtifact = {
 		...crosswalk("district-to-ward", [["E06000001", "E05000001"]]),
-		from: { geography: "localAuthority", boundaryRelease: "2023-05-uk-bgc-v2" },
+		from: {
+			geography: "localAuthority",
+			boundaryRelease: "2023-05-uk-bgc-v2",
+		},
 		to: vintage.from,
 	};
 	const artifacts = [vintage, dropping, agreeing, districtToWard];
@@ -392,7 +407,9 @@ test("lists only a composed path that reconciles, between releases the partition
 		boundaryRegistry: registry,
 		dataCatalog: catalog,
 		measureObservations: observations,
-		crosswalkLookup: new Map(artifacts.map((artifact) => [artifact.id, artifact])),
+		crosswalkLookup: new Map(
+			artifacts.map((artifact) => [artifact.id, artifact]),
+		),
 		crosswalkInventory: {
 			schemaVersion: 1,
 			contentHash: "sha256:crosswalks",
@@ -457,7 +474,12 @@ test("lists only a composed path that reconciles, between releases the partition
 		entry?.href,
 		`/v1/measures/${measure.id}/reconciliation?path=c-reconciles&period=2022`,
 	);
-	const followed = reconcileMeasure(context, measure, { path: "c-reconciles" }, "2022");
+	const followed = reconcileMeasure(
+		context,
+		measure,
+		{ path: "c-reconciles" },
+		"2022",
+	);
 	assert.ok(!("refusal" in followed));
 	if ("refusal" in followed) return;
 	assert.equal(followed.pairing, "verified");
@@ -474,7 +496,10 @@ test("links each listed comparison to the latest period both partitions publish"
 			{ ...districts!, periods: ["2021", "2022"] },
 		],
 	};
-	const [entry] = availableReconciliations(contextWith([agreeing]), unordered);
+	const [entry] = availableReconciliations(
+		contextWith([agreeing]),
+		unordered,
+	);
 
 	assert.deepEqual(entry?.periods, ["2021", "2022"]);
 	assert.match(entry?.href ?? "", /&period=2022$/);

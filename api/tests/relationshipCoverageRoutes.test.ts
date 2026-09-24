@@ -28,7 +28,10 @@ test("reports the hierarchy spine's coverage and names uncovered areas", () => {
 	assert.equal(data.relatedAreaCount, 1);
 	assert.equal(data.relationshipCount, 1);
 	assert.deepEqual(data.crosswalkIds, ["ward-to-local-authority-2025"]);
-	assert.deepEqual(data.uncoveredAreas.map((area: { code: string }) => area.code), ["E05000002"]);
+	assert.deepEqual(
+		data.uncoveredAreas.map((area: { code: string }) => area.code),
+		["E05000002"],
+	);
 });
 
 test("rejects an unknown relationship kind", () => {

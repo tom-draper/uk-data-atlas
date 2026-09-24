@@ -10,7 +10,14 @@
  */
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
-import { copyFile, mkdir, readFile, rename, stat, writeFile } from "fs/promises";
+import {
+	copyFile,
+	mkdir,
+	readFile,
+	rename,
+	stat,
+	writeFile,
+} from "fs/promises";
 import { basename, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";

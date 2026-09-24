@@ -63,11 +63,29 @@ test("counts an area-overlap source as a member only when wholly inside", () => 
 		records: [
 			{
 				source: { code: "W1", labels: [], areaM2: 1, coverage: 1 },
-				targets: [{ code: "L1", labels: [], weight: 1, overlapAreaM2: 1, sourceShare: 1, targetShare: 0.5 }],
+				targets: [
+					{
+						code: "L1",
+						labels: [],
+						weight: 1,
+						overlapAreaM2: 1,
+						sourceShare: 1,
+						targetShare: 0.5,
+					},
+				],
 			},
 			{
 				source: { code: "W2", labels: [], areaM2: 1, coverage: 0.98 },
-				targets: [{ code: "L1", labels: [], weight: 1, overlapAreaM2: 1, sourceShare: 0.98, targetShare: 0.5 }],
+				targets: [
+					{
+						code: "L1",
+						labels: [],
+						weight: 1,
+						overlapAreaM2: 1,
+						sourceShare: 0.98,
+						targetShare: 0.5,
+					},
+				],
 			},
 		],
 	} as unknown as CrosswalkArtifact;

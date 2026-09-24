@@ -44,10 +44,13 @@ test("resolves a named location and reports lookup failures", () => {
 		},
 		namedLocationLookup: new Map([[location.id, location]]),
 	});
-	assert.equal(resolveAggregationLocation({
+	assert.equal(
+		resolveAggregationLocation({
 			locationId: null,
 			geographyResolver: withLocation,
-		}), undefined);
+		}),
+		undefined,
+	);
 	assert.equal(
 		resolveAggregationLocation({
 			locationId: "example",

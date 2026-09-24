@@ -4,7 +4,13 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const manifest = join(root, "public", "data", "datasets", "dataset-manifest.json");
+const manifest = join(
+	root,
+	"public",
+	"data",
+	"datasets",
+	"dataset-manifest.json",
+);
 
 async function newestMtime(directory) {
 	let newest = 0;
@@ -16,8 +22,7 @@ async function newestMtime(directory) {
 	}
 
 	for (const entry of entries) {
-		if (entry.name === "node_modules")
-			continue;
+		if (entry.name === "node_modules") continue;
 		const path = join(directory, entry.name);
 		if (entry.isDirectory())
 			newest = Math.max(newest, await newestMtime(path));

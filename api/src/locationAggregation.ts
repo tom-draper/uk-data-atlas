@@ -33,7 +33,8 @@ export const validateLocationAggregation = ({
 				new Set(byLocation.members.map((record) => record.areaCode)),
 			)
 		: undefined;
-	if (unavailable && byLocation.unresolvedMemberCodes.length > 0) return unavailable;
+	if (unavailable && byLocation.unresolvedMemberCodes.length > 0)
+		return unavailable;
 	if (locationCoverage && locationCoverage.unexplained.length > 0) {
 		return problem(
 			422,

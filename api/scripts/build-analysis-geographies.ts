@@ -14,12 +14,16 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 	const catalogPath = join(directory, "data-catalog.json");
 	const crosswalkPath = join(directory, "crosswalk-inventory.json");
 	if (!existsSync(catalogPath) || !existsSync(crosswalkPath))
-		throw new Error("Build the data catalogue and crosswalk inventory before analysis geographies.");
+		throw new Error(
+			"Build the data catalogue and crosswalk inventory before analysis geographies.",
+		);
 	// Read only if built: a path-backed support needs it, and compiling
 	// refuses one without it.
 	const pathsPath = join(directory, "relationship-paths.json");
 	const relationshipPaths = existsSync(pathsPath)
-		? (JSON.parse(readFileSync(pathsPath, "utf8")) as RelationshipPathInventory)
+		? (JSON.parse(
+				readFileSync(pathsPath, "utf8"),
+			) as RelationshipPathInventory)
 		: undefined;
 	const inventory = compileAnalysisGeographies(
 		readAnalysisGeographySupport(
@@ -36,6 +40,10 @@ export const buildAnalysisGeographies = (repositoryRoot: string) => {
 
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-	const result = buildAnalysisGeographies(resolve(dirname(scriptPath), "../.."));
-	console.log(`Wrote ${result.count} analysis geography support entries to ${result.outputPath}`);
+	const result = buildAnalysisGeographies(
+		resolve(dirname(scriptPath), "../.."),
+	);
+	console.log(
+		`Wrote ${result.count} analysis geography support entries to ${result.outputPath}`,
+	);
 }

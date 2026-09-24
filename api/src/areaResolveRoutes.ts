@@ -91,7 +91,11 @@ export const handleAreaResolveRoutes = ({
 			"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 		);
 	const selection = date
-		? geographyResolver.selectReleaseForDate(geography!, date.month, country)
+		? geographyResolver.selectReleaseForDate(
+				geography!,
+				date.month,
+				country,
+			)
 		: undefined;
 	if (date && !selection)
 		return problem(
@@ -139,11 +143,16 @@ export const handleAreaResolveRoutes = ({
 				? ["code-exact" as const]
 				: []),
 			...(() => {
-				const match = nameMatches(area.name, normalized, normalizedName, {
-					exact: "name-exact",
-					normalized: "name-normalized-exact",
-					withoutAdministrativeTitle: "name-exact-without-title",
-				});
+				const match = nameMatches(
+					area.name,
+					normalized,
+					normalizedName,
+					{
+						exact: "name-exact",
+						normalized: "name-normalized-exact",
+						withoutAdministrativeTitle: "name-exact-without-title",
+					},
+				);
 				return match ? [match] : [];
 			})(),
 			...(area.aliases ?? []).flatMap((alias) => {

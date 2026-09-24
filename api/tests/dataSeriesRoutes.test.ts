@@ -112,7 +112,9 @@ test("returns a source-exact series without selecting a geometry release", () =>
 test("returns a reviewed derived series on an explicit analysis geography", () => {
 	const route = (url: string) =>
 		routeWithCatalog(url, dataCatalog, measureObservations, {
-			crosswalkLookup: new Map([[analysisCrosswalk.id, analysisCrosswalk]]),
+			crosswalkLookup: new Map([
+				[analysisCrosswalk.id, analysisCrosswalk],
+			]),
 			analysisGeographyInventory: analysisInventory,
 		});
 	const response = route(
@@ -180,10 +182,12 @@ test("returns a reviewed derived series through every step of a reviewed path", 
 					purpose: "membership",
 					origin: "declared",
 					quality: "publisher-supplied",
-					steps: [analysisCrosswalk, authorityToRegion].map((artifact) => ({
-						crosswalk: summary(artifact),
-						direction: "forward" as const,
-					})),
+					steps: [analysisCrosswalk, authorityToRegion].map(
+						(artifact) => ({
+							crosswalk: summary(artifact),
+							direction: "forward" as const,
+						}),
+					),
 				},
 			},
 		],
@@ -203,10 +207,12 @@ test("returns a reviewed derived series through every step of a reviewed path", 
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: Record<string, any> }).data;
 	assert.deepEqual(
-		data.series.map(({ period, value }: { period: string; value: number }) => [
-			period,
-			value,
-		]),
+		data.series.map(
+			({ period, value }: { period: string; value: number }) => [
+				period,
+				value,
+			],
+		),
 		[["2019", 3100]],
 	);
 	assert.equal(data.conversion.method, "relationship-path");
@@ -217,5 +223,8 @@ test("returns a reviewed derived series through every step of a reviewed path", 
 		),
 		[analysisCrosswalk.id, authorityToRegion.id],
 	);
-	assert.match(data.provenance.transformation.note, /every step of the reviewed path/);
+	assert.match(
+		data.provenance.transformation.note,
+		/every step of the reviewed path/,
+	);
 });

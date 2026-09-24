@@ -22,10 +22,18 @@ const measureReadiness = (
 	from: { geography: string; boundaryRelease: string },
 ) => {
 	if (!catalog)
-		return { status: "not-built" as const, reason: "Build the data catalogue before assessing a measure's conversion semantics." };
-	const measure = catalog.measures.find((candidate) => candidate.id === measureId);
+		return {
+			status: "not-built" as const,
+			reason: "Build the data catalogue before assessing a measure's conversion semantics.",
+		};
+	const measure = catalog.measures.find(
+		(candidate) => candidate.id === measureId,
+	);
 	if (!measure)
-		return { status: "unsupported" as const, reason: `No published measure matches ${measureId}.` };
+		return {
+			status: "unsupported" as const,
+			reason: `No published measure matches ${measureId}.`,
+		};
 	if (!compatibilityInventory)
 		return {
 			measure: { id: measure.id, unit: measure.unit },
@@ -35,26 +43,29 @@ const measureReadiness = (
 	const compatibility = compatibilityInventory.measures.find(
 		(candidate) => candidate.measureId === measure.id,
 	);
-	const sourceCompatibility = compatibility?.sources
-		.filter((source) => source.sourceGeography.type === from.geography)
-		.map((source) => ({
-			datasetId: source.datasetId,
-			boundaryYear: source.sourceGeography.boundaryYear,
-			periods: source.periods,
-			candidates: source.candidates.filter(
-				(candidate) => candidate.boundaryRelease === from.boundaryRelease,
-			),
-		})) ?? [];
-	const matchingSources = compatibility?.sources.filter(
-		(source) =>
-			source.sourceGeography.type === from.geography &&
-			source.candidates.some(
-				(candidate) =>
-					candidate.boundaryRelease === from.boundaryRelease &&
-					(candidate.status === "exact-code-set" ||
-						candidate.status === "code-set-compatible"),
-			),
-	) ?? [];
+	const sourceCompatibility =
+		compatibility?.sources
+			.filter((source) => source.sourceGeography.type === from.geography)
+			.map((source) => ({
+				datasetId: source.datasetId,
+				boundaryYear: source.sourceGeography.boundaryYear,
+				periods: source.periods,
+				candidates: source.candidates.filter(
+					(candidate) =>
+						candidate.boundaryRelease === from.boundaryRelease,
+				),
+			})) ?? [];
+	const matchingSources =
+		compatibility?.sources.filter(
+			(source) =>
+				source.sourceGeography.type === from.geography &&
+				source.candidates.some(
+					(candidate) =>
+						candidate.boundaryRelease === from.boundaryRelease &&
+						(candidate.status === "exact-code-set" ||
+							candidate.status === "code-set-compatible"),
+				),
+		) ?? [];
 	if (matchingSources.length === 0) {
 		const statuses = sourceCompatibility.flatMap((source) =>
 			source.candidates.map((candidate) => candidate.status),
@@ -80,14 +91,49 @@ const measureReadiness = (
 		),
 	}));
 	if (purpose === "identity")
-		return { measure: { id: measure.id, unit: measure.unit }, sourcePartitions, status: "available" as const, operation: "identity-join", reason: "An identity path can align this measure's area identifiers without changing values." };
+		return {
+			measure: { id: measure.id, unit: measure.unit },
+			sourcePartitions,
+			status: "available" as const,
+			operation: "identity-join",
+			reason: "An identity path can align this measure's area identifiers without changing values.",
+		};
 	if (purpose === "membership" && measure.aggregation.kind === "intensive")
 		return measure.aggregation.available
-			? { measure: { id: measure.id, unit: measure.unit }, sourcePartitions, status: "requires-conversion" as const, operation: "weighted-mean", weight: measure.aggregation.weight, reason: "This intensive measure requires the declared denominator; it must not be summed across members." }
-			: { measure: { id: measure.id, unit: measure.unit }, sourcePartitions, status: "unsupported" as const, reason: "This intensive measure requires a weighted mean, but no published aggregation operation is available." };
-	if (measure.aggregation.kind === "extensive" && measure.aggregation.available)
-		return { measure: { id: measure.id, unit: measure.unit }, sourcePartitions, status: "available" as const, operation: purpose === "membership" ? "containment-aggregation" : "weighted-allocation", reason: "This extensive measure may be summed or allocated using the declared relationship operation." };
-	return { measure: { id: measure.id, unit: measure.unit }, sourcePartitions, status: "unsupported" as const, reason: `This measure is ${measure.aggregation.kind}; ${purpose === "membership" ? "containment aggregation" : "weighted allocation"} is not published as a safe operation.` };
+			? {
+					measure: { id: measure.id, unit: measure.unit },
+					sourcePartitions,
+					status: "requires-conversion" as const,
+					operation: "weighted-mean",
+					weight: measure.aggregation.weight,
+					reason: "This intensive measure requires the declared denominator; it must not be summed across members.",
+				}
+			: {
+					measure: { id: measure.id, unit: measure.unit },
+					sourcePartitions,
+					status: "unsupported" as const,
+					reason: "This intensive measure requires a weighted mean, but no published aggregation operation is available.",
+				};
+	if (
+		measure.aggregation.kind === "extensive" &&
+		measure.aggregation.available
+	)
+		return {
+			measure: { id: measure.id, unit: measure.unit },
+			sourcePartitions,
+			status: "available" as const,
+			operation:
+				purpose === "membership"
+					? "containment-aggregation"
+					: "weighted-allocation",
+			reason: "This extensive measure may be summed or allocated using the declared relationship operation.",
+		};
+	return {
+		measure: { id: measure.id, unit: measure.unit },
+		sourcePartitions,
+		status: "unsupported" as const,
+		reason: `This measure is ${measure.aggregation.kind}; ${purpose === "membership" ? "containment aggregation" : "weighted allocation"} is not published as a safe operation.`,
+	};
 };
 
 /**
@@ -119,11 +165,16 @@ export const handleRelationshipCapabilityRoutes = ({
 	if (
 		!from.geography ||
 		!from.boundaryRelease ||
-		((to.geography === null) !== (to.boundaryRelease === null)) ||
+		(to.geography === null) !== (to.boundaryRelease === null) ||
 		((to.geography !== null || to.boundaryRelease !== null) &&
-			!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)) ||
-		((to.geography === null && to.boundaryRelease === null) && purposeParameter !== null)
-		|| ((to.geography === null || to.boundaryRelease === null) && measureId !== null)
+			!RELATIONSHIP_PURPOSES.includes(
+				purposeParameter as RelationshipPurpose,
+			)) ||
+		(to.geography === null &&
+			to.boundaryRelease === null &&
+			purposeParameter !== null) ||
+		((to.geography === null || to.boundaryRelease === null) &&
+			measureId !== null)
 	) {
 		return problem(
 			400,
@@ -134,7 +185,12 @@ export const handleRelationshipCapabilityRoutes = ({
 	const geographyResolver = context.geographyResolver;
 	if (to.geography === null || to.boundaryRelease === null) {
 		const source = from as { geography: string; boundaryRelease: string };
-		if (!geographyResolver.hasAreaRelease(source.geography, source.boundaryRelease)) {
+		if (
+			!geographyResolver.hasAreaRelease(
+				source.geography,
+				source.boundaryRelease,
+			)
+		) {
 			return {
 				status: 200,
 				body: envelope(releaseId, {
@@ -142,23 +198,31 @@ export const handleRelationshipCapabilityRoutes = ({
 					status: "not-built" as const,
 					reason: `No compiled area identity artifact is available for ${source.geography}/${source.boundaryRelease}.`,
 					capabilities: [],
-					missingPrerequisites: [{
-						id: "source-areas",
-						status: "not-built" as const,
-						reason: `No compiled area identity artifact is available for ${source.geography}/${source.boundaryRelease}.`,
-					}],
+					missingPrerequisites: [
+						{
+							id: "source-areas",
+							status: "not-built" as const,
+							reason: `No compiled area identity artifact is available for ${source.geography}/${source.boundaryRelease}.`,
+						},
+					],
 				}),
 			};
 		}
-		const capabilities = geographyResolver.relationshipCapabilitiesFrom(
-			source,
-		);
+		const capabilities =
+			geographyResolver.relationshipCapabilitiesFrom(source);
 		return {
 			status: 200,
 			body: envelope(releaseId, {
 				from,
-				status: capabilities.length > 0 ? "available" as const : "unsupported" as const,
-				...(capabilities.length > 0 ? {} : { reason: `No declared conversion paths start at ${from.geography}/${from.boundaryRelease}.` }),
+				status:
+					capabilities.length > 0
+						? ("available" as const)
+						: ("unsupported" as const),
+				...(capabilities.length > 0
+					? {}
+					: {
+							reason: `No declared conversion paths start at ${from.geography}/${from.boundaryRelease}.`,
+						}),
 				capabilities,
 			}),
 		};
@@ -185,7 +249,20 @@ export const handleRelationshipCapabilityRoutes = ({
 					}),
 			paths: capability.paths,
 			missingPrerequisites: capability.missingPrerequisites,
-			...(measureId ? { measureReadiness: measureReadiness(context.dataCatalog, context.measureCompatibilityInventory, measureId, purpose, from as { geography: string; boundaryRelease: string }) } : {}),
+			...(measureId
+				? {
+						measureReadiness: measureReadiness(
+							context.dataCatalog,
+							context.measureCompatibilityInventory,
+							measureId,
+							purpose,
+							from as {
+								geography: string;
+								boundaryRelease: string;
+							},
+						),
+					}
+				: {}),
 		}),
 	};
 };

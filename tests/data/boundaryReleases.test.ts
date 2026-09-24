@@ -38,13 +38,21 @@ const sourceBoundaryReleases = readdirSync(
 				{ withFileTypes: true },
 			)
 				.filter((release) => release.isDirectory())
-				.map((release) => identity(toCamelCase(geography.name), release.name))
+				.map((release) =>
+					identity(toCamelCase(geography.name), release.name),
+				)
 		: [],
 );
 
 const docsCatalogue = JSON.parse(
 	readFileSync(
-		join(process.cwd(), "public", "data", "datasets", "docs-catalogue.json"),
+		join(
+			process.cwd(),
+			"public",
+			"data",
+			"datasets",
+			"docs-catalogue.json",
+		),
 		"utf8",
 	),
 ) as {
@@ -61,7 +69,10 @@ const apiAreaInventory = { releases: docsCatalogue.areaAvailability };
 describe("boundary releases", () => {
 	it("makes every source release explicitly held or available from both products", () => {
 		const website = new Map(
-			catalogued.map(({ type, release }) => [identity(type, release.id), release]),
+			catalogued.map(({ type, release }) => [
+				identity(type, release.id),
+				release,
+			]),
 		);
 		const apiRegistry = new Set(
 			docsCatalogue.releases.map((release) =>
@@ -75,19 +86,33 @@ describe("boundary releases", () => {
 			]),
 		);
 
-		expect([...website.keys()].sort()).toEqual([...sourceBoundaryReleases].sort());
-		expect([...apiRegistry].sort()).toEqual([...sourceBoundaryReleases].sort());
+		expect([...website.keys()].sort()).toEqual(
+			[...sourceBoundaryReleases].sort(),
+		);
+		expect([...apiRegistry].sort()).toEqual(
+			[...sourceBoundaryReleases].sort(),
+		);
 
 		for (const source of sourceBoundaryReleases) {
 			const release = website.get(source)!;
 			const area = apiAreas.get(source);
 			if (!release.asset) {
-				expect(release.holdReason, `${source} is held without a reason`).toBeTruthy();
+				expect(
+					release.holdReason,
+					`${source} is held without a reason`,
+				).toBeTruthy();
 				continue;
 			}
-			expect(release.holdReason, `${source} is both held and served`).toBeUndefined();
-			expect(existsSync(localBoundaryPath(release.asset)), source).toBe(true);
-			expect(area?.status, `${source} is not API-available`).toBe("available");
+			expect(
+				release.holdReason,
+				`${source} is both held and served`,
+			).toBeUndefined();
+			expect(existsSync(localBoundaryPath(release.asset)), source).toBe(
+				true,
+			);
+			expect(area?.status, `${source} is not API-available`).toBe(
+				"available",
+			);
 		}
 	});
 

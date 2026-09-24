@@ -100,14 +100,21 @@ test("offers focused parent and child containment routes", () => {
 		crosswalkInventory,
 		crosswalkLookup,
 	);
-	const lineageData = ("data" in lineage.body && lineage.body.data) as { ancestors: Array<{ depth: number }> };
+	const lineageData = ("data" in lineage.body && lineage.body.data) as {
+		ancestors: Array<{ depth: number }>;
+	};
 	assert.equal(lineageData.ancestors[0]?.depth, 1);
 	const descendants = route(
 		"GET",
 		"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/children?depth=2",
-		registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup,
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
 	);
-	const descendantData = ("data" in descendants.body && descendants.body.data) as { descendants: Array<{ depth: number }> };
+	const descendantData = ("data" in descendants.body &&
+		descendants.body.data) as { descendants: Array<{ depth: number }> };
 	assert.equal(descendantData.descendants[0]?.depth, 1);
 	const parentData = "data" in parents.body ? parents.body.data : undefined;
 	assert.ok(parentData && typeof parentData === "object");

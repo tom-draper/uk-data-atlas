@@ -52,7 +52,11 @@ const candidate = (
 	const path = relationshipPath(id, overrides);
 	return {
 		...path,
-		operations: { permitted: ["membership-join"], prohibited: [], note: "" },
+		operations: {
+			permitted: ["membership-join"],
+			prohibited: [],
+			note: "",
+		},
 		trust: assessPathTrust(path, coverage),
 		coverage: { status: coverage, steps: [] },
 	};
@@ -70,8 +74,14 @@ test("caps trust by coverage before considering how a path was declared", () => 
 		quality: "derived",
 	});
 
-	assert.equal(assessPathTrust(discoveredDerived, "not-built").level, "not-built");
-	assert.equal(assessPathTrust(discoveredDerived, "partial").level, "partial");
+	assert.equal(
+		assessPathTrust(discoveredDerived, "not-built").level,
+		"not-built",
+	);
+	assert.equal(
+		assessPathTrust(discoveredDerived, "partial").level,
+		"partial",
+	);
 	assert.deepEqual(assessPathTrust(discoveredDerived, "complete"), {
 		level: "derived",
 		reasons: [
@@ -80,14 +90,22 @@ test("caps trust by coverage before considering how a path was declared", () => 
 		],
 	});
 	assert.equal(
-		assessPathTrust(relationshipPath("p", { quality: "derived" }), "complete").level,
+		assessPathTrust(
+			relationshipPath("p", { quality: "derived" }),
+			"complete",
+		).level,
 		"derived",
 	);
-	assert.equal(assessPathTrust(relationshipPath("p"), "complete").level, "verified");
+	assert.equal(
+		assessPathTrust(relationshipPath("p"), "complete").level,
+		"verified",
+	);
 });
 
 test("ranks by coverage, then trust, origin and length, and explains each rank", () => {
-	const twoSteps = relationshipPath("x").steps.concat(relationshipPath("y").steps);
+	const twoSteps = relationshipPath("x").steps.concat(
+		relationshipPath("y").steps,
+	);
 	const ranked = rankResolvedPaths([
 		candidate("partial", "partial", { origin: "crosswalk" }),
 		candidate("derived", "complete", { quality: "derived" }),
@@ -119,12 +137,24 @@ test("ranks by coverage, then trust, origin and length, and explains each rank",
 test("takes the capability status from the best path, or from what is missing", () => {
 	const covered = (status: Coverage) => ({ coverage: { status, steps: [] } });
 
-	assert.equal(capabilityStatus([covered("partial"), covered("complete")], []), "available");
-	assert.equal(capabilityStatus([covered("not-built"), covered("partial")], []), "partial");
-	assert.equal(capabilityStatus([covered("not-built")], [notBuilt]), "not-built");
+	assert.equal(
+		capabilityStatus([covered("partial"), covered("complete")], []),
+		"available",
+	);
+	assert.equal(
+		capabilityStatus([covered("not-built"), covered("partial")], []),
+		"partial",
+	);
+	assert.equal(
+		capabilityStatus([covered("not-built")], [notBuilt]),
+		"not-built",
+	);
 	assert.equal(capabilityStatus([], [notBuilt]), "not-built");
 	assert.equal(
-		capabilityStatus([], [{ ...notBuilt, id: "relationship-path", status: "unsupported" }]),
+		capabilityStatus(
+			[],
+			[{ ...notBuilt, id: "relationship-path", status: "unsupported" }],
+		),
 		"unsupported",
 	);
 });
@@ -141,7 +171,10 @@ test("plans the first ranked path and keeps the rest as alternatives", () => {
 
 	assert.equal(plan.status, "available");
 	assert.equal(plan.selectedPath?.id, "first");
-	assert.deepEqual(plan.alternatives.map((path) => path.id), ["second"]);
+	assert.deepEqual(
+		plan.alternatives.map((path) => path.id),
+		["second"],
+	);
 	assert.equal(plan.reason, undefined);
 });
 
@@ -152,7 +185,10 @@ test("explains an incomplete plan with its first missing prerequisite", () => {
 		missingPrerequisites: [notBuilt],
 	};
 
-	assert.equal(planConversion(capability, "membership").reason, notBuilt.reason);
+	assert.equal(
+		planConversion(capability, "membership").reason,
+		notBuilt.reason,
+	);
 });
 
 test("falls back to a generic reason only when nothing specific is missing", () => {
@@ -251,8 +287,20 @@ test("compares code sets, published continuity and mapping cardinality between r
 			...validation,
 			continuity: {
 				changedExtent: [
-					{ code: "W2", relation: "changed", widestDifferenceM: 40, sourceShare: 0.9, targetShare: 0.8 },
-					{ code: "W3", relation: "indeterminate", widestDifferenceM: 2, sourceShare: 0.99, targetShare: 0.99 },
+					{
+						code: "W2",
+						relation: "changed",
+						widestDifferenceM: 40,
+						sourceShare: 0.9,
+						targetShare: 0.8,
+					},
+					{
+						code: "W3",
+						relation: "indeterminate",
+						widestDifferenceM: 2,
+						sourceShare: 0.99,
+						targetShare: 0.99,
+					},
 				],
 				unmeasured: [],
 			},
@@ -260,7 +308,15 @@ test("compares code sets, published continuity and mapping cardinality between r
 		records: [
 			{
 				source: { code: "W1", labels: [] },
-				targets: [{ code: "W1", labels: [], widestDifferenceM: 0, sourceShare: 1, targetShare: 1 }],
+				targets: [
+					{
+						code: "W1",
+						labels: [],
+						widestDifferenceM: 0,
+						sourceShare: 1,
+						targetShare: 1,
+					},
+				],
 			},
 		],
 	} as unknown as CrosswalkArtifact;
@@ -277,8 +333,14 @@ test("compares code sets, published continuity and mapping cardinality between r
 		provenance: { input: "lookup.csv", inputHash: "sha256:lookup-input" },
 		validation,
 		records: [
-			{ source: { code: "NEW1", labels: [] }, targets: [{ code: "OLD", labels: [] }] },
-			{ source: { code: "NEW2", labels: [] }, targets: [{ code: "OLD", labels: [] }] },
+			{
+				source: { code: "NEW1", labels: [] },
+				targets: [{ code: "OLD", labels: [] }],
+			},
+			{
+				source: { code: "NEW2", labels: [] },
+				targets: [{ code: "OLD", labels: [] }],
+			},
 		],
 	} as unknown as CrosswalkArtifact;
 	const comparison = compareBoundaryReleases(

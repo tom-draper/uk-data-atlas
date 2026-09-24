@@ -6,12 +6,12 @@ import { testContext } from "./routeFixtures";
 
 const get = (url: string) =>
 	routeRequest("GET", url, testContext()) as {
-	status: number;
+		status: number;
 		body: {
 			data?: {
 				point?: LookupPoint;
 				targetCrs?: string;
-					target?: {
+				target?: {
 					crs: string;
 					easting: number;
 					northing: number;
@@ -67,8 +67,13 @@ test("converts a normalised WGS84 point into a requested national grid", () => {
 	assert.equal(britishGrid.status, 200);
 	assert.equal(britishGrid.body.data?.targetCrs, "EPSG:27700");
 	assert.equal(britishGrid.body.data?.target?.crs, "EPSG:27700");
-	assert.ok(Math.abs((britishGrid.body.data?.target?.easting ?? 0) - 530000) < 0.02);
-	assert.ok(Math.abs((britishGrid.body.data?.target?.northing ?? 0) - 180000) < 0.02);
+	assert.ok(
+		Math.abs((britishGrid.body.data?.target?.easting ?? 0) - 530000) < 0.02,
+	);
+	assert.ok(
+		Math.abs((britishGrid.body.data?.target?.northing ?? 0) - 180000) <
+			0.02,
+	);
 	assert.equal(
 		britishGrid.body.data?.target?.transformation.epsg,
 		"EPSG:1314",

@@ -416,7 +416,10 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "geography-health",
-		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "geography-health",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "geography-health",
 		handle: handleGeographyHealthRoutes,
 	},
 	{
@@ -437,12 +440,18 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "relationship-coverage",
-		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "relationship-coverage",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "relationship-coverage",
 		handle: handleRelationshipCoverageRoutes,
 	},
 	{
 		name: "relationship-repairs",
-		owns: (segments) => segments.length === 2 && segments[0] === "v1" && segments[1] === "relationship-repairs",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "relationship-repairs",
 		handle: handleRelationshipRepairRoutes,
 	},
 	{

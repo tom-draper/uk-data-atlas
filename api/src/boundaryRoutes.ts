@@ -201,7 +201,10 @@ export const handleBoundaryRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "boundary-releases"
 	) {
-		const release = geographyResolver.boundaryRelease(segments[2]!, segments[3]!);
+		const release = geographyResolver.boundaryRelease(
+			segments[2]!,
+			segments[3]!,
+		);
 		if (release) return { status: 200, body: envelope(releaseId, release) };
 		return areaNotFound(context, segments[2], segments[3]);
 	}

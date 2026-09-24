@@ -162,26 +162,49 @@ test("converts a measure through every step of a published path the caller names
 		"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023";
 	const context = pathContext(
 		authorityToArea([
-			["E08000001", [["H1", 0.25], ["H2", 0.75]]],
+			[
+				"E08000001",
+				[
+					["H1", 0.25],
+					["H2", 0.75],
+				],
+			],
 			["W06000001", [["H3", 1]]],
 		]),
 	);
 
 	assert.equal(
-		routeRequest("GET", `${base}&path=ward-to-health-area&crosswalk=${wardToAuthority.id}`, context).status,
+		routeRequest(
+			"GET",
+			`${base}&path=ward-to-health-area&crosswalk=${wardToAuthority.id}`,
+			context,
+		).status,
 		400,
 	);
-	assert.equal(routeRequest("GET", `${base}&path=not-published`, context).status, 404);
+	assert.equal(
+		routeRequest("GET", `${base}&path=not-published`, context).status,
+		404,
+	);
 
-	const converted = routeRequest("GET", `${base}&path=ward-to-health-area`, context);
+	const converted = routeRequest(
+		"GET",
+		`${base}&path=ward-to-health-area`,
+		context,
+	);
 	assert.equal(converted.status, 200);
 	const data = (converted.body as { data: Record<string, any> }).data;
-	assert.deepEqual(data.targetGeography, { type: "healthArea", boundaryRelease: "2025" });
+	assert.deepEqual(data.targetGeography, {
+		type: "healthArea",
+		boundaryRelease: "2025",
+	});
 	assert.equal(data.conversion.method, "area-weighted");
 	assert.equal(data.conversion.crosswalk, undefined);
 	assert.deepEqual(
 		data.conversion.path.steps.map(
-			(step: { direction: string; crosswalk: { id: string } }) => [step.crosswalk.id, step.direction],
+			(step: { direction: string; crosswalk: { id: string } }) => [
+				step.crosswalk.id,
+				step.direction,
+			],
 		),
 		[
 			["ward-to-authority", "forward"],
@@ -189,7 +212,10 @@ test("converts a measure through every step of a published path the caller names
 		],
 	);
 	assert.deepEqual(
-		data.records.map((record: { areaCode: string; value: number }) => [record.areaCode, record.value]),
+		data.records.map((record: { areaCode: string; value: number }) => [
+			record.areaCode,
+			record.value,
+		]),
 		[
 			["H1", 25],
 			["H2", 75],
@@ -206,8 +232,15 @@ test("refuses a path whose later step would drop a value", () => {
 	);
 
 	assert.equal(refused.status, 422);
-	const body = refused.body as { absence: string; areaSample: string[]; detail: string };
+	const body = refused.body as {
+		absence: string;
+		areaSample: string[];
+		detail: string;
+	};
 	assert.equal(body.absence, "source-areas-not-mapped");
 	assert.deepEqual(body.areaSample, ["W05000001"]);
-	assert.match(body.detail, /Step 2 of the path, crosswalk authority-to-area/);
+	assert.match(
+		body.detail,
+		/Step 2 of the path, crosswalk authority-to-area/,
+	);
 });
