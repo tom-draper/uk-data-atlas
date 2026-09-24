@@ -1,75 +1,75 @@
 name: CI
 
 on:
-    pull_request:
-    push:
-        branches: [main]
+  pull_request:
+  push:
+    branches: [main]
 
 permissions:
-    contents: read
+  contents: read
 
 jobs:
-    check:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version-file: .node-version
-                  cache: pnpm
-            - run: pnpm install --frozen-lockfile
-            - run: pnpm check
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
 
-    api:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version-file: .node-version
-                  cache: pnpm
-            - run: pnpm install --frozen-lockfile
-            - run: pnpm --dir api typecheck
-            # api/public is no longer committed, so the tests run against a fresh
-            # build. The build runs every compiler and the validation gate, which
-            # fails on an exception no waiver covers.
-            - run: pnpm --dir api build
-            - run: pnpm --dir api test
-            - name: The docs files the website reads match a fresh build
-              run: |
-                  changed="$(git status --porcelain -- api/public)"
-                  if [ -n "$changed" ]; then
-                    echo "$changed"
-                    echo "The website's api/public docs files are stale: run 'pnpm --dir api build' and commit them."
-                    exit 1
-                  fi
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir api typecheck
+      # api/public is no longer committed, so the tests run against a fresh
+      # build. The build runs every compiler and the validation gate, which
+      # fails on an exception no waiver covers.
+      - run: pnpm --dir api build
+      - run: pnpm --dir api test
+      - name: The docs files the website reads match a fresh build
+        run: |
+          changed="$(git status --porcelain -- api/public)"
+          if [ -n "$changed" ]; then
+            echo "$changed"
+            echo "The website's api/public docs files are stale: run 'pnpm --dir api build' and commit them."
+            exit 1
+          fi
 
-    website-build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version-file: .node-version
-                  cache: pnpm
-            - run: pnpm install --frozen-lockfile
-            - name: Build the production website
-              env:
-                  NODE_OPTIONS: --max-old-space-size=6144
-              run: pnpm build
+  website-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build the production website
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: pnpm build
 
-    website-e2e:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version-file: .node-version
-                  cache: pnpm
-            - run: pnpm install --frozen-lockfile
-            - run: pnpm exec playwright install --with-deps chromium
-            - run: pnpm test:e2e
+  website-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
