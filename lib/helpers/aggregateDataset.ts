@@ -11,6 +11,8 @@ export interface DatasetConfig<T extends BoundaryDataset, R = unknown> {
 	datasets: Record<string, T>;
 	boundaryType: BoundaryType;
 	keyBy?: "year" | "id";
+	/** Reads a precomputed aggregate when this dataset includes one. */
+	getLocationAggregate?: (dataset: T) => R | null | undefined;
 	calculateStats: (
 		aggregator: DatasetAggregator,
 		geojson: BoundaryGeojson,
@@ -43,8 +45,11 @@ const cacheObjectId = (value: object): number => {
 const dataCacheIds = new WeakMap<object, number>();
 let nextDataCacheId = 0;
 
-const cacheDatasetId = (datasetId: string, dataset: object) => {
-	const data = Reflect.get(dataset, "data");
+const cacheDatasetId = (
+	datasetId: string,
+	dataset: object,
+	data: unknown,
+) => {
 	const identity = data && typeof data === "object" ? data : dataset;
 	let id = dataCacheIds.get(identity);
 	if (id === undefined) {
@@ -63,10 +68,10 @@ export function aggregateDataset<T extends BoundaryDataset, R>(
 	if (Object.keys(config.datasets).length === 0) return null;
 	const precomputed: Record<string, R | null> = {};
 	for (const [datasetId, dataset] of Object.entries(config.datasets)) {
-		const aggregate = Reflect.get(dataset, "locationAggregate");
+		const aggregate = config.getLocationAggregate?.(dataset);
 		if (aggregate !== undefined) {
 			const key = config.keyBy === "id" ? datasetId : dataset.year;
-			precomputed[key] = aggregate as R;
+			precomputed[key] = aggregate;
 		}
 	}
 	if (Object.keys(precomputed).length === Object.keys(config.datasets).length)
@@ -83,6 +88,9 @@ export function aggregateDataset<T extends BoundaryDataset, R>(
 		cacheObjectId(boundaryData),
 		cacheObjectId(config.datasets),
 		cacheObjectId(config.calculateStats),
+		config.getLocationAggregate
+			? cacheObjectId(config.getLocationAggregate)
+			: "no-precomputed-aggregate",
 	);
 	const cache = (config.aggregateCache ??= new Map());
 	const cached = cache.get(aggregationKey);
@@ -93,12 +101,10 @@ export function aggregateDataset<T extends BoundaryDataset, R>(
 		const geojson =
 			boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 		const key = config.keyBy === "id" ? datasetId : dataset.year;
-		const precomputedAggregate = Reflect.get(
-			dataset,
-			"locationAggregate",
-		);
+		const precomputedAggregate =
+			config.getLocationAggregate?.(dataset);
 		if (precomputedAggregate !== undefined) {
-			result[key] = precomputedAggregate as R;
+			result[key] = precomputedAggregate;
 			continue;
 		}
 		if (dataset.data && geojson) {
@@ -107,7 +113,7 @@ export function aggregateDataset<T extends BoundaryDataset, R>(
 				geojson,
 				dataset.data,
 				location,
-				cacheDatasetId(datasetId, dataset),
+				cacheDatasetId(datasetId, dataset, dataset.data),
 				dataset,
 			);
 		} else {
