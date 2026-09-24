@@ -88,6 +88,33 @@ type Spec = {
 	components?: Record<string, Record<string, Schema>>;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+function schemaArray(value: unknown): Schema[] {
+	if (!Array.isArray(value)) return [];
+	return value.map((item) => {
+		if (!isRecord(item)) throw new Error("Invalid OpenAPI schema array");
+		return item;
+	});
+}
+
+function schemaRecord(value: unknown): Schema | undefined {
+	return isRecord(value) ? value : undefined;
+}
+
+function schemaRecordMap(value: unknown): Record<string, Schema> {
+	if (value === undefined) return {};
+	if (!isRecord(value)) throw new Error("Invalid OpenAPI schema map");
+	return Object.fromEntries(
+		Object.entries(value).map(([key, schema]) => {
+			if (!isRecord(schema))
+				throw new Error(`Invalid OpenAPI schema at ${key}`);
+			return [key, schema];
+		}),
+	);
+}
+
 const METHODS: HttpMethod[] = ["get", "head", "post", "put", "patch", "delete"];
 
 export function slugify(value: string): string {
@@ -119,10 +146,13 @@ function resolveRef(spec: Spec, ref: string): Schema {
 	const parts = ref.replace(/^#\//, "").split("/");
 	let node: unknown = spec;
 	for (const part of parts) {
-		node = (node as Record<string, unknown> | undefined)?.[part];
+		if (!isRecord(node)) {
+			throw new Error(`Invalid $ref path ${ref}`);
+		}
+		node = node[part];
 	}
-	if (node == null) throw new Error(`Unresolved $ref ${ref}`);
-	return node as Schema;
+	if (!isRecord(node)) throw new Error(`Unresolved $ref ${ref}`);
+	return node;
 }
 
 function deref(spec: Spec, schema: Schema): Schema {
@@ -142,22 +172,24 @@ function literal(value: unknown): string {
 function typeLabel(spec: Spec, schema: Schema): string {
 	if (typeof schema.$ref === "string") return refName(schema.$ref);
 	if ("const" in schema) return literal(schema.const);
-	const variants = (schema.oneOf ?? schema.anyOf) as Schema[] | undefined;
+	const variantValue = schema.oneOf ?? schema.anyOf;
+	const variants = Array.isArray(variantValue)
+		? schemaArray(variantValue)
+		: undefined;
 	if (variants) {
 		return [...new Set(variants.map((v) => typeLabel(spec, v)))].join(
 			" | ",
 		);
 	}
+	const allOf = schemaArray(schema.allOf);
 	if (Array.isArray(schema.allOf)) {
-		const named = (schema.allOf as Schema[]).find(
-			(part) => typeof part.$ref === "string",
-		);
+		const named = allOf.find((part) => typeof part.$ref === "string");
 		return named ? typeLabel(spec, named) : "object";
 	}
 	const type = schema.type;
 	if (Array.isArray(type)) return type.join(" | ");
 	if (type === "array") {
-		const items = schema.items as Schema | undefined;
+		const items = schemaRecord(schema.items);
 		return `${items ? typeLabel(spec, items) : "any"}[]`;
 	}
 	if (typeof type === "string") return type;
@@ -170,7 +202,8 @@ function enumValues(spec: Spec, schema: Schema): string[] {
 	const resolved = deref(spec, schema);
 	if (Array.isArray(resolved.enum)) return resolved.enum.map(literal);
 	if (resolved.type === "array" && resolved.items) {
-		return enumValues(spec, resolved.items as Schema);
+		const items = schemaRecord(resolved.items);
+		return items ? enumValues(spec, items) : [];
 	}
 	return [];
 }
@@ -183,16 +216,20 @@ function objectShape(
 	const resolved = deref(spec, schema);
 	const properties: Record<string, Schema> = {};
 	const required = new Set<string>();
-	for (const part of [
-		resolved,
-		...((resolved.allOf as Schema[] | undefined) ?? []),
-	]) {
+	const allOf = schemaArray(resolved.allOf);
+	for (const part of [resolved, ...allOf]) {
 		const shape =
 			part === resolved
 				? {
-						properties:
-							(part.properties as Record<string, Schema>) ?? {},
-						required: new Set((part.required as string[]) ?? []),
+						properties: schemaRecordMap(part.properties),
+						required: new Set(
+							Array.isArray(part.required)
+								? part.required.filter(
+										(item): item is string =>
+											typeof item === "string",
+									)
+								: [],
+						),
 					}
 				: objectShape(spec, part);
 		Object.assign(properties, shape.properties);
@@ -205,9 +242,12 @@ function objectShape(
 function nestedObject(spec: Spec, schema: Schema): Schema | null {
 	const resolved = deref(spec, schema);
 	if (resolved.type === "array" && resolved.items) {
-		return nestedObject(spec, resolved.items as Schema);
+		const items = schemaRecord(resolved.items);
+		return items ? nestedObject(spec, items) : null;
 	}
-	return resolved.properties || resolved.allOf ? schema : null;
+	return isRecord(resolved.properties) || schemaArray(resolved.allOf).length
+		? schema
+		: null;
 }
 
 export function schemaFields(
@@ -252,11 +292,15 @@ function parameterType(spec: Spec, schema: Schema | undefined): string {
 
 function readParameter(spec: Spec, raw: Schema): DocsParameter {
 	const parameter = deref(spec, raw);
-	const schema = parameter.schema as Schema | undefined;
+	const schema = schemaRecord(parameter.schema);
 	const resolved = schema ? deref(spec, schema) : undefined;
+	const location = parameter.in;
+	if (location !== "path" && location !== "query" && location !== "header") {
+		throw new Error(`Invalid parameter location: ${String(location)}`);
+	}
 	return {
 		name: String(parameter.name),
-		location: parameter.in as DocsParameter["location"],
+		location,
 		required: parameter.required === true,
 		type: parameterType(spec, schema),
 		description: asText(parameter.description),
@@ -270,11 +314,11 @@ function readParameter(spec: Spec, raw: Schema): DocsParameter {
 
 function readResponse(spec: Spec, status: string, raw: Schema): DocsResponse {
 	const response = deref(spec, raw);
-	const content = (response.content ?? {}) as Record<string, Schema>;
+	const content = schemaRecordMap(response.content);
 	const media = Object.values(content);
-	const schema = media.find((m) => m.schema)?.schema as Schema | undefined;
+	const schema = schemaRecord(media.find((m) => m.schema)?.schema);
 	const exampleMedia = media.find((m) => m.example !== undefined);
-	const headers = (response.headers ?? {}) as Record<string, Schema>;
+	const headers = schemaRecordMap(response.headers);
 
 	return {
 		status,
@@ -310,17 +354,21 @@ export function buildContract(spec: Spec): ApiContract {
 	const sectionByName = new Map(sections.map((s) => [s.name, s]));
 
 	for (const [route, item] of Object.entries(spec.paths)) {
-		const shared = (item.parameters as unknown as Schema[]) ?? [];
+		const shared = schemaArray(item.parameters);
 		for (const method of METHODS) {
 			const op = item[method];
 			if (!op) continue;
 			const id = String(op.operationId);
-			const tag = (op.tags as string[] | undefined)?.[0];
+			const tag = Array.isArray(op.tags)
+				? op.tags.find(
+						(value): value is string => typeof value === "string",
+					)
+				: undefined;
 			const section = tag ? sectionByName.get(tag) : undefined;
 			if (!section) {
 				throw new Error(`${id} has no tag declared in the spec`);
 			}
-			const responses = (op.responses ?? {}) as Record<string, Schema>;
+			const responses = schemaRecordMap(op.responses);
 			section.operations.push({
 				id,
 				slug: operationSlug(id),
@@ -329,10 +377,9 @@ export function buildContract(spec: Spec): ApiContract {
 				summary: asText(op.summary),
 				description: asText(op.description),
 				sectionSlug: section.slug,
-				parameters: [
-					...shared,
-					...((op.parameters as Schema[]) ?? []),
-				].map((p) => readParameter(spec, p)),
+				parameters: [...shared, ...schemaArray(op.parameters)].map(
+					(p) => readParameter(spec, p),
+				),
 				responses: Object.entries(responses).map(([status, r]) =>
 					readResponse(spec, status, r),
 				),
@@ -340,9 +387,8 @@ export function buildContract(spec: Spec): ApiContract {
 		}
 	}
 
-	const problem = spec.components?.schemas?.Problem as Schema | undefined;
-	const code = (problem?.properties as Record<string, Schema> | undefined)
-		?.code;
+	const problem = schemaRecord(spec.components?.schemas?.Problem);
+	const code = schemaRecordMap(problem?.properties).code;
 
 	return {
 		title: spec.info.title,
