@@ -144,7 +144,8 @@ async function readConfig() {
 async function hasLocalSources() {
 	try {
 		return (await readdir(DATA)).some(
-			(name) => name !== ".source-release.json",
+			(name) =>
+				name !== ".source-release.json" && name !== ".DS_Store",
 		);
 	} catch (error) {
 		if (error?.code === "ENOENT") return false;

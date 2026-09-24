@@ -19,7 +19,7 @@ export async function loadSchoolPerformanceConstituency(
 ): Promise<Record<string, SchoolPerformanceConstituencyDataset>> {
 	const { data } = await parseCsv<Record<string, string>>(
 		await read(
-			"education/ks4-performance/constituency/202425_parliamentary_constituency_revised.csv",
+			"education/ks4-performance/ks4-constituency/202425_parliamentary_constituency_revised.csv",
 		),
 		{ header: true },
 	);
