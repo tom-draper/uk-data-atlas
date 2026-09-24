@@ -7,6 +7,28 @@ export type LsoaLadMapping = {
 	lsoaToLad: Record<string, string>;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isStringRecord = (value: unknown): value is Record<string, string> =>
+	isRecord(value) &&
+	Object.values(value).every((code) => typeof code === "string");
+
+const parseLsoaLadMapping = (value: unknown, year: number): LsoaLadMapping => {
+	if (
+		!isRecord(value) ||
+		value.version !== 1 ||
+		value.year !== year ||
+		!isStringRecord(value.lsoaToLad)
+	)
+		throw new Error(`Invalid LSOA/LAD mapping for ${year}`);
+	return {
+		version: 1,
+		year,
+		lsoaToLad: value.lsoaToLad,
+	};
+};
+
 const pending = new Map<number, Promise<Record<string, string>>>();
 
 const lsoaLadMappingUrl = (year: number) =>
@@ -30,10 +52,7 @@ export const fetchLsoaToLad = (
 					`Failed to fetch LSOA/LAD mappings: ${response.status} ${response.statusText}`,
 				);
 			}
-			const mapping = (await response.json()) as LsoaLadMapping;
-			if (mapping.year !== year || !mapping.lsoaToLad) {
-				throw new Error(`Invalid LSOA/LAD mapping for ${year}`);
-			}
+			const mapping = parseLsoaLadMapping(await response.json(), year);
 			return mapping.lsoaToLad;
 		})
 		.catch((error) => {

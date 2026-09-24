@@ -5,6 +5,7 @@ import {
 	buildConstituencyWardMappings,
 	buildCrossYearMappings,
 	extractWardLadMappings,
+	parsePrecompiledBoundaryMappings,
 	type CodeMapping,
 	type CodeType,
 	type PrecompiledBoundaryMappings,
@@ -69,7 +70,7 @@ export const seedBoundaryMappings = (
 					`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
 				);
 			applyBoundaryMappings(
-				(await response.json()) as PrecompiledBoundaryMappings,
+				parsePrecompiledBoundaryMappings(await response.json()),
 				target,
 			);
 			return true;

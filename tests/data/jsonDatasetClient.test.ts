@@ -4,6 +4,17 @@ import {
 	loadJsonDatasetSlice,
 } from "@/lib/data/jsonDatasetClient";
 
+const parseDataset = (value: unknown) => {
+	if (
+		typeof value !== "object" ||
+		value === null ||
+		!("value" in value) ||
+		typeof value.value !== "number"
+	)
+		throw new Error("Invalid test dataset record");
+	return { value: value.value };
+};
+
 describe("json dataset client", () => {
 	afterEach(() => vi.restoreAllMocks());
 
@@ -44,6 +55,7 @@ describe("json dataset client", () => {
 				],
 				"json-client-test-slice",
 				new AbortController().signal,
+				parseDataset,
 			),
 		).resolves.toEqual({
 			datasets: { good: { E1: { value: 4 } } },
@@ -108,6 +120,7 @@ describe("json dataset client", () => {
 			],
 			"json-client-priority-test-slice",
 			new AbortController().signal,
+			parseDataset,
 		);
 		expect(started.slice(0, 3)).toEqual([
 			"/active.json",

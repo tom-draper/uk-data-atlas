@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import {
 	loadJsonDataset,
 	loadJsonDatasetSlice,
+	parseJsonDatasetRecord,
+	type JsonDatasetParser,
 	type JsonDatasetRequest,
 } from "../data/jsonDatasetClient";
 
@@ -11,6 +13,7 @@ export type { JsonDatasetRequest } from "../data/jsonDatasetClient";
 
 export function useJsonDatasetLoaders<T>(
 	requests: readonly JsonDatasetRequest[],
+	parseDataset: JsonDatasetParser<T>,
 ) {
 	const [datasets, setDatasets] = useState<Record<string, Record<string, T>>>(
 		{},
@@ -34,7 +37,12 @@ export function useJsonDatasetLoaders<T>(
 			return;
 		}
 		setLoading(true);
-		loadJsonDatasetSlice<T>(requests, requestKey, controller.signal).then(
+		loadJsonDatasetSlice<T>(
+			requests,
+			requestKey,
+			controller.signal,
+			parseDataset,
+		).then(
 			(slice) => {
 				if (controller.signal.aborted) return;
 				setDatasets(slice.datasets);
@@ -43,24 +51,12 @@ export function useJsonDatasetLoaders<T>(
 			},
 		);
 		return () => controller.abort();
-	}, [requestKey]);
+	}, [requestKey, parseDataset]);
 
 	return { datasets, loading, errors };
 }
 
-export type JsonDatasetParser<T> = (value: unknown) => T;
-
-const parseDatasetRecord = <T>(
-	value: unknown,
-	parseDataset: JsonDatasetParser<T>,
-): Record<string, T> => {
-	if (typeof value !== "object" || value === null || Array.isArray(value))
-		throw new Error("Expected a JSON object containing datasets.");
-
-	return Object.fromEntries(
-		Object.entries(value).map(([id, dataset]) => [id, parseDataset(dataset)]),
-	);
-};
+export type { JsonDatasetParser } from "../data/jsonDatasetClient";
 
 export function useJsonDataLoader<T>(
 	url: string,
@@ -89,7 +85,7 @@ export function useJsonDataLoader<T>(
 		loadJsonDataset(url, controller.signal)
 			.then((data) => {
 				if (!active) return;
-				const parsedDatasets = parseDatasetRecord(data, parseDataset);
+				const parsedDatasets = parseJsonDatasetRecord(data, parseDataset);
 				loadedUrl.current = url;
 				setDatasets(parsedDatasets);
 				setLoading(false);

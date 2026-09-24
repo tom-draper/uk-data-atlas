@@ -1,4 +1,4 @@
-import type { BoundaryData, BoundaryGeojson } from "@/lib/types";
+import type { BoundaryData } from "@/lib/types";
 import type { BoundaryType } from "./catalog";
 import type { BoundaryGroupLoad } from "./propertyLoader";
 
@@ -22,11 +22,8 @@ export const mergeBoundaryGroups = (
 	previous: BoundaryData,
 	groups: readonly BoundaryGroupResult[],
 ): BoundaryData => {
-	const fetched = Object.fromEntries(
-		groups.map(([type, { data }]) => [
-			type,
-			{ ...previous[type], ...(data as Record<number, BoundaryGeojson>) },
-		]),
-	) as Partial<BoundaryData>;
+	const fetched: Partial<BoundaryData> = {};
+	for (const [type, { data }] of groups)
+		fetched[type] = { ...previous[type], ...data };
 	return { ...previous, ...fetched };
 };

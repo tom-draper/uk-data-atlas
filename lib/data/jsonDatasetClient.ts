@@ -28,12 +28,45 @@ export type CachedDatasetSlice<T> = {
 	errors: string[];
 };
 
+export type JsonDatasetParser<T> = (
+	value: unknown,
+	datasetGroup?: string,
+) => T;
+
+export const parseJsonDatasetRecord = <T>(
+	value: unknown,
+	parseDataset: JsonDatasetParser<T>,
+	datasetGroup?: string,
+): Record<string, T> => {
+	if (typeof value !== "object" || value === null || Array.isArray(value))
+		throw new Error("Expected a JSON object containing datasets.");
+
+	return Object.fromEntries(
+		Object.entries(value).map(([id, dataset]) => [
+			id,
+			parseDataset(dataset, datasetGroup),
+		]),
+	);
+};
+
 let worker: Worker | null = null;
 let nextId = 0;
 const pending = new Map<number, PendingRequest>();
 const SLICE_CACHE_LIMIT = 3;
 const MAX_CONCURRENT_DATASET_REQUESTS = 4;
 const completedSlices = new Map<string, CachedDatasetSlice<unknown>>();
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isWorkerResponse = (value: unknown): value is WorkerRes =>
+	isRecord(value) &&
+	typeof value.id === "number" &&
+	Number.isSafeInteger(value.id) &&
+	value.id >= 0 &&
+	(value.error === undefined
+		? "data" in value
+		: typeof value.error === "string" && !("data" in value));
 
 const abortError = () => new DOMException("Request cancelled", "AbortError");
 
@@ -44,7 +77,7 @@ const removeAbortListener = (entry: PendingRequest) => {
 
 const rememberSlice = <T>(key: string, slice: CachedDatasetSlice<T>) => {
 	completedSlices.delete(key);
-	completedSlices.set(key, slice as CachedDatasetSlice<unknown>);
+	completedSlices.set(key, slice);
 	if (completedSlices.size > SLICE_CACHE_LIMIT) {
 		const oldest = completedSlices.keys().next().value;
 		if (oldest !== undefined) completedSlices.delete(oldest);
@@ -62,13 +95,24 @@ function getWorker(): Worker | null {
 		} catch {
 			return null;
 		}
-		worker.onmessage = (event: MessageEvent<WorkerRes>) => {
+		worker.onmessage = (event: MessageEvent<unknown>) => {
+			if (!isWorkerResponse(event.data)) {
+				const error = new Error("Data worker returned an invalid response");
+				for (const callbacks of pending.values()) {
+					removeAbortListener(callbacks);
+					callbacks.reject(error);
+				}
+				pending.clear();
+				worker?.terminate();
+				worker = null;
+				return;
+			}
 			const { id, data, error } = event.data;
 			const callbacks = pending.get(id);
 			if (!callbacks) return;
 			pending.delete(id);
 			removeAbortListener(callbacks);
-			if (error) callbacks.reject(new Error(error));
+			if (error !== undefined) callbacks.reject(new Error(error));
 			else callbacks.resolve(data);
 		};
 		worker.onerror = (event) => {
@@ -143,13 +187,21 @@ export async function loadJsonDatasetSlice<T>(
 	requests: readonly JsonDatasetRequest[],
 	requestKey: string,
 	signal: AbortSignal,
+	parseDataset: JsonDatasetParser<T>,
 ): Promise<CachedDatasetSlice<T>> {
-	const cached = completedSlices.get(requestKey) as
-		CachedDatasetSlice<T> | undefined;
+	const cached = completedSlices.get(requestKey);
 	if (cached) {
 		completedSlices.delete(requestKey);
-		completedSlices.set(requestKey, cached as CachedDatasetSlice<unknown>);
-		return cached;
+		completedSlices.set(requestKey, cached);
+		return {
+			datasets: Object.fromEntries(
+				Object.entries(cached.datasets).map(([group, records]) => [
+					group,
+					parseJsonDatasetRecord(records, parseDataset, group),
+				]),
+			),
+			errors: cached.errors,
+		};
 	}
 
 	const pendingRequests = requests
@@ -172,12 +224,16 @@ export async function loadJsonDatasetSlice<T>(
 					status: "fulfilled",
 					value: {
 						key: request.key,
-						data: (await fetchViaWorker(
-							request.url,
-							request.filter,
-							request.chunkUrls,
-							signal,
-						)) as Record<string, T>,
+						data: parseJsonDatasetRecord(
+							await fetchViaWorker(
+								request.url,
+								request.filter,
+								request.chunkUrls,
+								signal,
+							),
+							parseDataset,
+							request.key,
+						),
 					},
 				};
 			} catch (reason) {

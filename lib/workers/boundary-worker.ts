@@ -2,10 +2,11 @@ import { decodeBoundaryData } from "../data/boundaries/decode";
 import { filterFeatures } from "../data/boundaries/filter";
 import {
 	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
 	type BoundaryType,
 } from "../data/boundaries/catalog";
 import type { Crosswalk } from "../data/gazetteer/types";
-import type { PrecompiledBoundaryMappings } from "../data/boundaries/mappings";
+import { parsePrecompiledBoundaryMappings } from "../data/boundaries/mappings";
 import {
 	fetchLsoaToLad,
 	lsoaYearForBoundaryAsset,
@@ -22,6 +23,53 @@ interface Request {
 		relations?: { constituencyLadOverlaps?: Crosswalk };
 	};
 }
+
+const BOUNDARY_TYPE_SET = new Set<string>(BOUNDARY_TYPES);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isCrosswalk = (value: unknown): value is Crosswalk =>
+	isRecord(value) &&
+	Object.values(value).every(
+		(targets) =>
+			Array.isArray(targets) &&
+			targets.every(
+				(target) =>
+					isRecord(target) &&
+					typeof target.code === "string" &&
+					typeof target.weight === "number",
+			),
+	);
+
+const isWorkerRequest = (value: unknown): value is Request => {
+	if (
+		!isRecord(value) ||
+		typeof value.id !== "number" ||
+		!Number.isSafeInteger(value.id) ||
+		value.id < 0 ||
+		typeof value.url !== "string"
+	)
+		return false;
+	if (value.filter === undefined) return true;
+	if (!isRecord(value.filter)) return false;
+	const filter = value.filter;
+	if (
+		(filter.type !== undefined &&
+			(typeof filter.type !== "string" ||
+				!BOUNDARY_TYPE_SET.has(filter.type))) ||
+		(filter.location !== undefined &&
+			filter.location !== null &&
+			typeof filter.location !== "string")
+	)
+		return false;
+	if (filter.relations === undefined) return true;
+	return (
+		isRecord(filter.relations) &&
+		(filter.relations.constituencyLadOverlaps === undefined ||
+			isCrosswalk(filter.relations.constituencyLadOverlaps))
+	);
+};
 
 interface Response {
 	id: number;
@@ -51,8 +99,9 @@ const fetchWardToLad = (): Promise<Record<string, string>> => {
 					`Failed to fetch ward/LAD mappings: ${response.status} ${response.statusText}`,
 				);
 			}
-			const mappings =
-				(await response.json()) as PrecompiledBoundaryMappings;
+			const mappings = parsePrecompiledBoundaryMappings(
+				await response.json(),
+			);
 			return mappings.wardToLad;
 		})
 		.then((mappings) => {
@@ -80,7 +129,8 @@ const wardReleaseNeedsLadMapping = (
 			),
 	);
 
-self.addEventListener("message", async (event: MessageEvent<Request>) => {
+self.addEventListener("message", async (event: MessageEvent<unknown>) => {
+	if (!isWorkerRequest(event.data)) return;
 	const { id, url, filter } = event.data;
 	try {
 		const response = await fetch(url);

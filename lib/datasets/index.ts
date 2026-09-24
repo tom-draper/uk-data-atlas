@@ -12,6 +12,7 @@ export type {
 	ChartPresentationRegistry,
 } from "./types";
 export type { ChartDatasetType } from "./generated";
+export type { ChartDataset } from "./generated";
 
 /** Public dataset identifiers are kebab-case, independently of TypeScript keys. */
 export function datasetSlug(datasetType: string) {
@@ -31,6 +32,27 @@ export function getChartDatasetTypeForSlug(
 export function getChartDatasetDefinition(type: string) {
 	return CHART_DATASET_DEFINITIONS.find(
 		(definition) => definition.type === type,
+	);
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** Validate the shared outer contract emitted by every compiled chart dataset. */
+export function isChartDatasetPayload(
+	value: unknown,
+	expectedType?: string,
+): value is ChartDataset {
+	if (!isRecord(value) || typeof value.type !== "string") return false;
+	if (expectedType !== undefined && value.type !== expectedType) return false;
+	const definition = getChartDatasetDefinition(value.type);
+	return (
+		definition !== undefined &&
+		typeof value.id === "string" &&
+		typeof value.year === "number" &&
+		typeof value.boundaryYear === "number" &&
+		value.boundaryType === definition.boundaryType &&
+		isRecord(value.data)
 	);
 }
 

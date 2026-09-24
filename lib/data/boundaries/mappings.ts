@@ -24,6 +24,55 @@ export interface PrecompiledBoundaryMappings {
 	constituencyToWards: Record<number, Record<string, string[]>>;
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isStringRecord = (value: unknown): value is Record<string, string> =>
+	isRecord(value) &&
+	Object.values(value).every((entry) => typeof entry === "string");
+
+const isStringArrayRecord = (value: unknown): value is Record<string, string[]> =>
+	isRecord(value) &&
+	Object.values(value).every(
+		(entry) =>
+			Array.isArray(entry) &&
+			entry.every((item) => typeof item === "string"),
+	);
+
+const isYearStringArrayRecord = (
+	value: unknown,
+): value is Record<number, Record<string, string[]>> =>
+	isRecord(value) &&
+	Object.entries(value).every(
+		([year, records]) =>
+			Number.isInteger(Number(year)) && isStringArrayRecord(records),
+	);
+
+const isCodeMapping = (value: unknown): value is CodeMapping =>
+	isRecord(value) &&
+	Object.values(value).every((years) => isStringRecord(years));
+
+const isPrecompiledBoundaryMappings = (
+	value: unknown,
+): value is PrecompiledBoundaryMappings =>
+	isRecord(value) &&
+	value.version === 1 &&
+	isStringRecord(value.wardToLad) &&
+	isYearStringArrayRecord(value.ladToWards) &&
+	isRecord(value.codeMappings) &&
+	isCodeMapping(value.codeMappings.ward) &&
+	isCodeMapping(value.codeMappings.localAuthority) &&
+	isCodeMapping(value.codeMappings.constituency) &&
+	isYearStringArrayRecord(value.constituencyToWards);
+
+export const parsePrecompiledBoundaryMappings = (
+	value: unknown,
+): PrecompiledBoundaryMappings => {
+	if (!isPrecompiledBoundaryMappings(value))
+		throw new Error("Invalid precompiled boundary mappings.");
+	return value;
+};
+
 export const extractWardLadMappings = (
 	features: Features,
 	wardCodeKeys: readonly string[],
