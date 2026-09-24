@@ -1,39 +1,97 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import type { CrosswalkInventory, PropertyCrosswalkArtifact } from "../src/crosswalkInventory";
+import type {
+	CrosswalkInventory,
+	PropertyCrosswalkArtifact,
+} from "../src/crosswalkInventory";
 import { createGeographyResolver } from "../src/geographyResolver";
-import { compileRelationshipPaths, createRelationshipPathIndex } from "../src/relationshipPaths";
-import { route, registry, geographyInventory, areaLookup, containmentCrosswalk, crosswalkInventory, crosswalkLookup } from "./routeFixtures";
+import {
+	compileRelationshipPaths,
+	createRelationshipPathIndex,
+} from "../src/relationshipPaths";
+import {
+	route,
+	registry,
+	geographyInventory,
+	areaLookup,
+	containmentCrosswalk,
+	crosswalkInventory,
+	crosswalkLookup,
+} from "./routeFixtures";
 
 test("summarises relationship gaps across compiled releases", () => {
-	const response = route("GET", "/v1/geography-health", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup);
+	const response = route(
+		"GET",
+		"/v1/geography-health",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: any }).data;
 	assert.deepEqual(data.summary, { partial: 1, available: 1 });
-	assert.equal(data.releases.find((release: any) => release.geography === "ward").gapCount, 1);
+	assert.equal(
+		data.releases.find((release: any) => release.geography === "ward")
+			.gapCount,
+		1,
+	);
 });
 
 test("keeps identity coverage visible when relationship artifacts are not built", () => {
 	const health = createGeographyResolver({ areaLookup }).geographyHealth();
-	assert.deepEqual(health.find((release) => release.geography === "ward"), {
-		geography: "ward", boundaryRelease: "2025-01-en-ward", status: "not-built",
-		areaCount: 2, relatedAreaCount: 0, gapCount: 2, countries: [],
-		reach: { status: "isolated", reaches: [], reachedFrom: [], vintagePathCount: 0 },
-	});
+	assert.deepEqual(
+		health.find((release) => release.geography === "ward"),
+		{
+			geography: "ward",
+			boundaryRelease: "2025-01-en-ward",
+			status: "not-built",
+			areaCount: 2,
+			relatedAreaCount: 0,
+			gapCount: 2,
+			countries: [],
+			reach: {
+				status: "isolated",
+				reaches: [],
+				reachedFrom: [],
+				vintagePathCount: 0,
+			},
+		},
+	);
 });
 
 test("filters the repair dashboard to one geography", () => {
-	const response = route("GET", "/v1/geography-health?geography=ward", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup);
+	const response = route(
+		"GET",
+		"/v1/geography-health?geography=ward",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.releases.length, 1);
 	assert.equal(data.filters.geography, "ward");
 	assert.equal(data.priorities[0].geography, "ward");
-	assert.equal(data.priorities[0].href, "/v1/relationship-coverage?geography=ward&release=2025-01-en-ward");
+	assert.equal(
+		data.priorities[0].href,
+		"/v1/relationship-coverage?geography=ward&release=2025-01-en-ward",
+	);
 });
 
 test("filters release health by boundary country coverage", () => {
-	const response = route("GET", "/v1/geography-health?country=GB-SCT", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup);
+	const response = route(
+		"GET",
+		"/v1/geography-health?country=GB-SCT",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
 	const data = (response.body as { data: any }).data;
 	assert.deepEqual(data.releases, []);
 	assert.equal(data.filters.country, "GB-SCT");
@@ -71,7 +129,9 @@ test("separates having relationships from being able to carry data", () => {
 			boundaryRelease: "2024-07-uk-bgc",
 			codeProperty: "PCON24CD",
 			nameProperty: "PCON24NM",
-			areas: [{ code: "E14000001", name: "A seat no crosswalk mentions" }],
+			areas: [
+				{ code: "E14000001", name: "A seat no crosswalk mentions" },
+			],
 		},
 	]);
 	// One crosswalk leaves the ward release for another geography; the other
@@ -103,7 +163,9 @@ test("separates having relationships from being able to carry data", () => {
 	const health = createGeographyResolver({
 		areaLookup: lookup,
 		crosswalkInventory: inventory,
-		crosswalkLookup: new Map(artifacts.map((artifact) => [artifact.id, artifact])),
+		crosswalkLookup: new Map(
+			artifacts.map((artifact) => [artifact.id, artifact]),
+		),
 		relationshipPathIndex: createRelationshipPathIndex(
 			compileRelationshipPaths(inventory),
 		),
@@ -137,15 +199,35 @@ test("separates having relationships from being able to carry data", () => {
 test("ranks and filters by what a release can convert onto", () => {
 	// No path inventory is built here, so nothing converts anywhere and the
 	// whole dashboard is isolated.
-	const response = route("GET", "/v1/geography-health?reach=isolated", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup);
+	const response = route(
+		"GET",
+		"/v1/geography-health?reach=isolated",
+		registry,
+		geographyInventory,
+		areaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+	);
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.releases.length, 2);
-	assert.ok(data.releases.every((release: any) => release.reach.status === "isolated"));
+	assert.ok(
+		data.releases.every(
+			(release: any) => release.reach.status === "isolated",
+		),
+	);
 	assert.equal(data.reachSummary.isolated, 2);
 	assert.equal(data.filters.reach, "isolated");
 	assert.equal(
-		route("GET", "/v1/geography-health?reach=nowhere", registry, geographyInventory, areaLookup, crosswalkInventory, crosswalkLookup).status,
+		route(
+			"GET",
+			"/v1/geography-health?reach=nowhere",
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+		).status,
 		400,
 	);
 });

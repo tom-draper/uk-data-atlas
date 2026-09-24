@@ -126,7 +126,11 @@ test("names changed resource fields without claiming observation-record changes"
 		schemaVersion: 1,
 		releaseId: "sha256:before",
 		artifacts: [
-			{ id: "data-catalog", path: "data-catalog.json", contentHash: "sha256:a" },
+			{
+				id: "data-catalog",
+				path: "data-catalog.json",
+				contentHash: "sha256:a",
+			},
 		],
 		resources: { datasets: { jobs: "sha256:one" } },
 	};
@@ -134,7 +138,11 @@ test("names changed resource fields without claiming observation-record changes"
 		...before,
 		releaseId: "sha256:after",
 		artifacts: [
-			{ id: "data-catalog", path: "data-catalog.json", contentHash: "sha256:b" },
+			{
+				id: "data-catalog",
+				path: "data-catalog.json",
+				contentHash: "sha256:b",
+			},
 		],
 		resources: { datasets: { jobs: "sha256:two" } },
 	};
@@ -201,11 +209,15 @@ test("says when a retained artifact cannot support a field-level comparison", ()
 	const after = release("sha256:after", "sha256:two");
 	const comparison = compareAtlasReleases(before, after);
 	assert.deepEqual(
-		semanticReleaseChanges(before, after, comparison.resources, () => undefined),
+		semanticReleaseChanges(
+			before,
+			after,
+			comparison.resources,
+			() => undefined,
+		),
 		{
 			status: "unavailable",
-			reason:
-				"The retained data-catalog artifact is unavailable for one or both releases, so datasets cannot be compared by field.",
+			reason: "The retained data-catalog artifact is unavailable for one or both releases, so datasets cannot be compared by field.",
 		},
 	);
 });

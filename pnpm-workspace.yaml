@@ -1,11 +1,11 @@
 packages:
-  - api
+    - api
 minimumReleaseAge: 10080
 trustPolicy: no-downgrade
 overrides:
-  nanoid: ^3.3.18
-  postcss: ^8.5.23
-  vite: ^8.0.16
+    nanoid: ^3.3.18
+    postcss: ^8.5.23
+    vite: ^8.0.16
 allowBuilds:
-  esbuild: true
-  sharp: true
+    esbuild: true
+    sharp: true

@@ -109,7 +109,9 @@ export const convertThroughSteps = (
 				const { targets } = translated;
 				if (targets.length !== 1) {
 					split = true;
-					if (targets.some((target) => weightOf(target) === undefined)) {
+					if (
+						targets.some((target) => weightOf(target) === undefined)
+					) {
 						unweighted.add(source);
 						continue;
 					}
@@ -117,7 +119,8 @@ export const convertThroughSteps = (
 				for (const target of targets)
 					next.set(
 						target.code,
-						(next.get(target.code) ?? 0) + share * (weightOf(target) ?? 1),
+						(next.get(target.code) ?? 0) +
+							share * (weightOf(target) ?? 1),
 					);
 			}
 			return next;
@@ -152,7 +155,8 @@ export const convertThroughSteps = (
 		const record = records[recordIndex]!;
 		for (const [code, weight] of distribution) {
 			const running = totals.get(code) ?? { value: 0, inputAreaCount: 0 };
-			running.value += method === "exact" ? record.value : record.value * weight;
+			running.value +=
+				method === "exact" ? record.value : record.value * weight;
 			running.inputAreaCount += 1;
 			totals.set(code, running);
 		}

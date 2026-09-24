@@ -1,4 +1,7 @@
-import { refused, resolveObservations } from "./observationResolution/observationPlan";
+import {
+	refused,
+	resolveObservations,
+} from "./observationResolution/observationPlan";
 import type { AggregationTarget } from "./aggregationTarget";
 import { resolveAggregationTarget } from "./aggregationTarget";
 import type { CompatibilityCandidate } from "./measureCompatibility";

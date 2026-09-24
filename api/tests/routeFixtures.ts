@@ -99,8 +99,8 @@ export const route = (
 			namedLocationLookup,
 			relationshipPathInventory,
 			dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
+			populationObservations,
+			populationLocalAuthorityObservations,
 			measureCompatibilityInventory,
 			measureObservations,
 			exportManifest,
@@ -150,7 +150,8 @@ export const testContext = (
 			inputs.geographyResolver ??
 			resolverFor({
 				...withRegistry,
-				areaGeometryCache: inputs.areaGeometryCache ?? areaGeometryCache,
+				areaGeometryCache:
+					inputs.areaGeometryCache ?? areaGeometryCache,
 			}),
 	};
 };
@@ -769,11 +770,11 @@ export const routeWithCatalog = (
 			dataCatalog: catalog,
 			populationObservations,
 			populationLocalAuthorityObservations,
-		measureCompatibilityInventory:
-			overrides.measureCompatibilityInventory ??
-			measureCompatibilityInventory,
-		analysisGeographyInventory: overrides.analysisGeographyInventory,
-		measureObservations: observations,
+			measureCompatibilityInventory:
+				overrides.measureCompatibilityInventory ??
+				measureCompatibilityInventory,
+			analysisGeographyInventory: overrides.analysisGeographyInventory,
+			measureObservations: observations,
 			exportManifest: overrides.exportManifest,
 			relationshipPathInventory: overrides.relationshipPathInventory,
 		}),

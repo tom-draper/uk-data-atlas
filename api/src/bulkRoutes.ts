@@ -167,10 +167,16 @@ export const handleBulkRoutes = ({
 			);
 		const table = (() => {
 			if (entry.kind === "area-identities") {
-				const release = context.geographyResolver.areaIdentityReleaseForArtifact(entry.source.artifact);
+				const release =
+					context.geographyResolver.areaIdentityReleaseForArtifact(
+						entry.source.artifact,
+					);
 				const areas =
 					release &&
-					context.geographyResolver.releaseAreas(release.geography, release.id);
+					context.geographyResolver.releaseAreas(
+						release.geography,
+						release.id,
+					);
 				return release && areas && release.status === "available"
 					? areaIdentityTable({
 							geography: release.geography,
@@ -182,13 +188,18 @@ export const handleBulkRoutes = ({
 					: undefined;
 			}
 			if (entry.kind === "crosswalk") {
-				const summary = context.geographyResolver.crosswalkSummaryForArtifact(entry.source.artifact);
-				const crosswalk = summary && context.geographyResolver.crosswalk(summary.id);
+				const summary =
+					context.geographyResolver.crosswalkSummaryForArtifact(
+						entry.source.artifact,
+					);
+				const crosswalk =
+					summary && context.geographyResolver.crosswalk(summary.id);
 				return crosswalk && summary
 					? crosswalkTable(crosswalk, summary.artifact)
 					: undefined;
 			}
-			const namedLocationInventory = context.geographyResolver.namedLocationMembershipInventory();
+			const namedLocationInventory =
+				context.geographyResolver.namedLocationMembershipInventory();
 			return namedLocationInventory
 				? namedLocationMembersTable(
 						namedLocationInventory,

@@ -106,7 +106,8 @@ export const readApiCatalogues = (
 		apiRoot,
 		crosswalkInventory,
 	);
-	const relationshipCandidateInventory = readRelationshipCandidateInventory(apiRoot);
+	const relationshipCandidateInventory =
+		readRelationshipCandidateInventory(apiRoot);
 	const namedLocationLookup = createNamedLocations(namedLocationInventory);
 	const locationProjectionInventory = readLocationProjectionInventory(
 		apiRoot,

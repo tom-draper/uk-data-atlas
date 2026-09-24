@@ -305,13 +305,17 @@ export const compileDataCatalog = ({
 	// local authority join that measure, rather than standing beside it.
 	for (const measure of census.measures) {
 		const partitions = censusSmallArea?.partitions.get(measure.id);
-		if (partitions) (measure.sources as MeasureSource[]).push(...partitions);
+		if (partitions)
+			(measure.sources as MeasureSource[]).push(...partitions);
 	}
 	const unclaimed = [...(censusSmallArea?.partitions.keys() ?? [])].filter(
-		(measureId) => !census.measures.some((measure) => measure.id === measureId),
+		(measureId) =>
+			!census.measures.some((measure) => measure.id === measureId),
 	);
 	if (unclaimed.length > 0)
-		throw new Error(`No census measure takes the small-area partitions of ${unclaimed.join(", ")}.`);
+		throw new Error(
+			`No census measure takes the small-area partitions of ${unclaimed.join(", ")}.`,
+		);
 	const measures = withNationalVariants([
 		population.measure,
 		...elections.measures,

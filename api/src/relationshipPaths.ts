@@ -1,8 +1,5 @@
 import { createHash } from "node:crypto";
-import type {
-	CrosswalkInventory,
-	CrosswalkMethod,
-} from "./crosswalkInventory";
+import type { CrosswalkInventory, CrosswalkMethod } from "./crosswalkInventory";
 import { releaseKey } from "./geographyKeys";
 
 export type RelationshipPurpose = "identity" | "membership" | "apportion";

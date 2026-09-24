@@ -547,7 +547,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	planMeasureCoverage: {
 		title: "Plan coverage by country",
-		intro: 'Before you rank or map a measure across the UK, check what it actually covers. Ward population, for instance, is published for England and Wales and for neither Scotland nor Northern Ireland, so a ranking of UK wards would quietly leave two countries out. This tells you that first.',
+		intro: "Before you rank or map a measure across the UK, check what it actually covers. Ward population, for instance, is published for England and Wales and for neither Scotland nor Northern Ireland, so a ranking of UK wards would quietly leave two countries out. This tells you that first.",
 		tips: [
 			"Each country comes back as `source-exact`, `converted`, `partial` or `missing`, with the number of areas behind it.",
 			"A `missing` country says whether the measure exists elsewhere and only lacks a route onto this release, which tells you what would fix it.",

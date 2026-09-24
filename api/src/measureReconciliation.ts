@@ -60,7 +60,10 @@ export type MeasureReconciliation = {
 		purpose: RelationshipPath["purpose"];
 		origin: RelationshipPath["origin"];
 		quality: RelationshipPath["quality"];
-		steps: Array<{ direction: "forward" | "reverse"; crosswalk: CrosswalkReference }>;
+		steps: Array<{
+			direction: "forward" | "reverse";
+			crosswalk: CrosswalkReference;
+		}>;
 	};
 	/** The partition added up, and the one it is compared against. */
 	from: { datasetId: string; geography: string; boundaryYear: number };
@@ -105,7 +108,8 @@ const crosswalkReference = (crosswalk: {
 });
 
 /** The crosswalk or published path a caller names to add one geography up through. */
-export type ReconciliationRouteRequest = { crosswalk: string } | { path: string };
+export type ReconciliationRouteRequest =
+	{ crosswalk: string } | { path: string };
 
 type ReconciliationRoute = {
 	/** How refusals name the route, such as `crosswalk x` or `path y`. */
@@ -125,7 +129,9 @@ const resolveRoute = (
 		const summary = resolver.crosswalkSummary(request.crosswalk);
 		const crosswalk = resolver.crosswalk(request.crosswalk);
 		if (!summary || !crosswalk)
-			return { refusal: `No published crosswalk is named ${request.crosswalk}.` };
+			return {
+				refusal: `No published crosswalk is named ${request.crosswalk}.`,
+			};
 		return {
 			label: request.crosswalk,
 			from: summary.from,
@@ -142,7 +148,9 @@ const resolveRoute = (
 	}
 	const path = resolver.relationshipPath(request.path);
 	if (!path)
-		return { refusal: `No published relationship path is named ${request.path}.` };
+		return {
+			refusal: `No published relationship path is named ${request.path}.`,
+		};
 	const indexed = resolver.indexedPathSteps(path);
 	if ("missingCrosswalkId" in indexed)
 		return {
@@ -220,9 +228,11 @@ const joinableReleases = (context: RouteContext, measure: Measure) => {
 				)
 			: undefined;
 	for (const source of coverage?.sources ?? []) {
-		const held = releases.get(source.sourceGeography.type) ?? new Set<string>();
+		const held =
+			releases.get(source.sourceGeography.type) ?? new Set<string>();
 		for (const candidate of source.boundaryCoverage)
-			if (candidate.eligibleForCodeJoin) held.add(candidate.boundaryRelease);
+			if (candidate.eligibleForCodeJoin)
+				held.add(candidate.boundaryRelease);
 		releases.set(source.sourceGeography.type, held);
 	}
 	return releases;
@@ -465,15 +475,19 @@ export const availableReconciliations = (
 			),
 		);
 	};
-	const crosswalks = context.geographyResolver.crosswalkSummaries().flatMap(
-		(crosswalk) => {
+	const crosswalks = context.geographyResolver
+		.crosswalkSummaries()
+		.flatMap((crosswalk) => {
 			// A crosswalk within one geography relates two vintages of the
 			// same areas; adding a partition up through it would compare it
 			// with itself.
 			if (crosswalk.from.geography === crosswalk.to.geography) return [];
 			const periods = [
 				...new Set(
-					sharedPeriods(crosswalk.from.geography, crosswalk.to.geography),
+					sharedPeriods(
+						crosswalk.from.geography,
+						crosswalk.to.geography,
+					),
 				),
 			].sort();
 			return periods.length > 0
@@ -492,8 +506,7 @@ export const availableReconciliations = (
 						},
 					]
 				: [];
-		},
-	);
+		});
 	// Composed paths are listed more narrowly than crosswalks, because there
 	// are far more of them and most cannot carry this measure. Only paths
 	// between releases its partitions are verified to join are tried, in the
@@ -525,20 +538,30 @@ export const availableReconciliations = (
 	const paths = [...endpoints.entries()]
 		.sort(([left], [right]) => left.localeCompare(right))
 		.flatMap(([, { from, to, purpose }]) => {
-			const periods = [...new Set(sharedPeriods(from.geography, to.geography))].sort();
+			const periods = [
+				...new Set(sharedPeriods(from.geography, to.geography)),
+			].sort();
 			const latest = periods.at(-1)!;
 			const path = context.geographyResolver
 				.relationshipCapability(from, to, purpose)
 				.paths.filter(
-					(candidate) => candidate.steps.length > 1 && summable(candidate),
+					(candidate) =>
+						candidate.steps.length > 1 && summable(candidate),
 				)
 				// Each attempt converts the whole partition, so only the best
 				// few are tried; the ranking puts complete coverage first.
 				.slice(0, MAX_LISTED_PATH_ATTEMPTS)
 				.find(
 					(candidate) =>
-						!("refusal" in
-							reconcileMeasure(context, measure, { path: candidate.id }, latest)),
+						!(
+							"refusal" in
+							reconcileMeasure(
+								context,
+								measure,
+								{ path: candidate.id },
+								latest,
+							)
+						),
 				);
 			if (!path) return [];
 			return [

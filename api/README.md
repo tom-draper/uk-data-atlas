@@ -236,7 +236,6 @@ only **available** when its endpoint, contract and provenance are published.
       Wales resolves to 232 wards, Greater Manchester to 215 and the North
       West to 829.
 
-
       The response states what membership means, because it depends on the
       crosswalk. `fully-contained` through a clean-containment crosswalk, where
       the publisher places each area wholly inside one parent, so nothing is
@@ -253,6 +252,7 @@ only **available** when its endpoint, contract and provenance are published.
       `reach` names any of the location's authorities the crosswalk places no
       area under, so Glasgow's LSOAs come back empty with its authority listed
       as unreached, rather than as an empty answer that looks complete.
+
 - [x] Find the regions, counties, combined authorities or countries a named
       location lies in through
       `GET /v1/locations/{id}/parents?geography=&release=&via=`. Each parent is
@@ -992,11 +992,11 @@ The first commercial beta serves three related jobs, in this order. A proposed
 capability must make at least one of them more correct, faster, cheaper or
 easier to defend; otherwise it remains deferred.
 
-| Path | Primary user | Promise |
-| --- | --- | --- |
-| Correct map | GIS/product engineer | Render release-pinned UK boundaries and values without a code/geometry mismatch, with attribution. |
+| Path             | Primary user          | Promise                                                                                                               |
+| ---------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Correct map      | GIS/product engineer  | Render release-pinned UK boundaries and values without a code/geometry mismatch, with attribution.                    |
 | Defensible trend | Analyst or consultant | Compare a small set of measures through time on an explicit analysis geography, with conversions and caveats visible. |
-| Reliable sync | Data engineer | Ingest release-pinned data into an existing stack and reprocess only meaningful changes. |
+| Reliable sync    | Data engineer         | Ingest release-pinned data into an existing stack and reprocess only meaningful changes.                              |
 
 A non-technical briefing interface may later compose these paths, but it is not
 the first API product. Reverse selection, peer groups, signals, custom areas
@@ -1015,30 +1015,30 @@ client should copy into production.
 Keep v1 paths stable rather than renaming routes for tidiness. Make the mental
 model explicit instead:
 
-| Term | Meaning |
-| --- | --- |
-| **Area** | One official, versioned identity: `{geography}/{release}/{code}`. |
-| **Place** | An ambiguous name-resolution result from `/places`; it is never silently chosen. |
-| **Curated area collection** | An editorial grouping served by `/locations`, not a generic geographic `location`. |
-| **Source geography** | The geography and code vintage on the publisher's observation. |
-| **Geometry release** | The caller-selected boundary release used only to join compatible geometry for a map. |
-| **Observation period** | The time period the measure describes. |
-| **Atlas release** | The immutable published Atlas artifact set that produced the response. |
+| Term                        | Meaning                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| **Area**                    | One official, versioned identity: `{geography}/{release}/{code}`.                     |
+| **Place**                   | An ambiguous name-resolution result from `/places`; it is never silently chosen.      |
+| **Curated area collection** | An editorial grouping served by `/locations`, not a generic geographic `location`.    |
+| **Source geography**        | The geography and code vintage on the publisher's observation.                        |
+| **Geometry release**        | The caller-selected boundary release used only to join compatible geometry for a map. |
+| **Observation period**      | The time period the measure describes.                                                |
+| **Atlas release**           | The immutable published Atlas artifact set that produced the response.                |
 
 The route selector in the documentation should begin with the user’s job:
 
-| I need to… | Start here |
-| --- | --- |
-| resolve a name or inspect possible meanings | `/places` |
-| inspect one exact official identity | `/areas/{geography}/{release}/{code}` |
-| get its geometry, relationships or citation | the corresponding area subresource |
-| draw a whole release as a map, or load its features into a warehouse | `/map-resources/{geography}/{release}` and its `features` |
-| render values or download source-exact observations | `/data/{measure}` |
-| see a trend, ranking, comparison or change | `/series`, `/rankings`, `/compare` or `/change` under that measure |
-| translate an identifier through a published crosswalk | `/translations` |
-| convert values under a declared measure/method rule | `/data/{measure}/convert` |
-| validate a supplied code/name or discover releases | `/areas:validate`, `/geographies`, `/boundary-releases` |
-| cite, attribute or inspect the published release | area citation, `/attribution`, `/atlas-releases` and `/validation` |
+| I need to…                                                           | Start here                                                         |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| resolve a name or inspect possible meanings                          | `/places`                                                          |
+| inspect one exact official identity                                  | `/areas/{geography}/{release}/{code}`                              |
+| get its geometry, relationships or citation                          | the corresponding area subresource                                 |
+| draw a whole release as a map, or load its features into a warehouse | `/map-resources/{geography}/{release}` and its `features`          |
+| render values or download source-exact observations                  | `/data/{measure}`                                                  |
+| see a trend, ranking, comparison or change                           | `/series`, `/rankings`, `/compare` or `/change` under that measure |
+| translate an identifier through a published crosswalk                | `/translations`                                                    |
+| convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                          |
+| validate a supplied code/name or discover releases                   | `/areas:validate`, `/geographies`, `/boundary-releases`            |
+| cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-releases` and `/validation` |
 
 `/data/{measure}/value?place=` is a deliberately narrow convenience for a
 place-name question. It resolves a name and dispatches to an existing
@@ -1144,7 +1144,7 @@ Implementation and documentation tasks:
       at a stated time rather than merely inspecting its old manifest. Before a
       build replaces the current release, it snapshots every artifact the
       manifest declares and verifies its byte hash. `GET
-      /v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}` then
+/v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}` then
       returns the retained exact bytes with immutable cache semantics.
 - [ ] State a source's publisher release date, Atlas ingestion date, expected
       refresh cadence and freshness status beside the measure metadata.
@@ -1528,13 +1528,13 @@ decisions as first-class, inspectable products.
 
 The public contract should offer five connected capabilities.
 
-| Capability | What a caller gets | Why it avoids repeat work |
-| --- | --- | --- |
-| Dataset catalogue | Measures, units, periods, coverage, licences and source lineage | Finds usable data before downloading it |
-| Canonical areas | Stable identifiers, aliases, parents, releases, bounds and geometry references | Removes name/code ambiguity |
-| Boundary releases | Valid geometry for a specified geography and vintage | Prevents mismatching a 2019 table to 2024 polygons by accident |
-| Crosswalks | Published, inferred, area-weighted or population-weighted mappings | Makes conversions explicit and reusable |
-| Named locations | Versioned area sets for places such as Greater Manchester, Devon or London | Makes common real-world scopes portable and inspectable |
+| Capability        | What a caller gets                                                             | Why it avoids repeat work                                      |
+| ----------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Dataset catalogue | Measures, units, periods, coverage, licences and source lineage                | Finds usable data before downloading it                        |
+| Canonical areas   | Stable identifiers, aliases, parents, releases, bounds and geometry references | Removes name/code ambiguity                                    |
+| Boundary releases | Valid geometry for a specified geography and vintage                           | Prevents mismatching a 2019 table to 2024 polygons by accident |
+| Crosswalks        | Published, inferred, area-weighted or population-weighted mappings             | Makes conversions explicit and reusable                        |
+| Named locations   | Versioned area sets for places such as Greater Manchester, Devon or London     | Makes common real-world scopes portable and inspectable        |
 
 The boundary utilities are the differentiator. Open data portals already host
 many individual tables. Far fewer products let someone request a dataset on a
@@ -1594,19 +1594,29 @@ An area record therefore needs a relationship graph rather than a single
 
 ```ts
 type AreaRelation = {
-  relation:
-    | "contains" | "within"
-    | "predecessor" | "successor"
-    | "recode-of" | "split-from" | "merged-from"
-    | "overlaps" | "equivalent-to";
-  target: string;              // canonical Atlas area id
-  validFrom?: string;
-  validTo?: string;
-  method: "official-lookup" | "clean-containment" | "same-geometry-recode"
-    | "area-overlap" | "population-overlap" | "inferred";
-  weight?: number;
-  quality: "exact" | "best-fit" | "inferred";
-  provenance: string;
+	relation:
+		| "contains"
+		| "within"
+		| "predecessor"
+		| "successor"
+		| "recode-of"
+		| "split-from"
+		| "merged-from"
+		| "overlaps"
+		| "equivalent-to";
+	target: string; // canonical Atlas area id
+	validFrom?: string;
+	validTo?: string;
+	method:
+		| "official-lookup"
+		| "clean-containment"
+		| "same-geometry-recode"
+		| "area-overlap"
+		| "population-overlap"
+		| "inferred";
+	weight?: number;
+	quality: "exact" | "best-fit" | "inferred";
+	provenance: string;
 };
 ```
 
@@ -1668,7 +1678,7 @@ Useful additions beyond code translation are:
 - predecessor/successor timelines and change events, so a caller can explain
   an abolished area rather than merely receive a replacement code;
 - reverse relationships (`ward -> LAD`, `LAD -> wards`, `LAD ->
-  constituencies`, `constituency -> LADs`) without having to download all
+constituencies`, `constituency -> LADs`) without having to download all
   geometry;
 - coordinate lookup (`lng`, `lat` -> containing areas in selected releases),
   useful for joining a point dataset or validating a geocode;
@@ -1697,11 +1707,11 @@ convertible on their own.
 
 There are three identities which must never be collapsed:
 
-| Identity | Example | Immutable key |
-| --- | --- | --- |
-| Area | Manchester LAD in a particular release | `geography / release / code` |
-| Place definition | "Greater Manchester" as a combined-authority area | `location / id / definition-revision` |
-| Relationship | Ward wholly within an LAD; constituency overlapping an LAD | `relationship / source / target / method / release` |
+| Identity         | Example                                                    | Immutable key                                       |
+| ---------------- | ---------------------------------------------------------- | --------------------------------------------------- |
+| Area             | Manchester LAD in a particular release                     | `geography / release / code`                        |
+| Place definition | "Greater Manchester" as a combined-authority area          | `location / id / definition-revision`               |
+| Relationship     | Ward wholly within an LAD; constituency overlapping an LAD | `relationship / source / target / method / release` |
 
 A place definition is anchored to a published set of areas, usually local
 authorities at first. Its projection is not a hand-maintained second list of
@@ -1858,16 +1868,16 @@ crosswalk/ward/2020-12-uk-bgc/to/local-authority/2024-05-uk-bgc
 
 Each relation includes a `method` and `quality`:
 
-| Method | Meaning | Appropriate use |
-| --- | --- | --- |
-| `official-lookup` | Publisher supplied an explicit correspondence | Preferred whenever available |
-| `same-geometry-recode` | 1:1 code/name change with unchanged geometry | Safe identity migration |
-| `same-code-continuity` | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
-| `clean-containment` | A published parent code or verified nesting relation | Membership and exact roll-up |
-| `geometric-containment` | Every child sits within one parent, established from the two releases' geometry | Membership where no lookup carries the hierarchy; derived |
-| `area-overlap` | Geometry intersection, weighted by area | Land-area quantities; not people by default |
-| `population-overlap` | Fine-grained population building blocks apportioned across targets | Counts whose distribution follows resident population |
-| `inferred` | Carefully documented heuristic, for example recovered ward-to-LAD membership | Discovery/matching; requires a warning |
+| Method                  | Meaning                                                                                | Appropriate use                                             |
+| ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `official-lookup`       | Publisher supplied an explicit correspondence                                          | Preferred whenever available                                |
+| `same-geometry-recode`  | 1:1 code/name change with unchanged geometry                                           | Safe identity migration                                     |
+| `same-code-continuity`  | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
+| `clean-containment`     | A published parent code or verified nesting relation                                   | Membership and exact roll-up                                |
+| `geometric-containment` | Every child sits within one parent, established from the two releases' geometry        | Membership where no lookup carries the hierarchy; derived   |
+| `area-overlap`          | Geometry intersection, weighted by area                                                | Land-area quantities; not people by default                 |
+| `population-overlap`    | Fine-grained population building blocks apportioned across targets                     | Counts whose distribution follows resident population       |
+| `inferred`              | Carefully documented heuristic, for example recovered ward-to-LAD membership           | Discovery/matching; requires a warning                      |
 
 The response must always state whether weights cover all source area, whether
 they sum to one, the weighting denominator/date, topology/geometry inputs, and
@@ -1910,27 +1920,33 @@ GET /v1/measures/population-estimate
 
 ```json
 {
-  "id": "population-estimate",
-  "label": "Population estimate",
-  "valueKind": "count",
-  "aggregation": { "kind": "extensive", "operation": "sum" },
-  "sources": [
-    {
-      "datasetId": "population",
-      "periods": ["2022"],
-      "sourceGeography": { "type": "ward", "boundaryYear": 2023 },
-      "coverage": { "kind": "partial", "includes": ["England", "Wales"] }
-    },
-    {
-      "datasetId": "population-uk",
-      "periods": ["2011", "…", "2024"],
-      "sourceGeography": { "type": "localAuthority", "boundaryYear": 2023 },
-      "coverage": { "kind": "source-reported", "includes": ["England", "Wales", "Scotland", "Northern Ireland"] }
-    }
-  ],
-  "links": {
-    "data": "/v1/data/population-estimate"
-  }
+	"id": "population-estimate",
+	"label": "Population estimate",
+	"valueKind": "count",
+	"aggregation": { "kind": "extensive", "operation": "sum" },
+	"sources": [
+		{
+			"datasetId": "population",
+			"periods": ["2022"],
+			"sourceGeography": { "type": "ward", "boundaryYear": 2023 },
+			"coverage": { "kind": "partial", "includes": ["England", "Wales"] }
+		},
+		{
+			"datasetId": "population-uk",
+			"periods": ["2011", "…", "2024"],
+			"sourceGeography": {
+				"type": "localAuthority",
+				"boundaryYear": 2023
+			},
+			"coverage": {
+				"kind": "source-reported",
+				"includes": ["England", "Wales", "Scotland", "Northern Ireland"]
+			}
+		}
+	],
+	"links": {
+		"data": "/v1/data/population-estimate"
+	}
 }
 ```
 
@@ -1995,21 +2011,19 @@ GET /v1/locations/greater-manchester/geometry?mode=union
 
 ```json
 {
-  "id": "greater-manchester@2026-09",
-  "label": "Greater Manchester",
-  "kind": "combined-authority",
-  "definition": {
-    "selection": "explicit-members",
-    "members": [
-      "local-authority/2025-05-uk-bgc-v2/E08000001"
-    ]
-  },
-  "provenance": {
-    "kind": "official-lookup",
-    "source": "…",
-    "retrievedAt": "2026-09-01"
-  },
-  "atlasRelease": "2026.09.0"
+	"id": "greater-manchester@2026-09",
+	"label": "Greater Manchester",
+	"kind": "combined-authority",
+	"definition": {
+		"selection": "explicit-members",
+		"members": ["local-authority/2025-05-uk-bgc-v2/E08000001"]
+	},
+	"provenance": {
+		"kind": "official-lookup",
+		"source": "…",
+		"retrievedAt": "2026-09-01"
+	},
+	"atlasRelease": "2026.09.0"
 }
 ```
 
@@ -2034,19 +2048,21 @@ is an immutable crosswalk download, not a request which creates server state.
 
 ```json
 {
-  "results": [{
-    "source": "E14001262",
-    "targets": [
-      { "code": "E08000003", "weight": 0.71 },
-      { "code": "E08000004", "weight": 0.29 }
-    ],
-    "crosswalk": {
-      "id": "constituency-2024-to-lad-2025-population-v1",
-      "method": "population-overlap",
-      "coverage": 1,
-      "quality": "best-fit"
-    }
-  }]
+	"results": [
+		{
+			"source": "E14001262",
+			"targets": [
+				{ "code": "E08000003", "weight": 0.71 },
+				{ "code": "E08000004", "weight": 0.29 }
+			],
+			"crosswalk": {
+				"id": "constituency-2024-to-lad-2025-population-v1",
+				"method": "population-overlap",
+				"coverage": 1,
+				"quality": "best-fit"
+			}
+		}
+	]
 }
 ```
 
@@ -2076,14 +2092,14 @@ ward release, or ask whether a code is still current:
 
 ```json
 {
-  "source": {
-    "type": "ward",
-    "release": "2019-12-gb-bgc",
-    "codes": ["E05001234"]
-  },
-  "target": { "type": "ward", "release": "2024-12-uk-bgc" },
-  "purpose": "identity",
-  "methodPreference": ["official-lookup", "same-geometry-recode"]
+	"source": {
+		"type": "ward",
+		"release": "2019-12-gb-bgc",
+		"codes": ["E05001234"]
+	},
+	"target": { "type": "ward", "release": "2024-12-uk-bgc" },
+	"purpose": "identity",
+	"methodPreference": ["official-lookup", "same-geometry-recode"]
 }
 ```
 
@@ -2094,14 +2110,14 @@ area-weighted target is the same area. The same endpoint translates types:
 
 ```json
 {
-  "source": {
-    "type": "local-authority",
-    "release": "2025-05-uk-bgc-v2",
-    "codes": ["E08000003"]
-  },
-  "target": { "type": "ward", "release": "2024-12-uk-bgc" },
-  "purpose": "membership",
-  "methodPreference": ["clean-containment", "inferred"]
+	"source": {
+		"type": "local-authority",
+		"release": "2025-05-uk-bgc-v2",
+		"codes": ["E08000003"]
+	},
+	"target": { "type": "ward", "release": "2024-12-uk-bgc" },
+	"purpose": "membership",
+	"methodPreference": ["clean-containment", "inferred"]
 }
 ```
 
@@ -2145,15 +2161,15 @@ For a compatible source query, a row looks like:
 
 ```json
 {
-  "area": "ward/2020-12-uk-bgc/E05001234",
-  "period": "2022",
-  "value": 12450,
-  "status": "observed",
-  "quality": {
-    "geography": "source-exact",
-    "conversion": null,
-    "suppression": null
-  }
+	"area": "ward/2020-12-uk-bgc/E05001234",
+	"period": "2022",
+	"value": 12450,
+	"status": "observed",
+	"quality": {
+		"geography": "source-exact",
+		"conversion": null,
+		"suppression": null
+	}
 }
 ```
 
@@ -2161,16 +2177,16 @@ For an output generated through a crosswalk, it becomes explicitly different:
 
 ```json
 {
-  "area": "ward/2024-12-uk-bgc/E05009999",
-  "period": "2022",
-  "value": 12108.4,
-  "status": "derived",
-  "quality": {
-    "geography": "best-fit",
-    "conversion": "ward-2020-to-ward-2024-population-v1",
-    "sourceCoverage": 0.997,
-    "rounding": "unrounded-derived-value"
-  }
+	"area": "ward/2024-12-uk-bgc/E05009999",
+	"period": "2022",
+	"value": 12108.4,
+	"status": "derived",
+	"quality": {
+		"geography": "best-fit",
+		"conversion": "ward-2020-to-ward-2024-population-v1",
+		"sourceCoverage": 0.997,
+		"rounding": "unrounded-derived-value"
+	}
 }
 ```
 
@@ -2231,14 +2247,14 @@ Every JSON response uses a small common envelope:
 
 ```json
 {
-  "apiVersion": "v1",
-  "atlasRelease": "2026.09.0",
-  "data": [],
-  "meta": {
-    "licences": [],
-    "provenance": [],
-    "nextCursor": null
-  }
+	"apiVersion": "v1",
+	"atlasRelease": "2026.09.0",
+	"data": [],
+	"meta": {
+		"licences": [],
+		"provenance": [],
+		"nextCursor": null
+	}
 }
 ```
 
@@ -2319,11 +2335,11 @@ Two things can change under a client, and each is pinned separately.
 
 ### Endpoints
 
-| Path | Answers |
-| --- | --- |
-| `/healthz` | `200` while the process is serving. |
-| `/readyz` | `200` with the release served and the geometry cache's state; `503` once the server is draining. |
-| `/metrics` | Prometheus text. Behind `Authorization: Bearer` when `ATLAS_METRICS_TOKEN` is set. |
+| Path       | Answers                                                                                          |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| `/healthz` | `200` while the process is serving.                                                              |
+| `/readyz`  | `200` with the release served and the geometry cache's state; `503` once the server is draining. |
+| `/metrics` | Prometheus text. Behind `Authorization: Bearer` when `ATLAS_METRICS_TOKEN` is set.               |
 
 None is cached or rate limited: a refused probe would take a healthy instance
 out of service.
@@ -2370,22 +2386,22 @@ line up.
 Every setting is read once at start, and a malformed value stops the server
 rather than falling back to the default.
 
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `PORT` | `3001` | Port to listen on. |
-| `HOST` | `127.0.0.1` | Address to listen on. |
-| `ATLAS_RATE_LIMIT_CAPACITY` | `600` | Requests a client may make at once; `0` turns limiting off. |
-| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10` | Requests earned back each second. |
-| `ATLAS_TRUSTED_PROXY_HOPS` | `0` | Proxies in front of the server that append to `X-Forwarded-For`. |
-| `ATLAS_GEOMETRY_CACHE_RELEASES` | `2` | Geometry releases held in memory at once. |
-| `ATLAS_METRICS_TOKEN` | unset | Bearer token `/metrics` requires; unset, it is open. |
-| `ATLAS_ACCESS_LOG` | `on` | Log every request, not only failures. |
-| `ATLAS_MAX_URL_LENGTH` | `4096` | Longest request target served. |
-| `ATLAS_SHUTDOWN_GRACE_SECONDS` | `10` | Time to finish open requests after `SIGTERM`. |
-| `ATLAS_TERRAIN_REMOTE_ENDPOINT` | unset | ArcGIS ImageServer `getSamples` endpoint for the non-persistent EA terrain preview provider. |
-| `ATLAS_TERRAIN_COVERAGE_ENDPOINT` | unset | Optional ArcGIS FeatureServer query endpoint used to verify exact coverage before sampling. |
-| `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS` | `5000` | Maximum time for one remote terrain request. |
-| `ATLAS_TERRAIN_REMOTE_CONCURRENCY` | `4` | Maximum concurrent remote terrain requests. |
+| Variable                             | Default     | Meaning                                                                                      |
+| ------------------------------------ | ----------- | -------------------------------------------------------------------------------------------- |
+| `PORT`                               | `3001`      | Port to listen on.                                                                           |
+| `HOST`                               | `127.0.0.1` | Address to listen on.                                                                        |
+| `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                  |
+| `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                            |
+| `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                             |
+| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `2`         | Geometry releases held in memory at once.                                                    |
+| `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires; unset, it is open.                                         |
+| `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                        |
+| `ATLAS_MAX_URL_LENGTH`               | `4096`      | Longest request target served.                                                               |
+| `ATLAS_SHUTDOWN_GRACE_SECONDS`       | `10`        | Time to finish open requests after `SIGTERM`.                                                |
+| `ATLAS_TERRAIN_REMOTE_ENDPOINT`      | unset       | ArcGIS ImageServer `getSamples` endpoint for the non-persistent EA terrain preview provider. |
+| `ATLAS_TERRAIN_COVERAGE_ENDPOINT`    | unset       | Optional ArcGIS FeatureServer query endpoint used to verify exact coverage before sampling.  |
+| `ATLAS_TERRAIN_REMOTE_TIMEOUT_MS`    | `5000`      | Maximum time for one remote terrain request.                                                 |
+| `ATLAS_TERRAIN_REMOTE_CONCURRENCY`   | `4`         | Maximum concurrent remote terrain requests.                                                  |
 
 ### Deployment smoke test
 
@@ -2963,13 +2979,13 @@ The API needs a product policy as much as it needs endpoints.
 
 Use a controlled vocabulary, not prose alone:
 
-| Field | Example values |
-| --- | --- |
-| `recordStatus` | `observed`, `cleaned`, `derived`, `suppressed`, `missing` |
-| `geographyMatch` | `source-exact`, `official-lookup`, `same-geometry-recode`, `best-fit`, `inferred` |
-| `coverage` | fraction plus list of missing/suppressed areas |
-| `comparability` | `within-release`, `cross-release-qualified`, `not-comparable` |
-| `confidence` | `high`, `medium`, `low`, with a linked explanation—not a fake statistical probability |
+| Field            | Example values                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| `recordStatus`   | `observed`, `cleaned`, `derived`, `suppressed`, `missing`                             |
+| `geographyMatch` | `source-exact`, `official-lookup`, `same-geometry-recode`, `best-fit`, `inferred`     |
+| `coverage`       | fraction plus list of missing/suppressed areas                                        |
+| `comparability`  | `within-release`, `cross-release-qualified`, `not-comparable`                         |
+| `confidence`     | `high`, `medium`, `low`, with a linked explanation—not a fake statistical probability |
 
 ### Required release gates
 
@@ -3010,18 +3026,18 @@ as an open API or promising a licence for transformed data.
 
 This is potentially very useful, but it can fail in predictable ways.
 
-| Risk / weakness | Why it matters | Mitigation |
-| --- | --- | --- |
-| False authority | A clean API response can make estimated or inferred results appear official | Prominent quality/provenance fields, separate observed and derived endpoints, no silent fallback |
-| Geographic change is not reversible | Splits/mergers cannot always be converted exactly | Directional crosswalks, method choice, coverage/error disclosure, reject invalid requests |
-| UK-wide comparability is uneven | National statistics use different definitions, periods and small-area systems | Treat coverage and comparability as measure metadata; launch with a small honest UK-wide catalogue |
-| Editorial places are contestable | “Devon”, “London”, and regions have multiple legitimate meanings | Version named locations, state their kind and membership, support alternatives rather than hiding the choice |
-| Maintenance burden | Boundary releases, source updates and repairs require ongoing stewardship | Automate intake/validation, assign dataset owners, publish a deprecation policy, keep releases immutable |
-| Geometry cost | GeoJSON and runtime unions can be huge and slow | Tiles/CDN, named simplification tiers, asynchronous exports, precomputed common unions |
-| Licence incompatibility | Public-source data is not automatically freely redistributable in all forms | Per-resource licence policy and legal review before exposure |
-| API scope creep | "One-stop shop" can become an unmaintainable general GIS platform | Start with registry/crosswalk/data delivery; decline arbitrary spatial analysis initially |
-| Incomplete repairs | Some inferred ward mappings may be wrong or only partially covered | Publish confidence and evidence, accept corrections, distinguish inferred mappings from official ones |
-| Breaking reproducibility | `latest` can change an analysis underneath a user | Immutable release URLs, ETags, manifests, changelog and deprecation windows |
+| Risk / weakness                     | Why it matters                                                                | Mitigation                                                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| False authority                     | A clean API response can make estimated or inferred results appear official   | Prominent quality/provenance fields, separate observed and derived endpoints, no silent fallback             |
+| Geographic change is not reversible | Splits/mergers cannot always be converted exactly                             | Directional crosswalks, method choice, coverage/error disclosure, reject invalid requests                    |
+| UK-wide comparability is uneven     | National statistics use different definitions, periods and small-area systems | Treat coverage and comparability as measure metadata; launch with a small honest UK-wide catalogue           |
+| Editorial places are contestable    | “Devon”, “London”, and regions have multiple legitimate meanings              | Version named locations, state their kind and membership, support alternatives rather than hiding the choice |
+| Maintenance burden                  | Boundary releases, source updates and repairs require ongoing stewardship     | Automate intake/validation, assign dataset owners, publish a deprecation policy, keep releases immutable     |
+| Geometry cost                       | GeoJSON and runtime unions can be huge and slow                               | Tiles/CDN, named simplification tiers, asynchronous exports, precomputed common unions                       |
+| Licence incompatibility             | Public-source data is not automatically freely redistributable in all forms   | Per-resource licence policy and legal review before exposure                                                 |
+| API scope creep                     | "One-stop shop" can become an unmaintainable general GIS platform             | Start with registry/crosswalk/data delivery; decline arbitrary spatial analysis initially                    |
+| Incomplete repairs                  | Some inferred ward mappings may be wrong or only partially covered            | Publish confidence and evidence, accept corrections, distinguish inferred mappings from official ones        |
+| Breaking reproducibility            | `latest` can change an analysis underneath a user                             | Immutable release URLs, ETags, manifests, changelog and deprecation windows                                  |
 
 The most important criticism: the Atlas must not sell “all UK public data in a
 single consistent schema” before it can uphold that claim. Its honest advantage
@@ -3150,7 +3166,7 @@ delivery, change management and support, never from withholding OGL data.
       path, so a past result remains retrievable. Each build first snapshots
       the prior release's manifest-declared artifacts and verifies their hashes;
       a sync client retrieves one through `GET
-      /v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`.
+/v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`.
 - [x] Publish a public correction register for API-owned repairs, derived
       calculations and normalisations. `GET /v1/corrections` records the exact
       scope, source-versus-served behaviour, evidence and review state without
@@ -3230,7 +3246,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    discovery or its documented task group. Resolve the current public template
    drift too: OpenAPI used `{geography}` where root discovery advertised
    `{type}`; publish one canonical placeholder vocabulary.
-   *Done.* `tests/openapi.test.ts` requires the OpenAPI paths to be exactly
+   _Done._ `tests/openapi.test.ts` requires the OpenAPI paths to be exactly
    the index's links, placeholder names included, and `tests/contract.test.ts`
    serves every link and every README example against the compiled
    catalogues. Every path now names its placeholders `{geography}`,
@@ -3239,7 +3255,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    labelled as non-binding, and either generate the standalone endpoint list
    below from OpenAPI or replace it with an OpenAPI-derived task index. Do not
    maintain a second hand-written inventory of several dozen URLs.
-   *Done.* The conceptual model is labelled non-binding, and the route index
+   _Done._ The conceptual model is labelled non-binding, and the route index
    under [Initial standalone implementation](#initial-standalone-implementation)
    is generated from `openapi.yaml` by `pnpm docs:index`, with a test that
    fails when it goes stale. What remains by hand is a list of worked example
@@ -3250,7 +3266,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    [API UX and contract clarity](#api-ux-and-contract-clarity). Link the root
    response to the authoritative OpenAPI description and a human documentation
    landing page.
-   *Done.* Every operation carries a task tag, a summary and its most likely
+   _Done._ Every operation carries a task tag, a summary and its most likely
    refusal, and every parameter is described, the repeated ones through shared
    components. Response examples are taken from live responses and held to
    them by test. The index links to that description, which the API serves,
@@ -3260,7 +3276,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    code-compatible geometry `release`, observation `period` and immutable
    `atlasRelease` unambiguous in OpenAPI and examples. Add negative tests that
    prove a geometry selection cannot be mistaken for a value conversion.
-   *Done.* The OpenAPI description states the four identities once, and the
+   _Done._ The OpenAPI description states the four identities once, and the
    shared parameters carry them into every data route. `tests/contract.test.ts`
    proves a geometry release leaves every value as published, and that all six
    derivative routes refuse a release rather than ignoring it. `/convert`
@@ -3270,7 +3286,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    ambiguous place, absence state, incompatible geometry, unsupported
    conversion, partial coverage, invalid format and cursor failures. Test both
    JSON and tabular error representation policy.
-   *Done.* `src/problemCodes.ts` declares eleven codes, including ambiguous
+   _Done._ `src/problemCodes.ts` declares eleven codes, including ambiguous
    place, incompatible geometry, invalid format and invalid cursor. Each has
    an OpenAPI schema whose example is checked against the live response, and
    a route cannot emit an undeclared code without failing the type check. An
@@ -3280,7 +3296,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    the documented `format`/`Accept`, pagination, `Link`, content type,
    `Cache-Control`, provenance and content-hash rules. Implement or remove any
    claim that does not hold. Add representation and pagination contract tests.
-   *Done.* Conditional requests, caching, `format`, pagination, `Link` and
+   _Done._ Conditional requests, caching, `format`, pagination, `Link` and
    content types are documented once in the OpenAPI description and held by
    contract tests. `Accept` turned out to be described but never read, and is
    now documented as not negotiated. Provenance and content hashes are held at
@@ -3295,7 +3311,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    `/locations` as curated area collections and `/data/{measure}/value` as a
    by-place convenience dispatcher. Add examples showing `/places` first when
    ambiguity matters; do not rename either v1 path.
-   *Done.* OpenAPI calls `/locations` the curated area collections and
+   _Done._ OpenAPI calls `/locations` the curated area collections and
    `/data/{measure}/value` a by-place dispatcher, says it is not the primary
    way to fetch an observation, and points at `/places` first where a name is
    ambiguous.
@@ -3303,7 +3319,7 @@ surface area. They follow Phase 0 and Phase 1 only.
    TypeScript or shell examples for the three golden paths using only the
    published OpenAPI contract. A broken example blocks release rather than
    becoming a support burden.
-   *Done.* `examples/correct-map.ts`, `examples/defensible-trend.ts` and
+   _Done._ `examples/correct-map.ts`, `examples/defensible-trend.ts` and
    `examples/reliable-sync.ts` walk the three paths over HTTP using only the
    published contract, and `tests/examples.test.ts` runs them against a server
    it starts. Each asserts what it demonstrates: the trend example shows two
@@ -3315,7 +3331,7 @@ surface area. They follow Phase 0 and Phase 1 only.
 9. **Specify the release-pinned map resource contract:** identity, value join,
    simplification/topology tier, attribution, caching, content hashes and the
    distinction between source and geometry release.
-   *Done.* [Map resource contract](#map-resource-contract) settles all seven
+   _Done._ [Map resource contract](#map-resource-contract) settles all seven
    and resolves the drift between the two candidate tile shapes the
    non-binding sections sketched. Nothing in it is served yet; it is what
    items 10 to 12 build against. The two decisions that most affect those
@@ -3327,7 +3343,7 @@ surface area. They follow Phase 0 and Phase 1 only.
 10. **Build a topology-preserving tile or PMTiles compiler** for one boundary
     release and test that neighbouring features share edges at every published
     map tier.
-    *Geometry done; encoding still to do.* `src/mapResource/` splits a release
+    _Geometry done; encoding still to do._ `src/mapResource/` splits a release
     into shared arcs and generalises each arc once, so both areas along a
     border get identical coordinates by construction rather than by tolerance.
     `localAuthority/2023-05-uk-bgc-v2` decomposes into 6,792 arcs over 417,116
@@ -3384,9 +3400,10 @@ surface area. They follow Phase 0 and Phase 1 only.
     files behind them; a release that is recorded but no longer served is
     refused with `410`, naming the release now current, rather than quietly
     answered from it.
+
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
-    *Done.* Every measure that joins to the published map resource is served
+    _Done._ Every measure that joins to the published map resource is served
     as a Parquet join table, and the resource's shapes as GeoParquet at every
     tier. `tests/mapResourceArtifact.test.ts` holds each GeoParquet file to
     the hash, size and row count its descriptor gives, to the GeoParquet
@@ -3397,7 +3414,7 @@ surface area. They follow Phase 0 and Phase 1 only.
     map URL is covered by the release it names.
 12. **Create the MapLibre/TypeScript correct-map tutorial** and make it a
     release gate for the first design partner.
-    *Done, bar a design partner.* `examples/correct-map-render.ts` walks the
+    _Done, bar a design partner._ `examples/correct-map-render.ts` walks the
     whole path over HTTP using only the published contract: choose a published
     resource, read its descriptor, be refused a measure these boundaries
     cannot carry and told which releases would carry it, configure the
@@ -3416,10 +3433,11 @@ surface area. They follow Phase 0 and Phase 1 only.
     can revalidate and page, and answer the preflight that `If-None-Match`
     triggers. This is the tutorial earning its place as a release gate rather
     than as documentation.
+
 13. **Specify, but do not yet generalise,** the analysis-preflight and
     analysis-geography response contracts required by Phase 2. No custom
     geometry or broad analysis endpoint is in this phase.
-    *Done.* [Analysis contract](#analysis-contract) settles both and builds
+    _Done._ [Analysis contract](#analysis-contract) settles both and builds
     nothing. An analysis geography is a declared frame, supported per measure
     and only where the conversion method suits that measure's own semantics,
     so the four kinds the catalogue distinguishes each get a rule and a

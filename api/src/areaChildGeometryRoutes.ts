@@ -36,7 +36,8 @@ export const handleAreaChildGeometryRoutes = ({
 		code,
 	});
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	const relationshipsUnavailable = geographyResolver.requires("relationships");
+	const relationshipsUnavailable =
+		geographyResolver.requires("relationships");
 	if (relationshipsUnavailable) return relationshipsUnavailable;
 	const geometryUnavailable = geographyResolver.requires("geometry");
 	if (geometryUnavailable) return geometryUnavailable;
@@ -63,9 +64,8 @@ export const handleAreaChildGeometryRoutes = ({
 	const childGeography = parsedUrl.searchParams.get("childGeography");
 	const layers = [
 		...new Set(
-			contained.map(
-				({ counterpart }) =>
-					releaseKey(counterpart.geography, counterpart.boundaryRelease),
+			contained.map(({ counterpart }) =>
+				releaseKey(counterpart.geography, counterpart.boundaryRelease),
 			),
 		),
 	].sort();
@@ -73,14 +73,15 @@ export const handleAreaChildGeometryRoutes = ({
 		? contained.filter(
 				({ counterpart }) =>
 					counterpart.geography === childGeography ||
-					releaseKey(counterpart.geography, counterpart.boundaryRelease) ===
-						childGeography,
+					releaseKey(
+						counterpart.geography,
+						counterpart.boundaryRelease,
+					) === childGeography,
 			)
 		: contained;
 	const chosenLayers = new Set(
-		children.map(
-			({ counterpart }) =>
-				releaseKey(counterpart.geography, counterpart.boundaryRelease),
+		children.map(({ counterpart }) =>
+			releaseKey(counterpart.geography, counterpart.boundaryRelease),
 		),
 	);
 	if (childGeography && children.length === 0)

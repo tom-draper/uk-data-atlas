@@ -164,7 +164,8 @@ export const crosswalkFindings = (
 		const reaching = artifact.records
 			.filter(
 				(record) =>
-					record.targets[0]!.outsideWidthM >= containment.sliverWidthM / 2,
+					record.targets[0]!.outsideWidthM >=
+					containment.sliverWidthM / 2,
 			)
 			.map(
 				(record) =>
@@ -251,7 +252,6 @@ export const crosswalkFindings = (
 	}
 
 	if (artifact.method === "area-overlap") {
-
 		// Recompute coverage from the published shares rather than trusting
 		// the compiler's own minimums, and count targets that no source
 		// reaches at all.

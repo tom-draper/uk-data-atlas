@@ -164,8 +164,10 @@ export const normaliseObservation = <T extends PopulationObservation>(
 	...(record.confidenceInterval
 		? {
 				confidenceInterval: {
-					lower: record.confidenceInterval.lower * unit.scaleToCanonical,
-					upper: record.confidenceInterval.upper * unit.scaleToCanonical,
+					lower:
+						record.confidenceInterval.lower * unit.scaleToCanonical,
+					upper:
+						record.confidenceInterval.upper * unit.scaleToCanonical,
 				},
 			}
 		: {}),

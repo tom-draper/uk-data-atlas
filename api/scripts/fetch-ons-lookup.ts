@@ -49,7 +49,8 @@ export const fetchOnsLookup = async (
 	retrieved = new Date().toISOString().slice(0, 10),
 ) => {
 	const layer = `${SERVICES}/${source.service}/FeatureServer/0`;
-	if (source.distinctColumns) return fetchDistinct(repositoryRoot, source, layer, retrieved);
+	if (source.distinctColumns)
+		return fetchDistinct(repositoryRoot, source, layer, retrieved);
 	const { count } = await fetchJson(
 		`${layer}/query?where=1%3D1&returnCountOnly=true&f=json`,
 	);
@@ -96,7 +97,9 @@ const fetchDistinct = async (
 			`${layer}/query?${query}&resultOffset=${offset}&resultRecordCount=${PAGE}&f=geojson`,
 		);
 		if (!Array.isArray(page.features))
-			throw new Error(`${source.service}: page at ${offset} has no features`);
+			throw new Error(
+				`${source.service}: page at ${offset} has no features`,
+			);
 		features.push(...page.features);
 		if (page.features.length < PAGE) break;
 	}
@@ -123,7 +126,12 @@ const writeLookup = (
 		sourceUrl,
 		note,
 		retrieved,
-	}: { features: Feature[]; sourceUrl: string; note: string; retrieved: string },
+	}: {
+		features: Feature[];
+		sourceUrl: string;
+		note: string;
+		retrieved: string;
+	},
 ) => {
 	const directory = join(repositoryRoot, "data", "lookups", source.directory);
 	mkdirSync(directory, { recursive: true });

@@ -103,97 +103,106 @@ export const crosswalkTable = (
 		crosswalk.method === "area-overlap" ||
 		crosswalk.method === "population-overlap";
 	// A population overlap's shares are of people, not land.
-	const share = crosswalk.method === "population-overlap" ? "population" : "area";
+	const share =
+		crosswalk.method === "population-overlap" ? "population" : "area";
 	return {
-	id: `crosswalk-${crosswalk.id}`,
-	kind: "crosswalk",
-	title: `Crosswalk, ${crosswalk.id}`,
-	source: { artifact, contentHash: crosswalk.contentHash },
-	columns: [
-		column("crosswalkId", "string", "The crosswalk the row belongs to."),
-		column(
-			"method",
-			"string",
-			"How the relationship was established, such as clean-containment or area-overlap.",
+		id: `crosswalk-${crosswalk.id}`,
+		kind: "crosswalk",
+		title: `Crosswalk, ${crosswalk.id}`,
+		source: { artifact, contentHash: crosswalk.contentHash },
+		columns: [
+			column(
+				"crosswalkId",
+				"string",
+				"The crosswalk the row belongs to.",
+			),
+			column(
+				"method",
+				"string",
+				"How the relationship was established, such as clean-containment or area-overlap.",
+			),
+			column("fromGeography", "string", "The source side's geography."),
+			column(
+				"fromBoundaryRelease",
+				"string",
+				"The source side's release.",
+			),
+			column("sourceCode", "string", "The source area's code."),
+			column(
+				"sourceLabels",
+				"string[]",
+				"The source area's names in the input.",
+			),
+			column("toGeography", "string", "The target side's geography."),
+			column("toBoundaryRelease", "string", "The target side's release."),
+			column("targetCode", "string", "The target area's code."),
+			column(
+				"targetLabels",
+				"string[]",
+				"The target area's names in the input.",
+			),
+			column(
+				"weight",
+				"number",
+				"The share of the source to apportion to this target, where the crosswalk provides weights.",
+				weighted,
+			),
+			column(
+				"sourceShare",
+				"number",
+				`The share of the source ${share} inside the target, for a weighted overlap.`,
+				weighted,
+			),
+			column(
+				"targetShare",
+				"number",
+				`The share of the target ${share} inside the source, for a weighted overlap.`,
+				weighted,
+			),
+			column(
+				"overlapAreaM2",
+				"number",
+				"The overlapping area in square metres, for a weighted overlap.",
+				weighted,
+			),
+			column(
+				"population",
+				"number",
+				"The people in the overlap, from the crosswalk's population building blocks.",
+				crosswalk.method === "population-overlap",
+			),
+		],
+		rows: crosswalk.records.flatMap((record) =>
+			record.targets.map((target) => {
+				const overlap =
+					"weight" in target
+						? (target as {
+								weight: number;
+								sourceShare: number;
+								targetShare: number;
+								overlapAreaM2: number;
+								population?: number;
+							})
+						: undefined;
+				return {
+					crosswalkId: crosswalk.id,
+					method: crosswalk.method,
+					fromGeography: crosswalk.from.geography,
+					fromBoundaryRelease: crosswalk.from.boundaryRelease,
+					sourceCode: record.source.code,
+					sourceLabels: record.source.labels,
+					toGeography: crosswalk.to.geography,
+					toBoundaryRelease: crosswalk.to.boundaryRelease,
+					targetCode: target.code,
+					targetLabels: target.labels,
+					weight: overlap?.weight ?? null,
+					sourceShare: overlap?.sourceShare ?? null,
+					targetShare: overlap?.targetShare ?? null,
+					overlapAreaM2: overlap?.overlapAreaM2 ?? null,
+					population: overlap?.population ?? null,
+				};
+			}),
 		),
-		column("fromGeography", "string", "The source side's geography."),
-		column("fromBoundaryRelease", "string", "The source side's release."),
-		column("sourceCode", "string", "The source area's code."),
-		column(
-			"sourceLabels",
-			"string[]",
-			"The source area's names in the input.",
-		),
-		column("toGeography", "string", "The target side's geography."),
-		column("toBoundaryRelease", "string", "The target side's release."),
-		column("targetCode", "string", "The target area's code."),
-		column(
-			"targetLabels",
-			"string[]",
-			"The target area's names in the input.",
-		),
-		column(
-			"weight",
-			"number",
-			"The share of the source to apportion to this target, where the crosswalk provides weights.",
-			weighted,
-		),
-		column(
-			"sourceShare",
-			"number",
-			`The share of the source ${share} inside the target, for a weighted overlap.`,
-			weighted,
-		),
-		column(
-			"targetShare",
-			"number",
-			`The share of the target ${share} inside the source, for a weighted overlap.`,
-			weighted,
-		),
-		column(
-			"overlapAreaM2",
-			"number",
-			"The overlapping area in square metres, for a weighted overlap.",
-			weighted,
-		),
-		column(
-			"population",
-			"number",
-			"The people in the overlap, from the crosswalk's population building blocks.",
-			crosswalk.method === "population-overlap",
-		),
-	],
-	rows: crosswalk.records.flatMap((record) =>
-		record.targets.map((target) => {
-			const overlap =
-				"weight" in target
-					? (target as {
-							weight: number;
-							sourceShare: number;
-							targetShare: number;
-							overlapAreaM2: number;
-							population?: number;
-						})
-					: undefined;
-			return {
-				crosswalkId: crosswalk.id,
-				method: crosswalk.method,
-				fromGeography: crosswalk.from.geography,
-				fromBoundaryRelease: crosswalk.from.boundaryRelease,
-				sourceCode: record.source.code,
-				sourceLabels: record.source.labels,
-				toGeography: crosswalk.to.geography,
-				toBoundaryRelease: crosswalk.to.boundaryRelease,
-				targetCode: target.code,
-				targetLabels: target.labels,
-				weight: overlap?.weight ?? null,
-				sourceShare: overlap?.sourceShare ?? null,
-				targetShare: overlap?.targetShare ?? null,
-				overlapAreaM2: overlap?.overlapAreaM2 ?? null,
-				population: overlap?.population ?? null,
-			};
-		}),
-	),
 	};
 };
 

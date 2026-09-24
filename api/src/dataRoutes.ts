@@ -5,7 +5,10 @@ import {
 	measureUnit,
 	normaliseObservation,
 } from "./unitRegistry";
-import { refused, resolveObservations } from "./observationResolution/observationPlan";
+import {
+	refused,
+	resolveObservations,
+} from "./observationResolution/observationPlan";
 import {
 	exportMeasureRecords,
 	type MeasureExportRecord,
@@ -321,7 +324,10 @@ export const handleDataRoutes = ({
 				...(geometry === undefined ? {} : { geometry }),
 				provenance,
 				...(unitMode === "canonical"
-					? { valueRepresentation: canonicalValueRepresentation(measure) }
+					? {
+							valueRepresentation:
+								canonicalValueRepresentation(measure),
+						}
 					: {}),
 				conversion: null,
 				aggregation: null,

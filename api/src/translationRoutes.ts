@@ -2,11 +2,7 @@ import type { RelationshipPurpose } from "./relationshipPaths";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
-const PURPOSES: RelationshipPurpose[] = [
-	"identity",
-	"membership",
-	"apportion",
-];
+const PURPOSES: RelationshipPurpose[] = ["identity", "membership", "apportion"];
 
 /**
  * Translate one code through the resolver's published conversion graph. A
@@ -76,7 +72,9 @@ export const handleTranslationRoutes = ({
 						if (path.steps.length !== 1)
 							return { path, ...translation };
 						const step = path.steps[0]!;
-						const crosswalk = geographyResolver.crosswalk(step.crosswalkId);
+						const crosswalk = geographyResolver.crosswalk(
+							step.crosswalkId,
+						);
 						if (!crosswalk) return { path, ...translation };
 						return {
 							crosswalk: {

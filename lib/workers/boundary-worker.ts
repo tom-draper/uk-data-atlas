@@ -29,9 +29,7 @@ interface Response {
 	error?: string;
 }
 
-const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/datasets/boundary-mappings.json",
-);
+const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
 const COUNTRY_LOCATIONS = new Set([
 	"England",
 	"Scotland",

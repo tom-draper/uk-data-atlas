@@ -101,8 +101,12 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			semantic?:
 				| {
 						status: "available";
-						changes: Array<{ kind: string; id: string; fields: string[] }>;
-					}
+						changes: Array<{
+							kind: string;
+							id: string;
+							fields: string[];
+						}>;
+				  }
 				| { status: "unavailable"; reason: string };
 		}>(
 			`/v1/atlas-releases/compare?from=${previous.releaseId}&detail=fields`,
@@ -115,7 +119,10 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			semantic?.status === "available" && semantic.changes.length > 0
 				? ` Changed fields include ${semantic.changes
 						.slice(0, 3)
-						.map((change) => `${change.kind}/${change.id}: ${change.fields.join(", ")}`)
+						.map(
+							(change) =>
+								`${change.kind}/${change.id}: ${change.fields.join(", ")}`,
+						)
 						.join("; ")}.`
 				: semantic?.status === "unavailable"
 					? ` Field detail is unavailable: ${semantic.reason}`

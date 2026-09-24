@@ -88,7 +88,9 @@ export const validateAnalysisGeographies = (
 					support.source.boundaryYear,
 		);
 		if (!measure || !source)
-			throw new Error(`${support.measureId}: reviewed source is not published.`);
+			throw new Error(
+				`${support.measureId}: reviewed source is not published.`,
+			);
 		const artifactName = observationArtifactName(measure.id, source);
 		const stored = observationsByArtifact.get(artifactName);
 		const observations =
@@ -110,7 +112,8 @@ export const validateAnalysisGeographies = (
 				: [{ id: support.crosswalk!.id, direction: "forward" as const }]
 		).map(({ id, direction }) => {
 			const artifact = crosswalkLookup.get(id);
-			if (!artifact) throw new Error(`${id}: reviewed crosswalk is not built.`);
+			if (!artifact)
+				throw new Error(`${id}: reviewed crosswalk is not built.`);
 			return { artifact, direction };
 		});
 		// Indexed once per support, since every period converts through them.
@@ -169,11 +172,13 @@ export const validateAnalysisGeographies = (
 				? {
 						path: {
 							id: support.path.id,
-							crosswalks: routeSteps.map(({ artifact, direction }) => ({
-								id: artifact.id,
-								contentHash: artifact.contentHash,
-								direction,
-							})),
+							crosswalks: routeSteps.map(
+								({ artifact, direction }) => ({
+									id: artifact.id,
+									contentHash: artifact.contentHash,
+									direction,
+								}),
+							),
 						},
 					}
 				: {

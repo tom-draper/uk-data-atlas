@@ -155,7 +155,11 @@ export type PopulationOverlapValidation = {
 	/** People in blocks outside every source the adapter admits. */
 	outsidePopulation: number;
 	/** Blocks the clipper could not measure, and their population. */
-	unmeasuredBlocks: Array<{ code: string; population: number; reason: string }>;
+	unmeasuredBlocks: Array<{
+		code: string;
+		population: number;
+		reason: string;
+	}>;
 	minimumSourceCoverage: number;
 };
 
@@ -455,7 +459,9 @@ const compilePropertyCrosswalk = (
 			const pair = `${sourceArea.code}|${targetArea.code}`;
 			const previous = changes.get(pair);
 			if (previous && previous !== change)
-				throw new Error(`${adapter.id}: ${pair} is both ${previous} and ${change}`);
+				throw new Error(
+					`${adapter.id}: ${pair} is both ${previous} and ${change}`,
+				);
 			changes.set(pair, change);
 		}
 	}
@@ -489,12 +495,16 @@ const compilePropertyCrosswalk = (
 			source: record.source,
 			targets: [...record.targets.values()]
 				.map((target) => {
-					const change = changes.get(`${record.source.code}|${target.code}`);
+					const change = changes.get(
+						`${record.source.code}|${target.code}`,
+					);
 					return change ? { ...target, change } : target;
 				})
 				.sort((left, right) => left.code.localeCompare(right.code)),
 		}))
-		.sort((left, right) => left.source.code.localeCompare(right.source.code));
+		.sort((left, right) =>
+			left.source.code.localeCompare(right.source.code),
+		);
 	const geometryContainment =
 		adapter.method === "clean-containment"
 			? validateGeometryContainment(repositoryRoot, geometrySources, {
@@ -531,7 +541,9 @@ const compilePropertyCrosswalk = (
 						changes: Object.fromEntries(
 							Object.values(CHANGE_INDICATORS).map((change) => [
 								change,
-								[...changes.values()].filter((value) => value === change).length,
+								[...changes.values()].filter(
+									(value) => value === change,
+								).length,
 							]),
 						) as Record<CrosswalkChange, number>,
 					}
@@ -609,7 +621,9 @@ export const compileCrosswalks = (
 					areaLookup,
 				);
 			}
-			throw new Error(`${adapter.id}: no compiler for ${adapter.method}.`);
+			throw new Error(
+				`${adapter.id}: no compiler for ${adapter.method}.`,
+			);
 		})();
 		compiled.set(artifact.id, artifact);
 		return artifact;

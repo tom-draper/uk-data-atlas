@@ -5,7 +5,9 @@ import { notBuilt, unsupported } from "./capability";
 import { areaKey } from "./geographyKeys";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
-	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
+	response && "detail" in response.body
+		? response.body.detail
+		: "Catalogue data is unavailable.";
 
 /** Discovery endpoints for the Atlas's curated named locations. */
 export const handleLocationRoutes = ({
@@ -19,7 +21,8 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
-		const unavailable = context.geographyResolver.requires("named-locations");
+		const unavailable =
+			context.geographyResolver.requires("named-locations");
 		if (unavailable) return unavailable;
 		const namedLocations = context.geographyResolver.namedLocations();
 		const query = parsedUrl.searchParams
@@ -79,7 +82,10 @@ export const handleLocationRoutes = ({
 				"release is required to resolve a named location's members.",
 			);
 		const geographyResolver = context.geographyResolver;
-		const areas = geographyResolver.releaseAreas(geography, boundaryRelease);
+		const areas = geographyResolver.releaseAreas(
+			geography,
+			boundaryRelease,
+		);
 		if (!areas)
 			return problem(
 				404,
@@ -106,7 +112,10 @@ export const handleLocationRoutes = ({
 					composition: {
 						kind: "declared-member-composite",
 						officialGeography: false,
-						status: resolvedCodes.size === location.memberCodes.length ? ("complete" as const) : ("partial" as const),
+						status:
+							resolvedCodes.size === location.memberCodes.length
+								? ("complete" as const)
+								: ("partial" as const),
 						note: "This is a curated composite of declared member codes, not an official administrative geography. Aggregate only measures whose semantics permit summing these members.",
 					},
 					geography,
@@ -170,7 +179,10 @@ export const handleLocationRoutes = ({
 				composition: {
 					kind: "declared-member-composite",
 					officialGeography: false,
-					status: projection.partialMembers > 0 ? ("partial" as const) : ("complete" as const),
+					status:
+						projection.partialMembers > 0
+							? ("partial" as const)
+							: ("complete" as const),
 					note: "This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas.",
 				},
 				geography,
@@ -188,7 +200,11 @@ export const handleLocationRoutes = ({
 					}),
 					code: member.code,
 					through: {
-						id: areaKey(projection.parentGeography, projection.parentBoundaryRelease, member.throughCode),
+						id: areaKey(
+							projection.parentGeography,
+							projection.parentBoundaryRelease,
+							member.throughCode,
+						),
 						code: member.throughCode,
 					},
 					relation: member.relation,
@@ -234,29 +250,39 @@ const locationCapabilities = ({
 		? notBuilt(requirementDetail(areaAvailability))
 		: (() => {
 				const views = geographyResolver
-					.locationReleaseViews(location.memberGeography, location.memberCodes)
-					.map(({ geography, boundaryRelease, resolvedMemberCount }) => ({
-						geography,
-						boundaryRelease,
-						status:
-							resolvedMemberCount === location.memberCodes.length
-								? ("available" as const)
-								: ("partial" as const),
-						memberCodeCount: location.memberCodes.length,
-						resolvedMemberCount,
-						href: `/v1/locations/${location.id}/members?release=${boundaryRelease}`,
-					}));
+					.locationReleaseViews(
+						location.memberGeography,
+						location.memberCodes,
+					)
+					.map(
+						({
+							geography,
+							boundaryRelease,
+							resolvedMemberCount,
+						}) => ({
+							geography,
+							boundaryRelease,
+							status:
+								resolvedMemberCount ===
+								location.memberCodes.length
+									? ("available" as const)
+									: ("partial" as const),
+							memberCodeCount: location.memberCodes.length,
+							resolvedMemberCount,
+							href: `/v1/locations/${location.id}/members?release=${boundaryRelease}`,
+						}),
+					);
 				return views.length > 0
 					? { status: "available" as const, views }
 					: unsupported(
 							`No compiled ${location.memberGeography} release is available for this location.`,
 						);
 			})();
-	const memberAvailability = geographyResolver.requires("location-projections");
+	const memberAvailability = geographyResolver.requires(
+		"location-projections",
+	);
 	const members = memberAvailability
-		? notBuilt(
-				requirementDetail(memberAvailability),
-			)
+		? notBuilt(requirementDetail(memberAvailability))
 		: (() => {
 				const views = geographyResolver
 					.locationMemberProjectionShards(location.memberGeography)
@@ -276,11 +302,11 @@ const locationCapabilities = ({
 							`No published crosswalk projection reaches this location's ${location.memberGeography} members.`,
 						);
 			})();
-	const parentAvailability = geographyResolver.requires("location-projections");
+	const parentAvailability = geographyResolver.requires(
+		"location-projections",
+	);
 	const parents = parentAvailability
-		? notBuilt(
-				requirementDetail(parentAvailability),
-			)
+		? notBuilt(requirementDetail(parentAvailability))
 		: (() => {
 				const views = geographyResolver
 					.locationParentProjectionShards(location.memberGeography)
@@ -364,7 +390,10 @@ const locationParents = ({
 			"Not Found",
 			`No published crosswalk ${requested} runs from ${location.memberGeography} to ${geography}/${boundaryRelease}.`,
 		);
-	const parentAreas = geographyResolver.releaseAreas(geography, boundaryRelease);
+	const parentAreas = geographyResolver.releaseAreas(
+		geography,
+		boundaryRelease,
+	);
 	const memberAreas = geographyResolver.releaseAreas(
 		projection.memberGeography,
 		projection.memberBoundaryRelease,
@@ -372,18 +401,25 @@ const locationParents = ({
 	const parentId = (code: string) =>
 		areaKey(geography, boundaryRelease, code);
 	const memberId = (code: string) =>
-		areaKey(projection.memberGeography, projection.memberBoundaryRelease, code);
+		areaKey(
+			projection.memberGeography,
+			projection.memberBoundaryRelease,
+			code,
+		);
 	return {
 		status: 200,
-			body: envelope(releaseId, {
-				location,
-				composition: {
-					kind: "declared-member-composite",
-					officialGeography: false,
-					status: projection.unplaced.length > 0 ? ("partial" as const) : ("complete" as const),
-					note: "This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas.",
-				},
-				geography,
+		body: envelope(releaseId, {
+			location,
+			composition: {
+				kind: "declared-member-composite",
+				officialGeography: false,
+				status:
+					projection.unplaced.length > 0
+						? ("partial" as const)
+						: ("complete" as const),
+				note: "This is a curated composite projected through a published crosswalk, not an official administrative geography. Partial members must not be summed as whole areas.",
+			},
+			geography,
 			boundaryRelease,
 			via: projection.via,
 			memberGeography: projection.memberGeography,

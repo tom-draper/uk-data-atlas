@@ -49,7 +49,10 @@ const lookupCrosswalk = (
 		validation,
 		records: records.map(([source, targets]) => ({
 			source: { code: source, labels: [`${source} label`] },
-			targets: targets.map((code) => ({ code, labels: [`${code} label`] })),
+			targets: targets.map((code) => ({
+				code,
+				labels: [`${code} label`],
+			})),
 		})),
 		...extra,
 	}) as CrosswalkArtifact;
@@ -82,7 +85,12 @@ const overlapCrosswalk = (
 		provenance: { inputs: [] },
 		validation,
 		records: records.map(({ source, targets }) => ({
-			source: { code: source, labels: [`${source} label`], areaM2: 100, coverage: 1 },
+			source: {
+				code: source,
+				labels: [`${source} label`],
+				areaM2: 100,
+				coverage: 1,
+			},
 			targets: targets.map((target) => ({
 				...target,
 				labels: [`${target.code} label`],
@@ -104,7 +112,9 @@ const path = (
 		purpose,
 		from: steps[0]![1] === "forward" ? first.from : first.to,
 		to: lastDirection === "forward" ? last.to : last.from,
-		quality: steps.every(([artifact]) => artifact.quality === "publisher-supplied")
+		quality: steps.every(
+			([artifact]) => artifact.quality === "publisher-supplied",
+		)
 			? "publisher-supplied"
 			: "derived",
 		origin: "declared",
@@ -159,7 +169,12 @@ test("reverses a lookup step by collecting every source that names a target", ()
 test("normalises a reversed overlap to the share of the queried area its sources cover", () => {
 	// B1 is 30% covered by A1 and 50% by A2; 20% has no published source.
 	const crosswalk = overlapCrosswalk("a-b", "a", "b", [
-		{ source: "A1", targets: [{ code: "B1", weight: 1, sourceShare: 1, targetShare: 0.3 }] },
+		{
+			source: "A1",
+			targets: [
+				{ code: "B1", weight: 1, sourceShare: 1, targetShare: 0.3 },
+			],
+		},
 		{
 			source: "A2",
 			targets: [
@@ -186,7 +201,12 @@ test("normalises a reversed overlap to the share of the queried area its sources
 
 test("skips a reversed overlap target with no covered share", () => {
 	const crosswalk = overlapCrosswalk("a-b", "a", "b", [
-		{ source: "A1", targets: [{ code: "B1", weight: 1, sourceShare: 1, targetShare: 0 }] },
+		{
+			source: "A1",
+			targets: [
+				{ code: "B1", weight: 1, sourceShare: 1, targetShare: 0 },
+			],
+		},
 	]);
 
 	assert.equal(buildTranslationSteps(crosswalk, "reverse").has("B1"), false);
@@ -220,7 +240,12 @@ test("multiplies apportion weights along a path and sums them where routes meet"
 		},
 	]);
 	const second = overlapCrosswalk("m-t", "m", "t", [
-		{ source: "X", targets: [{ code: "T", weight: 1, sourceShare: 1, targetShare: 0.5 }] },
+		{
+			source: "X",
+			targets: [
+				{ code: "T", weight: 1, sourceShare: 1, targetShare: 0.5 },
+			],
+		},
 		{
 			source: "Y",
 			targets: [
@@ -284,7 +309,12 @@ test("merges labels without inventing weights on a membership path", () => {
 
 test("keeps the crosswalk shape and source coverage on a direct path", () => {
 	const crosswalk = overlapCrosswalk("a-b", "a", "b", [
-		{ source: "A1", targets: [{ code: "B1", weight: 1, sourceShare: 1, targetShare: 0.4 }] },
+		{
+			source: "A1",
+			targets: [
+				{ code: "B1", weight: 1, sourceShare: 1, targetShare: 0.4 },
+			],
+		},
 	]);
 	const route = path("b-a", "apportion", [[crosswalk, "reverse"]]);
 	const steps = buildTranslationSteps(crosswalk, "reverse");
@@ -322,19 +352,29 @@ test("ranks single crosswalks, then reviewed, then discovered, then evidence and
 	const crosswalk = lookupCrosswalk("a-b", "a", "b", []);
 	const derived = overlapCrosswalk("b-c", "b", "c", []);
 	const ranked = rankTranslationPaths([
-		path("discovered", "membership", [[crosswalk, "forward"]], { origin: "discovered" }),
+		path("discovered", "membership", [[crosswalk, "forward"]], {
+			origin: "discovered",
+		}),
 		path("declared-long", "membership", [
 			[crosswalk, "forward"],
 			[crosswalk, "forward"],
 		]),
 		path("declared-derived", "membership", [[derived, "forward"]]),
 		path("declared-short", "membership", [[crosswalk, "forward"]]),
-		path("crosswalk", "membership", [[crosswalk, "forward"]], { origin: "crosswalk" }),
+		path("crosswalk", "membership", [[crosswalk, "forward"]], {
+			origin: "crosswalk",
+		}),
 	]);
 
 	assert.deepEqual(
 		ranked.map((candidate) => candidate.id),
-		["crosswalk", "declared-short", "declared-long", "declared-derived", "discovered"],
+		[
+			"crosswalk",
+			"declared-short",
+			"declared-long",
+			"declared-derived",
+			"discovered",
+		],
 	);
 });
 
@@ -346,19 +386,30 @@ test("builds direct fallback paths in either direction for the requested purpose
 	} as Partial<CrosswalkArtifact>);
 
 	assert.deepEqual(
-		directTranslationPaths([lookup], endpoint("b"), endpoint("a"), "identity").map(
-			(candidate) => candidate.id,
-		),
+		directTranslationPaths(
+			[lookup],
+			endpoint("b"),
+			endpoint("a"),
+			"identity",
+		).map((candidate) => candidate.id),
 		["a-b/reverse/identity"],
 	);
 	assert.deepEqual(
-		directTranslationPaths([lookup], endpoint("a"), endpoint("b"), "membership"),
+		directTranslationPaths(
+			[lookup],
+			endpoint("a"),
+			endpoint("b"),
+			"membership",
+		),
 		[],
 	);
 	assert.deepEqual(
-		directTranslationPaths([containment], endpoint("a"), endpoint("c"), "membership").map(
-			(candidate) => candidate.id,
-		),
+		directTranslationPaths(
+			[containment],
+			endpoint("a"),
+			endpoint("c"),
+			"membership",
+		).map((candidate) => candidate.id),
 		["a-c/forward/membership"],
 	);
 });
@@ -386,7 +437,10 @@ test("prefers published paths over the direct crosswalk fallback", () => {
 	assert.deepEqual(
 		fallbackOnly
 			.translateArea(source, endpoint("b"), "membership")
-			.map(({ path: used, targets }) => [used.id, targets.map((target) => target.code)]),
+			.map(({ path: used, targets }) => [
+				used.id,
+				targets.map((target) => target.code),
+			]),
 		[["a-b/forward/membership", ["B1"]]],
 	);
 
@@ -402,7 +456,10 @@ test("prefers published paths over the direct crosswalk fallback", () => {
 	assert.deepEqual(
 		withPaths
 			.translateArea(source, endpoint("b"), "membership")
-			.map(({ path: used, targets }) => [used.id, targets.map((target) => target.code)]),
+			.map(({ path: used, targets }) => [
+				used.id,
+				targets.map((target) => target.code),
+			]),
 		[["a-m-b", ["B2"]]],
 	);
 });

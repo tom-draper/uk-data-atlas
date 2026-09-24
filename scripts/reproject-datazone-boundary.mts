@@ -54,7 +54,8 @@ const reprojectCoordinates = (coordinates: unknown): unknown => {
 		]);
 		return [round(x), round(y)];
 	}
-	if (Array.isArray(coordinates)) return coordinates.map(reprojectCoordinates);
+	if (Array.isArray(coordinates))
+		return coordinates.map(reprojectCoordinates);
 	throw new Error("Unexpected coordinate shape");
 };
 

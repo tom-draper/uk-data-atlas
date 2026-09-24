@@ -59,7 +59,9 @@ const aggregationNamedLocations: NamedLocationInventory = {
 		},
 	],
 };
-const aggregationNamedLocationLookup = createNamedLocationLookup(aggregationNamedLocations);
+const aggregationNamedLocationLookup = createNamedLocationLookup(
+	aggregationNamedLocations,
+);
 
 test("aggregates a region through an explicit complete crosswalk", () => {
 	const crosswalkId = "local-authority-to-region-fixture";
@@ -862,7 +864,10 @@ const combinedToRegion = (overrides: Partial<CrosswalkArtifact> = {}) =>
 	containmentCrosswalk("combined-authority-to-region-fixture", {
 		method: "official-lookup" as const,
 		relationshipPurpose: "membership",
-		from: { geography: "combinedAuthority", boundaryRelease: "2025-12-en-cauth" },
+		from: {
+			geography: "combinedAuthority",
+			boundaryRelease: "2025-12-en-cauth",
+		},
 		to: { geography: "region", boundaryRelease: "2025-12-en-rgn" },
 		records: [
 			{
@@ -884,7 +889,9 @@ const aggregateThrough = (
 		{
 			crosswalkLookup: new Map([
 				...crosswalkLookup,
-				...steps.map(([crosswalk]) => [crosswalk.id, crosswalk] as const),
+				...steps.map(
+					([crosswalk]) => [crosswalk.id, crosswalk] as const,
+				),
 			]),
 			measureCompatibilityInventory: containmentCompatibility,
 			relationshipPathInventory: {
@@ -928,7 +935,10 @@ test("sums a target reached through every step of a published membership path", 
 		aggregation: {
 			membership: string;
 			crosswalk?: unknown;
-			path: { id: string; steps: Array<{ membership: string; crosswalk: { id: string } }> };
+			path: {
+				id: string;
+				steps: Array<{ membership: string; crosswalk: { id: string } }>;
+			};
 		};
 	};
 	assert.deepEqual(data.record, { value: 400, status: "derived" });
@@ -941,7 +951,10 @@ test("sums a target reached through every step of a published membership path", 
 		]),
 		[
 			["lad-to-combined-authority-path", "verified-clean-containment"],
-			["combined-authority-to-region-fixture", "published-membership-lookup"],
+			[
+				"combined-authority-to-region-fixture",
+				"published-membership-lookup",
+			],
 		],
 	);
 	assert.equal(data.target.id, "region/2025-12-en-rgn/E12000001");
@@ -962,18 +975,27 @@ test("refuses a path with a step that does not establish membership", () => {
 	const identity = aggregateThrough(
 		"targetCode=E12000001&path=authority-to-region-fixture",
 		[
-			[containmentCrosswalk("lad-to-combined-authority-identity"), "forward"],
+			[
+				containmentCrosswalk("lad-to-combined-authority-identity"),
+				"forward",
+			],
 			[combinedToRegion({ relationshipPurpose: "identity" }), "forward"],
 		],
 	);
 	assert.equal(identity.status, 422);
-	assert.match(detailOf(identity), /Step 2 of the path.*does not declare membership/);
+	assert.match(
+		detailOf(identity),
+		/Step 2 of the path.*does not declare membership/,
+	);
 
 	// Reversed containment lists a region's parts, not the region each is in.
 	const reversed = aggregateThrough(
 		"targetCode=E12000001&path=authority-to-region-fixture",
 		[
-			[containmentCrosswalk("lad-to-combined-authority-reversed"), "forward"],
+			[
+				containmentCrosswalk("lad-to-combined-authority-reversed"),
+				"forward",
+			],
 			[combinedToRegion(), "reverse"],
 		],
 	);

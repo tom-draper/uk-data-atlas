@@ -67,7 +67,11 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 				"Residence type: Lives in a communal establishment; measures: Value",
 				"Usual residents living in communal establishments",
 			],
-			["total", "Residence type: Total; measures: Value", "Usual residents"],
+			[
+				"total",
+				"Residence type: Total; measures: Value",
+				"Usual residents",
+			],
 		],
 		notes: [
 			"A census count of usual residents on Census Day, not a mid-year population estimate; the two differ in date and method.",
@@ -181,7 +185,11 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 				"Household composition: Other household types: Other, including all full-time students and all aged 66 years and over; measures: Value",
 				"Other household type, including all full-time students",
 			],
-			["total", "Household composition: Total; measures: Value", "Households"],
+			[
+				"total",
+				"Household composition: Total; measures: Value",
+				"Households",
+			],
 		],
 		notes: [
 			"A dependent child is aged 0 to 15, or 16 to 18 in full-time education and living with a parent.",
@@ -194,7 +202,11 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		universe: "Households, not people: each household counts once.",
 		totalColumn: "Tenure of household: Total: All households",
 		categories: [
-			["owned-outright", "Tenure of household: Owned: Owns outright", "Owned outright"],
+			[
+				"owned-outright",
+				"Tenure of household: Owned: Owns outright",
+				"Owned outright",
+			],
 			[
 				"owned-with-mortgage",
 				"Tenure of household: Owned: Owns with a mortgage or loan",
@@ -225,8 +237,16 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 				"Tenure of household: Private rented: Other private rented",
 				"Other private rented",
 			],
-			["rent-free", "Tenure of household: Lives rent free", "Lives rent free"],
-			["total", "Tenure of household: Total: All households", "Households"],
+			[
+				"rent-free",
+				"Tenure of household: Lives rent free",
+				"Lives rent free",
+			],
+			[
+				"total",
+				"Tenure of household: Total: All households",
+				"Households",
+			],
 		],
 		notes: [
 			"Social rented includes housing associations as well as councils; owned covers owned outright and with a mortgage, not shared ownership.",
@@ -307,25 +327,93 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		totalColumn: "Ethnic group: Total: All usual residents",
 		extendsExistingMeasures: true,
 		categories: [
-			["bangladeshi", "Ethnic group: Asian, Asian British or Asian Welsh: Bangladeshi", "Ethnic group: Bangladeshi"],
-			["chinese", "Ethnic group: Asian, Asian British or Asian Welsh: Chinese", "Ethnic group: Chinese"],
-			["indian", "Ethnic group: Asian, Asian British or Asian Welsh: Indian", "Ethnic group: Indian"],
-			["pakistani", "Ethnic group: Asian, Asian British or Asian Welsh: Pakistani", "Ethnic group: Pakistani"],
-			["other-asian", "Ethnic group: Asian, Asian British or Asian Welsh: Other Asian", "Ethnic group: Other Asian"],
-			["african", "Ethnic group: Black, Black British, Black Welsh, Caribbean or African: African", "Ethnic group: African"],
-			["caribbean", "Ethnic group: Black, Black British, Black Welsh, Caribbean or African: Caribbean", "Ethnic group: Caribbean"],
-			["other-black", "Ethnic group: Black, Black British, Black Welsh, Caribbean or African: Other Black", "Ethnic group: Other Black"],
-			["white-and-asian", "Ethnic group: Mixed or Multiple ethnic groups: White and Asian", "Ethnic group: White and Asian"],
-			["white-and-black-african", "Ethnic group: Mixed or Multiple ethnic groups: White and Black African", "Ethnic group: White and Black African"],
-			["white-and-black-caribbean", "Ethnic group: Mixed or Multiple ethnic groups: White and Black Caribbean", "Ethnic group: White and Black Caribbean"],
-			["other-mixed", "Ethnic group: Mixed or Multiple ethnic groups: Other Mixed or Multiple ethnic groups", "Ethnic group: Other Mixed or Multiple ethnic groups"],
-			["white-british", "Ethnic group: White: English, Welsh, Scottish, Northern Irish or British", "Ethnic group: English, Welsh, Scottish, Northern Irish or British"],
+			[
+				"bangladeshi",
+				"Ethnic group: Asian, Asian British or Asian Welsh: Bangladeshi",
+				"Ethnic group: Bangladeshi",
+			],
+			[
+				"chinese",
+				"Ethnic group: Asian, Asian British or Asian Welsh: Chinese",
+				"Ethnic group: Chinese",
+			],
+			[
+				"indian",
+				"Ethnic group: Asian, Asian British or Asian Welsh: Indian",
+				"Ethnic group: Indian",
+			],
+			[
+				"pakistani",
+				"Ethnic group: Asian, Asian British or Asian Welsh: Pakistani",
+				"Ethnic group: Pakistani",
+			],
+			[
+				"other-asian",
+				"Ethnic group: Asian, Asian British or Asian Welsh: Other Asian",
+				"Ethnic group: Other Asian",
+			],
+			[
+				"african",
+				"Ethnic group: Black, Black British, Black Welsh, Caribbean or African: African",
+				"Ethnic group: African",
+			],
+			[
+				"caribbean",
+				"Ethnic group: Black, Black British, Black Welsh, Caribbean or African: Caribbean",
+				"Ethnic group: Caribbean",
+			],
+			[
+				"other-black",
+				"Ethnic group: Black, Black British, Black Welsh, Caribbean or African: Other Black",
+				"Ethnic group: Other Black",
+			],
+			[
+				"white-and-asian",
+				"Ethnic group: Mixed or Multiple ethnic groups: White and Asian",
+				"Ethnic group: White and Asian",
+			],
+			[
+				"white-and-black-african",
+				"Ethnic group: Mixed or Multiple ethnic groups: White and Black African",
+				"Ethnic group: White and Black African",
+			],
+			[
+				"white-and-black-caribbean",
+				"Ethnic group: Mixed or Multiple ethnic groups: White and Black Caribbean",
+				"Ethnic group: White and Black Caribbean",
+			],
+			[
+				"other-mixed",
+				"Ethnic group: Mixed or Multiple ethnic groups: Other Mixed or Multiple ethnic groups",
+				"Ethnic group: Other Mixed or Multiple ethnic groups",
+			],
+			[
+				"white-british",
+				"Ethnic group: White: English, Welsh, Scottish, Northern Irish or British",
+				"Ethnic group: English, Welsh, Scottish, Northern Irish or British",
+			],
 			["irish", "Ethnic group: White: Irish", "Ethnic group: Irish"],
-			["gypsy-or-irish-traveller", "Ethnic group: White: Gypsy or Irish Traveller", "Ethnic group: Gypsy or Irish Traveller"],
+			[
+				"gypsy-or-irish-traveller",
+				"Ethnic group: White: Gypsy or Irish Traveller",
+				"Ethnic group: Gypsy or Irish Traveller",
+			],
 			["roma", "Ethnic group: White: Roma", "Ethnic group: Roma"],
-			["other-white", "Ethnic group: White: Other White", "Ethnic group: Other White"],
-			["arab", "Ethnic group: Other ethnic group: Arab", "Ethnic group: Arab"],
-			["any-other", "Ethnic group: Other ethnic group: Any other ethnic group", "Ethnic group: Any other ethnic group"],
+			[
+				"other-white",
+				"Ethnic group: White: Other White",
+				"Ethnic group: Other White",
+			],
+			[
+				"arab",
+				"Ethnic group: Other ethnic group: Arab",
+				"Ethnic group: Arab",
+			],
+			[
+				"any-other",
+				"Ethnic group: Other ethnic group: Any other ethnic group",
+				"Ethnic group: Any other ethnic group",
+			],
 		],
 		notes: [],
 	},
@@ -333,15 +421,28 @@ export const CENSUS_SMALL_AREA_TABLES: readonly CensusTable[] = [
 		table: "ts037",
 		measurePrefix: "general-health",
 		unit: "usual residents",
-		universe: "All usual residents, by their own assessment of their general health.",
+		universe:
+			"All usual residents, by their own assessment of their general health.",
 		totalColumn: "General health: Total: All usual residents",
 		categories: [
-			["very-good", "General health: Very good health", "General health: very good"],
+			[
+				"very-good",
+				"General health: Very good health",
+				"General health: very good",
+			],
 			["good", "General health: Good health", "General health: good"],
 			["fair", "General health: Fair health", "General health: fair"],
 			["bad", "General health: Bad health", "General health: bad"],
-			["very-bad", "General health: Very bad health", "General health: very bad"],
-			["total", "General health: Total: All usual residents", "Usual residents"],
+			[
+				"very-bad",
+				"General health: Very bad health",
+				"General health: very bad",
+			],
+			[
+				"total",
+				"General health: Total: All usual residents",
+				"Usual residents",
+			],
 		],
 		notes: [
 			"Self-assessed on a five-point scale; it is not a clinical measure and was collected during the pandemic.",
@@ -397,9 +498,12 @@ const tableRecords = (
 		const fields = csvFields(line);
 		const code = fields[2] ?? "";
 		const where = `${path} row ${index + 2}`;
-		if (fields[0] !== PERIOD) throw new Error(`${where}: date is ${fields[0]}, not ${PERIOD}`);
+		if (fields[0] !== PERIOD)
+			throw new Error(`${where}: date is ${fields[0]}, not ${PERIOD}`);
 		if (!geography.prefixes.some((prefix) => code.startsWith(prefix)))
-			throw new Error(`${where}: ${code} is not a ${geography.label} code`);
+			throw new Error(
+				`${where}: ${code} is not a ${geography.label} code`,
+			);
 		if (seen.has(code)) throw new Error(`${where}: ${code} repeats`);
 		seen.add(code);
 		const value = (column: number) => {
@@ -408,9 +512,14 @@ const tableRecords = (
 				throw new Error(`${where}: ${header[column]} is not a count`);
 			return parsed;
 		};
-		const sum = leaves.reduce((running, column) => running + value(column), 0);
+		const sum = leaves.reduce(
+			(running, column) => running + value(column),
+			0,
+		);
 		if (sum !== value(total))
-			throw new Error(`${where}: the categories sum to ${sum}, not the total ${value(total)}`);
+			throw new Error(
+				`${where}: the categories sum to ${sum}, not the total ${value(total)}`,
+			);
 		return [code, ...columns.map(value)] as [string, ...number[]];
 	});
 };
@@ -433,7 +542,12 @@ export const compileCensusSmallArea = (
 	const measures: Measure[] = [];
 	const partitions = new Map<string, MeasureSource[]>();
 	for (const table of tablesToCompile) {
-		const directory = join(repositoryRoot, "data", DATA_DIRECTORY, table.table);
+		const directory = join(
+			repositoryRoot,
+			"data",
+			DATA_DIRECTORY,
+			table.table,
+		);
 		const meta = JSON.parse(
 			readFileSync(join(directory, "meta.json"), "utf8"),
 		) as {
@@ -450,13 +564,20 @@ export const compileCensusSmallArea = (
 		const built = GEOGRAPHIES.map((geography) => {
 			const file = `census2021-${table.table}-${geography.type}.csv`;
 			const content = readFileSync(join(directory, file));
-			const records = tableRecords(join(directory, file), table, geography);
+			const records = tableRecords(
+				join(directory, file),
+				table,
+				geography,
+			);
 			const withoutHash = {
 				schemaVersion: 1 as const,
 				kind: "measure-table" as const,
 				id: censusTableArtifactName(table.table, geography.type),
 				datasetId,
-				sourceGeography: { type: geography.type, boundaryYear: BOUNDARY_YEAR },
+				sourceGeography: {
+					type: geography.type,
+					boundaryYear: BOUNDARY_YEAR,
+				},
 				period: PERIOD,
 				measures: measureIds,
 				records,
@@ -477,7 +598,9 @@ export const compileCensusSmallArea = (
 			};
 		});
 		tables.push(...built.map(({ artifact }) => artifact));
-		const compiledContent = built.map(({ artifact }) => JSON.stringify(artifact)).join("\n");
+		const compiledContent = built
+			.map(({ artifact }) => JSON.stringify(artifact))
+			.join("\n");
 		datasets.push({
 			id: datasetId,
 			label: meta.title,
@@ -489,7 +612,10 @@ export const compileCensusSmallArea = (
 			inputs: built.map(({ input }) => input),
 			summary: {
 				datasetCount: built.length,
-				dataRecordCount: built.reduce((count, { artifact }) => count + artifact.records.length, 0),
+				dataRecordCount: built.reduce(
+					(count, { artifact }) => count + artifact.records.length,
+					0,
+				),
 				boundaryYears: [BOUNDARY_YEAR],
 			},
 			compiled: {
@@ -499,18 +625,27 @@ export const compileCensusSmallArea = (
 		});
 		for (const [index, [, , label]] of table.categories.entries()) {
 			const measureId = measureIds[index]!;
-			const sources = built.map(({ geography, artifact }): MeasureSource => ({
-				datasetId,
-				periods: [PERIOD],
-				sourceGeography: { type: geography.type, boundaryYear: BOUNDARY_YEAR },
-				observationArtifact: artifact.id,
-				coverage: {
-					kind: "partial",
-					countries: countriesFor(artifact.records.map(([areaCode]) => ({ areaCode }))),
-					recordCount: artifact.records.length,
-					note: `Census 2021 covers every ${geography.label.slice(5)} in England and Wales; Scotland and Northern Ireland hold their own censuses on other geographies.`,
-				},
-			}));
+			const sources = built.map(
+				({ geography, artifact }): MeasureSource => ({
+					datasetId,
+					periods: [PERIOD],
+					sourceGeography: {
+						type: geography.type,
+						boundaryYear: BOUNDARY_YEAR,
+					},
+					observationArtifact: artifact.id,
+					coverage: {
+						kind: "partial",
+						countries: countriesFor(
+							artifact.records.map(([areaCode]) => ({
+								areaCode,
+							})),
+						),
+						recordCount: artifact.records.length,
+						note: `Census 2021 covers every ${geography.label.slice(5)} in England and Wales; Scotland and Northern Ireland hold their own censuses on other geographies.`,
+					},
+				}),
+			);
 			if (table.extendsExistingMeasures) {
 				partitions.set(measureId, sources);
 				continue;
@@ -520,9 +655,17 @@ export const compileCensusSmallArea = (
 				label,
 				valueKind: "count",
 				unit: table.unit,
-				aggregation: { kind: "extensive", operation: "sum", available: true },
+				aggregation: {
+					kind: "extensive",
+					operation: "sum",
+					available: true,
+				},
 				sources,
-				availability: { sourceExact: true, conversion: false, aggregation: true },
+				availability: {
+					sourceExact: true,
+					conversion: false,
+					aggregation: true,
+				},
 				links: { data: `/v1/data/${measureId}` },
 				notes: [table.universe, ...table.notes, ...CENSUS_NOTES],
 			});

@@ -38,7 +38,10 @@ export const derivedReleaseSources = (
 				? [
 						[
 							releaseKey(release.geography, release.id),
-							releaseKey(release.derivedFrom.source.geography, release.derivedFrom.source.boundaryRelease),
+							releaseKey(
+								release.derivedFrom.source.geography,
+								release.derivedFrom.source.boundaryRelease,
+							),
 						] as const,
 					]
 				: [],

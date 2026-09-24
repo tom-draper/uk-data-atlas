@@ -11,9 +11,7 @@ import {
 	type YearCode,
 } from "./mappings";
 
-const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/datasets/boundary-mappings.json",
-);
+const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
 
 /** The mutable boundary-code lookup populated from precompiled mappings. */
 export type BoundaryMappingTarget = {

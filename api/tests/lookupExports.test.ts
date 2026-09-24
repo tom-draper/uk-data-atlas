@@ -212,17 +212,17 @@ test("serves a lookup only when it renders the bytes its manifest lists", () => 
 	} as unknown as CrosswalkInventory;
 	const context = (areas = wards.areas): RouteContext =>
 		testContext({
-		boundaryRegistry: {
-			schemaVersion: 1,
-			contentHash: "sha256:registry",
-			releases: [],
-		},
-		areaInventory,
-		areaLookup: createAreaLookup([{ ...wards, areas }]),
-		crosswalkInventory,
-		crosswalkLookup: new Map([[overlap.id, overlap]]),
-		namedLocationInventory: locations,
-		lookupManifest,
+			boundaryRegistry: {
+				schemaVersion: 1,
+				contentHash: "sha256:registry",
+				releases: [],
+			},
+			areaInventory,
+			areaLookup: createAreaLookup([{ ...wards, areas }]),
+			crosswalkInventory,
+			crosswalkLookup: new Map([[overlap.id, overlap]]),
+			namedLocationInventory: locations,
+			lookupManifest,
 		});
 
 	const listed = route("GET", "/v1/lookups", context());

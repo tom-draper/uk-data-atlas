@@ -12,7 +12,9 @@ const parseAnalysisGeography = (value: string | null) => {
 };
 
 const supportFor = (
-	inventory: NonNullable<RouteRequest["context"]["analysisGeographyInventory"]>,
+	inventory: NonNullable<
+		RouteRequest["context"]["analysisGeographyInventory"]
+	>,
 	measureId: string,
 	analysisGeography: { geography: string; boundaryRelease: string },
 	source?: { geography: string; boundaryYear: string | null },
@@ -20,11 +22,14 @@ const supportFor = (
 	inventory.supports.filter(
 		(support) =>
 			support.measureId === measureId &&
-			support.analysisGeography.geography === analysisGeography.geography &&
-			support.analysisGeography.boundaryRelease === analysisGeography.boundaryRelease &&
+			support.analysisGeography.geography ===
+				analysisGeography.geography &&
+			support.analysisGeography.boundaryRelease ===
+				analysisGeography.boundaryRelease &&
 			(source === undefined ||
 				(support.source.geography === source.geography &&
-					String(support.source.boundaryYear) === source.boundaryYear)),
+					String(support.source.boundaryYear) ===
+						source.boundaryYear)),
 	);
 
 /**
@@ -59,7 +64,11 @@ export const handleAnalysisGeographyRoutes = ({
 			"Catalogue Unavailable",
 			"Build the analysis geography inventory before planning an analysis.",
 		);
-	if (segments.length === 2 && segments[0] === "v1" && segments[1] === "analysis-geographies") {
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "analysis-geographies"
+	) {
 		const measureId = parsedUrl.searchParams.get("measure");
 		const supports = inventory.supports.filter(
 			(support) => measureId === null || support.measureId === measureId,
@@ -85,7 +94,9 @@ export const handleAnalysisGeographyRoutes = ({
 		segments[1] === "measures" &&
 		segments[3] === "conversion-support";
 	const isPlan =
-		segments.length === 2 && segments[0] === "v1" && segments[1] === "analysis:plan";
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "analysis:plan";
 	if (!isConversionSupport && !isPlan) return undefined;
 	const requestedMeasure = isPlan
 		? parsedUrl.searchParams.get("measure")
@@ -111,7 +122,9 @@ export const handleAnalysisGeographyRoutes = ({
 		inventory,
 		requestedMeasure,
 		analysisGeography,
-		sourceGeography ? { geography: sourceGeography, boundaryYear: sourceBoundaryYear } : undefined,
+		sourceGeography
+			? { geography: sourceGeography, boundaryYear: sourceBoundaryYear }
+			: undefined,
 	);
 	if (!isPlan)
 		return {
@@ -122,14 +135,20 @@ export const handleAnalysisGeographyRoutes = ({
 				...(supports.length > 0
 					? { status: "available" as const, supports }
 					: unsupported(
-						`No reviewed conversion is published for ${requestedMeasure} on ${analysisGeography.geography}/${analysisGeography.boundaryRelease}.`,
-					)),
+							`No reviewed conversion is published for ${requestedMeasure} on ${analysisGeography.geography}/${analysisGeography.boundaryRelease}.`,
+						)),
 			}),
 		};
 	const period = parsedUrl.searchParams.get("period");
 	if (!period)
-		return problem(400, "Invalid Query", "period is required when planning an analysis.");
-	const support = supports.find((candidate) => candidate.source.periods.includes(period));
+		return problem(
+			400,
+			"Invalid Query",
+			"period is required when planning an analysis.",
+		);
+	const support = supports.find((candidate) =>
+		candidate.source.periods.includes(period),
+	);
 	if (!support)
 		return {
 			status: 200,

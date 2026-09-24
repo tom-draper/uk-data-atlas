@@ -115,8 +115,7 @@ test("builds immutable geography indexes once for route-level queries", () => {
 		},
 	);
 	assert.deepEqual(
-		resolver
-			.validateAreas("ward", "2025-01-en-ward", ["E05000001"])
+		resolver.validateAreas("ward", "2025-01-en-ward", ["E05000001"])
 			?.summary,
 		{
 			valueCount: 1,
@@ -191,10 +190,7 @@ test("does not claim optional geography capabilities when their artifacts are ab
 		"named-locations",
 	] as const)
 		assert.equal(resolver.requires(requirement)?.status, 503, requirement);
-	assert.equal(
-		resolver.selectReleaseForDate("ward", "2025-01"),
-		undefined,
-	);
+	assert.equal(resolver.selectReleaseForDate("ward", "2025-01"), undefined);
 	assert.equal(resolver.geometryFor(ward), undefined);
 	assert.deepEqual(resolver.relationships(ward), []);
 	assert.deepEqual(
@@ -247,12 +243,18 @@ test("does not claim optional geography capabilities when their artifacts are ab
 });
 
 test("owns date-based release selection when its boundary registry is compiled", () => {
-	const resolver = createGeographyResolver({ boundaryRegistry: releaseRegistry });
+	const resolver = createGeographyResolver({
+		boundaryRegistry: releaseRegistry,
+	});
 	assert.equal(
 		resolver.boundaryRelease("ward", "2024-05-uk-bgc")?.title,
 		"Ward boundaries",
 	);
-	const selection = resolver.selectReleaseForDate("ward", "2025-01", "GB-SCT");
+	const selection = resolver.selectReleaseForDate(
+		"ward",
+		"2025-01",
+		"GB-SCT",
+	);
 	assert.equal(selection?.status, "selected");
 	assert.equal(
 		selection?.status === "selected" && selection.selected.id,
@@ -279,7 +281,10 @@ test("executes a declared multi-step translation through the resolver", () => {
 		weighting: { status: "not-applicable" },
 		from: { geography: "ward", boundaryRelease: "2025" },
 		to: { geography: "localAuthority", boundaryRelease: "2025" },
-		provenance: { input: "ward-authority.csv", inputHash: "sha256:ward-authority-input" },
+		provenance: {
+			input: "ward-authority.csv",
+			inputHash: "sha256:ward-authority-input",
+		},
 		validation: {
 			sourceNameConflicts: [],
 			endpoints: {
@@ -304,7 +309,10 @@ test("executes a declared multi-step translation through the resolver", () => {
 		weighting: { status: "not-provided" },
 		from: { geography: "localAuthority", boundaryRelease: "2025" },
 		to: { geography: "region", boundaryRelease: "2025" },
-		provenance: { input: "authority-region.csv", inputHash: "sha256:authority-region-input" },
+		provenance: {
+			input: "authority-region.csv",
+			inputHash: "sha256:authority-region-input",
+		},
 		validation: {
 			sourceNameConflicts: [],
 			endpoints: {

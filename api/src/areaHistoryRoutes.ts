@@ -26,13 +26,21 @@ export const handleAreaHistoryRoutes = ({
 	const depthParameter = parsedUrl.searchParams.get("depth");
 	const depth = depthParameter === null ? 8 : Number(depthParameter);
 	if (!Number.isInteger(depth) || depth < 1 || depth > 20)
-		return problem(400, "Invalid Query", "depth must be an integer from 1 to 20.");
-	const history = geographyResolver.areaHistory({
-		geography,
-		boundaryRelease,
-		code,
-	}, depth);
-	if (!history) return areaNotFound(context, geography, boundaryRelease, code);
+		return problem(
+			400,
+			"Invalid Query",
+			"depth must be an integer from 1 to 20.",
+		);
+	const history = geographyResolver.areaHistory(
+		{
+			geography,
+			boundaryRelease,
+			code,
+		},
+		depth,
+	);
+	if (!history)
+		return areaNotFound(context, geography, boundaryRelease, code);
 	return {
 		status: 200,
 		body: envelope(releaseId, {

@@ -5,7 +5,9 @@ import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
-	response && "detail" in response.body ? response.body.detail : "Catalogue data is unavailable.";
+	response && "detail" in response.body
+		? response.body.detail
+		: "Catalogue data is unavailable.";
 
 /**
  * A single, evidence-led starting point for an exact area identity. Detailed
@@ -44,13 +46,11 @@ export const handleAreaDossierRoutes = ({
 			"The boundary registry does not describe this resolved area release.",
 		);
 	const baseHref = `/v1/areas/${geography}/${boundaryRelease}/${code}`;
-	const relationshipSummary = geographyResolver.areaRelationshipSummary(identity);
+	const relationshipSummary =
+		geographyResolver.areaRelationshipSummary(identity);
 	const geometry = (() => {
 		const unavailable = geographyResolver.requires("geometry");
-		if (unavailable)
-			return notBuilt(
-				requirementDetail(unavailable),
-			);
+		if (unavailable) return notBuilt(requirementDetail(unavailable));
 		try {
 			const resolved = geographyResolver.areaGeometry(identity);
 			return resolved
@@ -82,7 +82,8 @@ export const handleAreaDossierRoutes = ({
 				)
 				? "derived"
 				: "verified"
-			: geometry.status === "available" || relationships.status === "available"
+			: geometry.status === "available" ||
+				  relationships.status === "available"
 				? "partial"
 				: "limited";
 	return {

@@ -1,9 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { AnalysisGeographyInventory } from "../src/analysisGeographies";
-import type {
-	AnalysisGeographyValidationInventory,
-} from "../src/analysisGeographyValidation";
+import type { AnalysisGeographyValidationInventory } from "../src/analysisGeographyValidation";
 import { route as routeRequest } from "../src/routes";
 import { registry, testContext } from "./routeFixtures";
 
@@ -91,22 +89,19 @@ test("serves the release-pinned validation receipt for reviewed conversions", ()
 test("lists only reviewed analysis conversions", () => {
 	const response = route("/v1/analysis-geographies?measure=road-collisions");
 	assert.equal(response.status, 200);
-	assert.deepEqual(
-		"data" in response.body && response.body.data,
-		{
-			analysisGeographies: [
-				{
-					geography: "localAuthority",
-					boundaryRelease: "2023-05-uk-bgc-v2",
-					measureId: "road-collisions",
-					source: inventory.supports[0]!.source,
-					basis: "derived",
-					conversion: inventory.supports[0]!.crosswalk,
-					note: "Exact regrouping.",
-				},
-			],
-		},
-	);
+	assert.deepEqual("data" in response.body && response.body.data, {
+		analysisGeographies: [
+			{
+				geography: "localAuthority",
+				boundaryRelease: "2023-05-uk-bgc-v2",
+				measureId: "road-collisions",
+				source: inventory.supports[0]!.source,
+				basis: "derived",
+				conversion: inventory.supports[0]!.crosswalk,
+				note: "Exact regrouping.",
+			},
+		],
+	});
 });
 
 test("preflights an explicit source and retains not-comparable periods", () => {
@@ -114,9 +109,16 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 		"/v1/analysis:plan?measure=road-collisions&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa&sourceBoundaryYear=2021";
 	const available = route(`${base}&period=2025`);
 	assert.equal(available.status, 200);
-	const availableData = "data" in available.body ? available.body.data : undefined;
-	assert.deepEqual(availableData && (availableData as { status: string }).status, "available");
-	assert.deepEqual(availableData && (availableData as { basis: string }).basis, "derived");
+	const availableData =
+		"data" in available.body ? available.body.data : undefined;
+	assert.deepEqual(
+		availableData && (availableData as { status: string }).status,
+		"available",
+	);
+	assert.deepEqual(
+		availableData && (availableData as { basis: string }).basis,
+		"derived",
+	);
 	assert.match(
 		String(availableData && (availableData as { result: string }).result),
 		/\/v1\/data\/road-collisions\/convert/,
@@ -125,7 +127,8 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 	const unavailable = route(`${base}&period=2023`);
 	assert.equal(unavailable.status, 200);
 	assert.deepEqual(
-		"data" in unavailable.body && (unavailable.body.data as { status: string }).status,
+		"data" in unavailable.body &&
+			(unavailable.body.data as { status: string }).status,
 		"not-comparable",
 	);
 
@@ -141,7 +144,8 @@ test("reports unsupported frames without manufacturing a conversion", () => {
 	);
 	assert.equal(response.status, 200);
 	assert.deepEqual(
-		"data" in response.body && (response.body.data as { status: string }).status,
+		"data" in response.body &&
+			(response.body.data as { status: string }).status,
 		"unsupported",
 	);
 });

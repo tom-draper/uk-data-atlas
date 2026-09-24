@@ -239,10 +239,7 @@ export const formatBritishGridReference = (
 	)
 		return undefined;
 	let digits = Math.min(5, Math.max(1, maximumDigits));
-	while (
-		digits > 0 &&
-		(10 ** (5 - digits) * Math.SQRT2) / 2 < uncertaintyM
-	)
+	while (digits > 0 && (10 ** (5 - digits) * Math.SQRT2) / 2 < uncertaintyM)
 		digits -= 1;
 	if (digits === 0) return undefined;
 	const firstRow = Math.floor((19 - northing100km) / 5);
@@ -779,15 +776,13 @@ const countryRelease = (
 	month: string | undefined,
 ): string | undefined => {
 	const resolver = context.geographyResolver;
-	const dated = resolver.boundaryReleasesFor("country")
+	const dated = resolver
+		.boundaryReleasesFor("country")
 		.filter(
 			(release) =>
 				release.geography === "country" &&
 				releaseMonth(release.id) !== undefined &&
-				resolver.hasAreaRelease(
-					"country",
-					release.id,
-				),
+				resolver.hasAreaRelease("country", release.id),
 		)
 		.sort((left, right) => left.id.localeCompare(right.id));
 	if (dated.length === 0) return undefined;

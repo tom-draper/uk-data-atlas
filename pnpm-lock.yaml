@@ -176,7 +176,7 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       prettier:
-        specifier: ^3.9.7
+        specifier: 3.9.7
         version: 3.9.7
       proj4:
         specifier: ^2.22.0

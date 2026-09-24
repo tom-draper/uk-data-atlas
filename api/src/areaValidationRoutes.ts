@@ -43,8 +43,7 @@ export const handleAreaValidationRoutes = ({
 		boundaryRelease,
 		values,
 	);
-	if (!validated)
-		return areaNotFound(context, geography, boundaryRelease);
+	if (!validated) return areaNotFound(context, geography, boundaryRelease);
 	return {
 		status: 200,
 		body: envelope(releaseId, {

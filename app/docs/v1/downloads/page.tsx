@@ -63,9 +63,8 @@ export default function DownloadsPage() {
 
 			<H2 id="boundaries">Boundaries</H2>
 			<P>
-				Download area-code tables and any
-				published GeoParquet or PMTiles boundary files, release by
-				release.
+				Download area-code tables and any published GeoParquet or
+				PMTiles boundary files, release by release.
 			</P>
 			{GEOGRAPHY_GROUPS.map((group) => (
 				<section key={group.id}>

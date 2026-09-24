@@ -53,10 +53,7 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 		"crosswalkInventoryHash",
 	],
 	"relationship-paths.json": ["crosswalkInventoryHash"],
-	"analysis-geographies.json": [
-		"dataCatalogHash",
-		"crosswalkInventoryHash",
-	],
+	"analysis-geographies.json": ["dataCatalogHash", "crosswalkInventoryHash"],
 	"analysis-geography-validation.json": [
 		"analysisGeographyInventoryHash",
 		"dataCatalogHash",
@@ -148,19 +145,19 @@ test("builds measure compatibility from the current observations and areas", () 
 						artifact.contentHash,
 					])
 				: typeof artifact.measureId === "string" &&
-			artifact.sourceGeography &&
-			Array.isArray(artifact.periods)
-				? [
-						[
-							observationPartitionKey(
-								artifact as Parameters<
-									typeof observationPartitionKey
-								>[0],
-							),
-							artifact.contentHash,
-						],
-					]
-				: [],
+					  artifact.sourceGeography &&
+					  Array.isArray(artifact.periods)
+					? [
+							[
+								observationPartitionKey(
+									artifact as Parameters<
+										typeof observationPartitionKey
+									>[0],
+								),
+								artifact.contentHash,
+							],
+						]
+					: [],
 		),
 	);
 	const areaHashes = new Map(

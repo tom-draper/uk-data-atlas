@@ -129,15 +129,16 @@ export const attributionFor = (
 	// A crosswalk is compiled by the Atlas from boundary files, so it carries no
 	// licence of its own; its endpoints are attributed instead.
 	for (const id of request.crosswalks) {
-		const crosswalk = crosswalks.find(
-			(candidate) => candidate.id === id,
-		);
+		const crosswalk = crosswalks.find((candidate) => candidate.id === id);
 		if (!crosswalk) {
 			unknown.push(`crosswalk=${id}`);
 			continue;
 		}
 		const endpoints = [
-			releaseKey(crosswalk.from.geography, crosswalk.from.boundaryRelease),
+			releaseKey(
+				crosswalk.from.geography,
+				crosswalk.from.boundaryRelease,
+			),
 			releaseKey(crosswalk.to.geography, crosswalk.to.boundaryRelease),
 		];
 		for (const endpoint of endpoints)

@@ -95,7 +95,9 @@ export const conversionCoverageOnto = (
 					summary.id,
 				].join("/");
 				if (!cache.has(key)) {
-					const crosswalk = context.geographyResolver.crosswalk(summary.id);
+					const crosswalk = context.geographyResolver.crosswalk(
+						summary.id,
+					);
 					const observations = observationsFor(
 						measure.id,
 						source,

@@ -181,11 +181,23 @@ const overlap = (
 
 test("multiplies published weights through every step of a path", () => {
 	const first = overlap("first", "area", [
-		["A", [["X", 0.6, 1], ["Y", 0.4, 1]]],
+		[
+			"A",
+			[
+				["X", 0.6, 1],
+				["Y", 0.4, 1],
+			],
+		],
 	]);
 	const second = overlap("second", "population", [
 		["X", [["T", 1, 0.5]]],
-		["Y", [["T", 0.5, 0.5], ["U", 0.5, 1]]],
+		[
+			"Y",
+			[
+				["T", 0.5, 0.5],
+				["U", 0.5, 1],
+			],
+		],
 	]);
 
 	const result = convertThroughSteps(
@@ -198,7 +210,10 @@ test("multiplies published weights through every step of a path", () => {
 	// Area weighting at any split step makes the whole path area-weighted.
 	assert.equal(result.method, "area-weighted");
 	assert.deepEqual(
-		result.records.map((record) => [record.areaCode, Math.round(record.value)]),
+		result.records.map((record) => [
+			record.areaCode,
+			Math.round(record.value),
+		]),
 		[
 			["T", 800],
 			["U", 200],
@@ -224,14 +239,23 @@ test("stays exact through steps that only regroup", () => {
 
 	const result = convertThroughSteps(
 		[indexed(contained), indexed(second)],
-		[observed("E05000001", 100), observed("E05000002", 250), observed("E05000003", 40)],
+		[
+			observed("E05000001", 100),
+			observed("E05000002", 250),
+			observed("E05000003", 40),
+		],
 	);
 
 	assert.equal(result.status, "converted");
 	if (result.status !== "converted") return;
 	assert.equal(result.method, "exact");
 	assert.deepEqual(result.records, [
-		{ areaCode: "E12000001", value: 390, status: "derived", inputAreaCount: 3 },
+		{
+			areaCode: "E12000001",
+			value: 390,
+			status: "derived",
+			inputAreaCount: 3,
+		},
 	]);
 });
 
@@ -239,7 +263,13 @@ test("apportions through a reversed overlap by the queried area's covered share"
 	// Published from A to B: B1 is 30% A1 and 50% A2, with 20% unpublished.
 	const published = overlap("a-to-b", "area", [
 		["A1", [["B1", 1, 0.3]]],
-		["A2", [["B1", 0.5, 0.5], ["B2", 0.5, 1]]],
+		[
+			"A2",
+			[
+				["B1", 0.5, 0.5],
+				["B2", 0.5, 1],
+			],
+		],
 	]);
 
 	const result = convertThroughSteps(
@@ -250,7 +280,10 @@ test("apportions through a reversed overlap by the queried area's covered share"
 	assert.equal(result.status, "converted");
 	if (result.status !== "converted") return;
 	assert.deepEqual(
-		result.records.map((record) => [record.areaCode, Math.round(record.value)]),
+		result.records.map((record) => [
+			record.areaCode,
+			Math.round(record.value),
+		]),
 		[
 			["A1", 300],
 			["A2", 500],
@@ -302,7 +335,15 @@ test("refuses a path that splits without a weight at a later step", () => {
 });
 
 test("names a path population-weighted only when every split step is", () => {
-	const first = overlap("first", "population", [["A", [["X", 0.5, 1], ["Y", 0.5, 1]]]]);
+	const first = overlap("first", "population", [
+		[
+			"A",
+			[
+				["X", 0.5, 1],
+				["Y", 0.5, 1],
+			],
+		],
+	]);
 	const second = overlap("second", "population", [
 		["X", [["T", 1, 1]]],
 		["Y", [["T", 1, 1]]],
@@ -316,5 +357,8 @@ test("names a path population-weighted only when every split step is", () => {
 	assert.equal(result.status, "converted");
 	if (result.status !== "converted") return;
 	assert.equal(result.method, "population-weighted");
-	assert.deepEqual(result.records.map((record) => record.value), [10]);
+	assert.deepEqual(
+		result.records.map((record) => record.value),
+		[10],
+	);
 });

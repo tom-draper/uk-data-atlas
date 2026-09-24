@@ -87,8 +87,7 @@ const stepEdges = (crosswalk: CrosswalkArtifact) => {
 			existing
 				? {
 						reaches: [...existing.reaches, ...reaches],
-						whole:
-							existing.whole === whole ? whole : undefined,
+						whole: existing.whole === whole ? whole : undefined,
 					}
 				: { reaches, whole },
 		);
@@ -118,7 +117,8 @@ export const membershipThroughSteps = (
 		for (const step of edges) {
 			const next = new Set<string>();
 			for (const code of reached)
-				for (const target of step.get(code)?.reaches ?? []) next.add(target);
+				for (const target of step.get(code)?.reaches ?? [])
+					next.add(target);
 			reached = next;
 			whole = whole === undefined ? undefined : step.get(whole)?.whole;
 		}
@@ -126,7 +126,10 @@ export const membershipThroughSteps = (
 		matched += 1;
 		if (whole === targetCode) members.push(record.source.code);
 	}
-	return { memberCodes: members, unsafeSourceCount: matched - members.length };
+	return {
+		memberCodes: members,
+		unsafeSourceCount: matched - members.length,
+	};
 };
 
 /** The source areas a crosswalk puts wholly inside one target. */
@@ -149,9 +152,7 @@ export const pathMembershipClaims = (
 		artifact: CrosswalkArtifact;
 		direction: "forward" | "reverse";
 	}>,
-):
-	| { claims: string[] }
-	| { refusal: string } => {
+): { claims: string[] } | { refusal: string } => {
 	const claims: string[] = [];
 	for (const [index, { artifact, direction }] of steps.entries()) {
 		if (direction !== "forward")

@@ -137,43 +137,40 @@ const compileLocationProjectionArtifact = (
 			`${crosswalk.id}: cannot materialise location membership because ${memberGeography}/${crosswalk.to.boundaryRelease} has no compiled areas.`,
 		);
 	}
-	const projections = locations.map(
-		(location): LocationProjection => {
-			const parentCodes = new Set(
-				location.memberCodes.filter((code) => parents.has(code)),
-			);
-			const members = membersThroughCrosswalk(crosswalk, parentCodes);
-			return {
-				locationId: location.id,
-				locationDefinitionRevision: location.definitionRevision,
-				geography: crosswalk.from.geography,
-				boundaryRelease: crosswalk.from.boundaryRelease,
-				membership: membershipKindFor(crosswalk),
-				via: {
-					id: crosswalk.id,
-					method: crosswalk.method,
-					quality: crosswalk.quality,
-					weighting: crosswalk.weighting,
-					from: crosswalk.from,
-					to: crosswalk.to,
-					contentHash: summary.contentHash,
-				},
-				members,
-				partialMembers: members.filter((member) => member.partial)
-					.length,
-				parentGeography: memberGeography,
-				parentBoundaryRelease: crosswalk.to.boundaryRelease,
-				reach: memberReach(crosswalk, parentCodes),
-				coverage: reconcileMembers(
-					areaLookup,
-					memberGeography,
-					crosswalk.to.boundaryRelease,
-					location.memberCodes,
-					parentCodes,
-				),
-			};
-		},
-	);
+	const projections = locations.map((location): LocationProjection => {
+		const parentCodes = new Set(
+			location.memberCodes.filter((code) => parents.has(code)),
+		);
+		const members = membersThroughCrosswalk(crosswalk, parentCodes);
+		return {
+			locationId: location.id,
+			locationDefinitionRevision: location.definitionRevision,
+			geography: crosswalk.from.geography,
+			boundaryRelease: crosswalk.from.boundaryRelease,
+			membership: membershipKindFor(crosswalk),
+			via: {
+				id: crosswalk.id,
+				method: crosswalk.method,
+				quality: crosswalk.quality,
+				weighting: crosswalk.weighting,
+				from: crosswalk.from,
+				to: crosswalk.to,
+				contentHash: summary.contentHash,
+			},
+			members,
+			partialMembers: members.filter((member) => member.partial).length,
+			parentGeography: memberGeography,
+			parentBoundaryRelease: crosswalk.to.boundaryRelease,
+			reach: memberReach(crosswalk, parentCodes),
+			coverage: reconcileMembers(
+				areaLookup,
+				memberGeography,
+				crosswalk.to.boundaryRelease,
+				location.memberCodes,
+				parentCodes,
+			),
+		};
+	});
 	projections.sort((left, right) => {
 		const key = locationProjectionKey(
 			left.locationId,

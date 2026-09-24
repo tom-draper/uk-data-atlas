@@ -37,7 +37,10 @@ test("serves one measure's column as an ordinary observation artifact", () => {
 	]);
 	// A download of the view is the whole table it came from.
 	assert.equal(observationTableOf(rented), table);
-	assert.throws(() => tableMeasureObservations(table, "unknown"), /does not serve unknown/);
+	assert.throws(
+		() => tableMeasureObservations(table, "unknown"),
+		/does not serve unknown/,
+	);
 });
 
 test("builds a view's records only when first read", () => {
@@ -60,7 +63,10 @@ test("builds a view's records only when first read", () => {
 test("reads a shared table once and a measure's own artifact as it is", () => {
 	const directory = mkdtempSync(join(tmpdir(), "observation-tables-"));
 	try {
-		writeFileSync(join(directory, "fixture-table.json"), JSON.stringify(table));
+		writeFileSync(
+			join(directory, "fixture-table.json"),
+			JSON.stringify(table),
+		);
 		const own = {
 			schemaVersion: 1,
 			contentHash: "sha256:own",
@@ -68,20 +74,42 @@ test("reads a shared table once and a measure's own artifact as it is", () => {
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
 			periods: [{ period: "2022", records: [] }],
 		};
-		writeFileSync(join(directory, "population-observations.json"), JSON.stringify(own));
+		writeFileSync(
+			join(directory, "population-observations.json"),
+			JSON.stringify(own),
+		);
 		const tables = new Map<string, MeasureTableArtifact>();
 
-		const owned = readSourceObservations(directory, "fixture-table", "owned", tables);
+		const owned = readSourceObservations(
+			directory,
+			"fixture-table",
+			"owned",
+			tables,
+		);
 		assert.equal(tables.size, 1);
 		// The second measure comes from the cached table, not the file.
 		rmSync(join(directory, "fixture-table.json"));
-		const rented = readSourceObservations(directory, "fixture-table", "rented", tables);
+		const rented = readSourceObservations(
+			directory,
+			"fixture-table",
+			"rented",
+			tables,
+		);
 		assert.deepEqual(
-			[owned.measureId, rented.measureId, rented.periods[0]?.records.length],
+			[
+				owned.measureId,
+				rented.measureId,
+				rented.periods[0]?.records.length,
+			],
 			["owned", "rented", 1],
 		);
 		assert.deepEqual(
-			readSourceObservations(directory, "population-observations", "population", tables),
+			readSourceObservations(
+				directory,
+				"population-observations",
+				"population",
+				tables,
+			),
 			own,
 		);
 	} finally {

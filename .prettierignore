@@ -1,0 +1,16 @@
+# Generated browser payloads. They are committed for deployment but are not
+# hand-authored source files.
+/public/data/
+/api/public/
+/api/contract/
+/pnpm-lock.yaml
+
+# Restored raw source data and transient data-release workspaces.
+/data/
+/.data-release/
+
+# Local tool state is not project source.
+/.agents/
+/.claude/
+/.codeq/
+/.codex/

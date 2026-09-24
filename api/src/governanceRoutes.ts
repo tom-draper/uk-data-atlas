@@ -10,10 +10,7 @@ export const handleGovernanceRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const {
-		dataCatalog,
-		relationshipCandidateInventory,
-	} = context;
+	const { dataCatalog, relationshipCandidateInventory } = context;
 
 	if (
 		segments.length === 2 &&

@@ -60,9 +60,8 @@ export const handleDataSeriesRoutes = ({
 			"No published measure serves a series at that path.",
 		);
 	}
-	const analysisGeographyValue = parsedUrl.searchParams.get(
-		"analysisGeography",
-	);
+	const analysisGeographyValue =
+		parsedUrl.searchParams.get("analysisGeography");
 	if (
 		parsedUrl.searchParams.has("release") ||
 		parsedUrl.searchParams.has("conversion") ||
@@ -134,7 +133,9 @@ export const handleDataSeriesRoutes = ({
 		);
 	}
 	if (analysisGeographyValue !== null) {
-		const analysisGeography = parseAnalysisGeography(analysisGeographyValue);
+		const analysisGeography = parseAnalysisGeography(
+			analysisGeographyValue,
+		);
 		if (!analysisGeography)
 			return problem(
 				400,
@@ -157,7 +158,8 @@ export const handleDataSeriesRoutes = ({
 					analysisGeography.boundaryRelease &&
 				candidate.source.datasetId === source.datasetId &&
 				candidate.source.geography === source.sourceGeography.type &&
-				candidate.source.boundaryYear === source.sourceGeography.boundaryYear,
+				candidate.source.boundaryYear ===
+					source.sourceGeography.boundaryYear,
 		);
 		if (!support)
 			return {
@@ -167,8 +169,7 @@ export const handleDataSeriesRoutes = ({
 					areaCode,
 					analysisGeography,
 					status: "not-comparable" as const,
-					reason:
-						"No reviewed conversion is published from the requested source partition to that analysis geography.",
+					reason: "No reviewed conversion is published from the requested source partition to that analysis geography.",
 				}),
 			};
 		// The steps are the reviewed ones the validation receipt checked: one
@@ -199,14 +200,12 @@ export const handleDataSeriesRoutes = ({
 		const series = available.flatMap(({ period, observations }) => {
 			if (!support.source.periods.includes(period)) return [];
 			if (!observations.records.every(isNumericObservation)) {
-				conversionFailure =
-					`${measureId}/${period} has non-numeric records despite its reviewed extensive conversion.`;
+				conversionFailure = `${measureId}/${period} has non-numeric records despite its reviewed extensive conversion.`;
 				return [];
 			}
 			const converted = convertThroughSteps(steps, observations.records);
 			if (converted.status !== "converted") {
-				conversionFailure =
-					`${measureId}/${period} no longer satisfies reviewed conversion ${conversion.id}: ${converted.reason}`;
+				conversionFailure = `${measureId}/${period} no longer satisfies reviewed conversion ${conversion.id}: ${converted.reason}`;
 				return [];
 			}
 			const record = converted.records.find(

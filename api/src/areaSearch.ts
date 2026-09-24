@@ -78,7 +78,9 @@ export const createAreaSearchIndex = (
 	return {
 		areas,
 		exactCodes,
-		terms: [...byTerm.keys()].sort((left, right) => left.localeCompare(right)),
+		terms: [...byTerm.keys()].sort((left, right) =>
+			left.localeCompare(right),
+		),
 		byTerm,
 	};
 };

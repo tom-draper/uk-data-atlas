@@ -50,7 +50,10 @@ export const handleCoordinateRoutes = ({
 			"to must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 		);
 	const gridReferenceDigitsText = parsedUrl.searchParams.get("gridrefDigits");
-	if (gridReferenceDigitsText !== null && !/^[1-5]$/.test(gridReferenceDigitsText))
+	if (
+		gridReferenceDigitsText !== null &&
+		!/^[1-5]$/.test(gridReferenceDigitsText)
+	)
 		return problem(
 			400,
 			"Invalid Query",
@@ -89,33 +92,39 @@ export const handleCoordinateRoutes = ({
 		targetCrs === "EPSG:4326"
 			? undefined
 			: (() => {
-				const { position, transformation } = fromWgs84Point(
-					[point.lng, point.lat],
-					targetCrs,
-				);
-				if (!isProjectedLookupPointInBounds(targetCrs, position)) return null;
-				const uncertaintyM =
-					Math.round(
-						(point.precision.uncertaintyM + transformation!.accuracyM) * 100,
-					) / 100;
-				const gridReference =
-					targetCrs === "EPSG:27700"
-						? formatBritishGridReference(
-								position,
-								uncertaintyM,
-								gridReferenceDigits,
-							)
-						: undefined;
-				return {
-					crs: targetCrs,
-					easting: position[0],
-					northing: position[1],
-					// This is the inverse of the named published operation.
-					transformation: { ...transformation!, direction: "inverse" as const },
-					uncertaintyM,
-					...(gridReference ? { gridReference } : {}),
-				};
-			})();
+					const { position, transformation } = fromWgs84Point(
+						[point.lng, point.lat],
+						targetCrs,
+					);
+					if (!isProjectedLookupPointInBounds(targetCrs, position))
+						return null;
+					const uncertaintyM =
+						Math.round(
+							(point.precision.uncertaintyM +
+								transformation!.accuracyM) *
+								100,
+						) / 100;
+					const gridReference =
+						targetCrs === "EPSG:27700"
+							? formatBritishGridReference(
+									position,
+									uncertaintyM,
+									gridReferenceDigits,
+								)
+							: undefined;
+					return {
+						crs: targetCrs,
+						easting: position[0],
+						northing: position[1],
+						// This is the inverse of the named published operation.
+						transformation: {
+							...transformation!,
+							direction: "inverse" as const,
+						},
+						uncertaintyM,
+						...(gridReference ? { gridReference } : {}),
+					};
+				})();
 	if (target === null)
 		return problem(
 			400,

@@ -22,7 +22,8 @@ test("discovers source metadata and reports boundary compiler coverage", () => {
 	);
 	assert.ok(
 		sourceInventory.sources.some(
-			(source) => source.key === "demographics/population/mid-year-estimates/uk",
+			(source) =>
+				source.key === "demographics/population/mid-year-estimates/uk",
 		),
 	);
 	assert.equal(
@@ -34,10 +35,12 @@ test("discovers source metadata and reports boundary compiler coverage", () => {
 		geographyInventory.geographies.every(
 			(geography) =>
 				geography.capabilities.areaIdentities.availableReleaseCount +
-					geography.capabilities.areaIdentities.unsupportedReleaseCount ===
+					geography.capabilities.areaIdentities
+						.unsupportedReleaseCount ===
 					geography.releaseCount &&
 				geography.capabilities.relationships.availableReleaseCount +
-					geography.capabilities.relationships.unsupportedReleaseCount ===
+					geography.capabilities.relationships
+						.unsupportedReleaseCount ===
 					geography.releaseCount,
 		),
 	);

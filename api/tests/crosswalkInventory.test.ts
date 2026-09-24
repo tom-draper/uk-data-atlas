@@ -212,7 +212,14 @@ const compileContainment = (parentRing: number[][]) => {
 				properties: { WDCD: "W1" },
 				geometry: {
 					type: "Polygon",
-					coordinates: [[[0, 0], [0, 1], [1, 1], [0, 0]]],
+					coordinates: [
+						[
+							[0, 0],
+							[0, 1],
+							[1, 1],
+							[0, 0],
+						],
+					],
 				},
 			},
 		],
@@ -347,7 +354,13 @@ test("keeps the publisher's change indicator on each pair, checked against the l
 			JSON.stringify({
 				type: "FeatureCollection",
 				features: rows.map(([from, to, change]) => ({
-					properties: { OLDCD: from, OLDNM: from, NEWCD: to, NEWNM: to, CHGIND: change },
+					properties: {
+						OLDCD: from,
+						OLDNM: from,
+						NEWCD: to,
+						NEWNM: to,
+						CHGIND: change,
+					},
 				})),
 			}),
 		);
@@ -389,17 +402,28 @@ test("keeps the publisher's change indicator on each pair, checked against the l
 		assert.deepEqual(
 			artifact.records.map(({ source, targets }) => [
 				source.code,
-				targets.map((target) => [target.code, "change" in target ? target.change : undefined]),
+				targets.map((target) => [
+					target.code,
+					"change" in target ? target.change : undefined,
+				]),
 			]),
 			[
 				["A", [["A2", "unchanged"]]],
-				["B", [["B2", "split"], ["B3", "split"]]],
+				[
+					"B",
+					[
+						["B2", "split"],
+						["B3", "split"],
+					],
+				],
 				["C", [["CD", "merged"]]],
 				["D", [["CD", "merged"]]],
 			],
 		);
 		assert.deepEqual(
-			"changes" in artifact.validation ? artifact.validation.changes : undefined,
+			"changes" in artifact.validation
+				? artifact.validation.changes
+				: undefined,
 			{ unchanged: 1, split: 2, merged: 2, complex: 0 },
 		);
 
@@ -408,7 +432,10 @@ test("keeps the publisher's change indicator on each pair, checked against the l
 			["B", "B2", "U"],
 			["B", "B3", "S"],
 		]);
-		assert.throws(compile, /change indicators disagree with the lookup: B\|B2 is unchanged/);
+		assert.throws(
+			compile,
+			/change indicators disagree with the lookup: B\|B2 is unchanged/,
+		);
 		write([["A", "A2", "Q"]]);
 		assert.throws(compile, /change indicator Q, not U, S, M or X/);
 	} finally {

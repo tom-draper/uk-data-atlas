@@ -46,7 +46,11 @@ const catalogue = {
 			label: "Fixture",
 			valueKind: "count",
 			unit: "things",
-			aggregation: { kind: "extensive", operation: "sum", available: true },
+			aggregation: {
+				kind: "extensive",
+				operation: "sum",
+				available: true,
+			},
 			sources: [
 				{
 					datasetId: "fixture-dataset",
@@ -61,7 +65,11 @@ const catalogue = {
 					},
 				},
 			],
-			availability: { sourceExact: true, conversion: false, aggregation: true },
+			availability: {
+				sourceExact: true,
+				conversion: false,
+				aggregation: true,
+			},
 			links: { data: "/v1/data/fixture" },
 		},
 	],
@@ -162,7 +170,9 @@ test("gates a reviewed path on exact coverage and conservation through every ste
 		],
 	} as unknown as CrosswalkArtifact;
 	const [reviewed] = analysisGeographies.supports;
-	const pathSupport = (second: CrosswalkArtifact): AnalysisGeographyInventory => ({
+	const pathSupport = (
+		second: CrosswalkArtifact,
+	): AnalysisGeographyInventory => ({
 		...analysisGeographies,
 		supports: [
 			{
@@ -205,7 +215,11 @@ test("gates a reviewed path on exact coverage and conservation through every ste
 	assert.deepEqual(support?.path, {
 		id: "fixture-path",
 		crosswalks: [
-			{ id: crosswalk.id, contentHash: "sha256:crosswalk", direction: "forward" },
+			{
+				id: crosswalk.id,
+				contentHash: "sha256:crosswalk",
+				direction: "forward",
+			},
 			{
 				id: authorityToRegion.id,
 				contentHash: "sha256:authority-region",

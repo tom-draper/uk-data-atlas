@@ -46,7 +46,11 @@ const crosswalks: CrosswalkInventory = {
 	contentHash: "sha256:crosswalks",
 	crosswalks: [
 		summary("lsoa-to-lad", ["lsoa", "2021"], ["localAuthority", "2023"]),
-		summary("lad-to-region", ["localAuthority", "2023"], ["region", "2023"]),
+		summary(
+			"lad-to-region",
+			["localAuthority", "2023"],
+			["region", "2023"],
+		),
 	],
 };
 
@@ -72,10 +76,17 @@ const paths: RelationshipPathInventory = {
 	],
 };
 
-const support = (route: { crosswalkId: string } | { pathId: string }, geography = "region") => ({
+const support = (
+	route: { crosswalkId: string } | { pathId: string },
+	geography = "region",
+) => ({
 	measureId: "fixture",
 	analysisGeography: { geography, boundaryRelease: "2023" },
-	source: { datasetId: "fixture-dataset", geography: "lsoa", boundaryYear: 2021 },
+	source: {
+		datasetId: "fixture-dataset",
+		geography: "lsoa",
+		boundaryYear: 2021,
+	},
 	...route,
 	note: "Reviewed.",
 });
@@ -92,7 +103,10 @@ test("compiles a path-backed support with its reviewed steps", () => {
 	assert.equal(inventory.relationshipPathInventoryHash, "sha256:paths");
 	assert.equal(compiled?.crosswalk, undefined);
 	assert.deepEqual(
-		compiled?.path?.steps.map(({ crosswalk, direction }) => [crosswalk.id, direction]),
+		compiled?.path?.steps.map(({ crosswalk, direction }) => [
+			crosswalk.id,
+			direction,
+		]),
 		[
 			["lsoa-to-lad", "forward"],
 			["lad-to-region", "forward"],
@@ -156,8 +170,14 @@ test("refuses a path that is missing, unbuilt or ends elsewhere", () => {
 
 test("requires exactly one of crosswalkId and pathId in the configuration", () => {
 	const configured = (entry: Record<string, unknown>) => {
-		const path = join(mkdtempSync(join(tmpdir(), "analysis-")), "config.json");
-		writeFileSync(path, JSON.stringify({ schemaVersion: 1, supports: [entry] }));
+		const path = join(
+			mkdtempSync(join(tmpdir(), "analysis-")),
+			"config.json",
+		);
+		writeFileSync(
+			path,
+			JSON.stringify({ schemaVersion: 1, supports: [entry] }),
+		);
 		return () => readAnalysisGeographySupport(path);
 	};
 	const base = support({ pathId: "lsoa-to-region" });

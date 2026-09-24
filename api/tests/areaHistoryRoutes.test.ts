@@ -110,8 +110,20 @@ test("reports each published link once, whichever end the walk reaches it from",
 		areaLookup: seats,
 		crosswalkLookup: new Map(
 			[
-				succession("seat-2010-to-2020", "2010", "2020", "E14000001", "E14000002"),
-				succession("seat-2020-to-2024", "2020", "2024", "E14000002", "E14000003"),
+				succession(
+					"seat-2010-to-2020",
+					"2010",
+					"2020",
+					"E14000001",
+					"E14000002",
+				),
+				succession(
+					"seat-2020-to-2024",
+					"2020",
+					"2024",
+					"E14000002",
+					"E14000003",
+				),
 			].map((artifact) => [artifact.id, artifact]),
 		),
 	});
@@ -128,8 +140,18 @@ test("reports each published link once, whichever end the walk reaches it from",
 			depth,
 		]),
 		[
-			["constituency/2020/E14000002", "constituency/2010/E14000001", "predecessor", 1],
-			["constituency/2020/E14000002", "constituency/2024/E14000003", "successor", 1],
+			[
+				"constituency/2020/E14000002",
+				"constituency/2010/E14000001",
+				"predecessor",
+				1,
+			],
+			[
+				"constituency/2020/E14000002",
+				"constituency/2024/E14000003",
+				"successor",
+				1,
+			],
 		],
 	);
 	// The middle seat sits between the other two, so a walk from one end
@@ -148,7 +170,11 @@ test("reports each published link once, whichever end the walk reaches it from",
 	assert.deepEqual(
 		resolver
 			.areaHistory(
-				{ geography: "constituency", boundaryRelease: "2010", code: "E14000001" },
+				{
+					geography: "constituency",
+					boundaryRelease: "2010",
+					code: "E14000001",
+				},
 				1,
 			)
 			?.lineage.map(({ counterpart }) => counterpart.id),
