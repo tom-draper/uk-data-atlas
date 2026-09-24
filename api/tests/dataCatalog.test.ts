@@ -245,7 +245,7 @@ const writeSources = (
 				dataset("life-expectancy-series", 4, 2, 2021),
 				dataset("population-constituency", 4, 2, 2024),
 				dataset("general-election", 4, 2, 2019),
-				dataset("local-election", 6, 2, 2019),
+				dataset("local-election", 7, 2, 2019),
 				dataset("regional-gdp-itl1", 4, 2, 2025),
 				dataset("regional-gdp-itl2", 4, 2, 2025),
 				dataset("regional-gdp-itl3", 4, 2, 2025),
@@ -863,13 +863,22 @@ const writeSources = (
 						turnoutPercent: 42,
 						partyVotes: { CON: 50, LAB: 70 },
 					},
+					E05011348: {
+						totalVotes: 75,
+						turnoutPercent: 41,
+						partyVotes: { CON: 35, LAB: 40 },
+					},
 					W05001001: {
 						totalVotes: 90,
 						turnoutPercent: 39,
 						partyVotes: { LAB: 45, PC: 45 },
 					},
 				},
-				results: { E05001001: "LAB", W05001001: "LAB" },
+				results: {
+					E05001001: "LAB",
+					E05011348: "LAB",
+					W05001001: "LAB",
+				},
 			},
 		}),
 	);
@@ -1134,6 +1143,36 @@ test("publishes source-exact election turnout and party vote counts", () => {
 			{
 				areaCode: "E05011412",
 				sourceAreaCode: "E05013831",
+				category: "LAB",
+				status: "observed",
+			},
+		);
+		const localVotes2024 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "local-election-con-votes" &&
+				artifact.sourceGeography.boundaryYear === 2024,
+		);
+		assert.deepEqual(
+			localVotes2024?.periods[0]?.records.find(
+				(record) => record.areaCode === "E05011348",
+			),
+			{
+				areaCode: "E05011348",
+				value: 35,
+				status: "observed",
+			},
+		);
+		const localWinners2024 = result.electionObservations.find(
+			(artifact) =>
+				artifact.measureId === "local-election-winning-party" &&
+				artifact.sourceGeography.boundaryYear === 2024,
+		);
+		assert.deepEqual(
+			localWinners2024?.periods[0]?.records.find(
+				(record) => record.areaCode === "E05011348",
+			),
+			{
+				areaCode: "E05011348",
 				category: "LAB",
 				status: "observed",
 			},
