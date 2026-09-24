@@ -116,8 +116,9 @@
 
 ## Licence
 
-The source code is released under the [MIT License](./LICENSE). The datasets
-and boundary files retain their own source licences; see
+The source code is released under the [MIT License](./LICENSE).
+
+The datasets and boundary files retain their own source licences; see
 [DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution and attribution.
 
 #
