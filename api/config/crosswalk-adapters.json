@@ -262,6 +262,13 @@
 				"boundaryRelease": "2019-04-uk-bgc",
 				"codeProperty": "lad19cd",
 				"nameProperty": "lad19nm"
+			},
+			"targetCodeCorrections": {
+				"E43000239": {
+					"publishedTargetCode": "E07000220",
+					"correctedTargetCode": "E06000055",
+					"reason": "The source names this feature Bedford, unparished area, but its LAD19CD is Rugby. All 115 geometry vertices lie within Bedford (E06000055), so correct the erroneous target code."
+				}
 			}
 		},
 		{
@@ -283,6 +290,13 @@
 				"boundaryRelease": "2019-12-uk-bgc",
 				"codeProperty": "lad19cd",
 				"nameProperty": "lad19nm"
+			},
+			"targetCodeCorrections": {
+				"E43000239": {
+					"publishedTargetCode": "E07000220",
+					"correctedTargetCode": "E06000055",
+					"reason": "The source names this feature Bedford, unparished area, but its LAD19CD is Rugby. All 115 geometry vertices lie within Bedford (E06000055), so correct the erroneous target code."
+				}
 			}
 		},
 		{

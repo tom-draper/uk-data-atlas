@@ -85,6 +85,11 @@ const electionFieldPeriods = (
 					`${path}.${period}: expected ${geography} election data with a boundary year`,
 				);
 			}
+			// Keep modern election observations on codes held by their own
+			// boundary-year release. Legacy equivalence corrections can point
+			// to retired codes that are no longer present from 2021 onward.
+			const corrections =
+				entry.boundaryYear >= 2021 ? undefined : wardCodeCorrections;
 			const data = object(entry.data, `${path}.${period}.data`);
 			const unaddressableCodes = Object.keys(data).filter(
 				(areaCode) => !electionCodeKind(areaCode) && areaCode !== "NA",
@@ -147,7 +152,7 @@ const electionFieldPeriods = (
 												);
 											})();
 							const servedAreaCode =
-								wardCodeCorrections.get(areaCode) ?? areaCode;
+								corrections?.get(areaCode) ?? areaCode;
 							return {
 								areaCode: servedAreaCode,
 								...(servedAreaCode === areaCode
@@ -191,7 +196,7 @@ const electionFieldPeriods = (
 							electionCodeKind(areaCode) === geography &&
 							(typeof (record as { sourceWardCode?: unknown })
 								.sourceWardCode === "string" ||
-								wardCodeCorrections.has(areaCode)),
+								corrections?.has(areaCode)),
 					)
 					.map(([areaCode, record]): [string, string] => [
 						typeof (record as { sourceWardCode?: unknown })
@@ -199,7 +204,7 @@ const electionFieldPeriods = (
 							? (record as { sourceWardCode: string })
 									.sourceWardCode
 							: areaCode,
-						wardCodeCorrections.get(areaCode) ?? areaCode,
+						corrections?.get(areaCode) ?? areaCode,
 					])
 					.sort(([left], [right]) => left.localeCompare(right)),
 			};
@@ -234,6 +239,11 @@ const electionWinnerPeriods = (
 					`${path}.${period}: expected ${geography} election results with a boundary year`,
 				);
 			}
+			// These corrections normalize older polls to codes retained in their
+			// release; applying them to modern polls emits codes retired before
+			// the declared 2021+ boundary vintage.
+			const corrections =
+				entry.boundaryYear >= 2021 ? undefined : wardCodeCorrections;
 			const results = object(entry.results, `${path}.${period}.results`);
 			return {
 				period,
@@ -242,7 +252,7 @@ const electionWinnerPeriods = (
 					.flatMap(([areaCode, category]) => {
 						if (electionCodeKind(areaCode) !== geography) return [];
 						const servedAreaCode =
-							wardCodeCorrections.get(areaCode) ?? areaCode;
+							corrections?.get(areaCode) ?? areaCode;
 						return [
 							{
 								areaCode: servedAreaCode,
