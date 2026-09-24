@@ -1,10 +1,11 @@
 // lib/data/electionConfig.ts
 
-import { WardYear } from "../../boundaries/boundaries";
+import type { WardYear } from "../../boundaries/boundaries";
+import type { LocalElectionYear } from "@lib/types";
 
 interface ElectionSourceBase {
-	year: number;
-	boundaryYear?: WardYear; // Defaults to year; set when election year has no ward boundary
+	year: LocalElectionYear;
+	boundaryYear: WardYear;
 	// Path relative to data/, read at precompile time. The leading segments
 	// are the dataset's id, so this points into its folder alongside meta.json.
 	path: string;
@@ -81,6 +82,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2024: {
 		year: 2024,
+		boundaryYear: 2024,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2024/LEH-2024-results-HoC-version.xlsx",
 		sheet: "Wards results",
@@ -105,6 +107,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2023: {
 		year: 2023,
+		boundaryYear: 2023,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2023/LEH-Candidates-2023.xlsx",
 		sheet: "Ward_Level",
@@ -133,6 +136,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2022: {
 		year: 2022,
+		boundaryYear: 2022,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2022/local-elections-2022.xlsx",
 		sheet: "Wards-results",
@@ -157,6 +161,7 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2021: {
 		year: 2021,
+		boundaryYear: 2021,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2021/local_elections_2021_results-2.xlsx",
 		sheet: "Wards-results",
@@ -201,21 +206,25 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2019: {
 		year: 2019,
+		boundaryYear: 2019,
 		source: "leap",
 		path: "politics/elections/local-elections/2019/leap-2019-05-02.csv",
 	},
 	2018: {
 		year: 2018,
+		boundaryYear: 2018,
 		source: "leap",
 		path: "politics/elections/local-elections/2018/leap-2018-05-03.csv",
 	},
 	2017: {
 		year: 2017,
+		boundaryYear: 2017,
 		source: "leap",
 		path: "politics/elections/local-elections/2017/leap-2017-05-04.csv",
 	},
 	2016: {
 		year: 2016,
+		boundaryYear: 2016,
 		source: "leap",
 		path: "politics/elections/local-elections/2016/leap-2016-05-05.csv",
 	},

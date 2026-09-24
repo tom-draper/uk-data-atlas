@@ -13,6 +13,7 @@ import {
 
 const codedConfig: ElectionTableSourceConfig = {
 	year: 2022,
+	boundaryYear: 2022,
 	source: "xlsx",
 	path: "wards.xlsx",
 	sheet: "Wards",
@@ -38,6 +39,7 @@ const codedConfig: ElectionTableSourceConfig = {
 
 const uncodedConfig: ElectionTableSourceConfig = {
 	year: 2023,
+	boundaryYear: 2023,
 	source: "xlsx",
 	path: "wards.xlsx",
 	sheet: "Ward_Level",
@@ -205,6 +207,7 @@ Nowhere,Example Council,LAB,100`,
 	it("counts LEAP candidates the same way and excludes Scottish STV records", () => {
 		const config: LeapElectionSourceConfig = {
 			year: 2019,
+			boundaryYear: 2019,
 			source: "leap",
 			path: "leap.csv",
 		};
