@@ -3,8 +3,8 @@ import test from "node:test";
 import { calculateWeightedAggregate } from "../src/weightedAggregation";
 
 const records = [
-	{ areaCode: "E1", value: 10 },
-	{ areaCode: "E2", value: 20 },
+	{ areaCode: "E1", value: 10, status: "observed" as const },
+	{ areaCode: "E2", value: 20, status: "observed" as const },
 ];
 
 test("calculates a country weighted aggregate", () => {
@@ -12,8 +12,8 @@ test("calculates a country weighted aggregate", () => {
 		calculateWeightedAggregate({
 			aggregate: { members: records, value: 30 },
 			weightRecords: [
-				{ areaCode: "E1", value: 1 },
-				{ areaCode: "E2", value: 3 },
+				{ areaCode: "E1", value: 1, status: "observed" as const },
+				{ areaCode: "E2", value: 3, status: "observed" as const },
 			],
 			areaCode: "E92000001",
 		}),
@@ -26,8 +26,8 @@ test("uses only named-location members", () => {
 		calculateWeightedAggregate({
 			aggregate: { members: [records[0]], value: 10 },
 			weightRecords: [
-				{ areaCode: "E1", value: 1 },
-				{ areaCode: "E2", value: 3 },
+				{ areaCode: "E1", value: 1, status: "observed" as const },
+				{ areaCode: "E2", value: 3, status: "observed" as const },
 			],
 			location: {
 				id: "example",
@@ -45,23 +45,25 @@ test("uses only named-location members", () => {
 });
 
 test("reports partial coverage and invalid weights", () => {
+	const partialCoverage = calculateWeightedAggregate({
+		aggregate: { members: records, value: 30 },
+		weightRecords: [records[0]!],
+		areaCode: "E92000001",
+	});
 	assert.equal(
-		calculateWeightedAggregate({
-			aggregate: { members: records, value: 30 },
-			weightRecords: [records[0]],
-			areaCode: "E92000001",
-		}).status,
+		"status" in partialCoverage ? partialCoverage.status : undefined,
 		422,
 	);
+	const invalidWeights = calculateWeightedAggregate({
+		aggregate: { members: records, value: 30 },
+		weightRecords: [
+			{ areaCode: "E1", value: 0, status: "observed" as const },
+			{ areaCode: "E2", value: 0, status: "observed" as const },
+		],
+		areaCode: "E92000001",
+	});
 	assert.equal(
-		calculateWeightedAggregate({
-			aggregate: { members: records, value: 30 },
-			weightRecords: [
-				{ areaCode: "E1", value: 0 },
-				{ areaCode: "E2", value: 0 },
-			],
-			areaCode: "E92000001",
-		}).status,
+		"status" in invalidWeights ? invalidWeights.status : undefined,
 		422,
 	);
 });

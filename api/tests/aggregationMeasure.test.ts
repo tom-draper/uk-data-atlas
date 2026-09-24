@@ -64,17 +64,13 @@ test("resolves available sum and weighted-mean policies", () => {
 });
 
 test("reports missing, unknown and unsupported measures", () => {
-	assert.equal(
-		resolveAggregationMeasure({ measureId: "measure.example" }).status,
-		503,
-	);
-	assert.equal(
-		resolveAggregationMeasure({
-			dataCatalog: catalog(),
-			measureId: "measure.example",
-		}).status,
-		404,
-	);
+	const missing = resolveAggregationMeasure({ measureId: "measure.example" });
+	assert.equal("status" in missing ? missing.status : undefined, 503);
+	const unknown = resolveAggregationMeasure({
+		dataCatalog: catalog(),
+		measureId: "measure.example",
+	});
+	assert.equal("status" in unknown ? unknown.status : undefined, 404);
 	const unsupported = resolveAggregationMeasure({
 		dataCatalog: catalog(
 			measure({
@@ -86,5 +82,5 @@ test("reports missing, unknown and unsupported measures", () => {
 		),
 		measureId: "measure.example",
 	});
-	assert.equal(unsupported.status, 422);
+	assert.equal("status" in unsupported ? unsupported.status : undefined, 422);
 });

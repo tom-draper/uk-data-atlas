@@ -63,7 +63,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 				boundaryRegistry: registry,
 				areaLookup,
 				crosswalkLookup,
-			} satisfies RouteContext,
+			},
 			new AreaGeometryCache(
 				root,
 				new Map([

@@ -165,9 +165,7 @@ test("uses a location's declared member geography for direct membership", () => 
 		"/v1/locations/example-wards/members?release=2025-01-en-ward",
 		{
 			boundaryRegistry: registry,
-			areaLookup,
 			namedLocationInventory: inventory,
-			namedLocationLookup: lookup,
 			geographyResolver: createGeographyResolver({
 				areaLookup,
 				namedLocationLookup: lookup,
@@ -217,10 +215,7 @@ test("resolves a named location into another geography through a crosswalk", () 
 	);
 	const context: RouteContext = {
 		boundaryRegistry: registry,
-		areaLookup,
 		crosswalkInventory: inventory,
-		crosswalkLookup,
-		namedLocationLookup,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,
@@ -420,9 +415,7 @@ test("says which parents a named location covers or meets", () => {
 	assert.equal(compiled.inventory.parentShards.length, 1);
 	const context: RouteContext = {
 		boundaryRegistry: registry,
-		areaLookup,
 		crosswalkInventory: inventory,
-		namedLocationLookup,
 		geographyResolver: createGeographyResolver({
 			areaLookup,
 			crosswalkInventory: inventory,

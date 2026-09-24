@@ -65,7 +65,7 @@ const citationRegistry: BoundaryRegistry = {
 	],
 };
 
-const citationContext = {
+const citationContext = testContext({
 	boundaryRegistry: citationRegistry,
 	areaInventory: {
 		schemaVersion: 1,
@@ -120,7 +120,7 @@ const citationContext = {
 	populationLocalAuthorityObservations,
 	measureObservations,
 	measureCompatibilityInventory,
-} satisfies RouteContext;
+});
 
 const citation = (url: string, context: RouteContext = citationContext) => {
 	const response = routeRequest("GET", url, testContext(context));

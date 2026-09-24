@@ -56,10 +56,16 @@ test("resolves the boundary release to use for a date", () => {
 				{ ...registry.releases[0]!, id: "2023-05-en-ward" },
 			],
 		},
+		geographyResolver: createGeographyResolver({
+			boundaryRegistry: {
+				...registry,
+				releases: [
+					...registry.releases,
+					{ ...registry.releases[0]!, id: "2023-05-en-ward" },
+				],
+			},
+		}),
 	};
-	context.geographyResolver = createGeographyResolver({
-		boundaryRegistry: context.boundaryRegistry,
-	});
 	const resolve = (query: string) =>
 		routeRequest("GET", `/v1/boundary-releases:resolve?${query}`, context);
 
@@ -132,7 +138,6 @@ test("compares release code sets without claiming that differences are geography
 	]);
 	const context: RouteContext = {
 		boundaryRegistry,
-		areaLookup,
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
@@ -273,8 +278,6 @@ test("summarises published release mappings as directional cardinality evidence"
 	};
 	const context: RouteContext = {
 		boundaryRegistry,
-		areaLookup,
-		crosswalkLookup: new Map([[lookup.id, lookup]]),
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,
@@ -430,8 +433,6 @@ test("reports published same-code continuity findings separately from code-set e
 	};
 	const context: RouteContext = {
 		boundaryRegistry,
-		areaLookup,
-		crosswalkLookup: new Map([[continuity.id, continuity]]),
 		geographyResolver: createGeographyResolver({
 			boundaryRegistry,
 			areaLookup,

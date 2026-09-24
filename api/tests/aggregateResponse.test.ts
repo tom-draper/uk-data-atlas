@@ -4,6 +4,7 @@ import { createGeographyResolver } from "../src/geographyResolver";
 import type { AggregationTarget } from "../src/aggregationTarget";
 import type { Measure, MeasureSource } from "../src/dataCatalog";
 import { buildAggregateResponse } from "../src/aggregateResponse";
+import { containmentCrosswalk } from "./geographyFixtures";
 
 // These cases need no compiled areas, so the resolver is empty.
 const geographyResolver = createGeographyResolver({});
@@ -70,7 +71,7 @@ test("builds country response metadata", () => {
 });
 
 test("builds regional target and weighting metadata", () => {
-	const regional = {
+	const regional: AggregationTarget = {
 		claim: "published-membership-lookup",
 		sourceRelease: "2024-01",
 		memberCodes: new Set(["E1", "E2"]),
@@ -81,11 +82,10 @@ test("builds regional target and weighting metadata", () => {
 			code: "R1",
 		},
 		crosswalk: {
+			...containmentCrosswalk,
 			id: "crosswalk.example",
-			method: "official-lookup",
-			quality: "official",
 		},
-	} as AggregationTarget;
+	};
 	const data = responseData(
 		buildAggregateResponse({
 			geographyResolver,

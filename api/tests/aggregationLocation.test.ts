@@ -51,18 +51,20 @@ test("resolves a named location and reports lookup failures", () => {
 		}),
 		undefined,
 	);
+	const unavailable = resolveAggregationLocation({
+		locationId: "example",
+		geographyResolver: createGeographyResolver({}),
+	});
 	assert.equal(
-		resolveAggregationLocation({
-			locationId: "example",
-			geographyResolver: createGeographyResolver({}),
-		})?.status,
+		unavailable && "status" in unavailable ? unavailable.status : undefined,
 		503,
 	);
+	const missing = resolveAggregationLocation({
+		locationId: "missing",
+		geographyResolver: withLocation,
+	});
 	assert.equal(
-		resolveAggregationLocation({
-			locationId: "missing",
-			geographyResolver: withLocation,
-		})?.status,
+		missing && "status" in missing ? missing.status : undefined,
 		404,
 	);
 	assert.deepEqual(

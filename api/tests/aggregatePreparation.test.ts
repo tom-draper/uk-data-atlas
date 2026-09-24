@@ -6,7 +6,7 @@ import { prepareAggregateTarget } from "../src/aggregatePreparation";
 // These cases need no compiled areas, so the resolver is empty.
 const geographyResolver = createGeographyResolver({});
 
-const sourceGeography = { type: "localAuthority", boundaryYear: 2024 };
+const sourceGeography = { type: "localAuthority", boundaryYear: 2024 } as const;
 
 const location = {
 	id: "example",
@@ -57,5 +57,5 @@ test("refuses a country with no published members", () => {
 		compatibleReleases: [],
 		sourceGeography,
 	});
-	assert.equal(result.status, 422);
+	assert.equal("status" in result ? result.status : undefined, 422);
 });

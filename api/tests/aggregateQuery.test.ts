@@ -50,7 +50,7 @@ test("rejects unsupported selectors and malformed targets", () => {
 		),
 		measureId: "measure.example",
 	});
-	assert.equal(conversion.status, 422);
+	assert.equal("status" in conversion ? conversion.status : undefined, 422);
 
 	const invalidCountry = parseAggregateQuery({
 		parsedUrl: url(
@@ -58,11 +58,17 @@ test("rejects unsupported selectors and malformed targets", () => {
 		),
 		measureId: "measure.example",
 	});
-	assert.equal(invalidCountry.status, 400);
+	assert.equal(
+		"status" in invalidCountry ? invalidCountry.status : undefined,
+		400,
+	);
 
 	const missingSource = parseAggregateQuery({
 		parsedUrl: url("areaCode=E92000001"),
 		measureId: "measure.example",
 	});
-	assert.equal(missingSource.status, 400);
+	assert.equal(
+		"status" in missingSource ? missingSource.status : undefined,
+		400,
+	);
 });

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { route } from "../src/routes";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import { testContext } from "./routeFixtures";
 
 const boundaryRegistry: BoundaryRegistry = {
 	schemaVersion: 1,
@@ -11,10 +12,14 @@ const boundaryRegistry: BoundaryRegistry = {
 
 test("serves the OpenAPI description as the document itself", () => {
 	const openapiDocument = 'openapi: 3.1.0\ninfo:\n  title: "Test"\n';
-	const response = route("GET", "/v1/openapi.yaml", {
-		boundaryRegistry,
-		openapiDocument,
-	});
+	const response = route(
+		"GET",
+		"/v1/openapi.yaml",
+		testContext({
+			boundaryRegistry,
+			openapiDocument,
+		}),
+	);
 	assert.equal(response.status, 200);
 	assert.deepEqual(response.representation, {
 		contentType: "application/yaml",
@@ -29,7 +34,11 @@ test("serves the OpenAPI description as the document itself", () => {
 });
 
 test("reports the description as unavailable when the server has none", () => {
-	const response = route("GET", "/v1/openapi.yaml", { boundaryRegistry });
+	const response = route(
+		"GET",
+		"/v1/openapi.yaml",
+		testContext({ boundaryRegistry }),
+	);
 	assert.equal(response.status, 503);
 	assert.equal(
 		"title" in response.body && response.body.title,

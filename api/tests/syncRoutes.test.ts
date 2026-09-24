@@ -19,14 +19,15 @@ import {
 	validationReport,
 } from "./routeFixtures";
 
-const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
-	boundaryRegistry: {
-		schemaVersion: 1,
-		contentHash: "sha256:registry",
-		releases: [],
-	},
-	...overrides,
-});
+const context = (overrides: Partial<RouteContext> = {}): RouteContext =>
+	testContext({
+		boundaryRegistry: {
+			schemaVersion: 1,
+			contentHash: "sha256:registry",
+			releases: [],
+		},
+		...overrides,
+	});
 
 const request = (
 	path: string,
@@ -253,14 +254,14 @@ test("lists and compares archived Atlas releases by immutable artifact hash", ()
 			},
 		],
 	};
-	const context = {
+	const context = testContext({
 		boundaryRegistry: registry,
 		atlasRelease,
 		atlasReleaseHistory: new Map([
 			[previous.releaseId, previous],
 			[atlasRelease.releaseId, atlasRelease],
 		]),
-	};
+	});
 	const releases = routeRequest("GET", "/v1/atlas-releases", context);
 	assert.equal(releases.status, 200);
 	assert.equal(

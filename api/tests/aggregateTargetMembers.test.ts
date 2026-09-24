@@ -16,12 +16,7 @@ const regional = {
 		boundaryRelease: "2024-01",
 		code: "R1",
 	},
-	crosswalk: {
-		id: "crosswalk.example",
-		method: "official-lookup",
-		quality: "official",
-	},
-} as AggregationTarget;
+} satisfies AggregationTarget;
 
 test("selects country and regional members without changing records", () => {
 	const records = [
@@ -50,7 +45,10 @@ test("refuses empty country and regional targets", () => {
 		areaCode: "E92000001",
 	});
 	const countryResult = requireAggregateMembers(emptyCountry);
-	assert.equal(countryResult.status, 422);
+	assert.equal(
+		"status" in countryResult ? countryResult.status : undefined,
+		422,
+	);
 
 	const emptyRegion = aggregateTargetMembers({
 		records: [{ areaCode: "W1", value: 20, status: "observed" }],
@@ -58,10 +56,13 @@ test("refuses empty country and regional targets", () => {
 		areaCode: null,
 	});
 	const regionResult = requireAggregateMembers({ ...emptyRegion, regional });
-	assert.equal(regionResult.status, 422);
+	assert.equal(
+		"status" in regionResult ? regionResult.status : undefined,
+		422,
+	);
 });
 
 test("refuses a request without a resolved target", () => {
 	const result = requireAggregateMembers({});
-	assert.equal(result.status, 400);
+	assert.equal("status" in result ? result.status : undefined, 400);
 });

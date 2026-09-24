@@ -171,7 +171,10 @@ test("refuses a file whose categories do not make up its total, or whose codes a
 			/E01000001 repeats/,
 		],
 	] as const) {
-		const root = repository(tenure, rows);
+		const root = repository(tenure, {
+			lsoa: [...rows.lsoa],
+			msoa: [...rows.msoa],
+		});
 		try {
 			assert.throws(
 				() => compileCensusSmallArea(root, [tenure]),

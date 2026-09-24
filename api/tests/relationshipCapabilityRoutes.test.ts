@@ -1,10 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createGeographyResolver } from "../src/geographyResolver";
-import {
-	compileRelationshipPaths,
-	createRelationshipPathIndex,
-} from "../src/relationshipPaths";
+import { compileRelationshipPaths } from "../src/relationshipPaths";
+import type { DataCatalog } from "../src/dataCatalog";
+import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 import { route } from "../src/routes";
 import {
 	areaLookup,
@@ -15,11 +13,12 @@ import {
 	registry,
 	dataCatalog,
 	measureCompatibilityInventory,
+	testContext,
 } from "./routeFixtures";
 
 const relationshipPathInventory = compileRelationshipPaths(crosswalkInventory);
 
-const compatibleMeasureInventory = {
+const compatibleMeasureInventory: MeasureCompatibilityInventory = {
 	...measureCompatibilityInventory,
 	measures: [
 		...measureCompatibilityInventory.measures.map((measure) => ({
@@ -79,25 +78,17 @@ const contextFor = ({
 	crosswalks?: Map<string, typeof containmentCrosswalk>;
 	catalog?: typeof dataCatalog;
 	boundaryRegistry?: typeof registry;
-	compatibility?: typeof compatibleMeasureInventory;
-} = {}) => ({
-	boundaryRegistry,
-	areaLookup: lookup,
-	crosswalkInventory,
-	crosswalkLookup: crosswalks,
-	relationshipPathInventory,
-	dataCatalog: catalog,
-	measureCompatibilityInventory: compatibility,
-	geographyResolver: createGeographyResolver({
+	compatibility?: MeasureCompatibilityInventory;
+} = {}) =>
+	testContext({
 		boundaryRegistry,
 		areaLookup: lookup,
 		crosswalkInventory,
 		crosswalkLookup: crosswalks,
-		relationshipPathIndex: createRelationshipPathIndex(
-			relationshipPathInventory,
-		),
-	}),
-});
+		relationshipPathInventory,
+		dataCatalog: catalog,
+		measureCompatibilityInventory: compatibility,
+	});
 
 const query =
 	"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
@@ -215,7 +206,7 @@ test("preflights an extensive measure against containment aggregation", () => {
 });
 
 test("refuses a measure whose source partition does not match the source release", () => {
-	const compatibility = {
+	const compatibility: MeasureCompatibilityInventory = {
 		...compatibleMeasureInventory,
 		measures: compatibleMeasureInventory.measures.map((measure) => ({
 			...measure,
@@ -256,7 +247,7 @@ test("refuses a measure whose source partition does not match the source release
 });
 
 test("returns partial code-set evidence instead of concealing it behind a refusal", () => {
-	const compatibility = {
+	const compatibility: MeasureCompatibilityInventory = {
 		...compatibleMeasureInventory,
 		measures: compatibleMeasureInventory.measures.map((measure) => ({
 			...measure,
@@ -318,15 +309,20 @@ test("refuses an intensive measure when its required weighted mean is unavailabl
 });
 
 test("names the required denominator for a supported intensive conversion", () => {
-	const catalog = {
+	const catalog: DataCatalog = {
 		...dataCatalog,
 		measures: dataCatalog.measures.map((measure) =>
 			measure.id === "mobile-5g-coverage"
 				? {
 						...measure,
 						aggregation: {
-							...measure.aggregation,
+							kind: "intensive",
+							operation: "weighted-mean",
 							available: true,
+							weight: {
+								description: "The authority's premises count.",
+								datasetField: "premisesCount",
+							},
 						},
 					}
 				: measure,
