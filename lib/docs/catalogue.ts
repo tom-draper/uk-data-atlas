@@ -103,18 +103,157 @@ interface DocsCatalogueSnapshot {
 	mapResourceIds: string[];
 }
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const hasOptionalString = (record: Record<string, unknown>, key: string) =>
+	!(key in record) || typeof record[key] === "string";
+
+function isArrayOf<T>(
+	value: unknown,
+	isItem: (item: unknown) => item is T,
+): value is T[] {
+	return Array.isArray(value) && value.every(isItem);
+}
+
+function isLicence(value: unknown): value is Licence {
+	return (
+		isRecord(value) &&
+		typeof value.name === "string" &&
+		hasOptionalString(value, "url")
+	);
+}
+
+function isCatalogueDataset(value: unknown): value is CatalogueDataset {
+	return (
+		isRecord(value) &&
+		typeof value.id === "string" &&
+		typeof value.label === "string" &&
+		typeof value.publisher === "string" &&
+		hasOptionalString(value, "sourceUrl") &&
+		hasOptionalString(value, "temporalCoverage") &&
+		hasOptionalString(value, "description") &&
+		(!("licence" in value) || isLicence(value.licence))
+	);
+}
+
+function isMeasureSource(value: unknown): value is MeasureSource {
+	return (
+		isRecord(value) &&
+		typeof value.datasetId === "string" &&
+		Array.isArray(value.periods) &&
+		value.periods.every((period) => typeof period === "string") &&
+		isRecord(value.sourceGeography) &&
+		typeof value.sourceGeography.type === "string" &&
+		typeof value.sourceGeography.boundaryYear === "number" &&
+		isRecord(value.coverage) &&
+		typeof value.coverage.kind === "string" &&
+		Array.isArray(value.coverage.countries) &&
+		value.coverage.countries.every(
+			(country) => typeof country === "string",
+		) &&
+		typeof value.coverage.recordCount === "number" &&
+		hasOptionalString(value.coverage, "note")
+	);
+}
+
+function isCatalogueMeasure(value: unknown): value is CatalogueMeasure {
+	if (!isRecord(value) || !isRecord(value.aggregation)) return false;
+	const aggregation = value.aggregation;
+	return (
+		typeof value.id === "string" &&
+		typeof value.label === "string" &&
+		typeof value.valueKind === "string" &&
+		typeof value.unit === "string" &&
+		typeof aggregation.kind === "string" &&
+		typeof aggregation.available === "boolean" &&
+		hasOptionalString(aggregation, "operation") &&
+		hasOptionalString(aggregation, "statistic") &&
+		hasOptionalString(aggregation, "note") &&
+		isArrayOf(value.sources, isMeasureSource) &&
+		(!("notes" in value) ||
+			(Array.isArray(value.notes) &&
+				value.notes.every((note) => typeof note === "string"))) &&
+		(!("derivedFrom" in value) ||
+			(isRecord(value.derivedFrom) &&
+				Array.isArray(value.derivedFrom.datasetIds) &&
+				value.derivedFrom.datasetIds.every(
+					(id) => typeof id === "string",
+				) &&
+				hasOptionalString(value.derivedFrom, "note")))
+	);
+}
+
+function isCatalogueExport(value: unknown): value is CatalogueExport {
+	return (
+		isRecord(value) &&
+		typeof value.id === "string" &&
+		typeof value.measureId === "string" &&
+		typeof value.datasetId === "string" &&
+		Array.isArray(value.periods) &&
+		value.periods.every((period) => typeof period === "string") &&
+		isRecord(value.sourceGeography) &&
+		typeof value.sourceGeography.type === "string" &&
+		typeof value.sourceGeography.boundaryYear === "number" &&
+		typeof value.bytes === "number" &&
+		typeof value.recordCount === "number" &&
+		typeof value.href === "string"
+	);
+}
+
+function isBoundaryRelease(value: unknown): value is BoundaryRelease {
+	return (
+		isRecord(value) &&
+		typeof value.id === "string" &&
+		typeof value.geography === "string" &&
+		typeof value.title === "string" &&
+		hasOptionalString(value, "description") &&
+		hasOptionalString(value, "temporalCoverage") &&
+		isRecord(value.coverage) &&
+		Array.isArray(value.coverage.countries) &&
+		value.coverage.countries.every(
+			(country) => typeof country === "string",
+		) &&
+		isRecord(value.source) &&
+		typeof value.source.publisher === "string" &&
+		hasOptionalString(value.source, "url") &&
+		(!("licence" in value.source) || isLicence(value.source.licence))
+	);
+}
+
+function isDocsCatalogueSnapshot(
+	value: unknown,
+): value is DocsCatalogueSnapshot {
+	return (
+		isRecord(value) &&
+		value.schemaVersion === 1 &&
+		isArrayOf(
+			value.sourceArtifacts,
+			(
+				artifact,
+			): artifact is DocsCatalogueSnapshot["sourceArtifacts"][number] =>
+				isRecord(artifact) &&
+				typeof artifact.path === "string" &&
+				typeof artifact.sha256 === "string",
+		) &&
+		isArrayOf(value.datasets, isCatalogueDataset) &&
+		isArrayOf(value.measures, isCatalogueMeasure) &&
+		isArrayOf(value.exports, isCatalogueExport) &&
+		isArrayOf(value.releases, isBoundaryRelease) &&
+		isRecord(value.areaCounts) &&
+		Object.values(value.areaCounts).every(
+			(count) => typeof count === "number" && Number.isFinite(count),
+		) &&
+		Array.isArray(value.mapResourceIds) &&
+		value.mapResourceIds.every((id) => typeof id === "string")
+	);
+}
+
 function readSnapshot(): DocsCatalogueSnapshot {
-	const snapshot = JSON.parse(
+	const snapshot: unknown = JSON.parse(
 		fs.readFileSync(DOCS_CATALOGUE, "utf8"),
-	) as DocsCatalogueSnapshot;
-	if (
-		snapshot.schemaVersion !== 1 ||
-		!Array.isArray(snapshot.datasets) ||
-		!Array.isArray(snapshot.measures) ||
-		!Array.isArray(snapshot.exports) ||
-		!Array.isArray(snapshot.releases) ||
-		!Array.isArray(snapshot.mapResourceIds)
-	) {
+	);
+	if (!isDocsCatalogueSnapshot(snapshot)) {
 		throw new Error(`Invalid docs catalogue snapshot at ${DOCS_CATALOGUE}`);
 	}
 	return snapshot;
