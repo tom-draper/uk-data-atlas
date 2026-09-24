@@ -295,18 +295,41 @@ test("checks every child geometry vertex against its published parent", () => {
 			[-1, -1],
 		]),
 		{
-			status: "verified",
+			status: "checked",
 			sourceAreaCount: 1,
 			testedVertexCount: 4,
 			boundaryVertexCount: 3,
-			toleranceM: 50,
+			toleranceM: 100,
 			toleratedVertexCount: 0,
+			outsideToleranceAreas: [],
+			geometryInputs: [
+				{
+					side: "from",
+					geography: "ward",
+					boundaryRelease: "2025",
+					input: "boundaries/ward.geojson",
+					inputHash: null,
+					crs: "EPSG:4326",
+					codeProperty: "WDCD",
+					corrections: [],
+				},
+				{
+					side: "to",
+					geography: "localAuthority",
+					boundaryRelease: "2025",
+					input: "boundaries/local-authority.geojson",
+					inputHash: null,
+					crs: "EPSG:4326",
+					codeProperty: "LADCD",
+					corrections: [],
+				},
+			],
 			widestOutsideM: 0,
 		},
 	);
 });
 
-test("tolerates generalisation noise at a shared edge but not a real overhang", () => {
+test("records generalisation noise and real overhangs beyond the tolerance", () => {
 	// The ward's corner at (0, 0) lies 0.0002 degrees, about 22 m, outside a
 	// parent edge that runs along latitude 0.0002.
 	const nearly = compileContainment([
@@ -329,17 +352,26 @@ test("tolerates generalisation noise at a shared edge but not a real overhang", 
 			Math.round(nearly.widestOutsideM),
 		22,
 	);
-	// About 110 m outside is more than the tolerance, so the lookup is refused.
-	assert.throws(
-		() =>
-			compileContainment([
-				[-1, 0.001],
-				[-1, 2],
-				[2, 2],
-				[2, 0.001],
-				[-1, 0.001],
-			]),
-		/W1 has a vertex more than 50 m outside declared parent L1/,
+	// About 110 m outside is recorded for validation rather than aborting
+	// crosswalk compilation, where the configured waiver policy can decide it.
+	const overhang = compileContainment([
+		[-1, 0.001],
+		[-1, 2],
+		[2, 2],
+		[2, 0.001],
+		[-1, 0.001],
+	]);
+	assert.equal(overhang?.status, "checked");
+	assert.equal(
+		overhang && "outsideToleranceAreas" in overhang
+			? overhang.outsideToleranceAreas[0]?.code
+			: undefined,
+		"W1",
+	);
+	assert.ok(
+		overhang &&
+			"outsideToleranceAreas" in overhang &&
+			overhang.outsideToleranceAreas[0]!.outsideM > 100,
 	);
 });
 

@@ -35,6 +35,12 @@ const copyArtifact = (
 	releaseId: string,
 	artifact: AtlasReleaseArtifactRef,
 ) => {
+	const destination = artifactPath(publicDirectory, releaseId, artifact.path);
+	if (existsSync(destination)) {
+		if (sha256(destination) !== artifact.contentHash)
+			throw new Error(`Conflicting archived artifact at ${destination}.`);
+		return;
+	}
 	const source = join(publicDirectory, artifact.path);
 	if (!existsSync(source))
 		throw new Error(
@@ -44,12 +50,6 @@ const copyArtifact = (
 		throw new Error(
 			`Cannot archive ${artifact.id}: ${artifact.path} does not match release ${releaseId}.`,
 		);
-	const destination = artifactPath(publicDirectory, releaseId, artifact.path);
-	if (existsSync(destination)) {
-		if (sha256(destination) !== artifact.contentHash)
-			throw new Error(`Conflicting archived artifact at ${destination}.`);
-		return;
-	}
 	mkdirSync(dirname(destination), { recursive: true });
 	copyFileSync(source, destination);
 };

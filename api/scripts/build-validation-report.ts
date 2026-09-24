@@ -12,9 +12,9 @@ import type { ExportManifest } from "../src/exportManifest";
 import type { GeographyInventory } from "../src/geographyInventory";
 import type { GeometrySourceRegistry } from "../src/geometrySourceRegistry";
 import type { RelationshipCandidateInventory } from "../src/relationshipCandidates";
+import { readSourceObservations } from "../src/observationTables";
 import { compileValidationReport } from "../src/validation/compileValidationReport";
 import {
-	type ObservationArtifact,
 	readMeasureTotals,
 	readValidationWaivers,
 } from "../src/validation/inputs";
@@ -57,7 +57,11 @@ export const buildValidationReport = (repositoryRoot: string) => {
 		observationArtifacts: Object.fromEntries(
 			exportManifest.exports.map((entry) => [
 				entry.id,
-				read<ObservationArtifact>(`${entry.artifact}.json`),
+				readSourceObservations(
+					outputDirectory,
+					entry.artifact,
+					entry.measureId,
+				),
 			]),
 		),
 		...readMeasureTotals(

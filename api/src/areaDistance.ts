@@ -58,6 +58,81 @@ const segmentDistance = (
 	return Math.hypot(startX + along * deltaX, startY + along * deltaY);
 };
 
+type BoundarySegment = {
+	start: Coordinate;
+	end: Coordinate;
+	bounds: GeometryBounds;
+};
+type BoundaryIndex = {
+	segments: BoundarySegment[];
+	cells: Map<string, number[]>;
+	longSegments: number[];
+};
+
+const boundaryIndexes = new Map<GeoJsonGeometry, BoundaryIndex>();
+const MAX_BOUNDARY_INDEXES = 48;
+const DISTANCE_CELL_DEGREES = 0.025;
+const MAX_SEGMENT_CELLS = 64;
+
+const boundaryIndexFor = (geometry: GeoJsonGeometry): BoundaryIndex => {
+	const cached = boundaryIndexes.get(geometry);
+	if (cached) {
+		boundaryIndexes.delete(geometry);
+		boundaryIndexes.set(geometry, cached);
+		return cached;
+	}
+	const index: BoundaryIndex = {
+		segments: [],
+		cells: new Map(),
+		longSegments: [],
+	};
+	for (const ring of ringsOf(geometry)) {
+		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+			const start = ring[j]!;
+			const end = ring[i]!;
+			const segmentIndex = index.segments.length;
+			index.segments.push({
+				start,
+				end,
+				bounds: [
+					Math.min(start[0], end[0]),
+					Math.min(start[1], end[1]),
+					Math.max(start[0], end[0]),
+					Math.max(start[1], end[1]),
+				],
+			});
+			const west = Math.floor(
+				Math.min(start[0], end[0]) / DISTANCE_CELL_DEGREES,
+			);
+			const east = Math.floor(
+				Math.max(start[0], end[0]) / DISTANCE_CELL_DEGREES,
+			);
+			const south = Math.floor(
+				Math.min(start[1], end[1]) / DISTANCE_CELL_DEGREES,
+			);
+			const north = Math.floor(
+				Math.max(start[1], end[1]) / DISTANCE_CELL_DEGREES,
+			);
+			const cells = (east - west + 1) * (north - south + 1);
+			if (cells > MAX_SEGMENT_CELLS) {
+				index.longSegments.push(segmentIndex);
+				continue;
+			}
+			for (let x = west; x <= east; x++)
+				for (let y = south; y <= north; y++) {
+					const key = `${x}/${y}`;
+					const segments = index.cells.get(key) ?? [];
+					segments.push(segmentIndex);
+					index.cells.set(key, segments);
+				}
+		}
+	}
+	boundaryIndexes.set(geometry, index);
+	if (boundaryIndexes.size > MAX_BOUNDARY_INDEXES)
+		boundaryIndexes.delete(boundaryIndexes.keys().next().value!);
+	return index;
+};
+
 /** Metres from a point to the nearest edge of any ring, holes included. */
 export const distanceToBoundaryM = (
 	point: Coordinate,
@@ -92,27 +167,42 @@ export const boundaryDistanceWithinM = (
 	const reachY = withinM / scale.latitude;
 	const toPlane = planar(point);
 	let nearest: number | undefined;
-	for (const ring of ringsOf(geometry))
-		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-			const [startX, startY] = ring[j]!;
-			const [endX, endY] = ring[i]!;
-			if (
-				Math.min(startX, endX) > point[0] + reachX ||
-				Math.max(startX, endX) < point[0] - reachX ||
-				Math.min(startY, endY) > point[1] + reachY ||
-				Math.max(startY, endY) < point[1] - reachY
-			)
-				continue;
-			const distance = segmentDistance(
-				toPlane(ring[j]!),
-				toPlane(ring[i]!),
-			);
-			if (
-				distance <= withinM &&
-				(nearest === undefined || distance < nearest)
-			)
-				nearest = distance;
-		}
+	const index = boundaryIndexFor(geometry);
+	const west = Math.floor((point[0] - reachX) / DISTANCE_CELL_DEGREES);
+	const east = Math.floor((point[0] + reachX) / DISTANCE_CELL_DEGREES);
+	const south = Math.floor((point[1] - reachY) / DISTANCE_CELL_DEGREES);
+	const north = Math.floor((point[1] + reachY) / DISTANCE_CELL_DEGREES);
+	const candidateCount = (east - west + 1) * (north - south + 1);
+	const candidates = new Set(index.longSegments);
+	if (candidateCount <= 5_000) {
+		for (let x = west; x <= east; x++)
+			for (let y = south; y <= north; y++)
+				for (const segment of index.cells.get(`${x}/${y}`) ?? [])
+					candidates.add(segment);
+	} else {
+		for (let segment = 0; segment < index.segments.length; segment++)
+			candidates.add(segment);
+	}
+	for (const segmentIndex of candidates) {
+		const segment = index.segments[segmentIndex]!;
+		const [minX, minY, maxX, maxY] = segment.bounds;
+		if (
+			minX > point[0] + reachX ||
+			maxX < point[0] - reachX ||
+			minY > point[1] + reachY ||
+			maxY < point[1] - reachY
+		)
+			continue;
+		const distance = segmentDistance(
+			toPlane(segment.start),
+			toPlane(segment.end),
+		);
+		if (
+			distance <= withinM &&
+			(nearest === undefined || distance < nearest)
+		)
+			nearest = distance;
+	}
 	return nearest;
 };
 

@@ -13,8 +13,13 @@ import {
 	createCrosswalkInventory,
 	type AreaOverlapCrosswalkArtifact,
 	type CrosswalkArtifact,
+	type PropertyCrosswalkArtifact,
 	type SameCodeContinuityCrosswalkArtifact,
 } from "../src/crosswalkInventory";
+import {
+	CONTAINMENT_TOLERANCE_M,
+	geometryContainmentInputs,
+} from "../src/crosswalkGeometryValidation";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import {
 	createAreaLookup,
@@ -202,6 +207,72 @@ const reusablePopulationOverlap = (
 	}
 };
 
+/**
+ * Geometry validation is the expensive part of a clean-containment adapter.
+ * Reuse it only when both geometry files, their correction manifests, the
+ * published lookup, and the validation rules are exactly the current ones.
+ */
+const reusableCleanContainment = (
+	repositoryRoot: string,
+	outputDirectory: string,
+	adapter: Extract<CrosswalkAdapter, { method: "clean-containment" }>,
+	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
+): PropertyCrosswalkArtifact | undefined => {
+	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
+	if (!existsSync(path)) return undefined;
+	try {
+		const artifact = JSON.parse(
+			readFileSync(path, "utf8"),
+		) as PropertyCrosswalkArtifact;
+		const { contentHash, ...withoutHash } = artifact;
+		const expectedGeometryInputs = geometryContainmentInputs(
+			repositoryRoot,
+			geometrySources,
+			adapter.from,
+			adapter.to,
+		);
+		const inputHash = sha256(
+			readFileSync(join(repositoryRoot, "data", adapter.input), "utf8"),
+		);
+		const containment = artifact.validation.geometryContainment;
+		return contentHash === sha256(JSON.stringify(withoutHash)) &&
+			artifact.id === adapter.id &&
+			artifact.method === adapter.method &&
+			artifact.quality === adapter.quality &&
+			JSON.stringify(artifact.from) ===
+				JSON.stringify({
+					geography: adapter.from.geography,
+					boundaryRelease: adapter.from.boundaryRelease,
+				}) &&
+			JSON.stringify(artifact.to) ===
+				JSON.stringify({
+					geography: adapter.to.geography,
+					boundaryRelease: adapter.to.boundaryRelease,
+				}) &&
+			JSON.stringify(artifact.weighting) ===
+				JSON.stringify(adapter.weighting) &&
+			artifact.provenance.input === adapter.input &&
+			artifact.provenance.inputHash === inputHash &&
+			JSON.stringify(artifact.provenance.corrections ?? []) ===
+				JSON.stringify(
+					Object.entries(adapter.targetCodeCorrections ?? {}).map(
+						([sourceCode, correction]) => ({
+							sourceCode,
+							...correction,
+						}),
+					),
+				) &&
+			containment?.status === "checked" &&
+			containment.toleranceM === CONTAINMENT_TOLERANCE_M &&
+			JSON.stringify(containment.geometryInputs) ===
+				JSON.stringify(expectedGeometryInputs)
+			? artifact
+			: undefined;
+	} catch {
+		return undefined;
+	}
+};
+
 export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const outputDirectory = join(repositoryRoot, "api", "public");
 	if (!existsSync(outputDirectory)) {
@@ -217,10 +288,10 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	);
 	const reusable = new Map<string, CrosswalkArtifact>(
 		adapters.flatMap((adapter) =>
-			adapter.method === "area-overlap" ||
-			adapter.method === "same-code-continuity"
+			adapter.method === "clean-containment"
 				? (() => {
-						const artifact = reusableGeometryCrosswalk(
+						const artifact = reusableCleanContainment(
+							repositoryRoot,
 							outputDirectory,
 							adapter,
 							geometrySources,
@@ -229,7 +300,19 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 							? [[adapter.id, artifact] as const]
 							: [];
 					})()
-				: [],
+				: adapter.method === "area-overlap" ||
+					  adapter.method === "same-code-continuity"
+					? (() => {
+							const artifact = reusableGeometryCrosswalk(
+								outputDirectory,
+								adapter,
+								geometrySources,
+							);
+							return artifact
+								? [[adapter.id, artifact] as const]
+								: [];
+						})()
+					: [],
 		),
 	);
 	for (const adapter of adapters) {
@@ -244,6 +327,9 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 		if (artifact) reusable.set(adapter.id, artifact);
 	}
 	const pending = adapters.filter((adapter) => !reusable.has(adapter.id));
+	console.log(
+		`Reusing ${reusable.size} validated crosswalks; compiling ${pending.length} changed or uncached crosswalks.`,
+	);
 	const compiled = compileCrosswalks(
 		repositoryRoot,
 		pending,

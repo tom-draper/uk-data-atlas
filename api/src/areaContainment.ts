@@ -80,16 +80,119 @@ const pointOnSegment = (
 	);
 };
 
-const pointInRing = (point: Coordinate, ring: unknown): PointContainment => {
-	if (!Array.isArray(ring)) return "outside";
-	const coordinates = ring.filter(isCoordinate);
-	if (coordinates.length < 3) return "outside";
-	let inside = false;
+type PreparedRing = {
+	coordinates: Coordinate[];
+	bounds: GeometryBounds;
+	latitudeBuckets: Map<number, number[]>;
+};
+type PreparedPolygon = { rings: PreparedRing[] };
+type PreparedGeometry =
+	| { type: "Polygon" | "MultiPolygon"; polygons: PreparedPolygon[] }
+	| { type: "GeometryCollection"; geometries: PreparedGeometry[] }
+	| { type: "Other" };
+
+// Keep only a bounded working set: a full API build checks many releases and
+// retaining every prepared ring would duplicate several gigabytes of geometry.
+const preparedGeometries = new Map<GeoJsonGeometry, PreparedGeometry>();
+const MAX_PREPARED_GEOMETRIES = 96;
+const RING_LATITUDE_BUCKET_DEGREES = 0.025;
+
+const prepareRing = (value: unknown): PreparedRing | undefined => {
+	if (!Array.isArray(value)) return undefined;
+	const coordinates = value.filter(isCoordinate);
+	if (coordinates.length < 3) return undefined;
+	let west = Infinity;
+	let south = Infinity;
+	let east = -Infinity;
+	let north = -Infinity;
+	for (const [longitude, latitude] of coordinates) {
+		west = Math.min(west, longitude);
+		south = Math.min(south, latitude);
+		east = Math.max(east, longitude);
+		north = Math.max(north, latitude);
+	}
+	const latitudeBuckets = new Map<number, number[]>();
 	for (
 		let index = 0, previous = coordinates.length - 1;
 		index < coordinates.length;
 		previous = index++
 	) {
+		const minBucket = Math.floor(
+			Math.min(coordinates[previous]![1], coordinates[index]![1]) /
+				RING_LATITUDE_BUCKET_DEGREES,
+		);
+		const maxBucket = Math.floor(
+			Math.max(coordinates[previous]![1], coordinates[index]![1]) /
+				RING_LATITUDE_BUCKET_DEGREES,
+		);
+		for (let bucket = minBucket; bucket <= maxBucket; bucket++) {
+			const indices = latitudeBuckets.get(bucket) ?? [];
+			indices.push(index);
+			latitudeBuckets.set(bucket, indices);
+		}
+	}
+	return {
+		coordinates,
+		bounds: [west, south, east, north],
+		latitudeBuckets,
+	};
+};
+
+const preparePolygon = (value: unknown): PreparedPolygon | undefined => {
+	if (!Array.isArray(value)) return undefined;
+	const rings = value.flatMap((ring) => {
+		const prepared = prepareRing(ring);
+		return prepared ? [prepared] : [];
+	});
+	return rings.length ? { rings } : undefined;
+};
+
+const prepareGeometry = (geometry: GeoJsonGeometry): PreparedGeometry => {
+	const cached = preparedGeometries.get(geometry);
+	if (cached) {
+		preparedGeometries.delete(geometry);
+		preparedGeometries.set(geometry, cached);
+		return cached;
+	}
+	let prepared: PreparedGeometry;
+	if (geometry.type === "Polygon") {
+		const polygon = preparePolygon(geometry.coordinates);
+		prepared = { type: "Polygon", polygons: polygon ? [polygon] : [] };
+	} else if (geometry.type === "MultiPolygon") {
+		const polygons = Array.isArray(geometry.coordinates)
+			? geometry.coordinates.flatMap((polygon) => {
+					const result = preparePolygon(polygon);
+					return result ? [result] : [];
+				})
+			: [];
+		prepared = { type: "MultiPolygon", polygons };
+	} else if (geometry.type === "GeometryCollection") {
+		prepared = {
+			type: "GeometryCollection",
+			geometries: (geometry.geometries ?? []).map(prepareGeometry),
+		};
+	} else {
+		prepared = { type: "Other" };
+	}
+	preparedGeometries.set(geometry, prepared);
+	if (preparedGeometries.size > MAX_PREPARED_GEOMETRIES)
+		preparedGeometries.delete(preparedGeometries.keys().next().value!);
+	return prepared;
+};
+
+const pointInRing = (
+	point: Coordinate,
+	ring: PreparedRing,
+): PointContainment => {
+	if (!pointInBounds(point, ring.bounds)) return "outside";
+	const coordinates = ring.coordinates;
+	const candidates =
+		ring.latitudeBuckets.get(
+			Math.floor(point[1] / RING_LATITUDE_BUCKET_DEGREES),
+		) ?? [];
+	let inside = false;
+	for (const index of candidates) {
+		const previous = index === 0 ? coordinates.length - 1 : index - 1;
 		const start = coordinates[previous] as Coordinate;
 		const end = coordinates[index] as Coordinate;
 		if (pointOnSegment(point, start, end)) return "boundary";
@@ -109,12 +212,13 @@ const pointInRing = (point: Coordinate, ring: unknown): PointContainment => {
 
 const pointInPolygon = (
 	point: Coordinate,
-	polygon: unknown,
+	polygon: PreparedPolygon,
 ): PointContainment => {
-	if (!Array.isArray(polygon) || polygon.length === 0) return "outside";
-	const outer = pointInRing(point, polygon[0]);
+	const [outerRing, ...holes] = polygon.rings;
+	if (!outerRing) return "outside";
+	const outer = pointInRing(point, outerRing);
 	if (outer === "outside") return "outside";
-	for (const hole of polygon.slice(1)) {
+	for (const hole of holes) {
 		const containment = pointInRing(point, hole);
 		if (containment === "boundary") return "boundary";
 		if (containment === "interior") return "outside";
@@ -134,29 +238,31 @@ const strongest = (left: PointContainment, right: PointContainment) =>
  * and labels it `boundary`. This avoids arbitrary exclusion at shared borders;
  * callers receive every matching area at a shared edge.
  */
-export const containPoint = (
+const containPreparedPoint = (
 	point: Coordinate,
-	geometry: GeoJsonGeometry,
+	prepared: PreparedGeometry,
 ): PointContainment => {
-	if (geometry.type === "Polygon")
-		return pointInPolygon(point, geometry.coordinates);
-	if (geometry.type === "MultiPolygon") {
-		return (
-			Array.isArray(geometry.coordinates) ? geometry.coordinates : []
-		).reduce(
+	if (prepared.type === "Polygon" || prepared.type === "MultiPolygon") {
+		return prepared.polygons.reduce(
 			(status, polygon) =>
 				strongest(status, pointInPolygon(point, polygon)),
 			"outside" as PointContainment,
 		);
 	}
-	if (geometry.type === "GeometryCollection") {
-		return (geometry.geometries ?? []).reduce(
-			(status, part) => strongest(status, containPoint(point, part)),
+	if (prepared.type === "GeometryCollection") {
+		return prepared.geometries.reduce(
+			(status, part) =>
+				strongest(status, containPreparedPoint(point, part)),
 			"outside" as PointContainment,
 		);
 	}
 	return "outside";
 };
+
+export const containPoint = (
+	point: Coordinate,
+	geometry: GeoJsonGeometry,
+): PointContainment => containPreparedPoint(point, prepareGeometry(geometry));
 
 export const boundsIntersect = (left: GeometryBounds, right: GeometryBounds) =>
 	left[0] <= right[2] + EPSILON &&

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+	boundaryDistanceWithinM,
 	distanceToBoundaryM,
 	distanceToBoundsM,
 	distanceToGeometryM,
@@ -40,6 +41,18 @@ test("measures to the nearest edge, and to nothing from inside", () => {
 	// Beyond a corner, the corner itself is nearest.
 	assert.ok(
 		Math.abs(distanceToGeometryM([0.015, 0.015], square) - 784.6) < 0.1,
+	);
+});
+
+test("finds nearby boundary segments across spatial-index cell edges", () => {
+	assert.ok(
+		Math.abs(
+			boundaryDistanceWithinM([0.0105, 0.005], square, 100)! - 55.66,
+		) < 0.1,
+	);
+	assert.equal(
+		boundaryDistanceWithinM([0.0105, 0.005], square, 50),
+		undefined,
 	);
 });
 
