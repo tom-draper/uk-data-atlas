@@ -26,6 +26,47 @@ export type MatchIndex = Record<
 	Record<number, { codes: string[]; names: Record<string, string> }>
 >;
 
+/** Parse one geography's year-indexed data from the downloaded match index. */
+export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
+	if (typeof value !== "object" || value === null || Array.isArray(value))
+		throw new Error("Invalid gazetteer match index level.");
+
+	const level: MatchIndex[string] = {};
+	for (const [yearKey, vintage] of Object.entries(value)) {
+		const year = Number(yearKey);
+		if (
+			!Number.isInteger(year) ||
+			typeof vintage !== "object" ||
+			vintage === null ||
+			Array.isArray(vintage)
+		)
+			throw new Error("Invalid gazetteer match index vintage.");
+
+		if (
+			!Array.isArray(vintage.codes) ||
+			typeof vintage.names !== "object" ||
+			vintage.names === null ||
+			Array.isArray(vintage.names)
+		)
+			throw new Error("Invalid gazetteer match index entries.");
+
+		const codes: string[] = [];
+		for (const code of vintage.codes) {
+			if (typeof code !== "string")
+				throw new Error("Invalid gazetteer match index codes.");
+			codes.push(code);
+		}
+		const names: Record<string, string> = {};
+		for (const [name, code] of Object.entries(vintage.names)) {
+			if (typeof code !== "string")
+				throw new Error("Invalid gazetteer match index names.");
+			names[name] = code;
+		}
+		level[year] = { codes, names };
+	}
+	return level;
+}
+
 const LEVEL_LABELS: Record<string, string> = {
 	ward: "Ward",
 	constituency: "Constituency",

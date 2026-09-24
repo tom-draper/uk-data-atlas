@@ -1,5 +1,9 @@
 import { useMemo } from "react";
-import { CustomDataset, CustomPoint } from "../types/custom";
+import type { CustomDataset, CustomPoint } from "../types/custom";
+import {
+	parseRoadSafetyDataset,
+	parseRoadSafetyPoints,
+} from "../data/roadSafetyDatasetParser";
 import { withCDN } from "../helpers/cdn";
 import { useJsonDataLoader } from "./useJsonDataLoader";
 
@@ -24,6 +28,7 @@ export const useRoadSafetyData = (
 ) => {
 	const { datasets, loading, error } = useJsonDataLoader<CustomDataset>(
 		DATASETS_URL,
+		parseRoadSafetyDataset,
 		enabled,
 	);
 
@@ -36,6 +41,7 @@ export const useRoadSafetyData = (
 	// looking at another one does not pay for it twice.
 	const { datasets: pointsById } = useJsonDataLoader<CustomPoint[]>(
 		POINTS_URL,
+		parseRoadSafetyPoints,
 		pointsWanted,
 	);
 
