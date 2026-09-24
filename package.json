@@ -15,7 +15,7 @@
 		"precompile:if-needed": "node scripts/precompile-if-needed.mjs",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
-		"build": "pnpm data:verify-precompiled && next build --turbopack",
+		"build": "pnpm precompile:if-needed && pnpm data:verify-precompiled && next build --turbopack",
 		"hooks:install": "git config core.hooksPath .githooks",
 		"start": "next start",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
