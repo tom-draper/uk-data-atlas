@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
-import type { Map as MapLibreMap } from "maplibre-gl";
 import { BASE_MAP_STYLES, type BaseMapStyle } from "@/lib/config/baseMapStyles";
+import type { MapInstance } from "@/lib/types/mapInstance";
 
 /** Applies base-style changes and reports when the active style is ready. */
 export function useMapStyle(
-	mapRef: RefObject<MapLibreMap | null>,
+	mapRef: RefObject<MapInstance | null>,
 	mapReady: boolean,
 	styleId: BaseMapStyle["id"],
 ): boolean {

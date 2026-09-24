@@ -1,13 +1,12 @@
 // lib/utils/mapManager/mapManager.ts
 import { BoundaryGeojson, Features, PropertyKeys } from "@lib/types";
 import { MapOptions } from "@lib/types/mapOptions";
-import type { Map as MapLibreMap } from "maplibre-gl";
+import type { MapInstance } from "@/lib/types/mapInstance";
 import { LayerManager } from "./layerManager";
 import { EventHandler } from "./eventHandler";
 import { DatasetAggregator } from "../datasetAggregation";
 import { FeatureBuilder } from "./featureBuilder";
 import { PropertyDetector, type BoundaryCodeScope } from "./propertyDetector";
-import { StatsCache } from "./statsCache";
 import type { VectorLineLayer } from "./layers";
 
 import type { MapRenderContext } from "../mapRendering";
@@ -20,7 +19,6 @@ export class MapManager implements MapRenderContext {
 	readonly datasetAggregator: DatasetAggregator;
 	readonly featureBuilder: FeatureBuilder;
 	private propertyDetector: PropertyDetector;
-	private cache: StatsCache;
 	private activeTransformedGeojson:
 		| {
 				boundary: BoundaryGeojson;
@@ -33,16 +31,12 @@ export class MapManager implements MapRenderContext {
 	// carries, so a detection is reused across every file sharing that schema.
 	private codePropCache = new Map<string, PropertyKeys>();
 
-	constructor(map: MapLibreMap, callbacks: MapManagerCallbacks) {
+	constructor(map: MapInstance, callbacks: MapManagerCallbacks) {
 		this.layerManager = new LayerManager(map);
 		this.eventHandler = new EventHandler(map, callbacks);
 		this.propertyDetector = new PropertyDetector();
 		this.featureBuilder = new FeatureBuilder();
-		this.cache = new StatsCache();
-		this.datasetAggregator = new DatasetAggregator(
-			this.propertyDetector,
-			this.cache,
-		);
+		this.datasetAggregator = new DatasetAggregator(this.propertyDetector);
 	}
 
 	codeProp(scope: BoundaryCodeScope, features: Features): PropertyKeys {

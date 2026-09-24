@@ -13,6 +13,48 @@ export type ConstituencyLadOverlaps = {
 	releases: Record<string, Crosswalk>;
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isCrosswalk = (value: unknown): value is Crosswalk =>
+	isRecord(value) &&
+	Object.values(value).every(
+		(targets) =>
+			Array.isArray(targets) &&
+			targets.every(
+				(target) =>
+					isRecord(target) &&
+					typeof target.code === "string" &&
+					typeof target.weight === "number" &&
+					Number.isFinite(target.weight),
+			),
+	);
+
+const parseConstituencyLadOverlaps = (
+	value: unknown,
+): ConstituencyLadOverlaps => {
+	if (
+		!isRecord(value) ||
+		value.version !== 1 ||
+		typeof value.targetLocalAuthorityRelease !== "string" ||
+		value.targetLocalAuthorityRelease.length === 0 ||
+		!isRecord(value.releases)
+	)
+		throw new Error("Invalid constituency/LAD overlaps file");
+	const releases: Record<string, Crosswalk> = {};
+	for (const [release, crosswalk] of Object.entries(value.releases)) {
+		if (!isCrosswalk(crosswalk))
+			throw new Error("Invalid constituency/LAD overlaps file");
+		releases[release] = crosswalk;
+	}
+
+	return {
+		version: 1,
+		targetLocalAuthorityRelease: value.targetLocalAuthorityRelease,
+		releases,
+	};
+};
+
 const URL = withCDN("/data/datasets/constituency-lad-overlaps.json");
 let cached: ConstituencyLadOverlaps | null = null;
 let pending: Promise<ConstituencyLadOverlaps> | null = null;
@@ -36,16 +78,9 @@ export const fetchConstituencyLadOverlaps =
 						`Failed to fetch constituency/LAD overlaps: ${response.status} ${response.statusText}`,
 					);
 				}
-				return response.json() as Promise<ConstituencyLadOverlaps>;
+				return parseConstituencyLadOverlaps(await response.json());
 			})
 			.then((overlaps) => {
-				if (
-					overlaps.version !== 1 ||
-					!overlaps.targetLocalAuthorityRelease ||
-					!overlaps.releases
-				) {
-					throw new Error("Invalid constituency/LAD overlaps file");
-				}
 				cached = overlaps;
 				pending = null;
 				return overlaps;

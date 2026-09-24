@@ -1,17 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { RefObject } from "react";
-import type { Map as MapLibreMap } from "maplibre-gl";
 import { MAP_CONFIG } from "@/lib/config/map";
 import { gazetteer } from "@/lib/data/gazetteer/static";
-
-type MapWithExport = MapLibreMap & {
-	once(type: "render", listener: () => void): void;
-	triggerRepaint(): void;
-};
+import type { MapInstance } from "@/lib/types/mapInstance";
 
 /** Map camera and export commands exposed to the UI overlay. */
 export function useMapCamera(
-	mapRef: RefObject<MapLibreMap | null>,
+	mapRef: RefObject<MapInstance | null>,
 	selectedLocation: string,
 	styleReady: boolean,
 	setSelectedLocation: (location: string) => void,
@@ -56,7 +51,7 @@ export function useMapCamera(
 	}, [mapRef]);
 
 	const onExport = useCallback(() => {
-		const map = mapRef.current as MapWithExport | null;
+		const map = mapRef.current;
 		if (!map) return;
 		map.once("render", () => {
 			const link = document.createElement("a");

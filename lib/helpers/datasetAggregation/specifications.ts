@@ -41,13 +41,17 @@ import {
 	aggregateGeneralElection,
 	aggregateLocalElection,
 } from "./elections";
-import type { BoundaryCodeScope } from "./ports";
+import {
+	createBoundaryAggregationSpec,
+	type BoundaryCodeScope,
+} from "./ports";
 
 const boundaryAggregation = <T, R>(
 	cacheKey: string,
 	scope: BoundaryCodeScope,
 	aggregate: BoundaryAggregationSpec<T, R>["aggregate"],
-): BoundaryAggregationSpec<T, R> => ({ cacheKey, scope, aggregate });
+): BoundaryAggregationSpec<T, R> =>
+	createBoundaryAggregationSpec(cacheKey, scope, aggregate);
 
 const numericAggregation = <T, R>(
 	cacheKey: string,
@@ -62,11 +66,11 @@ const numericAggregation = <T, R>(
 export const customDatasetAggregation: BoundaryAggregationSpec<
 	Record<string, number>,
 	ReturnType<typeof aggregateCustomDataset>
-> = {
-	cacheKey: "custom-dataset",
-	scope: "any",
-	aggregate: aggregateCustomDataset,
-};
+> = createBoundaryAggregationSpec(
+	"custom-dataset",
+	"any",
+	aggregateCustomDataset,
+);
 
 export const localElectionAggregation = boundaryAggregation(
 	"local-election",

@@ -1,7 +1,8 @@
-import type { GeoJSONSource, Map as MapLibreMap } from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import type { FeatureCollection } from "geojson";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
+import type { MapInstance } from "@/lib/types/mapInstance";
 import { DEFAULT_COLOR } from "./featureBuilder";
 import type { FillPaintConfig } from "./expressions";
 
@@ -27,7 +28,7 @@ export class BoundaryLayerController {
 	} | null = null;
 	private awaitingStyle = false;
 
-	constructor(private readonly map: MapLibreMap) {}
+	constructor(private readonly map: MapInstance) {}
 
 	paint(
 		geojson: BoundaryGeojson,

@@ -1,4 +1,5 @@
-import type { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
+import type { MapMouseEvent } from "maplibre-gl";
+import type { MapInstance } from "@/lib/types/mapInstance";
 
 import { MapManagerCallbacks, type MapLayerMouseHandler } from "./callbacks";
 import { BoundaryType, ElectionData } from "@/lib/types";
@@ -66,7 +67,7 @@ export class EventHandler {
 	private handlersAttached = false;
 
 	constructor(
-		private map: MapLibreMap,
+		private map: MapInstance,
 		private callbacks: MapManagerCallbacks,
 	) {
 		this.canvas = this.map.getCanvas();

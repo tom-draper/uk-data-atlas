@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { MapManager } from "@/lib/helpers/mapManager";
-import type { Map as MapLibreMap } from "maplibre-gl";
+import type { MapInstance } from "@/lib/types/mapInstance";
 import { SelectedArea } from "../types/areas";
 
 type UseMapManagerOptions = {
-	mapRef: React.RefObject<MapLibreMap | null>;
+	mapRef: React.RefObject<MapInstance | null>;
 	mapReady: boolean;
 	interactionHandlers: {
 		onAreaHover: (area: SelectedArea | null) => void;
