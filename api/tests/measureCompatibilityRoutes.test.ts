@@ -1,16 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { route as routeRequest } from "../src/routes";
-import { registry, measureCompatibilityInventory } from "./routeFixtures";
+import {
+	registry,
+	measureCompatibilityInventory,
+	testContext,
+} from "./routeFixtures";
 
 test("publishes measure boundary candidates as code compatibility only", () => {
 	const response = routeRequest(
 		"GET",
 		"/v1/measures/population-estimate/compatibility",
-		{
+		testContext({
 			boundaryRegistry: registry,
 			measureCompatibilityInventory,
-		},
+		}),
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;

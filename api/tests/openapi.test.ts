@@ -4,6 +4,7 @@ import test from "node:test";
 import { parse } from "yaml";
 import { route } from "../src/routes";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
+import { testContext } from "./routeFixtures";
 
 type OpenApiOperation = { operationId?: string; tags?: string[] };
 type OpenApiPathItem = Partial<
@@ -99,7 +100,11 @@ test("resolves every component reference", () => {
 });
 
 test("documents exactly the routes advertised by the API index", () => {
-	const response = route("GET", "/v1", { boundaryRegistry: registry });
+	const response = route(
+		"GET",
+		"/v1",
+		testContext({ boundaryRegistry: registry }),
+	);
 	assert.equal(response.status, 200);
 	const { links } = (response.body as { data: { links: string[] } }).data;
 	// Placeholders are compared by name too, so the index and the spec

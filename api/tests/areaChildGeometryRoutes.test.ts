@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
+import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
@@ -208,7 +209,10 @@ test("refuses to draw children of several geographies as one collection", () => 
 			geographyInventory,
 			areaLookup,
 			crosswalkInventory,
-			new Map([...crosswalkLookup, [lsoaCrosswalk.id, lsoaCrosswalk]]),
+			new Map<string, CrosswalkArtifact>([
+				...crosswalkLookup,
+				[lsoaCrosswalk.id, lsoaCrosswalk],
+			]),
 			undefined,
 			new AreaGeometryCache(tmpdir(), new Map()),
 		);

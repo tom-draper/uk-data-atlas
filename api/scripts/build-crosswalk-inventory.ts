@@ -6,6 +6,7 @@ import {
 	readCrosswalkAdapters,
 	type AreaOverlapCrosswalkAdapter,
 	type PopulationOverlapCrosswalkAdapter,
+	type PropertyCrosswalkAdapter,
 	type SameCodeContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import {
@@ -57,6 +58,9 @@ const readCompiledAreaLookup = (outputDirectory: string) => {
 
 type GeometryCrosswalkAdapter =
 	AreaOverlapCrosswalkAdapter | SameCodeContinuityCrosswalkAdapter;
+type CleanContainmentAdapter = PropertyCrosswalkAdapter & {
+	method: "clean-containment";
+};
 
 /**
  * Geometry overlays are deliberately expensive. A prior artifact is safe to
@@ -215,7 +219,7 @@ const reusablePopulationOverlap = (
 const reusableCleanContainment = (
 	repositoryRoot: string,
 	outputDirectory: string,
-	adapter: Extract<CrosswalkAdapter, { method: "clean-containment" }>,
+	adapter: CleanContainmentAdapter,
 	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
 ): PropertyCrosswalkArtifact | undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
@@ -286,35 +290,31 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const geometrySources = readGeometrySourceLookup(
 		join(repositoryRoot, "api"),
 	);
-	const reusable = new Map<string, CrosswalkArtifact>(
-		adapters.flatMap((adapter) =>
-			adapter.method === "clean-containment"
-				? (() => {
-						const artifact = reusableCleanContainment(
-							repositoryRoot,
-							outputDirectory,
-							adapter,
-							geometrySources,
-						);
-						return artifact
-							? [[adapter.id, artifact] as const]
-							: [];
-					})()
-				: adapter.method === "area-overlap" ||
-					  adapter.method === "same-code-continuity"
-					? (() => {
-							const artifact = reusableGeometryCrosswalk(
-								outputDirectory,
-								adapter,
-								geometrySources,
-							);
-							return artifact
-								? [[adapter.id, artifact] as const]
-								: [];
-						})()
-					: [],
-		),
-	);
+	const reusableEntries = adapters.reduce<
+		Array<readonly [string, CrosswalkArtifact]>
+	>((entries, adapter) => {
+		let artifact: CrosswalkArtifact | undefined;
+		if (adapter.method === "clean-containment") {
+			artifact = reusableCleanContainment(
+				repositoryRoot,
+				outputDirectory,
+				adapter as CleanContainmentAdapter,
+				geometrySources,
+			);
+		} else if (
+			adapter.method === "area-overlap" ||
+			adapter.method === "same-code-continuity"
+		) {
+			artifact = reusableGeometryCrosswalk(
+				outputDirectory,
+				adapter,
+				geometrySources,
+			);
+		}
+		if (artifact) entries.push([adapter.id, artifact]);
+		return entries;
+	}, []);
+	const reusable = new Map(reusableEntries);
 	for (const adapter of adapters) {
 		if (adapter.method !== "population-overlap") continue;
 		const artifact = reusablePopulationOverlap(

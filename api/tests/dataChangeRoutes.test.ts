@@ -8,16 +8,17 @@ import {
 	measureObservations,
 	populationObservations,
 	populationLocalAuthorityObservations,
+	testContext,
 } from "./routeFixtures";
 
 test("ranks change between two periods of one source partition", () => {
-	const context: RouteContext = {
+	const context = testContext({
 		boundaryRegistry: registry,
 		dataCatalog,
 		populationObservations,
 		populationLocalAuthorityObservations,
 		measureObservations,
-	};
+	});
 	const ask = (measureId: string, query: string) =>
 		routeRequest("GET", `/v1/data/${measureId}/change?${query}`, context);
 	const partition = "geography=localAuthority&boundaryYear=2023";

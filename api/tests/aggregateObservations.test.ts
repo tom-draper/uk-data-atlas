@@ -49,7 +49,7 @@ test("reports missing and non-numeric catalogue artifacts", () => {
 		period: "2024",
 		artifacts: {},
 	});
-	assert.equal(missing.status, 503);
+	assert.equal("status" in missing ? missing.status : undefined, 503);
 
 	const nonNumeric = readAggregateObservations({
 		measureId: "measure.example",
@@ -61,5 +61,5 @@ test("reports missing and non-numeric catalogue artifacts", () => {
 			],
 		},
 	});
-	assert.equal(nonNumeric.status, 503);
+	assert.equal("status" in nonNumeric ? nonNumeric.status : undefined, 503);
 });

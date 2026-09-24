@@ -280,7 +280,10 @@ const compileContainment = (parentRing: number[][]) => {
 				],
 			]),
 		);
-		return artifacts[0]!.validation.geometryContainment;
+		const validation = artifacts[0]!.validation;
+		return "geometryContainment" in validation
+			? validation.geometryContainment
+			: undefined;
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}
