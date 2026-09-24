@@ -114,12 +114,12 @@
 
 <!-- boundaries:end -->
 
-#
-
 ## Licence
 
 The source code is released under the [MIT License](./LICENSE). The datasets
 and boundary files retain their own source licences; see
 [DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution and attribution.
+
+#
 
 Inspired by <a href="https://redistricter.com/">Redistricter</a> by <a href="https://www.colindm.com/">Colin Miller</a>.
