@@ -7004,7 +7004,7 @@ paths:
                   schemaVersion: 1
                   dataCatalogHash: "sha256:708f04397ddcc766ca53f31c43fa806b3e77d9698502932c7dcc19816e200ec4"
                   fields:
-                    areaCode: The official code of the area, as the source partition gives it.
+                    areaCode: The official code of the area in the served source partition.
                     value: The numeric value, in the measure's unit.
                     status: "`observed` for a value the publisher reported, `derived` for one this API computed."
                   datasets:
