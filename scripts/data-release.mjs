@@ -128,8 +128,10 @@ async function readConfig() {
 	try {
 		const config = JSON.parse(await readFile(CONFIG, "utf8"));
 		if (
-			config.version !== 1 ||
+			config.version !== 2 ||
 			typeof config.tag !== "string" ||
+			typeof config.commit !== "string" ||
+			!/^[0-9a-f]{40}$/.test(config.commit) ||
 			typeof config.repository !== "string" ||
 			!Array.isArray(config.assets)
 		)
@@ -258,8 +260,9 @@ async function publish(tag) {
 	]);
 
 	const config = {
-		version: 1,
+		version: 2,
 		tag,
+		commit: target,
 		repository,
 		assets: assets.map(({ path: _path, ...asset }) => asset),
 	};
