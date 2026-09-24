@@ -1,12 +1,10 @@
 // lib/data/election/local-election/load.ts
 import Papa from "papaparse";
-import {
+import type {
 	LocalElectionDataset,
 	LocalElectionExcludedWard,
 	LocalElectionWardData,
-	LocalElectionYear,
 } from "@lib/types/index";
-import { WardYear } from "@/lib/data/boundaries/boundaries";
 import { PARTY_INFO } from "@/lib/data/election/parties";
 import {
 	type ElectionTableSourceConfig,
@@ -285,8 +283,8 @@ export const parseLocalElectionTable = (
 	return {
 		id: `localElection${config.year}`,
 		type: "localElection",
-		year: config.year as LocalElectionYear,
-		boundaryYear: (config.boundaryYear ?? config.year) as WardYear,
+		year: config.year,
+		boundaryYear: config.boundaryYear,
 		boundaryType: "ward",
 		results,
 		data,
@@ -350,8 +348,8 @@ export const parseLeapLocalElection = (
 	return {
 		id: `localElection${config.year}`,
 		type: "localElection",
-		year: config.year as LocalElectionYear,
-		boundaryYear: (config.boundaryYear ?? config.year) as WardYear,
+		year: config.year,
+		boundaryYear: config.boundaryYear,
 		boundaryType: "ward",
 		results,
 		data,
