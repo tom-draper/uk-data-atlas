@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
+import { isGeographyKind, type GeographyKind } from "./geography";
 
 export type CrosswalkSideAdapter = {
-	geography: string;
+	geography: GeographyKind;
 	boundaryRelease: string;
 	codeProperty: string;
 	nameProperty: string;
@@ -36,7 +37,7 @@ export type PopulationOverlapWeighting = {
 	/** The reference date of the count. */
 	date: string;
 	/** The building blocks the count was published for. */
-	blocks: { geography: string; boundaryRelease: string };
+	blocks: { geography: GeographyKind; boundaryRelease: string };
 };
 export type CrosswalkWeighting =
 	| { status: "not-provided" }
@@ -82,8 +83,8 @@ export type AreaOverlapCrosswalkAdapter = {
 	method: "area-overlap";
 	quality: "derived";
 	weighting: AreaOverlapWeighting;
-	from: { geography: string; boundaryRelease: string };
-	to: { geography: string; boundaryRelease: string };
+	from: { geography: GeographyKind; boundaryRelease: string };
+	to: { geography: GeographyKind; boundaryRelease: string };
 	/** Limit a derived relationship to an explicit, documented source code set. */
 	sourceCodePattern?: string;
 	sliverWidthM: number;
@@ -99,8 +100,8 @@ export type SameCodeContinuityCrosswalkAdapter = {
 	quality: "derived";
 	relationshipPurpose: "identity";
 	weighting: { status: "not-applicable" };
-	from: { geography: string; boundaryRelease: string };
-	to: { geography: string; boundaryRelease: string };
+	from: { geography: GeographyKind; boundaryRelease: string };
+	to: { geography: GeographyKind; boundaryRelease: string };
 	/**
 	 * The sliver width, as area-overlap adapters declare it: a pair is
 	 * identity while its widest difference is under half of it.
@@ -115,8 +116,8 @@ export type PopulationOverlapCrosswalkAdapter = {
 	method: "population-overlap";
 	quality: "derived";
 	weighting: PopulationOverlapWeighting;
-	from: { geography: string; boundaryRelease: string };
-	to: { geography: string; boundaryRelease: string };
+	from: { geography: GeographyKind; boundaryRelease: string };
+	to: { geography: GeographyKind; boundaryRelease: string };
 	/** The area-overlap crosswalk whose source/target pairs are reweighted. */
 	pairs: string;
 	/** Limit the sources to those the building blocks cover. */
@@ -135,8 +136,8 @@ export type GeometricContainmentCrosswalkAdapter = {
 	quality: "derived";
 	relationshipPurpose: "membership";
 	weighting: { status: "not-applicable" };
-	from: { geography: string; boundaryRelease: string };
-	to: { geography: string; boundaryRelease: string };
+	from: { geography: GeographyKind; boundaryRelease: string };
+	to: { geography: GeographyKind; boundaryRelease: string };
 	/** A child reaching further than half of this beyond its parent is not within it. */
 	sliverWidthM: number;
 };
@@ -148,11 +149,16 @@ export type CrosswalkAdapter =
 	| GeometricContainmentCrosswalkAdapter
 	| SameCodeContinuityCrosswalkAdapter;
 
-type AdapterFile = { schemaVersion?: unknown; crosswalks?: unknown };
+const PROPERTY_METHODS = ["official-lookup", "clean-containment"] as const;
+const PROPERTY_WEIGHTING_STATUSES = ["not-provided", "not-applicable"] as const;
+const PROPERTY_RELATIONSHIP_PURPOSES = ["identity", "membership"] as const;
 
-const PROPERTY_METHODS = ["official-lookup", "clean-containment"];
-const PROPERTY_WEIGHTING_STATUSES = ["not-provided", "not-applicable"];
-const PROPERTY_RELATIONSHIP_PURPOSES = ["identity", "membership"];
+const isOneOf = <Values extends readonly string[]>(
+	values: Values,
+	value: unknown,
+): value is Values[number] =>
+	typeof value === "string" &&
+	values.some((candidate) => candidate === value);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
@@ -160,29 +166,32 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const hasStrings = (value: unknown, keys: string[]) =>
 	isRecord(value) && keys.every((key) => typeof value[key] === "string");
 
+const hasEndpoint = (
+	value: unknown,
+): value is { geography: GeographyKind; boundaryRelease: string } =>
+	isRecord(value) &&
+	isGeographyKind(value.geography) &&
+	typeof value.boundaryRelease === "string";
+
 const validSide = (side: unknown): side is CrosswalkSideAdapter =>
-	hasStrings(side, [
-		"geography",
-		"boundaryRelease",
-		"codeProperty",
-		"nameProperty",
-	]) &&
-	((side as { aliasProperty?: unknown }).aliasProperty === undefined ||
-		typeof (side as { aliasProperty?: unknown }).aliasProperty ===
-			"string");
+	isRecord(side) &&
+	isGeographyKind(side.geography) &&
+	typeof side.boundaryRelease === "string" &&
+	typeof side.codeProperty === "string" &&
+	typeof side.nameProperty === "string" &&
+	(side.aliasProperty === undefined ||
+		typeof side.aliasProperty === "string");
 
 const validPropertyAdapter = (
 	adapter: Record<string, unknown>,
 ): adapter is PropertyCrosswalkAdapter =>
 	typeof adapter.input === "string" &&
-	PROPERTY_METHODS.includes(adapter.method as string) &&
+	isOneOf(PROPERTY_METHODS, adapter.method) &&
 	adapter.quality === "publisher-supplied" &&
 	(adapter.relationshipPurpose === undefined ||
-		PROPERTY_RELATIONSHIP_PURPOSES.includes(
-			adapter.relationshipPurpose as string,
-		)) &&
+		isOneOf(PROPERTY_RELATIONSHIP_PURPOSES, adapter.relationshipPurpose)) &&
 	isRecord(adapter.weighting) &&
-	PROPERTY_WEIGHTING_STATUSES.includes(adapter.weighting.status as string) &&
+	isOneOf(PROPERTY_WEIGHTING_STATUSES, adapter.weighting.status) &&
 	(adapter.changeProperty === undefined ||
 		typeof adapter.changeProperty === "string") &&
 	(adapter.targetCodeCorrections === undefined ||
@@ -207,8 +216,8 @@ const validAreaOverlapAdapter = (
 	adapter.weighting.status === "provided" &&
 	adapter.weighting.basis === "area" &&
 	adapter.weighting.normalisation === "per-source" &&
-	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
-	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	hasEndpoint(adapter.from) &&
+	hasEndpoint(adapter.to) &&
 	(adapter.sourceCodePattern === undefined ||
 		typeof adapter.sourceCodePattern === "string") &&
 	typeof adapter.sliverWidthM === "number" &&
@@ -228,9 +237,9 @@ const validPopulationOverlapAdapter = (
 	adapter.weighting.normalisation === "per-source" &&
 	typeof adapter.weighting.population === "string" &&
 	typeof adapter.weighting.date === "string" &&
-	hasStrings(adapter.weighting.blocks, ["geography", "boundaryRelease"]) &&
-	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
-	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	hasEndpoint(adapter.weighting.blocks) &&
+	hasEndpoint(adapter.from) &&
+	hasEndpoint(adapter.to) &&
 	typeof adapter.pairs === "string" &&
 	(adapter.sourceCodePattern === undefined ||
 		typeof adapter.sourceCodePattern === "string") &&
@@ -247,8 +256,8 @@ const validGeometricContainmentAdapter = (
 	adapter.relationshipPurpose === "membership" &&
 	isRecord(adapter.weighting) &&
 	adapter.weighting.status === "not-applicable" &&
-	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
-	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
+	hasEndpoint(adapter.from) &&
+	hasEndpoint(adapter.to) &&
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0;
 
@@ -260,18 +269,20 @@ const validSameCodeContinuityAdapter = (
 	adapter.relationshipPurpose === "identity" &&
 	isRecord(adapter.weighting) &&
 	adapter.weighting.status === "not-applicable" &&
-	hasStrings(adapter.from, ["geography", "boundaryRelease"]) &&
-	hasStrings(adapter.to, ["geography", "boundaryRelease"]) &&
-	(adapter.from as { geography: string }).geography ===
-		(adapter.to as { geography: string }).geography &&
-	(adapter.from as { boundaryRelease: string }).boundaryRelease !==
-		(adapter.to as { boundaryRelease: string }).boundaryRelease &&
+	hasEndpoint(adapter.from) &&
+	hasEndpoint(adapter.to) &&
+	adapter.from.geography === adapter.to.geography &&
+	adapter.from.boundaryRelease !== adapter.to.boundaryRelease &&
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0;
 
 export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
-	const file = JSON.parse(readFileSync(path, "utf8")) as AdapterFile;
-	if (file.schemaVersion !== 1 || !Array.isArray(file.crosswalks)) {
+	const file: unknown = JSON.parse(readFileSync(path, "utf8"));
+	if (
+		!isRecord(file) ||
+		file.schemaVersion !== 1 ||
+		!Array.isArray(file.crosswalks)
+	) {
 		throw new Error(`Invalid crosswalk adapter manifest at ${path}`);
 	}
 	return file.crosswalks.map((adapter: unknown) => {

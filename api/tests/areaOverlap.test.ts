@@ -85,8 +85,11 @@ const writeFixture = (root: string) => {
 
 const geometrySources = (crs = "EPSG:4326"): GeometrySourceLookup =>
 	new Map([
-		["source/1", { input: "sources.geojson", crs, codeProperty: "SRC" }],
-		["target/1", { input: "targets.geojson", crs, codeProperty: "TGT" }],
+		["ward/1", { input: "sources.geojson", crs, codeProperty: "SRC" }],
+		[
+			"localAuthority/1",
+			{ input: "targets.geojson", crs, codeProperty: "TGT" },
+		],
 	]);
 
 const areaLookup = (targetCodes = ["T1", "T2", "T3"]) =>
@@ -94,7 +97,7 @@ const areaLookup = (targetCodes = ["T1", "T2", "T3"]) =>
 		{
 			schemaVersion: 1,
 			contentHash: "sha256:sources",
-			geography: "source",
+			geography: "ward",
 			boundaryRelease: "1",
 			codeProperty: "SRC",
 			nameProperty: "SRCNM",
@@ -106,7 +109,7 @@ const areaLookup = (targetCodes = ["T1", "T2", "T3"]) =>
 		{
 			schemaVersion: 1,
 			contentHash: "sha256:targets",
-			geography: "target",
+			geography: "localAuthority",
 			boundaryRelease: "1",
 			codeProperty: "TGT",
 			nameProperty: "TGTNM",
@@ -128,8 +131,8 @@ const adapter = (
 		basis: "area",
 		normalisation: "per-source",
 	},
-	from: { geography: "source", boundaryRelease: "1" },
-	to: { geography: "target", boundaryRelease: "1" },
+	from: { geography: "ward", boundaryRelease: "1" },
+	to: { geography: "localAuthority", boundaryRelease: "1" },
 	sliverWidthM: 100,
 	minimumCoverage: 0.99,
 	...overrides,
@@ -276,7 +279,7 @@ test("fails on geometry without a compiled identity or a supported transformatio
 					geometrySources(),
 					areaLookup(["T1", "T2"]),
 				),
-			/T3 has geometry but no compiled identity in target\/1/,
+			/T3 has geometry but no compiled identity in localAuthority\/1/,
 		);
 		assert.throws(
 			() =>
@@ -286,7 +289,7 @@ test("fails on geometry without a compiled identity or a supported transformatio
 					geometrySources("EPSG:99999"),
 					areaLookup(),
 				),
-			/source\/1 geometry is EPSG:99999 and has no transformation to WGS84/,
+			/ward\/1 geometry is EPSG:99999 and has no transformation to WGS84/,
 		);
 	});
 });

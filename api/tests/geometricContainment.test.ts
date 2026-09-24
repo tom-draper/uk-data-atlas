@@ -63,11 +63,11 @@ const writeFixture = (root: string, straddling = true) => {
 
 const geometrySources: GeometrySourceLookup = new Map([
 	[
-		"child/1",
+		"ward/1",
 		{ input: "children.geojson", crs: "EPSG:4326", codeProperty: "CD" },
 	],
 	[
-		"parent/1",
+		"localAuthority/1",
 		{ input: "parents.geojson", crs: "EPSG:4326", codeProperty: "CD" },
 	],
 ]);
@@ -75,8 +75,8 @@ const geometrySources: GeometrySourceLookup = new Map([
 const areaLookup = createAreaLookup(
 	(
 		[
-			["child", ["C1", "C2", "C3", "C4"]],
-			["parent", ["P1", "P2"]],
+			["ward", ["C1", "C2", "C3", "C4"]],
+			["localAuthority", ["P1", "P2"]],
 		] as const
 	).map(([geography, codes]) => ({
 		schemaVersion: 1 as const,
@@ -95,8 +95,8 @@ const adapter: GeometricContainmentCrosswalkAdapter = {
 	quality: "derived",
 	relationshipPurpose: "membership",
 	weighting: { status: "not-applicable" },
-	from: { geography: "child", boundaryRelease: "1" },
-	to: { geography: "parent", boundaryRelease: "1" },
+	from: { geography: "ward", boundaryRelease: "1" },
+	to: { geography: "localAuthority", boundaryRelease: "1" },
 	sliverWidthM: 100,
 };
 
@@ -150,7 +150,7 @@ test("refuses to publish a hierarchy a child straddles", () => {
 		assert.throws(
 			() =>
 				compileCrosswalks(root, [adapter], areaLookup, geometrySources),
-			/1 of 4 areas do not sit within one parent: C4 \(straddles, \d+(\.\d+)? m outside P2\)/,
+			/1 of 4 areas do not sit within one localAuthority: C4 \(straddles, \d+(\.\d+)? m outside P2\)/,
 		);
 	});
 });
@@ -202,7 +202,7 @@ test("gives up on a pair that is not a hierarchy", () => {
 		assert.equal(measured.abandoned?.after, 4);
 		assert.match(
 			measured.abandoned!.reason,
-			/1 areas are not within one parent/,
+			/1 areas are not within one localAuthority/,
 		);
 	});
 });

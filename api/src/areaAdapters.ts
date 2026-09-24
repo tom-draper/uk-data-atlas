@@ -7,32 +7,31 @@ export type AreaPropertyAdapter = {
 
 export type AreaAdapterManifest = Record<string, AreaPropertyAdapter>;
 
-type AdapterFile = { schemaVersion?: unknown; releases?: unknown };
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isAreaPropertyAdapter = (value: unknown): value is AreaPropertyAdapter =>
+	isRecord(value) &&
+	typeof value.codeProperty === "string" &&
+	typeof value.nameProperty === "string";
 
 export const readAreaAdapters = (path: string): AreaAdapterManifest => {
-	const file = JSON.parse(readFileSync(path, "utf8")) as AdapterFile;
+	const parsed: unknown = JSON.parse(readFileSync(path, "utf8"));
 	if (
-		file.schemaVersion !== 1 ||
-		typeof file.releases !== "object" ||
-		file.releases === null
+		!isRecord(parsed) ||
+		parsed.schemaVersion !== 1 ||
+		!isRecord(parsed.releases)
 	) {
 		throw new Error(`Invalid area adapter manifest at ${path}`);
 	}
 	return Object.fromEntries(
-		Object.entries(file.releases).map(([identity, adapter]) => {
-			if (
-				typeof adapter !== "object" ||
-				adapter === null ||
-				typeof (adapter as AreaPropertyAdapter).codeProperty !==
-					"string" ||
-				typeof (adapter as AreaPropertyAdapter).nameProperty !==
-					"string"
-			) {
+		Object.entries(parsed.releases).map(([identity, adapter]) => {
+			if (!isAreaPropertyAdapter(adapter)) {
 				throw new Error(
 					`Invalid area adapter for ${identity} at ${path}`,
 				);
 			}
-			return [identity, adapter as AreaPropertyAdapter];
+			return [identity, adapter];
 		}),
 	);
 };

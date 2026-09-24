@@ -8,6 +8,8 @@ import {
 	compileAnalysisGeographies,
 	readAnalysisGeographySupport,
 } from "../src/analysisGeographies";
+import type { AnalysisGeographySupportConfig } from "../src/analysisGeographies";
+import type { GeographyKind } from "../src/geography";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import type { DataCatalog } from "../src/dataCatalog";
 import type { RelationshipPathInventory } from "../src/relationshipPaths";
@@ -78,8 +80,8 @@ const paths: RelationshipPathInventory = {
 
 const support = (
 	route: { crosswalkId: string } | { pathId: string },
-	geography = "region",
-) => ({
+	geography: GeographyKind = "region",
+): AnalysisGeographySupportConfig => ({
 	measureId: "fixture",
 	analysisGeography: { geography, boundaryRelease: "2023" },
 	source: {
@@ -189,4 +191,14 @@ test("requires exactly one of crosswalkId and pathId in the configuration", () =
 	);
 	const { pathId: _pathId, ...neither } = base as { pathId: string };
 	assert.throws(configured(neither), /exactly one of crosswalkId and pathId/);
+	assert.throws(
+		configured({
+			...base,
+			analysisGeography: {
+				...base.analysisGeography,
+				geography: "local-authority",
+			},
+		}),
+		/invalid analysis-geography support/,
+	);
 });

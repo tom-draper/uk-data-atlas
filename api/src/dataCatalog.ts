@@ -1,3 +1,5 @@
+import type { MeasureGeographyKind } from "./geography";
+
 export type DatasetCatalogueEntry = {
 	id: string;
 	label: string;
@@ -28,23 +30,7 @@ export type SourceGeography = {
 	 * they are not interchangeable: an English LSOA, a Scottish data zone and a
 	 * Northern Irish super output area are drawn to different sizes and rules.
 	 */
-	type:
-		| "ward"
-		| "localAuthority"
-		| "localPlanningAuthority"
-		| "constituency"
-		| "communitySafetyPartnership"
-		| "lsoa"
-		// England and Wales's middle layer, which nests whole LSOAs.
-		| "msoa"
-		| "dataZone"
-		| "superOutputArea"
-		// The three International Territorial Level tiers, which economic
-		// statistics are published on. They nest, so a measure names each as
-		// its own partition rather than mixing them in one total.
-		| "itl1"
-		| "itl2"
-		| "itl3";
+	type: MeasureGeographyKind;
 	boundaryYear: number;
 };
 

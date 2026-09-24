@@ -5,6 +5,7 @@ import type { AreaInventory } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type { GeometricContainmentCrosswalkAdapter } from "../src/crosswalkAdapters";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import { isGeographyKind } from "../src/geography";
 import type { readGeometries as readGeometriesForCache } from "../src/areaOverlap";
 import { measureContainment } from "../src/geometricContainment";
 import { readGeometrySourceLookup } from "../src/geometrySources";
@@ -169,6 +170,15 @@ export const proposeGeometricContainment = (
 		if (reached.has(to.identity) && !stranded.has(from.identity)) {
 			report?.(
 				`[${index + 1}/${candidates.length}] ${from.identity} -> ${to.identity}: left to composition through a coarser child`,
+			);
+			continue;
+		}
+		if (
+			!isGeographyKind(from.geography) ||
+			!isGeographyKind(to.geography)
+		) {
+			rejected.push(
+				`${from.identity} -> ${to.identity}: unsupported geography kind`,
 			);
 			continue;
 		}

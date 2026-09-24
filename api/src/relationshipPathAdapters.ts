@@ -4,56 +4,61 @@ import type {
 	RelationshipPurpose,
 } from "./relationshipPaths";
 
-const purposes: RelationshipPurpose[] = ["identity", "membership", "apportion"];
+const purposes = ["identity", "membership", "apportion"] as const;
+const directions = ["forward", "reverse"] as const;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null;
+
+const isPurpose = (value: unknown): value is RelationshipPurpose =>
+	typeof value === "string" && purposes.some((purpose) => purpose === value);
+
+const isDirection = (value: unknown): value is "forward" | "reverse" =>
+	typeof value === "string" &&
+	directions.some((direction) => direction === value);
 
 /** Reads reviewed multi-hop paths; an empty list is a valid conservative start. */
 export const readApprovedRelationshipPaths = (
 	path: string,
 ): ApprovedRelationshipPath[] => {
-	const value = JSON.parse(readFileSync(path, "utf8")) as { paths?: unknown };
-	if (!Array.isArray(value.paths))
+	const value: unknown = JSON.parse(readFileSync(path, "utf8"));
+	if (!isRecord(value) || !Array.isArray(value.paths))
 		throw new Error(`Invalid relationship path adapters at ${path}`);
 	const ids = new Set<string>();
 	return value.paths.map((candidate, index) => {
-		if (typeof candidate !== "object" || candidate === null)
+		if (!isRecord(candidate))
 			throw new Error(`${path}: path ${index} is invalid.`);
-		const entry = candidate as {
-			id?: unknown;
-			purpose?: unknown;
-			steps?: unknown;
-		};
 		if (
-			typeof entry.id !== "string" ||
-			!entry.id ||
-			ids.has(entry.id) ||
-			!purposes.includes(entry.purpose as RelationshipPurpose) ||
-			!Array.isArray(entry.steps)
+			typeof candidate.id !== "string" ||
+			!candidate.id ||
+			ids.has(candidate.id) ||
+			!isPurpose(candidate.purpose) ||
+			!Array.isArray(candidate.steps)
 		) {
 			throw new Error(`${path}: path ${index} is invalid.`);
 		}
-		ids.add(entry.id);
-		const steps = entry.steps.map((step) => {
-			if (typeof step !== "object" || step === null)
+		ids.add(candidate.id);
+		const steps = candidate.steps.map((step) => {
+			if (!isRecord(step))
 				throw new Error(
-					`${path}: path ${entry.id} has an invalid step.`,
+					`${path}: path ${candidate.id} has an invalid step.`,
 				);
-			const edge = step as { crosswalkId?: unknown; direction?: unknown };
 			if (
-				typeof edge.crosswalkId !== "string" ||
-				!edge.crosswalkId ||
-				!["forward", "reverse"].includes(edge.direction as string)
+				typeof step.crosswalkId !== "string" ||
+				!step.crosswalkId ||
+				!isDirection(step.direction)
 			)
 				throw new Error(
-					`${path}: path ${entry.id} has an invalid step.`,
+					`${path}: path ${candidate.id} has an invalid step.`,
 				);
 			return {
-				crosswalkId: edge.crosswalkId,
-				direction: edge.direction as "forward" | "reverse",
+				crosswalkId: step.crosswalkId,
+				direction: step.direction,
 			};
 		});
 		return {
-			id: entry.id,
-			purpose: entry.purpose as RelationshipPurpose,
+			id: candidate.id,
+			purpose: candidate.purpose,
 			steps,
 		};
 	});

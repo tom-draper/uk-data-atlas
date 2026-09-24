@@ -6,6 +6,7 @@ import { readShapefileFeatures } from "../src/shapefile";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type { SameCodeContinuityCrosswalkAdapter } from "../src/crosswalkAdapters";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
+import { isGeographyKind } from "../src/geography";
 
 type Release = BoundaryRegistry["releases"][number] & {
 	identity: string;
@@ -157,6 +158,10 @@ export const proposeSameCodeContinuity = (repositoryRoot: string) => {
 				skipped.push(
 					`${from.identity} -> ${to.identity}: only ${shared} shared codes`,
 				);
+				continue;
+			}
+			if (!isGeographyKind(geography)) {
+				skipped.push(`${geography}: unsupported geography kind`);
 				continue;
 			}
 			adapters.push({
