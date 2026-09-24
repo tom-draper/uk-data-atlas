@@ -341,7 +341,9 @@ async function compileDataset(
 		output: definition.precompiledFile,
 		source: definition.source,
 		contract: definition.ingestion ?? {},
-		inputs: [...artifacts.values()],
+		inputs: [...artifacts.values()].sort((left, right) =>
+			left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
+		),
 		summary,
 		compiled: output,
 	};
