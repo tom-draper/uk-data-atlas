@@ -39,6 +39,21 @@ export const DATA_PAGES: DataPage[] = [
 		intro: "Official population estimates from the Office for National Statistics: every UK local authority each year since 2011, wards in England and Wales, and the Westminster constituencies first contested in 2024. Population density is included too.",
 	},
 	{
+		slug: "census-2021-small-areas",
+		title: "Census 2021 small areas",
+		topic: "people",
+		datasets: [
+			"census-2021-ts001",
+			"census-2021-ts003",
+			"census-2021-ts007a",
+			"census-2021-ts021",
+			"census-2021-ts037",
+			"census-2021-ts054",
+			"census-2021-ts066",
+		],
+		intro: "Detailed Census 2021 counts for small areas in England and Wales: residents by age, ethnic group, health and economic activity, and households by composition and tenure. Data is available for lower and middle layer super output areas.",
+	},
+	{
 		slug: "ethnicity",
 		title: "Ethnicity",
 		topic: "people",

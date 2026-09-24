@@ -480,6 +480,15 @@ const CATALOG = {
 				asset: asset("local-authority", "2016-12-gb-bgc"),
 			},
 			{
+				id: "2015-12-gb-bgc",
+				year: 2015,
+				month: 12,
+				extent: "gb",
+				codeKey: "lad15cd",
+				nameKey: "lad15nm",
+				asset: asset("local-authority", "2015-12-gb-bgc"),
+			},
+			{
 				id: "2011-12-gb-bgc",
 				year: 2011,
 				month: 12,
