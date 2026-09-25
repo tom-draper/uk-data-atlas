@@ -577,15 +577,14 @@ export const parseLookupRequest = (
 			"Invalid Query",
 			`No release is selected for ${unselected.join(", ")}. Pin one as release={geography}/{release}, or give a date to use the latest release dated on or before it.`,
 		);
-	const { boundaryRegistry, geographyResolver } = context;
+	const { geographyResolver } = context;
 	const releases: LookupRelease[] = [];
 	for (const geography of geographies) {
 		const pinnedRelease = pinned.get(geography);
 		if (pinnedRelease !== undefined || !date) {
-			const release = boundaryRegistry.releases.find(
-				(candidate) =>
-					candidate.geography === geography &&
-					candidate.id === pinnedRelease,
+			const release = geographyResolver.boundaryRelease(
+				geography,
+				pinnedRelease!,
 			);
 			if (
 				!release ||
@@ -634,10 +633,9 @@ export const parseLookupRequest = (
 				choices: selected.choices,
 			});
 		} else {
-			const release = boundaryRegistry.releases.find(
-				(candidate) =>
-					candidate.geography === geography &&
-					candidate.id === selected.selected.id,
+			const release = geographyResolver.boundaryRelease(
+				geography,
+				selected.selected.id,
 			);
 			if (
 				!release ||
