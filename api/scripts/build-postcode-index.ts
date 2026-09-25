@@ -18,7 +18,7 @@ import {
 
 /**
  * Compile the newest ONS Postcode Directory under data/postcodes/onspd into
- * api/public/postcode-index.json and one shard per postcode area under
+ * api/public/postcode-index.json and one shard per postcode district under
  * api/public/postcodes. `--include-northern-ireland` keeps BT postcodes, for a
  * build that will not be served publicly.
  */
@@ -115,12 +115,14 @@ export const buildPostcodeIndex = async (
 		rows.push(row);
 	const { artifact, files } = compilePostcodeIndex(rows, source, options);
 	const publicRoot = join(repositoryRoot, "api", "public");
-	// Every shard is rewritten, so one for an area no longer compiled, such as
-	// BT after a build that included Northern Ireland, cannot linger.
+	// Every shard is rewritten, so one for a district no longer compiled, such
+	// as BT1 after a build that included Northern Ireland, cannot linger.
 	rmSync(join(publicRoot, "postcodes"), { recursive: true, force: true });
 	mkdirSync(join(publicRoot, "postcodes"));
-	for (const file of files)
+	for (const file of files) {
+		mkdirSync(dirname(join(publicRoot, file.path)), { recursive: true });
 		writeFileSync(join(publicRoot, file.path), file.text);
+	}
 	const outputPath = join(publicRoot, "postcode-index.json");
 	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
 	return { outputPath, artifact };
@@ -137,6 +139,6 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 		},
 	);
 	console.log(
-		`Wrote ${artifact.counts.postcodes} postcodes (${artifact.counts.live} live) in ${artifact.shards.length} areas to ${outputPath}${artifact.excluded.length ? `, leaving out ${artifact.excluded.map((entry) => `${entry.area} (${entry.postcodes})`).join(", ")}` : ""}`,
+		`Wrote ${artifact.counts.postcodes} postcodes (${artifact.counts.live} live) in ${artifact.shards.length} districts to ${outputPath}${artifact.excluded.length ? `, leaving out ${artifact.excluded.map((entry) => `${entry.area} (${entry.postcodes})`).join(", ")}` : ""}`,
 	);
 }

@@ -1768,7 +1768,7 @@ paths:
                   x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap&period=2022"
                   value:
                     apiVersion: v1
-                    atlasRelease: sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                    atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                     data:
                       measure:
                         id: population-estimate
@@ -1862,7 +1862,7 @@ paths:
                   x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward&release=2023-05-uk-bgc"
                   value:
                     apiVersion: v1
-                    atlasRelease: sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                    atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                     data:
                       measure:
                         id: population-estimate
@@ -3329,7 +3329,7 @@ paths:
               x-example-request: "/v1/postcodes/SW1A1AA"
               example:
                 apiVersion: v1
-                atlasRelease: sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                 data:
                   postcode: SW1A 1AA
                   status: live
@@ -3405,6 +3405,138 @@ paths:
                 $ref: "#/components/schemas/Problem"
         "451":
           description: The postcode is in Northern Ireland, which this API is not licensed to serve.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /postcodes:batch:
+    get:
+      operationId: resolvePostcodes
+      tags: ["Start here"]
+      summary: Find where each of a batch of postcodes is and the areas containing it
+      x-likely-refusal:
+        status: 400
+        when: "No postcode is given, or more than 100 are."
+        x-example-request: "/v1/postcodes:batch"
+      description: >
+        The `/postcodes/{postcode}` lookup for up to 100 postcodes at once.
+        Repeat `postcode`, or separate postcodes with commas. The releases are
+        chosen once for the whole batch, as for a single postcode: the default
+        geographies as at the directory's edition unless `geography`,
+        `release` or `date` say otherwise.
+
+
+        Each postcode has its own entry, in the order given, with a `status`:
+        `placed`, with its areas; `not-placed`, for a postcode the directory
+        gives no grid reference; `invalid`, for text that is not a unit
+        postcode; `not-found`, for one the directory edition does not hold;
+        and `not-served`, for a Northern Ireland postcode, which this API is
+        not licensed to serve. None of these fails the batch. Only a problem
+        with the request itself does, such as no postcodes, too many, or a
+        malformed date.
+
+
+        Placed centroids are tested together, so each release's geometry is
+        read once for the batch, and release-wide provenance is given once in
+        `releases`. `summary` counts each postcode status and each lookup
+        outcome.
+      parameters:
+        - name: postcode
+          in: query
+          required: true
+          schema:
+            type: array
+            maxItems: 100
+            items: { type: string }
+          style: form
+          explode: true
+          description: >
+            A unit postcode, in any case and with or without its space. Repeat
+            for more, or give several separated by commas; at most 100 in all.
+        - $ref: "#/components/parameters/PointLookupGeography"
+        - $ref: "#/components/parameters/PointLookupRelease"
+        - $ref: "#/components/parameters/PointLookupDate"
+      responses:
+        "200":
+          description: Each postcode's entry, and a summary of the batch.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostcodeBatchEnvelope"
+              x-example-request: "/v1/postcodes:batch?postcode=SW1A1AA,M11AE,CF101EP,BT11AA&geography=localAuthority"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                data:
+                  date: "2026-08"
+                  dateBasis: directory-edition
+                  boundaryRule: included
+                  releases:
+                    - geography: localAuthority
+                      boundaryRelease: 2026-05-uk-bgc
+                  summary:
+                    postcodes: 4
+                    placed: 3
+                    notPlaced: 0
+                    invalid: 0
+                    notFound: 0
+                    notServed: 1
+                    lookups: 3
+                    matched: 3
+                    noMatch: 0
+                    outsideCoverage: 0
+                    unresolved: 0
+                    nearBoundary: 0
+                  postcodes:
+                    - index: 0
+                      input: SW1A1AA
+                      status: placed
+                      postcode:
+                        postcode: SW1A 1AA
+                        status: live
+                      results:
+                        - geography: localAuthority
+                          boundaryRelease: 2026-05-uk-bgc
+                          status: matched
+                          matches:
+                            - id: localAuthority/2026-05-uk-bgc/E09000033
+                              name: Westminster
+                              nearBoundary: false
+                    - index: 1
+                      input: M11AE
+                      status: placed
+                      results:
+                        - geography: localAuthority
+                          status: matched
+                          matches:
+                            - id: localAuthority/2026-05-uk-bgc/E08000003
+                              name: Manchester
+                    - index: 2
+                      input: CF101EP
+                      status: placed
+                      results:
+                        - geography: localAuthority
+                          status: matched
+                          matches:
+                            - id: localAuthority/2026-05-uk-bgc/W06000015
+                              name: Cardiff
+                    - index: 3
+                      input: BT11AA
+                      status: not-served
+                      detail: Northern Ireland postcodes are licensed by Land and Property Services for internal business use only, so this API does not serve them.
+        "400":
+          description: >
+            No postcode is given, more than 100 are, or the geography, release
+            or date is malformed as for `/areas:contains`.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: A pinned release or a geography is unknown.
           content:
             application/problem+json:
               schema:
@@ -5040,7 +5172,7 @@ paths:
                   boundaryRelease: 2023-05-uk-bgc-v2
                   atlasRelease:
                     id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
-                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                   identity:
                     status: available
                     artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
@@ -5093,7 +5225,7 @@ paths:
                     Data: Population (Local Authority) — Office for National Statistics.
                     Boundaries: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2) — Office for National Statistics.
                     Licence: Open Government Licence v3.0.
-                    Compiled by the UK Data Atlas, release sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480.
+                    Compiled by the UK Data Atlas, release sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38.
                   note: Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.
                 meta:
                   nextCursor: null
@@ -7543,7 +7675,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                     artifactCount: 338
                     current: true
                 meta:
@@ -7734,10 +7866,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []
@@ -10459,6 +10591,93 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/PostcodeLookup"
+
+    PostcodeBatch:
+      type: object
+      required:
+        [
+          date,
+          dateBasis,
+          boundaryRule,
+          releases,
+          summary,
+          postcodes,
+          source,
+          note,
+        ]
+      properties:
+        date: { type: string }
+        dateBasis: { enum: [requested, directory-edition] }
+        boundaryRule: { const: included }
+        releases:
+          type: array
+          items:
+            $ref: "#/components/schemas/PointLookupRelease"
+        summary:
+          type: object
+          required:
+            [
+              postcodes,
+              placed,
+              notPlaced,
+              invalid,
+              notFound,
+              notServed,
+              lookups,
+              matched,
+              noMatch,
+              outsideCoverage,
+              unresolved,
+              nearBoundary,
+            ]
+          properties:
+            postcodes: { type: integer }
+            placed: { type: integer }
+            notPlaced: { type: integer }
+            invalid: { type: integer }
+            notFound: { type: integer }
+            notServed: { type: integer }
+            lookups: { type: integer }
+            matched: { type: integer }
+            noMatch: { type: integer }
+            outsideCoverage: { type: integer }
+            unresolved: { type: integer }
+            nearBoundary: { type: integer }
+        postcodes:
+          type: array
+          items:
+            type: object
+            required: [index, input, status]
+            properties:
+              index: { type: integer }
+              input: { type: string, description: The postcode as given. }
+              status:
+                { enum: [placed, not-placed, invalid, not-found, not-served] }
+              detail: { type: string }
+              postcode:
+                description: The directory's record, as `/postcodes/{postcode}` gives it, for a placed or not-placed postcode.
+                type: object
+              point:
+                $ref: "#/components/schemas/LookupPoint"
+              pointCountry:
+                $ref: "#/components/schemas/PointCountry"
+              results:
+                type: array
+                description: One per entry in releases, in the same order.
+                items:
+                  $ref: "#/components/schemas/PointLookupResult"
+              caution: { type: string }
+        source:
+          type: object
+        note: { type: string }
+
+    PostcodeBatchEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/PostcodeBatch"
 
     PointContainmentBatch:
       type: object
