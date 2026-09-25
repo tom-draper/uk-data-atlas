@@ -53,12 +53,7 @@ const parseVisibility = (raw: string | null): Record<ChartKey, boolean> => {
 		const persisted: Record<ChartKey, boolean> = {};
 		for (const key of Object.keys(parsed)) {
 			const value = parsed[key];
-			if (
-				Object.hasOwn(DEFAULT_VISIBILITY, key) &&
-				typeof value === "boolean"
-			) {
-				persisted[key] = value;
-			}
+			if (typeof value === "boolean") persisted[key] = value;
 		}
 		return { ...DEFAULT_VISIBILITY, ...persisted };
 	} catch {

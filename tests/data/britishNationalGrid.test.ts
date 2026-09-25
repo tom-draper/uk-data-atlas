@@ -36,17 +36,27 @@ describe("British National Grid reprojection", () => {
 					{
 						type: "Feature",
 						properties: {},
-						geometry: { type: "Point", coordinates: grid },
+						geometry: {
+							type: "Polygon",
+							coordinates: [
+								[
+									grid,
+									[grid[0] + 1, grid[1]],
+									[grid[0] + 1, grid[1] + 1],
+									[grid[0], grid[1] + 1],
+									grid,
+								],
+							],
+						},
 					},
 				],
 			}).features[0]!.geometry as unknown as {
-				coordinates: [number, number];
+				coordinates: number[][][];
 			};
+			const [longitude, latitude] = coordinates[0]![0]!;
 			const metres = Math.hypot(
-				(coordinates[0] - lon) *
-					111320 *
-					Math.cos((lat * Math.PI) / 180),
-				(coordinates[1] - lat) * 110574,
+				(longitude - lon) * 111320 * Math.cos((lat * Math.PI) / 180),
+				(latitude - lat) * 110574,
 			);
 			expect(metres, `${grid}`).toBeLessThan(0.1);
 		}

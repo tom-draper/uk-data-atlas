@@ -51,6 +51,7 @@ describe("aggregateDataset", () => {
 				{
 					datasets,
 					boundaryType: "ward",
+					getLocationAggregate: () => aggregate,
 					calculateStats: vi.fn(),
 				},
 				null,

@@ -48,15 +48,27 @@ const collection = (code: string, position: [number, number]) => ({
 		{
 			type: "Feature" as const,
 			properties: { LAD22CD: code },
-			geometry: { type: "Point" as const, coordinates: position },
+			geometry: {
+				type: "Polygon" as const,
+				coordinates: [
+					[
+						position,
+						[position[0] + 1, position[1]],
+						[position[0] + 1, position[1] + 1],
+						[position[0], position[1] + 1],
+						position,
+					],
+				],
+			},
 		},
 	],
 });
 
-const reprojected = (input: ReturnType<typeof collection>) =>
-	decodeBoundaryData(input).features[0]!.geometry as unknown as {
-		coordinates: [number, number];
-	};
+const reprojected = (input: ReturnType<typeof collection>) => {
+	const geometry = decodeBoundaryData(input).features[0]!
+		.geometry as unknown as { coordinates: number[][][] };
+	return geometry.coordinates[0]![0]! as [number, number];
+};
 
 /** Metres between two nearby WGS84 positions. */
 const metres = ([lon1, lat1]: number[], [lon2, lat2]: number[]) =>
@@ -77,8 +89,8 @@ describe("Northern Ireland grid offset", () => {
 					"test",
 				),
 			);
-			expect(metres(before.coordinates, wgs84)).toBeGreaterThan(50);
-			expect(metres(after.coordinates, wgs84)).toBeLessThan(0.1);
+			expect(metres(before, wgs84)).toBeGreaterThan(50);
+			expect(metres(after, wgs84)).toBeLessThan(0.1);
 		}
 	});
 
