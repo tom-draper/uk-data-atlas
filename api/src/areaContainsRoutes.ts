@@ -76,12 +76,9 @@ export const handleAreaContainsRoutes = ({
 	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;
-	const [{ country, results }] = locatePoints(
-		context,
-		geographyResolver,
-		request,
-		[point],
-	) as [ReturnType<typeof locatePoints>[number]];
+	const [{ country, results }] = locatePoints(geographyResolver, request, [
+		point,
+	]) as [ReturnType<typeof locatePoints>[number]];
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -181,7 +178,7 @@ export const handleAreaContainsBatchRoutes = ({
 	if (unavailable) return unavailable;
 	const request = parseLookupRequest(context, parsedUrl.searchParams);
 	if ("status" in request) return request;
-	const located = locatePoints(context, geographyResolver, request, points);
+	const located = locatePoints(geographyResolver, request, points);
 	const statuses = located.flatMap(({ results }) =>
 		results.map((result) => result.status),
 	);

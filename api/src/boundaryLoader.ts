@@ -19,6 +19,12 @@ import {
 	postcodeIndexMismatch,
 	type PostcodeIndexArtifact,
 } from "./postcodes";
+import {
+	PostcodeAreaIndex,
+	postcodeAreasMismatch,
+	type PostcodeAreasArtifact,
+} from "./postcodeAreas";
+import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 
 const publicPath = (apiRoot: string, filename: string) =>
@@ -123,6 +129,44 @@ export const readPostcodeIndex = (apiRoot: string): PostcodeIndex => {
 		);
 	}
 	return new PostcodeIndex(artifact, (shard) =>
+		readFileSync(publicPath(apiRoot, shard), "utf8"),
+	);
+};
+
+/**
+ * The compiled postcode area index, refused unless built from this postcode
+ * index and the current areas and geometry of every release it holds.
+ */
+export const readPostcodeAreaIndex = (
+	apiRoot: string,
+	postcodeIndex: PostcodeIndex,
+	areaInventory: AreaInventory,
+	geometrySources: GeometrySourceLookup,
+): PostcodeAreaIndex => {
+	const path = publicPath(apiRoot, "postcode-areas.json");
+	const artifact = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as PostcodeAreasArtifact;
+	const mismatch = postcodeAreasMismatch(artifact, postcodeIndex.artifact, {
+		areaRelease: (geography, boundaryRelease) => {
+			const release = areaInventory.releases.find(
+				(entry) =>
+					entry.geography === geography &&
+					entry.id === boundaryRelease,
+			);
+			return release?.status === "available"
+				? release.contentHash
+				: undefined;
+		},
+		geometryInput: (geography, boundaryRelease) =>
+			geometrySources.get(`${geography}/${boundaryRelease}`)?.inputHash,
+	});
+	if (mismatch) {
+		throw new Error(
+			`The postcode area index at ${path} ${mismatch}. Run pnpm build:postcode-areas.`,
+		);
+	}
+	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
 		readFileSync(publicPath(apiRoot, shard), "utf8"),
 	);
 };

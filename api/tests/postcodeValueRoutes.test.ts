@@ -13,9 +13,14 @@ import type {
 	MeasureCompatibilityInventory,
 } from "../src/measureCompatibility";
 import { toWgs84Point } from "../src/reprojection";
+import { postcodeAreaReleases } from "../src/postcodeAreas";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/routing";
-import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
+import {
+	postcodeAreaIndexFor,
+	postcodeIndexFor,
+	postcodeRow,
+} from "./postcodeFixtures";
 import {
 	dataCatalog,
 	measureObservations,
@@ -167,7 +172,7 @@ const measureCompatibilityInventory = {
 	],
 } as unknown as MeasureCompatibilityInventory;
 
-const { index } = postcodeIndexFor([
+const { index, texts } = postcodeIndexFor([
 	postcodeRow("EC1A 1AA", { east1m: "529700" }),
 	postcodeRow("EC1A 1AB", { east1m: "530300" }),
 	postcodeRow("EH1 1YZ", { east1m: "532100", ctry: "S92000003" }),
@@ -369,4 +374,63 @@ test("answers a value for a postcode given as a place or its reference", () => {
 		assert.deepEqual(data.answer, direct.answer);
 		assert.equal(data.area.id, direct.area.id);
 	}
+});
+
+test("answers a postcode's value from the postcode area index without reading geometry", () => {
+	const { areaIndex } = postcodeAreaIndexFor(
+		index,
+		texts,
+		new AreaGeometryCache(root, geometrySources, 6),
+		Object.keys(layers),
+	);
+	const areaGeometryCache = new AreaGeometryCache(root, geometrySources, 6);
+	const compiled = context({
+		geographyResolver: createGeographyResolver({
+			boundaryRegistry,
+			areaLookup,
+			areaGeometryCache,
+			postcodeIndex: index,
+			postcodeAreaIndex: areaIndex,
+			placeIndex: compilePlaceIndex(
+				areaLookup,
+				undefined,
+				"sha256:areas",
+			),
+		}),
+	});
+	for (const url of [
+		"/v1/data/population-estimate/value?postcode=EC1A1AA",
+		"/v1/data/population-estimate/value?postcode=EC1A1AB",
+		"/v1/data/population-estimate/value?postcode=EH11YZ",
+	])
+		assert.deepEqual(get(url, compiled).body, get(url).body, url);
+	assert.equal(areaGeometryCache.stats().loads, 0);
+});
+
+test("compiles the releases postcode answers read by default", () => {
+	assert.deepEqual(
+		postcodeAreaReleases(
+			valueContext.geographyResolver,
+			measureCompatibilityInventory,
+			"2026-08",
+			(geography) => geography !== "constituency",
+		),
+		[
+			{
+				geography: "country",
+				boundaryRelease: "2025-12-uk-bgc",
+				purposes: ["country"],
+			},
+			{
+				geography: "localAuthority",
+				boundaryRelease: "2023-05-uk-bgc-v2",
+				purposes: ["default-lookup", "measure-source"],
+			},
+			{
+				geography: "ward",
+				boundaryRelease: "2023-05-uk-bgc",
+				purposes: ["default-lookup", "measure-source"],
+			},
+		],
+	);
 });

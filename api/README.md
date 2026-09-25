@@ -825,6 +825,19 @@ only **available** when its endpoint, contract and provenance are published.
       accepts as `place`. A query reading as a postcode district or sector, or
       a postcode the directory lacks or this API may not serve, carries a
       `postcodeHint` rather than silently matching nothing.
+- [x] Precompile the areas every postcode falls in for the 30 releases
+      postcode answers read by default: each default geography's release at
+      the directory's edition, the release each measure source's codes are
+      found in, and the country release that settles a postcode matching
+      nothing. `pnpm build:postcode-areas` places each release's 2.64 million
+      centroids by the live lookup's own containment test and nearest-edge
+      distance, and checks a sample of each against a live lookup, failing on
+      any difference. A postcode lookup, batch or value then reads a district
+      shard rather than loading national geometry: from a cold start, a
+      lookup takes about 25 ms rather than 3 to 12 seconds, and loads no
+      geometry. Any other release is still placed live. The build takes about
+      20 minutes with three workers, reuses any release whose postcodes, areas
+      and geometry are unchanged, and writes some 630 MB of shards.
 - [ ] Count active postcodes within an area.
 - [ ] Return postcode-sector, district and area statistics.
 - [ ] Return a clearly defined count of households, dwellings, addresses or

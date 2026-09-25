@@ -11,7 +11,11 @@ import { NORTHERN_IRELAND_EXCLUSION } from "../src/postcodes";
 import { toWgs84Point } from "../src/reprojection";
 import { route } from "../src/routes";
 import type { RouteContext } from "../src/routing";
-import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
+import {
+	postcodeAreaIndexFor,
+	postcodeIndexFor,
+	postcodeRow,
+} from "./postcodeFixtures";
 
 // Areas a kilometre or so across, west and east of a point in London, so the
 // postcodes below can carry real British National Grid references.
@@ -112,11 +116,13 @@ const areaLookup = createAreaLookup(
 	}),
 );
 
-const { index } = postcodeIndexFor([
+const { index, texts } = postcodeIndexFor([
 	// 300 m west and east of the centre line.
 	postcodeRow("EC1A 1AA", { east1m: "529700" }),
 	postcodeRow("EC1A 1AB", { east1m: "530300", doterm: "201905" }),
 	postcodeRow("EC1A 1AD", { east1m: "529700", gridind: "5" }),
+	// Ten kilometres east, beyond every area.
+	postcodeRow("EC1A 1AE", { east1m: "540000" }),
 	postcodeRow("GY1 1AA", {
 		gridind: "9",
 		east1m: "",
@@ -322,4 +328,50 @@ test("refuses a batch it cannot look up", () => {
 		get("/v1/postcodes:batch?postcode=EC1A1AA", context(false)).status,
 		503,
 	);
+});
+
+test("answers from the postcode area index as the geometry would, without reading it", () => {
+	const { areaIndex } = postcodeAreaIndexFor(
+		index,
+		texts,
+		new AreaGeometryCache(root, geometrySources, 6),
+		[
+			"localAuthority/2026-05-uk-bgc",
+			"ward/2026-05-uk-bgc",
+			"constituency/2024-07-uk-bgc",
+			"country/2025-12-uk-bgc",
+		],
+	);
+	const areaGeometryCache = new AreaGeometryCache(root, geometrySources, 6);
+	const compiled: RouteContext = {
+		boundaryRegistry,
+		geographyResolver: createGeographyResolver({
+			boundaryRegistry,
+			areaLookup,
+			areaGeometryCache,
+			postcodeIndex: index,
+			postcodeAreaIndex: areaIndex,
+		}),
+	};
+	for (const url of [
+		"/v1/postcodes/EC1A1AA",
+		"/v1/postcodes/EC1A1AD",
+		"/v1/postcodes/EC1A1AE",
+		"/v1/postcodes:batch?postcode=EC1A1AA,EC1A1AB,EC1A1AE,GY11AA",
+	])
+		assert.deepEqual(get(url, compiled).body, get(url).body, url);
+	assert.equal(
+		get("/v1/postcodes/EC1A1AE", compiled).data.results[0].reason,
+		"outside-uk-boundaries",
+	);
+	assert.equal(areaGeometryCache.stats().loads, 0);
+	// A release the index does not hold is placed live.
+	assert.deepEqual(
+		get(
+			"/v1/postcodes/EC1A1AA?geography=localAuthority&date=2027-01",
+			compiled,
+		).data.results.map(matched),
+		[["localAuthority/2026-12-uk-bgc/E09000003"]],
+	);
+	assert.equal(areaGeometryCache.stats().loads, 1);
 });

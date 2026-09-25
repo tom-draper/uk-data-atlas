@@ -166,6 +166,41 @@ export class SpatialResolver {
 			});
 	}
 
+	/**
+	 * Areas already found to contain a point, as `containingAreas` describes
+	 * them. Undefined without a geometry cache, whose provenance they carry.
+	 */
+	resolvePlacedAreas(
+		geography: string,
+		boundaryRelease: string,
+		placed: Array<{
+			code: string;
+			containment: PointContainment;
+			distanceToBoundaryM: number;
+		}>,
+	): ResolvedContainingArea[] | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		return placed.flatMap(({ code, containment, distanceToBoundaryM }) => {
+			const area = this.area({ geography, boundaryRelease, code });
+			return area
+				? [
+						{
+							id: areaId({ geography, boundaryRelease, code }),
+							...area,
+							containment,
+							distanceToBoundaryM,
+							geometrySource: cache.provenance(
+								geography,
+								boundaryRelease,
+								code,
+							),
+						},
+					]
+				: [];
+		});
+	}
+
 	nearestAreas(
 		geography: string,
 		boundaryRelease: string,

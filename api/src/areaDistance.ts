@@ -152,6 +152,127 @@ export const distanceToBoundaryM = (
 };
 
 /**
+ * `distanceToBoundaryM` for many points against one geometry. Each point is
+ * measured to the same segments by the same tangent-plane arithmetic, so the
+ * answers are the same numbers. Segments are filed in a grid of cells, and
+ * the search visits rings of cells outward from the point's own, stopping
+ * once the next ring lies further away than the nearest edge found.
+ */
+export const boundaryDistanceFinder = (geometry: GeoJsonGeometry) => {
+	const starts: Coordinate[] = [];
+	const ends: Coordinate[] = [];
+	let west = Infinity;
+	let south = Infinity;
+	let east = -Infinity;
+	let north = -Infinity;
+	for (const ring of ringsOf(geometry))
+		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+			starts.push(ring[j]!);
+			ends.push(ring[i]!);
+			west = Math.min(west, ring[i]![0]);
+			east = Math.max(east, ring[i]![0]);
+			south = Math.min(south, ring[i]![1]);
+			north = Math.max(north, ring[i]![1]);
+		}
+	const count = starts.length;
+	// Some four segments to a cell, on average, over the geometry's envelope.
+	const cell = Math.max(
+		Math.sqrt(((east - west) * (north - south) * 4) / Math.max(count, 1)),
+		1e-4,
+	);
+	const columns = Math.floor((east - west) / cell) + 1;
+	const rows = Math.floor((north - south) / cell) + 1;
+	const cells = new Map<number, number[]>();
+	for (let at = 0; at < count; at += 1) {
+		const [x0, y0] = starts[at]!;
+		const [x1, y1] = ends[at]!;
+		for (
+			let x = Math.floor((Math.min(x0, x1) - west) / cell);
+			x <= Math.floor((Math.max(x0, x1) - west) / cell);
+			x += 1
+		)
+			for (
+				let y = Math.floor((Math.min(y0, y1) - south) / cell);
+				y <= Math.floor((Math.max(y0, y1) - south) / cell);
+				y += 1
+			) {
+				const key = x * rows + y;
+				const members = cells.get(key);
+				if (members) members.push(at);
+				else cells.set(key, [at]);
+			}
+	}
+	const seen = new Int32Array(count);
+	let query = 0;
+	return (point: Coordinate): number => {
+		if (count === 0) return Infinity;
+		query += 1;
+		const toPlane = planar(point);
+		const scale = metresPerDegree(point[1]);
+		const cellM = cell * Math.min(scale.longitude, scale.latitude);
+		const px = Math.floor((point[0] - west) / cell);
+		const py = Math.floor((point[1] - south) / cell);
+		// How far outside the grid the point lies, in cells, before any ring
+		// can reach a segment.
+		const outside = Math.max(
+			0,
+			-px,
+			px - (columns - 1),
+			-py,
+			py - (rows - 1),
+		);
+		const widest = outside + Math.max(columns, rows);
+		let nearest = Infinity;
+		const visit = (x: number, y: number) => {
+			if (x < 0 || y < 0 || x >= columns || y >= rows) return;
+			// A cell whose rectangle lies beyond the nearest edge holds
+			// nothing nearer.
+			const gapX = Math.max(
+				0,
+				west + x * cell - point[0],
+				point[0] - (west + (x + 1) * cell),
+			);
+			const gapY = Math.max(
+				0,
+				south + y * cell - point[1],
+				point[1] - (south + (y + 1) * cell),
+			);
+			if (
+				Math.hypot(gapX * scale.longitude, gapY * scale.latitude) >
+				nearest + 1e-6
+			)
+				return;
+			for (const at of cells.get(x * rows + y) ?? []) {
+				if (seen[at] === query) continue;
+				seen[at] = query;
+				nearest = Math.min(
+					nearest,
+					segmentDistance(toPlane(starts[at]!), toPlane(ends[at]!)),
+				);
+			}
+		};
+		for (let ring = 0; ring <= widest; ring += 1) {
+			// Every cell of this ring or beyond lies at least ring - 1 whole
+			// cells from the point.
+			if ((ring - 1) * cellM > nearest + 1e-6) break;
+			if (ring === 0) {
+				visit(px, py);
+				continue;
+			}
+			for (let x = px - ring; x <= px + ring; x += 1) {
+				visit(x, py - ring);
+				visit(x, py + ring);
+			}
+			for (let y = py - ring + 1; y <= py + ring - 1; y += 1) {
+				visit(px - ring, y);
+				visit(px + ring, y);
+			}
+		}
+		return nearest;
+	};
+};
+
+/**
  * Metres from a point to the nearest edge of a geometry, when some edge is
  * within `withinM`; undefined otherwise. Edges whose bounding box is further
  * than that are skipped without projecting them, so checking many points

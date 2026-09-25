@@ -10,6 +10,7 @@ import {
 	type PointMatch,
 	type PointResult,
 } from "./pointLookup";
+import { compactPostcode } from "./postcodes";
 import type { RouteContext } from "./routing";
 
 /**
@@ -73,7 +74,12 @@ export const sourceReleases = (
 				entry.sourceGeography.boundaryYear ===
 					source.sourceGeography.boundaryYear,
 		);
-	return [...(compiled?.candidates ?? [])]
+	return rankReleases(compiled?.candidates ?? []);
+};
+
+/** Candidate releases best first, without those sharing no code. */
+export const rankReleases = (candidates: CompatibilityCandidate[]) =>
+	[...candidates]
 		.filter((candidate) => candidate.status !== "no-code-overlap")
 		.sort(
 			(left, right) =>
@@ -81,7 +87,6 @@ export const sourceReleases = (
 				right.matchedSourceShare - left.matchedSourceShare ||
 				left.boundaryRelease.localeCompare(right.boundaryRelease),
 		);
-};
 
 export type PostcodePlacement =
 	| {
@@ -100,6 +105,8 @@ export const placeInSource = (
 	point: LookupPoint,
 	geography: string,
 	releases: CompatibilityCandidate[],
+	/** The postcode whose centroid the point is, as the index keys it. */
+	postcode?: string,
 ): PostcodePlacement => {
 	const resolver = context.geographyResolver;
 	let reason = `No compiled ${geography} boundary release holds the source's area codes.`;
@@ -111,7 +118,6 @@ export const placeInSource = (
 		if (!release || !resolver.hasAreaRelease(geography, release.id))
 			continue;
 		const [{ results }] = locatePoints(
-			context,
 			resolver,
 			{
 				releases: [
@@ -125,6 +131,7 @@ export const placeInSource = (
 				],
 			},
 			[point],
+			[postcode],
 		) as [ReturnType<typeof locatePoints>[number]];
 		const result = results[0]!;
 		if (result.status === "geometry-unavailable") {
@@ -215,7 +222,13 @@ export const attemptSource = (
 	dispatch: Dispatch,
 ): SourceAttempt => {
 	const { type } = source.sourceGeography;
-	const placement = placeInSource(context, point, type, releases);
+	const placement = placeInSource(
+		context,
+		point,
+		type,
+		releases,
+		compactPostcode(postcode),
+	);
 	if (!placement.placed)
 		return { outcome: "unserved", source, reason: placement.reason };
 	const { result, release } = placement;

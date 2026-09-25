@@ -12,6 +12,7 @@ import {
 	readAreaInventory,
 	readAreaLookup,
 	readAreaSearchIndex,
+	readPostcodeAreaIndex,
 	readPostcodeIndex,
 	readBoundaryRegistry,
 	readGeographyInventory,
@@ -40,7 +41,7 @@ import {
 	readValidationReport,
 } from "./catalogueManifestLoader";
 import { readMapAssets, readMapResources } from "./mapResourceLoader";
-import { createAreaGeometryCache } from "./geometryLoader";
+import { createAreaGeometryCache, readGeometrySources } from "./geometryLoader";
 import {
 	createReleaseArtifactReader,
 	readAtlasReleaseHistory,
@@ -123,6 +124,7 @@ export const readApiCatalogues = (
 		namedLocationInventory,
 		crosswalkInventory,
 	);
+	const postcodeIndex = readPostcodeIndex(apiRoot);
 	const areaGeometryCache = createAreaGeometryCache(
 		apiRoot,
 		options.geometryCacheReleases,
@@ -143,7 +145,13 @@ export const readApiCatalogues = (
 			namedLocationInventory,
 		),
 		areaSearchIndex: readAreaSearchIndex(apiRoot, areaInventory),
-		postcodeIndex: readPostcodeIndex(apiRoot),
+		postcodeIndex,
+		postcodeAreaIndex: readPostcodeAreaIndex(
+			apiRoot,
+			postcodeIndex,
+			areaInventory,
+			readGeometrySources(apiRoot),
+		),
 		locationProjectionStore,
 		relationshipPathIndex: createRelationshipPathIndex(
 			relationshipPathInventory,
