@@ -8,6 +8,12 @@ import {
 } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { GeographyInventory } from "./geographyInventory";
+import type { NamedLocationInventory } from "./namedLocations";
+import { placeIndexMismatch, type PlaceIndexArtifact } from "./placeIndex";
+import {
+	areaSearchIndexMismatch,
+	type AreaSearchIndexArtifact,
+} from "./areaSearch";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 
 const publicPath = (apiRoot: string, filename: string) =>
@@ -73,4 +79,43 @@ export const readAreaLookup = (
 		return [artifact];
 	});
 	return createAreaLookup(artifacts);
+};
+
+/** The compiled place index, refused unless built from these very inputs. */
+export const readPlaceIndex = (
+	apiRoot: string,
+	areaInventory: AreaInventory,
+	namedLocations: NamedLocationInventory,
+): PlaceIndexArtifact => {
+	const path = publicPath(apiRoot, "place-index.json");
+	const index = JSON.parse(readFileSync(path, "utf8")) as PlaceIndexArtifact;
+	const mismatch = placeIndexMismatch(
+		index,
+		areaInventory.contentHash,
+		namedLocations,
+	);
+	if (mismatch) {
+		throw new Error(
+			`The place index at ${path} ${mismatch}. Run pnpm build:place-index.`,
+		);
+	}
+	return index;
+};
+
+/** The compiled area search index, refused unless built from this inventory. */
+export const readAreaSearchIndex = (
+	apiRoot: string,
+	areaInventory: AreaInventory,
+): AreaSearchIndexArtifact => {
+	const path = publicPath(apiRoot, "area-search-index.json");
+	const index = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as AreaSearchIndexArtifact;
+	const mismatch = areaSearchIndexMismatch(index, areaInventory.contentHash);
+	if (mismatch) {
+		throw new Error(
+			`The area search index at ${path} ${mismatch}. Run pnpm build:area-search-index.`,
+		);
+	}
+	return index;
 };

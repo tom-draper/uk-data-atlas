@@ -3,7 +3,7 @@ import {
 	explainCodeInRelease,
 	type MemberCodeStatus,
 } from "./memberReconciliation";
-import { normalisePlaceName, withoutTitle } from "./placeResolver";
+import { normalisePlaceName, withoutTitle } from "./nameNormalisation";
 import { areaKey, releaseKey } from "./geographyKeys";
 
 /**

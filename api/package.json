@@ -7,7 +7,7 @@
 		"node": ">=24 <25"
 	},
 	"scripts": {
-		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-paths && pnpm build:analysis-geographies && pnpm build:analysis-geography-validation && pnpm build:location-projections && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:terrain-catalogue && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release && pnpm --dir .. docs:catalogue",
+		"build": "pnpm build:archive-atlas-release && pnpm build:boundary-registry && pnpm build:derived-boundaries && pnpm build:area-inventory && pnpm build:named-locations && pnpm build:place-index && pnpm build:area-search-index && pnpm build:data-catalog && pnpm build:measure-compatibility && pnpm build:export-manifest && pnpm build:geometry-source-registry && pnpm build:crosswalk-inventory && pnpm build:relationship-paths && pnpm build:analysis-geographies && pnpm build:analysis-geography-validation && pnpm build:location-projections && pnpm build:relationship-candidates && pnpm build:geography-inventory && pnpm build:terrain-catalogue && pnpm build:lookup-manifest && pnpm build:map-resource && pnpm build:validation-report && pnpm build:atlas-release && pnpm --dir .. docs:catalogue",
 		"docs:index": "tsx scripts/build-readme-index.ts",
 		"example:map": "tsx examples/correct-map.ts",
 		"example:map-render": "tsx examples/correct-map-render.ts",
@@ -31,6 +31,8 @@
 		"build:relationship-candidates": "tsx scripts/build-relationship-candidates.ts",
 		"build:geometry-source-registry": "tsx scripts/build-geometry-source-registry.ts",
 		"build:named-locations": "tsx scripts/build-named-locations.ts",
+		"build:place-index": "tsx scripts/build-place-index.ts",
+		"build:area-search-index": "tsx scripts/build-area-search-index.ts",
 		"build:data-catalog": "tsx scripts/build-data-catalog.ts",
 		"build:export-manifest": "tsx scripts/build-export-manifest.ts",
 		"build:lookup-manifest": "tsx scripts/build-lookup-manifest.ts",

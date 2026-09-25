@@ -45,7 +45,9 @@ export const handleDataValueRoutes = ({
 			"place is required: a place name such as North West, an area code, or a place reference from /v1/places.",
 		);
 	}
-	const unavailable = context.geographyResolver.requires("areas");
+	const unavailable =
+		context.geographyResolver.requires("areas") ??
+		context.geographyResolver.requires("places");
 	if (unavailable) return unavailable;
 	const period = parsedUrl.searchParams.get("period")?.trim() || undefined;
 	const candidates = context.geographyResolver.places(place, 12);

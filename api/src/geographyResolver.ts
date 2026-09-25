@@ -11,6 +11,8 @@ import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "./namedLocations";
+import type { AreaSearchIndexArtifact } from "./areaSearch";
+import type { PlaceIndexArtifact } from "./placeIndex";
 import type { RelationshipPath } from "./relationshipPaths";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
@@ -36,6 +38,8 @@ import { problem, type ApiResponse } from "./routeResponse";
 
 export type GeographyRequirement =
 	| "areas"
+	| "places"
+	| "area-search"
 	| "geometry"
 	| "relationships"
 	| "named-locations"
@@ -98,6 +102,10 @@ export type GeographyResolverInputs = {
 	areaGeometryCache?: AreaGeometryCache;
 	namedLocationInventory?: NamedLocationInventory;
 	namedLocationLookup?: NamedLocationLookup;
+	/** Every area and named location by name, compiled with the area inventory. */
+	placeIndex?: PlaceIndexArtifact;
+	/** Every area identity by code, name and alias, compiled with the area inventory. */
+	areaSearchIndex?: AreaSearchIndexArtifact;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
@@ -141,6 +149,8 @@ export class GeographyResolver {
 	requires(requirement: GeographyRequirement): ApiResponse | undefined {
 		const available: Record<GeographyRequirement, boolean> = {
 			areas: this.areas.hasAreas(),
+			places: this.areas.hasPlaceIndex(),
+			"area-search": this.areas.hasAreaSearch(),
 			geometry: this.spatial.hasAreaGeometryCache(),
 			relationships: this.lineage.hasAreaRelationships(),
 			"named-locations": this.locations.hasNamedLocationInventory(),
@@ -150,6 +160,9 @@ export class GeographyResolver {
 		if (available[requirement]) return undefined;
 		const descriptions: Record<GeographyRequirement, string> = {
 			areas: "Build the area inventory before serving geography data.",
+			places: "Build the place index before resolving place names.",
+			"area-search":
+				"Build the area search index before searching areas.",
 			geometry:
 				"Build the geometry source registry before serving geometry.",
 			relationships:
@@ -247,6 +260,13 @@ export class GeographyResolver {
 		query?: string;
 	}) {
 		return this.areas.searchAreas(query);
+	}
+	exactAreaCandidates(query: {
+		geography?: string | null;
+		boundaryRelease?: string | null;
+		query: string;
+	}) {
+		return this.areas.exactAreaCandidates(query);
 	}
 
 	geometryCacheStats() {

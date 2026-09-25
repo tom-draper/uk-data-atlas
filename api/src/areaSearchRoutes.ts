@@ -21,6 +21,8 @@ export const handleAreaSearchRoutes = ({
 	)
 		return undefined;
 	const geographyResolver = context.geographyResolver;
+	const unavailable = geographyResolver.requires("area-search");
+	if (unavailable) return unavailable;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const query = parsedUrl.searchParams.get("q")?.trim();
@@ -42,7 +44,7 @@ export const handleAreaSearchRoutes = ({
 		return problem(400, "Invalid Query", "cursor is invalid.", {
 			code: "invalid_cursor",
 		});
-	const offset = id ? matches.findIndex((area) => area.id === id) + 1 : 0;
+	const offset = id ? matches.positionOf(id) + 1 : 0;
 	if (id && offset === 0)
 		return problem(
 			400,

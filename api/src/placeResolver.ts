@@ -1,5 +1,11 @@
-import type { AreaLookup } from "./areaInventory";
-import type { NamedLocationInventory } from "./namedLocations";
+import { normalisePlaceName } from "./nameNormalisation";
+import { findSorted, lowerBound } from "./sortedIndex";
+import {
+	AREA_CODE,
+	placeReference,
+	type CompiledPlaceLabel,
+	type PlaceIndexArtifact,
+} from "./placeIndex";
 
 /**
  * Turning a name someone typed into the places it could mean.
@@ -97,154 +103,6 @@ const MATCH_RANK: Record<PlaceMatch, number> = {
 	prefix: 1,
 };
 
-/**
- * A name reduced to what distinguishes it: case, accents, punctuation and the
- * ampersand all set aside, so "Brighton & Hove", "brighton and hove" and
- * "Ynys Môn" match what was published.
- */
-export const normalisePlaceName = (value: string) =>
-	value
-		.normalize("NFKD")
-		.replace(/[\u0300-\u036f]/g, "")
-		.toLowerCase()
-		.replace(/&/g, " and ")
-		.replace(/['\u2019]/g, "")
-		.replace(/[^a-z0-9]+/g, " ")
-		.trim();
-
-/**
- * The same name with an administrative title removed, or undefined when it
- * carries none. Publishers write "Bristol, City of" and "Kingston upon Hull,
- * City of"; nobody searches for either.
- */
-export const withoutTitle = (normalised: string) => {
-	const stripped = normalised
-		.replace(/\b(city|county|borough|royal borough) of\b/g, " ")
-		.replace(/\s+/g, " ")
-		.trim();
-	return stripped && stripped !== normalised ? stripped : undefined;
-};
-
-type IndexEntry = {
-	kind: "area" | "named-location";
-	geography: string;
-	code: string;
-	label: string;
-	viaTitle: boolean;
-};
-
-type Grouped = {
-	kind: "area" | "named-location";
-	geography: string;
-	code: string;
-	/** Release to name, so the newest release's name wins. */
-	names: Map<string, string>;
-	boundaryReleases: Set<string>;
-	memberCodes?: string[];
-	memberGeography?: string;
-	definitionRevision?: number;
-	validity?: { from: string | null; to: string | null };
-};
-
-export type PlaceIndex = {
-	byName: Map<string, IndexEntry[]>;
-	/** Every indexed name, sorted, for prefix search. */
-	names: string[];
-	places: Map<string, Grouped>;
-};
-
-const placeKey = (
-	kind: "area" | "named-location",
-	geography: string,
-	code: string,
-) => (kind === "named-location" ? `location/${code}` : `${geography}/${code}`);
-
-export const createPlaceIndex = (
-	areaLookup: AreaLookup,
-	namedLocations?: NamedLocationInventory,
-): PlaceIndex => {
-	const byName = new Map<string, IndexEntry[]>();
-	const places = new Map<string, Grouped>();
-	const add = (name: string, entry: IndexEntry) => {
-		const list = byName.get(name);
-		if (!list) {
-			byName.set(name, [entry]);
-			return;
-		}
-		// The same code carries the same name in release after release; one
-		// entry per place and label is enough.
-		if (
-			!list.some(
-				(existing) =>
-					existing.kind === entry.kind &&
-					existing.geography === entry.geography &&
-					existing.code === entry.code &&
-					existing.label === entry.label,
-			)
-		) {
-			list.push(entry);
-		}
-	};
-	const indexLabel = (
-		label: string,
-		kind: "area" | "named-location",
-		geography: string,
-		code: string,
-	) => {
-		const normalised = normalisePlaceName(label);
-		if (!normalised) return;
-		add(normalised, { kind, geography, code, label, viaTitle: false });
-		const stripped = withoutTitle(normalised);
-		if (stripped) {
-			add(stripped, { kind, geography, code, label, viaTitle: true });
-		}
-	};
-
-	for (const [key, areas] of areaLookup) {
-		const [geography, boundaryRelease] = key.split("/") as [string, string];
-		for (const area of areas.values()) {
-			const id = placeKey("area", geography, area.code);
-			const grouped = places.get(id) ?? {
-				kind: "area" as const,
-				geography,
-				code: area.code,
-				names: new Map<string, string>(),
-				boundaryReleases: new Set<string>(),
-			};
-			grouped.names.set(boundaryRelease, area.name);
-			grouped.boundaryReleases.add(boundaryRelease);
-			places.set(id, grouped);
-			for (const label of [area.name, ...(area.aliases ?? [])]) {
-				indexLabel(label, "area", geography, area.code);
-			}
-		}
-	}
-	for (const location of namedLocations?.locations ?? []) {
-		places.set(placeKey("named-location", "named-location", location.id), {
-			kind: "named-location",
-			geography: "named-location",
-			code: location.id,
-			names: new Map([["", location.label]]),
-			boundaryReleases: new Set(),
-			memberCodes: location.memberCodes,
-			memberGeography: location.memberGeography,
-			definitionRevision: location.definitionRevision,
-			validity: location.validity,
-		});
-		indexLabel(
-			location.label,
-			"named-location",
-			"named-location",
-			location.id,
-		);
-	}
-	return {
-		byName,
-		names: [...byName.keys()].sort(),
-		places,
-	};
-};
-
 /** A release-independent place reference, split, or undefined if malformed. */
 export const parsePlaceReference = (
 	reference: string,
@@ -260,46 +118,32 @@ export const parsePlaceReference = (
 };
 
 const toCandidate = (
-	index: PlaceIndex,
-	entry: IndexEntry,
+	index: PlaceIndexArtifact,
+	position: number,
 	match: PlaceMatch,
-): PlaceCandidate | undefined => {
-	const grouped = index.places.get(
-		placeKey(entry.kind, entry.geography, entry.code),
-	);
-	if (!grouped) return undefined;
-	const boundaryReleases = [...grouped.boundaryReleases].sort().reverse();
-	const newest = boundaryReleases[0] ?? "";
+	matchedLabel?: string,
+): PlaceCandidate => {
+	const place = index.places[position]!;
 	return {
-		place: placeKey(grouped.kind, grouped.geography, grouped.code),
-		kind: grouped.kind,
-		name: grouped.names.get(newest) ?? [...grouped.names.values()][0] ?? "",
-		geography: grouped.geography,
-		code: grouped.code,
+		place: place.place,
+		kind: place.kind,
+		name: place.name,
+		geography: place.geography,
+		code: place.code,
 		match,
-		matchedLabel: entry.label,
-		boundaryReleases,
-		...(grouped.memberCodes ? { memberCodes: grouped.memberCodes } : {}),
-		...(grouped.memberGeography
-			? { memberGeography: grouped.memberGeography }
+		matchedLabel: matchedLabel ?? place.name,
+		boundaryReleases: place.boundaryReleases.map(
+			(release) => index.releases[release]!,
+		),
+		...(place.memberCodes ? { memberCodes: place.memberCodes } : {}),
+		...(place.memberGeography
+			? { memberGeography: place.memberGeography }
 			: {}),
-		...(grouped.definitionRevision
-			? { definitionRevision: grouped.definitionRevision }
+		...(place.definitionRevision
+			? { definitionRevision: place.definitionRevision }
 			: {}),
-		...(grouped.validity ? { validity: grouped.validity } : {}),
+		...(place.validity ? { validity: place.validity } : {}),
 	};
-};
-
-/** The first index at which a sorted list could hold a string beginning with `prefix`. */
-const lowerBound = (sorted: string[], prefix: string) => {
-	let low = 0;
-	let high = sorted.length;
-	while (low < high) {
-		const middle = (low + high) >> 1;
-		if (sorted[middle]! < prefix) low = middle + 1;
-		else high = middle;
-	}
-	return low;
 };
 
 /**
@@ -312,7 +156,7 @@ const lowerBound = (sorted: string[], prefix: string) => {
  * best match.
  */
 export const resolvePlaces = (
-	index: PlaceIndex,
+	index: PlaceIndexArtifact,
 	query: string,
 	limit = 10,
 ): PlaceCandidate[] => {
@@ -321,45 +165,50 @@ export const resolvePlaces = (
 
 	const reference = parsePlaceReference(trimmed);
 	if (reference) {
-		const candidate = toCandidate(
-			index,
-			{ ...reference, label: trimmed, viaTitle: false },
-			"exact",
+		const position = findSorted(
+			index.places,
+			placeReference(reference.kind, reference.geography, reference.code),
+			(place) => place.place,
 		);
-		if (candidate) return [candidate];
+		if (position !== -1)
+			return [toCandidate(index, position, "exact", trimmed)];
 	}
 
-	const found = new Map<string, PlaceCandidate>();
-	const consider = (entry: IndexEntry, match: PlaceMatch) => {
-		const key = placeKey(entry.kind, entry.geography, entry.code);
-		const existing = found.get(key);
+	const found = new Map<number, PlaceCandidate>();
+	const consider = (
+		position: number,
+		match: PlaceMatch,
+		matchedLabel?: string,
+	) => {
+		const existing = found.get(position);
 		if (existing && MATCH_RANK[existing.match] <= MATCH_RANK[match]) return;
-		const candidate = toCandidate(index, entry, match);
-		if (candidate) found.set(key, candidate);
+		found.set(position, toCandidate(index, position, match, matchedLabel));
+	};
+	const considerLabels = (
+		labels: CompiledPlaceLabel[],
+		match: (viaTitle: 0 | 1) => PlaceMatch,
+	) => {
+		for (const [position, viaTitle, label] of labels) {
+			consider(position, match(viaTitle), label);
+		}
 	};
 
 	// A bare code is a place too: E08000003 is Manchester in every geography
 	// that carries the code.
-	if (/^[A-Z]\d{8}$/.test(trimmed.toUpperCase())) {
-		const code = trimmed.toUpperCase();
-		for (const grouped of index.places.values()) {
-			if (grouped.code !== code) continue;
-			consider(
-				{
-					kind: grouped.kind,
-					geography: grouped.geography,
-					code,
-					label: code,
-					viaTitle: false,
-				},
-				"exact",
-			);
+	const code = trimmed.toUpperCase();
+	if (AREA_CODE.test(code)) {
+		const at = findSorted(index.codes, code);
+		for (const position of at === -1 ? [] : index.codePlaces[at]!) {
+			consider(position, "exact", code);
 		}
 	}
 
 	const normalised = normalisePlaceName(trimmed);
-	for (const entry of index.byName.get(normalised) ?? []) {
-		consider(entry, entry.viaTitle ? "exact-without-title" : "exact");
+	const exact = findSorted(index.names, normalised);
+	if (exact !== -1) {
+		considerLabels(index.labels[exact]!, (viaTitle) =>
+			viaTitle ? "exact-without-title" : "exact",
+		);
 	}
 
 	if (found.size < limit && normalised.length >= 3) {
@@ -369,11 +218,8 @@ export const resolvePlaces = (
 			index.names[position]!.startsWith(normalised);
 			position += 1
 		) {
-			const name = index.names[position]!;
-			if (name === normalised) continue;
-			for (const entry of index.byName.get(name) ?? []) {
-				consider(entry, "prefix");
-			}
+			if (position === exact) continue;
+			considerLabels(index.labels[position]!, () => "prefix");
 		}
 	}
 
