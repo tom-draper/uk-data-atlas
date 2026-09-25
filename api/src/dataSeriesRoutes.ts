@@ -1,6 +1,5 @@
 import {
 	isNumericObservation,
-	type MeasureSource,
 	type PopulationObservation,
 } from "./dataCatalog";
 import { analysisConversion } from "./analysisGeographies";

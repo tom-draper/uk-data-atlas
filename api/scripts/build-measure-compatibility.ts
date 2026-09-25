@@ -10,7 +10,6 @@ import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import {
 	type DataCatalog,
 	isLegacyPopulationSource,
-	type AnyMeasureObservationArtifact,
 	observationArtifactName,
 	PopulationLocalAuthorityObservationArtifact,
 	PopulationObservationArtifact,
