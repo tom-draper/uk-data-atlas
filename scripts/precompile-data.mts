@@ -152,7 +152,7 @@ const out = async (name: string, data: unknown) => {
 	const json = JSON.stringify(data);
 	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
-	console.log(`  precompiled: ${name}.json (${kb} KB)`);
+	console.log(`  dataset: ${name}.json (${kb} KB)`);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
 		sha256: createHash("sha256").update(json).digest("hex"),
