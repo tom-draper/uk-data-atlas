@@ -24,7 +24,12 @@ export const handleAreaIdentityRoutes = ({
 		boundaryRelease,
 		code,
 	});
-	if (area)
+	if (area) {
+		const postcodes = geographyResolver.postcodeCounts({
+			geography,
+			boundaryRelease,
+			code: area.code,
+		});
 		return {
 			status: 200,
 			body: envelope(releaseId, {
@@ -32,7 +37,9 @@ export const handleAreaIdentityRoutes = ({
 				geography,
 				boundaryRelease,
 				...area,
+				...(postcodes ? { postcodes } : {}),
 			}),
 		};
+	}
 	return areaNotFound(context, geography, boundaryRelease, code);
 };

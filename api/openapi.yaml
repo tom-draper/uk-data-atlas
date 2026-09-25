@@ -4817,6 +4817,10 @@ paths:
       operationId: getArea
       tags: ["Geography"]
       summary: Get one compiled area by its full identity
+      description: >
+        Where precompiled postcode placements cover this boundary release, the
+        area also includes live and terminated unit-postcode counts from the
+        ONS Postcode Directory edition shown in `postcodes.edition`.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
@@ -4848,6 +4852,11 @@ paths:
                   boundaryRelease: 2024-07-uk-bgc
                   code: E14001262
                   name: Halifax
+                  postcodes:
+                    live: 3412
+                    terminated: 1412
+                    largeUser: 123
+                    edition: "2026-08"
                 meta:
                   nextCursor: null
         "404":
@@ -9927,6 +9936,36 @@ components:
           type: array
           items:
             type: string
+    AreaDetail:
+      allOf:
+        - $ref: "#/components/schemas/Area"
+        - type: object
+          properties:
+            postcodes:
+              $ref: "#/components/schemas/AreaPostcodeCounts"
+
+    AreaPostcodeCounts:
+      type: object
+      description: >
+        Unit postcode centroid counts for this area, compiled from the ONS
+        Postcode Directory. `live` is the number with no termination date;
+        `terminated` is retained historical directory records; `largeUser` is
+        the live subset marked as serving a single large user. A postcode on a
+        shared area boundary may be counted in each area it touches.
+      required: [live, terminated, largeUser, edition]
+      properties:
+        live:
+          type: integer
+          minimum: 0
+        terminated:
+          type: integer
+          minimum: 0
+        largeUser:
+          type: integer
+          minimum: 0
+        edition:
+          type: string
+          description: The ONS Postcode Directory edition used for the counts.
 
     AreaRelationship:
       type: object
@@ -11130,7 +11169,7 @@ components:
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/Area"
+              $ref: "#/components/schemas/AreaDetail"
 
     CrosswalkSide:
       type: object

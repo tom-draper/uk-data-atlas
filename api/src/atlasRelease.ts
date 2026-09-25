@@ -58,6 +58,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	// them.
 	{ id: "postcode-index", path: "postcode-index.json" },
 	{ id: "postcode-areas", path: "postcode-areas.json" },
+	{ id: "postcode-counts", path: "postcode-counts.json" },
 	{
 		id: "location-projection-inventory",
 		path: "location-projection-inventory.json",

@@ -850,7 +850,14 @@ only **available** when its endpoint, contract and provenance are published.
       geometry. Any other release is still placed live. The build takes about
       20 minutes with three workers, reuses any release whose postcodes, areas
       and geometry are unchanged, and writes some 630 MB of shards.
-- [ ] Count active postcodes within an area.
+- [x] Count live and terminated postcodes in each compiled postcode-area
+      release. `GET /v1/areas/{geography}/{release}/{code}` includes a
+      `postcodes` block with `live`, `terminated`, `largeUser` and the ONS
+      directory `edition` where precompiled placements cover that release.
+      Counts use postcode centroids, and a centroid on a shared boundary is
+      counted in each area it touches. The small count artifact is aggregated
+      from the postcode and postcode-area shards during the build, with no
+      geometry load.
 - [ ] Return postcode-sector, district and area statistics.
 - [ ] Return a clearly defined count of households, dwellings, addresses or
       homes. These are different measures and must never be silently substituted.

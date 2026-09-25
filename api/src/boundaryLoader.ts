@@ -24,6 +24,11 @@ import {
 	postcodeAreasMismatch,
 	type PostcodeAreasArtifact,
 } from "./postcodeAreas";
+import {
+	PostcodeCountsIndex,
+	postcodeCountsMismatch,
+	type PostcodeCountsArtifact,
+} from "./postcodeCounts";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 
@@ -168,6 +173,31 @@ export const readPostcodeAreaIndex = (
 	}
 	return new PostcodeAreaIndex(artifact, postcodeIndex, (shard) =>
 		readFileSync(publicPath(apiRoot, shard), "utf8"),
+	);
+};
+
+/** The per-area postcode counts, refused unless built from these indexes. */
+export const readPostcodeCounts = (
+	apiRoot: string,
+	postcodeIndex: PostcodeIndex,
+	postcodeAreas: PostcodeAreaIndex,
+): PostcodeCountsIndex => {
+	const path = publicPath(apiRoot, "postcode-counts.json");
+	const artifact = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as PostcodeCountsArtifact;
+	const mismatch = postcodeCountsMismatch(
+		artifact,
+		postcodeIndex.artifact,
+		postcodeAreas.artifact,
+	);
+	if (mismatch)
+		throw new Error(
+			`The postcode counts at ${path} ${mismatch}. Run pnpm build:postcode-counts.`,
+		);
+	return new PostcodeCountsIndex(
+		artifact,
+		postcodeIndex.artifact.source.edition,
 	);
 };
 
