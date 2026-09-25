@@ -7,13 +7,13 @@ import {
 	type ValidatedValue,
 } from "../batchValidation";
 import type { BoundaryRegistry } from "../boundaryRegistry";
-import { createPlaceIndex, resolvePlaces } from "../placeResolver";
-import type { PlaceIndex } from "../placeResolver";
-import type { NamedLocationInventory } from "../namedLocations";
+import { resolvePlaces } from "../placeResolver";
+import type { PlaceIndexArtifact } from "../placeIndex";
 import {
-	createAreaSearchIndex,
-	searchAreas,
-	type AreaSearchIndex,
+	AreaSearch,
+	type AreaMatches,
+	type AreaSearchFilters,
+	type AreaSearchIndexArtifact,
 } from "../areaSearch";
 import {
 	derivedReleaseSources,
@@ -39,13 +39,13 @@ export type AreasResolverInputs = {
 	boundaryRegistry?: BoundaryRegistry;
 	areaInventory?: AreaInventory;
 	areaLookup?: AreaLookup;
-	namedLocationInventory?: NamedLocationInventory;
+	placeIndex?: PlaceIndexArtifact;
+	areaSearchIndex?: AreaSearchIndexArtifact;
 };
 
 /** Area identity, release and place indexes over immutable compiled artifacts. */
 export class AreasResolver {
-	private readonly areaSearchIndex?: AreaSearchIndex;
-	private placeIndex?: PlaceIndex;
+	private readonly areaSearch?: AreaSearch;
 	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
 	private readonly boundaryReleases = new Map<
 		string,
@@ -61,7 +61,9 @@ export class AreasResolver {
 				release,
 			);
 		if (inputs.areaLookup) {
-			this.areaSearchIndex = createAreaSearchIndex(inputs.areaLookup);
+			this.areaSearch = inputs.areaSearchIndex
+				? new AreaSearch(inputs.areaSearchIndex, inputs.areaLookup)
+				: undefined;
 			for (const [releaseIdentity, areas] of inputs.areaLookup) {
 				const [geography, boundaryRelease] = releaseIdentity.split(
 					"/",
@@ -125,14 +127,13 @@ export class AreasResolver {
 		return undefined;
 	}
 
+	hasPlaceIndex() {
+		return this.inputs.placeIndex !== undefined;
+	}
+
 	places(query: string, limit: number) {
-		if (!this.inputs.areaLookup) return [];
-		if (!this.placeIndex)
-			this.placeIndex = createPlaceIndex(
-				this.inputs.areaLookup,
-				this.inputs.namedLocationInventory,
-			);
-		return resolvePlaces(this.placeIndex, query, limit);
+		if (!this.inputs.placeIndex) return [];
+		return resolvePlaces(this.inputs.placeIndex, query, limit);
 	}
 
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {
@@ -233,13 +234,21 @@ export class AreasResolver {
 			: undefined;
 	}
 
-	searchAreas(query: {
-		geography?: string | null;
-		boundaryRelease?: string | null;
-		query?: string;
-	}) {
-		return this.areaSearchIndex
-			? searchAreas(this.areaSearchIndex, query)
-			: [];
+	hasAreaSearch() {
+		return this.areaSearch !== undefined;
+	}
+
+	searchAreas(query: AreaSearchFilters & { query?: string }): AreaMatches {
+		return (
+			this.areaSearch?.search(query) ?? {
+				length: 0,
+				positionOf: () => -1,
+				slice: () => [],
+			}
+		);
+	}
+
+	exactAreaCandidates(query: AreaSearchFilters & { query: string }) {
+		return this.areaSearch?.exactCandidates(query) ?? [];
 	}
 }

@@ -53,6 +53,8 @@ const RECORDED_UPSTREAM: Record<string, string[]> = {
 		"crosswalkInventoryHash",
 	],
 	"relationship-paths.json": ["crosswalkInventoryHash"],
+	"place-index.json": ["areaInventoryHash", "namedLocationInventoryHash"],
+	"area-search-index.json": ["areaInventoryHash"],
 	"analysis-geographies.json": ["dataCatalogHash", "crosswalkInventoryHash"],
 	"analysis-geography-validation.json": [
 		"analysisGeographyInventoryHash",

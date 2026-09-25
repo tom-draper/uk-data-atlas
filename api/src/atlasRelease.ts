@@ -52,6 +52,8 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "derived-boundaries", path: "derived-boundaries.json" },
 	{ id: "area-inventory", path: "area-inventory.json" },
 	{ id: "named-locations", path: "named-locations.json" },
+	{ id: "place-index", path: "place-index.json" },
+	{ id: "area-search-index", path: "area-search-index.json" },
 	{
 		id: "location-projection-inventory",
 		path: "location-projection-inventory.json",

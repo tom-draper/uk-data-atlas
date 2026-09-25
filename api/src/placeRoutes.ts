@@ -30,7 +30,7 @@ export const handlePlaceRoutes = ({
 			"Invalid Query",
 			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 		);
-	const unavailable = context.geographyResolver.requires("areas");
+	const unavailable = context.geographyResolver.requires("places");
 	if (unavailable) return unavailable;
 	const candidates = context.geographyResolver.places(query, limit);
 	return {

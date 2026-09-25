@@ -11,8 +11,10 @@ import type { RouteContext } from "./routing";
 import {
 	readAreaInventory,
 	readAreaLookup,
+	readAreaSearchIndex,
 	readBoundaryRegistry,
 	readGeographyInventory,
+	readPlaceIndex,
 	readTerrainCatalogue,
 } from "./boundaryLoader";
 import {
@@ -134,6 +136,12 @@ export const readApiCatalogues = (
 		areaGeometryCache,
 		namedLocationInventory,
 		namedLocationLookup,
+		placeIndex: readPlaceIndex(
+			apiRoot,
+			areaInventory,
+			namedLocationInventory,
+		),
+		areaSearchIndex: readAreaSearchIndex(apiRoot, areaInventory),
 		locationProjectionStore,
 		relationshipPathIndex: createRelationshipPathIndex(
 			relationshipPathInventory,

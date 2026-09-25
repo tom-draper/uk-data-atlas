@@ -26,6 +26,8 @@ import type {
 	PopulationObservationArtifact,
 } from "../src/dataCatalog";
 import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
+import { compileAreaSearchIndex } from "../src/areaSearch";
+import { compilePlaceIndex } from "../src/placeIndex";
 import { createRelationshipPathIndex } from "../src/relationshipPaths";
 
 /**
@@ -45,6 +47,21 @@ const resolverFor = (inputs: TestContextInputs) =>
 		geographyInventory: inputs.geographyInventory,
 		areaInventory: inputs.areaInventory,
 		areaLookup: inputs.areaLookup,
+		// Compiled from the fixture areas as the build compiles it from the
+		// area inventory.
+		placeIndex: inputs.areaLookup
+			? compilePlaceIndex(
+					inputs.areaLookup,
+					inputs.namedLocationInventory,
+					inputs.areaInventory?.contentHash ?? "sha256:fixture-areas",
+				)
+			: undefined,
+		areaSearchIndex: inputs.areaLookup
+			? compileAreaSearchIndex(
+					inputs.areaLookup,
+					inputs.areaInventory?.contentHash ?? "sha256:fixture-areas",
+				)
+			: undefined,
 		crosswalkInventory: inputs.crosswalkInventory,
 		crosswalkLookup: inputs.crosswalkLookup,
 		areaGeometryCache: inputs.areaGeometryCache,

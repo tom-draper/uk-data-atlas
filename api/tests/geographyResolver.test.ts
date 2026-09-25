@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { compileAreaSearchIndex } from "../src/areaSearch";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -51,6 +52,7 @@ test("builds immutable geography indexes once for route-level queries", () => {
 	const relationshipPaths = compileRelationshipPaths(crosswalkInventory);
 	const resolver = createGeographyResolver({
 		areaLookup,
+		areaSearchIndex: compileAreaSearchIndex(areaLookup, "sha256:areas"),
 		crosswalkInventory,
 		crosswalkLookup: new Map([
 			[containmentCrosswalk.id, containmentCrosswalk],
@@ -68,7 +70,10 @@ test("builds immutable geography indexes once for route-level queries", () => {
 	});
 
 	assert.deepEqual(
-		resolver.searchAreas({ query: "gm" }).map((area) => area.id),
+		resolver
+			.searchAreas({ query: "gm" })
+			.slice(0, 10)
+			.map((area) => area.id),
 		["localAuthority/2025-01-uk-lad/E08000001"],
 	);
 	assert.equal(

@@ -1,12 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
-import {
-	createPlaceIndex,
-	normalisePlaceName,
-	parsePlaceReference,
-	resolvePlaces,
-} from "../src/placeResolver";
+import { normalisePlaceName } from "../src/nameNormalisation";
+import { compilePlaceIndex, placeIndexMismatch } from "../src/placeIndex";
+import { parsePlaceReference, resolvePlaces } from "../src/placeResolver";
 import type { NamedLocationInventory } from "../src/namedLocations";
 
 const release = (
@@ -65,7 +62,7 @@ const namedLocations = {
 	],
 } as unknown as NamedLocationInventory;
 
-const index = createPlaceIndex(areaLookup, namedLocations);
+const index = compilePlaceIndex(areaLookup, namedLocations, "sha256:areas");
 const places = (query: string, limit?: number) =>
 	resolvePlaces(index, query, limit).map((candidate) => candidate.place);
 
@@ -160,4 +157,44 @@ test("finds nothing for an unknown name, and does not prefix-match fragments", (
 
 test("stops at the limit", () => {
 	assert.equal(places("Manchester", 2).length, 2);
+});
+
+test("compiles each place once, sorted, with its releases interned", () => {
+	const references = index.places.map((place) => place.place);
+	assert.deepEqual(references, [...references].sort());
+	assert.equal(new Set(references).size, references.length);
+	assert.deepEqual(index.releases, [...index.releases].sort().reverse());
+	assert.deepEqual(index.names, [...index.names].sort());
+	assert.equal(index.names.length, index.labels.length);
+});
+
+test("serves a compiled index only against the inputs it was built from", () => {
+	assert.equal(
+		placeIndexMismatch(index, "sha256:areas", namedLocations),
+		undefined,
+	);
+	assert.match(
+		placeIndexMismatch(index, "sha256:other-areas", namedLocations)!,
+		/area inventory/,
+	);
+	assert.match(
+		placeIndexMismatch(index, "sha256:areas", undefined)!,
+		/named locations/,
+	);
+	assert.match(
+		placeIndexMismatch(
+			{ ...index, nameNormalisation: "sha256:older-rules" },
+			"sha256:areas",
+			namedLocations,
+		)!,
+		/name rules/,
+	);
+	assert.match(
+		placeIndexMismatch(
+			{ ...index, labels: index.labels.slice(1) },
+			"sha256:areas",
+			namedLocations,
+		)!,
+		/malformed/,
+	);
 });

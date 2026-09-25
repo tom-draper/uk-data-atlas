@@ -1,6 +1,6 @@
 import { areaNotFound } from "./areaResources";
 import { parseSelectionDate } from "./releaseForDate";
-import { normalisePlaceName, withoutTitle } from "./placeResolver";
+import { normalisePlaceName, withoutTitle } from "./nameNormalisation";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -131,9 +131,12 @@ export const handleAreaResolveRoutes = ({
 		!geographyResolver.hasAreaRelease(geography!, boundaryRelease!)
 	)
 		return areaNotFound(context, geography!, boundaryRelease!);
-	const areas = geographyResolver.searchAreas({
+	const unavailable = geographyResolver.requires("area-search");
+	if (unavailable) return unavailable;
+	const areas = geographyResolver.exactAreaCandidates({
 		geography,
 		boundaryRelease,
+		query: q,
 	});
 	const normalized = q.toLocaleLowerCase();
 	const normalizedName = normalisePlaceName(q);

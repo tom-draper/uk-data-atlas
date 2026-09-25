@@ -98,8 +98,13 @@ only **available** when its endpoint, contract and provenance are published.
       Anglesey; an administrative title is set aside too, so "Bristol" finds
       the authority published as "Bristol, City of". Names that merely begin
       with the query follow equal ones. A place held in several releases comes
-      back once. Of some 85,000 places, "Manchester" is six geographies and a
-      curated location, and "Newport" thirteen codes.
+      back once. Of some 89,000 places, "Manchester" is six geographies and a
+      curated location, and "Newport" thirteen codes. The build compiles
+      every place and name into `public/place-index.json`, sorted for binary
+      search, so a request does no indexing. The index records the area
+      inventory and named locations it was built from and a fingerprint of the
+      name-normalisation rules; the API refuses to start on one that differs
+      from any of them.
 - [x] Answer a measure for a place given by name through
       `GET /v1/data/{measure-id}/value?place=`, so "what is the population of
       the North West?" is one request. Each place the name could mean is put to
