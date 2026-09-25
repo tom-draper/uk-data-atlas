@@ -158,3 +158,58 @@ export const handlePostcodeRoutes = ({
 		}),
 	};
 };
+
+/** The place reference a postcode candidate carries, `postcode/SW1A1AA`. */
+export const POSTCODE_REFERENCE = "postcode/";
+
+/** The postcode a place query or reference names, when it names one. */
+export const postcodeInPlace = (query: string) => {
+	const text = query.startsWith(POSTCODE_REFERENCE)
+		? query.slice(POSTCODE_REFERENCE.length)
+		: query;
+	return parsePostcode(text);
+};
+
+/**
+ * What a place search makes of a query written as a postcode: a candidate for
+ * a unit postcode the index holds, or a hint saying why there is none. Nothing
+ * here reads geometry, so a place search stays as fast as a name lookup; the
+ * candidate links to the routes that place the postcode in areas.
+ */
+export const postcodePlace = (
+	context: RouteRequest["context"],
+	query: string,
+): { candidate?: Record<string, unknown>; hint?: string } => {
+	const parsed = postcodeInPlace(query);
+	if (!parsed) return {};
+	if (parsed.kind !== "unit")
+		return {
+			hint: `${parsed.display} reads as a postcode ${parsed.kind}, which covers many postcodes. A full unit postcode, such as ${parsed.kind === "district" ? `${parsed.display} 1AA` : `${parsed.display}AA`}, is found as a place.`,
+		};
+	const index = context.geographyResolver.postcodeIndex();
+	if (!index) return {};
+	const found = index.lookup(parsed);
+	if (found.status === "excluded") return { hint: found.reason };
+	if (found.status === "not-found")
+		return {
+			hint: `${parsed.display} reads as a postcode but is not in the ${index.artifact.source.title}.`,
+		};
+	const { record } = found;
+	const point = record.centroid && postcodeLookupPoint(record.centroid);
+	return {
+		candidate: {
+			place: `${POSTCODE_REFERENCE}${parsed.compact}`,
+			kind: "postcode",
+			name: record.postcode,
+			geography: "postcode",
+			code: record.postcode,
+			match: "exact",
+			status: record.status,
+			...(record.terminated ? { terminated: record.terminated } : {}),
+			country: record.country,
+			point: point ? { lng: point.lng, lat: point.lat } : null,
+			href: `/v1/postcodes/${parsed.compact}`,
+			edition: index.artifact.source.edition,
+		},
+	};
+};

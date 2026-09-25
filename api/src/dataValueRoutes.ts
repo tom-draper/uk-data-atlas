@@ -3,6 +3,7 @@ import { CONTAINMENT_NOTE, countryOfCode } from "./pointLookup";
 import {
 	findPostcode,
 	POSTCODE_NOTE,
+	postcodeInPlace,
 	UNDECLARED_POSTCODE_ACCURACY,
 } from "./postcodeRoutes";
 import { postcodeLookupPoint } from "./postcodes";
@@ -60,11 +61,18 @@ export const handleDataValueRoutes = ({
 			"Give place or postcode, not both.",
 		);
 	}
-	if (postcode)
+	// A place written as a unit postcode, or a postcode place reference from
+	// /v1/places, is answered as that postcode.
+	const postcodeText =
+		postcode ??
+		(place && postcodeInPlace(place)?.kind === "unit"
+			? place.replace(/^postcode\//, "")
+			: undefined);
+	if (postcodeText)
 		return postcodeValue(
 			{ context, releaseId, parsedUrl, segments, dispatch },
 			measure,
-			postcode,
+			postcodeText,
 		);
 	if (!place) {
 		return problem(
