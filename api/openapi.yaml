@@ -3211,11 +3211,22 @@ paths:
         wards and smaller areas; that is a presentation order and asserts
         nothing about which was meant. Curated named locations appear with
         their member codes.
+
+
+        A unit postcode, typed in any case and with or without its space, leads
+        the candidates as a place of its own: kind `postcode`, a place
+        reference such as `postcode/SW1A1AA`, its centroid as `point`, and an
+        `href` to `/postcodes/{postcode}`, which places it in areas. Nothing
+        is placed here, so a search stays as fast as a name lookup. Pass the
+        reference as `place` to `/data/{measure-id}/value` to answer a measure
+        for the postcode. A query that reads as a postcode district or sector,
+        or a unit postcode the directory does not hold or this API may not
+        serve, carries a `postcodeHint` saying so.
       parameters:
         - name: q
           in: query
           required: true
-          description: A place name, an area code, or a place reference such as `localAuthority/E08000003`.
+          description: A place name, an area code, a unit postcode, or a place reference such as `localAuthority/E08000003` or `postcode/SW1A1AA`.
           schema:
             type: string
           example: Manchester
@@ -3476,9 +3487,9 @@ paths:
             type: string
           example: North West
           description: >
-            A place name, an area code, or a place reference such as
-            `localAuthority/E08000003` from `GET /v1/places`. One of `place`
-            or `postcode` is required.
+            A place name, an area code, a unit postcode, or a place reference
+            such as `localAuthority/E08000003` or `postcode/SW1A1AA` from
+            `GET /v1/places`. One of `place` or `postcode` is required.
         - name: postcode
           in: query
           required: false

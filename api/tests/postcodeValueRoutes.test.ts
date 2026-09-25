@@ -7,6 +7,7 @@ import { AreaGeometryCache } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import { createGeographyResolver } from "../src/geographyResolver";
+import { compilePlaceIndex } from "../src/placeIndex";
 import type {
 	CompatibilityCandidate,
 	MeasureCompatibilityInventory,
@@ -190,6 +191,7 @@ const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
 		areaLookup,
 		areaGeometryCache: new AreaGeometryCache(root, geometrySources, 6),
 		postcodeIndex: index,
+		placeIndex: compilePlaceIndex(areaLookup, undefined, "sha256:areas"),
 	}),
 	...overrides,
 });
@@ -318,4 +320,53 @@ test("says why a postcode's value cannot be answered", () => {
 		context({ measureCompatibilityInventory: undefined }),
 	);
 	assert.equal(withoutCompatibility.status, 503);
+});
+
+test("finds a unit postcode as a place of its own, ahead of names", () => {
+	const { status, data } = get("/v1/places?q=ec1a%201aa");
+	assert.equal(status, 200);
+	assert.equal(data.postcodeHint, undefined);
+	const [first] = data.candidates;
+	assert.equal(first.place, "postcode/EC1A1AA");
+	assert.equal(first.kind, "postcode");
+	assert.equal(first.name, "EC1A 1AA");
+	assert.equal(first.match, "exact");
+	assert.equal(first.status, "live");
+	assert.equal(first.href, "/v1/postcodes/EC1A1AA");
+	assert.equal(first.edition, "2026-08");
+	assert.ok(Math.abs(first.point.lng - lng) < 0.01);
+	// Its own place reference finds it again.
+	assert.equal(
+		get("/v1/places?q=postcode/EC1A1AA").data.candidates[0].place,
+		"postcode/EC1A1AA",
+	);
+	assert.equal(get("/v1/places?q=EC1A1AA&limit=1").data.candidates.length, 1);
+	// A postcode with no centroid is still a place, with no point.
+	assert.equal(get("/v1/places?q=GY11AA").data.candidates[0].point, null);
+});
+
+test("says why a query written as a postcode found no postcode", () => {
+	assert.match(get("/v1/places?q=EC1A").data.postcodeHint, /district/);
+	assert.match(get("/v1/places?q=EC1A%201").data.postcodeHint, /sector/);
+	assert.match(
+		get("/v1/places?q=EC1A9ZZ").data.postcodeHint,
+		/not in the ONS Postcode Directory/,
+	);
+	const named = get("/v1/places?q=Hartlepool").data;
+	assert.equal(named.postcodeHint, undefined);
+	assert.equal(named.candidates[0].place, "localAuthority/E06000001");
+});
+
+test("answers a value for a postcode given as a place or its reference", () => {
+	const direct = get(
+		"/v1/data/population-estimate/value?postcode=EC1A1AA",
+	).data;
+	for (const place of ["postcode/EC1A1AA", "ec1a%201aa"]) {
+		const { status, data } = get(
+			`/v1/data/population-estimate/value?place=${place}`,
+		);
+		assert.equal(status, 200, place);
+		assert.deepEqual(data.answer, direct.answer);
+		assert.equal(data.area.id, direct.area.id);
+	}
 });

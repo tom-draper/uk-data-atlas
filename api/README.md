@@ -813,6 +813,11 @@ only **available** when its endpoint, contract and provenance are published.
       holds that partition's codes. The finest geography answers first, and a
       coarser one only where a finer does not cover the postcode's country or
       has no value there, each passed-over geography saying why.
+- [x] Recognise a unit postcode in `GET /v1/places?q=` as a place of its own,
+      listed first with a `postcode/{code}` reference that a value request
+      accepts as `place`. A query reading as a postcode district or sector, or
+      a postcode the directory lacks or this API may not serve, carries a
+      `postcodeHint` rather than silently matching nothing.
 - [ ] Count active postcodes within an area.
 - [ ] Return postcode-sector, district and area statistics.
 - [ ] Return a clearly defined count of households, dwellings, addresses or
