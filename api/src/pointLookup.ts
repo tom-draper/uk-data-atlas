@@ -769,11 +769,10 @@ export const countryOfCode = (code: string) =>
 	/^[ENSW]\d{8}$/.test(code) ? COUNTRY_BY_PREFIX[code[0]!] : undefined;
 
 /** The country release to place a point with: for the date, else the latest. */
-const countryRelease = (
-	context: RouteContext,
+export const countryRelease = (
+	resolver: GeographyResolver,
 	month: string | undefined,
 ): string | undefined => {
-	const resolver = context.geographyResolver;
 	const dated = resolver
 		.boundaryReleasesFor("country")
 		.filter(
@@ -813,13 +812,39 @@ const tolerance = (
  * nothing is only called outside a release's coverage when its country is
  * known: from a code it matched elsewhere, or else from the country
  * boundaries, which are read last and only for points that need them.
+ *
+ * A point that is a postcode's centroid may name the postcode, and a release
+ * the postcode area index holds is then answered from it without reading
+ * geometry; its answer is the one the geometry would give.
  */
 export const locatePoints = (
-	context: RouteContext,
 	geographyResolver: GeographyResolver,
 	request: LookupRequest,
 	points: LookupPoint[],
+	postcodes: Array<string | undefined> = [],
 ): Array<{ country: PointCountry; results: PointResult[] }> => {
+	const containing = (
+		index: number,
+		geography: string,
+		boundaryRelease: string,
+		point: LookupPoint,
+	) => {
+		const postcode = postcodes[index];
+		return (
+			(postcode === undefined
+				? undefined
+				: geographyResolver.postcodeContainingAreas(
+						postcode,
+						geography,
+						boundaryRelease,
+					)) ??
+			geographyResolver.containingAreas(geography, boundaryRelease, [
+				point.lng,
+				point.lat,
+			]) ??
+			[]
+		);
+	};
 	const located = points.map(() => ({
 		country: undefined as PointCountry | undefined,
 		results: [] as PointResult[],
@@ -867,12 +892,7 @@ export const locatePoints = (
 			);
 			let found: ResolvedContainingArea[];
 			try {
-				found =
-					geographyResolver.containingAreas(
-						geography,
-						boundaryRelease,
-						[point.lng, point.lat],
-					) ?? [];
+				found = containing(index, geography, boundaryRelease, point);
 			} catch (error) {
 				results.push({
 					geography,
@@ -921,7 +941,10 @@ export const locatePoints = (
 			: [],
 	);
 	if (needCountry.length > 0) {
-		const countryReleaseId = countryRelease(context, request.date?.month);
+		const countryReleaseId = countryRelease(
+			geographyResolver,
+			request.date?.month,
+		);
 		for (const index of needCountry) {
 			const entry = located[index]!;
 			const point = points[index]!;
@@ -934,12 +957,12 @@ export const locatePoints = (
 				continue;
 			}
 			try {
-				const countries =
-					geographyResolver.containingAreas(
-						"country",
-						countryReleaseId,
-						[point.lng, point.lat],
-					) ?? [];
+				const countries = containing(
+					index,
+					"country",
+					countryReleaseId,
+					point,
+				);
 				const code = countries
 					.map((country) => countryOfCode(country.code))
 					.find(Boolean);

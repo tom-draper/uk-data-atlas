@@ -1768,7 +1768,7 @@ paths:
                   x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap&period=2022"
                   value:
                     apiVersion: v1
-                    atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                    atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                     data:
                       measure:
                         id: population-estimate
@@ -1862,7 +1862,7 @@ paths:
                   x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward&release=2023-05-uk-bgc"
                   value:
                     apiVersion: v1
-                    atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                    atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                     data:
                       measure:
                         id: population-estimate
@@ -3329,7 +3329,7 @@ paths:
               x-example-request: "/v1/postcodes/SW1A1AA"
               example:
                 apiVersion: v1
-                atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                 data:
                   postcode: SW1A 1AA
                   status: live
@@ -3469,7 +3469,7 @@ paths:
               x-example-request: "/v1/postcodes:batch?postcode=SW1A1AA,M11AE,CF101EP,BT11AA&geography=localAuthority"
               example:
                 apiVersion: v1
-                atlasRelease: sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                 data:
                   date: "2026-08"
                   dateBasis: directory-edition
@@ -5172,7 +5172,7 @@ paths:
                   boundaryRelease: 2023-05-uk-bgc-v2
                   atlasRelease:
                     id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
-                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                   identity:
                     status: available
                     artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
@@ -5225,7 +5225,7 @@ paths:
                     Data: Population (Local Authority) — Office for National Statistics.
                     Boundaries: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2) — Office for National Statistics.
                     Licence: Open Government Licence v3.0.
-                    Compiled by the UK Data Atlas, release sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38.
+                    Compiled by the UK Data Atlas, release sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8.
                   note: Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.
                 meta:
                   nextCursor: null
@@ -7675,7 +7675,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                     artifactCount: 338
                     current: true
                 meta:
@@ -7866,10 +7866,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:e2e1decfd0b0e4e1623230e57f191bb0056fb38ea22cc6ba1e0444b6f60f7f38
+                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []

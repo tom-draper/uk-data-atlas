@@ -140,6 +140,10 @@ export const parsePostcode = (input: string): ParsedPostcode | undefined => {
 	return undefined;
 };
 
+/** A unit postcode as the index keys it, "SW1A 1AA" as "SW1A1AA". */
+export const compactPostcode = (postcode: string) =>
+	postcode.replace(/\s+/g, "").toUpperCase();
+
 type QualityIndicator = {
 	indicator: number;
 	description: string;
@@ -425,6 +429,15 @@ export class PostcodeIndex {
 		if (this.shards.size > this.capacity)
 			this.shards.delete(this.shards.keys().next().value!);
 		return shard;
+	}
+
+	/** Where a compact unit postcode sits: its district and position there. */
+	position(postcode: string): { district: string; at: number } | undefined {
+		const district = postcode.slice(0, -3);
+		const shard = this.shard(district);
+		if (!shard) return undefined;
+		const at = findSorted(shard.postcodes, postcode);
+		return at === -1 ? undefined : { district, at };
 	}
 
 	lookup(

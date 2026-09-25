@@ -13,6 +13,7 @@ import type {
 } from "./namedLocations";
 import type { AreaSearchIndexArtifact } from "./areaSearch";
 import type { PlaceIndexArtifact } from "./placeIndex";
+import type { PostcodeAreaIndex } from "./postcodeAreas";
 import type { PostcodeIndex } from "./postcodes";
 import type { RelationshipPath } from "./relationshipPaths";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
@@ -29,7 +30,10 @@ import {
 	type BoundaryReleaseComparison,
 } from "./resolver/releaseComparison";
 import { LocationsResolver } from "./resolver/locations";
-import { SpatialResolver } from "./resolver/spatial";
+import {
+	SpatialResolver,
+	type ResolvedContainingArea,
+} from "./resolver/spatial";
 import {
 	CrosswalkTranslator,
 	type CrosswalkLookup,
@@ -110,6 +114,8 @@ export type GeographyResolverInputs = {
 	areaSearchIndex?: AreaSearchIndexArtifact;
 	/** Every unit postcode's centroid, compiled from the ONS Postcode Directory. */
 	postcodeIndex?: PostcodeIndex;
+	/** The areas each postcode falls in, compiled for the releases read most. */
+	postcodeAreaIndex?: PostcodeAreaIndex;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
@@ -189,6 +195,32 @@ export class GeographyResolver {
 
 	postcodeIndex() {
 		return this.inputs.postcodeIndex;
+	}
+	postcodeAreaIndex() {
+		return this.inputs.postcodeAreaIndex;
+	}
+	/**
+	 * The areas of one release a unit postcode's centroid lies in, from the
+	 * compiled postcode area index: the answer `containingAreas` gives for the
+	 * centroid, without reading geometry. Undefined when the index does not
+	 * hold the release, so the caller places the centroid live.
+	 */
+	postcodeContainingAreas(
+		postcode: string,
+		geography: string,
+		boundaryRelease: string,
+	): ResolvedContainingArea[] | undefined {
+		const matches = this.inputs.postcodeAreaIndex?.containing(
+			postcode,
+			geography,
+			boundaryRelease,
+		);
+		if (!matches) return undefined;
+		return this.spatial.resolvePlacedAreas(
+			geography,
+			boundaryRelease,
+			matches,
+		);
 	}
 
 	area(identity: AreaIdentity): AreaRecord | undefined {

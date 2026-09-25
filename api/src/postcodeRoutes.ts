@@ -5,6 +5,7 @@ import {
 	parseLookupRequest,
 } from "./pointLookup";
 import {
+	compactPostcode,
 	parsePostcode,
 	postcodeLookupPoint,
 	type PostcodeRecord,
@@ -175,10 +176,10 @@ export const handlePostcodeRoutes = ({
 		};
 	const point = postcodeLookupPoint(record.centroid);
 	const [{ country, results }] = locatePoints(
-		context,
 		geographyResolver,
 		request,
 		[point],
+		[compactPostcode(record.postcode)],
 	) as [ReturnType<typeof locatePoints>[number]];
 	return {
 		status: 200,
@@ -315,10 +316,14 @@ export const handlePostcodeBatchRoutes = ({
 			: [],
 	);
 	const located = locatePoints(
-		context,
 		geographyResolver,
 		request,
 		placed.map(({ point }) => point),
+		placed.map(({ index }) =>
+			compactPostcode(
+				(outcomes[index] as { record: PostcodeRecord }).record.postcode,
+			),
+		),
 	);
 	const locatedAt = new Map(
 		placed.map(({ index, point }, at) => [

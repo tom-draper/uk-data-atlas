@@ -1,6 +1,16 @@
+import type { AreaGeometryCache } from "../src/areaGeometry";
+import {
+	compilePostcodeAreas,
+	PostcodeAreaIndex,
+	placePoints,
+	releaseCounts,
+} from "../src/postcodeAreas";
 import {
 	compilePostcodeIndex,
+	parsePostcode,
 	PostcodeIndex,
+	postcodeLookupPoint,
+	type PostcodeShard,
 	type PostcodeSource,
 	type PostcodeSourceRow,
 } from "../src/postcodes";
@@ -55,4 +65,83 @@ export const postcodeIndexFor = (
 		options.capacity,
 	);
 	return { index, artifact, files, texts, reads };
+};
+
+/** Every postcode's centroid in shard order, NaN where it has none. */
+export const postcodeCentroids = (
+	index: PostcodeIndex,
+	texts: Map<string, string>,
+) => {
+	const longitudes: number[] = [];
+	const latitudes: number[] = [];
+	for (const entry of index.artifact.shards)
+		for (const postcode of (
+			JSON.parse(texts.get(entry.path)!) as PostcodeShard
+		).postcodes) {
+			const found = index.lookup(
+				parsePostcode(postcode) as Extract<
+					ReturnType<typeof parsePostcode>,
+					{ kind: "unit" }
+				>,
+			);
+			const point =
+				found.status === "found" && found.record.centroid
+					? postcodeLookupPoint(found.record.centroid)
+					: undefined;
+			longitudes.push(point?.lng ?? Number.NaN);
+			latitudes.push(point?.lat ?? Number.NaN);
+		}
+	return {
+		longitudes: Float64Array.from(longitudes),
+		latitudes: Float64Array.from(latitudes),
+	};
+};
+
+/**
+ * A postcode area index placing an index's postcodes in these releases of a
+ * geometry cache, reading its shards from memory.
+ */
+export const postcodeAreaIndexFor = (
+	index: PostcodeIndex,
+	texts: Map<string, string>,
+	cache: AreaGeometryCache,
+	releases: string[],
+) => {
+	const { longitudes, latitudes } = postcodeCentroids(index, texts);
+	const { artifact, files } = compilePostcodeAreas(
+		index.artifact,
+		releases.map((key) => {
+			const [geography, boundaryRelease] = key.split("/") as [
+				string,
+				string,
+			];
+			const placements = placePoints(
+				longitudes,
+				latitudes,
+				cache.codes(geography, boundaryRelease),
+				(code) => cache.get(geography, boundaryRelease, code),
+			);
+			return {
+				release: {
+					geography,
+					boundaryRelease,
+					purposes: ["default-lookup" as const],
+					areaRelease: `sha256:${key}`,
+					geometryInput: `sha256:${key}`,
+					counts: releaseCounts(
+						placements,
+						(at) => !Number.isNaN(longitudes[at]!),
+					),
+				},
+				placements,
+			};
+		}),
+	);
+	const shardTexts = new Map(files.map((file) => [file.path, file.text]));
+	const reads: string[] = [];
+	const areaIndex = new PostcodeAreaIndex(artifact, index, (path) => {
+		reads.push(path);
+		return shardTexts.get(path)!;
+	});
+	return { areaIndex, artifact, files, shardTexts, reads };
 };
