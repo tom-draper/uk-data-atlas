@@ -19,6 +19,7 @@ import { handleDataRankingRoutes } from "./dataRankingRoutes";
 import { handleDataChangeRoutes } from "./dataChangeRoutes";
 import { handleDataValueRoutes } from "./dataValueRoutes";
 import { handlePlaceRoutes } from "./placeRoutes";
+import { handlePostcodeRoutes } from "./postcodeRoutes";
 import { handleDataTransformRoutes } from "./dataTransformRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
@@ -222,6 +223,11 @@ const routeFamilies: RouteFamily[] = [
 		name: "places",
 		owns: (segments) => segments[0] === "v1" && segments[1] === "places",
 		handle: handlePlaceRoutes,
+	},
+	{
+		name: "postcodes",
+		owns: (segments) => segments[0] === "v1" && segments[1] === "postcodes",
+		handle: handlePostcodeRoutes,
 	},
 	{
 		name: "data-transforms",

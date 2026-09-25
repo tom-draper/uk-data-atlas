@@ -54,6 +54,9 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "named-locations", path: "named-locations.json" },
 	{ id: "place-index", path: "place-index.json" },
 	{ id: "area-search-index", path: "area-search-index.json" },
+	// The manifest holds the hash of every postcode shard, so pinning it pins
+	// them.
+	{ id: "postcode-index", path: "postcode-index.json" },
 	{
 		id: "location-projection-inventory",
 		path: "location-projection-inventory.json",

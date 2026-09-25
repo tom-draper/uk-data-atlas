@@ -793,8 +793,19 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Postcodes, homes and addresses — data required, later
 
-- [ ] Postcode → ward, local authority, constituency and country lookup, with
-      an explicit postcode release and containment method.
+- [x] Postcode → local authority, ward, constituency, or any other compiled
+      geography and release, through `GET /v1/postcodes/{postcode}`. Postcodes
+      are compiled from the ONS Postcode Directory (August 2026, 2.67 million
+      live and terminated postcodes) into one shard per postcode area, read on
+      first use. A postcode's centroid is placed by the same point lookup as
+      `areas:contains`, so every answer names its directory edition, boundary
+      release, the centroid's positional quality and whether it lies near a
+      boundary. Against the directory's own assignments for a sample of 6,612
+      postcodes, 19,831 of 19,836 local authority, ward and constituency
+      placements agree, and the five that differ are all flagged
+      `nearBoundary`. Northern Ireland postcodes are licensed by Land and
+      Property Services for internal business use only, so they are refused
+      with 451 rather than served.
 - [ ] Count active postcodes within an area.
 - [ ] Return postcode-sector, district and area statistics.
 - [ ] Return a clearly defined count of households, dwellings, addresses or
@@ -1434,9 +1445,8 @@ GET /v1/snapshots/{snapshot-id}
       requested map, export, embed or commercial report. It should identify
       applicable source licences, any redistribution constraint, and ready-to-
       use attribution; it is an aid to compliance, not legal advice.
-- [ ] Add versioned postcode-to-geography resolution as soon as the relevant
-      ONS directory release is available, including the postcode release and
-      containment method in every response.
+- [x] Add versioned postcode-to-geography resolution, including the postcode
+      directory edition and containment method in every response.
 - [x] Extend coordinate lookup to multiple explicitly selected geographies and
       add a nearest-area convenience route. Nearest must be labelled as a
       distance result, never as containment.
@@ -2398,7 +2408,7 @@ rather than falling back to the default.
 | `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                  |
 | `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                            |
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                             |
-| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `2`         | Geometry releases held in memory at once.                                                    |
+| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `3`         | Geometry releases held in memory at once.                                                    |
 | `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires; unset, it is open.                                         |
 | `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                        |
 | `ATLAS_MAX_URL_LENGTH`               | `4096`      | Longest request target served.                                                               |
@@ -3486,6 +3496,7 @@ second inventory to maintain:
 - `GET /v1/openapi.yaml` — The OpenAPI description of this API
 - `GET /v1/docs` — The human documentation landing page
 - `GET /v1/places` — Find every place a name could mean
+- `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
 - `GET /v1/areas:resolve` — Resolve a code, name or alias to every exact area identity it can mean
 - `GET /v1/areas/{geography}/{release}/{code}/dossier` — Get the verified geography dossier for one exact area identity
@@ -3666,6 +3677,7 @@ catalogues by the contract tests:
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`
+- `GET /v1/postcodes/SW1A1AA`
 - `GET /v1/locations?q=york`
 - `GET /v1/locations/london`
 - `GET /v1/boundary-releases`

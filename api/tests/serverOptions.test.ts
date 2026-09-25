@@ -7,7 +7,7 @@ test("defaults to a limited, logged single public instance", () => {
 	const configuration = readServeConfiguration({});
 	assert.equal(configuration.port, 3001);
 	assert.equal(configuration.host, "127.0.0.1");
-	assert.equal(configuration.geometryCacheReleases, 2);
+	assert.equal(configuration.geometryCacheReleases, 3);
 	assert.deepEqual(configuration.server.rateLimit, {
 		capacity: 600,
 		refillPerSecond: 10,

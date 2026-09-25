@@ -12,6 +12,7 @@ import {
 	readAreaInventory,
 	readAreaLookup,
 	readAreaSearchIndex,
+	readPostcodeIndex,
 	readBoundaryRegistry,
 	readGeographyInventory,
 	readPlaceIndex,
@@ -142,6 +143,7 @@ export const readApiCatalogues = (
 			namedLocationInventory,
 		),
 		areaSearchIndex: readAreaSearchIndex(apiRoot, areaInventory),
+		postcodeIndex: readPostcodeIndex(apiRoot),
 		locationProjectionStore,
 		relationshipPathIndex: createRelationshipPathIndex(
 			relationshipPathInventory,

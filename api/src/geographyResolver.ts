@@ -13,6 +13,7 @@ import type {
 } from "./namedLocations";
 import type { AreaSearchIndexArtifact } from "./areaSearch";
 import type { PlaceIndexArtifact } from "./placeIndex";
+import type { PostcodeIndex } from "./postcodes";
 import type { RelationshipPath } from "./relationshipPaths";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import {
@@ -40,6 +41,7 @@ export type GeographyRequirement =
 	| "areas"
 	| "places"
 	| "area-search"
+	| "postcodes"
 	| "geometry"
 	| "relationships"
 	| "named-locations"
@@ -106,6 +108,8 @@ export type GeographyResolverInputs = {
 	placeIndex?: PlaceIndexArtifact;
 	/** Every area identity by code, name and alias, compiled with the area inventory. */
 	areaSearchIndex?: AreaSearchIndexArtifact;
+	/** Every unit postcode's centroid, compiled from the ONS Postcode Directory. */
+	postcodeIndex?: PostcodeIndex;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
@@ -151,6 +155,7 @@ export class GeographyResolver {
 			areas: this.areas.hasAreas(),
 			places: this.areas.hasPlaceIndex(),
 			"area-search": this.areas.hasAreaSearch(),
+			postcodes: this.inputs.postcodeIndex !== undefined,
 			geometry: this.spatial.hasAreaGeometryCache(),
 			relationships: this.lineage.hasAreaRelationships(),
 			"named-locations": this.locations.hasNamedLocationInventory(),
@@ -163,6 +168,7 @@ export class GeographyResolver {
 			places: "Build the place index before resolving place names.",
 			"area-search":
 				"Build the area search index before searching areas.",
+			postcodes: "Build the postcode index before resolving postcodes.",
 			geometry:
 				"Build the geometry source registry before serving geometry.",
 			relationships:
@@ -179,6 +185,10 @@ export class GeographyResolver {
 
 	geographyInventory() {
 		return this.inputs.geographyInventory;
+	}
+
+	postcodeIndex() {
+		return this.inputs.postcodeIndex;
 	}
 
 	area(identity: AreaIdentity): AreaRecord | undefined {

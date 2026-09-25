@@ -56,6 +56,7 @@ export const handleIndexRoutes = ({
 				"/v1/data/{measure-id}/change",
 				"/v1/data/{measure-id}/value",
 				"/v1/places",
+				"/v1/postcodes/{postcode}",
 				"/v1/data/{measure-id}/compare",
 				"/v1/data/{measure-id}/aggregate",
 				"/v1/data/{measure-id}/convert",
