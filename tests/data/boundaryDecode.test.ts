@@ -77,7 +77,18 @@ describe("decodeBoundaryData", () => {
 				{
 					type: "Feature",
 					properties: {},
-					geometry: { type: "Point", coordinates: [543620, 184826] },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[543620, 184826],
+								[543621, 184826],
+								[543621, 184827],
+								[543620, 184827],
+								[543620, 184826],
+							],
+						],
+					},
 				},
 			],
 		});
@@ -86,7 +97,7 @@ describe("decodeBoundaryData", () => {
 			"urn:ogc:def:crs:OGC:1.3:CRS84",
 		);
 		const [longitude, latitude] =
-			boundary.features[0].geometry!.coordinates;
+			boundary.features[0].geometry!.coordinates[0]![0]!;
 		expect(longitude).toBeCloseTo(0.1, 1);
 		expect(latitude).toBeCloseTo(51.5, 1);
 	});
