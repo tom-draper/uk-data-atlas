@@ -36,6 +36,22 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Each result has a `place` reference, like `localAuthority/E06000023`, that you can pass straight to [Get a value for a place](/docs/v1/reference/start-here/measure-value-for-place).",
 		],
 	},
+	resolvePostcode: {
+		title: "Find a postcode's areas",
+		intro: "Look up a full UK postcode and find the areas containing its centroid, including its local authority, ward and constituency by default. The response includes the postcode's status, source edition and positional quality so you can judge how precise the placement is.",
+		tips: [
+			"A postcode centroid is one point; addresses in that postcode can fall on both sides of a boundary. Check `nearBoundary` and the positional caution before treating the result as exact.",
+			"Northern Ireland postcodes are not available because of licensing restrictions. Use [Find areas at a point](/docs/v1/reference/map/find-containing-areas) when you already have coordinates.",
+		],
+	},
+	resolvePostcodes: {
+		title: "Find areas for postcodes",
+		intro: "Look up up to 100 full UK postcodes in one request and find the areas containing each postcode's centroid. The response gives every lookup the same source edition and boundary settings, making it easier to tag a list consistently.",
+		tips: [
+			"Give each postcode as a repeated `postcode` parameter. The request accepts full unit postcodes only.",
+			"Each postcode is still placed by one centroid, so its addresses may span a boundary. Check the positional quality and `nearBoundary` fields.",
+		],
+	},
 	getMeasureValueForPlace: {
 		title: "Get a value for a place",
 		intro: 'The quickest way to answer a question like "what was the population of the North West in 2022?". Give a measure and a place name and you get a single number back, with a note of exactly how it was worked out.',
