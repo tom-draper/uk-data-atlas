@@ -3453,17 +3453,56 @@ paths:
         wards. When the name matches places but the measure answers none, the
         response is a 422 with a `candidates` member saying why for each, such
         as a median, which cannot be summed over a region.
+
+
+        Give `postcode` instead of `place` to answer for where a unit postcode
+        is: `GET /v1/data/imd-decile/value?postcode=M1 1AE`. The postcode's
+        centroid is placed in the areas the data was published for, as drawn
+        for the data's own boundary year rather than today's, in a boundary
+        release holding that partition's codes; `boundaryMatch` names it. With
+        no `geography`, the finest geography the measure is published on is
+        tried first, and a coarser one only where a finer does not cover the
+        postcode's country or has no value there; `passedOver` says why, and
+        `otherGeographies` gives the request for each other geography. A
+        centroid on a shared boundary whose areas answer differently is a 409
+        with `choices`, and a postcode no geography answers is a 422 with a
+        `candidates` member saying why for each.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
         - name: place
           in: query
-          required: true
+          required: false
           schema:
             type: string
           example: North West
           description: >
             A place name, an area code, or a place reference such as
-            `localAuthority/E08000003` from `GET /v1/places`.
+            `localAuthority/E08000003` from `GET /v1/places`. One of `place`
+            or `postcode` is required.
+        - name: postcode
+          in: query
+          required: false
+          schema:
+            type: string
+          example: SW1A 1AA
+          description: >
+            A full unit postcode, in any case and with or without its space.
+            Refused as `/postcodes/{postcode}` refuses it.
+        - name: geography
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >
+            With `postcode`, the geography to answer in, such as `lsoa` or
+            `localAuthority`. Omit for the finest that answers.
+        - name: boundaryYear
+          in: query
+          required: false
+          schema: { type: string, pattern: "^\\d{4}$" }
+          description: >
+            With `postcode`, the boundary year of the partition to answer
+            from. Omit for the newest.
         - name: period
           in: query
           required: false
