@@ -14,6 +14,11 @@ import {
 	areaSearchIndexMismatch,
 	type AreaSearchIndexArtifact,
 } from "./areaSearch";
+import {
+	PostcodeIndex,
+	postcodeIndexMismatch,
+	type PostcodeIndexArtifact,
+} from "./postcodes";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 
 const publicPath = (apiRoot: string, filename: string) =>
@@ -100,6 +105,26 @@ export const readPlaceIndex = (
 		);
 	}
 	return index;
+};
+
+/**
+ * The compiled postcode index. Only its manifest is read here; each area's
+ * shard is read, and checked against the manifest, on first use.
+ */
+export const readPostcodeIndex = (apiRoot: string): PostcodeIndex => {
+	const path = publicPath(apiRoot, "postcode-index.json");
+	const artifact = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as PostcodeIndexArtifact;
+	const mismatch = postcodeIndexMismatch(artifact);
+	if (mismatch) {
+		throw new Error(
+			`The postcode index at ${path} ${mismatch}. Run pnpm build:postcode-index.`,
+		);
+	}
+	return new PostcodeIndex(artifact, (shard) =>
+		readFileSync(publicPath(apiRoot, shard), "utf8"),
+	);
 };
 
 /** The compiled area search index, refused unless built from this inventory. */

@@ -8,12 +8,14 @@ import {
 import type { LocationProjectionStore } from "../src/locationProjections";
 import { compileAreaSearchIndex } from "../src/areaSearch";
 import { compilePlaceIndex } from "../src/placeIndex";
+import { postcodeIndexFor, postcodeRow } from "./postcodeFixtures";
 import { areaLookup, namedLocationInventory } from "./geographyFixtures";
 
 const requirements: GeographyRequirement[] = [
 	"areas",
 	"places",
 	"area-search",
+	"postcodes",
 	"geometry",
 	"relationships",
 	"named-locations",
@@ -27,6 +29,7 @@ test("requires returns the standard 503 for each unavailable capability", () => 
 		areas: "Build the area inventory before serving geography data.",
 		places: "Build the place index before resolving place names.",
 		"area-search": "Build the area search index before searching areas.",
+		postcodes: "Build the postcode index before resolving postcodes.",
 		geometry: "Build the geometry source registry before serving geometry.",
 		relationships:
 			"Build the crosswalk inventory before serving area relationships.",
@@ -60,6 +63,7 @@ test("requires accepts each capability when its owning input is present", () => 
 			areaLookup,
 			"sha256:fixture-areas",
 		),
+		postcodeIndex: postcodeIndexFor([postcodeRow("M1 1AE")]).index,
 		areaGeometryCache: {} as AreaGeometryCache,
 		crosswalkLookup: new Map(),
 		namedLocationInventory,

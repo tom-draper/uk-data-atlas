@@ -97,10 +97,12 @@ export const readServeConfiguration = (
 	return {
 		port: integer(env, "PORT", 3001, 1, 65535),
 		host: env.HOST || "127.0.0.1",
+		// A postcode is placed in three geographies by default; a smaller
+		// cache would reload one of their releases on every lookup.
 		geometryCacheReleases: integer(
 			env,
 			"ATLAS_GEOMETRY_CACHE_RELEASES",
-			2,
+			3,
 			1,
 		),
 		shutdownGraceSeconds: integer(

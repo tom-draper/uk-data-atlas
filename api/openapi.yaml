@@ -1768,7 +1768,7 @@ paths:
                   x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap&period=2022"
                   value:
                     apiVersion: v1
-                    atlasRelease: sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    atlasRelease: sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
                     data:
                       measure:
                         id: population-estimate
@@ -1862,7 +1862,7 @@ paths:
                   x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward&release=2023-05-uk-bgc"
                   value:
                     apiVersion: v1
-                    atlasRelease: sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    atlasRelease: sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
                     data:
                       measure:
                         id: population-estimate
@@ -3260,6 +3260,144 @@ paths:
                   nextCursor: null
         "400":
           $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
+  /postcodes/{postcode}:
+    get:
+      operationId: resolvePostcode
+      tags: ["Start here"]
+      summary: Find where a postcode is and the areas containing it
+      x-likely-refusal:
+        status: 400
+        when: "A postcode district or sector is given rather than a full unit postcode."
+        x-example-request: "/v1/postcodes/SW1A"
+      description: >
+        Looks a unit postcode up in the ONS Postcode Directory and places its
+        centroid in each requested geography, through the same point lookup as
+        `/areas:contains`. The postcode is read in any case, with or without
+        its space.
+
+
+        With no `geography` or `release`, the postcode is placed in its local
+        authority, ward and Westminster constituency. With no `date`, each
+        release is the latest dated on or before the directory's edition, and
+        `dateBasis` says which was used. Terminated postcodes are served, with
+        the month they were terminated.
+
+
+        A postcode is placed by a single centroid, and its addresses can fall
+        on both sides of a boundary. The centroid's positional quality comes
+        from the directory; where the directory states an accuracy it becomes
+        the point's uncertainty and counts towards `positionalToleranceM`.
+        Where it does not, as for centroids ONS imputed or set at a postcode
+        sector's mean, `caution` says that `nearBoundary` may understate the
+        risk. A postcode with no grid reference, such as one in the Channel
+        Islands or the Isle of Man, is described but placed in no area.
+
+
+        Northern Ireland postcodes are licensed by Land and Property Services
+        for internal business use only and are refused with 451. The source's
+        required attribution is returned with every answer.
+      parameters:
+        - name: postcode
+          in: path
+          required: true
+          schema: { type: string }
+          description: A full unit postcode, such as `SW1A 1AA` or `sw1a1aa`.
+        - $ref: "#/components/parameters/PointLookupGeography"
+        - $ref: "#/components/parameters/PointLookupRelease"
+        - $ref: "#/components/parameters/PointLookupDate"
+      responses:
+        "200":
+          description: The postcode, its centroid and the areas containing it.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostcodeLookupEnvelope"
+              x-example-request: "/v1/postcodes/SW1A1AA"
+              example:
+                apiVersion: v1
+                atlasRelease: sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
+                data:
+                  postcode: SW1A 1AA
+                  status: live
+                  introduced: "1980-01"
+                  userType: large
+                  country: E92000001
+                  centroid:
+                    crs: EPSG:27700
+                    easting: 529090
+                    northing: 179645
+                    positionalQuality:
+                      indicator: 1
+                      description: Within the building of the matched address closest to the postcode mean.
+                      accuracyM: 0.5
+                  point:
+                    lng: -0.1415876
+                    lat: 51.5010089
+                    crs: EPSG:4326
+                    precision:
+                      uncertaintyM: 2.5
+                      basis: decimal-places-and-transformation
+                  date: "2026-08"
+                  dateBasis: directory-edition
+                  pointCountry:
+                    code: GB-ENG
+                    determinedBy: area-code
+                  boundaryRule: included
+                  results:
+                    - geography: localAuthority
+                      boundaryRelease: 2026-05-uk-bgc
+                      status: matched
+                      matches:
+                        - id: localAuthority/2026-05-uk-bgc/E09000033
+                          code: E09000033
+                          name: Westminster
+                          nearBoundary: false
+                    - geography: ward
+                      boundaryRelease: 2026-05-uk-bgc
+                      status: matched
+                      matches:
+                        - id: ward/2026-05-uk-bgc/E05013806
+                          code: E05013806
+                          name: St James's
+                          nearBoundary: false
+                    - geography: constituency
+                      boundaryRelease: 2024-07-uk-bgc
+                      status: matched
+                      matches:
+                        - id: constituency/2024-07-uk-bgc/E14001172
+                          code: E14001172
+                          name: Cities of London and Westminster
+                          nearBoundary: false
+                  source:
+                    title: ONS Postcode Directory (August 2026)
+                    edition: "2026-08"
+                    publisher: Office for National Statistics
+        "400":
+          description: >
+            The postcode is not a UK postcode, or names a district or sector
+            rather than a unit; or the geography, release or date is malformed
+            as for `/areas:contains`.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: >
+            The postcode is not in the directory edition served, or a pinned
+            release or geography is unknown.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "451":
+          description: The postcode is in Northern Ireland, which this API is not licensed to serve.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -4852,7 +4990,7 @@ paths:
                   boundaryRelease: 2023-05-uk-bgc-v2
                   atlasRelease:
                     id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
-                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
                   identity:
                     status: available
                     artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
@@ -4905,7 +5043,7 @@ paths:
                     Data: Population (Local Authority) — Office for National Statistics.
                     Boundaries: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2) — Office for National Statistics.
                     Licence: Open Government Licence v3.0.
-                    Compiled by the UK Data Atlas, release sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e.
+                    Compiled by the UK Data Atlas, release sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480.
                   note: Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.
                 meta:
                   nextCursor: null
@@ -7355,7 +7493,7 @@ paths:
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
                     artifactCount: 338
                     current: true
                 meta:
@@ -7546,10 +7684,10 @@ paths:
                 data:
                   from:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
                   to:
                     releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:22dd47da9600276649e890d93c4d4ed4b78caa59b5a1a377ba0f20ef5469e03e
+                    href: /v1/atlas-releases/sha256:615675fad65644201c2d226df3ec4692001095135086bd1fa57cedb089271480
                   summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
                   artifacts:
                     added: []
@@ -10187,6 +10325,90 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/PointContainment"
+
+    PostcodeLookup:
+      type: object
+      required:
+        [
+          postcode,
+          status,
+          introduced,
+          userType,
+          country,
+          centroid,
+          results,
+          source,
+        ]
+      properties:
+        postcode:
+          type: string
+          description: The postcode as the directory writes it, such as `SW1A 1AA`.
+        status: { enum: [live, terminated] }
+        introduced: { type: string, description: "YYYY-MM" }
+        terminated: { type: string, description: "YYYY-MM, when terminated." }
+        userType:
+          enum: [small, large]
+          description: A large user is a single address receiving enough mail for its own postcode.
+        country:
+          type: string
+          description: The country code the directory assigns, including L93000001 for the Channel Islands and M83000003 for the Isle of Man.
+        centroid:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [crs, easting, northing, positionalQuality]
+              properties:
+                crs: { enum: ["EPSG:27700", "EPSG:29902"] }
+                easting: { type: integer }
+                northing: { type: integer }
+                positionalQuality:
+                  type: object
+                  required: [indicator, description, accuracyM]
+                  properties:
+                    indicator:
+                      { type: integer, description: The directory's GRIDIND. }
+                    description: { type: string }
+                    accuracyM: { type: ["number", "null"] }
+        point:
+          $ref: "#/components/schemas/LookupPoint"
+        date: { type: string }
+        dateBasis: { enum: [requested, directory-edition] }
+        pointCountry:
+          $ref: "#/components/schemas/PointCountry"
+        boundaryRule: { const: included }
+        results:
+          type: array
+          description: One per requested geography, in the order requested; empty when the postcode has no centroid.
+          items:
+            allOf:
+              - $ref: "#/components/schemas/PointLookupRelease"
+              - $ref: "#/components/schemas/PointLookupResult"
+        caution: { type: string }
+        detail: { type: string }
+        source:
+          type: object
+          required: [title, edition, publisher, licence, attribution]
+          properties:
+            title: { type: string }
+            edition: { type: string }
+            publisher: { type: string }
+            licence:
+              type: object
+              properties:
+                name: { type: string }
+                url: { type: string }
+            attribution:
+              type: array
+              items: { type: string }
+        note: { type: string }
+
+    PostcodeLookupEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/PostcodeLookup"
 
     PointContainmentBatch:
       type: object
