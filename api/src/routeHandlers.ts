@@ -19,7 +19,10 @@ import { handleDataRankingRoutes } from "./dataRankingRoutes";
 import { handleDataChangeRoutes } from "./dataChangeRoutes";
 import { handleDataValueRoutes } from "./dataValueRoutes";
 import { handlePlaceRoutes } from "./placeRoutes";
-import { handlePostcodeRoutes } from "./postcodeRoutes";
+import {
+	handlePostcodeBatchRoutes,
+	handlePostcodeRoutes,
+} from "./postcodeRoutes";
 import { handleDataTransformRoutes } from "./dataTransformRoutes";
 import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
@@ -228,6 +231,14 @@ const routeFamilies: RouteFamily[] = [
 		name: "postcodes",
 		owns: (segments) => segments[0] === "v1" && segments[1] === "postcodes",
 		handle: handlePostcodeRoutes,
+	},
+	{
+		name: "postcodes-batch",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "postcodes:batch",
+		handle: handlePostcodeBatchRoutes,
 	},
 	{
 		name: "data-transforms",

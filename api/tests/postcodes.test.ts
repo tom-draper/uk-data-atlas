@@ -24,12 +24,14 @@ test("reads a postcode however it was typed", () => {
 		compact: "SW1A1AA",
 		display: "SW1A 1AA",
 		area: "SW",
+		district: "SW1A",
 	});
 	assert.deepEqual(parsePostcode("m1  1ae"), {
 		kind: "unit",
 		compact: "M11AE",
 		display: "M1 1AE",
 		area: "M",
+		district: "M1",
 	});
 	// Two non-geographic postcodes the directory holds.
 	assert.equal(unit("GIR 0AA").area, "GIR");
@@ -46,7 +48,7 @@ test("reads a postcode however it was typed", () => {
 		assert.equal(parsePostcode(text), undefined, text);
 });
 
-test("shards postcodes by area, sorted by code unit", () => {
+test("shards postcodes by district, sorted by code unit", () => {
 	const { artifact, files } = compilePostcodeIndex(
 		[
 			postcodeRow("M1 1AE"),
@@ -58,11 +60,16 @@ test("shards postcodes by area, sorted by code unit", () => {
 		postcodeSource,
 	);
 	assert.deepEqual(
-		artifact.shards.map((shard) => [shard.area, shard.postcodes]),
+		artifact.shards.map((shard) => [
+			shard.district,
+			shard.path,
+			shard.postcodes,
+		]),
 		[
-			["B", 1],
-			["GIR", 1],
-			["M", 3],
+			["B1", "postcodes/B/B1.json", 1],
+			["GIR", "postcodes/GIR/GIR.json", 1],
+			["M1", "postcodes/M/M1.json", 2],
+			["M11", "postcodes/M/M11.json", 1],
 		],
 	);
 	assert.deepEqual(artifact.counts, {
@@ -72,10 +79,10 @@ test("shards postcodes by area, sorted by code unit", () => {
 		withoutGridReference: 1,
 	});
 	const m = JSON.parse(
-		files.find((file) => file.path === "postcodes/M.json")!.text,
+		files.find((file) => file.path === "postcodes/M/M1.json")!.text,
 	);
-	assert.deepEqual(m.postcodes, ["M111AA", "M11AA", "M11AE"]);
-	assert.deepEqual(m.terminated, [0, 201005, 0]);
+	assert.deepEqual(m.postcodes, ["M11AA", "M11AE"]);
+	assert.deepEqual(m.terminated, [201005, 0]);
 	assert.equal(postcodeIndexMismatch(artifact), undefined);
 	assert.match(
 		postcodeIndexMismatch({
@@ -192,7 +199,7 @@ test("describes each postcode from its shard, reading a shard once", () => {
 	);
 	assert.deepEqual(index.lookup(unit("M1 9ZZ")), { status: "not-found" });
 	assert.deepEqual(index.lookup(unit("ZE1 1AA")), { status: "not-found" });
-	assert.deepEqual(reads, ["postcodes/M.json", "postcodes/S.json"]);
+	assert.deepEqual(reads, ["postcodes/M/M1.json", "postcodes/S/S1.json"]);
 });
 
 test("keeps only the most recently used shards in memory", () => {
@@ -210,10 +217,10 @@ test("keeps only the most recently used shards in memory", () => {
 	])
 		index.lookup(unit(postcode));
 	assert.deepEqual(reads, [
-		"postcodes/B.json",
-		"postcodes/M.json",
-		"postcodes/S.json",
-		"postcodes/M.json",
+		"postcodes/B/B1.json",
+		"postcodes/M/M1.json",
+		"postcodes/S/S1.json",
+		"postcodes/M/M1.json",
 	]);
 });
 

@@ -796,7 +796,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Postcode → local authority, ward, constituency, or any other compiled
       geography and release, through `GET /v1/postcodes/{postcode}`. Postcodes
       are compiled from the ONS Postcode Directory (August 2026, 2.67 million
-      live and terminated postcodes) into one shard per postcode area, read on
+      live and terminated postcodes) into one shard per postcode district, read on
       first use. A postcode's centroid is placed by the same point lookup as
       `areas:contains`, so every answer names its directory edition, boundary
       release, the centroid's positional quality and whether it lies near a
@@ -813,6 +813,13 @@ only **available** when its endpoint, contract and provenance are published.
       holds that partition's codes. The finest geography answers first, and a
       coarser one only where a finer does not cover the postcode's country or
       has no value there, each passed-over geography saying why.
+- [x] Look up to 100 postcodes in one request through
+      `GET /v1/postcodes:batch?postcode=`. Each postcode is reported in its own
+      entry, so one that is malformed, unknown, unserved or without a grid
+      reference does not fail the batch, and the placed centroids are tested
+      together, reading each boundary release once. District shards keep a
+      batch spread across the country in memory: 97 postcodes in 84 postcode
+      areas take about a quarter of a second once their releases are loaded.
 - [x] Recognise a unit postcode in `GET /v1/places?q=` as a place of its own,
       listed first with a `postcode/{code}` reference that a value request
       accepts as `place`. A query reading as a postcode district or sector, or
@@ -3509,6 +3516,7 @@ second inventory to maintain:
 - `GET /v1/docs` — The human documentation landing page
 - `GET /v1/places` — Find every place a name could mean
 - `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
+- `GET /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
 - `GET /v1/areas:resolve` — Resolve a code, name or alias to every exact area identity it can mean
 - `GET /v1/areas/{geography}/{release}/{code}/dossier` — Get the verified geography dossier for one exact area identity
@@ -3690,6 +3698,7 @@ catalogues by the contract tests:
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`
 - `GET /v1/postcodes/SW1A1AA`
+- `GET /v1/postcodes:batch?postcode=SW1A1AA,M11AE,CF101EP,BT11AA&geography=localAuthority`
 - `GET /v1/data/imd-decile/value?postcode=M11AE`
 - `GET /v1/locations?q=york`
 - `GET /v1/locations/london`

@@ -13,8 +13,10 @@ import { compareCodeUnits, findSorted } from "./sortedIndex";
  * same method and with the same caveats as any other point.
  *
  * The directory is too large to hold in memory, so postcodes are sharded by
- * postcode area (the letters that begin one) and a shard is read on first
- * use. The manifest records each shard's hash, so pinning the manifest pins
+ * postcode district (the outward code, such as SW1A) and a shard is read on
+ * first use. A district holds some 900 postcodes on average, so a lookup reads
+ * a few kilobytes, and a batch spread across the country keeps every district
+ * it touches in memory at once. The manifest records each shard's hash, so pinning the manifest pins
  * every shard, and a shard that no longer matches it is refused.
  */
 export type PostcodeIndexArtifact = {
@@ -29,9 +31,9 @@ export type PostcodeIndexArtifact = {
 		terminated: number;
 		withoutGridReference: number;
 	};
-	/** Sorted by area. */
+	/** Sorted by district. */
 	shards: Array<{
-		area: string;
+		district: string;
 		path: string;
 		postcodes: number;
 		contentHash: string;
@@ -53,12 +55,12 @@ export type PostcodeSource = {
 };
 
 /**
- * One postcode area, stored column by column: position `i` of every column
- * describes `postcodes[i]`.
+ * One postcode district, stored column by column: position `i` of every
+ * column describes `postcodes[i]`.
  */
 export type PostcodeShard = {
 	schemaVersion: 1;
-	area: string;
+	district: string;
 	/** Compact unit postcodes such as "AB10AA", sorted by code unit. */
 	postcodes: string[];
 	/** Easting then northing in whole metres for each postcode, or null twice. */
@@ -103,7 +105,15 @@ const DISTRICT = /^[A-Z]{1,2}[0-9][0-9A-Z]?$/;
 const SECTOR = /^[A-Z]{1,2}[0-9][0-9A-Z]?[0-9]$/;
 
 export type ParsedPostcode =
-	| { kind: "unit"; compact: string; display: string; area: string }
+	| {
+			kind: "unit";
+			compact: string;
+			display: string;
+			/** The letters a postcode begins with, such as SW. */
+			area: string;
+			/** The outward code, such as SW1A. */
+			district: string;
+	  }
 	| { kind: "district" | "sector"; display: string };
 
 /**
@@ -119,6 +129,7 @@ export const parsePostcode = (input: string): ParsedPostcode | undefined => {
 			compact,
 			display: `${compact.slice(0, -3)} ${compact.slice(-3)}`,
 			area: /^[A-Z]+/.exec(compact)![0],
+			district: compact.slice(0, -3),
 		};
 	if (DISTRICT.test(compact)) return { kind: "district", display: compact };
 	if (SECTOR.test(compact))
@@ -245,7 +256,7 @@ export const compilePostcodeIndex = (
 		terminated: number;
 		largeUser: boolean;
 	};
-	const byArea = new Map<string, Entry[]>();
+	const byDistrict = new Map<string, Entry[]>();
 	const excluded = new Map<string, number>();
 	for (const row of rows) {
 		const parsed = parsePostcode(row.pcds);
@@ -267,8 +278,8 @@ export const compilePostcodeIndex = (
 			throw new Error(
 				`${row.pcds}: gridind ${row.gridind} disagrees with its grid reference`,
 			);
-		const entries = byArea.get(parsed.area) ?? [];
-		byArea.set(parsed.area, entries);
+		const entries = byDistrict.get(parsed.district) ?? [];
+		byDistrict.set(parsed.district, entries);
 		entries.push({
 			compact: parsed.compact,
 			grid: hasGrid ? [Number(row.east1m), Number(row.north1m)] : null,
@@ -290,9 +301,9 @@ export const compilePostcodeIndex = (
 	};
 	const files: Array<{ path: string; text: string }> = [];
 	const shards: PostcodeIndexArtifact["shards"] = [];
-	for (const area of [...byArea.keys()].sort(compareCodeUnits)) {
-		const entries = byArea
-			.get(area)!
+	for (const district of [...byDistrict.keys()].sort(compareCodeUnits)) {
+		const entries = byDistrict
+			.get(district)!
 			.sort((left, right) =>
 				compareCodeUnits(left.compact, right.compact),
 			);
@@ -301,7 +312,7 @@ export const compilePostcodeIndex = (
 				throw new Error(`${entries[at]!.compact} appears twice`);
 		const shard: PostcodeShard = {
 			schemaVersion: 1,
-			area,
+			district,
 			postcodes: entries.map((entry) => entry.compact),
 			grid: entries.flatMap((entry) => entry.grid ?? [null, null]),
 			quality: entries.map((entry) => entry.quality).join(""),
@@ -313,10 +324,10 @@ export const compilePostcodeIndex = (
 				.join(""),
 		};
 		const text = `${JSON.stringify(shard)}\n`;
-		const path = `postcodes/${area}.json`;
+		const path = `postcodes/${/^[A-Z]+/.exec(district)![0]}/${district}.json`;
 		files.push({ path, text });
 		shards.push({
-			area,
+			district,
 			path,
 			postcodes: entries.length,
 			contentHash: sha256(text),
@@ -369,39 +380,48 @@ export type PostcodeLookup =
 	| { status: "excluded"; reason: string }
 	| { status: "not-found" };
 
-/** Unit postcodes read from the shards a manifest pins, a few areas at a time. */
+/** Unit postcodes read from the shards a manifest pins, a few districts at a time. */
 export class PostcodeIndex {
 	private readonly shards = new Map<string, PostcodeShard>();
-	private readonly areas: string[];
+	private readonly districts: string[];
+	/** Shards already checked against the manifest; a re-read need not be. */
+	private readonly verified = new Set<string>();
 
 	constructor(
 		readonly artifact: PostcodeIndexArtifact,
 		/** The text of a shard at its path in the manifest. */
 		private readonly readShard: (path: string) => string,
-		/** How many areas stay in memory; the largest holds some 60,000 postcodes. */
-		private readonly capacity = 24,
+		/**
+		 * How many districts stay in memory. A district averages some 900
+		 * postcodes and the largest holds a few thousand, so this is a few
+		 * tens of megabytes at most.
+		 */
+		private readonly capacity = 512,
 	) {
-		this.areas = artifact.shards.map((shard) => shard.area);
+		this.districts = artifact.shards.map((shard) => shard.district);
 	}
 
-	private shard(area: string): PostcodeShard | undefined {
-		const cached = this.shards.get(area);
+	private shard(district: string): PostcodeShard | undefined {
+		const cached = this.shards.get(district);
 		if (cached) {
 			// Most recently used last, so the first entry is evicted first.
-			this.shards.delete(area);
-			this.shards.set(area, cached);
+			this.shards.delete(district);
+			this.shards.set(district, cached);
 			return cached;
 		}
-		const at = findSorted(this.areas, area);
+		const at = findSorted(this.districts, district);
 		if (at === -1) return undefined;
 		const entry = this.artifact.shards[at]!;
 		const text = this.readShard(entry.path);
-		if (sha256(text) !== entry.contentHash)
-			throw new Error(
-				`The postcode shard ${entry.path} does not match the postcode index. Run pnpm build:postcode-index.`,
-			);
+		if (!this.verified.has(entry.path)) {
+			if (sha256(text) !== entry.contentHash)
+				throw new Error(
+					`The postcode shard ${entry.path} does not match the postcode index. Run pnpm build:postcode-index.`,
+				);
+			this.verified.add(entry.path);
+		}
 		const shard = JSON.parse(text) as PostcodeShard;
-		this.shards.set(area, shard);
+		this.shards.set(district, shard);
 		if (this.shards.size > this.capacity)
 			this.shards.delete(this.shards.keys().next().value!);
 		return shard;
@@ -410,7 +430,7 @@ export class PostcodeIndex {
 	lookup(
 		postcode: Extract<ParsedPostcode, { kind: "unit" }>,
 	): PostcodeLookup {
-		const shard = this.shard(postcode.area);
+		const shard = this.shard(postcode.district);
 		if (!shard) {
 			const excluded = this.artifact.excluded.find(
 				(entry) => entry.area === postcode.area,

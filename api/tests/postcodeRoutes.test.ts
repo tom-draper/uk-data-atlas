@@ -242,3 +242,84 @@ test("is unavailable until the postcode index is built", () => {
 	assert.equal(response.status, 503);
 	assert.match(response.body.detail, /postcode index/);
 });
+
+test("looks up a batch of postcodes, reporting each one that cannot be placed", () => {
+	const { status, data } = get(
+		"/v1/postcodes:batch?postcode=EC1A1AA,ec1a%201ab&postcode=GY11AA&postcode=BT11AA&postcode=EC1A9ZZ&postcode=EC1A&geography=ward",
+	);
+	assert.equal(status, 200);
+	assert.equal(data.date, "2026-08");
+	assert.equal(data.dateBasis, "directory-edition");
+	assert.deepEqual(
+		data.releases.map((release: any) => release.boundaryRelease),
+		["2026-05-uk-bgc"],
+	);
+	assert.deepEqual(
+		data.postcodes.map((entry: any) => [entry.input, entry.status]),
+		[
+			["EC1A1AA", "placed"],
+			["ec1a 1ab", "placed"],
+			["GY11AA", "not-placed"],
+			["BT11AA", "not-served"],
+			["EC1A9ZZ", "not-found"],
+			["EC1A", "invalid"],
+		],
+	);
+	const [west, east, channel, northernIreland] = data.postcodes;
+	assert.equal(west.postcode.postcode, "EC1A 1AA");
+	assert.equal(west.pointCountry.code, "GB-ENG");
+	assert.deepEqual(west.results.map(matched), [
+		["ward/2026-05-uk-bgc/E05000001"],
+	]);
+	// Provenance is given once, in releases, not repeated per match.
+	assert.equal(west.results[0].matches[0].geometrySource, undefined);
+	assert.deepEqual(east.results.map(matched), [
+		["ward/2026-05-uk-bgc/E05000002"],
+	]);
+	assert.equal(east.postcode.status, "terminated");
+	assert.equal(channel.postcode.country, "L93000001");
+	assert.equal(northernIreland.detail, NORTHERN_IRELAND_EXCLUSION);
+	assert.deepEqual(data.summary, {
+		postcodes: 6,
+		placed: 2,
+		notPlaced: 1,
+		invalid: 1,
+		notFound: 1,
+		notServed: 1,
+		lookups: 2,
+		matched: 2,
+		noMatch: 0,
+		outsideCoverage: 0,
+		unresolved: 0,
+		nearBoundary: 0,
+	});
+	assert.equal(data.source.edition, "2026-08");
+});
+
+test("places a batch in the default geographies, flagging undeclared accuracy per postcode", () => {
+	const { data } = get("/v1/postcodes:batch?postcode=EC1A1AD");
+	assert.deepEqual(
+		data.releases.map((release: any) => release.geography),
+		["localAuthority", "ward", "constituency"],
+	);
+	assert.match(data.postcodes[0].caution, /understate/);
+});
+
+test("refuses a batch it cannot look up", () => {
+	const many = Array.from({ length: 101 }, () => "EC1A1AA").join(",");
+	const cases: Array<[string, number, RegExp]> = [
+		["/v1/postcodes:batch", 400, /at least one postcode/],
+		["/v1/postcodes:batch?postcode=,%20", 400, /at least one postcode/],
+		[`/v1/postcodes:batch?postcode=${many}`, 400, /At most 100/],
+		["/v1/postcodes:batch?postcode=EC1A1AA&date=soon", 400, /date must be/],
+	];
+	for (const [url, status, detail] of cases) {
+		const response = get(url);
+		assert.equal(response.status, status, url);
+		assert.match(response.body.detail, detail, url);
+	}
+	assert.equal(
+		get("/v1/postcodes:batch?postcode=EC1A1AA", context(false)).status,
+		503,
+	);
+});
