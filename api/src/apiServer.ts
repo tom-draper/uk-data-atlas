@@ -19,7 +19,7 @@ import {
 } from "./operationTemplates";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { problem, type ApiResponse } from "./routeResponse";
-import { route, routeAsync } from "./routes";
+import { routeAsync } from "./routes";
 import type { RouteContext } from "./routing";
 import {
 	DEFAULT_MAX_URL_LENGTH,

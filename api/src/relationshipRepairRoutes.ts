@@ -1,4 +1,4 @@
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** A governed repair queue: discovery is never authority to publish. */

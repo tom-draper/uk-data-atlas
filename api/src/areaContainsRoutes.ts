@@ -16,13 +16,6 @@ import type { RouteRequest } from "./routing";
 /** Points a batch lookup accepts; more belongs in a bulk export. */
 export const MAX_BATCH_POINTS = 100;
 
-const unavailable = () =>
-	problem(
-		503,
-		"Catalogue Unavailable",
-		"Build the geography resolver and geometry source registry before point lookup.",
-	);
-
 const coordinateDescription = (crs: string) =>
 	crs === "EPSG:4326"
 		? "lng (-180 to 180) and lat (-90 to 90) as plain decimal WGS 84 degrees"

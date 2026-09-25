@@ -8,7 +8,7 @@ import {
 import { measureCapability } from "./measureCapability";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, type ApiResponse } from "./routeResponse";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body
@@ -30,9 +30,6 @@ export const handleAreaCapabilityRoutes = ({
 		return undefined;
 	const {
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
 		measureCompatibilityInventory,
 	} = context;
 	const geographyResolver = context.geographyResolver;
