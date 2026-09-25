@@ -56,7 +56,7 @@ export interface DatasetMeta {
 	 * "lookup" is a published mapping table used to relate geographies. Like a
 	 * boundary, it has source metadata but no chart or independent loader.
 	 */
-	kind?: "dataset" | "boundary" | "lookup";
+	kind?: "dataset" | "boundary" | "lookup" | "postcode-directory";
 	title: string;
 	description?: string;
 	/** Free grouping, independent of the folder tree. */
@@ -78,7 +78,12 @@ export interface DatasetMeta {
 }
 
 const FILE_ROLES = new Set(["source", "derived", "lookup", "reference"]);
-const KINDS = new Set(["dataset", "boundary", "lookup"]);
+const KINDS = new Set([
+	"dataset",
+	"boundary",
+	"lookup",
+	"postcode-directory",
+]);
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 class MetaError extends Error {
