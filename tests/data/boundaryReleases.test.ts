@@ -2,6 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+	API_ONLY_GEOGRAPHIES,
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 	type BoundaryType,
@@ -86,14 +87,27 @@ describe("boundary releases", () => {
 			]),
 		);
 
-		expect([...website.keys()].sort()).toEqual(
-			[...sourceBoundaryReleases].sort(),
+		const apiOnly = new Set(
+			Object.values(API_ONLY_GEOGRAPHIES).map(
+				({ geography }) => geography,
+			),
 		);
+		const mapped = sourceBoundaryReleases.filter(
+			(source) => !apiOnly.has(source.split("/")[0]!),
+		);
+		expect([...website.keys()].sort()).toEqual([...mapped].sort());
 		expect([...apiRegistry].sort()).toEqual(
 			[...sourceBoundaryReleases].sort(),
 		);
 
 		for (const source of sourceBoundaryReleases) {
+			if (apiOnly.has(source.split("/")[0]!)) {
+				expect(
+					apiAreas.get(source)?.status,
+					`${source} is API-only but not API-available`,
+				).toBe("available");
+				continue;
+			}
 			const release = website.get(source)!;
 			const area = apiAreas.get(source);
 			if (!release.asset) {

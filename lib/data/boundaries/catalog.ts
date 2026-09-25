@@ -1121,6 +1121,24 @@ export type BoundaryYear<T extends BoundaryType> =
 export const BOUNDARY_TYPES = Object.keys(CATALOG) as BoundaryType[];
 
 /**
+ * Geographies under `data/boundaries/` that the API serves and the map does
+ * not, keyed by folder, with the reason. They are not boundary types: every
+ * family in the catalogue is one the map can draw.
+ */
+export const API_ONLY_GEOGRAPHIES: Readonly<
+	Record<string, { geography: string; reason: string }>
+> = {
+	"output-area": {
+		geography: "outputArea",
+		reason: "Its 188,880 unnamed areas are more than the map can draw; the API answers hierarchy and lookup questions about them.",
+	},
+	"intermediate-zone": {
+		geography: "intermediateZone",
+		reason: "It is published only as a British National Grid shapefile, which the map compiler cannot read; the API reads the shapefile itself.",
+	},
+};
+
+/**
  * A geography's code keys and name keys, newest release first and paired by
  * construction — the two lists are read out of the same releases, so they
  * cannot drift apart the way two hand-written arrays can.

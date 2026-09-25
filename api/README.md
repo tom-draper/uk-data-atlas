@@ -161,9 +161,21 @@ only **available** when its endpoint, contract and provenance are published.
       A published crosswalk or a reviewed declaration between the same
       releases for the same purpose always takes precedence, and coverage is
       measured end to end, so a long chain states what it loses.
-- [ ] Complete the standard small-area hierarchies with explicit national
+- [x] Complete the standard small-area hierarchies with explicit national
       coverage: OA → LSOA → MSOA → LAD where applicable, Scottish data zone
-      and Northern Irish super output area equivalents.
+      and Northern Irish super output area equivalents. England and Wales
+      run 2021 output area → LSOA → MSOA and LSOA → May 2023 local
+      authority, from the ONS exact-fit lookups. Scotland runs 2011 data
+      zone → intermediate zone → December 2018 council area, from the
+      Scottish Government's parent codes. Each of these is `clean-
+      containment`, checked against both releases' geometry, with declared
+      two-step paths from the smallest area to its authority and back.
+      Northern Ireland's 2011 super output areas do not nest in the 2014
+      districts, so their relationship is the ONS lookup's `membership`
+      alone: ten are listed under two districts, and geometry shows others
+      straddle too, which the lookup's small-area best fit hides. Upper Braniel
+      (95II22W1) lies about half in Lisburn and Castlereagh but is listed
+      under Belfast alone.
 - [x] Report an area's capability/availability matrix: supported geometry,
       parent/child relations, crosswalks, named-location membership, datasets
       and measures for its exact release. The API reports explicit unavailable
@@ -1851,10 +1863,13 @@ small candidate set.
    raster resolution, interpolation method, source date and uncertainty.
    Altitude normally does not affect LAD, ward or constituency containment:
    those are two-dimensional ground footprints.
-7. **Expand deliberately.** Add OA → LSOA → MSOA → LAD hierarchies and their
-   Scottish/Northern Irish equivalents, then non-administrative geographies
-   such as police, NHS and travel-to-work areas only with a named source,
-   release cadence and qualified relationship method.
+7. **Expand deliberately.** The OA → LSOA → MSOA → LAD hierarchy and its
+   Scottish equivalent, data zone → intermediate zone → council area, are
+   published as clean containment; Northern Irish super output areas are
+   related to districts by membership only, because they do not nest. Add
+   non-administrative geographies such as police, NHS and travel-to-work
+   areas only with a named source, release cadence and qualified
+   relationship method.
 
 The compiler's capability report is the roadmap's guardrail. It must expose
 what is available, partial, unsupported or awaiting source data for every

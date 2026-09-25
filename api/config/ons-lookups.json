@@ -69,5 +69,25 @@
 			"MSOA21NM",
 			"MSOA21NMW"
 		]
+	},
+	{
+		"service": "SA11_LSOA11_LAD18_NI_LU_classificationv2_942e0f54c76a4998becb14986dc0b0ca",
+		"directory": "super-output-area-to-local-authority/2018-ni",
+		"title": "2011 super output area to local government district, 2018 (Northern Ireland)",
+		"description": "Official ONS lookup assigning each 2011 Northern Ireland Small Area to its Super Output Area and to one 2018 Local Government District, stored at Super Output Area level. Super Output Areas do not nest in the 2014 districts: ten appear under two districts because their Small Areas were assigned to different ones, and a Super Output Area whose Small Areas were all assigned to one district is listed under that district alone even where part of it lies in another.",
+		"temporalCoverage": "2018",
+		"distinctColumns": [
+			"LSOA11CD",
+			"LSOA11NM",
+			"LAD18CD",
+			"LAD18NM"
+		]
+	},
+	{
+		"service": "OA_LSOA_MSOA_EW_DEC_2021_LU_v3",
+		"directory": "output-area-to-lsoa/2021-12-ew",
+		"title": "2021 output area to 2021 LSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2021 Output Areas to Lower and Middle Layer Super Output Areas and 2022 Local Authority Districts, December 2021, one row per Output Area: every 2021 Output Area lies wholly in one 2021 LSOA.",
+		"temporalCoverage": "2021-12"
 	}
 ]

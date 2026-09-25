@@ -9,6 +9,7 @@ import {
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+	API_ONLY_GEOGRAPHIES,
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 } from "@/lib/data/boundaries/catalog";
@@ -52,6 +53,8 @@ const GEOGRAPHY_TYPE: Record<string, string> = Object.fromEntries(
 		return folder ? [[folder, type]] : [];
 	}),
 );
+for (const [folder, { geography }] of Object.entries(API_ONLY_GEOGRAPHIES))
+	GEOGRAPHY_TYPE[folder] = geography;
 
 describe("boundary release metadata", () => {
 	it("describes every release folder on disk", () => {

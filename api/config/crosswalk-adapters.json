@@ -404,6 +404,28 @@
 			"minimumCoverage": 0.99
 		},
 		{
+			"id": "super-output-area-2011-ni-to-local-authority-2018-12-uk-bgc-official-lookup",
+			"input": "lookups/super-output-area-to-local-authority/2018-ni/SA11_LSOA11_LAD18_NI_LU_classificationv2_942e0f54c76a4998becb14986dc0b0ca.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "superOutputArea",
+				"boundaryRelease": "2011-ni",
+				"codeProperty": "LSOA11CD",
+				"nameProperty": "LSOA11NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc",
+				"codeProperty": "LAD18CD",
+				"nameProperty": "LAD18NM"
+			}
+		},
+		{
 			"id": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
 			"input": "lookups/local-authority-to-country/2025-04-uk/LAD25_CTRY25_UK_LU.geojson",
 			"method": "official-lookup",
@@ -623,6 +645,70 @@
 				"codeProperty": "MSOA21CD",
 				"nameProperty": "MSOA21NM",
 				"aliasProperty": "MSOA21NMW"
+			}
+		},
+		{
+			"id": "output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup",
+			"input": "lookups/output-area-to-lsoa/2021-12-ew/OA_LSOA_MSOA_EW_DEC_2021_LU_v3.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "outputArea",
+				"boundaryRelease": "2021-12-ew-bgc-v2",
+				"codeProperty": "OA21CD",
+				"nameProperty": "OA21CD"
+			},
+			"to": {
+				"geography": "lsoa",
+				"boundaryRelease": "2021-12-ew-bgc-v5",
+				"codeProperty": "LSOA21CD",
+				"nameProperty": "LSOA21NM",
+				"aliasProperty": "LSOA21NMW"
+			}
+		},
+		{
+			"id": "data-zone-2011-12-sc-bfc-to-intermediate-zone-2011-12-sc-bfc-official-lookup",
+			"input": "lookups/data-zone-to-intermediate-zone/2011-sc/DZ11_IZ11_SC_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "dataZone",
+				"boundaryRelease": "2011-12-sc-bfc",
+				"codeProperty": "DZ11CD",
+				"nameProperty": "DZ11NM"
+			},
+			"to": {
+				"geography": "intermediateZone",
+				"boundaryRelease": "2011-12-sc-bfc",
+				"codeProperty": "IZ11CD",
+				"nameProperty": "IZ11NM"
+			}
+		},
+		{
+			"id": "intermediate-zone-2011-12-sc-bfc-to-local-authority-2018-12-uk-bgc-official-lookup",
+			"input": "lookups/intermediate-zone-to-local-authority/2011-sc/IZ11_CA_SC_LU.geojson",
+			"method": "clean-containment",
+			"quality": "publisher-supplied",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "intermediateZone",
+				"boundaryRelease": "2011-12-sc-bfc",
+				"codeProperty": "IZ11CD",
+				"nameProperty": "IZ11NM"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2018-12-uk-bgc",
+				"codeProperty": "CACD",
+				"nameProperty": "CANM"
 			}
 		},
 		{
