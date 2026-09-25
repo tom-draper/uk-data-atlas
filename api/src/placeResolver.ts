@@ -88,6 +88,8 @@ const GEOGRAPHY_ORDER = [
 	"parish",
 	"msoa",
 	"lsoa",
+	"outputArea",
+	"intermediateZone",
 	"dataZone",
 	"superOutputArea",
 ];

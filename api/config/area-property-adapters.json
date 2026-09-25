@@ -5,6 +5,14 @@
 			"codeProperty": "DataZone",
 			"nameProperty": "Name"
 		},
+		"intermediateZone/2011-12-sc-bfc": {
+			"codeProperty": "InterZone",
+			"nameProperty": "Name"
+		},
+		"outputArea/2021-12-ew-bgc-v2": {
+			"codeProperty": "OA21CD",
+			"nameProperty": "OA21CD"
+		},
 		"parish/2019-04-ew-bgc": {
 			"codeProperty": "parncp19cd",
 			"nameProperty": "parncp19nm"
