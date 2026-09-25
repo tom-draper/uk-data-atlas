@@ -4,7 +4,12 @@ import {
 	locatePoints,
 	parseLookupRequest,
 } from "./pointLookup";
-import { parsePostcode, postcodeLookupPoint } from "./postcodes";
+import {
+	parsePostcode,
+	postcodeLookupPoint,
+	type PostcodeRecord,
+	type PostcodeSource,
+} from "./postcodes";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -21,34 +26,28 @@ export const POSTCODE_NOTE =
 const UNDECLARED_ACCURACY =
 	"The directory does not state how far this centroid may lie from the postcode's addresses, so positionalToleranceM covers only its grid reference and nearBoundary may understate the risk of a different answer.";
 
+export const UNDECLARED_POSTCODE_ACCURACY = UNDECLARED_ACCURACY;
+
 /**
- * A unit postcode, where its centroid lies and the areas containing it: the
- * way most people name where they are, resolved through the same point lookup
- * as any coordinate.
+ * A unit postcode as a caller typed it, found in the compiled index, or the
+ * problem that explains why it cannot be. Every route that accepts a postcode
+ * refuses one the same way.
  */
-export const handlePostcodeRoutes = ({
-	context,
-	releaseId,
-	parsedUrl,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 3 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "postcodes"
-	)
-		return undefined;
+export const findPostcode = (
+	context: RouteRequest["context"],
+	text: string,
+): { record: PostcodeRecord; source: PostcodeSourceSummary } | ApiResponse => {
 	const { geographyResolver } = context;
 	const unavailable =
 		geographyResolver.requires("postcodes") ??
 		geographyResolver.requires("geometry");
 	if (unavailable) return unavailable;
-	const parsed = parsePostcode(segments[2]!);
+	const parsed = parsePostcode(text);
 	if (!parsed)
 		return problem(
 			400,
 			"Invalid Postcode",
-			`${JSON.stringify(segments[2])} is not a UK postcode. Give a full unit postcode such as SW1A 1AA; the space is optional.`,
+			`${JSON.stringify(text)} is not a UK postcode. Give a full unit postcode such as SW1A 1AA; the space is optional.`,
 		);
 	if (parsed.kind !== "unit")
 		return problem(
@@ -67,7 +66,44 @@ export const handlePostcodeRoutes = ({
 			"Postcode Not Found",
 			`${parsed.display} is not in the ${source.title}. It may never have been issued, or be newer than that edition.`,
 		);
-	const { record } = found;
+	return {
+		record: found.record,
+		source: {
+			title: source.title,
+			edition: source.edition,
+			publisher: source.publisher,
+			licence: source.licence,
+			attribution: source.attribution,
+		},
+	};
+};
+
+export type PostcodeSourceSummary = Pick<
+	PostcodeSource,
+	"title" | "edition" | "publisher" | "licence" | "attribution"
+>;
+
+/**
+ * A unit postcode, where its centroid lies and the areas containing it: the
+ * way most people name where they are, resolved through the same point lookup
+ * as any coordinate.
+ */
+export const handlePostcodeRoutes = ({
+	context,
+	releaseId,
+	parsedUrl,
+	segments,
+}: RouteRequest): ApiResponse | undefined => {
+	if (
+		segments.length !== 3 ||
+		segments[0] !== "v1" ||
+		segments[1] !== "postcodes"
+	)
+		return undefined;
+	const found = findPostcode(context, segments[2]!);
+	if ("status" in found) return found;
+	const { geographyResolver } = context;
+	const { record, source: sourceSummary } = found;
 	const searchParams = new URLSearchParams(parsedUrl.searchParams);
 	if (
 		searchParams.getAll("geography").length === 0 &&
@@ -80,16 +116,10 @@ export const handlePostcodeRoutes = ({
 	const dateBasis = searchParams.has("date")
 		? "requested"
 		: "directory-edition";
-	if (!searchParams.has("date")) searchParams.set("date", source.edition);
+	if (!searchParams.has("date"))
+		searchParams.set("date", sourceSummary.edition);
 	const request = parseLookupRequest(context, searchParams);
 	if ("status" in request) return request;
-	const sourceSummary = {
-		title: source.title,
-		edition: source.edition,
-		publisher: source.publisher,
-		licence: source.licence,
-		attribution: source.attribution,
-	};
 	if (!record.centroid)
 		return {
 			status: 200,

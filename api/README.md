@@ -806,6 +806,13 @@ only **available** when its endpoint, contract and provenance are published.
       `nearBoundary`. Northern Ireland postcodes are licensed by Land and
       Property Services for internal business use only, so they are refused
       with 451 rather than served.
+- [x] Answer a measure for a postcode through
+      `GET /v1/data/{measure-id}/value?postcode=`. The postcode is placed in
+      the areas the data was published for, as drawn for the data's own
+      boundary year, in a boundary release the compatibility inventory shows
+      holds that partition's codes. The finest geography answers first, and a
+      coarser one only where a finer does not cover the postcode's country or
+      has no value there, each passed-over geography saying why.
 - [ ] Count active postcodes within an area.
 - [ ] Return postcode-sector, district and area statistics.
 - [ ] Return a clearly defined count of households, dwellings, addresses or
@@ -3678,6 +3685,7 @@ catalogues by the contract tests:
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`
 - `GET /v1/postcodes/SW1A1AA`
+- `GET /v1/data/imd-decile/value?postcode=M11AE`
 - `GET /v1/locations?q=york`
 - `GET /v1/locations/london`
 - `GET /v1/boundary-releases`

@@ -3155,7 +3155,16 @@
 					"required": true
 				},
 				"query:place": {
-					"required": true
+					"required": false
+				},
+				"query:postcode": {
+					"required": false
+				},
+				"query:geography": {
+					"required": false
+				},
+				"query:boundaryYear": {
+					"required": false
 				},
 				"query:period": {
 					"required": false
