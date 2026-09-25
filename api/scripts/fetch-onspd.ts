@@ -1,20 +1,28 @@
 import { createHash } from "node:crypto";
 import {
 	createReadStream,
-	existsSync,
+	createWriteStream,
 	mkdirSync,
+	mkdtempSync,
+	renameSync,
+	rmSync,
 	statSync,
 	writeFileSync,
 } from "node:fs";
 import { writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
+import { spawn } from "node:child_process";
+import { createInterface } from "node:readline";
+import { createGzip } from "node:zlib";
+import { pipeline } from "node:stream/promises";
 
 /**
- * Download the latest ONS Postcode Directory into
- * data/postcodes/onspd/{YYYY-MM}-uk, with the meta.json every source under
- * data/ carries. The archive is kept as ONS publishes it, so its hash can be
- * checked against the portal; the build streams the one CSV it needs out of it.
+ * Download the latest ONS Postcode Directory, remove Northern Ireland rows
+ * before anything enters data/, and retain only the fields the API compiles.
+ * The resulting permitted source can be included in the public data release.
  */
 const SEARCH = "https://www.arcgis.com/sharing/rest/search";
 const ITEMS = "https://www.arcgis.com/sharing/rest/content/items";
@@ -33,6 +41,15 @@ const MONTHS = [
 	"December",
 ];
 const TITLE = /^ONS Postcode Directory \((\w+) (\d{4})\)(?: for the UK)?$/;
+const COLUMNS = [
+	"pcds",
+	"dointr",
+	"doterm",
+	"usrtypind",
+	"east1m",
+	"north1m",
+	"gridind",
+] as const;
 
 type Item = { id: string; title: string; name: string; size: number };
 
@@ -81,6 +98,62 @@ const fileSha256 = (path: string) =>
 			.on("error", fail);
 	});
 
+const quoteCsv = (value: string) =>
+	/[\",\r\n]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
+
+async function writePermittedSource(archivePath: string, outputPath: string) {
+	const unzip = spawn("unzip", ["-p", archivePath, "Data/ONSPD_*_UK.csv"], {
+		stdio: ["ignore", "pipe", "inherit"],
+	});
+	const exited = new Promise<number>((done, fail) => {
+		unzip.on("error", fail);
+		unzip.on("close", (code) => done(code ?? 1));
+	});
+	let header: string[] | undefined;
+	let positions: number[] = [];
+	let country = -1;
+	let countryColumn = "";
+	let kept = 0;
+	const rows = async function* () {
+		for await (const line of createInterface({ input: unzip.stdout })) {
+			const cells = line.split(",").map((cell) => cell.replace(/^"|"$/g, ""));
+			if (!header) {
+				header = cells;
+				positions = COLUMNS.map((column) => header!.indexOf(column));
+				country = header.findIndex((column) => /^ctry\d{2}cd$/.test(column));
+				countryColumn = header[country] ?? "";
+				const missing = COLUMNS.filter((_, at) => positions[at] === -1);
+				if (missing.length > 0 || country === -1)
+					throw new Error(`The directory has no ${[...missing, "ctry"].join(", ")} column`);
+				yield `${[...COLUMNS, countryColumn].join(",")}\n`;
+				continue;
+			}
+			if (cells.length !== header.length)
+				throw new Error(`Unexpected ONSPD row width: ${cells.length}, expected ${header.length}`);
+			if (cells[country]?.startsWith("N")) continue;
+			const selected = [...positions.map((at) => cells[at]!), cells[country]!];
+			kept += 1;
+			yield `${selected.map(quoteCsv).join(",")}\n`;
+		}
+	};
+	const temporaryPath = `${outputPath}.${process.pid}.tmp`;
+	try {
+		await pipeline(
+			Readable.from(rows()),
+			createGzip(),
+			createWriteStream(temporaryPath),
+		);
+		const code = await exited;
+		if (code !== 0) throw new Error(`unzip exited with ${code}`);
+		if (kept === 0)
+			throw new Error("The ONSPD source contained no permitted rows.");
+		renameSync(temporaryPath, outputPath);
+	} finally {
+		rmSync(temporaryPath, { force: true });
+	}
+	return kept;
+}
+
 export const fetchOnspd = async (
 	repositoryRoot: string,
 	retrieved = new Date().toISOString().slice(0, 10),
@@ -94,9 +167,11 @@ export const fetchOnspd = async (
 		`${edition}-uk`,
 	);
 	mkdirSync(directory, { recursive: true });
-	const archive = join(directory, item.name);
+	const archive = join(mkdtempSync(join(tmpdir(), "atlas-onspd-")), item.name);
 	const sourceUrl = `${ITEMS}/${item.id}/data`;
-	if (!existsSync(archive) || statSync(archive).size !== item.size) {
+	const sourcePath = join(directory, "onspd-permitted.csv.gz");
+	const pendingSourcePath = `${sourcePath}.${process.pid}.tmp`;
+	try {
 		const response = await fetch(sourceUrl);
 		if (!response.ok)
 			throw new Error(
@@ -105,41 +180,57 @@ export const fetchOnspd = async (
 		await writeFile(archive, Buffer.from(await response.arrayBuffer()));
 		if (statSync(archive).size !== item.size)
 			throw new Error(`${item.name}: expected ${item.size} bytes`);
-	}
-	const meta = {
-		id: `${edition}-uk`,
-		kind: "postcode-directory",
-		title: item.title,
-		description:
-			"Every current and terminated postcode in the United Kingdom, the Channel Islands and the Isle of Man, with the grid reference of its centroid and the areas ONS assigns it to.",
-		publisher: "Office for National Statistics",
-		sourceUrl,
-		retrieved,
-		temporalCoverage: edition,
-		licence: {
-			name: "Open Government Licence v3.0",
-			url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-			note: "Northern Ireland postcodes (BT) are licensed by Land and Property Services for internal business use only.",
-		},
-		attribution: [
-			"Contains OS data © Crown copyright and database right",
-			"Contains Royal Mail data © Royal Mail copyright and database right",
-			"Source: Office for National Statistics licensed under the Open Government Licence v.3.0",
-		],
-		files: [
-			{
-				path: item.name,
-				role: "source",
-				sha256: await fileSha256(archive),
-				note: "The archive as published on the ONS Open Geography Portal.",
+		const includedRows = await writePermittedSource(
+			archive,
+			pendingSourcePath,
+		);
+		const sourceHash = await fileSha256(pendingSourcePath);
+		const meta = {
+			id: `${edition}-uk-permitted`,
+			kind: "postcode-directory",
+			title: item.title,
+			description:
+				"Current and terminated postcodes from the ONS Postcode Directory, with Northern Ireland rows removed before storage, and the grid reference of each postcode centroid.",
+			publisher: "Office for National Statistics",
+			sourceUrl,
+			retrieved,
+			temporalCoverage: edition,
+			licence: {
+				name: "Open Government Licence v3.0",
+				url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+				note: "Northern Ireland (BT) postcode rows are excluded because Land and Property Services licenses them for internal business use only.",
 			},
-		],
-	};
-	writeFileSync(
-		join(directory, "meta.json"),
-		`${JSON.stringify(meta, null, "\t")}\n`,
-	);
-	return { directory, edition };
+			attribution: [
+				"Contains OS data © Crown copyright and database right",
+				"Contains Royal Mail data © Royal Mail copyright and database right",
+				"Source: Office for National Statistics licensed under the Open Government Licence v.3.0",
+			],
+			files: [
+				{
+					path: "onspd-permitted.csv.gz",
+					role: "source",
+					sha256: sourceHash,
+					note: `Only permitted non-Northern Ireland rows and fields required by the API; ${includedRows} rows.`,
+				},
+			],
+		};
+		renameSync(pendingSourcePath, sourcePath);
+		writeFileSync(
+			join(directory, `meta.json.${process.pid}.tmp`),
+			`${JSON.stringify(meta, null, "\t")}\n`,
+		);
+		renameSync(
+			join(directory, `meta.json.${process.pid}.tmp`),
+			join(directory, "meta.json"),
+		);
+		return { directory, edition };
+	} finally {
+		rmSync(pendingSourcePath, { force: true });
+		rmSync(join(directory, `meta.json.${process.pid}.tmp`), {
+			force: true,
+		});
+		rmSync(dirname(archive), { recursive: true, force: true });
+	}
 };
 
 const scriptPath = fileURLToPath(import.meta.url);

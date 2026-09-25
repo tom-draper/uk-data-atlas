@@ -17,10 +17,10 @@ import {
 } from "../src/postcodes";
 
 /**
- * Compile the newest ONS Postcode Directory under data/postcodes/onspd into
- * api/public/postcode-index.json and one shard per postcode district under
- * api/public/postcodes. `--include-northern-ireland` keeps BT postcodes, for a
- * build that will not be served publicly.
+ * Compile the newest filtered ONS Postcode Directory under
+ * data/postcodes/onspd into api/public/postcode-index.json and one shard per
+ * postcode district under api/public/postcodes. The stored source excludes
+ * Northern Ireland before it is included in the public data release.
  */
 
 const COLUMNS = [
@@ -42,16 +42,16 @@ const latestDirectory = (repositoryRoot: string) => {
 		: [];
 	if (editions.length === 0)
 		throw new Error(
-			`No ONS Postcode Directory under ${root}. Run pnpm fetch:onspd.`,
+			`No permitted ONS Postcode Directory under ${root}. Run pnpm refresh:onspd from api/.`,
 		);
 	return join(root, editions.at(-1)!);
 };
 
-/** Directory rows streamed out of the archive, one at a time. */
+/** Permitted ONSPD rows streamed from the stored, filtered source. */
 async function* directoryRows(
-	archive: string,
+	sourcePath: string,
 ): AsyncGenerator<PostcodeSourceRow> {
-	const unzip = spawn("unzip", ["-p", archive, "Data/ONSPD_*_UK.csv"], {
+	const unzip = spawn("gzip", ["-dc", sourcePath], {
 		stdio: ["ignore", "pipe", "inherit"],
 	});
 	const exited = new Promise<number>((done, fail) => {
@@ -62,8 +62,7 @@ async function* directoryRows(
 	let positions: number[] = [];
 	let country = -1;
 	for await (const line of createInterface({ input: unzip.stdout })) {
-		// The directory quotes text and never puts a comma or quote inside it,
-		// which the column count below would catch.
+		// The selected ONSPD fields contain no embedded commas or quotes.
 		const cells = line.split(",").map((cell) => cell.replace(/^"|"$/g, ""));
 		if (!header) {
 			header = cells;
@@ -93,27 +92,33 @@ async function* directoryRows(
 
 export const buildPostcodeIndex = async (
 	repositoryRoot: string,
-	options: { includeNorthernIreland?: boolean } = {},
 ) => {
 	const directory = latestDirectory(repositoryRoot);
 	const meta = JSON.parse(readFileSync(join(directory, "meta.json"), "utf8"));
-	const archive = meta.files.find(
+	const sourceFile = meta.files.find(
 		(file: { role: string }) => file.role === "source",
 	);
+	if (!sourceFile)
+		throw new Error(`${directory}: no source file is recorded in meta.json`);
 	const source: PostcodeSource = {
 		title: meta.title,
 		edition: meta.temporalCoverage,
 		publisher: meta.publisher,
 		sourceUrl: meta.sourceUrl,
 		retrieved: meta.retrieved,
-		sha256: `sha256:${archive.sha256}`,
+		sha256: `sha256:${sourceFile.sha256}`,
 		licence: { name: meta.licence.name, url: meta.licence.url },
 		attribution: meta.attribution,
 	};
 	const rows: PostcodeSourceRow[] = [];
-	for await (const row of directoryRows(join(directory, archive.path)))
+	for await (const row of directoryRows(join(directory, sourceFile.path))) {
+		if (row.ctry.startsWith("N"))
+			throw new Error(
+				`${row.pcds}: Northern Ireland rows must not be stored in the public postcode source.`,
+			);
 		rows.push(row);
-	const { artifact, files } = compilePostcodeIndex(rows, source, options);
+	}
+	const { artifact, files } = compilePostcodeIndex(rows, source);
 	const publicRoot = join(repositoryRoot, "api", "public");
 	// Every shard is rewritten, so one for a district no longer compiled, such
 	// as BT1 after a build that included Northern Ireland, cannot linger.
@@ -132,11 +137,6 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const { outputPath, artifact } = await buildPostcodeIndex(
 		resolve(dirname(scriptPath), "../.."),
-		{
-			includeNorthernIreland: process.argv.includes(
-				"--include-northern-ireland",
-			),
-		},
 	);
 	console.log(
 		`Wrote ${artifact.counts.postcodes} postcodes (${artifact.counts.live} live) in ${artifact.shards.length} districts to ${outputPath}${artifact.excluded.length ? `, leaving out ${artifact.excluded.map((entry) => `${entry.area} (${entry.postcodes})`).join(", ")}` : ""}`,

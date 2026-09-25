@@ -47,7 +47,7 @@ export type PostcodeSource = {
 	publisher: string;
 	sourceUrl: string;
 	retrieved: string;
-	/** The SHA-256 of the downloaded archive. */
+	/** The SHA-256 of the permitted, filtered source file. */
 	sha256: string;
 	licence: { name: string; url: string };
 	/** Statements the licence requires wherever the data is used. */

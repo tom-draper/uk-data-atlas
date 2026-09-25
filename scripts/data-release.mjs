@@ -222,7 +222,7 @@ async function createArchives(tag) {
 	}
 }
 
-async function publish(tag) {
+async function publish(tag, targetRef = "HEAD") {
 	if (!DATA_TAG_PATTERN.test(tag))
 		fail(
 			`Invalid data release tag ${JSON.stringify(tag)}. Use data-YYYY-MM-DD (optionally with a suffix).`,
@@ -232,8 +232,12 @@ async function publish(tag) {
 			"GitHub CLI (gh) is required to publish. Install it, then run gh auth login.",
 		);
 	const repository = repositoryFromOrigin();
-	const target = capture("git", ["rev-parse", "HEAD"]);
-	if (!target) fail("Could not resolve the release target commit.");
+	const target = capture("git", [
+		"rev-parse",
+		"--verify",
+		`${targetRef}^{commit}`,
+	]);
+	if (!target) fail(`Could not resolve release target ${targetRef}.`);
 	if (capture("gh", ["release", "view", tag, "--repo", repository]))
 		fail(
 			`GitHub release ${tag} already exists. Releases are immutable snapshots; choose a new data tag.`,
@@ -401,13 +405,14 @@ async function verifyPrecompiled() {
 }
 
 async function main() {
-	const [command = "help", option] = process.argv.slice(2);
-	if (command === "publish") await publish(option ?? todayTag());
+	const [command = "help", option, targetRef] = process.argv.slice(2);
+	if (command === "publish")
+		await publish(option ?? todayTag(), targetRef ?? "HEAD");
 	else if (command === "download") await download(option === "--force");
 	else if (command === "verify-precompiled") await verifyPrecompiled();
 	else {
 		console.log(
-			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD]|download [--force]|verify-precompiled>",
+			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD] [target-commitish]|download [--force]|verify-precompiled>",
 		);
 	}
 }

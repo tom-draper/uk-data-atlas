@@ -805,6 +805,15 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Postcodes, homes and addresses — data required, later
 
+Refresh the stored postcode source with `pnpm --dir api refresh:onspd`. The
+command downloads the current ONS Postcode Directory, removes Northern Ireland
+rows before writing the compact permitted source under `data/postcodes/onspd/`,
+and records its edition, source hash and required attribution. To carry that
+edition into future builds, publish a new immutable source snapshot with
+`pnpm data:publish data-YYYY-MM-DD` and commit the updated `data-release.json`.
+Builds that need raw sources restore that snapshot from GitHub; they do not
+fetch the postcode directory from ONS.
+
 - [x] Postcode → local authority, ward, constituency, or any other compiled
       geography and release, through `GET /v1/postcodes/{postcode}`. Postcodes
       are compiled from the ONS Postcode Directory (August 2026, 2.67 million
