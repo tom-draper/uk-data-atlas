@@ -14,6 +14,7 @@ import type {
 import type { AreaSearchIndexArtifact } from "./areaSearch";
 import type { PlaceIndexArtifact } from "./placeIndex";
 import type { PostcodeAreaIndex } from "./postcodeAreas";
+import type { PostcodeCounts, PostcodeCountsIndex } from "./postcodeCounts";
 import type { PostcodeIndex } from "./postcodes";
 import type { RelationshipPath } from "./relationshipPaths";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
@@ -116,6 +117,8 @@ export type GeographyResolverInputs = {
 	postcodeIndex?: PostcodeIndex;
 	/** The areas each postcode falls in, compiled for the releases read most. */
 	postcodeAreaIndex?: PostcodeAreaIndex;
+	/** Per-area postcode counts, derived from the compiled postcode placements. */
+	postcodeCountsIndex?: PostcodeCountsIndex;
 	locationProjectionStore?: LocationProjectionStore;
 	relationshipPathIndex?: Map<string, RelationshipPath[]>;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
@@ -195,6 +198,13 @@ export class GeographyResolver {
 
 	postcodeIndex() {
 		return this.inputs.postcodeIndex;
+	}
+	postcodeCounts(identity: AreaIdentity): PostcodeCounts | undefined {
+		return this.inputs.postcodeCountsIndex?.forArea(
+			identity.geography,
+			identity.boundaryRelease,
+			identity.code,
+		);
 	}
 	postcodeAreaIndex() {
 		return this.inputs.postcodeAreaIndex;

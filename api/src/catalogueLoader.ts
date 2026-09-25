@@ -13,6 +13,7 @@ import {
 	readAreaLookup,
 	readAreaSearchIndex,
 	readPostcodeAreaIndex,
+	readPostcodeCounts,
 	readPostcodeIndex,
 	readBoundaryRegistry,
 	readGeographyInventory,
@@ -125,6 +126,17 @@ export const readApiCatalogues = (
 		crosswalkInventory,
 	);
 	const postcodeIndex = readPostcodeIndex(apiRoot);
+	const postcodeAreaIndex = readPostcodeAreaIndex(
+		apiRoot,
+		postcodeIndex,
+		areaInventory,
+		readGeometrySources(apiRoot),
+	);
+	const postcodeCountsIndex = readPostcodeCounts(
+		apiRoot,
+		postcodeIndex,
+		postcodeAreaIndex,
+	);
 	const areaGeometryCache = createAreaGeometryCache(
 		apiRoot,
 		options.geometryCacheReleases,
@@ -146,12 +158,8 @@ export const readApiCatalogues = (
 		),
 		areaSearchIndex: readAreaSearchIndex(apiRoot, areaInventory),
 		postcodeIndex,
-		postcodeAreaIndex: readPostcodeAreaIndex(
-			apiRoot,
-			postcodeIndex,
-			areaInventory,
-			readGeometrySources(apiRoot),
-		),
+		postcodeAreaIndex,
+		postcodeCountsIndex,
 		locationProjectionStore,
 		relationshipPathIndex: createRelationshipPathIndex(
 			relationshipPathInventory,
