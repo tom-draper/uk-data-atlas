@@ -46,7 +46,8 @@ export type AreasResolverInputs = {
 /** Area identity, release and place indexes over immutable compiled artifacts. */
 export class AreasResolver {
 	private readonly areaSearch?: AreaSearch;
-	private readonly sameCodeAreas = new Map<string, ResolvedSameCodeArea[]>();
+	/** Each geography's releases in the area inventory, oldest first. */
+	private readonly geographyReleases = new Map<string, string[]>();
 	private readonly boundaryReleases = new Map<
 		string,
 		BoundaryRegistry["releases"][number]
@@ -64,29 +65,18 @@ export class AreasResolver {
 			this.areaSearch = inputs.areaSearchIndex
 				? new AreaSearch(inputs.areaSearchIndex, inputs.areaLookup)
 				: undefined;
-			for (const [releaseIdentity, areas] of inputs.areaLookup) {
+			for (const releaseIdentity of inputs.areaLookup.keys()) {
 				const [geography, boundaryRelease] = releaseIdentity.split(
 					"/",
 					2,
 				);
 				if (!geography || !boundaryRelease) continue;
-				for (const [code, area] of areas) {
-					const key = `${geography}/${code}`;
-					const candidates = this.sameCodeAreas.get(key) ?? [];
-					candidates.push({
-						id: areaId({ geography, boundaryRelease, code }),
-						geography,
-						boundaryRelease,
-						...area,
-						status: "same-code-continuity",
-					});
-					this.sameCodeAreas.set(key, candidates);
-				}
+				const releases = this.geographyReleases.get(geography) ?? [];
+				releases.push(boundaryRelease);
+				this.geographyReleases.set(geography, releases);
 			}
-			for (const candidates of this.sameCodeAreas.values())
-				candidates.sort((left, right) =>
-					left.boundaryRelease.localeCompare(right.boundaryRelease),
-				);
+			for (const releases of this.geographyReleases.values())
+				releases.sort((left, right) => left.localeCompare(right));
 		}
 	}
 
@@ -168,13 +158,33 @@ export class AreasResolver {
 		) as BoundaryRegistry["releases"];
 	}
 
+	/**
+	 * The code in every other release of its geography, oldest first. A
+	 * geography has a few dozen releases at most, so this is that many
+	 * lookups and needs no index of its own.
+	 */
 	sameCode(identity: AreaIdentity): ResolvedSameCodeArea[] {
-		return (
-			this.sameCodeAreas.get(`${identity.geography}/${identity.code}`) ??
-			[]
-		).filter(
-			({ boundaryRelease }) =>
-				boundaryRelease !== identity.boundaryRelease,
+		const { geography, code } = identity;
+		return (this.geographyReleases.get(geography) ?? []).flatMap(
+			(boundaryRelease) => {
+				if (boundaryRelease === identity.boundaryRelease) return [];
+				const area = this.area({ geography, boundaryRelease, code });
+				return area
+					? [
+							{
+								id: areaId({
+									geography,
+									boundaryRelease,
+									code,
+								}),
+								geography,
+								boundaryRelease,
+								...area,
+								status: "same-code-continuity" as const,
+							},
+						]
+					: [];
+			},
 		);
 	}
 
