@@ -128,7 +128,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.7, 53.7, -1.4, 53.9],
 	},
 	Sheffield: {
-		lad_codes: ["E08000039"],
+		lad_codes: ["E08000019", "E08000039"],
 		bounds: [-1.6, 53.3, -1.3, 53.5],
 	},
 	Bradford: {
@@ -152,7 +152,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.55, 53.65, -1.45, 53.72],
 	},
 	Barnsley: {
-		lad_codes: ["E08000038"],
+		lad_codes: ["E08000016", "E08000038"],
 		bounds: [-1.55, 53.52, -1.45, 53.58],
 	},
 	Rotherham: {
@@ -266,7 +266,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-1.3, 54.53, -1.15, 54.58],
 	},
 	Gateshead: {
-		lad_codes: ["E08000037"],
+		lad_codes: ["E08000037", "E08000020"],
 		bounds: [-1.7, 54.93, -1.55, 55.0],
 	},
 	"South Shields": {
@@ -449,7 +449,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Scotland
 	Glasgow: {
-		lad_codes: ["S12000049"],
+		lad_codes: ["S12000049", "S12000046"],
 		bounds: [-4.35, 55.8, -4.15, 55.92],
 	},
 	Edinburgh: {
@@ -473,7 +473,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 		bounds: [-4.0, 56.1, -3.9, 56.15],
 	},
 	Perth: {
-		lad_codes: ["S12000048"],
+		lad_codes: ["S12000048", "S12000024"],
 		bounds: [-3.5, 56.38, -3.4, 56.43],
 	},
 	Paisley: {
@@ -590,16 +590,17 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 			// County Durham and Northumberland Unitary Authorities
 			"E06000047", // County Durham
-			"E06000057", // Northumberland (***This was missing from your list***)
+			"E06000057", // Northumberland
+			"E06000048", // Northumberland (pre-2019 code)
 
 			// Tyne and Wear Metropolitan Districts
-			"E08000037", // Gateshead (***The correct code for Gateshead***)
+			"E08000037", // Gateshead
+			"E08000020", // Gateshead (pre-2018 code)
 			"E08000021", // Newcastle upon Tyne
 			"E08000022", // North Tyneside
 			"E08000023", // South Tyneside
 			"E08000024", // Sunderland
 		],
-		// Corrected bounding box
 		bounds: [-2.7, 54.2, -0.5, 55.9],
 	},
 
@@ -701,6 +702,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E06000045", // Southampton
 			"E06000046", // Isle of Wight
 			"E06000060", // Buckinghamshire UA (Supersedes E07 codes for Aylesbury Vale, Chiltern, South Bucks, Wycombe)
+			"E07000004", // Aylesbury Vale
+			"E07000005", // Chiltern
+			"E07000006", // South Bucks
+			"E07000007", // Wycombe
 
 			// East Sussex (5 codes)
 			"E07000061", // Eastbourne
@@ -802,26 +807,28 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000077",
 
 			// Hertfordshire LADs: Broxbourne, Dacorum, East Herts, Hertsmere, North Herts, St Albans, Stevenage, Three Rivers, Watford, Welwyn Hatfield
+			// East Herts, St Albans, Stevenage and Welwyn Hatfield were recoded
+			// in 2019; both vintages are listed because datasets carry both.
 			"E07000095",
 			"E07000096",
 			"E07000097",
+			"E07000242",
 			"E07000098",
 			"E07000099",
 			"E07000100",
+			"E07000240",
 			"E07000101",
+			"E07000243",
 			"E07000102",
 			"E07000103",
 			"E07000104",
+			"E07000241",
 
 			// Suffolk LADs: Ipswich, East Suffolk, West Suffolk (incorporating boundary changes up to 2019)
 			"E07000200",
 			"E07000201",
 			"E07000202",
 			"E07000203",
-			"E07000100",
-			"E07000104",
-			"E07000097",
-			"E07000101",
 			"E07000244",
 			"E07000245",
 
@@ -835,6 +842,65 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000149",
 		],
 		bounds: [-0.6, 51.6, 1.8, 53.2],
+	},
+
+	// East Midlands
+	"East Midlands": {
+		lad_codes: [
+			// Derbyshire
+			"E06000015", // Derby
+			"E07000032", // Amber Valley
+			"E07000033", // Bolsover
+			"E07000034", // Chesterfield
+			"E07000035", // Derbyshire Dales
+			"E07000036", // Erewash
+			"E07000037", // High Peak
+			"E07000038", // North East Derbyshire
+			"E07000039", // South Derbyshire
+
+			// Leicestershire and Rutland
+			"E06000016", // Leicester
+			"E06000017", // Rutland
+			"E07000129", // Blaby
+			"E07000130", // Charnwood
+			"E07000131", // Harborough
+			"E07000132", // Hinckley and Bosworth
+			"E07000133", // Melton
+			"E07000134", // North West Leicestershire
+			"E07000135", // Oadby and Wigston
+
+			// Lincolnshire
+			"E07000136", // Boston
+			"E07000137", // East Lindsey
+			"E07000138", // Lincoln
+			"E07000139", // North Kesteven
+			"E07000140", // South Holland
+			"E07000141", // South Kesteven
+			"E07000142", // West Lindsey
+
+			// Northamptonshire. The seven districts became two unitary
+			// authorities in 2021; both vintages are listed.
+			"E06000061", // North Northamptonshire
+			"E06000062", // West Northamptonshire
+			"E07000150", // Corby
+			"E07000151", // Daventry
+			"E07000152", // East Northamptonshire
+			"E07000153", // Kettering
+			"E07000154", // Northampton
+			"E07000155", // South Northamptonshire
+			"E07000156", // Wellingborough
+
+			// Nottinghamshire
+			"E06000018", // Nottingham
+			"E07000170", // Ashfield
+			"E07000171", // Bassetlaw
+			"E07000172", // Broxtowe
+			"E07000173", // Gedling
+			"E07000174", // Mansfield
+			"E07000175", // Newark and Sherwood
+			"E07000176", // Rushcliffe
+		],
+		bounds: [-2.0, 52.0, 0.4, 53.6],
 	},
 
 	// Devon
@@ -872,7 +938,19 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Dorset
 	Dorset: {
-		lad_codes: ["E06000058", "E06000059"],
+		// The six districts merged into two unitary authorities in 2019.
+		// Keeping every vintage lets each dataset select the code that matches
+		// its boundaries.
+		lad_codes: [
+			"E07000048", // Christchurch
+			"E07000049", // East Dorset
+			"E07000050", // North Dorset
+			"E07000051", // Purbeck
+			"E07000052", // West Dorset
+			"E07000053", // Weymouth and Portland
+			"E06000058", // Bournemouth, Christchurch and Poole
+			"E06000059", // Dorset
+		],
 		bounds: [-2.8, 50.6, -1.6, 51.1],
 	},
 
@@ -922,11 +1000,15 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000223",
 			"E07000224",
 			"E07000225",
-			"E07000226", // West Sussex
+			"E07000226",
+			"E07000227",
+			"E07000228",
+			"E07000229", // West Sussex
 			"E07000061",
 			"E07000062",
 			"E07000063",
 			"E07000064",
+			"E07000065",
 			"E06000043", // East Sussex & Brighton
 		],
 		bounds: [-0.9, 50.7, 1.0, 51.2],
@@ -953,36 +1035,63 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Hertfordshire
 	Hertfordshire: {
+		// East Herts, St Albans, Stevenage and Welwyn Hatfield were recoded in
+		// 2019; both vintages are listed because datasets carry both.
 		lad_codes: [
 			"E07000095",
 			"E07000096",
 			"E07000097",
+			"E07000242",
 			"E07000098",
 			"E07000099",
 			"E07000100",
+			"E07000240",
 			"E07000101",
+			"E07000243",
 			"E07000102",
 			"E07000103",
 			"E07000104",
+			"E07000241",
 		],
 		bounds: [-0.6, 51.6, 0.3, 52.1],
 	},
 
+	// Buckinghamshire
+	Buckinghamshire: {
+		// The four districts merged into one unitary authority in 2020.
+		// Keeping every vintage lets each dataset select the code that matches
+		// its boundaries. Milton Keynes has been separate throughout.
+		lad_codes: [
+			"E07000004", // Aylesbury Vale
+			"E07000005", // Chiltern
+			"E07000006", // South Bucks
+			"E07000007", // Wycombe
+			"E06000060", // Buckinghamshire
+		],
+		bounds: [-1.1, 51.5, -0.5, 52.1],
+	},
+
 	// Oxfordshire
 	Oxfordshire: {
-		lad_codes: ["E07000177", "E07000178", "E07000179"],
+		lad_codes: [
+			"E07000177", // Cherwell
+			"E07000178", // Oxford
+			"E07000179", // South Oxfordshire
+			"E07000180", // Vale of White Horse
+			"E07000181", // West Oxfordshire
+		],
 		bounds: [-1.8, 51.5, -0.9, 52.2],
 	},
 
 	// Gloucestershire
 	Gloucestershire: {
 		lad_codes: [
-			"E07000077",
-			"E07000078",
-			"E07000079",
-			"E07000080",
-			"E07000081",
-			"E07000082",
+			"E07000078", // Cheltenham
+			"E07000079", // Cotswold
+			"E07000080", // Forest of Dean
+			"E07000081", // Gloucester
+			"E07000082", // Stroud
+			"E07000083", // Tewkesbury
 		],
 		bounds: [-2.6, 51.6, -1.7, 52.1],
 	},
@@ -1026,9 +1135,11 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E08000035",
 			"E08000036",
 			// South Yorkshire
+			"E08000016",
 			"E08000038",
 			"E08000017",
 			"E08000018",
+			"E08000019",
 			"E08000039",
 			// North Yorkshire
 			"E07000163",
@@ -1073,9 +1184,8 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000140",
 			"E07000141",
 			"E07000142",
-			"E06000013",
-			"E06000014",
-			"E06000015", // North & NE Lincs, Hull
+			"E06000013", // North Lincolnshire
+			"E06000012", // North East Lincolnshire
 		],
 		bounds: [-0.8, 52.6, 0.4, 53.7],
 	},
@@ -1096,12 +1206,19 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// Suffolk
 	Suffolk: {
+		// Suffolk Coastal and Waveney became East Suffolk, and Forest Heath and
+		// St Edmundsbury became West Suffolk, in 2019. Keeping every vintage
+		// lets each dataset select the code that matches its boundaries.
 		lad_codes: [
-			"E07000200",
-			"E07000201",
-			"E07000202",
-			"E07000203",
-			"E07000204",
+			"E07000200", // Babergh
+			"E07000201", // Forest Heath
+			"E07000202", // Ipswich
+			"E07000203", // Mid Suffolk
+			"E07000204", // St Edmundsbury
+			"E07000205", // Suffolk Coastal
+			"E07000206", // Waveney
+			"E07000244", // East Suffolk
+			"E07000245", // West Suffolk
 		],
 		bounds: [0.3, 51.9, 1.7, 52.6],
 	},
@@ -1114,6 +1231,9 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000194",
 			"E07000195",
 			"E07000196",
+			"E07000197", // Stafford
+			"E07000198", // Staffordshire Moorlands
+			"E07000199", // Tamworth
 			"E06000021", // Stoke-on-Trent
 		],
 		bounds: [-2.3, 52.6, -1.5, 53.2],
@@ -1140,26 +1260,51 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// The Highlands
 	"The Highlands": {
-		lad_codes: ["S12000017"], // Highland Council
+		lad_codes: [
+			"S12000017", // Highland
+			"S12000035", // Argyll and Bute
+		],
 		bounds: [-6.0, 56.3, -3.0, 58.7],
 	},
 
 	// Grampian (Aberdeenshire + Aberdeen City + Moray)
 	Grampian: {
-		lad_codes: ["S12000033", "S12000020", "S12000013"],
+		lad_codes: [
+			"S12000033", // Aberdeen City
+			"S12000034", // Aberdeenshire
+			"S12000020", // Moray
+		],
 		bounds: [-3.8, 56.8, -1.8, 58.0],
 	},
 
 	// Central Belt (Glasgow + Edinburgh + Stirling + Falkirk + West Lothian)
 	"Central Belt": {
 		lad_codes: [
-			"S12000049",
-			"S12000036",
-			"S12000030",
-			"S12000014",
-			"S12000039",
+			"S12000049", // Glasgow City
+			"S12000046", // Glasgow City (pre-2019 code)
+			"S12000036", // City of Edinburgh
+			"S12000030", // Stirling
+			"S12000014", // Falkirk
+			"S12000005", // Clackmannanshire
+			"S12000039", // West Dunbartonshire
+			"S12000045", // East Dunbartonshire
+			"S12000050", // North Lanarkshire
+			"S12000044", // North Lanarkshire (pre-2019 code)
+			"S12000029", // South Lanarkshire
+			"S12000010", // East Lothian
+			"S12000019", // Midlothian
+			"S12000040", // West Lothian
 		],
 		bounds: [-4.6, 55.7, -3.0, 56.1],
+	},
+
+	// Fife
+	Fife: {
+		lad_codes: [
+			"S12000047", // Fife
+			"S12000015", // Fife (pre-2019 code)
+		],
+		bounds: [-3.8, 55.9, -2.5, 56.5],
 	},
 
 	// Scottish Borders
@@ -1170,19 +1315,29 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 
 	// The Hebrides (Na h-Eileanan Siar + Skye)
 	"The Hebrides": {
-		lad_codes: ["S12000013", "S12000048"], // Western Isles + Highland (Skye area)
+		lad_codes: ["S12000013", "S12000017"], // Western Isles + Highland (Skye area)
 		bounds: [-8.0, 56.7, -5.5, 58.4],
 	},
 
 	// Tayside (Perth & Kinross, Angus, Dundee)
 	Tayside: {
-		lad_codes: ["S12000041", "S12000045", "S12000042"],
+		lad_codes: [
+			"S12000041", // Angus
+			"S12000042", // Dundee City
+			"S12000048", // Perth and Kinross
+			"S12000024", // Perth and Kinross (pre-2019 code)
+		],
 		bounds: [-4.6, 56.2, -2.5, 57.2],
 	},
 
 	// Lowlands (South Ayrshire, Dumfries & Galloway)
 	Lowlands: {
-		lad_codes: ["S12000028", "S12000006"],
+		lad_codes: [
+			"S12000028", // South Ayrshire
+			"S12000008", // East Ayrshire
+			"S12000021", // North Ayrshire
+			"S12000006", // Dumfries and Galloway
+		],
 		bounds: [-5.5, 54.8, -2.9, 55.5],
 	},
 
@@ -1190,18 +1345,23 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	"Greater Glasgow and Clyde": {
 		lad_codes: [
 			"S12000049", // Glasgow City
-			"S12000035", // East Renfrewshire
+			"S12000046", // Glasgow City (pre-2019 code)
+			"S12000011", // East Renfrewshire
 			"S12000038", // Renfrewshire
-			"S12000045", // Inverclyde
-			"S12000049", // East Dunbartonshire
-			"S12000047", // West Dunbartonshire
+			"S12000018", // Inverclyde
+			"S12000045", // East Dunbartonshire
+			"S12000039", // West Dunbartonshire
 		],
 		bounds: [-4.6, 55.7, -4.0, 56.1],
 	},
 
 	// North East Scotland
 	"North East Scotland": {
-		lad_codes: ["S12000020", "S12000033", "S12000013"],
+		lad_codes: [
+			"S12000020", // Moray
+			"S12000033", // Aberdeen City
+			"S12000034", // Aberdeenshire
+		],
 		bounds: [-3.8, 56.9, -1.9, 58.0],
 	},
 
@@ -1305,5 +1465,51 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	"Pembrokeshire Coast": {
 		lad_codes: ["W06000009"],
 		bounds: [-5.5, 51.6, -4.5, 52.1],
+	},
+
+	// ----------------------------
+	// NORTHERN IRELAND
+	// ----------------------------
+	// The eleven councils nest into no official sub-national geography, so
+	// these groupings are editorial, like the Scottish ones above. Between
+	// them they cover every council.
+
+	// Belfast Metropolitan Area
+	"Belfast Metropolitan Area": {
+		lad_codes: [
+			"N09000003", // Belfast
+			"N09000007", // Lisburn and Castlereagh
+			"N09000011", // Ards and North Down
+			"N09000001", // Antrim and Newtownabbey
+		],
+		bounds: [-6.5, 54.32, -5.43, 54.81],
+	},
+
+	// Causeway Coast and Antrim
+	"Causeway Coast and Antrim": {
+		lad_codes: [
+			"N09000004", // Causeway Coast and Glens
+			"N09000008", // Mid and East Antrim
+		],
+		bounds: [-7.17, 54.69, -5.69, 55.31],
+	},
+
+	// West of Northern Ireland
+	"West of Northern Ireland": {
+		lad_codes: [
+			"N09000005", // Derry City and Strabane
+			"N09000006", // Fermanagh and Omagh
+			"N09000009", // Mid Ulster
+		],
+		bounds: [-8.18, 54.11, -6.41, 55.07],
+	},
+
+	// Armagh, Down and Newry
+	"Armagh, Down and Newry": {
+		lad_codes: [
+			"N09000010", // Newry, Mourne and Down
+			"N09000002", // Armagh City, Banbridge and Craigavon
+		],
+		bounds: [-6.88, 54.02, -5.52, 54.59],
 	},
 };

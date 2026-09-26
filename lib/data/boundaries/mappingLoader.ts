@@ -9,7 +9,8 @@ import {
 	extractWardLadMappings,
 	type PrecompiledBoundaryMappings,
 } from "./mappings";
-import { wardLadFromGeometry } from "./wardLadGeometry";
+import { areasLadFromGeometry } from "./wardLadGeometry";
+import type { LsoaLadMapping } from "./lsoaLadMappings";
 
 type BoundaryGroup = Record<number, BoundaryGeojson>;
 
@@ -32,7 +33,10 @@ async function loadBoundaryFile(
 
 async function loadBoundaryGroup(
 	read: (path: string) => Promise<string>,
-	type: Extract<BoundaryType, "ward" | "constituency" | "localAuthority">,
+	type: Extract<
+		BoundaryType,
+		"ward" | "constituency" | "localAuthority" | "lsoa"
+	>,
 ): Promise<BoundaryGroup> {
 	const paths = BOUNDARY_CATALOG[type].vintages;
 	const entries = await Promise.all(
@@ -42,6 +46,52 @@ async function loadBoundaryGroup(
 		),
 	);
 	return Object.fromEntries(entries);
+}
+
+/**
+ * LSOA releases do not publish their local-authority parent in boundary
+ * properties. Resolve it once from the release geometry and the current LAD
+ * boundaries, then ship a small lookup rather than use named-location boxes.
+ */
+export async function loadLsoaLadMappings(
+	read: (path: string) => Promise<string>,
+): Promise<Record<number, LsoaLadMapping>> {
+	const [lsoas, localAuthorities] = await Promise.all([
+		loadBoundaryGroup(read, "lsoa"),
+		loadBoundaryGroup(read, "localAuthority"),
+	]);
+	const newestLocalAuthorities =
+		localAuthorities[
+			Math.max(...Object.keys(localAuthorities).map(Number))
+		];
+
+	const lsoaToLad = Object.fromEntries(
+		Object.entries(lsoas).map(([year, lsoa]) => [
+			Number(year),
+			areasLadFromGeometry(
+				lsoa.features,
+				BOUNDARY_CATALOG.lsoa.properties.code,
+				newestLocalAuthorities.features,
+				BOUNDARY_CATALOG.localAuthority.properties.code,
+				() => true,
+			),
+		]),
+	) as Record<number, Record<string, string>>;
+	for (const [year, lsoa] of Object.entries(lsoas)) {
+		const resolved = Object.keys(lsoaToLad[Number(year)] ?? {}).length;
+		if (resolved !== lsoa.features.length) {
+			throw new Error(
+				`LSOA ${year}: resolved ${resolved}/${lsoa.features.length} local-authority parents`,
+			);
+		}
+	}
+
+	return Object.fromEntries(
+		Object.entries(lsoaToLad).map(([year, mapping]) => [
+			Number(year),
+			{ version: 1, year: Number(year), lsoaToLad: mapping },
+		]),
+	);
 }
 
 export async function loadBoundaryMappings(
@@ -87,7 +137,7 @@ export async function loadBoundaryMappings(
 	for (const boundary of Object.values(wards)) {
 		Object.assign(
 			wardToLad,
-			wardLadFromGeometry(
+			areasLadFromGeometry(
 				boundary.features,
 				BOUNDARY_CATALOG.ward.properties.code,
 				newestLocalAuthorities.features,

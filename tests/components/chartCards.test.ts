@@ -36,4 +36,31 @@ describe("ChartCards registry selection", () => {
 			),
 		).toBe(false);
 	});
+
+	it("puts the primary economics cards first", () => {
+		const charts = getVisibleChartDefinitions(
+			"Economics",
+			visibility({
+				"economics-housePrice": true,
+				"economics-income": true,
+				"economics-planningApplications": true,
+				"economics-councilTax": true,
+				"economics-unemployment": true,
+				"economics-childPoverty": true,
+				"economics-fuelPoverty": true,
+				"economics-businessActivity": true,
+			}),
+		);
+
+		expect(charts.map(({ chart }) => chart.key)).toEqual([
+			"economics-housePrice",
+			"economics-income",
+			"economics-planningApplications",
+			"economics-councilTax",
+			"economics-unemployment",
+			"economics-childPoverty",
+			"economics-fuelPoverty",
+			"economics-businessActivity",
+		]);
+	});
 });

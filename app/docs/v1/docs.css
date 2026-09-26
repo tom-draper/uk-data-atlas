@@ -1,0 +1,251 @@
+/*
+ * The page behind the API docs: a pale canvas with daylight falling across it
+ * from a window to the upper left. The light is white and the shade is cool,
+ * so it reads as light on a surface rather than a colour.
+ */
+
+.docs-sky {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			140% 110% at 50% 40%,
+			rgba(255, 255, 255, 0) 55%,
+			rgba(120, 128, 140, 0.1) 100%
+		),
+		linear-gradient(165deg, #f8f8f6 0%, #f3f3f1 55%, #eeeff0 100%);
+}
+
+/* The broad wash of daylight where the window's light lands. */
+.docs-light {
+	position: absolute;
+	top: -30vmax;
+	left: -20vmax;
+	width: 95vmax;
+	height: 95vmax;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(255, 255, 255, 0.95) 0%,
+		rgba(255, 255, 255, 0.6) 30%,
+		rgba(255, 255, 255, 0) 65%
+	);
+	animation: docs-breathe 18s ease-in-out infinite alternate;
+}
+
+/* Window panes of light thrown across the canvas, with the frame's shadow between. */
+.docs-window {
+	position: absolute;
+	top: -25vh;
+	left: -8vw;
+	width: 90vw;
+	height: 150vh;
+	transform: skewX(-24deg);
+	transform-origin: top left;
+	background: repeating-linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0) 0,
+		rgba(255, 255, 255, 0.75) 4vw,
+		rgba(255, 255, 255, 0.75) 15vw,
+		rgba(255, 255, 255, 0) 19vw,
+		rgba(110, 120, 135, 0.05) 20.5vw,
+		rgba(255, 255, 255, 0) 22vw
+	);
+	-webkit-mask-image: linear-gradient(
+		165deg,
+		#000 0%,
+		rgba(0, 0, 0, 0.45) 45%,
+		transparent 80%
+	);
+	mask-image: linear-gradient(
+		165deg,
+		#000 0%,
+		rgba(0, 0, 0, 0.45) 45%,
+		transparent 80%
+	);
+	filter: blur(26px);
+	animation: docs-drift 40s ease-in-out infinite alternate;
+}
+
+/* Soft shade in the far corner, away from the window. */
+.docs-shade {
+	position: absolute;
+	right: -25vmax;
+	bottom: -25vmax;
+	width: 70vmax;
+	height: 70vmax;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle,
+		rgba(120, 130, 145, 0.12) 0%,
+		rgba(120, 130, 145, 0) 65%
+	);
+}
+
+/* The weave of the canvas, barely there. */
+.docs-weave {
+	position: absolute;
+	inset: 0;
+	opacity: 0.35;
+	mix-blend-mode: multiply;
+	background-image:
+		repeating-linear-gradient(
+			0deg,
+			rgba(90, 95, 105, 0.035) 0 1px,
+			transparent 1px 3px
+		),
+		repeating-linear-gradient(
+			90deg,
+			rgba(90, 95, 105, 0.03) 0 1px,
+			transparent 1px 3px
+		);
+}
+
+.docs-grain {
+	position: absolute;
+	inset: 0;
+	opacity: 0.05;
+	mix-blend-mode: multiply;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Dust catching the light. */
+.docs-mote {
+	position: absolute;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow:
+		0 0 4px 1px rgba(255, 255, 255, 0.8),
+		0 0 1px rgba(100, 110, 125, 0.35);
+	animation: docs-float linear infinite;
+}
+
+@keyframes docs-breathe {
+	from {
+		opacity: 0.85;
+		transform: scale(1);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1.04);
+	}
+}
+
+@keyframes docs-drift {
+	from {
+		translate: 0 0;
+	}
+	to {
+		translate: 2vw 1vh;
+	}
+}
+
+@keyframes docs-float {
+	0% {
+		translate: 0 0;
+		opacity: 0;
+	}
+	20% {
+		opacity: 0.9;
+	}
+	80% {
+		opacity: 0.9;
+	}
+	100% {
+		translate: 5vw 18vh;
+		opacity: 0;
+	}
+}
+
+/*
+ * The shadow of the window frame falls over the content too, so the light
+ * reads as landing on the page. Cool and faint, it only tints.
+ */
+.docs-sunfall {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.docs-sunfall::before {
+	content: "";
+	position: absolute;
+	top: -25vh;
+	left: -8vw;
+	width: 90vw;
+	height: 150vh;
+	transform: skewX(-24deg);
+	transform-origin: top left;
+	background: repeating-linear-gradient(
+		90deg,
+		rgba(110, 120, 135, 0) 0,
+		rgba(110, 120, 135, 0) 18vw,
+		rgba(110, 120, 135, 0.05) 20.5vw,
+		rgba(110, 120, 135, 0) 23vw
+	);
+	-webkit-mask-image: linear-gradient(165deg, #000 0%, transparent 70%);
+	mask-image: linear-gradient(165deg, #000 0%, transparent 70%);
+	mix-blend-mode: multiply;
+	filter: blur(20px);
+	animation: docs-drift 40s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.docs-light,
+	.docs-window,
+	.docs-sunfall::before {
+		animation: none;
+	}
+
+	.docs-mote {
+		display: none;
+	}
+}
+
+/* Syntax colours for the smoked-glass code panels. */
+.docs-code .tok-key {
+	color: #a5b4fc;
+}
+
+.docs-code .tok-string {
+	color: #fcd9a0;
+}
+
+.docs-code .tok-number {
+	color: #86efac;
+}
+
+.docs-code .tok-literal {
+	color: #f9a8d4;
+}
+
+.docs-code .tok-punct {
+	color: rgba(226, 232, 240, 0.45);
+}
+
+.docs-code .tok-param {
+	color: #fcd9a0;
+}
+
+.docs-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+}
+
+.docs-description > summary::-webkit-details-marker {
+	display: none;
+}
+
+.docs-code .tok-comment {
+	color: rgba(148, 163, 184, 0.75);
+	font-style: italic;
+}
+
+.docs-code .tok-fn {
+	color: #93c5fd;
+}

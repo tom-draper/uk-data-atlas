@@ -107,7 +107,7 @@ export default function LocationPanel({
 					className={`shrink-0 ${t.section} flex items-center overflow-hidden`}
 				>
 					<h2
-						className={`px-2.5 pb-2 pt-2.5 text-sm font-semibold grow ${t.heading}`}
+						className={`grow px-2.5 pt-2.5 pb-2 text-sm font-semibold tracking-tight ${t.heading}`}
 					>
 						Locations
 					</h2>

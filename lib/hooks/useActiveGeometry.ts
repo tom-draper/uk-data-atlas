@@ -107,8 +107,10 @@ export function useActiveGeometry(
 		fetchBoundaryFile(path, {
 			type,
 			location: location ?? null,
-			getLadForWard,
-			constituencyLadOverlaps: constituencyOverlaps,
+			relations: {
+				getLadForWard,
+				constituencyLadOverlaps: constituencyOverlaps,
+			},
 		})
 			.then((data) => {
 				if (!active) return;

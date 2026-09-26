@@ -1,31 +1,50 @@
 // lib/data/electionConfig.ts
 
-import { WardYear } from "../../boundaries/boundaries";
+import type { WardYear } from "../../boundaries/boundaries";
+import type { LocalElectionYear } from "@lib/types";
 
 interface ElectionSourceBase {
-	year: number;
-	boundaryYear?: WardYear; // Defaults to year; set when election year has no ward boundary
+	year: LocalElectionYear;
+	boundaryYear: WardYear;
 	// Path relative to data/, read at precompile time. The leading segments
 	// are the dataset's id, so this points into its folder alongside meta.json.
 	path: string;
-	isReference?: boolean; // Used to fix 2023 data
 }
 
 export interface ElectionTableSourceConfig extends ElectionSourceBase {
 	source: "xlsx";
-	// Worksheet inside the workbook holding the ward-level table.
+	// Worksheet with one row per ward, giving its identity, electorate and
+	// turnout. Votes are not read from it.
 	sheet: string;
-	// Map internal standard keys to worksheet table headers.
 	fields: {
-		code: string; // Ward Code
-		name: string; // Ward Name
+		code?: string; // Absent when the workbook publishes no ward codes
+		name: string;
 		ladName: string;
-		ladCode?: string; // Optional, 2023 might not have it
+		ladCode?: string;
 		turnout: string;
 		electorate: string;
-		totalVotes?: string; // 2023 uses 'Grand Total'
 	};
-	// Remap ward codes in source data to match the boundary file for that year
+	// Worksheet with one row per candidate, from which ward votes are counted.
+	candidates: {
+		sheet: string;
+		fields: {
+			code?: string;
+			name: string;
+			ladName: string;
+			party: string;
+			votes: string;
+		};
+	};
+	// For a workbook without ward codes: the official ward list for the
+	// boundary year, whose codes are matched by exact authority and ward name.
+	wardList?: {
+		path: string;
+		code: string;
+		name: string;
+		ladName: string;
+	};
+	// Corrections from a code the source gives to the code of the ward the
+	// election was actually held in. Each corrected record keeps sourceWardCode.
 	wardCodeMap?: Record<string, string>;
 }
 
@@ -43,22 +62,30 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 		boundaryYear: 2025, // 2025 HoC data uses WD25CD codes from the May 2025 ward boundary
 		path: "politics/elections/local-elections/2025/LEH-2025-results-HoC.xlsx",
 		sheet: "Ward results",
-		isReference: true,
 		fields: {
 			code: "ONS ward code",
 			name: "Ward/ County Electoral District name",
 			ladName: "Lower tier authority",
 			turnout: "Valid vote turnout (HoC method)",
 			electorate: "Electorate",
-			totalVotes: "Ballots",
+		},
+		candidates: {
+			sheet: "Candidates result",
+			fields: {
+				code: "ONS ward code",
+				name: "Ward/ County Electoral District name",
+				ladName: "Lower tier authority",
+				party: "Party name",
+				votes: "Votes cast",
+			},
 		},
 	},
 	2024: {
 		year: 2024,
+		boundaryYear: 2024,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2024/LEH-2024-results-HoC-version.xlsx",
 		sheet: "Wards results",
-		isReference: true,
 		fields: {
 			code: "Ward code",
 			name: "Ward name",
@@ -66,30 +93,53 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 			ladCode: "Local authority code",
 			turnout: "Turnout (%)",
 			electorate: "Electorate",
-			totalVotes: "Total votes",
+		},
+		candidates: {
+			sheet: "Candidates results",
+			fields: {
+				code: "Ward code",
+				name: "Ward name",
+				ladName: "Local authority name",
+				party: "Party name",
+				votes: "Votes",
+			},
 		},
 	},
 	2023: {
 		year: 2023,
+		boundaryYear: 2023,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2023/LEH-Candidates-2023.xlsx",
 		sheet: "Ward_Level",
-		isReference: false,
 		fields: {
-			code: "", // Missing in 2023
 			name: "WARDNAME",
-			ladName: "DISTRICTNAME", // handled in parser logic
+			ladName: "DISTRICTNAME",
 			turnout: "TURNOUT",
 			electorate: "ELECT",
-			totalVotes: "Grand Total",
+		},
+		candidates: {
+			sheet: "Cand_Table",
+			fields: {
+				name: "WARDNAME",
+				ladName: "DISTRICTNAME",
+				party: "PARTYNAME",
+				votes: "VOTE",
+			},
+		},
+		// The workbook publishes no ward codes.
+		wardList: {
+			path: "boundaries/ward/2023-05-uk-bgc/WD_MAY_2023_UK_BGC_932649178890735580.geojson",
+			code: "WD23CD",
+			name: "WD23NM",
+			ladName: "LAD23NM",
 		},
 	},
 	2022: {
 		year: 2022,
+		boundaryYear: 2022,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2022/local-elections-2022.xlsx",
 		sheet: "Wards-results",
-		isReference: true,
 		fields: {
 			code: "Ward code",
 			name: "Ward name",
@@ -97,15 +147,24 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 			ladCode: "Local authority code",
 			turnout: "Turnout (%)",
 			electorate: "Electorate",
-			totalVotes: "Total votes",
+		},
+		candidates: {
+			sheet: "Candidates-results",
+			fields: {
+				code: "Ward code",
+				name: "Ward name",
+				ladName: "Local authority name",
+				party: "Party name",
+				votes: "Votes",
+			},
 		},
 	},
 	2021: {
 		year: 2021,
+		boundaryYear: 2021,
 		source: "xlsx",
 		path: "politics/elections/local-elections/2021/local_elections_2021_results-2.xlsx",
 		sheet: "Wards-results",
-		isReference: true,
 		fields: {
 			code: "Ward/ED code",
 			name: "Ward/ED name",
@@ -113,16 +172,30 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 			ladCode: "Local authority code",
 			turnout: "Turnout (%)",
 			electorate: "Electorate",
-			totalVotes: "Total votes",
 		},
-		// The HoC dataset uses post-2022 ward codes for some areas that had boundary
-		// reviews. Remap to their Dec 2021 boundary equivalents so they match the map.
+		candidates: {
+			sheet: "Candidates-results",
+			fields: {
+				code: "Ward/ED code",
+				name: "Ward/ED name",
+				ladName: "Local authority name",
+				party: "Party name",
+				votes: "Votes",
+			},
+		},
+		// The workbook gives these wards the codes first issued in December 2022
+		// for the wards that replaced them after boundary reviews in these five
+		// councils, which took effect at the May 2022 elections. The 2021 votes
+		// were cast in the earlier wards, so they are recorded under the codes in
+		// force at the election, and every other 2021 ward in these councils
+		// already carries one. Each record keeps the workbook's code as
+		// sourceWardCode.
 		wardCodeMap: {
 			E05013874: "E05002328", // Park (Reading)
 			E05013955: "E05004793", // Harpenden West
 			E05013963: "E05004802", // Sopwell
 			E05014120: "E05000916", // Billinge & Seneley Green
-			E05014136: "E05001150", // West Park
+			E05014136: "E05000930", // West Park (St Helens)
 			E05014147: "E05004541", // Lee East
 			E05014148: "E05004542", // Lee West
 			E05014152: "E05000670", // Besses (Bury)
@@ -133,26 +206,26 @@ export const ELECTION_SOURCES: Record<string, ElectionSourceConfig> = {
 	},
 	2019: {
 		year: 2019,
+		boundaryYear: 2019,
 		source: "leap",
 		path: "politics/elections/local-elections/2019/leap-2019-05-02.csv",
-		isReference: true,
 	},
 	2018: {
 		year: 2018,
+		boundaryYear: 2018,
 		source: "leap",
 		path: "politics/elections/local-elections/2018/leap-2018-05-03.csv",
-		isReference: true,
 	},
 	2017: {
 		year: 2017,
+		boundaryYear: 2017,
 		source: "leap",
 		path: "politics/elections/local-elections/2017/leap-2017-05-04.csv",
-		isReference: true,
 	},
 	2016: {
 		year: 2016,
+		boundaryYear: 2016,
 		source: "leap",
 		path: "politics/elections/local-elections/2016/leap-2016-05-05.csv",
-		isReference: true,
 	},
 };

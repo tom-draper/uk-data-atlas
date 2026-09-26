@@ -13,6 +13,7 @@ export const CHART_GROUPS: readonly ChartGroupDefinition[] = [
 	{ group: "Deprivation", title: "Deprivation" },
 	{ group: "Health", title: "Health" },
 	{ group: "Education", title: "Education" },
+	{ group: "Transport", title: "Transport" },
 	{ group: "Telecoms", title: "Telecoms" },
 	{ group: "Environment", title: "Environment" },
 ];

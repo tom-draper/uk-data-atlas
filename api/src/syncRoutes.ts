@@ -1,0 +1,292 @@
+import { compareAtlasReleases } from "./atlasReleaseComparison";
+import { semanticReleaseChanges } from "./atlasReleaseSemanticChanges";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
+import type { RouteRequest } from "./routing";
+
+const artifactContentType = (path: string) =>
+	path.endsWith(".json")
+		? "application/json"
+		: path.endsWith(".parquet")
+			? "application/vnd.apache.parquet"
+			: path.endsWith(".pmtiles")
+				? "application/vnd.pmtiles"
+				: "application/octet-stream";
+
+/**
+ * Endpoints that let a caller synchronise an immutable Atlas release or
+ * inspect the validation gate that admitted it. Keeping them together means
+ * new map and data capabilities do not need to touch this independent API
+ * surface.
+ */
+export const handleSyncRoutes = ({
+	context,
+	releaseId,
+	parsedUrl,
+	segments,
+}: RouteRequest): ApiResponse | undefined => {
+	const { atlasRelease, atlasReleaseHistory, validationReport } = context;
+
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases" &&
+		segments[3] === "artifacts"
+	) {
+		if (!atlasReleaseHistory || !context.readReleaseArtifact)
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the Atlas release history before downloading a release artifact.",
+			);
+		const requestedReleaseId = segments[2] as string;
+		const release = atlasReleaseHistory.get(requestedReleaseId);
+		if (!release)
+			return problem(
+				404,
+				"Not Found",
+				"No archived Atlas release matches that identity.",
+			);
+		const artifactId = parsedUrl.searchParams.get("artifact");
+		if (!artifactId)
+			return problem(
+				400,
+				"Invalid Query",
+				"artifact is required; read the release manifest to choose one of its declared artifact ids.",
+			);
+		const artifact = context.readReleaseArtifact(
+			requestedReleaseId,
+			artifactId,
+		);
+		if (!artifact) {
+			const current = requestedReleaseId === releaseId;
+			return problem(
+				current ? 503 : 410,
+				current ? "Export Unavailable" : "Release No Longer Served",
+				current
+					? `Release artifact ${artifactId} is unavailable or does not match its manifest hash.`
+					: `Atlas release ${requestedReleaseId} is recorded, but artifact ${artifactId} was not retained or no longer matches its release manifest.`,
+			);
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				releaseId: requestedReleaseId,
+				artifact: artifact.artifact,
+			}),
+			cache: "immutable",
+			representation: {
+				contentType: artifactContentType(artifact.artifact.path),
+				body: artifact.body,
+				headers: {
+					"content-disposition": `attachment; filename="${artifact.artifact.path.split("/").at(-1)}"`,
+				},
+			},
+		};
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases"
+	) {
+		return atlasReleaseHistory
+			? {
+					status: 200,
+					body: envelope(
+						releaseId,
+						[...atlasReleaseHistory.values()]
+							.map((release) => ({
+								releaseId: release.releaseId,
+								href: `/v1/atlas-releases/${release.releaseId}`,
+								artifactCount: release.artifacts.length,
+								current: release.releaseId === releaseId,
+							}))
+							.sort((left, right) =>
+								left.releaseId.localeCompare(right.releaseId),
+							),
+					),
+				}
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the atlas release history before listing releases.",
+				);
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases" &&
+		segments[2] === "compare"
+	) {
+		if (!atlasReleaseHistory) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the atlas release history before comparing releases.",
+			);
+		}
+		const fromId = parsedUrl.searchParams.get("from");
+		const toId = parsedUrl.searchParams.get("to") ?? releaseId;
+		if (!fromId) {
+			return problem(
+				400,
+				"Invalid Query",
+				"from is required; to defaults to the current Atlas release.",
+			);
+		}
+		const from = atlasReleaseHistory.get(fromId);
+		const to = atlasReleaseHistory.get(toId);
+		if (!from || !to) {
+			return problem(
+				404,
+				"Not Found",
+				"One or both requested Atlas releases are not archived by this API instance.",
+			);
+		}
+		const detail = parsedUrl.searchParams.get("detail") ?? "summary";
+		if (detail !== "summary" && detail !== "fields")
+			return problem(
+				400,
+				"Invalid Query",
+				"detail must be summary or fields.",
+			);
+		const comparison = compareAtlasReleases(from, to);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...comparison,
+				...(detail === "fields"
+					? {
+							semantic: semanticReleaseChanges(
+								from,
+								to,
+								comparison.resources,
+								context.readReleaseArtifact,
+							),
+						}
+					: {}),
+			}),
+		};
+	}
+
+	if (
+		segments.length === 3 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-releases"
+	) {
+		const requested = atlasReleaseHistory?.get(segments[2] as string);
+		return requested
+			? { status: 200, body: envelope(releaseId, requested) }
+			: problem(
+					404,
+					"Not Found",
+					"No archived Atlas release matches that identity.",
+				);
+	}
+
+	if (
+		segments.length === 2 &&
+		segments[0] === "v1" &&
+		segments[1] === "atlas-release"
+	) {
+		return atlasRelease
+			? { status: 200, body: envelope(releaseId, atlasRelease) }
+			: problem(
+					503,
+					"Catalogue Unavailable",
+					"Build the atlas release manifest before starting the API.",
+				);
+	}
+
+	const isValidationResource =
+		segments[0] === "v1" &&
+		segments[1] === "validation" &&
+		((segments[2] === "boundary-releases" && segments.length === 5) ||
+			(segments.length === 4 &&
+				["crosswalks", "measures", "exports"].includes(
+					segments[2] ?? "",
+				)));
+	if (
+		(segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "validation") ||
+		isValidationResource
+	) {
+		if (!validationReport) {
+			return problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the validation report before starting the API.",
+			);
+		}
+		if (isValidationResource) {
+			const id = segments.slice(2).join("/");
+			const resource = validationReport.resources.find(
+				(candidate) => candidate.id === id,
+			);
+			return resource
+				? { status: 200, body: envelope(releaseId, resource) }
+				: problem(
+						404,
+						"Not Found",
+						"No validated resource matches that identity.",
+					);
+		}
+		const status = parsedUrl.searchParams.get("status");
+		if (status !== null && status !== "passed" && status !== "waived") {
+			return problem(
+				400,
+				"Invalid Query",
+				"status must be passed or waived.",
+			);
+		}
+		const scope = parsedUrl.searchParams.get("scope");
+		if (scope !== null && scope !== "data") {
+			return problem(
+				400,
+				"Invalid Query",
+				"scope must be data when supplied.",
+			);
+		}
+		const { resources, ...report } = validationReport;
+		const filtered = resources.filter(
+			(resource) =>
+				(status === null || resource.status === status) &&
+				(scope !== "data" || resource.kind === "measure-source"),
+		);
+		if (scope === "data") {
+			const checks = filtered.flatMap((resource) => resource.checks);
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					schemaVersion: report.schemaVersion,
+					contentHash: report.contentHash,
+					inputs: report.inputs,
+					scope: "data",
+					summary: {
+						resourceCount: filtered.length,
+						checkCount: checks.length,
+						passedCount: checks.filter(
+							(entry) => entry.status === "passed",
+						).length,
+						waivedCount: checks.filter(
+							(entry) => entry.status === "waived",
+						).length,
+					},
+					resources: filtered,
+					note: "This is the source-observation quality audit. It checks artifact integrity, duplicate area-period records, area-code resolution, declared country coverage, value semantics and published intervals. An unwaived failure prevents publication; any waiver remains visible here.",
+				}),
+			};
+		}
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...report,
+				resources: filtered,
+			}),
+		};
+	}
+
+	return undefined;
+};

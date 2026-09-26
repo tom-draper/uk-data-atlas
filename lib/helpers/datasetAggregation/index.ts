@@ -5,7 +5,7 @@
  */
 export { DatasetAggregator } from "./datasetAggregator";
 export type {
-	AggregationCache,
 	BoundaryAggregationSpec,
 	BoundaryCodeDetector,
 } from "./ports";
+export { createBoundaryAggregationSpec } from "./ports";

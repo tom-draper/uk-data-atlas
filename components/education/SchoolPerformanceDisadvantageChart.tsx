@@ -10,6 +10,7 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface SchoolPerformanceDisadvantageChartProps {
 	activeDataset: Dataset | null;
@@ -20,16 +21,6 @@ interface SchoolPerformanceDisadvantageChartProps {
 	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-}
-
-/** A wide gap is the bad end here, so the scale runs the opposite way to attainment. */
-function gapColor(points: number | null): string {
-	if (points == null) return "#9ca3af";
-	if (points < 12) return "#16a34a";
-	if (points < 15) return "#4ade80";
-	if (points < 18) return "#eab308";
-	if (points < 21) return "#f97316";
-	return "#dc2626";
 }
 
 function computeStats(
@@ -85,7 +76,10 @@ export default function SchoolPerformanceDisadvantageChart({
 		activeDataset?.type === "schoolPerformanceGap" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null && stats.att8Gap != null;
-	const color = gapColor(stats?.att8Gap ?? null);
+	const color = useHeatmapValueColor(
+		"schoolPerformanceGap",
+		hasData ? stats.att8Gap : null,
+	);
 
 	if (!dataset) return null;
 
@@ -125,7 +119,7 @@ export default function SchoolPerformanceDisadvantageChart({
 						: undefined
 				}
 				barWidth={barWidth}
-				barColor={color}
+				barColor={color ?? undefined}
 			/>
 		</ChartCard>
 	);

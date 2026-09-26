@@ -10,6 +10,7 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface SchoolPerformanceConstituencyChartProps {
 	activeDataset: Dataset | null;
@@ -20,15 +21,6 @@ interface SchoolPerformanceConstituencyChartProps {
 	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-}
-
-function gradeColor(pct: number | null): string {
-	if (pct == null) return "#9ca3af";
-	if (pct >= 70) return "#16a34a";
-	if (pct >= 60) return "#4ade80";
-	if (pct >= 50) return "#eab308";
-	if (pct >= 40) return "#f97316";
-	return "#dc2626";
 }
 
 function computeStats(
@@ -78,7 +70,10 @@ export default function SchoolPerformanceConstituencyChart({
 		activeDataset?.type === "schoolPerformanceConstituency" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null && stats.ptL2basics94 != null;
-	const color = gradeColor(stats?.ptL2basics94 ?? null);
+	const color = useHeatmapValueColor(
+		"schoolPerformanceConstituency",
+		hasData ? stats.ptL2basics94 : null,
+	);
 
 	if (!dataset) return null;
 
@@ -116,7 +111,7 @@ export default function SchoolPerformanceConstituencyChart({
 						: undefined
 				}
 				barWidth={barWidth}
-				barColor={color}
+				barColor={color ?? undefined}
 			/>
 		</ChartCard>
 	);

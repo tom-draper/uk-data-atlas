@@ -6,6 +6,11 @@ export interface HousePriceWardData {
 	ladName: string;
 	wardCode: string;
 	wardName: string;
+	/**
+	 * The code the publisher used, where the loader moved the ward onto a
+	 * newer one so the map joins. Absent when the two are the same.
+	 */
+	sourceWardCode?: string;
 	/** Median price paid, by calendar year. */
 	prices: Record<number, number>;
 	/** Mean price paid, by calendar year. */

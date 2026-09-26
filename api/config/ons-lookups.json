@@ -1,0 +1,93 @@
+[
+	{
+		"service": "LAD25_CAUTH25_EN_LU",
+		"directory": "local-authority-to-combined-authority/2025-05-en",
+		"title": "Local authority district to combined authority, May 2025 (England)",
+		"description": "Official ONS lookup from English Local Authority Districts to the combined authorities they belong to, as at May 2025. Districts outside any combined authority are not listed.",
+		"temporalCoverage": "2025-05"
+	},
+	{
+		"service": "LAD25_CTYUA25_UK_LU_v2",
+		"directory": "local-authority-to-county-and-unitary-authority/2025-04-uk",
+		"title": "Local authority district to county and unitary authority, April 2025 (United Kingdom)",
+		"description": "Official ONS lookup from Local Authority Districts to counties and unitary authorities in the United Kingdom, as at 1 April 2025.",
+		"temporalCoverage": "2025-04-01"
+	},
+	{
+		"service": "LAD21_LAU121_ITL321_ITL221_ITL121_UK_LU",
+		"directory": "local-authority-to-itl/2021-01-uk",
+		"title": "Local authority district to LAU1 and ITL levels 3, 2 and 1, 2021 (United Kingdom)",
+		"description": "Official ONS lookup from 2021 Local Authority Districts through Local Administrative Units to International Territorial Levels 3, 2 and 1.",
+		"temporalCoverage": "2021"
+	},
+	{
+		"service": "LSOA21_LAD23_EW_LU",
+		"directory": "lsoa-to-local-authority/2023-05-ew",
+		"title": "2021 LSOA to local authority district, May 2023 (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2021 Lower Layer Super Output Areas to Local Authority Districts as at May 2023.",
+		"temporalCoverage": "2023-05"
+	},
+	{
+		"service": "MSOA21_LAD23_EW_LU",
+		"directory": "msoa-to-local-authority/2023-05-ew",
+		"title": "2021 MSOA to local authority district, May 2023 (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2021 Middle Layer Super Output Areas to Local Authority Districts as at May 2023.",
+		"temporalCoverage": "2023-05"
+	},
+	{
+		"service": "LAD22_LAD23_UK_LU_v1",
+		"directory": "local-authority-changes/2022-12-to-2023-05-uk",
+		"title": "Local authority district changes, December 2022 to May 2023 (United Kingdom)",
+		"description": "Official ONS lookup from December 2022 Local Authority Districts to their May 2023 successors.",
+		"temporalCoverage": "2023-04-01"
+	},
+	{
+		"service": "LAD24_LAD25_UK_LU_v2",
+		"directory": "local-authority-changes/2024-12-to-2025-05-uk",
+		"title": "Local authority district changes, December 2024 to May 2025 (United Kingdom)",
+		"description": "Official ONS lookup from December 2024 Local Authority Districts to their May 2025 successors.",
+		"temporalCoverage": "2025-04-01"
+	},
+	{
+		"service": "LSOA11_LSOA21_LAD22_EW_LU_v5",
+		"directory": "lsoa-changes/2011-to-2021-ew",
+		"title": "2011 LSOA to 2021 LSOA changes (England and Wales)",
+		"description": "Official ONS lookup from 2011 Lower Layer Super Output Areas to 2021 LSOAs, with a change indicator: U unchanged, S split, M merged, X a complex redistribution.",
+		"temporalCoverage": "2021-03-21"
+	},
+	{
+		"service": "OA_LSOA_MSOA_EW_DEC_2021_LU_v3",
+		"directory": "lsoa-to-msoa/2021-12-ew",
+		"title": "2021 LSOA to 2021 MSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2021 Output Areas to Lower and Middle Layer Super Output Areas, December 2021, stored at LSOA level: every 2021 LSOA lies wholly in one 2021 MSOA.",
+		"temporalCoverage": "2021-12",
+		"distinctColumns": [
+			"LSOA21CD",
+			"LSOA21NM",
+			"LSOA21NMW",
+			"MSOA21CD",
+			"MSOA21NM",
+			"MSOA21NMW"
+		]
+	},
+	{
+		"service": "SA11_LSOA11_LAD18_NI_LU_classificationv2_942e0f54c76a4998becb14986dc0b0ca",
+		"directory": "super-output-area-to-local-authority/2018-ni",
+		"title": "2011 super output area to local government district, 2018 (Northern Ireland)",
+		"description": "Official ONS lookup assigning each 2011 Northern Ireland Small Area to its Super Output Area and to one 2018 Local Government District, stored at Super Output Area level. Super Output Areas do not nest in the 2014 districts: ten appear under two districts because their Small Areas were assigned to different ones, and a Super Output Area whose Small Areas were all assigned to one district is listed under that district alone even where part of it lies in another.",
+		"temporalCoverage": "2018",
+		"distinctColumns": [
+			"LSOA11CD",
+			"LSOA11NM",
+			"LAD18CD",
+			"LAD18NM"
+		]
+	},
+	{
+		"service": "OA_LSOA_MSOA_EW_DEC_2021_LU_v3",
+		"directory": "output-area-to-lsoa/2021-12-ew",
+		"title": "2021 output area to 2021 LSOA (England and Wales)",
+		"description": "Official ONS exact-fit lookup from 2021 Output Areas to Lower and Middle Layer Super Output Areas and 2022 Local Authority Districts, December 2021, one row per Output Area: every 2021 Output Area lies wholly in one 2021 LSOA.",
+		"temporalCoverage": "2021-12"
+	}
+]

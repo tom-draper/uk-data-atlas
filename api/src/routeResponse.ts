@@ -1,0 +1,90 @@
+import type { ProblemCode } from "./problemCodes";
+
+export type Envelope<T> = {
+	apiVersion: "v1";
+	atlasRelease: string;
+	data: T;
+	meta: { nextCursor: string | null };
+};
+
+export type Problem = {
+	type: string;
+	title: string;
+	status: number;
+	detail: string;
+	choices?: unknown[];
+	candidates?: unknown[];
+	code?: ProblemCode;
+	absence?: string;
+	areaCount?: number;
+	areaSample?: string[];
+	presentIn?: unknown[];
+	availableReleases?: unknown[];
+	/**
+	 * What the caller could have asked for instead. A refusal that cannot say
+	 * this leaves them guessing, which is what this API exists to remove.
+	 */
+	alternatives?: {
+		periods?: string[];
+		partitions?: Array<{
+			geography: string;
+			boundaryYear: number;
+			periods: string[];
+		}>;
+		releases?: string[];
+	};
+	earliest?: unknown;
+	undated?: string[];
+	links?: Record<string, string>;
+	/** Quoted on a failure the server did not expect, to find it in the logs. */
+	requestId?: string;
+};
+
+export type ApiResponse = {
+	status: number;
+	body: Envelope<unknown> | Problem;
+	/**
+	 * Set where the answer is pinned to an immutable Atlas release, so its
+	 * bytes can never change and a client never needs to revalidate them.
+	 */
+	cache?: "immutable";
+	representation?: {
+		contentType: string;
+		/**
+		 * A Buffer for a representation that is not text, such as a vector
+		 * tile. It travels to the client as it is, and is hashed for the ETag
+		 * the same way a string body is.
+		 */
+		body: string | Buffer;
+		headers?: Record<string, string>;
+	};
+};
+
+export const envelope = <T>(
+	atlasRelease: string,
+	data: T,
+	nextCursor: string | null = null,
+): Envelope<T> => ({
+	apiVersion: "v1",
+	atlasRelease,
+	data,
+	meta: { nextCursor },
+});
+
+export const problem = (
+	status: number,
+	title: string,
+	detail: string,
+	extensions: Omit<Problem, "type" | "title" | "status" | "detail"> = {},
+): ApiResponse => ({
+	status,
+	body: {
+		type: `https://api.ukdataatlas.com/problems/${title
+			.toLowerCase()
+			.replaceAll(" ", "-")}`,
+		title,
+		status,
+		detail,
+		...extensions,
+	},
+});

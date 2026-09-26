@@ -1,0 +1,139 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import {
+	canServeAsWgs84,
+	fromWgs84Point,
+	geometryProvenance,
+	toWgs84Geometry,
+} from "../src/reprojection";
+
+// Reference values from PROJ's cct running EPSG:1314 (OSGB36 to WGS 84 (6))
+// as an explicit pipeline: inverse British National Grid, then the Helmert
+// shift in the position vector convention.
+const REFERENCES: Array<[[number, number], [number, number]]> = [
+	[
+		[651409.903, 313177.27],
+		[1.71605199, 52.657978599],
+	],
+	[
+		[325000, 673000],
+		[-3.202386182, 55.944167047],
+	],
+	[
+		[150000, 50000],
+		[-5.511662554, 50.296848418],
+	],
+	[
+		[530000, 180000],
+		[-0.12835394, 51.503990828],
+	],
+];
+
+test("matches PROJ for British National Grid points across Great Britain", () => {
+	for (const [grid, [lon, lat]] of REFERENCES) {
+		const { coordinates } = toWgs84Geometry(
+			{ type: "Point", coordinates: grid },
+			"EPSG:27700",
+		) as { coordinates: [number, number] };
+		// Output is rounded to 1e-7 degrees, about a centimetre.
+		assert.ok(Math.abs(coordinates[0] - lon) < 1e-7, `${grid} longitude`);
+		assert.ok(Math.abs(coordinates[1] - lat) < 1e-7, `${grid} latitude`);
+	}
+});
+
+test("round-trips normalised WGS84 points into both supported national grids", () => {
+	for (const [grid, wgs84] of REFERENCES) {
+		const { position } = fromWgs84Point(wgs84, "EPSG:27700");
+		assert.ok(Math.abs(position[0] - grid[0]) < 0.02, `${grid} easting`);
+		assert.ok(Math.abs(position[1] - grid[1]) < 0.02, `${grid} northing`);
+	}
+	for (const [grid, wgs84] of IRISH_GRID_REFERENCES) {
+		const { position } = fromWgs84Point(wgs84, "EPSG:29902");
+		assert.ok(Math.abs(position[0] - grid[0]) < 0.02, `${grid} easting`);
+		assert.ok(Math.abs(position[1] - grid[1]) < 0.02, `${grid} northing`);
+	}
+});
+
+// Reference values from PROJ's cs2cs for EPSG:29902 to EPSG:4326, which runs
+// EPSG:1641 (TM65 to WGS 84 (2)): Belfast, near Sligo, and north of Ballycastle.
+const IRISH_GRID_REFERENCES: Array<[[number, number], [number, number]]> = [
+	[
+		[333500, 373500],
+		[-5.935443406, 54.592112534],
+	],
+	[
+		[189000, 310000],
+		[-8.168639858, 54.039154941],
+	],
+	[
+		[360000, 450000],
+		[-5.483339555, 55.270946743],
+	],
+];
+
+test("matches PROJ for Irish Grid points across Northern Ireland", () => {
+	for (const [grid, [lon, lat]] of IRISH_GRID_REFERENCES) {
+		const { coordinates } = toWgs84Geometry(
+			{ type: "Point", coordinates: grid },
+			"EPSG:29902",
+		) as { coordinates: [number, number] };
+		assert.ok(Math.abs(coordinates[0] - lon) < 1e-7, `${grid} longitude`);
+		assert.ok(Math.abs(coordinates[1] - lat) < 1e-7, `${grid} latitude`);
+	}
+	assert.deepEqual(geometryProvenance("EPSG:29902").transformation, {
+		name: "TM65 to WGS 84 (2)",
+		epsg: "EPSG:1641",
+		accuracyM: 1,
+		areaOfUse: "Ireland and Northern Ireland onshore.",
+	});
+});
+
+test("reprojects every coordinate of nested and collected geometries", () => {
+	const collection = toWgs84Geometry(
+		{
+			type: "GeometryCollection",
+			geometries: [
+				{
+					type: "MultiPolygon",
+					coordinates: [
+						[
+							[
+								[530000, 180000],
+								[530100, 180000],
+								[530000, 180000],
+							],
+						],
+					],
+				},
+			],
+		},
+		"EPSG:27700",
+	) as { geometries: Array<{ coordinates: number[][][][] }> };
+	const ring = collection.geometries[0].coordinates[0][0];
+	assert.equal(ring.length, 3);
+	assert.ok(ring.every(([lon, lat]) => lon > -0.2 && lon < 0 && lat > 51.5));
+});
+
+test("leaves WGS84 geometry alone and refuses an unknown CRS", () => {
+	const point = { type: "Point", coordinates: [-2.24, 53.48] };
+	assert.equal(toWgs84Geometry(point, "EPSG:4326"), point);
+	assert.equal(
+		toWgs84Geometry(point, "urn:ogc:def:crs:OGC:1.3:CRS84"),
+		point,
+	);
+	assert.throws(
+		() => toWgs84Geometry(point, "EPSG:3857"),
+		/No transformation to WGS84 is available from EPSG:3857\./,
+	);
+	assert.deepEqual(
+		["EPSG:4326", "EPSG:27700", "EPSG:3857"].map(canServeAsWgs84),
+		[true, true, false],
+	);
+	assert.deepEqual(geometryProvenance("EPSG:4326"), {
+		sourceCrs: "EPSG:4326",
+	});
+	assert.equal(
+		geometryProvenance("EPSG:27700").transformation?.epsg,
+		"EPSG:1314",
+	);
+});

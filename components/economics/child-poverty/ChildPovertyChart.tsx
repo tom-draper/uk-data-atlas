@@ -9,6 +9,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface ChildPovertyChartProps {
 	activeDataset: Dataset | null;
@@ -21,14 +22,6 @@ interface ChildPovertyChartProps {
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-const accentForRate = (rate: number) =>
-	rate >= 30
-		? "#dc2626"
-		: rate >= 20
-			? "#f97316"
-			: rate >= 12
-				? "#eab308"
-				: "#16a34a";
 const formatCount = (value: number) =>
 	value >= 1_000_000
 		? `${(value / 1_000_000).toFixed(1)}m`
@@ -83,7 +76,10 @@ export default function ChildPovertyChart({
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
 	const rate = stats?.childPovertyRate ?? 0;
-	const accent = hasData ? accentForRate(rate) : null;
+	const accent = useHeatmapValueColor(
+		"childPoverty",
+		stats?.childPovertyRate,
+	);
 	const color = accent ?? undefined;
 	if (!dataset) return null;
 

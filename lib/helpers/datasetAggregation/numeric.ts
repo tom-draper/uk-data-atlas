@@ -25,6 +25,14 @@ import type {
 	FuelPovertyDataset,
 } from "@/lib/types/fuelPoverty";
 import type {
+	AggregatedGhgEmissionsData,
+	GhgEmissionsDataset,
+} from "@/lib/types/ghgEmissions";
+import type {
+	AggregatedMobileCoverageData,
+	MobileCoverageDataset,
+} from "@/lib/types/mobileCoverage";
+import type {
 	AggregatedSchoolPerformanceData,
 	AggregatedSchoolPerformanceGapData,
 	SchoolPerformanceGapMeasures,
@@ -46,86 +54,121 @@ export function collectBoundaryRecords<T>(
 	return records;
 }
 
+/**
+ * The mean of a value over records, each weighted by the size of the
+ * population it describes, over the records that have both. A figure that is
+ * a share or an average of something must be combined this way: a flat mean
+ * of authorities' figures would weigh the Isles of Scilly as heavily as
+ * Birmingham.
+ */
+export function weightedMean<T>(
+	records: T[],
+	value: (record: T) => number | null | undefined,
+	weight: (record: T) => number | null | undefined,
+): number | null {
+	let weighted = 0,
+		total = 0;
+	for (const record of records) {
+		const v = value(record);
+		const w = weight(record);
+		if (v == null || w == null || !(w > 0)) continue;
+		weighted += v * w;
+		total += w;
+	}
+	return total > 0 ? weighted / total : null;
+}
+
+/**
+ * The size of the population a rate is taken over, recovered from a count and
+ * the rate it gives: 250 claimants at 2.5% are 10,000 residents. Unknown where
+ * the rate is zero, since any population gives none.
+ */
+const denominator = (count: number, ratePer: number, rate: number) =>
+	rate > 0 ? (count / rate) * ratePer : null;
+
+/** Coverage is a share of premises, so authorities are weighted by premises. */
 export function aggregateBroadband(
 	records: BroadbandDataset["data"][string][],
 ): AggregatedBroadbandData | null {
-	let superfast = 0,
-		ultrafast = 0,
-		fullFibre = 0,
-		gigabit = 0,
-		count = 0;
-	for (const record of records) {
-		if (record.pctFullFibre == null) continue;
-		superfast += record.pctSuperfast ?? 0;
-		ultrafast += record.pctUltrafast ?? 0;
-		fullFibre += record.pctFullFibre;
-		gigabit += record.pctGigabit ?? 0;
-		count++;
-	}
-	return count === 0
-		? null
-		: {
-				pctSuperfast: superfast / count,
-				pctUltrafast: ultrafast / count,
-				pctFullFibre: fullFibre / count,
-				pctGigabit: gigabit / count,
-			};
+	const reporting = records.filter((record) => record.pctFullFibre != null);
+	const share = (
+		field: "pctSuperfast" | "pctUltrafast" | "pctFullFibre" | "pctGigabit",
+	) =>
+		weightedMean(
+			reporting,
+			(record) => record[field],
+			(record) => record.premisesCount,
+		) ?? 0;
+	return reporting.some((record) => (record.premisesCount ?? 0) > 0)
+		? {
+				pctSuperfast: share("pctSuperfast"),
+				pctUltrafast: share("pctUltrafast"),
+				pctFullFibre: share("pctFullFibre"),
+				pctGigabit: share("pctGigabit"),
+			}
+		: null;
 }
 
+/**
+ * Each authority's concentration is a mean over its 1x1 km grid cells, so
+ * weighting by cell count gives the mean over every cell in the combined area.
+ */
 export function aggregateAirQuality(
 	records: AirQualityDataset["data"][string][],
 ): AggregatedAirQualityData | null {
-	let no2 = 0,
-		pm25 = 0,
-		pm10 = 0,
-		count = 0,
-		pm25Count = 0,
-		pm10Count = 0;
-	for (const record of records) {
-		if (record.no2Mean == null) continue;
-		no2 += record.no2Mean;
-		if (record.pm25Mean != null) {
-			pm25 += record.pm25Mean;
-			pm25Count++;
-		}
-		if (record.pm10Mean != null) {
-			pm10 += record.pm10Mean;
-			pm10Count++;
-		}
-		count++;
-	}
-	return count === 0
+	const cells = (record: AirQualityDataset["data"][string]) =>
+		record.gridCells;
+	const no2Mean = weightedMean(records, (record) => record.no2Mean, cells);
+	return no2Mean === null
 		? null
 		: {
-				no2Mean: no2 / count,
-				pm25Mean: pm25Count ? pm25 / pm25Count : null,
-				pm10Mean: pm10Count ? pm10 / pm10Count : null,
+				no2Mean,
+				pm25Mean: weightedMean(
+					records,
+					(record) => record.pm25Mean,
+					cells,
+				),
+				pm10Mean: weightedMean(
+					records,
+					(record) => record.pm10Mean,
+					cells,
+				),
 			};
 }
 
+/**
+ * Counts add. Both rates are claimants as a share of residents aged 16 to 64,
+ * so the combined rate is the summed claimants over the summed residents,
+ * recovered from each authority's count and rate.
+ */
 export function aggregateClaimantCount(
 	records: ClaimantCountDataset["data"][string][],
 ): AggregatedClaimantCountData | null {
+	if (records.length === 0) return null;
 	let totalCount = 0,
-		totalRate = 0,
 		youthCount = 0,
-		youthRate = 0,
-		count = 0;
+		residents = 0,
+		ratedTotal = 0,
+		ratedYouth = 0;
 	for (const record of records) {
 		totalCount += record.totalCount;
-		totalRate += record.totalRate;
 		youthCount += record.youthCount;
-		youthRate += record.youthRate;
-		count++;
+		const population = denominator(
+			record.totalCount,
+			100,
+			record.totalRate,
+		);
+		if (population === null) continue;
+		residents += population;
+		ratedTotal += record.totalCount;
+		ratedYouth += record.youthCount;
 	}
-	return count === 0
-		? null
-		: {
-				totalCount,
-				totalRate: totalRate / count,
-				youthCount,
-				youthRate: youthRate / count,
-			};
+	return {
+		totalCount,
+		totalRate: residents > 0 ? (ratedTotal / residents) * 100 : 0,
+		youthCount,
+		youthRate: residents > 0 ? (ratedYouth / residents) * 100 : 0,
+	};
 }
 
 export function aggregateChildPoverty(
@@ -147,31 +190,133 @@ export function aggregateChildPoverty(
 			};
 }
 
-export function aggregateHomelessness(
-	records: HomelessnessDataset["data"][string][],
-): AggregatedHomelessnessData | null {
-	let householdsInTemporaryAccommodation = 0;
-	let householdsPerThousand = 0;
-	let householdsWithChildren = 0;
-	let childrenInTemporaryAccommodation = 0;
-	let count = 0;
+/**
+ * Emissions are a count, so they add across authorities; the per-person figure
+ * has to be recomputed from the summed population rather than averaged, or a
+ * rural authority with few residents would weigh as heavily as a city.
+ */
+export function aggregateGhgEmissions(
+	records: GhgEmissionsDataset["data"][string][],
+): AggregatedGhgEmissionsData | null {
+	let totalKtCO2e = 0,
+		excludingLandUseKtCO2e = 0,
+		populationThousands = 0,
+		transport = 0,
+		domestic = 0,
+		industry = 0,
+		count = 0;
 	for (const record of records) {
-		householdsInTemporaryAccommodation +=
-			record.householdsInTemporaryAccommodation;
-		householdsPerThousand += record.householdsPerThousand;
-		householdsWithChildren += record.householdsWithChildren;
-		childrenInTemporaryAccommodation +=
-			record.childrenInTemporaryAccommodation;
+		totalKtCO2e += record.totalKtCO2e;
+		excludingLandUseKtCO2e += record.excludingLandUseKtCO2e;
+		populationThousands += record.populationThousands;
+		transport += record.transport;
+		domestic += record.domestic;
+		industry += record.industry;
 		count++;
 	}
 	return count === 0
 		? null
 		: {
-				householdsInTemporaryAccommodation,
-				householdsPerThousand: householdsPerThousand / count,
-				householdsWithChildren,
-				childrenInTemporaryAccommodation,
+				totalKtCO2e,
+				excludingLandUseKtCO2e,
+				perPersonTCO2e:
+					populationThousands > 0
+						? totalKtCO2e / populationThousands
+						: 0,
+				transport,
+				domestic,
+				industry,
 			};
+}
+
+/**
+ * Coverage is a share of premises, so authorities are weighted by how many
+ * premises they hold rather than averaged flat; otherwise the Isles of Scilly
+ * would pull a region's figure as hard as Birmingham. Landmass shares have no
+ * premises weight to use, so they stay a plain mean.
+ */
+export function aggregateMobileCoverage(
+	records: MobileCoverageDataset["data"][string][],
+): AggregatedMobileCoverageData | null {
+	if (records.length === 0) return null;
+
+	const premisesWeighted = (
+		field:
+			| "pct4GIndoorAll"
+			| "pct4GIndoorAny"
+			| "pct5GOutdoorAll"
+			| "pct5GOutdoorAny",
+	) => {
+		let weighted = 0,
+			premises = 0;
+		for (const record of records) {
+			const share = record[field];
+			const count = record.premisesCount;
+			if (share === null || count === null || count <= 0) continue;
+			weighted += share * count;
+			premises += count;
+		}
+		return premises > 0 ? weighted / premises : null;
+	};
+
+	const mean = (field: "pct4GGeoAll" | "pct5GGeoAny") => {
+		let total = 0,
+			count = 0;
+		for (const record of records) {
+			const share = record[field];
+			if (share === null) continue;
+			total += share;
+			count++;
+		}
+		return count > 0 ? total / count : null;
+	};
+
+	return {
+		pct4GIndoorAll: premisesWeighted("pct4GIndoorAll"),
+		pct4GIndoorAny: premisesWeighted("pct4GIndoorAny"),
+		pct5GOutdoorAll: premisesWeighted("pct5GOutdoorAll"),
+		pct5GOutdoorAny: premisesWeighted("pct5GOutdoorAny"),
+		pct4GGeoAll: mean("pct4GGeoAll"),
+		pct5GGeoAny: mean("pct5GGeoAny"),
+	};
+}
+
+export function aggregateHomelessness(
+	records: HomelessnessDataset["data"][string][],
+): AggregatedHomelessnessData | null {
+	if (records.length === 0) return null;
+	let householdsInTemporaryAccommodation = 0;
+	let householdsWithChildren = 0;
+	let childrenInTemporaryAccommodation = 0;
+	// The rate is per thousand of all households in the authority, so the
+	// combined rate pools those households, recovered from the count and rate.
+	let households = 0;
+	let ratedInTemporaryAccommodation = 0;
+	for (const record of records) {
+		householdsInTemporaryAccommodation +=
+			record.householdsInTemporaryAccommodation;
+		householdsWithChildren += record.householdsWithChildren;
+		childrenInTemporaryAccommodation +=
+			record.childrenInTemporaryAccommodation;
+		const all = denominator(
+			record.householdsInTemporaryAccommodation,
+			1000,
+			record.householdsPerThousand,
+		);
+		if (all === null) continue;
+		households += all;
+		ratedInTemporaryAccommodation +=
+			record.householdsInTemporaryAccommodation;
+	}
+	return {
+		householdsInTemporaryAccommodation,
+		householdsPerThousand:
+			households > 0
+				? (ratedInTemporaryAccommodation / households) * 1000
+				: 0,
+		householdsWithChildren,
+		childrenInTemporaryAccommodation,
+	};
 }
 
 export function aggregateFuelPoverty(
@@ -194,31 +339,31 @@ export function aggregateFuelPoverty(
 }
 
 /**
- * Averages the gap across an area's districts. Districts whose cohorts fell
- * below the reporting floor carry a null gap and are skipped, so a region is
- * summarised from the districts that could be measured rather than being
- * dragged toward zero by the ones that could not.
+ * Pools each group's Attainment 8 over its own pupils, and takes the gap
+ * between the pooled scores. Districts whose cohorts fell below the reporting
+ * floor carry a null gap and are skipped, so a region is summarised from the
+ * districts that could be measured rather than dragged toward zero.
  */
 export function aggregateSchoolPerformanceGap(
 	records: SchoolPerformanceGapMeasures[],
 ): AggregatedSchoolPerformanceGapData | null {
-	let gap = 0,
-		disadvantaged = 0,
-		notDisadvantaged = 0,
-		count = 0;
-	for (const record of records) {
-		if (record.att8Gap == null) continue;
-		gap += record.att8Gap;
-		disadvantaged += record.att8Disadvantaged ?? 0;
-		notDisadvantaged += record.att8NotDisadvantaged ?? 0;
-		count++;
-	}
-	return count === 0
+	const measured = records.filter((record) => record.att8Gap != null);
+	const att8Disadvantaged = weightedMean(
+		measured,
+		(record) => record.att8Disadvantaged,
+		(record) => record.disadvantagedPupils,
+	);
+	const att8NotDisadvantaged = weightedMean(
+		measured,
+		(record) => record.att8NotDisadvantaged,
+		(record) => record.notDisadvantagedPupils,
+	);
+	return att8Disadvantaged === null || att8NotDisadvantaged === null
 		? null
 		: {
-				att8Gap: gap / count,
-				att8Disadvantaged: disadvantaged / count,
-				att8NotDisadvantaged: notDisadvantaged / count,
+				att8Gap: att8NotDisadvantaged - att8Disadvantaged,
+				att8Disadvantaged,
+				att8NotDisadvantaged,
 			};
 }
 
@@ -227,25 +372,33 @@ export function aggregateSchoolPerformanceGap(
 export function aggregateSchoolPerformance(
 	records: SchoolPerformanceMeasures[],
 ): AggregatedSchoolPerformanceData | null {
-	let pt94 = 0,
-		pt95 = 0,
-		att8 = 0,
-		p8 = 0,
-		count = 0;
-	for (const record of records) {
-		if (record.ptL2basics94 == null) continue;
-		pt94 += record.ptL2basics94;
-		pt95 += record.ptL2basics95 ?? 0;
-		att8 += record.avgAtt8 ?? 0;
-		p8 += record.avgP8score ?? 0;
-		count++;
-	}
-	return count === 0
+	// Each figure is a share or an average over the area's pupils, so
+	// authorities count by how many pupils they have.
+	const reporting = records.filter((record) => record.ptL2basics94 != null);
+	const pupils = (record: SchoolPerformanceMeasures) => record.pupils;
+	const ptL2basics94 = weightedMean(
+		reporting,
+		(record) => record.ptL2basics94,
+		pupils,
+	);
+	return ptL2basics94 === null
 		? null
 		: {
-				ptL2basics94: pt94 / count,
-				ptL2basics95: pt95 / count,
-				avgAtt8: att8 / count,
-				avgP8score: p8 / count,
+				ptL2basics94,
+				ptL2basics95: weightedMean(
+					reporting,
+					(record) => record.ptL2basics95,
+					pupils,
+				),
+				avgAtt8: weightedMean(
+					reporting,
+					(record) => record.avgAtt8,
+					pupils,
+				),
+				avgP8score: weightedMean(
+					reporting,
+					(record) => record.avgP8score,
+					pupils,
+				),
 			};
 }

@@ -10,12 +10,15 @@ describe("legend data selectors", () => {
 			{ type: "localElection", year: 2024 } as any,
 			{
 				localElection: {
-					2024: { partyVotes: { LAB: 12, CON: 30, GRN: 0 } },
+					2024: {
+						partyVotes: { LAB: 12, CON: 30, OTHER: 5, GRN: 0 },
+					},
 				},
 			},
 		);
 
-		expect(parties.map(({ id }) => id)).toEqual(["CON", "LAB"]);
+		expect(parties.map(({ id }) => id)).toEqual(["CON", "LAB", "OTHER"]);
+		expect(parties.at(-1)?.name).toBe("Other");
 	});
 
 	it("combines and sorts ethnicity totals across local authorities", () => {

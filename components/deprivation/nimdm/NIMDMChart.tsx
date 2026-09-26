@@ -7,7 +7,7 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivationStats } from "../deprivationStats";
+import { resolveDeprivation } from "../deprivationStats";
 
 const NIMDM: DeprivationIndex = {
 	datasetType: "nimdm",
@@ -17,6 +17,7 @@ const NIMDM: DeprivationIndex = {
 		"NISRA. Northern Ireland Multiple Deprivation Measure 2017. nisra.gov.uk",
 	metric: "rank",
 	metricMaximum: 890,
+	areaNoun: "super output areas",
 };
 
 interface NIMDMChartProps {
@@ -40,18 +41,11 @@ export default function NIMDMChart({
 	const dataset = availableDatasets?.[year];
 	if (!dataset) return null;
 
-	const stats = resolveDeprivationStats({
+	const resolved = resolveDeprivation({
 		aggregated: aggregatedData?.[dataset.year] ?? null,
 		ladStats: dataset.lgdStats,
 		selectedArea,
-		fineArea: {
-			type: "superOutputArea",
-			records: dataset.data,
-			statsFor: (record) => ({
-				averageNIMDMRank: record.nimdmRank,
-				averageNIMDMDecile: record.nimdmDecile,
-			}),
-		},
+		fineArea: { type: "superOutputArea", records: dataset.data },
 	});
 
 	return (
@@ -59,9 +53,20 @@ export default function NIMDMChart({
 			index={NIMDM}
 			dataset={dataset}
 			activeDataset={activeDataset}
-			decile={stats?.averageNIMDMDecile ?? null}
-			detail={
-				stats ? { kind: "rank", value: stats.averageNIMDMRank } : null
+			view={
+				resolved === null
+					? null
+					: resolved.kind === "summary"
+						? resolved
+						: {
+								kind: "area",
+								// NISRA publishes no decile for these areas, so none is shown.
+								decile: null,
+								detail: {
+									kind: "rank",
+									value: resolved.record.nimdmRank,
+								},
+							}
 			}
 			setActiveViz={setActiveViz}
 		/>

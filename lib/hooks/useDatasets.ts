@@ -11,6 +11,8 @@ import { Datasets } from "../types/datasets";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
 import {
 	CHART_DATASET_DEFINITIONS,
+	isChartDatasetPayload,
+	type ChartDataset,
 	type ChartDatasetType,
 } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
@@ -29,6 +31,15 @@ export interface UseDatasetsResult {
 	loading: boolean;
 	errors: string[];
 }
+
+const parseChartDataset = (value: unknown, datasetType?: string): ChartDataset => {
+	if (!isChartDatasetPayload(value, datasetType)) {
+		throw new Error(
+			`Invalid compiled dataset payload for ${datasetType ?? "unknown dataset"}`,
+		);
+	}
+	return value;
+};
 
 /**
  * Whether a dataset is worth fetching: a visible card reads it, or the map is
@@ -52,6 +63,20 @@ export function datasetIsNeeded(
 	);
 }
 
+/** Prioritise the active map, then visible cards, then background datasets. */
+export function datasetLoadPriority(
+	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
+	visibility: Record<ChartKey, boolean>,
+	activeDatasetType?: string,
+): number {
+	if (definition.type === activeDatasetType) return 0;
+	return getChartDefinitions(definition).some(
+		(chart) => visibility[chart.key] ?? DEFAULT_VISIBILITY[chart.key],
+	)
+		? 1
+		: 2;
+}
+
 /**
  * The chart datasets for the current view.
  *
@@ -71,9 +96,7 @@ export function useDatasets(
 	const chartDatasets = useJsonDatasetLoaders(
 		CHART_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
-			url: withCDN(
-				`/data/precompiled/${definition.precompiledFile}.json`,
-			),
+			url: withCDN(`/data/datasets/${definition.precompiledFile}.json`),
 			filter: {
 				location: selectedLocation,
 				boundaryType: definition.boundaryType,
@@ -89,8 +112,14 @@ export function useDatasets(
 						),
 					) ?? undefined)
 				: undefined,
+			priority: datasetLoadPriority(
+				definition,
+				visibility,
+				activeDatasetType,
+			),
 			enabled: datasetIsNeeded(definition, visibility, activeDatasetType),
 		})),
+		parseChartDataset,
 	);
 	const chartDatasetRecords = Object.fromEntries(
 		CHART_DATASET_DEFINITIONS.map((definition) => [

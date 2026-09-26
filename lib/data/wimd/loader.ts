@@ -1,6 +1,11 @@
 import { WIMDDataset, WIMDLSOAData } from "@/lib/types/wimd";
+import {
+	summariseDeprivationBy,
+	summariseWIMD,
+} from "@/lib/helpers/datasetAggregation/deprivation";
 import { findHeaderLine, parseCsv } from "@/lib/helpers/parseCsv";
-import { parseNum, parseNumInt } from "@/lib/helpers/parseNumber";
+import { parseNum } from "@/lib/helpers/parseNumber";
+import { odsTableRows } from "@/lib/data/spreadsheet/ods";
 
 const LOCAL_AUTHORITY_CODES: Record<string, string> = {
 	"Isle of Anglesey": "W06000001",
@@ -35,9 +40,62 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 	return "";
 }
 
+/**
+ * The published overall rank and decile, keyed by LSOA code.
+ *
+ * These come from the Welsh Government's ranks workbook, not from sorting the
+ * scores: the scores sheet rounds to one decimal place, and re-ranking it
+ * disagrees with the published rank for most LSOAs.
+ */
+export function publishedWIMDRanks(
+	ranksContentXml: string,
+): Map<string, { rank: number; decile: number }> {
+	const ranks = new Map<string, { rank: number; decile: number }>();
+	for (const row of odsTableRows(ranksContentXml, {
+		table: "Deciles_quintiles_quartiles",
+		label: "wimd ranks",
+		maxColumns: 8,
+	})) {
+		const [lsoaCode, , , rank, decile] = row;
+		if (!lsoaCode?.startsWith("W01")) continue;
+		const parsedRank = Number(rank);
+		const parsedDecile = Number(decile);
+		if (!Number.isInteger(parsedRank) || !Number.isInteger(parsedDecile))
+			throw new Error(
+				`WIMD ranks: unreadable rank or decile for ${lsoaCode}`,
+			);
+		ranks.set(lsoaCode, { rank: parsedRank, decile: parsedDecile });
+	}
+	return ranks;
+}
+
+/**
+ * ONS mid-2017 population by LSOA code, from the Nomis extract beside the
+ * scores. WIMD publishes no population of its own, and a group's average score
+ * is weighted by it.
+ */
+export function welshLSOAPopulations(csv: string): Map<string, number> {
+	const populations = new Map<string, number>();
+	for (const line of csv.split(/\r?\n/).slice(1)) {
+		if (!line.trim()) continue;
+		const cells = line.split(",").map((cell) => cell.replace(/"/g, ""));
+		const code = cells[1];
+		const population = Number(cells.at(-1));
+		if (!code?.startsWith("W01") || !Number.isInteger(population))
+			throw new Error(`WIMD population: unreadable row "${line}"`);
+		populations.set(code, population);
+	}
+	return populations;
+}
+
 export async function loadWIMD(
 	read: (path: string) => Promise<string>,
+	ranksContentXml: string,
 ): Promise<Record<string, WIMDDataset>> {
+	const published = publishedWIMDRanks(ranksContentXml);
+	const populations = welshLSOAPopulations(
+		await read("deprivation/wimd/wales-lsoa-population-mid-2017.csv"),
+	);
 	const text = await read("deprivation/wimd/wimd2019.csv");
 	const { data } = await parseCsv(text, {
 		header: true,
@@ -78,25 +136,14 @@ export async function loadWIMD(
 				"Score",
 			),
 		);
-		const wimdRank = parseNumInt(
-			pick(
-				row,
-				"WIMD 2019 Rank",
-				"Overall WIMD 2019 Rank",
-				"WIMD Rank",
-				"wimd_rank",
-				"Rank",
-			),
-		);
-		const wimdDecile = parseNumInt(
-			pick(
-				row,
-				"WIMD 2019 Decile",
-				"WIMD Decile",
-				"wimd_decile",
-				"Decile",
-			),
-		);
+		const publishedRank = published.get(lsoaCode);
+		if (!publishedRank)
+			throw new Error(`WIMD ranks: no published rank for ${lsoaCode}`);
+		const wimdRank = publishedRank.rank;
+		const wimdDecile = publishedRank.decile;
+		const population = populations.get(lsoaCode);
+		if (population === undefined)
+			throw new Error(`WIMD population: no estimate for ${lsoaCode}`);
 
 		records[lsoaCode] = {
 			lsoaCode,
@@ -113,32 +160,15 @@ export async function loadWIMD(
 			wimdScore,
 			wimdRank,
 			wimdDecile,
+			population,
 		};
 	}
 
-	const sorted = Object.values(records).sort(
-		(a, b) => b.wimdScore - a.wimdScore,
+	const ladStats: WIMDDataset["ladStats"] = summariseDeprivationBy(
+		Object.values(records),
+		(record) => record.ladCode,
+		summariseWIMD,
 	);
-	sorted.forEach((record, i) => {
-		record.wimdRank = i + 1;
-		record.wimdDecile = Math.ceil(((i + 1) / sorted.length) * 10);
-	});
-
-	const ladGroups: Record<string, (typeof records)[string][]> = {};
-	for (const r of Object.values(records)) {
-		(ladGroups[r.ladCode] ??= []).push(r);
-	}
-	const ladStats: WIMDDataset["ladStats"] = {};
-	for (const [lad, lsoas] of Object.entries(ladGroups)) {
-		ladStats[lad] = {
-			averageWIMDScore:
-				lsoas.reduce((s, r) => s + r.wimdScore, 0) / lsoas.length,
-			averageWIMDRank:
-				lsoas.reduce((s, r) => s + r.wimdRank, 0) / lsoas.length,
-			averageWIMDDecile:
-				lsoas.reduce((s, r) => s + r.wimdDecile, 0) / lsoas.length,
-		};
-	}
 
 	return {
 		2019: {

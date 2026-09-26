@@ -13,6 +13,18 @@ const COUNTRY_PREFIXES: Record<string, string> = {
 	"Northern Ireland": "N",
 };
 
+export type BoundaryLocationRelations = {
+	getLadForWard?: (wardCode: string) => string | undefined;
+	constituencyLadOverlaps?: Crosswalk;
+	lsoaToLad?: Record<string, string>;
+};
+
+export type BoundaryFeatureFilter = {
+	location: string | null;
+	type: BoundaryType;
+	relations?: BoundaryLocationRelations;
+};
+
 /** Fast AABB (Axis-Aligned Bounding Box) intersection check. */
 const isFeatureInBounds = (
 	feature: BoundaryGeojson["features"][number],
@@ -36,11 +48,9 @@ const isFeatureInBounds = (
 /** Filter features by the selected named location. */
 export const filterFeatures = (
 	geojson: BoundaryGeojson,
-	location: string | null,
-	type: BoundaryType,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	constituencyLadOverlaps?: Crosswalk,
+	{ location, type, relations = {} }: BoundaryFeatureFilter,
 ): BoundaryGeojson => {
+	const { getLadForWard, constituencyLadOverlaps, lsoaToLad } = relations;
 	// No filtering needed for UK-wide view
 	if (!location || location === "United Kingdom") {
 		return geojson;
@@ -72,18 +82,38 @@ export const filterFeatures = (
 		loc.memberCodes?.length
 	) {
 		const ladCodeSet = new Set(loc.memberCodes);
+		const parentMapping = capability.locationScope.mapping;
+		if (parentMapping === "lsoaToLad" && !lsoaToLad) {
+			// Preserve the previous coarse behaviour if the lookup artifact is
+			// temporarily unavailable rather than hiding the whole dataset.
+			return loc.bbox
+				? {
+						...geojson,
+						features: geojson.features.filter((f) =>
+							isFeatureInBounds(f, loc.bbox!),
+						),
+					}
+				: geojson;
+		}
 		return {
 			...geojson,
 			features: geojson.features.filter((f) => {
-				const wardCode = getProp(f.properties, codeKeys);
+				const areaCode = getProp(f.properties, codeKeys);
+				if (parentMapping === "lsoaToLad") {
+					return Boolean(
+						areaCode &&
+						lsoaToLad &&
+						ladCodeSet.has(lsoaToLad[areaCode]),
+					);
+				}
 				let ladCode = getProp(
 					f.properties,
 					BOUNDARY_CATALOG[type].properties.parentCode ??
 						BOUNDARY_CATALOG.localAuthority.properties.code,
 				);
 				const mappedLadCode =
-					wardCode && getLadForWard
-						? getLadForWard(wardCode)
+					areaCode && getLadForWard
+						? getLadForWard(areaCode)
 						: undefined;
 				ladCode = ladCode || mappedLadCode;
 				return ladCode && ladCodeSet.has(ladCode);

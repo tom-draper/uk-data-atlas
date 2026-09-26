@@ -6,6 +6,7 @@ import {
 } from "../types/elections";
 import type { SelectedArea } from "../types/areas";
 import { calculateTurnout, processPartyVotes } from "./generalElection";
+import { cacheKey } from "./cacheKey";
 
 export interface ProcessedLocalElectionYearData {
 	year: number;
@@ -40,7 +41,7 @@ const localElectionCacheKey = (
 		datasetId = nextLocalElectionDatasetId++;
 		localElectionDatasetIds.set(dataset, datasetId);
 	}
-	return `${areaKey}:${datasetId}:${mappingGeneration}`;
+	return cacheKey(areaKey, datasetId, mappingGeneration);
 };
 
 export function computeLocalElectionYearData(

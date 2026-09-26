@@ -24,7 +24,7 @@ const CHART_PENDING_TYPES = new Set(
 	).map((definition) => definition.type),
 );
 
-const PRECOMPILED = join(process.cwd(), "data", "precompiled");
+const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
 
 type ManifestEntry = {
 	type: string;
@@ -172,7 +172,9 @@ describe("chart dataset registry contract", () => {
 					compiled.data as never,
 				);
 				expect(summary).toEqual(entry?.summary);
-			});
+				// Reads, hashes and validates the whole compiled file, up to
+				// 17 MB; slow when the suite runs in parallel.
+			}, 20_000);
 
 			if (definition.map) {
 				it("has a valid choropleth encoding", () => {

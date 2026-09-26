@@ -6,6 +6,13 @@ import {
 	constituencyReleaseIdForYear,
 	type ConstituencyLadOverlaps,
 } from "./constituencyLadOverlaps";
+import type { BoundaryLocationRelations } from "./filter";
+
+type LocationBoundaryDependencies = {
+	relations?: BoundaryLocationRelations;
+	constituencyLadOverlaps?: ConstituencyLadOverlaps | null;
+	lsoaToLadByYear?: Record<number, Record<string, string>> | null;
+};
 
 const LOCATION_BOUNDARY_CACHE_LIMIT = 20;
 const filteredBoundaryDataCache = new WeakMap<
@@ -15,6 +22,7 @@ const filteredBoundaryDataCache = new WeakMap<
 		{
 			data: BoundaryData;
 			constituencyLadOverlaps: ConstituencyLadOverlaps | null;
+			lsoaToLadByYear: Record<number, Record<string, string>> | null;
 		}
 	>
 >();
@@ -24,8 +32,7 @@ const filterBoundaryGroup = (
 	group: Record<number, BoundaryGeojson | null>,
 	type: BoundaryType,
 	location: string | null,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
+	dependencies: LocationBoundaryDependencies = {},
 ): Record<number, BoundaryGeojson | null> => {
 	const filtered: Record<number, BoundaryGeojson | null> = {};
 	for (const [year, data] of Object.entries(group)) {
@@ -34,15 +41,19 @@ const filterBoundaryGroup = (
 				? constituencyReleaseIdForYear(Number(year))
 				: undefined;
 		filtered[Number(year)] = data
-			? filterFeatures(
-					data,
+			? filterFeatures(data, {
 					location,
 					type,
-					getLadForWard,
-					releaseId
-						? constituencyLadOverlaps?.releases[releaseId]
-						: undefined,
-				)
+					relations: {
+						...dependencies.relations,
+						constituencyLadOverlaps: releaseId
+							? dependencies.constituencyLadOverlaps?.releases[
+									releaseId
+								]
+							: undefined,
+						lsoaToLad: dependencies.lsoaToLadByYear?.[Number(year)],
+					},
+				})
 			: null;
 	}
 	return filtered;
@@ -57,8 +68,7 @@ const filterBoundaryGroup = (
 export const getCachedFilteredBoundaryData = (
 	rawData: BoundaryData,
 	location: string | null,
-	getLadForWard?: (wardCode: string) => string | undefined,
-	constituencyLadOverlaps: ConstituencyLadOverlaps | null = null,
+	dependencies: LocationBoundaryDependencies = {},
 ): BoundaryData => {
 	let cache = filteredBoundaryDataCache.get(rawData);
 	if (!cache) {
@@ -67,7 +77,14 @@ export const getCachedFilteredBoundaryData = (
 	}
 	const cacheKey = location ?? "";
 	const cached = cache.get(cacheKey);
-	if (cached && cached.constituencyLadOverlaps === constituencyLadOverlaps) {
+	const constituencyLadOverlaps =
+		dependencies.constituencyLadOverlaps ?? null;
+	const lsoaToLadByYear = dependencies.lsoaToLadByYear ?? null;
+	if (
+		cached &&
+		cached.constituencyLadOverlaps === constituencyLadOverlaps &&
+		cached.lsoaToLadByYear === lsoaToLadByYear
+	) {
 		cache.delete(cacheKey);
 		cache.set(cacheKey, cached);
 		return cached.data;
@@ -76,13 +93,7 @@ export const getCachedFilteredBoundaryData = (
 	const data = Object.fromEntries(
 		BOUNDARY_TYPES.map((type) => [
 			type,
-			filterBoundaryGroup(
-				rawData[type],
-				type,
-				location,
-				getLadForWard,
-				constituencyLadOverlaps,
-			),
+			filterBoundaryGroup(rawData[type], type, location, dependencies),
 		]),
 	) as BoundaryData;
 
@@ -90,6 +101,10 @@ export const getCachedFilteredBoundaryData = (
 		const oldestKey = cache.keys().next().value;
 		if (oldestKey !== undefined) cache.delete(oldestKey);
 	}
-	cache.set(cacheKey, { data, constituencyLadOverlaps });
+	cache.set(cacheKey, {
+		data,
+		constituencyLadOverlaps,
+		lsoaToLadByYear,
+	});
 	return data;
 };

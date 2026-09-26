@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { datasetIsNeeded } from "@/lib/hooks/useDatasets";
+import { datasetIsNeeded, datasetLoadPriority } from "@/lib/hooks/useDatasets";
 import { DEFAULT_VISIBILITY } from "@/lib/context/ChartVisibilityContext";
 import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
 import { getChartDefinitions } from "@/lib/datasets/types";
@@ -31,11 +31,14 @@ describe("datasetIsNeeded", () => {
 
 	// A link carries the visualisation, not the reader's chart settings, so the
 	// dataset the map is drawing has to load whether or not its card is shown.
-	// These six are the ones that ship hidden, and so the ones that used to open
-	// as an empty map.
+	// These are the datasets whose cards ship hidden, and so the ones that used
+	// to open as an empty map.
 	it("fetches the dataset the map is drawing even while its card is hidden", () => {
 		expect(hiddenByDefault.map((d) => d.type).sort()).toEqual([
+			"adultSocialCareOutcomes",
 			"brexitConstituency",
+			"localGovernmentFinance",
+			"netAdditionalDwellings",
 			"nimdm",
 			"schoolPerformanceGap",
 			"simd",
@@ -72,5 +75,17 @@ describe("datasetIsNeeded", () => {
 				[key]: true,
 			}),
 		).toBe(true);
+	});
+
+	it("prioritises the active map, then visible cards", () => {
+		const active = definitionFor("simd");
+		const visible = definitionFor("localElection");
+		expect(
+			datasetLoadPriority(active, DEFAULT_VISIBILITY, active.type),
+		).toBe(0);
+		expect(datasetLoadPriority(visible, DEFAULT_VISIBILITY)).toBe(1);
+		expect(
+			datasetLoadPriority(definitionFor("simd"), DEFAULT_VISIBILITY),
+		).toBe(2);
 	});
 });

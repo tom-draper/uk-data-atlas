@@ -1,37 +1,46 @@
 import type { SelectedArea } from "@lib/types";
 
 /**
- * Which stats a deprivation index shows for the selected area. Every index
- * publishes the same shape of lookup: the whole selection when nothing is
- * picked, a local-authority rollup for a LAD or one of its wards, and its own
- * finest geography read straight from the source records.
+ * What a deprivation card shows for the current selection.
+ *
+ * A single small area of the index's own geography has a published rank and
+ * decile, so it is shown as one. Anything larger (the whole selection, a
+ * local authority, or a ward, which rolls up to its local authority) is a
+ * group, and is summarised: by its average score where the index publishes
+ * scores, and otherwise by its share in the most deprived tenth, never by
+ * averaging ranks or deciles.
  */
-export function resolveDeprivationStats<TStats, TRecord>({
+export type ResolvedDeprivation<TRecord, TSummary> =
+	{ kind: "area"; record: TRecord } | { kind: "summary"; summary: TSummary };
+
+export function resolveDeprivation<TRecord, TSummary>({
 	aggregated,
 	ladStats,
 	selectedArea,
 	fineArea,
 }: {
-	aggregated: TStats | null;
-	ladStats: Record<string, TStats>;
+	aggregated: TSummary | null;
+	ladStats: Record<string, TSummary>;
 	selectedArea: SelectedArea | null;
 	fineArea: {
 		type: SelectedArea["type"];
 		records: Record<string, TRecord>;
-		statsFor: (record: TRecord) => TStats;
 	};
-}): TStats | null {
-	if (selectedArea === null) return aggregated;
+}): ResolvedDeprivation<TRecord, TSummary> | null {
+	const summary = (value: TSummary | null | undefined) =>
+		value ? { kind: "summary" as const, summary: value } : null;
+
+	if (selectedArea === null) return summary(aggregated);
 
 	if (selectedArea.type === "localAuthority")
-		return ladStats[selectedArea.code] ?? null;
+		return summary(ladStats[selectedArea.code]);
 
 	if (selectedArea.type === "ward" && selectedArea.data)
-		return ladStats[selectedArea.data.ladCode] ?? null;
+		return summary(ladStats[selectedArea.data.ladCode]);
 
 	if (selectedArea.type === fineArea.type) {
 		const record = fineArea.records[selectedArea.code];
-		return record ? fineArea.statsFor(record) : null;
+		return record ? { kind: "area", record } : null;
 	}
 
 	return null;

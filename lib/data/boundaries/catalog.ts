@@ -32,6 +32,8 @@ type BoundaryRelease = {
 	parentCodeKey?: PropertyKeys;
 	/** The served asset. Absent for a release held but not yet compiled. */
 	asset?: string;
+	/** Why this source release is intentionally not served. */
+	holdReason?: string;
 };
 
 type BoundaryProperties = {
@@ -172,6 +174,15 @@ const CATALOG = {
 				asset: asset("ward", "2020-12-uk-bgc"),
 			},
 			{
+				id: "2019-12-uk-bgc",
+				year: 2019,
+				month: 12,
+				extent: "uk",
+				codeKey: "WD19CD",
+				nameKey: "WD19NM",
+				asset: asset("ward", "2019-12-uk-bgc"),
+			},
+			{
 				id: "2019-12-gb-bgc",
 				year: 2019,
 				month: 12,
@@ -208,6 +219,25 @@ const CATALOG = {
 				parentCodeKey: "lad16cd",
 				asset: asset("ward", "2016-12-gb-bgc"),
 			},
+			{
+				id: "2015-12-gb-bgc",
+				year: 2015,
+				month: 12,
+				extent: "gb",
+				codeKey: "wd15cd",
+				nameKey: "wd15nm",
+				parentCodeKey: "lad15cd",
+				asset: asset("ward", "2015-12-gb-bgc"),
+			},
+			{
+				id: "2011-12-ew-bgc",
+				year: 2011,
+				month: 12,
+				extent: "ew",
+				codeKey: "wd11cd",
+				nameKey: "wd11nm",
+				asset: asset("ward", "2011-12-ew-bgc"),
+			},
 		],
 		// May and December 2025 publish the same 8,405 wards; the May release
 		// is the corrected V2 and stays the one served for the year.
@@ -216,6 +246,7 @@ const CATALOG = {
 			// December names each ward's local authority; May does not.
 			2024: "2024-12-uk-bgc",
 			2023: "2023-12-uk-bgc",
+			2019: "2019-12-uk-bgc",
 		},
 	},
 	constituency: {
@@ -230,6 +261,33 @@ const CATALOG = {
 				asset: asset("constituency", "2024-07-uk-bgc"),
 			},
 			{
+				id: "2022-12-uk-bgc",
+				year: 2022,
+				month: 12,
+				extent: "uk",
+				codeKey: "PCON22CD",
+				nameKey: "PCON22NM",
+				asset: asset("constituency", "2022-12-uk-bgc"),
+			},
+			{
+				id: "2021-12-uk-bgc",
+				year: 2021,
+				month: 12,
+				extent: "uk",
+				codeKey: "PCON21CD",
+				nameKey: "PCON21NM",
+				asset: asset("constituency", "2021-12-uk-bgc"),
+			},
+			{
+				id: "2020-12-uk-bgc",
+				year: 2020,
+				month: 12,
+				extent: "uk",
+				codeKey: "PCON20CD",
+				nameKey: "PCON20NM",
+				asset: asset("constituency", "2020-12-uk-bgc"),
+			},
+			{
 				id: "2019-12-uk-bgc",
 				year: 2019,
 				month: 12,
@@ -237,6 +295,15 @@ const CATALOG = {
 				codeKey: "pcon19cd",
 				nameKey: "pcon19nm",
 				asset: asset("constituency", "2019-12-uk-bgc"),
+			},
+			{
+				id: "2018-12-uk-bgc",
+				year: 2018,
+				month: 12,
+				extent: "uk",
+				codeKey: "pcon18cd",
+				nameKey: "pcon18nm",
+				asset: asset("constituency", "2018-12-uk-bgc"),
 			},
 			{
 				id: "2017-12-uk-bgc",
@@ -323,6 +390,15 @@ const CATALOG = {
 				asset: asset("local-authority", "2024-05-uk-bgc"),
 			},
 			{
+				id: "2023-12-uk-bgc",
+				year: 2023,
+				month: 12,
+				extent: "uk",
+				codeKey: "LAD23CD",
+				nameKey: "LAD23NM",
+				asset: asset("local-authority", "2023-12-uk-bgc"),
+			},
+			{
 				id: "2023-05-uk-bgc-v2",
 				year: 2023,
 				month: 5,
@@ -350,6 +426,15 @@ const CATALOG = {
 				asset: asset("local-authority", "2021-12-uk-bgc"),
 			},
 			{
+				id: "2020-12-uk-bgc",
+				year: 2020,
+				month: 12,
+				extent: "uk",
+				codeKey: "LAD20CD",
+				nameKey: "LAD20NM",
+				asset: asset("local-authority", "2020-12-uk-bgc"),
+			},
+			{
 				id: "2019-12-uk-bgc",
 				year: 2019,
 				month: 12,
@@ -357,6 +442,15 @@ const CATALOG = {
 				codeKey: "lad19cd",
 				nameKey: "lad19nm",
 				asset: asset("local-authority", "2019-12-uk-bgc"),
+			},
+			{
+				id: "2019-04-uk-bgc",
+				year: 2019,
+				month: 4,
+				extent: "uk",
+				codeKey: "LAD19CD",
+				nameKey: "LAD19NM",
+				asset: asset("local-authority", "2019-04-uk-bgc"),
 			},
 			{
 				id: "2018-12-uk-bgc",
@@ -368,6 +462,15 @@ const CATALOG = {
 				asset: asset("local-authority", "2018-12-uk-bgc"),
 			},
 			{
+				id: "2017-12-gb-bgc",
+				year: 2017,
+				month: 12,
+				extent: "gb",
+				codeKey: "LAD17CD",
+				nameKey: "LAD17NM",
+				asset: asset("local-authority", "2017-12-gb-bgc"),
+			},
+			{
 				id: "2016-12-gb-bgc",
 				year: 2016,
 				month: 12,
@@ -375,6 +478,42 @@ const CATALOG = {
 				codeKey: "LAD16CD",
 				nameKey: "LAD16NM",
 				asset: asset("local-authority", "2016-12-gb-bgc"),
+			},
+			{
+				id: "2015-12-gb-bgc",
+				year: 2015,
+				month: 12,
+				extent: "gb",
+				codeKey: "lad15cd",
+				nameKey: "lad15nm",
+				asset: asset("local-authority", "2015-12-gb-bgc"),
+			},
+			{
+				id: "2011-12-gb-bgc",
+				year: 2011,
+				month: 12,
+				extent: "gb",
+				codeKey: "lad11cd",
+				nameKey: "lad11nm",
+				asset: asset("local-authority", "2011-12-gb-bgc"),
+			},
+			{
+				id: "2009-12-gb-bgc",
+				year: 2009,
+				month: 12,
+				extent: "gb",
+				codeKey: "lad09cd",
+				nameKey: "lad09nm",
+				asset: asset("local-authority", "2009-12-gb-bgc"),
+			},
+			{
+				id: "2008-12-gb-bgc",
+				year: 2008,
+				month: 12,
+				extent: "gb",
+				codeKey: "LAD08CD",
+				nameKey: "LAD08NM",
+				asset: asset("local-authority", "2008-12-gb-bgc"),
 			},
 		],
 		// May and December publish the same 361 authorities in 2024 and 2025.
@@ -384,10 +523,21 @@ const CATALOG = {
 		aliases: {
 			2025: "2025-05-uk-bgc-v2",
 			2024: "2024-05-uk-bgc",
+			2023: "2023-12-uk-bgc",
+			2019: "2019-12-uk-bgc",
 		},
 	},
 	lsoa: {
 		releases: [
+			{
+				id: "2021-12-ew-bgc-v5",
+				year: 2021,
+				month: 12,
+				extent: "ew",
+				codeKey: "LSOA21CD",
+				nameKey: "LSOA21NM",
+				asset: asset("lsoa", "2021-12-ew-bgc-v5"),
+			},
 			{
 				id: "2011-12-ew-bgc-v3",
 				year: 2011,
@@ -406,9 +556,18 @@ const CATALOG = {
 				nameKey: "LSOA11NM",
 				asset: asset("lsoa", "2011-12-w-bgc"),
 			},
+			{
+				id: "2001-12-ew-bgc",
+				year: 2001,
+				month: 12,
+				extent: "ew",
+				codeKey: "LSOA01CD",
+				nameKey: "LSOA01NM",
+				asset: asset("lsoa", "2001-12-ew-bgc"),
+			},
 		],
 		// Both releases are 2011; the England-and-Wales one covers the other.
-		aliases: { 2011: "2011-12-ew-bgc-v3" },
+		aliases: { 2021: "2021-12-ew-bgc-v5", 2011: "2011-12-ew-bgc-v3" },
 		alsoAccepts: { code: ["LSOA21CD"], name: ["LSOA21NM"] },
 	},
 	dataZone: {
@@ -432,6 +591,8 @@ const CATALOG = {
 				extent: "sc",
 				codeKey: "DZ11CD",
 				nameKey: "DZ11NM",
+				holdReason:
+					"It duplicates the served 2011 data zones under incompatible codes.",
 			},
 		],
 	},
@@ -616,6 +777,15 @@ const CATALOG = {
 	itl1: {
 		releases: [
 			{
+				id: "2025-01-uk-bgc",
+				year: 2025,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL125CD",
+				nameKey: "ITL125NM",
+				asset: asset("itl1", "2025-01-uk-bgc"),
+			},
+			{
 				id: "2021-01-uk-bgc",
 				year: 2021,
 				month: 1,
@@ -629,6 +799,15 @@ const CATALOG = {
 	itl2: {
 		releases: [
 			{
+				id: "2025-01-uk-bgc",
+				year: 2025,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL225CD",
+				nameKey: "ITL225NM",
+				asset: asset("itl2", "2025-01-uk-bgc"),
+			},
+			{
 				id: "2021-01-uk-bgc-v2",
 				year: 2021,
 				month: 1,
@@ -641,6 +820,15 @@ const CATALOG = {
 	},
 	itl3: {
 		releases: [
+			{
+				id: "2025-01-uk-bgc-v2",
+				year: 2025,
+				month: 1,
+				extent: "uk",
+				codeKey: "ITL325CD",
+				nameKey: "ITL325NM",
+				asset: asset("itl3", "2025-01-uk-bgc-v2"),
+			},
 			{
 				id: "2021-01-uk-bgc-v3",
 				year: 2021,
@@ -668,6 +856,30 @@ const CATALOG = {
 	scottishParliamentaryConstituency: {
 		releases: [
 			{
+				id: "2026-05-sc-bgc",
+				year: 2026,
+				month: 5,
+				extent: "sc",
+				codeKey: "SPC26CD",
+				nameKey: "SPC26NM",
+				asset: asset(
+					"scottish-parliamentary-constituency",
+					"2026-05-sc-bgc",
+				),
+			},
+			{
+				id: "2022-12-sc-bgc",
+				year: 2022,
+				month: 12,
+				extent: "sc",
+				codeKey: "SPC22CD",
+				nameKey: "SPC22NM",
+				asset: asset(
+					"scottish-parliamentary-constituency",
+					"2022-12-sc-bgc",
+				),
+			},
+			{
 				id: "2021-05-sc-bgc",
 				year: 2021,
 				month: 5,
@@ -677,6 +889,18 @@ const CATALOG = {
 				asset: asset(
 					"scottish-parliamentary-constituency",
 					"2021-05-sc-bgc",
+				),
+			},
+			{
+				id: "2016-05-sc-gcb",
+				year: 2016,
+				month: 5,
+				extent: "sc",
+				codeKey: "spc16cd",
+				nameKey: "spc16nm",
+				asset: asset(
+					"scottish-parliamentary-constituency",
+					"2016-05-sc-gcb",
 				),
 			},
 		],
@@ -895,6 +1119,24 @@ export type BoundaryYear<T extends BoundaryType> =
 
 /** Every geography in catalogue order, for callers that handle all of them. */
 export const BOUNDARY_TYPES = Object.keys(CATALOG) as BoundaryType[];
+
+/**
+ * Geographies under `data/boundaries/` that the API serves and the map does
+ * not, keyed by folder, with the reason. They are not boundary types: every
+ * family in the catalogue is one the map can draw.
+ */
+export const API_ONLY_GEOGRAPHIES: Readonly<
+	Record<string, { geography: string; reason: string }>
+> = {
+	"output-area": {
+		geography: "outputArea",
+		reason: "Its 188,880 unnamed areas are more than the map can draw; the API answers hierarchy and lookup questions about them.",
+	},
+	"intermediate-zone": {
+		geography: "intermediateZone",
+		reason: "It is published only as a British National Grid shapefile, which the map compiler cannot read; the API reads the shapefile itself.",
+	},
+};
 
 /**
  * A geography's code keys and name keys, newest release first and paired by

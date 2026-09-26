@@ -1,3 +1,5 @@
+packages:
+  - api
 minimumReleaseAge: 10080
 trustPolicy: no-downgrade
 overrides:

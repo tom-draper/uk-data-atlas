@@ -7,6 +7,12 @@ export interface CustomPoint {
 	label?: string;
 	// Compact values rendered into the point tooltip according to pointStyle.
 	details?: string[];
+	/**
+	 * The local authority the publisher assigned the point to, when it has
+	 * one. Named locations then include the point by membership rather than
+	 * by their bounding box, which overlaps neighbouring areas.
+	 */
+	areaCode?: string;
 }
 
 export interface PointTooltip {

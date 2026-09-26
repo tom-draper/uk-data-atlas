@@ -1,15 +1,26 @@
 {
 	"name": "uk-data-atlas",
-	"version": "0.1.10",
+	"version": "0.2.0",
 	"private": true,
+	"license": "AGPL-3.0-only",
+	"engines": {
+		"node": ">=24 <25"
+	},
 	"scripts": {
-		"precompile": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/generate-sources-readme.mts && npx tsx scripts/precompile-data.mts",
+		"data:download": "node scripts/data-release.mjs download",
+		"data:publish": "node scripts/data-release.mjs publish",
+		"data:verify-precompiled": "node scripts/data-release.mjs verify-precompiled",
+		"docs:catalogue": "npx tsx scripts/build-docs-catalogue.mts",
+		"precompile": "pnpm data:download && pnpm precompile:generate",
+		"precompile:generate": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/generate-sources-readme.mts && npx tsx scripts/precompile-data.mts",
+		"precompile:if-needed": "node scripts/precompile-if-needed.mjs",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
-		"dev": "pnpm precompile && node scripts/sync-public-data.mjs && next dev --turbopack",
-		"build": "pnpm precompile && node scripts/sync-public-data.mjs && next build --turbopack",
+		"dev": "pnpm precompile:if-needed && next dev --turbopack",
+		"build": "pnpm precompile:if-needed && pnpm data:verify-precompiled && next build --turbopack",
+		"hooks:install": "git config core.hooksPath .githooks",
 		"start": "next start",
-		"format": "prettier --write \"**/*.{ts,tsx}\"",
-		"format:check": "prettier --check \"**/*.{ts,tsx}\"",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
 		"test": "vitest",
 		"test:run": "vitest run",
 		"test:e2e": "playwright test",
@@ -20,28 +31,29 @@
 		"doctor": "npx react-doctor@latest"
 	},
 	"dependencies": {
-		"lucide-react": "^1.39.0",
+		"lucide-react": "^1.47.0",
 		"maplibre-gl": "^5.24.0",
-		"next": "^16.3.4",
+		"next": "^16.3.5",
 		"papaparse": "^5.7.0",
 		"react": "19.2.8",
 		"react-dom": "19.2.8",
-		"topojson-client": "^3.1.0"
+		"topojson-client": "^3.1.0",
+		"yaml": "^2.9.1"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.62.1",
+		"@playwright/test": "^1.63.0",
 		"@tailwindcss/postcss": "^4.3.3",
 		"@types/geojson": "^7946.0.16",
-		"@types/node": "^26.4.1",
+		"@types/node": "^26.6.2",
 		"@types/papaparse": "^5.5.2",
-		"@types/react": "^19.2.18",
-		"@types/react-dom": "^19.2.5",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
 		"@types/topojson-client": "^3.1.5",
 		"@types/topojson-server": "^3.0.4",
 		"@types/topojson-simplify": "^3.0.3",
 		"@types/topojson-specification": "^1.0.5",
 		"babel-plugin-react-compiler": "^1.0.0",
-		"prettier": "^3.9.6",
+		"prettier": "3.9.7",
 		"proj4": "^2.22.0",
 		"tailwindcss": "^4.3.3",
 		"topojson-server": "^3.0.1",
@@ -51,5 +63,5 @@
 		"vite": "^8.2.1",
 		"vitest": "^4.1.11"
 	},
-	"packageManager": "pnpm@12.3.4"
+	"packageManager": "pnpm@12.5.1"
 }

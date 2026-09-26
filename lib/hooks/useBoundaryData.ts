@@ -7,8 +7,11 @@ import {
 	useState,
 	useSyncExternalStore,
 } from "react";
-import type { BoundaryData, BoundaryGeojson } from "@lib/types";
-import type { BoundaryType } from "../data/boundaries/catalog";
+import type { BoundaryData } from "@lib/types";
+import {
+	BOUNDARY_CATALOG,
+	type BoundaryType,
+} from "../data/boundaries/catalog";
 import {
 	EMPTY_BOUNDARY_DATA,
 	fetchBoundaryPropertyGroup,
@@ -16,7 +19,6 @@ import {
 import {
 	completedBoundaryTypes,
 	mergeBoundaryGroups,
-	type BoundaryGroupResult,
 } from "../data/boundaries/loadState";
 import {
 	deriveBoundaryMappings,
@@ -29,6 +31,7 @@ import {
 	fetchConstituencyLadOverlaps,
 	type ConstituencyLadOverlaps,
 } from "../data/boundaries/constituencyLadOverlaps";
+import { fetchLsoaToLad } from "../data/boundaries/lsoaLadMappings";
 import { getCachedFilteredBoundaryData } from "../data/boundaries/locationFilter";
 import {
 	DEFAULT_VISIBILITY,
@@ -50,6 +53,10 @@ export function useBoundaryData(
 	const [error, setError] = useState<Error | null>(null);
 	const [constituencyLadOverlaps, setConstituencyLadOverlaps] =
 		useState<ConstituencyLadOverlaps | null>(null);
+	const [lsoaToLadByYear, setLsoaToLadByYear] = useState<Record<
+		number,
+		Record<string, string>
+	> | null>(null);
 
 	// Kept separately because filtering is memoized independently of loading.
 	const getLadForWard = codeMapper?.getLadForWard;
@@ -62,11 +69,9 @@ export function useBoundaryData(
 		getVisibilitySnapshot,
 		() => DEFAULT_VISIBILITY,
 	);
-	const requiredKey = useMemo(
+	const requiredTypes = useMemo(
 		() =>
-			[...requiredBoundaryTypes(visibility, [activeBoundaryType])]
-				.sort()
-				.join(","),
+			[...requiredBoundaryTypes(visibility, [activeBoundaryType])].sort(),
 		[visibility, activeBoundaryType],
 	);
 	const loadedTypes = useRef(new Set<BoundaryType>());
@@ -83,9 +88,7 @@ export function useBoundaryData(
 				: Promise.resolve(false);
 
 			// Fetch only what is newly required; anything already held stays.
-			const wanted = requiredKey
-				? (requiredKey.split(",") as BoundaryType[])
-				: [];
+			const wanted = requiredTypes;
 			const missing = wanted.filter(
 				(type) => !loadedTypes.current.has(type),
 			);
@@ -98,6 +101,25 @@ export function useBoundaryData(
 						return null;
 					})
 				: Promise.resolve(null);
+			const lsoaMappings = wanted.includes("lsoa")
+				? Promise.all(
+						Object.keys(BOUNDARY_CATALOG.lsoa.vintages).map(
+							async (year) =>
+								[
+									Number(year),
+									await fetchLsoaToLad(Number(year)),
+								] as const,
+						),
+					)
+						.then((entries) => Object.fromEntries(entries))
+						.catch((error) => {
+							console.warn(
+								"[boundaries] Falling back to LSOA bbox filtering:",
+								error,
+							);
+							return null;
+						})
+				: Promise.resolve(null);
 
 			Promise.all([
 				precompiledMappings,
@@ -109,40 +131,49 @@ export function useBoundaryData(
 					}),
 				),
 				overlaps,
+				lsoaMappings,
 			])
-				.then(([mappingsApplied, groups, loadedOverlaps]) => {
-					if (!mounted) return;
-					const boundaryGroups = groups as BoundaryGroupResult[];
-					if (loadedOverlaps)
-						setConstituencyLadOverlaps(loadedOverlaps);
+				.then(
+					([
+						mappingsApplied,
+						groups,
+						loadedOverlaps,
+						loadedLsoaMappings,
+					]) => {
+						if (!mounted) return;
+						if (loadedOverlaps)
+							setConstituencyLadOverlaps(loadedOverlaps);
+						if (loadedLsoaMappings)
+							setLsoaToLadByYear(loadedLsoaMappings);
 
-					for (const type of completedBoundaryTypes(boundaryGroups))
-						loadedTypes.current.add(type);
-					const fetched = Object.fromEntries(
-						boundaryGroups.map(([type, { data }]) => [type, data]),
-					) as Partial<
-						Record<BoundaryType, Record<number, BoundaryGeojson>>
-					>;
+						for (const type of completedBoundaryTypes(groups))
+							loadedTypes.current.add(type);
+						const fetched: Parameters<
+							typeof deriveBoundaryMappings
+						>[0] = {};
+						for (const [type, { data }] of groups)
+							fetched[type] = data;
 
-					// Whatever did load is still worth drawing, so keep it and
-					// report the gaps alongside rather than instead.
-					const failures = boundaryGroups.flatMap(
-						([, { failures: groupFailures }]) => groupFailures,
-					);
-					if (failures.length > 0) {
-						setError(new Error(failures.join("; ")));
-					}
-
-					startTransition(() => {
-						setRawData((previous) =>
-							mergeBoundaryGroups(previous, boundaryGroups),
+						// Whatever did load is still worth drawing, so keep it and
+						// report the gaps alongside rather than instead.
+						const failures = groups.flatMap(
+							([, { failures: groupFailures }]) => groupFailures,
 						);
-						setIsLoading(false);
-					});
+						if (failures.length > 0) {
+							setError(new Error(failures.join("; ")));
+						}
 
-					if (!mappingsApplied && codeMapper)
-						deriveBoundaryMappings(fetched, codeMapper);
-				})
+						startTransition(() => {
+							setRawData((previous) =>
+								mergeBoundaryGroups(previous, groups),
+							);
+							setIsLoading(false);
+						});
+
+						if (!mappingsApplied && codeMapper)
+							deriveBoundaryMappings(fetched, codeMapper);
+					},
+				)
 				.catch((err) => {
 					if (mounted) {
 						setError(
@@ -160,20 +191,19 @@ export function useBoundaryData(
 		return () => {
 			mounted = false;
 		};
-	}, [requiredKey, codeMapper]);
+	}, [requiredTypes, codeMapper]);
 
 	const loc = selectedLocation || null;
 
 	const filteredData = useMemo<BoundaryData>(() => {
 		if (isLoading) return EMPTY_BOUNDARY_DATA;
-		return getCachedFilteredBoundaryData(
-			rawData,
-			loc,
-			getLadForWard,
+		return getCachedFilteredBoundaryData(rawData, loc, {
+			relations: { getLadForWard },
 			constituencyLadOverlaps,
-		);
+			lsoaToLadByYear,
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [rawData, loc, constituencyLadOverlaps]);
+	}, [rawData, loc, constituencyLadOverlaps, lsoaToLadByYear]);
 
 	const wardCodes = useMemo(
 		() => extractWardCodes(rawData, isLoading),

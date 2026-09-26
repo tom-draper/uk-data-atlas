@@ -1,0 +1,45 @@
+import { areaNotFound } from "./areaResources";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
+import type { RouteRequest } from "./routing";
+import { areaKey } from "./geographyKeys";
+
+/** One compiled area identity in one explicit geography release. */
+export const handleAreaIdentityRoutes = ({
+	context,
+	releaseId,
+	segments,
+}: RouteRequest): ApiResponse | undefined => {
+	if (
+		segments.length !== 5 ||
+		segments[0] !== "v1" ||
+		segments[1] !== "areas"
+	)
+		return undefined;
+	const [geography, boundaryRelease, code] = segments.slice(2);
+	if (!geography || !boundaryRelease || !code)
+		return problem(400, "Invalid Path", "An area identity is incomplete.");
+	const geographyResolver = context.geographyResolver;
+	const area = geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
+	if (area) {
+		const postcodes = geographyResolver.postcodeCounts({
+			geography,
+			boundaryRelease,
+			code: area.code,
+		});
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				id: areaKey(geography, boundaryRelease, area.code),
+				geography,
+				boundaryRelease,
+				...area,
+				...(postcodes ? { postcodes } : {}),
+			}),
+		};
+	}
+	return areaNotFound(context, geography, boundaryRelease, code);
+};

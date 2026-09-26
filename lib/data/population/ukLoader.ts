@@ -32,7 +32,7 @@ export async function loadPopulationUk(
 ): Promise<Record<string, PopulationUkDataset>> {
 	const { data } = await parseCsv<string[]>(
 		await readSheet(
-			"demographics/population/uk/myebtablesuk20112024.xlsx",
+			"demographics/population/mid-year-estimates/uk/myebtablesuk20112024.xlsx",
 			"MYEB1",
 		),
 		{ header: false, skipLines: 1 },

@@ -20,10 +20,149 @@ interface GeoJsonFeatureCollection extends FeatureCollection<
 	};
 }
 
-const isTopology = (json: unknown): json is Topology =>
-	typeof json === "object" &&
-	json !== null &&
-	(json as { type?: unknown }).type === "Topology";
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isNumberArray = (value: unknown): value is number[] =>
+	Array.isArray(value) &&
+	value.every((coordinate) =>
+		typeof coordinate === "number" && Number.isFinite(coordinate),
+	);
+
+const isPosition = (value: unknown): value is Position =>
+	isNumberArray(value) && value.length >= 2;
+
+const isPositionArray = (value: unknown): value is Position[] =>
+	Array.isArray(value) && value.every(isPosition);
+
+const isGeometry = (value: unknown): value is Geometry => {
+	if (!isRecord(value) || typeof value.type !== "string") return false;
+	if (value.bbox !== undefined && !isNumberArray(value.bbox)) return false;
+
+	switch (value.type) {
+		case "Point":
+			return isPosition(value.coordinates);
+		case "MultiPoint":
+		case "LineString":
+			return isPositionArray(value.coordinates);
+		case "MultiLineString":
+		case "Polygon":
+			return (
+				Array.isArray(value.coordinates) &&
+				value.coordinates.every(isPositionArray)
+			);
+		case "MultiPolygon":
+			return (
+				Array.isArray(value.coordinates) &&
+				value.coordinates.every(
+					(polygon) =>
+						Array.isArray(polygon) && polygon.every(isPositionArray),
+				)
+			);
+		case "GeometryCollection":
+			return (
+				Array.isArray(value.geometries) &&
+				value.geometries.every(isGeometry)
+			);
+		default:
+			return false;
+	}
+};
+
+const isGeoJsonFeature = (
+	value: unknown,
+): value is GeoJsonFeatureCollection["features"][number] =>
+	isRecord(value) &&
+	value.type === "Feature" &&
+	(value.geometry === null ||
+		(isGeometry(value.geometry) &&
+			(value.geometry.type === "Polygon" ||
+				value.geometry.type === "MultiPolygon"))) &&
+	isRecord(value.properties) &&
+	(value.id === undefined ||
+		typeof value.id === "string" ||
+		typeof value.id === "number") &&
+	(value.bbox === undefined || isNumberArray(value.bbox));
+
+const isGeoJsonFeatureCollection = (
+	value: unknown,
+): value is GeoJsonFeatureCollection =>
+	isRecord(value) &&
+	value.type === "FeatureCollection" &&
+	Array.isArray(value.features) &&
+	value.features.every(isGeoJsonFeature) &&
+	(value.crs === undefined ||
+		(isRecord(value.crs) &&
+			typeof value.crs.type === "string" &&
+			isRecord(value.crs.properties) &&
+			typeof value.crs.properties.name === "string"));
+
+const isArc = (value: unknown): value is Topology["arcs"][number] =>
+	Array.isArray(value) &&
+	value.every((point) => isNumberArray(point) && point.length >= 2);
+
+const isArcIndexes = (value: unknown): value is number[] =>
+	Array.isArray(value) &&
+	value.every((index) => Number.isSafeInteger(index));
+
+const isTopologyObject = (
+	value: unknown,
+): value is Topology["objects"][string] => {
+	if (
+		!isRecord(value) ||
+		typeof value.type !== "string" ||
+		(value.bbox !== undefined && !isNumberArray(value.bbox)) ||
+		(value.properties !== undefined &&
+			value.properties !== null &&
+			!isRecord(value.properties)) ||
+		(value.id !== undefined &&
+			typeof value.id !== "string" &&
+			typeof value.id !== "number")
+	)
+		return false;
+
+	switch (value.type) {
+		case "Point":
+			return isPosition(value.coordinates);
+		case "MultiPoint":
+			return isPositionArray(value.coordinates);
+		case "LineString":
+			return isArcIndexes(value.arcs);
+		case "MultiLineString":
+		case "Polygon":
+			return Array.isArray(value.arcs) && value.arcs.every(isArcIndexes);
+		case "MultiPolygon":
+			return (
+				Array.isArray(value.arcs) &&
+				value.arcs.every(
+					(polygon) =>
+						Array.isArray(polygon) && polygon.every(isArcIndexes),
+				)
+			);
+		case "GeometryCollection":
+			return (
+				Array.isArray(value.geometries) &&
+				value.geometries.every(isTopologyObject)
+			);
+		default:
+			return false;
+	}
+};
+
+const isTopology = (value: unknown): value is Topology =>
+	isRecord(value) &&
+	value.type === "Topology" &&
+	(value.bbox === undefined || isNumberArray(value.bbox)) &&
+	isRecord(value.objects) &&
+	Object.values(value.objects).every(isTopologyObject) &&
+	Array.isArray(value.arcs) &&
+	value.arcs.every(isArc) &&
+	(value.transform === undefined ||
+		(isRecord(value.transform) &&
+			isNumberArray(value.transform.scale) &&
+			value.transform.scale.length === 2 &&
+			isNumberArray(value.transform.translate) &&
+			value.transform.translate.length === 2));
 
 const radians = (degrees: number) => (degrees * Math.PI) / 180;
 const degrees = (radians: number) => (radians * 180) / Math.PI;
@@ -172,6 +311,28 @@ const reprojectBritishNationalGrid = (
 });
 
 /**
+ * Numbers any feature that arrives without an id by its position, counting
+ * from one. The map keys hover state by feature id, so a feature without one
+ * cannot be hovered or highlighted. Whether a publisher file carries ids
+ * depends on the format it was downloaded in, not on the release, so they are
+ * never relied on. Position from one is the numbering the files that do carry
+ * ids already use, and the one properties sidecars are given.
+ */
+const withFeatureIds = (
+	geojson: GeoJsonFeatureCollection,
+): GeoJsonFeatureCollection =>
+	geojson.features.every((feature) => typeof feature.id === "number")
+		? geojson
+		: {
+				...geojson,
+				features: geojson.features.map((feature, index) =>
+					typeof feature.id !== "number"
+						? { ...feature, id: index + 1 }
+						: feature,
+				),
+			};
+
+/**
  * Normalises a fetched boundary file into a GeoJSON FeatureCollection. The
  * files are TopoJSON, but a plain FeatureCollection is accepted too, so the
  * shape is decided at runtime rather than assumed.
@@ -184,13 +345,20 @@ export const decodeBoundaryData = (json: unknown): BoundaryGeojson => {
 			throw new Error("TopoJSON contains no geometry objects");
 
 		const result = topojson.feature(json, json.objects[objectKey]);
-		geojson =
+		const collection =
 			result.type === "Feature"
 				? { type: "FeatureCollection", features: [result] }
 				: result;
+		if (!isGeoJsonFeatureCollection(collection))
+			throw new Error("TopoJSON did not decode to a valid feature collection");
+		geojson = collection;
+	} else if (isGeoJsonFeatureCollection(json)) {
+		geojson = json;
 	} else {
-		geojson = json as GeoJsonFeatureCollection;
+		throw new Error("Boundary data is not valid GeoJSON or TopoJSON");
 	}
+
+	geojson = withFeatureIds(geojson);
 
 	if (isBritishNationalGrid(geojson)) {
 		geojson = reprojectBritishNationalGrid(geojson);

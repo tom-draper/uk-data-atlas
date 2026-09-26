@@ -10,6 +10,16 @@ import type {
 	QualificationBreakdown,
 	QualificationDataset,
 } from "@/lib/types/qualification";
+import type {
+	AggregatedCarAvailabilityData,
+	CarAvailabilityBreakdown,
+	CarAvailabilityDataset,
+} from "@/lib/types/carAvailability";
+import type {
+	AggregatedTravelToWorkData,
+	TravelToWorkBreakdown,
+	TravelToWorkDataset,
+} from "@/lib/types/travelToWork";
 
 export function aggregateEthnicity(
 	features: Features,
@@ -76,6 +86,64 @@ export function aggregateLifeExpectancy(
 		averageMaleLE: count > 0 ? male / count : 0,
 		averageFemaleLE: count > 0 ? female / count : 0,
 	};
+}
+
+export function aggregateCarAvailability(
+	features: Features,
+	codeProperty: PropertyKeys,
+	data: CarAvailabilityDataset["data"],
+): AggregatedCarAvailabilityData {
+	const seen = new Set<string>();
+	const total: CarAvailabilityBreakdown = {
+		noCar: 0,
+		oneCar: 0,
+		twoCars: 0,
+		threeOrMoreCars: 0,
+		total: 0,
+	};
+	for (const feature of features) {
+		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
+		if (seen.has(code)) continue;
+		seen.add(code);
+		const breakdown = data[code]?.breakdown;
+		if (!breakdown) continue;
+		for (const key of Object.keys(total) as Array<
+			keyof CarAvailabilityBreakdown
+		>)
+			total[key] += breakdown[key];
+	}
+	return { breakdown: total };
+}
+
+export function aggregateTravelToWork(
+	features: Features,
+	codeProperty: PropertyKeys,
+	data: TravelToWorkDataset["data"],
+): AggregatedTravelToWorkData {
+	const seen = new Set<string>();
+	const total: TravelToWorkBreakdown = {
+		workFromHome: 0,
+		publicTransport: 0,
+		car: 0,
+		taxi: 0,
+		motorcycle: 0,
+		bicycle: 0,
+		onFoot: 0,
+		other: 0,
+		total: 0,
+	};
+	for (const feature of features) {
+		const code = getFeatureProp(feature.properties, codeProperty) ?? "";
+		if (seen.has(code)) continue;
+		seen.add(code);
+		const breakdown = data[code]?.breakdown;
+		if (!breakdown) continue;
+		for (const key of Object.keys(total) as Array<
+			keyof TravelToWorkBreakdown
+		>)
+			total[key] += breakdown[key];
+	}
+	return { breakdown: total };
 }
 
 export function aggregateQualifications(

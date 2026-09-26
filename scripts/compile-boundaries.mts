@@ -10,7 +10,14 @@
  */
 import { createHash } from "crypto";
 import { readFileSync } from "fs";
-import { mkdir, readFile, rename, stat, writeFile } from "fs/promises";
+import {
+	copyFile,
+	mkdir,
+	readFile,
+	rename,
+	stat,
+	writeFile,
+} from "fs/promises";
 import { basename, dirname, join } from "path";
 import { fileURLToPath } from "url";
 import { feature } from "topojson-client";
@@ -155,7 +162,7 @@ const releaseSources = () =>
 	).sort((a, b) => a.label.localeCompare(b.label));
 
 const writeAtomically = async (path: string, contents: string) => {
-	// public/data is not committed, so the release folder may not exist yet.
+	// Generated release folders may not exist yet.
 	await mkdir(dirname(path), { recursive: true });
 	const temporaryPath = `${path}.${process.pid}.tmp`;
 	await writeFile(temporaryPath, contents);
@@ -387,22 +394,35 @@ export async function compileBoundaryAssets(): Promise<void> {
 				);
 				continue;
 			}
-			if (!(await shouldCompile([topologySourcePath], propertiesPath))) {
+			const topologyChanged = await shouldCompile(
+				[topologySourcePath],
+				outputPath,
+			);
+			const propertiesChanged = await shouldCompile(
+				[topologySourcePath],
+				propertiesPath,
+			);
+			if (!topologyChanged && !propertiesChanged) {
 				console.log(`  boundary: ${label} (properties up to date)`);
 				continue;
 			}
-
-			const topologyData = JSON.parse(
-				await readFile(topologySourcePath, "utf8"),
-			) as ReturnType<typeof topology>;
-			const properties = serializeProperties(label, topologyData);
-			await writeAtomically(propertiesPath, properties);
-			const propertiesKb = Math.round(
-				Buffer.byteLength(properties, "utf8") / 1024,
-			);
-			console.log(
-				`  boundary: ${label} (TopoJSON source -> ${propertiesKb} KB properties)`,
-			);
+			if (topologyChanged) {
+				await mkdir(dirname(outputPath), { recursive: true });
+				await copyFile(topologySourcePath, outputPath);
+			}
+			if (propertiesChanged) {
+				const topologyData = JSON.parse(
+					await readFile(topologySourcePath, "utf8"),
+				) as ReturnType<typeof topology>;
+				const properties = serializeProperties(label, topologyData);
+				await writeAtomically(propertiesPath, properties);
+				const propertiesKb = Math.round(
+					Buffer.byteLength(properties, "utf8") / 1024,
+				);
+				console.log(
+					`  boundary: ${label} (TopoJSON source -> ${propertiesKb} KB properties)`,
+				);
+			}
 			continue;
 		}
 

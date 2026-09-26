@@ -36,6 +36,9 @@ export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
 let hasReadStoredVisibility = false;
 let cachedVisibility: Record<ChartKey, boolean> = DEFAULT_VISIBILITY;
 const visibilityListeners = new Set<() => void>();
@@ -44,9 +47,12 @@ let isListeningForStorage = false;
 const parseVisibility = (raw: string | null): Record<ChartKey, boolean> => {
 	if (!raw) return DEFAULT_VISIBILITY;
 	try {
-		const parsed = JSON.parse(raw) as Partial<Record<ChartKey, boolean>>;
+		const parsed: unknown = JSON.parse(raw);
+		if (!isRecord(parsed)) return DEFAULT_VISIBILITY;
+
 		const persisted: Record<ChartKey, boolean> = {};
-		for (const [key, value] of Object.entries(parsed)) {
+		for (const key of Object.keys(parsed)) {
+			const value = parsed[key];
 			if (typeof value === "boolean") persisted[key] = value;
 		}
 		return { ...DEFAULT_VISIBILITY, ...persisted };

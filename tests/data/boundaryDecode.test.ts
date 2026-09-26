@@ -77,7 +77,18 @@ describe("decodeBoundaryData", () => {
 				{
 					type: "Feature",
 					properties: {},
-					geometry: { type: "Point", coordinates: [543620, 184826] },
+					geometry: {
+						type: "Polygon",
+						coordinates: [
+							[
+								[543620, 184826],
+								[543621, 184826],
+								[543621, 184827],
+								[543620, 184827],
+								[543620, 184826],
+							],
+						],
+					},
 				},
 			],
 		});
@@ -86,9 +97,68 @@ describe("decodeBoundaryData", () => {
 			"urn:ogc:def:crs:OGC:1.3:CRS84",
 		);
 		const [longitude, latitude] =
-			boundary.features[0].geometry!.coordinates;
+			boundary.features[0].geometry!.coordinates[0]![0]!;
 		expect(longitude).toBeCloseTo(0.1, 1);
 		expect(latitude).toBeCloseTo(51.5, 1);
+	});
+
+	it("numbers features without an id by position, so the map can hover them", () => {
+		const square = {
+			type: "Polygon" as const,
+			coordinates: [
+				[
+					[0, 0],
+					[1, 0],
+					[1, 1],
+					[0, 0],
+				],
+			],
+		};
+		const boundary = decodeBoundaryData({
+			type: "FeatureCollection",
+			features: [
+				{
+					type: "Feature",
+					geometry: square,
+					properties: { code: "A" },
+				},
+				{
+					type: "Feature",
+					geometry: square,
+					properties: { code: "B" },
+				},
+				{
+					type: "Feature",
+					geometry: square,
+					properties: { code: "C" },
+				},
+			],
+		});
+		expect(boundary.features.map((feature) => feature.id)).toEqual([
+			1, 2, 3,
+		]);
+	});
+
+	it("keeps the ids a file already carries", () => {
+		const square = {
+			type: "Polygon" as const,
+			coordinates: [
+				[
+					[0, 0],
+					[1, 0],
+					[1, 1],
+					[0, 0],
+				],
+			],
+		};
+		const boundary = decodeBoundaryData({
+			type: "FeatureCollection",
+			features: [
+				{ type: "Feature", id: 7, geometry: square, properties: {} },
+				{ type: "Feature", geometry: square, properties: {} },
+			],
+		});
+		expect(boundary.features.map((feature) => feature.id)).toEqual([7, 2]);
 	});
 
 	it("refuses a TopoJSON file with no geometry objects", () => {

@@ -1,0 +1,145 @@
+{
+	"schemaVersion": 1,
+	"paths": [
+		{
+			"id": "ward-2025-12-uk-bgc-to-country-2025-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "country-2025-12-uk-bgc-to-ward-2025-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-country-2025-12-uk-bgc-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "reverse"
+				}
+			]
+		},
+		{
+			"id": "ward-2025-12-uk-bgc-to-region-2025-12-en-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "region-2025-12-en-bgc-to-ward-2025-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "ward-2025-12-uk-bgc-to-local-authority-2025-12-uk-bgc-clean-containment",
+					"direction": "reverse"
+				}
+			]
+		},
+		{
+			"id": "output-area-2021-12-ew-bgc-v2-to-msoa-2021-12-ew-bgc-v3-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-msoa-2021-12-ew-bgc-v3-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "msoa-2021-12-ew-bgc-v3-to-output-area-2021-12-ew-bgc-v2-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-msoa-2021-12-ew-bgc-v3-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup",
+					"direction": "reverse"
+				}
+			]
+		},
+		{
+			"id": "output-area-2021-12-ew-bgc-v2-to-local-authority-2023-05-uk-bgc-v2-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2023-05-uk-bgc-v2-to-output-area-2021-12-ew-bgc-v2-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup",
+					"direction": "reverse"
+				}
+			]
+		},
+		{
+			"id": "data-zone-2011-12-sc-bfc-to-local-authority-2018-12-uk-bgc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "data-zone-2011-12-sc-bfc-to-intermediate-zone-2011-12-sc-bfc-official-lookup",
+					"direction": "forward"
+				},
+				{
+					"crosswalkId": "intermediate-zone-2011-12-sc-bfc-to-local-authority-2018-12-uk-bgc-official-lookup",
+					"direction": "forward"
+				}
+			]
+		},
+		{
+			"id": "local-authority-2018-12-uk-bgc-to-data-zone-2011-12-sc-bfc-membership",
+			"purpose": "membership",
+			"steps": [
+				{
+					"crosswalkId": "intermediate-zone-2011-12-sc-bfc-to-local-authority-2018-12-uk-bgc-official-lookup",
+					"direction": "reverse"
+				},
+				{
+					"crosswalkId": "data-zone-2011-12-sc-bfc-to-intermediate-zone-2011-12-sc-bfc-official-lookup",
+					"direction": "reverse"
+				}
+			]
+		}
+	]
+}

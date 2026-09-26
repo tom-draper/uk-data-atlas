@@ -1,7 +1,8 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+	API_ONLY_GEOGRAPHIES,
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 	type BoundaryType,
@@ -22,7 +23,113 @@ const catalogued = BOUNDARY_TYPES.flatMap((type) =>
 	BOUNDARY_CATALOG[type].releases.map((release) => ({ type, release })),
 );
 
+const identity = (geography: string, release: string) =>
+	`${geography}/${release}`;
+
+const toCamelCase = (value: string) =>
+	value.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+
+const sourceBoundaryReleases = readdirSync(
+	join(process.cwd(), "data", "boundaries"),
+	{ withFileTypes: true },
+).flatMap((geography) =>
+	geography.isDirectory()
+		? readdirSync(
+				join(process.cwd(), "data", "boundaries", geography.name),
+				{ withFileTypes: true },
+			)
+				.filter((release) => release.isDirectory())
+				.map((release) =>
+					identity(toCamelCase(geography.name), release.name),
+				)
+		: [],
+);
+
+const docsCatalogue = JSON.parse(
+	readFileSync(
+		join(
+			process.cwd(),
+			"public",
+			"data",
+			"datasets",
+			"docs-catalogue.json",
+		),
+		"utf8",
+	),
+) as {
+	releases: Array<{ geography: string; id: string }>;
+	areaAvailability: Array<{
+		geography: string;
+		id: string;
+		status: "available" | "not-compiled";
+	}>;
+};
+
+const apiAreaInventory = { releases: docsCatalogue.areaAvailability };
+
 describe("boundary releases", () => {
+	it("makes every source release explicitly held or available from both products", () => {
+		const website = new Map(
+			catalogued.map(({ type, release }) => [
+				identity(type, release.id),
+				release,
+			]),
+		);
+		const apiRegistry = new Set(
+			docsCatalogue.releases.map((release) =>
+				identity(release.geography, release.id),
+			),
+		);
+		const apiAreas = new Map(
+			apiAreaInventory.releases.map((release) => [
+				identity(release.geography, release.id),
+				release,
+			]),
+		);
+
+		const apiOnly = new Set(
+			Object.values(API_ONLY_GEOGRAPHIES).map(
+				({ geography }) => geography,
+			),
+		);
+		const mapped = sourceBoundaryReleases.filter(
+			(source) => !apiOnly.has(source.split("/")[0]!),
+		);
+		expect([...website.keys()].sort()).toEqual([...mapped].sort());
+		expect([...apiRegistry].sort()).toEqual(
+			[...sourceBoundaryReleases].sort(),
+		);
+
+		for (const source of sourceBoundaryReleases) {
+			if (apiOnly.has(source.split("/")[0]!)) {
+				expect(
+					apiAreas.get(source)?.status,
+					`${source} is API-only but not API-available`,
+				).toBe("available");
+				continue;
+			}
+			const release = website.get(source)!;
+			const area = apiAreas.get(source);
+			if (!release.asset) {
+				expect(
+					release.holdReason,
+					`${source} is held without a reason`,
+				).toBeTruthy();
+				continue;
+			}
+			expect(
+				release.holdReason,
+				`${source} is both held and served`,
+			).toBeUndefined();
+			expect(existsSync(localBoundaryPath(release.asset)), source).toBe(
+				true,
+			);
+			expect(area?.status, `${source} is not API-available`).toBe(
+				"available",
+			);
+		}
+	});
+
 	it("names every asset after the release that owns it", () => {
 		for (const { type, release } of catalogued) {
 			if (!release.asset) continue;

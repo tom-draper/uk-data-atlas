@@ -1,9 +1,6 @@
-import {
-	Popup,
-	type GeoJSONSource,
-	type Map as MapLibreMap,
-} from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import type { PointTooltip } from "@/lib/types/custom";
+import type { MapInstance, MapPopup } from "@/lib/types/mapInstance";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { MapLayerMouseHandler } from "./callbacks";
 import { featureProperty, zoomInterpolate } from "./expressions";
@@ -18,9 +15,9 @@ export class PointLayerController {
 	private tooltip: PointTooltip | undefined;
 	private tooltipIsDark = false;
 	private tooltipHandlersAttached = false;
-	private popup: Popup | null = null;
+	private popup: MapPopup | null = null;
 
-	constructor(private readonly map: MapLibreMap) {}
+	constructor(private readonly map: MapInstance) {}
 
 	update(
 		collection: GeoJSON.FeatureCollection,
@@ -138,7 +135,7 @@ export class PointLayerController {
 		});
 
 		if (!this.popup) {
-			this.popup = new Popup({
+			this.popup = this.map.createPopup({
 				closeButton: false,
 				closeOnClick: false,
 				offset: 8,
@@ -149,7 +146,7 @@ export class PointLayerController {
 		this.popup
 			.setLngLat(event.lngLat)
 			.setDOMContent(content)
-			.addTo(this.map);
+			.addTo();
 	};
 
 	private handleMouseLeave: MapLayerMouseHandler = () => {

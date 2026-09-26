@@ -5,15 +5,14 @@ import {
 	buildConstituencyWardMappings,
 	buildCrossYearMappings,
 	extractWardLadMappings,
+	parsePrecompiledBoundaryMappings,
 	type CodeMapping,
 	type CodeType,
 	type PrecompiledBoundaryMappings,
 	type YearCode,
 } from "./mappings";
 
-const BOUNDARY_MAPPINGS_URL = withCDN(
-	"/data/precompiled/boundary-mappings.json",
-);
+const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
 
 /** The mutable boundary-code lookup populated from precompiled mappings. */
 export type BoundaryMappingTarget = {
@@ -71,7 +70,7 @@ export const seedBoundaryMappings = (
 					`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
 				);
 			applyBoundaryMappings(
-				(await response.json()) as PrecompiledBoundaryMappings,
+				parsePrecompiledBoundaryMappings(await response.json()),
 				target,
 			);
 			return true;

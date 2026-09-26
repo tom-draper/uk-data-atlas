@@ -1,56 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useDatasets } from "@/lib/hooks/useDatasets";
 import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
-import type { ActiveViz } from "@/lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
 import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
-
-const DEFAULT_ACTIVE_VIZ: ActiveViz = {
-	datasetId: "localElection2024",
-	datasetType: "localElection",
-	datasetYear: 2024,
-};
-
-const VIZ_VIEWS: readonly NonNullable<ActiveViz["view"]>[] = [
-	"age",
-	"density",
-	"gender",
-];
-
-const DEFAULT_LOCATION = "Greater Manchester";
-
-// The URL is the one place the visualisation is a flat string; everywhere else
-// it stays split into the dataset it shows and which of its views.
-function parseActiveVizFromParams(params: URLSearchParams): ActiveViz | null {
-	const datasetId = params.get("viz");
-	const datasetType = params.get("type");
-	const datasetYear = params.get("year");
-	if (!datasetId || !datasetType || !datasetYear) return null;
-	const year = parseInt(datasetYear, 10);
-	if (isNaN(year)) return null;
-	const view = VIZ_VIEWS.find(
-		(candidate) => candidate === params.get("view"),
-	);
-	return {
-		datasetId,
-		...(view ? { view } : {}),
-		datasetType: datasetType as ActiveViz["datasetType"],
-		datasetYear: year,
-	};
-}
-
-function writeActiveVizParams(params: URLSearchParams, viz: ActiveViz) {
-	params.set("viz", viz.datasetId);
-	params.set("type", viz.datasetType);
-	params.set("year", String(viz.datasetYear));
-	if (viz.view) params.set("view", viz.view);
-}
+import { useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
 
 function ErrorBanner({
 	errors,
@@ -86,15 +44,8 @@ function ErrorBanner({
 }
 
 export default function AtlasClient() {
-	const searchParams = useSearchParams();
-	const getSearchParam = (key: string) => searchParams.get(key);
-
-	const [activeViz, setActiveVizState] = useState<ActiveViz>(() => {
-		return parseActiveVizFromParams(searchParams) ?? DEFAULT_ACTIVE_VIZ;
-	});
-	const [selectedLocation, setSelectedLocationState] = useState(() => {
-		return getSearchParam("location") ?? DEFAULT_LOCATION;
-	});
+	const { activeViz, selectedLocation, setActiveViz, setSelectedLocation } =
+		useAtlasUrlState();
 	const [customDatasets, setCustomDatasets] = useState<CustomDataset[]>([]);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
@@ -132,47 +83,6 @@ export default function AtlasClient() {
 	};
 
 	const allErrors = [...errors, ...boundaryErrors];
-
-	const activeVizRef = useRef(activeViz);
-	const selectedLocationRef = useRef(selectedLocation);
-	useEffect(() => {
-		activeVizRef.current = activeViz;
-		selectedLocationRef.current = selectedLocation;
-	});
-
-	const updateParams = (location: string, viz: ActiveViz) => {
-		const params = new URLSearchParams();
-		params.set("location", location);
-		writeActiveVizParams(params, viz);
-		window.history.replaceState(null, "", `?${params.toString()}`);
-	};
-
-	const setActiveViz = (viz: ActiveViz) => {
-		setActiveVizState(viz);
-		updateParams(selectedLocationRef.current, viz);
-	};
-
-	const setSelectedLocation = (location: string) => {
-		setSelectedLocationState(location);
-		updateParams(location, activeVizRef.current);
-	};
-
-	useEffect(() => {
-		if (!getSearchParam("location")) {
-			const params = new URLSearchParams();
-			params.set("location", selectedLocation);
-			writeActiveVizParams(params, activeViz);
-			window.history.replaceState(null, "", `?${params.toString()}`);
-		}
-		// Only run on mount
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		document.title = selectedLocation
-			? `${selectedLocation} - UK Data Atlas`
-			: "UK Data Atlas";
-	}, [selectedLocation]);
 
 	if (datasetsLoading && !initialDatasetLoadComplete)
 		return <LoadingDisplay />;

@@ -9,6 +9,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface NHSWaitingChartProps {
 	activeDataset: Dataset | null;
@@ -22,13 +23,6 @@ interface NHSWaitingChartProps {
 
 // 18-week NHS target: 92% treated within 18 weeks = max 8% over
 const TARGET_PCT = 8;
-
-function waitColor(pctOver: number): string {
-	if (pctOver <= TARGET_PCT) return "#16a34a";
-	if (pctOver <= 20) return "#eab308";
-	if (pctOver <= 35) return "#f97316";
-	return "#dc2626";
-}
 
 function computeStats(
 	dataset: NHSWaitingDataset,
@@ -75,7 +69,10 @@ export default function NHSWaitingChart({
 		activeDataset?.type === "nhsWaiting" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
-	const color = waitColor(stats?.pctOver18Weeks ?? 0);
+	const color = useHeatmapValueColor(
+		"nhsWaiting",
+		hasData ? stats.pctOver18Weeks : null,
+	);
 
 	if (!dataset) return null;
 
@@ -110,7 +107,7 @@ export default function NHSWaitingChart({
 				unit="% over 18 wks"
 				secondary={<>target &lt;{TARGET_PCT}%</>}
 				barWidth={barWidth}
-				barColor={color}
+				barColor={color ?? undefined}
 			/>
 		</ChartCard>
 	);

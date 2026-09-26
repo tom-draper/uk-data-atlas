@@ -5,12 +5,15 @@ import {
 	aggregateChildPoverty,
 	aggregateClaimantCount,
 	aggregateFuelPoverty,
+	aggregateGhgEmissions,
 	aggregateHomelessness,
+	aggregateMobileCoverage,
 	aggregateSchoolPerformance,
 	aggregateSchoolPerformanceGap,
 	collectBoundaryRecords,
 } from "./numeric";
 import { aggregateNHSWaiting } from "./health";
+import { aggregateIndicator, averageIndicator } from "./indicator";
 import { aggregatePopulation } from "./population";
 import {
 	aggregateCrime,
@@ -29,6 +32,8 @@ import {
 	aggregateEthnicity,
 	aggregateLifeExpectancy,
 	aggregateQualifications,
+	aggregateCarAvailability,
+	aggregateTravelToWork,
 } from "./demographics";
 import {
 	aggregateBrexit,
@@ -36,13 +41,17 @@ import {
 	aggregateGeneralElection,
 	aggregateLocalElection,
 } from "./elections";
-import type { BoundaryCodeScope } from "./ports";
+import {
+	createBoundaryAggregationSpec,
+	type BoundaryCodeScope,
+} from "./ports";
 
 const boundaryAggregation = <T, R>(
 	cacheKey: string,
 	scope: BoundaryCodeScope,
 	aggregate: BoundaryAggregationSpec<T, R>["aggregate"],
-): BoundaryAggregationSpec<T, R> => ({ cacheKey, scope, aggregate });
+): BoundaryAggregationSpec<T, R> =>
+	createBoundaryAggregationSpec(cacheKey, scope, aggregate);
 
 const numericAggregation = <T, R>(
 	cacheKey: string,
@@ -57,11 +66,11 @@ const numericAggregation = <T, R>(
 export const customDatasetAggregation: BoundaryAggregationSpec<
 	Record<string, number>,
 	ReturnType<typeof aggregateCustomDataset>
-> = {
-	cacheKey: "custom-dataset",
-	scope: "any",
-	aggregate: aggregateCustomDataset,
-};
+> = createBoundaryAggregationSpec(
+	"custom-dataset",
+	"any",
+	aggregateCustomDataset,
+);
 
 export const localElectionAggregation = boundaryAggregation(
 	"local-election",
@@ -134,6 +143,16 @@ export const qualificationAggregation = boundaryAggregation(
 	"localAuthority",
 	aggregateQualifications,
 );
+export const carAvailabilityAggregation = boundaryAggregation(
+	"carAvailability",
+	"localAuthority",
+	aggregateCarAvailability,
+);
+export const travelToWorkAggregation = boundaryAggregation(
+	"travelToWork",
+	"localAuthority",
+	aggregateTravelToWork,
+);
 export const broadbandAggregation = numericAggregation(
 	"broadband",
 	"localAuthority",
@@ -153,6 +172,16 @@ export const childPovertyAggregation = numericAggregation(
 	"childPoverty",
 	"localAuthority",
 	aggregateChildPoverty,
+);
+export const ghgEmissionsAggregation = numericAggregation(
+	"ghgEmissions",
+	"localAuthority",
+	aggregateGhgEmissions,
+);
+export const mobileCoverageAggregation = numericAggregation(
+	"mobileCoverage",
+	"localAuthority",
+	aggregateMobileCoverage,
 );
 export const homelessnessAggregation = numericAggregation(
 	"homelessness",
@@ -188,4 +217,14 @@ export const unemploymentAggregation = boundaryAggregation(
 	"unemployment",
 	"localAuthority",
 	aggregateUnemployment,
+);
+export const indicatorAggregation = numericAggregation(
+	"indicator",
+	"any",
+	aggregateIndicator,
+);
+export const averageIndicatorAggregation = numericAggregation(
+	"average-indicator",
+	"any",
+	averageIndicator,
 );

@@ -1,3 +1,5 @@
+import type { ScoredDeprivationSummary } from "./deprivation";
+
 export interface WIMDLSOAData {
 	lsoaCode: string;
 	lsoaName: string;
@@ -6,6 +8,8 @@ export interface WIMDLSOAData {
 	wimdScore: number;
 	wimdRank: number;
 	wimdDecile: number;
+	/** ONS mid-2017 population estimate, the year WIMD 2019's denominators use. */
+	population: number;
 }
 
 export interface WIMDDataset {
@@ -22,8 +26,5 @@ export interface WIMDDataset {
 	};
 }
 
-export interface AggregatedWIMDData {
-	averageWIMDScore: number;
-	averageWIMDRank: number;
-	averageWIMDDecile: number;
-}
+/** A group of areas: its population-weighted average score, and its share in the most deprived tenth. */
+export type AggregatedWIMDData = ScoredDeprivationSummary;

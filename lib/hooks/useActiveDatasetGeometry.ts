@@ -3,13 +3,34 @@
 import { useMemo } from "react";
 import type { BoundaryGeojson, BoundaryType, Dataset } from "@lib/types";
 import { boundaryCapabilityFor } from "../data/boundaries/capabilities";
-import { BOUNDARY_CATALOG } from "../data/boundaries/catalog";
+import {
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+} from "../data/boundaries/catalog";
+import { getProp } from "../data/boundaries/properties";
 import type { ConstituencyLadOverlaps } from "../data/boundaries/constituencyLadOverlaps";
 import { getChartDatasetDefinition } from "../datasets";
 import { filterGeometryToDatasetCoverage } from "../helpers/datasetCoverage";
 import { useActiveGeometry } from "./useActiveGeometry";
 
 type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
+type DatasetWithBoundaryData = BoundaryDataset & {
+	boundaryType: BoundaryType;
+	data: Record<string, unknown>;
+};
+
+const BOUNDARY_TYPE_SET = new Set<string>(BOUNDARY_TYPES);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isDatasetWithBoundaryData = (
+	dataset: Dataset,
+): dataset is DatasetWithBoundaryData =>
+	dataset.type !== "network" &&
+	typeof dataset.boundaryType === "string" &&
+	BOUNDARY_TYPE_SET.has(dataset.boundaryType) &&
+	isRecord(dataset.data);
 
 /**
  * Applies dataset coverage and record availability to fetched boundary
@@ -23,12 +44,11 @@ export const prepareActiveDatasetGeometry = (
 	if (
 		!rawGeometry ||
 		!activeDataset ||
-		activeDataset.type === "network" ||
-		!("data" in activeDataset)
+		!isDatasetWithBoundaryData(activeDataset)
 	)
 		return rawGeometry;
 
-	const dataset = activeDataset as BoundaryDataset;
+	const dataset = activeDataset;
 	// The compiled payload carries coverage for production data, while the
 	// definition keeps the map correct if a client still has a prior payload
 	// after a hot reload or CDN update.
@@ -42,9 +62,7 @@ export const prepareActiveDatasetGeometry = (
 		rawGeometry,
 		coverageDataset,
 	);
-	const dataKeys = new Set(
-		Object.keys(dataset.data as Record<string, unknown>),
-	);
+	const dataKeys = new Set(Object.keys(dataset.data));
 	// A country-specific payload can have no records even though the source
 	// covers that country (for example, a year without Welsh elections). Keep
 	// declared coverage visible, but preserve the empty-map behaviour when no
@@ -54,25 +72,23 @@ export const prepareActiveDatasetGeometry = (
 			? coverageGeometry
 			: { ...coverageGeometry, features: [] };
 
-	const boundaryType = dataset.boundaryType as BoundaryType;
+	const boundaryType = dataset.boundaryType;
 	const codeKeys: readonly string[] = boundaryCapabilityFor(boundaryType)
 		.filterGeometryToDatasetData
 		? BOUNDARY_CATALOG[boundaryType].properties.code
 		: [];
 	if (codeKeys.length === 0) return coverageGeometry;
-	const firstProperties = coverageGeometry.features[0]
-		?.properties as unknown as Record<string, unknown> | undefined;
-	if (!firstProperties) return coverageGeometry;
-	const codeKey = codeKeys.find((key) => key in firstProperties);
+	const firstFeature = coverageGeometry.features[0];
+	if (!firstFeature) return coverageGeometry;
+	const codeKey = codeKeys.find(
+		(key) => getProp(firstFeature.properties, [key]) !== undefined,
+	);
 	if (!codeKey) return coverageGeometry;
 	const features = coverageGeometry.features.filter(
-		(feature) =>
-			feature.properties &&
-			dataKeys.has(
-				(feature.properties as unknown as Record<string, unknown>)[
-					codeKey
-				] as string,
-			),
+		(feature) => {
+			const code = getProp(feature.properties, [codeKey]);
+			return code !== undefined && dataKeys.has(code);
+		},
 	);
 	return features.length === coverageGeometry.features.length
 		? coverageGeometry
@@ -87,9 +103,11 @@ export const useActiveDatasetGeometry = (
 	constituencyLadOverlaps?: ConstituencyLadOverlaps | null,
 ) => {
 	const boundaryDataset =
-		activeDataset?.type === "network" ? null : activeDataset;
+		activeDataset && isDatasetWithBoundaryData(activeDataset)
+			? activeDataset
+			: null;
 	const activeGeometry = useActiveGeometry(
-		boundaryDataset?.boundaryType as BoundaryType | undefined,
+		boundaryDataset?.boundaryType,
 		boundaryDataset?.boundaryYear,
 		selectedLocation,
 		getLadForWard,

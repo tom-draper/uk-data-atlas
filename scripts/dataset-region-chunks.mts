@@ -67,6 +67,7 @@ const LOCAL_ELECTION_PARTIES = [
 	"SF",
 	"APNI",
 	"SDLP",
+	"OTHER",
 ] as const;
 
 const countryForCode = (code: string): RegionChunkKey | null => {
@@ -371,8 +372,7 @@ export async function writeDatasetRegionChunks({
 	boundaryMappings?: Pick<PrecompiledBoundaryMappings, "wardToLad">;
 }) {
 	const gazetteer = new Gazetteer(core);
-	const outDir = join(root, "data", "precompiled", "chunks");
-	const publicDir = join(root, "public", "data", "precompiled", "chunks");
+	const outDir = join(root, "public", "data", "datasets", "chunks");
 
 	for (const [file, compiled] of datasets) {
 		const chunkLayout = compiled.layout?.regionChunks;
@@ -466,10 +466,7 @@ export async function writeDatasetRegionChunks({
 			REGION_CHUNK_KEYS.map(async (region) => {
 				const json = JSON.stringify(chunks.get(region));
 				const relative = join(file, `${region}.json`);
-				await Promise.all([
-					writeAtomically(join(outDir, relative), json),
-					writeAtomically(join(publicDir, relative), json),
-				]);
+				await writeAtomically(join(outDir, relative), json);
 			}),
 		);
 	}

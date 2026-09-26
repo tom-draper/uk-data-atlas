@@ -5,6 +5,7 @@ import type {
 	SelectedArea,
 } from "@/lib/types";
 import type { HousePriceOptions } from "@/lib/types/mapOptions";
+import { cacheKey } from "./cacheKey";
 
 type HousePriceMeasure = HousePriceOptions["measure"];
 
@@ -188,6 +189,12 @@ export class HousePriceSeriesCache {
 			datasetId = this.nextDatasetId++;
 			this.datasetIds.set(dataset, datasetId);
 		}
-		return `${selectedArea!.type}-${selectedArea!.code}:${datasetId}:${mappingGeneration}:${measure}`;
+		return cacheKey(
+			selectedArea!.type,
+			selectedArea!.code,
+			datasetId,
+			mappingGeneration,
+			measure,
+		);
 	}
 }

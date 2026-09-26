@@ -51,13 +51,13 @@ Consequences:
 The single biggest design decision: do **not** build one monolith. Split by
 size and volatility.
 
-| Layer | What | Size | Where it lives |
-|-------|------|------|----------------|
-| **Gazetteer** | code / name / level / vintage / hierarchy / bbox / areaM2 | small at coarse levels, large at OA + crosswalks | precomputed artifact, **sharded** (see 3.1) |
-| **Geometry** | boundary polygons | large (MBs per level per year) | lazy-loaded by `(level, year)` key, unchanged from today |
-| **Postcodes** | ~1.7M postcode -> area | ~1GB (ONSPD) | out of the browser: server-side, or district-level only, or centroid index |
+| Layer         | What                                                      | Size                                             | Where it lives                                                             |
+| ------------- | --------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
+| **Gazetteer** | code / name / level / vintage / hierarchy / bbox / areaM2 | small at coarse levels, large at OA + crosswalks | precomputed artifact, **sharded** (see 3.1)                                |
+| **Geometry**  | boundary polygons                                         | large (MBs per level per year)                   | lazy-loaded by `(level, year)` key, unchanged from today                   |
+| **Postcodes** | ~1.7M postcode -> area                                    | ~1GB (ONSPD)                                     | out of the browser: server-side, or district-level only, or centroid index |
 
-The gazetteer *references* geometry by key; it never embeds it. Postcodes are a
+The gazetteer _references_ geometry by key; it never embeds it. Postcodes are a
 separate subsystem the gazetteer links to at district granularity at most.
 
 ### 3.1 Sharding and the size budget
@@ -65,7 +65,7 @@ separate subsystem the gazetteer links to at district granularity at most.
 "Loaded once, small" is the load-bearing claim of this whole design and must be
 proven, not assumed. Coarse levels are genuinely small, but the crosswalks are
 not obviously so: an OA-level table (~200k OAs times their targets) can dwarf the
-rest. If the artifact is one eager blob, startup could end up *worse* than today,
+rest. If the artifact is one eager blob, startup could end up _worse_ than today,
 which would defeat the point.
 
 So the gazetteer is **sharded and lazy-loaded, not one blob**:
@@ -90,11 +90,11 @@ client-side today to derive the same facts.
 Measured from real UK boundaries (`scripts/gazetteer-phase0.ts`), gzipped since
 that is what ships:
 
-| Artifact | Ships? | Size |
-|----------|--------|------|
-| Eager core: 361 LADs + 650 constituencies, with `areaM2` + bbox | yes | **37 KB** |
-| Constituency->LAD crosswalk (area-weighted via LSOA) | yes | **5 KB** |
-| LSOA building-block table (34,753 rows) | no, build input | 446 KB, extrapolates to **~2.9 MB** at OA (~230k) |
+| Artifact                                                        | Ships?          | Size                                              |
+| --------------------------------------------------------------- | --------------- | ------------------------------------------------- |
+| Eager core: 361 LADs + 650 constituencies, with `areaM2` + bbox | yes             | **37 KB**                                         |
+| Constituency->LAD crosswalk (area-weighted via LSOA)            | yes             | **5 KB**                                          |
+| LSOA building-block table (34,753 rows)                         | no, build input | 446 KB, extrapolates to **~2.9 MB** at OA (~230k) |
 
 Findings:
 
@@ -102,7 +102,7 @@ Findings:
   crosswalk is single-digit KB. Adding wards keeps the core comfortably under a
   few hundred KB.
 - **Only the building-block table is large, and it never ships.** At OA scale it
-  is ~2.9 MB, too heavy to send to the browser, but it is only needed at *build*
+  is ~2.9 MB, too heavy to send to the browser, but it is only needed at _build_
   time to derive weights (4.4). So the resolution is decided: **precompute
   per-relation weighted crosswalks at build; keep the OA/LSOA + population table
   build-time-only.** The "universal OA table at runtime" idea in 4.4 is dropped;
@@ -121,28 +121,34 @@ data, so Phase 1 is unblocked.
 
 ```ts
 type Level =
-  | "region" | "county" | "localAuthority" | "constituency"
-  | "ward" | "lsoa" | "dataZone" | "superOutputArea";
+	| "region"
+	| "county"
+	| "localAuthority"
+	| "constituency"
+	| "ward"
+	| "lsoa"
+	| "dataZone"
+	| "superOutputArea";
 
 interface GazetteerEntry {
-  code: string;              // canonical ONS code, e.g. "E08000003"
-  name: string;              // canonical name, e.g. "Manchester"
-  level: Level;
-  vintage: number;           // boundary year this code belongs to, e.g. 2023
-  // parents/children ONLY encode clean nesting (ward -> LAD -> county -> region;
-  // LSOA -> LAD). Non-nesting relations (constituency <-> LAD) and boundary
-  // reviews are many-to-many and live in weighted crosswalks instead (see 4.4).
-  parents: string[];         // codes one level up in a nesting relation
-  children?: string[];       // optional; can be inverted from parents at load
-  aliases?: string[];        // lowercased name variants for matching
-  bbox: [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
-  areaM2: number;            // intrinsic geometry, per vintage (see 4.5)
-  refPopulation?: number;    // canonical baseline for crosswalk weighting (4.5)
-  // Geometry is referenced, never embedded:
-  geometryRef?: { level: Level; year: number }; // where to lazy-load the polygon
-  // 1:1 vintage recodes only (an area recoded but geographically unchanged).
-  // Boundary reviews that split/merge areas are crosswalks, not this (see 4.4).
-  successors?: Record<number, string>; // vintage -> code, when 1:1
+	code: string; // canonical ONS code, e.g. "E08000003"
+	name: string; // canonical name, e.g. "Manchester"
+	level: Level;
+	vintage: number; // boundary year this code belongs to, e.g. 2023
+	// parents/children ONLY encode clean nesting (ward -> LAD -> county -> region;
+	// LSOA -> LAD). Non-nesting relations (constituency <-> LAD) and boundary
+	// reviews are many-to-many and live in weighted crosswalks instead (see 4.4).
+	parents: string[]; // codes one level up in a nesting relation
+	children?: string[]; // optional; can be inverted from parents at load
+	aliases?: string[]; // lowercased name variants for matching
+	bbox: [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
+	areaM2: number; // intrinsic geometry, per vintage (see 4.5)
+	refPopulation?: number; // canonical baseline for crosswalk weighting (4.5)
+	// Geometry is referenced, never embedded:
+	geometryRef?: { level: Level; year: number }; // where to lazy-load the polygon
+	// 1:1 vintage recodes only (an area recoded but geographically unchanged).
+	// Boundary reviews that split/merge areas are crosswalks, not this (see 4.4).
+	successors?: Record<number, string>; // vintage -> code, when 1:1
 }
 ```
 
@@ -150,7 +156,7 @@ interface GazetteerEntry {
 
 `GEOJSON_PATHS` (in `boundaries.ts`) already keys geometry by `(level, year)` and
 `useBoundaryData` lazy-loads it. That stays. The gazetteer only holds
-`geometryRef` so a consumer knows *which* file to fetch for a given code. No
+`geometryRef` so a consumer knows _which_ file to fetch for a given code. No
 change to how or when polygons load.
 
 ### 4.3 Postcodes
@@ -171,9 +177,9 @@ Conversions are the highest-value thing the gazetteer unlocks, and they are
 where the naive "clean hierarchy" model breaks. "Conversion" hides two very
 different questions:
 
-| | Question | What it needs |
-|---|----------|---------------|
-| **Membership** | which LADs does this constituency overlap? | overlap > 0 |
+|                   | Question                                            | What it needs                                |
+| ----------------- | --------------------------------------------------- | -------------------------------------------- |
+| **Membership**    | which LADs does this constituency overlap?          | overlap > 0                                  |
 | **Apportionment** | this 2024 constituency's figure in 2019 boundaries? | area- or population-**weighted** split/merge |
 
 `parents`/`successors` are scalars and can only answer membership for clean
@@ -190,8 +196,8 @@ Both are modelled with a weighted crosswalk:
 
 ```ts
 type Crosswalk = Record<
-  string,                                  // source code
-  Array<{ code: string; weight: number }>  // targets + share of source in each
+	string, // source code
+	Array<{ code: string; weight: number }> // targets + share of source in each
 >;
 // weight = fraction of the source area's population (best-fit) or land area
 // (exact-fit) that falls within each target.
@@ -203,14 +209,14 @@ From a crosswalk:
   LADs).
 - **Apportionment** = `sum(source_value * weight)` accumulated into each target
   (e.g. re-express 2024 constituency values on 2019 boundaries). Only valid for
-  *extensive* quantities (counts, populations); *intensive* ones (rates, medians)
+  _extensive_ quantities (counts, populations); _intensive_ ones (rates, medians)
   must apportion a numerator and denominator separately, never the ratio.
 
 ONS publishes these as best-fit (population-weighted) and exact-fit
 (area-weighted) lookups. The 2010->2024 constituency lookup already sits in
 `data/boundaries/constituencies/`, which is exactly the 2025->2020 case.
 
-**Weights are usually derived, not read.** Most ONS lookups are *assignments*
+**Weights are usually derived, not read.** Most ONS lookups are _assignments_
 ("this OA belongs to that LAD"), not fractions. Real apportionment weights are
 computed at build time from the building blocks:
 
@@ -244,11 +250,11 @@ Area, population, and density look similar but have three different natures, and
 conflating them is the trap. They map onto the same "separate by size and
 volatility" principle as the three layers in section 3.
 
-| Value | Nature | Where it lives |
-|-------|--------|----------------|
-| Area m² | intrinsic geometry, per vintage | **in** the gazetteer (`areaM2`) |
-| Population | volatile dataset, per year | stays a dataset, **referenced** via API |
-| Density | derived | **computed** `pop / area`, stored nowhere |
+| Value      | Nature                          | Where it lives                            |
+| ---------- | ------------------------------- | ----------------------------------------- |
+| Area m²    | intrinsic geometry, per vintage | **in** the gazetteer (`areaM2`)           |
+| Population | volatile dataset, per year      | stays a dataset, **referenced** via API   |
+| Density    | derived                         | **computed** `pop / area`, stored nowhere |
 
 - **Area** is a property of the boundary itself, changing only with vintage, so
   it belongs on the entry as `areaM2`. Today it is recomputed client-side from
@@ -256,7 +262,7 @@ volatility" principle as the three layers in section 3.
   build time retires that path and supplies the denominator for area-weighted
   crosswalks (4.4).
 - **Population** is dataset-sourced and time-varying; the population dataset stays
-  its source of truth. The gazetteer *references* it (`population(code, year)`),
+  its source of truth. The gazetteer _references_ it (`population(code, year)`),
   and embeds only a single `refPopulation` baseline used as the weighting
   denominator for best-fit crosswalks. Composite locations ("Greater Manchester")
   derive their population by summing members (`membersOf`), never storing a
@@ -291,8 +297,8 @@ Disambiguation is a defined pipeline, not a guess:
 
 ### 4.7 Point-to-area is a separate capability
 
-Crosswalks convert *area to area*. They do **not** answer *coordinate to
-containing area*, which is a different operation, and one we already need: the
+Crosswalks convert _area to area_. They do **not** answer _coordinate to
+containing area_, which is a different operation, and one we already need: the
 road-safety points want "which LAD is this collision in?", and `codeMapper` does
 runtime point-in-polygon for hover. This reverse-geocoding is called out
 explicitly so it doesn't get quietly assumed into "conversions" and then be
@@ -329,10 +335,10 @@ existing loaders:
 3. Derive crosswalk weights from OA population/area (4.4).
 4. Emit **sharded** output (3.1) under `data/gazetteer/` (and the `public/`
    mirror):
-   - `gazetteer.core.json`: eager coarse levels + `nameIndex` + `namedLocations`
-     (replaces `LOCATIONS`), stamped with a `version`.
-   - `gazetteer.<level>.<vintage>.json`: on-demand entry shards.
-   - `crosswalk.<from>-<to>.json`: on-demand weighted crosswalks.
+    - `gazetteer.core.json`: eager coarse levels + `nameIndex` + `namedLocations`
+      (replaces `LOCATIONS`), stamped with a `version`.
+    - `gazetteer.<level>.<vintage>.json`: on-demand entry shards.
+    - `crosswalk.<from>-<to>.json`: on-demand weighted crosswalks.
 
 Precompute once at build, not per browser session. This is the efficiency win.
 
@@ -367,29 +373,32 @@ precompiled datasets) supersedes `LOCATIONS`, `areaBank`, and `codeMapper`:
 
 ```ts
 interface Gazetteer {
-  get(code: string): GazetteerEntry | undefined;
-  resolveName(name: string, level?: Level): GazetteerEntry[]; // alias-aware
-  ancestors(code: string): GazetteerEntry[];  // up the nesting hierarchy
-  descendants(code: string, level: Level): GazetteerEntry[]; // e.g. LAD -> wards
-  membersOf(named: string): string[];         // "Greater Manchester" -> codes
-  boundsOf(named: string): [number, number, number, number];
-  matchColumn(values: string[]): AreaMatch[];  // subsumes areaBank matching
+	get(code: string): GazetteerEntry | undefined;
+	resolveName(name: string, level?: Level): GazetteerEntry[]; // alias-aware
+	ancestors(code: string): GazetteerEntry[]; // up the nesting hierarchy
+	descendants(code: string, level: Level): GazetteerEntry[]; // e.g. LAD -> wards
+	membersOf(named: string): string[]; // "Greater Manchester" -> codes
+	boundsOf(named: string): [number, number, number, number];
+	matchColumn(values: string[]): AreaMatch[]; // subsumes areaBank matching
 
-  // Attributes / derived metrics (see 4.5).
-  areaM2(code: string): number;                // intrinsic, from the entry
-  population(code: string, year: number): number | undefined; // joins the dataset
-  density(code: string, popYear: number): number | undefined; // pop / area, derived
-  // Composite/aggregate variants sum numerator and denominator separately.
+	// Attributes / derived metrics (see 4.5).
+	areaM2(code: string): number; // intrinsic, from the entry
+	population(code: string, year: number): number | undefined; // joins the dataset
+	density(code: string, popYear: number): number | undefined; // pop / area, derived
+	// Composite/aggregate variants sum numerator and denominator separately.
 
-  // Conversions (see 4.4). Work across both non-nesting relations and vintages.
-  mapToVintage(code: string, targetYear: number): string | undefined; // 1:1 only
-  overlaps(code: string, targetLevel: Level, targetVintage?: number):
-    Array<{ code: string; weight: number }>;   // membership + weights
-  apportion(
-    values: Record<string, number>,            // source code -> extensive value
-    targetLevel: Level,
-    targetVintage: number,
-  ): Record<string, number>;                    // weighted re-aggregation
+	// Conversions (see 4.4). Work across both non-nesting relations and vintages.
+	mapToVintage(code: string, targetYear: number): string | undefined; // 1:1 only
+	overlaps(
+		code: string,
+		targetLevel: Level,
+		targetVintage?: number,
+	): Array<{ code: string; weight: number }>; // membership + weights
+	apportion(
+		values: Record<string, number>, // source code -> extensive value
+		targetLevel: Level,
+		targetVintage: number,
+	): Record<string, number>; // weighted re-aggregation
 }
 ```
 
@@ -405,18 +414,23 @@ Once the gazetteer exists, a standard-geography dataset declares itself:
 
 ```ts
 interface DatasetManifest {
-  id: string;
-  level: Level;
-  vintage: number;
-  minGazetteerVersion: number;   // compatibility floor (6.2)
-  join: { by: "code"; column: string } | { by: "name"; column: string };
-  levelHint?: Level;             // disambiguates name joins (4.6)
-  // Extensive values apportion directly; intensive ones (rates, medians) must
-  // declare numerator + denominator so we apportion those, not the ratio (4.5).
-  valueColumns: Array<
-    | { column: string; kind: "extensive" }
-    | { column: string; kind: "intensive"; numerator: string; denominator: string }
-  >;
+	id: string;
+	level: Level;
+	vintage: number;
+	minGazetteerVersion: number; // compatibility floor (6.2)
+	join: { by: "code"; column: string } | { by: "name"; column: string };
+	levelHint?: Level; // disambiguates name joins (4.6)
+	// Extensive values apportion directly; intensive ones (rates, medians) must
+	// declare numerator + denominator so we apportion those, not the ratio (4.5).
+	valueColumns: Array<
+		| { column: string; kind: "extensive" }
+		| {
+				column: string;
+				kind: "intensive";
+				numerator: string;
+				denominator: string;
+		  }
+	>;
 }
 ```
 
@@ -425,20 +439,20 @@ members fall in the selected named location), roll-up aggregation (sum/average u
 `parents`), name matching, vintage reconciliation, and boundary selection all
 come from the registry. The bespoke per-dataset location code largely disappears.
 
-**Limit (honest):** this only trivialises datasets on *standard ONS
-geographies*. Non-standard ones (police force areas, NHS trusts, travel-to-work
+**Limit (honest):** this only trivialises datasets on _standard ONS
+geographies_. Non-standard ones (police force areas, NHS trusts, travel-to-work
 areas, water companies) still need a **one-time** mapping into the hierarchy,
 added as extra `Level`s or crosswalk tables. The gazetteer shrinks repeat work;
 it does not abolish bespoke geographies.
 
 ## 9. Migration: folding in the three modules
 
-| Today | Folds into |
-|-------|-----------|
-| `LOCATIONS` (named -> lad_codes + bounds) | `namedLocations` + `membersOf` / `boundsOf` |
-| `areaBank` (code sets, name->code, matching) | `nameIndex` + `matchColumn` |
-| `codeMapper` nesting (ward↔LAD) + cross-year 1:1 | `parents`/`children` + `ancestors`/`descendants` + `mapToVintage` |
-| `codeMapper` constituency↔ward (`buildConstituencyWardMappings`, point-in-polygon) | precomputed crosswalk + `overlaps` (see 4.4) |
+| Today                                                                              | Folds into                                                        |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `LOCATIONS` (named -> lad_codes + bounds)                                          | `namedLocations` + `membersOf` / `boundsOf`                       |
+| `areaBank` (code sets, name->code, matching)                                       | `nameIndex` + `matchColumn`                                       |
+| `codeMapper` nesting (ward↔LAD) + cross-year 1:1                                   | `parents`/`children` + `ancestors`/`descendants` + `mapToVintage` |
+| `codeMapper` constituency↔ward (`buildConstituencyWardMappings`, point-in-polygon) | precomputed crosswalk + `overlaps` (see 4.4)                      |
 
 Do it incrementally: build the gazetteer artifact first, wrap the new API around
 it, then migrate call sites one module at a time behind the existing interfaces
@@ -493,13 +507,13 @@ modules once their call sites are gone.
   matching, plus bilingual (Welsh) names. `name` + `aliases` covers matching;
   decide whether a separate `displayName` (and locale) is needed.
 - **Multi-vintage member lists (resolved; NOT a LOCATIONS bug).** `LOCATIONS`
-  lists region members across several LAD vintages *on purpose*:
+  lists region members across several LAD vintages _on purpose_:
   `"North West"` carries both the 6 abolished Cumbria districts (`E07000026-31`)
   and the 2 unitaries that replaced them (`E06000063/64`). This is intentional
   because pre-2023 ward boundaries carry the old district LAD codes and 2023+
   wards carry the new unitary codes, and the app filters wards by
   `lad_codes.includes(ward.ladCode)`; listing both makes region aggregation work
-  for *either* ward vintage. The live app never double-counts, since only one ward
+  for _either_ ward vintage. The live app never double-counts, since only one ward
   vintage is active per dataset. The bug was in the gazetteer: `linkRegions`
   summed LAD-entry areas across all vintages (region 20,911 vs ~14,100 km2).
   Fixed by rolling area up over the current vintage only (union of LAD >= 2023,
@@ -551,7 +565,7 @@ modules once their call sites are gone.
    now read named-location bounds/members from the gazetteer, not `LOCATIONS`. No
    runtime code imports `LOCATIONS` any more; it remains only as the build-time
    curated source for the loader. Enabled by `lib/data/gazetteer/static.ts`, a
-   statically bundled singleton (the eager core is needed *synchronously* at map
+   statically bundled singleton (the eager core is needed _synchronously_ at map
    mount and in the non-React `boundaries.ts`, so it is imported, not fetched;
    this refines 3.1 for the core, shards stay fetched). Verified end-to-end: the
    location list renders identical populations (UK 60,238,038, London 8,866,180),

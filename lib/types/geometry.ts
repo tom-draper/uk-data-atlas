@@ -46,10 +46,23 @@ interface WardProperties2021 {
 }
 
 interface WardProperties2019 {
+	WD19CD: string;
+	WD19NM: string;
 	lad19cd: string;
 	lad19nm: string;
 	wd19cd: string;
 	wd19nm: string;
+}
+
+interface WardProperties2015 {
+	wd15cd: string;
+	wd15nm: string;
+	lad15cd: string;
+}
+
+interface WardProperties2011 {
+	wd11cd: string;
+	wd11nm: string;
 }
 
 interface WardProperties2018 {
@@ -99,14 +112,46 @@ interface LocalAuthorityProperties2021 {
 	LAD21NM: string;
 }
 
+interface LocalAuthorityProperties2020 {
+	LAD20CD: string;
+	LAD20NM: string;
+}
+
 interface LocalAuthorityProperties2018 {
 	lad18cd: string;
 	lad18nm: string;
 }
 
+interface LocalAuthorityProperties2019 {
+	LAD19CD: string;
+	LAD19NM: string;
+	lad19cd: string;
+	lad19nm: string;
+}
+
+interface LocalAuthorityProperties2017 {
+	LAD17CD: string;
+	LAD17NM: string;
+}
+
 interface LocalAuthorityProperties2016 {
 	LAD16CD: string;
 	LAD16NM: string;
+}
+
+interface LocalAuthorityProperties2011 {
+	lad11cd: string;
+	lad11nm: string;
+}
+
+interface LocalAuthorityProperties2009 {
+	lad09cd: string;
+	lad09nm: string;
+}
+
+interface LocalAuthorityProperties2008 {
+	LAD08CD: string;
+	LAD08NM: string;
 }
 
 // Constituency properties by year
@@ -118,6 +163,26 @@ interface ConstituencyProperties2024 {
 interface ConstituencyProperties2019 {
 	pcon19cd: string;
 	pcon19nm: string;
+}
+
+interface ConstituencyProperties2022 {
+	PCON22CD: string;
+	PCON22NM: string;
+}
+
+interface ConstituencyProperties2021 {
+	PCON21CD: string;
+	PCON21NM: string;
+}
+
+interface ConstituencyProperties2020 {
+	PCON20CD: string;
+	PCON20NM: string;
+}
+
+interface ConstituencyProperties2018 {
+	pcon18cd: string;
+	pcon18nm: string;
 }
 
 interface ConstituencyProperties2017 {
@@ -144,6 +209,11 @@ interface LSOAProperties2011 {
 interface LSOAProperties2021 {
 	LSOA21CD: string;
 	LSOA21NM: string;
+}
+
+interface LSOAProperties2001 {
+	LSOA01CD: string;
+	LSOA01NM: string;
 }
 
 // Scottish Data Zone properties
@@ -250,6 +320,21 @@ interface Itl3Properties2021 {
 	ITL321NM: string;
 }
 
+interface Itl1Properties2025 {
+	ITL125CD: string;
+	ITL125NM: string;
+}
+
+interface Itl2Properties2025 {
+	ITL225CD: string;
+	ITL225NM: string;
+}
+
+interface Itl3Properties2025 {
+	ITL325CD: string;
+	ITL325NM: string;
+}
+
 interface MajorTownAndCityProperties2015 {
 	TCITY15CD: string;
 	TCITY15NM: string;
@@ -258,6 +343,21 @@ interface MajorTownAndCityProperties2015 {
 interface ScottishParliamentaryConstituencyProperties2021 {
 	SPC21CD: string;
 	SPC21NM: string;
+}
+
+interface ScottishParliamentaryConstituencyProperties2026 {
+	SPC26CD: string;
+	SPC26NM: string;
+}
+
+interface ScottishParliamentaryConstituencyProperties2022 {
+	SPC22CD: string;
+	SPC22NM: string;
+}
+
+interface ScottishParliamentaryConstituencyProperties2016 {
+	spc16cd: string;
+	spc16nm: string;
 }
 
 interface ScottishParliamentaryRegionProperties2022 {
@@ -357,6 +457,7 @@ interface SuperOutputAreaProperties2011 {
 // Unified mapping of all boundary types by year
 export type YearToProperties = {
 	// LSOAs
+	lsoa_2001: LSOAProperties2001;
 	lsoa_2011: LSOAProperties2011;
 	lsoa_2021: LSOAProperties2021;
 	// Scottish Data Zones
@@ -373,22 +474,34 @@ export type YearToProperties = {
 	ward_2026: WardProperties2026;
 	ward_2025: WardProperties2025;
 	ward_2019: WardProperties2019;
+	ward_2015: WardProperties2015;
+	ward_2011: WardProperties2011;
 	ward_2018: WardProperties2018;
 	ward_2017: WardProperties2017;
 	ward_2016: WardProperties2016;
 	// Local Authorities
 	lad_2016: LocalAuthorityProperties2016;
 	lad_2018: LocalAuthorityProperties2018;
+	lad_2019: LocalAuthorityProperties2019;
+	lad_2020: LocalAuthorityProperties2020;
 	lad_2021: LocalAuthorityProperties2021;
 	lad_2022: LocalAuthorityProperties2022;
 	lad_2023: LocalAuthorityProperties2023;
 	lad_2024: LocalAuthorityProperties2024;
 	lad_2025: LocalAuthorityProperties2025;
+	lad_2017: LocalAuthorityProperties2017;
+	lad_2011: LocalAuthorityProperties2011;
+	lad_2009: LocalAuthorityProperties2009;
+	lad_2008: LocalAuthorityProperties2008;
 	// Constituencies
 	constituency_2015: ConstituencyProperties2015;
 	constituency_2016: ConstituencyProperties2016;
 	constituency_2017: ConstituencyProperties2017;
+	constituency_2018: ConstituencyProperties2018;
 	constituency_2019: ConstituencyProperties2019;
+	constituency_2020: ConstituencyProperties2020;
+	constituency_2021: ConstituencyProperties2021;
+	constituency_2022: ConstituencyProperties2022;
 	constituency_2024: ConstituencyProperties2024;
 	// Countries
 	country_2020: CountryProperties2020;
@@ -413,8 +526,14 @@ export type YearToProperties = {
 	itl1_2021: Itl1Properties2021;
 	itl2_2021: Itl2Properties2021;
 	itl3_2021: Itl3Properties2021;
+	itl1_2025: Itl1Properties2025;
+	itl2_2025: Itl2Properties2025;
+	itl3_2025: Itl3Properties2025;
 	majorTownAndCity_2015: MajorTownAndCityProperties2015;
 	scottishParliamentaryConstituency_2021: ScottishParliamentaryConstituencyProperties2021;
+	scottishParliamentaryConstituency_2022: ScottishParliamentaryConstituencyProperties2022;
+	scottishParliamentaryConstituency_2026: ScottishParliamentaryConstituencyProperties2026;
+	scottishParliamentaryConstituency_2016: ScottishParliamentaryConstituencyProperties2016;
 	scottishParliamentaryRegion_2022: ScottishParliamentaryRegionProperties2022;
 	seneddConstituency_2022: SeneddConstituencyProperties2022;
 	seneddElectoralRegion_2022: SeneddElectoralRegionProperties2022;

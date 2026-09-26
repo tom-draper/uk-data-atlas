@@ -2,6 +2,13 @@ import { HousePriceDataset, HousePriceWardData } from "@/lib/types/housePrice";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
 import { parseNullableNum } from "@/lib/helpers/parseNumber";
 
+/**
+ * Salford's wards were redrawn in 2021. The workbook still publishes them under
+ * their old codes, so they are moved onto the new ones for the map to join. The
+ * old code is kept on the record as `sourceWardCode`, because a price measured
+ * on the old ward is not a price for the new one and the API serves it under
+ * the code it was published against.
+ */
 const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
 	E05000759: "E05013018",
 	E05000760: "E05013020",
@@ -75,6 +82,7 @@ export async function loadHousePrice(
 			ladName: row["Local authority name"]?.trim() || "",
 			wardCode,
 			wardName: row["Ward name"]?.trim() || "",
+			...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
 			prices: pricesForRow(row, median.fields.slice(4)),
 			meanPrices: {},
 		};
@@ -96,6 +104,7 @@ export async function loadHousePrice(
 			ladName: row["Local authority name"]?.trim() || "",
 			wardCode,
 			wardName: row["Ward name"]?.trim() || "",
+			...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
 			prices: {},
 			meanPrices,
 		};

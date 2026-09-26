@@ -1,42 +1,26 @@
 // Boundary and cache adapter for dataset-owned aggregation specifications.
-import type { BoundaryGeojson, Features, PropertyKeys } from "@lib/types";
+import type { BoundaryGeojson } from "@lib/types";
 import type {
-	AggregationCache,
 	BoundaryAggregationSpec,
 	BoundaryCodeDetector,
-	BoundaryCodeScope,
 } from "./ports";
+import { cacheKey } from "../cacheKey";
 
 /** Aggregates dataset records against the currently loaded boundary geometry. */
 export class DatasetAggregator {
+	private readonly geometryIds = new WeakMap<BoundaryGeojson, number>();
+	private nextGeometryId = 0;
+
 	constructor(
 		private propertyDetector: BoundaryCodeDetector,
-		private cache: AggregationCache,
 	) {}
 
-	// Cache empty-coverage results too, so they are not recomputed on every update.
-	private cached<R>(cacheKey: string, compute: () => R): R {
-		const cached = this.cache.get(cacheKey);
-		if (cached !== undefined) return cached as R;
-		const result = compute();
-		this.cache.set(cacheKey, result);
-		return result;
-	}
-
-	private byBoundary<R>(
-		key: string,
-		scope: BoundaryCodeScope,
-		geojson: BoundaryGeojson,
-		location: string | null,
-		datasetId: string | null,
-		aggregate: (features: Features, codeProp: PropertyKeys) => R,
-	): R {
-		return this.cached(`${key}-${location}-${datasetId}`, () =>
-			aggregate(
-				geojson.features,
-				this.propertyDetector.detect(scope, geojson.features),
-			),
-		);
+	private geometryId(geojson: BoundaryGeojson): number {
+		const cached = this.geometryIds.get(geojson);
+		if (cached !== undefined) return cached;
+		const id = this.nextGeometryId++;
+		this.geometryIds.set(geojson, id);
+		return id;
 	}
 
 	/**
@@ -50,13 +34,22 @@ export class DatasetAggregator {
 		location: string | null,
 		datasetId: string | null,
 	): R {
-		return this.byBoundary(
-			spec.cacheKey,
-			spec.scope,
-			geojson,
-			location,
-			datasetId,
-			(features, codeProp) => spec.aggregate(features, codeProp, data),
+		return spec.getOrCompute(
+			this,
+			cacheKey(
+				this.geometryId(geojson),
+				spec.cacheKey,
+				location,
+				datasetId,
+			),
+			() => {
+				const features = geojson.features;
+				const codeProp = this.propertyDetector.detect(
+					spec.scope,
+					features,
+				);
+				return spec.aggregate(features, codeProp, data);
+			},
 		);
 	}
 }

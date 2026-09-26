@@ -1,63 +1,166 @@
-import { CrimeDataset, CrimeLADData } from "@/lib/types";
+import {
+	CrimeCounts,
+	CrimeDataset,
+	CrimeLADData,
+	CrimePartnershipData,
+} from "@/lib/types/crime";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
-import { parseNum } from "@/lib/helpers/parseNumber";
 
-const extractYearFromTitle = (title: string): number => {
-	const match = title.match(/(\d{4})/);
-	return match ? parseInt(match[1]) : new Date().getFullYear();
+/**
+ * The twelve months a table covers, from its title, such as "year ending March
+ * 2026". Refused if absent, so a new edition cannot be mislabelled with the
+ * period of the one it replaced.
+ */
+const periodFromTitle = (title: string) => {
+	const match = title.match(/year ending ([A-Z][a-z]+) (\d{4})/);
+	if (!match) throw new Error(`Crime table title names no period: ${title}`);
+	return {
+		dataDate: `year ending ${match[1]} ${match[2]}`,
+		year: Number(match[2]),
+	};
 };
 
+/** The count columns, in table order from the seventh column. */
+const COUNT_FIELDS: Array<keyof CrimeCounts> = [
+	"totalRecordedCrime",
+	"violenceAgainstPerson",
+	"homicide",
+	"deathSeriesInjuryUnlawfulDriving",
+	"violenceWithInjury",
+	"violenceWithoutInjury",
+	"stalkingHarassment",
+	"sexualOffences",
+	"robbery",
+	"theftOffences",
+	"burglary",
+	"residentialBurglary",
+	"nonResidentialBurglary",
+	"vehicleOffences",
+	"theftFromPerson",
+	"bicycleTheft",
+	"shoplifting",
+	"otherTheftOffences",
+	"criminalDamageArson",
+	"drugOffences",
+	"possessionWeapons",
+	"publicOrderOffences",
+	"miscellaneousCrimes",
+];
+
+/** What the table writes in place of an authority code for a multi-authority partnership. */
+const COMBINED_AUTHORITIES = "Combined Local Authorities";
+
+const AREA_CODE = /^[EW]\d{8}$/;
+
+/**
+ * A count cell, refused unless it is a number. The table marks unavailable
+ * figures as [x], and reading one as zero would pass for no crime.
+ */
+const count = (value: string | undefined, context: string): number => {
+	const parsed = Number((value ?? "").replace(/,/g, "").trim());
+	if (!value?.trim() || !Number.isFinite(parsed))
+		throw new Error(`${context} is not a count: ${JSON.stringify(value)}`);
+	return parsed;
+};
+
+/**
+ * Table C2 publishes recorded crime by community safety partnership, not by
+ * local authority. Most partnerships are one authority, but some cover
+ * several, marked "Combined Local Authorities", and some authorities are
+ * split between several partnerships, as Buckinghamshire and BCP still are.
+ *
+ * So every partnership is kept, keyed by its own code. An authority gets a
+ * value only where the table attributes all of its crime: from its single
+ * partnership, or as the sum of its several, which is exact for counts. An
+ * authority inside a multi-authority partnership has none, since a
+ * partnership's count cannot be divided between its authorities. Rows with no
+ * partnership code, the force totals and the crimes left unassigned to any
+ * partnership, are not areas and are skipped.
+ */
 export async function loadCrime(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, CrimeDataset>> {
-	const csvText = await read(
-		"economics/crime/policeforceareatablesyejune25final.xlsx",
-	);
-	const year = extractYearFromTitle(csvText.split("\n")[0] ?? "");
+	const csvText = await read("economics/crime/pfatablesyemarch2026.xlsx");
+	const { dataDate, year } = periodFromTitle(csvText.split("\n")[0] ?? "");
 
 	const headerLine = findHeaderLine(csvText, "police force area code");
-	const { data } = await parseCsv<string[]>(csvText, {
+	const { data: rows } = await parseCsv<string[]>(csvText, {
 		header: false,
 		skipLines: headerLine + 1,
 	});
 
-	const records: Record<string, CrimeLADData> = {};
-	for (const row of data as string[][]) {
-		if (!row[0] || row[0].trim() === "") continue;
-		const areaCode = row[4]?.trim() || "";
-		const areaName = row[5]?.trim() || "";
-		if (!areaCode || areaCode === "Local Authority code") continue;
+	const partnerships: Record<string, CrimePartnershipData> = {};
+	for (const row of rows as string[][]) {
+		const partnershipCode = row[2]?.trim() ?? "";
+		// Only rows for a force are data; the header's cells span several
+		// lines, so it cannot be found and skipped by name.
+		if (!AREA_CODE.test(row[0]?.trim() ?? "") || !partnershipCode) continue;
+		if (partnerships[partnershipCode])
+			throw new Error(
+				`Crime table repeats partnership ${partnershipCode}`,
+			);
+		const authorityCode = row[4]?.trim() ?? "";
+		if (
+			authorityCode !== COMBINED_AUTHORITIES &&
+			!AREA_CODE.test(authorityCode)
+		)
+			throw new Error(
+				`Crime partnership ${partnershipCode} has no recognisable authority code: ${JSON.stringify(authorityCode)}`,
+			);
+		const counts = Object.fromEntries(
+			COUNT_FIELDS.map((field, index) => [
+				field,
+				count(row[6 + index], `${partnershipCode} ${field}`),
+			]),
+		) as unknown as CrimeCounts;
+		const single = authorityCode !== COMBINED_AUTHORITIES;
+		partnerships[partnershipCode] = {
+			communitySafetyPartnershipCode: partnershipCode,
+			communitySafetyPartnershipName: row[3]?.trim() ?? "",
+			policeForceAreaCode: row[0].trim(),
+			policeForceAreaName: row[1]?.trim() ?? "",
+			localAuthorityCode: single ? authorityCode : null,
+			localAuthorityName: single ? (row[5]?.trim() ?? "") : null,
+			...counts,
+		};
+	}
 
-		records[areaCode] = {
-			ladCode: areaCode,
-			ladName: areaName,
-			policeForceAreaCode: row[0]?.trim() || "",
-			policeForceAreaName: row[1]?.trim() || "",
-			communitySafetyPartnershipCode: row[2]?.trim() || "",
-			communitySafetyPartnershipName: row[3]?.trim() || "",
-			totalRecordedCrime: parseNum(row[6]),
-			violenceAgainstPerson: parseNum(row[7]),
-			homicide: parseNum(row[8]),
-			deathSeriesInjuryUnlawfulDriving: parseNum(row[9]),
-			violenceWithInjury: parseNum(row[10]),
-			violenceWithoutInjury: parseNum(row[11]),
-			stalkingHarassment: parseNum(row[12]),
-			sexualOffences: parseNum(row[13]),
-			robbery: parseNum(row[14]),
-			theftOffences: parseNum(row[15]),
-			burglary: parseNum(row[16]),
-			residentialBurglary: parseNum(row[17]),
-			nonResidentialBurglary: parseNum(row[18]),
-			vehicleOffences: parseNum(row[19]),
-			theftFromPerson: parseNum(row[20]),
-			bicycleTheft: parseNum(row[21]),
-			shoplifting: parseNum(row[22]),
-			otherTheftOffences: parseNum(row[23]),
-			criminalDamageArson: parseNum(row[24]),
-			drugOffences: parseNum(row[25]),
-			possessionWeapons: parseNum(row[26]),
-			publicOrderOffences: parseNum(row[27]),
-			miscellaneousCrimes: parseNum(row[28]),
+	const byAuthority = new Map<string, CrimePartnershipData[]>();
+	for (const partnership of Object.values(partnerships)) {
+		if (!partnership.localAuthorityCode) continue;
+		const list = byAuthority.get(partnership.localAuthorityCode) ?? [];
+		list.push(partnership);
+		byAuthority.set(partnership.localAuthorityCode, list);
+	}
+	const records: Record<string, CrimeLADData> = {};
+	for (const [authorityCode, members] of byAuthority) {
+		const [first] = members;
+		// Some rows name a split authority by its former district, as Suffolk
+		// Coastal and Waveney both stand for East Suffolk; where the rows
+		// disagree, none of their names is the authority's.
+		const names = new Set(
+			members.map((member) => member.localAuthorityName),
+		);
+		records[authorityCode] = {
+			ladCode: authorityCode,
+			ladName: names.size === 1 ? (first.localAuthorityName ?? "") : "",
+			policeForceAreaCode: first.policeForceAreaCode,
+			policeForceAreaName: first.policeForceAreaName,
+			// A summed authority has no one partnership to name.
+			...(members.length === 1
+				? {
+						communitySafetyPartnershipCode:
+							first.communitySafetyPartnershipCode,
+						communitySafetyPartnershipName:
+							first.communitySafetyPartnershipName,
+					}
+				: {}),
+			...(Object.fromEntries(
+				COUNT_FIELDS.map((field) => [
+					field,
+					members.reduce((total, member) => total + member[field], 0),
+				]),
+			) as unknown as CrimeCounts),
 		};
 	}
 
@@ -68,13 +171,15 @@ export async function loadCrime(
 			type: "crime",
 			boundaryType: "localAuthority",
 			boundaryYear: year,
-			dataDate: `year ending June ${year}`,
+			dataDate,
 			jurisdiction: "England and Wales",
 			data: records,
+			partnerships,
 			metadata: {
 				source: "Police recorded crime from the Home Office",
 				notes: [
 					"Police recorded crime statistics are published as official statistics, not accredited official statistics",
+					"Published by community safety partnership. An authority split between several partnerships is their sum; an authority inside a partnership covering several authorities has no value of its own.",
 				],
 			},
 		},

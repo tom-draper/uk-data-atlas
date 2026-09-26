@@ -8,7 +8,7 @@ import type { BoundaryType } from "./catalog";
 export type BoundaryLocationScope =
 	| { kind: "none" }
 	| { kind: "direct-membership" }
-	| { kind: "parent-map"; mapping: "wardToLad" }
+	| { kind: "parent-map"; mapping: "wardToLad" | "lsoaToLad" }
 	| { kind: "crosswalk"; crosswalk: "constituencyLad" }
 	| { kind: "bbox" };
 
@@ -47,7 +47,7 @@ export const BOUNDARY_CAPABILITIES = {
 	},
 	lsoa: {
 		countryPrefixFilter: true,
-		locationScope: { kind: "bbox" },
+		locationScope: { kind: "parent-map", mapping: "lsoaToLad" },
 		filterGeometryToDatasetData: true,
 	},
 	dataZone: {

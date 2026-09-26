@@ -11,8 +11,8 @@ describe("withCDN", () => {
 		vi.stubEnv("NODE_ENV", "development");
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
-		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"/data/precompiled/population.json",
+		expect(withCDN("/data/datasets/population.json")).toBe(
+			"/data/datasets/population.json",
 		);
 	});
 
@@ -20,8 +20,8 @@ describe("withCDN", () => {
 		vi.stubEnv("NODE_ENV", "production");
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
-		expect(withCDN("/data/precompiled/population.json")).toBe(
-			`/data/precompiled/population.json?v=v${packageJson.version}`,
+		expect(withCDN("/data/datasets/population.json")).toBe(
+			`/data/datasets/population.json?v=v${packageJson.version}`,
 		);
 	});
 
@@ -30,8 +30,8 @@ describe("withCDN", () => {
 		vi.stubEnv("NEXT_PUBLIC_DATA_VERSION", "v0.1.8");
 		const { withCDN } = await import("@/lib/helpers/cdn");
 
-		expect(withCDN("/data/precompiled/population.json")).toBe(
-			"/data/precompiled/population.json?v=v0.1.8",
+		expect(withCDN("/data/datasets/population.json")).toBe(
+			"/data/datasets/population.json?v=v0.1.8",
 		);
 	});
 

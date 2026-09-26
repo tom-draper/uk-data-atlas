@@ -11,6 +11,7 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 
 interface HomelessnessChartProps {
 	activeDataset: Dataset | null;
@@ -21,13 +22,6 @@ interface HomelessnessChartProps {
 	codeMapper?: CodeYearResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-}
-
-function rateColor(rate: number): string {
-	if (rate <= 2.5) return "#16a34a";
-	if (rate <= 5) return "#eab308";
-	if (rate <= 8) return "#f97316";
-	return "#dc2626";
 }
 
 function formatCount(value: number): string {
@@ -90,7 +84,10 @@ export default function HomelessnessChart({
 		activeDataset?.type === "homelessness" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
-	const color = rateColor(stats?.householdsPerThousand ?? 0);
+	const color = useHeatmapValueColor(
+		"homelessness",
+		stats?.householdsPerThousand,
+	);
 	if (!dataset) return null;
 
 	const rate = stats?.householdsPerThousand ?? 0;
@@ -130,7 +127,7 @@ export default function HomelessnessChart({
 						: undefined
 				}
 				barWidth={barWidth}
-				barColor={color}
+				barColor={color ?? undefined}
 			/>
 		</ChartCard>
 	);

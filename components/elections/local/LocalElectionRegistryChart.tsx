@@ -33,6 +33,10 @@ export default function LocalElectionRegistryChart({
 }: LocalElectionRegistryChartProps) {
 	const { excludedLocalParties, selectedLocalParty } =
 		useExcludedCategories();
+	const isActive =
+		activeDataset?.type === "localElection" &&
+		activeDataset.id === `localElection${year}`;
+
 	const data = computeLocalElectionYearData(
 		year,
 		availableDatasets?.[year],
@@ -42,13 +46,11 @@ export default function LocalElectionRegistryChart({
 		codeMapper?.getWardsForLad,
 		codeMapper?.getWardsForConstituency,
 		codeMapper?.getMappingGeneration() ?? 0,
-		excludedLocalParties,
-		selectedLocalParty,
+		// The legend filter belongs to the dataset on the map, so other years
+		// keep showing their full results.
+		isActive ? excludedLocalParties : undefined,
+		isActive ? selectedLocalParty : undefined,
 	);
-
-	const isActive =
-		activeDataset?.type === "localElection" &&
-		activeDataset.id === `localElection${year}`;
 
 	return (
 		<LocalElectionResultChart

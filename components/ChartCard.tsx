@@ -14,6 +14,7 @@ import {
 	chartHeadingClass,
 	useCardAccent,
 } from "@/lib/hooks/useCardAccent";
+import { toChartTitleCase } from "@/lib/helpers/titleCase";
 
 interface ChartCardProps {
 	heading: ReactNode;
@@ -86,6 +87,8 @@ export function ChartCard({
 		isDark,
 	);
 	const { cardRef, heightFloor } = useActiveHeightFloor(isActive);
+	const displayHeading =
+		typeof heading === "string" ? toChartTitleCase(heading) : heading;
 
 	return (
 		<button
@@ -122,7 +125,7 @@ export function ChartCard({
 							.join(" ")}
 						title={headingTitle}
 					>
-						{heading}
+						{displayHeading}
 					</h3>
 					{headerEnd}
 				</div>
