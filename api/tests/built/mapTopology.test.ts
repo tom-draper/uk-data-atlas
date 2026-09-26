@@ -2,11 +2,14 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { AreaGeometryCache, type GeoJsonGeometry } from "../src/areaGeometry";
-import { readGeometrySourceLookup } from "../src/geometrySources";
-import { GEOMETRY_TIERS, simplifyGeometry } from "../src/simplifyGeometry";
-import { decomposeArcs, rebuildAreas } from "../src/mapResource/arcs";
-import { compileTier } from "../src/mapResource/topologyTiers";
+import {
+	AreaGeometryCache,
+	type GeoJsonGeometry,
+} from "../../src/areaGeometry";
+import { readGeometrySourceLookup } from "../../src/geometrySources";
+import { GEOMETRY_TIERS, simplifyGeometry } from "../../src/simplifyGeometry";
+import { decomposeArcs, rebuildAreas } from "../../src/mapResource/arcs";
+import { compileTier } from "../../src/mapResource/topologyTiers";
 
 /**
  * The release gate for a map resource: neighbours share edges at every tier.
@@ -17,7 +20,7 @@ import { compileTier } from "../src/mapResource/topologyTiers";
  * difference rather than restating whatever both happen to do.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const TIERS = Object.keys(GEOMETRY_TIERS) as Array<keyof typeof GEOMETRY_TIERS>;
 
 const square = (

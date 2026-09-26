@@ -12,8 +12,8 @@ import test from "node:test";
 import {
 	AreaGeometryCache,
 	type GeometrySourceLookup,
-} from "../src/areaGeometry";
-import { toWgs84Geometry } from "../src/reprojection";
+} from "../../src/areaGeometry";
+import { toWgs84Geometry } from "../../src/reprojection";
 
 const writeSource = (root: string, input: string, geojson: unknown) => {
 	const path = join(root, "data", input);
@@ -285,7 +285,7 @@ test("reprojects British National Grid geometry to WGS84 when an area is read", 
 			join(root, "data", "boundaries", "northern-ireland-offset.json"),
 			readFileSync(
 				new URL(
-					"../../data/boundaries/northern-ireland-offset.json",
+					"../../../data/boundaries/northern-ireland-offset.json",
 					import.meta.url,
 				),
 				"utf8",

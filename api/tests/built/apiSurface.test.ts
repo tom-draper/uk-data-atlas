@@ -5,8 +5,8 @@ import {
 	currentSurface,
 	renderSurface,
 	surfacePath,
-} from "../scripts/build-api-surface";
-import { breakingChanges, type ApiSurface } from "../src/apiSurface";
+} from "../../scripts/build-api-surface";
+import { breakingChanges, type ApiSurface } from "../../src/apiSurface";
 
 const today = new Date().toISOString().slice(0, 10);
 const locked = JSON.parse(readFileSync(surfacePath, "utf8")) as ApiSurface;

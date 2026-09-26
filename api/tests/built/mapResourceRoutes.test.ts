@@ -3,18 +3,18 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
-import { httpResponse } from "../src/httpResponse";
-import { route } from "../src/routes";
-import { readApiCatalogues } from "../src/server";
-import { readParquet } from "./parquetFixtures";
-import { decodeTile } from "./vectorTileFixtures";
+import { httpResponse } from "../../src/httpResponse";
+import { route } from "../../src/routes";
+import { readApiCatalogues } from "../../src/server";
+import { readParquet } from "../parquetFixtures";
+import { decodeTile } from "../vectorTileFixtures";
 
 /**
  * Serving the published map resource: the descriptor a client reads, the
  * TileJSON a renderer is configured with, and the tiles themselves.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const catalogues = readApiCatalogues(apiRoot);
 const RESOURCE = "localAuthority/2023-05-uk-bgc-v2";
 

@@ -3,12 +3,12 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { observationPartitionKey } from "../src/measureCompatibility";
-import { isMeasureTable } from "../src/observationTables";
+import { observationPartitionKey } from "../../src/measureCompatibility";
+import { isMeasureTable } from "../../src/observationTables";
 import {
 	readMeasureTotals,
 	readValidationWaivers,
-} from "../src/validation/inputs";
+} from "../../src/validation/inputs";
 
 /**
  * A compiled artifact records the content hash of each artifact it was built
@@ -17,7 +17,7 @@ import {
  * newly published crosswalk still reads as passing. The Atlas release hashes
  * whatever files are present, so it cannot see this; these tests can.
  */
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const publicRoot = join(apiRoot, "public");
 const read = (path: string) =>
 	JSON.parse(readFileSync(join(publicRoot, path), "utf8")) as Record<

@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { resolveObservations } from "../src/observationResolution/observationPlan";
-import { readApiCatalogues } from "../src/server";
+import { resolveObservations } from "../../src/observationResolution/observationPlan";
+import { readApiCatalogues } from "../../src/server";
 
 /**
  * The resolver, on its own.
@@ -14,7 +14,7 @@ import { readApiCatalogues } from "../src/server";
  * refusal that only says no is what this layer exists to stop.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const catalogues = readApiCatalogues(apiRoot);
 
 const plan = (request: Parameters<typeof resolveObservations>[1]) => {

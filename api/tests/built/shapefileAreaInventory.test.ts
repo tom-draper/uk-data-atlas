@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { readAreaAdapters } from "../src/areaAdapters";
-import { compileAreas } from "../src/areaInventory";
-import { createBoundaryRegistry } from "../scripts/build-boundary-registry";
+import { readAreaAdapters } from "../../src/areaAdapters";
+import { compileAreas } from "../../src/areaInventory";
+import { createBoundaryRegistry } from "../../scripts/build-boundary-registry";
 
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
-	"../..",
+	"../../..",
 );
 
 test("compiles identities from original Shapefile attribute tables", () => {

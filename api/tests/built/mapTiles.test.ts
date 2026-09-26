@@ -2,17 +2,20 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { AreaGeometryCache, type GeoJsonGeometry } from "../src/areaGeometry";
-import { readGeometrySourceLookup } from "../src/geometrySources";
-import { simplifyGeometry } from "../src/simplifyGeometry";
-import { decomposeArcs } from "../src/mapResource/arcs";
-import { compileTier } from "../src/mapResource/topologyTiers";
+import {
+	AreaGeometryCache,
+	type GeoJsonGeometry,
+} from "../../src/areaGeometry";
+import { readGeometrySourceLookup } from "../../src/geometrySources";
+import { simplifyGeometry } from "../../src/simplifyGeometry";
+import { decomposeArcs } from "../../src/mapResource/arcs";
+import { compileTier } from "../../src/mapResource/topologyTiers";
 import {
 	tileBounds,
 	tilesCovering,
 	type TileAddress,
 	type TileBox,
-} from "../src/mapResource/tileGrid";
+} from "../../src/mapResource/tileGrid";
 import {
 	boundsOf,
 	buildTile,
@@ -21,8 +24,8 @@ import {
 	tierForZoom,
 	ZOOM_TIERS,
 	type MapFeature,
-} from "../src/mapResource/tileset";
-import { decodeTile } from "./vectorTileFixtures";
+} from "../../src/mapResource/tileset";
+import { decodeTile } from "../vectorTileFixtures";
 
 /**
  * The tiles a map actually loads.
@@ -39,7 +42,7 @@ import { decodeTile } from "./vectorTileFixtures";
  * each area alone would.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const RELEASE = { geography: "localAuthority", id: "2023-05-uk-bgc-v2" };
 const UNITED_KINGDOM: TileBox = [-8.7, 49.8, 1.9, 61.0];
 

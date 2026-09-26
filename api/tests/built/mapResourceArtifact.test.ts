@@ -4,14 +4,14 @@ import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import type { MapResourceDescriptor } from "../src/mapResource/compileMapResource";
-import { tileId, TILE_TYPE_MVT } from "../src/mapResource/pmtiles";
-import { MAX_ZOOM, MIN_ZOOM, ZOOM_TIERS } from "../src/mapResource/tileset";
-import { featureIds } from "../src/mapResource/compileMapResource";
-import { GEOMETRY_TIERS } from "../src/simplifyGeometry";
-import { readParquet } from "./parquetFixtures";
-import { readHeader, readMetadata, readTile } from "./pmtilesFixtures";
-import { decodeTile } from "./vectorTileFixtures";
+import type { MapResourceDescriptor } from "../../src/mapResource/compileMapResource";
+import { tileId, TILE_TYPE_MVT } from "../../src/mapResource/pmtiles";
+import { MAX_ZOOM, MIN_ZOOM, ZOOM_TIERS } from "../../src/mapResource/tileset";
+import { featureIds } from "../../src/mapResource/compileMapResource";
+import { GEOMETRY_TIERS } from "../../src/simplifyGeometry";
+import { readParquet } from "../parquetFixtures";
+import { readHeader, readMetadata, readTile } from "../pmtilesFixtures";
+import { decodeTile } from "../vectorTileFixtures";
 
 /**
  * The published artifact, held to the descriptor that describes it.
@@ -22,7 +22,7 @@ import { decodeTile } from "./vectorTileFixtures";
  * would read it, so a rebuild that is not committed fails rather than drifting.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const publicRoot = join(apiRoot, "public");
 
 const manifest = JSON.parse(

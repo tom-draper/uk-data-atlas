@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { jsonLog, readServeConfiguration } from "../src/serverOptions";
+import { jsonLog, readServeConfiguration } from "../../src/serverOptions";
 
 test("defaults to a limited, logged single public instance", () => {
 	const configuration = readServeConfiguration({});
@@ -76,7 +76,7 @@ test("writes one JSON object per log line", () => {
 
 test("documents exactly the settings the server reads", () => {
 	const source = readFileSync(
-		new URL("../src/serverOptions.ts", import.meta.url),
+		new URL("../../src/serverOptions.ts", import.meta.url),
 		"utf8",
 	);
 	const read = new Set(
@@ -85,7 +85,7 @@ test("documents exactly the settings the server reads", () => {
 		),
 	);
 	const readme = readFileSync(
-		new URL("../README.md", import.meta.url),
+		new URL("../../README.md", import.meta.url),
 		"utf8",
 	);
 	const section = /^### Configuration\n([\s\S]*?)^### /m.exec(readme)?.[1];

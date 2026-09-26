@@ -3,15 +3,15 @@ import type { AddressInfo } from "node:net";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { runSmoke } from "../scripts/smoke";
-import { createApiServer, readApiCatalogues } from "../src/server";
+import { runSmoke } from "../../scripts/smoke";
+import { createApiServer, readApiCatalogues } from "../../src/server";
 
 /**
  * The deployment smoke suite, run against the compiled catalogues as
  * `pnpm start` serves them. A check that fails here would fail every
  * deployment, so the suite is held to passing in full before it gates one.
  */
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("passes the deployment smoke suite against a local server", async (t) => {
 	const server = createApiServer(readApiCatalogues(apiRoot), {

@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { createAtlasRelease } from "../src/atlasRelease";
+import { createAtlasRelease } from "../../src/atlasRelease";
 
 const writeArtifacts = (directory: string, crosswalkContent = "[]") => {
 	writeFileSync(join(directory, "boundary-releases.json"), "{}");

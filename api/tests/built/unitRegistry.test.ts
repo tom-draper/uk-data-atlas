@@ -2,15 +2,15 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { readDataCatalog } from "../src/server";
+import { readDataCatalog } from "../../src/server";
 import {
 	normaliseObservation,
 	unitDefinitionFor,
 	withUnitDefinitions,
-} from "../src/unitRegistry";
-import type { DataCatalog } from "../src/dataCatalog";
+} from "../../src/unitRegistry";
+import type { DataCatalog } from "../../src/dataCatalog";
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("serves an exhaustive canonical definition beside every existing display unit", () => {
 	const catalog = readDataCatalog(apiRoot);

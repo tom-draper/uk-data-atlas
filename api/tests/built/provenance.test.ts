@@ -4,8 +4,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { route } from "../src/routes";
-import { readApiCatalogues } from "../src/server";
+import { route } from "../../src/routes";
+import { readApiCatalogues } from "../../src/server";
 
 /**
  * Provenance as a client receives it.
@@ -18,7 +18,7 @@ import { readApiCatalogues } from "../src/server";
  * quote a hash from a previous build, and nothing would notice.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const catalogues = readApiCatalogues(apiRoot);
 
 type Provenance = {

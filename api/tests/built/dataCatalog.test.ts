@@ -6,10 +6,10 @@ import test from "node:test";
 import {
 	compileDataCatalog,
 	type DataCatalogInputs,
-} from "../src/catalog/compileDataCatalog";
-import { onApril2023Authorities } from "../src/catalog/authorityChanges";
+} from "../../src/catalog/compileDataCatalog";
+import { onApril2023Authorities } from "../../src/catalog/authorityChanges";
 import { fileURLToPath } from "node:url";
-import type { DataCatalog } from "../src/dataCatalog";
+import type { DataCatalog } from "../../src/dataCatalog";
 
 const dataset = (
 	output: string,
@@ -2067,7 +2067,7 @@ test("names what covers the nations a measure does not", () => {
 		readFileSync(
 			resolve(
 				dirname(fileURLToPath(import.meta.url)),
-				"../public/data-catalog.json",
+				"../../public/data-catalog.json",
 			),
 			"utf8",
 		),

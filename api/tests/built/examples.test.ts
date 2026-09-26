@@ -3,16 +3,16 @@ import type { AddressInfo } from "node:net";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { createClient } from "../examples/client";
-import { run as correctMap } from "../examples/correct-map";
+import { createClient } from "../../examples/client";
+import { run as correctMap } from "../../examples/correct-map";
 import {
 	plan as mapPlan,
 	run as correctMapRender,
 	tutorialPage,
-} from "../examples/correct-map-render";
-import { run as defensibleTrend } from "../examples/defensible-trend";
-import { run as reliableSync } from "../examples/reliable-sync";
-import { createApiServer, readApiCatalogues } from "../src/server";
+} from "../../examples/correct-map-render";
+import { run as defensibleTrend } from "../../examples/defensible-trend";
+import { run as reliableSync } from "../../examples/reliable-sync";
+import { createApiServer, readApiCatalogues } from "../../src/server";
 
 /**
  * The golden paths, run against a real server over HTTP. They use only the
@@ -24,7 +24,7 @@ import { createApiServer, readApiCatalogues } from "../src/server";
  * URLs all resolve, the values are numbered for the layer the style draws, and
  * the page carries the citation.
  */
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 test("walks the golden paths against a running server", async (t) => {
 	const server = createApiServer(readApiCatalogues(apiRoot));

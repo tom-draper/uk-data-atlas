@@ -4,9 +4,9 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { renderDocsPage, type OpenApiGuide } from "../src/docsPage";
-import { route } from "../src/routes";
-import { readApiCatalogues } from "../src/server";
+import { renderDocsPage, type OpenApiGuide } from "../../src/docsPage";
+import { route } from "../../src/routes";
+import { readApiCatalogues } from "../../src/server";
 
 /**
  * The documentation landing page and the guide it is rendered from. The quick
@@ -14,7 +14,7 @@ import { readApiCatalogues } from "../src/server";
  * stops working fails the build rather than a reader's first attempt.
  */
 
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const catalogues = readApiCatalogues(apiRoot);
 const openapi = parse(
 	readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),

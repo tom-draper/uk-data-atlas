@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createBoundaryRegistry } from "../scripts/build-boundary-registry";
+import { createBoundaryRegistry } from "../../scripts/build-boundary-registry";
 
 const repositoryRoot = resolve(
 	dirname(fileURLToPath(import.meta.url)),
-	"../..",
+	"../../..",
 );
 
 test("builds an API-safe registry for every boundary metadata record", () => {

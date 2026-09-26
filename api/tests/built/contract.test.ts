@@ -4,19 +4,19 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import { httpResponse } from "../src/httpResponse";
-import { CAPABILITY_STATUSES } from "../src/capability";
-import { CONVERSION_METHODS } from "../src/conversion";
-import { COMPATIBILITY_STATUSES } from "../src/measureCompatibility";
-import { PROBLEM_CODES } from "../src/problemCodes";
-import { route } from "../src/routes";
-import { GEOMETRY_TIERS } from "../src/simplifyGeometry";
-import { readApiCatalogues } from "../src/server";
+import { httpResponse } from "../../src/httpResponse";
+import { CAPABILITY_STATUSES } from "../../src/capability";
+import { CONVERSION_METHODS } from "../../src/conversion";
+import { COMPATIBILITY_STATUSES } from "../../src/measureCompatibility";
+import { PROBLEM_CODES } from "../../src/problemCodes";
+import { route } from "../../src/routes";
+import { GEOMETRY_TIERS } from "../../src/simplifyGeometry";
+import { readApiCatalogues } from "../../src/server";
 import {
 	INDEX_END,
 	INDEX_START,
 	renderRouteIndex,
-} from "../scripts/build-readme-index";
+} from "../../scripts/build-readme-index";
 
 /**
  * The API index, the OpenAPI paths and the README's endpoint list are three
@@ -24,7 +24,7 @@ import {
  * agree; this checks the routes behind them are really served, against the
  * compiled catalogues the server loads, and that the README agrees too.
  */
-const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const catalogues = readApiCatalogues(apiRoot);
 
 // The router's answer when no route matches a path at all. Any other
