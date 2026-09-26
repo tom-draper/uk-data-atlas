@@ -112,7 +112,14 @@
 
 ## Licence
 
-The source code is released under the [MIT License](./LICENSE).
+The source code is released under the
+[GNU Affero General Public License v3.0](./LICENSE). If you run a modified
+version as a network service, the AGPL requires you to offer its source to
+your users.
+
+A commercial licence is available for organisations that want to use, host or
+embed the UK Data Atlas without the AGPL's obligations. Contact
+[@tom-draper](https://github.com/tom-draper) for details.
 
 The datasets and boundary files retain their own source licences; see
 [DATA-LICENCES.md](./DATA-LICENCES.md) for the redistribution and attribution.
