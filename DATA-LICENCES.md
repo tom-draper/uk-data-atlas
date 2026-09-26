@@ -45,10 +45,15 @@ over this summary.
 
 ## Project transformations
 
-The project may hold copyright or database rights in its original code,
-selection, arrangement, documentation, and independently created
-transformations. Those rights do not replace or remove the rights and
-conditions attached to the underlying source data.
+Cleaned, repaired, standardised, combined and derived datasets and boundary
+files are released under the same licence as the source they come from: data
+derived from Open Government Licence sources is released under the Open
+Government Licence v3.0, data derived from Open Parliament Licence sources under
+the Open Parliament Licence, and data derived from CC BY-SA 3.0 sources under
+CC BY-SA 3.0. Where a release combines sources, each source's terms apply to the
+parts derived from it. Any rights the project holds in its selection,
+arrangement or transformations of the data are licensed on the same terms, so
+the published data stays as open as its sources.
 
 The API's provenance and attribution metadata should travel with generated
 exports so users can identify both the original source and the Atlas
