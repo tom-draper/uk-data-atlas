@@ -31,3 +31,9 @@ To agree, include this line in your pull request description:
 
 > I have read and agree to the contributor licence agreement in
 > CONTRIBUTING.md.
+
+## Data
+
+Datasets and boundary files keep the licence of their source. A pull request
+that adds or changes a source must record its publisher, source URL and licence
+as described in [DATA-LICENCES.md](./DATA-LICENCES.md).
