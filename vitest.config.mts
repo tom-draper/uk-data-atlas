@@ -16,7 +16,7 @@ const HEAVY_DATA_TESTS = [
 /**
  * Suites that read the raw source data restored into data/ by
  * `pnpm data:download`. CI never restores it, so these run only locally,
- * through `pnpm check`.
+ * through `pnpm check:full`.
  */
 const SOURCE_DATA_TESTS = [
 	"tests/data/boundaryMeta.test.ts",
