@@ -200,7 +200,7 @@ export const fetchOnspd = async (
 		);
 		const sourceHash = await fileSha256(pendingSourcePath);
 		const meta = {
-			id: `${edition}-uk-permitted`,
+			id: `${edition}-uk`,
 			kind: "postcode-directory",
 			title: item.title,
 			description:
