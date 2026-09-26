@@ -12,7 +12,7 @@
 		"data:verify-precompiled": "node scripts/data-release.mjs verify-precompiled",
 		"docs:catalogue": "npx tsx scripts/build-docs-catalogue.mts",
 		"precompile": "pnpm data:download && pnpm precompile:generate",
-		"precompile:generate": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/generate-sources-readme.mts && npx tsx scripts/precompile-data.mts",
+		"precompile:generate": "npx tsx scripts/generate-dataset-registry.ts && npx tsx scripts/generate-sources-readme.mts && npx tsx --max-old-space-size=4096 scripts/precompile-data.mts",
 		"precompile:if-needed": "node scripts/precompile-if-needed.mjs",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
