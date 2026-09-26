@@ -63,6 +63,6 @@ API or hosted feature must identify its own service terms without claiming
 rights over source data that the source licence leaves open for downstream
 reuse.
 
-The API and website code may remain MIT-licensed while hosted access, paid
+The API and website code are AGPL-3.0 licensed, while hosted access, paid
 features, quotas, support and service levels are governed by separate service
 terms. This file is a project policy and licence summary, not legal advice.
