@@ -35,7 +35,10 @@ export function boundaryCoverageMarkdown(): string {
 	return [
 		"| Geography | Releases | Release IDs |",
 		"| --- | ---: | --- |",
-		...Object.entries(GEOGRAPHIES).map(([id, geography]) => {
+		// API-only geographies, such as output areas, have docs pages but no
+		// map boundary releases to list.
+		...Object.entries(GEOGRAPHIES).flatMap(([id, geography]) => {
+			if (!(id in BOUNDARY_CATALOG)) return [];
 			const releases =
 				BOUNDARY_CATALOG[id as keyof typeof BOUNDARY_CATALOG].releases;
 			return `| [${geography.title}](https://ukdataatlas.com/docs/v1/geographies/${geography.slug}) | ${releases.length} | ${releases.map((release) => `\`${release.id}\``).join(", ")} |`;

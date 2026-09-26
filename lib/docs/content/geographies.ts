@@ -115,6 +115,12 @@ export const GEOGRAPHIES: Record<string, GeographyContent> = {
 		group: "electoral",
 		intro: "The five regions that elect the Senedd's additional members.",
 	},
+	outputArea: {
+		slug: "output-areas",
+		title: "Output areas",
+		group: "statistical",
+		intro: "The smallest areas census statistics are published for in England and Wales, of around 100 to 625 people. LSOAs are built from them.",
+	},
 	lsoa: {
 		slug: "lsoas",
 		title: "Lower layer super output areas (LSOAs)",
@@ -132,6 +138,12 @@ export const GEOGRAPHIES: Record<string, GeographyContent> = {
 		title: "Data zones",
 		group: "statistical",
 		intro: "Scotland's small areas for statistics, similar to LSOAs in England and Wales. The Scottish Index of Multiple Deprivation is published on them.",
+	},
+	intermediateZone: {
+		slug: "intermediate-zones",
+		title: "Intermediate zones",
+		group: "statistical",
+		intro: "Scottish areas of around 2,500 to 6,000 people, built from data zones and sitting between them and council areas, much like MSOAs in England and Wales.",
 	},
 	superOutputArea: {
 		slug: "northern-ireland-super-output-areas",
