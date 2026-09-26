@@ -2,10 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Map as MapLibreMap, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { adaptMapPopup } from "@/lib/helpers/mapPopup";
-import type {
-	MapInstance,
-	MapPopupOptions,
-} from "@/lib/types/mapInstance";
+import type { MapInstance, MapPopupOptions } from "@/lib/types/mapInstance";
 
 interface UseMapLibreInitializationOptions {
 	style: string;

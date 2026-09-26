@@ -25,8 +25,9 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const isNumberArray = (value: unknown): value is number[] =>
 	Array.isArray(value) &&
-	value.every((coordinate) =>
-		typeof coordinate === "number" && Number.isFinite(coordinate),
+	value.every(
+		(coordinate) =>
+			typeof coordinate === "number" && Number.isFinite(coordinate),
 	);
 
 const isPosition = (value: unknown): value is Position =>
@@ -56,7 +57,8 @@ const isGeometry = (value: unknown): value is Geometry => {
 				Array.isArray(value.coordinates) &&
 				value.coordinates.every(
 					(polygon) =>
-						Array.isArray(polygon) && polygon.every(isPositionArray),
+						Array.isArray(polygon) &&
+						polygon.every(isPositionArray),
 				)
 			);
 		case "GeometryCollection":
@@ -102,8 +104,7 @@ const isArc = (value: unknown): value is Topology["arcs"][number] =>
 	value.every((point) => isNumberArray(point) && point.length >= 2);
 
 const isArcIndexes = (value: unknown): value is number[] =>
-	Array.isArray(value) &&
-	value.every((index) => Number.isSafeInteger(index));
+	Array.isArray(value) && value.every((index) => Number.isSafeInteger(index));
 
 const isTopologyObject = (
 	value: unknown,
@@ -350,7 +351,9 @@ export const decodeBoundaryData = (json: unknown): BoundaryGeojson => {
 				? { type: "FeatureCollection", features: [result] }
 				: result;
 		if (!isGeoJsonFeatureCollection(collection))
-			throw new Error("TopoJSON did not decode to a valid feature collection");
+			throw new Error(
+				"TopoJSON did not decode to a valid feature collection",
+			);
 		geojson = collection;
 	} else if (isGeoJsonFeatureCollection(json)) {
 		geojson = json;

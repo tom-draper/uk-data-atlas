@@ -78,12 +78,7 @@ export interface DatasetMeta {
 }
 
 const FILE_ROLES = new Set(["source", "derived", "lookup", "reference"]);
-const KINDS = new Set([
-	"dataset",
-	"boundary",
-	"lookup",
-	"postcode-directory",
-]);
+const KINDS = new Set(["dataset", "boundary", "lookup", "postcode-directory"]);
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 class MetaError extends Error {

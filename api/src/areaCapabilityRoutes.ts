@@ -28,10 +28,7 @@ export const handleAreaCapabilityRoutes = ({
 		segments[5] !== "capabilities"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		measureCompatibilityInventory,
-	} = context;
+	const { dataCatalog, measureCompatibilityInventory } = context;
 	const geographyResolver = context.geographyResolver;
 	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
 		string,

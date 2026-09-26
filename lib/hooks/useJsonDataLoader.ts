@@ -42,14 +42,12 @@ export function useJsonDatasetLoaders<T>(
 			requestKey,
 			controller.signal,
 			parseDataset,
-		).then(
-			(slice) => {
-				if (controller.signal.aborted) return;
-				setDatasets(slice.datasets);
-				setErrors(slice.errors);
-				setLoading(false);
-			},
-		);
+		).then((slice) => {
+			if (controller.signal.aborted) return;
+			setDatasets(slice.datasets);
+			setErrors(slice.errors);
+			setLoading(false);
+		});
 		return () => controller.abort();
 	}, [requestKey, parseDataset]);
 
@@ -85,7 +83,10 @@ export function useJsonDataLoader<T>(
 		loadJsonDataset(url, controller.signal)
 			.then((data) => {
 				if (!active) return;
-				const parsedDatasets = parseJsonDatasetRecord(data, parseDataset);
+				const parsedDatasets = parseJsonDatasetRecord(
+					data,
+					parseDataset,
+				);
 				loadedUrl.current = url;
 				setDatasets(parsedDatasets);
 				setLoading(false);

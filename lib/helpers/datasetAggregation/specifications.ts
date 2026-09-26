@@ -41,10 +41,7 @@ import {
 	aggregateGeneralElection,
 	aggregateLocalElection,
 } from "./elections";
-import {
-	createBoundaryAggregationSpec,
-	type BoundaryCodeScope,
-} from "./ports";
+import { createBoundaryAggregationSpec, type BoundaryCodeScope } from "./ports";
 
 const boundaryAggregation = <T, R>(
 	cacheKey: string,

@@ -44,8 +44,11 @@ const getWorker = (): Worker | null => {
 		);
 		worker.onmessage = (event: MessageEvent<unknown>) => {
 			if (!isWorkerResponse(event.data)) {
-				const error = new Error("Boundary worker returned an invalid response");
-				for (const callbacks of pending.values()) callbacks.reject(error);
+				const error = new Error(
+					"Boundary worker returned an invalid response",
+				);
+				for (const callbacks of pending.values())
+					callbacks.reject(error);
 				pending.clear();
 				worker?.terminate();
 				worker = null;

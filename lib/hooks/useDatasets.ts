@@ -32,7 +32,10 @@ export interface UseDatasetsResult {
 	errors: string[];
 }
 
-const parseChartDataset = (value: unknown, datasetType?: string): ChartDataset => {
+const parseChartDataset = (
+	value: unknown,
+	datasetType?: string,
+): ChartDataset => {
 	if (!isChartDatasetPayload(value, datasetType)) {
 		throw new Error(
 			`Invalid compiled dataset payload for ${datasetType ?? "unknown dataset"}`,

@@ -44,7 +44,9 @@ describe("DatasetAggregator", () => {
 			"localAuthority",
 			aggregate,
 		);
-		const aggregator = new DatasetAggregator({ detect } as BoundaryCodeDetector);
+		const aggregator = new DatasetAggregator({
+			detect,
+		} as BoundaryCodeDetector);
 
 		expect(
 			aggregator.aggregate(

@@ -28,10 +28,7 @@ export type CachedDatasetSlice<T> = {
 	errors: string[];
 };
 
-export type JsonDatasetParser<T> = (
-	value: unknown,
-	datasetGroup?: string,
-) => T;
+export type JsonDatasetParser<T> = (value: unknown, datasetGroup?: string) => T;
 
 export const parseJsonDatasetRecord = <T>(
 	value: unknown,
@@ -97,7 +94,9 @@ function getWorker(): Worker | null {
 		}
 		worker.onmessage = (event: MessageEvent<unknown>) => {
 			if (!isWorkerResponse(event.data)) {
-				const error = new Error("Data worker returned an invalid response");
+				const error = new Error(
+					"Data worker returned an invalid response",
+				);
 				for (const callbacks of pending.values()) {
 					removeAbortListener(callbacks);
 					callbacks.reject(error);

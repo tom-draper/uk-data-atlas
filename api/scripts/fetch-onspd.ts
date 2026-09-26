@@ -116,22 +116,33 @@ async function writePermittedSource(archivePath: string, outputPath: string) {
 	let kept = 0;
 	const rows = async function* () {
 		for await (const line of createInterface({ input: unzip.stdout })) {
-			const cells = line.split(",").map((cell) => cell.replace(/^"|"$/g, ""));
+			const cells = line
+				.split(",")
+				.map((cell) => cell.replace(/^"|"$/g, ""));
 			if (!header) {
 				header = cells;
 				positions = COLUMNS.map((column) => header!.indexOf(column));
-				country = header.findIndex((column) => /^ctry\d{2}cd$/.test(column));
+				country = header.findIndex((column) =>
+					/^ctry\d{2}cd$/.test(column),
+				);
 				countryColumn = header[country] ?? "";
 				const missing = COLUMNS.filter((_, at) => positions[at] === -1);
 				if (missing.length > 0 || country === -1)
-					throw new Error(`The directory has no ${[...missing, "ctry"].join(", ")} column`);
+					throw new Error(
+						`The directory has no ${[...missing, "ctry"].join(", ")} column`,
+					);
 				yield `${[...COLUMNS, countryColumn].join(",")}\n`;
 				continue;
 			}
 			if (cells.length !== header.length)
-				throw new Error(`Unexpected ONSPD row width: ${cells.length}, expected ${header.length}`);
+				throw new Error(
+					`Unexpected ONSPD row width: ${cells.length}, expected ${header.length}`,
+				);
 			if (cells[country]?.startsWith("N")) continue;
-			const selected = [...positions.map((at) => cells[at]!), cells[country]!];
+			const selected = [
+				...positions.map((at) => cells[at]!),
+				cells[country]!,
+			];
 			kept += 1;
 			yield `${selected.map(quoteCsv).join(",")}\n`;
 		}
@@ -167,7 +178,10 @@ export const fetchOnspd = async (
 		`${edition}-uk`,
 	);
 	mkdirSync(directory, { recursive: true });
-	const archive = join(mkdtempSync(join(tmpdir(), "atlas-onspd-")), item.name);
+	const archive = join(
+		mkdtempSync(join(tmpdir(), "atlas-onspd-")),
+		item.name,
+	);
 	const sourceUrl = `${ITEMS}/${item.id}/data`;
 	const sourcePath = join(directory, "onspd-permitted.csv.gz");
 	const pendingSourcePath = `${sourcePath}.${process.pid}.tmp`;

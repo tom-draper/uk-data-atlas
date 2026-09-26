@@ -1,9 +1,6 @@
 // Boundary and cache adapter for dataset-owned aggregation specifications.
 import type { BoundaryGeojson } from "@lib/types";
-import type {
-	BoundaryAggregationSpec,
-	BoundaryCodeDetector,
-} from "./ports";
+import type { BoundaryAggregationSpec, BoundaryCodeDetector } from "./ports";
 import { cacheKey } from "../cacheKey";
 
 /** Aggregates dataset records against the currently loaded boundary geometry. */
@@ -11,9 +8,7 @@ export class DatasetAggregator {
 	private readonly geometryIds = new WeakMap<BoundaryGeojson, number>();
 	private nextGeometryId = 0;
 
-	constructor(
-		private propertyDetector: BoundaryCodeDetector,
-	) {}
+	constructor(private propertyDetector: BoundaryCodeDetector) {}
 
 	private geometryId(geojson: BoundaryGeojson): number {
 		const cached = this.geometryIds.get(geojson);

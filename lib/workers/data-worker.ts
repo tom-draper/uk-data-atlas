@@ -57,10 +57,7 @@ const isCancelRequest = (value: unknown): value is CancelReq =>
 	hasValidId(value) && value.type === "cancel";
 
 const isWorkerRequest = (value: unknown): value is Req => {
-	if (
-		!hasValidId(value)
-	)
-		return false;
+	if (!hasValidId(value)) return false;
 	return (
 		value.type === undefined &&
 		typeof value.url === "string" &&

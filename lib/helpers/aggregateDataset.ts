@@ -45,11 +45,7 @@ const cacheObjectId = (value: object): number => {
 const dataCacheIds = new WeakMap<object, number>();
 let nextDataCacheId = 0;
 
-const cacheDatasetId = (
-	datasetId: string,
-	dataset: object,
-	data: unknown,
-) => {
+const cacheDatasetId = (datasetId: string, dataset: object, data: unknown) => {
 	const identity = data && typeof data === "object" ? data : dataset;
 	let id = dataCacheIds.get(identity);
 	if (id === undefined) {
@@ -101,8 +97,7 @@ export function aggregateDataset<T extends BoundaryDataset, R>(
 		const geojson =
 			boundaryData[config.boundaryType]?.[dataset.boundaryYear];
 		const key = config.keyBy === "id" ? datasetId : dataset.year;
-		const precomputedAggregate =
-			config.getLocationAggregate?.(dataset);
+		const precomputedAggregate = config.getLocationAggregate?.(dataset);
 		if (precomputedAggregate !== undefined) {
 			result[key] = precomputedAggregate;
 			continue;

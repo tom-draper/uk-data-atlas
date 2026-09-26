@@ -135,18 +135,17 @@ export class PointLayerController {
 		});
 
 		if (!this.popup) {
-			this.popup = this.map.createPopup({
-				closeButton: false,
-				closeOnClick: false,
-				offset: 8,
-			}).addClassName("atlas-point-popup");
+			this.popup = this.map
+				.createPopup({
+					closeButton: false,
+					closeOnClick: false,
+					offset: 8,
+				})
+				.addClassName("atlas-point-popup");
 			if (this.tooltipIsDark)
 				this.popup.addClassName("atlas-point-popup--dark");
 		}
-		this.popup
-			.setLngLat(event.lngLat)
-			.setDOMContent(content)
-			.addTo();
+		this.popup.setLngLat(event.lngLat).setDOMContent(content).addTo();
 	};
 
 	private handleMouseLeave: MapLayerMouseHandler = () => {

@@ -76,12 +76,7 @@
 		"title": "2011 super output area to local government district, 2018 (Northern Ireland)",
 		"description": "Official ONS lookup assigning each 2011 Northern Ireland Small Area to its Super Output Area and to one 2018 Local Government District, stored at Super Output Area level. Super Output Areas do not nest in the 2014 districts: ten appear under two districts because their Small Areas were assigned to different ones, and a Super Output Area whose Small Areas were all assigned to one district is listed under that district alone even where part of it lies in another.",
 		"temporalCoverage": "2018",
-		"distinctColumns": [
-			"LSOA11CD",
-			"LSOA11NM",
-			"LAD18CD",
-			"LAD18NM"
-		]
+		"distinctColumns": ["LSOA11CD", "LSOA11NM", "LAD18CD", "LAD18NM"]
 	},
 	{
 		"service": "OA_LSOA_MSOA_EW_DEC_2021_LU_v3",

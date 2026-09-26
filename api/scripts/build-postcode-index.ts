@@ -90,16 +90,16 @@ async function* directoryRows(
 	if (code !== 0) throw new Error(`unzip exited with ${code}`);
 }
 
-export const buildPostcodeIndex = async (
-	repositoryRoot: string,
-) => {
+export const buildPostcodeIndex = async (repositoryRoot: string) => {
 	const directory = latestDirectory(repositoryRoot);
 	const meta = JSON.parse(readFileSync(join(directory, "meta.json"), "utf8"));
 	const sourceFile = meta.files.find(
 		(file: { role: string }) => file.role === "source",
 	);
 	if (!sourceFile)
-		throw new Error(`${directory}: no source file is recorded in meta.json`);
+		throw new Error(
+			`${directory}: no source file is recorded in meta.json`,
+		);
 	const source: PostcodeSource = {
 		title: meta.title,
 		edition: meta.temporalCoverage,

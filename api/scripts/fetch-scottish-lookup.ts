@@ -24,7 +24,12 @@ export type ScottishLookupSource = {
 	description: string;
 	temporalCoverage: string;
 	/** Property names for the area and its parent, such as `DZ11CD`. */
-	columns: { code: string; name: string; parentCode: string; parentName: string };
+	columns: {
+		code: string;
+		name: string;
+		parentCode: string;
+		parentName: string;
+	};
 };
 
 export const SCOTTISH_LOOKUPS: ScottishLookupSource[] = [
@@ -182,7 +187,10 @@ const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
 	for (const source of SCOTTISH_LOOKUPS) {
-		const { path, rows } = await fetchScottishLookup(repositoryRoot, source);
+		const { path, rows } = await fetchScottishLookup(
+			repositoryRoot,
+			source,
+		);
 		console.log(`Wrote ${rows} rows to ${path}`);
 	}
 }

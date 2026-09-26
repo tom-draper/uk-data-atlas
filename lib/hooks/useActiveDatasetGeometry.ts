@@ -3,10 +3,7 @@
 import { useMemo } from "react";
 import type { BoundaryGeojson, BoundaryType, Dataset } from "@lib/types";
 import { boundaryCapabilityFor } from "../data/boundaries/capabilities";
-import {
-	BOUNDARY_CATALOG,
-	BOUNDARY_TYPES,
-} from "../data/boundaries/catalog";
+import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "../data/boundaries/catalog";
 import { getProp } from "../data/boundaries/properties";
 import type { ConstituencyLadOverlaps } from "../data/boundaries/constituencyLadOverlaps";
 import { getChartDatasetDefinition } from "../datasets";
@@ -84,12 +81,10 @@ export const prepareActiveDatasetGeometry = (
 		(key) => getProp(firstFeature.properties, [key]) !== undefined,
 	);
 	if (!codeKey) return coverageGeometry;
-	const features = coverageGeometry.features.filter(
-		(feature) => {
-			const code = getProp(feature.properties, [codeKey]);
-			return code !== undefined && dataKeys.has(code);
-		},
-	);
+	const features = coverageGeometry.features.filter((feature) => {
+		const code = getProp(feature.properties, [codeKey]);
+		return code !== undefined && dataKeys.has(code);
+	});
 	return features.length === coverageGeometry.features.length
 		? coverageGeometry
 		: { ...coverageGeometry, features };

@@ -31,7 +31,9 @@ const isStringRecord = (value: unknown): value is Record<string, string> =>
 	isRecord(value) &&
 	Object.values(value).every((entry) => typeof entry === "string");
 
-const isStringArrayRecord = (value: unknown): value is Record<string, string[]> =>
+const isStringArrayRecord = (
+	value: unknown,
+): value is Record<string, string[]> =>
 	isRecord(value) &&
 	Object.values(value).every(
 		(entry) =>

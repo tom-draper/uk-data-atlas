@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { adaptMapPopup } from "@/lib/helpers/mapPopup";
-import type {
-	MapInstance,
-	MapPopupOptions,
-} from "@/lib/types/mapInstance";
+import type { MapInstance, MapPopupOptions } from "@/lib/types/mapInstance";
 
 interface UseMapInitializationOptions {
 	style: string;

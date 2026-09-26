@@ -1,8 +1,4 @@
-import type {
-	CustomDataset,
-	CustomPoint,
-	PointStyle,
-} from "../types/custom";
+import type { CustomDataset, CustomPoint, PointStyle } from "../types/custom";
 import { BOUNDARY_TYPES } from "./boundaries/catalog";
 
 const BOUNDARY_TYPE_SET = new Set<string>(BOUNDARY_TYPES);

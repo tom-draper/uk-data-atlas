@@ -1,10 +1,7 @@
 // Fallback type declarations for the optional Mapbox provider. Keep this
 // surface aligned with the methods consumed through MapInstance.
 declare module "mapbox-gl" {
-	type MapboxPopup = Omit<
-		import("./mapInstance").MapPopup,
-		"addTo"
-	> & {
+	type MapboxPopup = Omit<import("./mapInstance").MapPopup, "addTo"> & {
 		addTo(map: import("./mapInstance").MapEngine): MapboxPopup;
 	};
 
