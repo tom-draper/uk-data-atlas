@@ -224,7 +224,7 @@ summed to 1 within tolerance, and 34,738 of 34,753 LSOAs assigned cleanly.
 
 ## 9. What is left, in priority order
 
-### 9.1 Same-named areas on upload (done for wards; parishes remain)
+### 9.1 Same-named areas on upload (done)
 
 Uploads keyed by area name are joined through `gazetteer.matchindex.json`
 (`lib/data/custom/import.ts`). The index used to keep one code per name per
@@ -249,10 +249,12 @@ Fixed on 2026-09-27:
 - When several vintages match a column equally, the newest is chosen; before,
   a column of current ward names was read as 2011 wards.
 
-**Remaining:** parish releases publish no parent, so shared parish names are
-reported but cannot yet be settled. They need a parish -> LAD source: the ONS
-parish lookup, fetched like other lookups, or containment against LAD geometry
-at build, as `lsoa-lad-mappings` already does.
+Parishes followed the same day. Their releases publish no parent, so the
+match index finds each shared-name parish's council from the geometry: the
+local authority holding most of it (the best-fit sampler used for
+constituency membership, 9.3) in the nearest release not after the parish's.
+All 1,545 such parishes have one; the 2025 parents agree with the ONS
+parish/ward/LAD lookup on all 1,442 it covers.
 
 ### 9.2 Build every lookup in one place (done)
 
