@@ -60,12 +60,12 @@ export function validateCore(
 			errors.push(
 				`namedLocations[${name}] members differ from its definition`,
 			);
-		// A member with no matching boundary in any shipped vintage is LOCATIONS
-		// curation debt (a pre-2016 recoded/abolished LAD), not a gazetteer fault.
+		// The core holds every LAD release with GSS codes, so a member it lacks
+		// is in no shipped release: a mistyped or pre-2011 code in LOCATIONS.
 		for (const c of loc.lad_codes)
 			if (!codes.has(c))
 				warnings.push(
-					`namedLocations[${name}] member ${c} predates shipped boundaries`,
+					`namedLocations[${name}] member ${c} is in no shipped LAD release`,
 				);
 	}
 

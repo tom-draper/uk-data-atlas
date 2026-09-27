@@ -164,10 +164,15 @@ async function loadFeatures(
 export async function loadGazetteerCore(
 	read: (path: string) => Promise<string>,
 ): Promise<GazetteerCore> {
-	// Include multiple LAD vintages (oldest first) so codes referenced by
-	// LOCATIONS that belong to reorganised/abolished councils still resolve;
-	// current codes end up at their newest vintage as newer sources overwrite.
-	const LAD_VINTAGES = [2016, 2023, 2024, 2025] as const;
+	// Every LAD vintage with GSS codes (2011 on), oldest first, so a code any
+	// shipped release uses resolves, including those LOCATIONS keeps for
+	// reorganised or recoded councils (Gateshead's 2013 recode, Somerset West
+	// and Taunton); current codes end up at their newest vintage as newer
+	// sources overwrite. Earlier releases use old ONS codes no place names.
+	const LAD_VINTAGES = Object.keys(BOUNDARY_CATALOG.localAuthority.vintages)
+		.map(Number)
+		.filter((vintage) => vintage >= 2011)
+		.sort((a, b) => a - b);
 
 	const ladByVintage = await Promise.all(
 		LAD_VINTAGES.map((v) =>
@@ -233,7 +238,7 @@ export async function loadGazetteerCore(
 	const { errors, warnings } = validateCore(core, places, currentCodes);
 	if (warnings.length > 0)
 		console.warn(
-			`  gazetteer: ${warnings.length} warning(s) (LOCATIONS curation debt), e.g. ${warnings[0]}`,
+			`  gazetteer: ${warnings.length} warning(s) (LOCATIONS codes to check), e.g. ${warnings[0]}`,
 		);
 	if (errors.length > 0) {
 		throw new Error(
