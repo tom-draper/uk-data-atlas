@@ -68,7 +68,7 @@ describe("location-scoped chart datasets", () => {
 				async () =>
 					new Response(
 						JSON.stringify({
-							version: 2,
+							version: 3,
 							wardToLad: {
 								[includedCode]:
 									greaterManchester.memberCodes[0],

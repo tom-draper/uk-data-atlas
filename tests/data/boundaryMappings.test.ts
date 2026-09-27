@@ -91,7 +91,10 @@ describe("shipped boundary mappings", () => {
 			constituency: { C1: { 2024: "C2" } },
 			localAuthority: { L1: { 2025: "L1" } },
 		},
-		constituencyToWards: { 2026: { C1: ["W2"] } },
+		constituencyToWards: {
+			2024: { C1: ["W1", "W2"] },
+			2026: { C1: ["W2"], C2: ["W1"] },
+		},
 	};
 
 	it("round-trips through the shipped encoding", () => {
@@ -128,6 +131,15 @@ describe("shipped boundary mappings", () => {
 		expect(parseBoundaryWardToLad(shipped)).toEqual(mappings.wardToLad);
 		expect(() =>
 			parseBoundaryWardToLad({ ...shipped, version: 1 }),
+		).toThrow();
+	});
+
+	it("rejects the version 2 file, whose ward membership is unmasked", () => {
+		const shipped = JSON.parse(
+			JSON.stringify(encodeBoundaryMappings(mappings)),
+		);
+		expect(() =>
+			parsePrecompiledBoundaryMappings({ ...shipped, version: 2 }),
 		).toThrow();
 	});
 

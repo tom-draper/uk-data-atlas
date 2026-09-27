@@ -33,14 +33,14 @@ type YearMasked<K extends string> = {
 
 /** The file `boundary-mappings.json` holds. */
 export interface BoundaryMappingsFile {
-	version: 2;
+	version: 3;
 	wardToLad: Record<string, string>;
 	ladToWards: YearMasked<"members">;
 	codeMappings: Record<
 		keyof PrecompiledBoundaryMappings["codeMappings"],
 		YearMasked<"targets">
 	>;
-	constituencyToWards: Record<number, Record<string, string[]>>;
+	constituencyToWards: YearMasked<"members">;
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -49,25 +49,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 const isStringRecord = (value: unknown): value is Record<string, string> =>
 	isRecord(value) &&
 	Object.values(value).every((entry) => typeof entry === "string");
-
-const isStringArrayRecord = (
-	value: unknown,
-): value is Record<string, string[]> =>
-	isRecord(value) &&
-	Object.values(value).every(
-		(entry) =>
-			Array.isArray(entry) &&
-			entry.every((item) => typeof item === "string"),
-	);
-
-const isYearStringArrayRecord = (
-	value: unknown,
-): value is Record<number, Record<string, string[]>> =>
-	isRecord(value) &&
-	Object.entries(value).every(
-		([year, records]) =>
-			Number.isInteger(Number(year)) && isStringArrayRecord(records),
-	);
 
 const MAX_MASKED_YEARS = 31;
 
@@ -155,11 +136,16 @@ const decodeCodeMapping = (value: unknown): CodeMapping => {
 export const encodeBoundaryMappings = (
 	mappings: PrecompiledBoundaryMappings,
 ): BoundaryMappingsFile => {
-	const ladToWards = maskYears(mappings.ladToWards);
+	const maskedMembers = (
+		byYear: Record<number, Record<string, string[]>>,
+	): YearMasked<"members"> => {
+		const { years, masked } = maskYears(byYear);
+		return { years, members: masked };
+	};
 	return {
-		version: 2,
+		version: 3,
 		wardToLad: mappings.wardToLad,
-		ladToWards: { years: ladToWards.years, members: ladToWards.masked },
+		ladToWards: maskedMembers(mappings.ladToWards),
 		codeMappings: {
 			ward: encodeCodeMapping(mappings.codeMappings.ward),
 			constituency: encodeCodeMapping(mappings.codeMappings.constituency),
@@ -167,7 +153,7 @@ export const encodeBoundaryMappings = (
 				mappings.codeMappings.localAuthority,
 			),
 		},
-		constituencyToWards: mappings.constituencyToWards,
+		constituencyToWards: maskedMembers(mappings.constituencyToWards),
 	};
 };
 
@@ -180,7 +166,7 @@ export const parseBoundaryWardToLad = (
 ): Record<string, string> => {
 	if (
 		!isRecord(value) ||
-		value.version !== 2 ||
+		value.version !== 3 ||
 		!isStringRecord(value.wardToLad)
 	)
 		throw invalid();
@@ -192,11 +178,11 @@ export const parsePrecompiledBoundaryMappings = (
 ): PrecompiledBoundaryMappings => {
 	if (
 		!isRecord(value) ||
-		value.version !== 2 ||
+		value.version !== 3 ||
 		!isStringRecord(value.wardToLad) ||
 		!isRecord(value.ladToWards) ||
 		!isRecord(value.codeMappings) ||
-		!isYearStringArrayRecord(value.constituencyToWards)
+		!isRecord(value.constituencyToWards)
 	)
 		throw invalid();
 	return {
@@ -212,7 +198,10 @@ export const parsePrecompiledBoundaryMappings = (
 				value.codeMappings.localAuthority,
 			),
 		},
-		constituencyToWards: value.constituencyToWards,
+		constituencyToWards: unmaskYears(
+			value.constituencyToWards.years,
+			value.constituencyToWards.members,
+		),
 	};
 };
 

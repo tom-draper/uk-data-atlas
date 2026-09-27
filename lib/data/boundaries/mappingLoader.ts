@@ -3,6 +3,7 @@ import type { BoundaryType } from "./boundaries";
 import { BOUNDARY_CATALOG } from "./catalog";
 import { localDataPath } from "./dataPath";
 import { decodeBoundaryData } from "./decode";
+import { getProp } from "./properties";
 import {
 	buildConstituencyWardMappings,
 	buildCrossYearMappings,
@@ -147,16 +148,36 @@ export async function loadBoundaryMappings(
 		);
 	}
 
-	const latestWardYear = Math.max(...Object.keys(wards).map(Number));
-	const constituencyToWards: Record<number, Record<string, string[]>> = {};
-	const constituencyWardMappings: Record<string, string[]> = {};
-	for (const boundary of Object.values(constituencies)) {
-		Object.assign(
-			constituencyWardMappings,
-			buildConstituencyWardMappings(wards[latestWardYear], boundary),
-		);
+	// Charts sum a ward dataset's wards into the constituency a reader picks,
+	// on that dataset's own ward release, and the constituency may come from
+	// either the 2010 or the 2024 code set. So membership is built for every
+	// ward release against one release of each constituency code set; the
+	// releases within a set share their codes and boundaries.
+	const constituencySets = new Map<string, BoundaryGeojson>();
+	for (const year of Object.keys(constituencies).map(Number).sort()) {
+		const boundary = constituencies[year];
+		const codes = boundary.features
+			.map((feature) =>
+				getProp(
+					feature.properties,
+					BOUNDARY_CATALOG.constituency.properties.code,
+				),
+			)
+			.filter(Boolean)
+			.sort()
+			.join();
+		constituencySets.set(codes, boundary); // the latest of each set wins
 	}
-	constituencyToWards[latestWardYear] = constituencyWardMappings;
+	const constituencyToWards: Record<number, Record<string, string[]>> = {};
+	for (const [year, wardBoundary] of Object.entries(wards))
+		for (const constituencyBoundary of constituencySets.values())
+			Object.assign(
+				(constituencyToWards[Number(year)] ??= {}),
+				buildConstituencyWardMappings(
+					wardBoundary,
+					constituencyBoundary,
+				),
+			);
 
 	return {
 		wardToLad,
