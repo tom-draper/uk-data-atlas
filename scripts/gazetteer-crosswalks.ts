@@ -94,7 +94,10 @@ async function main() {
 			BOUNDARY_CATALOG.constituency.properties.code,
 			lad,
 			BOUNDARY_CATALOG.localAuthority.properties.code,
-			(d, t) => process.stdout.write(`  ${release.id} ${d}/${t}\r`),
+			{
+				onProgress: (d, t) =>
+					process.stdout.write(`  ${release.id} ${d}/${t}\r`),
+			},
 		);
 		console.log(`\n    assigned ${assigned}/${total} building blocks`);
 

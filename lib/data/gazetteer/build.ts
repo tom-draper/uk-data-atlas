@@ -70,15 +70,22 @@ export function buildCore(
 }
 
 // Weighted crosswalk from source areas to target areas, via a finer building
-// block (e.g. LSOA / ward). weight = share of source's building-block measure
-// (area here; swap for population for best-fit) that falls in each target.
+// block (e.g. LSOA / data zone). weight = share of the source's building-block
+// measure that falls in each target: area by default, or residents for a
+// population-weighted best fit.
 export function buildCrosswalk(
 	blocks: Feat[],
 	sources: Feat[],
 	sourceCodeKeys: readonly string[],
 	targets: Feat[],
 	targetCodeKeys: readonly string[],
-	onProgress?: (done: number, total: number) => void,
+	{
+		measure = (block: Feat) => areaM2(block.geometry),
+		onProgress,
+	}: {
+		measure?: (block: Feat) => number;
+		onProgress?: (done: number, total: number) => void;
+	} = {},
 ): { crosswalk: Crosswalk; assigned: number; total: number } {
 	const index = (feats: Feat[], keys: readonly string[]) =>
 		feats.map((f) => ({
@@ -115,7 +122,7 @@ export function buildCrosswalk(
 			tgtIdx.filter((c) => inBox(px, py, c.bbox)),
 		);
 		if (!s || !t) continue;
-		const w = areaM2(blocks[i].geometry);
+		const w = measure(blocks[i]);
 		(accum[s] ??= {})[t] = (accum[s][t] ?? 0) + w;
 		assigned++;
 		if (onProgress && i % 5000 === 0) onProgress(i, blocks.length);
