@@ -64,7 +64,7 @@ All live in `public/data/datasets/`. Sizes as of 2026-09-27.
 | `gazetteer.core.json`            | `precompile-data.mts`             | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
 | `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | — / 37 KB       |
 | `gazetteer.matchindex.json`      | `precompile-data.mts`             | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
-| `boundary-mappings.json`         | `precompile-data.mts`             | every `/atlas` load; workers on demand  | 1.6 MB / 287 KB |
+| `boundary-mappings.json`         | `precompile-data.mts`             | every `/atlas` load; workers on demand  | 2.0 MB / 355 KB |
 | `lsoa-lad-mappings-<year>.json`  | `precompile-data.mts`             | on demand, LSOA location filter         | small           |
 
 **Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
@@ -81,8 +81,9 @@ mappings store each code, name or target once with a bit mask of the vintages
 it holds in (bit `i` is `years[i]`), instead of repeating near-identical lists
 per vintage. Parsers expand them back to the per-year shape callers use. This
 cut the match index from 3.1 MB to 906 KB gz and the mappings from 643 KB to
-287 KB gz. The mappings file is `version: 2`; a version 1 file is rejected and
-the seeder falls back to deriving mappings from geometry.
+287 KB gz (355 KB since constituency membership covers every ward release,
+9.3). The mappings file is `version: 3`; an older file is rejected and the
+seeder falls back to deriving mappings from geometry.
 
 ## 4. Design principles that held
 
@@ -266,13 +267,27 @@ vintage, and the crosswalk must have a table for every served constituency
 release and target the served 2025 LAD release. (Every served release has a
 table; the catalogue's 2010 and 2015 constituency years map onto them.)
 
-### 9.3 Replace centroid constituency/ward membership
+### 9.3 Constituency/ward membership (done)
 
-`boundary-mappings.json` still derives `constituencyToWards` by testing each
-ward's rough ring centroid against constituency polygons, for the latest ward
-release only. It should come from a precomputed ward/constituency crosswalk, or
-from the ONS ward-to-constituency lookup, which is exact. That also makes older
-ward releases work.
+Charts sum a ward dataset into the constituency a reader selects, on the
+dataset's own ward release. Membership used to exist for the latest ward
+release only, placing each ward by the average of its outline's vertices, so:
+
+- every ward dataset (local elections 2016-2025, house prices 2021, population 2023) showed "No data available" for any constituency;
+- even for the latest release, about 180 wards fell in no constituency (their
+  vertex average lay outside every polygon) and about 1% were misplaced.
+
+Fixed on 2026-09-27. Membership is built for every ward release, against one
+release of each constituency code set (2010 and 2024), and each ward goes to
+the constituency holding most of it, sampled on an 8x8 grid. A ward that
+straddles a boundary is counted once, so ward values sum to constituency
+totals. Against the ONS ward/constituency lookups it agrees on 99.94% (2024
+and 2025 wards) and 99.99% (2022 wards) of wards ONS places in a single
+constituency, and places every ward.
+
+The ONS lookups were used to measure, not as the source: they are published
+for only some ward releases (none for 2011, 2015, 2021 or 2026), and list a
+straddling ward under every constituency it touches, which would double-count.
 
 ### 9.4 Density from `areaM2`, not polygon rings
 
