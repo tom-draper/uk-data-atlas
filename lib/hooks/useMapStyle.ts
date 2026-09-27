@@ -18,8 +18,13 @@ export function useMapStyle(
 		const map = mapRef.current;
 		if (!map || !mapReady) return;
 
+		// Stop listening once this style is ready: the map goes idle after
+		// every repaint, hover highlights included, and each call would queue
+		// a blocking update ahead of the chart pane's hover render.
 		const handleStyleReady = () => {
-			if (map.isStyleLoaded()) setLoadedStyleId(styleId);
+			if (!map.isStyleLoaded()) return;
+			map.off("idle", handleStyleReady);
+			setLoadedStyleId(styleId);
 		};
 		map.on("idle", handleStyleReady);
 
