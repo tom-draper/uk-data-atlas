@@ -914,7 +914,8 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000045",
 			"E07000046",
 			"E07000047", // Devon districts
-			"E06000052", // Plymouth
+			"E06000026", // Plymouth
+			"E06000027", // Torbay
 		],
 		bounds: [-4.9, 50.2, -2.9, 51.3],
 	},
@@ -966,7 +967,8 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000090",
 			"E07000091",
 			"E07000092",
-			"E07000093", // Hampshire districts
+			"E07000093",
+			"E07000094", // Hampshire districts
 			"E06000044",
 			"E06000045", // Portsmouth, Southampton
 		],
@@ -988,8 +990,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000114",
 			"E07000115",
 			"E07000116",
-			"E06000035",
-			"E06000036", // Medway, Thurrock
+			"E06000035", // Medway
 		],
 		bounds: [0.3, 50.8, 1.6, 51.5],
 	},
@@ -1028,9 +1029,11 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000074",
 			"E07000075",
 			"E07000076",
-			"E06000033", // Thurrock, Southend
+			"E07000077", // Essex districts
+			"E06000033",
+			"E06000034", // Southend, Thurrock
 		],
-		bounds: [0.2, 51.5, 1.3, 52.1],
+		bounds: [0.0, 51.4, 1.3, 52.1],
 	},
 
 	// Hertfordshire
@@ -1249,9 +1252,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000036",
 			"E07000037",
 			"E07000038",
+			"E07000039", // Derbyshire districts
 			"E06000015", // Derby
 		],
-		bounds: [-2.0, 52.8, -1.3, 53.5],
+		bounds: [-2.0, 52.6, -1.3, 53.5],
 	},
 
 	// ----------------------------
