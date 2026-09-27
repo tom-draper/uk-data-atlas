@@ -303,16 +303,36 @@ cached, agreeing with the sidecar to 0.00005%. Shipping the value in the
 TopoJSON would add about 8 KB per ward file to every map download to save
 that, so it stays as is.
 
-### 9.5 Reverse the dependency on the API
+### 9.5 Official places from ONS lookups (done)
 
-The API's named locations are compiled from this project's
-`gazetteer.core.json`, whose composites come from the hand-curated
-`lib/data/locations.ts` (about 1,500 lines). The API already models sourced,
-versioned place definitions. The sturdier direction is for the API to own place
-definitions (from ONS combined-authority and ceremonial-county lookups where
-they exist, explicitly curated where they don't) and for the gazetteer core to
-be built from the API's output. Open question: do that, or keep `LOCATIONS` as
-the source for both and document why.
+Decided 2026-09-27: rather than reverse the build so the gazetteer consumes the
+API, official places take their members from the ONS lookups already in
+`data/lookups`, and every named location says what it is. The build order is
+unchanged; the API reads the result from the core as before.
+
+- `lib/data/gazetteer/places.ts` lists the official places: the 9 English
+  regions, Greater Manchester (combined authority), and the 5 counties whose
+  name means the ONS county (Gloucestershire, Hertfordshire, Norfolk,
+  Oxfordshire, Suffolk). Their current members come from the lookup; curated
+  codes the lookups do not list are superseded ones, kept for older boundary
+  releases (4.1). Countries keep their code-prefix filter and are labelled.
+- The other 136 stay editorial and exactly as curated in `LOCATIONS`.
+- Each named location in the core carries `kind` (and, if sourced, `source`
+  and `definitionRevision: 2`); the API passes these through, so a caller can
+  tell an official region from an editorial grouping.
+- Precompile logs what the lookups change. The first run added seven councils
+  the hand-kept regions had lost (Cherwell, West Oxfordshire and Worthing to
+  the South East; North and North East Lincolnshire to Yorkshire; Swindon to
+  the South West; Staffordshire Moorlands to the West Midlands), over a
+  million residents missing from region totals and filters.
+
+Most county names mean the ceremonial county (Kent with Medway), which no ONS
+lookup here defines, so they stay editorial. Checking them against the ONS
+counties found off-by-one slips in sequential code lists, now corrected: Kent
+held Bracknell Forest, Devon held Cornwall's code where Plymouth was meant and
+lacked Torbay, and Derbyshire, Essex and Hampshire each stopped one district
+short (Essex also lacked Thurrock). Lancashire's Sefton ("Southport") is
+deliberate and left as curated.
 
 ### 9.6 Population-weighted, UK-wide crosswalk (done)
 
