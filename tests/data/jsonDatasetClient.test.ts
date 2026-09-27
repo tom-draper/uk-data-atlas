@@ -53,7 +53,6 @@ describe("json dataset client", () => {
 					{ key: "disabled", url: "/disabled.json", enabled: false },
 					{ key: "broken", url: "/broken.json", enabled: true },
 				],
-				"json-client-test-slice",
 				new AbortController().signal,
 				parseDataset,
 			),
@@ -118,7 +117,6 @@ describe("json dataset client", () => {
 					priority: 2,
 				},
 			],
-			"json-client-priority-test-slice",
 			new AbortController().signal,
 			parseDataset,
 		);
@@ -128,5 +126,77 @@ describe("json dataset client", () => {
 			"/background.json",
 		]);
 		expect(maximumActive).toBeLessThanOrEqual(4);
+	});
+	describe("dataset cache", () => {
+		const load = (keys: string[]) =>
+			loadJsonDatasetSlice(
+				keys.map((key) => ({
+					key,
+					url: `/cache-test/${key}.json`,
+					enabled: true,
+				})),
+				new AbortController().signal,
+				parseDataset,
+			);
+
+		const stubFetch = (failing: string[] = []) => {
+			const fetched: string[] = [];
+			vi.stubGlobal(
+				"fetch",
+				vi.fn().mockImplementation(async (url: string) => {
+					fetched.push(url);
+					if (failing.some((key) => url.endsWith(`/${key}.json`)))
+						return { ok: false, status: 503, statusText: "Down" };
+					return {
+						ok: true,
+						json: async () => ({ E1: { value: 1 } }),
+					};
+				}),
+			);
+			return fetched;
+		};
+
+		it("loads only the dataset a toggle adds", async () => {
+			const fetched = stubFetch();
+			await load(["toggle-a", "toggle-b"]);
+			const slice = await load(["toggle-a", "toggle-b", "toggle-c"]);
+			expect(fetched).toEqual([
+				"/cache-test/toggle-a.json",
+				"/cache-test/toggle-b.json",
+				"/cache-test/toggle-c.json",
+			]);
+			expect(Object.keys(slice.datasets)).toEqual([
+				"toggle-a",
+				"toggle-b",
+				"toggle-c",
+			]);
+		});
+
+		it("drops a dataset once three newer slices do not use it", async () => {
+			const fetched = stubFetch();
+			await load(["evict-x"]);
+			await load(["evict-y"]);
+			await load(["evict-z"]);
+			await load(["evict-x"]);
+			expect(fetched).toHaveLength(3);
+			await load(["evict-w"]);
+			await load(["evict-y"]);
+			await load(["evict-z"]);
+			await load(["evict-w"]);
+			await load(["evict-x"]);
+			expect(
+				fetched.filter((url) => url.endsWith("evict-x.json")),
+			).toHaveLength(2);
+		});
+
+		it("retries a dataset that failed", async () => {
+			const fetched = stubFetch(["retry-broken"]);
+			await load(["retry-broken"]);
+			await load(["retry-broken"]);
+			expect(fetched).toEqual([
+				"/cache-test/retry-broken.json",
+				"/cache-test/retry-broken.json",
+			]);
+		});
 	});
 });

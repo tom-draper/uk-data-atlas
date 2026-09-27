@@ -37,17 +37,14 @@ export function useJsonDatasetLoaders<T>(
 			return;
 		}
 		setLoading(true);
-		loadJsonDatasetSlice<T>(
-			requests,
-			requestKey,
-			controller.signal,
-			parseDataset,
-		).then((slice) => {
-			if (controller.signal.aborted) return;
-			setDatasets(slice.datasets);
-			setErrors(slice.errors);
-			setLoading(false);
-		});
+		loadJsonDatasetSlice<T>(requests, controller.signal, parseDataset).then(
+			(slice) => {
+				if (controller.signal.aborted) return;
+				setDatasets(slice.datasets);
+				setErrors(slice.errors);
+				setLoading(false);
+			},
+		);
 		return () => controller.abort();
 	}, [requestKey, parseDataset]);
 

@@ -49,9 +49,18 @@ export const parseJsonDatasetRecord = <T>(
 let worker: Worker | null = null;
 let nextId = 0;
 const pending = new Map<number, PendingRequest>();
+/** How many of the most recent slices keep their datasets cached. */
 const SLICE_CACHE_LIMIT = 3;
 const MAX_CONCURRENT_DATASET_REQUESTS = 4;
-const completedSlices = new Map<string, CachedDatasetSlice<unknown>>();
+// Each loaded dataset, by what was fetched, shared by every slice that asks for
+// it: turning one chart on or off loads only that chart's dataset rather than
+// every enabled one again, and the rest keep their identity, so their
+// aggregates stay cached too.
+const loadedDatasets = new Map<string, unknown>();
+// The datasets of the most recent slices, newest last. A dataset stays cached
+// only while one of them uses it, so the cache never holds more than those
+// slices did, and holds a dataset they share once.
+const recentSlices: string[][] = [];
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
@@ -72,13 +81,15 @@ const removeAbortListener = (entry: PendingRequest) => {
 		entry.signal.removeEventListener("abort", entry.onAbort);
 };
 
-const rememberSlice = <T>(key: string, slice: CachedDatasetSlice<T>) => {
-	completedSlices.delete(key);
-	completedSlices.set(key, slice);
-	if (completedSlices.size > SLICE_CACHE_LIMIT) {
-		const oldest = completedSlices.keys().next().value;
-		if (oldest !== undefined) completedSlices.delete(oldest);
-	}
+const datasetCacheKey = (request: JsonDatasetRequest) =>
+	`${request.url}|${JSON.stringify(request.filter ?? {})}|${request.chunkUrls?.join(",") ?? ""}`;
+
+const rememberSlice = (datasetKeys: string[]) => {
+	recentSlices.push(datasetKeys);
+	if (recentSlices.length > SLICE_CACHE_LIMIT) recentSlices.shift();
+	const inUse = new Set(recentSlices.flat());
+	for (const key of loadedDatasets.keys())
+		if (!inUse.has(key)) loadedDatasets.delete(key);
 };
 
 function getWorker(): Worker | null {
@@ -181,31 +192,19 @@ export function loadJsonDataset(
 	return fetchViaWorker(url, undefined, undefined, signal);
 }
 
-/** Load one enabled dataset slice, using the worker and bounded LRU cache. */
+/**
+ * Load the enabled datasets of a slice through the worker, reusing any a
+ * recent slice already loaded.
+ */
 export async function loadJsonDatasetSlice<T>(
 	requests: readonly JsonDatasetRequest[],
-	requestKey: string,
 	signal: AbortSignal,
 	parseDataset: JsonDatasetParser<T>,
 ): Promise<CachedDatasetSlice<T>> {
-	const cached = completedSlices.get(requestKey);
-	if (cached) {
-		completedSlices.delete(requestKey);
-		completedSlices.set(requestKey, cached);
-		return {
-			datasets: Object.fromEntries(
-				Object.entries(cached.datasets).map(([group, records]) => [
-					group,
-					parseJsonDatasetRecord(records, parseDataset, group),
-				]),
-			),
-			errors: cached.errors,
-		};
-	}
-
-	const pendingRequests = requests
-		.map((request, index) => ({ request, index }))
-		.filter(({ request }) => request.enabled)
+	const enabledRequests = requests.filter((request) => request.enabled);
+	const datasetKeys = enabledRequests.map(datasetCacheKey);
+	const pendingRequests = enabledRequests
+		.map((request, index) => ({ request, cacheKey: datasetKeys[index]! }))
 		.sort(
 			(left, right) =>
 				(left.request.priority ?? 0) - (right.request.priority ?? 0),
@@ -217,19 +216,24 @@ export async function loadJsonDatasetSlice<T>(
 	const runNext = async () => {
 		while (nextRequest < pendingRequests.length) {
 			const slot = nextRequest++;
-			const request = pendingRequests[slot]!.request;
+			const { request, cacheKey } = pendingRequests[slot]!;
 			try {
+				let loaded = loadedDatasets.get(cacheKey);
+				if (loaded === undefined) {
+					loaded = await fetchViaWorker(
+						request.url,
+						request.filter,
+						request.chunkUrls,
+						signal,
+					);
+					loadedDatasets.set(cacheKey, loaded);
+				}
 				results[slot] = {
 					status: "fulfilled",
 					value: {
 						key: request.key,
 						data: parseJsonDatasetRecord(
-							await fetchViaWorker(
-								request.url,
-								request.filter,
-								request.chunkUrls,
-								signal,
-							),
+							loaded,
 							parseDataset,
 							request.key,
 						),
@@ -263,7 +267,6 @@ export async function loadJsonDatasetSlice<T>(
 					: String(result.reason),
 			);
 	}
-	const slice = { datasets: loaded, errors };
-	if (!signal.aborted) rememberSlice(requestKey, slice);
-	return slice;
+	if (!signal.aborted) rememberSlice(datasetKeys);
+	return { datasets: loaded, errors };
 }
