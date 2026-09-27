@@ -1,8 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useChartVisibility } from "@/lib/context/ChartVisibilityContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useNearViewport } from "@/lib/hooks/useNearViewport";
 import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
 import ChartCards, {
 	hasVisibleChart,
@@ -30,15 +31,24 @@ function ChartSection({
 	title,
 	showBorder,
 	extra,
+	selectedArea,
 	...props
 }: ChartSectionProps) {
 	const { visibility } = useChartVisibility();
 	const isDark = useIsDark();
+	const [sectionRef, isNearViewport] = useNearViewport();
+	// A section scrolled well out of view keeps the area it last showed, so a
+	// hover re-renders only the cards that can be seen; it catches up as it
+	// nears the viewport.
+	const [shownArea, setShownArea] = useState(selectedArea);
+	if (isNearViewport && shownArea !== selectedArea)
+		setShownArea(selectedArea);
 	const hasCharts = hasVisibleChart(group, visibility);
 	if (!hasCharts && !extra) return null;
 
 	return (
 		<div
+			ref={sectionRef}
 			className={`space-y-2 ${showBorder ? "border-t pt-2" : "pt-2"} ${
 				isDark ? "border-white/10" : "border-gray-200/80"
 			}`}
@@ -49,7 +59,12 @@ function ChartSection({
 				{title}
 			</h3>
 			{hasCharts && (
-				<ChartCards group={group} visibility={visibility} {...props} />
+				<ChartCards
+					group={group}
+					visibility={visibility}
+					selectedArea={shownArea}
+					{...props}
+				/>
 			)}
 			{extra}
 		</div>
