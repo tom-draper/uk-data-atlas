@@ -104,10 +104,7 @@ function DensityGrid({ density }: { density: number }) {
 			}}
 		>
 			{squareClasses.map((className, index) => (
-				<div
-					key={index}
-					className={`rounded-xs transition-all duration-300 ${className}`}
-				/>
+				<div key={index} className={`rounded-xs ${className}`} />
 			))}
 		</div>
 	);
