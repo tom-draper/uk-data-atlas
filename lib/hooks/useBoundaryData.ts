@@ -21,7 +21,6 @@ import {
 	mergeBoundaryGroups,
 } from "../data/boundaries/loadState";
 import {
-	deriveBoundaryMappings,
 	seedBoundaryMappings,
 	type BoundaryMappingTarget,
 } from "../data/boundaries/mappingSeeder";
@@ -133,47 +132,32 @@ export function useBoundaryData(
 				overlaps,
 				lsoaMappings,
 			])
-				.then(
-					([
-						mappingsApplied,
-						groups,
-						loadedOverlaps,
-						loadedLsoaMappings,
-					]) => {
-						if (!mounted) return;
-						if (loadedOverlaps)
-							setConstituencyLadOverlaps(loadedOverlaps);
-						if (loadedLsoaMappings)
-							setLsoaToLadByYear(loadedLsoaMappings);
+				.then(([, groups, loadedOverlaps, loadedLsoaMappings]) => {
+					if (!mounted) return;
+					if (loadedOverlaps)
+						setConstituencyLadOverlaps(loadedOverlaps);
+					if (loadedLsoaMappings)
+						setLsoaToLadByYear(loadedLsoaMappings);
 
-						for (const type of completedBoundaryTypes(groups))
-							loadedTypes.current.add(type);
-						const fetched: Parameters<
-							typeof deriveBoundaryMappings
-						>[0] = {};
-						for (const [type, { data }] of groups)
-							fetched[type] = data;
+					for (const type of completedBoundaryTypes(groups))
+						loadedTypes.current.add(type);
 
-						// Whatever did load is still worth drawing, so keep it and
-						// report the gaps alongside rather than instead.
-						const failures = groups.flatMap(
-							([, { failures: groupFailures }]) => groupFailures,
+					// Whatever did load is still worth drawing, so keep it and
+					// report the gaps alongside rather than instead.
+					const failures = groups.flatMap(
+						([, { failures: groupFailures }]) => groupFailures,
+					);
+					if (failures.length > 0) {
+						setError(new Error(failures.join("; ")));
+					}
+
+					startTransition(() => {
+						setRawData((previous) =>
+							mergeBoundaryGroups(previous, groups),
 						);
-						if (failures.length > 0) {
-							setError(new Error(failures.join("; ")));
-						}
-
-						startTransition(() => {
-							setRawData((previous) =>
-								mergeBoundaryGroups(previous, groups),
-							);
-							setIsLoading(false);
-						});
-
-						if (!mappingsApplied && codeMapper)
-							deriveBoundaryMappings(fetched, codeMapper);
-					},
-				)
+						setIsLoading(false);
+					});
+				})
 				.catch((err) => {
 					if (mounted) {
 						setError(

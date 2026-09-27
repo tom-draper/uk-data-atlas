@@ -1,10 +1,5 @@
-import type { BoundaryGeojson } from "@lib/types";
 import { withCDN } from "../../helpers/cdn";
-import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
 import {
-	buildConstituencyWardMappings,
-	buildCrossYearMappings,
-	extractWardLadMappings,
 	parsePrecompiledBoundaryMappings,
 	type CodeMapping,
 	type CodeType,
@@ -76,8 +71,10 @@ export const seedBoundaryMappings = (
 			return true;
 		})
 		.catch((error) => {
+			// The file ships with the code (its URL carries the deploy's data
+			// version), so this is a failed fetch; the next load retries.
 			console.warn(
-				"[boundaries] Falling back to in-browser mapping generation:",
+				"[boundaries] Boundary mappings unavailable; area filters will be incomplete:",
 				error,
 			);
 			seededMappers.delete(target);
@@ -85,65 +82,4 @@ export const seedBoundaryMappings = (
 		});
 	seededMappers.set(target, seeding);
 	return seeding;
-};
-
-type FetchedMappings = Partial<
-	Record<BoundaryType, Record<number, BoundaryGeojson>>
->;
-
-/**
- * Compatibility path for a CDN revision without the precompiled mapping file.
- * It deliberately only derives mappings when the three required geographies
- * were fetched together; constituency-to-ward matching needs geometry and is
- * unavailable from the properties sidecars.
- */
-export const deriveBoundaryMappings = (
-	fetched: FetchedMappings,
-	target: BoundaryMappingTarget,
-) => {
-	if (!fetched.ward || !fetched.constituency || !fetched.localAuthority)
-		return;
-
-	const wardToLad: Record<string, string> = {};
-	for (const [year, boundary] of Object.entries(fetched.ward)) {
-		const wardMappings = extractWardLadMappings(
-			boundary.features,
-			BOUNDARY_CATALOG.ward.properties.code,
-			BOUNDARY_CATALOG.ward.properties.parentCode ??
-				BOUNDARY_CATALOG.localAuthority.properties.code,
-		);
-		Object.assign(wardToLad, wardMappings.wardToLad);
-		target.addLadWardMappings?.(Number(year), wardMappings.ladToWards);
-	}
-	target.addWardLadMappings?.(wardToLad);
-	for (const type of ["ward", "constituency", "localAuthority"] as const) {
-		const boundaries = fetched[type]!;
-		target.addCodeMappings?.(
-			type,
-			buildCrossYearMappings(
-				boundaries,
-				type,
-				Object.keys(boundaries).map(Number),
-			),
-		);
-	}
-
-	const wardGroup = fetched.ward;
-	const latestWardYear = Math.max(
-		...Object.keys(wardGroup)
-			.map(Number)
-			.filter((year) => wardGroup[year]?.features),
-	);
-	const latestWardData = wardGroup[latestWardYear];
-	if (!latestWardData?.features) return;
-	const mergedMappings: Record<string, string[]> = {};
-	for (const constituencyData of Object.values(fetched.constituency)) {
-		if (!constituencyData?.features) continue;
-		Object.assign(
-			mergedMappings,
-			buildConstituencyWardMappings(latestWardData, constituencyData),
-		);
-	}
-	if (Object.keys(mergedMappings).length > 0)
-		target.addConstituencyWardMappings?.(latestWardYear, mergedMappings);
 };
