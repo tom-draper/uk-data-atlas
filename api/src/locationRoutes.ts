@@ -9,6 +9,21 @@ const requirementDetail = (response: ApiResponse | undefined) =>
 		? response.body.detail
 		: "Catalogue data is unavailable.";
 
+const selectedAsOf = (parsedUrl: URL): string | undefined | ApiResponse => {
+	const asOf = parsedUrl.searchParams.get("asOf");
+	if (asOf === null) return undefined;
+	const date = new Date(`${asOf}T00:00:00.000Z`);
+	return /^\d{4}-\d{2}-\d{2}$/.test(asOf) &&
+		!Number.isNaN(date.valueOf()) &&
+		date.toISOString().slice(0, 10) === asOf
+		? asOf
+		: problem(
+				400,
+				"Invalid Query",
+				"asOf must be a calendar date in YYYY-MM-DD form.",
+			);
+};
+
 /** Discovery endpoints for the Atlas's curated named locations. */
 export const handleLocationRoutes = ({
 	context,
@@ -21,10 +36,12 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
+		const asOf = selectedAsOf(parsedUrl);
+		if (typeof asOf !== "string" && asOf !== undefined) return asOf;
 		const unavailable =
 			context.geographyResolver.requires("named-locations");
 		if (unavailable) return unavailable;
-		const namedLocations = context.geographyResolver.namedLocations();
+		const namedLocations = context.geographyResolver.namedLocations(asOf);
 		const query = parsedUrl.searchParams
 			.get("q")
 			?.trim()
@@ -42,7 +59,12 @@ export const handleLocationRoutes = ({
 		segments[0] === "v1" &&
 		segments[1] === "locations"
 	) {
-		const location = context.geographyResolver.namedLocation(segments[2]!);
+		const asOf = selectedAsOf(parsedUrl);
+		if (typeof asOf !== "string" && asOf !== undefined) return asOf;
+		const location = context.geographyResolver.namedLocation(
+			segments[2]!,
+			asOf,
+		);
 		return location
 			? { status: 200, body: envelope(releaseId, location) }
 			: problem(
@@ -64,7 +86,12 @@ export const handleLocationRoutes = ({
 		segments[1] === "locations" &&
 		segments[3] === "members"
 	) {
-		const location = context.geographyResolver.namedLocation(segments[2]!);
+		const asOf = selectedAsOf(parsedUrl);
+		if (typeof asOf !== "string" && asOf !== undefined) return asOf;
+		const location = context.geographyResolver.namedLocation(
+			segments[2]!,
+			asOf,
+		);
 		if (!location)
 			return problem(
 				404,
@@ -134,6 +161,12 @@ export const handleLocationRoutes = ({
 				}),
 			};
 		}
+		if (asOf !== undefined)
+			return problem(
+				422,
+				"Operation Not Supported",
+				"asOf currently selects direct member codes only; dated crosswalk projections have not been published.",
+			);
 		const resolver = context.geographyResolver;
 		const candidates = resolver.crosswalksToLocationMembers(
 			geography,

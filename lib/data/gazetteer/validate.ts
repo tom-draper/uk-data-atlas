@@ -60,6 +60,14 @@ export function validateCore(
 			errors.push(
 				`namedLocations[${name}] members differ from its definition`,
 			);
+		if (
+			got.memberAssertions &&
+			got.memberAssertions.map(({ code }) => code).join(",") !==
+				loc.lad_codes.join(",")
+		)
+			errors.push(
+				`namedLocations[${name}] membership assertions differ from its definition`,
+			);
 		// The core holds every LAD release with GSS codes, so a member it lacks
 		// is in no shipped release: a mistyped or pre-2011 code in LOCATIONS.
 		for (const c of loc.lad_codes)

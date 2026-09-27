@@ -278,12 +278,11 @@ only **available** when its endpoint, contract and provenance are published.
       regions. The hand-kept lists had drifted: Kent, Devon, Derbyshire, Essex
       and Hampshire held off-by-one code slips, and Lancashire held
       Merseyside's Sefton, all corrected on 2026-09-27.
-- [ ] Give each named location a validity interval, and each member the
-      releases it applies to. Every location is served with
-      `validity: {from: null, to: null}`, though some lists deliberately
-      carry an abolished council beside its successor, as the North West does
-      Cumbria's six former districts and the two unitaries that replaced
-      them.
+- [x] Give each named-location member a half-open effective interval and let
+      callers select it with `asOf=YYYY-MM-DD`. The North West switches from
+      Cumbria's six former districts to Cumberland and Westmorland and Furness
+      on 2023-04-01; an undated read retains both assertions for audit. Dated
+      crosswalk projections are not published yet.
 - [x] List all wards, local authorities or constituencies in a named location,
       through `GET /v1/locations/{id}/members?geography=&release=&via=`. A
       location is curated as local authority codes, so any other geography is

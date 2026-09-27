@@ -8147,7 +8147,9 @@ paths:
         only through a crosswalk the caller names. `q` matches an id or label
         prefix. `definitionRevision` identifies the curated definition used;
         `validity` gives its known bounds, with null bounds when the curator
-        has not supplied dates.
+        has not supplied dates. `memberAssertions` gives each member code's
+        half-open effective interval; `asOf` selects the definition active on
+        one date.
       parameters:
         - name: q
           in: query
@@ -8155,6 +8157,10 @@ paths:
           description: >
             Matches a named location's label, case and punctuation aside. Omit
             it to list every curated location.
+        - name: asOf
+          in: query
+          schema: { type: string, format: date }
+          description: Select the member codes effective on this date. Omit it to return the complete dated definition.
       responses:
         "200":
           description: Named location definitions.
@@ -8192,6 +8198,10 @@ paths:
         x-example-request: "/v1/locations/greater-london"
       parameters:
         - $ref: "#/components/parameters/LocationId"
+        - name: asOf
+          in: query
+          schema: { type: string, format: date }
+          description: Select the member codes effective on this date. Omit it to return the complete dated definition.
       responses:
         "200":
           description: The location's definition, source codes and bounds.
@@ -8341,6 +8351,13 @@ paths:
             geography other than the location's `memberGeography`. Omit it to
             be told which are available.
           example: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
+        - name: asOf
+          in: query
+          schema: { type: string, format: date }
+          description: >
+            Select member codes effective on this date. Date selection is
+            currently available for direct member-code matches only, not a
+            crosswalk projection.
       responses:
         "400":
           description: >

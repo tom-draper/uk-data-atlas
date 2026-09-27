@@ -11,6 +11,7 @@ type GazetteerNamedLocation = {
 	source?: unknown;
 	definitionRevision?: unknown;
 	memberCodes?: unknown;
+	memberAssertions?: unknown;
 	memberGeography?: unknown;
 	validFrom?: unknown;
 	validTo?: unknown;
@@ -46,6 +47,12 @@ export type NamedLocation = {
 	definitionRevision: number;
 	/** The geography whose codes define this editorial grouping. */
 	memberGeography: string;
+	/** Every source-area assertion, with its own known effective interval. */
+	memberAssertions?: Array<{
+		code: string;
+		validity: { from: string | null; to: string | null };
+	}>;
+	/** All codes in the definition. Use `membersAt` to select a date. */
 	memberCodes: string[];
 	/** Known temporal bounds of the definition; null means the source gives none. */
 	validity: { from: string | null; to: string | null };
@@ -86,6 +93,40 @@ const memberCodes = (value: unknown): string[] | undefined =>
 	value.every((code) => typeof code === "string" && code.trim().length > 0)
 		? [...new Set(value.map((code) => code.trim()))].sort()
 		: undefined;
+
+type MemberAssertion = NonNullable<NamedLocation["memberAssertions"]>[number];
+
+const memberAssertions = (
+	value: unknown,
+	legacyCodes: string[] | undefined,
+	validFrom: string | null | undefined,
+	validTo: string | null | undefined,
+): MemberAssertion[] | undefined => {
+	if (value === undefined) {
+		return legacyCodes?.map((code) => ({
+			code,
+			validity: { from: validFrom ?? null, to: validTo ?? null },
+		}));
+	}
+	if (!Array.isArray(value)) return undefined;
+	const assertions = value.map((item) => {
+		const entry = (item ?? {}) as Record<string, unknown>;
+		const code = typeof entry.code === "string" ? entry.code.trim() : "";
+		const from = isoDate(entry.validFrom);
+		const to = isoDate(entry.validTo);
+		return code &&
+			from !== undefined &&
+			to !== undefined &&
+			(from === null || to === null || from < to)
+			? { code, validity: { from, to } }
+			: undefined;
+	});
+	if (assertions.some((assertion) => !assertion)) return undefined;
+	const resolved = assertions as MemberAssertion[];
+	if (new Set(resolved.map(({ code }) => code)).size !== resolved.length)
+		return undefined;
+	return resolved.sort((left, right) => left.code.localeCompare(right.code));
+};
 
 const memberGeography = (value: unknown): string | undefined =>
 	value === undefined
@@ -166,10 +207,16 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 				entry.definitionRevision,
 				gazetteerVersion,
 			);
-			const members = memberCodes(entry.memberCodes);
-			const geography = memberGeography(entry.memberGeography);
 			const validFrom = isoDate(entry.validFrom);
 			const validTo = isoDate(entry.validTo);
+			const legacyMembers = memberCodes(entry.memberCodes);
+			const assertions = memberAssertions(
+				entry.memberAssertions,
+				legacyMembers,
+				validFrom,
+				validTo,
+			);
+			const geography = memberGeography(entry.memberGeography);
 			const bounds = bbox(entry.bbox);
 			const locationKind = kind(entry.kind);
 			const locationSource = placeSource(entry.source);
@@ -186,13 +233,16 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 			if (
 				!id ||
 				!definitionRevision ||
-				!members ||
+				!assertions ||
+				(legacyMembers !== undefined &&
+					legacyMembers.join(",") !==
+						assertions.map(({ code }) => code).join(",")) ||
 				!geography ||
 				validFrom === undefined ||
 				validTo === undefined ||
 				(validFrom !== null &&
 					validTo !== null &&
-					validFrom > validTo) ||
+					validFrom >= validTo) ||
 				!bounds
 			) {
 				throw new Error(`${path}: named location ${label} is invalid`);
@@ -210,7 +260,8 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 				...(locationSource && { source: locationSource }),
 				definitionRevision,
 				memberGeography: geography,
-				memberCodes: members,
+				memberAssertions: assertions,
+				memberCodes: assertions.map(({ code }) => code),
 				validity: { from: validFrom, to: validTo },
 				bbox: bounds,
 			};
@@ -240,3 +291,29 @@ export const createNamedLocationLookup = (
 	inventory: NamedLocationInventory,
 ): NamedLocationLookup =>
 	new Map(inventory.locations.map((location) => [location.id, location]));
+
+/** Select the codes whose half-open membership interval includes `asOf`. */
+export const membersAt = (location: NamedLocation, asOf?: string) =>
+	(
+		location.memberAssertions ??
+		location.memberCodes.map((code) => ({
+			code,
+			validity: location.validity,
+		}))
+	)
+		.filter(
+			({ validity }) =>
+				asOf === undefined ||
+				((validity.from === null || validity.from <= asOf) &&
+					(validity.to === null || asOf < validity.to)),
+		)
+		.map(({ code }) => code);
+
+/** A dated view leaves the full membership audit trail attached to the location. */
+export const selectNamedLocationAt = (
+	location: NamedLocation,
+	asOf?: string,
+): NamedLocation =>
+	asOf === undefined
+		? location
+		: { ...location, memberCodes: membersAt(location, asOf) };

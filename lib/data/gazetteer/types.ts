@@ -18,6 +18,12 @@ export interface GazetteerEntry {
 
 export interface NamedLocation {
 	memberCodes: string[];
+	/** Effective intervals for members whose code set has changed over time. */
+	memberAssertions?: Array<{
+		code: string;
+		validFrom?: string;
+		validTo?: string;
+	}>;
 	bbox: [number, number, number, number];
 	/** An official area, or an editorial grouping (see ./places.ts). */
 	kind: PlaceKind;

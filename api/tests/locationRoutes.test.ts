@@ -146,6 +146,12 @@ test("uses a location's declared member geography for direct membership", () => 
 				kind: "editorial-grouping" as const,
 				definitionRevision: 1,
 				memberGeography: "ward",
+				memberAssertions: [
+					{
+						code: "E05000001",
+						validity: { from: "2024-05-02", to: null },
+					},
+				],
 				memberCodes: ["E05000001"],
 				validity: { from: null, to: null },
 				bbox: [-2.5, 53.3, -2, 53.7] as [
@@ -184,6 +190,22 @@ test("uses a location's declared member geography for direct membership", () => 
 		data.members.map((member) => member.code),
 		["E05000001"],
 	);
+	const beforeDefinition = routeRequest(
+		"GET",
+		"/v1/locations/example-wards/members?release=2025-01-en-ward&asOf=2024-05-01",
+		{
+			boundaryRegistry: registry,
+			namedLocationInventory: inventory,
+			geographyResolver: createGeographyResolver({
+				areaLookup,
+				namedLocationLookup: lookup,
+			}),
+		},
+	);
+	assert.equal(beforeDefinition.status, 200);
+	const historicalData = ("data" in beforeDefinition.body &&
+		beforeDefinition.body.data) as { members: { code: string }[] };
+	assert.deepEqual(historicalData.members, []);
 });
 
 test("resolves a named location into another geography through a crosswalk", () => {

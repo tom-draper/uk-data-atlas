@@ -248,15 +248,21 @@ export const namedLocationMembersTable = (
 		),
 	],
 	rows: inventory.locations.flatMap((location) =>
-		location.memberCodes.map((memberCode) => ({
+		(
+			location.memberAssertions ??
+			location.memberCodes.map((code) => ({
+				code,
+				validity: location.validity,
+			}))
+		).map(({ code: memberCode, validity }) => ({
 			locationId: location.id,
 			label: location.label,
 			kind: location.kind,
 			definitionRevision: location.definitionRevision,
 			memberGeography: location.memberGeography,
 			memberCode,
-			validFrom: location.validity.from,
-			validTo: location.validity.to,
+			validFrom: validity.from,
+			validTo: validity.to,
 		})),
 	),
 });

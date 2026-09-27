@@ -12,6 +12,7 @@ import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
 } from "../namedLocations";
+import { selectNamedLocationAt } from "../namedLocations";
 import type { CatalogueResolver } from "./catalogue";
 import type { AreaIdentity } from "./areas";
 
@@ -44,12 +45,15 @@ export class LocationsResolver {
 			locations.sort((left, right) => left.id.localeCompare(right.id));
 	}
 
-	namedLocation(id: string): NamedLocation | undefined {
-		return this.inputs.namedLocationLookup?.get(id);
+	namedLocation(id: string, asOf?: string): NamedLocation | undefined {
+		const location = this.inputs.namedLocationLookup?.get(id);
+		return location && selectNamedLocationAt(location, asOf);
 	}
 
-	namedLocations() {
-		return this.inputs.namedLocationInventory?.locations ?? [];
+	namedLocations(asOf?: string) {
+		return (this.inputs.namedLocationInventory?.locations ?? []).map(
+			(location) => selectNamedLocationAt(location, asOf),
+		);
 	}
 
 	hasNamedLocationInventory() {

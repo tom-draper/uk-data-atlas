@@ -37,11 +37,34 @@ type OfficialPlace =
 
 type Bounds = [number, number, number, number];
 
-type CuratedLocation = { lad_codes: string[]; bounds: Bounds };
+type MemberValidity = { validFrom?: string; validTo?: string };
+
+type CuratedLocation = {
+	lad_codes: string[];
+	bounds: Bounds;
+	memberValidity?: Record<string, MemberValidity>;
+};
 
 export type ResolvedPlace = CuratedLocation & {
 	kind: PlaceKind;
 	source?: PlaceSource;
+};
+
+/**
+ * Curated effective intervals for members retained across a reorganisation.
+ * Bounds are half-open: an assertion ending on a date does not apply that day.
+ */
+const MEMBER_VALIDITY: Record<string, Record<string, MemberValidity>> = {
+	"North West": {
+		E07000026: { validTo: "2023-04-01" },
+		E07000027: { validTo: "2023-04-01" },
+		E07000028: { validTo: "2023-04-01" },
+		E07000029: { validTo: "2023-04-01" },
+		E07000030: { validTo: "2023-04-01" },
+		E07000031: { validTo: "2023-04-01" },
+		E06000063: { validFrom: "2023-04-01" },
+		E06000064: { validFrom: "2023-04-01" },
+	},
 };
 
 /** An ONS lookup from local authority to a grouping, and its columns. */
@@ -137,9 +160,28 @@ export function resolvePlaces(
 	return Object.fromEntries(
 		Object.entries(locations).map(([name, location]) => {
 			const place = official[name];
-			if (!place) return [name, { ...location, kind: "editorial" }];
+			if (!place)
+				return [
+					name,
+					{
+						...location,
+						kind: "editorial",
+						...(MEMBER_VALIDITY[name] && {
+							memberValidity: MEMBER_VALIDITY[name],
+						}),
+					},
+				];
 			if (place.kind === "country")
-				return [name, { ...location, kind: "country" }];
+				return [
+					name,
+					{
+						...location,
+						kind: "country",
+						...(MEMBER_VALIDITY[name] && {
+							memberValidity: MEMBER_VALIDITY[name],
+						}),
+					},
+				];
 
 			const members = lookupMembers[place.code];
 			if (!members?.length)
@@ -156,6 +198,9 @@ export function resolvePlaces(
 					bounds: location.bounds,
 					kind: place.kind,
 					source: { lookup: place.lookup, code: place.code },
+					...(MEMBER_VALIDITY[name] && {
+						memberValidity: MEMBER_VALIDITY[name],
+					}),
 				},
 			];
 		}),

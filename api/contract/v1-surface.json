@@ -7809,6 +7809,9 @@
 			"parameters": {
 				"query:q": {
 					"required": false
+				},
+				"query:asOf": {
+					"required": false
 				}
 			},
 			"responses": {
@@ -7840,6 +7843,9 @@
 			"parameters": {
 				"path:location-id": {
 					"required": true
+				},
+				"query:asOf": {
+					"required": false
 				}
 			},
 			"responses": {
@@ -7910,6 +7916,9 @@
 					"required": true
 				},
 				"query:via": {
+					"required": false
+				},
+				"query:asOf": {
 					"required": false
 				}
 			},

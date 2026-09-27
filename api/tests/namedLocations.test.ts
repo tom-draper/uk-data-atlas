@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
-import { compileNamedLocations } from "../src/namedLocations";
+import { compileNamedLocations, membersAt } from "../src/namedLocations";
 
 test("keeps an official area's kind and its ONS source", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-named-locations-"));
@@ -107,6 +107,12 @@ test("compiles curated gazetteer locations as explicitly editorial definitions",
 				kind: "editorial-grouping",
 				definitionRevision: 4,
 				memberGeography: "ward",
+				memberAssertions: [
+					{
+						code: "E05000001",
+						validity: { from: "2024-05-02", to: "2026-05-06" },
+					},
+				],
 				memberCodes: ["E05000001"],
 				validity: { from: "2024-05-02", to: "2026-05-06" },
 				bbox: [-2.5, 53.3, -2, 53.7],
@@ -117,11 +123,51 @@ test("compiles curated gazetteer locations as explicitly editorial definitions",
 				kind: "editorial-grouping",
 				definitionRevision: 3,
 				memberGeography: "localAuthority",
+				memberAssertions: [
+					{
+						code: "E08000001",
+						validity: { from: null, to: null },
+					},
+					{
+						code: "E08000002",
+						validity: { from: null, to: null },
+					},
+				],
 				memberCodes: ["E08000001", "E08000002"],
 				validity: { from: null, to: null },
 				bbox: [-2.5, 53.3, -2, 53.7],
 			},
 		]);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("selects dated member assertions using half-open intervals", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-named-locations-"));
+	try {
+		const source = join(root, "gazetteer.core.json");
+		writeFileSync(
+			source,
+			JSON.stringify({
+				version: 1,
+				namedLocations: {
+					"North West": {
+						memberCodes: ["E07000026", "E06000063"],
+						memberAssertions: [
+							{ code: "E07000026", validTo: "2023-04-01" },
+							{ code: "E06000063", validFrom: "2023-04-01" },
+						],
+						bbox: [-3.6, 53.3, -2.1, 55.1],
+					},
+				},
+			}),
+		);
+
+		const [northWest] = compileNamedLocations(source).locations;
+		assert.deepEqual(membersAt(northWest!, "2023-03-31"), ["E07000026"]);
+		assert.deepEqual(membersAt(northWest!, "2023-04-01"), ["E06000063"]);
+		assert.deepEqual(membersAt(northWest!), ["E06000063", "E07000026"]);
 	} finally {
 		rmSync(root, { recursive: true, force: true });
 	}

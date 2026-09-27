@@ -380,11 +380,11 @@ export class GeographyResolver {
 		return this.lineage.areaHistory(identity, maximumDepth);
 	}
 
-	namedLocation(id: string) {
-		return this.locations.namedLocation(id);
+	namedLocation(id: string, asOf?: string) {
+		return this.locations.namedLocation(id, asOf);
 	}
-	namedLocations() {
-		return this.locations.namedLocations();
+	namedLocations(asOf?: string) {
+		return this.locations.namedLocations(asOf);
 	}
 	namedLocationsForArea(identity: AreaIdentity) {
 		return this.locations.namedLocationsForArea(identity);

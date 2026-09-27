@@ -75,6 +75,12 @@ export function buildCore(
 			}
 		namedLocations[name] = {
 			memberCodes: loc.lad_codes,
+			...(loc.memberValidity && {
+				memberAssertions: loc.lad_codes.map((code) => ({
+					code,
+					...loc.memberValidity?.[code],
+				})),
+			}),
 			bbox,
 			kind: loc.kind,
 			...(loc.source && {
