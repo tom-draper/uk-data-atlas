@@ -358,45 +358,39 @@ const bboxOf = (polygons: number[][][][]): Bbox => {
 const inBbox = (x: number, y: number, [x0, y0, x1, y1]: Bbox) =>
 	x >= x0 && x <= x1 && y >= y0 && y <= y1;
 
-/** Samples per side of the grid laid over each ward. */
+/** Samples per side of the grid laid over each area. */
 const MEMBERSHIP_GRID = 8;
 
 /**
- * Which wards each constituency holds, best fit: every ward goes to the one
- * constituency holding most of it, estimated by sampling an 8x8 grid over the
- * ward. A ward straddling a boundary is counted once, never twice, so ward
- * values sum to constituency totals. Against the ONS ward/constituency
- * lookups this agrees on 99.94% (2025 wards, 2024 constituencies) and 99.99%
- * (2022, 2010 set) of wards the lookup places in a single constituency.
+ * Which container holds most of each area, estimated by sampling an 8x8 grid
+ * over the area: a best fit, so an area straddling a boundary gets one
+ * container, never two. Areas `include` rejects are skipped.
  */
-export const buildConstituencyWardMappings = (
-	wardGeoJSON: BoundaryGeojson,
-	constituencyGeoJSON: BoundaryGeojson,
-): Record<string, string[]> => {
-	const constituencies = constituencyGeoJSON.features.flatMap((feature) => {
-		const code = getProp(
-			feature.properties,
-			BOUNDARY_CATALOG.constituency.properties.code,
-		);
+export const bestFitContainer = (
+	areas: BoundaryGeojson,
+	areaCodeKeys: readonly string[],
+	containers: BoundaryGeojson,
+	containerCodeKeys: readonly string[],
+	include: (areaCode: string) => boolean = () => true,
+): Record<string, string> => {
+	const indexed = containers.features.flatMap((feature) => {
+		const code = getProp(feature.properties, containerCodeKeys);
 		// A vintage held as properties alone cannot be matched by shape; the
 		// precompiled mappings cover that case, this needs geometry.
 		if (!code || !feature.geometry) return [];
 		const polygons = polygonsOf(feature.geometry);
 		return [{ code, polygons, bbox: bboxOf(polygons) }];
 	});
-	const constituencyAt = (x: number, y: number) =>
-		constituencies.find(
+	const containerAt = (x: number, y: number) =>
+		indexed.find(
 			({ polygons, bbox }) =>
 				inBbox(x, y, bbox) && inPolygons(x, y, polygons),
 		)?.code;
 
-	const mappings: Record<string, string[]> = {};
-	for (const feature of wardGeoJSON.features) {
-		const wardCode = getProp(
-			feature.properties,
-			BOUNDARY_CATALOG.ward.properties.code,
-		);
-		if (!wardCode || !feature.geometry) continue;
+	const fits: Record<string, string> = {};
+	for (const feature of areas.features) {
+		const areaCode = getProp(feature.properties, areaCodeKeys);
+		if (!areaCode || !feature.geometry || !include(areaCode)) continue;
 		const polygons = polygonsOf(feature.geometry);
 		const [x0, y0, x1, y1] = bboxOf(polygons);
 
@@ -406,7 +400,7 @@ export const buildConstituencyWardMappings = (
 				const x = x0 + ((i + 0.5) / MEMBERSHIP_GRID) * (x1 - x0);
 				const y = y0 + ((j + 0.5) / MEMBERSHIP_GRID) * (y1 - y0);
 				if (!inPolygons(x, y, polygons)) continue;
-				const code = constituencyAt(x, y);
+				const code = containerAt(x, y);
 				if (code) votes.set(code, (votes.get(code) ?? 0) + 1);
 			}
 		let best: string | undefined;
@@ -418,11 +412,34 @@ export const buildConstituencyWardMappings = (
 		if (!best)
 			for (const [outer] of polygons) {
 				for (const [x, y] of outer)
-					if ((best = constituencyAt(x, y))) break;
+					if ((best = containerAt(x, y))) break;
 				if (best) break;
 			}
-		if (best) (mappings[best] ??= []).push(wardCode);
+		if (best) fits[areaCode] = best;
 	}
+	return fits;
+};
 
+/**
+ * Which wards each constituency holds, best fit (see `bestFitContainer`). A
+ * ward straddling a boundary is counted once, never twice, so ward values sum
+ * to constituency totals. Against the ONS ward/constituency lookups this
+ * agrees on 99.94% (2025 wards, 2024 constituencies) and 99.99% (2022, 2010
+ * set) of wards the lookup places in a single constituency.
+ */
+export const buildConstituencyWardMappings = (
+	wardGeoJSON: BoundaryGeojson,
+	constituencyGeoJSON: BoundaryGeojson,
+): Record<string, string[]> => {
+	const mappings: Record<string, string[]> = {};
+	for (const [ward, constituency] of Object.entries(
+		bestFitContainer(
+			wardGeoJSON,
+			BOUNDARY_CATALOG.ward.properties.code,
+			constituencyGeoJSON,
+			BOUNDARY_CATALOG.constituency.properties.code,
+		),
+	))
+		(mappings[constituency] ??= []).push(ward);
 	return mappings;
 };
