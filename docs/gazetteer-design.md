@@ -62,7 +62,7 @@ All live in `public/data/datasets/`. Sizes as of 2026-09-27.
 | Artifact                         | Built by                          | Loaded                                  | Size (raw / gz) |
 | -------------------------------- | --------------------------------- | --------------------------------------- | --------------- |
 | `gazetteer.core.json`            | `precompile-data.mts`             | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
-| `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | — / 37 KB       |
+| `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | 305 KB / 44 KB  |
 | `gazetteer.matchindex.json`      | `precompile-data.mts`             | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
 | `boundary-mappings.json`         | `precompile-data.mts`             | every `/atlas` load; workers on demand  | 2.0 MB / 355 KB |
 | `lsoa-lad-mappings-<year>.json`  | `precompile-data.mts`             | on demand, LSOA location filter         | small           |
@@ -73,8 +73,11 @@ regions, 162 named locations and 936 indexed names. `version` is
 `GAZETTEER_VERSION` (currently 1).
 
 **Crosswalk.** Constituency to 2025 LAD, one table per served constituency
-release (eight, 2016-12 to 2024-07). Weights are **area**-weighted over a
-building block, not population-weighted (section 9.6).
+release (eight, 2016-12 to 2024-07), covering all 650 constituencies. Weights
+are **residents**-weighted over UK-wide building blocks, except in Northern
+Ireland, where they are area-weighted (section 9.6); the file's `weighting`
+field says which. The app reads only membership from it today; the weights
+matter once values are apportioned (9.8).
 
 **Year masks.** The match index and the cross-year parts of the boundary
 mappings store each code, name or target once with a bit mask of the vintages
@@ -289,12 +292,16 @@ The ONS lookups were used to measure, not as the source: they are published
 for only some ward releases (none for 2011, 2015, 2021 or 2026), and list a
 straddling ward under every constituency it touches, which would double-count.
 
-### 9.4 Density from `areaM2`, not polygon rings
+### 9.4 Density from precompiled area (not worth doing)
 
-`boundaries/derived.ts` computes area in the browser with `polygonAreaSqKm`. For
-LADs and constituencies the gazetteer already has `areaM2`; use it and keep the
-ring computation only as a fallback for families the core does not hold.
-Composite density must sum populations and areas separately (§4).
+The premise was wrong. Charts already read `areaSqKm` from each release's
+properties sidecar, which `scripts/compile-boundaries.mts` computes from the
+finished topology, and composite density already sums populations and areas
+separately (`helpers/populationDensity.ts`). Only the map's density layer
+measures rings in the browser, for the one release it draws: 30-100 ms once,
+cached, agreeing with the sidecar to 0.00005%. Shipping the value in the
+TopoJSON would add about 8 KB per ward file to every map download to save
+that, so it stays as is.
 
 ### 9.5 Reverse the dependency on the API
 
@@ -307,14 +314,27 @@ they exist, explicitly curated where they don't) and for the gazetteer core to
 be built from the API's output. Open question: do that, or keep `LOCATIONS` as
 the source for both and document why.
 
-### 9.6 Population-weighted crosswalks
+### 9.6 Population-weighted, UK-wide crosswalk (done)
 
-Constituency/LAD weights are area-weighted. For values about people, which is
-most of the atlas, population-weighted best fit is the better default: a rural
-LAD with most of a constituency's land but few of its residents currently
-takes most of its share. The building-block route supports this by swapping
-the measure (`build.ts` already notes it). The API's crosswalks record their
-method; this one should too.
+Fixed on 2026-09-27. The constituency/LAD crosswalk was area-weighted over 2011
+LSOAs, which cover England and Wales only, so:
+
+- Scottish and Northern Irish constituencies were absent, and a constituency
+  dataset filtered to any of the 27 named locations there (Glasgow, Edinburgh,
+  Belfast, the Highlands, ...) drew nothing;
+- its point-in-polygon test ignored holes, so Warwick and Leamington, which
+  Kenilworth and Southam surrounds, got no building blocks and was absent too;
+- a rural authority with most of a constituency's land but few of its
+  residents took most of its weight.
+
+The building blocks now cover the UK, each nation weighted by the best measure
+in `data/`: Census 2021 usual residents by 2021 LSOA (England and Wales), SIMD
+2020 total population by 2011 data zone (Scotland), and area by 2011 SOA
+(Northern Ireland, which has no small-area population source here yet; adding
+one is a data change, not a code one). The file records this in `weighting`.
+Membership in England and Wales is unchanged apart from Warwick and
+Leamington; 143 of the 2024 weights moved by more than 20 points, as with
+Dagenham and Rainham, where Havering's share falls from 66% to 39%.
 
 ### 9.7 Not worth doing any more
 
