@@ -80,12 +80,7 @@ describe("datasetIsNeeded", () => {
 	it("prioritises the active map, then visible cards", () => {
 		const active = definitionFor("simd");
 		const visible = definitionFor("localElection");
-		expect(
-			datasetLoadPriority(active, DEFAULT_VISIBILITY, active.type),
-		).toBe(0);
-		expect(datasetLoadPriority(visible, DEFAULT_VISIBILITY)).toBe(1);
-		expect(
-			datasetLoadPriority(definitionFor("simd"), DEFAULT_VISIBILITY),
-		).toBe(2);
+		expect(datasetLoadPriority(active, active.type)).toBe(0);
+		expect(datasetLoadPriority(visible)).toBe(1);
 	});
 });

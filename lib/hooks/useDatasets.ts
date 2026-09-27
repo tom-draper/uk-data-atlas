@@ -66,18 +66,15 @@ export function datasetIsNeeded(
 	);
 }
 
-/** Prioritise the active map, then visible cards, then background datasets. */
+/**
+ * Load the active map's dataset first, then the visible cards'. Nothing else
+ * is loaded (see `datasetIsNeeded`), so there is no lower tier.
+ */
 export function datasetLoadPriority(
 	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
-	visibility: Record<ChartKey, boolean>,
 	activeDatasetType?: string,
 ): number {
-	if (definition.type === activeDatasetType) return 0;
-	return getChartDefinitions(definition).some(
-		(chart) => visibility[chart.key] ?? DEFAULT_VISIBILITY[chart.key],
-	)
-		? 1
-		: 2;
+	return definition.type === activeDatasetType ? 0 : 1;
 }
 
 /**
@@ -115,11 +112,7 @@ export function useDatasets(
 						),
 					) ?? undefined)
 				: undefined,
-			priority: datasetLoadPriority(
-				definition,
-				visibility,
-				activeDatasetType,
-			),
+			priority: datasetLoadPriority(definition, activeDatasetType),
 			enabled: datasetIsNeeded(definition, visibility, activeDatasetType),
 		})),
 		parseChartDataset,
