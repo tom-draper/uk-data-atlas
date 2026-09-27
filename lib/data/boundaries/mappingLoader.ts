@@ -25,6 +25,44 @@ const WARD_PARENT_CODE_KEYS =
 	BOUNDARY_CATALOG.ward.properties.parentCode ??
 	BOUNDARY_CATALOG.localAuthority.properties.code;
 
+const WARD_TO_CONSTITUENCY_LOOKUP =
+	"lookups/ward-to-constituency/2025-05-to-2024-07-uk/WD25_PCON24_LAD25_CTYUA25_UK_LU.geojson";
+
+type OfficialWardConstituencyLookup = {
+	features: Array<{ properties: Record<string, unknown> }>;
+};
+
+/**
+ * ONS publishes split wards under each constituency they cross. Keep the
+ * geometry best fit for those 423 cases: the lookup has no share to permit an
+ * aggregation. Every unsplit ward is instead assigned by ONS's official
+ * best-fit lookup.
+ */
+async function loadOfficialWardConstituencyMembership(
+	read: (path: string) => Promise<string>,
+): Promise<{ members: Record<string, string[]>; unsplitWards: Set<string> }> {
+	const lookup = JSON.parse(
+		await read(WARD_TO_CONSTITUENCY_LOOKUP),
+	) as OfficialWardConstituencyLookup;
+	const members: Record<string, string[]> = {};
+	const unsplitWards = new Set<string>();
+	for (const { properties } of lookup.features) {
+		const ward = properties.WD25CD;
+		const constituency = properties.PCON24CD;
+		if (
+			typeof ward !== "string" ||
+			typeof constituency !== "string" ||
+			properties.SPLIT_WARD === "Yes" ||
+			properties.SPLIT_WARD === "TRUE"
+		)
+			continue;
+		unsplitWards.add(ward);
+		(members[constituency] ??= []).push(ward);
+	}
+	for (const wards of Object.values(members)) wards.sort();
+	return { members, unsplitWards };
+}
+
 async function loadBoundaryFile(
 	read: (path: string) => Promise<string>,
 	path: string,
@@ -98,11 +136,13 @@ export async function loadLsoaLadMappings(
 export async function loadBoundaryMappings(
 	read: (path: string) => Promise<string>,
 ): Promise<PrecompiledBoundaryMappings> {
-	const [wards, constituencies, localAuthorities] = await Promise.all([
-		loadBoundaryGroup(read, "ward"),
-		loadBoundaryGroup(read, "constituency"),
-		loadBoundaryGroup(read, "localAuthority"),
-	]);
+	const [wards, constituencies, localAuthorities, officialWardMembership] =
+		await Promise.all([
+			loadBoundaryGroup(read, "ward"),
+			loadBoundaryGroup(read, "constituency"),
+			loadBoundaryGroup(read, "localAuthority"),
+			loadOfficialWardConstituencyMembership(read),
+		]);
 
 	const wardToLad: Record<string, string> = {};
 	const ladToWards: Record<number, Record<string, string[]>> = {};
@@ -178,6 +218,22 @@ export async function loadBoundaryMappings(
 					constituencyBoundary,
 				),
 			);
+
+	// The current lookup replaces geometry inference wherever its relation is
+	// unambiguous. Split wards remain with the previous one-constituency best
+	// fit so a ward-valued measure cannot be counted twice in an aggregation.
+	const current = (constituencyToWards[2025] ??= {});
+	for (const [constituency, wardCodes] of Object.entries(current)) {
+		const kept = wardCodes.filter(
+			(ward) => !officialWardMembership.unsplitWards.has(ward),
+		);
+		if (kept.length > 0) current[constituency] = kept;
+		else delete current[constituency];
+	}
+	for (const [constituency, wardCodes] of Object.entries(
+		officialWardMembership.members,
+	))
+		current[constituency] = wardCodes;
 
 	return {
 		wardToLad,

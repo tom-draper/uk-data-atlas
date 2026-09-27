@@ -1,5 +1,12 @@
 [
 	{
+		"service": "WD25_PCON24_LAD25_CTYUA25_UK_LU",
+		"directory": "ward-to-constituency/2025-05-to-2024-07-uk",
+		"title": "Ward to Westminster Parliamentary Constituency, May 2025 to July 2024 (United Kingdom)",
+		"description": "Official ONS best-fit lookup from May 2025 wards to 2024 Westminster Parliamentary Constituencies, with a flag for wards split by a constituency boundary.",
+		"temporalCoverage": "2025-05-to-2024-07"
+	},
+	{
 		"service": "LAD25_CAUTH25_EN_LU",
 		"directory": "local-authority-to-combined-authority/2025-05-en",
 		"title": "Local authority district to combined authority, May 2025 (England)",
