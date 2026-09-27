@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	buildConstituencyWardMappings,
 	buildCrossYearMappings,
 	encodeBoundaryMappings,
 	extractWardLadMappings,
@@ -134,5 +135,65 @@ describe("shipped boundary mappings", () => {
 		expect(() =>
 			parsePrecompiledBoundaryMappings({ version: 1, ...mappings }),
 		).toThrow();
+	});
+});
+
+describe("constituency to ward membership", () => {
+	const square = (x0: number, x1: number) => [
+		[x0, 0],
+		[x1, 0],
+		[x1, 10],
+		[x0, 10],
+		[x0, 0],
+	];
+	const collection = (
+		key: string,
+		areas: Array<[code: string, ring: number[][]]>,
+	) =>
+		({
+			type: "FeatureCollection",
+			features: areas.map(([code, ring]) => ({
+				type: "Feature",
+				properties: { [key]: code },
+				geometry: { type: "Polygon", coordinates: [ring] },
+			})),
+		}) as any;
+	const constituencies = collection("PCON24CD", [
+		["A", square(0, 10)],
+		["B", square(10, 20)],
+	]);
+	const membership = (wards: Array<[string, number[][]]>) =>
+		buildConstituencyWardMappings(
+			collection("WD24CD", wards),
+			constituencies,
+		);
+
+	it("places a ward in the constituency holding most of its area", () => {
+		// Five of six units lie in B, but most vertices sit on the left
+		// edge, where an average of the vertices would fall in A.
+		const leftEdge = Array.from({ length: 19 }, (_, i) => [8, 9.5 - i / 2]);
+		const leaning = [
+			[8, 0],
+			[20, 0],
+			[20, 10],
+			[8, 10],
+			...leftEdge,
+			[8, 0],
+		];
+		expect(membership([["W1", leaning]])).toEqual({ B: ["W1"] });
+	});
+
+	it("places a straddling ward once, where most of it is", () => {
+		expect(membership([["W1", square(6, 12)]])).toEqual({ A: ["W1"] });
+	});
+
+	it("still places a ward too thin for any sample to land inside", () => {
+		const sliver = [
+			[2, 2],
+			[4, 4],
+			[6, 6],
+			[2, 2],
+		];
+		expect(membership([["W1", sliver]])).toEqual({ A: ["W1"] });
 	});
 });
