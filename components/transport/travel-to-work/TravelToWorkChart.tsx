@@ -17,6 +17,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface TravelToWorkChartProps {
 	activeDataset: Dataset | null;
@@ -131,7 +132,7 @@ export default function TravelToWorkChart({
 									width: `${pct}%`,
 									backgroundColor: color,
 								}}
-								title={`${label}: ${count.toLocaleString()} (${pct.toFixed(1)}%)`}
+								title={`${label}: ${formatCount(count)} (${pct.toFixed(1)}%)`}
 								className="hover:opacity-80 transition-opacity"
 							>
 								{pct > 8 && (

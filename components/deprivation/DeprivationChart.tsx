@@ -5,6 +5,7 @@ import type {
 	ScoredDeprivationSummary,
 } from "@/lib/types/deprivation";
 import DecileChart from "./DecileChart";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 /** The identity and wording of one national deprivation index. */
 export interface DeprivationIndex {
@@ -72,7 +73,7 @@ export function summaryDisplay(
 	return {
 		value: sharePercent,
 		unit: "in most deprived 10%",
-		secondary: `${summary.mostDeprivedCount.toLocaleString()} of ${summary.areaCount.toLocaleString()} ${index.areaNoun}`,
+		secondary: `${formatCount(summary.mostDeprivedCount)} of ${formatCount(summary.areaCount)} ${index.areaNoun}`,
 		barWidth: severity * 100,
 		severity,
 	};
@@ -104,7 +105,7 @@ export function areaDisplay(
 		hasData: decile !== null || hasDetail,
 		value: hasDetail
 			? detail.kind === "rank"
-				? Math.round(detail.value).toLocaleString()
+				? formatCount(Math.round(detail.value))
 				: detail.value.toFixed(1)
 			: (displayDecile ?? ""),
 		unit: hasDetail ? detail.kind : "decile",

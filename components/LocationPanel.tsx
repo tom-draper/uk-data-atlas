@@ -19,6 +19,7 @@ import {
 	useRef,
 	useMemo,
 } from "react";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface LocationPanelProps {
 	selectedLocation: string | null;
@@ -196,7 +197,7 @@ export default function LocationPanel({
 								<span
 									className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}
 								>
-									{totalPopulation.toLocaleString()}
+									{formatCount(totalPopulation)}
 								</span>
 							</button>
 						),

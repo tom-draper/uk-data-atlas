@@ -6,6 +6,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface AgeDistributionChartProps {
 	counts: Uint32Array | number[];
@@ -70,7 +71,7 @@ function AgeDistributionChart({
 						<div
 							key={age}
 							className="flex-1 hover:opacity-80 transition-opacity relative group"
-							title={`Age ${age}: ${count.toLocaleString()}`}
+							title={`Age ${age}: ${formatCount(count)}`}
 							style={{
 								height: "100%",
 							}}

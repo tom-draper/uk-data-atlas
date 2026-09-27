@@ -8,6 +8,7 @@ import {
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 const MALE_COLOR = "#60a5fa"; // blue-400, matches chart bars
 const FEMALE_COLOR = "#f472b6"; // pink-400, matches chart bars
@@ -216,11 +217,11 @@ function Gender({
 				hasData && (
 					<span className="text-[10px] text-gray-600 mr-1">
 						<span className="text-blue-600">
-							{totalMales.toLocaleString()}
+							{formatCount(totalMales)}
 						</span>{" "}
 						<span className="text-gray-500">/</span>{" "}
 						<span className="text-pink-600">
-							{totalFemales.toLocaleString()}
+							{formatCount(totalFemales)}
 						</span>
 						<span className="ml-2 text-gray-500">
 							{(totalMales / (totalMales + totalFemales)).toFixed(

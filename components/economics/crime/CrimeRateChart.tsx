@@ -11,6 +11,7 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface CrimeRateChartProps {
 	activeDataset: Dataset | null;
@@ -119,7 +120,7 @@ export default function CrimeRateChart({
 		>
 			<ChartCardValueBar
 				hasData={hasData}
-				value={Math.round(rawValue).toLocaleString()}
+				value={formatCount(Math.round(rawValue))}
 				unit="offences"
 				barWidth={intensity * 100}
 				barColor={color ?? undefined}

@@ -11,6 +11,7 @@ import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 /** Buckets the roads layer's currently rendered features into the dataset's legend rows. */
 function useVisibleRoadBreakdown(
@@ -232,7 +233,7 @@ function NetworkCard({
 											width: `${pct}%`,
 											backgroundColor: bucket.color,
 										}}
-										title={`${bucket.label}: ${bucket.count.toLocaleString()} (${pct.toFixed(1)}%)`}
+										title={`${bucket.label}: ${formatCount(bucket.count)} (${pct.toFixed(1)}%)`}
 										className="hover:opacity-80 transition-opacity"
 									>
 										{pct > 8 && (

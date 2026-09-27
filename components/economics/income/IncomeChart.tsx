@@ -14,6 +14,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -134,7 +135,7 @@ export default function IncomeChart({
 		activeDataset.id === `income${dataset.year}`
 	);
 	const formattedMedian = medianIncome
-		? `£${Math.round(medianIncome).toLocaleString()}`
+		? `£${formatCount(Math.round(medianIncome))}`
 		: null;
 
 	if (!dataset) return null;

@@ -13,6 +13,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { resolvePopulationDensity } from "@/lib/helpers/populationDensity";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
@@ -173,7 +174,7 @@ export default function PopulationDensityChart({
 					<div className="relative py-1 h-full flex flex-col justify-between pl-4">
 						<div className="flex items-baseline gap-2">
 							<div className="text-xl font-bold">
-								{Math.round(density).toLocaleString()}
+								{formatCount(Math.round(density))}
 							</div>
 							<div className="text-sm">people/km²</div>
 						</div>
@@ -181,7 +182,7 @@ export default function PopulationDensityChart({
 							<div className="flex pr-3">
 								<div className="mr-1">Population</div>
 								<div className="font-semibold">
-									{total.toLocaleString()}
+									{formatCount(total)}
 								</div>
 							</div>
 							<div className="flex">

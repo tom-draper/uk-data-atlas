@@ -19,6 +19,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface HousePriceChartProps {
 	activeDataset: Dataset | null;
@@ -91,7 +92,7 @@ function PriceChart({
 	})();
 
 	const formattedPrice = currentPrice
-		? `£${Math.round(currentPrice).toLocaleString()}`
+		? `£${formatCount(Math.round(currentPrice))}`
 		: null;
 
 	return (

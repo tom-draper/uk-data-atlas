@@ -1,3 +1,4 @@
+import { formatCount } from "@/lib/helpers/formatCount";
 interface AgeGroupBarProps {
 	label: string;
 	value: number;
@@ -29,7 +30,7 @@ export default function AgeGroupBar({
 					/>
 				</div>
 				<div className="w-14 text-[10px] font-bold text-right">
-					{value.toLocaleString()}
+					{formatCount(value)}
 				</div>
 			</div>
 		</div>

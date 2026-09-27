@@ -15,6 +15,7 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -34,7 +35,7 @@ function EthnicityBar({ data }: { data: ProcessedEthnicityData[] }) {
 						width: `${item.percentage}%`,
 						backgroundColor: item.color,
 					}}
-					title={`${item.ethnicity}: ${item.population.toLocaleString()} (${item.percentage.toFixed(1)}%)`}
+					title={`${item.ethnicity}: ${formatCount(item.population)} (${item.percentage.toFixed(1)}%)`}
 					className="group relative hover:opacity-80 transition-opacity"
 				>
 					{item.percentage > 5 && (
@@ -69,7 +70,7 @@ function Legend({
 							className="truncate font-medium"
 							title={item.ethnicity}
 						>
-							{item.population.toLocaleString()}: {item.ethnicity}
+							{formatCount(item.population)}: {item.ethnicity}
 						</span>
 					</div>
 				))}

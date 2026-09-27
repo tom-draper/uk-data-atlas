@@ -16,6 +16,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
@@ -228,7 +229,7 @@ function GenderBalanceByAgeChart({
 
 				// Direct DOM update - extremely fast, no React overhead
 				tooltip.innerHTML = `
-            Age ${age}: ${males.toLocaleString()}M / ${females.toLocaleString()}F 
+            Age ${age}: ${formatCount(males)}M / ${formatCount(females)}F 
             <span class="opacity-75">(${malePct.toFixed(1)}% male)</span>
           `;
 

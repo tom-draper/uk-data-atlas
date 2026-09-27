@@ -8,6 +8,7 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface ProcessedPartyData {
 	key: string;
@@ -39,7 +40,7 @@ function VoteBar({ data }: { data: ProcessedPartyData[] }) {
 						width: `${p.percentage}%`,
 						backgroundColor: p.color,
 					}}
-					title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(
+					title={`${p.name}: ${formatCount(p.votes)} (${p.percentage.toFixed(
 						1,
 					)}%)`}
 					className="group relative hover:opacity-80 transition-opacity"
@@ -76,7 +77,7 @@ function Legend({
 							style={{ backgroundColor: p.color }}
 						/>
 						<span className="truncate font-medium">
-							{p.key}: {p.votes.toLocaleString()}
+							{p.key}: {formatCount(p.votes)}
 						</span>
 					</div>
 				))}
