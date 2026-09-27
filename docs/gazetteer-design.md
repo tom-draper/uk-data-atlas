@@ -63,7 +63,7 @@ All live in `public/data/datasets/`. Sizes as of 2026-09-27.
 | -------------------------------- | --------------------------------- | --------------------------------------- | --------------- |
 | `gazetteer.core.json`            | `precompile-data.mts`             | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
 | `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | — / 37 KB       |
-| `gazetteer.matchindex.json`      | `scripts/gazetteer-matchindex.ts` | on demand, when the upload panel opens  | 4.3 MB / 906 KB |
+| `gazetteer.matchindex.json`      | `precompile-data.mts`             | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
 | `boundary-mappings.json`         | `precompile-data.mts`             | every `/atlas` load; workers on demand  | 1.6 MB / 287 KB |
 | `lsoa-lad-mappings-<year>.json`  | `precompile-data.mts`             | on demand, LSOA location filter         | small           |
 
@@ -250,19 +250,21 @@ reported but cannot yet be settled. They need a parish -> LAD source: the ONS
 parish lookup, fetched like other lookups, or containment against LAD geometry
 at build, as `lsoa-lad-mappings` already does.
 
-### 9.2 Build every lookup in one place
+### 9.2 Build every lookup in one place (done)
 
-The match index and the crosswalk are built by standalone scripts, not by
-`precompile-data.mts`. The match index went stale that way: 22 catalogue
-releases (LSOA 2021, LAD 2026 among them) were unmatchable until 2026-09-27. A
-test in `tests/data/compiledBoundaryAssets.test.ts` now fails if its vintages
-drift from the catalogue.
+The match index used to be built by a standalone script and went stale that
+way: 22 catalogue releases (LSOA 2021, LAD 2026 among them) were unmatchable
+until 2026-09-27. It is now built by `precompile-data.mts`
+(`lib/data/gazetteer/matchIndex.ts`), straight after the boundary mappings it
+takes ward parents from.
 
-- Give the crosswalk the same guard: every constituency release the catalogue
-  serves either has a table or is explicitly listed as unsupported. Today 2010
-  and 2015 have none.
-- Better, build the match index in precompile (it is cheap) and keep only the
-  crosswalk separate (it is expensive), with a staleness check.
+The constituency/LAD crosswalk stays a separate script
+(`scripts/gazetteer-crosswalks.ts`) because it is expensive and changes only
+with boundaries. `tests/data/compiledBoundaryAssets.test.ts` fails if either
+artifact drifts from the catalogue: the match index must cover every served
+vintage, and the crosswalk must have a table for every served constituency
+release and target the served 2025 LAD release. (Every served release has a
+table; the catalogue's 2010 and 2015 constituency years map onto them.)
 
 ### 9.3 Replace centroid constituency/ward membership
 
