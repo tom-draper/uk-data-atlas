@@ -7281,11 +7281,11 @@ paths:
                       measured: { periodCount: 28, recordCount: 225225 }
                     - id: records-resolve
                       status: waived
-                      detail: "No compiled ward release for 2020 holds every code: 2020-12-uk-bgc lacks 2 (E05013830, E05013831)."
+                      detail: "No compiled ward release for 2020 holds every code: 2020-12-uk-bgc lacks 1 (E05013830)."
                       measured:
                         areaCodeCount: 8049
                         boundaryRelease: null
-                        unresolvedCount: 2
+                        unresolvedCount: 1
                       waiver:
                         reason: The publisher's workbook gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, among otherwise December 2020 codes. Values stay on the codes the publisher used.
                     - id: countries-declared
