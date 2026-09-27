@@ -107,8 +107,8 @@ These parts of the original design proved right and still guide changes.
   referenced; density is derived and stored nowhere.
 - **Surface ambiguity, don't guess.** Names collide ("Castle", "Newcastle",
   "St Albans"). Name resolution returns candidates, and an unresolved name is a
-  reported outcome. `Gazetteer.resolveName` does this; upload matching does not
-  yet (section 9.1).
+  reported outcome. `Gazetteer.resolveName` does this, and so does upload
+  matching (section 9.1).
 - **Point-to-area is its own capability.** Crosswalks convert area to area.
   Coordinate to containing area is separate; the API's spatial indexes own it.
 - **Validate at build.** `gazetteer/validate.ts` fails the build on unknown
@@ -220,11 +220,11 @@ summed to 1 within tolerance, and 34,738 of 34,753 LSOAs assigned cleanly.
 
 ## 9. What is left, in priority order
 
-### 9.1 Stop guessing between same-named areas on upload (correctness)
+### 9.1 Same-named areas on upload (done for wards; parishes remain)
 
-`gazetteer.matchindex.json` stores one code per lowercased name per vintage,
-and `lib/data/custom/import.ts` joins name-keyed upload rows through it. Where
-a name is shared the last area built wins, silently:
+Uploads keyed by area name are joined through `gazetteer.matchindex.json`
+(`lib/data/custom/import.ts`). The index used to keep one code per name per
+vintage, so a shared name silently landed on whichever area was built last:
 
 | Geography (vintage) | Shared names | Areas behind them |
 | ------------------- | ------------ | ----------------- |
@@ -232,11 +232,23 @@ a name is shared the last area built wins, silently:
 | parish (2026)       | 575          | 1,443 (14%)       |
 | LAD, constituency   | 0            | 0                 |
 
-An uploaded row for "Castle" ward lands on one of several Castle wards. Fix:
-keep every candidate in the match index (`name -> codes`, still year-masked),
-use a parent column (ward plus LAD name or code) to disambiguate when the upload
-has one, and report rows that stay ambiguous rather than placing them. This is
-the §4 "surface, don't guess" principle applied where it matters most.
+Fixed on 2026-09-27:
+
+- The index keeps every code for a name, and the parent authority of every
+  code behind a shared name (ward parents from the release, falling back to
+  `wardToLad`; 2,098 wards, 10 KB gz).
+- A row whose name is shared is **left off the map**, never guessed, and the
+  upload form says which names and how many rows before it is applied.
+- An optional local authority column, picked or guessed from its header and
+  given as a code or a name from any vintage, settles a shared name when
+  exactly one of its wards sits in that authority.
+- When several vintages match a column equally, the newest is chosen; before,
+  a column of current ward names was read as 2011 wards.
+
+**Remaining:** parish releases publish no parent, so shared parish names are
+reported but cannot yet be settled. They need a parish -> LAD source: the ONS
+parish lookup, fetched like other lookups, or containment against LAD geometry
+at build, as `lsoa-lad-mappings` already does.
 
 ### 9.2 Build every lookup in one place
 
