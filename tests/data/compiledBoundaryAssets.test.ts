@@ -5,6 +5,7 @@ import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 import { getProp } from "@/lib/data/boundaries/properties";
 import { parseMatchIndexLevel } from "@/lib/data/areaBank";
+import type { GazetteerCore } from "@/lib/data/gazetteer/types";
 
 /**
  * Compiled assets live in public/data, where they are served from; the two
@@ -185,5 +186,32 @@ describe("constituency to local authority crosswalk", () => {
 			overlaps.targetLocalAuthorityRelease,
 			`target LAD release; ${rerun}`,
 		).toBe(target);
+	});
+});
+
+describe("gazetteer core", () => {
+	const core = JSON.parse(
+		readFileSync(
+			join(
+				process.cwd(),
+				"public",
+				"data",
+				"datasets",
+				"gazetteer.core.json",
+			),
+			"utf8",
+		),
+	) as GazetteerCore;
+
+	// Named locations keep superseded council codes for older ward releases;
+	// the core holds every LAD release with GSS codes, so each must resolve.
+	it("holds every named location's members", () => {
+		const missing = Object.entries(core.namedLocations).flatMap(
+			([name, { memberCodes }]) =>
+				memberCodes
+					.filter((code) => !core.byCode[code])
+					.map((code) => `${name}: ${code}`),
+		);
+		expect(missing).toEqual([]);
 	});
 });
