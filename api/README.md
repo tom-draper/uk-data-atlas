@@ -162,13 +162,12 @@ only **available** when its endpoint, contract and provenance are published.
       than as succession.
 - [ ] Add official ward historical change lookups. Do not promote name-based
       matching to a public equivalence claim, nor a shared code on its own.
-- [ ] Extend `population-overlap` weighting to Scotland and Northern Ireland.
-      Its blocks are 2021 LSOAs, so Scotland's 57 and Northern Ireland's 18
-      2024 constituencies convert by area only. Scotland can use 2011 data
-      zones with their SIMD 2020 populations
-      (`data/deprivation/simd/SIMD+2020v2+-+indicators.csv`), as the website's
-      crosswalk already does; Northern Ireland needs a small-area population
-      source first.
+- [ ] Extend `population-overlap` weighting to Northern Ireland. Scotland's
+      57 2024 constituencies now use 2011 data zones with the 2017 small-area
+      population estimates published in SIMD 2020v2
+      (`data/deprivation/simd/SIMD+2020v2+-+indicators.csv`). Northern
+      Ireland's 18 constituencies still convert by area only until a
+      small-area population source is imported.
 - [ ] Relate the geographies published with no relationship at all: local
       health boards, NHS England regions, national parks, local planning
       authorities, major towns and cities, and travel-to-work areas. ONS

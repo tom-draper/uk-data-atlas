@@ -1823,6 +1823,38 @@
 			"minimumCoverage": 0.99
 		},
 		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap-scotland",
+			"method": "population-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Small-area population estimates 2017 (SIMD 2020v2)",
+				"date": "2017-06-30",
+				"blocks": {
+					"geography": "dataZone",
+					"boundaryRelease": "2011-12-sc-bfc"
+				}
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"pairs": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"sourceCodePattern": "^S14",
+			"population": {
+				"input": "deprivation/simd/SIMD+2020v2+-+indicators.csv",
+				"codeColumn": "Data_Zone",
+				"valueColumn": "Total_population"
+			},
+			"minimumCoverage": 0.99
+		},
+		{
 			"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
 			"method": "geometric-containment",
 			"quality": "derived",
