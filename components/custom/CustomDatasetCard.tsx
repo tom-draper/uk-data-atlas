@@ -169,9 +169,9 @@ export function CustomDatasetCard({
 						className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}
 					>
 						<div
-							className="h-full rounded-xs transition-all duration-300"
+							className="h-full origin-left rounded-xs transition-transform duration-300"
 							style={{
-								width: `${barWidth}%`,
+								transform: `scaleX(${barWidth / 100})`,
 								backgroundColor: valueColor,
 							}}
 						/>

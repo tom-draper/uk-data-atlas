@@ -77,9 +77,14 @@ export function ChartCardValueBar({
 			<div
 				className={`h-1.5 rounded-xs overflow-hidden ${isDark ? "bg-white/10" : "bg-black/8"}`}
 			>
+				{/* Scaled, not sized: a width transition relays out the whole
+				    page every frame, while a transform stays on the compositor. */}
 				<div
-					className="h-full rounded-xs transition-all duration-300"
-					style={{ width: `${barWidth}%`, backgroundColor: barColor }}
+					className="h-full origin-left rounded-xs transition-transform duration-300"
+					style={{
+						transform: `scaleX(${barWidth / 100})`,
+						backgroundColor: barColor,
+					}}
 				/>
 			</div>
 		</div>
