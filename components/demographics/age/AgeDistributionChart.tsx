@@ -80,12 +80,11 @@ function AgeDistributionChart({
 								className="size-full origin-bottom"
 								style={{
 									backgroundColor: getAgeColor(age),
-									// translateZ(0) forces GPU layer without will-change issues
-									transform: `scaleY(${scale}) translateZ(0)`,
+									// No forced GPU layer: a hundred of them cost
+									// more to composite on each hover than the
+									// bars cost to paint.
+									transform: `scaleY(${scale})`,
 									minHeight: scale > 0 ? "2px" : "0",
-									// Optimize paint operations
-									backfaceVisibility: "hidden",
-									WebkitBackfaceVisibility: "hidden",
 								}}
 							/>
 						</div>
