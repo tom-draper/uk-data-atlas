@@ -116,3 +116,47 @@ describe("upload match index", () => {
 		}
 	});
 });
+
+describe("constituency to local authority crosswalk", () => {
+	const overlaps = JSON.parse(
+		readFileSync(
+			join(
+				process.cwd(),
+				"public",
+				"data",
+				"datasets",
+				"constituency-lad-overlaps.json",
+			),
+			"utf8",
+		),
+	) as {
+		targetLocalAuthorityRelease: string;
+		releases: Record<string, unknown>;
+	};
+	const rerun = "rerun scripts/gazetteer-crosswalks.ts";
+
+	it("has a table for every constituency release the catalogue serves", () => {
+		const { releases, vintages } = BOUNDARY_CATALOG.constituency;
+		const served = new Set(
+			Object.values(vintages).map(
+				(asset) =>
+					releases.find((release) => release.asset === asset)?.id,
+			),
+		);
+		expect(
+			Object.keys(overlaps.releases).sort(),
+			`constituency releases; ${rerun}`,
+		).toEqual([...served].sort());
+	});
+
+	it("targets the local authority release the catalogue serves", () => {
+		const { releases, vintages } = BOUNDARY_CATALOG.localAuthority;
+		const target = releases.find(
+			(release) => release.asset === vintages[2025],
+		)?.id;
+		expect(
+			overlaps.targetLocalAuthorityRelease,
+			`target LAD release; ${rerun}`,
+		).toBe(target);
+	});
+});
