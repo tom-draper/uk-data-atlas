@@ -233,8 +233,12 @@ const responseExamples = Object.entries(openapi.paths).flatMap(
  * of the live items, in any order. Identifiers, codes, names and prose must
  * match exactly. Hashes and numbers change with every data build, so only
  * their type is checked: an example shows what a count or hash looks like,
- * not today's value.
+ * not today's value. A hash inside a string, such as a release link or a
+ * citation, is masked the same way before the rest is compared.
  */
+const HASH = /sha256:[0-9a-f]{64}/g;
+const maskHashes = (value: unknown) =>
+	typeof value === "string" ? value.replaceAll(HASH, "sha256:…") : value;
 const departures = (example: unknown, live: unknown, at: string): string[] => {
 	if (typeof example === "string" && example.startsWith("sha256:"))
 		return typeof live === "string" && live.startsWith("sha256:")
@@ -243,7 +247,7 @@ const departures = (example: unknown, live: unknown, at: string): string[] => {
 	if (typeof example === "number")
 		return typeof live === "number" ? [] : [`${at}: expected a number`];
 	if (example === null || typeof example !== "object")
-		return example === live
+		return maskHashes(example) === maskHashes(live)
 			? []
 			: [`${at}: ${JSON.stringify(example)} is ${JSON.stringify(live)}`];
 	if (Array.isArray(example)) {
