@@ -49,7 +49,7 @@ export function validateCore(
 			);
 	}
 
-	// namedLocations reproduce LOCATIONS exactly (regression guard).
+	// namedLocations reproduce the resolved places exactly (regression guard).
 	for (const [name, loc] of Object.entries(locations)) {
 		const got = core.namedLocations[name];
 		if (!got) {
@@ -58,7 +58,7 @@ export function validateCore(
 		}
 		if (got.memberCodes.join(",") !== loc.lad_codes.join(","))
 			errors.push(
-				`namedLocations[${name}] members differ from LOCATIONS`,
+				`namedLocations[${name}] members differ from its definition`,
 			);
 		// A member with no matching boundary in any shipped vintage is LOCATIONS
 		// curation debt (a pre-2016 recoded/abolished LAD), not a gazetteer fault.

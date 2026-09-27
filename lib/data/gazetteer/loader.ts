@@ -9,6 +9,12 @@ import { LOCATIONS } from "../locations";
 import { buildCore, type LevelSource } from "./build";
 import { bboxOf, centroidOf, outerRings, pointInGeom } from "./geometry";
 import { validateCore } from "./validate";
+import {
+	OFFICIAL_PLACES,
+	PLACE_LOOKUPS,
+	resolvePlaces,
+	type ResolvedPlace,
+} from "./places";
 import type { GazetteerCore } from "./types";
 import type { Topology } from "topojson-specification";
 
@@ -99,6 +105,49 @@ function linkLadsToRegions(
 	}
 }
 
+/** Each ONS place code's local authorities, from the lookups in data/. */
+async function loadPlaceMembers(
+	read: (path: string) => Promise<string>,
+): Promise<Record<string, string[]>> {
+	const members: Record<string, string[]> = {};
+	for (const { lookup, file, localAuthorityKey, placeKey } of PLACE_LOOKUPS) {
+		const { features } = JSON.parse(
+			await read(`lookups/${lookup}/${file}`),
+		) as { features: { properties: Record<string, unknown> }[] };
+		for (const { properties } of features) {
+			const place = properties[placeKey];
+			const localAuthority = properties[localAuthorityKey];
+			if (typeof place === "string" && typeof localAuthority === "string")
+				(members[place] ??= []).push(localAuthority);
+		}
+	}
+	return members;
+}
+
+/** Say what the lookups changed, so a drifting curated list is visible. */
+function reportPlaceChanges(
+	places: Record<string, ResolvedPlace>,
+	currentCodes: ReadonlySet<string>,
+) {
+	for (const [name, place] of Object.entries(places)) {
+		if (!place.source) continue;
+		const curated = new Set(
+			(LOCATIONS[name]?.lad_codes ?? []).filter((c) =>
+				currentCodes.has(c),
+			),
+		);
+		const sourced = place.lad_codes.filter((c) => currentCodes.has(c));
+		const added = sourced.filter((c) => !curated.has(c));
+		const removed = [...curated].filter((c) => !sourced.includes(c));
+		if (added.length || removed.length)
+			console.log(
+				`  gazetteer: ${name} from ${place.source.lookup}` +
+					(added.length ? `, adds ${added.join(" ")}` : "") +
+					(removed.length ? `, drops ${removed.join(" ")}` : ""),
+			);
+	}
+}
+
 async function loadFeatures(
 	read: (path: string) => Promise<string>,
 	path: string,
@@ -151,8 +200,6 @@ export async function loadGazetteerCore(
 		},
 	];
 
-	const core = buildCore(sources, LOCATIONS, GAZETTEER_VERSION);
-
 	// Current LAD codes = union of post-reorganisation vintages (>= 2023). Region
 	// area is rolled up over these only, so multi-vintage member lists don't
 	// double-count areas reorganised by April 2023 (Cumbria, North Yorkshire).
@@ -170,9 +217,20 @@ export async function loadGazetteerCore(
 		}
 	});
 
+	const placeMembers = await loadPlaceMembers(read);
+	const lookupCodes = new Set(Object.values(placeMembers).flat());
+	const places = resolvePlaces(
+		LOCATIONS,
+		OFFICIAL_PLACES,
+		placeMembers,
+		lookupCodes,
+	);
+	reportPlaceChanges(places, lookupCodes);
+	const core = buildCore(sources, places, GAZETTEER_VERSION);
+
 	linkLadsToRegions(core, ladByVintage.flat(), regions, currentCodes);
 
-	const { errors, warnings } = validateCore(core, LOCATIONS, currentCodes);
+	const { errors, warnings } = validateCore(core, places, currentCodes);
 	if (warnings.length > 0)
 		console.warn(
 			`  gazetteer: ${warnings.length} warning(s) (LOCATIONS curation debt), e.g. ${warnings[0]}`,

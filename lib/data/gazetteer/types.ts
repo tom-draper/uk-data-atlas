@@ -1,4 +1,5 @@
 // Gazetteer artifact types. See docs/gazetteer-design.md.
+import type { PlaceKind, PlaceSource } from "./places";
 
 export type Level =
 	| "region"
@@ -23,6 +24,12 @@ export interface GazetteerEntry {
 export interface NamedLocation {
 	memberCodes: string[];
 	bbox: [number, number, number, number];
+	/** An official area, or an editorial grouping (see ./places.ts). */
+	kind: PlaceKind;
+	/** The ONS lookup an official area's current members come from. */
+	source?: PlaceSource;
+	/** Set when the definition has been revised since the gazetteer version. */
+	definitionRevision?: number;
 }
 
 // The eager core artifact (gazetteer.core.json). Coarse levels + indexes.

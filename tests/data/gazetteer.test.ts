@@ -4,6 +4,7 @@ import { join } from "path";
 import { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
 import type { Crosswalk, GazetteerCore } from "@/lib/data/gazetteer/types";
 import { LOCATIONS } from "@/lib/data/locations";
+import { OFFICIAL_PLACES } from "@/lib/data/gazetteer/places";
 
 const PRECOMPILED = join(process.cwd(), "public", "data", "datasets");
 const core = JSON.parse(
@@ -20,17 +21,49 @@ const g = new Gazetteer(core, {
 	"constituency->localAuthority": crosswalk,
 });
 
-describe("Gazetteer core agrees with LOCATIONS (regression guard)", () => {
-	it("membersOf matches LOCATIONS.lad_codes for every named location", () => {
+describe("Gazetteer named locations", () => {
+	const official = (name: string) => OFFICIAL_PLACES[name]?.kind;
+
+	it("keeps editorial locations exactly as curated in LOCATIONS", () => {
 		for (const [name, loc] of Object.entries(LOCATIONS)) {
+			if (official(name) && official(name) !== "country") continue;
+			expect(g.namedLocation(name)?.kind).toBe(
+				official(name) ?? "editorial",
+			);
 			expect(g.membersOf(name)).toEqual(loc.lad_codes);
+			expect(g.boundsOf(name)).toEqual(loc.bounds);
 		}
 	});
 
-	it("boundsOf matches LOCATIONS.bounds for every named location", () => {
-		for (const [name, loc] of Object.entries(LOCATIONS)) {
-			expect(g.boundsOf(name)).toEqual(loc.bounds);
+	it("sources official areas from ONS, keeping curated superseded codes", () => {
+		for (const [name, place] of Object.entries(OFFICIAL_PLACES)) {
+			if (place.kind === "country") continue;
+			const location = g.namedLocation(name)!;
+			expect(location.kind).toBe(place.kind);
+			expect(location.source).toEqual({
+				lookup: place.lookup,
+				code: place.code,
+			});
+			// Codes the curated list keeps for older boundary releases stay.
+			for (const code of LOCATIONS[name]!.lad_codes)
+				if (!g.get(code) || g.get(code)!.vintage < 2023)
+					expect(location.memberCodes).toContain(code);
+			const [w, s, e, n] = LOCATIONS[name]!.bounds;
+			const [bw, bs, be, bn] = location.bbox;
+			expect(bw <= w && bs <= s && be >= e && bn >= n).toBe(true);
 		}
+	});
+
+	it("includes the councils the hand-kept regions had lost", () => {
+		const includes = (name: string, code: string) =>
+			expect(g.membersOf(name)).toContain(code);
+		includes("South East", "E07000177"); // Cherwell
+		includes("South East", "E07000181"); // West Oxfordshire
+		includes("South East", "E07000229"); // Worthing
+		includes("Yorkshire", "E06000012"); // North East Lincolnshire
+		includes("Yorkshire", "E06000013"); // North Lincolnshire
+		includes("South West", "E06000030"); // Swindon
+		includes("West Midlands", "E07000198"); // Staffordshire Moorlands
 	});
 });
 
