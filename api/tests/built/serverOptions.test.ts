@@ -91,7 +91,7 @@ test("documents exactly the settings the server reads", () => {
 	const section = /^### Configuration\n([\s\S]*?)^### /m.exec(readme)?.[1];
 	assert.ok(section, "README has no Configuration section");
 	const documented = new Set(
-		[...section.matchAll(/^\| `([A-Z_]+)` \|/gm)].map((match) => match[1]),
+		[...section.matchAll(/^\| `([A-Z_]+)` +\|/gm)].map((match) => match[1]),
 	);
 	assert.deepEqual([...documented].sort(), [...read].sort());
 });
