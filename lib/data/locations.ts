@@ -1102,10 +1102,10 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 	// Lancashire
 	Lancashire: {
 		lad_codes: [
-			// Historic Lancashire unitary areas, plus Sefton for Southport.
+			// Ceremonial Lancashire: the county council's districts and the
+			// two unitaries. Sefton (Southport) is Merseyside's.
 			"E06000008", // Blackburn with Darwen
 			"E06000009", // Blackpool
-			"E08000014", // Sefton (Southport)
 			"E07000117",
 			"E07000118",
 			"E07000119",
@@ -1119,7 +1119,7 @@ export const LOCATIONS: Record<string, LocationBounds> = {
 			"E07000127",
 			"E07000128",
 		],
-		bounds: [-3.2, 53.3, -2.2, 54.2],
+		bounds: [-3.1, 53.45, -2.0, 54.25],
 	},
 
 	// Cheshire
