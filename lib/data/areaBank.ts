@@ -7,6 +7,15 @@ export interface AreaEntry {
 	codes: Set<string>;
 	/** Lowercase name → every area of that name; more than one is ambiguous. */
 	nameToCodes: Map<string, string[]>;
+	/**
+	 * Parent codes (a ward's local authorities) for the areas behind a shared
+	 * name, so a parent column in the upload can tell them apart.
+	 */
+	parentsOf?: Map<string, string[]>;
+	/** What the parents are, for the upload form, e.g. "Local authority". */
+	parentLabel?: string;
+	/** Lowercased parent name → its codes in any vintage. */
+	parentNameToCodes?: Map<string, string[]>;
 }
 
 export interface AreaMatch {
@@ -22,10 +31,18 @@ const DISTRICT_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?$/i;
 
 // Precomputed match index (scripts/gazetteer-matchindex.ts): per boundary
 // level+vintage, codes and a lowercased name -> codes map. Names are not
-// unique (dozens of wards are called "Castle"), so every code is kept.
+// unique (dozens of wards are called "Castle"), so every code is kept, with
+// the parents that disambiguate them where the geography has any.
 export type MatchIndex = Record<
 	string,
-	Record<number, { codes: string[]; names: Record<string, string[]> }>
+	Record<
+		number,
+		{
+			codes: string[];
+			names: Record<string, string[]>;
+			parents?: Record<string, string[]>;
+		}
+	>
 >;
 
 /**
@@ -37,6 +54,8 @@ export type CompactMatchIndexLevel = {
 	years: number[];
 	codes: Record<string, number>;
 	names: [name: string, code: string, mask: number][];
+	/** Every parent code seen for a code, across the level's vintages. */
+	parents?: Record<string, string[]>;
 };
 
 export function compactMatchIndexLevel(
@@ -50,7 +69,14 @@ export function compactMatchIndexLevel(
 
 	const codes: Record<string, number> = {};
 	const names = new Map<string, [string, string, number]>();
+	const parents: Record<string, string[]> = {};
 	years.forEach((year, i) => {
+		for (const [code, codeParents] of Object.entries(
+			level[year].parents ?? {},
+		))
+			for (const parent of codeParents)
+				if (!(parents[code] ??= []).includes(parent))
+					parents[code].push(parent);
 		const bit = 1 << i;
 		for (const code of level[year].codes)
 			codes[code] = (codes[code] ?? 0) | bit;
@@ -62,7 +88,12 @@ export function compactMatchIndexLevel(
 				else names.set(key, [name, code, bit]);
 			}
 	});
-	return { years, codes, names: [...names.values()] };
+	return {
+		years,
+		codes,
+		names: [...names.values()],
+		...(Object.keys(parents).length > 0 && { parents }),
+	};
 }
 
 /** Parse one geography from the downloaded match index into per-year data. */
@@ -70,7 +101,8 @@ export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
 	if (typeof value !== "object" || value === null || Array.isArray(value))
 		throw new Error("Invalid gazetteer match index level.");
 
-	const { years, codes, names } = value as Partial<CompactMatchIndexLevel>;
+	const { years, codes, names, parents } =
+		value as Partial<CompactMatchIndexLevel>;
 	if (
 		!Array.isArray(years) ||
 		years.length > 31 ||
@@ -78,7 +110,18 @@ export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
 		typeof codes !== "object" ||
 		codes === null ||
 		Array.isArray(codes) ||
-		!Array.isArray(names)
+		!Array.isArray(names) ||
+		(parents !== undefined &&
+			(typeof parents !== "object" ||
+				parents === null ||
+				Array.isArray(parents) ||
+				!Object.values(parents).every(
+					(codeParents) =>
+						Array.isArray(codeParents) &&
+						codeParents.every(
+							(parent) => typeof parent === "string",
+						),
+				)))
 	)
 		throw new Error("Invalid gazetteer match index level.");
 
@@ -89,7 +132,8 @@ export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
 		((mask as number) & ~full) === 0;
 
 	const level: MatchIndex[string] = {};
-	for (const year of years) level[year] = { codes: [], names: {} };
+	for (const year of years)
+		level[year] = { codes: [], names: {}, ...(parents && { parents }) };
 	const eachYear = (mask: number, visit: (year: number) => void) =>
 		years.forEach((year, i) => {
 			if (mask & (1 << i)) visit(year);
@@ -123,14 +167,47 @@ const LEVEL_LABELS: Record<string, string> = {
 	superOutputArea: "Super Output Area",
 };
 
+/** The geography a level's parents belong to, where it has parents. */
+const PARENT_LEVELS: Record<string, { level: string; label: string }> = {
+	ward: { level: "localAuthority", label: "Local authority" },
+};
+
+/** Every name a level has had, across vintages, with every code it named. */
+const namesAcrossVintages = (byYear: MatchIndex[string]) => {
+	const merged = new Map<string, string[]>();
+	for (const { names } of Object.values(byYear))
+		for (const [name, codes] of Object.entries(names)) {
+			const known = merged.get(name) ?? [];
+			merged.set(name, [
+				...known,
+				...codes.filter((code) => !known.includes(code)),
+			]);
+		}
+	return merged;
+};
+
 // Builds the same AreaBank buildAreaBank derives from geometry, but from the
 // precomputed match index. Lets upload matching run against every geography
 // without loading boundary geometry at runtime.
 export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 	const bank: AreaBank = [];
+	const parentNameCache = new Map<string, Map<string, string[]>>();
+	const parentNames = (boundaryType: string) => {
+		const parent = PARENT_LEVELS[boundaryType];
+		const parentIndex = parent && index[parent.level];
+		if (!parent || !parentIndex) return {};
+		let names = parentNameCache.get(parent.level);
+		if (!names) {
+			names = namesAcrossVintages(parentIndex);
+			parentNameCache.set(parent.level, names);
+		}
+		return { parentLabel: parent.label, parentNameToCodes: names };
+	};
 	for (const [boundaryType, byYear] of Object.entries(index)) {
 		const label = LEVEL_LABELS[boundaryType] ?? boundaryType;
-		for (const [yearStr, { codes, names }] of Object.entries(byYear)) {
+		for (const [yearStr, { codes, names, parents }] of Object.entries(
+			byYear,
+		)) {
 			const year = Number(yearStr);
 			if (codes.length > 0) {
 				bank.push({
@@ -151,6 +228,10 @@ export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 					matchType: "name",
 					codes: new Set(),
 					nameToCodes: new Map(nameEntries),
+					...(parents && {
+						parentsOf: new Map(Object.entries(parents)),
+						...parentNames(boundaryType),
+					}),
 				});
 			}
 		}

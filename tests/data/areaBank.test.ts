@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+	buildAreaBankFromIndex,
 	compactMatchIndexLevel,
 	detectCoordinateColumns,
 	parseMatchIndexLevel,
@@ -82,6 +83,67 @@ describe("match index vintages", () => {
 			);
 			expect(parsed[year].names).toEqual(level[year].names);
 		}
+	});
+
+	it("keeps the parents that tell same-named areas apart", () => {
+		const withParents = {
+			2023: { ...level[2023], parents: { E05000001: ["E07000001"] } },
+			2024: {
+				...level[2024],
+				parents: {
+					E05000001: ["E06000001"],
+					E05000004: ["E07000002"],
+				},
+			},
+		};
+		const parsed = parseMatchIndexLevel(
+			JSON.parse(JSON.stringify(compactMatchIndexLevel(withParents))),
+		);
+		expect(parsed[2024].parents).toEqual({
+			E05000001: ["E07000001", "E06000001"],
+			E05000004: ["E07000002"],
+		});
+
+		const [nameEntry] = buildAreaBankFromIndex({ ward: parsed }).filter(
+			(entry) => entry.matchType === "name" && entry.year === 2024,
+		);
+		expect(nameEntry?.parentsOf?.get("E05000004")).toEqual(["E07000002"]);
+	});
+
+	it("offers ward entries the local authority names of every vintage", () => {
+		const bank = buildAreaBankFromIndex({
+			ward: {
+				2026: {
+					codes: ["E05000001", "E05000002"],
+					names: { castle: ["E05000001", "E05000002"] },
+					parents: {
+						E05000001: ["E07000001"],
+						E05000002: ["E06000064"],
+					},
+				},
+			},
+			localAuthority: {
+				2019: { codes: [], names: { allerdale: ["E07000026"] } },
+				2025: {
+					codes: [],
+					names: {
+						cumberland: ["E06000063"],
+						oxford: ["E07000178"],
+					},
+				},
+			},
+		});
+		const wardNames = bank.find(
+			(entry) =>
+				entry.boundaryType === "ward" && entry.matchType === "name",
+		);
+		expect(wardNames?.parentLabel).toBe("Local authority");
+		expect(wardNames?.parentNameToCodes?.get("allerdale")).toEqual([
+			"E07000026",
+		]);
+		expect(wardNames?.parentNameToCodes?.get("oxford")).toEqual([
+			"E07000178",
+		]);
 	});
 
 	it("rejects a mask that names a vintage the level does not have", () => {

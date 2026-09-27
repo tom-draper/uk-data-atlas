@@ -17,6 +17,7 @@ import {
 	BOUNDARY_TYPES,
 } from "../lib/data/boundaries/catalog";
 import { compactMatchIndexLevel, type MatchIndex } from "../lib/data/areaBank";
+import { parseBoundaryWardToLad } from "../lib/data/boundaries/mappings";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -49,7 +50,24 @@ const LEVELS = BOUNDARY_TYPES.map((boundaryType) => ({
 	vintages: BOUNDARY_CATALOG[boundaryType].vintages as Record<number, string>,
 	codeKeys: BOUNDARY_CATALOG[boundaryType].properties.code,
 	nameKeys: BOUNDARY_CATALOG[boundaryType].properties.name,
+	parentKeys: (
+		BOUNDARY_CATALOG[boundaryType].properties as {
+			parentCode?: readonly string[];
+		}
+	).parentCode,
 }));
+
+/**
+ * Ward releases from December 2017 to 2021 publish no local authority, so a
+ * ward's parent falls back to the precompiled ward -> LAD map, which fills
+ * those gaps from geometry. Run precompile first so it is current.
+ */
+const loadWardToLad = async () =>
+	parseBoundaryWardToLad(
+		JSON.parse(
+			await readFile(join(OUT_DIR, "boundary-mappings.json"), "utf8"),
+		),
+	);
 
 const sizes = (o: unknown) => {
 	const j = JSON.stringify(o);
@@ -59,24 +77,39 @@ const sizes = (o: unknown) => {
 async function main() {
 	console.log("Building match index...");
 	const index: MatchIndex = {};
+	const wardToLad = await loadWardToLad();
 	for (const lvl of LEVELS) {
 		const years = Object.keys(lvl.vintages).map(Number);
 		for (const year of years) {
 			const feats = await load(lvl.vintages[year]);
 			const codes = new Set<string>();
 			const names: Record<string, string[]> = {};
+			const parentOf: Record<string, string> = {};
 			for (const f of feats) {
 				const code = getProp(f.properties, lvl.codeKeys);
 				const name = getProp(f.properties, lvl.nameKeys);
 				if (code) codes.add(code);
 				if (name && code) {
-					const codes = (names[name.toLowerCase()] ??= []);
-					if (!codes.includes(code)) codes.push(code);
+					const nameCodes = (names[name.toLowerCase()] ??= []);
+					if (!nameCodes.includes(code)) nameCodes.push(code);
 				}
+				const parent =
+					(code &&
+						lvl.parentKeys &&
+						getProp(f.properties, lvl.parentKeys)) ||
+					(code && lvl.boundaryType === "ward" && wardToLad[code]);
+				if (code && parent) parentOf[code] = parent;
 			}
+			// Parents only matter where a name is shared, so ship only those.
+			const parents: Record<string, string[]> = {};
+			for (const nameCodes of Object.values(names))
+				if (nameCodes.length > 1)
+					for (const code of nameCodes)
+						if (parentOf[code]) parents[code] = [parentOf[code]];
 			(index[lvl.boundaryType] ??= {})[year] = {
 				codes: [...codes],
 				names,
+				...(Object.keys(parents).length > 0 && { parents }),
 			};
 			console.log(
 				`  ${lvl.boundaryType} ${year}: ${codes.size} codes, ${Object.keys(names).length} names`,
