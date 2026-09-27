@@ -1097,15 +1097,15 @@ client should copy into production.
 Keep v1 paths stable rather than renaming routes for tidiness. Make the mental
 model explicit instead:
 
-| Term                        | Meaning                                                                               |
-| --------------------------- | ------------------------------------------------------------------------------------- |
-| **Area**                    | One official, versioned identity: `{geography}/{release}/{code}`.                     |
-| **Place**                   | An ambiguous name-resolution result from `/places`; it is never silently chosen.      |
-| **Curated area collection** | An editorial grouping served by `/locations`, not a generic geographic `location`.    |
-| **Source geography**        | The geography and code vintage on the publisher's observation.                        |
-| **Geometry release**        | The caller-selected boundary release used only to join compatible geometry for a map. |
-| **Observation period**      | The time period the measure describes.                                                |
-| **Atlas release**           | The immutable published Atlas artifact set that produced the response.                |
+| Term                        | Meaning                                                                                                                                                                      |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Area**                    | One official, versioned identity: `{geography}/{release}/{code}`.                                                                                                            |
+| **Place**                   | An ambiguous name-resolution result from `/places`; it is never silently chosen.                                                                                             |
+| **Curated area collection** | A named set of areas served by `/locations`: an official area ONS defines (its `kind` and `source` say which) or an editorial grouping. Not a generic geographic `location`. |
+| **Source geography**        | The geography and code vintage on the publisher's observation.                                                                                                               |
+| **Geometry release**        | The caller-selected boundary release used only to join compatible geometry for a map.                                                                                        |
+| **Observation period**      | The time period the measure describes.                                                                                                                                       |
+| **Atlas release**           | The immutable published Atlas artifact set that produced the response.                                                                                                       |
 
 The route selector in the documentation should begin with the user’s job:
 
