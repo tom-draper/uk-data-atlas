@@ -150,6 +150,78 @@ describe("custom import materialisation", () => {
 		]);
 	});
 
+	it("tells same-named areas apart by a local authority column", () => {
+		const document = createCsvImportDocument(
+			"wards.csv",
+			[
+				["Ward", "Council", "Rate"],
+				["Castle", "E07000001", "1"],
+				["Castle", "Oxford", "2"],
+				["Castle", "Nowhere", "3"],
+				["Bridge", "E07000001", "4"],
+			],
+			0,
+		);
+		const { dataset, report } = materialiseCustomImport(
+			"dataset-5",
+			document,
+			{
+				kind: "choropleth",
+				codeColumn: "Ward",
+				valueColumn: "Rate",
+				boundaryType: "ward",
+				boundaryYear: 2026,
+				nameToCodes: new Map([
+					["castle", ["E05000001", "E05000002"]],
+					["bridge", ["E05000003", "E05000004"]],
+				]),
+				parentColumn: "Council",
+				parentsOf: new Map([
+					["E05000001", ["E07000001"]],
+					["E05000002", ["E07000178"]],
+					// Both Bridge wards sit in the same authority, so the
+					// parent cannot decide between them.
+					["E05000003", ["E07000001"]],
+					["E05000004", ["E07000001"]],
+				]),
+				parentNameToCodes: new Map([["oxford", ["E07000178"]]]),
+			},
+		);
+
+		expect(dataset?.data).toEqual({ E05000001: 1, E05000002: 2 });
+		expect(report.issues).toMatchObject([
+			{
+				code: "ambiguous-name",
+				rows: [4, 5],
+				names: ["Castle", "Bridge"],
+			},
+		]);
+	});
+
+	it("reports a parent column the file does not have", () => {
+		const report = validateCustomImport(
+			createCsvImportDocument("rates.csv", [["Ward", "Rate"]], 0),
+			{
+				kind: "choropleth",
+				codeColumn: "Ward",
+				valueColumn: "Rate",
+				boundaryType: "ward",
+				boundaryYear: 2026,
+				parentColumn: "Council",
+			},
+		);
+
+		expect(report).toMatchObject({
+			valid: false,
+			issues: [
+				{
+					code: "missing-column",
+					message: expect.stringContaining("Council"),
+				},
+			],
+		});
+	});
+
 	it("rejects a plan that refers to an absent column", () => {
 		const report = validateCustomImport(
 			createCsvImportDocument("rates.csv", [["Code", "Rate"]], 0),

@@ -8,6 +8,7 @@ import {
 	canVisualise,
 	chooseMatch,
 	guessCodeColumn,
+	guessParentColumn,
 	guessValueColumn,
 	importWarnings,
 	isPointMode,
@@ -18,6 +19,7 @@ import type { CustomImport } from "@/lib/data/custom/import";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { BoundaryColumnFields } from "./BoundaryColumnFields";
 import { PointColumnFields } from "./PointColumnFields";
+import { ColumnDropdown } from "./ColumnDropdown";
 
 export function UploadModal({
 	isOpen,
@@ -40,6 +42,8 @@ export function UploadModal({
 	const [overrideLabel, setOverrideLabel] = useState("");
 	const [showBoundaryOptions, setShowBoundaryOptions] = useState(false);
 	const [error, setError] = useState("");
+	/** The reader's parent column; "" is an explicit "None", null not chosen. */
+	const [parentChoice, setParentChoice] = useState<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const isDark = useIsDark();
 
@@ -56,24 +60,25 @@ export function UploadModal({
 	);
 	const pointMode = isPointMode(coord, matches);
 
-	// Rows the upload would leave off, shown before it is applied. The match
-	// entry comes from the area bank, so it is stable across renders.
-	const matchEntry = effectiveMatch?.entry;
-	const warnings = useMemo(
-		() =>
-			importWarnings(
-				{
-					file: file?.name ?? null,
-					csvData,
-					headerRow,
-					selectedColumn,
-					dataColumn,
-					latColumn,
-					lngColumn,
-				},
-				pointMode,
-				effectiveMatch,
-			),
+	// A local authority column settles wards that share a name. Until the
+	// reader picks one (or "None"), a header that looks like one is used.
+	const parentGuess = useMemo(
+		() => guessParentColumn(csvData[headerRow] ?? [], selectedColumn),
+		[csvData, headerRow, selectedColumn],
+	);
+	const parentColumn = parentChoice ?? parentGuess ?? "";
+
+	const draft = useMemo(
+		() => ({
+			file: file?.name ?? null,
+			csvData,
+			headerRow,
+			selectedColumn,
+			dataColumn,
+			latColumn,
+			lngColumn,
+			parentColumn,
+		}),
 		[
 			file,
 			csvData,
@@ -82,10 +87,25 @@ export function UploadModal({
 			dataColumn,
 			latColumn,
 			lngColumn,
-			pointMode,
-			matchEntry,
+			parentColumn,
 		],
 	);
+
+	// Rows the upload would leave off, shown before it is applied, and whether
+	// any of them could be settled by a parent column. The match entry comes
+	// from the area bank, so it is stable across renders.
+	const matchEntry = effectiveMatch?.entry;
+	const { warnings, hasSharedNames } = useMemo(() => {
+		const warnings = importWarnings(draft, pointMode, effectiveMatch);
+		const hasSharedNames =
+			!!matchEntry?.parentsOf &&
+			importWarnings(
+				{ ...draft, parentColumn: "" },
+				pointMode,
+				effectiveMatch,
+			).some((warning) => warning.code === "ambiguous-name");
+		return { warnings, hasSharedNames };
+	}, [draft, pointMode, matchEntry]);
 
 	// Prefill the lat/lng/value pickers from detection when entering point mode.
 	useEffect(() => {
@@ -107,6 +127,7 @@ export function UploadModal({
 		setLngColumn("");
 		setOverrideLabel("");
 		setShowBoundaryOptions(false);
+		setParentChoice(null);
 		setError("");
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
@@ -140,6 +161,7 @@ export function UploadModal({
 
 	const handleSelectedColumnChange = (value: string) => {
 		setSelectedColumn(value);
+		setParentChoice(null);
 		setOverrideLabel("");
 		setShowBoundaryOptions(false);
 	};
@@ -152,25 +174,14 @@ export function UploadModal({
 	const handleHeaderRowChange = (row: number) => {
 		setHeaderRow(row);
 		setSelectedColumn("");
+		setParentChoice(null);
 		setDataColumn("");
 		setOverrideLabel("");
 		setShowBoundaryOptions(false);
 	};
 
 	const handleUpload = () => {
-		const result = buildCustomImport(
-			{
-				file: file?.name ?? null,
-				csvData,
-				headerRow,
-				selectedColumn,
-				dataColumn,
-				latColumn,
-				lngColumn,
-			},
-			pointMode,
-			effectiveMatch,
-		);
+		const result = buildCustomImport(draft, pointMode, effectiveMatch);
 		if ("error" in result) {
 			setError(result.error);
 			return;
@@ -319,6 +330,41 @@ export function UploadModal({
 							onOverride={handleOverride}
 							isDark={isDark}
 						/>
+					)}
+
+					{csvData.length > 0 && !pointMode && hasSharedNames && (
+						<div>
+							<div className="flex items-center justify-between mb-1.5">
+								<label
+									className={`text-xs font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}
+								>
+									{matchEntry?.parentLabel ?? "Parent area"}
+									<span
+										className={`ml-1.5 font-normal ${isDark ? "text-gray-500" : "text-gray-400"}`}
+									>
+										to tell shared names apart
+									</span>
+								</label>
+								{parentColumn && (
+									<button
+										type="button"
+										onClick={() => setParentChoice("")}
+										className={`text-[10px] underline underline-offset-2 ${isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-600"}`}
+									>
+										None
+									</button>
+								)}
+							</div>
+							<ColumnDropdown
+								columns={columns.filter(
+									(column) => column.name !== selectedColumn,
+								)}
+								value={parentColumn}
+								onChange={setParentChoice}
+								placeholder="Select a column naming each row's local authority..."
+								isDark={isDark}
+							/>
+						</div>
 					)}
 
 					{warnings.map((warning) => (

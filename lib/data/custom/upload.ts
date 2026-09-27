@@ -52,6 +52,19 @@ export function uploadColumns(
 	}));
 }
 
+const PARENT_HEADER =
+	/^(lad\d*(cd|nm|code|name)?|la( ?(code|name))?|local ?authority.*|council.*|district.*|borough.*)$/i;
+
+/** The column most likely to name each row's local authority, from headers. */
+export function guessParentColumn(
+	headerCells: string[],
+	areaColumn: string,
+): string | undefined {
+	return headerCells.find(
+		(header) => header !== areaColumn && PARENT_HEADER.test(header.trim()),
+	);
+}
+
 /** The column most likely to hold area codes, from its header alone. */
 export function guessCodeColumn(headerCells: string[]): string | undefined {
 	return headerCells.find((header) => CODE_COLUMN_RE.test(header));
@@ -137,6 +150,8 @@ export interface UploadDraft {
 	dataColumn: string;
 	latColumn: string;
 	lngColumn: string;
+	/** A column naming each row's parent, to settle shared area names. */
+	parentColumn?: string;
 }
 
 /**
@@ -191,6 +206,13 @@ export function buildCustomImport(
 				...(match.entry.matchType === "name" && {
 					nameToCodes: match.entry.nameToCodes,
 				}),
+				...(match.entry.matchType === "name" &&
+					match.entry.parentsOf &&
+					draft.parentColumn && {
+						parentColumn: draft.parentColumn,
+						parentsOf: match.entry.parentsOf,
+						parentNameToCodes: match.entry.parentNameToCodes,
+					}),
 			},
 		},
 	};

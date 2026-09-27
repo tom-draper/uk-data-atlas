@@ -5,6 +5,7 @@ import {
 	canVisualise,
 	chooseMatch,
 	guessCodeColumn,
+	guessParentColumn,
 	guessValueColumn,
 	importWarnings,
 	isPointMode,
@@ -318,9 +319,59 @@ describe("importWarnings", () => {
 		]);
 	});
 
+	it("settles shared names with the local authority column", () => {
+		const withParents: AreaMatch = {
+			...wardNames,
+			entry: {
+				...wardNames.entry,
+				parentsOf: new Map([
+					["E05000001", ["E07000001"]],
+					["E05000002", ["E07000178"]],
+				]),
+				parentLabel: "Local authority",
+				parentNameToCodes: new Map([["oxford", ["E07000178"]]]),
+			},
+		};
+		const withCouncil = {
+			...draft,
+			csvData: [
+				["Ward", "Council", "Rate"],
+				["Castle", "Oxford", "1"],
+				["Abbey", "Oxford", "2"],
+			],
+			parentColumn: "Council",
+		};
+
+		expect(importWarnings(withCouncil, false, withParents)).toEqual([]);
+		const result = buildCustomImport(withCouncil, false, withParents);
+		expect(
+			"customImport" in result && result.customImport.plan,
+		).toMatchObject({
+			parentColumn: "Council",
+		});
+	});
+
 	it("has nothing to say until the draft is complete", () => {
 		expect(
 			importWarnings({ ...draft, dataColumn: "" }, false, wardNames),
 		).toEqual([]);
+	});
+});
+
+describe("guessParentColumn", () => {
+	it("finds a local authority column other than the area column", () => {
+		expect(guessParentColumn(["Ward", "LAD24NM", "Rate"], "Ward")).toBe(
+			"LAD24NM",
+		);
+		expect(
+			guessParentColumn(["Ward", "Local Authority", "Rate"], "Ward"),
+		).toBe("Local Authority");
+		expect(guessParentColumn(["Ward", "Council", "Rate"], "Ward")).toBe(
+			"Council",
+		);
+	});
+
+	it("finds nothing when no column looks like one", () => {
+		expect(guessParentColumn(["Ward", "Rate"], "Ward")).toBeUndefined();
 	});
 });

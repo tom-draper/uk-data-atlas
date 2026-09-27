@@ -27,6 +27,16 @@ export type CustomImportPlan =
 			 * is ambiguous and its rows are left off rather than guessed.
 			 */
 			nameToCodes?: ReadonlyMap<string, readonly string[]>;
+			/**
+			 * A column naming each row's parent (a ward's local authority, by
+			 * code or name), which settles a shared name when exactly one of
+			 * its areas sits in that parent.
+			 */
+			parentColumn?: string;
+			/** Parent codes of the areas behind shared names. */
+			parentsOf?: ReadonlyMap<string, readonly string[]>;
+			/** Lowercased parent name → its codes, for parents given by name. */
+			parentNameToCodes?: ReadonlyMap<string, readonly string[]>;
 	  }
 	| {
 			kind: "points";
@@ -78,7 +88,11 @@ const columnIndexes = (
 	const headers = document.rows[document.headerRow] ?? [];
 	const columns =
 		plan.kind === "choropleth"
-			? { code: plan.codeColumn, value: plan.valueColumn }
+			? {
+					code: plan.codeColumn,
+					value: plan.valueColumn,
+					...(plan.parentColumn && { parent: plan.parentColumn }),
+				}
 			: {
 					latitude: plan.latitudeColumn,
 					longitude: plan.longitudeColumn,
@@ -119,16 +133,30 @@ const invalidRowsIssue = (rows: number[]): CustomImportIssue | undefined =>
 		: undefined;
 
 /**
- * The area a choropleth row names. A name shared by several areas resolves to
- * none of them; a name the index does not know is kept as written, as before.
+ * The area a choropleth row names. A name shared by several areas resolves
+ * only if the row's parent leaves exactly one of them, and otherwise to none;
+ * a name the index does not know is kept as written, as before.
  */
 const rowArea = (
 	plan: Extract<CustomImportPlan, { kind: "choropleth" }>,
 	raw: string,
+	parentRaw: string | undefined,
 ): { code: string } | { ambiguous: true } => {
 	const codes = plan.nameToCodes?.get(raw.toLowerCase());
 	if (!codes || codes.length === 0) return { code: raw };
-	return codes.length === 1 ? { code: codes[0]! } : { ambiguous: true };
+	if (codes.length === 1) return { code: codes[0]! };
+
+	const parent = parentRaw?.trim();
+	if (!parent || !plan.parentsOf) return { ambiguous: true };
+	const parentCodes = new Set(
+		plan.parentNameToCodes?.get(parent.toLowerCase()) ?? [
+			parent.toUpperCase(),
+		],
+	);
+	const inParent = codes.filter((code) =>
+		plan.parentsOf!.get(code)?.some((p) => parentCodes.has(p)),
+	);
+	return inParent.length === 1 ? { code: inParent[0]! } : { ambiguous: true };
 };
 
 const ambiguousNamesIssue = (
@@ -176,7 +204,7 @@ export function validateCustomImport(
 				invalidRows.push(document.headerRow + index + 2);
 				continue;
 			}
-			if ("ambiguous" in rowArea(plan, raw)) {
+			if ("ambiguous" in rowArea(plan, raw, row[indexes.parent])) {
 				ambiguousRows.push(document.headerRow + index + 2);
 				if (!ambiguousNames.has(raw.toLowerCase()))
 					ambiguousNames.set(raw.toLowerCase(), raw);
@@ -257,7 +285,7 @@ export function materialiseCustomImport(
 		const raw = row[indexes.code]?.trim();
 		const value = Number.parseFloat(row[indexes.value]!);
 		if (!raw || Number.isNaN(value)) continue;
-		const area = rowArea(plan, raw);
+		const area = rowArea(plan, raw, row[indexes.parent]);
 		if ("code" in area) data[area.code] = value;
 	}
 	return {
