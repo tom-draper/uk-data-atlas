@@ -30,6 +30,7 @@ import {
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
+import { loadMatchIndex } from "../lib/data/gazetteer/matchIndex";
 import {
 	loadBoundaryMappings,
 	loadLsoaLadMappings,
@@ -260,6 +261,14 @@ async function main() {
 			return data;
 		},
 	);
+	// Upload matching reads ward parents from the mappings just built, so the
+	// index is compiled here, in step with the boundary catalogue.
+	const matchIndex = boundaryMappings.then(async ({ wardToLad }) =>
+		out(
+			"gazetteer.matchindex",
+			await loadMatchIndex(readBoundaryAsset, wardToLad),
+		),
+	);
 	const lsoaLadMappings = loadLsoaLadMappings(readBoundaryAsset).then(
 		async (data) => {
 			await Promise.all(
@@ -285,6 +294,7 @@ async function main() {
 		roadSafety,
 		gazetteerCore,
 		boundaryMappings,
+		matchIndex,
 		lsoaLadMappings,
 	]);
 

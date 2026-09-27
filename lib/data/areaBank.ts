@@ -29,7 +29,7 @@ export type AreaBank = AreaEntry[];
 const FULL_POSTCODE_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s*[0-9][A-Z]{2}$/i;
 const DISTRICT_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?$/i;
 
-// Precomputed match index (scripts/gazetteer-matchindex.ts): per boundary
+// Precomputed match index (lib/data/gazetteer/matchIndex.ts): per boundary
 // level+vintage, codes and a lowercased name -> codes map. Names are not
 // unique (dozens of wards are called "Castle"), so every code is kept, with
 // the parents that disambiguate them where the geography has any.

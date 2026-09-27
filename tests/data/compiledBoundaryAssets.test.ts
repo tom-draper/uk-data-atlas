@@ -111,7 +111,7 @@ describe("upload match index", () => {
 			const level = parseMatchIndexLevel(index[boundaryType] ?? {});
 			expect(
 				Object.keys(level).map(Number).sort(),
-				`${boundaryType} vintages; rerun scripts/gazetteer-matchindex.ts`,
+				`${boundaryType} vintages; rerun pnpm precompile`,
 			).toEqual(Object.keys(definition.vintages).map(Number).sort());
 		}
 	});
