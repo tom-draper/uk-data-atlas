@@ -1,15 +1,10 @@
 // Gazetteer artifact types. See docs/gazetteer-design.md.
 import type { PlaceKind, PlaceSource } from "./places";
 
-export type Level =
-	| "region"
-	| "county"
-	| "localAuthority"
-	| "constituency"
-	| "ward"
-	| "lsoa"
-	| "dataZone"
-	| "superOutputArea";
+// The levels the core holds and crosswalks join. Finer levels stay with the
+// boundary mappings and match index, and counties are named locations
+// (docs/gazetteer-design.md 9.7).
+export type Level = "region" | "localAuthority" | "constituency";
 
 export interface GazetteerEntry {
 	code: string;
