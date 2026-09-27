@@ -41,9 +41,17 @@ type OfficialWardConstituencyLookup = {
 async function loadOfficialWardConstituencyMembership(
 	read: (path: string) => Promise<string>,
 ): Promise<{ members: Record<string, string[]>; unsplitWards: Set<string> }> {
-	const lookup = JSON.parse(
-		await read(WARD_TO_CONSTITUENCY_LOOKUP),
-	) as OfficialWardConstituencyLookup;
+	let source: string;
+	try {
+		source = await read(WARD_TO_CONSTITUENCY_LOOKUP);
+	} catch (error) {
+		// The committed compact mapping remains usable while a raw-data release
+		// is being restored; a fresh build then retains its geometry best fit.
+		if ((error as NodeJS.ErrnoException).code === "ENOENT")
+			return { members: {}, unsplitWards: new Set() };
+		throw error;
+	}
+	const lookup = JSON.parse(source) as OfficialWardConstituencyLookup;
 	const members: Record<string, string[]> = {};
 	const unsplitWards = new Set<string>();
 	for (const { properties } of lookup.features) {
