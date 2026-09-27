@@ -1,125 +1,136 @@
-# Gazetteer: a canonical location registry
+# Gazetteer: the website's location registry
 
-Status: draft / design. No code yet. This document proposes consolidating the
-app's scattered location logic into one precomputed registry so that adding a
-new dataset stops requiring us to re-solve "what geography is this?" every time.
+Status: **in use** (revised 2026-09-27). The website reads named locations,
+area extents and the constituency/LAD crosswalk from the gazetteer. The other
+location lookups it proposed to absorb have since become precompiled artifacts
+of their own (section 3). This revision records what was built, what the
+original design got right, and what is still worth doing (section 9).
 
-## 1. Problem
+## 1. Scope: the website, not the API
 
-Every dataset arrives keyed by some geography (LAD, ward, constituency, LSOA,
-police force area, ...) at some vintage (2011 census, 2021 census, a boundary
-review year). Today the knowledge needed to place that data on the map is spread
-across three modules that overlap and are each rebuilt in the browser from
-loaded geometry:
+The gazetteer is a **browser-side projection** of UK geography, shaped around
+the boundary releases, code mappings and crosswalks the map needs. It is not
+the canonical geography source. That role belongs to the API's own geography
+compiler (`api/README.md`, "API-owned geography compiler and completeness",
+served by `GeographyResolver` in `api/src/geographyResolver.ts`), which compiles
+complete, release-aware areas, relationships, crosswalks, place definitions,
+spatial indexes, change events and coverage reports from the raw releases.
 
-- **`lib/data/locations.ts`** (`LOCATIONS`): named area (`"Greater Manchester"`,
-  `"Cheshire"`, nations) to its constituent `lad_codes` plus a bounding box.
-- **`lib/data/areaBank.ts`** (`buildAreaBank`): per `(level, year)` sets of codes
-  and `name -> code` maps, built at load time from boundary GeoJSON. Used to
-  match uploaded CSV columns to a geography.
-- **`lib/hooks/useCodeMapper.ts`**: hierarchy relations (ward to LAD, ward to
-  constituency, LAD to wards) and cross-year code equivalence, also derived from
-  geometry.
+The two meet in one place today: `api/scripts/build-named-locations.ts` reads
+the curated named locations from this project's `gazetteer.core.json`. Section
+9.5 argues that dependency should eventually point the other way.
 
-Consequences:
+## 2. The original problem, and how it was resolved
 
-- Three structures encode overlapping facts; none is the source of truth.
-- All three are rebuilt client-side from megabytes of geometry on every load.
-- Onboarding an "obscure" dataset means re-deriving its level, matching its
-  codes/names, and reconciling its vintage by hand.
+Location knowledge was spread across three overlapping modules, each rebuilt in
+the browser from megabytes of boundary geometry on every load:
 
-## 2. Goals / non-goals
+- `LOCATIONS` (`lib/data/locations.ts`): named area to LAD codes and a bounding
+  box.
+- `areaBank` (`lib/data/areaBank.ts`): per `(level, year)` code sets and
+  `name -> code` maps for matching uploaded CSV columns.
+- `codeMapper` (`lib/data/boundaries/codeMapper.ts`): ward/LAD nesting,
+  constituency/ward membership and cross-year code equivalence.
 
-**Goals**
+The runtime cost is gone, but not by folding everything into one registry as
+first planned. Each lookup is now **precompiled at build time** into its own
+artifact and the old modules read those artifacts:
 
-- One canonical, precomputed registry of UK areas: code, name, level, vintage,
-  hierarchy (parents/children), name aliases, and bounding box.
-- Make dataset onboarding declarative: state the level + code/name column, and
-  location scoping, roll-up aggregation, name matching, and boundary loading all
-  derive from the registry.
-- Be smaller and cheaper than today (one lookup artifact vs. three in-browser
-  rebuilds from geometry).
+| Concern                        | Before                           | Now                                                 |
+| ------------------------------ | -------------------------------- | --------------------------------------------------- |
+| Named locations, extents       | `LOCATIONS` at runtime           | gazetteer core (`membersOf`, `boundsOf`)            |
+| Upload column matching         | `buildAreaBank` from geometry    | `gazetteer.matchindex.json` into `areaBank`         |
+| Ward/LAD, cross-year codes     | derived from geometry in browser | `boundary-mappings.json` into `codeMapper`          |
+| LSOA to LAD                    | named-location boxes             | `lsoa-lad-mappings-<year>.json`                     |
+| Constituency to LAD membership | ward centroid point-in-polygon   | `constituency-lad-overlaps.json` crosswalk          |
+| How a family scopes a location | per-consumer type switches       | `BOUNDARY_CAPABILITIES` (`boundaries/capabilities`) |
 
-**Non-goals**
+`LOCATIONS` survives only as the build-time curated source for the gazetteer
+loader; no runtime code imports it. `areaBank` and `codeMapper` survive as thin
+readers over precompiled data, which is why migrating them into the `Gazetteer`
+class (old Phases 4 and 5) is no longer worth doing for its own sake.
 
-- Storing boundary geometry inside the registry (it stays lazy-loaded, see 4.2).
-- A full client-side postcode database (infeasible, see 4.3).
-- Eliminating one-time work for non-standard geographies (inherent, see 8).
+Two runtime geometry paths remain: `deriveBoundaryMappings`
+(`boundaries/mappingSeeder.ts`), a fallback for a CDN revision without
+`boundary-mappings.json`, and `polygonAreaSqKm` in `boundaries/derived.ts` for
+population density (section 9.4).
 
-## 3. Three layers, deliberately separated
+## 3. Artifacts
 
-The single biggest design decision: do **not** build one monolith. Split by
-size and volatility.
+All live in `public/data/datasets/`. Sizes as of 2026-09-27.
 
-| Layer         | What                                                      | Size                                             | Where it lives                                                             |
-| ------------- | --------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- |
-| **Gazetteer** | code / name / level / vintage / hierarchy / bbox / areaM2 | small at coarse levels, large at OA + crosswalks | precomputed artifact, **sharded** (see 3.1)                                |
-| **Geometry**  | boundary polygons                                         | large (MBs per level per year)                   | lazy-loaded by `(level, year)` key, unchanged from today                   |
-| **Postcodes** | ~1.7M postcode -> area                                    | ~1GB (ONSPD)                                     | out of the browser: server-side, or district-level only, or centroid index |
+| Artifact                         | Built by                          | Loaded                                  | Size (raw / gz) |
+| -------------------------------- | --------------------------------- | --------------------------------------- | --------------- |
+| `gazetteer.core.json`            | `precompile-data.mts`             | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
+| `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | — / 37 KB       |
+| `gazetteer.matchindex.json`      | `scripts/gazetteer-matchindex.ts` | on demand, when the upload panel opens  | 4.3 MB / 906 KB |
+| `boundary-mappings.json`         | `precompile-data.mts`             | every `/atlas` load; workers on demand  | 1.6 MB / 287 KB |
+| `lsoa-lad-mappings-<year>.json`  | `precompile-data.mts`             | on demand, LSOA location filter         | small           |
 
-The gazetteer _references_ geometry by key; it never embeds it. Postcodes are a
-separate subsystem the gazetteer links to at district granularity at most.
+**Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
+named locations still reference, 650 constituencies (2024), the 9 English
+regions, 162 named locations and 936 indexed names. `version` is
+`GAZETTEER_VERSION` (currently 1).
 
-### 3.1 Sharding and the size budget
+**Crosswalk.** Constituency to 2025 LAD, one table per served constituency
+release (eight, 2016-12 to 2024-07). Weights are **area**-weighted over a
+building block, not population-weighted (section 9.6).
 
-"Loaded once, small" is the load-bearing claim of this whole design and must be
-proven, not assumed. Coarse levels are genuinely small, but the crosswalks are
-not obviously so: an OA-level table (~200k OAs times their targets) can dwarf the
-rest. If the artifact is one eager blob, startup could end up _worse_ than today,
-which would defeat the point.
+**Year masks.** The match index and the cross-year parts of the boundary
+mappings store each code, name or target once with a bit mask of the vintages
+it holds in (bit `i` is `years[i]`), instead of repeating near-identical lists
+per vintage. Parsers expand them back to the per-year shape callers use. This
+cut the match index from 3.1 MB to 906 KB gz and the mappings from 643 KB to
+287 KB gz. The mappings file is `version: 2`; a version 1 file is rejected and
+the seeder falls back to deriving mappings from geometry.
 
-So the gazetteer is **sharded and lazy-loaded, not one blob**:
+## 4. Design principles that held
 
-- **Eager core:** region / county / localAuthority / constituency entries plus
-  named composites. Small, needed for the location list and most datasets.
-  (Phase 3 update: the core is **statically bundled**, not fetched, because it is
-  read synchronously at map mount and in non-React modules; shards stay fetched.)
-- **On-demand shards:** ward / LSOA / dataZone / SOA / OA entries and their
-  crosswalks, fetched by `(level, vintage)` exactly like geometry, only when a
-  dataset or query at that level is active.
-- **Hard budget with fallback:** each shard has a stated size ceiling. If the OA
-  crosswalk exceeds it, fall back to per-relation crosswalks (constituency->LAD,
-  vintage->vintage) computed at build instead of the universal OA table (4.4).
+These parts of the original design proved right and still guide changes.
 
-Pinning this budget is a prerequisite for Phase 1; the efficiency argument is
-only true if the sharded core is materially smaller than the geometry we parse
-client-side today to derive the same facts.
+- **Separate layers by size and volatility.** Registry, geometry and postcodes
+  stay apart. The gazetteer references geometry by `(level, year)` and never
+  embeds it; full postcodes never ship to the browser (the API serves them).
+- **Bundle the eager core; fetch the rest.** The core is needed synchronously at
+  map mount and in non-React modules, so it is imported, not fetched. Anything
+  larger is fetched only when the feature that needs it is used.
+- **Membership and apportionment are different questions.** Non-nesting
+  relations (constituency/LAD) and boundary reviews are many-to-many and live in
+  weighted crosswalks. `parents` only encodes clean nesting.
+- **Derive weights at build time; never ship the building block.** Phase 0
+  measured an OA-level table at about 2.9 MB gz. Per-relation crosswalks are
+  tens of KB. The building block is a build input only.
+- **Apportion only extensive values.** Rates, medians and densities apportion
+  numerator and denominator separately, then divide; never the ratio.
+- **Area, population and density have different natures.** Area is intrinsic
+  per vintage and belongs on the entry (`areaM2`); population is a dataset,
+  referenced; density is derived and stored nowhere.
+- **Surface ambiguity, don't guess.** Names collide ("Castle", "Newcastle",
+  "St Albans"). Name resolution returns candidates, and an unresolved name is a
+  reported outcome. `Gazetteer.resolveName` does this; upload matching does not
+  yet (section 9.1).
+- **Point-to-area is its own capability.** Crosswalks convert area to area.
+  Coordinate to containing area is separate; the API's spatial indexes own it.
+- **Validate at build.** `gazetteer/validate.ts` fails the build on unknown
+  parents, dangling name-index codes or named locations that disagree with
+  `LOCATIONS`, and reports curation debt as warnings.
 
-### 3.2 Phase 0 measurements (decisive)
+### 4.1 Lesson: multi-vintage member lists are load-bearing
 
-Measured from real UK boundaries (`scripts/gazetteer-phase0.ts`), gzipped since
-that is what ships:
+`LOCATIONS` lists region members across several LAD vintages on purpose.
+`"North West"` carries both the six abolished Cumbria districts
+(`E07000026-31`) and the two unitaries that replaced them (`E06000063/64`),
+because pre-2023 wards carry the old district codes and 2023+ wards the new
+ones, and wards are filtered by parent LAD. Only one ward vintage is active per
+dataset, so the live app never double-counts. The bug was in the gazetteer,
+which summed region area across all vintages (20,911 against about
+14,100 km²); area now rolls up over the current LAD vintage only. The dual codes
+looked like debt but were load-bearing: verify before "fixing" source data.
 
-| Artifact                                                        | Ships?          | Size                                              |
-| --------------------------------------------------------------- | --------------- | ------------------------------------------------- |
-| Eager core: 361 LADs + 650 constituencies, with `areaM2` + bbox | yes             | **37 KB**                                         |
-| Constituency->LAD crosswalk (area-weighted via LSOA)            | yes             | **5 KB**                                          |
-| LSOA building-block table (34,753 rows)                         | no, build input | 446 KB, extrapolates to **~2.9 MB** at OA (~230k) |
-
-Findings:
-
-- **Shipped artifacts are trivial.** The eager core is tens of KB; a per-relation
-  crosswalk is single-digit KB. Adding wards keeps the core comfortably under a
-  few hundred KB.
-- **Only the building-block table is large, and it never ships.** At OA scale it
-  is ~2.9 MB, too heavy to send to the browser, but it is only needed at _build_
-  time to derive weights (4.4). So the resolution is decided: **precompute
-  per-relation weighted crosswalks at build; keep the OA/LSOA + population table
-  build-time-only.** The "universal OA table at runtime" idea in 4.4 is dropped;
-  the per-relation approach is the default, not a fallback.
-- **The pipeline is validated.** 227 of 574 constituencies span more than one LAD
-  (the many-to-many case is real, not theoretical), every crosswalk's weights sum
-  to 1.0 within tolerance (0 violations, the 6.1 invariant holds), and 34,738 of
-  34,753 LSOAs assigned cleanly.
-
-Net: the size budget is met with margin and the weight derivation works on real
-data, so Phase 1 is unblocked.
-
-## 4. Data model
-
-### 4.1 Gazetteer entry
+## 5. Data model as built
 
 ```ts
+// lib/data/gazetteer/types.ts
 type Level =
 	| "region"
 	| "county"
@@ -131,447 +142,175 @@ type Level =
 	| "superOutputArea";
 
 interface GazetteerEntry {
-	code: string; // canonical ONS code, e.g. "E08000003"
-	name: string; // canonical name, e.g. "Manchester"
-	level: Level;
-	vintage: number; // boundary year this code belongs to, e.g. 2023
-	// parents/children ONLY encode clean nesting (ward -> LAD -> county -> region;
-	// LSOA -> LAD). Non-nesting relations (constituency <-> LAD) and boundary
-	// reviews are many-to-many and live in weighted crosswalks instead (see 4.4).
-	parents: string[]; // codes one level up in a nesting relation
-	children?: string[]; // optional; can be inverted from parents at load
-	aliases?: string[]; // lowercased name variants for matching
-	bbox: [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
-	areaM2: number; // intrinsic geometry, per vintage (see 4.5)
-	refPopulation?: number; // canonical baseline for crosswalk weighting (4.5)
-	// Geometry is referenced, never embedded:
-	geometryRef?: { level: Level; year: number }; // where to lazy-load the polygon
-	// 1:1 vintage recodes only (an area recoded but geographically unchanged).
-	// Boundary reviews that split/merge areas are crosswalks, not this (see 4.4).
-	successors?: Record<number, string>; // vintage -> code, when 1:1
-}
-```
-
-### 4.2 Geometry stays external
-
-`GEOJSON_PATHS` (in `boundaries.ts`) already keys geometry by `(level, year)` and
-`useBoundaryData` lazy-loads it. That stays. The gazetteer only holds
-`geometryRef` so a consumer knows _which_ file to fetch for a given code. No
-change to how or when polygons load.
-
-### 4.3 Postcodes
-
-Not in the in-memory gazetteer. Options, in preference order:
-
-1. **Postcode district** (`M1`, `SW1A`) only, small enough to ship, links to LAD.
-2. **Server-side full-postcode lookup** (API endpoint over ONSPD).
-3. **Compressed centroid index** if we ever need full-postcode client-side.
-
-The current `areaBank` already distinguishes `postcode-full` /
-`postcode-district` match types and marks them "coming soon"; this is where that
-resolves.
-
-### 4.4 Conversions and crosswalks
-
-Conversions are the highest-value thing the gazetteer unlocks, and they are
-where the naive "clean hierarchy" model breaks. "Conversion" hides two very
-different questions:
-
-|                   | Question                                            | What it needs                                |
-| ----------------- | --------------------------------------------------- | -------------------------------------------- |
-| **Membership**    | which LADs does this constituency overlap?          | overlap > 0                                  |
-| **Apportionment** | this 2024 constituency's figure in 2019 boundaries? | area- or population-**weighted** split/merge |
-
-`parents`/`successors` are scalars and can only answer membership for clean
-nesting. Two situations need more:
-
-- **Non-nesting relations.** Constituencies and LADs do not nest: a constituency
-  spans several LADs, an LAD holds parts of several constituencies. This is a
-  many-to-many overlap, not a hierarchy.
-- **Boundary reviews.** The 2024 Westminster review redrew constituencies; a 2024
-  constituency is stitched from pieces of several 2019 ones, so there is no
-  single "2020 equivalent" code. Many-to-many again.
-
-Both are modelled with a weighted crosswalk:
-
-```ts
-type Crosswalk = Record<
-	string, // source code
-	Array<{ code: string; weight: number }> // targets + share of source in each
->;
-// weight = fraction of the source area's population (best-fit) or land area
-// (exact-fit) that falls within each target.
-```
-
-From a crosswalk:
-
-- **Membership** = targets with `weight > 0` (e.g. constituency -> overlapping
-  LADs).
-- **Apportionment** = `sum(source_value * weight)` accumulated into each target
-  (e.g. re-express 2024 constituency values on 2019 boundaries). Only valid for
-  _extensive_ quantities (counts, populations); _intensive_ ones (rates, medians)
-  must apportion a numerator and denominator separately, never the ratio.
-
-ONS publishes these as best-fit (population-weighted) and exact-fit
-(area-weighted) lookups. The 2010->2024 constituency lookup already sits in
-`data/boundaries/constituencies/`, which is exactly the 2025->2020 case.
-
-**Weights are usually derived, not read.** Most ONS lookups are _assignments_
-("this OA belongs to that LAD"), not fractions. Real apportionment weights are
-computed at build time from the building blocks:
-
-```
-weight(source -> target) = sum over OAs in (source ∩ target) of OA population
-                           / sum over OAs in source of OA population
-```
-
-(swap OA population for OA area for exact-fit). This makes an **OA-level
-population table a hard dependency of the whole conversion feature**, not an
-optional nicety. If we choose not to ship that dependency, `apportion` degrades
-to membership-only (overlap > 0, no fractions) and we drop the apportionment
-accuracy claim. The design does not get weighted conversion "for free" from
-published lookups.
-
-**The general form (build-time, not runtime).** Conceptually every conversion is
-the same operation over a universal building block: decompose the source to
-Output Areas (the atom all standard geographies are best-fit aggregated from),
-re-aggregate up to the target level/vintage, weighting by OA population. But
-Phase 0 (3.2) measured the OA building-block table at ~2.9 MB gz, too heavy to
-ship. So this decomposition happens **at build time only**: we run it once per
-needed relation and emit a small per-relation crosswalk (5 KB gz for
-constituency->LAD), which is what the browser loads. The OA/LSOA table and its
-populations stay build inputs and never ship. This also replaces the runtime
-`buildConstituencyWardMappings` (ward-centroid-in-polygon) with an exact,
-precomputed crosswalk.
-
-### 4.5 Attributes and derived metrics
-
-Area, population, and density look similar but have three different natures, and
-conflating them is the trap. They map onto the same "separate by size and
-volatility" principle as the three layers in section 3.
-
-| Value      | Nature                          | Where it lives                            |
-| ---------- | ------------------------------- | ----------------------------------------- |
-| Area m²    | intrinsic geometry, per vintage | **in** the gazetteer (`areaM2`)           |
-| Population | volatile dataset, per year      | stays a dataset, **referenced** via API   |
-| Density    | derived                         | **computed** `pop / area`, stored nowhere |
-
-- **Area** is a property of the boundary itself, changing only with vintage, so
-  it belongs on the entry as `areaM2`. Today it is recomputed client-side from
-  polygon rings (`polygonAreaSqKm` in `statsCalculator`); precomputing it at
-  build time retires that path and supplies the denominator for area-weighted
-  crosswalks (4.4).
-- **Population** is dataset-sourced and time-varying; the population dataset stays
-  its source of truth. The gazetteer _references_ it (`population(code, year)`),
-  and embeds only a single `refPopulation` baseline used as the weighting
-  denominator for best-fit crosswalks. Composite locations ("Greater Manchester")
-  derive their population by summing members (`membersOf`), never storing a
-  per-composite figure.
-- **Density is never stored.** It is `population / area`, and storing it invites
-  drift from its inputs. Expose it as `density(code, popYear)`.
-
-**Intensive-quantity rule (same as 4.4).** Density is intensive: for composites
-and cross-vintage conversion, sum the numerator and denominator separately, then
-divide, e.g. `GM density = sum(member populations) / sum(member areaM2)`, never
-the mean of member densities. Population and area must share a vintage (or be
-apportioned through a crosswalk) or the ratio is wrong; vintage-keying gives us
-that for free.
-
-### 4.6 Name matching and disambiguation
-
-Names collide, so `nameIndex` maps `name -> codes[]` and `resolveName` /
-`matchColumn` return candidates, never a single code. "Newcastle" (upon Tyne vs.
-under Lyme), "St Albans" (city / district / constituency), and dozens of
-duplicate ward names ("Castle", "Broadfield") are the norm, and resolving a
-name-keyed dataset is exactly the ingestion pain this project exists to remove.
-Disambiguation is a defined pipeline, not a guess:
-
-1. **Level hint** from the dataset manifest narrows candidates to one level.
-2. **Parent context**, if the dataset carries a coarser column (ward + its LAD),
-   filters by hierarchy.
-3. **Confidence scoring** over the whole column, the percentage match `areaBank`
-   already does, picks the best-fitting `(level, vintage)`.
-4. **Surface, don't guess.** An ambiguous name with no level hint is a
-   first-class, reported outcome (unresolved rows listed), never silently
-   assigned to the first candidate.
-
-### 4.7 Point-to-area is a separate capability
-
-Crosswalks convert _area to area_. They do **not** answer _coordinate to
-containing area_, which is a different operation, and one we already need: the
-road-safety points want "which LAD is this collision in?", and `codeMapper` does
-runtime point-in-polygon for hover. This reverse-geocoding is called out
-explicitly so it doesn't get quietly assumed into "conversions" and then be
-missing.
-
-Options: keep it a runtime concern (point-in-polygon against loaded geometry, as
-today), or have the gazetteer own a coarse **spatial index** (e.g. a grid or
-bbox tree over area centroids/bounds) for fast point -> area at a chosen level.
-Decision deferred, but the capability is named and owned.
-
-## 5. Source data
-
-The registry is not invented, it is compiled from ONS lookup tables (the
-authoritative "central bank"):
-
-- Ward -> LAD -> County -> Region lookups.
-- LSOA -> Ward -> LAD lookups.
-- Westminster constituency lookups (incl. the 2010->2024 boundary change lookup
-  already present under `data/boundaries/constituencies/`).
-- Names come from the same lookups; bboxes are computed once from geometry at
-  build time.
-
-These are small CSVs. We download them into `data/gazetteer/` like any other
-source dataset.
-
-## 6. Build pipeline
-
-Add a `loadGazetteer()` step to `scripts/precompile-data.ts`, mirroring the
-existing loaders:
-
-1. Read the ONS lookup CSVs from `data/gazetteer/`.
-2. Read boundary GeoJSON once to compute per-code bounding boxes and `areaM2` in
-   the same pass.
-3. Derive crosswalk weights from OA population/area (4.4).
-4. Emit **sharded** output (3.1) under `data/gazetteer/` (and the `public/`
-   mirror):
-    - `gazetteer.core.json`: eager coarse levels + `nameIndex` + `namedLocations`
-      (replaces `LOCATIONS`), stamped with a `version`.
-    - `gazetteer.<level>.<vintage>.json`: on-demand entry shards.
-    - `crosswalk.<from>-<to>.json`: on-demand weighted crosswalks.
-
-Precompute once at build, not per browser session. This is the efficiency win.
-
-### 6.1 Validation (build-time invariants)
-
-Bad ONS joins fail silently otherwise, so the build asserts a fixed set of
-invariants and fails on violation:
-
-- Every `parents` / crosswalk target code resolves to an entry.
-- Crosswalk weights per source sum to 1.0 within ε.
-- `membersOf(named)` equals today's `LOCATIONS` exactly (regression guard).
-- `areaM2` rolls up parent-to-children within tolerance.
-- No orphan codes; no duplicate `(code, vintage)`.
-- **Every dataset manifest's `(level, vintage)` exists in the shipped gazetteer**,
-  and its `minGazetteerVersion` is satisfied (see 6.2).
-
-This suite is small and is the primary defence against silent geographic errors;
-it is also the Phase 2 "must agree with current outputs" check made concrete.
-
-### 6.2 Versioning
-
-The artifact is regenerated over time (new ONS vintages, size trims), so a
-dropped vintage could break a pinned dataset silently. The `core` artifact
-carries a monotonic `version`; each `DatasetManifest` declares a
-`minGazetteerVersion`; the validation suite (6.1) fails the build if any manifest
-references a `(level, vintage)` the current gazetteer no longer contains.
-
-## 7. Runtime API
-
-A single module `lib/data/gazetteer.ts` (loaded via a hook like the other
-precompiled datasets) supersedes `LOCATIONS`, `areaBank`, and `codeMapper`:
-
-```ts
-interface Gazetteer {
-	get(code: string): GazetteerEntry | undefined;
-	resolveName(name: string, level?: Level): GazetteerEntry[]; // alias-aware
-	ancestors(code: string): GazetteerEntry[]; // up the nesting hierarchy
-	descendants(code: string, level: Level): GazetteerEntry[]; // e.g. LAD -> wards
-	membersOf(named: string): string[]; // "Greater Manchester" -> codes
-	boundsOf(named: string): [number, number, number, number];
-	matchColumn(values: string[]): AreaMatch[]; // subsumes areaBank matching
-
-	// Attributes / derived metrics (see 4.5).
-	areaM2(code: string): number; // intrinsic, from the entry
-	population(code: string, year: number): number | undefined; // joins the dataset
-	density(code: string, popYear: number): number | undefined; // pop / area, derived
-	// Composite/aggregate variants sum numerator and denominator separately.
-
-	// Conversions (see 4.4). Work across both non-nesting relations and vintages.
-	mapToVintage(code: string, targetYear: number): string | undefined; // 1:1 only
-	overlaps(
-		code: string,
-		targetLevel: Level,
-		targetVintage?: number,
-	): Array<{ code: string; weight: number }>; // membership + weights
-	apportion(
-		values: Record<string, number>, // source code -> extensive value
-		targetLevel: Level,
-		targetVintage: number,
-	): Record<string, number>; // weighted re-aggregation
-}
-```
-
-`overlaps` answers "LADs within a constituency" (`overlaps(pcon, "localAuthority")`
--> weighted list). `apportion` answers "2024 constituency values on 2019
-boundaries". `mapToVintage` stays for the easy 1:1 recode case. Method-by-method
-this is a strict superset of the three current modules, so migration is
-mechanical (see 9).
-
-## 8. Dataset manifest
-
-Once the gazetteer exists, a standard-geography dataset declares itself:
-
-```ts
-interface DatasetManifest {
-	id: string;
+	code: string;
+	name: string;
 	level: Level;
 	vintage: number;
-	minGazetteerVersion: number; // compatibility floor (6.2)
-	join: { by: "code"; column: string } | { by: "name"; column: string };
-	levelHint?: Level; // disambiguates name joins (4.6)
-	// Extensive values apportion directly; intensive ones (rates, medians) must
-	// declare numerator + denominator so we apportion those, not the ratio (4.5).
-	valueColumns: Array<
-		| { column: string; kind: "extensive" }
-		| {
-				column: string;
-				kind: "intensive";
-				numerator: string;
-				denominator: string;
-		  }
-	>;
+	areaM2: number;
+	bbox: [number, number, number, number]; // [minLng, minLat, maxLng, maxLat]
+	parents: string[]; // clean-nesting parents only
 }
+
+interface GazetteerCore {
+	version: number;
+	byCode: Record<string, GazetteerEntry>;
+	nameIndex: Record<string, string[]>; // lowercased name -> codes
+	namedLocations: Record<string, { memberCodes: string[]; bbox: Bbox }>;
+}
+
+type Crosswalk = Record<string, Array<{ code: string; weight: number }>>;
 ```
 
-The loader then joins rows to the gazetteer generically: location scoping (which
-members fall in the selected named location), roll-up aggregation (sum/average up
-`parents`), name matching, vintage reconciliation, and boundary selection all
-come from the registry. The bespoke per-dataset location code largely disappears.
+Only `region`, `localAuthority` and `constituency` entries exist. The other
+levels are declared but unpopulated; section 9.7 recommends against filling
+them. Proposed fields that were never needed (`children`, `aliases`,
+`refPopulation`, `geometryRef`, `successors`) have been left out.
 
-**Limit (honest):** this only trivialises datasets on _standard ONS
-geographies_. Non-standard ones (police force areas, NHS trusts, travel-to-work
-areas, water companies) still need a **one-time** mapping into the hierarchy,
-added as extra `Level`s or crosswalk tables. The gazetteer shrinks repeat work;
-it does not abolish bespoke geographies.
+## 6. Runtime API as built
 
-## 9. Migration: folding in the three modules
+`Gazetteer` (`lib/data/gazetteer/gazetteer.ts`), available as the bundled
+singleton `gazetteer` from `lib/data/gazetteer/static.ts`:
 
-| Today                                                                              | Folds into                                                        |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `LOCATIONS` (named -> lad_codes + bounds)                                          | `namedLocations` + `membersOf` / `boundsOf`                       |
-| `areaBank` (code sets, name->code, matching)                                       | `nameIndex` + `matchColumn`                                       |
-| `codeMapper` nesting (ward↔LAD) + cross-year 1:1                                   | `parents`/`children` + `ancestors`/`descendants` + `mapToVintage` |
-| `codeMapper` constituency↔ward (`buildConstituencyWardMappings`, point-in-polygon) | precomputed crosswalk + `overlaps` (see 4.4)                      |
+| Method                                         | Answers                                  |
+| ---------------------------------------------- | ---------------------------------------- |
+| `get(code)`, `areaM2(code)`, `bboxOf(code)`    | one entry and its intrinsic attributes   |
+| `resolveName(name, level?)`                    | every candidate for a name               |
+| `namedLocations()`, `namedLocation(name)`      | the curated composites                   |
+| `membersOf(name)`, `boundsOf(name)`            | a composite's LAD codes and extent       |
+| `ancestors(code)`, `descendants(code, level?)` | the clean-nesting hierarchy              |
+| `overlaps(code, targetLevel)`                  | crosswalk membership with weights        |
+| `apportion(values, fromLevel, targetLevel)`    | extensive values re-aggregated by weight |
 
-Do it incrementally: build the gazetteer artifact first, wrap the new API around
-it, then migrate call sites one module at a time behind the existing interfaces
-(`CodeMapper`, `AreaBank`) so nothing breaks in one big bang. Delete the old
-modules once their call sites are gone.
+Proposed but not built, and no longer planned in the gazetteer: `matchColumn`
+(upload matching reads the match index directly), `mapToVintage` (served by
+`codeMapper.getCodeForYear` over `boundary-mappings.json`), and
+`population` / `density` (section 9.4).
 
-## 10. Concrete wins, measured against recent work
+## 7. Datasets and location scoping
 
-- The road-safety points scoping we just shipped uses a **bounding box** filter.
-  With the gazetteer plus the DfT `local_authority_ons_district` column, points
-  could scope to actual LAD membership within a named location instead of a
-  rectangle.
-- Adding the next choropleth on a standard geography becomes: drop the CSV,
-  write a manifest, done. No new location wrangling.
-- "LADs within a constituency" and "2025 constituency -> 2020 equivalent" become
-  one-line calls (`overlaps` / `apportion`, see 4.4) instead of runtime
-  point-in-polygon or bespoke per-case code.
-- Population density stops recomputing polygon area in the browser
-  (`polygonAreaSqKm`): `areaM2` is precomputed and `density()` derives from it,
-  correct for composites via the intensive-quantity rule (4.5).
+The proposed `DatasetManifest` was largely realised under other names:
 
-## 11. Open questions
+- `DatasetDefinition` and its `DatasetIngestionContract`
+  (`lib/data/catalog/types.ts`) declare each dataset's geography, source and
+  payload layout, and `DatasetLocationScope` covers datasets keyed by another
+  geography (`kind: "mapped"`).
+- `BOUNDARY_CAPABILITIES` declares how each boundary family reduces to a named
+  location: `direct-membership` (LAD), `parent-map` (ward and LSOA via LAD),
+  `crosswalk` (constituency), `bbox` (data zone, SOA) or `none`.
+  `datasetLocationFilter.ts` and the boundary worker read it instead of
+  switching on type names.
 
-- **Hierarchy across census vintages.** LSOA/ward boundaries change between 2011
-  and 2021; `parents`/`successors` must be vintage-aware. `codeMapper` already
-  does cross-year mapping we can lift.
-- **Children storage.** Store `parents` only and invert at load, or precompute
-  `children` too? Inverting is smaller on disk; measure.
-- **Nation coverage.** England/Wales use LSOA, Scotland data zones, NI SOAs. The
-  `Level` union already reflects this; the lookups differ per nation.
-- **Best-fit vs exact-fit crosswalks.** Population-weighted best-fit is smaller
-  and fine for most choropleths; area-weighted exact-fit is more accurate but
-  heavier. Start best-fit; allow exact-fit per relation where it matters.
-- **OA lookup budget.** The universal-building-block approach (4.4) needs an
-  OA-to-everything membership table. Codes only, but there are ~230k OAs; confirm
-  the compressed size is acceptable before committing to it, else fall back to
-  per-relation crosswalks (constituency->LAD, vintage->vintage) computed at build.
-- **Intensive quantities.** `apportion` is only valid for extensive values.
-  Datasets carrying rates/medians must declare a numerator + denominator so we
-  apportion those, not the ratio. Reflect this in `DatasetManifest`.
-- **Artifact size budget.** Target: gazetteer JSON materially smaller than the
-  sum of geometry we currently parse client-side to derive the same facts.
-- **API load lifecycle.** With a sharded artifact (3.1) and `population()`
-  joining a separately-loaded dataset, the API can't be fully synchronous. Decide
-  the shape: a hook returning `{ ready, gazetteer }`, sync-after-ready for loaded
-  shards, and async (or "undefined until loaded") for on-demand ones.
-- **Named-composite curation.** "Greater Manchester" (combined authority),
-  "Cheshire" (ceremonial county), London-borough grouping, these are partly
-  editorial. Source from ONS combined-authority / ceremonial-county lookups where
-  they exist; hand-list the rest and be explicit that set is curated.
-- **Display vs. match names.** Preferred display label vs. the alias set used for
-  matching, plus bilingual (Welsh) names. `name` + `aliases` covers matching;
-  decide whether a separate `displayName` (and locale) is needed.
-- **Multi-vintage member lists (resolved; NOT a LOCATIONS bug).** `LOCATIONS`
-  lists region members across several LAD vintages _on purpose_:
-  `"North West"` carries both the 6 abolished Cumbria districts (`E07000026-31`)
-  and the 2 unitaries that replaced them (`E06000063/64`). This is intentional
-  because pre-2023 ward boundaries carry the old district LAD codes and 2023+
-  wards carry the new unitary codes, and the app filters wards by
-  `lad_codes.includes(ward.ladCode)`; listing both makes region aggregation work
-  for _either_ ward vintage. The live app never double-counts, since only one ward
-  vintage is active per dataset. The bug was in the gazetteer: `linkRegions`
-  summed LAD-entry areas across all vintages (region 20,911 vs ~14,100 km2).
-  Fixed by rolling area up over the current vintage only (union of LAD >= 2023,
-  robust to gaps like the 2025 file missing Barnsley/Sheffield). Superseded
-  district entries survive but carry no region parent. Lesson: the dual codes
-  looked like debt but were load-bearing; verify before "fixing" source data.
+Not realised: declaring whether a value is extensive or intensive, with
+numerator and denominator for the latter. That is the one manifest field
+`apportion` needs before it can be used on real datasets (section 9.8).
 
-## 12. Phased rollout
+## 8. Phase 0 measurements (historical)
 
-0. **Prerequisites (DONE, see 3.2).** Measured real artifact sizes and validated
-   weight derivation via `scripts/gazetteer-phase0.ts`. Outcome: eager core 37 KB
-   gz, per-relation crosswalks single-digit KB, building-block table stays
-   build-time-only (~2.9 MB at OA). Decision locked in: precompute per-relation
-   crosswalks; do not ship the OA table. Budget met, pipeline validated.
-1. Compile the **sharded** artifact (core + level/vintage + crosswalk shards)
-   from ONS lookups, with bboxes and `areaM2` computed from geometry in the same
-   pass; run the 6.1 validation suite; ship it, unused.
-   **In progress:** `lib/data/gazetteer/` builds `gazetteer.core.json` (LAD across
-   4 vintages + constituency, 51 KB gz) in `precompile-data.ts`, and
-   `scripts/gazetteer-crosswalks.ts` builds the versioned
-   `constituency-lad-overlaps.json` shard (19 KB gz across the four served
-   constituency releases) separately. Validation runs and already surfaced real debt: 9
-   `LOCATIONS` members predate our boundary vintages (recoded pre-2016), reported
-   as warnings.
-   **Backfill (done):** LAD -> region hierarchy is populated for the 9 English
-   regions (E12 codes) by inverting LOCATIONS membership; region entries carry
-   summed `areaM2` + union bbox. `ancestors`/`descendants` now work
-   (`tests/data/gazetteer.test.ts`, 10 green). Region area is rolled up over the
-   current LAD vintage only, so multi-vintage LOCATIONS member lists don't
-   double-count reorganised areas like Cumbria / North Yorkshire (see 11). Still
-   to do: nations (Scotland/Wales/NI) as regions, ward/LSOA shards, county tier,
-   and population-weighted (not area-weighted) crosswalks.
-2. Add `lib/data/gazetteer.ts` + hook (with the load lifecycle from §11);
-   validate against current `LOCATIONS` / `areaBank` / `codeMapper` outputs (they
-   must agree, this is 6.1's regression guard).
-   **Done:** `lib/data/gazetteer/gazetteer.ts` (`Gazetteer` class: get / resolveName
-   / membersOf / boundsOf / areaM2 / overlaps / apportion / ancestors). The core is
-   bundled statically by `lib/data/gazetteer/static.ts` rather than fetched through
-   a hook, and the constituency/LAD crosswalk is loaded lazily by
-   `lib/data/boundaries/constituencyLadOverlaps.ts`; the `useGazetteer` hook this
-   step originally proposed was never wired up and has been removed.
-   `tests/data/gazetteer.test.ts`
-   asserts `membersOf`/`boundsOf` equal `LOCATIONS` for all 154 named locations
-   and that crosswalk weights sum to 1 / apportion preserves totals (7 tests
-   green). `areaBank`/`codeMapper` parity is validated during their Phase 3/4/5
-   swaps rather than up front (they are derived from geometry at runtime).
-3. Migrate `LOCATIONS` consumers to `membersOf`/`boundsOf`.
-   **Done:** `boundaries.ts`, `useMapUpdates`, `MapInterface`, and `LocationPanel`
-   now read named-location bounds/members from the gazetteer, not `LOCATIONS`. No
-   runtime code imports `LOCATIONS` any more; it remains only as the build-time
-   curated source for the loader. Enabled by `lib/data/gazetteer/static.ts`, a
-   statically bundled singleton (the eager core is needed _synchronously_ at map
-   mount and in the non-React `boundaries.ts`, so it is imported, not fetched;
-   this refines 3.1 for the core, shards stay fetched). Verified end-to-end: the
-   location list renders identical populations (UK 60,238,038, London 8,866,180),
-   111 tests green.
-4. Migrate `areaBank` (custom upload matching) to `matchColumn`.
-5. Migrate `codeMapper` consumers to `ancestors`/`descendants`/`mapToVintage`.
-6. Introduce `DatasetManifest`; convert one existing dataset as the reference.
-7. Delete superseded modules.
-8. Postcodes: separate track, district-level first.
+Measured from real UK boundaries with `scripts/gazetteer-phase0.ts` before
+anything shipped. They settled the build-time crosswalk decision:
+
+| Artifact                                             | Ships?          | Size (gz)                     |
+| ---------------------------------------------------- | --------------- | ----------------------------- |
+| Core: 361 LADs + 650 constituencies, `areaM2` + bbox | yes             | 37 KB                         |
+| Constituency to LAD crosswalk (one release)          | yes             | 5 KB                          |
+| LSOA building-block table (34,753 rows)              | no, build input | 446 KB; ~2.9 MB at OA (~230k) |
+
+227 of 574 constituencies spanned more than one LAD, every crosswalk's weights
+summed to 1 within tolerance, and 34,738 of 34,753 LSOAs assigned cleanly.
+
+## 9. What is left, in priority order
+
+### 9.1 Stop guessing between same-named areas on upload (correctness)
+
+`gazetteer.matchindex.json` stores one code per lowercased name per vintage,
+and `lib/data/custom/import.ts` joins name-keyed upload rows through it. Where
+a name is shared the last area built wins, silently:
+
+| Geography (vintage) | Shared names | Areas behind them |
+| ------------------- | ------------ | ----------------- |
+| ward (2026)         | 274          | 752 (9%)          |
+| parish (2026)       | 575          | 1,443 (14%)       |
+| LAD, constituency   | 0            | 0                 |
+
+An uploaded row for "Castle" ward lands on one of several Castle wards. Fix:
+keep every candidate in the match index (`name -> codes`, still year-masked),
+use a parent column (ward plus LAD name or code) to disambiguate when the upload
+has one, and report rows that stay ambiguous rather than placing them. This is
+the §4 "surface, don't guess" principle applied where it matters most.
+
+### 9.2 Build every lookup in one place
+
+The match index and the crosswalk are built by standalone scripts, not by
+`precompile-data.mts`. The match index went stale that way: 22 catalogue
+releases (LSOA 2021, LAD 2026 among them) were unmatchable until 2026-09-27. A
+test in `tests/data/compiledBoundaryAssets.test.ts` now fails if its vintages
+drift from the catalogue.
+
+- Give the crosswalk the same guard: every constituency release the catalogue
+  serves either has a table or is explicitly listed as unsupported. Today 2010
+  and 2015 have none.
+- Better, build the match index in precompile (it is cheap) and keep only the
+  crosswalk separate (it is expensive), with a staleness check.
+
+### 9.3 Replace centroid constituency/ward membership
+
+`boundary-mappings.json` still derives `constituencyToWards` by testing each
+ward's rough ring centroid against constituency polygons, for the latest ward
+release only. It should come from a precomputed ward/constituency crosswalk, or
+from the ONS ward-to-constituency lookup, which is exact. That also makes older
+ward releases work.
+
+### 9.4 Density from `areaM2`, not polygon rings
+
+`boundaries/derived.ts` computes area in the browser with `polygonAreaSqKm`. For
+LADs and constituencies the gazetteer already has `areaM2`; use it and keep the
+ring computation only as a fallback for families the core does not hold.
+Composite density must sum populations and areas separately (§4).
+
+### 9.5 Reverse the dependency on the API
+
+The API's named locations are compiled from this project's
+`gazetteer.core.json`, whose composites come from the hand-curated
+`lib/data/locations.ts` (about 1,500 lines). The API already models sourced,
+versioned place definitions. The sturdier direction is for the API to own place
+definitions (from ONS combined-authority and ceremonial-county lookups where
+they exist, explicitly curated where they don't) and for the gazetteer core to
+be built from the API's output. Open question: do that, or keep `LOCATIONS` as
+the source for both and document why.
+
+### 9.6 Population-weighted crosswalks
+
+Constituency/LAD weights are area-weighted. For values about people, which is
+most of the atlas, population-weighted best fit is the better default: a rural
+LAD with most of a constituency's land but few of its residents currently
+takes most of its share. The building-block route supports this by swapping
+the measure (`build.ts` already notes it). The API's crosswalks record their
+method; this one should too.
+
+### 9.7 Not worth doing any more
+
+- **Ward, LSOA, data-zone and SOA entry shards.** The match index and boundary
+  mappings already cover what the browser needs at those levels.
+- **Folding `areaBank` and `codeMapper` into `Gazetteer`.** They read
+  precompiled data now; moving them would be churn without a runtime gain.
+- **Nations and a county tier as gazetteer regions**, unless a feature needs
+  them. Nations are already named locations and are filtered by code prefix.
+- **Postcodes in the browser.** The API serves postcode lookup
+  (`api/src/postcodeAreas.ts`).
+
+### 9.8 Declare extensive and intensive values
+
+Before `apportion` is used on any dataset, `DatasetDefinition` needs to say
+whether each value column is extensive, or intensive with its numerator and
+denominator. Without that, the first cross-boundary conversion of a rate will
+be wrong in a way no test catches.
+
+### 9.9 Smaller items
+
+- Drop the `deriveBoundaryMappings` geometry fallback once every deployed
+  revision serves version 2 mappings; it is the last runtime rebuild of lookups
+  from geometry.
+- `LOCATIONS` still produces validation warnings for members that predate the
+  served LAD releases. Recode or retire them.
+- `Level` declares levels the core never holds. Narrow it when 9.7 is settled,
+  so the type says what the artifact contains.
