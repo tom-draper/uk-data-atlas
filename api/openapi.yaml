@@ -107,7 +107,7 @@ x-glossary:
   - term: Place
     meaning: "An ambiguous name-resolution result from `/places`; it is never silently chosen."
   - term: Curated area collection
-    meaning: "An editorial grouping served by `/locations`, not a generic geographic `location`."
+    meaning: "A named set of areas served by `/locations`: an official area ONS defines (its `kind` and `source` say which) or an editorial grouping. Not a generic geographic `location`."
   - term: Source geography
     meaning: "The geography and code vintage on the publisher's observation."
   - term: Geometry release
@@ -2452,8 +2452,9 @@ paths:
         `aggregation.memberCodesNotInPartition`. Any other missing member is
         refused with `code: partial_coverage` rather than silently returning a
         partial total, and a location none of whose codes is in the partition
-        is refused with its reason. Named locations are editorial code
-        groupings, not claims of official administrative geography.
+        is refused with its reason. A named location's `kind` says whether it
+        is an official area sourced from an ONS lookup or an editorial code
+        grouping that claims no official status.
 
         With `areaCode`, which currently accepts a country code such as
         `E92000001`, membership follows the first character of the GSS area
@@ -5053,7 +5054,7 @@ paths:
                         - id: birmingham
                           label: Birmingham
                           href: /v1/locations/birmingham/members?geography=localAuthority&release=2023-05-uk-bgc-v2
-                      note: Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.
+                      note: Membership is a direct code match against each named location's member codes. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.
                     data:
                       status: available
                       counts:
@@ -8136,10 +8137,13 @@ paths:
         status: 503
         when: "A search that matches nothing is an empty list, not a refusal. Refused only when the server was started without named locations built."
       description: >
-        A named location is a curated area collection: an editorial grouping
-        of area codes, kept because people ask for places the official
-        geographies do not name. It is not a generic geographic location and
-        not an official administrative geography, and its membership holds
+        A named location is a curated area collection. Most are editorial
+        groupings of area codes (`kind: editorial-grouping`), kept because
+        people ask for places the official geographies do not name. Countries,
+        English regions, Greater Manchester and some counties are official
+        areas (`kind: country`, `region`, `combined-authority` or `county`), and
+        all but countries name the ONS lookup their current members come from
+        in `source`. None is a generic geographic location, and membership holds
         only through a crosswalk the caller names. `q` matches an id or label
         prefix. `definitionRevision` identifies the curated definition used;
         `validity` gives its known bounds, with null bounds when the curator

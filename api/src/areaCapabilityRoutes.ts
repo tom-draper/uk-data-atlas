@@ -181,7 +181,7 @@ export const handleAreaCapabilityRoutes = ({
 								label: location.label,
 								href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
 							})),
-							note: "Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.",
+							note: "Membership is a direct code match against each named location's member codes. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
 						},
 				data,
 			},

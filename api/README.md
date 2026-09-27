@@ -73,8 +73,11 @@ only **available** when its endpoint, contract and provenance are published.
       explicit purpose: official historical identity, clean membership, or
       area-overlap apportionment. Unsupported conversions return an error.
 - [x] Search and inspect all 162 curated named locations. Their definitions
-      are versioned in the Atlas release and explicitly labelled editorial
-      groupings rather than silently presented as official geographies.
+      are versioned in the Atlas release and labelled with their `kind`: the
+      countries, English regions, Greater Manchester and five counties are
+      official areas, all but the countries naming the ONS lookup their
+      current members come from; the rest are explicitly editorial groupings
+      rather than silently presented as official geographies.
 - [x] Resolve a named location's direct member codes in one specified
       geography/release, reporting unresolved legacy codes rather than applying
       an implicit historical conversion. Each unresolved code is classified
@@ -241,9 +244,12 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Named locations — next
 
-- [ ] Add sourced semantic classifications where available: combined authority,
-      ceremonial county or historic county. Definitions currently remain
-      transparently labelled `editorial-grouping`.
+- [x] Add sourced semantic classifications where an ONS lookup defines the
+      area: regions, combined authorities and counties, whose current members
+      now come from that lookup.
+- [ ] Ceremonial and historic counties. Most county names here mean the
+      ceremonial county (Kent with Medway), which no ONS lookup defines, so
+      they remain labelled `editorial-grouping`.
 - [x] List all wards, local authorities or constituencies in a named location,
       through `GET /v1/locations/{id}/members?geography=&release=&via=`. A
       location is curated as local authority codes, so any other geography is

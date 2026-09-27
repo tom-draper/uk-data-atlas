@@ -221,7 +221,7 @@ export const namedLocationMembersTable = (
 		column(
 			"kind",
 			"string",
-			"How the location is defined; editorial-grouping is a curated grouping, not an official area.",
+			"How the location is defined: country, region, combined-authority or county for an area ONS defines, or editorial-grouping for a curated grouping that is not an official area.",
 		),
 		column(
 			"definitionRevision",

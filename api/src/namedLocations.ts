@@ -7,6 +7,8 @@ type GazetteerCore = {
 };
 
 type GazetteerNamedLocation = {
+	kind?: unknown;
+	source?: unknown;
 	definitionRevision?: unknown;
 	memberCodes?: unknown;
 	memberGeography?: unknown;
@@ -17,10 +19,29 @@ type GazetteerNamedLocation = {
 
 export const DEFAULT_NAMED_LOCATION_MEMBER_GEOGRAPHY = "localAuthority";
 
+/**
+ * What a named location is. An official kind is an area ONS defines, with its
+ * members taken from the ONS lookup in `source`; `editorial-grouping` is a
+ * curated set that claims no official status.
+ */
+export type NamedLocationKind =
+	| "editorial-grouping"
+	| "country"
+	| "region"
+	| "combined-authority"
+	| "county";
+
 export type NamedLocation = {
 	id: string;
 	label: string;
-	kind: "editorial-grouping";
+	kind: NamedLocationKind;
+	/** For an official kind, the ONS lookup its current members come from. */
+	source?: {
+		publisher: "Office for National Statistics";
+		/** Directory under data/lookups in the Atlas repository. */
+		lookup: string;
+		code: string;
+	};
 	/** Revision of this definition in the curated gazetteer. */
 	definitionRevision: number;
 	/** The geography whose codes define this editorial grouping. */
@@ -73,6 +94,34 @@ const memberGeography = (value: unknown): string | undefined =>
 			? value.trim()
 			: undefined;
 
+const OFFICIAL_KINDS = new Set<NamedLocationKind>([
+	"country",
+	"region",
+	"combined-authority",
+	"county",
+]);
+
+// The gazetteer calls a curated grouping `editorial`; older cores omit it.
+const kind = (value: unknown): NamedLocationKind | undefined =>
+	value === undefined || value === "editorial"
+		? "editorial-grouping"
+		: OFFICIAL_KINDS.has(value as NamedLocationKind)
+			? (value as NamedLocationKind)
+			: undefined;
+
+const placeSource = (
+	value: unknown,
+): NamedLocation["source"] | null | undefined => {
+	if (value === undefined) return null;
+	const { lookup, code } = (value ?? {}) as Record<string, unknown>;
+	return typeof lookup === "string" &&
+		lookup.length > 0 &&
+		typeof code === "string" &&
+		code.length > 0
+		? { publisher: "Office for National Statistics", lookup, code }
+		: undefined;
+};
+
 const revision = (value: unknown, fallback: number): number | undefined =>
 	value === undefined
 		? fallback
@@ -92,9 +141,9 @@ const isoDate = (value: unknown): string | null | undefined => {
 };
 
 /**
- * Compile the existing, curated Atlas location definitions into an API artifact.
- * They remain explicitly editorial groupings: this compiler adds no claim that a
- * location is an official administrative geography.
+ * Compile the Atlas location definitions into an API artifact. A location is
+ * official only where the gazetteer sourced it from an ONS lookup and says
+ * so; everything else stays an explicit editorial grouping.
  */
 export const compileNamedLocations = (path: string): NamedLocationInventory => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as GazetteerCore;
@@ -122,6 +171,18 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 			const validFrom = isoDate(entry.validFrom);
 			const validTo = isoDate(entry.validTo);
 			const bounds = bbox(entry.bbox);
+			const locationKind = kind(entry.kind);
+			const locationSource = placeSource(entry.source);
+			if (
+				!locationKind ||
+				locationSource === undefined ||
+				// An official area must say where it comes from; a country is
+				// defined by its code prefix and needs no lookup.
+				(locationKind !== "editorial-grouping" &&
+					locationKind !== "country" &&
+					!locationSource)
+			)
+				throw new Error(`${path}: named location ${label} is invalid`);
 			if (
 				!id ||
 				!definitionRevision ||
@@ -145,7 +206,8 @@ export const compileNamedLocations = (path: string): NamedLocationInventory => {
 			return {
 				id,
 				label,
-				kind: "editorial-grouping" as const,
+				kind: locationKind,
+				...(locationSource && { source: locationSource }),
 				definitionRevision,
 				memberGeography: geography,
 				memberCodes: members,

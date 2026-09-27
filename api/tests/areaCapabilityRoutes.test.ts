@@ -69,7 +69,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 		reason: "No curated named location lists this area's code.",
 		membership: "direct-code-match",
 		locations: [],
-		note: "Named locations are editorial groupings. Membership is a direct code match and does not assert an official geography or equal geometry.",
+		note: "Membership is a direct code match against each named location's member codes. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
 	});
 	const measureData = capabilities.data as {
 		status: string;

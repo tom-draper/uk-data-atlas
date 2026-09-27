@@ -5,6 +5,73 @@ import { tmpdir } from "node:os";
 import test from "node:test";
 import { compileNamedLocations } from "../src/namedLocations";
 
+test("keeps an official area's kind and its ONS source", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-named-locations-"));
+	try {
+		const source = join(root, "gazetteer.core.json");
+		writeFileSync(
+			source,
+			JSON.stringify({
+				version: 1,
+				namedLocations: {
+					"South East": {
+						kind: "region",
+						source: {
+							lookup: "local-authority-to-region/2025-04-en",
+							code: "E12000008",
+						},
+						definitionRevision: 2,
+						memberCodes: ["E07000229"],
+						bbox: [-1.9, 50.5, 1.5, 52.2],
+					},
+					"Central Belt": {
+						kind: "editorial",
+						memberCodes: ["S12000049"],
+						bbox: [-4.8, 55.6, -2.8, 56.1],
+					},
+				},
+			}),
+		);
+
+		const [centralBelt, southEast] =
+			compileNamedLocations(source).locations;
+		assert.equal(centralBelt?.kind, "editorial-grouping");
+		assert.equal(centralBelt?.source, undefined);
+		assert.equal(southEast?.kind, "region");
+		assert.equal(southEast?.definitionRevision, 2);
+		assert.deepEqual(southEast?.source, {
+			publisher: "Office for National Statistics",
+			lookup: "local-authority-to-region/2025-04-en",
+			code: "E12000008",
+		});
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test("rejects a kind the gazetteer does not define", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-named-locations-"));
+	try {
+		const source = join(root, "gazetteer.core.json");
+		writeFileSync(
+			source,
+			JSON.stringify({
+				version: 1,
+				namedLocations: {
+					Somewhere: {
+						kind: "parish",
+						memberCodes: ["E07000229"],
+						bbox: [0, 0, 1, 1],
+					},
+				},
+			}),
+		);
+		assert.throws(() => compileNamedLocations(source), /Somewhere/);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
 test("compiles curated gazetteer locations as explicitly editorial definitions", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-named-locations-"));
 	try {
