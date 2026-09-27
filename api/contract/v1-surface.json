@@ -4841,6 +4841,11 @@
 					"data.geography",
 					"data.id",
 					"data.name",
+					"data.postcodes",
+					"data.postcodes.edition",
+					"data.postcodes.largeUser",
+					"data.postcodes.live",
+					"data.postcodes.terminated",
 					"meta",
 					"meta.nextCursor"
 				],
