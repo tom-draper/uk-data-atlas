@@ -9,6 +9,7 @@ import {
 	chooseMatch,
 	guessCodeColumn,
 	guessValueColumn,
+	importWarnings,
 	isPointMode,
 	matchColumn,
 	uploadColumns,
@@ -54,6 +55,37 @@ export function UploadModal({
 		[csvData, headerRow],
 	);
 	const pointMode = isPointMode(coord, matches);
+
+	// Rows the upload would leave off, shown before it is applied. The match
+	// entry comes from the area bank, so it is stable across renders.
+	const matchEntry = effectiveMatch?.entry;
+	const warnings = useMemo(
+		() =>
+			importWarnings(
+				{
+					file: file?.name ?? null,
+					csvData,
+					headerRow,
+					selectedColumn,
+					dataColumn,
+					latColumn,
+					lngColumn,
+				},
+				pointMode,
+				effectiveMatch,
+			),
+		[
+			file,
+			csvData,
+			headerRow,
+			selectedColumn,
+			dataColumn,
+			latColumn,
+			lngColumn,
+			pointMode,
+			matchEntry,
+		],
+	);
 
 	// Prefill the lat/lng/value pickers from detection when entering point mode.
 	useEffect(() => {
@@ -288,6 +320,26 @@ export function UploadModal({
 							isDark={isDark}
 						/>
 					)}
+
+					{warnings.map((warning) => (
+						<div
+							key={warning.code}
+							role="status"
+							className={`p-3 border rounded-md flex items-start gap-2 text-xs ${
+								isDark
+									? "bg-amber-900/20 border-amber-800/40 text-amber-300"
+									: "bg-amber-50 border-amber-200 text-amber-800"
+							}`}
+						>
+							<AlertCircle size={14} className="shrink-0 mt-px" />
+							<span>
+								{warning.message}
+								{warning.names && warning.names.length > 0 && (
+									<> Shared: {warning.names.join(", ")}</>
+								)}
+							</span>
+						</div>
+					))}
 				</div>
 
 				<div

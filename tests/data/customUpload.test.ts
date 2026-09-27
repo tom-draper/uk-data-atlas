@@ -6,6 +6,7 @@ import {
 	chooseMatch,
 	guessCodeColumn,
 	guessValueColumn,
+	importWarnings,
 	isPointMode,
 	isSpecialMatchType,
 	matchColumn,
@@ -263,5 +264,46 @@ describe("buildCustomImport", () => {
 				match("Postcodes", "postcode-full", 90),
 			),
 		).toEqual({ error: "Postcode visualisation is coming soon." });
+	});
+});
+
+describe("importWarnings", () => {
+	const draft = {
+		file: "wards.csv",
+		csvData: [
+			["Ward", "Rate"],
+			["Castle", "1"],
+			["Abbey", "2"],
+		],
+		headerRow: 0,
+		selectedColumn: "Ward",
+		dataColumn: "Rate",
+		latColumn: "",
+		lngColumn: "",
+	};
+	const wardNames: AreaMatch = {
+		entry: {
+			...entry("Ward Name [2026]", "name"),
+			boundaryType: "ward",
+			year: 2026,
+			nameToCodes: new Map([
+				["castle", ["E05000001", "E05000002"]],
+				["abbey", ["E05000003"]],
+			]),
+		},
+		percentage: 100,
+		matchCount: 2,
+	};
+
+	it("warns before upload about rows a shared name would leave off", () => {
+		expect(importWarnings(draft, false, wardNames)).toMatchObject([
+			{ code: "ambiguous-name", count: 1, names: ["Castle"] },
+		]);
+	});
+
+	it("has nothing to say until the draft is complete", () => {
+		expect(
+			importWarnings({ ...draft, dataColumn: "" }, false, wardNames),
+		).toEqual([]);
 	});
 });

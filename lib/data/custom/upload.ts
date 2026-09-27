@@ -9,7 +9,12 @@ import {
 	type AreaMatch,
 	type CoordinateColumns,
 } from "@/lib/data/areaBank";
-import { createCsvImportDocument, type CustomImport } from "./import";
+import {
+	createCsvImportDocument,
+	validateCustomImport,
+	type CustomImport,
+	type CustomImportIssue,
+} from "./import";
 import type { BoundaryType } from "@/lib/types/boundaries";
 
 /** A column offered to the pickers, with a taste of its first data row. */
@@ -189,4 +194,21 @@ export function buildCustomImport(
 			},
 		},
 	};
+}
+
+/**
+ * What the upload would leave off the map, said before the user commits to
+ * it: rows with missing values, and rows naming an area several share.
+ */
+export function importWarnings(
+	draft: UploadDraft,
+	pointMode: boolean,
+	match: AreaMatch | null,
+): CustomImportIssue[] {
+	const result = buildCustomImport(draft, pointMode, match);
+	if ("error" in result) return [];
+	const { document, plan } = result.customImport;
+	return validateCustomImport(document, plan).issues.filter(
+		(issue) => issue.severity === "warning",
+	);
 }
