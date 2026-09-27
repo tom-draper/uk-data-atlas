@@ -347,12 +347,16 @@ Dagenham and Rainham, where Havering's share falls from 66% to 39%.
 - **Postcodes in the browser.** The API serves postcode lookup
   (`api/src/postcodeAreas.ts`).
 
-### 9.8 Declare extensive and intensive values
+### 9.8 Extensive and intensive values (already owned by the API)
 
-Before `apportion` is used on any dataset, `DatasetDefinition` needs to say
-whether each value column is extensive, or intensive with its numerator and
-denominator. Without that, the first cross-boundary conversion of a rate will
-be wrong in a way no test catches.
+Nothing to add here. The API's data catalogue already declares how every
+measure it serves may be combined (`aggregation.kind` in
+`api/src/dataCatalog.ts`): of 228 measures, 180 extensive, 31 intensive with
+their weighting denominator, 15 non-aggregatable (medians, ranks, deciles) and
+2 categorical, and its conversion routes refuse anything but extensive. A second
+classification on the website's `DatasetDefinition` would be a second source
+of truth to drift. `Gazetteer.apportion` has no callers; its comment now says it
+is only valid for measures the API classifies as extensive.
 
 ### 9.9 Smaller items
 

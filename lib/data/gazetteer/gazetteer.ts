@@ -98,7 +98,14 @@ export class Gazetteer {
 		return this.crosswalks[key(level, targetLevel)]?.[code] ?? [];
 	}
 
-	// Weighted re-aggregation of extensive values from one level to another.
+	/**
+	 * Weighted re-aggregation of extensive values (counts that add over areas)
+	 * from one level to another. Wrong for anything else: a rate, share or
+	 * median must be apportioned as numerator and denominator, or not at all.
+	 * Which kind a measure is belongs to the API, whose data catalogue declares
+	 * it for every measure it serves (`aggregation.kind` in api/src/dataCatalog.ts);
+	 * check that before calling this on a dataset's values.
+	 */
 	apportion(
 		values: Record<string, number>,
 		fromLevel: Level,
