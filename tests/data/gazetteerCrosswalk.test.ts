@@ -52,4 +52,29 @@ describe("buildCrosswalk", () => {
 			{ code: "T1", weight: 0.1 },
 		]);
 	});
+
+	it("gives a block in a hole to the area filling it, not the one around it", () => {
+		// OUTER is a ring round INNER, as Kenilworth and Southam is round
+		// Warwick and Leamington. OUTER is listed first.
+		const outer = {
+			type: "Feature" as const,
+			properties: { CODE: "OUTER" },
+			geometry: {
+				type: "Polygon" as const,
+				coordinates: [
+					square("", 0, 0, 3).geometry.coordinates[0],
+					square("", 1, 1, 1).geometry.coordinates[0],
+				],
+			},
+		};
+		const inner = square("INNER", 1, 1, 1);
+		const { crosswalk } = buildCrosswalk(
+			[square("B", 1.25, 1.25, 0.5)],
+			[outer, inner],
+			["CODE"],
+			[square("T", 0, 0, 3)],
+			["CODE"],
+		);
+		expect(Object.keys(crosswalk)).toEqual(["INNER"]);
+	});
 });

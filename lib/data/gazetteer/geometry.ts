@@ -66,8 +66,19 @@ function pointInRing(px: number, py: number, ring: number[][]): boolean {
 	return inside;
 }
 
+// A point in a hole is outside: an authority or constituency can wrap round
+// another, as South Cambridgeshire does Cambridge.
 export function pointInGeom(px: number, py: number, geom: Geom): boolean {
-	for (const ring of outerRings(geom))
-		if (pointInRing(px, py, ring)) return true;
-	return false;
+	const polygons =
+		geom.type === "Polygon"
+			? [geom.coordinates]
+			: geom.type === "MultiPolygon"
+				? geom.coordinates
+				: [];
+	return polygons.some(
+		([outer, ...holes]) =>
+			!!outer &&
+			pointInRing(px, py, outer) &&
+			!holes.some((hole) => pointInRing(px, py, hole)),
+	);
 }
