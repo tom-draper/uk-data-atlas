@@ -93,7 +93,12 @@ only **available** when its endpoint, contract and provenance are published.
 ### Geography and place intelligence — next
 
 - [ ] Resolve a canonical area page with validity, aliases, extent, provenance
-      and links to geometry and relationships.
+      and links to geometry and relationships. Mostly served:
+      `GET /v1/areas/{geography}/{release}/{code}/dossier` gives the area's
+      aliases, its boundary release's source, temporal coverage and metadata
+      hash, geometry provenance, and links to geometry, relationships, history,
+      capabilities and citation. Still to add: the code's own validity span
+      (the releases holding it) and its extent.
 - [x] Resolve a place name to every place it could mean through
       `GET /v1/places?q=`, each candidate saying what kind of place it is and
       none chosen. Names match with case, accents, punctuation and the
@@ -130,9 +135,11 @@ only **available** when its endpoint, contract and provenance are published.
       have exactly one parent, or the build fails. LAD → ITL3 is deliberately
       not published: Highland, North Ayrshire and Argyll and Bute are split
       between ITL3 areas, so it is not containment.
-- [ ] Publish constituency → ward and LSOA 2021 → MSOA 2021 where an
-      authoritative or carefully qualified mapping exists. ONS publishes ward
-      → constituency only as a best fit, and LSOA → MSOA only for England.
+- [x] Publish LSOA 2021 → MSOA 2021 from the ONS exact-fit lookup, as
+      `clean-containment` checked against both releases' geometry: 35,672
+      LSOAs, 33,755 in England and 1,917 in Wales.
+- [ ] Publish constituency → ward where a carefully qualified mapping exists.
+      ONS publishes ward → constituency only as a best fit.
 - [x] Cross-check published clean-containment lookups against geometry by
       testing every child's vertices against its declared parent. This is a
       build-time validation gate, not a way to derive a relationship; missing
@@ -143,7 +150,11 @@ only **available** when its endpoint, contract and provenance are published.
       reverse area-overlap weights against the queried target.
 - [ ] Publish a directional relationship graph: within, contains, overlaps,
       predecessor, successor, split-from, merged-from and equivalent-to, each with
-      method, quality and provenance.
+      method, quality and provenance. `within`, `contains`, `overlaps`,
+      `predecessor` and `successor` are served through
+      `/areas/{geography}/{release}/{code}/relationships` and `/history`;
+      `split-from`, `merged-from` and `equivalent-to` are not yet
+      distinguished.
 - [x] Add official LAD historical change lookups, December 2022 → May 2023 and
       December 2024 → May 2025, and the 2011 → 2021 LSOA changes, where 865
       2011 LSOAs have more than one successor. An official lookup declared as
@@ -336,8 +347,13 @@ only **available** when its endpoint, contract and provenance are published.
       `population-density` divides by. Measured against it, Birmingham and the
       Isle of Wight agree to about a part in a thousand, while Highland is 2%
       larger, which is its lochs.
-- [ ] Expand point lookup beyond its current single geography/release scope,
-      with documented request limits and an efficient multi-geography strategy.
+- [x] Expand point lookup beyond a single geography and release.
+      `GET /v1/areas:contains` tests one point against up to four geographies,
+      each on a pinned release or the one `date` selects, and
+      `GET /v1/areas:containsBatch` takes up to 100 points. Every result
+      states its positional tolerance and whether the point lies near a
+      boundary, `outside-coverage` is kept apart from `no-match`, and each
+      release is read once, on first use.
 - [x] Find nearby areas for a coordinate outside a boundary through
       `GET /v1/areas:near`, ranking up to ten areas per geography within 50 km
       by ground distance to their published geometry. The answer is labelled
@@ -362,7 +378,9 @@ only **available** when its endpoint, contract and provenance are published.
       conservative combined coordinate/transformation uncertainty.
 - [ ] Keep terrain elevation as a separately versioned raster lookup, with its
       vertical datum, resolution and uncertainty; elevation is not part of
-      administrative-area containment.
+      administrative-area containment. `GET /v1/terrain` publishes the
+      product catalogue and the requirements a product must meet; every product
+      is `not-published` until a terrain source is ingested and validated.
 - [x] Serve point, nearest-area and box lookup through a compact per-release
       spatial candidate index before exact geometry tests. A release costs 60
       to 400 MB of heap once read, so only two are held at a time, and a lookup
@@ -396,8 +414,13 @@ only **available** when its endpoint, contract and provenance are published.
       names the coastline. In the May 2023 release, Birmingham shares 100% of
       its perimeter over seven neighbours, Belfast 94% with 4.1 km left on the lough, Highland 7% with
       4,445 km of coast, and the Isle of Wight has no neighbours at all.
-- [ ] Compare two boundary releases to identify recodes, membership changes and
-      geometry changes.
+- [x] Compare two boundary releases through
+      `GET /v1/boundary-releases:compare`. Codes held by only one release are
+      kept apart from any claim that an area was added or removed; shared codes
+      are continuous only where a same-code-continuity crosswalk measured their
+      geometry, with changed and unmeasured ones listed for review; and other
+      published crosswalks between the releases are named with their code
+      cardinality and split- or merge-shaped examples.
 - [x] Report the overlap between two specified areas through
       `GET /v1/areas/{geography}/{release}/{code}/overlap?with=`, across geographies
       and releases: the shared area, each area's share, and a relation judged
@@ -444,8 +467,14 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Accept a column of supplied codes or place names and return an auditable
       match report: candidate geography/release, exact/alias/fuzzy match method,
       ambiguity, unmatched values and recommended next action.
+      `/areas:validate` reports method, ambiguity and unmatched values, but
+      only against a release the caller names; choosing the candidate
+      geography and release from the values is still to do.
 - [ ] Detect mixed or stale code systems in the same input and propose only
       published conversion paths; never silently normalise them.
+      `/areas:validate` already marks each stale or other-geography code;
+      diagnosing the input as a whole and proposing a conversion are still to
+      do.
 - [ ] Provide a downloadable match result and a reproducible matching manifest,
       so a user can join their own dataset without redoing the Atlas's repair
       and code-resolution work.
@@ -1274,20 +1303,27 @@ GET /v1/status
 - [ ] Extend batch area validation to diagnose mixed or stale code systems,
       duplicate values and ambiguous names, and to recommend only published
       conversion paths. It must remain a diagnosis, not silently rewrite a
-      customer's data.
+      customer's data. Duplicates, ambiguous names and each stale code are
+      reported; a diagnosis of the whole input and a recommended conversion
+      are not.
 - [ ] Find and rank declared conversion paths between two exact area identities,
       exposing each intermediate release, method, coverage and quality.
 - [ ] Make a small, carefully selected set of extensive measures available for
       fully validated conversion. Do not mark a measure convertible merely
       because a crosswalk exists; conservation, coverage and uncertainty rules
-      must be declared and tested per measure/method pair.
+      must be declared and tested per measure/method pair. The review and its
+      conservation gate are built, and road collisions (LSOA 2021 to May 2023
+      local authorities) is the first reviewed pair.
 - [ ] Let a caller provide a bounded list of canonical area references and
       receive a valid aggregate, comparison or profile, with every selected
       input, aggregation rule and coverage caveat echoed in the response.
 - [ ] Add a read-only analysis preflight which selects no data. It states the
       source partition, conversion, aggregation rule, coverage, expected size
       and safer alternatives for a requested analysis before a caller builds a
-      map, trend or data pipeline around it.
+      map, trend or data pipeline around it. `GET /v1/analysis:plan` states the
+      source partition, the crosswalk and whether the period is comparable;
+      the aggregation rule, coverage, expected size and alternatives are still
+      to add.
 - [ ] Keep custom-geometry overlap as a design question, not a promised v1
       route. If evidence from the three golden paths justifies it, first define
       bounded input limits, caching, provenance, privacy/logging and a
