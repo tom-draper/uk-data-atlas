@@ -159,7 +159,6 @@ export async function loadBoundaryMappings(
 	constituencyToWards[latestWardYear] = constituencyWardMappings;
 
 	return {
-		version: 1,
 		wardToLad,
 		ladToWards,
 		codeMappings: {

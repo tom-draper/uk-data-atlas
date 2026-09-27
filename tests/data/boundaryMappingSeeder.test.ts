@@ -8,7 +8,6 @@ import type { PrecompiledBoundaryMappings } from "@/lib/data/boundaries/mappings
 describe("precompiled boundary mapping seeding", () => {
 	it("applies every mapping family to its destination", () => {
 		const mappings: PrecompiledBoundaryMappings = {
-			version: 1,
 			wardToLad: { W1: "L1" },
 			ladToWards: { 2024: { L1: ["W1"] } },
 			codeMappings: {

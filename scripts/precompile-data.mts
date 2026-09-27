@@ -34,6 +34,7 @@ import {
 	loadBoundaryMappings,
 	loadLsoaLadMappings,
 } from "../lib/data/boundaries/mappingLoader";
+import { encodeBoundaryMappings } from "../lib/data/boundaries/mappings";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 
@@ -255,7 +256,7 @@ async function main() {
 	);
 	const boundaryMappings = loadBoundaryMappings(readBoundaryAsset).then(
 		async (data) => {
-			await out("boundary-mappings", data);
+			await out("boundary-mappings", encodeBoundaryMappings(data));
 			return data;
 		},
 	);
