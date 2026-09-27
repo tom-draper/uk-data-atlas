@@ -162,6 +162,19 @@ only **available** when its endpoint, contract and provenance are published.
       than as succession.
 - [ ] Add official ward historical change lookups. Do not promote name-based
       matching to a public equivalence claim, nor a shared code on its own.
+- [ ] Extend `population-overlap` weighting to Scotland and Northern Ireland.
+      Its blocks are 2021 LSOAs, so Scotland's 57 and Northern Ireland's 18
+      2024 constituencies convert by area only. Scotland can use 2011 data
+      zones with their SIMD 2020 populations
+      (`data/deprivation/simd/SIMD+2020v2+-+indicators.csv`), as the website's
+      crosswalk already does; Northern Ireland needs a small-area population
+      source first.
+- [ ] Relate the geographies published with no relationship at all: local
+      health boards, NHS England regions, national parks, local planning
+      authorities, major towns and cities, and travel-to-work areas. ONS
+      lookups exist for some, such as local authority to local health board
+      and sub-ICB location to NHS England region; the rest need a derived
+      method stated as such.
 - [x] Publish derived `same-code-continuity` identity between consecutive
       releases of one geography, where no piece of the difference between a
       shared code's two geometries is wider than generalisation slivers.
@@ -260,7 +273,18 @@ only **available** when its endpoint, contract and provenance are published.
       now come from that lookup.
 - [ ] Ceremonial and historic counties. Most county names here mean the
       ceremonial county (Kent with Medway), which no ONS lookup defines, so
-      they remain labelled `editorial-grouping`.
+      they remain labelled `editorial-grouping`. Ordnance Survey's
+      Boundary-Line publishes ceremonial county boundaries under the Open
+      Government Licence, and could source them as the ONS lookups source
+      regions. The hand-kept lists had drifted: Kent, Devon, Derbyshire, Essex
+      and Hampshire held off-by-one code slips, and Lancashire held
+      Merseyside's Sefton, all corrected on 2026-09-27.
+- [ ] Give each named location a validity interval, and each member the
+      releases it applies to. Every location is served with
+      `validity: {from: null, to: null}`, though some lists deliberately
+      carry an abolished council beside its successor, as the North West does
+      Cumbria's six former districts and the two unitaries that replaced
+      them.
 - [x] List all wards, local authorities or constituencies in a named location,
       through `GET /v1/locations/{id}/members?geography=&release=&via=`. A
       location is curated as local authority codes, so any other geography is
@@ -470,6 +494,11 @@ only **available** when its endpoint, contract and provenance are published.
       `/areas:validate` reports method, ambiguity and unmatched values, but
       only against a release the caller names; choosing the candidate
       geography and release from the values is still to do.
+- [ ] Settle a name shared by several areas with a parent column, such as a
+      ward's local authority, given by code or name. A name is resolved only
+      when the parent leaves exactly one area, and stays `ambiguous`
+      otherwise. The website's upload matching does this for wards and
+      parishes.
 - [ ] Detect mixed or stale code systems in the same input and propose only
       published conversion paths; never silently normalise them.
       `/areas:validate` already marks each stale or other-geography code;
@@ -1915,6 +1944,7 @@ small candidate set.
    coordinate precision/tolerance, CRS transformation metadata and an explicit
    outside-coverage result. Add nearest-area separately, with distance but no
    containment implication; add bounded batch lookup for point datasets.
+   _Done:_ `areas:contains`, `areas:containsBatch` and `areas:near`.
 6. **Add terrain and contextual layers.** Serve elevation, slope, aspect and
    other raster-derived context through separate versioned products. Every
    elevation answer states its horizontal/vertical CRS or datum, units,
