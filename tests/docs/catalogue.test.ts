@@ -57,6 +57,11 @@ describe("geography pages", () => {
 		);
 	});
 
+	it("name one area of every geography, for labels such as the upload form's", () => {
+		for (const [id, geography] of Object.entries(GEOGRAPHIES))
+			expect(geography.singular, id).toMatch(/^[A-Z]\S/);
+	});
+
 	it("lists every map boundary release in its geography documentation", () => {
 		for (const [geography, family] of Object.entries(BOUNDARY_CATALOG)) {
 			expect(
