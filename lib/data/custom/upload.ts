@@ -16,6 +16,7 @@ import {
 	type CustomImportIssue,
 } from "./import";
 import type { BoundaryType } from "@/lib/types/boundaries";
+import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
 
 /** A column offered to the pickers, with a taste of its first data row. */
 export interface UploadColumn {
@@ -30,6 +31,14 @@ const PREVIEW_LENGTH = 25;
 const BOUNDARY_MATCH_THRESHOLD = 60;
 
 const CODE_COLUMN_RE = /code|area|ward|constituency|authority/i;
+
+// A header naming a geography the atlas draws ("Parish", "Police force area")
+// most likely holds that geography's codes or names.
+const GEOGRAPHY_NAMES = Object.values(GEOGRAPHIES).map(({ singular }) =>
+	singular.toLowerCase(),
+);
+const namesGeography = (header: string) =>
+	GEOGRAPHY_NAMES.some((name) => header.toLowerCase().includes(name));
 
 /** Match types that name a place the atlas cannot yet draw a boundary for. */
 export function isSpecialMatchType(matchType: string): boolean {
@@ -67,7 +76,9 @@ export function guessParentColumn(
 
 /** The column most likely to hold area codes, from its header alone. */
 export function guessCodeColumn(headerCells: string[]): string | undefined {
-	return headerCells.find((header) => CODE_COLUMN_RE.test(header));
+	return headerCells.find(
+		(header) => CODE_COLUMN_RE.test(header) || namesGeography(header),
+	);
 }
 
 /** How well one column's values match each area set the bank knows. */

@@ -68,6 +68,13 @@ describe("guessCodeColumn", () => {
 		expect(guessCodeColumn(["Constituency", "Votes"])).toBe("Constituency");
 	});
 
+	it("recognises any geography the atlas draws by its name", () => {
+		expect(guessCodeColumn(["Parish", "Households"])).toBe("Parish");
+		expect(guessCodeColumn(["Rate", "Police force area"])).toBe(
+			"Police force area",
+		);
+	});
+
 	it("returns nothing when no header looks like one", () => {
 		expect(guessCodeColumn(["Value", "Total"])).toBeUndefined();
 	});
