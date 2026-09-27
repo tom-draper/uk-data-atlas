@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 import { getProp } from "@/lib/data/boundaries/properties";
+import { parseMatchIndexLevel } from "@/lib/data/areaBank";
 
 /**
  * Compiled assets live in public/data, where they are served from; the two
@@ -87,4 +88,31 @@ describe("every compiled boundary release", () => {
 			expect(new Set(ids).size).toBe(ids.length);
 		},
 	);
+});
+
+describe("upload match index", () => {
+	it("matches against every boundary release the catalogue serves", () => {
+		const index = JSON.parse(
+			readFileSync(
+				join(
+					process.cwd(),
+					"public",
+					"data",
+					"datasets",
+					"gazetteer.matchindex.json",
+				),
+				"utf8",
+			),
+		) as Record<string, unknown>;
+
+		for (const [boundaryType, definition] of Object.entries(
+			BOUNDARY_CATALOG,
+		)) {
+			const level = parseMatchIndexLevel(index[boundaryType] ?? {});
+			expect(
+				Object.keys(level).map(Number).sort(),
+				`${boundaryType} vintages; rerun scripts/gazetteer-matchindex.ts`,
+			).toEqual(Object.keys(definition.vintages).map(Number).sort());
+		}
+	});
 });
