@@ -1,27 +1,61 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * Whether an element is inside, or within `margin` of, its scroll container's
- * visible area. Returns a ref callback to attach and the current answer.
- * Starts true, so content renders fully before the first observation and
- * wherever IntersectionObserver is missing.
+ * Whether any of a set of elements is inside, or within `margin` of, its
+ * scroll container's visible area. Returns a ref callback that adds an element
+ * to the set (and removes it on unmount) and the current answer.
+ *
+ * True while nothing is observed, so content renders fully before its first
+ * observation, when it renders no element to observe, and wherever
+ * IntersectionObserver is missing.
  */
 export function useNearViewport(margin = "250px") {
-	const [element, setElement] = useState<Element | null>(null);
 	const [near, setNear] = useState(true);
+	const observerRef = useRef<IntersectionObserver | null>(null);
+	const intersecting = useRef(new Map<Element, boolean>());
 
-	useEffect(() => {
-		if (!element || typeof IntersectionObserver === "undefined") return;
-		// The margin only stretches the root's box, so observe against the
-		// scrolling panel rather than the page, which would clip at its edge.
-		const root = element.closest(".scroll-container");
-		const observer = new IntersectionObserver(
-			([entry]) => setNear(entry.isIntersecting),
-			{ root, rootMargin: `${margin} 0px` },
-		);
-		observer.observe(element);
-		return () => observer.disconnect();
-	}, [element, margin]);
+	const update = useCallback(() => {
+		const states = [...intersecting.current.values()];
+		setNear(states.length === 0 || states.some(Boolean));
+	}, []);
 
-	return [setElement, near] as const;
+	const observe = useCallback(
+		(element: Element) => {
+			if (typeof IntersectionObserver === "undefined") return;
+			// The margin only stretches the root's box, so observe against the
+			// scrolling panel rather than the page, which would clip at its edge.
+			observerRef.current ??= new IntersectionObserver(
+				(entries) => {
+					for (const entry of entries)
+						intersecting.current.set(
+							entry.target,
+							entry.isIntersecting,
+						);
+					update();
+				},
+				{
+					root: element.closest(".scroll-container"),
+					rootMargin: `${margin} 0px`,
+				},
+			);
+			const observer = observerRef.current;
+			observer.observe(element);
+			return () => {
+				observer.unobserve(element);
+				intersecting.current.delete(element);
+				update();
+			};
+		},
+		[margin, update],
+	);
+
+	useEffect(
+		() => () => {
+			observerRef.current?.disconnect();
+			observerRef.current = null;
+		},
+		[],
+	);
+
+	return [observe, near] as const;
 }

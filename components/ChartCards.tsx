@@ -11,6 +11,7 @@ import type { ActiveViz, Dataset, Datasets, SelectedArea } from "@/lib/types";
 import type { BoundaryData } from "@/lib/types/boundaries";
 import type { ChartKey } from "@/lib/context/ChartVisibilityContext";
 import type { ChartComponentProps } from "./chartComponentTypes";
+import { ViewportGatedChart } from "./ViewportGatedChart";
 
 export interface ChartCardsProps {
 	group: string;
@@ -121,6 +122,6 @@ export default function ChartCards({
 			setActiveViz,
 			boundaryData,
 		};
-		return <Chart key={chart.key} {...props} />;
+		return <ViewportGatedChart key={chart.key} Chart={Chart} {...props} />;
 	});
 }

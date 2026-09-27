@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	useCallback,
 	useEffect,
 	useRef,
 	useState,
@@ -15,6 +16,7 @@ import {
 	useCardAccent,
 } from "@/lib/hooks/useCardAccent";
 import { toChartTitleCase } from "@/lib/helpers/titleCase";
+import { useObserveCard } from "@/components/ViewportGatedChart";
 
 interface ChartCardProps {
 	heading: ReactNode;
@@ -87,12 +89,25 @@ export function ChartCard({
 		isDark,
 	);
 	const { cardRef, heightFloor } = useActiveHeightFloor(isActive);
+	// Lets a viewport-gated chart see whether this card is near view.
+	const observeCard = useObserveCard();
+	const ref = useCallback(
+		(card: HTMLButtonElement | null) => {
+			cardRef.current = card;
+			const unobserve = card ? observeCard?.(card) : undefined;
+			return () => {
+				cardRef.current = null;
+				unobserve?.();
+			};
+		},
+		[cardRef, observeCard],
+	);
 	const displayHeading =
 		typeof heading === "string" ? toChartTitleCase(heading) : heading;
 
 	return (
 		<button
-			ref={cardRef}
+			ref={ref}
 			type="button"
 			onClick={onClick}
 			style={{
