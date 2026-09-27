@@ -370,5 +370,9 @@ export function matchColumnAgainstBank(
 		}
 	}
 
-	return results.sort((a, b) => b.percentage - a.percentage);
+	// Unchanged codes and names match every vintage equally; on a tie the
+	// newest is the likeliest reading of a file someone uploads today.
+	return results.sort(
+		(a, b) => b.percentage - a.percentage || b.entry.year - a.entry.year,
+	);
 }

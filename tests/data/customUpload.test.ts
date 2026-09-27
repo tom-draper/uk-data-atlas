@@ -83,6 +83,23 @@ describe("matchColumn", () => {
 		expect(matches[0].percentage).toBe(100);
 	});
 
+	it("prefers the newest vintage when several match equally", () => {
+		const vintage = (year: number): AreaEntry => ({
+			...entry(`LADs ${year}`, "code", ["E06000001", "E06000002"]),
+			year,
+		});
+		const matches = matchColumn(csv, 1, "LAD24CD", [
+			vintage(2011),
+			vintage(2024),
+			vintage(2016),
+		]);
+		expect(matches.map((m) => m.entry.label)).toEqual([
+			"LADs 2024",
+			"LADs 2016",
+			"LADs 2011",
+		]);
+	});
+
 	it("returns nothing when the column is absent or unselected", () => {
 		expect(matchColumn(csv, 1, "", areaBank)).toEqual([]);
 		expect(matchColumn(csv, 1, "Missing", areaBank)).toEqual([]);
