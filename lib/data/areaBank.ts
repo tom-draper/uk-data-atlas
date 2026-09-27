@@ -26,43 +26,87 @@ export type MatchIndex = Record<
 	Record<number, { codes: string[]; names: Record<string, string> }>
 >;
 
-/** Parse one geography's year-indexed data from the downloaded match index. */
+/**
+ * One geography as it is shipped. Most codes and names survive unchanged
+ * across vintages, so each is stored once with a bit mask of the vintages it
+ * appears in (bit i is `years[i]`) rather than repeated in every year's list.
+ */
+export type CompactMatchIndexLevel = {
+	years: number[];
+	codes: Record<string, number>;
+	names: [name: string, code: string, mask: number][];
+};
+
+export function compactMatchIndexLevel(
+	level: MatchIndex[string],
+): CompactMatchIndexLevel {
+	const years = Object.keys(level)
+		.map(Number)
+		.sort((a, b) => a - b);
+	if (years.length > 31)
+		throw new Error("Too many vintages for a match index mask.");
+
+	const codes: Record<string, number> = {};
+	const names = new Map<string, [string, string, number]>();
+	years.forEach((year, i) => {
+		const bit = 1 << i;
+		for (const code of level[year].codes)
+			codes[code] = (codes[code] ?? 0) | bit;
+		for (const [name, code] of Object.entries(level[year].names)) {
+			const key = `${name}\u0000${code}`;
+			const entry = names.get(key);
+			if (entry) entry[2] |= bit;
+			else names.set(key, [name, code, bit]);
+		}
+	});
+	return { years, codes, names: [...names.values()] };
+}
+
+/** Parse one geography from the downloaded match index into per-year data. */
 export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
 	if (typeof value !== "object" || value === null || Array.isArray(value))
 		throw new Error("Invalid gazetteer match index level.");
 
+	const { years, codes, names } = value as Partial<CompactMatchIndexLevel>;
+	if (
+		!Array.isArray(years) ||
+		years.length > 31 ||
+		!years.every(Number.isInteger) ||
+		typeof codes !== "object" ||
+		codes === null ||
+		Array.isArray(codes) ||
+		!Array.isArray(names)
+	)
+		throw new Error("Invalid gazetteer match index level.");
+
+	const full = (1 << years.length) - 1;
+	const validMask = (mask: unknown): mask is number =>
+		Number.isInteger(mask) &&
+		(mask as number) > 0 &&
+		((mask as number) & ~full) === 0;
+
 	const level: MatchIndex[string] = {};
-	for (const [yearKey, vintage] of Object.entries(value)) {
-		const year = Number(yearKey);
-		if (
-			!Number.isInteger(year) ||
-			typeof vintage !== "object" ||
-			vintage === null ||
-			Array.isArray(vintage)
-		)
-			throw new Error("Invalid gazetteer match index vintage.");
+	for (const year of years) level[year] = { codes: [], names: {} };
+	const eachYear = (mask: number, visit: (year: number) => void) =>
+		years.forEach((year, i) => {
+			if (mask & (1 << i)) visit(year);
+		});
 
+	for (const [code, mask] of Object.entries(codes)) {
+		if (!validMask(mask))
+			throw new Error("Invalid gazetteer match index codes.");
+		eachYear(mask, (year) => level[year].codes.push(code));
+	}
+	for (const entry of names) {
 		if (
-			!Array.isArray(vintage.codes) ||
-			typeof vintage.names !== "object" ||
-			vintage.names === null ||
-			Array.isArray(vintage.names)
+			!Array.isArray(entry) ||
+			typeof entry[0] !== "string" ||
+			typeof entry[1] !== "string" ||
+			!validMask(entry[2])
 		)
-			throw new Error("Invalid gazetteer match index entries.");
-
-		const codes: string[] = [];
-		for (const code of vintage.codes) {
-			if (typeof code !== "string")
-				throw new Error("Invalid gazetteer match index codes.");
-			codes.push(code);
-		}
-		const names: Record<string, string> = {};
-		for (const [name, code] of Object.entries(vintage.names)) {
-			if (typeof code !== "string")
-				throw new Error("Invalid gazetteer match index names.");
-			names[name] = code;
-		}
-		level[year] = { codes, names };
+			throw new Error("Invalid gazetteer match index names.");
+		const [name, code, mask] = entry;
+		eachYear(mask, (year) => (level[year].names[name] = code));
 	}
 	return level;
 }

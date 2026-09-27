@@ -16,6 +16,7 @@ import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
 } from "../lib/data/boundaries/catalog";
+import { compactMatchIndexLevel, type MatchIndex } from "../lib/data/areaBank";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -50,11 +51,6 @@ const LEVELS = BOUNDARY_TYPES.map((boundaryType) => ({
 	nameKeys: BOUNDARY_CATALOG[boundaryType].properties.name,
 }));
 
-type MatchIndex = Record<
-	string,
-	Record<number, { codes: string[]; names: Record<string, string> }>
->;
-
 const sizes = (o: unknown) => {
 	const j = JSON.stringify(o);
 	return `${(Buffer.byteLength(j) / 1024).toFixed(0)} KB raw / ${(gzipSync(j).length / 1024).toFixed(0)} KB gz`;
@@ -85,11 +81,17 @@ async function main() {
 		}
 	}
 
-	console.log("\nTotal:", sizes(index));
-	for (const [bt, byYear] of Object.entries(index))
-		console.log(`  ${bt}: ${sizes(byYear)}`);
+	const compact = Object.fromEntries(
+		Object.entries(index).map(([bt, byYear]) => [
+			bt,
+			compactMatchIndexLevel(byYear),
+		]),
+	);
+	console.log("\nTotal:", sizes(compact));
+	for (const [bt, level] of Object.entries(compact))
+		console.log(`  ${bt}: ${sizes(level)}`);
 
-	const json = JSON.stringify(index);
+	const json = JSON.stringify(compact);
 	await writeFile(join(OUT_DIR, "gazetteer.matchindex.json"), json);
 	console.log("Done.");
 }

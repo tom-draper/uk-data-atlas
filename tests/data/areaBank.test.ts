@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { detectCoordinateColumns } from "@/lib/data/areaBank";
+import {
+	compactMatchIndexLevel,
+	detectCoordinateColumns,
+	parseMatchIndexLevel,
+} from "@/lib/data/areaBank";
 
 describe("detectCoordinateColumns", () => {
 	it("detects lat/lng by header name regardless of column order", () => {
@@ -45,5 +49,45 @@ describe("detectCoordinateColumns", () => {
 			["E05000002", "20"],
 		];
 		expect(detectCoordinateColumns(table, 0)).toBeNull();
+	});
+});
+
+describe("match index vintages", () => {
+	const level = {
+		2023: {
+			codes: ["E05000001", "E05000002"],
+			names: { alpha: "E05000001", beta: "E05000002" },
+		},
+		2024: {
+			codes: ["E05000001", "E05000003"],
+			names: { alpha: "E05000001", beta: "E05000003" },
+		},
+	};
+
+	it("stores a code shared by several vintages once", () => {
+		const compact = compactMatchIndexLevel(level);
+		expect(Object.keys(compact.codes)).toHaveLength(3);
+		expect(compact.names).toHaveLength(3);
+	});
+
+	it("expands back to the same codes and names for every vintage", () => {
+		const parsed = parseMatchIndexLevel(compactMatchIndexLevel(level));
+		expect(Object.keys(parsed).map(Number)).toEqual([2023, 2024]);
+		for (const year of [2023, 2024] as const) {
+			expect(new Set(parsed[year].codes)).toEqual(
+				new Set(level[year].codes),
+			);
+			expect(parsed[year].names).toEqual(level[year].names);
+		}
+	});
+
+	it("rejects a mask that names a vintage the level does not have", () => {
+		expect(() =>
+			parseMatchIndexLevel({
+				years: [2024],
+				codes: { E05000001: 0b10 },
+				names: [],
+			}),
+		).toThrow();
 	});
 });
