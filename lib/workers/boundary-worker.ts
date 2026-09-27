@@ -6,7 +6,7 @@ import {
 	type BoundaryType,
 } from "../data/boundaries/catalog";
 import type { Crosswalk } from "../data/gazetteer/types";
-import { parsePrecompiledBoundaryMappings } from "../data/boundaries/mappings";
+import { parseBoundaryWardToLad } from "../data/boundaries/mappings";
 import {
 	fetchLsoaToLad,
 	lsoaYearForBoundaryAsset,
@@ -99,10 +99,7 @@ const fetchWardToLad = (): Promise<Record<string, string>> => {
 					`Failed to fetch ward/LAD mappings: ${response.status} ${response.statusText}`,
 				);
 			}
-			const mappings = parsePrecompiledBoundaryMappings(
-				await response.json(),
-			);
-			return mappings.wardToLad;
+			return parseBoundaryWardToLad(await response.json());
 		})
 		.then((mappings) => {
 			wardToLad = mappings;

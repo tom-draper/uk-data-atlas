@@ -3,6 +3,7 @@ import {
 	buildCrossYearMappings,
 	encodeBoundaryMappings,
 	extractWardLadMappings,
+	parseBoundaryWardToLad,
 	parsePrecompiledBoundaryMappings,
 	type PrecompiledBoundaryMappings,
 } from "@/lib/data/boundaries/mappings";
@@ -117,6 +118,16 @@ describe("shipped boundary mappings", () => {
 		);
 		shipped.codeMappings.constituency.targets.C1 = { C2: 0b10 };
 		expect(() => parsePrecompiledBoundaryMappings(shipped)).toThrow();
+	});
+
+	it("reads the ward to local authority map alone", () => {
+		const shipped = JSON.parse(
+			JSON.stringify(encodeBoundaryMappings(mappings)),
+		);
+		expect(parseBoundaryWardToLad(shipped)).toEqual(mappings.wardToLad);
+		expect(() =>
+			parseBoundaryWardToLad({ ...shipped, version: 1 }),
+		).toThrow();
 	});
 
 	it("rejects the unencoded version 1 file", () => {

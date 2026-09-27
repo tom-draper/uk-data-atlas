@@ -6,6 +6,7 @@ import { getProp } from "./boundaries/properties";
 import { withCDN } from "../helpers/cdn";
 import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
 import { fetchLsoaToLad } from "./boundaries/lsoaLadMappings";
+import { parseBoundaryWardToLad } from "./boundaries/mappings";
 
 export type DatasetLocationFilter = {
 	location: string;
@@ -122,10 +123,7 @@ const fetchWardToLad = () => {
 					throw new Error(
 						`Failed to fetch ward/LAD mappings: ${response.status} ${response.statusText}`,
 					);
-				const mappings = (await response.json()) as {
-					wardToLad?: Record<string, string>;
-				};
-				return mappings.wardToLad ?? {};
+				return parseBoundaryWardToLad(await response.json());
 			})
 			.catch((error) => {
 				wardToLadPending = null;

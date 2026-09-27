@@ -172,6 +172,22 @@ export const encodeBoundaryMappings = (
 	};
 };
 
+/**
+ * Just the ward to local authority map, for a worker that filters wards by
+ * location and has no use for expanding the rest of the file.
+ */
+export const parseBoundaryWardToLad = (
+	value: unknown,
+): Record<string, string> => {
+	if (
+		!isRecord(value) ||
+		value.version !== 2 ||
+		!isStringRecord(value.wardToLad)
+	)
+		throw invalid();
+	return value.wardToLad;
+};
+
 export const parsePrecompiledBoundaryMappings = (
 	value: unknown,
 ): PrecompiledBoundaryMappings => {
