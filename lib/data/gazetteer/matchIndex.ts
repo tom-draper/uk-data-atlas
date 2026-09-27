@@ -17,6 +17,17 @@ import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "../boundaries/catalog";
 import { localDataPath } from "../boundaries/dataPath";
 import { decodeBoundaryData } from "../boundaries/decode";
 import { getProp } from "../boundaries/properties";
+import { bestFitContainer } from "../boundaries/mappings";
+import type { BoundaryGeojson } from "@lib/types";
+
+/**
+ * Levels whose releases publish no parent, so a parent is found from the
+ * geometry: the local authority holding most of each area, in the nearest
+ * local authority release not after the area's own.
+ */
+const PARENTS_FROM_GEOMETRY: Partial<Record<string, "localAuthority">> = {
+	parish: "localAuthority",
+};
 
 export type CompactMatchIndex = Record<string, CompactMatchIndexLevel>;
 
@@ -29,6 +40,28 @@ export async function loadMatchIndex(
 	wardToLad: Record<string, string>,
 ): Promise<CompactMatchIndex> {
 	const index: MatchIndex = {};
+	const decode = async (path: string) =>
+		decodeBoundaryData(JSON.parse(await read(localDataPath(path))));
+	const containerCache = new Map<string, BoundaryGeojson>();
+	const containersFor = async (family: "localAuthority", year: number) => {
+		const vintages = BOUNDARY_CATALOG[family].vintages as Record<
+			number,
+			string
+		>;
+		const years = Object.keys(vintages)
+			.map(Number)
+			.sort((a, b) => a - b);
+		const chosen =
+			[...years].reverse().find((candidate) => candidate <= year) ??
+			years[0]!;
+		const path = vintages[chosen]!;
+		let boundary = containerCache.get(path);
+		if (!boundary) {
+			boundary = await decode(path);
+			containerCache.set(path, boundary);
+		}
+		return boundary;
+	};
 	// Every geography the catalogue serves, so a new one is matchable as soon
 	// as it has a release. One file at a time: together they are large.
 	for (const boundaryType of BOUNDARY_TYPES) {
@@ -38,9 +71,8 @@ export async function loadMatchIndex(
 		for (const [year, path] of Object.entries(
 			vintages as Record<number, string>,
 		)) {
-			const { features } = decodeBoundaryData(
-				JSON.parse(await read(localDataPath(path))),
-			);
+			const boundary = await decode(path);
+			const { features } = boundary;
 			const codes = new Set<string>();
 			const names: Record<string, string[]> = {};
 			const parentOf: Record<string, string> = {};
@@ -59,11 +91,26 @@ export async function loadMatchIndex(
 				if (parent) parentOf[code] = parent;
 			}
 			// Parents only matter where a name is shared, so ship only those.
+			const shared = new Set(
+				Object.values(names)
+					.filter((nameCodes) => nameCodes.length > 1)
+					.flat(),
+			);
+			const parentFamily = PARENTS_FROM_GEOMETRY[boundaryType];
+			if (parentFamily && shared.size > 0)
+				Object.assign(
+					parentOf,
+					bestFitContainer(
+						boundary,
+						properties.code,
+						await containersFor(parentFamily, Number(year)),
+						BOUNDARY_CATALOG[parentFamily].properties.code,
+						(code) => shared.has(code),
+					),
+				);
 			const parents: Record<string, string[]> = {};
-			for (const nameCodes of Object.values(names))
-				if (nameCodes.length > 1)
-					for (const code of nameCodes)
-						if (parentOf[code]) parents[code] = [parentOf[code]];
+			for (const code of shared)
+				if (parentOf[code]) parents[code] = [parentOf[code]];
 			(index[boundaryType] ??= {})[Number(year)] = {
 				codes: [...codes],
 				names,

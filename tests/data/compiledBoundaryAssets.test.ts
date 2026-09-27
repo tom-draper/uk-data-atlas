@@ -117,6 +117,33 @@ describe("upload match index", () => {
 	});
 });
 
+describe("upload match index parents", () => {
+	it("knows the council of every ward and parish behind a shared name", () => {
+		const index = JSON.parse(
+			readFileSync(
+				join(
+					process.cwd(),
+					"public",
+					"data",
+					"datasets",
+					"gazetteer.matchindex.json",
+				),
+				"utf8",
+			),
+		) as Record<string, unknown>;
+		for (const boundaryType of ["ward", "parish"]) {
+			const level = parseMatchIndexLevel(index[boundaryType]);
+			for (const [year, { names, parents }] of Object.entries(level)) {
+				const orphans = Object.values(names)
+					.filter((codes) => codes.length > 1)
+					.flat()
+					.filter((code) => !parents?.[code]?.length);
+				expect(orphans, `${boundaryType} ${year}`).toEqual([]);
+			}
+		}
+	});
+});
+
 describe("constituency to local authority crosswalk", () => {
 	const overlaps = JSON.parse(
 		readFileSync(

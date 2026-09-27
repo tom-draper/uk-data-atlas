@@ -170,6 +170,7 @@ const LEVEL_LABELS: Record<string, string> = {
 /** The geography a level's parents belong to, where it has parents. */
 const PARENT_LEVELS: Record<string, { level: string; label: string }> = {
 	ward: { level: "localAuthority", label: "Local authority" },
+	parish: { level: "localAuthority", label: "Local authority" },
 };
 
 /** Every name a level has had, across vintages, with every code it named. */

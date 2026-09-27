@@ -110,6 +110,32 @@ describe("match index vintages", () => {
 		expect(nameEntry?.parentsOf?.get("E05000004")).toEqual(["E07000002"]);
 	});
 
+	it("offers parish entries local authority names too", () => {
+		const bank = buildAreaBankFromIndex({
+			parish: {
+				2026: {
+					codes: ["E04000001", "E04000002"],
+					names: { ashley: ["E04000001", "E04000002"] },
+					parents: {
+						E04000001: ["E07000093"],
+						E04000002: ["E06000059"],
+					},
+				},
+			},
+			localAuthority: {
+				2025: { codes: [], names: { "test valley": ["E07000093"] } },
+			},
+		});
+		const parishNames = bank.find(
+			(entry) =>
+				entry.boundaryType === "parish" && entry.matchType === "name",
+		);
+		expect(parishNames?.parentLabel).toBe("Local authority");
+		expect(parishNames?.parentNameToCodes?.get("test valley")).toEqual([
+			"E07000093",
+		]);
+	});
+
 	it("offers ward entries the local authority names of every vintage", () => {
 		const bank = buildAreaBankFromIndex({
 			ward: {
