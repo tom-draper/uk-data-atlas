@@ -1,3 +1,5 @@
+import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
+
 export interface AreaEntry {
 	label: string;
 	boundaryType: string;
@@ -158,19 +160,14 @@ export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
 	return level;
 }
 
-const LEVEL_LABELS: Record<string, string> = {
-	ward: "Ward",
-	constituency: "Constituency",
-	localAuthority: "Local Authority",
-	lsoa: "LSOA",
-	dataZone: "Data Zone",
-	superOutputArea: "Super Output Area",
-};
+/** One area of a geography, as the docs name it: "Parish", "Local authority". */
+const singularOf = (boundaryType: string) =>
+	GEOGRAPHIES[boundaryType]?.singular ?? boundaryType;
 
 /** The geography a level's parents belong to, where it has parents. */
 const PARENT_LEVELS: Record<string, { level: string; label: string }> = {
-	ward: { level: "localAuthority", label: "Local authority" },
-	parish: { level: "localAuthority", label: "Local authority" },
+	ward: { level: "localAuthority", label: singularOf("localAuthority") },
+	parish: { level: "localAuthority", label: singularOf("localAuthority") },
 };
 
 /** Every name a level has had, across vintages, with every code it named. */
@@ -205,7 +202,7 @@ export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 		return { parentLabel: parent.label, parentNameToCodes: names };
 	};
 	for (const [boundaryType, byYear] of Object.entries(index)) {
-		const label = LEVEL_LABELS[boundaryType] ?? boundaryType;
+		const label = singularOf(boundaryType);
 		for (const [yearStr, { codes, names, parents }] of Object.entries(
 			byYear,
 		)) {
@@ -223,7 +220,7 @@ export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 			const nameEntries = Object.entries(names);
 			if (nameEntries.length > 0) {
 				bank.push({
-					label: `${label} Name [${year}]`,
+					label: `${label} name [${year}]`,
 					boundaryType,
 					year,
 					matchType: "name",

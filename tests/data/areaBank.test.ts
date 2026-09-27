@@ -110,6 +110,29 @@ describe("match index vintages", () => {
 		expect(nameEntry?.parentsOf?.get("E05000004")).toEqual(["E07000002"]);
 	});
 
+	it("labels every geography by its name, not its internal key", () => {
+		const labels = buildAreaBankFromIndex({
+			parish: {
+				2026: {
+					codes: ["E04000001"],
+					names: { ashley: ["E04000001"] },
+				},
+			},
+			localAuthority: {
+				2025: {
+					codes: ["E07000093"],
+					names: { "test valley": ["E07000093"] },
+				},
+			},
+		}).map((entry) => entry.label);
+		expect(labels).toEqual([
+			"Parish [2026]",
+			"Parish name [2026]",
+			"Local authority [2025]",
+			"Local authority name [2025]",
+		]);
+	});
+
 	it("offers parish entries local authority names too", () => {
 		const bank = buildAreaBankFromIndex({
 			parish: {
