@@ -448,8 +448,13 @@ export class PostcodeIndex {
 			const excluded = this.artifact.excluded.find(
 				(entry) => entry.area === postcode.area,
 			);
-			return excluded
-				? { status: "excluded", reason: excluded.reason }
+			if (excluded)
+				return { status: "excluded", reason: excluded.reason };
+			// The stored directory has its Northern Ireland rows removed before
+			// the index is built, so they leave no exclusion behind. Every
+			// Northern Ireland postcode is in the BT area, and only they are.
+			return postcode.area === "BT"
+				? { status: "excluded", reason: NORTHERN_IRELAND_EXCLUSION }
 				: { status: "not-found" };
 		}
 		const at = findSorted(shard.postcodes, postcode.compact);

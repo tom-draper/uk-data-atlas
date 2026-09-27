@@ -141,6 +141,15 @@ test("leaves Northern Ireland out unless asked, and says why", () => {
 	);
 });
 
+test("still refuses Northern Ireland when the source arrives without it", () => {
+	const { index, artifact } = postcodeIndexFor([postcodeRow("M1 1AE")]);
+	assert.deepEqual(artifact.excluded, []);
+	assert.deepEqual(index.lookup(unit("BT1 1AA")), {
+		status: "excluded",
+		reason: NORTHERN_IRELAND_EXCLUSION,
+	});
+});
+
 test("describes each postcode from its shard, reading a shard once", () => {
 	const { index, reads } = postcodeIndexFor([
 		postcodeRow("M1 1AE", { usrtypind: "1", dointr: "200112" }),
