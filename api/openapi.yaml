@@ -8194,7 +8194,7 @@ paths:
         - $ref: "#/components/parameters/LocationId"
       responses:
         "200":
-          description: The location's editorial definition, source codes and bounds.
+          description: The location's definition, source codes and bounds.
           content:
             application/json:
               schema: { type: object }
@@ -8205,8 +8205,12 @@ paths:
                 data:
                   id: london
                   label: London
-                  kind: editorial-grouping
-                  definitionRevision: 1
+                  kind: region
+                  source:
+                    publisher: Office for National Statistics
+                    lookup: local-authority-to-region/2025-04-en
+                    code: E12000007
+                  definitionRevision: 2
                   memberGeography: localAuthority
                   memberCodes:
                     - E09000001
