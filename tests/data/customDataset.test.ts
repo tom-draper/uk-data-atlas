@@ -94,11 +94,60 @@ describe("custom import materialisation", () => {
 				valueColumn: "Rate",
 				boundaryType: "localAuthority",
 				boundaryYear: 2024,
-				nameToCode: new Map([["hartlepool", "E06000001"]]),
+				nameToCodes: new Map([["hartlepool", ["E06000001"]]]),
 			},
 		);
 
 		expect(dataset?.data).toEqual({ E06000001: 12.5 });
+	});
+
+	it("leaves off rows whose name several areas share, and says which", () => {
+		const document = createCsvImportDocument(
+			"wards.csv",
+			[
+				["Ward", "Rate"],
+				["Castle", "1"],
+				["Abbey", "2"],
+				["castle", "3"],
+				["Nowhere", "4"],
+			],
+			0,
+		);
+		const plan = {
+			kind: "choropleth",
+			codeColumn: "Ward",
+			valueColumn: "Rate",
+			boundaryType: "ward",
+			boundaryYear: 2026,
+			nameToCodes: new Map([
+				["castle", ["E05000001", "E05000002"]],
+				["abbey", ["E05000003"]],
+			]),
+		} as const;
+
+		const { dataset, report } = materialiseCustomImport(
+			"dataset-4",
+			document,
+			plan,
+		);
+
+		expect(dataset?.data).toEqual({ E05000003: 2, Nowhere: 4 });
+		expect(report).toMatchObject({
+			valid: true,
+			acceptedRows: 2,
+			rejectedRows: 2,
+		});
+		expect(report.issues).toEqual([
+			{
+				severity: "warning",
+				code: "ambiguous-name",
+				message:
+					"Left 2 rows off the map: 1 name is shared by more than one area.",
+				rows: [2, 4],
+				count: 2,
+				names: ["Castle"],
+			},
+		]);
 	});
 
 	it("rejects a plan that refers to an absent column", () => {

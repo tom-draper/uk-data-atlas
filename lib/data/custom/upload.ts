@@ -184,7 +184,7 @@ export function buildCustomImport(
 				boundaryType: match.entry.boundaryType as BoundaryType,
 				boundaryYear: match.entry.year,
 				...(match.entry.matchType === "name" && {
-					nameToCode: match.entry.nameToCode,
+					nameToCodes: match.entry.nameToCodes,
 				}),
 			},
 		},

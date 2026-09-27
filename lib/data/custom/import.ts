@@ -21,8 +21,12 @@ export type CustomImportPlan =
 			valueColumn: string;
 			boundaryType: BoundaryType;
 			boundaryYear: number;
-			/** Present when the selected geography was matched by area name. */
-			nameToCode?: ReadonlyMap<string, string>;
+			/**
+			 * Present when the selected geography was matched by area name:
+			 * every area of each lowercased name. A name with more than one
+			 * is ambiguous and its rows are left off rather than guessed.
+			 */
+			nameToCodes?: ReadonlyMap<string, readonly string[]>;
 	  }
 	| {
 			kind: "points";
@@ -38,11 +42,13 @@ export interface CustomImport {
 
 export interface CustomImportIssue {
 	severity: "error" | "warning";
-	code: "missing-column" | "invalid-row";
+	code: "missing-column" | "invalid-row" | "ambiguous-name";
 	message: string;
 	/** A bounded sample of one-based spreadsheet row numbers. */
 	rows?: number[];
 	count?: number;
+	/** A bounded sample of the ambiguous names, as the file spells them. */
+	names?: string[];
 }
 
 export interface CustomImportReport {
@@ -113,6 +119,36 @@ const invalidRowsIssue = (rows: number[]): CustomImportIssue | undefined =>
 		: undefined;
 
 /**
+ * The area a choropleth row names. A name shared by several areas resolves to
+ * none of them; a name the index does not know is kept as written, as before.
+ */
+const rowArea = (
+	plan: Extract<CustomImportPlan, { kind: "choropleth" }>,
+	raw: string,
+): { code: string } | { ambiguous: true } => {
+	const codes = plan.nameToCodes?.get(raw.toLowerCase());
+	if (!codes || codes.length === 0) return { code: raw };
+	return codes.length === 1 ? { code: codes[0]! } : { ambiguous: true };
+};
+
+const ambiguousNamesIssue = (
+	rows: number[],
+	names: string[],
+): CustomImportIssue | undefined =>
+	rows.length > 0
+		? {
+				severity: "warning",
+				code: "ambiguous-name",
+				message: `Left ${rows.length} row${rows.length === 1 ? "" : "s"} off the map: ${names.length} name${
+					names.length === 1 ? " is" : "s are"
+				} shared by more than one area.`,
+				rows: rows.slice(0, 10),
+				count: rows.length,
+				names: names.slice(0, 10),
+			}
+		: undefined;
+
+/**
  * Validates column bindings and reports the rows that materialisation would
  * skip. Invalid values are warnings because the existing upload experience
  * intentionally accepts a useful partial dataset.
@@ -128,13 +164,22 @@ export function validateCustomImport(
 
 	let acceptedRows = 0;
 	const invalidRows: number[] = [];
+	const ambiguousRows: number[] = [];
+	const ambiguousNames = new Map<string, string>();
 	for (const [index, row] of document.rows
 		.slice(document.headerRow + 1)
 		.entries()) {
 		const value = Number.parseFloat(row[indexes.value]!);
 		if (plan.kind === "choropleth") {
-			if (!row[indexes.code]?.trim() || Number.isNaN(value)) {
+			const raw = row[indexes.code]?.trim();
+			if (!raw || Number.isNaN(value)) {
 				invalidRows.push(document.headerRow + index + 2);
+				continue;
+			}
+			if ("ambiguous" in rowArea(plan, raw)) {
+				ambiguousRows.push(document.headerRow + index + 2);
+				if (!ambiguousNames.has(raw.toLowerCase()))
+					ambiguousNames.set(raw.toLowerCase(), raw);
 				continue;
 			}
 		} else {
@@ -151,12 +196,15 @@ export function validateCustomImport(
 		}
 		acceptedRows++;
 	}
-	const warning = invalidRowsIssue(invalidRows);
+	const warnings = [
+		invalidRowsIssue(invalidRows),
+		ambiguousNamesIssue(ambiguousRows, [...ambiguousNames.values()]),
+	].filter((issue): issue is CustomImportIssue => issue !== undefined);
 	return {
 		valid: true,
 		acceptedRows,
-		rejectedRows: invalidRows.length,
-		issues: warning ? [warning] : [],
+		rejectedRows: invalidRows.length + ambiguousRows.length,
+		issues: warnings,
 	};
 }
 
@@ -206,11 +254,11 @@ export function materialiseCustomImport(
 
 	const data: Record<string, number> = {};
 	for (const row of rows) {
-		let code = row[indexes.code]?.trim();
+		const raw = row[indexes.code]?.trim();
 		const value = Number.parseFloat(row[indexes.value]!);
-		if (plan.nameToCode && code)
-			code = plan.nameToCode.get(code.toLowerCase()) ?? code;
-		if (code && !Number.isNaN(value)) data[code] = value;
+		if (!raw || Number.isNaN(value)) continue;
+		const area = rowArea(plan, raw);
+		if ("code" in area) data[area.code] = value;
 	}
 	return {
 		dataset: {

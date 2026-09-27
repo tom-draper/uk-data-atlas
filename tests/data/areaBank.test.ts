@@ -56,18 +56,21 @@ describe("match index vintages", () => {
 	const level = {
 		2023: {
 			codes: ["E05000001", "E05000002"],
-			names: { alpha: "E05000001", beta: "E05000002" },
+			names: { alpha: ["E05000001"], beta: ["E05000002"] },
 		},
 		2024: {
-			codes: ["E05000001", "E05000003"],
-			names: { alpha: "E05000001", beta: "E05000003" },
+			codes: ["E05000001", "E05000003", "E05000004"],
+			names: {
+				alpha: ["E05000001", "E05000004"],
+				beta: ["E05000003"],
+			},
 		},
 	};
 
 	it("stores a code shared by several vintages once", () => {
 		const compact = compactMatchIndexLevel(level);
-		expect(Object.keys(compact.codes)).toHaveLength(3);
-		expect(compact.names).toHaveLength(3);
+		expect(Object.keys(compact.codes)).toHaveLength(4);
+		expect(compact.names).toHaveLength(4);
 	});
 
 	it("expands back to the same codes and names for every vintage", () => {

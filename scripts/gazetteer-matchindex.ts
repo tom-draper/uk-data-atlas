@@ -64,12 +64,15 @@ async function main() {
 		for (const year of years) {
 			const feats = await load(lvl.vintages[year]);
 			const codes = new Set<string>();
-			const names: Record<string, string> = {};
+			const names: Record<string, string[]> = {};
 			for (const f of feats) {
 				const code = getProp(f.properties, lvl.codeKeys);
 				const name = getProp(f.properties, lvl.nameKeys);
 				if (code) codes.add(code);
-				if (name && code) names[name.toLowerCase()] = code;
+				if (name && code) {
+					const codes = (names[name.toLowerCase()] ??= []);
+					if (!codes.includes(code)) codes.push(code);
+				}
 			}
 			(index[lvl.boundaryType] ??= {})[year] = {
 				codes: [...codes],

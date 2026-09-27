@@ -5,7 +5,8 @@ export interface AreaEntry {
 	matchType:
 		"code" | "name" | "postcode-full" | "postcode-district" | "coordinate";
 	codes: Set<string>;
-	nameToCode: Map<string, string>; // lowercase name → boundary code
+	/** Lowercase name → every area of that name; more than one is ambiguous. */
+	nameToCodes: Map<string, string[]>;
 }
 
 export interface AreaMatch {
@@ -20,10 +21,11 @@ const FULL_POSTCODE_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s*[0-9][A-Z]{2}$/i;
 const DISTRICT_RE = /^[A-Z]{1,2}[0-9][0-9A-Z]?$/i;
 
 // Precomputed match index (scripts/gazetteer-matchindex.ts): per boundary
-// level+vintage, codes and a lowercased name->code map.
+// level+vintage, codes and a lowercased name -> codes map. Names are not
+// unique (dozens of wards are called "Castle"), so every code is kept.
 export type MatchIndex = Record<
 	string,
-	Record<number, { codes: string[]; names: Record<string, string> }>
+	Record<number, { codes: string[]; names: Record<string, string[]> }>
 >;
 
 /**
@@ -52,12 +54,13 @@ export function compactMatchIndexLevel(
 		const bit = 1 << i;
 		for (const code of level[year].codes)
 			codes[code] = (codes[code] ?? 0) | bit;
-		for (const [name, code] of Object.entries(level[year].names)) {
-			const key = `${name}\u0000${code}`;
-			const entry = names.get(key);
-			if (entry) entry[2] |= bit;
-			else names.set(key, [name, code, bit]);
-		}
+		for (const [name, nameCodes] of Object.entries(level[year].names))
+			for (const code of nameCodes) {
+				const key = `${name}\u0000${code}`;
+				const entry = names.get(key);
+				if (entry) entry[2] |= bit;
+				else names.set(key, [name, code, bit]);
+			}
 	});
 	return { years, codes, names: [...names.values()] };
 }
@@ -106,7 +109,7 @@ export function parseMatchIndexLevel(value: unknown): MatchIndex[string] {
 		)
 			throw new Error("Invalid gazetteer match index names.");
 		const [name, code, mask] = entry;
-		eachYear(mask, (year) => (level[year].names[name] = code));
+		eachYear(mask, (year) => (level[year].names[name] ??= []).push(code));
 	}
 	return level;
 }
@@ -136,7 +139,7 @@ export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 					year,
 					matchType: "code",
 					codes: new Set(codes),
-					nameToCode: new Map(),
+					nameToCodes: new Map(),
 				});
 			}
 			const nameEntries = Object.entries(names);
@@ -147,7 +150,7 @@ export function buildAreaBankFromIndex(index: MatchIndex): AreaBank {
 					year,
 					matchType: "name",
 					codes: new Set(),
-					nameToCode: new Map(nameEntries),
+					nameToCodes: new Map(nameEntries),
 				});
 			}
 		}
@@ -279,7 +282,7 @@ export function matchColumnAgainstBank(
 			).length;
 		} else if (entry.matchType === "name") {
 			matchCount = [...sampleSet].filter((v) =>
-				entry.nameToCode.has(v.toLowerCase()),
+				entry.nameToCodes.has(v.toLowerCase()),
 			).length;
 		}
 		if (matchCount > 0) {
@@ -307,7 +310,7 @@ export function matchColumnAgainstBank(
 						v.replace(/\s+/, " ").toUpperCase(),
 					),
 				),
-				nameToCode: new Map(),
+				nameToCodes: new Map(),
 			},
 			percentage: (fullPostcodes.length / sampleSet.size) * 100,
 			matchCount: fullPostcodes.length,
@@ -322,7 +325,7 @@ export function matchColumnAgainstBank(
 					year: 0,
 					matchType: "postcode-district",
 					codes: new Set(districts.map((v) => v.toUpperCase())),
-					nameToCode: new Map(),
+					nameToCodes: new Map(),
 				},
 				percentage: (districts.length / sampleSet.size) * 100,
 				matchCount: districts.length,
@@ -346,7 +349,7 @@ export function matchColumnAgainstBank(
 					year: 0,
 					matchType: "coordinate",
 					codes: new Set(),
-					nameToCode: new Map(),
+					nameToCodes: new Map(),
 				},
 				percentage: 100,
 				matchCount: sampleSet.size,
@@ -359,7 +362,7 @@ export function matchColumnAgainstBank(
 					year: 0,
 					matchType: "coordinate",
 					codes: new Set(),
-					nameToCode: new Map(),
+					nameToCodes: new Map(),
 				},
 				percentage: 100,
 				matchCount: sampleSet.size,

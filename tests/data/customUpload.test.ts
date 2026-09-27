@@ -22,7 +22,7 @@ const entry = (
 	year: 2024,
 	matchType,
 	codes: new Set(codes),
-	nameToCode: new Map(),
+	nameToCodes: new Map(),
 });
 
 const match = (
