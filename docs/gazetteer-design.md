@@ -333,8 +333,9 @@ lookup here defines, so they stay editorial. Checking them against the ONS
 counties found off-by-one slips in sequential code lists, now corrected: Kent
 held Bracknell Forest, Devon held Cornwall's code where Plymouth was meant and
 lacked Torbay, and Derbyshire, Essex and Hampshire each stopped one district
-short (Essex also lacked Thurrock). Lancashire's Sefton ("Southport") is
-deliberate and left as curated.
+short (Essex also lacked Thurrock). Lancashire also held Sefton, for
+Southport, which has been in Merseyside since 1974; it is now Merseyside's
+alone.
 
 ### 9.6 Population-weighted, UK-wide crosswalk (done)
 
