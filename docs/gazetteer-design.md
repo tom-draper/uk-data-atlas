@@ -50,10 +50,8 @@ loader; no runtime code imports it. `areaBank` and `codeMapper` survive as thin
 readers over precompiled data, which is why migrating them into the `Gazetteer`
 class (old Phases 4 and 5) is no longer worth doing for its own sake.
 
-Two runtime geometry paths remain: `deriveBoundaryMappings`
-(`boundaries/mappingSeeder.ts`), a fallback for a CDN revision without
-`boundary-mappings.json`, and `polygonAreaSqKm` in `boundaries/derived.ts` for
-population density (section 9.4).
+One runtime geometry path remains: `polygonAreaSqKm` in
+`boundaries/derived.ts`, for population density (section 9.4).
 
 ## 3. Artifacts
 
@@ -117,7 +115,8 @@ These parts of the original design proved right and still guide changes.
   Coordinate to containing area is separate; the API's spatial indexes own it.
 - **Validate at build.** `gazetteer/validate.ts` fails the build on unknown
   parents, dangling name-index codes or named locations that disagree with
-  `LOCATIONS`, and reports curation debt as warnings.
+  `LOCATIONS`, and warns about a named-location member no shipped LAD release
+  holds.
 
 ### 4.1 Lesson: multi-vintage member lists are load-bearing
 
@@ -130,6 +129,13 @@ dataset, so the live app never double-counts. The bug was in the gazetteer,
 which summed region area across all vintages (20,911 against about
 14,100 km²); area now rolls up over the current LAD vintage only. The dual codes
 looked like debt but were load-bearing: verify before "fixing" source data.
+
+For the same reason the core loads every LAD release with GSS codes (2011
+on), not a chosen few, so any code a shipped ward release names resolves.
+Loading only 2016 and 2023 onwards had left Gateshead's and Northumberland's
+pre-2013 codes, four Hertfordshire districts' pre-2014 codes and Somerset West
+and Taunton (2019-2023) reported as debt, though the atlas ships boundaries
+for all of them.
 
 ## 5. Data model as built
 
@@ -381,12 +387,16 @@ classification on the website's `DatasetDefinition` would be a second source
 of truth to drift. `Gazetteer.apportion` has no callers; its comment now says it
 is only valid for measures the API classifies as extensive.
 
-### 9.9 Smaller items
+### 9.9 Smaller items (done)
 
-- Drop the `deriveBoundaryMappings` geometry fallback once every deployed
-  revision serves version 2 mappings; it is the last runtime rebuild of lookups
-  from geometry.
-- `LOCATIONS` still produces validation warnings for members that predate the
-  served LAD releases. Recode or retire them.
-- `Level` declares levels the core never holds. Narrow it when 9.7 is settled,
-  so the type says what the artifact contains.
+Done on 2026-09-27.
+
+- **The `deriveBoundaryMappings` fallback is gone.** Data URLs carry the
+  deploy's commit as their version, so the mappings file always ships with the
+  code that reads it; the fallback could only run after a failed fetch, and
+  then rebuilt lookups from property sidecars that hold no geometry.
+- **The `LOCATIONS` warnings were the loader's, not the list's.** Every code
+  was in a shipped release the core skipped (section 4.1); it now loads them
+  all.
+- **`Level` is narrowed** to region, local authority and constituency, the
+  levels the core holds and crosswalks join.
