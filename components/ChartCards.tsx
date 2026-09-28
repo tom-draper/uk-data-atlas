@@ -28,6 +28,12 @@ export interface ChartCardsProps {
 }
 
 const GROUP_START_CHARTS: Partial<Record<string, string[]>> = {
+	Demographics: [
+		"demographics-populationDensity",
+		"demographics-age",
+		"demographics-gender",
+		"demographics-ethnicity",
+	],
 	Economics: [
 		"economics-housePrice",
 		"economics-income",
