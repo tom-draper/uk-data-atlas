@@ -153,7 +153,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 	//    on other boundaries cannot be drawn here, and the API says which
 	//    releases would carry it rather than leaving the caller to guess.
 	const refused = await client.refusal(
-		`${chosen.href}/join/imd-rank?period=2019`,
+		`${chosen.href}/join/imd-rank?period=2025`,
 	);
 	const alternatives = (
 		refused as unknown as { alternatives?: { releases?: string[] } }

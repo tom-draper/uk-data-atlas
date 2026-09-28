@@ -183,7 +183,7 @@ x-quick-starts:
         request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023"
       - title: See a join refused, not a wrong map
         explain: The deprivation rank is published on LSOAs, which this release does not hold. The refusal names the releases that would carry it.
-        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2019"
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2025"
         status: 422
       - title: Or take the features flat
         explain: The same shapes as GeoParquet, with the same ids, for a GIS or warehouse that draws features rather than tiles.
@@ -571,7 +571,7 @@ paths:
         status: 422
         code: incompatible_geometry
         when: "The measure is published on areas this release does not hold, so its values cannot be drawn on it. The refusal names the releases that would carry it."
-        x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2019"
+        x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2025"
       description: >
         The values a renderer joins to the tiles, as `id`, `code` and `value`.
         The `id` is the same integer the tile carries, so a renderer sets
@@ -2375,7 +2375,7 @@ paths:
         status: 422
         code: aggregation_not_supported
         when: "The measure is a rank, median or share that cannot be combined over areas. Only a measure declared additive is aggregated."
-        x-example-request: "/v1/data/imd-rank/aggregate?period=2019&locationId=north-west"
+        x-example-request: "/v1/data/imd-rank/aggregate?period=2025&locationId=north-west"
       description: >
         Returns a derived sum for a measure declared extensive, or a weighted
         mean for a measure that publishes an available weight measure. Supply

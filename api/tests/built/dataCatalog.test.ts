@@ -238,7 +238,7 @@ const writeSources = (
 				dataset("jobs", 7, 2, 2023),
 				dataset("land-area", 2, 1, 2024),
 				dataset("house-price", 3, 1, 2021),
-				dataset("imd", 3, 1, 2011),
+				dataset("imd", 3, 1, 2021),
 				dataset("nimdm", 2, 1, 2011),
 				dataset("wimd", 1, 1, 2011),
 				dataset("simd", 1, 1, 2011),
@@ -682,15 +682,14 @@ const writeSources = (
 	writeFileSync(
 		imd,
 		JSON.stringify({
-			"2019": {
-				year: 2019,
-				boundaryYear: 2011,
+			"2025": {
+				year: 2025,
+				boundaryYear: 2021,
 				boundaryType: "lsoa",
 				data: {
 					E01000001: { imdRank: 1, imdDecile: 1 },
-					// A tie, exactly as the published file carries 26 of them.
 					E01000002: { imdRank: 2, imdDecile: 1 },
-					E01000003: { imdRank: 2, imdDecile: 1 },
+					E01000003: { imdRank: 3, imdDecile: 1 },
 				},
 			},
 		}),
@@ -1492,12 +1491,12 @@ test("publishes deprivation rank and decile as they were published", () => {
 		assert.equal(rank?.measureId, "imd-rank");
 		assert.deepEqual(rank?.sourceGeography, {
 			type: "lsoa",
-			boundaryYear: 2011,
+			boundaryYear: 2021,
 		});
-		// Ties are served as published, not re-ranked into 1, 2, 3.
+		// Published ranks are served directly rather than derived from scores.
 		assert.deepEqual(
 			rank?.periods[0]?.records.map((record) => record.value),
-			[1, 2, 2],
+			[1, 2, 3],
 		);
 		assert.equal(decile?.measureId, "imd-decile");
 

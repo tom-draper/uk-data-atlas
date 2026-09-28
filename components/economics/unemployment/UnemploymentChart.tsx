@@ -129,10 +129,10 @@ export default function UnemploymentChart({
 
 	return (
 		<ChartCard
-			heading={`Unemployment Rate [1996-${dataset.latestYear}]`}
+			heading={`Historic Unemployment Rate [1996-${dataset.latestYear}]`}
 			accent={hasData ? ACCENT : null}
 			isActive={isActive}
-			title="ONS. Model-based estimates of unemployment for local and unitary authorities. ons.gov.uk"
+			title="ONS. Final model-based unemployment estimates for local and unitary authorities; this series was discontinued in August 2022. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,

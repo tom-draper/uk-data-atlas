@@ -46,6 +46,19 @@ const SOURCE_DATA = join(ROOT, "data");
 // inputs remain in data/, which is restored from the pinned data release.
 const OUT_DIR = join(PUBLIC_DATA, "datasets");
 
+type ExistingManifestDataset = {
+	type: string;
+	output: string;
+	source: unknown;
+	contract: unknown;
+	inputs: unknown;
+	summary: unknown;
+	compiled: {
+		bytes: number;
+		sha256: string;
+	};
+};
+
 // Read source datasets directly. public/data only contains files that must be
 // served to the browser during local development.
 const read = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
@@ -74,6 +87,7 @@ const readXlsSheet = async (
 	sheetName: string,
 ): Promise<string> => {
 	const fullPath = join(SOURCE_DATA, path);
+	await stat(fullPath);
 	const bytes = path.endsWith(".zip")
 		? execSync(`unzip -p "${fullPath}" "*.xls"`, {
 				maxBuffer: 512 * 1024 * 1024,
@@ -89,7 +103,7 @@ const readSource = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
 // Extracts and reads the first CSV from a ZIP in data/ (never synced to public/)
 const readZip = (path: string): Promise<string> => {
 	const fullPath = join(SOURCE_DATA, path);
-	return Promise.resolve(
+	return stat(fullPath).then(() =>
 		execSync(`unzip -p "${fullPath}" "*.csv"`, {
 			maxBuffer: 100 * 1024 * 1024,
 		}).toString("utf8"),
@@ -103,6 +117,7 @@ const readXlsxSheetFile = async (
 	fullPath: string,
 	sheetName: string,
 ): Promise<string> => {
+	await stat(fullPath);
 	const entry = (name: string) =>
 		execSync(`unzip -p "${fullPath}" "${name}"`, {
 			maxBuffer: 512 * 1024 * 1024,
@@ -137,7 +152,7 @@ const readXlsxSheet = (path: string, sheetName: string) =>
 // loader only needs its worksheet XML, which is then reduced to compact JSON.
 const readOdsContent = (path: string): Promise<string> => {
 	const fullPath = join(SOURCE_DATA, path);
-	return Promise.resolve(
+	return stat(fullPath).then(() =>
 		execSync(`unzip -p "${fullPath}" content.xml`, {
 			maxBuffer: 100 * 1024 * 1024,
 		}).toString("utf8"),
@@ -240,6 +255,15 @@ async function main() {
 		string,
 		{ data: unknown; layout?: DatasetPayloadLayout }
 	>();
+	const existingManifest = JSON.parse(
+		await readFile(join(OUT_DIR, "dataset-manifest.json"), "utf8"),
+	) as { datasets?: ExistingManifestDataset[] };
+	const existingDatasets = new Map(
+		(existingManifest.datasets ?? []).map((dataset) => [
+			dataset.type,
+			dataset,
+		]),
+	);
 	// Dataset loaders can hold large source strings, parsed rows, compiled
 	// records, and the JSON string being written at the same time. Starting all
 	// loaders with map(async ...) creates a large, avoidable memory spike. Keep
@@ -247,7 +271,13 @@ async function main() {
 	// time so the peak is bounded by the largest individual dataset.
 	const chartResults: Awaited<ReturnType<typeof compileDataset>>[] = [];
 	for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
-		chartResults.push(await compileDataset(definition, compiledDatasets));
+		chartResults.push(
+			await compileDataset(
+				definition,
+				compiledDatasets,
+				existingDatasets,
+			),
+		);
 	}
 	const gazetteerCore = loadGazetteerCore(readBoundaryAsset).then(
 		async (data) => {
@@ -327,9 +357,47 @@ async function compileDataset(
 		string,
 		{ data: unknown; layout?: DatasetPayloadLayout }
 	>,
+	existingDatasets: Map<string, ExistingManifestDataset>,
 ) {
 	const { reader, artifacts } = createTrackedReader();
-	const compiled = await definition.precompile(reader);
+	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
+	let preserved: ExistingManifestDataset | undefined;
+	try {
+		compiled = await definition.precompile(reader);
+	} catch (error) {
+		const missingRawSource =
+			typeof error === "object" &&
+			error !== null &&
+			"code" in error &&
+			error.code === "ENOENT" &&
+			"path" in error &&
+			typeof error.path === "string" &&
+			error.path.startsWith(SOURCE_DATA);
+
+		if (!missingRawSource) throw error;
+
+		const existing = existingDatasets.get(definition.type);
+		const compiledPath = join(
+			OUT_DIR,
+			`${definition.precompiledFile}.json`,
+		);
+		if (!existing || existing.output !== definition.precompiledFile)
+			throw error;
+
+		const content = await readFile(compiledPath, "utf8");
+		const actualSha256 = createHash("sha256").update(content).digest("hex");
+		if (actualSha256 !== existing.compiled.sha256) {
+			throw new Error(
+				`Cannot preserve ${definition.type}: ${compiledPath} does not match dataset-manifest.json`,
+			);
+		}
+
+		compiled = JSON.parse(content);
+		preserved = existing;
+		console.log(
+			`  dataset: ${definition.precompiledFile}.json (preserved; raw source unavailable)`,
+		);
+	}
 	const data = definition.coverageCountries
 		? Object.fromEntries(
 				Object.entries(compiled).map(([id, dataset]) => [
@@ -346,6 +414,7 @@ async function compileDataset(
 		layout: definition.payload,
 	});
 	const summary = validatePrecompiledDataset(definition, data);
+	if (preserved) return preserved;
 	const output = await out(definition.precompiledFile, data);
 	return {
 		type: definition.type,

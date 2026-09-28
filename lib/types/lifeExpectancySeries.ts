@@ -21,7 +21,7 @@ export interface LifeExpectancySeriesDataset {
 	id: string;
 	type: "lifeExpectancySeries";
 	year: number;
-	/** The span the estimate covers, e.g. "2020-2022". */
+	/** The span the estimate covers, e.g. "2022-2024". */
 	period: string;
 	boundaryType: "localAuthority";
 	boundaryYear: number;

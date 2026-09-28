@@ -11,12 +11,12 @@ const estimate = (
 	row: Record<string, string>,
 	context: string,
 ): LifeExpectancyEstimate => {
-	const value = Number(row["Life expectancy (years)"]);
+	const value = Number(row["Life expectancy"]);
 	const lower = Number(row["Lower confidence interval"]);
 	const upper = Number(row["Upper confidence interval"]);
 	if (
 		![value, lower, upper].every(Number.isFinite) ||
-		row["Life expectancy (years)"]?.trim() === ""
+		row["Life expectancy"]?.trim() === ""
 	)
 		throw new Error(
 			`Life expectancy series: unreadable estimate for ${context}`,

@@ -10,13 +10,13 @@ export const imdDatasetDefinition: DatasetDefinition<IMDDataset> = {
 		name: "Indices of Multiple Deprivation",
 		source: "Ministry of Housing, Communities & Local Government",
 		sourceUrl:
-			"https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
-		year: "2019",
+			"https://www.gov.uk/government/statistics/english-indices-of-deprivation-2025",
+		year: "2025",
 		licence: "Open Government Licence v3.0",
 		licenceUrl:
 			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Deprivation scores, ranks and deciles by small area (LSOA) for England.",
+			"Deprivation scores, ranks and deciles by 2021 small area (LSOA) for England.",
 	},
 	precompile: async ({ text }) => loadIMD(text),
 };

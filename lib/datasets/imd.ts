@@ -8,12 +8,12 @@ export const imdDefinition: ChartDatasetDefinition<IMDDataset> = {
 	chart: {
 		group: "Deprivation",
 		key: "deprivation-imd",
-		label: "Deprivation (IMD) [2019]",
+		label: "Deprivation (IMD) [2025]",
 		defaultVisible: true,
 		componentPath: "@/components/deprivation/imd/IMDChart",
 		calculateStats: (mm, g, d, l, id) =>
 			mm.aggregate(imdAggregation, g, d, l, id),
-		year: 2019,
+		year: 2025,
 	},
 	map: {
 		valueKey: "imdScore",

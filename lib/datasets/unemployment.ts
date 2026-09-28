@@ -9,8 +9,8 @@ export const unemploymentDefinition: ChartDatasetDefinition<UnemploymentDataset>
 		chart: {
 			group: "Economics",
 			key: "economics-unemployment",
-			label: "Unemployment Rate [2021]",
-			defaultVisible: true,
+			label: "Historic Unemployment Rate [2021]",
+			defaultVisible: false,
 			componentPath:
 				"@/components/economics/unemployment/UnemploymentChart",
 			calculateStats: (

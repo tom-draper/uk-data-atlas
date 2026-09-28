@@ -36,7 +36,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Population",
 		topic: "people",
 		datasets: ["population-uk", "population", "population-constituency"],
-		intro: "Official population estimates from the Office for National Statistics: every UK local authority each year since 2011, wards in England and Wales, and the Westminster constituencies first contested in 2024. Population density is included too.",
+		intro: "Official population estimates from the Office for National Statistics: every UK local authority each year since 2011, wards in England and Wales, and the Westminster constituencies first contested in 2024. Ward estimates run through mid-2022; newer ONS ward estimates use May 2025 boundaries, which are not yet mapped in the atlas. Population density is included too.",
 	},
 	{
 		slug: "census-2021-small-areas",
@@ -118,7 +118,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "Unemployment",
 		topic: "work",
 		datasets: ["unemployment"],
-		intro: "The ONS's model-based estimates of unemployment for local authorities in Great Britain, from 1996 to 2021, as a rate and a count, with confidence intervals.",
+		intro: "The ONS's final model-based estimates of unemployment for local authorities in Great Britain, from 1996 to 2021, as a rate and a count, with confidence intervals. ONS discontinued this series in August 2022.",
 	},
 	{
 		slug: "claimant-count",
@@ -132,7 +132,7 @@ export const DATA_PAGES: DataPage[] = [
 		title: "House prices",
 		topic: "housing",
 		datasets: ["house-price"],
-		intro: "The median price paid for homes in every ward in England and Wales, for each year from 1995 to 2022.",
+		intro: "Median and mean prices paid for homes in every ward in England and Wales, for each year from 1995 to 2023. This was the final ONS ward-level edition.",
 	},
 	{
 		slug: "temporary-accommodation",
