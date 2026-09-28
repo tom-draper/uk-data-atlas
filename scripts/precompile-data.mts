@@ -4,8 +4,12 @@
  *
  * Run via: pnpm precompile
  * Also runs automatically before pnpm dev and pnpm build.
+ *
+ * `--only <dataset>[,<dataset>...]` recompiles just the named datasets, by
+ * type or output file, against the boundaries and gazetteer a full run has
+ * already written: pnpm precompile:only claimantCount
  */
-import { readFile, mkdir, rename, stat, writeFile } from "fs/promises";
+import { readFile, mkdir, rename, stat, utimes, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
@@ -35,9 +39,17 @@ import {
 	loadBoundaryMappings,
 	loadLsoaLadMappings,
 } from "../lib/data/boundaries/mappingLoader";
-import { encodeBoundaryMappings } from "../lib/data/boundaries/mappings";
+import {
+	encodeBoundaryMappings,
+	parseBoundaryWardToLad,
+} from "../lib/data/boundaries/mappings";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
+import {
+	mergeManifestEntries,
+	parseOnlyArgument,
+	selectDefinitions,
+} from "./precompile-selection";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -215,7 +227,77 @@ async function verifyDescribedFiles(
 	}
 }
 
+/**
+ * Recompiles only the named datasets and folds them into the existing
+ * manifest. The boundary assets, gazetteer and mappings are read as a full run
+ * last wrote them rather than rebuilt, which is what makes this quick.
+ */
+async function compileSelected(names: readonly string[]) {
+	const selected = selectDefinitions(CATALOGUE_DATASET_DEFINITIONS, names);
+	console.log(
+		`Pre-compiling ${selected.map((definition) => definition.type).join(", ")}...`,
+	);
+	const manifestPath = join(OUT_DIR, "dataset-manifest.json");
+	let manifest: { datasets: { type: string }[] };
+	let manifestTimes: { atime: Date; mtime: Date };
+	try {
+		manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+		manifestTimes = await stat(manifestPath);
+	} catch {
+		throw new Error(
+			"No dataset manifest to update. Run a full pnpm precompile first.",
+		);
+	}
+
+	const compiledDatasets = new Map<
+		string,
+		{ data: unknown; layout?: DatasetPayloadLayout }
+	>();
+	const results: Awaited<ReturnType<typeof compileDataset>>[] = [];
+	for (const definition of selected)
+		results.push(await compileDataset(definition, compiledDatasets));
+
+	const needsRegionChunks = selected.some(
+		(definition) => definition.payload?.regionChunks?.kind === "regional",
+	);
+	if (needsRegionChunks)
+		await writeDatasetRegionChunks({
+			root: ROOT,
+			datasets: compiledDatasets,
+			core: JSON.parse(
+				await readFile(join(OUT_DIR, "gazetteer.core.json"), "utf8"),
+			),
+			boundaryMappings: {
+				wardToLad: parseBoundaryWardToLad(
+					JSON.parse(
+						await readFile(
+							join(OUT_DIR, "boundary-mappings.json"),
+							"utf8",
+						),
+					),
+				),
+			},
+		});
+
+	await out("dataset-manifest", {
+		...manifest,
+		datasets: mergeManifestEntries(
+			manifest.datasets,
+			results,
+			CATALOGUE_DATASET_DEFINITIONS.map((definition) => definition.type),
+		),
+	});
+	// precompile:if-needed treats a manifest newer than data/ as proof that
+	// everything is current. Only some datasets were rebuilt here, so keep the
+	// manifest's old timestamp and leave that judgement as a full run left it.
+	await utimes(manifestPath, manifestTimes.atime, manifestTimes.mtime);
+	console.log("Done.");
+}
+
 async function main() {
+	const only = parseOnlyArgument(process.argv.slice(2));
+	if (only) return compileSelected(only);
+
 	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
 	await compileBoundaryAssets();
