@@ -4200,20 +4200,24 @@ records each release's declared corrections, and a corrected area's
 Constituencies December 2016 are British National Grid but already accurate,
 and are served uncorrected.
 
-The WGS84 constituency releases from December 2017 to December 2022 carry a
-different fault: Northern Ireland's inland boundaries lie 55 to 67 m east of
-their true position, about 67 m in Belfast, while the clipped coastline is
-accurate. Only part of each area moved, so no grid offset can repair them.
-Northern Ireland's eighteen constituencies were unchanged from 2008 until the
-2024 review, so these six releases take Northern Ireland's areas, code for
-code, from December 2016, which agrees with the WGS84 local authorities to
-about 2 m; July 2024 is accurate as published. The substitution is declared
-in `lib/data/boundaries/geometrySubstitutions.ts`, shared with the website's
-boundary compiler, and a substituted area's
-`properties.geometrySource.corrections` names it with the donor file and its
-hash. Travel to work areas 2011 have the same fault, a median 59 m, but no
-accurate copy is held to repair them from: they are served as published, and
-the validation report's waived `geometry-positioned` check says so. Each response's
+Several WGS84 releases carry Northern Ireland about 60 m east of its true
+position: the same offset, applied the wrong way round. Constituencies
+December 2017 and travel to work areas 2011 carry it throughout;
+constituencies December 2018 to December 2022 carry it on their inland
+boundaries only, with a clipped coastline that is already accurate, so
+reversing the offset there would push the coast out instead. Northern
+Ireland's eighteen constituencies were unchanged from 2008 until the 2024
+review, so the six constituency releases from 2017 to 2022 take its areas,
+code for code, from December 2016, which agrees with the WGS84 local
+authorities to about 2 m; July 2024 is accurate as published. Travel to work
+areas have no accurate release to borrow from, so their Northern Ireland
+areas are taken into British National Grid, moved back by the offset's exact
+inverse and reprojected, which brings 63% of their vertices within 10 m of
+the local authority boundaries, against 5% as published. Both repairs are
+declared in `lib/data/boundaries/geometrySubstitutions.ts`, shared with the
+website's boundary compiler, and a repaired area's
+`properties.geometrySource.corrections` names the repair, with the donor
+file and its hash for a substitution. Each response's
 `properties.geometrySource` names the source CRS and any transformation. A source in any other CRS is refused
 rather than served unprojected. This is a raw per-area lookup, not the tiled or
 simplified delivery the full proposal describes for map rendering at scale.

@@ -5,6 +5,7 @@ import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
 import {
 	applyGridOffset,
 	offsetPosition,
+	reverseOffsetPosition,
 	parseGridOffset,
 } from "@/lib/data/boundaries/gridOffset";
 
@@ -132,5 +133,21 @@ describe("Northern Ireland grid offset", () => {
 
 	it("keeps any coordinate beyond easting and northing", () => {
 		expect(offsetPosition(OFFSET, [146735, 535611, 12])[2]).toBe(12);
+	});
+
+	it("reverses the offset exactly", () => {
+		for (const position of [
+			[146735, 535611],
+			[100000, 500000],
+			[230000, 380000, 7],
+		]) {
+			const back = reverseOffsetPosition(
+				OFFSET,
+				offsetPosition(OFFSET, position),
+			);
+			expect(back[0]).toBeCloseTo(position[0]!, 6);
+			expect(back[1]).toBeCloseTo(position[1]!, 6);
+			expect(back.slice(2)).toEqual(position.slice(2));
+		}
 	});
 });

@@ -4,6 +4,7 @@ import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
 import {
 	GEOMETRY_SUBSTITUTIONS,
 	KNOWN_GEOMETRY_DISPLACEMENTS,
+	REVERSED_GRID_OFFSETS,
 	substituteFeatures,
 } from "@/lib/data/boundaries/geometrySubstitutions";
 
@@ -98,12 +99,25 @@ describe("geometry substitution definitions", () => {
 			expect(served(donor.geography, donor.boundaryRelease)).toBe(true);
 			expect(releases).not.toContain(donor.boundaryRelease);
 		}
-		for (const {
-			geography,
-			boundaryRelease,
-		} of KNOWN_GEOMETRY_DISPLACEMENTS)
+		for (const { geography, boundaryRelease } of [
+			...KNOWN_GEOMETRY_DISPLACEMENTS,
+			...REVERSED_GRID_OFFSETS,
+		])
 			expect(served(geography, boundaryRelease), boundaryRelease).toBe(
 				true,
 			);
+	});
+
+	it("repair each release at most one way", () => {
+		const repaired = [
+			...GEOMETRY_SUBSTITUTIONS.flatMap(({ geography, releases }) =>
+				releases.map((release) => `${geography}/${release}`),
+			),
+			...REVERSED_GRID_OFFSETS.map(
+				({ geography, boundaryRelease }) =>
+					`${geography}/${boundaryRelease}`,
+			),
+		];
+		expect(new Set(repaired).size).toBe(repaired.length);
 	});
 });

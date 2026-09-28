@@ -5,7 +5,10 @@ import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { containPoint, ringsOf } from "./areaContainment";
 import { boundaryDistanceWithinM, distanceToBoundaryM } from "./areaDistance";
 import type { CrosswalkArea } from "./crosswalkInventory";
-import { geometrySubstitution } from "./geometrySubstitution";
+import {
+	geometrySubstitution,
+	reversedGridOffset,
+} from "./geometrySubstitution";
 import { releaseKey } from "./geographyKeys";
 
 export type GeometryContainmentValidation =
@@ -42,6 +45,8 @@ export type GeometryContainmentInputs = Array<{
 	corrections: Array<{ id: string; contentHash: string }>;
 	/** Geometry substitutions, with the hash of the donor file they read. */
 	substitutions?: Array<{ id: string; donorInputHash: string | null }>;
+	/** Grid offsets undone on a WGS84 release, with their definition's hash. */
+	reversedOffsets?: Array<{ id: string; contentHash: string }>;
 }>;
 
 const sha256 = (content: Buffer | string) =>
@@ -79,6 +84,23 @@ export const geometryContainmentInputs = (
 					),
 				),
 			})),
+			...(source.reversedOffsets?.length
+				? {
+						reversedOffsets: source.reversedOffsets.map((id) => ({
+							id,
+							contentHash: sha256(
+								readFileSync(
+									join(
+										repositoryRoot,
+										"data",
+										"boundaries",
+										`${reversedGridOffset(id).offset}.json`,
+									),
+								),
+							),
+						})),
+					}
+				: {}),
 			...(source.substitutions?.length
 				? {
 						substitutions: source.substitutions.map((id) => {

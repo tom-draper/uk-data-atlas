@@ -3,12 +3,20 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	GEOMETRY_SUBSTITUTIONS,
+	REVERSED_GRID_OFFSETS,
 	type GeometrySubstitution,
+	type ReversedGridOffset,
 } from "../../lib/data/boundaries/geometrySubstitutions";
 import type { GeoJsonGeometry, GeometrySourceLookup } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
-import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
-import { toWgs84Geometry } from "./reprojection";
+import {
+	appliesTo,
+	offsetGeometry,
+	readGridOffset,
+	reverseOffsetGeometry,
+	type GridOffset,
+} from "./gridOffset";
+import { fromWgs84Geometry, toWgs84Geometry } from "./reprojection";
 
 export type { GeometrySubstitution };
 
@@ -154,3 +162,60 @@ export const substitutionProvenance = (
 					: substitution.description,
 			};
 		});
+
+export const reversedGridOffset = (id: string): ReversedGridOffset => {
+	const reversed = REVERSED_GRID_OFFSETS.find(
+		(candidate) => candidate.id === id,
+	);
+	if (!reversed)
+		throw new Error(`No reversed grid offset is defined as ${id}.`);
+	return reversed;
+};
+
+const offsets = new Map<string, GridOffset>();
+const gridOffset = (repositoryRoot: string, id: string) => {
+	const key = `${repositoryRoot}\u0000${id}`;
+	let offset = offsets.get(key);
+	if (!offset) {
+		offset = readGridOffset(repositoryRoot, id);
+		offsets.set(key, offset);
+	}
+	return offset;
+};
+
+/**
+ * Undoes the grid offsets a WGS84 release carries backwards, for one area:
+ * into the offset's grid, back by its exact inverse, and into WGS84 again.
+ */
+export const applyReversedOffsets = <T extends GeoJsonGeometry>(
+	repositoryRoot: string,
+	ids: readonly string[],
+	code: string,
+	geometry: T,
+): T =>
+	ids
+		.map(reversedGridOffset)
+		.filter((reversed) => code.startsWith(reversed.codePrefix))
+		.reduce((moved, reversed) => {
+			const offset = gridOffset(repositoryRoot, reversed.offset);
+			return toWgs84Geometry(
+				reverseOffsetGeometry(
+					offset,
+					fromWgs84Geometry(moved, offset.crs),
+				),
+				offset.crs,
+			);
+		}, geometry);
+
+/** The reversed offsets that moved one area, or with no code all of them. */
+export const reversedOffsetProvenance = (
+	ids: readonly string[],
+	code?: string,
+) =>
+	ids
+		.map(reversedGridOffset)
+		.filter(
+			(reversed) =>
+				code === undefined || code.startsWith(reversed.codePrefix),
+		)
+		.map(({ id, description }) => ({ id, description }));

@@ -8,7 +8,10 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import type { AreaReleaseArtifact } from "./areaInventory";
-import { substitutionsFor } from "../../lib/data/boundaries/geometrySubstitutions";
+import {
+	reversedOffsetsFor,
+	substitutionsFor,
+} from "../../lib/data/boundaries/geometrySubstitutions";
 
 type BoundaryMetadata = { files?: unknown };
 export type GeometrySourceRegistry = {
@@ -99,6 +102,10 @@ export const createGeometrySourceRegistry = (
 			a.geography,
 			a.boundaryRelease,
 		).map(({ id }) => id);
+		const reversedOffsets = reversedOffsetsFor(
+			a.geography,
+			a.boundaryRelease,
+		).map(({ id }) => id);
 		return {
 			id: a.geography + "/" + a.boundaryRelease,
 			status: "available",
@@ -110,6 +117,7 @@ export const createGeometrySourceRegistry = (
 			codeProperty: a.codeProperty,
 			...(corrections.length > 0 ? { corrections } : {}),
 			...(substitutions.length > 0 ? { substitutions } : {}),
+			...(reversedOffsets.length > 0 ? { reversedOffsets } : {}),
 			...(a.derivedFrom ? { selection: a.derivedFrom.filter } : {}),
 		};
 	});

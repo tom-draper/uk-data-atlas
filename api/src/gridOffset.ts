@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { reverseOffsetPosition } from "../../lib/data/boundaries/gridOffset";
 
 type Position = [number, number];
 
@@ -108,4 +109,34 @@ export const offsetGeometry = <T extends Geometry>(
 		: {
 				...geometry,
 				coordinates: offsetCoordinates(offset, geometry.coordinates),
+			}) as T;
+
+const reverseCoordinates = (
+	offset: GridOffset,
+	coordinates: unknown,
+): unknown =>
+	Array.isArray(coordinates) && typeof coordinates[0] === "number"
+		? reverseOffsetPosition(offset, [
+				coordinates[0],
+				coordinates[1] as number,
+			])
+		: Array.isArray(coordinates)
+			? coordinates.map((child) => reverseCoordinates(offset, child))
+			: coordinates;
+
+/** Moves every position of a grid geometry back by the offset, exactly. */
+export const reverseOffsetGeometry = <T extends Geometry>(
+	offset: GridOffset,
+	geometry: T,
+): T =>
+	(geometry.type === "GeometryCollection"
+		? {
+				...geometry,
+				geometries: (geometry.geometries ?? []).map((child) =>
+					reverseOffsetGeometry(offset, child),
+				),
+			}
+		: {
+				...geometry,
+				coordinates: reverseCoordinates(offset, geometry.coordinates),
 			}) as T;

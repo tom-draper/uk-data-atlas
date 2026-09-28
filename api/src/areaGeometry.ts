@@ -21,7 +21,9 @@ import {
 	type PackedGeometry,
 } from "./packedGeometry";
 import {
+	applyReversedOffsets,
 	loadSubstitutions,
+	reversedOffsetProvenance,
 	substitutionProvenance,
 } from "./geometrySubstitution";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
@@ -55,6 +57,8 @@ export type GeometrySource = {
 	 * another release's, by definition id (lib/data/boundaries).
 	 */
 	substitutions?: string[];
+	/** Grid offsets a WGS84 release carries backwards, undone on load. */
+	reversedOffsets?: string[];
 };
 export type GeometrySourceLookup = Map<string, GeometrySource>;
 type Feature = { properties?: unknown; geometry?: unknown };
@@ -372,11 +376,17 @@ export class AreaGeometryCache {
 			).map(({ id, description }) => ({ id, description })),
 			...(code === undefined
 				? []
-				: substitutionProvenance(
-						this.sources,
-						source.substitutions ?? [],
-						code,
-					)),
+				: [
+						...substitutionProvenance(
+							this.sources,
+							source.substitutions ?? [],
+							code,
+						),
+						...reversedOffsetProvenance(
+							source.reversedOffsets ?? [],
+							code,
+						),
+					]),
 		];
 		return {
 			...(source.inputHash
@@ -454,6 +464,22 @@ export class AreaGeometryCache {
 				))
 					for (const [code, geometry] of donor)
 						geometries.set(code, geometry);
+			}
+			if (source.reversedOffsets?.length) {
+				if (!isWgs84(source.crs))
+					throw new Error(
+						`${identity}: reversed grid offsets need a WGS84 release, not ${source.crs}.`,
+					);
+				for (const [code, geometry] of geometries)
+					geometries.set(
+						code,
+						applyReversedOffsets(
+							this.repositoryRoot,
+							source.reversedOffsets,
+							code,
+							geometry,
+						),
+					);
 			}
 			const packed = new Map<string, PackedGeometry>();
 			for (const [code, geometry] of geometries)

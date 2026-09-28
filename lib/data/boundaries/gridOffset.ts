@@ -72,6 +72,34 @@ export const offsetPosition = (
 	];
 };
 
+/**
+ * The exact inverse of `offsetPosition`: the position the offset would move
+ * onto this one. Some WGS84 releases carry the offset backwards, and are
+ * repaired by applying this to their Northern Ireland areas in the grid.
+ */
+export const reverseOffsetPosition = (
+	offset: GridOffset,
+	[easting, northing, ...rest]: Position,
+): Position => {
+	const unit = offset.unitMetres;
+	const [e0, e1, e2] = offset.east;
+	const [n0, n1, n2] = offset.north;
+	// Forward, in units of unitMetres from the origin:
+	// p = x·(unit + e1) + y·e2, q = x·n1 + y·(unit + n2).
+	const p = easting! - offset.origin.easting - e0;
+	const q = northing! - offset.origin.northing - n0;
+	const a = unit + e1;
+	const d = unit + n2;
+	const determinant = a * d - e2 * n1;
+	const x = (p * d - e2 * q) / determinant;
+	const y = (a * q - n1 * p) / determinant;
+	return [
+		offset.origin.easting + unit * x,
+		offset.origin.northing + unit * y,
+		...rest,
+	];
+};
+
 const offsetCoordinates = (
 	offset: GridOffset,
 	coordinates: unknown,

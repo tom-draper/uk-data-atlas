@@ -18,7 +18,9 @@ import {
 } from "./reprojection";
 import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
 import {
+	applyReversedOffsets,
 	loadSubstitutions,
+	reversedOffsetProvenance,
 	substitutionProvenance,
 } from "./geometrySubstitution";
 import { readShapefileFeatures } from "./shapefile";
@@ -322,7 +324,12 @@ export const readGeometries = (
 		const polygons = polygonsByCode.get(code.trim()) ?? [];
 		polygons.push(
 			...toPolygons(
-				toWgs84Geometry(corrected, source.crs),
+				applyReversedOffsets(
+					repositoryRoot,
+					source.reversedOffsets ?? [],
+					code.trim(),
+					toWgs84Geometry(corrected, source.crs),
+				),
 				`${source.input} feature ${index} geometry`,
 			),
 		);
@@ -348,7 +355,9 @@ export const readGeometries = (
 			input: source.input,
 			inputHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
 			...geometryProvenance(source.crs),
-			...(offsets.length > 0 || substitutions.length > 0
+			...(offsets.length > 0 ||
+			substitutions.length > 0 ||
+			(source.reversedOffsets?.length ?? 0) > 0
 				? {
 						corrections: [
 							...offsets.map(({ id, description }) => ({
@@ -358,6 +367,9 @@ export const readGeometries = (
 							...substitutionProvenance(
 								geometrySources,
 								source.substitutions ?? [],
+							),
+							...reversedOffsetProvenance(
+								source.reversedOffsets ?? [],
 							),
 						],
 					}
