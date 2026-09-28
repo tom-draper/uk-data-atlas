@@ -8,6 +8,7 @@
  * future domain cannot accidentally produce an invalid release asset.
  */
 import { createHash } from "node:crypto";
+import { createReadStream } from "node:fs";
 import {
 	cp,
 	mkdir,
@@ -70,10 +71,20 @@ const gnuTar = () => {
 	);
 };
 
-const sha256 = async (path) =>
-	createHash("sha256")
-		.update(await readFile(path))
-		.digest("hex");
+const sha256 = async (path) => {
+	const hash = createHash("sha256");
+	for await (const chunk of createReadStream(path)) hash.update(chunk);
+	return hash.digest("hex");
+};
+
+const sha256OrNull = async (path) => {
+	try {
+		return await sha256(path);
+	} catch (error) {
+		if (error?.code === "ENOENT") return null;
+		throw error;
+	}
+};
 
 const fileSize = async (path) => (await stat(path)).size;
 
@@ -222,6 +233,12 @@ async function createArchives(tag) {
 	}
 }
 
+const writeMarker = (tag, repository, files) =>
+	writeFile(
+		LOCAL_MARKER,
+		`${JSON.stringify({ version: 2, tag, repository, files }, null, "\t")}\n`,
+	);
+
 async function publish(tag, targetRef = "HEAD") {
 	if (!DATA_TAG_PATTERN.test(tag))
 		fail(
@@ -271,6 +288,11 @@ async function publish(tag, targetRef = "HEAD") {
 		assets: assets.map(({ path: _path, ...asset }) => asset),
 	};
 	await writeFile(CONFIG, `${JSON.stringify(config, null, "\t")}\n`);
+	// data/ now matches the release exactly, so it becomes the merge base.
+	const files = {};
+	for (const { path } of await filesUnder(DATA))
+		files[path] = await sha256(join(DATA, path));
+	await writeMarker(tag, repository, files);
 	console.log(
 		`Wrote ${relative(ROOT, CONFIG)}. Commit it with public/data/.`,
 	);
@@ -323,7 +345,68 @@ async function replaceSources(staging) {
 	if (hadPrevious) await rm(previous, { recursive: true, force: true });
 }
 
-async function download(force) {
+async function moveFile(source, destination) {
+	await mkdir(dirname(destination), { recursive: true });
+	try {
+		await rename(source, destination);
+	} catch (error) {
+		if (error?.code !== "EXDEV") throw error;
+		await cp(source, destination);
+	}
+}
+
+/**
+ * Three-way merge of an extracted release into data/. `base` maps each path
+ * to the hash it had in the previously synchronized release, so a local file
+ * that still matches it is known to be untouched and safe to update. Anything
+ * added or edited locally is kept.
+ */
+async function mergeSources(staging, base) {
+	const release = {};
+	const added = [];
+	const updated = [];
+	const kept = [];
+	for (const { path } of await filesUnder(staging)) {
+		const source = join(staging, path);
+		const destination = join(DATA, path);
+		const releaseHash = await sha256(source);
+		release[path] = releaseHash;
+		const localHash = await sha256OrNull(destination);
+		if (localHash === releaseHash) continue;
+		if (localHash === null) added.push(path);
+		else if (localHash === base[path]) updated.push(path);
+		else {
+			kept.push(path);
+			continue;
+		}
+		await moveFile(source, destination);
+	}
+
+	const removed = [];
+	for (const [path, baseHash] of Object.entries(base)) {
+		if (path in release) continue;
+		const destination = join(DATA, path);
+		if ((await sha256OrNull(destination)) !== baseHash) continue;
+		await rm(destination);
+		removed.push(path);
+	}
+
+	const report = (label, paths) => {
+		if (paths.length === 0) return;
+		console.log(`${label} (${paths.length}):`);
+		for (const path of paths.sort()) console.log(`  ${path}`);
+	};
+	report("Added from the release", added);
+	report("Updated to the release version", updated);
+	report("Removed because the release dropped them", removed);
+	report(
+		"Kept local version that differs from the release (edited or added locally)",
+		kept,
+	);
+	return release;
+}
+
+async function download(mode) {
 	const config = await readConfig();
 	if (!config) {
 		if (await hasLocalSources()) {
@@ -342,10 +425,10 @@ async function download(force) {
 	} catch (error) {
 		if (error?.code !== "ENOENT")
 			console.log(
-				"Raw data marker is unreadable; restoring the pinned release.",
+				"Raw data marker is unreadable; merging the pinned release.",
 			);
 	}
-	if (!force && marker?.tag === config.tag && (await hasLocalSources())) {
+	if (!mode && marker?.tag === config.tag && (await hasLocalSources())) {
 		console.log(
 			`Raw data ${config.tag} is already present; skipping download.`,
 		);
@@ -377,16 +460,23 @@ async function download(force) {
 			]);
 			await rm(path, { force: true });
 		}
-		await replaceSources(workspace);
-		await writeFile(
-			LOCAL_MARKER,
-			`${JSON.stringify(
-				{ version: 1, tag: config.tag, repository: config.repository },
-				null,
-				"\t",
-			)}\n`,
+		let files;
+		if (mode === "--replace") {
+			files = {};
+			for (const { path } of await filesUnder(workspace))
+				files[path] = await sha256(join(workspace, path));
+			await replaceSources(workspace);
+		} else {
+			await mkdir(DATA, { recursive: true });
+			files = await mergeSources(
+				workspace,
+				marker?.version === 2 ? marker.files : {},
+			);
+		}
+		await writeMarker(config.tag, config.repository, files);
+		console.log(
+			`${mode === "--replace" ? "Restored" : "Merged"} raw data release ${config.tag}.`,
 		);
-		console.log(`Restored raw data release ${config.tag}.`);
 	} finally {
 		await rm(workspace, { recursive: true, force: true });
 	}
@@ -408,11 +498,14 @@ async function main() {
 	const [command = "help", option, targetRef] = process.argv.slice(2);
 	if (command === "publish")
 		await publish(option ?? todayTag(), targetRef ?? "HEAD");
-	else if (command === "download") await download(option === "--force");
-	else if (command === "verify-precompiled") await verifyPrecompiled();
+	else if (command === "download") {
+		if (option && option !== "--force" && option !== "--replace")
+			fail(`Unknown download option ${option}.`);
+		await download(option);
+	} else if (command === "verify-precompiled") await verifyPrecompiled();
 	else {
 		console.log(
-			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD] [target-commitish]|download [--force]|verify-precompiled>",
+			"Usage: node scripts/data-release.mjs <publish [data-YYYY-MM-DD] [target-commitish]|download [--force|--replace]|verify-precompiled>",
 		);
 	}
 }
