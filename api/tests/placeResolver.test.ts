@@ -4,6 +4,7 @@ import { createAreaLookup } from "../src/areaInventory";
 import { normalisePlaceName } from "../src/nameNormalisation";
 import { compilePlaceIndex, placeIndexMismatch } from "../src/placeIndex";
 import { parsePlaceReference, resolvePlaces } from "../src/placeResolver";
+import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type { NamedLocationInventory } from "../src/namedLocations";
 
 const release = (
@@ -103,6 +104,44 @@ test("returns a place once however many releases carry it", () => {
 	assert.deepEqual(manchester!.boundaryReleases, [
 		"2023-05-uk-bgc-v2",
 		"2021-12-uk-bgc",
+	]);
+});
+
+test("uses registry dates to choose a place's newest name", () => {
+	const releases: BoundaryRegistry["releases"] = [
+		["2021-ni", "2021", "Northern Ireland name"],
+		["2021-12-uk-bgc", "2021", "December name"],
+	].map(([id, temporalCoverage]) => ({
+		id,
+		geography: "localAuthority",
+		title: id,
+		temporalCoverage,
+		coverage: { countries: ["GB-NIR"] },
+		source: {
+			publisher: "ONS",
+			url: "https://example.com",
+			licence: { name: "Open Government Licence" },
+		},
+		metadataHash: `sha256:${id}`,
+	}));
+	const datedIndex = compilePlaceIndex(
+		createAreaLookup([
+			release("localAuthority", "2021-ni", [
+				{ code: "E06000001", name: "Northern Ireland name" },
+			]),
+			release("localAuthority", "2021-12-uk-bgc", [
+				{ code: "E06000001", name: "December name" },
+			]),
+		]),
+		undefined,
+		"sha256:areas",
+		{ schemaVersion: 1, contentHash: "sha256:registry", releases },
+	);
+	const [candidate] = resolvePlaces(datedIndex, "E06000001");
+	assert.equal(candidate?.name, "December name");
+	assert.deepEqual(candidate?.boundaryReleases, [
+		"2021-12-uk-bgc",
+		"2021-ni",
 	]);
 });
 

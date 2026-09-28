@@ -54,6 +54,7 @@ const resolverFor = (inputs: TestContextInputs) =>
 					inputs.areaLookup,
 					inputs.namedLocationInventory,
 					inputs.areaInventory?.contentHash ?? "sha256:fixture-areas",
+					inputs.boundaryRegistry,
 				)
 			: undefined,
 		areaSearchIndex: inputs.areaLookup

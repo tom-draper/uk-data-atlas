@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import type { AreaLookup } from "./areaInventory";
+import type { BoundaryRegistry } from "./boundaryRegistry";
 import type { NamedLocationInventory } from "./namedLocations";
+import { compareBoundaryReleases } from "./releaseForDate";
 import {
 	NAME_NORMALISATION,
 	normalisePlaceName,
@@ -93,7 +95,11 @@ export const compilePlaceIndex = (
 	areaLookup: AreaLookup,
 	namedLocations: NamedLocationInventory | undefined,
 	areaInventoryHash: string,
+	boundaryRegistry?: BoundaryRegistry,
 ): PlaceIndexArtifact => {
+	const registryReleases = new Map(
+		boundaryRegistry?.releases.map((release) => [release.id, release]),
+	);
 	const grouped = new Map<string, Grouped>();
 	const byName = new Map<string, Label[]>();
 	const add = (name: string, entry: Label) => {
@@ -170,7 +176,13 @@ export const compilePlaceIndex = (
 			]),
 		),
 	]
-		.sort()
+		.sort((left, right) => {
+			const leftRelease = registryReleases.get(left);
+			const rightRelease = registryReleases.get(right);
+			return leftRelease && rightRelease
+				? compareBoundaryReleases(leftRelease, rightRelease)
+				: left.localeCompare(right);
+		})
 		.reverse();
 	const releasePosition = new Map(
 		releases.map((release, index) => [release, index]),

@@ -16,6 +16,7 @@ import {
 	type AreaSearchIndexArtifact,
 } from "../areaSearch";
 import {
+	compareBoundaryReleases,
 	derivedReleaseSources,
 	selectReleaseForDate,
 	type ReleaseSelection,
@@ -75,8 +76,18 @@ export class AreasResolver {
 				releases.push(boundaryRelease);
 				this.geographyReleases.set(geography, releases);
 			}
-			for (const releases of this.geographyReleases.values())
-				releases.sort((left, right) => left.localeCompare(right));
+			for (const [geography, releases] of this.geographyReleases)
+				releases.sort((left, right) => {
+					const leftRelease = this.boundaryReleases.get(
+						releaseKey(geography, left),
+					);
+					const rightRelease = this.boundaryReleases.get(
+						releaseKey(geography, right),
+					);
+					return leftRelease && rightRelease
+						? compareBoundaryReleases(leftRelease, rightRelease)
+						: left.localeCompare(right);
+				});
 		}
 	}
 
@@ -97,11 +108,9 @@ export class AreasResolver {
 	}
 
 	countryIdentity(code: string) {
-		for (const identity of [...(this.inputs.areaLookup?.keys() ?? [])]
-			.filter((key) => key.startsWith("country/"))
-			.sort()
-			.reverse()) {
-			const boundaryRelease = identity.slice("country/".length);
+		for (const boundaryRelease of [
+			...(this.geographyReleases.get("country") ?? []),
+		].reverse()) {
 			const area = this.area({
 				geography: "country",
 				boundaryRelease,

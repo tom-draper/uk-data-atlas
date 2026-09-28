@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createAreaLookup } from "../src/areaInventory";
+import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import { AreasResolver } from "../src/resolver/areas";
 
 const areaLookup = createAreaLookup([
@@ -62,4 +63,66 @@ test("AreasResolver stays empty when area identities are unavailable", () => {
 		undefined,
 	);
 	assert.equal(resolver.areaCodes("ward", "2024"), undefined);
+});
+
+test("orders same-code history and country identity by registry date", () => {
+	const datedLookup = createAreaLookup(
+		[
+			["ward", "2021-ni", "Northern Ireland snapshot"],
+			["ward", "2021-12-uk-bgc", "December snapshot"],
+			["ward", "2022-01-uk-bgc", "Current snapshot"],
+			["country", "2021-ni", "Northern Ireland country"],
+			["country", "2021-12-uk-bgc", "December country"],
+		].map(([geography, boundaryRelease, name]) => ({
+			schemaVersion: 1 as const,
+			contentHash: `sha256:${geography}-${boundaryRelease}`,
+			geography,
+			boundaryRelease,
+			codeProperty: "CODE",
+			nameProperty: "NAME",
+			areas: [{ code: "E00000001", name }],
+		})),
+	);
+	const boundaryRegistry: BoundaryRegistry = {
+		schemaVersion: 1,
+		contentHash: "sha256:registry",
+		releases: [
+			["ward", "2021-ni", "2021"],
+			["ward", "2021-12-uk-bgc", "2021"],
+			["ward", "2022-01-uk-bgc", "2022"],
+			["country", "2021-ni", "2021"],
+			["country", "2021-12-uk-bgc", "2021"],
+		].map(([geography, id, temporalCoverage]) => ({
+			id,
+			geography,
+			title: id,
+			temporalCoverage,
+			coverage: { countries: ["GB-ENG"] },
+			source: {
+				publisher: "ONS",
+				url: "https://example.com",
+				licence: { name: "Open Government Licence" },
+			},
+			metadataHash: `sha256:${id}`,
+		})),
+	};
+	const resolver = new AreasResolver({
+		areaLookup: datedLookup,
+		boundaryRegistry,
+	});
+
+	assert.deepEqual(
+		resolver
+			.sameCode({
+				geography: "ward",
+				boundaryRelease: "2022-01-uk-bgc",
+				code: "E00000001",
+			})
+			.map(({ boundaryRelease }) => boundaryRelease),
+		["2021-ni", "2021-12-uk-bgc"],
+	);
+	assert.equal(
+		resolver.countryIdentity("E00000001")?.boundaryRelease,
+		"2021-12-uk-bgc",
+	);
 });

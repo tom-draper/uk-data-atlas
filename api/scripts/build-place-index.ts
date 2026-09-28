@@ -1,7 +1,11 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
+import {
+	readAreaInventory,
+	readAreaLookup,
+	readBoundaryRegistry,
+} from "../src/boundaryLoader";
 import { readNamedLocationInventory } from "../src/locationLoader";
 import { compilePlaceIndex } from "../src/placeIndex";
 
@@ -12,6 +16,7 @@ export const buildPlaceIndex = (repositoryRoot: string) => {
 		readAreaLookup(apiRoot, areaInventory),
 		readNamedLocationInventory(apiRoot),
 		areaInventory.contentHash,
+		readBoundaryRegistry(apiRoot),
 	);
 	const outputPath = join(apiRoot, "public", "place-index.json");
 	// Compact: this is an index read by machine, and indenting it would
