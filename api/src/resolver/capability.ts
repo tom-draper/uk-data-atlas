@@ -51,6 +51,13 @@ export type RelationshipRepair = {
 	action: "publish-crosswalk" | "review-candidate" | "compile-target-release";
 };
 
+type CachedRelationshipCoverage = Omit<
+	ResolvedRelationshipCoverage,
+	"uncoveredAreas"
+> & {
+	uncoveredCodes: string[];
+};
+
 export type CapabilityResolverInputs = {
 	areaLookup?: AreaLookup;
 	boundaryRegistry?: BoundaryRegistry;
@@ -60,6 +67,11 @@ export type CapabilityResolverInputs = {
 /** Conversion evidence, release coverage, operational health and repair advice. */
 export class CapabilityResolver {
 	private readonly conversions: ConversionCapabilities;
+	private readonly relationshipCoverageCache = new Map<
+		string,
+		CachedRelationshipCoverage
+	>();
+	private geographyHealthCache?: GeographyHealth[];
 
 	constructor(
 		inputs: CapabilityResolverInputs &
@@ -108,48 +120,70 @@ export class CapabilityResolver {
 			releaseKey(geography, boundaryRelease),
 		);
 		if (!areas || !this.hasRelationships()) return undefined;
-		const byRelation: Partial<Record<AreaRelation, number>> = {};
-		const crosswalkIds = new Set<string>();
-		let relatedAreaCount = 0;
-		let relationshipCount = 0;
-		const uncoveredAreas: ResolvedRelationshipCoverage["uncoveredAreas"] =
-			[];
-		for (const [code, area] of areas) {
-			const relationships = this.relationships({
-				geography,
-				boundaryRelease,
-				code,
-			}).filter(
-				(candidate) => !relation || candidate.relation === relation,
-			);
-			if (relationships.length > 0) {
-				relatedAreaCount += 1;
-				relationshipCount += relationships.length;
-				for (const candidate of relationships) {
-					byRelation[candidate.relation] =
-						(byRelation[candidate.relation] ?? 0) + 1;
-					crosswalkIds.add(candidate.crosswalk.id);
-				}
-			} else if (uncoveredAreas.length < limit)
-				uncoveredAreas.push({
-					id: areaId({ geography, boundaryRelease, code }),
-					...area,
-				});
+		const key = `${releaseKey(geography, boundaryRelease)}\u0000${relation ?? ""}`;
+		let cached = this.relationshipCoverageCache.get(key);
+		if (!cached) {
+			const byRelation: Partial<Record<AreaRelation, number>> = {};
+			const crosswalkIds = new Set<string>();
+			let relatedAreaCount = 0;
+			let relationshipCount = 0;
+			const uncoveredCodes: string[] = [];
+			for (const [code] of areas) {
+				const relationships = this.relationships({
+					geography,
+					boundaryRelease,
+					code,
+				}).filter(
+					(candidate) => !relation || candidate.relation === relation,
+				);
+				if (relationships.length > 0) {
+					relatedAreaCount += 1;
+					relationshipCount += relationships.length;
+					for (const candidate of relationships) {
+						byRelation[candidate.relation] =
+							(byRelation[candidate.relation] ?? 0) + 1;
+						crosswalkIds.add(candidate.crosswalk.id);
+					}
+				} else uncoveredCodes.push(code);
+			}
+			cached = {
+				areaCount: areas.size,
+				relatedAreaCount,
+				relationshipCount,
+				byRelation,
+				crosswalkIds: [...crosswalkIds].sort(),
+				uncoveredCodes,
+			};
+			this.relationshipCoverageCache.set(key, cached);
 		}
+		const { uncoveredCodes, ...coverage } = cached;
 		return {
-			areaCount: areas.size,
-			relatedAreaCount,
-			relationshipCount,
-			byRelation,
-			crosswalkIds: [...crosswalkIds].sort(),
-			uncoveredAreas,
+			...coverage,
+			byRelation: { ...coverage.byRelation },
+			crosswalkIds: [...coverage.crosswalkIds],
+			uncoveredAreas: uncoveredCodes.slice(0, limit).flatMap((code) => {
+				const area = areas.get(code);
+				return area
+					? [
+							{
+								id: areaId({
+									geography,
+									boundaryRelease,
+									code,
+								}),
+								...area,
+							},
+						]
+					: [];
+			}),
 		};
 	}
 
 	geographyHealth(): GeographyHealth[] {
 		if (!this.inputs.areaLookup) return [];
+		if (this.geographyHealthCache) return [...this.geographyHealthCache];
 		const reach = this.conversions.conversionReach();
-		return [...this.inputs.areaLookup.keys()]
+		this.geographyHealthCache = [...this.inputs.areaLookup.keys()]
 			.map((identity) => {
 				const [geography, boundaryRelease] = identity.split("/", 2) as [
 					string,
@@ -204,6 +238,7 @@ export class CapabilityResolver {
 					releaseKey(right.geography, right.boundaryRelease),
 				),
 			);
+		return [...this.geographyHealthCache];
 	}
 
 	relationshipRepairs(): RelationshipRepair[] {
