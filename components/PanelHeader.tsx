@@ -97,9 +97,14 @@ export function panelHeaderDetails(
 		}
 		case "lsoa":
 			return {
-				title: selectedArea.name || selectedArea.code,
-				subtitle: "",
-				code: selectedArea.code,
+				title:
+					selectedArea.data?.lsoaName ||
+					selectedArea.name ||
+					selectedArea.code,
+				subtitle: selectedArea.data?.ladName ?? "",
+				code: [selectedArea.data?.ladCode, selectedArea.code]
+					.filter(Boolean)
+					.join(" "),
 			};
 		case "dataZone":
 			return {

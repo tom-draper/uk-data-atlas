@@ -101,18 +101,23 @@ describe("panelHeaderDetails", () => {
 		});
 	});
 
-	it("does not show a redundant geography label for an LSOA", () => {
+	it("shows an LSOA's name, authority, and hierarchical codes", () => {
 		const selectedArea: SelectedArea = {
 			type: "lsoa",
 			code: "E01000001",
 			name: "Bolton 001A",
-			data: null,
+			data: {
+				lsoaCode: "E01000001",
+				lsoaName: "Rochdale 020E",
+				ladCode: "E08000005",
+				ladName: "Rochdale",
+			},
 		};
 
 		expect(panelHeaderDetails(null, selectedArea)).toEqual({
-			title: "Bolton 001A",
-			subtitle: "",
-			code: "E01000001",
+			title: "Rochdale 020E",
+			subtitle: "Rochdale",
+			code: "E08000005 E01000001",
 		});
 	});
 });

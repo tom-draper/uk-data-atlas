@@ -5,11 +5,18 @@ import {
 	LocalAuthorityData,
 } from "./elections";
 
+type LsoaAreaData = {
+	lsoaCode?: string;
+	lsoaName?: string;
+	ladCode?: string;
+	ladName?: string;
+};
+
 type AreaMap = {
 	ward: LocalElectionWardData;
 	constituency: GeneralElectionConstituencyData;
 	localAuthority: LocalAuthorityData;
-	lsoa: null;
+	lsoa: LsoaAreaData;
 	dataZone: null;
 	superOutputArea: null;
 };
