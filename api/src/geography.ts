@@ -14,9 +14,13 @@ export const GEOGRAPHY_KINDS = [
 	"itl2",
 	"itl3",
 	"localAuthority",
+	"localHealthBoard",
 	"localPlanningAuthority",
 	"lsoa",
+	"majorTownAndCity",
 	"msoa",
+	"nationalPark",
+	"nhsEnglandRegion",
 	"outputArea",
 	"parish",
 	"policeForceArea",
@@ -27,6 +31,7 @@ export const GEOGRAPHY_KINDS = [
 	"seneddElectoralRegion",
 	"subIntegratedCareBoardLocation",
 	"superOutputArea",
+	"travelToWorkArea",
 	"ward",
 ] as const;
 
