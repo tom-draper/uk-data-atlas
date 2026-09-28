@@ -7623,7 +7623,10 @@ paths:
         labels and, for `apportion`, the weight multiplied along the path: a
         step's shares, overlap area and population describe the areas that
         step joins, not the queried one. Reverse area-overlap weights are normalised against
-        the queried target and report its source coverage. The route does not
+        the queried target and report its source coverage. A composed apportion
+        result retains that first-step `sourceCoverage` and reports
+        `resolvedCoverage`, the share of the queried source its final targets
+        represent. The route does not
         treat a shared code across releases as proof of unchanged geography.
       parameters:
         - name: sourceGeography

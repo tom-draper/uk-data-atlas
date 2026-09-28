@@ -41,6 +41,8 @@ export type ResolvedAreaTranslation = {
 	targets: TranslationTarget[];
 	/** Present when a reverse overlap route was normalised to the queried area. */
 	sourceCoverage?: number;
+	/** The share of the queried source represented by composed apportion targets. */
+	resolvedCoverage?: number;
 };
 
 const endpointKey = (endpoint: GeographyEndpoint) =>
@@ -276,12 +278,24 @@ export const executeTranslationPath = (
 				: {}),
 		});
 	}
+	const sourceCoverage = firstStep.sourceCoverage ?? 1;
+	const resolvedCoverage =
+		path.purpose === "apportion"
+			? sourceCoverage *
+				[...combined.values()].reduce(
+					(sum, target) => sum + weightOf(target, 0),
+					0,
+				)
+			: undefined;
 	return {
 		path,
 		source: firstStep.source,
 		targets: [...combined.values()].sort((left, right) =>
 			left.code.localeCompare(right.code),
 		),
+		...(path.purpose === "apportion"
+			? { sourceCoverage, resolvedCoverage }
+			: {}),
 	};
 };
 
