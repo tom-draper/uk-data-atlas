@@ -242,7 +242,7 @@ const writeSources = (
 				dataset("nimdm", 2, 1, 2011),
 				dataset("wimd", 1, 1, 2011),
 				dataset("simd", 1, 1, 2011),
-				dataset("life-expectancy-series", 4, 2, 2021),
+				dataset("life-expectancy-series", 4, 2, 2025),
 				dataset("population-constituency", 4, 2, 2024),
 				dataset("general-election", 4, 2, 2019),
 				dataset("local-election", 7, 2, 2019),
@@ -740,9 +740,9 @@ const writeSources = (
 		year,
 		period: `${year - 2}-${year}`,
 		boundaryType: "localAuthority",
-		boundaryYear: 2021,
+		boundaryYear: 2025,
 		data: {
-			E07000028: {
+			E06000063: {
 				male: estimate(77.29 - offset),
 				female: estimate(81.5 - offset),
 			},
