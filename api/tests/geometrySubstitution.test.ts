@@ -1,11 +1,5 @@
 import assert from "node:assert/strict";
-import {
-	mkdirSync,
-	mkdtempSync,
-	readFileSync,
-	rmSync,
-	writeFileSync,
-} from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -136,15 +130,19 @@ test("undoes a grid offset a WGS84 release carries backwards", () => {
 		const boundaries = join(root, "data", "boundaries");
 		const directory = join(boundaries, "travel-to-work-area", "2011");
 		mkdirSync(directory, { recursive: true });
+		// The published definition's values, so the test needs no raw data.
 		writeFileSync(
 			join(boundaries, "northern-ireland-offset.json"),
-			readFileSync(
-				new URL(
-					"../../data/boundaries/northern-ireland-offset.json",
-					import.meta.url,
-				),
-				"utf8",
-			),
+			JSON.stringify({
+				id: "northern-ireland-offset",
+				description: "Test copy of the Northern Ireland grid offset.",
+				crs: "EPSG:27700",
+				codePrefix: "N",
+				origin: { easting: 100000, northing: 500000 },
+				unitMetres: 100000,
+				east: [59.903, 12.65, 0.312],
+				north: [-14.836, -0.411, 11.851],
+			}),
 		);
 		const offset = readGridOffset(root, "northern-ireland-offset");
 		// A point near Belfast, published where the offset would put it.
