@@ -176,7 +176,7 @@ test("refuses a partition the measure does not publish", () => {
 test("refuses a geometry it cannot carry and names ones it can", () => {
 	const refused = refusal({
 		measureId: "imd-rank",
-		periods: ["2019"],
+		periods: ["2025"],
 		release: "2023-05-uk-bgc-v2",
 	});
 	assert.equal(refused.status, 422);
@@ -187,7 +187,7 @@ test("refuses a geometry it cannot carry and names ones it can", () => {
 	for (const release of releases) {
 		const resolved = plan({
 			measureId: "imd-rank",
-			periods: ["2019"],
+			periods: ["2025"],
 			release,
 		});
 		assert.equal(resolved.join?.boundaryRelease, release);
@@ -200,7 +200,7 @@ test("reports possibilities without acting on them", () => {
 	// one. Source-exact means the caller chooses.
 	const refused = refusal({
 		measureId: "imd-rank",
-		periods: ["2019"],
+		periods: ["2025"],
 		release: "2023-05-uk-bgc-v2",
 	});
 	assert.ok((refused.alternatives?.releases ?? []).length > 0);

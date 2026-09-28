@@ -42,6 +42,7 @@ describe("datasetIsNeeded", () => {
 			"nimdm",
 			"schoolPerformanceGap",
 			"simd",
+			"unemployment",
 			"wimd",
 		]);
 
