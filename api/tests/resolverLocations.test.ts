@@ -114,6 +114,59 @@ test("indexes named locations by member geography and code, in id order", () => 
 	);
 });
 
+test("does not associate an area with a location outside its membership dates", () => {
+	const resolver = new LocationsResolver(
+		{
+			namedLocationInventory: {
+				...namedLocationInventory,
+				locations: [
+					{
+						...namedLocationInventory.locations[0]!,
+						memberCodes: ["E08000001", "E08000002"],
+						memberAssertions: [
+							{
+								code: "E08000001",
+								validity: { from: null, to: "2023-04-01" },
+							},
+							{
+								code: "E08000002",
+								validity: { from: "2023-04-01", to: null },
+							},
+						],
+					},
+				],
+			},
+		},
+		catalogue,
+	);
+	const identity = (code: string) => ({
+		geography: "localAuthority",
+		boundaryRelease: "2023-05-uk-lad",
+		code,
+	});
+
+	assert.deepEqual(
+		resolver
+			.namedLocationsForArea(identity("E08000001"), "2023-03")
+			.map(({ id }) => id),
+		["north-west"],
+	);
+	assert.deepEqual(
+		resolver.namedLocationsForArea(identity("E08000002"), "2023-03"),
+		[],
+	);
+	assert.deepEqual(
+		resolver.namedLocationsForArea(identity("E08000001"), "2023-05"),
+		[],
+	);
+	assert.deepEqual(
+		resolver
+			.namedLocationsForArea(identity("E08000002"), "2023-05")
+			.map(({ id }) => id),
+		["north-west"],
+	);
+});
+
 test("selects projection shards by the crosswalk end that holds the members", () => {
 	const shards = [
 		{ crosswalkId: "lad-to-region" },

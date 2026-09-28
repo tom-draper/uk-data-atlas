@@ -1,4 +1,5 @@
 import { describeCandidate } from "./placeResponses";
+import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";
 import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
@@ -31,6 +32,8 @@ export const handlePlaceRoutes = ({
 			"Invalid Query",
 			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 		);
+	const asOf = selectedAsOf(parsedUrl);
+	if (typeof asOf !== "string" && asOf !== undefined) return asOf;
 	const unavailable = context.geographyResolver.requires("places");
 	if (unavailable) return unavailable;
 	// A postcode is exactly one place, so it leads, and names fill the rest.
@@ -38,6 +41,7 @@ export const handlePlaceRoutes = ({
 	const candidates = context.geographyResolver.places(
 		query,
 		postcode.candidate ? limit - 1 : limit,
+		asOf,
 	);
 	return {
 		status: 200,
@@ -51,6 +55,9 @@ export const handlePlaceRoutes = ({
 					boundaryReleases: candidate.boundaryReleases,
 					...(candidate.memberCodes
 						? { memberCodes: candidate.memberCodes }
+						: {}),
+					...(candidate.memberAssertions
+						? { memberAssertions: candidate.memberAssertions }
 						: {}),
 					...(candidate.memberGeography
 						? { memberGeography: candidate.memberGeography }

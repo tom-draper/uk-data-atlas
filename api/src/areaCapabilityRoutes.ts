@@ -8,6 +8,7 @@ import {
 import { measureCapability } from "./measureCapability";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
+import { releaseMonth } from "./releaseForDate";
 import { envelope, type ApiResponse } from "./routeResponse";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
@@ -77,7 +78,10 @@ export const handleAreaCapabilityRoutes = ({
 		...crosswalk,
 		href: `/v1/crosswalks/${crosswalk.id}`,
 	}));
-	const locations = geographyResolver.namedLocationsForArea(identity);
+	const locations = geographyResolver.namedLocationsForArea(
+		identity,
+		releaseMonth(boundaryRelease),
+	);
 	const data = (() => {
 		if (!dataCatalog || !measureCompatibilityInventory)
 			return notBuilt(
@@ -181,7 +185,7 @@ export const handleAreaCapabilityRoutes = ({
 								label: location.label,
 								href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
 							})),
-							note: "Membership is a direct code match against each named location's member codes. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
+							note: "Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
 						},
 				data,
 			},

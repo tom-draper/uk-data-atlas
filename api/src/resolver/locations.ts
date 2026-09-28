@@ -13,6 +13,7 @@ import type {
 	NamedLocationLookup,
 } from "../namedLocations";
 import { selectNamedLocationAt } from "../namedLocations";
+import { membersAt } from "../namedLocations";
 import type { CatalogueResolver } from "./catalogue";
 import type { AreaIdentity } from "./areas";
 
@@ -60,11 +61,16 @@ export class LocationsResolver {
 		return this.inputs.namedLocationInventory !== undefined;
 	}
 
-	namedLocationsForArea(identity: AreaIdentity): NamedLocation[] {
+	namedLocationsForArea(
+		identity: AreaIdentity,
+		asOf?: string,
+	): NamedLocation[] {
 		return (
 			this.locationsByMemberArea.get(
 				memberAreaKey(identity.geography, identity.code),
 			) ?? []
+		).filter((location) =>
+			membersAt(location, asOf).includes(identity.code),
 		);
 	}
 

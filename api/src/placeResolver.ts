@@ -1,4 +1,5 @@
 import { normalisePlaceName } from "./nameNormalisation";
+import { memberCodesAt } from "./namedLocations";
 import { findSorted, lowerBound } from "./sortedIndex";
 import {
 	AREA_CODE,
@@ -44,6 +45,11 @@ export type PlaceCandidate = {
 	boundaryReleases: string[];
 	/** For a named location, its curated member codes. */
 	memberCodes?: string[];
+	/** Dated membership assertions for a named location. */
+	memberAssertions?: Array<{
+		code: string;
+		validity: { from: string | null; to: string | null };
+	}>;
 	/** The geography of a named location's curated member codes. */
 	memberGeography?: string;
 	/** Definition provenance for a named location. */
@@ -124,8 +130,17 @@ const toCandidate = (
 	position: number,
 	match: PlaceMatch,
 	matchedLabel?: string,
+	asOf?: string,
 ): PlaceCandidate => {
 	const place = index.places[position]!;
+	const memberCodes = place.memberCodes
+		? memberCodesAt(
+				place.memberCodes,
+				place.memberAssertions,
+				place.validity ?? { from: null, to: null },
+				asOf,
+			)
+		: undefined;
 	return {
 		place: place.place,
 		kind: place.kind,
@@ -137,7 +152,10 @@ const toCandidate = (
 		boundaryReleases: place.boundaryReleases.map(
 			(release) => index.releases[release]!,
 		),
-		...(place.memberCodes ? { memberCodes: place.memberCodes } : {}),
+		...(memberCodes ? { memberCodes } : {}),
+		...(place.memberAssertions
+			? { memberAssertions: place.memberAssertions }
+			: {}),
 		...(place.memberGeography
 			? { memberGeography: place.memberGeography }
 			: {}),
@@ -161,6 +179,7 @@ export const resolvePlaces = (
 	index: PlaceIndexArtifact,
 	query: string,
 	limit = 10,
+	asOf?: string,
 ): PlaceCandidate[] => {
 	const trimmed = query.trim();
 	if (!trimmed) return [];
@@ -173,7 +192,7 @@ export const resolvePlaces = (
 			(place) => place.place,
 		);
 		if (position !== -1)
-			return [toCandidate(index, position, "exact", trimmed)];
+			return [toCandidate(index, position, "exact", trimmed, asOf)];
 	}
 
 	const found = new Map<number, PlaceCandidate>();
@@ -184,7 +203,10 @@ export const resolvePlaces = (
 	) => {
 		const existing = found.get(position);
 		if (existing && MATCH_RANK[existing.match] <= MATCH_RANK[match]) return;
-		found.set(position, toCandidate(index, position, match, matchedLabel));
+		found.set(
+			position,
+			toCandidate(index, position, match, matchedLabel, asOf),
+		);
 	};
 	const considerLabels = (
 		labels: CompiledPlaceLabel[],

@@ -295,13 +295,18 @@ export const createNamedLocationLookup = (
 ): NamedLocationLookup =>
 	new Map(inventory.locations.map((location) => [location.id, location]));
 
-/** Select the codes whose half-open membership interval includes `asOf`. */
-export const membersAt = (location: NamedLocation, asOf?: string) =>
+/** Select codes whose half-open membership interval includes `asOf`. */
+export const memberCodesAt = (
+	memberCodes: string[],
+	memberAssertions: NamedLocation["memberAssertions"],
+	validity: NamedLocation["validity"],
+	asOf?: string,
+) =>
 	(
-		location.memberAssertions ??
-		location.memberCodes.map((code) => ({
+		memberAssertions ??
+		memberCodes.map((code) => ({
 			code,
-			validity: location.validity,
+			validity,
 		}))
 	)
 		.filter(
@@ -311,6 +316,15 @@ export const membersAt = (location: NamedLocation, asOf?: string) =>
 					(validity.to === null || asOf < validity.to)),
 		)
 		.map(({ code }) => code);
+
+/** Select the codes whose half-open membership interval includes `asOf`. */
+export const membersAt = (location: NamedLocation, asOf?: string) =>
+	memberCodesAt(
+		location.memberCodes,
+		location.memberAssertions,
+		location.validity,
+		asOf,
+	);
 
 /** A dated view leaves the full membership audit trail attached to the location. */
 export const selectNamedLocationAt = (
