@@ -42,6 +42,8 @@ export interface LocalAuthorityData {
 	ladCode: string;
 	ladName: string;
 	regionName: string;
+	/** Present for datasets, such as the EU referendum, that publish it. */
+	regionCode?: string;
 	countryName: string;
 }
 

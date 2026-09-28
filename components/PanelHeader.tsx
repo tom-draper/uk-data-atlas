@@ -2,6 +2,7 @@
 import { SelectedArea } from "@lib/types";
 import { usePanelContext } from "@/lib/context/PanelContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { gazetteer } from "@/lib/data/gazetteer/static";
 import { panelTheme } from "@/lib/helpers/panelTheme";
 
 function CogIcon({ className }: { className?: string }) {
@@ -22,7 +23,25 @@ function CogIcon({ className }: { className?: string }) {
 	);
 }
 
-function panelHeaderDetails(
+function localAuthorityContext(
+	code: string,
+	data: Extract<SelectedArea, { type: "localAuthority" }>["data"],
+) {
+	if (!data) return { subtitle: "", regionCode: "" };
+
+	const mappedRegion = gazetteer
+		.ancestors(code)
+		.find((area) => area.level === "region");
+	const regionName = data.regionName || mappedRegion?.name || "";
+	const regionCode = data.regionCode || mappedRegion?.code || "";
+
+	return {
+		subtitle: [regionName, data.countryName].filter(Boolean).join(", "),
+		regionCode,
+	};
+}
+
+export function panelHeaderDetails(
 	selectedLocation: string | null,
 	selectedArea: SelectedArea | null,
 ) {
@@ -38,18 +57,20 @@ function panelHeaderDetails(
 		case "ward":
 			return {
 				title:
-					selectedArea.name ??
-					(selectedArea.data ? selectedArea.data.wardName : ""),
-				subtitle: selectedArea.data
-					? (selectedArea.data.ladName ?? "")
-					: "",
-				code: `${selectedArea.data ? (selectedArea.data.ladCode ?? "") : ""} ${selectedArea.code}`,
+					selectedArea.data?.wardName ||
+					selectedArea.name ||
+					selectedArea.code,
+				subtitle: selectedArea.data?.ladName ?? "",
+				code: [selectedArea.data?.ladCode, selectedArea.code]
+					.filter(Boolean)
+					.join(" "),
 			};
 		case "constituency":
 			return {
 				title:
+					selectedArea.data?.constituencyName ||
 					selectedArea.name ||
-					(selectedArea.data?.constituencyName ?? ""),
+					selectedArea.code,
 				subtitle: selectedArea.data
 					? [
 							selectedArea.data.regionName,
@@ -60,35 +81,36 @@ function panelHeaderDetails(
 					: "",
 				code: selectedArea.code,
 			};
-		case "localAuthority":
+		case "localAuthority": {
+			const { subtitle, regionCode } = localAuthorityContext(
+				selectedArea.code,
+				selectedArea.data,
+			);
 			return {
-				title: selectedArea.name || (selectedArea.data?.ladName ?? ""),
-				subtitle: selectedArea.data
-					? [
-							selectedArea.data.regionName,
-							selectedArea.data.countryName,
-						]
-							.filter(Boolean)
-							.join(", ")
-					: "",
-				code: selectedArea.code,
+				title:
+					selectedArea.data?.ladName ||
+					selectedArea.name ||
+					selectedArea.code,
+				subtitle,
+				code: [regionCode, selectedArea.code].filter(Boolean).join(" "),
 			};
+		}
 		case "lsoa":
 			return {
 				title: selectedArea.name || selectedArea.code,
-				subtitle: "LSOA",
+				subtitle: "",
 				code: selectedArea.code,
 			};
 		case "dataZone":
 			return {
 				title: selectedArea.name || selectedArea.code,
-				subtitle: "Data Zone",
+				subtitle: "",
 				code: selectedArea.code,
 			};
 		case "superOutputArea":
 			return {
 				title: selectedArea.name || selectedArea.code,
-				subtitle: "Super Output Area",
+				subtitle: "",
 				code: selectedArea.code,
 			};
 	}
