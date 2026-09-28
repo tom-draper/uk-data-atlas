@@ -168,12 +168,14 @@ only **available** when its endpoint, contract and provenance are published.
       (`data/deprivation/simd/SIMD+2020v2+-+indicators.csv`). Northern
       Ireland's 18 constituencies still convert by area only until a
       small-area population source is imported.
-- [ ] Relate the geographies published with no relationship at all: local
-      health boards, NHS England regions, national parks, local planning
-      authorities, major towns and cities, and travel-to-work areas. ONS
-      lookups exist for some, such as local authority to local health board
-      and sub-ICB location to NHS England region; the rest need a derived
-      method stated as such.
+- [x] Publish the official Welsh local authority → local health board
+      (December 2023) and English sub-ICB location → NHS England region
+      (April 2026) membership lookups. NHS England region codes changed in
+      January 2024, so the latter is pinned to the matching January 2024
+      boundary release rather than the superseded July 2022 release.
+- [ ] Relate the remaining geographies published with no relationship at all:
+      national parks, local planning authorities, major towns and cities, and
+      travel-to-work areas. These need a derived method stated as such.
 - [x] Publish derived `same-code-continuity` identity between consecutive
       releases of one geography, where no piece of the difference between a
       shared code's two geometries is wider than generalisation slivers.

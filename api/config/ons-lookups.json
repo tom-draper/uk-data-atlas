@@ -91,5 +91,19 @@
 		"title": "2021 output area to 2021 LSOA (England and Wales)",
 		"description": "Official ONS exact-fit lookup from 2021 Output Areas to Lower and Middle Layer Super Output Areas and 2022 Local Authority Districts, December 2021, one row per Output Area: every 2021 Output Area lies wholly in one 2021 LSOA.",
 		"temporalCoverage": "2021-12"
+	},
+	{
+		"service": "UA23_LHB23_WA_LU",
+		"directory": "local-authority-to-local-health-board/2023-12-w",
+		"title": "Unitary Authority to Local Health Board, December 2023 (Wales)",
+		"description": "Official ONS lookup assigning each Welsh unitary authority to its Local Health Board as at December 2023.",
+		"temporalCoverage": "2023-12"
+	},
+	{
+		"service": "SICBL26_ICB26_NHSER26_EN_LU",
+		"directory": "sub-integrated-care-board-location-to-nhs-england-region/2026-04-en",
+		"title": "Sub Integrated Care Board Location to NHS England Region, April 2026 (England)",
+		"description": "Official ONS lookup assigning each April 2026 Sub Integrated Care Board Location to its Integrated Care Board and NHS England Region.",
+		"temporalCoverage": "2026-04"
 	}
 ]

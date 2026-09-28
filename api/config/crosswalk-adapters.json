@@ -69,6 +69,50 @@
 			}
 		},
 		{
+			"id": "local-authority-2023-12-uk-bgc-to-local-health-board-2023-12-w-bgc-official-lookup",
+			"input": "lookups/local-authority-to-local-health-board/2023-12-w/UA23_LHB23_WA_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc",
+				"codeProperty": "UA23CD",
+				"nameProperty": "UA23NM"
+			},
+			"to": {
+				"geography": "localHealthBoard",
+				"boundaryRelease": "2023-12-w-bgc",
+				"codeProperty": "LHB23CD",
+				"nameProperty": "LHB23NM"
+			}
+		},
+		{
+			"id": "sub-integrated-care-board-location-2026-04-en-bgc-to-nhs-england-region-2024-01-en-bgc-official-lookup",
+			"input": "lookups/sub-integrated-care-board-location-to-nhs-england-region/2026-04-en/SICBL26_ICB26_NHSER26_EN_LU.geojson",
+			"method": "official-lookup",
+			"quality": "publisher-supplied",
+			"relationshipPurpose": "membership",
+			"weighting": {
+				"status": "not-provided"
+			},
+			"from": {
+				"geography": "subIntegratedCareBoardLocation",
+				"boundaryRelease": "2026-04-en-bgc",
+				"codeProperty": "SICBL26CD",
+				"nameProperty": "SICBL26NM"
+			},
+			"to": {
+				"geography": "nhsEnglandRegion",
+				"boundaryRelease": "2024-01-en-bgc",
+				"codeProperty": "NHSER26CD",
+				"nameProperty": "NHSER26NM"
+			}
+		},
+		{
 			"id": "ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment",
 			"input": "boundaries/ward/2022-12-uk-bgc/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.geojson",
 			"method": "clean-containment",
