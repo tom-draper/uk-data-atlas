@@ -5,6 +5,14 @@
 			"codeProperty": "DataZone",
 			"nameProperty": "Name"
 		},
+		"dataZone/2021-ni": {
+			"codeProperty": "DZ2021_cd",
+			"nameProperty": "DZ2021_nm"
+		},
+		"dataZone/2022-sc-bfc": {
+			"codeProperty": "dzcode",
+			"nameProperty": "dzname"
+		},
 		"intermediateZone/2011-12-sc-bfc": {
 			"codeProperty": "InterZone",
 			"nameProperty": "Name"

@@ -229,6 +229,18 @@ interface DataZoneProperties2011 {
 	Name: string;
 }
 
+// The Scottish Government's 2022 data zones, and NISRA's Census 2021 data
+// zones for Northern Ireland, which share the name but not the code system.
+interface DataZoneProperties2022 {
+	dzcode: string;
+	dzname: string;
+}
+
+interface DataZoneNiProperties2021 {
+	DZ2021_cd: string;
+	DZ2021_nm: string;
+}
+
 // Country properties by year
 interface CountryProperties2020 {
 	CTRY20CD: string;
@@ -463,6 +475,8 @@ export type YearToProperties = {
 	// Scottish Data Zones
 	dataZone_2011: DataZoneProperties2011;
 	dataZone_ons_2011: DataZoneOnsProperties2011;
+	dataZone_ni_2021: DataZoneNiProperties2021;
+	dataZone_2022: DataZoneProperties2022;
 	// NI Super Output Areas
 	superOutputArea_2011: SuperOutputAreaProperties2011;
 	// Wards

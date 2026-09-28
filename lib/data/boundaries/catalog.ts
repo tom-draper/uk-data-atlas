@@ -573,6 +573,31 @@ const CATALOG = {
 	dataZone: {
 		releases: [
 			{
+				// Held, not served: the 2022 data zones that replace 2011's.
+				// Published only as a British National Grid shapefile, which the
+				// map compiler cannot read, and every Scottish dataset here is
+				// still keyed by 2011 codes.
+				id: "2022-sc-bfc",
+				year: 2022,
+				extent: "sc",
+				codeKey: "dzcode",
+				nameKey: "dzname",
+				holdReason:
+					"It is published only as a British National Grid shapefile, and no dataset is keyed by 2022 data zones yet.",
+			},
+			{
+				// Held, not served: NISRA's Census 2021 data zones for Northern
+				// Ireland. The API compiles their codes and names; nothing on
+				// the map is keyed by them yet.
+				id: "2021-ni",
+				year: 2021,
+				extent: "ni",
+				codeKey: "DZ2021_cd",
+				nameKey: "DZ2021_nm",
+				holdReason:
+					"No dataset is keyed by Northern Ireland data zones yet.",
+			},
+			{
 				id: "2011-12-sc-bfc",
 				year: 2011,
 				month: 12,
