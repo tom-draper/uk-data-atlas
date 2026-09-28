@@ -1,4 +1,8 @@
 import { IMDDataset, IMDLSOAData } from "@/lib/types/imd";
+import {
+	summariseDeprivationBy,
+	summariseIMD,
+} from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNum, parseNumInt } from "@/lib/helpers/parseNumber";
 
@@ -11,7 +15,7 @@ export async function loadIMD(
 	const { data } = await parseCsv(text, { header: true });
 
 	const records: Record<string, IMDLSOAData> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const lsoaCode = row["LSOA code (2011)"]?.trim();
 		if (!lsoaCode || !lsoaCode.startsWith("E")) continue;
 
@@ -20,34 +24,43 @@ export async function loadIMD(
 			lsoaName: row["LSOA name (2011)"]?.trim() || "",
 			ladCode: row["Local Authority District code (2019)"]?.trim() || "",
 			ladName: row["Local Authority District name (2019)"]?.trim() || "",
-			imdScore: parseNum(row["Index of Multiple Deprivation (IMD) Score"]),
+			imdScore: parseNum(
+				row["Index of Multiple Deprivation (IMD) Score"],
+			),
 			imdRank: parseNumInt(
-				row["Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"],
+				row[
+					"Index of Multiple Deprivation (IMD) Rank (where 1 is most deprived)"
+				],
 			),
 			imdDecile: parseNumInt(
-				row["Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"],
+				row[
+					"Index of Multiple Deprivation (IMD) Decile (where 1 is most deprived 10% of LSOAs)"
+				],
 			),
 			incomeScore: parseNum(row["Income Score (rate)"]),
 			employmentScore: parseNum(row["Employment Score (rate)"]),
-			educationScore: parseNum(row["Education, Skills and Training Score"]),
-			healthScore: parseNum(row["Health Deprivation and Disability Score"]),
+			educationScore: parseNum(
+				row["Education, Skills and Training Score"],
+			),
+			healthScore: parseNum(
+				row["Health Deprivation and Disability Score"],
+			),
 			crimeScore: parseNum(row["Crime Score"]),
-			housingScore: parseNum(row["Barriers to Housing and Services Score"]),
+			housingScore: parseNum(
+				row["Barriers to Housing and Services Score"],
+			),
 			livingEnvironmentScore: parseNum(row["Living Environment Score"]),
+			population: parseNumInt(
+				row["Total population: mid 2015 (excluding prisoners)"],
+			),
 		};
 	}
 
-	const ladGroups: Record<string, typeof records[string][]> = {};
-	for (const r of Object.values(records)) {
-		(ladGroups[r.ladCode] ??= []).push(r);
-	}
-	const ladStats: IMDDataset["ladStats"] = {};
-	for (const [lad, lsoas] of Object.entries(ladGroups)) {
-		ladStats[lad] = {
-			averageIMDScore: lsoas.reduce((s, r) => s + r.imdScore, 0) / lsoas.length,
-			averageIMDDecile: lsoas.reduce((s, r) => s + r.imdDecile, 0) / lsoas.length,
-		};
-	}
+	const ladStats: IMDDataset["ladStats"] = summariseDeprivationBy(
+		Object.values(records),
+		(record) => record.ladCode,
+		summariseIMD,
+	);
 
 	return {
 		2019: {

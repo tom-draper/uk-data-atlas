@@ -7,17 +7,16 @@ import {
 	SelectedArea,
 } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -26,6 +25,7 @@ interface LifeExpectancyChartProps {
 	selectedArea: SelectedArea | null;
 	datasetId: string;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -46,6 +46,7 @@ function computeLeStats(
 	dataset: LifeExpectancyDataset,
 	aggregatedData: Record<string, AggregatedLifeExpectancyData> | null,
 	selectedArea: SelectedArea | null,
+	codeMapper: LadResolver | undefined,
 	datasetId: string,
 	chartsLoading: boolean,
 ) {
@@ -56,32 +57,25 @@ function computeLeStats(
 		return null;
 	}
 
-	if (selectedArea.type === "localAuthority") {
-		const record = dataset.data[selectedArea.code];
-		return record
-			? {
-					averageMaleLE: record.maleBirthLE,
-					averageFemaleLE: record.femaleBirthLE,
-				}
-			: null;
-	}
-
-	if (selectedArea.type === "ward" && selectedArea.data) {
-		const record = dataset.data[selectedArea.data.ladCode];
-		return record
-			? {
-					averageMaleLE: record.maleBirthLE,
-					averageFemaleLE: record.femaleBirthLE,
-				}
-			: null;
-	}
-
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	const record = ladCode ? dataset.data[ladCode] : undefined;
+	return record
+		? {
+				averageMaleLE: record.maleBirthLE,
+				averageFemaleLE: record.femaleBirthLE,
+			}
+		: null;
 }
 
-function computeBarRange(dataset: LifeExpectancyDataset, chartsLoading: boolean) {
+function computeBarRange(
+	dataset: LifeExpectancyDataset,
+	chartsLoading: boolean,
+) {
 	if (chartsLoading) return { min: 55, max: 85 };
-	const vals = Object.values(dataset.data).flatMap((r) => [r.maleBirthLE, r.femaleBirthLE]);
+	const vals = Object.values(dataset.data).flatMap((r) => [
+		r.maleBirthLE,
+		r.femaleBirthLE,
+	]);
 	return { min: Math.min(...vals), max: Math.max(...vals) };
 }
 
@@ -126,6 +120,7 @@ export default function LifeExpectancyChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	datasetId,
 	setActiveViz,
 }: LifeExpectancyChartProps) {
@@ -133,8 +128,19 @@ export default function LifeExpectancyChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[datasetId];
 
-	const leStats = dataset ? computeLeStats(dataset, aggregatedData, selectedArea, datasetId, chartsLoading) : null;
-	const barRange = dataset ? computeBarRange(dataset, chartsLoading) : { min: 55, max: 85 };
+	const leStats = dataset
+		? computeLeStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				datasetId,
+				chartsLoading,
+			)
+		: null;
+	const barRange = dataset
+		? computeBarRange(dataset, chartsLoading)
+		: { min: 55, max: 85 };
 
 	const isActive = !!(
 		dataset &&
@@ -167,66 +173,57 @@ export default function LifeExpectancyChart({
 				return rgbToHex(r, g, b);
 			})()
 		: null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "h-[72px]")}
+		<ChartCard
+			heading={`${dataset.label} [${dataset.dataPeriod}]`}
+			headerClassName="mb-0"
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName="min-h-[72px]"
 			title={dataset.metadata.source}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
+					...(dataset.id === "hle"
+						? { view: "healthy-life-expectancy" }
+						: {}),
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex flex-col flex-1">
-				<h3 className={chartHeadingClass(isDark)}>
-					{dataset.label} [{dataset.dataPeriod}]
-				</h3>
-				{leStats ? (
-					<div className="mt-1 space-y-0">
-						{leBar(
-							leStats.averageMaleLE,
-							"M",
-							barRange.min,
-							barRange.max,
-							isDark,
-						)}
-						{leBar(
-							leStats.averageFemaleLE,
-							"F",
-							barRange.min,
-							barRange.max,
-							isDark,
-						)}
-					</div>
-				) : (
-					<div className="flex-1 mt-1">
-						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
-						) : (
-							<div
-								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-							>
-								No data available
-							</div>
-						)}
-					</div>
-				)}
-			</div>
-		</button>
+			{leStats ? (
+				<div className="mt-1 space-y-0">
+					{leBar(
+						leStats.averageMaleLE,
+						"M",
+						barRange.min,
+						barRange.max,
+						isDark,
+					)}
+					{leBar(
+						leStats.averageFemaleLE,
+						"F",
+						barRange.min,
+						barRange.max,
+						isDark,
+					)}
+				</div>
+			) : (
+				<div className="flex-1 mt-1">
+					{chartsLoading ? (
+						<ChartContentPlaceholder className="h-full" />
+					) : (
+						<div
+							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+						>
+							No data available
+						</div>
+					)}
+				</div>
+			)}
+		</ChartCard>
 	);
 }

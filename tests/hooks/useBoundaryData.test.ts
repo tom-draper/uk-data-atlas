@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getCachedFilteredBoundaryData } from "@/lib/hooks/useBoundaryData";
+import { getCachedFilteredBoundaryData } from "@/lib/data/boundaries/locationFilter";
+import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { BoundaryData } from "@/lib/types";
 
 const feature = (code: string) => ({
@@ -36,6 +37,31 @@ const boundaryData = (code: string): BoundaryData => {
 		lsoa: { 2011: geojson },
 		dataZone: { 2011: geojson },
 		superOutputArea: { 2011: geojson },
+		country: { 2025: geojson },
+		localPlanningAuthority: { 2019: geojson },
+		region: { 2025: geojson },
+		countyAndUnitaryAuthority: { 2025: geojson },
+		integratedCareBoard: { 2026: geojson },
+		msoa: { 2021: geojson },
+		communitySafetyPartnership: { 2023: geojson },
+		policeForceArea: { 2023: geojson },
+		combinedAuthority: { 2025: geojson },
+		itl1: { 2021: geojson },
+		itl2: { 2021: geojson },
+		itl3: { 2021: geojson },
+		majorTownAndCity: { 2015: geojson },
+		scottishParliamentaryConstituency: { 2021: geojson },
+		scottishParliamentaryRegion: { 2022: geojson },
+		seneddConstituency: { 2022: geojson },
+		seneddElectoralRegion: { 2022: geojson },
+		localHealthBoard: { 2023: geojson },
+		nhsEnglandRegion: { 2022: geojson },
+		subIntegratedCareBoardLocation: { 2026: geojson },
+		fireAndRescueAuthority: { 2021: geojson },
+		nationalPark: { 2020: geojson },
+		countyElectoralDivision: { 2023: geojson },
+		travelToWorkArea: { 2011: geojson },
+		parish: { 2024: geojson },
 	};
 };
 
@@ -62,5 +88,48 @@ describe("getCachedFilteredBoundaryData", () => {
 
 		expect(replacementVisit).not.toBe(firstVisit);
 		expect(replacementVisit.ward[2024]?.features).toHaveLength(0);
+	});
+
+	it("filters LSOA properties by local-authority membership", () => {
+		const includedCode = "E01000001";
+		const neighbouringCode = "E01000002";
+		const rawData = boundaryData("E0001");
+		rawData.lsoa[2011] = {
+			type: "FeatureCollection",
+			crs: {
+				type: "name",
+				properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+			},
+			features: [
+				{
+					...feature(includedCode),
+					properties: { LSOA11CD: includedCode },
+				},
+				{
+					...feature(neighbouringCode),
+					properties: { LSOA11CD: neighbouringCode },
+				},
+			],
+		} as any;
+		const greaterManchester =
+			gazetteer.namedLocation("Greater Manchester")!;
+
+		const filtered = getCachedFilteredBoundaryData(
+			rawData,
+			"Greater Manchester",
+			{
+				lsoaToLadByYear: {
+					2011: {
+						[includedCode]: greaterManchester.memberCodes[0]!,
+						[neighbouringCode]: "E06000001",
+					},
+				},
+			},
+		);
+
+		expect(filtered.lsoa[2011]?.features).toHaveLength(1);
+		expect(filtered.lsoa[2011]?.features[0]?.properties).toMatchObject({
+			LSOA11CD: includedCode,
+		});
 	});
 });

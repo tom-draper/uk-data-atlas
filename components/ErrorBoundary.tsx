@@ -1,5 +1,6 @@
 // components/ErrorBoundary.tsx
 "use client";
+import type { ErrorInfo } from "react";
 import { Component, ReactNode } from "react";
 import ErrorDisplay from "@/components/displays/ErrorDisplay";
 
@@ -23,7 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
 		return { hasError: true, error };
 	}
 
-	componentDidCatch(error: Error, errorInfo: any) {
+	componentDidCatch(error: Error, errorInfo: ErrorInfo) {
 		console.error("ErrorBoundary caught an error:", error, errorInfo);
 	}
 

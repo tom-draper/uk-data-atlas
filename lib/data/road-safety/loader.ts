@@ -1,5 +1,7 @@
-import { CustomDataset, CustomPoint } from "@/lib/types/custom";
+import { CustomDataset, CustomPoint, PointSummary } from "@/lib/types/custom";
 import { parseCsv } from "@/lib/helpers/parseCsv";
+import type { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
+import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;
@@ -56,12 +58,60 @@ const SEVERITY_STYLE = {
 // Coordinates are rounded to 5 dp (~1 m) to keep the precompiled payload compact.
 const round5 = (n: number) => Math.round(n * 1e5) / 1e5;
 
+/**
+ * DfT assigns collisions at Heathrow to `EHEATHROW` rather than to a local
+ * authority. The airport lies wholly within Hillingdon, so for placing those
+ * collisions in named locations they are treated as Hillingdon's.
+ */
+const LOCATION_AREA_CODES: Record<string, string> = {
+	EHEATHROW: "E09000017",
+};
+
+/**
+ * What the card shows for each named location, counted the same way the client
+ * does once the points load: by `getPointsInLocation`. Precomputing it is what
+ * lets the 6 MB point file stay unfetched until someone selects the dataset.
+ */
+const summariseByLocation = (
+	points: CustomPoint[],
+	gazetteer: Gazetteer,
+): Record<string, PointSummary> =>
+	Object.fromEntries(
+		gazetteer.namedLocations().flatMap((name) => {
+			if (!gazetteer.boundsOf(name)) return [];
+			const located = getPointsInLocation(points, name, gazetteer);
+			const total = located.reduce((sum, point) => sum + point.value, 0);
+			return [
+				[
+					name,
+					{
+						count: located.length,
+						// Three decimal places is well beyond the one the card renders.
+						averageValue:
+							located.length > 0
+								? Math.round((total / located.length) * 1e3) /
+									1e3
+								: 0,
+					},
+				],
+			];
+		}),
+	);
+
+export interface RoadSafetyCompilation {
+	/** The card's dataset, small enough to fetch on every page load. */
+	datasets: Record<string, CustomDataset>;
+	/** The collisions themselves, fetched only once the dataset is selected. */
+	points: Record<string, CustomPoint[]>;
+}
+
 // Loads the DfT road safety collision dataset as a point dataset. Reuses the
 // custom point render path (kind: "points") so it exercises the coordinate map
 // layer with real, national-scale data.
 export async function loadRoadSafety(
 	read: (path: string) => Promise<string>,
-): Promise<Record<string, CustomDataset>> {
+	gazetteer: Gazetteer,
+): Promise<RoadSafetyCompilation> {
 	const { data } = await parseCsv(await read(SOURCE), { header: true });
 
 	const points: CustomPoint[] = [];
@@ -73,7 +123,12 @@ export async function loadRoadSafety(
 		const severityCode = row["collision_severity"]?.trim() ?? "3";
 		const value = SEVERITY_WEIGHT[severityCode] ?? 1;
 		const speedLimit = row["speed_limit"]?.trim();
+		const assigned = row["local_authority_ons_district"]?.trim();
+		const areaCode = assigned
+			? (LOCATION_AREA_CODES[assigned] ?? assigned)
+			: undefined;
 		points.push({
+			...(areaCode ? { areaCode } : {}),
 			lng: round5(lng),
 			lat: round5(lat),
 			value,
@@ -101,11 +156,11 @@ export async function loadRoadSafety(
 		boundaryType: "ward",
 		boundaryYear: 0,
 		data: {},
-		points,
+		pointSummaries: summariseByLocation(points, gazetteer),
 		valueMin: 1,
 		valueMax: 3,
 		pointStyle: SEVERITY_STYLE,
 	};
 
-	return { [ID]: dataset };
+	return { datasets: { [ID]: dataset }, points: { [ID]: points } };
 }

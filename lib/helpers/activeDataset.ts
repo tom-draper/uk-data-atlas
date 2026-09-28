@@ -1,21 +1,24 @@
 import type { ActiveViz, Dataset, Datasets } from "@lib/types";
 import type { CustomDataset } from "@lib/types/custom";
+import type { NetworkDataset } from "@lib/types/network";
 
 export function getActiveDataset(
 	datasets: Datasets,
 	activeViz: ActiveViz,
-	customDatasets: CustomDataset[],
+	customDatasets: (CustomDataset | NetworkDataset)[],
 ): Dataset | null {
-	if (activeViz.datasetType === "custom") {
-		return customDatasets.find((d) => d.id === activeViz.vizId) ?? null;
+	if (
+		activeViz.datasetType === "custom" ||
+		activeViz.datasetType === "network"
+	) {
+		return customDatasets.find((d) => d.id === activeViz.datasetId) ?? null;
 	}
 
 	const datasetGroup = datasets[activeViz.datasetType] as
-		| Record<string, Dataset>
-		| undefined;
+		Record<string, Dataset> | undefined;
 
 	return (
-		datasetGroup?.[activeViz.vizId] ??
+		datasetGroup?.[activeViz.datasetId] ??
 		datasetGroup?.[String(activeViz.datasetYear)] ??
 		null
 	);

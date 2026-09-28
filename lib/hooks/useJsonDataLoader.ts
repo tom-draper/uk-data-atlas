@@ -1,116 +1,63 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
 
-interface WorkerRes { id: number; data?: unknown; error?: string }
+import { useEffect, useRef, useState } from "react";
+import {
+	loadJsonDataset,
+	loadJsonDatasetSlice,
+	parseJsonDatasetRecord,
+	type JsonDatasetParser,
+	type JsonDatasetRequest,
+} from "../data/jsonDatasetClient";
 
-let worker: Worker | null = null;
-let nextId = 0;
-const pending = new Map<number, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
+export type { JsonDatasetRequest } from "../data/jsonDatasetClient";
 
-function getWorker(): Worker | null {
-	if (typeof window === "undefined" || typeof Worker === "undefined")
-		return null;
-	if (!worker) {
-		try {
-			worker = new Worker(
-				new URL("../workers/data-worker.ts", import.meta.url),
-			);
-		} catch {
-			return null;
-		}
-		worker.onmessage = (e: MessageEvent<WorkerRes>) => {
-			const { id, data, error } = e.data;
-			const callbacks = pending.get(id);
-			if (!callbacks) return;
-			pending.delete(id);
-			if (error) callbacks.reject(new Error(error));
-			else callbacks.resolve(data);
-		};
-		worker.onerror = (e) => {
-			console.error("Data worker error:", e.message);
-			const err = new Error(e.message ?? "Worker error");
-			for (const callbacks of pending.values()) callbacks.reject(err);
-			pending.clear();
-			worker = null;
-		};
-	}
-	return worker;
-}
-
-async function fetchJson(url: string): Promise<unknown> {
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
-	}
-	return response.json();
-}
-
-function fetchViaWorker(url: string): Promise<unknown> {
-	return new Promise((resolve, reject) => {
-		const w = getWorker();
-		if (!w) {
-			fetchJson(url).then(resolve).catch(reject);
-			return;
-		}
-		const id = nextId++;
-		pending.set(id, { resolve, reject });
-		try {
-			w.postMessage({ id, url });
-		} catch (error) {
-			pending.delete(id);
-			reject(error instanceof Error ? error : new Error(String(error)));
-		}
-	});
-}
-
-export interface JsonDatasetRequest {
-	key: string;
-	url: string;
-	enabled: boolean;
-}
-
-export function useJsonDatasetLoaders<T>(requests: readonly JsonDatasetRequest[]) {
-	const [datasets, setDatasets] = useState<Record<string, Record<string, T>>>({});
-	const [loading, setLoading] = useState(requests.some((request) => request.enabled));
+export function useJsonDatasetLoaders<T>(
+	requests: readonly JsonDatasetRequest[],
+	parseDataset: JsonDatasetParser<T>,
+) {
+	const [datasets, setDatasets] = useState<Record<string, Record<string, T>>>(
+		{},
+	);
+	const [loading, setLoading] = useState(
+		requests.some((request) => request.enabled),
+	);
 	const [errors, setErrors] = useState<string[]>([]);
-	const loadedUrls = useRef(new Set<string>());
-	const requestKey = requests.map((request) => `${request.key}:${request.url}:${request.enabled}`).join("|");
+	const requestKey = requests
+		.map(
+			(request) =>
+				`${request.key}:${request.url}:${request.enabled}:${request.filter?.location ?? ""}:${request.filter?.boundaryType ?? ""}:${JSON.stringify(request.filter?.payloadLayout ?? {})}:${request.filter?.includeLocationPopulationSummary ?? false}:${request.chunkUrls?.join(",") ?? ""}`,
+		)
+		.join("|");
 
 	useEffect(() => {
-		let active = true;
-		const pendingRequests = requests.filter(
-			(request) => request.enabled && !loadedUrls.current.has(request.url),
-		);
+		const controller = new AbortController();
+		const pendingRequests = requests.filter((request) => request.enabled);
 		if (pendingRequests.length === 0) {
 			setLoading(false);
-			return () => { active = false; };
+			return;
 		}
 		setLoading(true);
-		Promise.allSettled(pendingRequests.map(async (request) => ({
-			key: request.key,
-			url: request.url,
-			data: (await fetchViaWorker(request.url)) as Record<string, T>,
-		}))).then((results) => {
-			if (!active) return;
-			const loaded: Record<string, Record<string, T>> = {};
-			const nextErrors: string[] = [];
-			for (const result of results) {
-				if (result.status === "fulfilled") {
-					loaded[result.value.key] = result.value.data;
-					loadedUrls.current.add(result.value.url);
-				} else nextErrors.push(result.reason instanceof Error ? result.reason.message : String(result.reason));
-			}
-			setDatasets((current) => ({ ...current, ...loaded }));
-			setErrors(nextErrors);
-			setLoading(false);
-		});
-		return () => { active = false; };
-	}, [requestKey]);
+		loadJsonDatasetSlice<T>(requests, controller.signal, parseDataset).then(
+			(slice) => {
+				if (controller.signal.aborted) return;
+				setDatasets(slice.datasets);
+				setErrors(slice.errors);
+				setLoading(false);
+			},
+		);
+		return () => controller.abort();
+	}, [requestKey, parseDataset]);
 
 	return { datasets, loading, errors };
 }
 
-export function useJsonDataLoader<T>(url: string, enabled = true) {
+export type { JsonDatasetParser } from "../data/jsonDatasetClient";
+
+export function useJsonDataLoader<T>(
+	url: string,
+	parseDataset: JsonDatasetParser<T>,
+	enabled = true,
+) {
 	const [datasets, setDatasets] = useState<Record<string, T>>({});
 	const [loading, setLoading] = useState(enabled);
 	const [error, setError] = useState("");
@@ -118,35 +65,43 @@ export function useJsonDataLoader<T>(url: string, enabled = true) {
 
 	useEffect(() => {
 		let active = true;
+		const controller = new AbortController();
 		if (!enabled) {
 			setLoading(false);
 			return () => {
 				active = false;
+				controller.abort();
 			};
 		}
 		if (loadedUrl.current === url) return;
 		setError("");
 		setLoading(true);
 
-		fetchViaWorker(url)
+		loadJsonDataset(url, controller.signal)
 			.then((data) => {
 				if (!active) return;
+				const parsedDatasets = parseJsonDatasetRecord(
+					data,
+					parseDataset,
+				);
 				loadedUrl.current = url;
-				setDatasets(data as Record<string, T>);
+				setDatasets(parsedDatasets);
 				setLoading(false);
 			})
-			.catch((err: Error) => {
+			.catch((reason: unknown) => {
 				if (!active) return;
-				// Allow a future effect run to retry this URL
 				if (loadedUrl.current === url) loadedUrl.current = null;
-				setError(err.message);
+				setError(
+					reason instanceof Error ? reason.message : String(reason),
+				);
 				setLoading(false);
 			});
 
 		return () => {
 			active = false;
+			controller.abort();
 		};
-	}, [enabled, url]);
+	}, [enabled, parseDataset, url]);
 
 	return { datasets, loading, error };
 }

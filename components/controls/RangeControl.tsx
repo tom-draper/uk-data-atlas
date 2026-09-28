@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
+// Keep endpoint handles clear of the legend panel's clipped edge.
+const HANDLE_INSET = 0.04;
+
 export interface RangeControlProps {
 	min: number;
 	max: number;
@@ -48,7 +51,14 @@ export function RangeControl({
 		if (!containerRef.current) return currentMaxRef.current;
 		const rect = containerRef.current.getBoundingClientRect();
 		const relativeY = clientY - rect.top;
-		const percentage = Math.max(0, Math.min(1, relativeY / rect.height));
+		const percentage = Math.max(
+			0,
+			Math.min(
+				1,
+				(relativeY / rect.height - HANDLE_INSET) /
+					(1 - HANDLE_INSET * 2),
+			),
+		);
 		return maxRef.current - percentage * (maxRef.current - minRef.current);
 	};
 
@@ -60,15 +70,23 @@ export function RangeControl({
 			if (isDraggingMinRef.current) {
 				const newMin = Math.min(
 					getValueFromPosition(e.clientY),
-					currentMaxRef.current - (maxRef.current - minRef.current) * 0.05,
+					currentMaxRef.current -
+						(maxRef.current - minRef.current) * 0.05,
 				);
-				onRangeInputRef.current(Math.max(newMin, minRef.current), currentMaxRef.current);
+				onRangeInputRef.current(
+					Math.max(newMin, minRef.current),
+					currentMaxRef.current,
+				);
 			} else if (isDraggingMaxRef.current) {
 				const newMax = Math.max(
 					getValueFromPosition(e.clientY),
-					currentMinRef.current + (maxRef.current - minRef.current) * 0.05,
+					currentMinRef.current +
+						(maxRef.current - minRef.current) * 0.05,
 				);
-				onRangeInputRef.current(currentMinRef.current, Math.min(newMax, maxRef.current));
+				onRangeInputRef.current(
+					currentMinRef.current,
+					Math.min(newMax, maxRef.current),
+				);
 			}
 		};
 
@@ -84,8 +102,12 @@ export function RangeControl({
 		document.addEventListener("mouseup", handleMouseUp);
 	};
 
-	const maxPosition = ((max - currentMax) / (max - min)) * 100;
-	const minPosition = ((max - currentMin) / (max - min)) * 100;
+	const handlePosition = (value: number) =>
+		(HANDLE_INSET +
+			((max - value) / (max - min)) * (1 - HANDLE_INSET * 2)) *
+		100;
+	const maxPosition = handlePosition(currentMax);
+	const minPosition = handlePosition(currentMin);
 
 	return (
 		<div className="p-1 relative select-none">
@@ -99,7 +121,7 @@ export function RangeControl({
 				className="h-40 w-6 rounded relative -mt-40 ml-auto"
 			>
 				<div
-					className="absolute inset-0 rounded"
+					className="absolute inset-x-0 top-[4%] bottom-[4%] rounded"
 					style={{ background: gradient, opacity }}
 				/>
 				{/* Max handle (top) */}

@@ -1,7 +1,14 @@
 import { HousePriceDataset, HousePriceWardData } from "@/lib/types/housePrice";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
-import { parseNullableInt } from "@/lib/helpers/parseNumber";
+import { parseNullableNum } from "@/lib/helpers/parseNumber";
 
+/**
+ * Salford's wards were redrawn in 2021. The workbook still publishes them under
+ * their old codes, so they are moved onto the new ones for the map to join. The
+ * old code is kept on the record as `sourceWardCode`, because a price measured
+ * on the old ward is not a price for the new one and the API serves it under
+ * the code it was published against.
+ */
 const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
 	E05000759: "E05013018",
 	E05000760: "E05013020",
@@ -25,30 +32,71 @@ const SALFORD_WARD_CODE_REMAP: Record<string, string> = {
 	E05000778: "E05013037",
 };
 
+const MEDIAN_PRICE_PATH =
+	"economics/housing/median-price-by-ward/hpssadataset37medianpricepaidbyward.zip";
+const MEAN_PRICE_PATH =
+	"economics/housing/mean-price-by-ward/hpssadataset38meanpricepaidbyward.zip";
+
+async function parsePriceRows(csvText: string) {
+	const skipLines = findHeaderLine(csvText, "local authority code");
+	return parseCsv(csvText, { header: true, skipLines });
+}
+
+function pricesForRow(
+	row: Record<string, string>,
+	timePeriodHeaders: string[],
+): Record<number, number> {
+	const prices: Record<number, number> = {};
+	for (const period of timePeriodHeaders) {
+		// Medians of an even number of sales land on a half penny, and the
+		// workbooks hold that rather than the rounded figure they display.
+		const rawPrice = parseNullableNum(row[period]);
+		const price = rawPrice === null ? null : Math.round(rawPrice);
+		if (price === null) continue;
+		const yearMatch = period.match(/\d{4}/);
+		if (yearMatch) prices[parseInt(yearMatch[0])] = price;
+	}
+	return prices;
+}
+
 export async function loadHousePrice(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, HousePriceDataset>> {
-	const csvText = await read(
-		"economics/housing/HPSSA Dataset 37 - Median price paid by wardHPSSA Dataset 37 - Median price paid by ward.csv",
-	);
-	const skipLines = findHeaderLine(csvText, "local authority code");
-	const { data, fields } = await parseCsv(csvText, { header: true, skipLines });
-
-	const timePeriodHeaders = fields.slice(4);
+	const [medianCsv, meanCsv] = await Promise.all([
+		read(MEDIAN_PRICE_PATH),
+		read(MEAN_PRICE_PATH),
+	]);
+	const [median, mean] = await Promise.all([
+		parsePriceRows(medianCsv),
+		parsePriceRows(meanCsv),
+	]);
 	const wardData: Record<string, HousePriceWardData> = {};
 
-	for (const row of data as any[]) {
+	for (const row of median.data) {
 		const rawCode = row["Ward code"]?.trim();
 		if (!rawCode) continue;
 		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
 
-		const prices: Record<number, number> = {};
-		for (const period of timePeriodHeaders) {
-			const price = parseNullableInt(row[period]);
-			if (price !== null) {
-				const yearMatch = period.match(/\d{4}/);
-				if (yearMatch) prices[parseInt(yearMatch[0])] = price;
-			}
+		wardData[wardCode] = {
+			ladCode: row["Local authority code"]?.trim() || "",
+			ladName: row["Local authority name"]?.trim() || "",
+			wardCode,
+			wardName: row["Ward name"]?.trim() || "",
+			...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
+			prices: pricesForRow(row, median.fields.slice(4)),
+			meanPrices: {},
+		};
+	}
+
+	for (const row of mean.data) {
+		const rawCode = row["Ward code"]?.trim();
+		if (!rawCode) continue;
+		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
+		const meanPrices = pricesForRow(row, mean.fields.slice(4));
+		const existing = wardData[wardCode];
+		if (existing) {
+			existing.meanPrices = meanPrices;
+			continue;
 		}
 
 		wardData[wardCode] = {
@@ -56,7 +104,9 @@ export async function loadHousePrice(
 			ladName: row["Local authority name"]?.trim() || "",
 			wardCode,
 			wardName: row["Ward name"]?.trim() || "",
-			prices,
+			...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
+			prices: {},
+			meanPrices,
 		};
 	}
 

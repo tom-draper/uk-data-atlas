@@ -1,57 +1,31 @@
-// components/population/density/PopulationDensityChart.tsx
-import { detectWardCodeForYear } from "@/lib/helpers/mapManager/propertyDetector";
-import {
+import type {
 	ActiveViz,
 	AggregatedPopulationData,
 	BoundaryData,
-	BoundaryGeojson,
-	Feature,
 	PopulationDataset,
 	SelectedArea,
-	getFeatureProp,
 } from "@/lib/types";
-import { calculateTotal, polygonAreaSqKm } from "@/lib/helpers/population";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import {
-	resolveWardData,
-	getLadCachedValue,
-} from "@/lib/helpers/demographicData";
+import { ChartCard } from "@/components/ChartCard";
+import { resolvePopulationDensity } from "@/lib/helpers/populationDensity";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface PopulationDensityChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver & LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-// Cache computed area per feature object — avoids re-traversing polygon vertices on every hover
-const featureAreaCache = new WeakMap<Feature, number>();
-
-const getWardPopulationDensity = (feature: Feature, total: number) => {
-	let areaSqKm = featureAreaCache.get(feature);
-	if (areaSqKm === undefined) {
-		areaSqKm = polygonAreaSqKm(feature.geometry.coordinates);
-		featureAreaCache.set(feature, areaSqKm);
-	}
-	const density = areaSqKm > 0 ? total / areaSqKm : 0;
-	return { density, areaSqKm };
-};
-
-// Seeded random number generator (extracted to avoid recreating in useMemo)
 const createSeededRandom = (seed: number) => {
 	let currentSeed = seed;
 	return () => {
@@ -60,12 +34,11 @@ const createSeededRandom = (seed: number) => {
 	};
 };
 
-// Pre-calculate density categories (constant)
 const DENSITY_CATEGORIES = [
 	{
 		threshold: 2000,
 		label: "Low",
-		hex: "#22c55e", // green-500
+		hex: "#22c55e",
 		color: "bg-green-500",
 		count: 15,
 		variations: ["bg-green-400", "bg-green-500", "bg-green-600"],
@@ -73,7 +46,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: 5000,
 		label: "Medium",
-		hex: "#eab308", // yellow-500
+		hex: "#eab308",
 		color: "bg-yellow-500",
 		count: 30,
 		variations: ["bg-yellow-400", "bg-yellow-500", "bg-yellow-600"],
@@ -81,7 +54,7 @@ const DENSITY_CATEGORIES = [
 	{
 		threshold: Infinity,
 		label: "High",
-		hex: "#ef4444", // red-500
+		hex: "#ef4444",
 		color: "bg-red-500",
 		count: 50,
 		variations: ["bg-red-400", "bg-red-500", "bg-red-600"],
@@ -89,10 +62,8 @@ const DENSITY_CATEGORIES = [
 ] as const;
 
 const getDensityCategory = (density: number) => {
-	for (let i = 0; i < DENSITY_CATEGORIES.length; i++) {
-		if (density < DENSITY_CATEGORIES[i].threshold) {
-			return DENSITY_CATEGORIES[i];
-		}
+	for (const category of DENSITY_CATEGORIES) {
+		if (density < category.threshold) return category;
 	}
 	return DENSITY_CATEGORIES[DENSITY_CATEGORIES.length - 1];
 };
@@ -101,30 +72,28 @@ function DensityGrid({ density }: { density: number }) {
 	const gridWidth = 18;
 	const gridHeight = 4;
 	const totalSquares = gridWidth * gridHeight;
-
 	const squareClasses = (() => {
 		const category = getDensityCategory(density);
 		const seededRandom = createSeededRandom(Math.floor(density));
-
-		const indices = new Array(totalSquares);
-		for (let i = 0; i < totalSquares; i++) {
-			indices[i] = i;
+		const indices = Array.from(
+			{ length: totalSquares },
+			(_, index) => index,
+		);
+		for (let index = indices.length - 1; index > 0; index--) {
+			const randomIndex = Math.floor(seededRandom() * (index + 1));
+			[indices[index], indices[randomIndex]] = [
+				indices[randomIndex],
+				indices[index],
+			];
 		}
-
-		for (let i = indices.length - 1; i > 0; i--) {
-			const j = Math.floor(seededRandom() * (i + 1));
-			[indices[i], indices[j]] = [indices[j], indices[i]];
-		}
-
 		const colors = new Array(totalSquares).fill("bg-gray-200");
-		for (let i = 0; i < category.count; i++) {
-			const index = indices[i];
+		for (let index = 0; index < category.count; index++) {
+			const square = indices[index];
 			const colorIndex = Math.floor(
 				seededRandom() * category.variations.length,
 			);
-			colors[index] = category.variations[colorIndex];
+			colors[square] = category.variations[colorIndex];
 		}
-
 		return colors;
 	})();
 
@@ -136,39 +105,14 @@ function DensityGrid({ density }: { density: number }) {
 				gridTemplateRows: `repeat(${gridHeight}, 1fr)`,
 			}}
 		>
-			{squareClasses.map((className, i) => (
-				<div
-					key={i}
-					className={`rounded-xs transition-all duration-300 ${className}`}
-				/>
+			{squareClasses.map((className, index) => (
+				<div key={index} className={`rounded-xs ${className}`} />
 			))}
 		</div>
 	);
 }
 
-const densityCache = new Map<string, Map<number, any>>();
-
-const featureIndexCache = new WeakMap<object, Map<string, Feature>>();
-
-const getFeatureIndex = (
-	geojson: BoundaryGeojson,
-	wardCodeProp: string,
-): Map<string, Feature> => {
-	let index = featureIndexCache.get(geojson);
-	if (!index) {
-		index = new Map();
-		for (const feature of geojson.features) {
-			const code = feature.properties
-				? getFeatureProp(feature.properties, wardCodeProp)
-				: undefined;
-			if (code) index.set(String(code), feature);
-		}
-		featureIndexCache.set(geojson, index);
-	}
-	return index;
-};
-
-function PopulationDensityChart({
+export default function PopulationDensityChart({
 	dataset,
 	aggregatedData,
 	boundaryData,
@@ -179,210 +123,41 @@ function PopulationDensityChart({
 }: PopulationDensityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const vizId = `populationDensity${dataset.year}`;
-	const isActive = activeViz.vizId === vizId;
-
-	const { density, areaSqKm, total } = (() => {
-		// Handle no area selected - use aggregated data
-		if (selectedArea === null && aggregatedData) {
-			const data = aggregatedData[dataset.year];
-			if (!data) return { density: null, areaSqKm: null, total: null };
-			return {
-				density: data.density,
-				areaSqKm: data.totalArea,
-				total: data.populationStats.total,
-			};
-		}
-
-		const geojson = boundaryData.ward[dataset.boundaryYear];
-		if (!geojson) {
-			return { density: null, areaSqKm: null, total: null };
-		}
-
-		// Handle Ward Selection
-		if (selectedArea && selectedArea.type === "ward") {
-			const wardCode = selectedArea.code;
-			const wardCodeProp = detectWardCodeForYear(
-				geojson.features,
-				dataset.boundaryYear,
-			);
-			const populationData = resolveWardData(
-				dataset,
-				wardCode,
-				codeMapper,
-			);
-
-			if (populationData) {
-				const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-				const wardFeature = featureIndex.get(wardCode);
-
-				if (wardFeature) {
-					const total = calculateTotal(populationData.total);
-					return {
-						...getWardPopulationDensity(wardFeature, total),
-						total,
-					};
-				}
-			}
-
-			return { density: null, areaSqKm: null, total: null };
-		}
-
-		// Handle Local Authority Selection
-		if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
-		) {
-			return getLadCachedValue(
-				densityCache,
-				selectedArea.code,
-				dataset.year,
-				() => {
-					const wardCodes = codeMapper.getWardsForLad!(
-						selectedArea.code,
-						dataset.boundaryYear,
-					);
-
-					if (wardCodes.length === 0)
-						return { density: null, areaSqKm: null, total: null };
-
-					const wardCodeProp = detectWardCodeForYear(
-						geojson.features,
-						dataset.boundaryYear,
-					);
-					const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-					let totalPopulation = 0;
-					let totalArea = 0;
-
-					for (const wardCode of wardCodes) {
-						const populationData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
-						if (populationData) {
-							const wardFeature = featureIndex.get(wardCode);
-							if (wardFeature) {
-								const wardTotal = calculateTotal(
-									populationData.total,
-								);
-								let wardArea =
-									featureAreaCache.get(wardFeature);
-								if (wardArea === undefined) {
-									wardArea = polygonAreaSqKm(
-										wardFeature.geometry.coordinates,
-									);
-									featureAreaCache.set(wardFeature, wardArea);
-								}
-								totalPopulation += wardTotal;
-								totalArea += wardArea;
-							}
-						}
-					}
-
-					return totalArea > 0
-						? {
-								density: totalPopulation / totalArea,
-								areaSqKm: totalArea,
-								total: totalPopulation,
-							}
-						: { density: null, areaSqKm: null, total: null };
-				},
-			);
-		}
-
-		// Handle Constituency Selection (no cache — stale cache risks hiding data if computed
-		// before constituency-ward mappings finish loading asynchronously)
-		if (
-			selectedArea &&
-			selectedArea.type === "constituency" &&
-			codeMapper?.getWardsForConstituency
-		) {
-			const wardCodes = codeMapper.getWardsForConstituency(
-				selectedArea.code,
-				dataset.boundaryYear,
-			);
-
-			if (wardCodes.length === 0)
-				return { density: null, areaSqKm: null, total: null };
-
-			const wardCodeProp = detectWardCodeForYear(
-				geojson.features,
-				dataset.boundaryYear,
-			);
-			const featureIndex = getFeatureIndex(geojson, wardCodeProp);
-			let totalPopulation = 0;
-			let totalArea = 0;
-
-			for (const wardCode of wardCodes) {
-				const populationData = resolveWardData(
-					dataset,
-					wardCode,
-					codeMapper,
-				);
-				if (populationData) {
-					const wardFeature = featureIndex.get(wardCode);
-					if (wardFeature) {
-						const wardTotal = calculateTotal(populationData.total);
-						let wardArea = featureAreaCache.get(wardFeature);
-						if (wardArea === undefined) {
-							wardArea = polygonAreaSqKm(
-								wardFeature.geometry.coordinates,
-							);
-							featureAreaCache.set(wardFeature, wardArea);
-						}
-						totalPopulation += wardTotal;
-						totalArea += wardArea;
-					}
-				}
-			}
-
-			return totalArea > 0
-				? {
-						density: totalPopulation / totalArea,
-						areaSqKm: totalArea,
-						total: totalPopulation,
-					}
-				: { density: null, areaSqKm: null, total: null };
-		}
-
-		// Unsupported area type
-		return { density: null, areaSqKm: null, total: null };
-	})();
-
+	const isActive =
+		activeViz.datasetId === dataset.id && activeViz.view === "density";
+	const { density, areaSqKm, total, fallbackLadCode } =
+		resolvePopulationDensity({
+			dataset,
+			aggregatedData,
+			boundaryData,
+			selectedArea,
+			codeMapper,
+		});
 	const accentColor =
 		density !== null ? getDensityCategory(density).hex : null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark)}
+		<ChartCard
+			heading={`Population Density [${dataset.year}]`}
+			headerEnd={
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
+					England &amp; Wales
+				</span>
+			}
+			accent={accentColor}
+			isActive={isActive}
 			title="Office for National Statistics. Census 2021: Population Density, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
-					vizId: vizId,
+					datasetId: dataset.id,
+					view: "density",
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Population Density [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
-			</div>
-
 			{!total || density === null || areaSqKm === null ? (
 				<div className="h-14 flex items-center justify-center">
 					{chartsLoading ? (
@@ -401,7 +176,7 @@ function PopulationDensityChart({
 					<div className="relative py-1 h-full flex flex-col justify-between pl-4">
 						<div className="flex items-baseline gap-2">
 							<div className="text-xl font-bold">
-								{Math.round(density).toLocaleString()}
+								{formatCount(Math.round(density))}
 							</div>
 							<div className="text-sm">people/km²</div>
 						</div>
@@ -409,7 +184,7 @@ function PopulationDensityChart({
 							<div className="flex pr-3">
 								<div className="mr-1">Population</div>
 								<div className="font-semibold">
-									{total.toLocaleString()}
+									{formatCount(total)}
 								</div>
 							</div>
 							<div className="flex">
@@ -418,12 +193,18 @@ function PopulationDensityChart({
 									{areaSqKm.toFixed(1)} km²
 								</div>
 							</div>
+							{fallbackLadCode && (
+								<div
+									className={`ml-auto pr-2 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+									title={`No census population is published for this ward's boundaries, so the figures shown are for its local authority (${fallbackLadCode}).`}
+								>
+									Local authority
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }
-
-export default PopulationDensityChart;

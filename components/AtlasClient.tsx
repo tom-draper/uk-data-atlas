@@ -1,36 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import MapInterface from "@components/MapInterface";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { useDatasets } from "@/lib/hooks/useDatasets";
 import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
-import type { ActiveViz } from "@/lib/types";
 import type { CustomDataset } from "@/lib/types/custom";
-
-const DEFAULT_ACTIVE_VIZ: ActiveViz = {
-	vizId: "localElection2024",
-	datasetType: "localElection",
-	datasetYear: 2024,
-};
-
-const DEFAULT_LOCATION = "Greater Manchester";
-
-function parseActiveVizFromParams(params: URLSearchParams): ActiveViz | null {
-	const vizId = params.get("viz");
-	const datasetType = params.get("type");
-	const datasetYear = params.get("year");
-	if (!vizId || !datasetType || !datasetYear) return null;
-	const year = parseInt(datasetYear, 10);
-	if (isNaN(year)) return null;
-	return {
-		vizId,
-		datasetType: datasetType as ActiveViz["datasetType"],
-		datasetYear: year,
-	};
-}
+import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
+import { useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
 
 function ErrorBanner({
 	errors,
@@ -66,22 +44,37 @@ function ErrorBanner({
 }
 
 export default function AtlasClient() {
-	const searchParams = useSearchParams();
-	const getSearchParam = (key: string) => searchParams.get(key);
-
-	const [activeViz, setActiveVizState] = useState<ActiveViz>(() => {
-		return parseActiveVizFromParams(searchParams) ?? DEFAULT_ACTIVE_VIZ;
-	});
-	const [selectedLocation, setSelectedLocationState] = useState(() => {
-		return getSearchParam("location") ?? DEFAULT_LOCATION;
-	});
+	const { activeViz, selectedLocation, setActiveViz, setSelectedLocation } =
+		useAtlasUrlState();
 	const [customDatasets, setCustomDatasets] = useState<CustomDataset[]>([]);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
+	const [initialDatasetLoadComplete, setInitialDatasetLoadComplete] =
+		useState(false);
 
-	const { datasets, loading, errors } = useDatasets();
-	const roadSafety = useRoadSafetyData();
-	const roadSafetyDatasets = Object.values(roadSafety.datasets);
+	const {
+		datasets,
+		loading: datasetsLoading,
+		errors,
+	} = useDatasets(selectedLocation, activeViz.datasetType);
+	// Only the selected dataset's points are worth fetching, so tell the loader
+	// which visualisation is showing.
+	const roadSafety = useRoadSafetyData(
+		activeViz.datasetType === "custom" ? activeViz.datasetId : undefined,
+	);
+	const roadSafetyDatasets = useMemo(
+		() => Object.values(roadSafety.datasets),
+		[roadSafety.datasets],
+	);
+	// Hidden until a tile URL is configured (NEXT_PUBLIC_OS_OPEN_ROADS_TILE_URL),
+	// so it stays off in production until we have somewhere to host the tiles.
+	const networkDatasets = Object.values(NETWORK_DATASETS).filter(
+		(dataset) => dataset.available,
+	);
+
+	useEffect(() => {
+		if (!datasetsLoading) setInitialDatasetLoadComplete(true);
+	}, [datasetsLoading]);
 
 	const handleBoundaryError = (error: Error) => {
 		setBoundaryErrors((prev) =>
@@ -91,52 +84,8 @@ export default function AtlasClient() {
 
 	const allErrors = [...errors, ...boundaryErrors];
 
-	const activeVizRef = useRef(activeViz);
-	const selectedLocationRef = useRef(selectedLocation);
-	useEffect(() => {
-		activeVizRef.current = activeViz;
-		selectedLocationRef.current = selectedLocation;
-	});
-
-	const updateParams = (location: string, viz: ActiveViz) => {
-		const params = new URLSearchParams();
-		params.set("location", location);
-		params.set("viz", viz.vizId);
-		params.set("type", viz.datasetType);
-		params.set("year", String(viz.datasetYear));
-		window.history.replaceState(null, "", `?${params.toString()}`);
-	};
-
-	const setActiveViz = (viz: ActiveViz) => {
-		setActiveVizState(viz);
-		updateParams(selectedLocationRef.current, viz);
-	};
-
-	const setSelectedLocation = (location: string) => {
-		setSelectedLocationState(location);
-		updateParams(location, activeVizRef.current);
-	};
-
-	useEffect(() => {
-		if (!getSearchParam("location")) {
-			const params = new URLSearchParams();
-			params.set("location", selectedLocation);
-			params.set("viz", activeViz.vizId);
-			params.set("type", activeViz.datasetType);
-			params.set("year", String(activeViz.datasetYear));
-			window.history.replaceState(null, "", `?${params.toString()}`);
-		}
-		// Only run on mount
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	useEffect(() => {
-		document.title = selectedLocation
-			? `${selectedLocation} - UK Data Atlas`
-			: "UK Data Atlas";
-	}, [selectedLocation]);
-
-	if (loading) return <LoadingDisplay />;
+	if (datasetsLoading && !initialDatasetLoadComplete)
+		return <LoadingDisplay />;
 
 	return (
 		<ErrorBoundary>
@@ -148,13 +97,17 @@ export default function AtlasClient() {
 			)}
 			<MapInterface
 				datasets={datasets}
+				datasetsLoading={datasetsLoading}
 				selectedLocation={selectedLocation}
 				setSelectedLocation={setSelectedLocation}
 				activeViz={activeViz}
 				setActiveViz={setActiveViz}
 				customDatasets={customDatasets}
-				addCustomDataset={(dataset) => setCustomDatasets((prev) => [...prev, dataset])}
+				addCustomDataset={(dataset) =>
+					setCustomDatasets((prev) => [...prev, dataset])
+				}
 				roadSafetyDatasets={roadSafetyDatasets}
+				networkDatasets={networkDatasets}
 				onError={handleBoundaryError}
 			/>
 		</ErrorBoundary>

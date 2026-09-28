@@ -1,401 +1,177 @@
 // lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
-import { gazetteer } from "@lib/data/gazetteer/static";
-import { withCDN } from "@/lib/helpers/cdn";
 import { decodeBoundaryData } from "./decode";
 import { fetchBoundaryInWorker } from "./worker";
+import type { Crosswalk } from "../gazetteer/types";
+import type { BoundaryType, BoundaryYear } from "./catalog";
+import { filterFeatures, type BoundaryLocationRelations } from "./filter";
+import { fetchLsoaToLad, lsoaYearForBoundaryAsset } from "./lsoaLadMappings";
 
-export const GEOJSON_PATHS = {
-	ward: {
-		2025: withCDN(
-			"/data/boundaries/wards/WD_MAY_2025_UK_BGC_V2_-8581021362622909866.topojson",
-		),
-		2024: withCDN(
-			"/data/boundaries/wards/Wards_December_2024_Boundaries_UK_BGC_-2654605954884295357.topojson",
-		),
-		2023: withCDN(
-			"/data/boundaries/wards/Wards_December_2023_Boundaries_UK_BGC_-915726682161155301.topojson",
-		),
-		2022: withCDN(
-			"/data/boundaries/wards/Wards_December_2022_Boundaries_UK_BGC_-898530251172766412.topojson",
-		),
-		2021: withCDN(
-			"/data/boundaries/wards/Wards_December_2021_UK_BGC_2022_-3127229614810050524.topojson",
-		),
-	},
-	constituency: {
-		2024: withCDN(
-			"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_July_2024_Boundaries_UK_BGC_-8097874740651686118.topojson",
-		),
-		2019: withCDN(
-			"/data/boundaries/constituencies/WPC_Dec_2019_GCB_UK_2022_-6554439877584414509.topojson",
-		),
-		2017: withCDN(
-			"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
-		),
-		2015: withCDN(
-			"/data/boundaries/constituencies/Westminster_Parliamentary_Constituencies_Dec_2017_UK_BGC_2022_-4428297854860494183.topojson",
-		),
-	},
-	localAuthority: {
-		2025: withCDN(
-			"/data/boundaries/lad/LAD_MAY_2025_UK_BGC_V2_1110015208521213948.topojson",
-		),
-		2024: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_May_2024_Boundaries_UK_BGC_-6307115499537197728.topojson",
-		),
-		2023: withCDN(
-			"/data/boundaries/lad/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.topojson",
-		),
-		// 2021: broken topojson - commented out intentionally
-		// 2021: withCDN(
-		// 	"/data/boundaries/lad/Local_Authority_Districts_December_2021_UK_BGC_2022_4923559779027843470.topojson",
-		// ),
-		2016: withCDN(
-			"/data/boundaries/lad/LAD_Dec_2016_GB_BGC_WGS84.topojson",
-		),
-	},
-	lsoa: {
-		2011: withCDN(
-			"/data/boundaries/lsoa/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_1201710622178571867.topojson",
-		),
-	},
-	dataZone: {
-		2011: withCDN(
-			"/data/boundaries/datazone/SG_DataZone_Bdry_2011.topojson",
-		),
-	},
-	superOutputArea: {
-		2011: withCDN("/data/boundaries/superOutputArea/NI_SOA_2011.topojson"),
-	},
-} as const;
+export { BOUNDARY_CATALOG } from "./catalog";
+export type { BoundaryType, BoundaryYear } from "./catalog";
+export { getProp } from "./properties";
+export { filterFeatures } from "./filter";
 
-export type BoundaryType = keyof typeof GEOJSON_PATHS;
-export type WardYear = keyof typeof GEOJSON_PATHS.ward;
-export type ConstituencyYear = keyof typeof GEOJSON_PATHS.constituency;
-export type LocalAuthorityYear = keyof typeof GEOJSON_PATHS.localAuthority;
-
-// Property keys for each boundary type (prioritized by year)
-export const WARD_CODE_KEYS = [
-	"WD25CD",
-	"WD24CD",
-	"WD23CD",
-	"WD22CD",
-	"WD21CD",
-] as const;
-const WARD_NAME_KEYS = [
-	"WD25NM",
-	"WD24NM",
-	"WD23NM",
-	"WD22NM",
-	"WD21NM",
-] as const;
-export const LAD_CODE_KEYS = [
-	"LAD25CD",
-	"LAD24CD",
-	"LAD23CD",
-	"LAD22CD",
-	"LAD21CD",
-	"LAD16CD",
-] as const;
-const LAD_NAME_KEYS = [
-	"LAD25NM",
-	"LAD24NM",
-	"LAD23NM",
-	"LAD22NM",
-	"LAD21NM",
-	"LAD16NM",
-] as const;
-export const CONSTITUENCY_CODE_KEYS = [
-	"PCON24CD",
-	"pcon19cd",
-	"PCON17CD",
-	"PCON15CD",
-] as const;
-const CONSTITUENCY_NAME_KEYS = [
-	"PCON24NM",
-	"pcon19nm",
-	"PCON17NM",
-	"PCON15NM",
-] as const;
-
-export const LSOA_CODE_KEYS = ["LSOA11CD", "LSOA21CD"] as const;
-const LSOA_NAME_KEYS = ["LSOA11NM", "LSOA21NM"] as const;
-export type LSOACodeKey = (typeof LSOA_CODE_KEYS)[number];
-export type LSOANameKey = (typeof LSOA_NAME_KEYS)[number];
-
-export const DATA_ZONE_CODE_KEYS = ["DataZone"] as const;
-const DATA_ZONE_NAME_KEYS = ["Name"] as const;
-export type DataZoneCodeKey = (typeof DATA_ZONE_CODE_KEYS)[number];
-export type DataZoneNameKey = (typeof DATA_ZONE_NAME_KEYS)[number];
-
-export const SOA_CODE_KEYS = ["SOA_CODE", "SOA2011", "SOA"] as const;
-const SOA_NAME_KEYS = ["SOA_LABEL", "SOA2011 Name", "SOA Name"] as const;
-export type SOACodeKey = (typeof SOA_CODE_KEYS)[number];
-export type SOANameKey = (typeof SOA_NAME_KEYS)[number];
-
-export type WardCodeKey = (typeof WARD_CODE_KEYS)[number];
-export type WardNameKey = (typeof WARD_NAME_KEYS)[number];
-export type LADCodeKey = (typeof LAD_CODE_KEYS)[number];
-export type LADNameKey = (typeof LAD_NAME_KEYS)[number];
-export type ConstituencyCodeKey = (typeof CONSTITUENCY_CODE_KEYS)[number];
-export type ConstituencyNameKey = (typeof CONSTITUENCY_NAME_KEYS)[number];
-
-export const PROPERTY_KEYS = {
-	wardCode: WARD_CODE_KEYS,
-	wardName: WARD_NAME_KEYS,
-	ladCode: LAD_CODE_KEYS,
-	ladName: LAD_NAME_KEYS,
-	constituencyCode: CONSTITUENCY_CODE_KEYS,
-	constituencyName: CONSTITUENCY_NAME_KEYS,
-	lsoaCode: LSOA_CODE_KEYS,
-	lsoaName: LSOA_NAME_KEYS,
-	dataZoneCode: DATA_ZONE_CODE_KEYS,
-	dataZoneName: DATA_ZONE_NAME_KEYS,
-	soaCode: SOA_CODE_KEYS,
-	soaName: SOA_NAME_KEYS,
-} as const;
-
-const COUNTRY_PREFIXES: Record<string, string> = {
-	England: "E",
-	Scotland: "S",
-	Wales: "W",
-	"Northern Ireland": "N",
-};
-
-const BOUNDARY_CACHE: Record<string, BoundaryGeojson> = {};
-const BOUNDARY_PENDING: Partial<Record<string, Promise<BoundaryGeojson>>> = {};
-const featureBoundsCache = new WeakMap<
-	object,
-	[number, number, number, number] | null
->();
+export type WardYear = BoundaryYear<"ward">;
+export type ConstituencyYear = BoundaryYear<"constituency">;
+export type LocalAuthorityYear = BoundaryYear<"localAuthority">;
 
 /**
- * Find the first available property from a list of possible keys
+ * Decoded geometry, most recently used last.
+ *
+ * Only the selected location's geometry is returned from the worker, while
+ * every chart aggregates from properties sidecars. The cache is therefore
+ * keyed by both boundary release and location, rather than retaining complete
+ * UK-wide coordinate sets just because the user visited a few map vintages.
+ * Keeping a few selected results still makes moving back and forth a cache hit.
  */
-export const getProp = (
-	props: any,
-	keys: readonly string[],
-): string | undefined => {
-	for (const key of keys) {
-		if (key in props && props[key]) return props[key];
+const GEOMETRY_CACHE_LIMIT = 3;
+const BOUNDARY_CACHE = new Map<string, BoundaryGeojson>();
+const BOUNDARY_PENDING = new Map<string, Promise<BoundaryGeojson>>();
+
+const rememberGeometry = (cacheKey: string, data: BoundaryGeojson) => {
+	BOUNDARY_CACHE.delete(cacheKey);
+	BOUNDARY_CACHE.set(cacheKey, data);
+	if (BOUNDARY_CACHE.size > GEOMETRY_CACHE_LIMIT) {
+		BOUNDARY_CACHE.delete(BOUNDARY_CACHE.keys().next().value!);
 	}
-	return undefined;
 };
 
+/** Properties sidecars, held for every vintage: they are small and all needed. */
+const PROPERTIES_CACHE = new Map<string, BoundaryGeojson>();
+const PROPERTIES_PENDING = new Map<string, Promise<BoundaryGeojson>>();
+
+type PropertiesFile = { features: Record<string, unknown>[] };
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
+
+const isPropertiesFile = (value: unknown): value is PropertiesFile =>
+	isRecord(value) &&
+	Array.isArray(value.features) &&
+	value.features.every(isRecord);
+
 /**
- * Fast AABB (Axis-Aligned Bounding Box) intersection check
+ * A sidecar read as a boundary collection whose features carry no geometry, so
+ * that filtering and aggregation — which only ever read properties — take it
+ * unchanged wherever they would take a decoded file.
  */
-const isFeatureInBounds = (
-	feature: any,
-	bounds: [number, number, number, number],
-): boolean => {
-	const [west, south, east, north] = bounds;
-	let featureBounds = featureBoundsCache.get(feature);
-	if (featureBounds === undefined) {
-		if (!feature.geometry?.coordinates) {
-			featureBounds = null;
-		} else {
-			const flatCoords =
-				feature.geometry.type === "MultiPolygon"
-					? feature.geometry.coordinates.flat(2)
-					: feature.geometry.coordinates.flat(1);
+const decodeProperties = (json: unknown): BoundaryGeojson => {
+	if (!isPropertiesFile(json)) {
+		throw new Error("Properties file contains no features");
+	}
+	return {
+		type: "FeatureCollection",
+		crs: {
+			type: "name",
+			properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+		},
+		features: json.features.map((properties, index) => ({
+			type: "Feature" as const,
+			id: index + 1,
+			geometry: null,
+			properties,
+		})),
+	} as unknown as BoundaryGeojson;
+};
 
-			let minX = Infinity,
-				minY = Infinity;
-			let maxX = -Infinity,
-				maxY = -Infinity;
+/** The properties of every feature in a release, without its coordinates. */
+export function fetchBoundaryProperties(
+	path: string,
+): Promise<BoundaryGeojson> {
+	const cached = PROPERTIES_CACHE.get(path);
+	if (cached) return Promise.resolve(cached);
+	const pending = PROPERTIES_PENDING.get(path);
+	if (pending) return pending;
 
-			for (const [x, y] of flatCoords) {
-				minX = Math.min(minX, x);
-				maxX = Math.max(maxX, x);
-				minY = Math.min(minY, y);
-				maxY = Math.max(maxY, y);
+	const promise = fetch(path)
+		.then(async (response) => {
+			if (!response.ok) {
+				throw new Error(
+					`Failed to fetch ${path}: ${response.status} ${response.statusText}`,
+				);
 			}
-			featureBounds = [minX, minY, maxX, maxY];
-		}
-		featureBoundsCache.set(feature, featureBounds);
-	}
-
-	return (
-		featureBounds !== null &&
-		featureBounds[0] <= east &&
-		featureBounds[2] >= west &&
-		featureBounds[1] <= north &&
-		featureBounds[3] >= south
-	);
+			return decodeProperties(await response.json());
+		})
+		.then((data) => {
+			PROPERTIES_CACHE.set(path, data);
+			PROPERTIES_PENDING.delete(path);
+			return data;
+		});
+	PROPERTIES_PENDING.set(path, promise);
+	promise.catch(() => PROPERTIES_PENDING.delete(path));
+	return promise;
+}
+export type BoundaryGeometryFilter = {
+	type: BoundaryType;
+	location: string | null;
+	relations?: BoundaryLocationRelations;
 };
 
-/**
- * Get property keys for a given boundary type
- */
-const getPropertyKeys = (type: BoundaryType) => {
-	const keyMap = {
-		ward: {
-			code: PROPERTY_KEYS.wardCode,
-			name: PROPERTY_KEYS.wardName,
-		},
-		constituency: {
-			code: PROPERTY_KEYS.constituencyCode,
-			name: PROPERTY_KEYS.constituencyName,
-		},
-		localAuthority: {
-			code: PROPERTY_KEYS.ladCode,
-			name: PROPERTY_KEYS.ladName,
-		},
-		lsoa: {
-			code: PROPERTY_KEYS.lsoaCode,
-			name: PROPERTY_KEYS.lsoaName,
-		},
-		dataZone: {
-			code: PROPERTY_KEYS.dataZoneCode,
-			name: PROPERTY_KEYS.dataZoneName,
-		},
-		superOutputArea: {
-			code: PROPERTY_KEYS.soaCode,
-			name: PROPERTY_KEYS.soaName,
-		},
-	};
-	return keyMap[type];
-};
+export const geometryCacheKey = (
+	path: string,
+	filter?: BoundaryGeometryFilter,
+) =>
+	filter
+		? `${path}\u0000${filter.type}\u0000${filter.location ?? ""}\u0000${filter.relations?.constituencyLadOverlaps ? "constituency-lad-overlaps" : filter.type === "lsoa" ? "lsoa-lad" : "bbox"}`
+		: path;
 
 /**
  * Fetch and cache boundary file (supports both GeoJSON and TopoJSON)
  */
-async function doFetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
+async function doFetchBoundaryFile(
+	path: string,
+	filter?: BoundaryGeometryFilter,
+): Promise<BoundaryGeojson> {
 	const res = await fetch(path);
 	if (!res.ok) {
-		throw new Error(`Failed to fetch ${path}: ${res.status} ${res.statusText}`);
+		throw new Error(
+			`Failed to fetch ${path}: ${res.status} ${res.statusText}`,
+		);
 	}
 
 	const typedGeojson = decodeBoundaryData(await res.json());
-	BOUNDARY_CACHE[path] = typedGeojson;
-	delete BOUNDARY_PENDING[path];
-	return typedGeojson;
+	const lsoaToLad =
+		filter?.type === "lsoa" && filter.location
+			? (filter.relations?.lsoaToLad ??
+				(await fetchLsoaToLad(
+					lsoaYearForBoundaryAsset(path) ?? NaN,
+				).catch(() => undefined)))
+			: undefined;
+	return filter
+		? filterFeatures(typedGeojson, {
+				...filter,
+				relations: { ...filter.relations, lsoaToLad },
+			})
+		: typedGeojson;
 }
 
-export function fetchBoundaryFile(path: string): Promise<BoundaryGeojson> {
-	if (BOUNDARY_CACHE[path]) return Promise.resolve(BOUNDARY_CACHE[path]);
-	if (BOUNDARY_PENDING[path]) return BOUNDARY_PENDING[path]!;
+export function fetchBoundaryFile(
+	path: string,
+	filter?: BoundaryGeometryFilter,
+): Promise<BoundaryGeojson> {
+	const cacheKey = geometryCacheKey(path, filter);
+	const cached = BOUNDARY_CACHE.get(cacheKey);
+	if (cached) {
+		rememberGeometry(cacheKey, cached);
+		return Promise.resolve(cached);
+	}
+	const pending = BOUNDARY_PENDING.get(cacheKey);
+	if (pending) return pending;
 
-	const workerFetch = fetchBoundaryInWorker(path);
-	const promise = (workerFetch
-		? workerFetch.catch(() => doFetchBoundaryFile(path))
-		: doFetchBoundaryFile(path)
+	const workerFetch = fetchBoundaryInWorker(path, filter);
+	const promise = (
+		workerFetch
+			? workerFetch.catch(() => doFetchBoundaryFile(path, filter))
+			: doFetchBoundaryFile(path, filter)
 	).then((data) => {
-		BOUNDARY_CACHE[path] = data;
-		delete BOUNDARY_PENDING[path];
+		rememberGeometry(cacheKey, data);
+		BOUNDARY_PENDING.delete(cacheKey);
 		return data;
 	});
-	BOUNDARY_PENDING[path] = promise;
-	promise.catch(() => { delete BOUNDARY_PENDING[path]; });
+	BOUNDARY_PENDING.set(cacheKey, promise);
+	promise.catch(() => {
+		BOUNDARY_PENDING.delete(cacheKey);
+	});
 	return promise;
 }
-
-/**
- * Filter features by location
- * Pass getLadForWard from useWardLadMap to enable 2021 ward filtering
- */
-export const filterFeatures = (
-	geojson: BoundaryGeojson,
-	location: string | null,
-	type: BoundaryType,
-	getLadForWard?: (wardCode: string) => string | undefined,
-): BoundaryGeojson => {
-	// No filtering needed for UK-wide view
-	if (!location || location === "United Kingdom") {
-		return geojson;
-	}
-
-	const { code: codeKeys } = getPropertyKeys(type);
-
-	// Filter by country prefix (England, Scotland, Wales, Northern Ireland)
-	if (COUNTRY_PREFIXES[location]) {
-		const prefix = COUNTRY_PREFIXES[location];
-		return {
-			...geojson,
-			features: geojson.features.filter((f) => {
-				const code = getProp(f.properties, codeKeys);
-				return code?.startsWith(prefix);
-			}),
-		};
-	}
-
-	const loc = gazetteer.namedLocation(location);
-	if (!loc) {
-		console.warn(`Location data not found for: ${location}`);
-		return geojson;
-	}
-
-	// Filter wards by LAD code (uses getLadForWard for 2021 data without LAD properties)
-	if (type === "ward" && loc.memberCodes?.length) {
-		const ladCodeSet = new Set(loc.memberCodes);
-		return {
-			...geojson,
-			features: geojson.features.filter((f) => {
-				const wardCode = getProp(f.properties, PROPERTY_KEYS.wardCode);
-				let ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
-				const mappedLadCode =
-					wardCode && getLadForWard
-						? getLadForWard(wardCode)
-						: undefined;
-				ladCode = ladCode || mappedLadCode;
-				return ladCode && ladCodeSet.has(ladCode);
-			}),
-		};
-	}
-
-	// Filter local authorities by LAD code
-	if (type === "localAuthority" && loc.memberCodes?.length) {
-		const ladCodeSet = new Set(loc.memberCodes);
-		return {
-			...geojson,
-			features: geojson.features.filter((f) => {
-				const ladCode = getProp(f.properties, PROPERTY_KEYS.ladCode);
-				return ladCode && ladCodeSet.has(ladCode);
-			}),
-		};
-	}
-
-	// Filter LSOAs by bounding box (no LAD code in simplified topojson)
-	if (type === "lsoa" && loc.bbox) {
-		return {
-			...geojson,
-			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, loc.bbox!),
-			),
-		};
-	}
-
-	// Filter Data Zones by bounding box
-	if (type === "dataZone" && loc.bbox) {
-		return {
-			...geojson,
-			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, loc.bbox!),
-			),
-		};
-	}
-
-	// Filter NI Super Output Areas by bounding box
-	if (type === "superOutputArea" && loc.bbox) {
-		return {
-			...geojson,
-			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, loc.bbox!),
-			),
-		};
-	}
-
-	// Filter constituencies by bounding box
-	if (type === "constituency" && loc.bbox) {
-		return {
-			...geojson,
-			features: geojson.features.filter((f) =>
-				isFeatureInBounds(f, loc.bbox!),
-			),
-		};
-	}
-
-	return geojson;
-};

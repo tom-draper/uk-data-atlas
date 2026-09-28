@@ -1,106 +1,121 @@
 import type { Dataset } from "@lib/types/datasets";
 import type { BoundaryType, BoundaryData } from "@lib/types/boundaries";
 import type { BoundaryGeojson } from "@lib/types/geometry";
-import { MapManager } from "./mapManager/mapManager";
-import { getChartSummary } from "@/lib/data/chart-summary/static";
-import type { ChartAggregateKey } from "@/lib/data/chart-summary/types";
+import { DatasetAggregator } from "./datasetAggregation";
+import { cacheKey } from "./cacheKey";
 
-export interface DatasetConfig<T extends Dataset> {
+type BoundaryDataset = Exclude<Dataset, { type: "network" }>;
+type AggregateResult<R> = Record<string, R | null>;
+
+export interface DatasetConfig<T extends BoundaryDataset, R = unknown> {
 	datasets: Record<string, T>;
 	boundaryType: BoundaryType;
 	keyBy?: "year" | "id";
+	/** Reads a precomputed aggregate when this dataset includes one. */
+	getLocationAggregate?: (dataset: T) => R | null | undefined;
 	calculateStats: (
-		mapManager: MapManager,
+		aggregator: DatasetAggregator,
 		geojson: BoundaryGeojson,
-		data: any,
+		data: T["data"],
 		location: string | null,
 		datasetId: string,
-	) => any;
+		dataset?: T,
+	) => R | null;
+	/** @internal Cache retained by callers that reuse this configuration. */
+	aggregateCache?: Map<string, { result: AggregateResult<R> }>;
 }
 
-// Chart sections and the legend often request the same aggregate during one
-// render (notably local/general elections and ethnicity). Keying by the stable
-// map manager, filtered boundary set, dataset record and location lets them
-// share that work without retaining stale data after a location change.
-const aggregateCache = new WeakMap<
-	MapManager,
-	WeakMap<BoundaryData, WeakMap<object, Map<string, Record<string, any> | null>>>
->();
+const CACHE_LIMIT = 1000;
+const cacheObjectIds = new WeakMap<object, number>();
+let nextCacheObjectId = 0;
 
-function cachedAggregate(
-	mapManager: MapManager,
-	boundaryData: BoundaryData,
-	datasets: object,
-	cacheKey: string,
-	calculate: () => Record<string, any> | null,
-): Record<string, any> | null {
-	let boundaryCache = aggregateCache.get(mapManager);
-	if (!boundaryCache) {
-		boundaryCache = new WeakMap();
-		aggregateCache.set(mapManager, boundaryCache);
+const cacheObjectId = (value: object): number => {
+	let id = cacheObjectIds.get(value);
+	if (id === undefined) {
+		id = nextCacheObjectId++;
+		cacheObjectIds.set(value, id);
 	}
-	let datasetCache = boundaryCache.get(boundaryData);
-	if (!datasetCache) {
-		datasetCache = new WeakMap();
-		boundaryCache.set(boundaryData, datasetCache);
-	}
-	let entries = datasetCache.get(datasets);
-	if (!entries) {
-		entries = new Map();
-		datasetCache.set(datasets, entries);
-	}
-	if (entries.has(cacheKey)) return entries.get(cacheKey) ?? null;
+	return id;
+};
 
-	const result = calculate();
-	entries.set(cacheKey, result);
-	return result;
-}
+// Dataset ids are stable across locations, whereas each worker response has a
+// distinct data object. Include that identity in the aggregator cache key so a
+// temporary aggregate against the previous location's slice cannot be reused
+// after the matching slice arrives.
+const dataCacheIds = new WeakMap<object, number>();
+let nextDataCacheId = 0;
 
-export function aggregateDataset<T extends Dataset>(
-	config: DatasetConfig<T>,
-	mapManager: MapManager | null,
+const cacheDatasetId = (datasetId: string, dataset: object, data: unknown) => {
+	const identity = data && typeof data === "object" ? data : dataset;
+	let id = dataCacheIds.get(identity);
+	if (id === undefined) {
+		id = nextDataCacheId++;
+		dataCacheIds.set(identity, id);
+	}
+	return cacheKey(datasetId, id);
+};
+
+export function aggregateDataset<T extends BoundaryDataset, R>(
+	config: DatasetConfig<T, R>,
+	aggregator: DatasetAggregator | null,
 	boundaryData: BoundaryData,
 	location: string | null,
-): Record<string, any> | null {
+): Record<string, R | null> | null {
 	if (Object.keys(config.datasets).length === 0) return null;
+	const precomputed: Record<string, R | null> = {};
+	for (const [datasetId, dataset] of Object.entries(config.datasets)) {
+		const aggregate = config.getLocationAggregate?.(dataset);
+		if (aggregate !== undefined) {
+			const key = config.keyBy === "id" ? datasetId : dataset.year;
+			precomputed[key] = aggregate;
+		}
+	}
+	if (Object.keys(precomputed).length === Object.keys(config.datasets).length)
+		return precomputed;
 
-	const firstDataset = Object.values(config.datasets)[0];
-	const keyBy = (config.keyBy ?? "year") as ChartAggregateKey;
-	const summary = getChartSummary(location, firstDataset?.type, keyBy);
-	const summaryIncludesEveryDataset = summary && Object.entries(config.datasets).every(
-		([datasetId, dataset]) =>
-			Object.hasOwn(summary, keyBy === "id" ? datasetId : String(dataset.year)),
+	if (!aggregator)
+		return Object.keys(precomputed).length ? precomputed : null;
+
+	const aggregationKey = cacheKey(
+		config.boundaryType,
+		config.keyBy ?? "year",
+		location,
+		cacheObjectId(aggregator),
+		cacheObjectId(boundaryData),
+		cacheObjectId(config.datasets),
+		cacheObjectId(config.calculateStats),
+		config.getLocationAggregate
+			? cacheObjectId(config.getLocationAggregate)
+			: "no-precomputed-aggregate",
 	);
-	if (summaryIncludesEveryDataset) return summary;
+	const cache = (config.aggregateCache ??= new Map());
+	const cached = cache.get(aggregationKey);
+	if (cached) return cached.result;
 
-	if (!mapManager) return null;
-
-	const cacheKey = `${config.boundaryType}:${config.keyBy ?? "year"}:${location ?? ""}`;
-	return cachedAggregate(
-		mapManager,
-		boundaryData,
-		config.datasets,
-		cacheKey,
-		() => {
-			const result: Record<string, any> = {};
-
-			for (const [datasetId, dataset] of Object.entries(config.datasets)) {
-				const geojson = boundaryData[config.boundaryType]?.[dataset.boundaryYear];
-				const key = config.keyBy === "id" ? datasetId : dataset.year;
-				if (dataset.data && geojson) {
-					result[key] = config.calculateStats(
-						mapManager,
-						geojson,
-						dataset.data,
-						location,
-						datasetId,
-					);
-				} else {
-					result[key] = null;
-				}
-			}
-
-			return result;
-		},
-	);
+	const result: AggregateResult<R> = {};
+	for (const [datasetId, dataset] of Object.entries(config.datasets)) {
+		const geojson =
+			boundaryData[config.boundaryType]?.[dataset.boundaryYear];
+		const key = config.keyBy === "id" ? datasetId : dataset.year;
+		const precomputedAggregate = config.getLocationAggregate?.(dataset);
+		if (precomputedAggregate !== undefined) {
+			result[key] = precomputedAggregate;
+			continue;
+		}
+		if (dataset.data && geojson) {
+			result[key] = config.calculateStats(
+				aggregator,
+				geojson,
+				dataset.data,
+				location,
+				cacheDatasetId(datasetId, dataset, dataset.data),
+				dataset,
+			);
+		} else {
+			result[key] = null;
+		}
+	}
+	cache.set(aggregationKey, { result });
+	if (cache.size > CACHE_LIMIT) cache.delete(cache.keys().next().value!);
+	return result;
 }

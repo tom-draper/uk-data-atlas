@@ -1,0 +1,363 @@
+/**
+ * Pre-compiles all CSV datasets into compact JSON files served to the browser.
+ * Eliminates PapaParse from the client bundle and removes main-thread CSV parsing.
+ *
+ * Run via: pnpm precompile
+ * Also runs automatically before pnpm dev and pnpm build.
+ */
+import { readFile, mkdir, rename, stat, writeFile } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { execSync } from "child_process";
+import { createHash } from "crypto";
+
+import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
+import {
+	type SourceArtifact,
+	validatePrecompiledDataset,
+} from "../lib/data/catalog";
+import type { DatasetReader } from "../lib/data/catalog";
+import type { DatasetPayloadLayout } from "../lib/data/catalog/types";
+import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
+import { readWorkbookStream, xlsSheetRows } from "../lib/data/spreadsheet/xls";
+import {
+	findSheetPath,
+	parseSharedStrings,
+	percentageStyles,
+	rowsToCsv,
+	sheetRows,
+} from "../lib/data/spreadsheet/xlsx";
+import { loadRoadSafety } from "../lib/data/road-safety/loader";
+import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
+import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
+import { loadMatchIndex } from "../lib/data/gazetteer/matchIndex";
+import {
+	loadBoundaryMappings,
+	loadLsoaLadMappings,
+} from "../lib/data/boundaries/mappingLoader";
+import { encodeBoundaryMappings } from "../lib/data/boundaries/mappings";
+import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
+
+const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+const PUBLIC_DATA = join(ROOT, "public", "data");
+const SOURCE_DATA = join(ROOT, "data");
+// Browser-ready output is committed exactly where Next serves it from. Raw
+// inputs remain in data/, which is restored from the pinned data release.
+const OUT_DIR = join(PUBLIC_DATA, "datasets");
+
+// Read source datasets directly. public/data only contains files that must be
+// served to the browser during local development.
+const read = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
+
+/**
+ * Reads a compiled boundary asset. The compiler writes them to public/data,
+ * where they are served from; the two releases published as TopoJSON rather
+ * than GeoJSON are committed in data/ and copied across afterwards, so fall
+ * back there for those.
+ */
+const readBoundaryAsset = async (path: string) => {
+	try {
+		return await readFile(join(PUBLIC_DATA, path), "utf8");
+	} catch {
+		return readFile(join(SOURCE_DATA, path), "utf8");
+	}
+};
+
+/**
+ * Pulls one named worksheet out of a legacy .xls and renders it as CSV. Some
+ * publishers ship the workbook inside a zip — HPSSA is 128 MB uncompressed
+ * against 36 MB zipped — so a zip holding a single .xls is unwrapped first.
+ */
+const readXlsSheet = async (
+	path: string,
+	sheetName: string,
+): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	const bytes = path.endsWith(".zip")
+		? execSync(`unzip -p "${fullPath}" "*.xls"`, {
+				maxBuffer: 512 * 1024 * 1024,
+			})
+		: await readFile(fullPath);
+	const stream = readWorkbookStream(new Uint8Array(bytes));
+	return rowsToCsv(xlsSheetRows(stream, sheetName));
+};
+
+// Reads a file relative to data/ (raw source data, not synced to public)
+const readSource = (path: string) => readFile(join(SOURCE_DATA, path), "utf8");
+
+// Extracts and reads the first CSV from a ZIP in data/ (never synced to public/)
+const readZip = (path: string): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	return Promise.resolve(
+		execSync(`unzip -p "${fullPath}" "*.csv"`, {
+			maxBuffer: 100 * 1024 * 1024,
+		}).toString("utf8"),
+	);
+};
+
+// Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
+// workbook can stay in data/ exactly as published and no extracted copy has to
+// be committed alongside it.
+const readXlsxSheetFile = async (
+	fullPath: string,
+	sheetName: string,
+): Promise<string> => {
+	const entry = (name: string) =>
+		execSync(`unzip -p "${fullPath}" "${name}"`, {
+			maxBuffer: 512 * 1024 * 1024,
+		}).toString("utf8");
+
+	const sheetPath = findSheetPath(
+		entry("xl/workbook.xml"),
+		entry("xl/_rels/workbook.xml.rels"),
+		sheetName,
+	);
+	// Not every workbook has a shared string table.
+	let sharedStrings: string[] = [];
+	try {
+		sharedStrings = parseSharedStrings(entry("xl/sharedStrings.xml"));
+	} catch {
+		sharedStrings = [];
+	}
+	// Percentage-styled cells store their fraction (0.756), not the displayed
+	// number (75.6), so the styles need reading too or every percentage comes
+	// out a hundred times too small.
+	const percentStyleIds = percentageStyles(entry("xl/styles.xml"));
+
+	return rowsToCsv(
+		sheetRows(entry(sheetPath), sharedStrings, percentStyleIds),
+	);
+};
+
+const readXlsxSheet = (path: string, sheetName: string) =>
+	readXlsxSheetFile(join(SOURCE_DATA, path), sheetName);
+
+// ODS source files are never exposed by the application. The child-poverty
+// loader only needs its worksheet XML, which is then reduced to compact JSON.
+const readOdsContent = (path: string): Promise<string> => {
+	const fullPath = join(SOURCE_DATA, path);
+	return Promise.resolve(
+		execSync(`unzip -p "${fullPath}" content.xml`, {
+			maxBuffer: 100 * 1024 * 1024,
+		}).toString("utf8"),
+	);
+};
+
+const writeAtomically = async (path: string, contents: string) => {
+	const temporaryPath = `${path}.${process.pid}.tmp`;
+	await writeFile(temporaryPath, contents);
+	await rename(temporaryPath, path);
+};
+
+const out = async (name: string, data: unknown) => {
+	const json = JSON.stringify(data);
+	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
+	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
+	console.log(`  dataset: ${name}.json (${kb} KB)`);
+	return {
+		bytes: Buffer.byteLength(json, "utf8"),
+		sha256: createHash("sha256").update(json).digest("hex"),
+	};
+};
+
+const createTrackedReader = () => {
+	const artifacts = new Map<string, SourceArtifact>();
+	const track = async (
+		kind: SourceArtifact["kind"],
+		path: string,
+		readContent: () => Promise<string>,
+	) => {
+		const content = await readContent();
+		artifacts.set(`${kind}:${path}`, {
+			kind,
+			path,
+			bytes: Buffer.byteLength(content, "utf8"),
+			sha256: createHash("sha256").update(content).digest("hex"),
+		});
+		return content;
+	};
+	const reader: DatasetReader = {
+		text: (path) => track("text", path, () => read(path)),
+		xlsxSheet: (path, sheet) =>
+			track("xlsxSheet", `${path}#${sheet}`, () =>
+				readXlsxSheet(path, sheet),
+			),
+		xlsSheet: (path, sheet) =>
+			track("xlsSheet", `${path}#${sheet}`, () =>
+				readXlsSheet(path, sheet),
+			),
+		odsContent: (path) =>
+			track("odsContent", path, () => readOdsContent(path)),
+		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
+	};
+	return { reader, artifacts };
+};
+
+/** Checks that every file a meta.json promises is actually present. */
+async function verifyDescribedFiles(
+	described: DiscoveredDataset[],
+): Promise<void> {
+	const missing: string[] = [];
+	for (const dataset of described) {
+		for (const file of dataset.meta.files) {
+			try {
+				await stat(join(dataset.dir, file.path));
+			} catch {
+				missing.push(`${dataset.id}/${file.path}`);
+			}
+		}
+	}
+	if (missing.length > 0) {
+		throw new Error(
+			`meta.json lists files that do not exist:\n  ${missing.join("\n  ")}`,
+		);
+	}
+}
+
+async function main() {
+	console.log("Pre-compiling datasets...");
+	await mkdir(OUT_DIR, { recursive: true });
+	await compileBoundaryAssets();
+
+	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
+	// first means a malformed drop fails the build immediately, with the folder
+	// named, rather than surfacing later as a confusing loader error.
+	const described = await discoverDatasets(SOURCE_DATA);
+	const boundaries = described.filter(
+		(dataset) => dataset.meta.kind === "boundary",
+	);
+	const lookups = described.filter(
+		(dataset) => dataset.meta.kind === "lookup",
+	);
+	console.log(
+		`  described datasets: ${described.length - boundaries.length - lookups.length} ` +
+			`(and ${boundaries.length} boundary releases, ${lookups.length} lookup tables)`,
+	);
+	await verifyDescribedFiles(described);
+
+	const compiledDatasets = new Map<
+		string,
+		{ data: unknown; layout?: DatasetPayloadLayout }
+	>();
+	// Dataset loaders can hold large source strings, parsed rows, compiled
+	// records, and the JSON string being written at the same time. Starting all
+	// loaders with map(async ...) creates a large, avoidable memory spike. Keep
+	// the result metadata and compiled payloads, but only run one loader at a
+	// time so the peak is bounded by the largest individual dataset.
+	const chartResults: Awaited<ReturnType<typeof compileDataset>>[] = [];
+	for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
+		chartResults.push(await compileDataset(definition, compiledDatasets));
+	}
+	const gazetteerCore = loadGazetteerCore(readBoundaryAsset).then(
+		async (data) => {
+			await out("gazetteer.core", data);
+			return data;
+		},
+	);
+	const boundaryMappings = loadBoundaryMappings(readBoundaryAsset).then(
+		async (data) => {
+			await out("boundary-mappings", encodeBoundaryMappings(data));
+			return data;
+		},
+	);
+	// Upload matching reads ward parents from the mappings just built, so the
+	// index is compiled here, in step with the boundary catalogue.
+	const matchIndex = boundaryMappings.then(async ({ wardToLad }) =>
+		out(
+			"gazetteer.matchindex",
+			await loadMatchIndex(readBoundaryAsset, wardToLad),
+		),
+	);
+	const lsoaLadMappings = loadLsoaLadMappings(readBoundaryAsset).then(
+		async (data) => {
+			await Promise.all(
+				Object.values(data).map((mapping) =>
+					out(`lsoa-lad-mappings-${mapping.year}`, mapping),
+				),
+			);
+			return data;
+		},
+	);
+	// The collisions are written apart from the dataset that describes them, so
+	// the card can be drawn from the small file and the 6 MB of points is only
+	// fetched once someone selects the dataset. Counting them per location needs
+	// the gazetteer's bounding boxes, so this waits on the core built above.
+	const roadSafety = gazetteerCore
+		.then((core) => loadRoadSafety(readSource, new Gazetteer(core)))
+		.then(async ({ datasets, points }) => {
+			await out("road-safety", datasets);
+			await out("road-safety-points", points);
+		});
+	const results = await Promise.allSettled([
+		...chartResults,
+		roadSafety,
+		gazetteerCore,
+		boundaryMappings,
+		matchIndex,
+		lsoaLadMappings,
+	]);
+
+	const failures = results.filter(
+		(r): r is PromiseRejectedResult => r.status === "rejected",
+	);
+	if (failures.length > 0) {
+		for (const f of failures) console.error("  ERROR:", f.reason);
+		process.exit(1);
+	}
+	await writeDatasetRegionChunks({
+		root: ROOT,
+		datasets: compiledDatasets,
+		core: await gazetteerCore,
+		boundaryMappings: await boundaryMappings,
+	});
+	await out("dataset-manifest", {
+		version: 1,
+		datasets: results
+			.slice(0, CATALOGUE_DATASET_DEFINITIONS.length)
+			.map((result) => (result as PromiseFulfilledResult<unknown>).value),
+	});
+
+	console.log("Done.");
+}
+
+async function compileDataset(
+	definition: (typeof CATALOGUE_DATASET_DEFINITIONS)[number],
+	compiledDatasets: Map<
+		string,
+		{ data: unknown; layout?: DatasetPayloadLayout }
+	>,
+) {
+	const { reader, artifacts } = createTrackedReader();
+	const compiled = await definition.precompile(reader);
+	const data = definition.coverageCountries
+		? Object.fromEntries(
+				Object.entries(compiled).map(([id, dataset]) => [
+					id,
+					{
+						...dataset,
+						coverageCountries: definition.coverageCountries,
+					},
+				]),
+			)
+		: compiled;
+	compiledDatasets.set(definition.precompiledFile, {
+		data,
+		layout: definition.payload,
+	});
+	const summary = validatePrecompiledDataset(definition, data);
+	const output = await out(definition.precompiledFile, data);
+	return {
+		type: definition.type,
+		output: definition.precompiledFile,
+		source: definition.source,
+		contract: definition.ingestion ?? {},
+		inputs: [...artifacts.values()].sort((left, right) =>
+			left.path < right.path ? -1 : left.path > right.path ? 1 : 0,
+		),
+		summary,
+		compiled: output,
+	};
+}
+
+await main();

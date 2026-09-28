@@ -1,4 +1,9 @@
 import { NIMDMDataset, NIMDMLSOAData } from "@/lib/types/nimdm";
+import {
+	isMostDeprivedNIMDM,
+	summariseDeprivation,
+	summariseDeprivationBy,
+} from "@/lib/helpers/datasetAggregation/deprivation";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNumInt } from "@/lib/helpers/parseNumber";
 
@@ -16,8 +21,6 @@ const LGD_CODES: Record<string, string> = {
 	"Ards and North Down": "N09000011",
 };
 
-const TOTAL_SOAS = 890;
-
 function pick(row: Record<string, any>, ...keys: string[]): string {
 	for (const k of keys) {
 		const v = row[k];
@@ -28,7 +31,12 @@ function pick(row: Record<string, any>, ...keys: string[]): string {
 
 function pickBySubstring(row: Record<string, any>, substring: string): string {
 	for (const [k, v] of Object.entries(row)) {
-		if (k.replace(/\s+/g, " ").includes(substring) && v !== undefined && v !== null && v !== "") {
+		if (
+			k.replace(/\s+/g, " ").includes(substring) &&
+			v !== undefined &&
+			v !== null &&
+			v !== ""
+		) {
 			return String(v).trim();
 		}
 	}
@@ -44,17 +52,17 @@ export async function loadNIMDM(
 	);
 
 	const records: Record<string, NIMDMLSOAData> = {};
-	for (const row of data as any[]) {
+	for (const row of data) {
 		const soaCode = pick(row, "SOA2001", "SOA2011", "SOA_Code", "SOA");
 		if (!soaCode) continue;
 
 		const lgdName = pick(row, "LGD2014NAME", "LGD2014", "LGD", "Council");
 		const lgdCode = LGD_CODES[lgdName] ?? "";
 
-		const nimdmRank = parseNumInt(pickBySubstring(row, "Multiple Deprivation Measure Rank"));
+		const nimdmRank = parseNumInt(
+			pickBySubstring(row, "Multiple Deprivation Measure Rank"),
+		);
 		if (!nimdmRank) continue;
-
-		const nimdmDecile = Math.ceil((nimdmRank / TOTAL_SOAS) * 10);
 
 		records[soaCode] = {
 			soaCode,
@@ -62,21 +70,14 @@ export async function loadNIMDM(
 			lgdCode,
 			lgdName,
 			nimdmRank,
-			nimdmDecile,
 		};
 	}
 
-	const lgdGroups: Record<string, typeof records[string][]> = {};
-	for (const r of Object.values(records)) {
-		(lgdGroups[r.lgdCode] ??= []).push(r);
-	}
-	const lgdStats: NIMDMDataset["lgdStats"] = {};
-	for (const [lgd, soas] of Object.entries(lgdGroups)) {
-		lgdStats[lgd] = {
-			averageNIMDMRank: soas.reduce((s, r) => s + r.nimdmRank, 0) / soas.length,
-			averageNIMDMDecile: soas.reduce((s, r) => s + r.nimdmDecile, 0) / soas.length,
-		};
-	}
+	const lgdStats: NIMDMDataset["lgdStats"] = summariseDeprivationBy(
+		Object.values(records),
+		(record) => record.lgdCode,
+		(group) => summariseDeprivation(group, isMostDeprivedNIMDM),
+	);
 
 	return {
 		2017: {
@@ -89,7 +90,9 @@ export async function loadNIMDM(
 			lgdStats,
 			metadata: {
 				source: "Northern Ireland Statistics and Research Agency. Northern Ireland Multiple Deprivation Measure 2017.",
-				notes: ["Northern Ireland only. Decile 1 = most deprived 10% of Super Output Areas."],
+				notes: [
+					"Northern Ireland only. NISRA publishes ranks, not deciles, for Super Output Areas; rank 1 is the most deprived.",
+				],
 			},
 		},
 	};

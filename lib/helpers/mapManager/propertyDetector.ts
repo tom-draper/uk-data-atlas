@@ -1,14 +1,14 @@
 // lib/utils/mapManager/propertyDetector.ts
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/boundaries";
 import {
-	CONSTITUENCY_CODE_KEYS,
-	DATA_ZONE_CODE_KEYS,
-	LAD_CODE_KEYS,
-	LSOA_CODE_KEYS,
-	WARD_CODE_KEYS,
-	SOA_CODE_KEYS,
-	WardCodeKey,
-} from "@/lib/data/boundaries/boundaries";
-import { BoundaryGeojson, PropertyKeys } from "@lib/types";
+	BoundaryGeojson,
+	BoundaryType,
+	Features,
+	PropertyKeys,
+} from "@lib/types";
+
+const { ward } = BOUNDARY_CATALOG;
+type WardCodeKey = (typeof ward.properties.code)[number];
 
 // Detects which ward code property key is present in a GeoJSON, preferring the
 // key that matches the dataset boundary year before falling back to any available key.
@@ -17,70 +17,46 @@ export function detectWardCodeForYear(
 	year: number,
 ): WardCodeKey {
 	const firstFeature = features[0];
-	if (!firstFeature) return WARD_CODE_KEYS[0];
+	if (!firstFeature) return ward.properties.code[0];
 
 	const yearSuffix = year.toString().slice(-2);
-	const specificKey = WARD_CODE_KEYS.find(
+	const specificKey = ward.properties.code.find(
 		(key) => key === `WD${yearSuffix}CD`,
 	);
 	if (specificKey && specificKey in firstFeature.properties)
 		return specificKey;
 
-	for (const key of WARD_CODE_KEYS) {
+	for (const key of ward.properties.code) {
 		if (key in firstFeature.properties) return key;
 	}
-	return WARD_CODE_KEYS[0];
+	return ward.properties.code[0];
 }
 
+/**
+ * The geography whose code key to look for, or "any" for boundary files whose
+ * geography isn't known ahead of time (custom uploads).
+ */
+export type BoundaryCodeScope = BoundaryType | "any";
+
+// Catalogue order decides which geography wins when a file carries code keys
+// for several of them.
+const ANY_CODE_KEYS = Object.values(BOUNDARY_CATALOG).flatMap(
+	(family) => family.properties.code,
+) as readonly PropertyKeys[];
+
+const codeKeysFor = (scope: BoundaryCodeScope): readonly PropertyKeys[] =>
+	scope === "any" ? ANY_CODE_KEYS : BOUNDARY_CATALOG[scope].properties.code;
+
 export class PropertyDetector {
-	detectWardCode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, WARD_CODE_KEYS);
-	}
+	/** The code property key a boundary file uses for the given geography. */
+	detect(scope: BoundaryCodeScope, features: Features): PropertyKeys {
+		const keys = codeKeysFor(scope);
+		const properties = features[0]?.properties;
+		if (!properties) return keys[0];
 
-	detectConstituencyCode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, CONSTITUENCY_CODE_KEYS);
-	}
-
-	detectLocalAuthorityCode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, LAD_CODE_KEYS);
-	}
-
-	detectLSOACode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, LSOA_CODE_KEYS);
-	}
-
-	detectDataZoneCode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, DATA_ZONE_CODE_KEYS);
-	}
-
-	detectSOACode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, SOA_CODE_KEYS);
-	}
-
-	detectCode(features: BoundaryGeojson["features"]) {
-		return this.detectPropertyKey(features, [
-			...WARD_CODE_KEYS,
-			...CONSTITUENCY_CODE_KEYS,
-			...LAD_CODE_KEYS,
-			...LSOA_CODE_KEYS,
-			...DATA_ZONE_CODE_KEYS,
-			...SOA_CODE_KEYS,
-		] as readonly PropertyKeys[]);
-	}
-
-	private detectPropertyKey(
-		features: BoundaryGeojson["features"],
-		possibleKeys: readonly PropertyKeys[],
-	) {
-		const firstFeature = features[0];
-		if (!firstFeature) return possibleKeys[0];
-
-		for (const key of possibleKeys) {
-			if (key in firstFeature.properties) {
-				return key;
-			}
+		for (const key of keys) {
+			if (key in properties) return key;
 		}
-
-		return possibleKeys[0];
+		return keys[0];
 	}
 }

@@ -6,25 +6,20 @@ import {
 	BrexitLADDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, BrexitLADDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: CodeYearResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -37,10 +32,14 @@ function computeBrexitElectoralStats(
 	dataset: BrexitLADDataset,
 	aggregatedData: Record<number, AggregatedBrexitData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeMapper | undefined,
+	codeMapper: CodeYearResolver | undefined,
 	year: number,
 ) {
-	if (selectedArea === null && aggregatedData && aggregatedData[dataset.year]) {
+	if (
+		selectedArea === null &&
+		aggregatedData &&
+		aggregatedData[dataset.year]
+	) {
 		const agg = aggregatedData[dataset.year];
 		return {
 			pctLeave: agg.pctLeave,
@@ -51,11 +50,19 @@ function computeBrexitElectoralStats(
 		};
 	}
 
-	if (selectedArea && selectedArea.type === "localAuthority" && selectedArea.data) {
+	if (
+		selectedArea &&
+		selectedArea.type === "localAuthority" &&
+		selectedArea.data
+	) {
 		const laCode = selectedArea.code;
 		let area = dataset.data?.[laCode];
 		if (!area && codeMapper) {
-			const mappedCode = codeMapper.getCodeForYear("localAuthority", laCode, year);
+			const mappedCode = codeMapper.getCodeForYear(
+				"localAuthority",
+				laCode,
+				year,
+			);
 			if (mappedCode) {
 				area = dataset.data?.[mappedCode];
 			}
@@ -88,9 +95,20 @@ export default function BrexitElectoralChart({
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
-	const brexitStats = dataset ? computeBrexitElectoralStats(dataset, aggregatedData, selectedArea, codeMapper, year) : null;
+	const brexitStats = dataset
+		? computeBrexitElectoralStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				year,
+			)
+		: null;
 
-	const isActive = !!(dataset && activeDataset?.type === "brexit" && activeDataset.id === dataset.id);
+	const isActive = !!(
+		activeDataset?.type === "brexit" &&
+		activeDataset.id === (dataset?.id ?? `brexit${year}`)
+	);
 
 	const pctLeave = brexitStats?.pctLeave ?? 0;
 	const pctRemain = brexitStats?.pctRemain ?? 0;
@@ -103,75 +121,59 @@ export default function BrexitElectoralChart({
 			: result === "remain"
 				? REMAIN_COLOR
 				: null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
-	if (!dataset) return null;
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "h-[65px]")}
+		<ChartCard
+			heading={`Electoral Commission [${dataset?.year ?? year}]`}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName="min-h-[65px]"
 			title="Electoral Commission. EU Referendum Results, 2016. electoralcommission.org.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
+					datasetId: dataset?.id ?? `brexit${year}`,
+					datasetType: "brexit",
+					datasetYear: dataset?.year ?? year,
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="relative z-10">
-				<h3 className={chartHeadingClass(isDark)}>
-					Electoral Commission [{dataset.year}]
-				</h3>
-
-				{!hasData ? (
-					chartsLoading ? (
-						<ChartContentPlaceholder className="h-5 mt-1.5" />
-					) : (
-						<div
-							className={`mt-1.5 h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)
+			{!hasData ? (
+				chartsLoading ? (
+					<ChartContentPlaceholder className="h-5" />
 				) : (
-					<div className="mt-1.5 flex h-5 rounded overflow-hidden">
-						<div
-							style={{
-								width: `${pctLeave.toFixed(1)}%`,
-								backgroundColor: `rgb(180, 20, 20)`,
-							}}
-						>
-							{pctLeave > 20 && (
-								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-									Leave {pctLeave.toFixed(1)}%
-								</span>
-							)}
-						</div>
-						<div
-							style={{
-								width: `${pctRemain.toFixed(1)}%`,
-								backgroundColor: `rgb(30, 60, 180)`,
-							}}
-						>
-							{pctRemain > 20 && (
-								<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-									Remain {pctRemain.toFixed(1)}%
-								</span>
-							)}
-						</div>
+					<div
+						className={`h-5 flex items-center justify-center text-xs ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
+					>
+						No data available
 					</div>
-				)}
-			</div>
-		</button>
+				)
+			) : (
+				<div className="flex h-5 rounded overflow-hidden">
+					<div
+						style={{
+							width: `${pctLeave.toFixed(1)}%`,
+							backgroundColor: `rgb(180, 20, 20)`,
+						}}
+					>
+						{pctLeave > 20 && (
+							<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+								Leave {pctLeave.toFixed(1)}%
+							</span>
+						)}
+					</div>
+					<div
+						style={{
+							width: `${pctRemain.toFixed(1)}%`,
+							backgroundColor: `rgb(30, 60, 180)`,
+						}}
+					>
+						{pctRemain > 20 && (
+							<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
+								Remain {pctRemain.toFixed(1)}%
+							</span>
+						)}
+					</div>
+				</div>
+			)}
+		</ChartCard>
 	);
 }

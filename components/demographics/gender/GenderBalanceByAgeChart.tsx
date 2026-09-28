@@ -1,25 +1,28 @@
 // components/population/gender/GenderBalanceByAgeChart.tsx
 import { useRef } from "react";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	AggregatedPopulationData,
 	PopulationDataset,
 	SelectedArea,
 } from "@/lib/types";
 import {
-	resolveWardData,
+	getAreaCachedValue,
 	getLadCachedValue,
+	populationAreaMappingsAvailable,
+	resolvePopulationAreaWards,
 } from "@/lib/helpers/demographicData";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 export interface GenderBalanceByAgeChartProps {
 	dataset: PopulationDataset;
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver;
 }
 
 // Pre-create age indices and string keys (constants)
@@ -35,6 +38,7 @@ function GenderBalanceByAgeChart({
 	codeMapper,
 }: GenderBalanceByAgeChartProps) {
 	const chartsLoading = useChartsLoading();
+	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 	// Refs for direct DOM manipulation (avoids re-renders on hover)
 	const tooltipRef = useRef<HTMLDivElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -60,11 +64,11 @@ function GenderBalanceByAgeChart({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardData = resolveWardData(
+			const wardData = resolvePopulationAreaWards(
 				dataset,
-				selectedArea.code,
+				selectedArea,
 				codeMapper,
-			);
+			)?.[0]?.data;
 
 			if (wardData) {
 				const { males, females } = wardData;
@@ -96,30 +100,28 @@ function GenderBalanceByAgeChart({
 		if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getLadCachedValue(
 				genderBalanceCache,
 				selectedArea.code,
 				dataset.year,
+				dataset,
+				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForLad!(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0)
+					if (!wardRecords?.length)
 						return { ageData: [], percentages: [] };
 
 					const aggregatedMales = new Array(91).fill(0);
 					const aggregatedFemales = new Array(91).fill(0);
 
-					for (const wardCode of wardCodes) {
-						const wardData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
+					for (const { data: wardData } of wardRecords) {
 						if (wardData) {
 							for (let age = 0; age < 91; age++) {
 								const ageStr = AGE_STRING_KEYS[age];
@@ -149,45 +151,60 @@ function GenderBalanceByAgeChart({
 			);
 		}
 
-		// Handle Constituency Selection (no cache — constituency-ward maps load async and a
-		// stale cache would permanently hide data if computed before mappings were ready)
+		// Mapping generation changes when the async constituency lookup is ready,
+		// so this cache cannot retain an early empty result.
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
-			codeMapper?.getWardsForConstituency
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
-			const wardCodes = codeMapper.getWardsForConstituency(
-				selectedArea.code,
-				dataset.boundaryYear,
-			);
+			return getAreaCachedValue(
+				genderBalanceCache,
+				`constituency-${selectedArea.code}`,
+				dataset.year,
+				dataset,
+				mappingGeneration,
+				() => {
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
+					);
 
-			if (wardCodes.length === 0) return { ageData: [], percentages: [] };
+					if (!wardRecords?.length)
+						return { ageData: [], percentages: [] };
 
-			const aggregatedMales = new Array(91).fill(0);
-			const aggregatedFemales = new Array(91).fill(0);
+					const aggregatedMales = new Array(91).fill(0);
+					const aggregatedFemales = new Array(91).fill(0);
 
-			for (const wardCode of wardCodes) {
-				const wardData = resolveWardData(dataset, wardCode, codeMapper);
-				if (wardData) {
-					for (let age = 0; age < 91; age++) {
-						const ageStr = AGE_STRING_KEYS[age];
-						aggregatedMales[age] += wardData.males[ageStr] || 0;
-						aggregatedFemales[age] += wardData.females[ageStr] || 0;
+					for (const { data: wardData } of wardRecords) {
+						if (wardData) {
+							for (let age = 0; age < 91; age++) {
+								const ageStr = AGE_STRING_KEYS[age];
+								aggregatedMales[age] +=
+									wardData.males[ageStr] || 0;
+								aggregatedFemales[age] +=
+									wardData.females[ageStr] || 0;
+							}
+						}
 					}
-				}
-			}
 
-			const data: Array<{ age: number; males: number; females: number }> =
-				new Array(91);
-			const pct: number[] = new Array(91);
-			for (let age = 0; age < 91; age++) {
-				const m = aggregatedMales[age];
-				const f = aggregatedFemales[age];
-				data[age] = { age, males: m, females: f };
-				pct[age] = m + f > 0 ? (m / (m + f)) * 100 : 50;
-			}
+					const data: Array<{
+						age: number;
+						males: number;
+						females: number;
+					}> = new Array(91);
+					const pct: number[] = new Array(91);
+					for (let age = 0; age < 91; age++) {
+						const m = aggregatedMales[age];
+						const f = aggregatedFemales[age];
+						data[age] = { age, males: m, females: f };
+						pct[age] = m + f > 0 ? (m / (m + f)) * 100 : 50;
+					}
 
-			return { ageData: data, percentages: pct };
+					return { ageData: data, percentages: pct };
+				},
+			);
 		}
 
 		// Unsupported area type or missing data
@@ -195,46 +212,46 @@ function GenderBalanceByAgeChart({
 	})();
 
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-			const tooltip = tooltipRef.current;
-			if (!tooltip || !containerRef.current) return;
+		const tooltip = tooltipRef.current;
+		if (!tooltip || !containerRef.current) return;
 
-			// Find which age row we are hovering over using event delegation
-			// (The target will be one of the bars, closest gets the row wrapper)
-			const row = (e.target as HTMLElement).closest("[data-age]");
+		// Find which age row we are hovering over using event delegation
+		// (The target will be one of the bars, closest gets the row wrapper)
+		const row = (e.target as HTMLElement).closest("[data-age]");
 
-			if (row && row instanceof HTMLElement) {
-				const age = parseInt(row.dataset.age || "0", 10);
-				const data = ageData[age];
+		if (row && row instanceof HTMLElement) {
+			const age = parseInt(row.dataset.age || "0", 10);
+			const data = ageData[age];
 
-				if (data) {
-					const { males, females } = data;
-					const malePct = percentages[age];
+			if (data) {
+				const { males, females } = data;
+				const malePct = percentages[age];
 
-					// Direct DOM update - extremely fast, no React overhead
-					tooltip.innerHTML = `
-            Age ${age}: ${males.toLocaleString()}M / ${females.toLocaleString()}F 
+				// Direct DOM update - extremely fast, no React overhead
+				tooltip.innerHTML = `
+            Age ${age}: ${formatCount(males)}M / ${formatCount(females)}F 
             <span class="opacity-75">(${malePct.toFixed(1)}% male)</span>
           `;
 
-					// Position the tooltip near the row
-					// We use fixed positioning or calculation based on container
-					const containerRect =
-						containerRef.current.getBoundingClientRect();
-					const rowRect = row.getBoundingClientRect();
+				// Position the tooltip near the row
+				// We use fixed positioning or calculation based on container
+				const containerRect =
+					containerRef.current.getBoundingClientRect();
+				const rowRect = row.getBoundingClientRect();
 
-					// Center tooltip horizontally relative to container
-					tooltip.style.left = "50%";
-					tooltip.style.transform = "translateX(-50%)";
+				// Center tooltip horizontally relative to container
+				tooltip.style.left = "50%";
+				tooltip.style.transform = "translateX(-50%)";
 
-					// Position above the current row
-					const topOffset = rowRect.top - containerRect.top - 8; // 8px buffer
-					tooltip.style.top = `${topOffset}px`;
+				// Position above the current row
+				const topOffset = rowRect.top - containerRect.top - 8; // 8px buffer
+				tooltip.style.top = `${topOffset}px`;
 
-					tooltip.style.opacity = "1";
-				}
-			} else {
-				tooltip.style.opacity = "0";
+				tooltip.style.opacity = "1";
 			}
+		} else {
+			tooltip.style.opacity = "0";
+		}
 	};
 
 	const handleMouseLeave = () => {
@@ -249,7 +266,9 @@ function GenderBalanceByAgeChart({
 				{chartsLoading ? (
 					<ChartContentPlaceholder className="size-full" />
 				) : (
-					<div className="h-full flex items-center justify-center">No data available</div>
+					<div className="h-full flex items-center justify-center">
+						No data available
+					</div>
 				)}
 			</div>
 		);

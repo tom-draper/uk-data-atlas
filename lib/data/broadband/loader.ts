@@ -4,7 +4,7 @@ import { parseCsv } from "@/lib/helpers/parseCsv";
 const YEAR = 2025;
 const BOUNDARY_YEAR = 2024;
 
-const parseNum = (v: any): number | null => {
+const parseNum = (v: unknown): number | null => {
 	if (!v || v === "" || v === "N/A" || v === "-" || v === "..") return null;
 	const n = parseFloat(String(v).replace(/,/g, "").replace(/%/, "").trim());
 	return isNaN(n) ? null : n;
@@ -28,9 +28,12 @@ export async function loadBroadband(
 			ladCode: code,
 			ladName: name,
 			pctSuperfast: parseNum(row["SFBB availability (% premises)"]),
-			pctUltrafast: parseNum(row["UFBB (100Mbit/s) availability (% premises)"]),
+			pctUltrafast: parseNum(
+				row["UFBB (100Mbit/s) availability (% premises)"],
+			),
 			pctFullFibre: parseNum(row["Full Fibre availability (% premises)"]),
 			pctGigabit: parseNum(row["Gigabit availability (% premises)"]),
+			premisesCount: parseNum(row["All Premises"]),
 		};
 	}
 

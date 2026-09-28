@@ -1,14 +1,10 @@
 // Gazetteer artifact types. See docs/gazetteer-design.md.
+import type { PlaceKind, PlaceSource } from "./places";
 
-export type Level =
-	| "region"
-	| "county"
-	| "localAuthority"
-	| "constituency"
-	| "ward"
-	| "lsoa"
-	| "dataZone"
-	| "superOutputArea";
+// The levels the core holds and crosswalks join. Finer levels stay with the
+// boundary mappings and match index, and counties are named locations
+// (docs/gazetteer-design.md 9.7).
+export type Level = "region" | "localAuthority" | "constituency";
 
 export interface GazetteerEntry {
 	code: string;
@@ -22,7 +18,19 @@ export interface GazetteerEntry {
 
 export interface NamedLocation {
 	memberCodes: string[];
+	/** Effective intervals for members whose code set has changed over time. */
+	memberAssertions?: Array<{
+		code: string;
+		validFrom?: string;
+		validTo?: string;
+	}>;
 	bbox: [number, number, number, number];
+	/** An official area, or an editorial grouping (see ./places.ts). */
+	kind: PlaceKind;
+	/** The ONS lookup an official area's current members come from. */
+	source?: PlaceSource;
+	/** Set when the definition has been revised since the gazetteer version. */
+	definitionRevision?: number;
 }
 
 // The eager core artifact (gazetteer.core.json). Coarse levels + indexes.

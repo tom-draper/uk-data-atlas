@@ -1,0 +1,262 @@
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import {
+	API_ONLY_GEOGRAPHIES,
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+	type BoundaryType,
+} from "@/lib/data/boundaries/catalog";
+import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+
+/**
+ * Compiled assets live in public/data, where they are served from; the two
+ * releases published as TopoJSON are committed in data/. Look in both.
+ */
+const localBoundaryPath = (path: string) => {
+	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
+	const served = join(process.cwd(), "public", "data", relative);
+	return existsSync(served) ? served : join(process.cwd(), "data", relative);
+};
+
+const catalogued = BOUNDARY_TYPES.flatMap((type) =>
+	BOUNDARY_CATALOG[type].releases.map((release) => ({ type, release })),
+);
+
+const identity = (geography: string, release: string) =>
+	`${geography}/${release}`;
+
+const toCamelCase = (value: string) =>
+	value.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
+
+const sourceBoundaryReleases = readdirSync(
+	join(process.cwd(), "data", "boundaries"),
+	{ withFileTypes: true },
+).flatMap((geography) =>
+	geography.isDirectory()
+		? readdirSync(
+				join(process.cwd(), "data", "boundaries", geography.name),
+				{ withFileTypes: true },
+			)
+				.filter((release) => release.isDirectory())
+				.map((release) =>
+					identity(toCamelCase(geography.name), release.name),
+				)
+		: [],
+);
+
+const docsCatalogue = JSON.parse(
+	readFileSync(
+		join(
+			process.cwd(),
+			"public",
+			"data",
+			"datasets",
+			"docs-catalogue.json",
+		),
+		"utf8",
+	),
+) as {
+	releases: Array<{ geography: string; id: string }>;
+	areaAvailability: Array<{
+		geography: string;
+		id: string;
+		status: "available" | "not-compiled";
+	}>;
+};
+
+const apiAreaInventory = { releases: docsCatalogue.areaAvailability };
+
+describe("boundary releases", () => {
+	it("makes every source release explicitly held or available from both products", () => {
+		const website = new Map(
+			catalogued.map(({ type, release }) => [
+				identity(type, release.id),
+				release,
+			]),
+		);
+		const apiRegistry = new Set(
+			docsCatalogue.releases.map((release) =>
+				identity(release.geography, release.id),
+			),
+		);
+		const apiAreas = new Map(
+			apiAreaInventory.releases.map((release) => [
+				identity(release.geography, release.id),
+				release,
+			]),
+		);
+
+		const apiOnly = new Set(
+			Object.values(API_ONLY_GEOGRAPHIES).map(
+				({ geography }) => geography,
+			),
+		);
+		const mapped = sourceBoundaryReleases.filter(
+			(source) => !apiOnly.has(source.split("/")[0]!),
+		);
+		expect([...website.keys()].sort()).toEqual([...mapped].sort());
+		expect([...apiRegistry].sort()).toEqual(
+			[...sourceBoundaryReleases].sort(),
+		);
+
+		for (const source of sourceBoundaryReleases) {
+			if (apiOnly.has(source.split("/")[0]!)) {
+				expect(
+					apiAreas.get(source)?.status,
+					`${source} is API-only but not API-available`,
+				).toBe("available");
+				continue;
+			}
+			const release = website.get(source)!;
+			const area = apiAreas.get(source);
+			if (!release.asset) {
+				expect(
+					release.holdReason,
+					`${source} is held without a reason`,
+				).toBeTruthy();
+				continue;
+			}
+			expect(
+				release.holdReason,
+				`${source} is both held and served`,
+			).toBeUndefined();
+			expect(existsSync(localBoundaryPath(release.asset)), source).toBe(
+				true,
+			);
+			expect(area?.status, `${source} is not API-available`).toBe(
+				"available",
+			);
+		}
+	});
+
+	it("names every asset after the release that owns it", () => {
+		for (const { type, release } of catalogued) {
+			if (!release.asset) continue;
+			expect(
+				release.asset,
+				`${type}/${release.id} is served from another release's folder`,
+			).toContain(`/${release.id}/boundaries.topojson`);
+			expect(existsSync(localBoundaryPath(release.asset))).toBe(true);
+		}
+	});
+
+	// The Dec 2020 ward and Dec 2015 constituency assets were both compiled
+	// with every property stripped, because the geography's shared key list
+	// never mentioned WD20CD and spelled pcon15cd in the wrong case. Nothing
+	// could see it: the assets had the right number of features and the wrong
+	// contents. Each release now declares its own keys, and this checks them
+	// against the file rather than against the list they came from.
+	it("serves features carrying the code and name each release declares", () => {
+		for (const { type, release } of catalogued) {
+			if (!release.asset) continue;
+			const where = `${type}/${release.id}`;
+			const boundaries = decodeBoundaryData(
+				JSON.parse(
+					readFileSync(localBoundaryPath(release.asset), "utf8"),
+				),
+			);
+			expect(boundaries.features.length, where).toBeGreaterThan(0);
+
+			const properties = boundaries.features[0]!.properties;
+			expect(
+				Object.keys(properties),
+				`${where} has no properties`,
+			).not.toHaveLength(0);
+			expect(properties, where).toHaveProperty(release.codeKey);
+			expect(properties, where).toHaveProperty(release.nameKey);
+			if (release.parentCodeKey) {
+				expect(properties, where).toHaveProperty(release.parentCodeKey);
+			}
+		}
+		// Reads every compiled asset in the catalogue, ~120 MB of TopoJSON.
+	}, 60_000);
+
+	it("keeps each geography's code and name keys paired", () => {
+		for (const type of BOUNDARY_TYPES) {
+			const { code, name } = BOUNDARY_CATALOG[type].properties;
+			expect(name, type).toHaveLength(code.length);
+		}
+	});
+
+	it("orders releases newest first", () => {
+		for (const type of BOUNDARY_TYPES) {
+			const dates = BOUNDARY_CATALOG[type].releases.map(
+				(release) => release.year * 100 + (release.month ?? 0),
+			);
+			expect(
+				[...dates].sort((a, b) => b - a),
+				type,
+			).toEqual(dates);
+		}
+	});
+
+	// Two releases can share a year - May and December 2023 wards, May and
+	// December 2025 - so which one the year serves is pinned in the catalogue
+	// rather than left to whichever happens to sort first.
+	it("serves a contested year from the release pinned to it", () => {
+		const pinned: [string, number, string][] = [
+			["ward", 2025, "2025-05-uk-bgc-v2"],
+			["ward", 2023, "2023-12-uk-bgc"],
+			["lsoa", 2011, "2011-12-ew-bgc-v3"],
+			["dataZone", 2011, "2011-12-sc-bfc"],
+		];
+		for (const [type, year, id] of pinned) {
+			const { vintages } = BOUNDARY_CATALOG[type as BoundaryType];
+			expect(vintages[year], `${type} ${year}`).toContain(`/${id}/`);
+		}
+	});
+
+	it("aliases only years onto releases that exist and are served", () => {
+		for (const type of BOUNDARY_TYPES) {
+			const { releases, vintages } = BOUNDARY_CATALOG[type];
+			const served = new Set(releases.flatMap((r) => r.asset ?? []));
+			for (const asset of Object.values(vintages)) {
+				expect(served, type).toContain(asset);
+			}
+		}
+	});
+});
+
+describe("Northern Ireland in British National Grid releases", () => {
+	// Belfast's outline did not change between December 2022 and May 2023.
+	// The December release is British National Grid and carries the ONS's
+	// Northern Ireland offset; the May release is WGS84 and does not. Compiled,
+	// the two must agree, where uncorrected they sat about 65 m apart. Each
+	// asset is simplified and quantised on its own, which moves an extent edge
+	// by several metres, so agreement means well inside the offset, not exact.
+	const extent = (asset: string) => {
+		const belfast = decodeBoundaryData(
+			JSON.parse(readFileSync(localBoundaryPath(asset), "utf8")),
+		).features.find((feature) =>
+			Object.values(feature.properties ?? {}).includes("N09000003"),
+		)!;
+		const positions = JSON.stringify(belfast.geometry)
+			.match(/-?\d+\.\d+,-?\d+\.\d+/g)!
+			.map((pair) => pair.split(",").map(Number) as [number, number]);
+		return [
+			Math.min(...positions.map(([lon]) => lon)),
+			Math.min(...positions.map(([, lat]) => lat)),
+			Math.max(...positions.map(([lon]) => lon)),
+			Math.max(...positions.map(([, lat]) => lat)),
+		];
+	};
+
+	it("draws Belfast where the WGS84 release does", () => {
+		const release = (id: string) =>
+			BOUNDARY_CATALOG.localAuthority.releases.find((r) => r.id === id)!
+				.asset!;
+		const corrected = extent(release("2022-12-uk-bgc-v2"));
+		const reference = extent(release("2023-05-uk-bgc-v2"));
+		const metresPerDegree = [
+			111320 * Math.cos((54.6 * Math.PI) / 180),
+			110574,
+		];
+		corrected.forEach((value, index) => {
+			const metres =
+				Math.abs(value - reference[index]!) *
+				metresPerDegree[index % 2]!;
+			expect(metres, `extent edge ${index}`).toBeLessThan(15);
+		});
+	});
+});

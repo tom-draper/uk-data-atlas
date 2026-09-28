@@ -1,0 +1,154 @@
+import type {
+	CrosswalkArtifact,
+	CrosswalkMethod,
+	CrosswalkQuality,
+	CrosswalkWeighting,
+} from "./crosswalkInventory";
+import { areaKey } from "./geographyKeys";
+
+export type AreaRelation =
+	"within" | "contains" | "successor" | "predecessor" | "overlaps";
+
+export type AreaOverlap = {
+	areaM2: number;
+	/** Overlap as a share of this area. */
+	shareOfArea: number;
+	/** Overlap as a share of the counterpart area. */
+	shareOfCounterpart: number;
+};
+
+export type AreaRelationship = {
+	relation: AreaRelation;
+	counterpart: {
+		id: string;
+		geography: string;
+		boundaryRelease: string;
+		code: string;
+		labels: string[];
+	};
+	crosswalk: {
+		id: string;
+		method: CrosswalkMethod;
+		quality: CrosswalkQuality;
+		weighting: CrosswalkWeighting;
+	};
+	overlap?: AreaOverlap;
+};
+
+export type AreaRelationshipIndex = Map<string, AreaRelationship[]>;
+
+const areaId = (geography: string, boundaryRelease: string, code: string) =>
+	areaKey(geography, boundaryRelease, code);
+
+const relationFor = (
+	{ method, relationshipPurpose }: CrosswalkArtifact,
+	direction: "from" | "to",
+): AreaRelation => {
+	// An official lookup declared as membership, such as district to region,
+	// states belonging, not succession.
+	if (
+		method === "clean-containment" ||
+		method === "geometric-containment" ||
+		relationshipPurpose === "membership"
+	) {
+		return direction === "from" ? "within" : "contains";
+	}
+	if (method === "area-overlap" || method === "population-overlap")
+		return "overlaps";
+	return direction === "from" ? "successor" : "predecessor";
+};
+
+const overlapFor = (
+	crosswalk: CrosswalkArtifact,
+	target: CrosswalkArtifact["records"][number]["targets"][number],
+	direction: "from" | "to",
+): { overlap?: AreaOverlap } => {
+	// Only an area overlap's shares are of area; a population overlap's are
+	// of people, and are read from its crosswalk rather than restated here.
+	if (crosswalk.method !== "area-overlap" || !("overlapAreaM2" in target))
+		return {};
+	return {
+		overlap: {
+			areaM2: target.overlapAreaM2,
+			shareOfArea:
+				direction === "from" ? target.sourceShare : target.targetShare,
+			shareOfCounterpart:
+				direction === "from" ? target.targetShare : target.sourceShare,
+		},
+	};
+};
+
+const addRelationship = (
+	index: AreaRelationshipIndex,
+	area: string,
+	relationship: AreaRelationship,
+) => {
+	const relationships = index.get(area) ?? [];
+	relationships.push(relationship);
+	index.set(area, relationships);
+};
+
+export const createAreaRelationshipIndex = (
+	crosswalks: Iterable<CrosswalkArtifact>,
+): AreaRelationshipIndex => {
+	const index: AreaRelationshipIndex = new Map();
+	for (const crosswalk of crosswalks) {
+		const crosswalkMetadata = {
+			id: crosswalk.id,
+			method: crosswalk.method,
+			quality: crosswalk.quality,
+			weighting: crosswalk.weighting,
+		};
+		for (const record of crosswalk.records) {
+			const sourceId = areaId(
+				crosswalk.from.geography,
+				crosswalk.from.boundaryRelease,
+				record.source.code,
+			);
+			for (const target of record.targets) {
+				const targetId = areaId(
+					crosswalk.to.geography,
+					crosswalk.to.boundaryRelease,
+					target.code,
+				);
+				addRelationship(index, sourceId, {
+					relation: relationFor(crosswalk, "from"),
+					counterpart: {
+						id: targetId,
+						geography: crosswalk.to.geography,
+						boundaryRelease: crosswalk.to.boundaryRelease,
+						code: target.code,
+						labels: target.labels,
+					},
+					crosswalk: crosswalkMetadata,
+					...overlapFor(crosswalk, target, "from"),
+				});
+				addRelationship(index, targetId, {
+					relation: relationFor(crosswalk, "to"),
+					counterpart: {
+						id: sourceId,
+						geography: crosswalk.from.geography,
+						boundaryRelease: crosswalk.from.boundaryRelease,
+						code: record.source.code,
+						labels: record.source.labels,
+					},
+					crosswalk: crosswalkMetadata,
+					...overlapFor(crosswalk, target, "to"),
+				});
+			}
+		}
+	}
+	for (const relationships of index.values()) {
+		relationships.sort((left, right) => {
+			const relation = left.relation.localeCompare(right.relation);
+			if (relation !== 0) return relation;
+			const counterpart = left.counterpart.id.localeCompare(
+				right.counterpart.id,
+			);
+			return counterpart !== 0
+				? counterpart
+				: left.crosswalk.id.localeCompare(right.crosswalk.id);
+		});
+	}
+	return index;
+};

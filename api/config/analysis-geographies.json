@@ -1,0 +1,19 @@
+{
+	"schemaVersion": 1,
+	"supports": [
+		{
+			"measureId": "road-collisions",
+			"analysisGeography": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"source": {
+				"datasetId": "road-collisions",
+				"geography": "lsoa",
+				"boundaryYear": 2021
+			},
+			"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"note": "Reported collision counts are extensive. Every published 2021 LSOA in this source has one verified May 2023 local-authority parent, so values are regrouped exactly; no area weighting is used."
+		}
+	]
+}

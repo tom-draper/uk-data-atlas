@@ -8,19 +8,18 @@ import {
 	AggregatedEthnicityData,
 } from "@/lib/types";
 import { ETHNICITY_COLORS } from "@/lib/helpers/colorScale";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
+import { formatCount } from "@/lib/helpers/formatCount";
+import {
+	selectedAreaLadRecord,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -40,7 +39,7 @@ function EthnicityBar({ data }: { data: ProcessedEthnicityData[] }) {
 						width: `${item.percentage}%`,
 						backgroundColor: item.color,
 					}}
-					title={`${item.ethnicity}: ${item.population.toLocaleString()} (${item.percentage.toFixed(1)}%)`}
+					title={`${item.ethnicity}: ${formatCount(item.population)} (${item.percentage.toFixed(1)}%)`}
 					className="group relative hover:opacity-80 transition-opacity"
 				>
 					{item.percentage > 5 && (
@@ -54,7 +53,11 @@ function EthnicityBar({ data }: { data: ProcessedEthnicityData[] }) {
 	);
 }
 
-function Legend({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) {
+function Legend({
+	ethnicityData,
+}: {
+	ethnicityData: ProcessedEthnicityData[];
+}) {
 	return (
 		<div className="animate-in fade-in duration-200 mt-1">
 			<div className="grid grid-cols-3 gap-0.5 text-[9px] overflow-y-auto">
@@ -71,7 +74,7 @@ function Legend({ ethnicityData }: { ethnicityData: ProcessedEthnicityData[] }) 
 							className="truncate font-medium"
 							title={item.ethnicity}
 						>
-							{item.population.toLocaleString()}: {item.ethnicity}
+							{formatCount(item.population)}: {item.ethnicity}
 						</span>
 					</div>
 				))}
@@ -84,7 +87,7 @@ interface EthnicityChartProps {
 	dataset: EthnicityDataset | undefined;
 	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeMapper;
+	codeMapper?: LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -113,6 +116,7 @@ export default function EthnicityChart({
 	dataset,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	activeViz,
 	setActiveViz,
 }: EthnicityChartProps) {
@@ -122,22 +126,32 @@ export default function EthnicityChart({
 
 	if (!dataset) return null;
 
-	const vizId = dataset.id;
-	const isActive = activeViz.vizId === vizId;
+	const datasetId = dataset.id;
+	const isActive = activeViz.datasetId === datasetId;
 
 	const processedData = (() => {
-		const areaData = selectedArea?.code
-			? dataset.data[selectedArea.code]
+		const areaData = selectedArea
+			? selectedArea.type === dataset.boundaryType
+				? dataset.data[selectedArea.code]
+				: selectedAreaLadRecord(
+						dataset.data,
+						selectedArea,
+						codeMapper,
+						dataset.boundaryYear,
+					)
 			: aggregatedData?.[2021];
 
 		if (!areaData) {
 			return { hasData: false, ethnicityData: [], totalPopulation: 0 };
 		}
 
+		// The legend filter only applies while this dataset is on the map.
 		const allEthnicities = flattenEthnicityData(areaData).filter(
 			(item) =>
-				!excludedEthnicities.has(item.ethnicity) &&
-				(!selectedEthnicity || item.ethnicity === selectedEthnicity),
+				!isActive ||
+				(!excludedEthnicities.has(item.ethnicity) &&
+					(!selectedEthnicity ||
+						item.ethnicity === selectedEthnicity)),
 		);
 
 		const totalPopulation = allEthnicities.reduce(
@@ -159,43 +173,31 @@ export default function EthnicityChart({
 		return { hasData: true, ethnicityData, totalPopulation };
 	})();
 
-	const heightClass = isActive ? "h-[170px]" : "h-[65px]";
+	const heightClass = isActive ? "min-h-[170px]" : "min-h-[65px]";
 
 	const accentColor = processedData.ethnicityData[0]?.color ?? null;
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(
-				isActive,
-				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass}`,
-			)}
+		<ChartCard
+			heading={`Ethnicity [${dataset.year}]`}
+			headerEnd={
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
+					England &amp; Wales
+				</span>
+			}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${heightClass}`}
 			title="Office for National Statistics. Census 2021: Ethnic Group, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Ethnicity [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England &amp; Wales</span>
-			</div>
-
 			{!processedData.hasData ? (
 				chartsLoading ? (
 					<ChartContentPlaceholder className="h-5 mt-1" />
@@ -214,6 +216,6 @@ export default function EthnicityChart({
 					)}
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }

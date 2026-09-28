@@ -1,5 +1,5 @@
 // Geometry helpers for building the gazetteer at build time.
-import { polygonAreaSqKm } from "../../helpers/population";
+import { ringsAreaSqKm } from "../../helpers/population";
 
 type Geom = GeoJSON.Geometry;
 
@@ -45,7 +45,7 @@ export function centroidOf(geom: Geom): [number, number] {
 }
 
 export const areaM2 = (geom: Geom): number =>
-	Math.round(polygonAreaSqKm((geom as { coordinates: number[][][] | number[][][][] }).coordinates) * 1e6);
+	Math.round(ringsAreaSqKm(outerRings(geom)) * 1e6);
 
 export const inBox = (px: number, py: number, b: readonly number[]): boolean =>
 	px >= b[0] && px <= b[2] && py >= b[1] && py <= b[3];
@@ -66,7 +66,19 @@ function pointInRing(px: number, py: number, ring: number[][]): boolean {
 	return inside;
 }
 
+// A point in a hole is outside: an authority or constituency can wrap round
+// another, as South Cambridgeshire does Cambridge.
 export function pointInGeom(px: number, py: number, geom: Geom): boolean {
-	for (const ring of outerRings(geom)) if (pointInRing(px, py, ring)) return true;
-	return false;
+	const polygons =
+		geom.type === "Polygon"
+			? [geom.coordinates]
+			: geom.type === "MultiPolygon"
+				? geom.coordinates
+				: [];
+	return polygons.some(
+		([outer, ...holes]) =>
+			!!outer &&
+			pointInRing(px, py, outer) &&
+			!holes.some((hole) => pointInRing(px, py, hole)),
+	);
 }

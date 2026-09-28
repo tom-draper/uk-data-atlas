@@ -6,17 +6,20 @@ import {
 	SIMDDataset,
 	SelectedArea,
 } from "@lib/types";
-import {
-	ChartLoadingBackground,
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
-import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
+import { resolveDeprivation } from "../deprivationStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
+
+const SIMD: DeprivationIndex = {
+	datasetType: "simd",
+	label: "SIMD",
+	region: "Scotland",
+	attribution:
+		"Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot",
+	metric: "rank",
+	metricMaximum: 6976,
+	areaNoun: "data zones",
+};
 
 interface SIMDChartProps {
 	activeDataset: Dataset | null;
@@ -25,48 +28,8 @@ interface SIMDChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
-}
-
-const DECILE_COLORS = [
-	"#15803d", // 1 - least deprived
-	"#16a34a", // 2
-	"#22c55e", // 3
-	"#4ade80", // 4
-	"#a3e635", // 5
-	"#eab308", // 6
-	"#f59e0b", // 7
-	"#f97316", // 8
-	"#ef4444", // 9
-	"#dc2626", // 10 - most deprived
-];
-
-function computeSimdStats(
-	dataset: SIMDDataset,
-	aggregatedData: Record<number, AggregatedSIMDData> | null,
-	selectedArea: SelectedArea | null,
-	chartsLoading: boolean,
-) {
-	if (chartsLoading) return null;
-	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-
-	if (selectedArea.type === "localAuthority")
-		return dataset.councilStats[selectedArea.code] ?? null;
-
-	if (selectedArea.type === "ward" && selectedArea.data)
-		return dataset.councilStats[selectedArea.data.ladCode] ?? null;
-
-	if (selectedArea.type === "dataZone") {
-		const dz = dataset.data[selectedArea.code];
-		if (!dz) return null;
-		return {
-			averageSIMDRank: dz.simdRank,
-			averageSIMDQuintile: dz.simdQuintile,
-			averageSIMDDecile: dz.simdDecile,
-		};
-	}
-
-	return null;
 }
 
 export default function SIMDChart({
@@ -75,107 +38,40 @@ export default function SIMDChart({
 	aggregatedData,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: SIMDChartProps) {
-	const chartsLoading = useChartsLoading();
-	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
-
-	const simdStats = dataset
-		? computeSimdStats(dataset, aggregatedData, selectedArea, chartsLoading)
-		: null;
-
-	const isActive =
-		activeDataset?.type === "simd" && activeDataset.id === dataset?.id;
-
-	const decile = simdStats
-		? Math.round(simdStats.averageSIMDDecile)
-		: null;
-	const displayDecile = decile ? 11 - decile : null;
-	const decileColor = displayDecile ? DECILE_COLORS[displayDecile - 1] : "#9ca3af";
-	const hasData = simdStats !== null;
-
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		hasData ? decileColor : null,
-		isActive,
-		isDark,
-	);
-
 	if (!dataset) return null;
 
+	const resolved = resolveDeprivation({
+		aggregated: aggregatedData?.[dataset.year] ?? null,
+		ladStats: dataset.councilStats,
+		selectedArea,
+		fineArea: { type: "dataZone", records: dataset.data },
+		codeMapper,
+	});
+
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark, "h-[72px] block w-full text-left")}
-			title="Scottish Government. Scottish Index of Multiple Deprivation 2020v2. gov.scot"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
-			onClick={() =>
-				setActiveViz({
-					vizId: dataset.id,
-					datasetType: dataset.type,
-					datasetYear: dataset.year,
-				})
+		<DeprivationChart
+			index={SIMD}
+			dataset={dataset}
+			activeDataset={activeDataset}
+			view={
+				resolved === null
+					? null
+					: resolved.kind === "summary"
+						? resolved
+						: {
+								kind: "area",
+								decile: resolved.record.simdDecile,
+								detail: {
+									kind: "rank",
+									value: resolved.record.simdRank,
+								},
+							}
 			}
-		>
-			<ChartLoadingBackground />
-			<div className="relative z-10 flex flex-col flex-1">
-				<div className="flex items-start justify-between mb-1.5 shrink-0">
-					<h3 className={chartHeadingClass(isDark)}>
-						Deprivation (SIMD) [{dataset.year}]
-					</h3>
-					<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>Scotland</span>
-				</div>
-				{hasData && simdStats ? (
-					<div className="flex items-start gap-2.5">
-						<div className="shrink-0 w-8 text-right leading-none mt-[-2px]">
-							<span
-								className="text-3xl font-bold leading-none"
-								style={{ color: decileColor }}
-							>
-								{displayDecile}
-							</span>
-						</div>
-						<div className="flex-1 flex flex-col gap-1.5">
-							<div className="flex gap-[2px]">
-								{DECILE_COLORS.map((color, i) => (
-									<div
-										key={i}
-										className="flex-1 h-3 rounded-[2px]"
-										style={{
-											backgroundColor:
-												displayDecile === i + 1
-													? color
-													: isDark
-														? "rgba(255,255,255,0.1)"
-														: "rgba(0,0,0,0.08)",
-										}}
-									/>
-								))}
-							</div>
-							<div className="flex justify-between">
-								<span className={`text-[9px] leading-none ${isDark ? "text-gray-500" : "text-gray-400"}`}>least deprived</span>
-								{selectedArea && Number.isFinite(simdStats.averageSIMDRank) && (
-									<span className={`text-[9px] leading-none ${isDark ? "text-gray-400" : "text-gray-500"}`}>Rank {Math.round(simdStats.averageSIMDRank).toLocaleString()}</span>
-								)}
-							</div>
-						</div>
-					</div>
-				) : (
-					<div className="flex-1">
-						{chartsLoading ? (
-							<ChartContentPlaceholder className="h-full" />
-						) : (
-							<div
-								className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-							>
-								No data available
-							</div>
-						)}
-					</div>
-				)}
-			</div>
-		</button>
+			setActiveViz={setActiveViz}
+		/>
 	);
 }

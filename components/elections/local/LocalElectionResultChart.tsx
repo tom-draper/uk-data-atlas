@@ -1,19 +1,14 @@
 // components/LocalElectionResultChart.tsx
 "use client";
 
-
 import { LocalElectionDataset, ActiveViz } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface ProcessedPartyData {
 	key: string;
@@ -38,8 +33,11 @@ function VoteBar({ data }: { data: ProcessedPartyData[] }) {
 			{data.map((p) => (
 				<div
 					key={p.key}
-					style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
-					title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(1)}%)`}
+					style={{
+						width: `${p.percentage}%`,
+						backgroundColor: p.color,
+					}}
+					title={`${p.name}: ${formatCount(p.votes)} (${p.percentage.toFixed(1)}%)`}
 					className="group relative hover:opacity-80 transition-opacity"
 				>
 					{p.percentage > 12 && (
@@ -64,7 +62,7 @@ function Legend({ partyData }: { partyData: ProcessedPartyData[] }) {
 							style={{ backgroundColor: p.color }}
 						/>
 						<span className="truncate font-medium">
-							{p.key}: {p.votes.toLocaleString()}
+							{p.key}: {formatCount(p.votes)}
 						</span>
 					</div>
 				))}
@@ -86,19 +84,13 @@ export default function LocalElectionResultChart({
 	const isDark = useIsDark();
 	const winnerColor = data.partyData[0]?.color;
 
-	const heightClass = isActive ? "h-[95px]" : "h-[65px]";
+	const heightClass = isActive ? "min-h-[95px]" : "min-h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	const handleActivate = () => {
 		if (data.dataset) {
 			setActiveViz({
-				vizId: data.dataset.id,
+				datasetId: data.dataset.id,
 				datasetType: data.dataset.type,
 				datasetYear: data.dataset.year,
 			});
@@ -106,32 +98,22 @@ export default function LocalElectionResultChart({
 	};
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(
-				isActive,
-				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass}`,
-			)}
+		<ChartCard
+			heading={`${data.year} Local Elections`}
+			headerEnd={
+				data.turnout ? (
+					<span className="text-[9px] text-gray-500 font-medium">
+						{data.turnout.toFixed(1)}% turnout
+					</span>
+				) : null
+			}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${heightClass}`}
 			title="House of Commons Library, UK Parliament. Local Election Results. commonslibrary.parliament.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={handleActivate}
 		>
-			<ChartLoadingBackground />
 			<div className="relative z-[1] flex-1 flex flex-col">
-				<div className="flex items-center justify-between mb-1.5">
-					<h3 className={chartHeadingClass(isDark)}>
-						{data.year} Local Elections
-					</h3>
-					{data.turnout && (
-						<span className="text-[9px] text-gray-500 font-medium">
-							{data.turnout.toFixed(1)}% turnout
-						</span>
-					)}
-				</div>
-
 				{!data.hasData ? (
 					chartsLoading ? (
 						<ChartContentPlaceholder className="flex-1 mt-1" />
@@ -149,6 +131,6 @@ export default function LocalElectionResultChart({
 					</div>
 				)}
 			</div>
-		</button>
+		</ChartCard>
 	);
 }

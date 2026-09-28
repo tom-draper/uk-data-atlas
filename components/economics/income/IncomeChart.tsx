@@ -7,18 +7,17 @@ import {
 	IncomeDataset,
 	SelectedArea,
 } from "@lib/types";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { formatCount } from "@/lib/helpers/formatCount";
 import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+	selectedAreaLadRecord,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -26,7 +25,7 @@ interface IncomeChartProps {
 	aggregatedData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeMapper;
+	codeMapper?: LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -53,12 +52,17 @@ function computeParticles(medianIncome: number | null) {
 
 	const minIncome = 25000;
 	const maxIncome = 45000;
-	const clampedIncome = Math.max(minIncome, Math.min(medianIncome, maxIncome));
+	const clampedIncome = Math.max(
+		minIncome,
+		Math.min(medianIncome, maxIncome),
+	);
 
 	const minParticles = 4;
 	const maxParticles = 100;
 	const percentage = (clampedIncome - minIncome) / (maxIncome - minIncome);
-	const count = Math.round(minParticles + percentage * (maxParticles - minParticles));
+	const count = Math.round(
+		minParticles + percentage * (maxParticles - minParticles),
+	);
 
 	const rand = seededRandom(Math.round(medianIncome));
 
@@ -86,7 +90,6 @@ export default function IncomeChart({
 	selectedArea,
 	year,
 	codeMapper,
-	activeViz,
 	setActiveViz,
 }: IncomeChartProps) {
 	const chartsLoading = useChartsLoading();
@@ -104,26 +107,14 @@ export default function IncomeChart({
 			aggregatedData[dataset.year]
 		) {
 			medianIncome = aggregatedData[dataset.year].averageIncome || null;
-		} else if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			selectedArea.data
-		) {
-			const laCode = selectedArea.code;
-			medianIncome = dataset.data?.[laCode]?.annual?.median || null;
-
-			// Try code mapping if not found
-			if (!medianIncome && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"localAuthority",
-					laCode,
+		} else if (selectedArea) {
+			medianIncome =
+				selectedAreaLadRecord(
+					dataset.data,
+					selectedArea,
+					codeMapper,
 					year,
-				);
-				if (mappedCode) {
-					medianIncome =
-						dataset.data?.[mappedCode]?.annual?.median || null;
-				}
-			}
+				)?.annual?.median || null;
 		}
 	}
 
@@ -131,67 +122,56 @@ export default function IncomeChart({
 
 	const isActive = !!(
 		dataset &&
-		activeDataset &&
-		((activeDataset.type === "income" &&
-			activeDataset.id === `income${dataset.year}`) ||
-			(activeViz.datasetType === "custom" &&
-				activeViz.vizId === "custom"))
+		activeDataset?.type === "income" &&
+		activeDataset.id === `income${dataset.year}`
 	);
 	const formattedMedian = medianIncome
-		? `£${Math.round(medianIncome).toLocaleString()}`
+		? `£${formatCount(Math.round(medianIncome))}`
 		: null;
-
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		dataset ? "#10b981" : null,
-		isActive,
-		isDark,
-	);
 
 	if (!dataset) return null;
 
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(!!isActive, isDark, "isolate h-20")}
+		<ChartCard
+			heading={`Median Income [${dataset.year}]`}
+			headerEnd={
+				<span
+					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+				>
+					England
+				</span>
+			}
+			accent="#10b981"
+			isActive={isActive}
+			minHeightClassName="isolate min-h-20"
 			title="Office for National Statistics. Annual Survey of Hours and Earnings (ASHE), Table 8: Distribution of Hourly Pay. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
-					vizId: dataset.id,
+					datasetId: dataset.id,
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})
 			}
+			background={
+				<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+					{particles.map((p) => (
+						<span
+							key={p.id}
+							className={`absolute font-bold ${p.color} ${p.blur}`}
+							style={{
+								top: p.top,
+								left: p.left,
+								fontSize: `${p.size}rem`,
+								opacity: p.opacity,
+								transform: `rotate(${p.rotation}deg)`,
+							}}
+						>
+							£
+						</span>
+					))}
+				</div>
+			}
 		>
-			<ChartLoadingBackground />
-			{/* Background Particles Layer */}
-			<div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-				{particles.map((p) => (
-					<span
-						key={p.id}
-						className={`absolute font-bold ${p.color} ${p.blur}`}
-						style={{
-							top: p.top,
-							left: p.left,
-							fontSize: `${p.size}rem`,
-							opacity: p.opacity,
-							transform: `rotate(${p.rotation}deg)`,
-						}}
-					>
-						£
-					</span>
-				))}
-			</div>
-
-			<div className="flex items-center justify-between mb-1.5 relative z-10">
-				<h3 className={chartHeadingClass(isDark)}>
-					Median Income [{dataset.year}]
-				</h3>
-				<span className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>England</span>
-			</div>
-
 			{formattedMedian ? (
 				<div className="relative flex justify-center items-center flex-1 z-10">
 					<div
@@ -213,6 +193,6 @@ export default function IncomeChart({
 					)}
 				</div>
 			)}
-		</button>
+		</ChartCard>
 	);
 }

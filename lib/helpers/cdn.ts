@@ -7,7 +7,8 @@ export const withCDN = (path: string) => {
 		return path;
 	}
 
-	const version = process.env.NEXT_PUBLIC_DATA_VERSION ?? PACKAGE_DATA_VERSION;
+	const version =
+		process.env.NEXT_PUBLIC_DATA_VERSION ?? PACKAGE_DATA_VERSION;
 	const separator = path.includes("?") ? "&" : "?";
 	return `${path}${separator}v=${encodeURIComponent(version)}`;
 };

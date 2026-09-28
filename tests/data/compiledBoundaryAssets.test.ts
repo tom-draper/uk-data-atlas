@@ -1,0 +1,217 @@
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import { BOUNDARY_CATALOG } from "@/lib/data/boundaries/catalog";
+import { decodeBoundaryData } from "@/lib/data/boundaries/decode";
+import { getProp } from "@/lib/data/boundaries/properties";
+import { parseMatchIndexLevel } from "@/lib/data/areaBank";
+import type { GazetteerCore } from "@/lib/data/gazetteer/types";
+
+/**
+ * Compiled assets live in public/data, where they are served from; the two
+ * releases published as TopoJSON are committed in data/. Look in both.
+ */
+const localBoundaryPath = (path: string) => {
+	const relative = path.split("?")[0]!.replace(/^\/data\//, "");
+	const served = join(process.cwd(), "public", "data", relative);
+	return existsSync(served) ? served : join(process.cwd(), "data", relative);
+};
+
+const WARD_VINTAGES = Object.keys(BOUNDARY_CATALOG.ward.vintages).map(Number);
+
+describe("compiled ward boundary assets", () => {
+	it("covers every ward vintage the catalogue serves", () => {
+		expect(WARD_VINTAGES.length).toBeGreaterThanOrEqual(9);
+	});
+
+	it("serves every ward vintage as WGS84 TopoJSON", () => {
+		for (const year of WARD_VINTAGES) {
+			const path =
+				BOUNDARY_CATALOG.ward.vintages[
+					year as keyof typeof BOUNDARY_CATALOG.ward.vintages
+				];
+			expect(path).toMatch(/\.topojson$/);
+
+			const topology = JSON.parse(
+				readFileSync(localBoundaryPath(path), "utf8"),
+			) as unknown;
+			expect(topology).toMatchObject({ type: "Topology" });
+
+			const boundaries = decodeBoundaryData(topology);
+			expect(boundaries.features.length).toBeGreaterThan(1_000);
+			const firstFeature = boundaries.features[0]!;
+			expect(
+				getProp(
+					firstFeature.properties,
+					BOUNDARY_CATALOG.ward.properties.code,
+				),
+			).toMatch(/^[EW]05/);
+
+			const coordinates = firstFeature
+				.geometry!.coordinates.flat(Infinity)
+				.filter((value): value is number => typeof value === "number");
+			expect(coordinates.some((value) => Math.abs(value) < 10)).toBe(
+				true,
+			);
+			expect(coordinates.some((value) => value > 49 && value < 61)).toBe(
+				true,
+			);
+		}
+	}, 60_000);
+});
+
+describe("every compiled boundary release", () => {
+	const releases = Object.entries(BOUNDARY_CATALOG)
+		.flatMap(([type, family]) =>
+			family.releases.flatMap((release) =>
+				release.asset
+					? [
+							{
+								label: `${type}/${release.id}`,
+								path: localBoundaryPath(release.asset),
+							},
+						]
+					: [],
+			),
+		)
+		.filter(({ path }) => existsSync(path));
+
+	// The map keys hover state by feature id. May 2026 local authorities, May
+	// 2025 parishes and 2011 data zones were published without one, and none of
+	// their areas could be hovered.
+	it.each(releases)(
+		"gives every feature of $label an id the map can hover",
+		({ path }) => {
+			const ids = decodeBoundaryData(
+				JSON.parse(readFileSync(path, "utf8")),
+			).features.map((feature) => feature.id);
+			expect(ids.filter((id) => id === undefined)).toEqual([]);
+			expect(new Set(ids).size).toBe(ids.length);
+		},
+	);
+});
+
+describe("upload match index", () => {
+	it("matches against every boundary release the catalogue serves", () => {
+		const index = JSON.parse(
+			readFileSync(
+				join(
+					process.cwd(),
+					"public",
+					"data",
+					"datasets",
+					"gazetteer.matchindex.json",
+				),
+				"utf8",
+			),
+		) as Record<string, unknown>;
+
+		for (const [boundaryType, definition] of Object.entries(
+			BOUNDARY_CATALOG,
+		)) {
+			const level = parseMatchIndexLevel(index[boundaryType] ?? {});
+			expect(
+				Object.keys(level).map(Number).sort(),
+				`${boundaryType} vintages; rerun pnpm precompile`,
+			).toEqual(Object.keys(definition.vintages).map(Number).sort());
+		}
+	});
+});
+
+describe("upload match index parents", () => {
+	it("knows the council of every ward and parish behind a shared name", () => {
+		const index = JSON.parse(
+			readFileSync(
+				join(
+					process.cwd(),
+					"public",
+					"data",
+					"datasets",
+					"gazetteer.matchindex.json",
+				),
+				"utf8",
+			),
+		) as Record<string, unknown>;
+		for (const boundaryType of ["ward", "parish"]) {
+			const level = parseMatchIndexLevel(index[boundaryType]);
+			for (const [year, { names, parents }] of Object.entries(level)) {
+				const orphans = Object.values(names)
+					.filter((codes) => codes.length > 1)
+					.flat()
+					.filter((code) => !parents?.[code]?.length);
+				expect(orphans, `${boundaryType} ${year}`).toEqual([]);
+			}
+		}
+	});
+});
+
+describe("constituency to local authority crosswalk", () => {
+	const overlaps = JSON.parse(
+		readFileSync(
+			join(
+				process.cwd(),
+				"public",
+				"data",
+				"datasets",
+				"constituency-lad-overlaps.json",
+			),
+			"utf8",
+		),
+	) as {
+		targetLocalAuthorityRelease: string;
+		releases: Record<string, unknown>;
+	};
+	const rerun = "rerun scripts/gazetteer-crosswalks.ts";
+
+	it("has a table for every constituency release the catalogue serves", () => {
+		const { releases, vintages } = BOUNDARY_CATALOG.constituency;
+		const served = new Set(
+			Object.values(vintages).map(
+				(asset) =>
+					releases.find((release) => release.asset === asset)?.id,
+			),
+		);
+		expect(
+			Object.keys(overlaps.releases).sort(),
+			`constituency releases; ${rerun}`,
+		).toEqual([...served].sort());
+	});
+
+	it("targets the local authority release the catalogue serves", () => {
+		const { releases, vintages } = BOUNDARY_CATALOG.localAuthority;
+		const target = releases.find(
+			(release) => release.asset === vintages[2025],
+		)?.id;
+		expect(
+			overlaps.targetLocalAuthorityRelease,
+			`target LAD release; ${rerun}`,
+		).toBe(target);
+	});
+});
+
+describe("gazetteer core", () => {
+	const core = JSON.parse(
+		readFileSync(
+			join(
+				process.cwd(),
+				"public",
+				"data",
+				"datasets",
+				"gazetteer.core.json",
+			),
+			"utf8",
+		),
+	) as GazetteerCore;
+
+	// Named locations keep superseded council codes for older ward releases;
+	// the core holds every LAD release with GSS codes, so each must resolve.
+	it("holds every named location's members", () => {
+		const missing = Object.entries(core.namedLocations).flatMap(
+			([name, { memberCodes }]) =>
+				memberCodes
+					.filter((code) => !core.byCode[code])
+					.map((code) => `${name}: ${code}`),
+		);
+		expect(missing).toEqual([]);
+	});
+});

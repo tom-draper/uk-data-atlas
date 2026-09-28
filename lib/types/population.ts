@@ -1,11 +1,19 @@
 // lib/types/population.ts
-import { WardYear } from "../data/boundaries/boundaries";
+import { LocalAuthorityYear, WardYear } from "../data/boundaries/boundaries";
 import { AgeData } from "./common";
 
-export interface PopulationWardData {
+/**
+ * The age-by-sex counts every population record carries, whatever geography
+ * it is keyed by. Aggregation and map rendering only ever need this much, so
+ * they accept it rather than a boundary-specific record.
+ */
+export interface PopulationAgeSexRecord {
 	total: AgeData;
 	males: AgeData;
 	females: AgeData;
+}
+
+export interface PopulationWardData extends PopulationAgeSexRecord {
 	wardName: string;
 	ladCode: string;
 	ladName: string;
@@ -18,6 +26,36 @@ export interface PopulationDataset {
 	boundaryYear: WardYear;
 	boundaryType: "ward";
 	data: Record<string, PopulationWardData>;
+	/** Compact list-panel totals calculated while the worker has the full data. */
+	locationPopulations?: Record<string, number>;
+	/** Selected-location card summary, emitted by the worker when available. */
+	locationAggregate?: AggregatedPopulationData;
+	/** Build artifact retained only until the worker selects one location. */
+	locationAggregates?: Record<string, AggregatedPopulationData>;
+}
+
+/**
+ * A local authority's estimates for one mid-year. The ward equivalent carries
+ * its parent LAD, so the analogous parent here is the country the authority
+ * sits in ("E", "N", "S", "W").
+ */
+export interface PopulationLocalAuthorityData extends PopulationAgeSexRecord {
+	ladName: string;
+	country: string;
+}
+
+/**
+ * UK-wide local authority estimates. Separate from the ward dataset rather
+ * than a boundary variant of it, because it comes from a different ONS release
+ * with its own reference years.
+ */
+export interface PopulationUkDataset {
+	id: string;
+	type: "populationUk";
+	year: number;
+	boundaryYear: LocalAuthorityYear;
+	boundaryType: "localAuthority";
+	data: Record<string, PopulationLocalAuthorityData>;
 }
 
 export interface AgeGroups {

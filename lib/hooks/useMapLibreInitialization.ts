@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import { Map as MapLibreMap, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { adaptMapPopup } from "@/lib/helpers/mapPopup";
+import type { MapInstance, MapPopupOptions } from "@/lib/types/mapInstance";
 
 interface UseMapLibreInitializationOptions {
 	style: string;
@@ -19,22 +21,33 @@ export function useMapLibreInitialization({
 	initialBounds,
 	fitBoundsPadding = 40,
 }: UseMapLibreInitializationOptions) {
-	const mapRef = useRef<maplibregl.Map | null>(null);
+	const mapRef = useRef<MapInstance | null>(null);
 	const [mapReady, setMapReady] = useState(false);
 
 	const handleMapContainer = useCallback((el: HTMLDivElement | null) => {
 		if (!el || mapRef.current) return;
 
 		try {
-			const map = new maplibregl.Map({
+			const engine = new MapLibreMap({
 				container: el,
 				style,
 				...(initialBounds
-					? { bounds: initialBounds, fitBoundsOptions: { padding: fitBoundsPadding } }
+					? {
+							bounds: initialBounds,
+							fitBoundsOptions: { padding: fitBoundsPadding },
+						}
 					: { center, zoom }),
 				maxBounds,
-				preserveDrawingBuffer: true,
-			} as any);
+				canvasContextAttributes: { preserveDrawingBuffer: true },
+			});
+			const map: MapInstance = Object.assign(engine, {
+				createPopup: (options?: MapPopupOptions) => {
+					const popup = new Popup(options);
+					return adaptMapPopup(popup, () => {
+						popup.addTo(engine);
+					});
+				},
+			});
 			mapRef.current = map;
 			map.once("style.load", () => setMapReady(true));
 		} catch (err) {

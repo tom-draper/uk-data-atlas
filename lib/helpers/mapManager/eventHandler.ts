@@ -1,10 +1,12 @@
-import type { MapGeoJSONFeature, MapMouseEvent } from "maplibre-gl";
+import type { MapMouseEvent } from "maplibre-gl";
+import type { MapInstance } from "@/lib/types/mapInstance";
 
-type MapLayerMouseHandler = (
-	ev: MapMouseEvent & { features?: MapGeoJSONFeature[] },
-) => void;
-import { MapManagerCallbacks } from "./callbacks";
+import { MapManagerCallbacks, type MapLayerMouseHandler } from "./callbacks";
 import { BoundaryType, ElectionData } from "@/lib/types";
+import {
+	boundaryTypeForCodeKey,
+	nameKeyForCodeKey,
+} from "@/lib/data/boundaries/catalog";
 
 const SOURCE_ID = "location-wards";
 const FILL_LAYER_ID = "wards-fill";
@@ -40,7 +42,10 @@ function rafThrottle<T extends unknown[]>(
 	};
 
 	const cancel = () => {
-		if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+		if (rafId !== null) {
+			cancelAnimationFrame(rafId);
+			rafId = null;
+		}
 		trailingArgs = null;
 	};
 
@@ -62,11 +67,13 @@ export class EventHandler {
 	private handlersAttached = false;
 
 	constructor(
-		private map: maplibregl.Map,
+		private map: MapInstance,
 		private callbacks: MapManagerCallbacks,
 	) {
 		this.canvas = this.map.getCanvas();
-		const { handler, cancel } = rafThrottle(this.handleMouseMove.bind(this));
+		const { handler, cancel } = rafThrottle(
+			this.handleMouseMove.bind(this),
+		);
 		this._mouseMoveHandler = handler;
 		this._cancelMouseMove = cancel;
 		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
@@ -94,20 +101,14 @@ export class EventHandler {
 		this.handlersAttached = true;
 	}
 
+	// The catalogue pairs each code property with its name property and
+	// geography, so neither has to be guessed from the key's spelling.
 	nameProp(codeProp: string) {
-		if (codeProp === "SOA_CODE") return "SOA_LABEL";
-		if (codeProp === "DataZone") return "Name";
-		return codeProp.replace(/cd$/i, "NM");
+		return nameKeyForCodeKey(codeProp) ?? codeProp.replace(/cd$/i, "NM");
 	}
 
-	boundaryType(codeProp: string) {
-		if (codeProp.toUpperCase().startsWith("LAD")) return "localAuthority";
-		if (codeProp.toUpperCase().startsWith("WD")) return "ward";
-		if (codeProp.toUpperCase().startsWith("PCON")) return "constituency";
-		if (codeProp.toUpperCase().startsWith("LSOA")) return "lsoa";
-		if (codeProp === "SOA_CODE" || codeProp === "SOA2011" || codeProp === "SOA") return "superOutputArea";
-		if (codeProp === "DataZone") return "dataZone";
-		return "ward";
+	boundaryType(codeProp: string): BoundaryType {
+		return boundaryTypeForCodeKey(codeProp) ?? "ward";
 	}
 
 	private handleMouseMove(

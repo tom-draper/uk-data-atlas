@@ -1,0 +1,177 @@
+{
+	"schemaVersion": 1,
+	"waivers": [
+		{
+			"check": "source-names-consistent",
+			"reason": "The publisher lookup names N06000004 Belfast West in three rows and Belfast North in one. Both names are kept as labels rather than the Atlas correcting the source.",
+			"resources": [
+				"crosswalks/constituency-2010-to-2024-official-lookup-v2"
+			]
+		},
+		{
+			"check": "records-resolve",
+			"reason": "The LEAP 2016 file gives 12 codes the December 2016 release does not hold: 7 retired wards that no compiled release holds (E05001607, E05002777, E05002780, E05002785, E05008530, E05008532, E05008537) and 5 wards first published in December 2018 or 2019. Results stay on the codes the source published.",
+			"resources": [
+				"exports/local-election-effective-votes-ward-2016-observations",
+				"exports/local-election-con-votes-ward-2016-observations",
+				"exports/local-election-green-votes-ward-2016-observations",
+				"exports/local-election-ind-votes-ward-2016-observations",
+				"exports/local-election-lab-votes-ward-2016-observations",
+				"exports/local-election-ld-votes-ward-2016-observations",
+				"exports/local-election-other-votes-ward-2016-observations",
+				"exports/local-election-pc-votes-ward-2016-observations",
+				"exports/local-election-ref-votes-ward-2016-observations",
+				"exports/local-election-ukip-votes-ward-2016-observations",
+				"exports/local-election-winning-party-ward-2016-observations"
+			]
+		},
+		{
+			"check": "records-resolve",
+			"reason": "The LEAP 2017 file gives 7 codes the December 2017 release does not hold: E05002780, which no compiled release holds, and 6 Welsh wards last published in December 2016. Results stay on the codes the source published.",
+			"resources": [
+				"exports/local-election-effective-votes-ward-2017-observations",
+				"exports/local-election-con-votes-ward-2017-observations",
+				"exports/local-election-green-votes-ward-2017-observations",
+				"exports/local-election-ind-votes-ward-2017-observations",
+				"exports/local-election-lab-votes-ward-2017-observations",
+				"exports/local-election-ld-votes-ward-2017-observations",
+				"exports/local-election-other-votes-ward-2017-observations",
+				"exports/local-election-pc-votes-ward-2017-observations",
+				"exports/local-election-ref-votes-ward-2017-observations",
+				"exports/local-election-ukip-votes-ward-2017-observations",
+				"exports/local-election-winning-party-ward-2017-observations"
+			]
+		},
+		{
+			"check": "records-resolve",
+			"reason": "The LEAP 2018 file gives 6 codes first published in December 2019 (E05012647, E05012648, E05012841, E05012842, E05012968, E05012969) that the December 2018 release does not hold. Results stay on the codes the source published.",
+			"resources": [
+				"exports/local-election-effective-votes-ward-2018-observations",
+				"exports/local-election-con-votes-ward-2018-observations",
+				"exports/local-election-green-votes-ward-2018-observations",
+				"exports/local-election-ind-votes-ward-2018-observations",
+				"exports/local-election-lab-votes-ward-2018-observations",
+				"exports/local-election-ld-votes-ward-2018-observations",
+				"exports/local-election-other-votes-ward-2018-observations",
+				"exports/local-election-pc-votes-ward-2018-observations",
+				"exports/local-election-ref-votes-ward-2018-observations",
+				"exports/local-election-ukip-votes-ward-2018-observations",
+				"exports/local-election-winning-party-ward-2018-observations"
+			]
+		},
+		{
+			"check": "records-resolve",
+			"reason": "The LEAP 2019 file gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, which the December 2019 release does not hold. Results stay on the codes the source published.",
+			"resources": [
+				"exports/local-election-effective-votes-ward-2019-observations",
+				"exports/local-election-con-votes-ward-2019-observations",
+				"exports/local-election-green-votes-ward-2019-observations",
+				"exports/local-election-ind-votes-ward-2019-observations",
+				"exports/local-election-lab-votes-ward-2019-observations",
+				"exports/local-election-ld-votes-ward-2019-observations",
+				"exports/local-election-other-votes-ward-2019-observations",
+				"exports/local-election-pc-votes-ward-2019-observations",
+				"exports/local-election-ref-votes-ward-2019-observations",
+				"exports/local-election-ukip-votes-ward-2019-observations",
+				"exports/local-election-winning-party-ward-2019-observations"
+			]
+		},
+		{
+			"check": "records-resolve",
+			"reason": "The publisher's workbook gives Leeds's Garforth & Swillington and Temple Newsam their December 2021 codes, E05013830 and E05013831, among otherwise December 2020 codes. Values stay on the codes the publisher used.",
+			"resources": ["exports/house-price-median-observations"]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "The publisher lookup incorrectly assigns E05014284 to Ryedale; the Atlas corrects it to Scarborough, matching the ward label and the majority of its geometry. The published ward geometry still crosses the Scarborough, Ryedale and East Riding boundaries, so its remaining 7.0 km overhang is recorded but waived pending a corrected boundary source.",
+			"resources": [
+				"crosswalks/ward-2022-12-uk-bgc-to-local-authority-2022-12-uk-bgc-v2-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "The ITL releases are generalised and clipped to the coastline separately, so child regions keep coastal slivers their parents trim. Every vertex beyond tolerance lies outside every parent region, in water; none falls in another region, and the ONS lookup assignments are correct. Largest: TLD1 Cumbria, 2.7 km.",
+			"resources": [
+				"crosswalks/itl2-2021-01-uk-bgc-v2-to-itl1-2021-01-uk-bgc-official-lookup",
+				"crosswalks/itl3-2021-01-uk-bgc-v3-to-itl2-2021-01-uk-bgc-v2-official-lookup"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "8 LSOAs overhang their May 2023 authority by 102 to 741 m, at the River Yare in Norwich, Portsmouth Harbour and Welsh estuaries. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "7 MSOAs overhang their May 2023 authority by 102 to 743 m, at the River Yare in Norwich, Portsmouth Harbour and Welsh estuaries. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/msoa-2021-12-ew-bgc-v3-to-local-authority-2023-05-uk-bgc-v2-official-lookup"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "E05002452 overhangs Portsmouth by 654 m at Langstone Harbour, towards Havant, and N08000518 overhangs its Northern Ireland district by 116 m. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "4 December 2024 wards overhang their May 2024 authority by 111 to 308 m, at the River Yare in Norwich, Portsmouth Harbour and the Dee estuary. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/ward-2024-12-uk-bgc-to-local-authority-2024-05-uk-bgc-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "The May 2025 release draws Norwich and Thorpe Hamlet (E05012910) along the River Yare to Breydon, which the December 2025 authorities assign to Broadland and South Norfolk, leaving a 16.4 km overhang; 3 wards in Cumbria, Lancashire and Highland overhang by 138 to 1,223 m. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/ward-2025-05-uk-bgc-v2-to-local-authority-2025-12-uk-bgc-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "3 December 2025 wards overhang their May 2025 authority by 304 to 8,972 m, in Cumbria and Highland. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/ward-2025-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "Norwich unparished area (E43000115) runs along the River Yare to Breydon, 16.3 km beyond the authority outline, and the Bournemouth, Christchurch and Poole unparished area overhangs by 383 m at the coast. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/parish-2026-05-ew-bgc-to-local-authority-2026-05-uk-bgc-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "49 parishes and unparished areas overhang their April 2019 authority by 101 m to 27.4 km. The largest is Bristol unparished area (E43000019), whose outline reaches out into the Severn Estuary; others lie on the Yare, Thames, Mersey and coast. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-04-uk-bgc-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "60 parishes and unparished areas overhang their December 2019 authority by 101 m to 27.4 km, led by Bristol unparished area in the Severn Estuary and Norwich unparished area on the River Yare. Every vertex beyond tolerance lies either in water outside every authority or across a river or estuary boundary, where the two releases draw the channel line differently; the lookup assignments themselves are correct.",
+			"resources": [
+				"crosswalks/parish-2019-04-ew-bgc-to-local-authority-2019-12-uk-bgc-clean-containment"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "The intermediate zones are the Scottish Government full-resolution boundaries, while the December 2018 council areas are generalised and clipped to the coastline. 27 zones overhang their council area by 107 to 379 m; all but one vertex beyond tolerance lies outside every council area, in water, and the remaining one lies 206 m into Stirling from Clackmannanshire. The lookup assignments are correct.",
+			"resources": [
+				"crosswalks/intermediate-zone-2011-12-sc-bfc-to-local-authority-2018-12-uk-bgc-official-lookup"
+			]
+		},
+		{
+			"check": "containment-verified",
+			"reason": "The output area and LSOA releases are generalised separately. 4 output areas overhang their LSOA by 175 m to 2.8 km: 13 of the 18 vertices beyond tolerance lie in water outside every LSOA, and the other 5 are single vertices of coastal or detached slivers, the largest a detached piece of E00075555 (South Gloucestershire) that the LSOA outline omits. The ONS exact-fit lookup is correct.",
+			"resources": [
+				"crosswalks/output-area-2021-12-ew-bgc-v2-to-lsoa-2021-12-ew-bgc-v5-official-lookup"
+			]
+		}
+	]
+}

@@ -64,7 +64,9 @@ async function waitForJson(url, timeoutMs = 10000) {
 		}
 		await delay(100);
 	}
-	throw new Error(`Timed out waiting for ${url}: ${lastError?.message ?? "unknown error"}`);
+	throw new Error(
+		`Timed out waiting for ${url}: ${lastError?.message ?? "unknown error"}`,
+	);
 }
 
 class CdpClient {
@@ -79,17 +81,30 @@ class CdpClient {
 		this.ws = new WebSocket(this.wsUrl);
 		await new Promise((resolveConnect, rejectConnect) => {
 			const timeout = setTimeout(
-				() => rejectConnect(new Error("Timed out connecting to Chrome DevTools")),
+				() =>
+					rejectConnect(
+						new Error("Timed out connecting to Chrome DevTools"),
+					),
 				10000,
 			);
-			this.ws.addEventListener("open", () => {
-				clearTimeout(timeout);
-				resolveConnect();
-			}, { once: true });
-			this.ws.addEventListener("error", () => {
-				clearTimeout(timeout);
-				rejectConnect(new Error("Failed to connect to Chrome DevTools"));
-			}, { once: true });
+			this.ws.addEventListener(
+				"open",
+				() => {
+					clearTimeout(timeout);
+					resolveConnect();
+				},
+				{ once: true },
+			);
+			this.ws.addEventListener(
+				"error",
+				() => {
+					clearTimeout(timeout);
+					rejectConnect(
+						new Error("Failed to connect to Chrome DevTools"),
+					);
+				},
+				{ once: true },
+			);
 		});
 
 		this.ws.addEventListener("message", (event) => {
@@ -98,7 +113,8 @@ class CdpClient {
 				const pending = this.pending.get(message.id);
 				if (!pending) return;
 				this.pending.delete(message.id);
-				if (message.error) pending.reject(new Error(message.error.message));
+				if (message.error)
+					pending.reject(new Error(message.error.message));
 				else pending.resolve(message.result ?? {});
 				return;
 			}
@@ -134,7 +150,9 @@ async function createPageTarget(debugPort, url) {
 		{ method: "PUT" },
 	);
 	if (!response.ok) {
-		throw new Error(`Failed to create Chrome target: ${response.status} ${response.statusText}`);
+		throw new Error(
+			`Failed to create Chrome target: ${response.status} ${response.statusText}`,
+		);
 	}
 	return response.json();
 }
@@ -184,7 +202,10 @@ function metricValue(metrics, name) {
 async function waitForNetworkQuiet(networkState, quietMs, timeoutMs) {
 	const startedAt = Date.now();
 	while (Date.now() - startedAt < timeoutMs) {
-		if (networkState.inflight.size === 0 && Date.now() - networkState.lastActivityAt >= quietMs) {
+		if (
+			networkState.inflight.size === 0 &&
+			Date.now() - networkState.lastActivityAt >= quietMs
+		) {
 			return;
 		}
 		await delay(100);
@@ -193,7 +214,10 @@ async function waitForNetworkQuiet(networkState, quietMs, timeoutMs) {
 
 function writeMarkdown(report, heapSnapshotPath) {
 	const networkRows = report.network.topResponses
-		.map((entry) => `| ${bytes(entry.encodedDataLength)} | ${entry.status ?? ""} | ${entry.mimeType ?? ""} | \`${entry.url}\` |`)
+		.map(
+			(entry) =>
+				`| ${bytes(entry.encodedDataLength)} | ${entry.status ?? ""} | ${entry.mimeType ?? ""} | \`${entry.url}\` |`,
+		)
 		.join("\n");
 	const allocationRows = report.heapSampling.topFunctions
 		.slice(0, 20)
@@ -324,13 +348,16 @@ async function main() {
 			networkState.responses.set(requestId, entry);
 			networkState.lastActivityAt = Date.now();
 		});
-		cdp.on("Network.loadingFinished", ({ requestId, encodedDataLength }) => {
-			const entry = networkState.responses.get(requestId) ?? {};
-			entry.encodedDataLength = encodedDataLength ?? 0;
-			networkState.responses.set(requestId, entry);
-			networkState.inflight.delete(requestId);
-			networkState.lastActivityAt = Date.now();
-		});
+		cdp.on(
+			"Network.loadingFinished",
+			({ requestId, encodedDataLength }) => {
+				const entry = networkState.responses.get(requestId) ?? {};
+				entry.encodedDataLength = encodedDataLength ?? 0;
+				networkState.responses.set(requestId, entry);
+				networkState.inflight.delete(requestId);
+				networkState.lastActivityAt = Date.now();
+			},
+		);
 		cdp.on("Network.loadingFailed", ({ requestId, errorText }) => {
 			const entry = networkState.responses.get(requestId) ?? {};
 			entry.errorText = errorText;
@@ -344,12 +371,16 @@ async function main() {
 		await cdp.send("Runtime.enable");
 		await cdp.send("Performance.enable");
 		await cdp.send("HeapProfiler.enable");
-		await cdp.send("HeapProfiler.startSampling", { samplingInterval: 32768 });
+		await cdp.send("HeapProfiler.startSampling", {
+			samplingInterval: 32768,
+		});
 		await cdp.send("HeapProfiler.collectGarbage");
 		const before = await cdp.send("Runtime.getHeapUsage");
 
 		await cdp.send("Page.navigate", { url: args.url });
-		await new Promise((resolveLoad) => cdp.on("Page.loadEventFired", resolveLoad));
+		await new Promise((resolveLoad) =>
+			cdp.on("Page.loadEventFired", resolveLoad),
+		);
 		await waitForNetworkQuiet(networkState, 2000, 60000);
 		await delay(args.waitMs);
 
@@ -368,10 +399,17 @@ async function main() {
 		let heapSnapshotPath = null;
 
 		if (args.heapSnapshot) {
-			heapSnapshotPath = join(outDir, `atlas-memory-${stamp}.heapsnapshot`);
+			heapSnapshotPath = join(
+				outDir,
+				`atlas-memory-${stamp}.heapsnapshot`,
+			);
 			const chunks = [];
-			cdp.on("HeapProfiler.addHeapSnapshotChunk", ({ chunk }) => chunks.push(chunk));
-			await cdp.send("HeapProfiler.takeHeapSnapshot", { reportProgress: false });
+			cdp.on("HeapProfiler.addHeapSnapshotChunk", ({ chunk }) =>
+				chunks.push(chunk),
+			);
+			await cdp.send("HeapProfiler.takeHeapSnapshot", {
+				reportProgress: false,
+			});
 			await writeFile(heapSnapshotPath, chunks.join(""));
 		}
 
@@ -391,8 +429,17 @@ async function main() {
 		);
 		const sampled = sumSampleSizes(sampling.profile);
 		const perf = Object.fromEntries(
-			["JSHeapUsedSize", "JSHeapTotalSize", "Documents", "Nodes", "LayoutCount", "RecalcStyleCount"]
-				.map((name) => [name, metricValue(performanceMetrics.metrics, name)]),
+			[
+				"JSHeapUsedSize",
+				"JSHeapTotalSize",
+				"Documents",
+				"Nodes",
+				"LayoutCount",
+				"RecalcStyleCount",
+			].map((name) => [
+				name,
+				metricValue(performanceMetrics.metrics, name),
+			]),
 		);
 
 		const report = {
@@ -432,8 +479,12 @@ async function main() {
 		console.log(`Wrote ${reportJson}`);
 		console.log(`Wrote ${reportMd}`);
 		if (heapSnapshotPath) console.log(`Wrote ${heapSnapshotPath}`);
-		console.log(`JS heap after GC: ${bytes(afterGc.usedSize)} used / ${bytes(afterGc.totalSize)} total`);
-		console.log(`Observed network payload: ${bytes(totalEncodedDataLength)}`);
+		console.log(
+			`JS heap after GC: ${bytes(afterGc.usedSize)} used / ${bytes(afterGc.totalSize)} total`,
+		);
+		console.log(
+			`Observed network payload: ${bytes(totalEncodedDataLength)}`,
+		);
 
 		cdp.close();
 	} catch (error) {

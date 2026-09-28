@@ -1,4 +1,3 @@
-
 import { type MapManager } from "@/lib/helpers/mapManager";
 import { useMapUpdates } from "@lib/hooks/useMapUpdates";
 import { ActiveViz, BoundaryGeojson, Dataset } from "@/lib/types";

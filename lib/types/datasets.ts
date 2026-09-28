@@ -1,106 +1,75 @@
 // lib/types/datasets.ts
-import {
-	LocalElectionDataset,
-	GeneralElectionDataset,
-	AggregatedLocalElectionData,
-	AggregatedGeneralElectionData,
-} from "./elections";
-import { PopulationDataset, AggregatedPopulationData } from "./population";
 import { HousePriceDataset, AggregatedHousePriceData } from "./housePrice";
 import { AggregatedCrimeData, CrimeDataset } from "./crime";
-import { AggregatedIncomeData, IncomeDataset } from "./income";
 import {
-	AggregatedHousingAffordabilityData,
-	HousingAffordabilityDataset,
-} from "./housingAffordability";
-import { AggregatedEthnicityData, EthnicityDataset } from "./ethnicity";
+	AggregatedIncomeData,
+	IncomeDataset,
+	WorkplaceIncomeDataset,
+} from "./income";
 import { AggregatedCustomData, CustomDataset } from "./custom";
-import {
-	AggregatedBrexitData,
-	BrexitConstituencyDataset,
-	BrexitLADDataset,
-} from "./referendum";
-import { AggregatedIMDData, IMDDataset } from "./imd";
-import { AggregatedSIMDData, SIMDDataset } from "./simd";
-import { AggregatedWIMDData, WIMDDataset } from "./wimd";
-import { AggregatedNIMDMData, NIMDMDataset } from "./nimdm";
-import {
-	AggregatedLifeExpectancyData,
-	LifeExpectancyDataset,
-} from "./lifeExpectancy";
-import {
-	AggregatedQualificationData,
-	QualificationDataset,
-} from "./qualification";
+import { NetworkDataset } from "./network";
 import { AggregatedBroadbandData, BroadbandDataset } from "./broadband";
 import { AggregatedAirQualityData, AirQualityDataset } from "./airQuality";
-import { AggregatedClaimantCountData, ClaimantCountDataset } from "./claimantCount";
-import { AggregatedSchoolPerformanceData, SchoolPerformanceDataset } from "./schoolPerformance";
+import {
+	AggregatedClaimantCountData,
+	ClaimantCountDataset,
+} from "./claimantCount";
+import {
+	AggregatedSchoolPerformanceData,
+	SchoolPerformanceDataset,
+} from "./schoolPerformance";
 import { AggregatedNHSWaitingData, NHSWaitingDataset } from "./nhsWaiting";
-import { AggregatedUnemploymentData, UnemploymentDataset } from "./unemployment";
-import { AggregatedChildPovertyData, ChildPovertyDataset } from "./childPoverty";
-import { AggregatedHomelessnessData, HomelessnessDataset } from "./homelessness";
-import { AggregatedFuelPovertyData, FuelPovertyDataset } from "./fuelPoverty";
+import {
+	AggregatedUnemploymentData,
+	UnemploymentDataset,
+} from "./unemployment";
+import type {
+	CatalogueDataset,
+	CatalogueDatasetRecords,
+} from "@/lib/data/catalog";
+import type { DatasetCoverage } from "./coverage";
 
-export type Dataset =
-	| LocalElectionDataset
-	| GeneralElectionDataset
-	| PopulationDataset
-	| EthnicityDataset
+type DatasetValue =
 	| HousePriceDataset
 	| CrimeDataset
 	| IncomeDataset
-	| HousingAffordabilityDataset
-	| BrexitLADDataset
-	| BrexitConstituencyDataset
+	| WorkplaceIncomeDataset
 	| CustomDataset
-	| IMDDataset
-	| SIMDDataset
-	| WIMDDataset
-	| NIMDMDataset
-	| LifeExpectancyDataset
-	| QualificationDataset
+	| NetworkDataset
 	| BroadbandDataset
 	| AirQualityDataset
 	| ClaimantCountDataset
 	| SchoolPerformanceDataset
 	| NHSWaitingDataset
 	| UnemploymentDataset
-	| ChildPovertyDataset
-	| HomelessnessDataset
-	| FuelPovertyDataset;
+	| CatalogueDataset;
+
+/** Every map dataset may declare the countries its source can cover. */
+export type Dataset = DatasetValue & DatasetCoverage;
 
 export type Datasets = {
-	localElection: Record<string, LocalElectionDataset>;
-	generalElection: Record<string, GeneralElectionDataset>;
-	population: Record<string, PopulationDataset>;
-	ethnicity: Record<string, EthnicityDataset>;
 	housePrice: Record<string, HousePriceDataset>;
 	crime: Record<string, CrimeDataset>;
 	income: Record<string, IncomeDataset>;
-	housingAffordability: Record<string, HousingAffordabilityDataset>;
-	brexit: Record<string, BrexitLADDataset>;
-	brexitConstituency: Record<string, BrexitConstituencyDataset>;
-	imd: Record<string, IMDDataset>;
-	simd: Record<string, SIMDDataset>;
-	wimd: Record<string, WIMDDataset>;
-	nimdm: Record<string, NIMDMDataset>;
-	lifeExpectancy: Record<string, LifeExpectancyDataset>;
-	qualification: Record<string, QualificationDataset>;
+	workplaceIncome: Record<string, WorkplaceIncomeDataset>;
 	broadband: Record<string, BroadbandDataset>;
 	airQuality: Record<string, AirQualityDataset>;
 	claimantCount: Record<string, ClaimantCountDataset>;
 	schoolPerformance: Record<string, SchoolPerformanceDataset>;
 	nhsWaiting: Record<string, NHSWaitingDataset>;
 	unemployment: Record<string, UnemploymentDataset>;
-	childPoverty: Record<string, ChildPovertyDataset>;
-	homelessness: Record<string, HomelessnessDataset>;
-	fuelPoverty: Record<string, FuelPovertyDataset>;
-};
+} & CatalogueDatasetRecords;
 
+/**
+ * Which visualisation of a dataset that backs several. Datasets with a single
+ * visualisation leave it unset.
+ */
+export type VizView = "age" | "density" | "gender" | "healthy-life-expectancy";
 
+/** Internal map selection, adapted from the public VisualizationRef at the URL boundary. */
 export type ActiveViz = {
-	vizId: string;
-	datasetType: keyof Datasets | "custom" | "brexitConstituency";
+	datasetId: string;
+	view?: VizView;
+	datasetType: keyof Datasets | "custom" | "network";
 	datasetYear: number;
 };

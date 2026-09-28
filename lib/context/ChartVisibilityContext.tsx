@@ -1,218 +1,106 @@
 "use client";
 import { createContext, use, useSyncExternalStore } from "react";
-import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { CHART_DATASET_DEFINITIONS } from "@/lib/datasets";
+import { getChartDefinitions } from "@/lib/datasets/types";
 
 export type ChartKey = string;
 
-type LegacyChartKey =
-	| "generalElection-2024"
-	| "generalElection-2019"
-	| "generalElection-2017"
-	| "generalElection-2015"
-	| "localElection-2025"
-	| "localElection-2024"
-	| "localElection-2023"
-	| "localElection-2022"
-	| "localElection-2021"
-	| "brexit-electoral"
-	| "brexit-hanretty"
-	| "demographics-populationDensity"
-	| "demographics-age"
-	| "demographics-gender"
-	| "demographics-ethnicity"
-	| "economics-housePrice"
-	| "economics-income"
-	| "economics-crime"
-	| "deprivation-imd"
-	| "deprivation-simd"
-	| "deprivation-wimd"
-	| "deprivation-nimdm"
-	| "health-lifeExpectancy"
-	| "health-healthyLifeExpectancy"
-	| "education-qualifications"
-	| "telecoms-broadband"
-	| "environment-airQuality"
-	| "economics-claimantCount"
-	| "education-schoolPerformance"
-	| "health-nhsWaiting"
-	| "economics-unemployment";
-
 export interface ChartConfigEntry {
 	group: string;
-	key: LegacyChartKey | ChartKey;
+	key: ChartKey;
 	label: string;
+	source: string;
 }
 
 export const CHART_CONFIG: ChartConfigEntry[] = [
-	{
-		group: "General Election",
-		key: "generalElection-2024",
-		label: "2024 General Election",
-	},
-	{
-		group: "General Election",
-		key: "generalElection-2019",
-		label: "2019 General Election",
-	},
-	{
-		group: "General Election",
-		key: "generalElection-2017",
-		label: "2017 General Election",
-	},
-	{
-		group: "General Election",
-		key: "generalElection-2015",
-		label: "2015 General Election",
-	},
-	{
-		group: "Local Election",
-		key: "localElection-2025",
-		label: "2025 Local Elections",
-	},
-	{
-		group: "Local Election",
-		key: "localElection-2024",
-		label: "2024 Local Elections",
-	},
-	{
-		group: "Local Election",
-		key: "localElection-2023",
-		label: "2023 Local Elections",
-	},
-	{
-		group: "Local Election",
-		key: "localElection-2022",
-		label: "2022 Local Elections",
-	},
-	{
-		group: "Local Election",
-		key: "localElection-2021",
-		label: "2021 Local Elections",
-	},
-	{
-		group: "Brexit",
-		key: "brexit-electoral",
-		label: "Electoral Commission [2016]",
-	},
-	{
-		group: "Brexit",
-		key: "brexit-hanretty",
-		label: "Hanretty Estimates [2016]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-populationDensity",
-		label: "Population Density [2022]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-age",
-		label: "Age Distribution [2022]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-gender",
-		label: "Gender Balance [2022]",
-	},
-	{
-		group: "Demographics",
-		key: "demographics-ethnicity",
-		label: "Ethnicity [2022]",
-	},
-	{
-		group: "Economics",
-		key: "economics-housePrice",
-		label: "House Prices [2023]",
-	},
-	{ group: "Economics", key: "economics-income", label: "Income [2025]" },
-	{ group: "Economics", key: "economics-crime", label: "Crime Rate [2025]" },
-	{ group: "Deprivation", key: "deprivation-imd", label: "Deprivation (IMD) [2019]" },
-	{ group: "Deprivation", key: "deprivation-simd", label: "Deprivation (SIMD) [2020]" },
-	{ group: "Deprivation", key: "deprivation-wimd", label: "Deprivation (WIMD) [2019]" },
-	{ group: "Deprivation", key: "deprivation-nimdm", label: "Deprivation (NIMDM) [2017]" },
-	{ group: "Health", key: "health-lifeExpectancy", label: "Life Expectancy [2020-2022]" },
-	{ group: "Health", key: "health-healthyLifeExpectancy", label: "Healthy Life Expectancy [2020-2022]" },
-	{ group: "Education", key: "education-qualifications", label: "Qualifications [2021]" },
-	{ group: "Telecoms", key: "telecoms-broadband", label: "Fixed Broadband Coverage [2025]" },
-	{ group: "Environment", key: "environment-airQuality", label: "Air Quality - NO2 [2022]" },
-	{ group: "Economics", key: "economics-claimantCount", label: "Claimant Count [2026]" },
-	{ group: "Education", key: "education-schoolPerformance", label: "School Performance [2024]" },
-	{ group: "Health", key: "health-nhsWaiting", label: "NHS Waiting Times [Mar 2026]" },
-	{ group: "Economics", key: "economics-unemployment", label: "Unemployment Rate [2024]" },
-	...SCALAR_DATASET_DEFINITIONS.map((definition) => definition.chart),
+	...CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+		getChartDefinitions(definition).map(({ group, key, label }) => ({
+			group,
+			key,
+			label,
+			source: definition.source.source,
+		})),
+	),
 ];
 
 export const DEFAULT_VISIBILITY: Record<ChartKey, boolean> = {
-	"generalElection-2024": true,
-	"generalElection-2019": true,
-	"generalElection-2017": true,
-	"generalElection-2015": true,
-	"localElection-2025": true,
-	"localElection-2024": true,
-	"localElection-2023": true,
-	"localElection-2022": true,
-	"localElection-2021": true,
-	"brexit-hanretty": false,
-	"brexit-electoral": true,
-	"demographics-populationDensity": true,
-	"demographics-age": true,
-	"demographics-gender": true,
-	"demographics-ethnicity": true,
-	"economics-housePrice": true,
-	"economics-income": true,
-	"economics-crime": true,
-	"deprivation-imd": true,
-	"deprivation-simd": false,
-	"deprivation-wimd": false,
-	"deprivation-nimdm": false,
-	"health-lifeExpectancy": true,
-	"health-healthyLifeExpectancy": false,
-	"education-qualifications": true,
-	"telecoms-broadband": true,
-	"environment-airQuality": true,
-	"economics-claimantCount": true,
-	"education-schoolPerformance": true,
-	"health-nhsWaiting": true,
-	"economics-unemployment": true,
 	...Object.fromEntries(
-		SCALAR_DATASET_DEFINITIONS.map((definition) => [
-			definition.chart.key,
-			definition.chart.defaultVisible,
-		]),
+		CHART_DATASET_DEFINITIONS.flatMap((definition) =>
+			getChartDefinitions(definition).map((chart) => [
+				chart.key,
+				chart.defaultVisible,
+			]),
+		),
 	),
 };
 
 const STORAGE_KEY = "uk-data-atlas-chart-visibility";
 
-let _cachedStorageKey: string | null | undefined = undefined;
-let _cachedVisibility: Record<ChartKey, boolean> = DEFAULT_VISIBILITY;
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+	typeof value === "object" && value !== null && !Array.isArray(value);
 
-export function getVisibilitySnapshot(): Record<ChartKey, boolean> {
-	const raw = localStorage.getItem(STORAGE_KEY);
-	if (raw === _cachedStorageKey) return _cachedVisibility;
-	_cachedStorageKey = raw;
-	if (!raw) {
-		_cachedVisibility = DEFAULT_VISIBILITY;
-		return _cachedVisibility;
-	}
+let hasReadStoredVisibility = false;
+let cachedVisibility: Record<ChartKey, boolean> = DEFAULT_VISIBILITY;
+const visibilityListeners = new Set<() => void>();
+let isListeningForStorage = false;
+
+const parseVisibility = (raw: string | null): Record<ChartKey, boolean> => {
+	if (!raw) return DEFAULT_VISIBILITY;
 	try {
-		const parsed = JSON.parse(raw) as Partial<Record<ChartKey, boolean>>;
+		const parsed: unknown = JSON.parse(raw);
+		if (!isRecord(parsed)) return DEFAULT_VISIBILITY;
+
 		const persisted: Record<ChartKey, boolean> = {};
-		for (const [key, value] of Object.entries(parsed)) {
+		for (const key of Object.keys(parsed)) {
+			const value = parsed[key];
 			if (typeof value === "boolean") persisted[key] = value;
 		}
-		_cachedVisibility = { ...DEFAULT_VISIBILITY, ...persisted };
+		return { ...DEFAULT_VISIBILITY, ...persisted };
 	} catch {
-		localStorage.removeItem(STORAGE_KEY);
-		_cachedStorageKey = null;
-		_cachedVisibility = DEFAULT_VISIBILITY;
+		return DEFAULT_VISIBILITY;
 	}
-	return _cachedVisibility;
+};
+
+const notifyVisibilityListeners = () => {
+	for (const listener of visibilityListeners) listener();
+};
+
+const handleStorage = (event: StorageEvent) => {
+	// A null key means localStorage.clear(), which also resets this preference.
+	if (event.key !== null && event.key !== STORAGE_KEY) return;
+	hasReadStoredVisibility = true;
+	cachedVisibility = parseVisibility(
+		event.key === null ? null : event.newValue,
+	);
+	notifyVisibilityListeners();
+};
+
+export function getVisibilitySnapshot(): Record<ChartKey, boolean> {
+	if (hasReadStoredVisibility) return cachedVisibility;
+	hasReadStoredVisibility = true;
+	try {
+		cachedVisibility = parseVisibility(localStorage.getItem(STORAGE_KEY));
+	} catch {
+		// Privacy settings can make localStorage unavailable. Visibility still
+		// works for this session, using the defaults as its initial value.
+		cachedVisibility = DEFAULT_VISIBILITY;
+	}
+	return cachedVisibility;
 }
 
 export function subscribeVisibility(callback: () => void): () => void {
-	window.addEventListener("storage", callback);
-	return () => window.removeEventListener("storage", callback);
+	visibilityListeners.add(callback);
+	if (!isListeningForStorage) {
+		window.addEventListener("storage", handleStorage);
+		isListeningForStorage = true;
+	}
+	return () => {
+		visibilityListeners.delete(callback);
+		if (visibilityListeners.size === 0 && isListeningForStorage) {
+			window.removeEventListener("storage", handleStorage);
+			isListeningForStorage = false;
+		}
+	};
 }
 
 interface ChartVisibilityContextValue {
@@ -239,10 +127,11 @@ export function ChartVisibilityProvider({
 	const toggle = (key: ChartKey) => {
 		const current = getVisibilitySnapshot();
 		const next = { ...current, [key]: !current[key] };
+		cachedVisibility = next;
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 		} catch {}
-		window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
+		notifyVisibilityListeners();
 	};
 
 	const ctxValue = { visibility, toggle };

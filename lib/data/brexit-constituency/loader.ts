@@ -6,7 +6,9 @@ export async function loadBrexitConstituency(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, BrexitConstituencyDataset>> {
 	const { data } = await parseCsv<string[]>(
-		await read("elections/referendum/eureferendum_constitunecy.csv"),
+		await read(
+			"politics/referendum/constituencies/2016/eureferendum_constitunecy.xlsx",
+		),
 		{ header: false },
 	);
 
@@ -15,6 +17,7 @@ export async function loadBrexitConstituency(
 
 	for (const row of data as string[][]) {
 		const code = row[1]?.trim() || "";
+		// Hanretty's estimates cover English constituencies only.
 		if (!code.startsWith("E14")) continue;
 
 		const pctLeave = parsePct(row[6]);

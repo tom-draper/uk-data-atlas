@@ -1,0 +1,305 @@
+/**
+ * The framework-neutral custom-import pipeline. Parsers produce a document,
+ * the UI chooses a plan, and this module validates and materialises the map
+ * dataset. Keeping those stages separate lets new file formats and mappings
+ * arrive without teaching map rendering about raw uploads.
+ */
+import type { BoundaryType } from "@/lib/types/boundaries";
+import type { CustomDataset, CustomPoint } from "@/lib/types/custom";
+
+export interface CustomImportDocument {
+	fileName: string;
+	format: "csv";
+	rows: string[][];
+	headerRow: number;
+}
+
+export type CustomImportPlan =
+	| {
+			kind: "choropleth";
+			codeColumn: string;
+			valueColumn: string;
+			boundaryType: BoundaryType;
+			boundaryYear: number;
+			/**
+			 * Present when the selected geography was matched by area name:
+			 * every area of each lowercased name. A name with more than one
+			 * is ambiguous and its rows are left off rather than guessed.
+			 */
+			nameToCodes?: ReadonlyMap<string, readonly string[]>;
+			/**
+			 * A column naming each row's parent (a ward's local authority, by
+			 * code or name), which settles a shared name when exactly one of
+			 * its areas sits in that parent.
+			 */
+			parentColumn?: string;
+			/** Parent codes of the areas behind shared names. */
+			parentsOf?: ReadonlyMap<string, readonly string[]>;
+			/** Lowercased parent name → its codes, for parents given by name. */
+			parentNameToCodes?: ReadonlyMap<string, readonly string[]>;
+	  }
+	| {
+			kind: "points";
+			latitudeColumn: string;
+			longitudeColumn: string;
+			valueColumn: string;
+	  };
+
+export interface CustomImport {
+	document: CustomImportDocument;
+	plan: CustomImportPlan;
+}
+
+export interface CustomImportIssue {
+	severity: "error" | "warning";
+	code: "missing-column" | "invalid-row" | "ambiguous-name";
+	message: string;
+	/** A bounded sample of one-based spreadsheet row numbers. */
+	rows?: number[];
+	count?: number;
+	/** A bounded sample of the ambiguous names, as the file spells them. */
+	names?: string[];
+}
+
+export interface CustomImportReport {
+	valid: boolean;
+	acceptedRows: number;
+	rejectedRows: number;
+	issues: CustomImportIssue[];
+}
+
+export interface MaterialisedCustomImport {
+	dataset: CustomDataset | null;
+	report: CustomImportReport;
+}
+
+export const createCsvImportDocument = (
+	fileName: string,
+	rows: string[][],
+	headerRow: number,
+): CustomImportDocument => ({ fileName, format: "csv", rows, headerRow });
+
+type ColumnIndexes = Record<string, number>;
+
+const columnIndexes = (
+	document: CustomImportDocument,
+	plan: CustomImportPlan,
+): { indexes: ColumnIndexes; issues: CustomImportIssue[] } => {
+	const headers = document.rows[document.headerRow] ?? [];
+	const columns =
+		plan.kind === "choropleth"
+			? {
+					code: plan.codeColumn,
+					value: plan.valueColumn,
+					...(plan.parentColumn && { parent: plan.parentColumn }),
+				}
+			: {
+					latitude: plan.latitudeColumn,
+					longitude: plan.longitudeColumn,
+					value: plan.valueColumn,
+				};
+	const indexes: ColumnIndexes = {};
+	const missing: string[] = [];
+	for (const [key, column] of Object.entries(columns)) {
+		const index = headers.indexOf(column);
+		if (index === -1) missing.push(column);
+		else indexes[key] = index;
+	}
+	return {
+		indexes,
+		issues: missing.length
+			? [
+					{
+						severity: "error",
+						code: "missing-column",
+						message: `The import plan refers to missing column${
+							missing.length === 1 ? "" : "s"
+						}: ${missing.join(", ")}`,
+					},
+				]
+			: [],
+	};
+};
+
+const invalidRowsIssue = (rows: number[]): CustomImportIssue | undefined =>
+	rows.length > 0
+		? {
+				severity: "warning",
+				code: "invalid-row",
+				message: `Ignored ${rows.length} row${rows.length === 1 ? "" : "s"} with missing or invalid values.`,
+				rows: rows.slice(0, 10),
+				count: rows.length,
+			}
+		: undefined;
+
+/**
+ * The area a choropleth row names. A name shared by several areas resolves
+ * only if the row's parent leaves exactly one of them, and otherwise to none;
+ * a name the index does not know is kept as written, as before.
+ */
+const rowArea = (
+	plan: Extract<CustomImportPlan, { kind: "choropleth" }>,
+	raw: string,
+	parentRaw: string | undefined,
+): { code: string } | { ambiguous: true } => {
+	const codes = plan.nameToCodes?.get(raw.toLowerCase());
+	if (!codes || codes.length === 0) return { code: raw };
+	if (codes.length === 1) return { code: codes[0]! };
+
+	const parent = parentRaw?.trim();
+	if (!parent || !plan.parentsOf) return { ambiguous: true };
+	const parentCodes = new Set(
+		plan.parentNameToCodes?.get(parent.toLowerCase()) ?? [
+			parent.toUpperCase(),
+		],
+	);
+	const inParent = codes.filter((code) =>
+		plan.parentsOf!.get(code)?.some((p) => parentCodes.has(p)),
+	);
+	return inParent.length === 1 ? { code: inParent[0]! } : { ambiguous: true };
+};
+
+const ambiguousNamesIssue = (
+	rows: number[],
+	names: string[],
+): CustomImportIssue | undefined =>
+	rows.length > 0
+		? {
+				severity: "warning",
+				code: "ambiguous-name",
+				message: `Left ${rows.length} row${rows.length === 1 ? "" : "s"} off the map: ${names.length} name${
+					names.length === 1 ? " is" : "s are"
+				} shared by more than one area.`,
+				rows: rows.slice(0, 10),
+				count: rows.length,
+				names: names.slice(0, 10),
+			}
+		: undefined;
+
+/**
+ * Validates column bindings and reports the rows that materialisation would
+ * skip. Invalid values are warnings because the existing upload experience
+ * intentionally accepts a useful partial dataset.
+ */
+export function validateCustomImport(
+	document: CustomImportDocument,
+	plan: CustomImportPlan,
+): CustomImportReport {
+	const { indexes, issues } = columnIndexes(document, plan);
+	if (issues.length > 0) {
+		return { valid: false, acceptedRows: 0, rejectedRows: 0, issues };
+	}
+
+	let acceptedRows = 0;
+	const invalidRows: number[] = [];
+	const ambiguousRows: number[] = [];
+	const ambiguousNames = new Map<string, string>();
+	for (const [index, row] of document.rows
+		.slice(document.headerRow + 1)
+		.entries()) {
+		const value = Number.parseFloat(row[indexes.value]!);
+		if (plan.kind === "choropleth") {
+			const raw = row[indexes.code]?.trim();
+			if (!raw || Number.isNaN(value)) {
+				invalidRows.push(document.headerRow + index + 2);
+				continue;
+			}
+			if ("ambiguous" in rowArea(plan, raw, row[indexes.parent])) {
+				ambiguousRows.push(document.headerRow + index + 2);
+				if (!ambiguousNames.has(raw.toLowerCase()))
+					ambiguousNames.set(raw.toLowerCase(), raw);
+				continue;
+			}
+		} else {
+			const latitude = Number.parseFloat(row[indexes.latitude]!);
+			const longitude = Number.parseFloat(row[indexes.longitude]!);
+			if (
+				Number.isNaN(latitude) ||
+				Number.isNaN(longitude) ||
+				Number.isNaN(value)
+			) {
+				invalidRows.push(document.headerRow + index + 2);
+				continue;
+			}
+		}
+		acceptedRows++;
+	}
+	const warnings = [
+		invalidRowsIssue(invalidRows),
+		ambiguousNamesIssue(ambiguousRows, [...ambiguousNames.values()]),
+	].filter((issue): issue is CustomImportIssue => issue !== undefined);
+	return {
+		valid: true,
+		acceptedRows,
+		rejectedRows: invalidRows.length + ambiguousRows.length,
+		issues: warnings,
+	};
+}
+
+/** Turns a validated document and plan into the compact dataset map renderers use. */
+export function materialiseCustomImport(
+	id: string,
+	document: CustomImportDocument,
+	plan: CustomImportPlan,
+): MaterialisedCustomImport {
+	const report = validateCustomImport(document, plan);
+	if (!report.valid) return { dataset: null, report };
+
+	const { indexes } = columnIndexes(document, plan);
+	const rows = document.rows.slice(document.headerRow + 1);
+	if (plan.kind === "points") {
+		const points: CustomPoint[] = [];
+		let valueMin = Infinity;
+		let valueMax = -Infinity;
+		for (const row of rows) {
+			const lat = Number.parseFloat(row[indexes.latitude]!);
+			const lng = Number.parseFloat(row[indexes.longitude]!);
+			const value = Number.parseFloat(row[indexes.value]!);
+			if (Number.isNaN(lat) || Number.isNaN(lng) || Number.isNaN(value))
+				continue;
+			points.push({ lat, lng, value });
+			valueMin = Math.min(valueMin, value);
+			valueMax = Math.max(valueMax, value);
+		}
+		return {
+			dataset: {
+				id,
+				type: "custom",
+				kind: "points",
+				name: document.fileName,
+				year: 0,
+				boundaryType: "ward",
+				boundaryYear: 0,
+				dataColumn: plan.valueColumn,
+				data: {},
+				points,
+				valueMin: points.length ? valueMin : 0,
+				valueMax: points.length ? valueMax : 0,
+			},
+			report,
+		};
+	}
+
+	const data: Record<string, number> = {};
+	for (const row of rows) {
+		const raw = row[indexes.code]?.trim();
+		const value = Number.parseFloat(row[indexes.value]!);
+		if (!raw || Number.isNaN(value)) continue;
+		const area = rowArea(plan, raw, row[indexes.parent]);
+		if ("code" in area) data[area.code] = value;
+	}
+	return {
+		dataset: {
+			id,
+			type: "custom",
+			kind: "choropleth",
+			name: document.fileName,
+			year: plan.boundaryYear,
+			boundaryType: plan.boundaryType,
+			boundaryYear: plan.boundaryYear,
+			dataColumn: plan.valueColumn,
+			data,
+		},
+		report,
+	};
+}

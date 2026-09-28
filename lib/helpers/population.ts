@@ -1,5 +1,8 @@
-// lib/population/utils.ts
-import { PopulationDataset, PopulationWardData } from "@lib/types";
+import {
+	BoundaryGeometry,
+	outerRings,
+	PopulationAgeSexRecord,
+} from "@lib/types";
 
 export const calculateTotal = (ageData: { [age: string]: number }): number => {
 	let sum = 0;
@@ -7,23 +10,12 @@ export const calculateTotal = (ageData: { [age: string]: number }): number => {
 	return sum;
 };
 
-const resolveWardCode = (
-	wardCode: string,
-	wardName: string,
-	population: PopulationDataset["data"],
-	wardCodeMap: { [name: string]: string },
-): string => {
-	if (population[wardCode]) return wardCode;
-	const normalizedName = wardName?.toLowerCase().trim();
-	return wardCodeMap[normalizedName] || "";
-};
-
 export const calculateMedianAge = (
-	wardPopulation: PopulationWardData,
+	population: PopulationAgeSexRecord,
 ): number | null => {
-	if (!wardPopulation?.total) return null;
+	if (!population?.total) return null;
 
-	const ageData = wardPopulation.total;
+	const ageData = population.total;
 	const totalPop = calculateTotal(ageData);
 	if (totalPop === 0) return null;
 
@@ -38,54 +30,37 @@ export const calculateMedianAge = (
 	return null;
 };
 
-// Calculates polygon area in square kilometers (roughly accurate for small areas)
-export const polygonAreaSqKm = (
-	coordinates: number[][][] | number[][][][],
-): number => {
+// Area of one ring in square kilometres (roughly accurate for small areas)
+const ringAreaSqKm = (ring: number[][]): number => {
 	const R = 6371;
+	if (ring.length < 4) return 0;
 
-	const calculateRingArea = (ring: number[][]): number => {
-		if (ring.length < 4) {
-			return 0;
-		}
+	let area = 0;
+	for (let i = 0; i < ring.length - 1; i++) {
+		const [lonStart, latStart] = ring[i];
+		const [lonEnd, latEnd] = ring[i + 1];
 
-		let area = 0;
-		for (let i = 0; i < ring.length - 1; i++) {
-			const [lonStart, latStart] = ring[i];
-			const [lonEnd, latEnd] = ring[i + 1];
+		const latStartRad = (latStart * Math.PI) / 180;
+		const latEndRad = (latEnd * Math.PI) / 180;
+		const deltaLonRad = ((lonEnd - lonStart) * Math.PI) / 180;
 
-			const latStartRad = (latStart * Math.PI) / 180;
-			const latEndRad = (latEnd * Math.PI) / 180;
-			const deltaLonRad = ((lonEnd - lonStart) * Math.PI) / 180;
-
-			area += deltaLonRad * (Math.sin(latStartRad) + Math.sin(latEndRad));
-		}
-
-		return (area * R * R) / 2;
-	};
-
-	let totalArea = 0;
-
-	// Determine if it's a Polygon or MultiPolygon by checking array depth
-	// MultiPolygon: coordinates are an array of Polygons, so coordinates[0] is a Polygon
-	// Polygon: coordinates are an array of rings, so coordinates[0] is a ring
-	const isMultiPolygon =
-		coordinates.length > 0 && Array.isArray(coordinates[0][0][0]);
-
-	if (isMultiPolygon) {
-		// MultiPolygon case: coordinates is number[][][][]
-		for (let i = 0; i < coordinates.length; i++) {
-			// Each element coordinates[i] is a Polygon (number[][][])
-			const outerRing = (coordinates[i] as number[][][])[0] as number[][];
-			const chunkArea = Math.abs(calculateRingArea(outerRing));
-			totalArea += chunkArea;
-		}
-	} else {
-		// Polygon case: coordinates is number[][][]
-		// The first ring of the polygon is coordinates[0] (number[][])
-		const outerRing = coordinates[0] as number[][];
-		totalArea = Math.abs(calculateRingArea(outerRing));
+		area += deltaLonRad * (Math.sin(latStartRad) + Math.sin(latEndRad));
 	}
 
-	return totalArea;
+	return (area * R * R) / 2;
 };
+
+/** Combined area of the given outer rings, in square kilometres. */
+export const ringsAreaSqKm = (rings: number[][][]): number =>
+	rings.reduce(
+		(total, ring) => total + (ring ? Math.abs(ringAreaSqKm(ring)) : 0),
+		0,
+	);
+
+/**
+ * Land area of a boundary geometry, in square kilometres. Holes are ignored:
+ * only each part's outer ring counts, and a part with no ring contributes
+ * nothing rather than throwing.
+ */
+export const polygonAreaSqKm = (geometry: BoundaryGeometry): number =>
+	ringsAreaSqKm(outerRings(geometry));

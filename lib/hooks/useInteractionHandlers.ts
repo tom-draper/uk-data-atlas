@@ -1,4 +1,4 @@
-import { useRef, useTransition } from "react";
+import { useCallback, useMemo, useRef, useTransition } from "react";
 import type { SelectedArea } from "@lib/types";
 
 interface UseInteractionHandlersParams {
@@ -13,8 +13,8 @@ export function useInteractionHandlers({
 	const lastHoveredCodeRef = useRef<string | null>(null);
 	const [, startTransition] = useTransition();
 
-	return {
-		onAreaHover: (hoverData: SelectedArea | null) => {
+	const onAreaHover = useCallback(
+		(hoverData: SelectedArea | null) => {
 			if (!hoverData) {
 				lastHoveredCodeRef.current = null;
 				startTransition(() => setSelectedArea(null));
@@ -24,10 +24,20 @@ export function useInteractionHandlers({
 			lastHoveredCodeRef.current = hoverData.code;
 			startTransition(() => setSelectedArea(hoverData));
 		},
-		onLocationChange: (location: string) => {
+		[setSelectedArea, startTransition],
+	);
+
+	const onLocationChange = useCallback(
+		(location: string) => {
 			setSelectedArea(null);
 			setSelectedLocation(location);
 			lastHoveredCodeRef.current = null;
 		},
-	};
+		[setSelectedArea, setSelectedLocation],
+	);
+
+	return useMemo(
+		() => ({ onAreaHover, onLocationChange }),
+		[onAreaHover, onLocationChange],
+	);
 }

@@ -10,6 +10,7 @@ export interface ValidationResult {
 export function validateCore(
 	core: GazetteerCore,
 	locations: Record<string, { lad_codes: string[] }>,
+	currentLocalAuthorityCodes?: ReadonlySet<string>,
 ): ValidationResult {
 	const errors: string[] = [];
 	const warnings: string[] = [];
@@ -24,20 +25,31 @@ export function validateCore(
 	// nameIndex points only at real codes.
 	for (const [name, cs] of Object.entries(core.nameIndex))
 		for (const c of cs)
-			if (!codes.has(c)) errors.push(`nameIndex[${name}] -> unknown code ${c}`);
+			if (!codes.has(c))
+				errors.push(`nameIndex[${name}] -> unknown code ${c}`);
 
 	// areaM2 rolls up: a region's area equals the sum of its child LAD areas.
 	const childArea: Record<string, number> = {};
-	for (const e of Object.values(core.byCode))
-		for (const p of e.parents) childArea[p] = (childArea[p] ?? 0) + e.areaM2;
+	for (const e of Object.values(core.byCode)) {
+		if (
+			e.level === "localAuthority" &&
+			currentLocalAuthorityCodes &&
+			!currentLocalAuthorityCodes.has(e.code)
+		)
+			continue;
+		for (const p of e.parents)
+			childArea[p] = (childArea[p] ?? 0) + e.areaM2;
+	}
 	for (const e of Object.values(core.byCode)) {
 		if (e.level !== "region") continue;
 		const summed = childArea[e.code] ?? 0;
 		if (summed > 0 && Math.abs(e.areaM2 - summed) / e.areaM2 > 0.001)
-			errors.push(`region ${e.code} areaM2 ${e.areaM2} != child sum ${summed}`);
+			errors.push(
+				`region ${e.code} areaM2 ${e.areaM2} != child sum ${summed}`,
+			);
 	}
 
-	// namedLocations reproduce LOCATIONS exactly (regression guard).
+	// namedLocations reproduce the resolved places exactly (regression guard).
 	for (const [name, loc] of Object.entries(locations)) {
 		const got = core.namedLocations[name];
 		if (!got) {
@@ -45,18 +57,34 @@ export function validateCore(
 			continue;
 		}
 		if (got.memberCodes.join(",") !== loc.lad_codes.join(","))
-			errors.push(`namedLocations[${name}] members differ from LOCATIONS`);
-		// A member with no matching boundary in any shipped vintage is LOCATIONS
-		// curation debt (a pre-2016 recoded/abolished LAD), not a gazetteer fault.
+			errors.push(
+				`namedLocations[${name}] members differ from its definition`,
+			);
+		if (
+			got.memberAssertions &&
+			got.memberAssertions.map(({ code }) => code).join(",") !==
+				loc.lad_codes.join(",")
+		)
+			errors.push(
+				`namedLocations[${name}] membership assertions differ from its definition`,
+			);
+		// The core holds every LAD release with GSS codes, so a member it lacks
+		// is in no shipped release: a mistyped or pre-2011 code in LOCATIONS.
 		for (const c of loc.lad_codes)
 			if (!codes.has(c))
-				warnings.push(`namedLocations[${name}] member ${c} predates shipped boundaries`);
+				warnings.push(
+					`namedLocations[${name}] member ${c} is in no shipped LAD release`,
+				);
 	}
 
 	return { errors, warnings };
 }
 
-export function validateCrosswalk(name: string, cw: Crosswalk, targetCodes: Set<string>): string[] {
+export function validateCrosswalk(
+	name: string,
+	cw: Crosswalk,
+	targetCodes: Set<string>,
+): string[] {
 	const errors: string[] = [];
 	for (const [src, tgts] of Object.entries(cw)) {
 		const sum = tgts.reduce((s, t) => s + t.weight, 0);

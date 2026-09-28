@@ -1,5 +1,5 @@
 // Runtime gazetteer API (design doc 7). Pure and synchronous over already-loaded
-// artifacts; the hook (useGazetteer) handles loading/lifecycle. Supersedes
+// artifacts, which are passed in whole at construction. Supersedes
 // LOCATIONS / areaBank / codeMapper as consumers migrate (Phase 3+).
 import type { Crosswalk, GazetteerCore, GazetteerEntry, Level } from "./types";
 
@@ -11,7 +11,10 @@ export class Gazetteer {
 	private crosswalks: Record<string, Crosswalk>;
 	private childrenByParent: Record<string, string[]> = {};
 
-	constructor(core: GazetteerCore, crosswalks: Record<string, Crosswalk> = {}) {
+	constructor(
+		core: GazetteerCore,
+		crosswalks: Record<string, Crosswalk> = {},
+	) {
 		this.core = core;
 		this.crosswalks = crosswalks;
 		this.version = core.version;
@@ -19,10 +22,6 @@ export class Gazetteer {
 		for (const e of Object.values(core.byCode))
 			for (const p of e.parents)
 				(this.childrenByParent[p] ??= []).push(e.code);
-	}
-
-	registerCrosswalk(from: Level, to: Level, cw: Crosswalk): void {
-		this.crosswalks[key(from, to)] = cw;
 	}
 
 	// --- identity / attributes ---
@@ -39,7 +38,9 @@ export class Gazetteer {
 	// --- names (alias-aware, ambiguity-preserving; see 4.6) ---
 	resolveName(name: string, level?: Level): GazetteerEntry[] {
 		const codes = this.core.nameIndex[name.trim().toLowerCase()] ?? [];
-		const entries = codes.map((c) => this.core.byCode[c]).filter(Boolean) as GazetteerEntry[];
+		const entries = codes
+			.map((c) => this.core.byCode[c])
+			.filter(Boolean) as GazetteerEntry[];
 		return level ? entries.filter((e) => e.level === level) : entries;
 	}
 
@@ -88,13 +89,23 @@ export class Gazetteer {
 	}
 
 	// --- conversions (see 4.4) ---
-	overlaps(code: string, targetLevel: Level): Array<{ code: string; weight: number }> {
+	overlaps(
+		code: string,
+		targetLevel: Level,
+	): Array<{ code: string; weight: number }> {
 		const level = this.get(code)?.level;
 		if (!level) return [];
 		return this.crosswalks[key(level, targetLevel)]?.[code] ?? [];
 	}
 
-	// Weighted re-aggregation of extensive values from one level to another.
+	/**
+	 * Weighted re-aggregation of extensive values (counts that add over areas)
+	 * from one level to another. Wrong for anything else: a rate, share or
+	 * median must be apportioned as numerator and denominator, or not at all.
+	 * Which kind a measure is belongs to the API, whose data catalogue declares
+	 * it for every measure it serves (`aggregation.kind` in api/src/dataCatalog.ts);
+	 * check that before calling this on a dataset's values.
+	 */
 	apportion(
 		values: Record<string, number>,
 		fromLevel: Level,

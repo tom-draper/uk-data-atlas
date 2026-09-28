@@ -4,7 +4,7 @@ test("selecting a local-election party filters its active chart", async ({
 	page,
 }) => {
 	await page.goto(
-		"/atlas?location=Greater%20Manchester&viz=localElection2024&type=localElection&year=2024",
+		"/atlas?location=Greater%20Manchester&dataset=local-election&period=2024",
 	);
 
 	const chart = page

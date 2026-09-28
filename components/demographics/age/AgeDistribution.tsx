@@ -7,19 +7,15 @@ import {
 	SelectedArea,
 } from "@/lib/types";
 import AgeDistributionChart from "./AgeDistributionChart";
-import { CodeMapper } from "@/lib/hooks/useCodeMapper";
-import { ChartLoadingBackground } from "@/components/ChartLoadingPlaceholder";
-import { useIsDark } from "@/lib/context/ThemeContext";
+import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
+import { ChartCard } from "@/components/ChartCard";
 import {
-	resolveWardData,
+	getAreaCachedValue,
 	getLadCachedValue,
+	populationAreaMappingsAvailable,
+	resolvePopulationAreaWards,
 } from "@/lib/helpers/demographicData";
 import { getAgeColor } from "@/lib/helpers/ageDistribution";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
 
 interface AgeDistributionProps {
 	dataset: PopulationDataset;
@@ -27,7 +23,7 @@ interface AgeDistributionProps {
 	selectedArea: SelectedArea | null;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
-	codeMapper?: CodeMapper;
+	codeMapper?: PopulationCodeResolver;
 }
 
 // Pre-calculate age group boundaries (constant)
@@ -81,9 +77,9 @@ function AgeDistribution({
 	setActiveViz,
 	codeMapper,
 }: AgeDistributionProps) {
-	const isDark = useIsDark();
-	const vizId = `ageDistribution${dataset.year}`;
-	const isActive = activeViz.vizId === vizId;
+	const isActive =
+		activeViz.datasetId === dataset.id && activeViz.view === "age";
+	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 
 	const { medianAge, ageGroups, total, counts, maxCount } = (() => {
 		let max = 0;
@@ -123,11 +119,11 @@ function AgeDistribution({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardData = resolveWardData(
+			const wardData = resolvePopulationAreaWards(
 				dataset,
-				selectedArea.code,
+				selectedArea,
 				codeMapper,
-			);
+			)?.[0]?.data;
 
 			if (!wardData) {
 				return {
@@ -204,19 +200,22 @@ function AgeDistribution({
 		if (
 			selectedArea &&
 			selectedArea.type === "localAuthority" &&
-			codeMapper?.getWardsForLad
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
 			return getLadCachedValue(
 				ageDistributionCache,
 				selectedArea.code,
 				dataset.year,
+				dataset,
+				mappingGeneration,
 				() => {
-					const wardCodes = codeMapper.getWardsForLad!(
-						selectedArea.code,
-						dataset.boundaryYear,
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
 					);
 
-					if (wardCodes.length === 0) {
+					if (!wardRecords?.length) {
 						return {
 							medianAge: 0,
 							ageGroups: EMPTY_AGE_GROUPS,
@@ -228,13 +227,8 @@ function AgeDistribution({
 
 					// Aggregate age counts across all wards
 					const aggregatedCounts = new Uint32Array(100);
-					for (const wardCode of wardCodes) {
-						const wardData = resolveWardData(
-							dataset,
-							wardCode,
-							codeMapper,
-						);
-						if (wardData?.total) {
+					for (const { data: wardData } of wardRecords) {
+						if (wardData.total) {
 							for (let i = 0; i < 90; i++) {
 								aggregatedCounts[i] +=
 									wardData.total[AGE_STRING_KEYS[i]] || 0;
@@ -284,76 +278,86 @@ function AgeDistribution({
 			);
 		}
 
-		// Handle Constituency Selection (no cache — stale cache risks hiding data if computed
-		// before constituency-ward mappings finish loading asynchronously)
+		// Mapping generation changes when the async constituency lookup is ready,
+		// so this cache cannot retain an early empty result.
 		if (
 			selectedArea &&
 			selectedArea.type === "constituency" &&
-			codeMapper?.getWardsForConstituency
+			populationAreaMappingsAvailable(selectedArea, codeMapper)
 		) {
-			const wardCodes = codeMapper.getWardsForConstituency(
-				selectedArea.code,
-				dataset.boundaryYear,
+			return getAreaCachedValue(
+				ageDistributionCache,
+				`constituency-${selectedArea.code}`,
+				dataset.year,
+				dataset,
+				mappingGeneration,
+				() => {
+					const wardRecords = resolvePopulationAreaWards(
+						dataset,
+						selectedArea,
+						codeMapper,
+					);
+
+					if (!wardRecords?.length) {
+						return {
+							medianAge: 0,
+							ageGroups: EMPTY_AGE_GROUPS,
+							total: 0,
+							counts: new Uint32Array(100),
+							maxCount: 0,
+						};
+					}
+
+					const aggregatedCounts = new Uint32Array(100);
+					for (const { data: wardData } of wardRecords) {
+						if (wardData.total) {
+							for (let i = 0; i < 90; i++) {
+								aggregatedCounts[i] +=
+									wardData.total[AGE_STRING_KEYS[i]] || 0;
+							}
+							const age90Plus = wardData.total["90"] || 0;
+							for (let i = 90; i < 100; i++) {
+								aggregatedCounts[i] += Math.round(
+									age90Plus * NORMALIZED_WEIGHTS[i - 90],
+								);
+							}
+						}
+					}
+
+					let totalPopulation = 0;
+					let max = 0;
+					for (let i = 0; i < 100; i++) {
+						totalPopulation += aggregatedCounts[i];
+						if (aggregatedCounts[i] > max)
+							max = aggregatedCounts[i];
+					}
+
+					let cumulative = 0;
+					const halfPopulation = totalPopulation / 2;
+					let median = 0;
+					let medianFound = false;
+					const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
+					for (let i = 0; i < 100; i++) {
+						const count = aggregatedCounts[i];
+						currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
+						if (!medianFound) {
+							cumulative += count;
+							if (cumulative >= halfPopulation) {
+								median = i;
+								medianFound = true;
+							}
+						}
+					}
+
+					return {
+						medianAge: median,
+						ageGroups: currentAgeGroups,
+						total: totalPopulation,
+						counts: aggregatedCounts,
+						maxCount: max,
+					};
+				},
 			);
-
-			if (wardCodes.length === 0) {
-				return {
-					medianAge: 0,
-					ageGroups: EMPTY_AGE_GROUPS,
-					total: 0,
-					counts: new Uint32Array(100),
-					maxCount: 0,
-				};
-			}
-
-			const aggregatedCounts = new Uint32Array(100);
-			for (const wardCode of wardCodes) {
-				const wardData = resolveWardData(dataset, wardCode, codeMapper);
-				if (wardData?.total) {
-					for (let i = 0; i < 90; i++) {
-						aggregatedCounts[i] +=
-							wardData.total[AGE_STRING_KEYS[i]] || 0;
-					}
-					const age90Plus = wardData.total["90"] || 0;
-					for (let i = 90; i < 100; i++) {
-						aggregatedCounts[i] += Math.round(
-							age90Plus * NORMALIZED_WEIGHTS[i - 90],
-						);
-					}
-				}
-			}
-
-			let totalPopulation = 0;
-			let max = 0;
-			for (let i = 0; i < 100; i++) {
-				totalPopulation += aggregatedCounts[i];
-				if (aggregatedCounts[i] > max) max = aggregatedCounts[i];
-			}
-
-			let cumulative = 0;
-			const halfPopulation = totalPopulation / 2;
-			let median = 0;
-			let medianFound = false;
-			const currentAgeGroups: AgeGroups = { ...EMPTY_AGE_GROUPS };
-			for (let i = 0; i < 100; i++) {
-				const count = aggregatedCounts[i];
-				currentAgeGroups[AGE_GROUP_KEYS[i]] += count;
-				if (!medianFound) {
-					cumulative += count;
-					if (cumulative >= halfPopulation) {
-						median = i;
-						medianFound = true;
-					}
-				}
-			}
-
-			return {
-				medianAge: median,
-				ageGroups: currentAgeGroups,
-				total: totalPopulation,
-				counts: aggregatedCounts,
-				maxCount: max,
-			};
 		}
 
 		// Handle Missing Data or unsupported area types
@@ -374,40 +378,28 @@ function AgeDistribution({
 		return getAgeColor(parseInt(largestKey.split("-")[0]));
 	})();
 
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(isActive, isDark)}
+		<ChartCard
+			heading={`Age Distribution [${dataset.year}]`}
+			headerEnd={
+				medianAge > 0 && (
+					<span className="text-[10px] text-gray-500 mr-1">
+						Median: {medianAge}
+					</span>
+				)
+			}
+			accent={accentColor}
+			isActive={isActive}
 			title="Office for National Statistics. Census 2021: Age by Single Year of Age, England and Wales. ons.gov.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				setActiveViz({
-					vizId: vizId,
+					datasetId: dataset.id,
+					view: "age",
 					datasetType: dataset.type,
 					datasetYear: dataset.year,
 				})
 			}
 		>
-			<ChartLoadingBackground />
-			<div className="flex items-center justify-between mb-1.5">
-				<h3 className={chartHeadingClass(isDark)}>
-					Age Distribution [{dataset.year}]
-				</h3>
-				{medianAge > 0 && (
-					<span className="text-[10px] text-gray-500 mr-1">
-						Median: {medianAge}
-					</span>
-				)}
-			</div>
-
 			{/* Pass primitive props to ensure reference stability and speed */}
 			<AgeDistributionChart
 				counts={counts}
@@ -416,7 +408,7 @@ function AgeDistribution({
 				ageGroups={ageGroups}
 				isActive={isActive}
 			/>
-		</button>
+		</ChartCard>
 	);
 }
 

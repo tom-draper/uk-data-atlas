@@ -1,12 +1,25 @@
 import { describe, expect, it, vi } from "vitest";
 import { LayerManager } from "@/lib/helpers/mapManager/layerManager";
+import {
+	featureColorPaint,
+	valuePaint,
+} from "@/lib/helpers/mapRendering/fillPaint";
 
-function createMap() {
+function createMap(styleLoaded = true) {
 	const sources = new Map<string, { setData: ReturnType<typeof vi.fn> }>();
 	const layers = new Set<string>();
+	let isStyleLoaded = styleLoaded;
+	let idleCallback: (() => void) | undefined;
 
 	return {
-		isStyleLoaded: () => true,
+		isStyleLoaded: () => isStyleLoaded,
+		setStyleLoaded: (loaded: boolean) => {
+			isStyleLoaded = loaded;
+		},
+		once: vi.fn((_event: string, callback: () => void) => {
+			idleCallback = callback;
+		}),
+		triggerIdle: () => idleCallback?.(),
 		getSource: (id: string) => sources.get(id),
 		getLayer: (id: string) => (layers.has(id) ? { id } : undefined),
 		addSource: (id: string) => sources.set(id, { setData: vi.fn() }),
@@ -14,6 +27,7 @@ function createMap() {
 		removeLayer: (id: string) => layers.delete(id),
 		removeSource: (id: string) => sources.delete(id),
 		setPaintProperty: vi.fn(),
+		setFilter: vi.fn(),
 		sources,
 	};
 }
@@ -30,17 +44,42 @@ describe("LayerManager visibility updates", () => {
 			overlayOpacity: 0.6,
 		};
 
-		manager.updatePointLayers(
-			{ type: "FeatureCollection", features: [] },
+		manager.render({
+			kind: "points",
+			data: { type: "FeatureCollection", features: [] },
 			visibility,
-			"viridis",
-			{ min: 1.5, max: 3.5 },
-		);
+			radius: { min: 1.5, max: 3.5 },
+		});
 
 		expect(map.setPaintProperty).toHaveBeenCalledWith(
 			"custom-points-circle",
 			"circle-radius",
 			["interpolate", ["linear"], ["zoom"], 6, 1.5, 10, 3.5],
+		);
+	});
+
+	it("renders standalone line layers through the shared layer contract", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		manager.render({
+			kind: "line",
+			id: "rail-network",
+			data: { type: "FeatureCollection", features: [] },
+			visibility: {
+				hideDataLayer: false,
+				hideBorders: false,
+				hideBoundaryLayer: false,
+				hideOverlay: false,
+				overlayOpacity: 0.6,
+			},
+			style: { color: "#d4006a", width: 2, opacity: 0.8 },
+		});
+
+		expect(map.getLayer("atlas-line-rail-network-stroke")).toBeDefined();
+		expect(map.setPaintProperty).toHaveBeenCalledWith(
+			"atlas-line-rail-network-stroke",
+			"line-opacity",
+			0.8,
 		);
 	});
 
@@ -69,7 +108,7 @@ describe("LayerManager visibility updates", () => {
 			],
 		} as any;
 
-		manager.updateColoredLayers(geojson, {
+		manager.paintBoundaries(geojson, featureColorPaint(), {
 			hideDataLayer: false,
 			hideBorders: false,
 			hideBoundaryLayer: false,
@@ -99,7 +138,32 @@ describe("LayerManager visibility updates", () => {
 		);
 	});
 
-	it("does not re-upload scalar GeoJSON when only the colour expression changes", () => {
+	it("renders vector-tile line layers without loading national GeoJSON", () => {
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+		manager.render({
+			kind: "vector-line",
+			id: "os-open-roads",
+			source: {
+				tiles: ["https://tiles.example/{z}/{x}/{y}.pbf"],
+				sourceLayer: "RoadLink",
+			},
+			visibility: {
+				hideDataLayer: false,
+				hideBorders: false,
+				hideBoundaryLayer: false,
+				hideOverlay: false,
+				overlayOpacity: 0.6,
+			},
+			style: { color: "#c2410c", width: 1 },
+		});
+
+		expect(
+			map.getLayer("atlas-vector-line-os-open-roads-stroke"),
+		).toBeDefined();
+	});
+
+	it("does not re-upload numeric GeoJSON when only the colour expression changes", () => {
 		const map = createMap();
 		const manager = new LayerManager(map as any);
 		const geojson = {
@@ -115,12 +179,24 @@ describe("LayerManager visibility updates", () => {
 			overlayOpacity: 0.6,
 		};
 
-		manager.updateValueLayers(geojson, ["get", "value"], visibility);
+		manager.paintBoundaries(
+			geojson,
+			valuePaint(["get", "value"]),
+			visibility,
+		);
 		const setData = map.sources.get("location-wards")!.setData;
 
-		manager.updateValueLayers(
+		manager.paintBoundaries(
 			geojson,
-			["interpolate", ["linear"], ["get", "value"], 0, "#000", 1, "#fff"],
+			valuePaint([
+				"interpolate",
+				["linear"],
+				["get", "value"],
+				0,
+				"#000",
+				1,
+				"#fff",
+			]),
 			visibility,
 		);
 
@@ -130,5 +206,35 @@ describe("LayerManager visibility updates", () => {
 			"fill-color",
 			["interpolate", ["linear"], ["get", "value"], 0, "#000", 1, "#fff"],
 		);
+	});
+
+	it("retries the latest boundary paint once a pending style becomes ready", () => {
+		const map = createMap(false);
+		const manager = new LayerManager(map as any);
+		const visibility = {
+			hideDataLayer: false,
+			hideBorders: false,
+			hideBoundaryLayer: false,
+			hideOverlay: false,
+			overlayOpacity: 0.6,
+		};
+
+		manager.paintBoundaries(
+			{
+				type: "FeatureCollection",
+				crs: { type: "name", properties: { name: "CRS84" } },
+				features: [],
+			} as any,
+			featureColorPaint(),
+			visibility,
+		);
+
+		expect(map.getLayer("wards-fill")).toBeUndefined();
+		expect(map.once).toHaveBeenCalledWith("idle", expect.any(Function));
+
+		map.setStyleLoaded(true);
+		map.triggerIdle();
+
+		expect(map.getLayer("wards-fill")).toBeDefined();
 	});
 });

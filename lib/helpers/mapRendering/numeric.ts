@@ -1,0 +1,104 @@
+import type { BoundaryGeojson } from "@lib/types";
+import type { BoundaryType } from "@/lib/types/boundaries";
+import type { ColorRange } from "@/lib/types/common";
+import type { MapOptions, NumericMapOptionsKey } from "@lib/types/mapOptions";
+import { getSequentialColorExpression } from "@/lib/helpers/colorScale/datasetColors";
+import type { BoundaryCodeScope } from "../mapManager/propertyDetector";
+import { valueGeojson, type MapRenderContext } from "./context";
+
+export type NumericDataset = {
+	/** Names both the map mode and the options group holding its colour range. */
+	type: NumericMapOptionsKey;
+	boundaryType: BoundaryType;
+	data: Record<string, unknown>;
+};
+
+export interface NumericMapConfig<T extends NumericDataset> {
+	valueKey?: string;
+	valueFor?(dataset: T, code: string, mapOptions: MapOptions): number | null;
+	colorRange?: ColorRange;
+	/** Identifies option-dependent source values for the transformed GeoJSON cache. */
+	sourceMode?(dataset: T, mapOptions: MapOptions): string;
+	invertColor?: boolean;
+	getColorRange?(dataset: T, mapOptions: MapOptions): ColorRange;
+}
+
+/** Paints one value per boundary on the theme's sequential colour ramp. */
+function renderChoropleth<T extends { data: Record<string, unknown> }>(
+	ctx: MapRenderContext,
+	geojson: BoundaryGeojson,
+	dataset: T,
+	mapOptions: MapOptions,
+	scope: BoundaryCodeScope,
+	sourceMode: string,
+	dataForEvents: Record<string, unknown>,
+	valueFor: (dataset: T, code: string) => number | null | undefined,
+	getColorRange: (dataset: T, options: MapOptions) => ColorRange,
+	invertColor = true,
+): void {
+	const codeProp = ctx.codeProp(scope, geojson.features);
+
+	const transformedGeojson = valueGeojson(
+		ctx,
+		geojson,
+		dataset,
+		sourceMode,
+		codeProp,
+		(code) => valueFor(dataset, code),
+	);
+	ctx.layerManager.render({
+		kind: "boundary-fill",
+		data: transformedGeojson,
+		colorExpression: getSequentialColorExpression(
+			getColorRange(dataset, mapOptions),
+			mapOptions.theme.id,
+			invertColor,
+		),
+		visibility: mapOptions.visibility,
+	});
+	ctx.eventHandler.setupEventHandlers(dataForEvents, codeProp);
+}
+
+export function renderNumericDataset<T extends NumericDataset>(
+	ctx: MapRenderContext,
+	geojson: BoundaryGeojson,
+	dataset: T,
+	mapOptions: MapOptions,
+	map: NumericMapConfig<T>,
+): void {
+	renderChoropleth(
+		ctx,
+		geojson,
+		dataset,
+		mapOptions,
+		dataset.boundaryType,
+		map.sourceMode?.(dataset, mapOptions) ?? dataset.type,
+		dataset.data,
+		(data, code) => {
+			const mappedValue = map.valueFor?.(data, code, mapOptions);
+			if (mappedValue !== undefined) return mappedValue;
+			const value = map.valueKey
+				? (
+						data.data[code] as unknown as
+							Record<string, unknown> | undefined
+					)?.[map.valueKey]
+				: null;
+			return typeof value === "number" && Number.isFinite(value)
+				? value
+				: null;
+		},
+		(data, options) => {
+			const configuredRange = options[dataset.type].colorRange;
+			if (
+				map.getColorRange &&
+				map.colorRange &&
+				configuredRange.min === map.colorRange.min &&
+				configuredRange.max === map.colorRange.max
+			) {
+				return map.getColorRange(data, options);
+			}
+			return configuredRange;
+		},
+		map.invertColor,
+	);
+}

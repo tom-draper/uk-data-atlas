@@ -1,0 +1,150 @@
+import {
+	closeSync,
+	openSync,
+	readdirSync,
+	readFileSync,
+	readSync,
+	statSync,
+} from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import {
+	API_ONLY_GEOGRAPHIES,
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+} from "@/lib/data/boundaries/catalog";
+import { parseDatasetMeta } from "@/lib/data/catalog/meta";
+
+const ROOT = join(process.cwd(), "data", "boundaries");
+
+/** Every file in a release folder, directories walked, meta.json excluded. */
+const filesIn = (dir: string, prefix = ""): string[] =>
+	readdirSync(dir).flatMap((name) => {
+		const path = join(dir, name);
+		if (statSync(path).isDirectory())
+			return filesIn(path, `${prefix}${name}/`);
+		return name === "meta.json" ? [] : [`${prefix}${name}`];
+	});
+
+const directories = (dir: string) =>
+	readdirSync(dir).filter((name) => statSync(join(dir, name)).isDirectory());
+
+const releaseFolders = directories(ROOT).flatMap((geography) =>
+	directories(join(ROOT, geography)).map((release) => ({
+		geography,
+		release,
+		dir: join(ROOT, geography, release),
+	})),
+);
+
+/**
+ * The catalogue's BoundaryType for each geography folder, read off the asset
+ * paths rather than listed here, so a new geography needs no edit to pass.
+ */
+const GEOGRAPHY_TYPE: Record<string, string> = Object.fromEntries(
+	BOUNDARY_TYPES.flatMap((type) => {
+		const asset = BOUNDARY_CATALOG[type].releases.find(
+			(r) => r.asset,
+		)?.asset;
+		const folder = asset
+			?.split("?")[0]
+			?.split("/data/boundaries/")[1]
+			?.split("/")[0];
+		return folder ? [[folder, type]] : [];
+	}),
+);
+for (const [folder, { geography }] of Object.entries(API_ONLY_GEOGRAPHIES))
+	GEOGRAPHY_TYPE[folder] = geography;
+
+describe("boundary release metadata", () => {
+	it("describes every release folder on disk", () => {
+		for (const { geography, release, dir } of releaseFolders) {
+			const raw = readFileSync(join(dir, "meta.json"), "utf8");
+			const meta = parseDatasetMeta(JSON.parse(raw), release);
+			expect(meta.kind, `${geography}/${release}`).toBe("boundary");
+			expect(
+				meta.spatialCoverage?.geography,
+				`${geography}/${release} geography`,
+			).toBe(GEOGRAPHY_TYPE[geography]);
+		}
+	});
+
+	// Drop a downloaded release in and this says what is missing, rather than
+	// the files sitting there unlisted the way nine releases already had.
+	it("lists exactly the files each release folder holds", () => {
+		for (const { geography, release, dir } of releaseFolders) {
+			const meta = parseDatasetMeta(
+				JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")),
+				release,
+			);
+			const listed = new Set(meta.files.map((file) => file.path));
+			const present = new Set(filesIn(dir));
+			expect(
+				[...present].filter((path) => !listed.has(path)),
+				`${geography}/${release}: files not listed in meta.json`,
+			).toEqual([]);
+			expect(
+				[...listed].filter((path) => !present.has(path)),
+				`${geography}/${release}: meta.json lists missing files`,
+			).toEqual([]);
+		}
+	});
+
+	it("describes every release the catalogue serves", () => {
+		const described = new Set(
+			releaseFolders.map(
+				({ geography, release }) => `${geography}/${release}`,
+			),
+		);
+		for (const type of BOUNDARY_TYPES) {
+			for (const { id, asset } of BOUNDARY_CATALOG[type].releases) {
+				if (!asset) continue;
+				const folder = asset
+					.split("?")[0]!
+					.replace("/data/boundaries/", "");
+				expect(described).toContain(
+					folder.replace("/boundaries.topojson", ""),
+				);
+			}
+		}
+	});
+});
+
+describe("declared geometry corrections", () => {
+	const declaring = releaseFolders.flatMap(({ geography, release, dir }) => {
+		const meta = parseDatasetMeta(
+			JSON.parse(readFileSync(join(dir, "meta.json"), "utf8")),
+			release,
+		);
+		return (meta.corrections ?? []).map((id) => ({
+			where: `${geography}/${release}`,
+			id,
+			source: meta.files.find(
+				(file) =>
+					file.path.endsWith(".geojson") && file.role === "source",
+			),
+			dir,
+		}));
+	});
+
+	it("names a definition that exists beside the releases", () => {
+		expect(declaring.length).toBeGreaterThan(0);
+		for (const { where, id } of declaring) {
+			expect(readdirSync(ROOT), where).toContain(`${id}.json`);
+		}
+	});
+
+	it("is declared only on a British National Grid source", () => {
+		for (const { where, source, dir } of declaring) {
+			expect(source, `${where} has no GeoJSON source`).toBeDefined();
+			// The CRS is declared at the top of the file, before any feature,
+			// so read only that much rather than sources of tens of megabytes.
+			const buffer = Buffer.alloc(512);
+			const file = openSync(join(dir, source!.path), "r");
+			const length = readSync(file, buffer, 0, buffer.length, 0);
+			closeSync(file);
+			const head = buffer.subarray(0, length).toString("utf8");
+			expect(head, where).toContain("27700");
+		}
+	});
+});

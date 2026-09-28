@@ -2,22 +2,30 @@
 import { useMemo } from "react";
 import { withCDN } from "../helpers/cdn";
 import { useJsonDataLoader } from "./useJsonDataLoader";
-import { buildAreaBankFromIndex, type AreaBank, type MatchIndex } from "../data/areaBank";
+import {
+	buildAreaBankFromIndex,
+	parseMatchIndexLevel,
+	type AreaBank,
+} from "../data/areaBank";
 
-// Lazily loads the precomputed match-index shard (810 KB gz) and derives the
-// AreaBank used for upload-column matching. Gated by `enabled` so the shard is
-// only fetched when the upload flow needs it, not on every page load.
-export function useMatchIndex(enabled: boolean): { areaBank: AreaBank; loading: boolean } {
-	const { datasets, loading } = useJsonDataLoader<MatchIndex>(
-		withCDN("/data/precompiled/gazetteer.matchindex.json"),
+// Lazily loads the precomputed match-index shard (about 1 MB gz, every geography
+// the catalogue serves) and derives the AreaBank used for upload-column
+// matching. Gated by `enabled` so the shard is only fetched when the upload
+// flow needs it, not on every page load.
+export function useMatchIndex(enabled: boolean): {
+	areaBank: AreaBank;
+	loading: boolean;
+} {
+	const { datasets: index, loading } = useJsonDataLoader(
+		withCDN("/data/datasets/gazetteer.matchindex.json"),
+		parseMatchIndexLevel,
 		enabled,
 	);
 
 	const areaBank = useMemo(() => {
-		const index = datasets as unknown as MatchIndex;
 		if (!index || Object.keys(index).length === 0) return [];
 		return buildAreaBankFromIndex(index);
-	}, [datasets]);
+	}, [index]);
 
 	return { areaBank, loading };
 }

@@ -1,15 +1,16 @@
 // lib/data/generalElectionConfig.ts
 
 import { ConstituencyYear } from "../../boundaries/boundaries";
+import type { GeneralElectionYear } from "@lib/types";
 
 export type GeneralElectionSourceConfig = {
-	year: ConstituencyYear;
+	year: GeneralElectionYear;
 	// Path relative to public/data/, read at precompile time
 	path: string;
 	// Flag to handle the unique header cleaning logic for the 2024 CSV file
 	requiresHeaderCleaning: boolean;
 	// The year of the boundary GeoJSON file corresponding to this election data
-	constituencyBoundaryYear: 2024 | 2019;
+	constituencyBoundaryYear: ConstituencyYear;
 	fields: {
 		onsId: string;
 		constituencyName: string;
@@ -23,6 +24,8 @@ export type GeneralElectionSourceConfig = {
 		invalidVotes: string;
 		// The list of party columns to iterate over
 		partyColumns: string[];
+		/** Maps a source header to the party key used by the atlas. */
+		partyColumnAliases?: Record<string, string>;
 	};
 };
 
@@ -55,14 +58,50 @@ const KNOWN_PARTIES_PRE_2024 = [
 	"APNI",
 	"UKIP",
 ];
+const KNOWN_PARTIES_2010 = [
+	"Con",
+	"Lab",
+	"LD",
+	"UKIP",
+	"Green",
+	"SNP",
+	"PC",
+	"DUP",
+	"SF",
+	"SDLP",
+	"UUP (as UCUNF)",
+	"APNI",
+];
 
 export const GENERAL_ELECTION_SOURCES: Record<
 	string,
 	GeneralElectionSourceConfig
 > = {
+	"general-election-2010": {
+		year: 2010,
+		path: "politics/elections/general-elections/2010/HoC-GE2010-results-by-constituency.csv",
+		requiresHeaderCleaning: false,
+		// The constituencies first contested in 2010 lasted until 2024, so like
+		// 2015 and 2017 its results carry the codes of the 2019 release.
+		constituencyBoundaryYear: 2019,
+		fields: {
+			onsId: "ONS ID",
+			constituencyName: "Constituency name",
+			regionName: "Region name",
+			countryName: "Country name",
+			firstParty: "First party",
+			otherCandidates: "All other candidates",
+			majority: "Majority",
+			electorate: "Electorate",
+			validVotes: "Valid votes",
+			invalidVotes: "Invalid votes",
+			partyColumns: KNOWN_PARTIES_2010,
+			partyColumnAliases: { "UUP (as UCUNF)": "UUP" },
+		},
+	},
 	"general-election-2024": {
 		year: 2024,
-		path: "elections/general-elections/HoC-GE2024-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2024/HoC-GE2024-results-by-constituency.csv",
 		requiresHeaderCleaning: true, // Need to skip initial metadata rows
 		constituencyBoundaryYear: 2024,
 		fields: {
@@ -81,7 +120,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2019": {
 		year: 2019,
-		path: "elections/general-elections/HoC-GE2019-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2019/HoC-GE2019-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019,
 		fields: {
@@ -100,7 +139,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2017": {
 		year: 2017,
-		path: "elections/general-elections/HoC-GE2017-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2017/HoC-GE2017-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
 		fields: {
@@ -119,7 +158,7 @@ export const GENERAL_ELECTION_SOURCES: Record<
 	},
 	"general-election-2015": {
 		year: 2015,
-		path: "elections/general-elections/HoC-GE2015-results-by-constituency.csv",
+		path: "politics/elections/general-elections/2015/HoC-GE2015-results-by-constituency.csv",
 		requiresHeaderCleaning: false,
 		constituencyBoundaryYear: 2019, // Re-use 2019 boundaries for 2017/2015
 		fields: {

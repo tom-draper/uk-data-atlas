@@ -2,6 +2,7 @@
 import { SelectedArea } from "@lib/types";
 import { usePanelContext } from "@/lib/context/PanelContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { gazetteer } from "@/lib/data/gazetteer/static";
 import { panelTheme } from "@/lib/helpers/panelTheme";
 
 function CogIcon({ className }: { className?: string }) {
@@ -22,7 +23,38 @@ function CogIcon({ className }: { className?: string }) {
 	);
 }
 
-function panelHeaderDetails(
+function localAuthorityContext(
+	code: string,
+	data: Extract<SelectedArea, { type: "localAuthority" }>["data"],
+) {
+	if (!data) return { subtitle: "", regionCode: "" };
+
+	const mappedRegion = gazetteer
+		.ancestors(code)
+		.find((area) => area.level === "region");
+	const regionName = data.regionName || mappedRegion?.name || "";
+	const regionCode = data.regionCode || mappedRegion?.code || "";
+
+	return {
+		subtitle: regionCountryLabel(regionName, data.countryName),
+		regionCode,
+	};
+}
+
+function regionCountryLabel(regionName: string, countryName: string) {
+	return [regionName, countryName]
+		.filter(Boolean)
+		.filter(
+			(value, index, values) =>
+				values.findIndex(
+					(candidate) =>
+						candidate.toLowerCase() === value.toLowerCase(),
+				) === index,
+		)
+		.join(", ");
+}
+
+export function panelHeaderDetails(
 	selectedLocation: string | null,
 	selectedArea: SelectedArea | null,
 ) {
@@ -38,57 +70,70 @@ function panelHeaderDetails(
 		case "ward":
 			return {
 				title:
-					selectedArea.name ??
-					(selectedArea.data ? selectedArea.data.wardName : ""),
-				subtitle: selectedArea.data
-					? (selectedArea.data.ladName ?? "")
-					: "",
-				code: `${selectedArea.data ? (selectedArea.data.ladCode ?? "") : ""} ${selectedArea.code}`,
+					selectedArea.data?.wardName ||
+					selectedArea.name ||
+					selectedArea.code,
+				subtitle: selectedArea.data?.ladName ?? "",
+				code: [selectedArea.data?.ladCode, selectedArea.code]
+					.filter(Boolean)
+					.join(" "),
 			};
-		case "constituency":
+		case "constituency": {
+			const regionCode = selectedArea.data?.regionName
+				? (gazetteer.resolveName(
+						selectedArea.data.regionName,
+						"region",
+					)[0]?.code ?? "")
+				: "";
 			return {
 				title:
+					selectedArea.data?.constituencyName ||
 					selectedArea.name ||
-					(selectedArea.data?.constituencyName ?? ""),
+					selectedArea.code,
 				subtitle: selectedArea.data
-					? [
+					? regionCountryLabel(
 							selectedArea.data.regionName,
 							selectedArea.data.countryName,
-						]
-							.filter(Boolean)
-							.join(", ")
+						)
 					: "",
-				code: selectedArea.code,
+				code: [regionCode, selectedArea.code].filter(Boolean).join(" "),
 			};
-		case "localAuthority":
+		}
+		case "localAuthority": {
+			const { subtitle, regionCode } = localAuthorityContext(
+				selectedArea.code,
+				selectedArea.data,
+			);
 			return {
-				title: selectedArea.name || (selectedArea.data?.ladName ?? ""),
-				subtitle: selectedArea.data
-					? [
-							selectedArea.data.regionName,
-							selectedArea.data.countryName,
-						]
-							.filter(Boolean)
-							.join(", ")
-					: "",
-				code: selectedArea.code,
+				title:
+					selectedArea.data?.ladName ||
+					selectedArea.name ||
+					selectedArea.code,
+				subtitle,
+				code: [regionCode, selectedArea.code].filter(Boolean).join(" "),
 			};
+		}
 		case "lsoa":
 			return {
-				title: selectedArea.name || selectedArea.code,
-				subtitle: "LSOA",
-				code: selectedArea.code,
+				title:
+					selectedArea.data?.lsoaName ||
+					selectedArea.name ||
+					selectedArea.code,
+				subtitle: selectedArea.data?.ladName ?? "",
+				code: [selectedArea.data?.ladCode, selectedArea.code]
+					.filter(Boolean)
+					.join(" "),
 			};
 		case "dataZone":
 			return {
 				title: selectedArea.name || selectedArea.code,
-				subtitle: "Data Zone",
+				subtitle: "",
 				code: selectedArea.code,
 			};
 		case "superOutputArea":
 			return {
 				title: selectedArea.name || selectedArea.code,
-				subtitle: "Super Output Area",
+				subtitle: "",
 				code: selectedArea.code,
 			};
 	}
@@ -112,7 +157,9 @@ export default function PanelHeader({
 	return (
 		<div className={`pb-2 pt-2.5 px-2.5 ${t.section}`}>
 			<div className="flex items-center justify-between">
-				<h2 className={`font-semibold text-sm ${t.heading}`}>
+				<h2
+					className={`text-sm font-semibold tracking-tight ${t.heading}`}
+				>
 					{title}
 				</h2>
 				<button

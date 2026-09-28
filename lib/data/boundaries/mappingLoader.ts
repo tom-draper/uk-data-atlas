@@ -1,37 +1,91 @@
-import { feature } from "topojson-client";
 import type { BoundaryGeojson } from "@lib/types";
-import { GEOJSON_PATHS, type BoundaryType, PROPERTY_KEYS } from "./boundaries";
+import type { BoundaryType } from "./boundaries";
+import { BOUNDARY_CATALOG } from "./catalog";
 import { localDataPath } from "./dataPath";
+import { decodeBoundaryData } from "./decode";
+import { getProp } from "./properties";
 import {
 	buildConstituencyWardMappings,
 	buildCrossYearMappings,
 	extractWardLadMappings,
 	type PrecompiledBoundaryMappings,
 } from "./mappings";
+import { areasLadFromGeometry } from "./wardLadGeometry";
+import type { LsoaLadMapping } from "./lsoaLadMappings";
 
 type BoundaryGroup = Record<number, BoundaryGeojson>;
+
+/**
+ * How ward releases spell the local authority they name — `lad16cd` among
+ * them, which the local authority family's own key list does not carry, since
+ * it describes a different set of files. Reading a ward's parent with the
+ * wrong list finds nothing and the release contributes no mapping at all.
+ */
+const WARD_PARENT_CODE_KEYS =
+	BOUNDARY_CATALOG.ward.properties.parentCode ??
+	BOUNDARY_CATALOG.localAuthority.properties.code;
+
+const WARD_TO_CONSTITUENCY_LOOKUP =
+	"lookups/ward-to-constituency/2025-05-to-2024-07-uk/WD25_PCON24_LAD25_CTYUA25_UK_LU.geojson";
+
+type OfficialWardConstituencyLookup = {
+	features: Array<{ properties: Record<string, unknown> }>;
+};
+
+/**
+ * ONS publishes split wards under each constituency they cross. Keep the
+ * geometry best fit for those 423 cases: the lookup has no share to permit an
+ * aggregation. Every unsplit ward is instead assigned by ONS's official
+ * best-fit lookup.
+ */
+async function loadOfficialWardConstituencyMembership(
+	read: (path: string) => Promise<string>,
+): Promise<{ members: Record<string, string[]>; unsplitWards: Set<string> }> {
+	let source: string;
+	try {
+		source = await read(WARD_TO_CONSTITUENCY_LOOKUP);
+	} catch (error) {
+		// The committed compact mapping remains usable while a raw-data release
+		// is being restored; a fresh build then retains its geometry best fit.
+		if ((error as NodeJS.ErrnoException).code === "ENOENT")
+			return { members: {}, unsplitWards: new Set() };
+		throw error;
+	}
+	const lookup = JSON.parse(source) as OfficialWardConstituencyLookup;
+	const members: Record<string, string[]> = {};
+	const unsplitWards = new Set<string>();
+	for (const { properties } of lookup.features) {
+		const ward = properties.WD25CD;
+		const constituency = properties.PCON24CD;
+		if (
+			typeof ward !== "string" ||
+			typeof constituency !== "string" ||
+			properties.SPLIT_WARD === "Yes" ||
+			properties.SPLIT_WARD === "TRUE"
+		)
+			continue;
+		unsplitWards.add(ward);
+		(members[constituency] ??= []).push(ward);
+	}
+	for (const wards of Object.values(members)) wards.sort();
+	return { members, unsplitWards };
+}
 
 async function loadBoundaryFile(
 	read: (path: string) => Promise<string>,
 	path: string,
 ): Promise<BoundaryGeojson> {
-	const topology = JSON.parse(await read(localDataPath(path))) as {
-		objects: Record<string, unknown>;
-	};
-	const objectName = Object.keys(topology.objects)[0];
-	const result = feature(
-		topology as never,
-		topology.objects[objectName] as never,
-	) as unknown;
-
-	return result as BoundaryGeojson;
+	return decodeBoundaryData(JSON.parse(await read(localDataPath(path))));
 }
 
 async function loadBoundaryGroup(
 	read: (path: string) => Promise<string>,
-	type: Extract<BoundaryType, "ward" | "constituency" | "localAuthority">,
+	type: Extract<
+		BoundaryType,
+		"ward" | "constituency" | "localAuthority" | "lsoa"
+	>,
 ): Promise<BoundaryGroup> {
-	const paths = GEOJSON_PATHS[type];
+	const paths = BOUNDARY_CATALOG[type].vintages;
 	const entries = await Promise.all(
 		Object.entries(paths).map(
 			async ([year, path]) =>
@@ -41,22 +95,70 @@ async function loadBoundaryGroup(
 	return Object.fromEntries(entries);
 }
 
+/**
+ * LSOA releases do not publish their local-authority parent in boundary
+ * properties. Resolve it once from the release geometry and the current LAD
+ * boundaries, then ship a small lookup rather than use named-location boxes.
+ */
+export async function loadLsoaLadMappings(
+	read: (path: string) => Promise<string>,
+): Promise<Record<number, LsoaLadMapping>> {
+	const [lsoas, localAuthorities] = await Promise.all([
+		loadBoundaryGroup(read, "lsoa"),
+		loadBoundaryGroup(read, "localAuthority"),
+	]);
+	const newestLocalAuthorities =
+		localAuthorities[
+			Math.max(...Object.keys(localAuthorities).map(Number))
+		];
+
+	const lsoaToLad = Object.fromEntries(
+		Object.entries(lsoas).map(([year, lsoa]) => [
+			Number(year),
+			areasLadFromGeometry(
+				lsoa.features,
+				BOUNDARY_CATALOG.lsoa.properties.code,
+				newestLocalAuthorities.features,
+				BOUNDARY_CATALOG.localAuthority.properties.code,
+				() => true,
+			),
+		]),
+	) as Record<number, Record<string, string>>;
+	for (const [year, lsoa] of Object.entries(lsoas)) {
+		const resolved = Object.keys(lsoaToLad[Number(year)] ?? {}).length;
+		if (resolved !== lsoa.features.length) {
+			throw new Error(
+				`LSOA ${year}: resolved ${resolved}/${lsoa.features.length} local-authority parents`,
+			);
+		}
+	}
+
+	return Object.fromEntries(
+		Object.entries(lsoaToLad).map(([year, mapping]) => [
+			Number(year),
+			{ version: 1, year: Number(year), lsoaToLad: mapping },
+		]),
+	);
+}
+
 export async function loadBoundaryMappings(
 	read: (path: string) => Promise<string>,
 ): Promise<PrecompiledBoundaryMappings> {
-	const [wards, constituencies, localAuthorities] = await Promise.all([
-		loadBoundaryGroup(read, "ward"),
-		loadBoundaryGroup(read, "constituency"),
-		loadBoundaryGroup(read, "localAuthority"),
-	]);
+	const [wards, constituencies, localAuthorities, officialWardMembership] =
+		await Promise.all([
+			loadBoundaryGroup(read, "ward"),
+			loadBoundaryGroup(read, "constituency"),
+			loadBoundaryGroup(read, "localAuthority"),
+			loadOfficialWardConstituencyMembership(read),
+		]);
 
 	const wardToLad: Record<string, string> = {};
 	const ladToWards: Record<number, Record<string, string[]>> = {};
 	for (const [year, boundary] of Object.entries(wards)) {
 		const mappings = extractWardLadMappings(
 			boundary.features,
-			PROPERTY_KEYS.wardCode,
-			PROPERTY_KEYS.ladCode,
+			BOUNDARY_CATALOG.ward.properties.code,
+			WARD_PARENT_CODE_KEYS,
 		);
 		Object.assign(wardToLad, mappings.wardToLad);
 		if (Object.keys(mappings.ladToWards).length > 0) {
@@ -64,19 +166,84 @@ export async function loadBoundaryMappings(
 		}
 	}
 
-	const latestWardYear = Math.max(...Object.keys(wards).map(Number));
-	const constituencyToWards: Record<number, Record<string, string[]>> = {};
-	const constituencyWardMappings: Record<string, string[]> = {};
-	for (const boundary of Object.values(constituencies)) {
+	// ONS published no local authority for the December 2017 to 2021 wards, so
+	// those releases contribute nothing above, and a ward one of them
+	// introduced that was later abolished ends up in no mapping at all. That
+	// ward is then dropped from every filtered view, because `filterFeatures`
+	// keeps a ward only when its authority is one of the location's — which is
+	// how a card keyed to an older release comes to draw nothing anywhere but
+	// the whole United Kingdom, leaving whatever was on the map before it.
+	//
+	// Fill only the gaps, and fill them from the newest authorities, because
+	// that is the vocabulary the gazetteer's locations mostly speak. A ward
+	// that already names its own authority keeps it: that release said which
+	// authority it meant, and some locations are still named by the codes of
+	// the era those releases belong to.
+	const newestLocalAuthorities =
+		localAuthorities[
+			Math.max(...Object.keys(localAuthorities).map(Number))
+		];
+	for (const boundary of Object.values(wards)) {
 		Object.assign(
-			constituencyWardMappings,
-			buildConstituencyWardMappings(wards[latestWardYear], boundary),
+			wardToLad,
+			areasLadFromGeometry(
+				boundary.features,
+				BOUNDARY_CATALOG.ward.properties.code,
+				newestLocalAuthorities.features,
+				BOUNDARY_CATALOG.localAuthority.properties.code,
+				(wardCode) => !wardToLad[wardCode],
+			),
 		);
 	}
-	constituencyToWards[latestWardYear] = constituencyWardMappings;
+
+	// Charts sum a ward dataset's wards into the constituency a reader picks,
+	// on that dataset's own ward release, and the constituency may come from
+	// either the 2010 or the 2024 code set. So membership is built for every
+	// ward release against one release of each constituency code set; the
+	// releases within a set share their codes and boundaries.
+	const constituencySets = new Map<string, BoundaryGeojson>();
+	for (const year of Object.keys(constituencies).map(Number).sort()) {
+		const boundary = constituencies[year];
+		const codes = boundary.features
+			.map((feature) =>
+				getProp(
+					feature.properties,
+					BOUNDARY_CATALOG.constituency.properties.code,
+				),
+			)
+			.filter(Boolean)
+			.sort()
+			.join();
+		constituencySets.set(codes, boundary); // the latest of each set wins
+	}
+	const constituencyToWards: Record<number, Record<string, string[]>> = {};
+	for (const [year, wardBoundary] of Object.entries(wards))
+		for (const constituencyBoundary of constituencySets.values())
+			Object.assign(
+				(constituencyToWards[Number(year)] ??= {}),
+				buildConstituencyWardMappings(
+					wardBoundary,
+					constituencyBoundary,
+				),
+			);
+
+	// The current lookup replaces geometry inference wherever its relation is
+	// unambiguous. Split wards remain with the previous one-constituency best
+	// fit so a ward-valued measure cannot be counted twice in an aggregation.
+	const current = (constituencyToWards[2025] ??= {});
+	for (const [constituency, wardCodes] of Object.entries(current)) {
+		const kept = wardCodes.filter(
+			(ward) => !officialWardMembership.unsplitWards.has(ward),
+		);
+		if (kept.length > 0) current[constituency] = kept;
+		else delete current[constituency];
+	}
+	for (const [constituency, wardCodes] of Object.entries(
+		officialWardMembership.members,
+	))
+		current[constituency] = wardCodes;
 
 	return {
-		version: 1,
 		wardToLad,
 		ladToWards,
 		codeMappings: {

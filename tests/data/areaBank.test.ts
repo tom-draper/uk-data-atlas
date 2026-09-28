@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { detectCoordinateColumns } from "@/lib/data/areaBank";
+import {
+	buildAreaBankFromIndex,
+	compactMatchIndexLevel,
+	detectCoordinateColumns,
+	parseMatchIndexLevel,
+} from "@/lib/data/areaBank";
 
 describe("detectCoordinateColumns", () => {
 	it("detects lat/lng by header name regardless of column order", () => {
@@ -45,5 +50,158 @@ describe("detectCoordinateColumns", () => {
 			["E05000002", "20"],
 		];
 		expect(detectCoordinateColumns(table, 0)).toBeNull();
+	});
+});
+
+describe("match index vintages", () => {
+	const level = {
+		2023: {
+			codes: ["E05000001", "E05000002"],
+			names: { alpha: ["E05000001"], beta: ["E05000002"] },
+		},
+		2024: {
+			codes: ["E05000001", "E05000003", "E05000004"],
+			names: {
+				alpha: ["E05000001", "E05000004"],
+				beta: ["E05000003"],
+			},
+		},
+	};
+
+	it("stores a code shared by several vintages once", () => {
+		const compact = compactMatchIndexLevel(level);
+		expect(Object.keys(compact.codes)).toHaveLength(4);
+		expect(compact.names).toHaveLength(4);
+	});
+
+	it("expands back to the same codes and names for every vintage", () => {
+		const parsed = parseMatchIndexLevel(compactMatchIndexLevel(level));
+		expect(Object.keys(parsed).map(Number)).toEqual([2023, 2024]);
+		for (const year of [2023, 2024] as const) {
+			expect(new Set(parsed[year].codes)).toEqual(
+				new Set(level[year].codes),
+			);
+			expect(parsed[year].names).toEqual(level[year].names);
+		}
+	});
+
+	it("keeps the parents that tell same-named areas apart", () => {
+		const withParents = {
+			2023: { ...level[2023], parents: { E05000001: ["E07000001"] } },
+			2024: {
+				...level[2024],
+				parents: {
+					E05000001: ["E06000001"],
+					E05000004: ["E07000002"],
+				},
+			},
+		};
+		const parsed = parseMatchIndexLevel(
+			JSON.parse(JSON.stringify(compactMatchIndexLevel(withParents))),
+		);
+		expect(parsed[2024].parents).toEqual({
+			E05000001: ["E07000001", "E06000001"],
+			E05000004: ["E07000002"],
+		});
+
+		const [nameEntry] = buildAreaBankFromIndex({ ward: parsed }).filter(
+			(entry) => entry.matchType === "name" && entry.year === 2024,
+		);
+		expect(nameEntry?.parentsOf?.get("E05000004")).toEqual(["E07000002"]);
+	});
+
+	it("labels every geography by its name, not its internal key", () => {
+		const labels = buildAreaBankFromIndex({
+			parish: {
+				2026: {
+					codes: ["E04000001"],
+					names: { ashley: ["E04000001"] },
+				},
+			},
+			localAuthority: {
+				2025: {
+					codes: ["E07000093"],
+					names: { "test valley": ["E07000093"] },
+				},
+			},
+		}).map((entry) => entry.label);
+		expect(labels).toEqual([
+			"Parish [2026]",
+			"Parish name [2026]",
+			"Local authority [2025]",
+			"Local authority name [2025]",
+		]);
+	});
+
+	it("offers parish entries local authority names too", () => {
+		const bank = buildAreaBankFromIndex({
+			parish: {
+				2026: {
+					codes: ["E04000001", "E04000002"],
+					names: { ashley: ["E04000001", "E04000002"] },
+					parents: {
+						E04000001: ["E07000093"],
+						E04000002: ["E06000059"],
+					},
+				},
+			},
+			localAuthority: {
+				2025: { codes: [], names: { "test valley": ["E07000093"] } },
+			},
+		});
+		const parishNames = bank.find(
+			(entry) =>
+				entry.boundaryType === "parish" && entry.matchType === "name",
+		);
+		expect(parishNames?.parentLabel).toBe("Local authority");
+		expect(parishNames?.parentNameToCodes?.get("test valley")).toEqual([
+			"E07000093",
+		]);
+	});
+
+	it("offers ward entries the local authority names of every vintage", () => {
+		const bank = buildAreaBankFromIndex({
+			ward: {
+				2026: {
+					codes: ["E05000001", "E05000002"],
+					names: { castle: ["E05000001", "E05000002"] },
+					parents: {
+						E05000001: ["E07000001"],
+						E05000002: ["E06000064"],
+					},
+				},
+			},
+			localAuthority: {
+				2019: { codes: [], names: { allerdale: ["E07000026"] } },
+				2025: {
+					codes: [],
+					names: {
+						cumberland: ["E06000063"],
+						oxford: ["E07000178"],
+					},
+				},
+			},
+		});
+		const wardNames = bank.find(
+			(entry) =>
+				entry.boundaryType === "ward" && entry.matchType === "name",
+		);
+		expect(wardNames?.parentLabel).toBe("Local authority");
+		expect(wardNames?.parentNameToCodes?.get("allerdale")).toEqual([
+			"E07000026",
+		]);
+		expect(wardNames?.parentNameToCodes?.get("oxford")).toEqual([
+			"E07000178",
+		]);
+	});
+
+	it("rejects a mask that names a vintage the level does not have", () => {
+		expect(() =>
+			parseMatchIndexLevel({
+				years: [2024],
+				codes: { E05000001: 0b10 },
+				names: [],
+			}),
+		).toThrow();
 	});
 });

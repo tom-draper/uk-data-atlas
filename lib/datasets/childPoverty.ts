@@ -1,17 +1,35 @@
-import { loadChildPoverty } from "@/lib/data/child-poverty/loader";
+import { childPovertyDatasetDefinition } from "@/lib/data/catalog/definitions";
+import { childPovertyAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { ChildPovertyDataset } from "@/lib/types/childPoverty";
-import type { ScalarDatasetDefinition } from "./types";
+import type { ChartDatasetDefinition } from "./types";
 
-export const childPovertyDefinition: ScalarDatasetDefinition<ChildPovertyDataset> = {
-	type: "childPoverty",
-	precompiledFile: "child-poverty",
-	sourcePath: "economics/child-poverty/children-in-low-income-families-2022-2025.ods",
-	sourceFormat: "ods",
-	chart: {
-		group: "Economics",
-		key: "economics-childPoverty",
-		label: "Child Poverty [2025]",
-		defaultVisible: true,
-	},
-	load: loadChildPoverty,
-};
+export const childPovertyDefinition: ChartDatasetDefinition<ChildPovertyDataset> =
+	{
+		...childPovertyDatasetDefinition,
+		chart: {
+			group: "Economics",
+			key: "economics-childPoverty",
+			label: "Child Poverty [2025]",
+			defaultVisible: true,
+			componentPath:
+				"@/components/economics/child-poverty/ChildPovertyChart",
+			calculateStats: (aggregator, geojson, data, location, datasetId) =>
+				aggregator.aggregate(
+					childPovertyAggregation,
+					geojson,
+					data,
+					location,
+					datasetId,
+				),
+			year: 2025,
+		},
+		map: {
+			valueKey: "childPovertyRate",
+			colorRange: { min: 10, max: 35 },
+			legend: {
+				min: 0,
+				max: 60,
+				format: (value) => `${value.toFixed(0)}%`,
+			},
+		},
+	};

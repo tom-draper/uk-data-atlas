@@ -12,15 +12,19 @@ const nextConfig: NextConfig = {
 		NEXT_PUBLIC_DATA_VERSION: dataVersion,
 	},
 	async headers() {
+		// Immutable caching is safe only because every data URL carries a
+		// version query in production (see lib/helpers/cdn.ts). In development
+		// `withCDN` returns the bare path, so the same URL would be pinned to
+		// the first copy the browser ever saw — recompiling the data changed
+		// nothing on screen until the cache was cleared by hand.
+		const cacheControl =
+			process.env.NODE_ENV === "production"
+				? "public, max-age=31536000, immutable"
+				: "no-cache";
 		return [
 			{
 				source: "/data/:path*",
-				headers: [
-					{
-						key: "Cache-Control",
-						value: "public, max-age=31536000, immutable",
-					},
-				],
+				headers: [{ key: "Cache-Control", value: cacheControl }],
 			},
 		];
 	},

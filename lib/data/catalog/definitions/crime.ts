@@ -1,0 +1,26 @@
+import { loadCrime } from "../../crime/loader";
+import type { CrimeDataset } from "@/lib/types/crime";
+import type { DatasetDefinition } from "../types";
+
+export const crimeDatasetDefinition: DatasetDefinition<CrimeDataset> = {
+	type: "crime",
+	precompiledFile: "crime",
+	boundaryType: "localAuthority",
+	coverageCountries: ["GB-ENG", "GB-WLS"],
+	source: {
+		name: "Crime",
+		source: "Office for National Statistics",
+		sourceUrl:
+			"https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
+		year: "2026",
+		licence: "Open Government Licence v3.0",
+		licenceUrl:
+			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+		description:
+			"Police recorded crime by local authority district for England and Wales.",
+	},
+	// Table C2 is recorded crime by community safety partnership area, read
+	// straight out of the published workbook rather than from an extract.
+	precompile: ({ xlsxSheet }) =>
+		loadCrime((path) => xlsxSheet(path, "Table C2")),
+};

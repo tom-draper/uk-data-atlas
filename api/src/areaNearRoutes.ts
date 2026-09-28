@@ -1,0 +1,151 @@
+import { DISTANCE_METHOD } from "./areaDistance";
+import {
+	MAX_STATED_ACCURACY_M,
+	describeLookupRelease,
+	parseLookupCoordinate,
+	parseLookupCrs,
+	parseLookupRequest,
+	parseStatedAccuracy,
+} from "./pointLookup";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
+import type { RouteRequest } from "./routing";
+import { readBoundedWholeNumber } from "./queryParameters";
+
+export const MAX_NEAR_LIMIT = 10;
+export const DEFAULT_NEAR_WITHIN_M = 1000;
+export const MAX_NEAR_WITHIN_M = 50000;
+
+/**
+ * The areas of each requested geography nearest a WGS84 point. This is a
+ * distance answer: an area at zero metres has the point on or inside it, but
+ * containment is only ever claimed by `areas:contains`.
+ */
+export const handleAreaNearRoutes = ({
+	context,
+	releaseId,
+	parsedUrl,
+	segments,
+}: RouteRequest): ApiResponse | undefined => {
+	if (
+		segments.length !== 2 ||
+		segments[0] !== "v1" ||
+		segments[1] !== "areas:near"
+	)
+		return undefined;
+	const { searchParams } = parsedUrl;
+	const accuracy = parseStatedAccuracy(searchParams.get("accuracy"));
+	if (accuracy === null)
+		return problem(
+			400,
+			"Invalid Query",
+			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
+		);
+	const crs = parseLookupCrs(searchParams.get("crs"));
+	if (!crs)
+		return problem(
+			400,
+			"Invalid Query",
+			"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
+		);
+	const point = parseLookupCoordinate(
+		crs,
+		{
+			lng: searchParams.get("lng") ?? undefined,
+			lat: searchParams.get("lat") ?? undefined,
+			easting: searchParams.get("easting") ?? undefined,
+			northing: searchParams.get("northing") ?? undefined,
+			gridReference: searchParams.get("gridref") ?? undefined,
+		},
+		accuracy,
+	);
+	if (!point)
+		return problem(
+			400,
+			"Invalid Query",
+			crs === "EPSG:4326"
+				? "lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."
+				: crs === "EPSG:27700"
+					? "easting and northing, or gridref as an Ordnance Survey National Grid reference, are required for EPSG:27700."
+					: `easting and northing are required as plain decimal grid metres for ${crs}.`,
+		);
+	const limit = readBoundedWholeNumber(
+		searchParams.get("limit"),
+		1,
+		1,
+		MAX_NEAR_LIMIT,
+	);
+	if (limit === undefined)
+		return problem(
+			400,
+			"Invalid Query",
+			`limit must be a whole number from 1 to ${MAX_NEAR_LIMIT}.`,
+		);
+	const withinM = readBoundedWholeNumber(
+		searchParams.get("within"),
+		DEFAULT_NEAR_WITHIN_M,
+		1,
+		MAX_NEAR_WITHIN_M,
+	);
+	if (withinM === undefined)
+		return problem(
+			400,
+			"Invalid Query",
+			`within must be a whole number of metres from 1 to ${MAX_NEAR_WITHIN_M}.`,
+		);
+	const geographyResolver = context.geographyResolver;
+	const unavailable = geographyResolver.requires("geometry");
+	if (unavailable) return unavailable;
+	const request = parseLookupRequest(context, searchParams);
+	if ("status" in request) return request;
+	const results = request.releases.map((lookupRelease) => {
+		const description = describeLookupRelease(
+			geographyResolver,
+			lookupRelease,
+		);
+		if (lookupRelease.status !== "selected" || "status" in description)
+			return { ...description, nearest: [] };
+		const { geography, boundaryRelease } = lookupRelease;
+		try {
+			const found = geographyResolver.nearestAreas(
+				geography,
+				boundaryRelease,
+				[point.lng, point.lat],
+				{ withinM, limit },
+			) ?? { matched: 0, nearest: [] };
+			return {
+				...description,
+				status: found.matched > 0 ? "found" : "none-within",
+				matched: found.matched,
+				truncated: found.matched > limit,
+				nearest: found.nearest.map((area, index) => ({
+					rank: index + 1,
+					...area,
+					distanceM: Math.round(area.distanceM * 10) / 10,
+				})),
+			};
+		} catch (error) {
+			return {
+				...description,
+				status: "geometry-unavailable",
+				detail:
+					error instanceof Error
+						? error.message
+						: "Geometry could not be loaded for nearest-area lookup.",
+				nearest: [],
+			};
+		}
+	});
+	return {
+		status: 200,
+		body: envelope(releaseId, {
+			point,
+			...(request.date ? { date: request.date.date } : {}),
+			within: withinM,
+			limit,
+			relation: "distance",
+			distanceMethod: DISTANCE_METHOD,
+			results,
+			note: "Each distance runs from the point to the nearest part of an area's published geometry, and is zero when the point lies on or inside it. It ranks areas by distance and never states containment: use /v1/areas:contains for that. Distances carry the coordinate's own uncertainty, given in point.precision.",
+		}),
+	};
+};

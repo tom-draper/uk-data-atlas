@@ -7,32 +7,20 @@ import {
 	getVisibilitySnapshot,
 	subscribeVisibility,
 } from "@/lib/context/ChartVisibilityContext";
-import { useLocalElectionData } from "@lib/hooks/useLocalElectionData";
-import { useGeneralElectionData } from "@lib/hooks/useGeneralElectionData";
-import { usePopulationData } from "@lib/hooks/usePopulationData";
-import { useHousePriceData } from "@lib/hooks/useHousePriceData";
-import { useCrimeData } from "./useCrimeData";
 import { Datasets } from "../types/datasets";
-import { useIncomeData } from "./useIncomeData";
-import { useEthnicityData } from "./useEthnicityData";
-import { useBrexitData } from "./useBrexitData";
-import { useBrexitConstituencyData } from "./useBrexitConstituencyData";
-import { useIMDData } from "./useIMDData";
-import { useSIMDData } from "./useSIMDData";
-import { useWIMDData } from "./useWIMDData";
-import { useNIMDMData } from "./useNIMDMData";
-import { useLifeExpectancyData } from "./useLifeExpectancyData";
-import { useQualificationData } from "./useQualificationData";
-import { useBroadbandData } from "./useBroadbandData";
-import { useAirQualityData } from "./useAirQualityData";
-import { useClaimantCountData } from "./useClaimantCountData";
-import { useSchoolPerformanceData } from "./useSchoolPerformanceData";
-import { useNHSWaitingData } from "./useNHSWaitingData";
-import { useUnemploymentData } from "./useUnemploymentData";
 import { useJsonDatasetLoaders } from "./useJsonDataLoader";
-import { SCALAR_DATASET_DEFINITIONS } from "@/lib/datasets";
+import {
+	CHART_DATASET_DEFINITIONS,
+	isChartDatasetPayload,
+	type ChartDataset,
+	type ChartDatasetType,
+} from "@/lib/datasets";
+import { getChartDefinitions } from "@/lib/datasets/types";
 import { withCDN } from "@/lib/helpers/cdn";
-import type { ChildPovertyDataset, FuelPovertyDataset, HomelessnessDataset, HousingAffordabilityDataset } from "@/lib/types";
+import {
+	regionChunkPath,
+	regionChunksForLocation,
+} from "@/lib/data/datasetRegionChunks";
 
 function getServerSnapshot(): Record<ChartKey, boolean> {
 	return DEFAULT_VISIBILITY;
@@ -44,104 +32,105 @@ export interface UseDatasetsResult {
 	errors: string[];
 }
 
-export function useDatasets(): UseDatasetsResult {
-	const visibility = useSyncExternalStore(subscribeVisibility, getVisibilitySnapshot, getServerSnapshot);
-	const isEnabled = (key: ChartKey) => visibility[key] ?? DEFAULT_VISIBILITY[key];
-	const anyEnabled = (...keys: ChartKey[]) => keys.some(k => isEnabled(k));
+const parseChartDataset = (
+	value: unknown,
+	datasetType?: string,
+): ChartDataset => {
+	if (!isChartDatasetPayload(value, datasetType)) {
+		throw new Error(
+			`Invalid compiled dataset payload for ${datasetType ?? "unknown dataset"}`,
+		);
+	}
+	return value;
+};
 
-	const localElection = useLocalElectionData(
-		anyEnabled("localElection-2021", "localElection-2022", "localElection-2023", "localElection-2024", "localElection-2025"),
+/**
+ * Whether a dataset is worth fetching: a visible card reads it, or the map is
+ * drawing it.
+ *
+ * The active visualisation counts even when its own card is hidden, which
+ * mirrors `requiredBoundaryTypes` keeping that visualisation's geography loaded
+ * on the same grounds. Six datasets ship with every card hidden by default (the
+ * Hanretty estimates, the Scottish, Welsh and Northern Irish deprivation
+ * indices, and two school performance breakdowns), so without this a link to one
+ * of them opened by anyone on default settings drew an empty map.
+ */
+export function datasetIsNeeded(
+	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
+	visibility: Record<ChartKey, boolean>,
+	activeDatasetType?: string,
+): boolean {
+	if (definition.type === activeDatasetType) return true;
+	return getChartDefinitions(definition).some(
+		(chart) => visibility[chart.key] ?? DEFAULT_VISIBILITY[chart.key],
 	);
-	const generalElection = useGeneralElectionData(
-		anyEnabled("generalElection-2015", "generalElection-2017", "generalElection-2019", "generalElection-2024"),
+}
+
+/**
+ * Load the active map's dataset first, then the visible cards'. Nothing else
+ * is loaded (see `datasetIsNeeded`), so there is no lower tier.
+ */
+export function datasetLoadPriority(
+	definition: (typeof CHART_DATASET_DEFINITIONS)[number],
+	activeDatasetType?: string,
+): number {
+	return definition.type === activeDatasetType ? 0 : 1;
+}
+
+/**
+ * The chart datasets for the current view.
+ *
+ * @param activeDatasetType The dataset the map is drawing, kept loaded whether
+ * or not its card is shown. See `datasetIsNeeded`.
+ */
+export function useDatasets(
+	selectedLocation: string,
+	activeDatasetType?: string,
+): UseDatasetsResult {
+	const visibility = useSyncExternalStore(
+		subscribeVisibility,
+		getVisibilitySnapshot,
+		getServerSnapshot,
 	);
-	const population = usePopulationData();
-	const ethnicity = useEthnicityData(isEnabled("demographics-ethnicity"));
-	const housePrice = useHousePriceData(isEnabled("economics-housePrice"));
-	const crime = useCrimeData(isEnabled("economics-crime"));
-	const income = useIncomeData(isEnabled("economics-income"));
-	const brexit = useBrexitData(isEnabled("brexit-electoral"));
-	const brexitConstituency = useBrexitConstituencyData(isEnabled("brexit-hanretty"));
-	const imd = useIMDData(isEnabled("deprivation-imd"));
-	const simd = useSIMDData(isEnabled("deprivation-simd"));
-	const wimd = useWIMDData(isEnabled("deprivation-wimd"));
-	const nimdm = useNIMDMData(isEnabled("deprivation-nimdm"));
-	const lifeExpectancy = useLifeExpectancyData(
-		anyEnabled("health-lifeExpectancy", "health-healthyLifeExpectancy"),
-		isEnabled("health-healthyLifeExpectancy"),
-	);
-	const qualification = useQualificationData(isEnabled("education-qualifications"));
-	const broadband = useBroadbandData(isEnabled("telecoms-broadband"));
-	const airQuality = useAirQualityData(isEnabled("environment-airQuality"));
-	const claimantCount = useClaimantCountData(isEnabled("economics-claimantCount"));
-	const schoolPerformance = useSchoolPerformanceData(isEnabled("education-schoolPerformance"));
-	const nhsWaiting = useNHSWaitingData(isEnabled("health-nhsWaiting"));
-	const unemployment = useUnemploymentData(isEnabled("economics-unemployment"));
-	const scalarDatasets = useJsonDatasetLoaders(
-		SCALAR_DATASET_DEFINITIONS.map((definition) => ({
+
+	const chartDatasets = useJsonDatasetLoaders(
+		CHART_DATASET_DEFINITIONS.map((definition) => ({
 			key: definition.type,
-			url: withCDN(`/data/precompiled/${definition.precompiledFile}.json`),
-			enabled: isEnabled(definition.chart.key),
+			url: withCDN(`/data/datasets/${definition.precompiledFile}.json`),
+			filter: {
+				location: selectedLocation,
+				boundaryType: definition.boundaryType,
+				payloadLayout: definition.payload,
+				includeLocationPopulationSummary:
+					definition.payload?.regionChunks?.populationSummary ===
+					true,
+			},
+			chunkUrls: definition.payload?.regionChunks
+				? (regionChunksForLocation(selectedLocation)?.map((region) =>
+						withCDN(
+							regionChunkPath(definition.precompiledFile, region),
+						),
+					) ?? undefined)
+				: undefined,
+			priority: datasetLoadPriority(definition, activeDatasetType),
+			enabled: datasetIsNeeded(definition, visibility, activeDatasetType),
 		})),
+		parseChartDataset,
 	);
+	const chartDatasetRecords = Object.fromEntries(
+		CHART_DATASET_DEFINITIONS.map((definition) => [
+			definition.type,
+			chartDatasets.datasets[definition.type] ?? {},
+		]),
+	) as Pick<Datasets, ChartDatasetType>;
 
 	const datasets = {
-		localElection: localElection.datasets,
-		generalElection: generalElection.datasets,
-		population: population.datasets,
-		ethnicity: ethnicity.datasets,
-		housePrice: housePrice.datasets,
-		crime: crime.datasets,
-		income: income.datasets,
-		housingAffordability: (scalarDatasets.datasets.housingAffordability ?? {}) as Record<string, HousingAffordabilityDataset>,
-		brexit: brexit.datasets,
-		brexitConstituency: brexitConstituency.datasets,
-		imd: imd.datasets,
-		simd: simd.datasets,
-		wimd: wimd.datasets,
-		nimdm: nimdm.datasets,
-		lifeExpectancy: lifeExpectancy.datasets,
-		qualification: qualification.datasets,
-		broadband: broadband.datasets,
-		airQuality: airQuality.datasets,
-		claimantCount: claimantCount.datasets,
-		schoolPerformance: schoolPerformance.datasets,
-		nhsWaiting: nhsWaiting.datasets,
-		unemployment: unemployment.datasets,
-		childPoverty: (scalarDatasets.datasets.childPoverty ?? {}) as Record<string, ChildPovertyDataset>,
-		homelessness: (scalarDatasets.datasets.homelessness ?? {}) as Record<string, HomelessnessDataset>,
-		fuelPoverty: (scalarDatasets.datasets.fuelPoverty ?? {}) as Record<string, FuelPovertyDataset>,
+		...chartDatasetRecords,
 	};
 
-	const results = [
-		localElection,
-		generalElection,
-		population,
-		ethnicity,
-		housePrice,
-		crime,
-		income,
-		brexit,
-		brexitConstituency,
-		imd,
-		simd,
-		wimd,
-		nimdm,
-		lifeExpectancy,
-		qualification,
-		broadband,
-		airQuality,
-		claimantCount,
-		schoolPerformance,
-		nhsWaiting,
-		unemployment,
-		scalarDatasets,
-	];
-
-	const loading = results.some((r) => r.loading);
-	const errors = results.flatMap((r) =>
-		"errors" in r ? r.errors : r.error ? [r.error] : [],
-	);
-
-	return { datasets, loading, errors };
+	return {
+		datasets,
+		loading: chartDatasets.loading,
+		errors: chartDatasets.errors,
+	};
 }

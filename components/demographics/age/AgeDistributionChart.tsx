@@ -6,6 +6,7 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface AgeDistributionChartProps {
 	counts: Uint32Array | number[];
@@ -41,7 +42,9 @@ function AgeDistributionChart({
 				{chartsLoading ? (
 					<ChartContentPlaceholder className="size-full" />
 				) : (
-					<div className="h-full flex items-center justify-center">No data available</div>
+					<div className="h-full flex items-center justify-center">
+						No data available
+					</div>
 				)}
 			</div>
 		);
@@ -68,7 +71,7 @@ function AgeDistributionChart({
 						<div
 							key={age}
 							className="flex-1 hover:opacity-80 transition-opacity relative group"
-							title={`Age ${age}: ${count.toLocaleString()}`}
+							title={`Age ${age}: ${formatCount(count)}`}
 							style={{
 								height: "100%",
 							}}
@@ -77,12 +80,11 @@ function AgeDistributionChart({
 								className="size-full origin-bottom"
 								style={{
 									backgroundColor: getAgeColor(age),
-									// translateZ(0) forces GPU layer without will-change issues
-									transform: `scaleY(${scale}) translateZ(0)`,
+									// No forced GPU layer: a hundred of them cost
+									// more to composite on each hover than the
+									// bars cost to paint.
+									transform: `scaleY(${scale})`,
 									minHeight: scale > 0 ? "2px" : "0",
-									// Optimize paint operations
-									backfaceVisibility: "hidden",
-									WebkitBackfaceVisibility: "hidden",
 								}}
 							/>
 						</div>

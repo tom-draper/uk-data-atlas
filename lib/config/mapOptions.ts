@@ -1,13 +1,30 @@
-import { MapOptions } from "../types/mapOptions";
+import { CHART_DATASET_DEFINITIONS } from "../datasets";
+import { MapOptions, ChartMapOptions } from "../types/mapOptions";
+
+const chartMapOptions: ChartMapOptions = Object.fromEntries(
+	CHART_DATASET_DEFINITIONS.map((definition) => [
+		definition.type,
+		{
+			colorRange: definition.map?.colorRange ?? { min: 0, max: 1 },
+			...(definition.type === "housePrice" ? { measure: "median" } : {}),
+			...(definition.type === "lifeExpectancy"
+				? { measure: "average" }
+				: {}),
+		},
+	]),
+) as ChartMapOptions;
 
 export const DEFAULT_MAP_OPTIONS: MapOptions = {
+	...chartMapOptions,
 	generalElection: {
 		mode: "majority",
-		percentageRange: { min: 0, max: 100 },
+		percentageRange: { min: 0, max: 50 },
+		colorRange: { min: 0, max: 1 },
 	},
 	localElection: {
 		mode: "majority",
-		percentageRange: { min: 0, max: 100 },
+		percentageRange: { min: 0, max: 50 },
+		colorRange: { min: 0, max: 1 },
 	},
 	ageDistribution: {
 		colorRange: { min: 25, max: 65 },
@@ -20,38 +37,13 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	},
 	ethnicity: {
 		mode: "majority",
-		percentageRange: { min: 0, max: 100 },
-	},
-	housePrice: {
-		colorRange: { min: 80000, max: 500000 },
-	},
-	crime: {
-		colorRange: { min: 10000, max: 100000 },
-	},
-	income: {
-		colorRange: { min: 25000, max: 45000 },
-	},
-	housingAffordability: {
-		colorRange: { min: 4, max: 12 },
+		percentageRange: { min: 0, max: 50 },
+		colorRange: { min: 0, max: 1 },
 	},
 	brexit: { colorRange: { min: 30, max: 70 } },
 	brexitConstituency: { colorRange: { min: 30, max: 70 } },
 	custom: { colorRange: { min: 0, max: 100 } },
-	imd: { colorRange: { min: 1, max: 70 } },
-	simd: { colorRange: { min: 1, max: 6976 } },
-	wimd: { colorRange: { min: 1, max: 1909 } },
-	nimdm: { colorRange: { min: 1, max: 890 } },
-	lifeExpectancy: { colorRange: { min: 72, max: 84 } },
-	qualification: { colorRange: { min: 25, max: 60 } },
-	broadband: { colorRange: { min: 50, max: 100 } },
-	airQuality: { colorRange: { min: 5, max: 35 } },
-	schoolPerformance: { colorRange: { min: 50, max: 80 } },
-	claimantCount: { colorRange: { min: 1, max: 8 } },
-	nhsWaiting: { colorRange: { min: 25, max: 40 } },
-	unemployment: { colorRange: { min: 2, max: 8 } },
-	childPoverty: { colorRange: { min: 10, max: 35 } },
-	homelessness: { colorRange: { min: 1, max: 12 } },
-	fuelPoverty: { colorRange: { min: 5, max: 15 } },
+	network: {},
 	theme: {
 		id: "viridis",
 	},

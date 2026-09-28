@@ -1,0 +1,33 @@
+{
+	"version": 2,
+	"tag": "data-2026-09-27",
+	"commit": "8f81b90f110dd9c43e6345c44dddeea9aa6a813f",
+	"repository": "tom-draper/uk-data-atlas",
+	"assets": [
+		{
+			"name": "data-2026-09-27.1.tar.gz",
+			"bytes": 632829211,
+			"sha256": "10ec27360e23ca6194383efff7766b1b297890e6313218189bcfb48ee15e907c"
+		},
+		{
+			"name": "data-2026-09-27.2.tar.gz",
+			"bytes": 859377591,
+			"sha256": "f405a9852cc6cd0412f3d48e0483023ed549c2eacf010a9f825e4fce2b8976cb"
+		},
+		{
+			"name": "data-2026-09-27.3.tar.gz",
+			"bytes": 975083103,
+			"sha256": "ef792b0cc72d92a457f1c90d5db710885a5532f1d3c14298c2fb32adde8a8786"
+		},
+		{
+			"name": "data-2026-09-27.4.tar.gz",
+			"bytes": 1058013453,
+			"sha256": "0a5f5253cb2fcd2fa655037f256569ca81cab887b478efe826a04f4319120cc7"
+		},
+		{
+			"name": "data-2026-09-27.5.tar.gz",
+			"bytes": 248326802,
+			"sha256": "a4d0c1fbf98af83c3cb041a67c0dc3dc704cf63ea6c84e3bb4de5896ba2ab714"
+		}
+	]
+}

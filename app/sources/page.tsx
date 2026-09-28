@@ -1,404 +1,168 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import Navigation from "@/components/Navigation";
+import { Card, Eyebrow, Sheet } from "@/components/docs/Page";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog/registry";
+import { loadCatalogue, releasesForGeography } from "@/lib/docs/catalogue";
+import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
+import { geographyHref } from "@/lib/docs/navigation";
 
 export const metadata: Metadata = {
-	title: "Data Sources - UK Data Atlas",
-	description: "Data sources and licensing information for the UK Data Atlas.",
+	title: "Datasets and boundaries - UK Data Atlas",
+	description:
+		"Datasets and boundary releases used by the UK Data Atlas, with their sources, coverage and licences.",
 };
 
-interface Dataset {
-	name: string;
-	source: string;
-	sourceUrl: string;
-	year: string;
-	licence: string;
-	licenceUrl: string;
-	description: string;
-}
-
-const datasets: Dataset[] = [
-	{
-		name: "General Election Results",
-		source: "House of Commons Library",
-		sourceUrl: "https://commonslibrary.parliament.uk/",
-		year: "2010, 2015, 2017, 2019, 2024",
-		licence: "Open Parliament Licence",
-		licenceUrl:
-			"https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
-		description: "General election results by parliamentary constituency.",
-	},
-	{
-		name: "Local Election Results",
-		source: "House of Commons Library",
-		sourceUrl:
-			"https://commonslibrary.parliament.uk/2025-local-elections-handbook-and-dataset/",
-		year: "2021, 2022, 2023, 2024, 2025",
-		licence: "Open Parliament Licence",
-		licenceUrl:
-			"https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence/",
-		description:
-			"Local election results by electoral ward for England and Wales.",
-	},
-	{
-		name: "EU Referendum Results",
-		source: "Electoral Commission",
-		sourceUrl:
-			"https://www.electoralcommission.org.uk/research-reports-and-data/our-reports-and-data-past-elections-and-referendums/results-and-turnout-eu-referendum",
-		year: "2016",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description: "EU referendum results by local authority counting area.",
-	},
-	{
-		name: "Population Estimates",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates",
-		year: "2020, 2021, 2022",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Population estimates by ward including age and sex breakdown for England and Wales.",
-	},
-	{
-		name: "Ethnicity",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/datasets/TS021/editions/2021/versions/3",
-		year: "2021",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Ethnic group breakdown by local authority district for England and Wales.",
-	},
-	{
-		name: "Qualifications",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/datasets/TS067/editions/2021/versions/3",
-		year: "2021",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Highest level of qualification breakdown by local authority district for England and Wales (Census 2021).",
-	},
-	{
-		name: "House Price",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/medianpricepaidbywardhpssadataset37",
-		year: "1995-2023",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description: "Median house price paid by ward for England and Wales.",
-	},
-	{
-		name: "Income",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofworkbylocalauthorityashetable7",
-		year: "2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Earnings estimates by local authority for England and Wales.",
-	},
-	{
-		name: "Housing Affordability",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/explore-local-statistics/indicators/housing-affordability-ratio",
-		year: "2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Median house price divided by gross annual residence-based earnings, by local authority in England and Wales.",
-	},
-	{
-		name: "Unemployment",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/employmentandlabourmarket/peoplenotinwork/unemployment/datasets/modelledunemploymentforlocalandunitaryauthoritiesm01/current",
-		year: "2021",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Model-based unemployment rate estimates by local authority for Great Britain.",
-	},
-	{
-		name: "Claimant Count",
-		source: "Office for National Statistics",
-		sourceUrl: "https://www.nomisweb.co.uk/datasets/ucjsa",
-		year: "2026",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Claimants of Universal Credit and Jobseeker's Allowance by local authority district for Great Britain.",
-	},
-	{
-		name: "Child Poverty",
-		source: "Department for Work and Pensions",
-		sourceUrl:
-			"https://www.gov.uk/government/statistics/children-in-low-income-families-local-area-statistics-2022-to-2025",
-		year: "2022 to 2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Children aged under 16 living in relative low-income families, before housing costs, by local authority across the United Kingdom.",
-	},
-	{
-		name: "Temporary Accommodation",
-		source: "Ministry of Housing, Communities and Local Government",
-		sourceUrl:
-			"https://www.gov.uk/government/statistical-data-sets/live-tables-on-homelessness",
-		year: "January-March 2026",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Households in temporary accommodation by English local authority, including households with children.",
-	},
-	{
-		name: "Crime",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/peoplepopulationandcommunity/crimeandjustice/datasets/policeforceareadatatables",
-		year: "2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Police recorded crime by local authority district for England and Wales.",
-	},
-	{
-		name: "Indices of Multiple Deprivation",
-		source: "Ministry of Housing, Communities & Local Government",
-		sourceUrl:
-			"https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019",
-		year: "2019",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Deprivation scores, ranks and deciles by small area (LSOA) for England.",
-	},
-	{
-		name: "Scottish Index of Multiple Deprivation",
-		source: "Scottish Government",
-		sourceUrl:
-			"https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/",
-		year: "2020",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Deprivation scores, ranks and quintiles by data zone for Scotland.",
-	},
-	{
-		name: "Welsh Index of Multiple Deprivation",
-		source: "Welsh Government",
-		sourceUrl: "https://www.gov.wales/welsh-index-multiple-deprivation",
-		year: "2019",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Deprivation scores, ranks and deciles by lower super output area for Wales.",
-	},
-	{
-		name: "Northern Ireland Multiple Deprivation Measure",
-		source: "Northern Ireland Statistics and Research Agency",
-		sourceUrl:
-			"https://www.nisra.gov.uk/statistics/deprivation/northern-ireland-multiple-deprivation-measure-2017-nimdm2017",
-		year: "2017",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Deprivation scores, ranks and deciles by super output area for Northern Ireland.",
-	},
-	{
-		name: "Life Expectancy",
-		source: "Office for National Statistics",
-		sourceUrl:
-			"https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/healthandlifeexpectancies/bulletins/lifeexpectancyforlocalareasonenglandandwales/2020to2022",
-		year: "2020-2022",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Life expectancy and healthy life expectancy estimates by local area for England and Wales.",
-	},
-	{
-		name: "NHS Waiting Times",
-		source: "NHS England",
-		sourceUrl:
-			"https://www.england.nhs.uk/statistics/statistical-work-areas/rtt-waiting-times/",
-		year: "2026",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Referral to treatment waiting times by Integrated Care Board for England.",
-	},
-	{
-		name: "School Performance (KS4)",
-		source: "Department for Education",
-		sourceUrl:
-			"https://explore-education-statistics.service.gov.uk/find-statistics/key-stage-4-performance",
-		year: "2024",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Key Stage 4 performance measures (GCSE results) by local authority district for England.",
-	},
-	{
-		name: "Air Quality",
-		source: "Department for Environment, Food and Rural Affairs",
-		sourceUrl:
-			"https://www.gov.uk/government/statistics/air-quality-statistics",
-		year: "2022",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Annual mean concentrations of nitrogen dioxide (NO2) by local authority district.",
-	},
-	{
-		name: "Broadband Coverage",
-		source: "Ofcom",
-		sourceUrl:
-			"https://www.ofcom.org.uk/research-and-data/telecoms-research/connected-nations",
-		year: "2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description:
-			"Fixed broadband coverage by local authority district across the UK.",
-	},
-	{
-		name: "Westminster Parliamentary Wards (Boundaries)",
-		source: "ONS Open Geography Portal",
-		sourceUrl: "https://geoportal.statistics.gov.uk/",
-		year: "December 2021, 2022, 2023, 2024, May 2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description: "Electoral ward boundaries.",
-	},
-	{
-		name: "Local Authority Districts (Boundaries)",
-		source: "ONS Open Geography Portal",
-		sourceUrl: "https://geoportal.statistics.gov.uk/",
-		year: "December 2021, 2022, 2023, 2024, May 2025",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description: "Local authority district boundaries.",
-	},
-	{
-		name: "Westminster Parliamentary Constituencies (Boundaries)",
-		source: "ONS Open Geography Portal",
-		sourceUrl: "https://geoportal.statistics.gov.uk/",
-		year: "2015, 2017, 2019, July 2024",
-		licence: "Open Government Licence v3.0",
-		licenceUrl:
-			"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-		description: "Parliamentary constituency boundaries.",
-	},
-];
+const datasets = CATALOGUE_DATASET_DEFINITIONS.map(
+	(definition) => definition.source,
+);
 
 export default function DatasetsPage() {
-	return (
-		<div
-			className="min-h-screen p-8"
-			style={{
-				backgroundImage: "url(/map-background-dark.png)",
-				backgroundSize: "cover",
-				minHeight: "100vh",
-			}}
-		>
-			<div className="max-w-5xl mx-auto">
-				<h1 className="text-5xl font-bold text-white/20 ml-4 mt-[12vh] mb-8">
-					Datasets
-				</h1>
+	const catalogue = loadCatalogue();
+	const boundaries = Object.entries(GEOGRAPHIES).map(([id, geography]) => {
+		const releases = releasesForGeography(catalogue, id);
+		return { id, geography, releases };
+	});
 
-				<div className="rounded-lg backdrop-blur-xl shadow-lg border border-white/10 overflow-hidden">
-					<div className="overflow-x-auto">
-						<table className="w-full">
-							<thead>
-								<tr className="bg-white/10">
-									<th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
-										Dataset
-									</th>
-									<th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
-										Source
-									</th>
-									<th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
-										Year
-									</th>
-									<th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
-										Licence
-									</th>
-									<th className="px-6 py-4 text-left text-sm font-semibold text-gray-200">
-										Description
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{datasets.map((dataset, idx) => (
-									<tr
-										key={dataset.name}
-										className={`hover:bg-white/10 transition-colors duration-150 ${
-											idx % 2 !== 0 ? "bg-black/20" : ""
-										}`}
-									>
-										<td className="px-6 py-4 text-sm font-medium text-gray-100">
-											{dataset.name}
-										</td>
-										<td className="px-6 py-4 text-sm text-gray-400">
-											<a
-												href={dataset.sourceUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-indigo-400 hover:text-indigo-300 underline"
-											>
-												{dataset.source}
-											</a>
-										</td>
-										<td className="px-6 py-4 text-sm text-gray-400">
-											{dataset.year}
-										</td>
-										<td className="px-6 py-4 text-sm text-gray-400">
-											<a
-												href={dataset.licenceUrl}
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-indigo-400 hover:text-indigo-300 underline"
-											>
-												{dataset.licence}
-											</a>
-										</td>
-										<td className="px-6 py-4 text-sm text-gray-500">
-											{dataset.description}
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
+	return (
+		<div className="min-h-screen bg-[#f3f3f1] text-slate-700">
+			<Navigation />
+			<main className="mx-auto max-w-[1480px] px-3 sm:px-4">
+				<Sheet>
+					<div className="max-w-[760px]">
+						<Eyebrow>Datasets and boundaries</Eyebrow>
+						<h1 className="text-[32px] leading-[1.15] font-semibold tracking-tight text-slate-900 sm:text-[38px]">
+							Data and boundaries used by the Atlas
+						</h1>
+						<p className="mt-4 text-[17px] leading-[1.7] text-slate-600">
+							The official datasets and boundary releases
+							currently connected to the UK Data Atlas. Sources,
+							years and licences are listed so you can see where
+							each layer comes from.
+						</p>
 					</div>
-				</div>
-			</div>
+
+					<Card className="mt-9 overflow-hidden">
+						<div className="overflow-x-auto">
+							<table className="w-full text-left text-[14px]">
+								<thead>
+									<tr className="border-b border-slate-900/[0.07]">
+										{[
+											"Dataset",
+											"Source",
+											"Year",
+											"Licence",
+											"Description",
+										].map((heading) => (
+											<th
+												key={heading}
+												className="px-4 py-3 text-[12px] font-semibold tracking-wide whitespace-nowrap text-slate-500"
+											>
+												{heading}
+											</th>
+										))}
+									</tr>
+								</thead>
+								<tbody className="divide-y divide-slate-900/[0.05]">
+									{datasets.map((dataset) => (
+										<tr
+											key={dataset.name}
+											className="align-top transition-colors hover:bg-white/60"
+										>
+											<td className="px-4 py-3 leading-relaxed font-medium text-slate-900">
+												{dataset.name}
+											</td>
+											<td className="px-4 py-3 leading-relaxed text-slate-600">
+												<a
+													href={dataset.sourceUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+												>
+													{dataset.source}
+												</a>
+											</td>
+											<td className="px-4 py-3 leading-relaxed whitespace-nowrap text-slate-600">
+												{dataset.year}
+											</td>
+											<td className="px-4 py-3 leading-relaxed text-slate-600">
+												<a
+													href={dataset.licenceUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+												>
+													{dataset.licence}
+												</a>
+											</td>
+											<td className="max-w-[520px] px-4 py-3 leading-relaxed text-slate-600">
+												{dataset.description}
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</Card>
+
+					<section className="mt-12">
+						<h2 className="text-[24px] font-semibold tracking-tight text-slate-900">
+							Boundary coverage
+						</h2>
+						<p className="mt-3 max-w-[760px] text-[16px] leading-[1.7] text-slate-600">
+							Every supported geography is listed below. Open a
+							geography for its complete release history,
+							publisher, licence and downloadable files.
+						</p>
+						<Card className="mt-6 overflow-hidden">
+							<div className="overflow-x-auto">
+								<table className="w-full text-left text-[14px]">
+									<thead>
+										<tr className="border-b border-slate-900/[0.07]">
+											<th className="px-4 py-3 text-[12px] font-semibold tracking-wide whitespace-nowrap text-slate-500">
+												Geography
+											</th>
+											<th className="px-4 py-3 text-[12px] font-semibold tracking-wide whitespace-nowrap text-slate-500">
+												Releases
+											</th>
+											<th className="px-4 py-3 text-[12px] font-semibold tracking-wide whitespace-nowrap text-slate-500">
+												Latest release
+											</th>
+										</tr>
+									</thead>
+									<tbody className="divide-y divide-slate-900/[0.05]">
+										{boundaries.map(
+											({ id, geography, releases }) => (
+												<tr
+													key={id}
+													className="align-top hover:bg-white/60"
+												>
+													<td className="px-4 py-3 font-medium text-slate-900">
+														<Link
+															href={geographyHref(
+																id,
+															)}
+															className="underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+														>
+															{geography.title}
+														</Link>
+													</td>
+													<td className="px-4 py-3 text-slate-600">
+														{releases.length}
+													</td>
+													<td className="px-4 py-3 font-mono text-[12px] text-slate-600">
+														{releases[0]?.id ?? "—"}
+													</td>
+												</tr>
+											),
+										)}
+									</tbody>
+								</table>
+							</div>
+						</Card>
+					</section>
+				</Sheet>
+			</main>
 		</div>
 	);
 }

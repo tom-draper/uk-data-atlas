@@ -1,33 +1,30 @@
-import type {
-	BrexitOptions,
-	CategoryOptions,
-	CrimeOptions,
-	DensityOptions,
-	GenderOptions,
-	HousePriceOptions,
-	IMDOptions,
-	SIMDOptions,
-	WIMDOptions,
-	NIMDMOptions,
-	IncomeOptions,
-	PopulationOptions,
-	QualificationOptions,
-	BroadbandOptions,
-	AirQualityOptions,
-	SchoolPerformanceOptions,
-	ClaimantCountOptions,
-	NHSWaitingOptions,
-	UnemploymentOptions,
-	ChildPovertyOptions,
-	HomelessnessOptions,
-	FuelPovertyOptions,
-} from "@/lib/types/mapOptions";
+import type { CategoryOptions, MapOptions } from "@/lib/types/mapOptions";
 import { normalizeValue, hexToRgb } from "./interpolation";
 import { getThemeColor, themes } from "./themes";
+import {
+	equal,
+	featureProperty,
+	lessThan,
+	linearInterpolate,
+	nullFallback,
+	when,
+	type MapExpression,
+} from "../mapManager/expressions";
 
 type ColorRange = { min: number; max: number };
 
-// Builds a MapLibre paint expression for scalar datasets. The source keeps the
+/** Returns the theme colour used by a numeric heatmap for one value. */
+export function getSequentialColorForValue(
+	value: number,
+	range: ColorRange,
+	themeId: string,
+	invertColor = true,
+): string {
+	const normalized = normalizeValue(value, range.min, range.max);
+	return getThemeColor(invertColor ? 1 - normalized : normalized, themeId);
+}
+
+// Builds a MapLibre paint expression for numeric datasets. The source keeps the
 // raw value so changing a theme or range only changes paint, rather than
 // rebuilding and uploading every boundary feature.
 export function getSequentialColorExpression(
@@ -35,82 +32,27 @@ export function getSequentialColorExpression(
 	themeId: string,
 	invertColor = true,
 	property = "value",
-): unknown[] {
-	const theme = themes.find((candidate) => candidate.id === themeId) ?? themes[0];
+): MapExpression {
+	const theme =
+		themes.find((candidate) => candidate.id === themeId) ?? themes[0];
 	const colors = invertColor ? [...theme.colors].reverse() : theme.colors;
 	if (range.min === range.max) {
-		return [
-			"case",
-			["==", ["get", property], null],
-			"#cccccc",
-			getThemeColor(0.5, themeId),
-		];
+		return nullFallback(property, "#cccccc", getThemeColor(0.5, themeId));
 	}
 	const span = range.max - range.min;
-	const expression: unknown[] = ["interpolate", ["linear"], ["get", property]];
-
-	colors.forEach((color, index) => {
+	const stops = colors.map((color, index) => {
 		const position =
 			colors.length <= 1
 				? range.min
 				: range.min + (span * index) / (colors.length - 1);
-		expression.push(position, color);
+		return [position, color] as const;
 	});
 
-	return [
-		"case",
-		["==", ["get", property], null],
+	return nullFallback(
+		property,
 		"#cccccc",
-		expression,
-	];
-}
-
-function colorFromRange(
-	value: number,
-	options: { colorRange: { min: number; max: number } },
-	themeId: string,
-	expandRange: boolean,
-	invertColor = true,
-): string {
-	const { min, max } = options.colorRange;
-	const normalized = normalizeValue(
-		value,
-		expandRange ? Math.min(min, value) : min,
-		expandRange ? Math.max(max, value) : max,
+		linearInterpolate(featureProperty(property), stops),
 	);
-	return getThemeColor(invertColor ? 1 - normalized : normalized, themeId);
-}
-
-export function getColorForAge(
-	medianAge: number,
-	mapOptions: PopulationOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(medianAge, mapOptions, themeId, false);
-}
-
-export function getColorForDensity(
-	density: number,
-	mapOptions: DensityOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(density, mapOptions, themeId, false);
-}
-
-export function getColorForHousePrice(
-	price: number,
-	options: HousePriceOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(price, options, themeId, true);
-}
-
-export function getColorForCrimeRate(
-	rate: number,
-	options: CrimeOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
 }
 
 // Pre-parsed color tuples — avoids regex on every feature
@@ -132,7 +74,7 @@ function lerpRgb(
 
 export function getColorForBrexitLeave(
 	pctLeave: number,
-	options: BrexitOptions,
+	options: MapOptions["brexit"],
 ): string {
 	const midpoint = 50;
 	const { min, max } = options.colorRange;
@@ -161,141 +103,12 @@ export function getColorForBrexitLeave(
 	}
 }
 
-export function getColorForIMD(
-	score: number,
-	options: IMDOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(score, options, themeId, true);
-}
-
-export function getColorForSIMD(
-	rank: number,
-	options: SIMDOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rank, options, themeId, false, false);
-}
-
-export function getColorForWIMD(
-	rank: number,
-	options: WIMDOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rank, options, themeId, false, false);
-}
-
-export function getColorForNIMDM(
-	rank: number,
-	options: NIMDMOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rank, options, themeId, false, false);
-}
-
-export function getColorForLifeExpectancy(
-	years: number,
-	min: number,
-	max: number,
-	themeId = "viridis",
-) {
-	return getThemeColor(normalizeValue(years, min, max), themeId);
-}
-
-export function getColorForQualification(
-	pctLevel4Plus: number,
-	options: QualificationOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(pctLevel4Plus, options, themeId, true);
-}
-
-export function getColorForIncome(
-	income: number,
-	options: IncomeOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(income, options, themeId, true);
-}
-
-export function getColorForBroadband(
-	speedMbps: number,
-	options: BroadbandOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(speedMbps, options, themeId, true);
-}
-
-export function getColorForAirQuality(
-	no2Mean: number,
-	options: AirQualityOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(no2Mean, options, themeId, true);
-}
-
-export function getColorForSchoolPerformance(
-	pct: number,
-	options: SchoolPerformanceOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(pct, options, themeId, true);
-}
-
-export function getColorForClaimantCount(
-	rate: number,
-	options: ClaimantCountOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForUnemployment(
-	rate: number,
-	options: UnemploymentOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForChildPoverty(
-	rate: number,
-	options: ChildPovertyOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForHomelessness(
-	rate: number,
-	options: HomelessnessOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForFuelPoverty(
-	rate: number,
-	options: FuelPovertyOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(rate, options, themeId, true);
-}
-
-export function getColorForNHSWaiting(
-	pct: number,
-	options: NHSWaitingOptions,
-	themeId = "viridis",
-) {
-	return colorFromRange(pct, options, themeId, true);
-}
-
 const FEMALE_RGB = [255, 105, 180] as const;
 const MALE_RGB = [70, 130, 180] as const;
 
 export function getColorForGenderRatio(
 	ratio: number,
-	mapOptions: GenderOptions,
+	mapOptions: MapOptions["gender"],
 ) {
 	const range = mapOptions.colorRange;
 	if (ratio < 0) {
@@ -308,57 +121,46 @@ export function getColorForGenderRatio(
 }
 
 export function getGenderColorExpression(
-	range: GenderOptions["colorRange"],
+	range: MapOptions["gender"]["colorRange"],
 	property = "value",
-): unknown[] {
-	const value = ["get", property];
-	return [
-		"case",
-		["==", value, null],
-		"#cccccc",
-		["<", value, 0],
+): MapExpression {
+	const value = featureProperty(property);
+	return when(
 		[
-			"interpolate",
-			["linear"],
-			value,
-			range.min,
-			"rgba(255, 105, 180, 0.8)",
-			0,
-			"rgba(240, 240, 240, 0.8)",
+			[equal(value, null), "#cccccc"],
+			[
+				lessThan(value, 0),
+				linearInterpolate(value, [
+					[range.min, "rgba(255, 105, 180, 0.8)"],
+					[0, "rgba(240, 240, 240, 0.8)"],
+				]),
+			],
 		],
-		[
-			"interpolate",
-			["linear"],
-			value,
-			0,
-			"rgba(240, 240, 240, 0.8)",
-			range.max,
-			"rgba(70, 130, 180, 0.8)",
-		],
-	];
+		linearInterpolate(value, [
+			[0, "rgba(240, 240, 240, 0.8)"],
+			[range.max, "rgba(70, 130, 180, 0.8)"],
+		]),
+	);
 }
 
 export function getPercentageColorExpression(
 	color: string,
 	mapOptions: CategoryOptions,
 	isDark = false,
-) {
+): MapExpression {
 	const range = mapOptions.percentageRange;
 	const partyRgb = hexToRgb(color);
 	const neutralColor = isDark ? "#1f2937" : "#f5f5f5";
 	const neutralRgb = hexToRgb(neutralColor);
-	return [
-		"case",
-		["==", ["get", "percentage"], null],
+	return nullFallback(
+		"percentage",
 		neutralColor,
-		[
-			"interpolate",
-			["linear"],
-			["get", "percentage"],
-			range.min,
-			`rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`,
-			range.max,
-			`rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`,
-		],
-	];
+		linearInterpolate(featureProperty("percentage"), [
+			[
+				range.min,
+				`rgb(${neutralRgb.r}, ${neutralRgb.g}, ${neutralRgb.b})`,
+			],
+			[range.max, `rgb(${partyRgb.r}, ${partyRgb.g}, ${partyRgb.b})`],
+		]),
+	);
 }

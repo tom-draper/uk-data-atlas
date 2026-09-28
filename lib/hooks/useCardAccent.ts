@@ -22,7 +22,7 @@ export function useCardAccent(
 	const onMouseEnter = () => setHovered(true);
 	const onMouseLeave = () => setHovered(false);
 
-	return { style, onMouseEnter, onMouseLeave };
+	return { style, onMouseEnter, onMouseLeave, isHovered: hovered };
 }
 
 export function chartHeadingClass(isDark: boolean) {
@@ -37,8 +37,10 @@ export function cardClass(isActive: boolean, isDark: boolean, extra?: string) {
 		: isDark
 			? "bg-white/5 border-white/10"
 			: "bg-white/60 border-gray-200/80";
+	// Containment keeps a card's relayout inside the card, so a hover that
+	// updates every card does not re-lay out the whole page.
 	return [
-		"p-2 rounded cursor-pointer overflow-hidden relative border-2 w-full flex flex-col text-left transition-colors duration-150",
+		"p-2 rounded cursor-pointer overflow-hidden relative border-2 w-full flex flex-col text-left transition-colors duration-150 [contain:content]",
 		state,
 		extra,
 	]

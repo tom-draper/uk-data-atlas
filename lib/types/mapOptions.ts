@@ -2,10 +2,19 @@
 import { Datasets } from "./datasets";
 import { ColorRange } from "./common";
 import type { BaseMapStyle } from "../config/baseMapStyles";
+import type { CatalogueDatasetType } from "@/lib/data/catalog";
 
 // Base option types reused across visualizations
-interface ColorRangeOption {
+export interface ColorRangeOption {
 	colorRange: ColorRange;
+}
+
+export interface HousePriceOptions extends ColorRangeOption {
+	measure: "median" | "mean";
+}
+
+export interface LifeExpectancyOptions extends ColorRangeOption {
+	measure: "average" | "male" | "female";
 }
 
 export interface CustomOptions extends ColorRangeOption {
@@ -20,33 +29,19 @@ export interface CategoryOptions {
 	percentageRange: ColorRange;
 }
 
-export type GeneralElectionOptions = CategoryOptions;
-export type LocalElectionOptions = CategoryOptions;
-export type HousePriceOptions = ColorRangeOption;
-export type EthnicityOptions = CategoryOptions;
-export type CrimeOptions = ColorRangeOption;
-export type PopulationOptions = ColorRangeOption;
-export type DensityOptions = ColorRangeOption;
-export type GenderOptions = ColorRangeOption;
-export type IncomeOptions = ColorRangeOption;
-export type HousingAffordabilityOptions = ColorRangeOption;
-export type BrexitOptions = ColorRangeOption;
-export type BrexitConstituencyOptions = ColorRangeOption;
-export type IMDOptions = ColorRangeOption;
-export type SIMDOptions = ColorRangeOption;
-export type WIMDOptions = ColorRangeOption;
-export type NIMDMOptions = ColorRangeOption;
-export type LifeExpectancyOptions = ColorRangeOption;
-export type QualificationOptions = ColorRangeOption;
-export type BroadbandOptions = ColorRangeOption;
-export type AirQualityOptions = ColorRangeOption;
-export type SchoolPerformanceOptions = ColorRangeOption;
-export type ClaimantCountOptions = ColorRangeOption;
-export type NHSWaitingOptions = ColorRangeOption;
-export type UnemploymentOptions = ColorRangeOption;
-export type ChildPovertyOptions = ColorRangeOption;
-export type HomelessnessOptions = ColorRangeOption;
-export type FuelPovertyOptions = ColorRangeOption;
+/** Click-to-isolate / right-click-to-exclude state for a map-native network layer's legend. */
+export interface NetworkOptions {
+	selected?: string;
+	excluded?: string[];
+}
+
+export type ChartMapOptions = Omit<
+	Record<CatalogueDatasetType, ColorRangeOption>,
+	"housePrice" | "lifeExpectancy"
+> & {
+	housePrice: HousePriceOptions;
+	lifeExpectancy: LifeExpectancyOptions;
+};
 
 export type ColorTheme =
 	| "viridis"
@@ -66,35 +61,31 @@ export type ColorTheme =
 
 export type MapMode = keyof Datasets | "custom";
 
-export interface MapOptions {
-	generalElection: GeneralElectionOptions;
-	localElection: LocalElectionOptions;
-	ageDistribution: PopulationOptions;
-	populationDensity: DensityOptions;
-	gender: GenderOptions;
-	ethnicity: EthnicityOptions;
-	housePrice: HousePriceOptions;
-	crime: CrimeOptions;
-	income: IncomeOptions;
-	housingAffordability: HousingAffordabilityOptions;
-	brexit: BrexitOptions;
-	brexitConstituency: BrexitConstituencyOptions;
+/**
+ * The dataset types whose map options carry a colour range, so the shared
+ * choropleth path can read `mapOptions[dataset.type].colorRange` without a
+ * cast. Derived, so a new option group joins or leaves it automatically.
+ */
+export type NumericMapOptionsKey = Extract<
+	MapMode,
+	{
+		[K in keyof MapOptions]: MapOptions[K] extends ColorRangeOption
+			? K
+			: never;
+	}[keyof MapOptions]
+>;
+
+export type MapOptions = ChartMapOptions & {
+	generalElection: CategoryOptions;
+	localElection: CategoryOptions;
+	ethnicity: CategoryOptions;
+	ageDistribution: ColorRangeOption;
+	populationDensity: ColorRangeOption;
+	gender: ColorRangeOption;
+	brexit: ColorRangeOption;
+	brexitConstituency: ColorRangeOption;
 	custom: CustomOptions;
-	imd: IMDOptions;
-	simd: SIMDOptions;
-	wimd: WIMDOptions;
-	nimdm: NIMDMOptions;
-	lifeExpectancy: LifeExpectancyOptions;
-	qualification: QualificationOptions;
-	broadband: BroadbandOptions;
-	airQuality: AirQualityOptions;
-	schoolPerformance: SchoolPerformanceOptions;
-	claimantCount: ClaimantCountOptions;
-	nhsWaiting: NHSWaitingOptions;
-	unemployment: UnemploymentOptions;
-	childPoverty: ChildPovertyOptions;
-	homelessness: HomelessnessOptions;
-	fuelPoverty: FuelPovertyOptions;
+	network: NetworkOptions;
 	theme: {
 		id: ColorTheme;
 	};
@@ -108,4 +99,10 @@ export interface MapOptions {
 		hideOverlay: boolean;
 		overlayOpacity: number;
 	};
-}
+};
+
+export type ColorRangeMapOptionKey = {
+	[Key in keyof MapOptions]: MapOptions[Key] extends ColorRangeOption
+		? Key
+		: never;
+}[keyof MapOptions];

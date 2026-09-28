@@ -1,0 +1,123 @@
+{
+	"schemaVersion": 1,
+	"totals": [
+		{
+			"measureId": "car-availability-total",
+			"components": [
+				"car-availability-none",
+				"car-availability-one",
+				"car-availability-two",
+				"car-availability-three-or-more"
+			]
+		},
+		{
+			"measureId": "qualification-total",
+			"components": [
+				"qualification-none",
+				"qualification-level-1",
+				"qualification-level-2",
+				"qualification-apprenticeship",
+				"qualification-level-3",
+				"qualification-level-4-plus",
+				"qualification-other"
+			]
+		},
+		{
+			"measureId": "travel-to-work-total",
+			"components": [
+				"travel-to-work-car",
+				"travel-to-work-home",
+				"travel-to-work-public-transport",
+				"travel-to-work-on-foot",
+				"travel-to-work-bicycle",
+				"travel-to-work-taxi",
+				"travel-to-work-motorcycle",
+				"travel-to-work-other"
+			]
+		},
+		{
+			"measureId": "crime-total",
+			"components": [
+				"crime-violence-against-the-person",
+				"crime-sexual-offences",
+				"crime-robbery",
+				"crime-theft-offences",
+				"crime-criminal-damage-and-arson",
+				"crime-drug-offences",
+				"crime-possession-of-weapons",
+				"crime-public-order-offences",
+				"crime-miscellaneous-crimes-against-society"
+			]
+		},
+		{
+			"measureId": "crime-violence-against-the-person",
+			"components": [
+				"crime-homicide",
+				"crime-death-or-serious-injury-by-illegal-driving",
+				"crime-violence-with-injury",
+				"crime-violence-without-injury",
+				"crime-stalking-and-harassment"
+			]
+		},
+		{
+			"measureId": "crime-theft-offences",
+			"components": [
+				"crime-burglary",
+				"crime-vehicle-offences",
+				"crime-theft-from-the-person",
+				"crime-bicycle-theft",
+				"crime-shoplifting",
+				"crime-other-theft"
+			]
+		},
+		{
+			"measureId": "crime-burglary",
+			"components": [
+				"crime-residential-burglary",
+				"crime-non-residential-burglary"
+			]
+		},
+		{
+			"measureId": "general-election-valid-votes",
+			"components": [
+				"general-election-apni-votes",
+				"general-election-brx-votes",
+				"general-election-con-votes",
+				"general-election-dup-votes",
+				"general-election-green-votes",
+				"general-election-lab-votes",
+				"general-election-ld-votes",
+				"general-election-other-votes",
+				"general-election-pc-votes",
+				"general-election-ruk-votes",
+				"general-election-sdlp-votes",
+				"general-election-sf-votes",
+				"general-election-snp-votes",
+				"general-election-ukip-votes",
+				"general-election-uup-votes"
+			]
+		},
+		{
+			"measureId": "local-election-effective-votes",
+			"components": [
+				"local-election-con-votes",
+				"local-election-green-votes",
+				"local-election-ind-votes",
+				"local-election-lab-votes",
+				"local-election-ld-votes",
+				"local-election-other-votes",
+				"local-election-pc-votes",
+				"local-election-ref-votes",
+				"local-election-ukip-votes"
+			]
+		},
+		{
+			"measureId": "road-collisions",
+			"components": [
+				"road-collisions-fatal",
+				"road-collisions-serious",
+				"road-collisions-slight"
+			]
+		}
+	]
+}

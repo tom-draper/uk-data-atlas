@@ -1,19 +1,14 @@
 // components/GeneralElectionResultChart.tsx
 "use client";
 
-
 import { ActiveViz, GeneralElectionDataset } from "@lib/types";
 import {
-	ChartLoadingBackground,
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
+import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	useCardAccent,
-	cardClass,
-	chartHeadingClass,
-} from "@/lib/hooks/useCardAccent";
+import { formatCount } from "@/lib/helpers/formatCount";
 
 interface ProcessedPartyData {
 	key: string;
@@ -41,8 +36,11 @@ function VoteBar({ data }: { data: ProcessedPartyData[] }) {
 			{data.map((p) => (
 				<div
 					key={p.key}
-					style={{ width: `${p.percentage}%`, backgroundColor: p.color }}
-					title={`${p.name}: ${p.votes.toLocaleString()} (${p.percentage.toFixed(
+					style={{
+						width: `${p.percentage}%`,
+						backgroundColor: p.color,
+					}}
+					title={`${p.name}: ${formatCount(p.votes)} (${p.percentage.toFixed(
 						1,
 					)}%)`}
 					className="group relative hover:opacity-80 transition-opacity"
@@ -79,7 +77,7 @@ function Legend({
 							style={{ backgroundColor: p.color }}
 						/>
 						<span className="truncate font-medium">
-							{p.key}: {p.votes.toLocaleString()}
+							{p.key}: {formatCount(p.votes)}
 						</span>
 					</div>
 				))}
@@ -126,56 +124,39 @@ export default function GeneralElectionResultChart({
 }) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
-	const vizId = `generalElection-${data.year}`;
+	const datasetId = `generalElection-${data.year}`;
 	const winnerColor = data.partyData[0]?.color;
 
-	const heightClass = isActive
-		? data.isAggregated
-			? "h-[205px]"
-			: "h-[95px]"
-		: "h-[65px]";
+	// An active general-election card can show the national seats breakdown.
+	// Reserve that compact layout from the loading state onwards so hovering a
+	// constituency cannot move every card below it.
+	const heightClass = isActive ? "min-h-[205px]" : "min-h-[65px]";
 
 	const accentColor = winnerColor ?? "#6366f1";
-	const { style, onMouseEnter, onMouseLeave } = useCardAccent(
-		accentColor,
-		isActive,
-		isDark,
-	);
-
 	return (
-		<button
-			type="button"
-			style={style}
-			className={cardClass(
-				isActive,
-				isDark,
-				`transition-[height] duration-300 ease-in-out ${heightClass}`,
-			)}
+		<ChartCard
+			heading={`${data.year} General Election`}
+			headerEnd={
+				data.turnout !== null && (
+					<span className="text-[9px] text-gray-500 font-medium">
+						{data.turnout.toFixed(1)}% turnout
+					</span>
+				)
+			}
+			accent={accentColor}
+			isActive={isActive}
+			minHeightClassName={`transition-[min-height] duration-300 ease-in-out ${heightClass}`}
 			title="House of Commons Library, UK Parliament. UK General Election Results. commonslibrary.parliament.uk"
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
 			onClick={() =>
 				data.dataset &&
 				setActiveViz({
-					vizId: vizId,
+					datasetId: datasetId,
 					datasetType: data.dataset.type,
 					datasetYear: data.year,
 				})
 			}
 		>
-			<ChartLoadingBackground />
 			<div className="relative z-[1] flex-1 flex flex-col">
-				<div className="flex items-center justify-between mb-1.5">
-					<h3 className={chartHeadingClass(isDark)}>
-						{data.year} General Election
-					</h3>
-					{data.turnout !== null && (
-						<span className="text-[9px] text-gray-500 font-medium">
-							{data.turnout.toFixed(1)}% turnout
-						</span>
-					)}
-				</div>
-
 				{!data.hasData ? (
 					chartsLoading ? (
 						<ChartContentPlaceholder className="flex-1 mt-1" />
@@ -199,6 +180,6 @@ export default function GeneralElectionResultChart({
 					</div>
 				)}
 			</div>
-		</button>
+		</ChartCard>
 	);
 }
