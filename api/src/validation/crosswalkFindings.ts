@@ -311,12 +311,24 @@ export const crosswalkFindings = (
 		);
 		// Each share is rounded to six places; allow for that per target.
 		const tolerance = 5e-6;
-		const below = [...sourceCoverage, ...targetCoverage]
-			.filter(
-				([, coverage]) =>
-					coverage + tolerance < overlap.minimumCoverage,
-			)
-			.map(([code, coverage]) => `${code} (${coverage.toFixed(4)})`);
+		// A crosswalk may hold its targets to a lower bar than its sources,
+		// as national parks do: most authorities contain no park at all. The
+		// compiler records that bar, and the check applies the same one.
+		const targetMinimum =
+			overlap.minimumTargetCoverageRequired ?? overlap.minimumCoverage;
+		const under = (
+			entries: ReadonlyArray<readonly [string, number]>,
+			required: number,
+		) => entries.filter(([, coverage]) => coverage + tolerance < required);
+		const below = [
+			...under(sourceCoverage, overlap.minimumCoverage).map(
+				([code, coverage]) => `${code} (${coverage.toFixed(4)})`,
+			),
+			...under(targetCoverage, targetMinimum).map(
+				([code, coverage]) =>
+					`${code} (${coverage.toFixed(4)}, target minimum ${targetMinimum})`,
+			),
+		];
 		const minimum = (entries: ReadonlyArray<readonly [string, number]>) =>
 			Number(
 				Math.min(...entries.map(([, coverage]) => coverage)).toFixed(6),
@@ -328,6 +340,12 @@ export const crosswalkFindings = (
 				`Areas below ${overlap.minimumCoverage} coverage: ${listed(below)}.`,
 				{
 					minimumCoverage: overlap.minimumCoverage,
+					...(overlap.minimumTargetCoverageRequired === undefined
+						? {}
+						: {
+								minimumTargetCoverageRequired:
+									overlap.minimumTargetCoverageRequired,
+							}),
 					minimumSourceCoverage: minimum(sourceCoverage),
 					minimumTargetCoverage:
 						targetCoverage.length > 0

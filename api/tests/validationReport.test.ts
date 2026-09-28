@@ -603,6 +603,62 @@ test("detects an edited crosswalk from its hash and its weights", () => {
 	);
 });
 
+test("holds overlap targets to the coverage the crosswalk requires of them", () => {
+	// Every ward lies wholly in L1, but covers only 40% of it, as a national
+	// park covers little of the authorities it lies in.
+	const partlyCovered = (required?: number) => {
+		const { contentHash: _, ...base } = overlap();
+		return hashed({
+			...base,
+			validation: {
+				...base.validation,
+				overlap: {
+					...base.validation.overlap,
+					...(required === undefined
+						? {}
+						: { minimumTargetCoverageRequired: required }),
+					minimumTargetCoverage: 0.4,
+				},
+			},
+			records: base.records.map((record) => ({
+				...record,
+				targets: record.targets.map((target) => ({
+					...target,
+					targetShare: 0.2,
+				})),
+			})),
+		});
+	};
+	assert.throws(
+		() =>
+			compileValidationReport(
+				inputs({ crosswalks: [containment(), partlyCovered()] }),
+			),
+		/ward-to-lad-area-overlap fails area-coverage: Areas below 0\.99 coverage: L1 \(0\.4000, target minimum 0\.99\)\./,
+	);
+	const report = compileValidationReport(
+		inputs({ crosswalks: [containment(), partlyCovered(0)] }),
+	);
+	assert.deepEqual(
+		report.resources
+			.find(
+				(resource) =>
+					resource.id === "crosswalks/ward-to-lad-area-overlap",
+			)
+			?.checks.find((entry) => entry.id === "area-coverage"),
+		{
+			id: "area-coverage",
+			status: "passed",
+			measured: {
+				minimumCoverage: 0.99,
+				minimumTargetCoverageRequired: 0,
+				minimumSourceCoverage: 1,
+				minimumTargetCoverage: 0.4,
+			},
+		},
+	);
+});
+
 test("fails containment with more than one parent", () => {
 	const twoParents = containment([
 		{
