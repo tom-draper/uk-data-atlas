@@ -88,6 +88,8 @@ export const handleAreaIntersectsRoutes = ({
 			geography,
 			boundaryRelease,
 			[west!, south!, east!, north!],
+			limit,
+			requestedTier !== null,
 		);
 		if (!found)
 			return problem(
@@ -95,26 +97,21 @@ export const handleAreaIntersectsRoutes = ({
 				"Catalogue Unavailable",
 				"Build the geometry source registry before box lookup.",
 			);
-		const matches = found.matches.slice(0, limit).map((match) => {
+		const matches = found.matches.map((match) => {
 			const { geometry, ...area } = match;
+			if (requestedTier === null) return area;
 			const simplified =
-				requestedTier === null
-					? undefined
-					: simplifyGeometry(geometry, requestedTier);
+				geometry && simplifyGeometry(geometry, requestedTier);
+			if (!simplified) return area;
 			return {
 				...area,
-				...(simplified
-					? {
-							generalisation: {
-								vertices: simplified.verticesAfter,
-								verticesAtFullResolution:
-									simplified.verticesBefore,
-								parts: simplified.partsAfter,
-								partsAtFullResolution: simplified.partsBefore,
-							},
-							geometry: simplified.geometry,
-						}
-					: {}),
+				generalisation: {
+					vertices: simplified.verticesAfter,
+					verticesAtFullResolution: simplified.verticesBefore,
+					parts: simplified.partsAfter,
+					partsAtFullResolution: simplified.partsBefore,
+				},
+				geometry: simplified.geometry,
 			};
 		});
 		return {
