@@ -8,6 +8,7 @@ import {
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
 import { resolveDeprivation } from "../deprivationStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 
 const NIMDM: DeprivationIndex = {
 	datasetType: "nimdm",
@@ -27,6 +28,7 @@ interface NIMDMChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -36,6 +38,7 @@ export default function NIMDMChart({
 	aggregatedData,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: NIMDMChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -46,6 +49,7 @@ export default function NIMDMChart({
 		ladStats: dataset.lgdStats,
 		selectedArea,
 		fineArea: { type: "superOutputArea", records: dataset.data },
+		codeMapper,
 	});
 
 	return (

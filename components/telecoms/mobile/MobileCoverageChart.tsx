@@ -12,6 +12,10 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface MobileCoverageChartProps {
 	activeDataset: Dataset | null;
@@ -20,6 +24,7 @@ interface MobileCoverageChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -68,6 +73,7 @@ function computeStats(
 	dataset: MobileCoverageDataset,
 	aggregatedData: Record<number, AggregatedMobileCoverageData> | null,
 	selectedArea: SelectedArea | null,
+	codeMapper: LadResolver | undefined,
 ): AggregatedMobileCoverageData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
@@ -84,11 +90,8 @@ function computeStats(
 		};
 	};
 
-	if (selectedArea.type === "localAuthority")
-		return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
-		return fromRecord(selectedArea.data.ladCode);
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	return ladCode ? fromRecord(ladCode) : null;
 }
 
 export default function MobileCoverageChart({
@@ -96,6 +99,7 @@ export default function MobileCoverageChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	year,
 	setActiveViz,
 }: MobileCoverageChartProps) {
@@ -104,7 +108,7 @@ export default function MobileCoverageChart({
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
-		? computeStats(dataset, aggregatedData, selectedArea)
+		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
 		: null;
 
 	const isActive =

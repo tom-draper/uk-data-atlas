@@ -18,6 +18,10 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface CarAvailabilityChartProps {
 	activeDataset: Dataset | null;
@@ -25,6 +29,7 @@ interface CarAvailabilityChartProps {
 	aggregatedData: Record<number, AggregatedCarAvailabilityData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -32,6 +37,7 @@ function computeBreakdown(
 	dataset: CarAvailabilityDataset,
 	aggregatedData: Record<number, AggregatedCarAvailabilityData> | null,
 	selectedArea: SelectedArea | null,
+	codeMapper: LadResolver | undefined,
 	year: number,
 	chartsLoading: boolean,
 ) {
@@ -39,13 +45,8 @@ function computeBreakdown(
 
 	if (selectedArea === null) return aggregatedData?.[year]?.breakdown ?? null;
 
-	if (selectedArea.type === "localAuthority")
-		return dataset.data[selectedArea.code]?.breakdown ?? null;
-
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
-		return dataset.data[selectedArea.data.ladCode]?.breakdown ?? null;
-
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	return ladCode ? (dataset.data[ladCode]?.breakdown ?? null) : null;
 }
 
 export default function CarAvailabilityChart({
@@ -53,6 +54,7 @@ export default function CarAvailabilityChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	year,
 	setActiveViz,
 }: CarAvailabilityChartProps) {
@@ -68,6 +70,7 @@ export default function CarAvailabilityChart({
 				dataset,
 				aggregatedData,
 				selectedArea,
+				codeMapper,
 				year,
 				chartsLoading,
 			)

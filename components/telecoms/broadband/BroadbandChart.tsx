@@ -13,6 +13,10 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface BroadbandChartProps {
 	activeDataset: Dataset | null;
@@ -20,7 +24,7 @@ interface BroadbandChartProps {
 	aggregatedData: Record<number, AggregatedBroadbandData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: CodeYearResolver & LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -31,7 +35,7 @@ function computeStats(
 	dataset: BroadbandDataset,
 	aggregatedData: Record<number, AggregatedBroadbandData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeYearResolver | undefined,
+	codeMapper: (CodeYearResolver & LadResolver) | undefined,
 ): AggregatedBroadbandData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
@@ -54,11 +58,8 @@ function computeStats(
 		} as AggregatedBroadbandData;
 	};
 
-	if (selectedArea.type === "localAuthority")
-		return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
-		return fromRecord(selectedArea.data.ladCode);
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	return ladCode ? fromRecord(ladCode) : null;
 }
 
 function StatPill({

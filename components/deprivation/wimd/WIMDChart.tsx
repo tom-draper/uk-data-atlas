@@ -8,6 +8,7 @@ import {
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
 import { resolveDeprivation } from "../deprivationStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 
 const WIMD: DeprivationIndex = {
 	datasetType: "wimd",
@@ -27,6 +28,7 @@ interface WIMDChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -36,6 +38,7 @@ export default function WIMDChart({
 	aggregatedData,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: WIMDChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -46,6 +49,7 @@ export default function WIMDChart({
 		ladStats: dataset.ladStats,
 		selectedArea,
 		fineArea: { type: "lsoa", records: dataset.data },
+		codeMapper,
 	});
 
 	return (

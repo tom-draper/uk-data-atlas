@@ -11,6 +11,10 @@ import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface SchoolPerformanceDisadvantageChartProps {
 	activeDataset: Dataset | null;
@@ -18,7 +22,7 @@ interface SchoolPerformanceDisadvantageChartProps {
 	aggregatedData: Record<number, AggregatedSchoolPerformanceGapData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: CodeYearResolver & LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -27,7 +31,7 @@ function computeStats(
 	dataset: SchoolPerformanceGapDataset,
 	aggregatedData: Record<number, AggregatedSchoolPerformanceGapData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeYearResolver | undefined,
+	codeMapper: (CodeYearResolver & LadResolver) | undefined,
 ): AggregatedSchoolPerformanceGapData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
@@ -49,11 +53,8 @@ function computeStats(
 		};
 	};
 
-	if (selectedArea.type === "localAuthority")
-		return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
-		return fromRecord(selectedArea.data.ladCode);
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	return ladCode ? fromRecord(ladCode) : null;
 }
 
 export default function SchoolPerformanceDisadvantageChart({

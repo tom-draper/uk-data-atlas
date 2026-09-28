@@ -10,6 +10,10 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface NHSWaitingChartProps {
 	activeDataset: Dataset | null;
@@ -18,6 +22,7 @@ interface NHSWaitingChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -28,6 +33,7 @@ function computeStats(
 	dataset: NHSWaitingDataset,
 	aggregatedData: Record<number, AggregatedNHSWaitingData> | null,
 	selectedArea: SelectedArea | null,
+	codeMapper: LadResolver | undefined,
 ): AggregatedNHSWaitingData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 
@@ -43,11 +49,8 @@ function computeStats(
 		};
 	};
 
-	if (selectedArea.type === "localAuthority")
-		return getForLad(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
-		return getForLad(selectedArea.data.ladCode);
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	return ladCode ? getForLad(ladCode) : null;
 }
 
 export default function NHSWaitingChart({
@@ -55,6 +58,7 @@ export default function NHSWaitingChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	year,
 	setActiveViz,
 }: NHSWaitingChartProps) {
@@ -62,7 +66,7 @@ export default function NHSWaitingChart({
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
-		? computeStats(dataset, aggregatedData, selectedArea)
+		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
 		: null;
 
 	const isActive =

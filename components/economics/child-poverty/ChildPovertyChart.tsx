@@ -10,6 +10,10 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface ChildPovertyChartProps {
 	activeDataset: Dataset | null;
@@ -17,7 +21,7 @@ interface ChildPovertyChartProps {
 	aggregatedData: Record<number, AggregatedChildPovertyData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: CodeYearResolver & LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -31,15 +35,10 @@ function statsFor(
 	dataset: ChildPovertyDataset,
 	aggregatedData: Record<number, AggregatedChildPovertyData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper?: CodeYearResolver,
+	codeMapper?: CodeYearResolver & LadResolver,
 ): AggregatedChildPovertyData | null {
 	if (!selectedArea) return aggregatedData?.[dataset.year] ?? null;
-	const code =
-		selectedArea.type === "localAuthority"
-			? selectedArea.code
-			: selectedArea.type === "ward"
-				? selectedArea.data?.ladCode
-				: undefined;
+	const code = selectedAreaLadCode(selectedArea, codeMapper);
 	if (!code) return null;
 	const record =
 		dataset.data[code] ??
