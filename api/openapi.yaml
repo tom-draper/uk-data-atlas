@@ -7934,9 +7934,9 @@ paths:
       tags: ["Geography"]
       summary: Get a curated area's compiled GeoJSON geometry
       x-likely-refusal:
-        status: 503
-        when: "The location has no fully resolved member release with raw geometry."
-        x-example-request: "/v1/locations/greater-manchester/geometry"
+        status: 404
+        when: "The location id is not listed by `/v1/locations`."
+        x-example-request: "/v1/locations/nowhere/geometry"
       description: >
         Returns the compiled union geometry for the location's fully resolved
         member release. It is unavailable rather than estimated when no such
@@ -7960,12 +7960,21 @@ paths:
                     id: greater-manchester
                     label: Greater Manchester
                     memberGeography: localAuthority
-                    boundaryRelease: 2025-05-uk-bgc-v2
-                    bbox: [-2.8, 53.3, -1.9, 53.8]
+                    boundaryRelease: 2026-05-uk-bgc
+                    bbox: [-2.73, 53.33, -1.91, 53.69]
                   geometry:
-                    type: Polygon
+                    type: MultiPolygon
                     coordinates:
-                      [[[-2.8, 53.3], [-1.9, 53.3], [-1.9, 53.8], [-2.8, 53.3]]]
+                      [
+                        [
+                          [
+                            [-2.73, 53.33],
+                            [-1.91, 53.33],
+                            [-1.91, 53.69],
+                            [-2.73, 53.33],
+                          ],
+                        ],
+                      ]
                 meta:
                   nextCursor: null
         "404":
