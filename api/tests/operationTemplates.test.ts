@@ -26,9 +26,6 @@ test("labels a request by the operation it reached", () => {
 		["/v1/areas:resolve", "/v1/areas:resolve"],
 		["/v1/areas:contains", "/v1/areas:contains"],
 		["/v1/boundary-releases:resolve", "/v1/boundary-releases:resolve"],
-		// A literal segment outranks a placeholder in the same place.
-		["/v1/atlas-releases/compare", "/v1/atlas-releases/compare"],
-		["/v1/atlas-releases/sha256:abc", "/v1/atlas-releases/{release-id}"],
 		[
 			"/v1/map-resources/localAuthority/2023-05-uk-bgc-v2.pmtiles",
 			"/v1/map-resources/{geography}/{release}.pmtiles",
@@ -37,24 +34,12 @@ test("labels a request by the operation it reached", () => {
 			"/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles/3/4/2.mvt",
 			"/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt",
 		],
-		[
-			"/v1/atlas-releases/sha256:abc/map-resources/ward/2023-05-uk-bgc",
-			"/v1/atlas-releases/{release-id}/map-resources/{geography}/{release}",
-		],
-		[
-			"/v1/atlas-releases/sha256:abc/datasets",
-			"/v1/atlas-releases/{release-id}/datasets",
-		],
 		["/v1/nothing/here", "unmatched"],
 		["/v2/areas", "unmatched"],
 		["/", "unmatched"],
 	] as const) {
 		assert.equal(match(path).route, route, path);
 	}
-	assert.equal(
-		match("/v1/atlas-releases/sha256:abc/datasets").pinnedTo,
-		"sha256:abc",
-	);
 });
 
 test("announces a deprecated operation on every response it serves", () => {

@@ -68,10 +68,8 @@ info:
     `contract/v1-surface.json` locks this document's surface, and a test
     refuses any change that breaks it. What the data says is pinned
     separately: every response carries an `Atlas-Release` header naming the
-    release that produced it, and a path under
-    `/atlas-releases/{release-id}/` answers exactly as the unpinned path does,
-    marked `immutable`, for as long as that release is served. A release no
-    longer served is refused with `410` rather than answered from another.
+    current compiled release that produced it. The API retains no historic
+    releases or archived release artifacts.
 
     Any operation may also answer with a problem that is not in its own list,
     because it comes from the server rather than the route. `429` means the
@@ -92,7 +90,7 @@ tags:
   - name: "Trend"
     description: "Analyse a measure within one source partition: an area's series, change between periods, rankings, comparisons, and aggregation or conversion only where they are declared valid."
   - name: "Sync"
-    description: "Keep a copy in step: whole observation exports, bulk lookup tables, and the immutable Atlas releases that pin them, with comparisons between releases."
+    description: "Keep a copy in step: whole observation exports, bulk lookup tables, and the current Atlas release manifest that identifies them."
   - name: "Geography"
     description: "Resolve and relate areas: boundary releases, area identities and their history, parents and children, crosswalks, code translation and curated named locations."
   - name: "Terrain"
@@ -159,14 +157,14 @@ x-endpoint-chooser:
       [
         "/areas/{geography}/{release}/{code}/citation",
         "/attribution",
-        "/atlas-releases",
+        "/atlas-release",
         "/validation",
       ]
 x-quick-starts:
   - id: correct-map
     title: Correct map
     audience: GIS or product engineer
-    promise: Draw release-pinned UK boundaries and values without a code/geometry mismatch, and cite them.
+    promise: Draw UK boundaries and values without a code/geometry mismatch, and cite their current release.
     steps:
       - title: Resolve the place
         explain: A name is not an area. Every place it could mean comes back with its geography and code, and none is chosen for you.
@@ -175,7 +173,7 @@ x-quick-starts:
         explain: A map resource is one boundary release compiled so neighbours share their borders exactly.
         request: "/v1/map-resources"
       - title: Read the descriptor
-        explain: The one document a map needs. It gives the tile and archive URLs, the zoom ladder, every content hash, the attribution and a pinned URL that never needs revalidating.
+        explain: The one document a map needs. It gives the tile and archive URLs, the zoom ladder, every content hash and the attribution.
         request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2"
       - title: Configure the renderer
         explain: TileJSON 3.0 for MapLibre or any other renderer. The tiles carry each area's code, name and a stable integer id, and no values.
@@ -221,9 +219,9 @@ x-quick-starts:
   - id: reliable-sync
     title: Reliable sync
     audience: Data engineer
-    promise: Ingest release-pinned data into an existing stack, verify it, and reprocess only what changed.
+    promise: Ingest current data into an existing stack and verify it.
     steps:
-      - title: Pin the Atlas release
+      - title: Record the Atlas release
         explain: Every response names the release that produced it. Record it beside every table you load.
         request: "/v1/atlas-release"
       - title: List the whole-partition exports
@@ -238,9 +236,6 @@ x-quick-starts:
       - title: Take the reference tables
         explain: Area identities, crosswalks and named-location membership as whole CSV or NDJSON files.
         request: "/v1/lookups/areas-localAuthority-2023-05-uk-bgc-v2?format=ndjson"
-      - title: Reprocess only what moved
-        explain: When a new release is published, compare it with the one you pinned using `/atlas-releases/compare?from=&detail=fields`, and rebuild only the resources it names. Field detail identifies changed published resource metadata, never guessed observation-row revisions.
-        request: "/v1/atlas-releases"
 servers:
   - url: http://127.0.0.1:3001/v1
     description: Local development server (pnpm start)
@@ -277,7 +272,6 @@ paths:
                     - /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt
                     - /v1/map-resources/{geography}/{release}/features
                     - /v1/map-resources/{geography}/{release}/join/{measure-id}
-                    - /v1/atlas-releases/{release-id}/map-resources/{geography}/{release}
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
                     - /v1/boundary-releases/{geography}/{release}
@@ -312,9 +306,6 @@ paths:
                     - /v1/exports
                     - /v1/exports/{export-id}
                     - /v1/atlas-release
-                    - /v1/atlas-releases
-                    - /v1/atlas-releases/{release-id}
-                    - /v1/atlas-releases/compare
                 meta:
                   nextCursor: null
 
@@ -366,60 +357,6 @@ paths:
             text/html:
               schema:
                 type: string
-        "503":
-          $ref: "#/components/responses/CatalogueUnavailable"
-
-  /atlas-releases/{release-id}/map-resources/{geography}/{release}:
-    get:
-      operationId: getPinnedMapResource
-      tags: ["Sync"]
-      summary: A map resource pinned to the Atlas release that produced it
-      x-likely-refusal:
-        status: 410
-        when: "The Atlas release in the path was served once and has been rebuilt since. Ask `/v1/atlas-release` for the release now served; a copy already held stays correct."
-      description: >
-        The same descriptor as the unpinned path, answered with
-        `Cache-Control: public, max-age=31536000, immutable`: the bytes are a
-        function of that release alone, so there is nothing to revalidate.
-        This is the form a production map should cite, and every link in the
-        answer stays pinned, so a renderer configured from the pinned TileJSON
-        fetches pinned tiles too.
-
-
-        Any path below the release id is served this way, including
-        `tiles.json`, `tiles/{z}/{x}/{y}.mvt`, the `.pmtiles` archive, the
-        GeoParquet `features` and a join table. Only the release the server currently holds can be
-        answered: the archive keeps release manifests, not the data files
-        behind them, so a release that is recorded but no longer served is
-        refused with `410` rather than quietly answered from the current one.
-        A copy a client already holds stays correct, which is what pinning
-        bought it.
-      parameters:
-        - name: release-id
-          in: path
-          required: true
-          schema: { type: string }
-          description: >
-            The Atlas release to pin to, the `sha256:` hash from
-            `GET /v1/atlas-release`.
-        - $ref: "#/components/parameters/Geography"
-        - $ref: "#/components/parameters/Release"
-      responses:
-        "200":
-          description: The map resource descriptor, pinned and immutable.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MapResourceEnvelope"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "410":
-          description: >
-            The release is recorded but its artifacts are no longer served.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -5182,7 +5119,7 @@ paths:
                   boundaryRelease: 2023-05-uk-bgc-v2
                   atlasRelease:
                     id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
-                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
+                    href: /v1/atlas-release
                   identity:
                     status: available
                     artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
@@ -7664,247 +7601,6 @@ paths:
                   nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
-
-  /atlas-releases:
-    get:
-      operationId: listAtlasReleases
-      tags: ["Sync"]
-      summary: List the current and archived immutable Atlas releases
-      x-likely-refusal:
-        when: "Takes no input, so nothing is refused but the server-wide rate limit."
-      responses:
-        "200":
-          description: Release identities with artifact counts.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/atlas-releases"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  - releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
-                    artifactCount: 338
-                    current: true
-                meta:
-                  nextCursor: null
-
-  /atlas-releases/{release-id}/artifacts:
-    get:
-      operationId: downloadAtlasReleaseArtifact
-      tags: ["Sync"]
-      summary: Download one artifact from a current or archived Atlas release
-      x-likely-refusal:
-        status: 404
-        when: "The caller named a release this API has never published."
-        x-example-request: "/v1/atlas-releases/sha256:0000000000000000000000000000000000000000000000000000000000000000/artifacts?artifact=data-catalog"
-      description: >
-        Returns the exact bytes named by an Atlas release manifest. Read
-        `GET /v1/atlas-releases/{release-id}` first, then pass one of its
-        artifact ids as `artifact`. Unlike ordinary pinned routes, this can
-        read an older release when its immutable snapshot has been retained.
-      parameters:
-        - name: release-id
-          in: path
-          required: true
-          schema: { type: string }
-          description: The current or archived Atlas release that declared the artifact.
-        - name: artifact
-          in: query
-          required: true
-          schema: { type: string }
-          description: An artifact id from that release manifest, such as `data-catalog`.
-      responses:
-        "200":
-          description: The immutable artifact bytes, with a strong ETag equal to their SHA-256.
-          content:
-            application/json:
-              schema: { type: object }
-          headers:
-            Content-Disposition:
-              description: A download filename derived from the manifest path.
-              schema: { type: string }
-        "400":
-          description: The required artifact id was not supplied.
-          content:
-            application/problem+json:
-              schema: { $ref: "#/components/schemas/Problem" }
-        "404":
-          description: The release was never published by this API.
-          content:
-            application/problem+json:
-              schema: { $ref: "#/components/schemas/Problem" }
-        "410":
-          description: The archived release manifest exists but the artifact snapshot was not retained.
-          content:
-            application/problem+json:
-              schema: { $ref: "#/components/schemas/Problem" }
-        "503":
-          description: The current artifact is absent or does not match its manifest hash.
-          content:
-            application/problem+json:
-              schema: { $ref: "#/components/schemas/Problem" }
-
-  /atlas-releases/{release-id}:
-    get:
-      operationId: getArchivedAtlasRelease
-      tags: ["Sync"]
-      summary: Get one current or archived Atlas release manifest
-      x-likely-refusal:
-        status: 404
-        when: "The release was never published by this API, or is a hash of something other than a release manifest."
-        x-example-request: "/v1/atlas-releases/sha256:0000000000000000000000000000000000000000000000000000000000000000"
-      parameters:
-        - name: release-id
-          in: path
-          required: true
-          schema: { type: string }
-          description: >
-            An archived release id from `GET /v1/atlas-releases`, the `sha256:`
-            hash the release is named by.
-      responses:
-        "200":
-          description: The immutable release manifest.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AtlasReleaseEnvelope"
-              x-example-request: "/v1/atlas-releases/{current-atlas-release}"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  schemaVersion: 1
-                  releaseId: sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5
-                  artifacts:
-                    - id: boundary-registry
-                      path: boundary-releases.json
-                      contentHash: sha256:07f06fd2970c65d03d11665dc7e2dcc4b791fc5d5d37afe08ebdb259ab1f279e
-                  resources:
-                    datasets:
-                      air-quality: sha256:36d5f2fe98d6d6adf0ba05b6ac7c0c8470cb98cf067f4d1bde1cfc13a966cf54
-                      brexit: sha256:0ec6e449c5f0b597e464066c65411e507fe5bbde99fa164d0d62babed779337c
-                      brexit-constituency: sha256:b9f2a2369e2ebaa243155e16f74fe20662a67972774a7a64c9069fb8d729a931
-                    measures:
-                      broadband-full-fibre-availability: sha256:75c5f4ab3ad7d5bf3a6927c0e89c0f25ba2ccca741558310517186e4e1d5efb3
-                      broadband-gigabit-availability: sha256:42403d33b12abf4c70ef7d6ad12141091438e24f23b951ca0e01964ef0937a0f
-                      broadband-superfast-availability: sha256:79d6c78c48b3bee8b46f8ee9f55bff1cfc9f6c7738a088b20ca3cfe5e7489594
-                    boundaryReleases:
-                      combinedAuthority/2025-12-en-bgc: sha256:562e6613e32c2ab3c9a6fadda26787fe6334e45a90c569743f71b4dc92fad360
-                      communitySafetyPartnership/2023-12-ew-bgc: sha256:bfb385ac91c582e9040ba33234a3e7cfb0f7396f12c3a7429e9fcadf205320b9
-                      constituency/2015-12-gb-bgc: sha256:9b84fcdd92aeaf87c9b9a87db04297a13399f683e0eca3cf3979270cab5b9f0a
-                    areaIdentities:
-                      combinedAuthority/2025-12-en-bgc: sha256:7d92965736e95d7e8a9bb0ec8cfdd1bf522d0958259ca8edc88338b0c2551446
-                      communitySafetyPartnership/2023-12-ew-bgc: sha256:252592fe688000dffd235746bd7cb327604ff28a23def38577e3e956e3ef0d12
-                      constituency/2015-12-gb-bgc: sha256:c5b97468289a1adb7c4415faa751ac06475931585b2e4f5871f201a1364cd9e3
-                    geometrySources:
-                      combinedAuthority/2025-12-en-bgc: sha256:40afe13d45f67a5a67dbf1c8a71e3a0c4d6da175bff3e85ce112d72d49c294e5
-                      communitySafetyPartnership/2023-12-ew-bgc: sha256:8c9388ddb1be325fde9e6cad29d00e4d86d1623707e2b784b2af3bf98ee198da
-                      constituency/2015-12-gb-bgc: sha256:7ebadb3a6199a789146d4d3919d5d2f26e9417497dc8c77e9fea81757221f936
-                    crosswalks:
-                      constituency-2010-to-2024-official-lookup-v2: sha256:cefd706b04545b3a02b75b4d7a88f8240019174412a9444490b09055ece0cc82
-                      constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap: sha256:e989fe1713b8239eb60455db37c25a72915e16950591c46256b815b4fbc3aca7
-                      local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap: sha256:b35db31c062deb9b17061450fdedc1a4f8007ebb75b8e6b6aaf0e7a56a8753a9
-                    validationExceptions:
-                      crosswalks/constituency-2010-to-2024-official-lookup-v2 source-names-consistent: sha256:9a3865df66e5a039378327900eddbeeba44c8b2dc782605aed352acbbb36ba42
-                    namedLocations:
-                      aberdeen: sha256:47f33490b901a4fc7f27e09b784369b9a23faa95a8a4e347fbac2d78a8eac3a5
-                      aberystwyth: sha256:d04c975edf3c45d63d521e6f2084fc4fcbadff11d758ac95d0af55d2b9088016
-                      armagh-down-and-newry: sha256:89a0303432937e9c13bdaa9000f7ec61e486f5e1f21aefa86ef1ba59a97d0ae7
-                    exports:
-                      broadband-full-fibre-availability-observations: sha256:cf95d6ea2a25ed6b3e1d3b16c3f1b9f232def6cf846b4af10124a6f1b6fccbbd
-                      broadband-gigabit-availability-observations: sha256:b19dc1cad58dd485fc7aa456c5251599fb1e10fdb977d2e813ed42cc85d6a736
-                      broadband-superfast-availability-observations: sha256:d51b13aca8a13a3c639c1f786623ca25b20eba6bab8605ea6fc2bb53bae468ee
-                meta:
-                  nextCursor: null
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-  /atlas-releases/compare:
-    get:
-      operationId: compareAtlasReleases
-      tags: ["Sync"]
-      summary: Compare two archived Atlas releases, artifact by artifact and resource by resource
-      x-likely-refusal:
-        status: 404
-        when: "`from` names a release this API has not archived."
-        x-example-request: "/v1/atlas-releases/compare?from=sha256:0000000000000000000000000000000000000000000000000000000000000000"
-      description: >
-        Reports added, removed and changed published artifacts by content
-        hash, and, inside them, the datasets, measures, boundary releases,
-        area identities, geometry sources, crosswalks, validation exceptions,
-        named locations, exports and lookups added, removed and changed, by the
-        fingerprints each release recorded. A changed resource differs
-        somewhere in its published entry. `detail=fields` names the changed
-        metadata fields for changed resources when both retained artifacts are
-        available. It never infers additions, removals or revisions of
-        individual observation records.
-      parameters:
-        - name: from
-          in: query
-          required: true
-          schema: { type: string }
-          description: The archived release to compare from, by its release id.
-        - name: to
-          in: query
-          required: false
-          description: Defaults to the current Atlas release.
-          schema: { type: string }
-        - name: detail
-          in: query
-          required: false
-          description: >
-            `summary` is the default resource-fingerprint comparison.
-            `fields` additionally names changed fields in changed published
-            resource entries; it does not compare individual observation rows.
-          schema: { enum: [summary, fields], default: summary }
-      responses:
-        "200":
-          description: The change summary between the two releases.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AtlasReleaseComparisonEnvelope"
-              # Until a second release is published, the only live comparison
-              # is the served release with itself, so every list is empty.
-              x-example-request: "/v1/atlas-releases/compare?from={current-atlas-release}"
-              example:
-                apiVersion: v1
-                atlasRelease: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                data:
-                  from:
-                    releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
-                  to:
-                    releaseId: "sha256:a07e4b427b30681552a0a36513c063686d832e7f2b14ad63d45e6c28640164b5"
-                    href: /v1/atlas-releases/sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
-                  summary: { added: 0, removed: 0, changed: 0, unchanged: 338 }
-                  artifacts:
-                    added: []
-                    removed: []
-                    changed: []
-                  resources:
-                    datasets:
-                      status: compared
-                      added: []
-                      removed: []
-                      changed: []
-                      unchanged: 37
-                    crosswalks:
-                      status: compared
-                      added: []
-                      removed: []
-                      changed: []
-                      unchanged: 26
-                  note: Artifacts are compared by content hash. Resources inside them, such as datasets, crosswalks and validation exceptions, are compared by the fingerprints each release recorded when it was built; a changed resource differs somewhere in its published entry, and the comparison does not say which field.
-                meta:
-                  nextCursor: null
-        "400":
-          $ref: "#/components/responses/InvalidQuery"
-        "404":
-          $ref: "#/components/responses/NotFound"
 
   /translations:
     get:

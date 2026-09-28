@@ -143,7 +143,7 @@ export default function RateLimitsPage() {
 				items={[
 					"Send back the `ETag` you were given. A `304 Not Modified` still costs a request, but it costs no bandwidth. See [Caching](/docs/v1/caching).",
 					"Take a whole table rather than a row at a time: [bulk downloads](/docs/v1/formats) serve an entire partition or lookup in one request.",
-					"Pin an [Atlas release](/docs/v1/concepts/releases#pinning). A pinned resource is immutable and can be cached for good, so you never re-fetch it.",
+					"Use conditional requests for [current Atlas data](/docs/v1/concepts/releases). An unchanged resource returns `304`, so you do not re-download it.",
 					"Ask for a bigger page. `limit` accepts up to 500, so one request can replace ten.",
 				]}
 			/>

@@ -966,20 +966,10 @@ fetch the postcode directory from ONS.
       that remain are published with their reasons, 47 waived checks in the
       current report, such as 2016 to 2019 ward election codes from outside
       their year's release.
-- [ ] Machine-readable change log, release notifications and deprecation
-      policy. `GET /v1/atlas-releases/compare` is already a machine-readable
-      change log between any two releases, and the
-      [operations contract](#operations-contract) sets out the deprecation
-      policy and the test that enforces it. There are no release notifications
-      yet.
-- [x] Compare two Atlas releases, identifying changed datasets, boundary
-      releases, crosswalks, validation exceptions and named-location definitions.
-      `GET /v1/atlas-releases/compare` lists the artifacts added, removed and
-      changed by content hash, and inside them the datasets, measures,
-      boundary releases, area identities, geometry sources, crosswalks,
-      validation exceptions, named locations, exports and lookups added,
-      removed and changed, by fingerprints each release records. It names a
-      changed resource, not the field that changed.
+- [ ] Machine-readable change log and release notifications. The current
+      release manifest records artifact hashes, but this pre-public API does
+      not retain releases to compare. The [operations contract](#operations-contract)
+      sets out the deprecation policy.
 - [x] Generate a ready-to-use attribution and licence block for selected
       resources through `GET /v1/attribution`, suitable for a map, report or
       bulk download. A measure is attributed through its source datasets; a
@@ -1183,7 +1173,7 @@ The route selector in the documentation should begin with the user’s job:
 | translate an identifier through a published crosswalk                | `/translations`                                                    |
 | convert values under a declared measure/method rule                  | `/data/{measure}/convert`                                          |
 | validate a supplied code/name or discover releases                   | `/areas:validate`, `/geographies`, `/boundary-releases`            |
-| cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-releases` and `/validation` |
+| cite, attribute or inspect the published release                     | area citation, `/attribution`, `/atlas-release` and `/validation`  |
 
 `/data/{measure}/value?place=` is a deliberately narrow convenience for a
 place-name question. It resolves a name and dispatches to an existing
@@ -1269,28 +1259,9 @@ Implementation and documentation tasks:
 
 - [ ] Publish a machine-readable change feed, including the datasets, periods,
       values, definitions, boundary releases, crosswalks, named locations and
-      validation results affected by an Atlas release. A changed artifact hash
-      alone does not tell a customer whether its analysis changed.
-      `GET /v1/atlas-releases/compare` now names the datasets, measures,
-      boundary releases, crosswalks, named locations, validation exceptions,
-      exports and lookups that changed between two releases; `detail=fields`
-      identifies changed metadata fields in those published resource entries.
-      Periods and values are not yet compared, and there is no feed to
-      subscribe to.
-- [ ] Expand release comparison from added/removed/changed artifacts to
-      semantic diffs, with affected area and record counts where possible.
-      Comparison now reaches resource level, naming each resource added,
-      removed or changed by its recorded fingerprint. `detail=fields` names
-      the changed metadata fields in a changed resource when both retained
-      artifacts are available; it does not yet count affected areas or records
-      or infer any row-level revision.
-- [x] Serve an archived Atlas release or an equivalent immutable release-pinned
-      download path, so an analysis can be reproduced as the Atlas published it
-      at a stated time rather than merely inspecting its old manifest. Before a
-      build replaces the current release, it snapshots every artifact the
-      manifest declares and verifies its byte hash. `GET
-/v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}` then
-      returns the retained exact bytes with immutable cache semantics.
+      validation results affected by an Atlas release.
+- [ ] Decide whether public historic-release retention is needed after the API
+      has users. Until then, corrections replace the active compiled release.
 - [ ] State a source's publisher release date, Atlas ingestion date, expected
       refresh cadence and freshness status beside the measure metadata.
 - [ ] Monitor upstream sources for a changed file, schema, URL, licence or
@@ -1323,9 +1294,6 @@ Candidate read-only routes:
 
 ```text
 GET /v1/changes?since={release-or-timestamp}
-GET /v1/atlas-releases/{release-id}/changes
-GET /v1/atlas-releases/{release-id}/availability
-GET /v1/atlas-releases/{release-id}/attestation
 GET /v1/api-versions/{version}/changes
 GET /v1/measures/{measure-id}/freshness
 GET /v1/corrections
@@ -2468,7 +2436,7 @@ conversion the convert route does not serve.
 How the server is run, as opposed to what it answers. None of this is under
 `/v1` or in `openapi.yaml`, because none of it is for a client of the API.
 
-### Versioning and release pinning
+### Versioning and current-release provenance
 
 Two things can change under a client, and each is pinned separately.
 
@@ -2482,11 +2450,10 @@ Two things can change under a client, and each is pinned separately.
   `deprecated: true` with `x-deprecated-since` and `x-sunset` dates is served
   with `Deprecation` and `Sunset` headers, and may be removed once its sunset
   has passed. A change that breaks anything else needs `/v2`.
-- **The data** is pinned by the Atlas release. Every response carries an
-  `Atlas-Release` header, and JSON responses name it in the envelope too. A
-  path under `/v1/atlas-releases/{release-id}/` answers as the unpinned path
-  does and is marked `immutable`. One server serves one release: a pinned path
-  to a release it no longer serves is `410 Gone`, never answered from another.
+- **The data** is identified by the current Atlas release. Every response
+  carries an `Atlas-Release` header, and JSON responses name it in the envelope
+  too. A correction or preprocessing change replaces the current release; the
+  API retains neither historic release artifacts nor an old runtime pipeline.
 
 ### Endpoints
 
@@ -2500,9 +2467,8 @@ None is cached or rate limited: a refused probe would take a healthy instance
 out of service.
 
 Metrics label a request by the OpenAPI template it reached, such as
-`/v1/areas/{geography}/{release}/{code}`, and a pinned request by the same
-template under `/v1/atlas-releases/{release-id}`. A path matching no template
-is `unmatched`, so a scan of made-up paths cannot grow the series. Besides
+`/v1/areas/{geography}/{release}/{code}`. A path matching no template is
+`unmatched`, so a scan of made-up paths cannot grow the series. Besides
 request counts, durations and bytes, the server exports rate-limit refusals,
 unhandled errors, process memory, event loop delay and the geometry cache's
 area reads, release loads, evictions and load time. Handlers run synchronously, so event
@@ -2749,7 +2715,7 @@ the non-binding [conceptual resource model](#2-find-places-and-inspect-geography
 and [commercial roadmap](#production-delivery); where they disagree, this
 section wins.
 
-All seven routes below are served, as is the pinned form. The flat
+All seven routes below are served. The flat
 `features` form is GeoParquet only; GeoJSON is not built, because a whole
 release at `full` detail is the nationwide GeoJSON a map should not download.
 
@@ -2769,13 +2735,6 @@ GET /v1/map-resources/{geography}/{release}.pmtiles
 GET /v1/map-resources/{geography}/{release}/join/{measure-id}?period={period}&format={json|parquet}
 GET /v1/map-resources/{geography}/{release}/features?tier={tier}&format=geoparquet
 ```
-
-Each also answers under `/v1/atlas-releases/{release-id}/...`, which is the
-form a production map should use; see
-[Caching](#caching-and-release-pinning) below. Only the release the server
-currently holds can be answered: the archive keeps release manifests, not the
-data files behind them, so a release that is recorded but no longer served is
-refused with `410` rather than quietly answered from the current one.
 
 The descriptor at `/v1/map-resources/{geography}/{release}` is the only
 document a client needs to read: it carries the tile and archive URLs, the
@@ -2869,20 +2828,11 @@ attribution string for a map corner. A tile URL handed to a renderer without
 its TileJSON is an incomplete citation, and the descriptor says which string
 to display.
 
-### Caching and release pinning
+### Caching current map resources
 
-Two URL forms, with deliberately different cache policy:
-
-- **Pinned**, under `/v1/atlas-releases/{release-id}/map-resources/...`. The
-  bytes can never change, so these are served
-  `Cache-Control: public, max-age=31536000, immutable` and are never
-  revalidated. A production map, a saved analysis and a PMTiles archive all
-  cite this form.
-- **Unpinned**, under `/v1/map-resources/...`. Answers under whichever Atlas
-  release the server has loaded, and keeps the standard
-  `public, max-age=300, must-revalidate` with an ETag. This form is for
-  discovery: it tells a client which pinned URL to use, and the descriptor it
-  returns names that URL.
+Map resources use `public, max-age=300, must-revalidate` with a strong ETag.
+Record the current Atlas release alongside any map output and revalidate the
+descriptor or tiles before reusing them after a later build.
 
 Tiles carry the same strong ETag as every other response, the SHA-256 of the
 bytes served, so a CDN and a client revalidate a tile exactly as they
@@ -2909,7 +2859,7 @@ trusting this API:
 - a join table declares the content hash of the observation artifact it was
   compiled from, which is the same hash `/v1/exports` publishes.
 
-A client that has fetched a pinned tileset, a join table and the Atlas
+A client that has fetched a tileset, a join table and the Atlas
 release can therefore prove the three agree, which is what makes a map
 citable.
 
@@ -2922,7 +2872,7 @@ where it is easiest to lose:
 - the **source geography** is the geography and boundary year the measure's
   values are published on;
 - the **observation period** is the period those values describe;
-- the **Atlas release** pins all three, and appears in the pinned URL.
+- the **Atlas release** identifies the compiled artifacts behind all three.
 
 A map resource selects geometry. It never selects, converts or reinterprets a
 value. Where the first three cannot be reconciled by code, the join is
@@ -3044,8 +2994,8 @@ artifact and content hash, the crosswalk and its own hash, the method and
 weighting, and the coverage at every period. That is the same material
 `sourceExactProvenance` already assembles for a source-exact response, plus
 the conversion — which is the point of specifying it now rather than later.
-The receipt is release-pinned, so the URL that produced it can be cited under
-`/v1/atlas-releases/{release-id}/` and fetched again unchanged.
+The receipt records the current release id and source hashes so the result can
+be cited with the exact compiled artifacts that produced it.
 
 ### What would have to be true before any of it is built
 
@@ -3263,12 +3213,9 @@ Atlas's core geography value without private state or universal conversion.
 - [x] Supply one MapLibre/TypeScript reference implementation showing place
       resolution, explicit release choice, values, tiles and citation.
       `examples/correct-map-render.ts`, run as a golden path on every build.
-- [x] Add cache validators and immutable resource URLs before adding API-key
-      tiers; public correctness and inexpensive delivery come first. Every
-      response carries a strong `ETag`, and anything asked for under
-      `/v1/atlas-releases/{release-id}/` is served `immutable` and never needs
-      revalidating. A request that arrived pinned keeps its links pinned, so a
-      renderer configured from a pinned TileJSON fetches pinned tiles too.
+- [x] Add cache validators before adding API-key tiers; public correctness and
+      inexpensive delivery come first. Every response carries a strong `ETag`
+      and revalidates against the current release.
 
 **Exit criterion:** an external engineer can build a cited UK map from the
 reference guide without downloading publisher files, guessing a release or
@@ -3317,11 +3264,9 @@ Turn the useful resources into production data infrastructure. This is the
 first plausible paid operational tier: service value comes from dependable
 delivery, change management and support, never from withholding OGL data.
 
-- [x] Serve archived resources through an immutable release-pinned download
-      path, so a past result remains retrievable. Each build first snapshots
-      the prior release's manifest-declared artifacts and verifies their hashes;
-      a sync client retrieves one through `GET
-/v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`.
+- [ ] Decide whether historic resource retrieval is needed once the API has
+      public users. The current release manifest and source hashes remain
+      available for provenance.
 - [x] Publish a public correction register for API-owned repairs, derived
       calculations and normalisations. `GET /v1/corrections` records the exact
       scope, source-versus-served behaviour, evidence and review state without
@@ -3545,16 +3490,9 @@ surface area. They follow Phase 0 and Phase 1 only.
     left unstored, and a zoom past the last says so and tells the renderer to
     over-zoom. All five are in the OpenAPI description and the index.
 
-    Item 10 is done. The pinned
-    `/v1/atlas-releases/{release-id}/map-resources/...` form the contract asks
-    for is served too: it answers exactly what the unpinned path answers, with
-    `Cache-Control: public, max-age=31536000, immutable`, and the links it
-    returns stay pinned so a renderer configured from a pinned TileJSON never
-    falls back to a revalidated tile. Only the current release can be
-    answered, because the archive keeps release manifests rather than the data
-    files behind them; a release that is recorded but no longer served is
-    refused with `410`, naming the release now current, rather than quietly
-    answered from it.
+    Map resources are served from the current release and revalidate with their
+    strong ETag. The descriptor records the source and compiled artifact hashes
+    needed to cite the map.
 
 11. **Publish one source-exact measure** as a map-ready resource and as
     Parquet/GeoParquet, with schema, manifest and provenance tests.
@@ -3672,16 +3610,11 @@ second inventory to maintain:
 
 **Sync**
 
-- `GET /v1/atlas-releases/{release-id}/map-resources/{geography}/{release}` — A map resource pinned to the Atlas release that produced it
 - `GET /v1/exports` — List release-pinned whole observation artifacts
 - `GET /v1/exports/{export-id}` — Download one immutable source observation artifact
 - `GET /v1/lookups` — List whole lookup tables for download
 - `GET /v1/lookups/{lookup-id}` — Download one whole lookup table as CSV or NDJSON
 - `GET /v1/atlas-release` — Get the current immutable atlas release manifest
-- `GET /v1/atlas-releases` — List the current and archived immutable Atlas releases
-- `GET /v1/atlas-releases/{release-id}/artifacts` — Download one artifact from a current or archived Atlas release
-- `GET /v1/atlas-releases/{release-id}` — Get one current or archived Atlas release manifest
-- `GET /v1/atlas-releases/compare` — Compare two archived Atlas releases, artifact by artifact and resource by resource
 
 **Geography**
 
@@ -3716,6 +3649,7 @@ second inventory to maintain:
 - `GET /v1/translations` — Translate one code through a published conversion path in either direction
 - `GET /v1/locations` — List the curated area collections
 - `GET /v1/locations/{location-id}` — Get one curated area collection's definition
+- `GET /v1/locations/{location-id}/geometry` — Get a curated area's compiled GeoJSON geometry
 - `GET /v1/locations/{location-id}/capabilities` — Discover the direct and crosswalk views published for a named location
 - `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
 - `GET /v1/locations/{location-id}/parents` — Find the areas of a coarser geography a named location covers or meets
@@ -3843,7 +3777,6 @@ catalogues by the contract tests:
 - `GET /v1/exports`
 - `GET /v1/lookups`
 - `GET /v1/atlas-release`
-- `GET /v1/atlas-releases`
 
 The build scans every `../data/**/meta.json`, so a newly added dataset becomes
 visible to the source inventory on the next build without changing API code.
@@ -4222,36 +4155,10 @@ registry, derived boundaries, area inventory, geometry source registry,
 crosswalk inventory, relationship candidate inventory, geography inventory,
 validation report and source inventory) by its content hash, plus a single
 `releaseId` hash of that set. Rebuilding without changing any input produces the same
-`releaseId`; changing any one artifact changes it. This is a first, minimal
-step toward the release and provenance model described above, not the full
-versioned release history it will eventually anchor.
-
-A build begins by archiving the current release under
-`public/atlas-releases/` before any compiler replaces it. Alongside its
-manifest, the archive retains every artifact that manifest declares in a
-release-ID directory and verifies each file's SHA-256 before copying it. This
-directory belongs on durable deployment storage (or an equivalent object
-store) and is deliberately not duplicated in source control. Read the release
-manifest, then retrieve an exact retained artifact through `GET
-/v1/atlas-releases/{release-id}/artifacts?artifact={artifact-id}`; the response
-is immutable and refuses a missing or hash-mismatched snapshot rather than
-falling back to current bytes. `GET /v1/atlas-releases/compare`
-provides a machine-readable change log between any archived release and the
-current release. It reports artifacts added, removed and changed by hash, and, inside
-them, which resources changed. Each release manifest records `resources`: for
-each kind (datasets, measures, boundary releases, area identities, geometry
-sources, crosswalks, validation exceptions, named locations, exports and
-lookups), a fingerprint per resource id, taken from that resource's published
-entry, or from the artifact hash where an inventory already records one. A
-validation exception is a waived check, identified by resource and check, and
-its fingerprint covers both the finding and the reason. The fingerprints are
-read from artifacts the release already hashes, so they do not enter the
-`releaseId`, and a comparison names a changed resource, not the field within
-it that changed. It does not infer dataset rows or boundary geometry changes.
-
-A kind one release does not record, such as lookups in a release made before
-the lookup manifest existed, is reported as `not-recorded` rather than as
-empty.
+`releaseId`; changing any one artifact changes it. The API serves this current
+manifest only. Its artifact and resource hashes provide provenance for the
+active build without retaining old output files or compatibility code for old
+preprocessing pipelines.
 
 `public/geometry-sources.json` records, per compiled area release, where its
 raw GeoJSON lives, its CRS, and its code property, or an explicit

@@ -36,10 +36,8 @@ export type AtlasRelease = {
 	artifacts: AtlasReleaseArtifactRef[];
 	/**
 	 * A fingerprint for every resource inside the artifacts, keyed by kind and
-	 * resource id, so a comparison can say which ones changed. Every value is
-	 * computed from an artifact the release already hashes, so it does not
-	 * enter the release id. Releases archived before fingerprints were
-	 * recorded have none.
+	 * resource id. Every value is computed from an artifact the release already
+	 * hashes, so it does not enter the release id.
 	 */
 	resources?: Partial<Record<ResourceKind, Record<string, string>>>;
 };
@@ -54,8 +52,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "named-locations", path: "named-locations.json" },
 	{ id: "place-index", path: "place-index.json" },
 	{ id: "area-search-index", path: "area-search-index.json" },
-	// The manifest holds the hash of every postcode shard, so pinning it pins
-	// them.
+	// The manifest holds the hash of every postcode shard.
 	{ id: "postcode-index", path: "postcode-index.json" },
 	{ id: "postcode-areas", path: "postcode-areas.json" },
 	{ id: "postcode-counts", path: "postcode-counts.json" },
@@ -67,8 +64,7 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "measure-compatibility", path: "measure-compatibility.json" },
 	{ id: "export-manifest", path: "export-manifest.json" },
 	{ id: "lookup-manifest", path: "lookup-manifest.json" },
-	// The descriptor holds the hash of every tile archive and GeoParquet file,
-	// so pinning it pins them: a pinned map URL is served immutable.
+	// The descriptor holds the hash of every tile archive and GeoParquet file.
 	{ id: "map-resources", path: "map-resources.json" },
 	{ id: "population-observations", path: "population-observations.json" },
 	{

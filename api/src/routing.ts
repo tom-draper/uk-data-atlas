@@ -1,5 +1,5 @@
 import type { AreaInventory } from "./areaInventory";
-import type { AtlasRelease, AtlasReleaseArtifactRef } from "./atlasRelease";
+import type { AtlasRelease } from "./atlasRelease";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
 	CrosswalkArtifact,
@@ -42,12 +42,6 @@ export type RouteContext = {
 	areaInventory?: AreaInventory;
 	crosswalkInventory?: CrosswalkInventory;
 	atlasRelease?: AtlasRelease;
-	atlasReleaseHistory?: Map<string, AtlasRelease>;
-	/** Read bytes from an immutable current or archived release artifact. */
-	readReleaseArtifact?: (
-		releaseId: string,
-		artifactId: string,
-	) => { artifact: AtlasReleaseArtifactRef; body: Buffer } | undefined;
 	/** Compiled geography indexes and domain operations for this Atlas release. */
 	geographyResolver: GeographyResolver;
 	relationshipPathInventory?: RelationshipPathInventory;
@@ -94,11 +88,4 @@ export type RouteRequest = {
 	 * exactly what a more specific route gives when called directly.
 	 */
 	dispatch: (url: string) => ApiResponse;
-	/**
-	 * The Atlas release this request was pinned to, where it was asked for
-	 * under `/v1/atlas-releases/{release-id}/`. A route uses it to build links
-	 * that stay pinned, so a client that pinned once does not fall back to a
-	 * revalidated URL on its next hop.
-	 */
-	pinnedTo?: string;
 };

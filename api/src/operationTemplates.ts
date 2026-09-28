@@ -21,12 +21,9 @@ export type MatchedOperation = {
 	/** The template with its `/v1` prefix, or `unmatched`. */
 	route: string;
 	operation?: OperationTemplate;
-	/** The Atlas release the path was pinned to, when it was. */
-	pinnedTo?: string;
 };
 
 const UNMATCHED = "unmatched";
-const PINNED_PREFIX = "/atlas-releases/{release-id}";
 
 /**
  * Reads path keys, and each operation's `deprecated`, `x-deprecated-since` and
@@ -97,9 +94,7 @@ const outranks = (left: number[], right: number[]) => {
 /**
  * A function from a request path to the operation it reached. Where two
  * templates match, the one with a literal segment earliest wins, so
- * `/atlas-releases/compare` is not labelled `/atlas-releases/{release-id}`.
- * A path under `/v1/atlas-releases/{release-id}/` is the pinned form of
- * another operation, and is labelled as that operation under the pin.
+ * an operation with a concrete leading segment outranks one with a parameter.
  */
 export const createOperationMatcher = (templates: OperationTemplate[]) => {
 	const byLength = new Map<number, CompiledTemplate[]>();
@@ -132,25 +127,6 @@ export const createOperationMatcher = (templates: OperationTemplate[]) => {
 		const segments = pathname.split("/").filter(Boolean);
 		if (segments[0] !== "v1") return { route: UNMATCHED };
 		const rest = segments.slice(1);
-		// A release artifact download is an explicit sync operation, not the
-		// generic pinned form of another route.
-		const direct =
-			rest.length === 3 &&
-			rest[0] === "atlas-releases" &&
-			rest[2] === "artifacts"
-				? find(rest)
-				: undefined;
-		if (direct) return { route: `/v1${direct.path}`, operation: direct };
-		if (rest.length >= 3 && rest[0] === "atlas-releases") {
-			const operation = find(rest.slice(2));
-			return operation
-				? {
-						route: `/v1${PINNED_PREFIX}${operation.path === "/" ? "" : operation.path}`,
-						operation,
-						pinnedTo: rest[1],
-					}
-				: { route: UNMATCHED };
-		}
 		const operation = find(rest);
 		return operation
 			? {

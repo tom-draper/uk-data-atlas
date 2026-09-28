@@ -243,53 +243,7 @@ export const runSmoke = async (
 					body.data.releaseId === needRelease(),
 					`the manifest is ${body.data.releaseId}`,
 				);
-				const { body: history } =
-					await json<
-						Envelope<Array<{ releaseId?: string; id?: string }>>
-					>("/v1/atlas-releases");
-				expect(Array.isArray(history.data), "no release history");
 				return "manifest names the served release";
-			},
-		],
-		[
-			"release pinning",
-			async () => {
-				const { body } =
-					await json<Envelope<Array<{ href: string }>>>(
-						"/v1/map-resources",
-					);
-				const [resource] = body.data;
-				if (!resource) throw new Skip("no map resource is published");
-				const pinned = resource.href.replace(
-					/^\/v1\//,
-					`/v1/atlas-releases/${needRelease()}/`,
-				);
-				const response = await get(pinned);
-				await response.body?.cancel();
-				expect(
-					response.status === 200,
-					`${pinned} answered ${response.status}`,
-				);
-				expect(
-					response.headers.get("cache-control") ===
-						"public, max-age=31536000, immutable",
-					`a pinned response is ${response.headers.get("cache-control")}`,
-				);
-				const unknown = await get(
-					`/v1/atlas-releases/sha256:${"0".repeat(64)}/geographies`,
-				);
-				expect(
-					[404, 410].includes(unknown.status),
-					`an unknown release answered ${unknown.status}`,
-				);
-				const problem = (await unknown.json()) as {
-					links?: { current?: string };
-				};
-				expect(
-					problem.links?.current === `/v1/atlas-releases/${release}`,
-					"a refused pin does not link the current release",
-				);
-				return "immutable under the pin, refused for an unknown release";
 			},
 		],
 		[

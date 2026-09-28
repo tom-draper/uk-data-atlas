@@ -73,138 +73,6 @@
 				]
 			}
 		},
-		"GET /atlas-releases/{release-id}/map-resources/{geography}/{release}": {
-			"operationId": "getPinnedMapResource",
-			"parameters": {
-				"path:release-id": {
-					"required": true
-				},
-				"path:geography": {
-					"required": true
-				},
-				"path:release": {
-					"required": true
-				}
-			},
-			"responses": {
-				"200 application/json": [
-					"apiVersion",
-					"atlasRelease",
-					"data",
-					"data.arcCount",
-					"data.areaCount",
-					"data.attribution",
-					"data.attribution.href",
-					"data.attribution.licence",
-					"data.attribution.licence.name",
-					"data.attribution.licence.url",
-					"data.attribution.publisher",
-					"data.attribution.sourceUrl",
-					"data.attribution.text",
-					"data.boundaryRelease",
-					"data.bounds",
-					"data.features",
-					"data.features[].artifact",
-					"data.features[].bytes",
-					"data.features[].contentHash",
-					"data.features[].coordinates",
-					"data.features[].format",
-					"data.features[].href",
-					"data.features[].rowCount",
-					"data.features[].tier",
-					"data.features[].toleranceM",
-					"data.generalisation",
-					"data.geography",
-					"data.geometrySource",
-					"data.id",
-					"data.tiers",
-					"data.tiers[].coordinates",
-					"data.tiers[].refinedArcs",
-					"data.tiers[].tier",
-					"data.tiers[].toleranceM",
-					"data.tiles",
-					"data.tiles.artifact",
-					"data.tiles.bytes",
-					"data.tiles.contentHash",
-					"data.tiles.format",
-					"data.tiles.href",
-					"data.tiles.layer",
-					"data.tiles.maxZoom",
-					"data.tiles.minZoom",
-					"data.tiles.tileCount",
-					"data.tiles.tileFormat",
-					"data.tiles.zooms",
-					"data.tiles.zooms[].maxZoom",
-					"data.tiles.zooms[].minZoom",
-					"data.tiles.zooms[].tier",
-					"data.tiles.zooms[].toleranceM",
-					"data.title",
-					"data.topology",
-					"meta",
-					"meta.nextCursor"
-				],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				],
-				"410 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				],
-				"503 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				]
-			}
-		},
 		"GET /map-resources": {
 			"operationId": "listMapResources",
 			"parameters": {},
@@ -7348,306 +7216,6 @@
 				]
 			}
 		},
-		"GET /atlas-releases": {
-			"operationId": "listAtlasReleases",
-			"parameters": {},
-			"responses": {
-				"200 application/json": [
-					"apiVersion",
-					"atlasRelease",
-					"meta",
-					"meta.nextCursor"
-				]
-			}
-		},
-		"GET /atlas-releases/{release-id}/artifacts": {
-			"operationId": "downloadAtlasReleaseArtifact",
-			"parameters": {
-				"path:release-id": {
-					"required": true
-				},
-				"query:artifact": {
-					"required": true
-				}
-			},
-			"responses": {
-				"200 application/json": [],
-				"400 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				],
-				"410 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				],
-				"503 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				]
-			}
-		},
-		"GET /atlas-releases/{release-id}": {
-			"operationId": "getArchivedAtlasRelease",
-			"parameters": {
-				"path:release-id": {
-					"required": true
-				}
-			},
-			"responses": {
-				"200 application/json": [
-					"apiVersion",
-					"atlasRelease",
-					"data",
-					"data.artifacts",
-					"data.artifacts[].contentHash",
-					"data.artifacts[].id",
-					"data.artifacts[].path",
-					"data.releaseId",
-					"data.resources",
-					"data.schemaVersion",
-					"meta",
-					"meta.nextCursor"
-				],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				]
-			}
-		},
-		"GET /atlas-releases/compare": {
-			"operationId": "compareAtlasReleases",
-			"parameters": {
-				"query:from": {
-					"required": true
-				},
-				"query:to": {
-					"required": false
-				},
-				"query:detail": {
-					"required": false,
-					"enum": [
-						"fields",
-						"summary"
-					]
-				}
-			},
-			"responses": {
-				"200 application/json": [
-					"apiVersion",
-					"atlasRelease",
-					"data",
-					"data.artifacts",
-					"data.from",
-					"data.note",
-					"data.resources",
-					"data.resources.areaIdentities",
-					"data.resources.areaIdentities.added",
-					"data.resources.areaIdentities.changed",
-					"data.resources.areaIdentities.reason",
-					"data.resources.areaIdentities.removed",
-					"data.resources.areaIdentities.status",
-					"data.resources.areaIdentities.unchanged",
-					"data.resources.boundaryReleases",
-					"data.resources.boundaryReleases.added",
-					"data.resources.boundaryReleases.changed",
-					"data.resources.boundaryReleases.reason",
-					"data.resources.boundaryReleases.removed",
-					"data.resources.boundaryReleases.status",
-					"data.resources.boundaryReleases.unchanged",
-					"data.resources.crosswalks",
-					"data.resources.crosswalks.added",
-					"data.resources.crosswalks.changed",
-					"data.resources.crosswalks.reason",
-					"data.resources.crosswalks.removed",
-					"data.resources.crosswalks.status",
-					"data.resources.crosswalks.unchanged",
-					"data.resources.datasets",
-					"data.resources.datasets.added",
-					"data.resources.datasets.changed",
-					"data.resources.datasets.reason",
-					"data.resources.datasets.removed",
-					"data.resources.datasets.status",
-					"data.resources.datasets.unchanged",
-					"data.resources.exports",
-					"data.resources.exports.added",
-					"data.resources.exports.changed",
-					"data.resources.exports.reason",
-					"data.resources.exports.removed",
-					"data.resources.exports.status",
-					"data.resources.exports.unchanged",
-					"data.resources.geometrySources",
-					"data.resources.geometrySources.added",
-					"data.resources.geometrySources.changed",
-					"data.resources.geometrySources.reason",
-					"data.resources.geometrySources.removed",
-					"data.resources.geometrySources.status",
-					"data.resources.geometrySources.unchanged",
-					"data.resources.lookups",
-					"data.resources.lookups.added",
-					"data.resources.lookups.changed",
-					"data.resources.lookups.reason",
-					"data.resources.lookups.removed",
-					"data.resources.lookups.status",
-					"data.resources.lookups.unchanged",
-					"data.resources.measures",
-					"data.resources.measures.added",
-					"data.resources.measures.changed",
-					"data.resources.measures.reason",
-					"data.resources.measures.removed",
-					"data.resources.measures.status",
-					"data.resources.measures.unchanged",
-					"data.resources.namedLocations",
-					"data.resources.namedLocations.added",
-					"data.resources.namedLocations.changed",
-					"data.resources.namedLocations.reason",
-					"data.resources.namedLocations.removed",
-					"data.resources.namedLocations.status",
-					"data.resources.namedLocations.unchanged",
-					"data.resources.validationExceptions",
-					"data.resources.validationExceptions.added",
-					"data.resources.validationExceptions.changed",
-					"data.resources.validationExceptions.reason",
-					"data.resources.validationExceptions.removed",
-					"data.resources.validationExceptions.status",
-					"data.resources.validationExceptions.unchanged",
-					"data.semantic",
-					"data.semantic.changes",
-					"data.semantic.changes[].fields",
-					"data.semantic.changes[].id",
-					"data.semantic.changes[].kind",
-					"data.semantic.reason",
-					"data.semantic.status",
-					"data.summary",
-					"data.to",
-					"meta",
-					"meta.nextCursor"
-				],
-				"400 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"title",
-					"type"
-				]
-			}
-		},
 		"GET /translations": {
 			"operationId": "translateAreaCode",
 			"parameters": {
@@ -7851,6 +7419,57 @@
 			"responses": {
 				"200 application/json": [],
 				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /locations/{location-id}/geometry": {
+			"operationId": "getNamedLocationGeometry",
+			"parameters": {
+				"path:location-id": {
+					"required": true
+				}
+			},
+			"responses": {
+				"200 application/json": [],
+				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",

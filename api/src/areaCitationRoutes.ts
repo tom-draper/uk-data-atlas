@@ -302,7 +302,7 @@ export const handleAreaCitationRoutes = ({
 			atlasRelease: atlasRelease
 				? {
 						id: releaseId,
-						href: `/v1/atlas-releases/${releaseId}`,
+						href: "/v1/atlas-release",
 					}
 				: { id: releaseId, status: "not-published" as const },
 			identity: identityArtifact

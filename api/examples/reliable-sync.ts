@@ -2,24 +2,23 @@ import { createHash } from "node:crypto";
 import { type AtlasClient, createClient, type Step } from "./client";
 
 /**
- * Reliable sync: ingest release-pinned data, verify what arrived, and
- * reprocess only what changed.
+ * Reliable sync: ingest current data and verify what arrived.
  *
  * The Atlas release is the version of everything. A warehouse pins it, checks
- * each download against the hash the manifest publishes, and asks what moved
- * between its pinned release and the current one rather than rebuilding.
+ * each download against the hash the manifest publishes, and records the
+ * release id alongside the imported data.
  */
 export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const steps: Step[] = [];
 
-	// 1. Pin the release. Every response names it, so a table can record the
+	// 1. Record the release. Every response names it, so a table can record the
 	//    exact set of artifacts it was built from.
 	const release = await client.get<{
 		releaseId: string;
 		artifacts: unknown[];
 	}>("/v1/atlas-release");
 	steps.push({
-		title: "Pin the Atlas release",
+		title: "Record the Atlas release",
 		detail: `${release.data.releaseId} covers ${release.data.artifacts.length} artifacts.`,
 	});
 
@@ -44,8 +43,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		detail: `${entry.id} is ${entry.recordCount.toLocaleString("en-GB")} records.`,
 	});
 
-	// 3. Verify it against the hash the manifest published. A mismatch means
-	//    the bytes are not the ones the release pinned.
+	// 3. Verify it against the hash the manifest published.
 	const { contentHash, ...content } = download.body as {
 		contentHash: string;
 	};
@@ -80,60 +78,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		detail: `If-None-Match on ${etag?.slice(0, 16)}… answered 304, ${body.length.toLocaleString("en-GB")} bytes saved.`,
 	});
 
-	// 5. Ask what changed since the pinned release, so only affected tables
-	//    are rebuilt.
-	const history =
-		await client.get<Array<{ releaseId: string; current: boolean }>>(
-			"/v1/atlas-releases",
-		);
-	const previous = history.data.find((candidate) => !candidate.current);
-	if (!previous) {
-		// The first published release has nothing before it: a sync starting
-		// here takes everything, and compares from its next run onwards.
-		steps.push({
-			title: "Reprocess only what moved",
-			detail: `${history.data.length} release published, so there is nothing to compare yet; take everything and pin this release.`,
-		});
-	} else {
-		const comparison = await client.get<{
-			summary: { added: number; removed: number; changed: number };
-			resources: Record<string, { changed?: unknown[] }>;
-			semantic?:
-				| {
-						status: "available";
-						changes: Array<{
-							kind: string;
-							id: string;
-							fields: string[];
-						}>;
-				  }
-				| { status: "unavailable"; reason: string };
-		}>(
-			`/v1/atlas-releases/compare?from=${previous.releaseId}&detail=fields`,
-		);
-		const changedKinds = Object.entries(comparison.data.resources)
-			.filter(([, value]) => (value.changed?.length ?? 0) > 0)
-			.map(([kind]) => kind);
-		const semantic = comparison.data.semantic;
-		const fieldDetail =
-			semantic?.status === "available" && semantic.changes.length > 0
-				? ` Changed fields include ${semantic.changes
-						.slice(0, 3)
-						.map(
-							(change) =>
-								`${change.kind}/${change.id}: ${change.fields.join(", ")}`,
-						)
-						.join("; ")}.`
-				: semantic?.status === "unavailable"
-					? ` Field detail is unavailable: ${semantic.reason}`
-					: "";
-		steps.push({
-			title: "Reprocess only what moved",
-			detail: `Against ${previous.releaseId.slice(0, 19)}…: ${comparison.data.summary.changed} artifacts changed${changedKinds.length > 0 ? `, in ${changedKinds.join(", ")}` : ""}.${fieldDetail}`,
-		});
-	}
-
-	// 6. The reference tables a warehouse joins against, as whole files.
+	// 5. The reference tables a warehouse joins against, as whole files.
 	const lookups = await client.get<{
 		lookups: Array<{ id: string; rowCount: number }>;
 	}>("/v1/lookups");

@@ -1,16 +1,9 @@
-import {
-	Callout,
-	DocPage,
-	EndpointRef,
-	H2,
-	List,
-	P,
-} from "@/components/docs/Content";
+import { DocPage, EndpointRef, H2, List, P } from "@/components/docs/Content";
 import { docsMetadata } from "@/lib/docs/metadata";
 
 export const metadata = docsMetadata(
-	"Atlas releases",
-	"How UK Data Atlas API releases version every dataset, boundary and crosswalk, so any answer can be reproduced and cited exactly.",
+	"Current Atlas release",
+	"How UK Data Atlas API identifies the dataset, boundary and crosswalk artifacts behind its current responses.",
 	"/docs/v1/concepts/releases",
 );
 
@@ -19,12 +12,12 @@ export default function ReleasesPage() {
 		<DocPage
 			href="/docs/v1/concepts/releases"
 			eyebrow="Concepts"
-			title="Atlas releases"
-			lede="Everything behind the API, from datasets and boundaries to crosswalks and validation, is built into a single release with its own fingerprint. It's how you know two answers came from the same data, and how you get the same answer again later."
+			title="Current Atlas release"
+			lede="Everything behind the API, from datasets and boundaries to crosswalks and validation, is built into a single current release with its own fingerprint. It tells you exactly which artifacts produced an answer."
 			toc={[
 				{ id: "what", title: "What a release is" },
 				{ id: "why", title: "Why it matters" },
-				{ id: "pinning", title: "Pinning" },
+				{ id: "availability", title: "Availability" },
 				{ id: "endpoints", title: "Useful endpoints" },
 			]}
 		>
@@ -44,27 +37,20 @@ export default function ReleasesPage() {
 			<List
 				items={[
 					"**Consistency.** If two responses share an `atlasRelease`, they came from exactly the same data.",
-					"**Reproducibility.** Record the release alongside a chart or report, and anyone can see precisely what it was built from.",
-					"**Efficient syncing.** [Compare two releases](/docs/v1/reference/sync/compare-atlas-releases) to see what changed, and refresh only that.",
+					"**Provenance.** Record the release alongside a chart or report, and anyone can see precisely which compiled artifacts it used.",
+					"**Integrity.** The manifest records a hash for every published artifact.",
 				]}
 			/>
 
-			<H2 id="pinning">Pinning</H2>
+			<H2 id="availability">Availability</H2>
 			<P>
-				Most URLs always serve the current release. Map resources can
-				also be requested under a specific release, and those responses
-				never change, so they can be cached permanently.
+				URLs serve the current release. A correction or preprocessing change
+				replaces it with a newly compiled release; the API retains no earlier
+				release data or runtime compatibility layer.
 			</P>
-			<Callout tone="warning">
-				The server only holds the current release's data. Asking for an
-				older one returns `410 Gone` rather than quietly giving you
-				newer data, so keep your own copy of anything you pin.
-			</Callout>
 
 			<H2 id="endpoints">Useful endpoints</H2>
 			<EndpointRef id="getAtlasRelease" />
-			<EndpointRef id="compareAtlasReleases" />
-			<EndpointRef id="getPinnedMapResource" />
 		</DocPage>
 	);
 }
