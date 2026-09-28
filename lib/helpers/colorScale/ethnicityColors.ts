@@ -9,8 +9,8 @@ export const ETHNICITY_COLORS: Record<string, string> = {
 	Bangladeshi: "#0ea5e9",
 	Chinese: "#3b82f6",
 	Indian: "#1d4ed8",
-	Pakistani: "#60a5fa",
-	"Other Asian": "#93c5fd",
+	Pakistani: "#8b5cf6",
+	"Other Asian": "#6366f1",
 
 	// Black subcategories
 	African: "#14b8a6",
@@ -24,11 +24,11 @@ export const ETHNICITY_COLORS: Record<string, string> = {
 	"Other Mixed or Multiple ethnic groups": "#fbbf24",
 
 	// White subcategories
-	"English, Welsh, Scottish, Northern Irish or British": "#8b5cf6",
+	"English, Welsh, Scottish, Northern Irish or British": "#60a5fa",
 	Irish: "#a78bfa",
 	"Gypsy or Irish Traveller": "#c4b5fd",
 	Roma: "#ddd6fe",
-	"Other White": "#6366f1",
+	"Other White": "#93c5fd",
 
 	// Other subcategories
 	Arab: "#ec4899",
