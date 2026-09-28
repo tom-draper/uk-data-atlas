@@ -3,6 +3,7 @@ import { canServeAsWgs84, geometryProvenance } from "../reprojection";
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
 import { releaseKey } from "../geographyKeys";
+import { knownDisplacementsFor } from "../../../lib/data/boundaries/geometrySubstitutions";
 
 export const boundaryReleaseFindings = (
 	inputs: ValidationInputs,
@@ -77,6 +78,10 @@ export const boundaryReleaseFindings = (
 			? geometryProvenance(String(geometry.crs)).transformation
 			: undefined;
 
+	// A displacement repaired by substitution is fixed; one still listed as
+	// known is served as published and has to be waived to be admitted.
+	const displacements = knownDisplacementsFor(release.geography, release.id);
+
 	const unreviewed = inputs.relationshipCandidates.candidates.filter(
 		(candidate) =>
 			candidate.from.geography === release.geography &&
@@ -120,6 +125,16 @@ export const boundaryReleaseFindings = (
 							: {}),
 					}
 				: undefined,
+		),
+		check(
+			"geometry-positioned",
+			displacements.length === 0,
+			displacements
+				.map(
+					({ codePrefix, description }) =>
+						`Areas coded ${codePrefix}: ${description}`,
+				)
+				.join(" "),
 		),
 		check(
 			"candidates-reviewed",

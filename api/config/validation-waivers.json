@@ -186,6 +186,11 @@
 			"resources": [
 				"crosswalks/sub-integrated-care-board-location-2026-04-en-bgc-to-nhs-england-region-2024-01-en-bgc-official-lookup"
 			]
+		},
+		{
+			"check": "geometry-positioned",
+			"reason": "Northern Ireland's travel to work areas lie a median 59 m from their true position, most of it eastward, while the clipped coastline is accurate, so no grid offset can repair them. No accurate copy of the December 2011 release is held to take them from. The release is served as published until one is.",
+			"resources": ["boundary-releases/travelToWorkArea/2011-12-uk-gcb"]
 		}
 	]
 }

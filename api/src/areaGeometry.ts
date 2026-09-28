@@ -20,6 +20,10 @@ import {
 	unpackGeometry,
 	type PackedGeometry,
 } from "./packedGeometry";
+import {
+	loadSubstitutions,
+	substitutionProvenance,
+} from "./geometrySubstitution";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
 import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
@@ -46,6 +50,11 @@ export type GeometrySource = {
 	codeProperty: string;
 	/** Grid corrections the release declares, by definition id. */
 	corrections?: string[];
+	/**
+	 * Geometry substitutions that replace some of the release's areas with
+	 * another release's, by definition id (lib/data/boundaries).
+	 */
+	substitutions?: string[];
 };
 export type GeometrySourceLookup = Map<string, GeometrySource>;
 type Feature = { properties?: unknown; geometry?: unknown };
@@ -356,23 +365,25 @@ export class AreaGeometryCache {
 		code?: string,
 	): GeometryProvenance {
 		const source = this.source(geography, boundaryRelease);
-		const corrections =
-			code === undefined || isWgs84(source.crs)
+		const corrections = [
+			...(code === undefined || isWgs84(source.crs)
 				? []
-				: this.correctionsFor(source, code);
+				: this.correctionsFor(source, code)
+			).map(({ id, description }) => ({ id, description })),
+			...(code === undefined
+				? []
+				: substitutionProvenance(
+						this.sources,
+						source.substitutions ?? [],
+						code,
+					)),
+		];
 		return {
 			...(source.inputHash
 				? { input: source.input, inputHash: source.inputHash }
 				: {}),
 			...geometryProvenance(source.crs),
-			...(corrections.length > 0
-				? {
-						corrections: corrections.map(({ id, description }) => ({
-							id,
-							description,
-						})),
-					}
-				: {}),
+			...(corrections.length > 0 ? { corrections } : {}),
 		};
 	}
 	/** The area's geometry in WGS84, reprojected from its source if needed. */
@@ -426,6 +437,23 @@ export class AreaGeometryCache {
 							}
 						: feature.geometry,
 				);
+			}
+			if (source.substitutions?.length) {
+				// Substituted areas arrive in WGS84, so they can only stand
+				// beside geometry that is already in it.
+				if (!isWgs84(source.crs))
+					throw new Error(
+						`${identity}: geometry substitutions need a WGS84 release, not ${source.crs}.`,
+					);
+				for (const { geometries: donor } of loadSubstitutions(
+					this.repositoryRoot,
+					this.sources,
+					identity,
+					source.substitutions,
+					geometries.keys(),
+				))
+					for (const [code, geometry] of donor)
+						geometries.set(code, geometry);
 			}
 			const packed = new Map<string, PackedGeometry>();
 			for (const [code, geometry] of geometries)

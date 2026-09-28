@@ -34,6 +34,11 @@ import {
 	parseGridOffset,
 	type GridOffset,
 } from "../lib/data/boundaries/gridOffset";
+import {
+	substituteFeatures,
+	substitutionsFor,
+	type GeometrySubstitution,
+} from "../lib/data/boundaries/geometrySubstitutions";
 import { parseDatasetMeta } from "../lib/data/catalog/meta";
 import { polygonAreaSqKm } from "../lib/helpers/population";
 
@@ -99,6 +104,65 @@ const sourceFromMeta = (releaseDir: string, label: string): string | null => {
 	return join(releaseDir, sources[0]!.path);
 };
 
+/** Where a catalogue release's meta.json and source GeoJSON live in data/. */
+const releaseDirFor = (asset: string) =>
+	dirname(
+		join(
+			ROOT,
+			"data",
+			// withCDN appends a version query outside development.
+			asset.split("?")[0]!.replace(/^\/data\//, ""),
+		),
+	);
+
+/**
+ * The donor releases a release's geometry substitutions read from, resolved
+ * through the catalogue so each donor is decoded with its own code property
+ * and corrections.
+ */
+const substitutionSources = (type: string, releaseId: string) =>
+	substitutionsFor(type, releaseId).map((substitution) => {
+		const { geography, boundaryRelease } = substitution.donor;
+		const label = `${geography}/${boundaryRelease}`;
+		const donor = BOUNDARY_CATALOG[
+			geography as keyof typeof BOUNDARY_CATALOG
+		]?.releases.find((release) => release.id === boundaryRelease);
+		if (!donor?.asset)
+			throw new Error(
+				`${type}/${releaseId}: ${substitution.id} names ${label}, which the catalogue does not serve.`,
+			);
+		const releaseDir = releaseDirFor(donor.asset);
+		const sourcePath = sourceFromMeta(releaseDir, label);
+		if (!sourcePath)
+			throw new Error(
+				`${type}/${releaseId}: ${substitution.id} names ${label}, which has no GeoJSON source.`,
+			);
+		const corrections = correctionsFromMeta(releaseDir);
+		return {
+			substitution,
+			label,
+			codeKey: donor.codeKey,
+			sourcePath,
+			offsets: corrections.map(({ offset }) => offset),
+			inputs: [
+				sourcePath,
+				join(releaseDir, "meta.json"),
+				...corrections.map(({ path }) => path),
+			],
+		};
+	});
+
+type SubstitutionSource = ReturnType<typeof substitutionSources>[number];
+
+// A change to the substitution definitions recompiles the releases they name.
+const SUBSTITUTIONS_MODULE = join(
+	ROOT,
+	"lib",
+	"data",
+	"boundaries",
+	"geometrySubstitutions.ts",
+);
+
 /**
  * Every release the catalogue serves, paired with the published GeoJSON it is
  * compiled from. Derived from the catalogue rather than listed here, so adding
@@ -140,15 +204,47 @@ const releaseSources = () =>
 				);
 			}
 			const corrections = correctionsFromMeta(releaseDir);
+			// A release that takes areas from another can only be recompiled
+			// when that release's raw source is held too; otherwise its
+			// committed assets stand, as for a release missing its own.
+			const donorsMissing = substitutionsFor(type, release.id).some(
+				({ donor }) => {
+					const asset = BOUNDARY_CATALOG[
+						donor.geography as keyof typeof BOUNDARY_CATALOG
+					]?.releases.find(
+						({ id }) => id === donor.boundaryRelease,
+					)?.asset;
+					return (
+						!asset ||
+						!existsSync(join(releaseDirFor(asset), "meta.json"))
+					);
+				},
+			);
+			if (donorsMissing) {
+				if (existsSync(outputPath) && existsSync(propertiesPath))
+					return [];
+				throw new Error(
+					`${type}/${release.id}: the release it takes areas from has no raw source, and no compiled assets are available`,
+				);
+			}
+			const substitutions = substitutionSources(type, release.id);
 			return [
 				{
 					label: `${type}/${release.id}`,
 					objectName: type,
 					codeKey: release.codeKey,
 					offsets: corrections.map(({ offset }) => offset),
-					// The meta and any correction it declares change the output as
-					// surely as the source does.
-					inputs: [metaPath, ...corrections.map(({ path }) => path)],
+					substitutions,
+					// The meta, any correction it declares and any release it takes
+					// areas from change the output as surely as the source does.
+					inputs: [
+						metaPath,
+						...corrections.map(({ path }) => path),
+						...substitutions.flatMap(({ inputs }) => inputs),
+						...(substitutions.length > 0
+							? [SUBSTITUTIONS_MODULE]
+							: []),
+					],
 					keep: new Set<string>([
 						release.codeKey,
 						release.nameKey,
@@ -286,26 +382,56 @@ const releaseProperties = (
 	}));
 };
 
-const simplifySource = (
+/**
+ * Decodes a published source into WGS84. Grid corrections work in the
+ * publisher's grid, so they run before decoding reprojects it.
+ */
+const decodeCorrected = (
 	raw: string,
-	objectName: string,
-	keep: ReadonlySet<string>,
-	correction: { label: string; codeKey: string; offsets: GridOffset[] },
-) => {
-	// Corrections work in the publisher's grid, so they run before decoding
-	// reprojects it.
-	const normalised = decodeBoundaryData(
-		correction.offsets.reduce(
+	label: string,
+	codeKey: string,
+	offsets: readonly GridOffset[],
+) =>
+	decodeBoundaryData(
+		offsets.reduce(
 			(collection, offset) =>
-				applyGridOffset(
-					collection,
-					offset,
-					correction.codeKey,
-					correction.label,
-				),
+				applyGridOffset(collection, offset, codeKey, label),
 			JSON.parse(raw),
 		),
 	);
+
+const simplifySource = async (
+	raw: string,
+	objectName: string,
+	keep: ReadonlySet<string>,
+	correction: {
+		label: string;
+		codeKey: string;
+		offsets: GridOffset[];
+		substitutions: SubstitutionSource[];
+	},
+) => {
+	let normalised = decodeCorrected(
+		raw,
+		correction.label,
+		correction.codeKey,
+		correction.offsets,
+	);
+	// Substituted areas are swapped in once both releases are in WGS84.
+	for (const donor of correction.substitutions)
+		normalised = substituteFeatures(
+			normalised,
+			correction.codeKey,
+			decodeCorrected(
+				await readFile(donor.sourcePath, "utf8"),
+				donor.label,
+				donor.codeKey,
+				donor.offsets,
+			),
+			donor.codeKey,
+			donor.substitution satisfies GeometrySubstitution,
+			correction.label,
+		);
 	const cleaned = {
 		...normalised,
 		features: normalised.features.map((feature) => ({
@@ -390,6 +516,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 		objectName,
 		codeKey,
 		offsets,
+		substitutions,
 		inputs,
 		keep,
 		sourcePath,
@@ -452,10 +579,11 @@ export async function compileBoundaryAssets(): Promise<void> {
 		}
 
 		const raw = await readFile(sourcePath, "utf8");
-		const topologyData = simplifySource(raw, objectName, keep, {
+		const topologyData = await simplifySource(raw, objectName, keep, {
 			label,
 			codeKey,
 			offsets,
+			substitutions,
 		});
 		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);

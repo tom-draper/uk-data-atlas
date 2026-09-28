@@ -5,6 +5,7 @@ import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import { containPoint, ringsOf } from "./areaContainment";
 import { boundaryDistanceWithinM, distanceToBoundaryM } from "./areaDistance";
 import type { CrosswalkArea } from "./crosswalkInventory";
+import { geometrySubstitution } from "./geometrySubstitution";
 import { releaseKey } from "./geographyKeys";
 
 export type GeometryContainmentValidation =
@@ -39,6 +40,8 @@ export type GeometryContainmentInputs = Array<{
 	crs: string;
 	codeProperty: string;
 	corrections: Array<{ id: string; contentHash: string }>;
+	/** Geometry substitutions, with the hash of the donor file they read. */
+	substitutions?: Array<{ id: string; donorInputHash: string | null }>;
 }>;
 
 const sha256 = (content: Buffer | string) =>
@@ -76,6 +79,23 @@ export const geometryContainmentInputs = (
 					),
 				),
 			})),
+			...(source.substitutions?.length
+				? {
+						substitutions: source.substitutions.map((id) => {
+							const { donor } = geometrySubstitution(id);
+							return {
+								id,
+								donorInputHash:
+									geometrySources.get(
+										releaseKey(
+											donor.geography,
+											donor.boundaryRelease,
+										),
+									)?.inputHash ?? null,
+							};
+						}),
+					}
+				: {}),
 		};
 	});
 

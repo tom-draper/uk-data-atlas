@@ -17,6 +17,10 @@ import {
 	toWgs84Geometry,
 } from "./reprojection";
 import { appliesTo, offsetGeometry, readGridOffset } from "./gridOffset";
+import {
+	loadSubstitutions,
+	substitutionProvenance,
+} from "./geometrySubstitution";
 import { readShapefileFeatures } from "./shapefile";
 import type { AreaOverlapCrosswalkAdapter } from "./crosswalkAdapters";
 import type { GeographyKind } from "./geography";
@@ -269,7 +273,30 @@ export const readGeometries = (
 			`${crosswalkId}: ${source.input} is not a FeatureCollection.`,
 		);
 	}
+	const substitutions = source.substitutions?.length
+		? loadSubstitutions(
+				repositoryRoot,
+				geometrySources,
+				identity,
+				source.substitutions,
+				collection.features.flatMap((feature) => {
+					const code = (
+						feature.properties as Record<string, unknown> | null
+					)?.[source.codeProperty];
+					return typeof code === "string" ? [code.trim()] : [];
+				}),
+			)
+		: [];
+	const substituted = (code: string) =>
+		substitutions.find(({ geometries }) => geometries.has(code));
 	const polygonsByCode = new Map<string, Polygon[]>();
+	for (const { geometries } of substitutions)
+		for (const [code, geometry] of geometries)
+			if (!codePattern || codePattern.test(code))
+				polygonsByCode.set(
+					code,
+					toPolygons(geometry, `${code} substituted geometry`),
+				);
 	for (const [index, feature] of collection.features.entries()) {
 		const code = (feature.properties as Record<string, unknown> | null)?.[
 			source.codeProperty
@@ -280,6 +307,7 @@ export const readGeometries = (
 			);
 		}
 		if (codePattern && !codePattern.test(code)) continue;
+		if (substituted(code.trim())) continue;
 		if (typeof feature.geometry !== "object" || feature.geometry === null) {
 			throw new Error(
 				`${crosswalkId}: ${source.input} feature ${index} (${code}) has no geometry.`,
@@ -320,12 +348,18 @@ export const readGeometries = (
 			input: source.input,
 			inputHash: `sha256:${createHash("sha256").update(content).digest("hex")}`,
 			...geometryProvenance(source.crs),
-			...(offsets.length > 0
+			...(offsets.length > 0 || substitutions.length > 0
 				? {
-						corrections: offsets.map(({ id, description }) => ({
-							id,
-							description,
-						})),
+						corrections: [
+							...offsets.map(({ id, description }) => ({
+								id,
+								description,
+							})),
+							...substitutionProvenance(
+								geometrySources,
+								source.substitutions ?? [],
+							),
+						],
 					}
 				: {}),
 		},

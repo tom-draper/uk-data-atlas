@@ -40,6 +40,14 @@ export const readGeometrySourceLookup = (
 									),
 								}
 							: {}),
+						...(Array.isArray(r.substitutions)
+							? {
+									substitutions: r.substitutions.filter(
+										(id): id is string =>
+											typeof id === "string",
+									),
+								}
+							: {}),
 					} satisfies GeometrySource,
 				] as const,
 			];
