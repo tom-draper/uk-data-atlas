@@ -68,6 +68,13 @@ const DISPLAY: Record<string, Display> = {
 		unit: "chargers",
 		maximum: 5_000,
 	},
+	housingAffordability: {
+		label: "House price to earnings",
+		unit: "× earnings",
+		maximum: 20,
+		digits: 1,
+		secondary: "Median ratio",
+	},
 };
 
 const selectedRecord = (

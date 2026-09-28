@@ -251,6 +251,7 @@ export const CHART_PRESENTATIONS = {
 	"environment-ghgEmissions": Chart12Presentation,
 	"economics-homelessness": Chart13Presentation,
 	"economics-housePrice": Chart14Presentation,
+	"economics-housingAffordability": Chart0Presentation,
 	"deprivation-imd": Chart15Presentation,
 	"economics-income": Chart16Presentation,
 	"health-lifeExpectancy": Chart17Presentation,

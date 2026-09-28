@@ -21,6 +21,7 @@ export { ghgEmissionsDatasetDefinition } from "./ghgEmissions";
 export { historicalGeneralElectionDatasetDefinition } from "./historicalGeneralElection";
 export { homelessnessDatasetDefinition } from "./homelessness";
 export { housePriceDatasetDefinition } from "./housePrice";
+export { housingAffordabilityDatasetDefinition } from "./housingAffordability";
 export { imdDatasetDefinition } from "./imd";
 export { incomeDatasetDefinition } from "./income";
 export { jobsDatasetDefinition } from "./jobs";

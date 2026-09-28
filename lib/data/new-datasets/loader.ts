@@ -13,7 +13,8 @@ type IndicatorType =
 	| "adultSocialCareActivity"
 	| "adultSocialCareOutcomes"
 	| "planningApplications"
-	| "electricVehicleChargers";
+	| "electricVehicleChargers"
+	| "housingAffordability";
 
 const source = (path: string) => path;
 const numeric = (value: unknown) => parseNullableNum(value) ?? null;
@@ -317,6 +318,51 @@ export async function loadElectricVehicleChargers(
 		2026,
 		"localAuthority",
 		2026,
+		records,
+	);
+}
+
+/**
+ * ONS table 5c: the ratio of the median price paid for existing dwellings
+ * (year ending September) to median gross annual residence-based earnings.
+ * Authorities ONS suppresses for the year ("[x]") are left out.
+ */
+export async function loadHousingAffordability(
+	read: (path: string, sheet: string) => Promise<string>,
+) {
+	const year = 2025;
+	const { data: rows } = await parseCsv<string[]>(
+		await read(
+			source(
+				"education/housing-affordability/ons-ew-existing-dwellings-residence-earnings-2025.xlsx",
+			),
+			"5c",
+		),
+		{ header: false },
+	);
+	const headerIndex = rows.findIndex(
+		(row) => row[2]?.trim() === "Local authority code",
+	);
+	const headers = rows[headerIndex] ?? [];
+	const valueColumn = headers.findIndex(
+		(header) => header?.trim() === String(year),
+	);
+	if (headerIndex < 0 || valueColumn < 0)
+		throw new Error(
+			`Housing affordability table 5c has no ${year} local authority column`,
+		);
+	const records: Record<string, IndicatorRecord> = {};
+	for (const row of rows.slice(headerIndex + 1)) {
+		const code = row[2]?.trim() ?? "";
+		const value = numeric(row[valueColumn]);
+		if (!authorityCode(code) || value === null) continue;
+		records[code] = { code, name: row[3]?.trim() || code, value };
+	}
+	return dataset(
+		"housingAffordability",
+		year,
+		"localAuthority",
+		year,
 		records,
 	);
 }
