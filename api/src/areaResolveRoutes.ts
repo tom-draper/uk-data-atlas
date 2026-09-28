@@ -1,39 +1,7 @@
 import { areaNotFound } from "./areaResources";
 import { parseSelectionDate } from "./releaseForDate";
-import { normalisePlaceName, withoutTitle } from "./nameNormalisation";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-
-type ExactMatch =
-	| "code-exact"
-	| "name-exact"
-	| "alias-exact"
-	| "name-normalized-exact"
-	| "alias-normalized-exact"
-	| "name-exact-without-title"
-	| "alias-exact-without-title";
-
-const nameMatches = (
-	label: string,
-	query: string,
-	normalizedQuery: string,
-	{
-		exact,
-		normalized,
-		withoutAdministrativeTitle,
-	}: {
-		exact: ExactMatch;
-		normalized: ExactMatch;
-		withoutAdministrativeTitle: ExactMatch;
-	},
-): ExactMatch | undefined => {
-	if (label.toLocaleLowerCase() === query) return exact;
-	const normalised = normalisePlaceName(label);
-	if (normalised === normalizedQuery) return normalized;
-	return withoutTitle(normalised) === normalizedQuery
-		? withoutAdministrativeTitle
-		: undefined;
-};
 
 /**
  * Resolves one supplied identifier into every exact area identity it can mean.
@@ -133,41 +101,10 @@ export const handleAreaResolveRoutes = ({
 		return areaNotFound(context, geography!, boundaryRelease!);
 	const unavailable = geographyResolver.requires("area-search");
 	if (unavailable) return unavailable;
-	const areas = geographyResolver.exactAreaCandidates({
+	const candidates = geographyResolver.resolveAreaCandidates({
 		geography,
 		boundaryRelease,
 		query: q,
-	});
-	const normalized = q.toLocaleLowerCase();
-	const normalizedName = normalisePlaceName(q);
-	const candidates = areas.flatMap((area) => {
-		const matches: ExactMatch[] = [
-			...(area.code.toLocaleLowerCase() === normalized
-				? ["code-exact" as const]
-				: []),
-			...(() => {
-				const match = nameMatches(
-					area.name,
-					normalized,
-					normalizedName,
-					{
-						exact: "name-exact",
-						normalized: "name-normalized-exact",
-						withoutAdministrativeTitle: "name-exact-without-title",
-					},
-				);
-				return match ? [match] : [];
-			})(),
-			...(area.aliases ?? []).flatMap((alias) => {
-				const match = nameMatches(alias, normalized, normalizedName, {
-					exact: "alias-exact",
-					normalized: "alias-normalized-exact",
-					withoutAdministrativeTitle: "alias-exact-without-title",
-				});
-				return match ? [match] : [];
-			}),
-		];
-		return matches.length > 0 ? [{ area, matches }] : [];
 	});
 	const searchParams = new URLSearchParams({ q });
 	if (geography) searchParams.set("geography", geography);

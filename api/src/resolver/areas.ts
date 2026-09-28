@@ -21,6 +21,7 @@ import {
 	selectReleaseForDate,
 	type ReleaseSelection,
 } from "../releaseForDate";
+import { exactNameMatch, type NameMatch } from "../nameNormalisation";
 
 export type GeographyEndpoint = { geography: string; boundaryRelease: string };
 export type AreaIdentity = GeographyEndpoint & { code: string };
@@ -34,6 +35,11 @@ export type ResolvedSameCodeArea = AreaRecord & {
 	boundaryRelease: string;
 	/** The identifier recurs; no unchanged-boundary claim is implied. */
 	status: "same-code-continuity";
+};
+
+export type ResolvedAreaCandidate = {
+	area: AreaRecord & AreaIdentity;
+	matches: Array<"code-exact" | Exclude<NameMatch, "prefix">>;
 };
 
 export type AreasResolverInputs = {
@@ -269,5 +275,28 @@ export class AreasResolver {
 
 	exactAreaCandidates(query: AreaSearchFilters & { query: string }) {
 		return this.areaSearch?.exactCandidates(query) ?? [];
+	}
+
+	resolveAreaCandidates(query: AreaSearchFilters & { query: string }) {
+		return this.exactAreaCandidates(query).flatMap((area) => {
+			const matches = [
+				...(area.code.toLocaleLowerCase() ===
+				query.query.toLocaleLowerCase()
+					? (["code-exact"] as const)
+					: []),
+				...[area.name, ...(area.aliases ?? [])].flatMap((label) => {
+					const match = exactNameMatch(label, query.query);
+					return match ? [match] : [];
+				}),
+			];
+			return matches.length > 0
+				? [
+						{
+							area,
+							matches: [...new Set(matches)],
+						},
+					]
+				: [];
+		});
 	}
 }

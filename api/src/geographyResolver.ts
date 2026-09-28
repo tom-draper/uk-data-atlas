@@ -320,6 +320,13 @@ export class GeographyResolver {
 	}) {
 		return this.areas.exactAreaCandidates(query);
 	}
+	resolveAreaCandidates(query: {
+		geography?: string | null;
+		boundaryRelease?: string | null;
+		query: string;
+	}) {
+		return this.areas.resolveAreaCandidates(query);
+	}
 
 	geometryCacheStats() {
 		return this.spatial.geometryCacheStats();
