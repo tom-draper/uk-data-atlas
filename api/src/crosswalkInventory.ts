@@ -428,6 +428,26 @@ const compilePropertyCrosswalk = (
 	>();
 	const sourcePrimaryNames = new Map<string, Set<string>>();
 	const appliedTargetCorrections = new Set<string>();
+	const endpointCodes = adapter.filterToEndpoints
+		? {
+				from: areaLookup?.get(
+					releaseKey(
+						adapter.from.geography,
+						adapter.from.boundaryRelease,
+					),
+				),
+				to: areaLookup?.get(
+					releaseKey(
+						adapter.to.geography,
+						adapter.to.boundaryRelease,
+					),
+				),
+			}
+		: undefined;
+	if (endpointCodes && (!endpointCodes.from || !endpointCodes.to))
+		throw new Error(
+			`${adapter.id}: filterToEndpoints needs compiled source and target areas.`,
+		);
 	// Keyed by source and target, since a pair's change is the publisher's.
 	const changes = new Map<string, CrosswalkChange>();
 	for (const [index, feature] of source.features.entries()) {
@@ -442,6 +462,12 @@ const compilePropertyCrosswalk = (
 		const properties = feature.properties as Record<string, unknown>;
 		const sourceArea = area(properties, adapter.from, adapter.id, index);
 		const publishedTarget = area(properties, adapter.to, adapter.id, index);
+		if (
+			endpointCodes &&
+			(!endpointCodes.from!.has(sourceArea.code) ||
+				!endpointCodes.to!.has(publishedTarget.code))
+		)
+			continue;
 		const correction = adapter.targetCodeCorrections?.[sourceArea.code];
 		let targetArea = publishedTarget;
 		if (correction) {

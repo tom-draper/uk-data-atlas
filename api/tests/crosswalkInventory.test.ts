@@ -114,6 +114,94 @@ test("compiles a published lookup without inventing apportionment weights", () =
 	}
 });
 
+test("filters an official multi-year history source to its declared releases", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	const input = "lookups/ward-history/changes.geojson";
+	const path = join(root, "data", input);
+	mkdirSync(join(path, ".."), { recursive: true });
+	writeFileSync(
+		path,
+		JSON.stringify({
+			type: "FeatureCollection",
+			features: [
+				{
+					properties: {
+						PREDECESSORCD: "E05000001",
+						PREDECESSORNM: "Old ward",
+						SUCCESSORCD: "E05001001",
+						SUCCESSORNM: "New ward",
+					},
+				},
+				{
+					properties: {
+						PREDECESSORCD: "E05009999",
+						PREDECESSORNM: "Another old ward",
+						SUCCESSORCD: "E05009998",
+						SUCCESSORNM: "Another new ward",
+					},
+				},
+			],
+		}),
+	);
+
+	try {
+		const areas = createAreaLookup([
+			{
+				schemaVersion: 1,
+				contentHash: "sha256:old-wards",
+				geography: "ward",
+				boundaryRelease: "2024",
+				codeProperty: "WD24CD",
+				nameProperty: "WD24NM",
+				areas: [{ code: "E05000001", name: "Old ward" }],
+			},
+			{
+				schemaVersion: 1,
+				contentHash: "sha256:new-wards",
+				geography: "ward",
+				boundaryRelease: "2025",
+				codeProperty: "WD25CD",
+				nameProperty: "WD25NM",
+				areas: [{ code: "E05001001", name: "New ward" }],
+			},
+		]);
+		const { artifacts } = compileCrosswalks(
+			root,
+			[
+				{
+					id: "ward-history",
+					input,
+					method: "official-lookup",
+					quality: "publisher-supplied",
+					weighting: { status: "not-provided" },
+					filterToEndpoints: true,
+					from: {
+						geography: "ward",
+						boundaryRelease: "2024",
+						codeProperty: "PREDECESSORCD",
+						nameProperty: "PREDECESSORNM",
+					},
+					to: {
+						geography: "ward",
+						boundaryRelease: "2025",
+						codeProperty: "SUCCESSORCD",
+						nameProperty: "SUCCESSORNM",
+					},
+				},
+			],
+			areas,
+		);
+		assert.deepEqual(artifacts[0]?.records, [
+			{
+				source: { code: "E05000001", labels: ["Old ward"] },
+				targets: [{ code: "E05001001", labels: ["New ward"] }],
+			},
+		]);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
 test("compiles a published parent-code containment with weighting marked not-applicable", () => {
 	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	const input = "boundaries/ward/2025/wards.geojson";

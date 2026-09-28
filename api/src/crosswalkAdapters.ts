@@ -65,6 +65,12 @@ export type PropertyCrosswalkAdapter = {
 	 * change lookups publish it: U unchanged, S split, M merged, X complex.
 	 */
 	changeProperty?: string;
+	/**
+	 * The Code History Database is a single nationwide, multi-year source.
+	 * Keep only pairs that exist in the releases this adapter declares, so one
+	 * source can safely provide a separate, release-specific history lookup.
+	 */
+	filterToEndpoints?: boolean;
 	/** Reviewed fixes for a publisher-supplied target code in a property lookup. */
 	targetCodeCorrections?: Record<
 		string,
@@ -194,6 +200,8 @@ const validPropertyAdapter = (
 	isOneOf(PROPERTY_WEIGHTING_STATUSES, adapter.weighting.status) &&
 	(adapter.changeProperty === undefined ||
 		typeof adapter.changeProperty === "string") &&
+	(adapter.filterToEndpoints === undefined ||
+		typeof adapter.filterToEndpoints === "boolean") &&
 	(adapter.targetCodeCorrections === undefined ||
 		(isRecord(adapter.targetCodeCorrections) &&
 			Object.values(adapter.targetCodeCorrections).every(
