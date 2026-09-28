@@ -56,7 +56,40 @@ describe("panelHeaderDetails", () => {
 		expect(panelHeaderDetails(null, selectedArea)).toEqual({
 			title: "Bolton North East",
 			subtitle: "North West, England",
-			code: "E14001234",
+			code: "E12000002 E14001234",
+		});
+	});
+
+	it("does not repeat an identical constituency region and country", () => {
+		const selectedArea: SelectedArea = {
+			type: "constituency",
+			code: "S14000001",
+			name: "Aberdeen North",
+			data: {
+				constituencyName: "Aberdeen North",
+				onsId: "S14000001",
+				regionName: "Scotland",
+				countryName: "Scotland",
+				constituencyType: "Burgh",
+				memberFirstName: "",
+				memberSurname: "",
+				memberGender: "",
+				result: "",
+				firstParty: "",
+				secondParty: "",
+				electorate: 0,
+				validVotes: 0,
+				invalidVotes: 0,
+				majority: 0,
+				partyVotes: {},
+				turnoutPercent: 0,
+			},
+		};
+
+		expect(panelHeaderDetails(null, selectedArea)).toEqual({
+			title: "Aberdeen North",
+			subtitle: "Scotland",
+			code: "S14000001",
 		});
 	});
 

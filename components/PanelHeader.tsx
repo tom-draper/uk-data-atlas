@@ -36,9 +36,22 @@ function localAuthorityContext(
 	const regionCode = data.regionCode || mappedRegion?.code || "";
 
 	return {
-		subtitle: [regionName, data.countryName].filter(Boolean).join(", "),
+		subtitle: regionCountryLabel(regionName, data.countryName),
 		regionCode,
 	};
+}
+
+function regionCountryLabel(regionName: string, countryName: string) {
+	return [regionName, countryName]
+		.filter(Boolean)
+		.filter(
+			(value, index, values) =>
+				values.findIndex(
+					(candidate) =>
+						candidate.toLowerCase() === value.toLowerCase(),
+				) === index,
+		)
+		.join(", ");
 }
 
 export function panelHeaderDetails(
@@ -65,22 +78,27 @@ export function panelHeaderDetails(
 					.filter(Boolean)
 					.join(" "),
 			};
-		case "constituency":
+		case "constituency": {
+			const regionCode = selectedArea.data?.regionName
+				? (gazetteer.resolveName(
+						selectedArea.data.regionName,
+						"region",
+					)[0]?.code ?? "")
+				: "";
 			return {
 				title:
 					selectedArea.data?.constituencyName ||
 					selectedArea.name ||
 					selectedArea.code,
 				subtitle: selectedArea.data
-					? [
+					? regionCountryLabel(
 							selectedArea.data.regionName,
 							selectedArea.data.countryName,
-						]
-							.filter(Boolean)
-							.join(", ")
+						)
 					: "",
-				code: selectedArea.code,
+				code: [regionCode, selectedArea.code].filter(Boolean).join(" "),
 			};
+		}
 		case "localAuthority": {
 			const { subtitle, regionCode } = localAuthorityContext(
 				selectedArea.code,
