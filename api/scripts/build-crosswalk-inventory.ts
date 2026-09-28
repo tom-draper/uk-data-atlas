@@ -100,7 +100,10 @@ const reusableGeometryCrosswalk = (
 				artifact.validation.overlap.sliverWidthM !==
 					overlap.sliverWidthM ||
 				artifact.validation.overlap.minimumCoverage !==
-					overlap.minimumCoverage
+					overlap.minimumCoverage ||
+				(artifact.validation.overlap.minimumTargetCoverageRequired ??
+					artifact.validation.overlap.minimumCoverage) !==
+					(overlap.minimumTargetCoverage ?? overlap.minimumCoverage)
 			)
 				return undefined;
 		} else if (

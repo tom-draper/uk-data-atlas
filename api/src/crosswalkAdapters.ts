@@ -94,6 +94,12 @@ export type AreaOverlapCrosswalkAdapter = {
 	/** Limit a derived relationship to an explicit, documented source code set. */
 	sourceCodePattern?: string;
 	sliverWidthM: number;
+	/**
+	 * The share of every target which must be covered. Defaults to
+	 * `minimumCoverage`, preserving full-footprint conversion crosswalks.
+	 * Set to zero only for a deliberately partial spatial relationship.
+	 */
+	minimumTargetCoverage?: number;
 	minimumCoverage: number;
 };
 
@@ -230,6 +236,10 @@ const validAreaOverlapAdapter = (
 		typeof adapter.sourceCodePattern === "string") &&
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0 &&
+	(adapter.minimumTargetCoverage === undefined ||
+		(typeof adapter.minimumTargetCoverage === "number" &&
+			adapter.minimumTargetCoverage >= 0 &&
+			adapter.minimumTargetCoverage <= 1)) &&
 	typeof adapter.minimumCoverage === "number" &&
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;

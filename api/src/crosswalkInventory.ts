@@ -71,6 +71,8 @@ export type AreaOverlapValidation = {
 	widestSliverWidthM: number | null;
 	narrowestOverlapWidthM: number;
 	minimumCoverage: number;
+	/** The declared target coverage threshold when it differs from the source's. */
+	minimumTargetCoverageRequired?: number;
 	minimumSourceCoverage: number;
 	minimumTargetCoverage: number;
 };

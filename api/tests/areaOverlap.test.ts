@@ -269,6 +269,38 @@ test("fails when an area is less covered than the adapter requires", () => {
 	});
 });
 
+test("permits uncovered targets only when an adapter declares a partial relationship", () => {
+	withFixture((root) => {
+		writeCollection(root, "targets.geojson", "TGT", [
+			["T1", box(0, D)],
+			["T2", box(D, 2 * D + SLIVER)],
+			["T3", box(2 * D + SLIVER, 3 * D)],
+			["T4", box(4 * D, 5 * D)],
+		]);
+		assert.throws(
+			() =>
+				compileAreaOverlapCrosswalk(
+					root,
+					adapter(),
+					geometrySources(),
+					areaLookup(["T1", "T2", "T3", "T4"]),
+				),
+			/1 target areas are less than 0\.99 covered: T4 \(0\.0000\)/,
+		);
+		const artifact = compileAreaOverlapCrosswalk(
+			root,
+			adapter({ minimumTargetCoverage: 0 }),
+			geometrySources(),
+			areaLookup(["T1", "T2", "T3", "T4"]),
+		);
+		assert.equal(
+			artifact.validation.overlap.minimumTargetCoverageRequired,
+			0,
+		);
+		assert.equal(artifact.validation.overlap.minimumTargetCoverage, 0);
+	});
+});
+
 test("fails on geometry without a compiled identity or a supported transformation", () => {
 	withFixture((root) => {
 		assert.throws(

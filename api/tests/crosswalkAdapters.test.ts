@@ -87,6 +87,8 @@ test("rejects area-overlap thresholds outside their range", () => {
 		{ ...areaOverlap, sliverWidthM: 0 },
 		{ ...areaOverlap, minimumCoverage: 1.5 },
 		{ ...areaOverlap, minimumCoverage: undefined },
+		{ ...areaOverlap, minimumTargetCoverage: -0.01 },
+		{ ...areaOverlap, minimumTargetCoverage: 1.01 },
 	]) {
 		assert.throws(() => read([adapter]), /Invalid crosswalk adapter/);
 	}

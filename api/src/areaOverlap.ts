@@ -363,6 +363,8 @@ export const compileAreaOverlapCrosswalk = (
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
 ): AreaOverlapCrosswalkArtifact => {
+	const minimumTargetCoverage =
+		adapter.minimumTargetCoverage ?? adapter.minimumCoverage;
 	let sourceCodePattern: RegExp | undefined;
 	if (adapter.sourceCodePattern) {
 		try {
@@ -506,16 +508,14 @@ export const compileAreaOverlapCrosswalk = (
 		left[1] - right[1];
 	sourceCoverage.sort(byCoverage);
 	targetCoverage.sort(byCoverage);
-	for (const [side, coverage] of [
-		["source", sourceCoverage],
-		["target", targetCoverage],
+	for (const [side, coverage, minimumCoverage] of [
+		["source", sourceCoverage, adapter.minimumCoverage],
+		["target", targetCoverage, minimumTargetCoverage],
 	] as const) {
-		const below = coverage.filter(
-			([, value]) => value < adapter.minimumCoverage,
-		);
+		const below = coverage.filter(([, value]) => value < minimumCoverage);
 		if (below.length > 0) {
 			throw new Error(
-				`${adapter.id}: ${below.length} ${side} areas are less than ${adapter.minimumCoverage} covered: ${formatCodes(below)}`,
+				`${adapter.id}: ${below.length} ${side} areas are less than ${minimumCoverage} covered: ${formatCodes(below)}`,
 			);
 		}
 	}
@@ -583,6 +583,9 @@ export const compileAreaOverlapCrosswalk = (
 						: round(widestSliverWidthM, 1),
 				narrowestOverlapWidthM: round(narrowestOverlapWidthM, 1),
 				minimumCoverage: adapter.minimumCoverage,
+				...(adapter.minimumTargetCoverage === undefined
+					? {}
+					: { minimumTargetCoverageRequired: minimumTargetCoverage }),
 				minimumSourceCoverage: round(sourceCoverage[0]?.[1] ?? 0, 6),
 				minimumTargetCoverage: round(targetCoverage[0]?.[1] ?? 0, 6),
 			},
