@@ -21,12 +21,12 @@ export const compileLifeExpectancy = (lifeExpectancySeriesPath: string) => {
 			const entry = object(value, `${lifeExpectancySeriesPath}.${key}`);
 			if (
 				entry.boundaryType !== "localAuthority" ||
-				entry.boundaryYear !== 2021 ||
+				entry.boundaryYear !== 2025 ||
 				typeof entry.period !== "string" ||
 				!/^\d{4}-\d{4}$/.test(entry.period)
 			) {
 				throw new Error(
-					`${lifeExpectancySeriesPath}.${key}: expected a local-authority period on the 2021 code vintage`,
+					`${lifeExpectancySeriesPath}.${key}: expected a local-authority period on the 2025 code vintage`,
 				);
 			}
 			return {
@@ -71,7 +71,7 @@ export const compileLifeExpectancy = (lifeExpectancySeriesPath: string) => {
 		}));
 		const sourceGeography = {
 			type: "localAuthority" as const,
-			boundaryYear: 2021,
+			boundaryYear: 2025,
 		};
 		const content = JSON.stringify({
 			schemaVersion: 1,
@@ -117,7 +117,7 @@ export const compileLifeExpectancy = (lifeExpectancySeriesPath: string) => {
 			},
 			notes: [
 				"Each period is a three-year period life expectancy, not a forecast for anyone born in it.",
-				"On the publisher's December 2021 local-authority codes, to which ONS restates the whole series. The four authorities created in April 2023 are not published and are not served; their predecessor districts are.",
+				"On the publisher's May 2025 local-authority codes, to which ONS restates the whole series across all four nations. The English counties the workbook also lists overlap their districts and are not served.",
 			],
 		};
 		return {

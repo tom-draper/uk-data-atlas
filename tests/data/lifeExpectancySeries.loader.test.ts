@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { loadLifeExpectancySeries } from "@/lib/data/life-expectancy/seriesLoader";
 
 const HEADER =
-	"Period,Country,Area type,Area code,Area name,Sex,Sex code,Age band,Age group,Life expectancy (years),Lower confidence interval,Upper confidence interval";
+	"Period,Country,Area type,Area code,Area name,Sex,Sex code,Age band,Age group,Life expectancy,Lower confidence interval,Upper confidence interval";
 
 const row = (
 	period: string,
@@ -26,6 +26,9 @@ const complete = [
 	// Not life expectancy at birth, and not a local area: both ignored.
 	row("2020 to 2022", "E06000001", "Male", [10, 9, 11], "65-69"),
 	row("2020 to 2022", "E12000001", "Male", [77, 76, 78], "<1", "Region"),
+	// A county is listed among the local areas but overlaps its districts.
+	row("2020 to 2022", "E10000003", "Male", [80, 79, 81]),
+	row("2020 to 2022", "E10000003", "Female", [84, 83, 85]),
 ];
 
 describe("loadLifeExpectancySeries", () => {
@@ -36,7 +39,7 @@ describe("loadLifeExpectancySeries", () => {
 		expect(datasets[2022]).toMatchObject({
 			type: "lifeExpectancySeries",
 			period: "2020-2022",
-			boundaryYear: 2021,
+			boundaryYear: 2025,
 		});
 		expect(datasets[2003].data.E06000001.male).toEqual({
 			value: 73.42,
