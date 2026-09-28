@@ -494,6 +494,13 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Get a named location",
 		intro: "Get one named location's description, the area codes it's made from and its bounds.",
 	},
+	getNamedLocationGeometry: {
+		title: "Get a named location's shape",
+		intro: "Download a named location's outline, such as Greater Manchester, as one GeoJSON Feature: its member areas merged into a single shape.",
+		tips: [
+			"The shape is built ahead of time from a boundary release in which every member area is known. When no such shape exists you get a 503, never an approximation.",
+		],
+	},
 	getNamedLocationCapabilities: {
 		title: "See named location options",
 		intro: "Discover which direct and crosswalk-based views are available for a named location before requesting its members or parents.",
