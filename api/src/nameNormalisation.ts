@@ -38,6 +38,20 @@ export const withoutTitle = (normalised: string) => {
 	return stripped && stripped !== normalised ? stripped : undefined;
 };
 
+export type NameMatch = "exact" | "exact-without-title" | "prefix";
+
+export const exactNameMatch = (
+	label: string,
+	query: string,
+): Exclude<NameMatch, "prefix"> | undefined => {
+	const normalised = normalisePlaceName(label);
+	const requested = normalisePlaceName(query);
+	if (normalised === requested) return "exact";
+	return withoutTitle(normalised) === requested
+		? "exact-without-title"
+		: undefined;
+};
+
 /**
  * Names chosen to exercise every rule above. Changing a rule changes how at
  * least one of them normalises, and so changes the fingerprint.

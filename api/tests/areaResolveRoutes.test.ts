@@ -56,7 +56,7 @@ test("resolves an alias exactly and directs prefixes to the search resource", ()
 			code: "E08000001",
 			name: "Greater Manchester",
 			aliases: ["GM"],
-			matches: ["alias-exact"],
+			matches: ["exact"],
 			dossierHref:
 				"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/dossier",
 		},
@@ -120,8 +120,8 @@ test("resolves normalised names and aliases without hiding the matching rule", (
 				candidates: Array<{ matches: string[] }>;
 			}
 		).candidates[0]?.matches;
-	assert.deepEqual(matches(title), ["name-exact-without-title"]);
-	assert.deepEqual(matches(alias), ["alias-normalized-exact"]);
+	assert.deepEqual(matches(title), ["exact-without-title"]);
+	assert.deepEqual(matches(alias), ["exact"]);
 });
 
 test("keeps an exact name and another area's equal alias as separate candidates", () => {
@@ -161,8 +161,8 @@ test("keeps an exact name and another area's equal alias as separate candidates"
 	assert.deepEqual(
 		data.candidates.map(({ code, matches }) => ({ code, matches })),
 		[
-			{ code: "E08000001", matches: ["alias-exact"] },
-			{ code: "E05000001", matches: ["name-exact"] },
+			{ code: "E08000001", matches: ["exact"] },
+			{ code: "E05000001", matches: ["exact"] },
 		],
 	);
 });

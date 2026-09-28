@@ -1,4 +1,4 @@
-import { normalisePlaceName } from "./nameNormalisation";
+import { normalisePlaceName, type NameMatch } from "./nameNormalisation";
 import { memberCodesAt } from "./namedLocations";
 import { findSorted, lowerBound } from "./sortedIndex";
 import {
@@ -20,13 +20,7 @@ import {
  * knows what the caller wants the place for.
  */
 
-export type PlaceMatch =
-	/** The name, or an alias, equals the query. */
-	| "exact"
-	/** Equal once a title such as "City of" is set aside: "Bristol, City of". */
-	| "exact-without-title"
-	/** The name begins with the query: "Richmond upon Thames" for "Richmond". */
-	| "prefix";
+export type PlaceMatch = NameMatch;
 
 export type PlaceCandidate = {
 	/**
