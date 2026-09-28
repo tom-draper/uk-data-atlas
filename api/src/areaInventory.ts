@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
+import { readGeoJsonProperties } from "./geoJsonProperties";
 import { join } from "node:path";
 import type { AreaAdapterManifest, AreaPropertyAdapter } from "./areaAdapters";
 import type {
@@ -246,11 +247,9 @@ const compileGeoJson = (
 	adapter?: AreaPropertyAdapter,
 	sourceAdapter?: AreaSourceAdapter,
 ): AreaReleaseArtifact | UnavailableAreaRelease => {
-	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
-	if (
-		source.type !== "FeatureCollection" ||
-		!Array.isArray(source.features)
-	) {
+	// Only the property table is compiled, so the geometry is never built.
+	const source = readGeoJsonProperties(path);
+	if (source.type !== "FeatureCollection") {
 		return {
 			id: boundaryRelease,
 			geography,
@@ -259,16 +258,16 @@ const compileGeoJson = (
 		};
 	}
 	const features = sourceAdapter
-		? source.features.filter((feature) => {
-				const properties = feature.properties as
-					Record<string, unknown> | undefined;
-				const value = properties?.[sourceAdapter.filter.property];
+		? source.properties.filter((properties) => {
+				const value = (
+					properties as Record<string, unknown> | undefined
+				)?.[sourceAdapter.filter.property];
 				return (
 					typeof value === "string" &&
 					value.startsWith(sourceAdapter.filter.startsWith)
 				);
 			})
-		: source.features;
+		: source.properties;
 	if (features.length === 0) {
 		return {
 			id: boundaryRelease,
@@ -277,14 +276,11 @@ const compileGeoJson = (
 			reason: "The configured source selection did not match any features.",
 		};
 	}
-	const propertiesByFeature = features.map((feature, index) => {
-		if (
-			typeof feature.properties !== "object" ||
-			feature.properties === null
-		) {
+	const propertiesByFeature = features.map((properties, index) => {
+		if (typeof properties !== "object" || properties === null) {
 			throw new Error(`${path}: feature ${index} has no properties`);
 		}
-		return feature.properties as Record<string, unknown>;
+		return properties as Record<string, unknown>;
 	});
 	return compileProperties(
 		path,
