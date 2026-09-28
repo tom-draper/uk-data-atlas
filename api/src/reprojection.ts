@@ -16,7 +16,10 @@ export type GeometryProvenance = {
 	inputHash?: string;
 	sourceCrs: string;
 	transformation?: GeometryTransformation;
-	/** Declared grid corrections that moved this area before reprojection. */
+	/**
+	 * Declared grid corrections that moved this area before reprojection, and
+	 * geometry substitutions that replaced it with another release's area.
+	 */
 	corrections?: Array<{ id: string; description: string }>;
 };
 

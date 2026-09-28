@@ -4,6 +4,7 @@ export const VALIDATION_CHECKS = [
 	"licence-recorded",
 	"area-identities",
 	"geometry-servable",
+	"geometry-positioned",
 	"candidates-reviewed",
 	"artifact-integrity",
 	"endpoints-verified",

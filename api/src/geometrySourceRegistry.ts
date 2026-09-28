@@ -8,6 +8,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import type { AreaReleaseArtifact } from "./areaInventory";
+import { substitutionsFor } from "../../lib/data/boundaries/geometrySubstitutions";
 
 type BoundaryMetadata = { files?: unknown };
 export type GeometrySourceRegistry = {
@@ -92,6 +93,12 @@ export const createGeometrySourceRegistry = (
 				reason: "No declared raw GeoJSON or Shapefile source is available.",
 			};
 		const corrections = declaredCorrections(dir);
+		// Declared in code rather than meta.json, so a repair needs no new
+		// data release; see lib/data/boundaries/geometrySubstitutions.ts.
+		const substitutions = substitutionsFor(
+			a.geography,
+			a.boundaryRelease,
+		).map(({ id }) => id);
 		return {
 			id: a.geography + "/" + a.boundaryRelease,
 			status: "available",
@@ -102,6 +109,7 @@ export const createGeometrySourceRegistry = (
 			crs: crs(path),
 			codeProperty: a.codeProperty,
 			...(corrections.length > 0 ? { corrections } : {}),
+			...(substitutions.length > 0 ? { substitutions } : {}),
 			...(a.derivedFrom ? { selection: a.derivedFrom.filter } : {}),
 		};
 	});

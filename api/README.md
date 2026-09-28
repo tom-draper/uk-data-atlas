@@ -4198,9 +4198,22 @@ them within a metre of NISRA's native boundaries; the geometry registry
 records each release's declared corrections, and a corrected area's
 `properties.geometrySource.corrections` names the correction applied.
 Constituencies December 2016 are British National Grid but already accurate,
-and are served uncorrected. Three WGS84 releases, constituencies December 2017
-and 2019 and travel to work areas 2011, are off in Northern Ireland by a
-different shift that is not corrected yet. Each response's
+and are served uncorrected.
+
+The WGS84 constituency releases from December 2017 to December 2022 carry a
+different fault: Northern Ireland's inland boundaries lie 55 to 67 m east of
+their true position, about 67 m in Belfast, while the clipped coastline is
+accurate. Only part of each area moved, so no grid offset can repair them.
+Northern Ireland's eighteen constituencies were unchanged from 2008 until the
+2024 review, so these six releases take Northern Ireland's areas, code for
+code, from December 2016, which agrees with the WGS84 local authorities to
+about 2 m; July 2024 is accurate as published. The substitution is declared
+in `lib/data/boundaries/geometrySubstitutions.ts`, shared with the website's
+boundary compiler, and a substituted area's
+`properties.geometrySource.corrections` names it with the donor file and its
+hash. Travel to work areas 2011 have the same fault, a median 59 m, but no
+accurate copy is held to repair them from: they are served as published, and
+the validation report's waived `geometry-positioned` check says so. Each response's
 `properties.geometrySource` names the source CRS and any transformation. A source in any other CRS is refused
 rather than served unprojected. This is a raw per-area lookup, not the tiled or
 simplified delivery the full proposal describes for map rendering at scale.
