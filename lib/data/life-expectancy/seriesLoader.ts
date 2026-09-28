@@ -6,6 +6,11 @@ import type {
 } from "@/lib/types/lifeExpectancySeries";
 
 const PERIOD = /^(\d{4}) to (\d{4})$/;
+// Unitary authorities, districts, metropolitan and London boroughs, Scottish
+// council areas, Welsh principal areas and Northern Irish districts. The
+// workbook's "Local Areas" also include English counties (E10), which
+// overlap their districts and belong to no single authority release.
+const DISTRICT_CODE = /^(E0[6-9]|W06|S12|N09)/;
 
 const estimate = (
 	row: Record<string, string>,
@@ -28,9 +33,10 @@ const estimate = (
  * Every published period of life expectancy at birth for local areas, with its
  * confidence interval, from sheet 1 of the ONS workbook.
  *
- * Nothing is derived. Authorities the publisher does not report, including the
- * four created in April 2023, are absent, and a period whose areas differ from
- * the others stops the build rather than mixing code vintages.
+ * Nothing is derived. ONS restates the whole series on the May 2025 local
+ * authority codes, so every period holds the same districts; county rows are
+ * set aside, and a period whose areas differ from the others stops the build
+ * rather than mixing code vintages.
  */
 export async function loadLifeExpectancySeries(
 	sheetCsv: string,
@@ -53,7 +59,12 @@ export async function loadLifeExpectancySeries(
 			throw new Error(`Life expectancy series: bad period ${period}`);
 		const ladCode = row["Area code"]?.trim();
 		const sex = row["Sex"]?.trim();
-		if (!ladCode || (sex !== "Male" && sex !== "Female")) continue;
+		if (
+			!ladCode ||
+			!DISTRICT_CODE.test(ladCode) ||
+			(sex !== "Male" && sex !== "Female")
+		)
+			continue;
 
 		const key = `${match[1]}-${match[2]}`;
 		const records = byPeriod.get(key) ?? {};
@@ -102,7 +113,7 @@ export async function loadLifeExpectancySeries(
 					year,
 					period,
 					boundaryType: "localAuthority" as const,
-					boundaryYear: 2021,
+					boundaryYear: 2025,
 					data,
 				},
 			];

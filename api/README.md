@@ -643,12 +643,12 @@ only **available** when its endpoint, contract and provenance are published.
       the first: ONS's 95% confidence interval on every estimate. Tabular
       exports carry `lowerBound` and `upperBound`, empty where none is published.
 - [x] Return life expectancy at birth through `GET /v1/data/life-expectancy-male`
-      and `GET /v1/data/life-expectancy-female`: 340 local areas in England,
-      Wales and Northern Ireland, for every three-year period from 2001 to 2003
-      to 2020 to 2022, each with its 95% confidence interval. ONS restates the
-      whole series on December 2021 codes. It publishes male and female series
-      but no persons total, so none is offered, and it does not publish the four
-      authorities created in April 2023, so they are not served. Declared
+      and `GET /v1/data/life-expectancy-female`: 359 local authorities across
+      all four UK nations, for every three-year period from 2001 to 2003 to
+      2022 to 2024, each with its 95% confidence interval. ONS restates the
+      whole series on May 2025 codes. It publishes male and female series but
+      no persons total, so none is offered, and the English counties its
+      workbook also lists overlap their districts, so they are not served. Declared
       `non-aggregatable`: a combined population's life expectancy is not an
       average of its areas'.
 - [x] Return median house price paid through `GET /v1/data/house-price-median`:
@@ -3751,8 +3751,8 @@ catalogues by the contract tests:
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2025&geography=lsoa&boundaryYear=2021&release=2021-12-ew-bgc-v5&include=area`
-- `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&boundaryYear=2021`
-- `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2021`
+- `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/population-estimate?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`

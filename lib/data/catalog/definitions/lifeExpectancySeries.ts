@@ -26,7 +26,7 @@ export const lifeExpectancySeriesDatasetDefinition: DatasetDefinition<LifeExpect
 		ingestion: {
 			minimumDatasets: 20,
 			minimumDataRecords: 340,
-			expectedBoundaryYears: [2021],
+			expectedBoundaryYears: [2025],
 			requiredDataFields: ["male", "female"],
 		},
 		precompile: ({ xlsxSheet }) =>
