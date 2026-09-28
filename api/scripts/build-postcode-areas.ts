@@ -59,7 +59,7 @@ import {
  * are unchanged since the last build is read back from its shards instead,
  * unless `--rebuild` is given.
  * `--workers N` sets how many releases are placed at once; each holds a
- * release's geometry, some hundreds of megabytes.
+ * release's geometry, packed, and parses its source file to load it.
  */
 
 type Job = {

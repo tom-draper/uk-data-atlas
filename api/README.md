@@ -411,9 +411,12 @@ only **available** when its endpoint, contract and provenance are published.
       product catalogue and the requirements a product must meet; every product
       is `not-published` until a terrain source is ingested and validated.
 - [x] Serve point, nearest-area and box lookup through a compact per-release
-      spatial candidate index before exact geometry tests. A release costs 60
-      to 400 MB of heap once read, so only two are held at a time, and a lookup
-      across more geographies than that re-reads the others on every request.
+      spatial candidate index before exact geometry tests. A release is held
+      with its coordinates packed in typed arrays, 18 MB for the May 2023
+      wards and 61 MB for the 2021 LSOAs once every area has been read, and
+      only the areas a request reads are rebuilt as GeoJSON. Two releases are
+      held at a time by default, and a lookup across more geographies than
+      that re-reads the others on every request.
 - [x] Retrieve the areas that intersect a bounded bbox for a chosen release,
       through `GET /v1/areas:intersects?bbox=west,south,east,north`. Each match
       reports whether it lies `within` the box or merely `overlaps` it, both
@@ -2496,8 +2499,10 @@ line up.
 - **Request target:** longer than `ATLAS_MAX_URL_LENGTH` is `414`.
 - **Slow clients:** headers must arrive within 15 seconds and the whole
   request within 30; idle keep-alive connections close after 5.
-- **Geometry cache:** a count of releases, because one costs 60 to 400 MB of
-  heap. A rising eviction count means the cache is too small for the traffic.
+- **Geometry cache:** a count of releases. One costs some 10 to 200 MB of
+  heap with its coordinates packed, the 2021 output areas being the largest,
+  plus the 256 most recently read areas held as GeoJSON. A rising eviction
+  count means the cache is too small for the traffic.
 - **Shutdown:** on `SIGTERM` the server reports not ready, stops accepting
   connections, finishes what it holds, and closes whatever is left after the
   grace period.

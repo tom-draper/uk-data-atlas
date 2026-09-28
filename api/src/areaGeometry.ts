@@ -14,13 +14,18 @@ import {
 	type GridOffset,
 } from "./gridOffset";
 import { readShapefileFeatures } from "./shapefile";
+import {
+	packedBounds,
+	packGeometry,
+	unpackGeometry,
+	type PackedGeometry,
+} from "./packedGeometry";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
 import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
 	boundsIntersect,
 	boundsWithin,
 	containPoint,
-	geometryBounds,
 	geometryMeetsBounds,
 	pointInBounds,
 	type Coordinate,
@@ -50,11 +55,15 @@ const isGeometry = (value: unknown): value is GeoJsonGeometry =>
 	value !== null &&
 	typeof (value as { type?: unknown }).type === "string";
 type CachedRelease = {
+	identity: string;
 	crs: string;
-	geometries: Map<string, GeoJsonGeometry>;
+	/** Areas as published, packed; see packedGeometry.ts. */
+	geometries: Map<string, PackedGeometry>;
 	// Reprojected lazily, one requested area at a time: whole releases can
-	// hold millions of vertices, and most requests read a single area.
-	wgs84: Map<string, GeoJsonGeometry>;
+	// hold millions of vertices, and most requests read a single area. Kept
+	// packed, so a release read in full costs its coordinates twice rather
+	// than twice its GeoJSON.
+	wgs84: Map<string, PackedGeometry>;
 	/** WGS84 bounds, built lazily with the geometry used for containment. */
 	bounds: Map<string, GeometryBounds | undefined>;
 	/** Compact candidate index: codes in quarter-degree cells, never copied rings. */
@@ -68,6 +77,11 @@ type SpatialIndex = {
 };
 
 const SPATIAL_CELL_DEGREES = 0.25;
+/**
+ * Areas held as GeoJSON after a request read them. Every other area stays
+ * packed; this only saves rebuilding the ones a burst of requests shares.
+ */
+const MATERIALISED_AREAS = 256;
 const MAX_SPATIAL_QUERY_CELLS = 10_000;
 
 export type ContainingArea = {
@@ -89,8 +103,9 @@ export type IntersectingArea = {
 };
 /**
  * How the geometry cache has behaved since the server started. A release costs
- * 60 to 400 MB of heap once read, so the limit is a count of releases, and a
- * rising eviction count says it is too small for the traffic it serves.
+ * some 10 to 200 MB of heap once read, its coordinates packed, so the limit is
+ * a count of releases, and a rising eviction count says it is too small for
+ * the traffic it serves.
  */
 export type AreaGeometryCacheStats = {
 	maxReleases: number;
@@ -108,6 +123,8 @@ export type AreaGeometryCacheStats = {
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
 	private readonly offsets = new Map<string, GridOffset>();
+	/** Recently read areas as GeoJSON, least recently used first. */
+	private readonly materialised = new Map<string, GeoJsonGeometry>();
 	private readonly counts = {
 		reads: 0,
 		loads: 0,
@@ -172,7 +189,35 @@ export class AreaGeometryCache {
 			})
 			.filter((offset) => appliesTo(offset, code));
 	}
-	/** Transform one loaded geometry, caching it only when an exact operation needs it. */
+	/** One area in WGS84, packed; reprojected from its source on first use. */
+	private wgs84Packed(
+		release: CachedRelease,
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): PackedGeometry | undefined {
+		const packed = release.geometries.get(code);
+		if (!packed || isWgs84(release.crs)) return packed;
+		const cached = release.wgs84.get(code);
+		if (cached) return cached;
+		const corrected = this.correctionsFor(
+			this.source(geography, boundaryRelease),
+			code,
+		).reduce(
+			(moved, offset) => offsetGeometry(offset, moved),
+			unpackGeometry(packed),
+		);
+		const reprojected = packGeometry(
+			toWgs84Geometry(corrected, release.crs),
+		);
+		release.wgs84.set(code, reprojected);
+		return reprojected;
+	}
+
+	/**
+	 * One area as WGS84 GeoJSON. Reads through `get` keep it for the next
+	 * request; internal whole-release passes build it and let it go.
+	 */
 	private wgs84Geometry(
 		release: CachedRelease,
 		geography: string,
@@ -180,20 +225,32 @@ export class AreaGeometryCache {
 		code: string,
 		cache: boolean,
 	): GeoJsonGeometry | undefined {
-		const geometry = release.geometries.get(code);
-		if (!geometry || isWgs84(release.crs)) return geometry;
-		const cached = release.wgs84.get(code);
-		if (cached) return cached;
-		const corrected = this.correctionsFor(
-			this.source(geography, boundaryRelease),
+		const key = `${release.identity}\u0000${code}`;
+		const held = this.materialised.get(key);
+		if (held) {
+			this.materialised.delete(key);
+			this.materialised.set(key, held);
+			return held;
+		}
+		const packed = this.wgs84Packed(
+			release,
+			geography,
+			boundaryRelease,
 			code,
-		).reduce((moved, offset) => offsetGeometry(offset, moved), geometry);
-		const reprojected = toWgs84Geometry(corrected, release.crs);
-		if (cache) release.wgs84.set(code, reprojected);
-		return reprojected;
+		);
+		if (!packed) return undefined;
+		const geometry = unpackGeometry(packed);
+		if (cache) {
+			this.materialised.set(key, geometry);
+			if (this.materialised.size > MATERIALISED_AREAS)
+				this.materialised.delete(
+					this.materialised.keys().next().value as string,
+				);
+		}
+		return geometry;
 	}
 
-	/** Calculate one WGS84 envelope without retaining a second copy of its rings. */
+	/** One area's WGS84 envelope, read from its packed coordinates. */
 	private boundsFor(
 		release: CachedRelease,
 		geography: string,
@@ -201,14 +258,13 @@ export class AreaGeometryCache {
 		code: string,
 	): GeometryBounds | undefined {
 		if (release.bounds.has(code)) return release.bounds.get(code);
-		const geometry = this.wgs84Geometry(
+		const packed = this.wgs84Packed(
 			release,
 			geography,
 			boundaryRelease,
 			code,
-			false,
 		);
-		const bounds = geometry ? geometryBounds(geometry) : undefined;
+		const bounds = packed ? packedBounds(packed) : undefined;
 		release.bounds.set(code, bounds);
 		return bounds;
 	}
@@ -371,9 +427,13 @@ export class AreaGeometryCache {
 						: feature.geometry,
 				);
 			}
+			const packed = new Map<string, PackedGeometry>();
+			for (const [code, geometry] of geometries)
+				packed.set(code, packGeometry(geometry));
 			release = {
+				identity,
 				crs: source.crs,
-				geometries,
+				geometries: packed,
 				wgs84: new Map(),
 				bounds: new Map(),
 			};
@@ -381,9 +441,11 @@ export class AreaGeometryCache {
 			this.counts.loads += 1;
 			this.counts.loadSeconds += (performance.now() - started) / 1000;
 			while (this.releases.size > this.maxReleases) {
-				this.releases.delete(
-					this.releases.keys().next().value as string,
-				);
+				const evicted = this.releases.keys().next().value as string;
+				this.releases.delete(evicted);
+				for (const key of this.materialised.keys())
+					if (key.startsWith(`${evicted}\u0000`))
+						this.materialised.delete(key);
 				this.counts.evictions += 1;
 			}
 		} else {
@@ -432,8 +494,7 @@ export class AreaGeometryCache {
 			point[0],
 			point[1],
 		])) {
-			const geometry = this.get(geography, boundaryRelease, code);
-			if (!geometry) continue;
+			// The envelope settles most candidates without building any rings.
 			const bounds = this.boundsFor(
 				release,
 				geography,
@@ -441,6 +502,8 @@ export class AreaGeometryCache {
 				code,
 			);
 			if (!bounds || !pointInBounds(point, bounds)) continue;
+			const geometry = this.get(geography, boundaryRelease, code);
+			if (!geometry) continue;
 			const containment = containPoint(point, geometry);
 			if (containment !== "outside") matches.push({ code, containment });
 		}
@@ -481,8 +544,6 @@ export class AreaGeometryCache {
 		];
 		const nearby: NearbyArea[] = [];
 		for (const code of this.spatialCandidates(index, searchBounds)) {
-			const geometry = this.get(geography, boundaryRelease, code);
-			if (!geometry) continue;
 			const bounds = this.boundsFor(
 				release,
 				geography,
@@ -490,6 +551,8 @@ export class AreaGeometryCache {
 				code,
 			);
 			if (!bounds || distanceToBoundsM(point, bounds) > withinM) continue;
+			const geometry = this.get(geography, boundaryRelease, code);
+			if (!geometry) continue;
 			const distanceM = distanceToGeometryM(point, geometry);
 			if (distanceM <= withinM) nearby.push({ code, distanceM });
 		}
@@ -520,8 +583,6 @@ export class AreaGeometryCache {
 		const { release, index } = indexed;
 		const matches: IntersectingArea[] = [];
 		for (const code of this.spatialCandidates(index, box)) {
-			const geometry = this.get(geography, boundaryRelease, code);
-			if (!geometry) continue;
 			const bounds = this.boundsFor(
 				release,
 				geography,
@@ -533,6 +594,8 @@ export class AreaGeometryCache {
 				matches.push({ code, relation: "within", bounds });
 				continue;
 			}
+			const geometry = this.get(geography, boundaryRelease, code);
+			if (!geometry) continue;
 			if (geometryMeetsBounds(geometry, box))
 				matches.push({ code, relation: "overlaps", bounds });
 		}
@@ -561,27 +624,21 @@ export class AreaGeometryCache {
 		const identity = [geography, boundaryRelease].join("/");
 		const release = this.releases.get(identity);
 		if (!release) return undefined;
-		const boundsFor = (forCode: string, forGeometry: GeoJsonGeometry) => {
-			let bounds = release.bounds.get(forCode);
-			if (bounds === undefined && !release.bounds.has(forCode)) {
-				bounds = geometryBounds(forGeometry);
-				release.bounds.set(forCode, bounds);
-			}
-			return bounds;
-		};
-		const targetBounds = boundsFor(code, geometry);
+		const boundsFor = (forCode: string) =>
+			this.boundsFor(release, geography, boundaryRelease, forCode);
+		const targetBounds = boundsFor(code);
 		if (!targetBounds) return [];
 		const target = borderIndex(geometry);
 		const neighbours: Neighbour[] = [];
 		for (const otherCode of release.geometries.keys()) {
 			if (otherCode === code) continue;
-			const other = this.get(geography, boundaryRelease, otherCode);
-			if (!other) continue;
-			const otherBounds = boundsFor(otherCode, other);
+			const otherBounds = boundsFor(otherCode);
 			// Bounds that only touch still qualify: two areas meeting along a
 			// border have bounds that meet there too.
 			if (!otherBounds || !boundsIntersect(targetBounds, otherBounds))
 				continue;
+			const other = this.get(geography, boundaryRelease, otherCode);
+			if (!other) continue;
 			const shared = sharedBorder(target, borderIndex(other));
 			if (shared) neighbours.push({ code: otherCode, ...shared });
 		}
