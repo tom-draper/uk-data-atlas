@@ -4,14 +4,18 @@ import type { Feature, FeatureCollection } from "geojson";
  * Boundary releases whose Northern Ireland geometry is known to be displaced,
  * and what is done about it.
  *
- * The ONS's UK-wide WGS84 constituency releases from December 2017 to
- * December 2022 carry Northern Ireland's inland boundaries 55 to 67 m east of
- * their true position (about 67 m in Belfast), while their clipped coastline
- * is accurate. Because only part of each area is displaced, no grid offset
- * can repair them. Northern Ireland's eighteen constituencies were unchanged
- * from 2008 until the 2024 review, so these releases take Northern Ireland's
- * shapes, code for code, from the December 2016 release, which agrees with
- * the ONS's own WGS84 local authorities to about 2 m.
+ * Several ONS UK-wide WGS84 releases carry Northern Ireland about 60 m east
+ * of its true position: the northern-ireland-offset correction, applied the
+ * wrong way round. Constituencies December 2017 and travel to work areas 2011
+ * carry it throughout. Constituencies December 2018 to December 2022 carry it
+ * on their inland boundaries only, with a clipped coastline that is already
+ * accurate, so reversing the offset there would push the coast out instead.
+ *
+ * Northern Ireland's eighteen constituencies were unchanged from 2008 until
+ * the 2024 review, so the constituency releases from 2017 to 2022 take its
+ * areas, code for code, from December 2016, which agrees with the ONS's WGS84
+ * local authorities to about 2 m. Travel to work areas have no accurate
+ * release to borrow from, so they are repaired by the reversed offset.
  *
  * Measured by nearest-vertex distance between releases: each release's
  * Northern Ireland vertices against December 2016 constituencies
@@ -42,7 +46,7 @@ export const GEOMETRY_SUBSTITUTIONS: readonly GeometrySubstitution[] = [
 	{
 		id: "northern-ireland-constituencies-2016",
 		description:
-			"Northern Ireland's constituencies are taken from the December 2016 release. In this release their inland boundaries lie 55 to 67 m east of their true position while the coastline is accurate, and the eighteen constituencies were unchanged from 2008 until the 2024 review.",
+			"Northern Ireland's constituencies are taken from the December 2016 release. In this release their boundaries lie up to about 67 m east of their true position, and the eighteen constituencies were unchanged from 2008 until the 2024 review.",
 		geography: "constituency",
 		releases: [
 			"2017-12-uk-bgc",
@@ -57,16 +61,49 @@ export const GEOMETRY_SUBSTITUTIONS: readonly GeometrySubstitution[] = [
 	},
 ];
 
+/**
+ * Releases known to be displaced with no repair yet, which the API's
+ * validation report has to waive to admit. None at present.
+ */
 export const KNOWN_GEOMETRY_DISPLACEMENTS: readonly KnownGeometryDisplacement[] =
-	[
-		{
-			geography: "travelToWorkArea",
-			boundaryRelease: "2011-12-uk-gcb",
-			codePrefix: "N",
-			description:
-				"Northern Ireland's travel to work areas lie a median 59 m from their true position, most of it eastward, with the clipped coastline accurate. No accurate copy of this release is held to repair it from.",
-		},
-	];
+	[];
+
+/**
+ * A grid offset applied backwards to a WGS84 release that carries it the
+ * wrong way round. The areas are taken into the offset's grid, moved by its
+ * exact inverse and brought back.
+ */
+export interface ReversedGridOffset {
+	id: string;
+	description: string;
+	/** The grid offset definition in data/boundaries/, by id. */
+	offset: string;
+	geography: string;
+	boundaryRelease: string;
+	codePrefix: string;
+}
+
+export const REVERSED_GRID_OFFSETS: readonly ReversedGridOffset[] = [
+	{
+		id: "northern-ireland-offset-reversed",
+		description:
+			"Northern Ireland's travel to work areas are published about 60 m east of their true position, the northern-ireland-offset correction applied backwards. Its exact inverse, applied in the British National Grid, brings 63% of their vertices within 10 m of the May 2023 local authorities, against 5% as published.",
+		offset: "northern-ireland-offset",
+		geography: "travelToWorkArea",
+		boundaryRelease: "2011-12-uk-gcb",
+		codePrefix: "N",
+	},
+];
+
+export const reversedOffsetsFor = (
+	geography: string,
+	boundaryRelease: string,
+): ReversedGridOffset[] =>
+	REVERSED_GRID_OFFSETS.filter(
+		(reversed) =>
+			reversed.geography === geography &&
+			reversed.boundaryRelease === boundaryRelease,
+	);
 
 export const substitutionsFor = (
 	geography: string,

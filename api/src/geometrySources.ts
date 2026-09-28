@@ -48,6 +48,14 @@ export const readGeometrySourceLookup = (
 									),
 								}
 							: {}),
+						...(Array.isArray(r.reversedOffsets)
+							? {
+									reversedOffsets: r.reversedOffsets.filter(
+										(id): id is string =>
+											typeof id === "string",
+									),
+								}
+							: {}),
 					} satisfies GeometrySource,
 				] as const,
 			];

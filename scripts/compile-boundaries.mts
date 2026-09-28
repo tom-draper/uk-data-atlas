@@ -35,10 +35,12 @@ import {
 	type GridOffset,
 } from "../lib/data/boundaries/gridOffset";
 import {
+	reversedOffsetsFor,
 	substituteFeatures,
 	substitutionsFor,
 	type GeometrySubstitution,
 } from "../lib/data/boundaries/geometrySubstitutions";
+import { applyReversedGridOffset } from "./reverse-grid-offset.mts";
 import { parseDatasetMeta } from "../lib/data/catalog/meta";
 import { polygonAreaSqKm } from "../lib/helpers/population";
 
@@ -154,6 +156,27 @@ const substitutionSources = (type: string, releaseId: string) =>
 
 type SubstitutionSource = ReturnType<typeof substitutionSources>[number];
 
+/**
+ * The grid offsets a WGS84 release carries backwards, loaded from their
+ * definitions in data/boundaries/ as the forward corrections are.
+ */
+const reversedOffsetSources = (type: string, releaseId: string) =>
+	reversedOffsetsFor(type, releaseId).map((reversed) => {
+		const path = join(
+			ROOT,
+			"data",
+			"boundaries",
+			`${reversed.offset}.json`,
+		);
+		return {
+			path,
+			offset: parseGridOffset(
+				JSON.parse(readFileSync(path, "utf8")),
+				path,
+			),
+		};
+	});
+
 // A change to the substitution definitions recompiles the releases they name.
 const SUBSTITUTIONS_MODULE = join(
 	ROOT,
@@ -228,6 +251,9 @@ const releaseSources = () =>
 				);
 			}
 			const substitutions = substitutionSources(type, release.id);
+			const reversedOffsets = reversedOffsetSources(type, release.id);
+			const repaired =
+				substitutions.length > 0 || reversedOffsets.length > 0;
 			return [
 				{
 					label: `${type}/${release.id}`,
@@ -235,15 +261,17 @@ const releaseSources = () =>
 					codeKey: release.codeKey,
 					offsets: corrections.map(({ offset }) => offset),
 					substitutions,
+					reversedOffsets: reversedOffsets.map(
+						({ offset }) => offset,
+					),
 					// The meta, any correction it declares and any release it takes
 					// areas from change the output as surely as the source does.
 					inputs: [
 						metaPath,
 						...corrections.map(({ path }) => path),
 						...substitutions.flatMap(({ inputs }) => inputs),
-						...(substitutions.length > 0
-							? [SUBSTITUTIONS_MODULE]
-							: []),
+						...reversedOffsets.map(({ path }) => path),
+						...(repaired ? [SUBSTITUTIONS_MODULE] : []),
 					],
 					keep: new Set<string>([
 						release.codeKey,
@@ -409,6 +437,7 @@ const simplifySource = async (
 		codeKey: string;
 		offsets: GridOffset[];
 		substitutions: SubstitutionSource[];
+		reversedOffsets: GridOffset[];
 	},
 ) => {
 	let normalised = decodeCorrected(
@@ -417,6 +446,14 @@ const simplifySource = async (
 		correction.codeKey,
 		correction.offsets,
 	);
+	// Offsets carried backwards are undone once the release is in WGS84.
+	for (const offset of correction.reversedOffsets)
+		normalised = applyReversedGridOffset(
+			normalised,
+			offset,
+			correction.codeKey,
+			correction.label,
+		);
 	// Substituted areas are swapped in once both releases are in WGS84.
 	for (const donor of correction.substitutions)
 		normalised = substituteFeatures(
@@ -517,6 +554,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 		codeKey,
 		offsets,
 		substitutions,
+		reversedOffsets,
 		inputs,
 		keep,
 		sourcePath,
@@ -584,6 +622,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 			codeKey,
 			offsets,
 			substitutions,
+			reversedOffsets,
 		});
 		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);

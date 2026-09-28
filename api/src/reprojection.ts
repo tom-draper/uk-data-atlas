@@ -180,3 +180,25 @@ export const toWgs84Geometry = <T extends Geometry>(
 				};
 	return reproject(geometry) as T;
 };
+
+/** Returns a WGS84 geometry in a supported national grid. */
+export const fromWgs84Geometry = <T extends Geometry>(
+	geometry: T,
+	crs: string,
+): T => {
+	if (isWgs84(crs)) return geometry;
+	const reprojection = REPROJECTIONS[crs];
+	if (!reprojection)
+		throw new Error(`No transformation from WGS84 is available to ${crs}.`);
+	const reproject = (value: Geometry): Geometry =>
+		value.type === "GeometryCollection"
+			? { ...value, geometries: (value.geometries ?? []).map(reproject) }
+			: {
+					...value,
+					coordinates: reprojectCoordinates(
+						value.coordinates,
+						reprojection.fromWgs84,
+					),
+				};
+	return reproject(geometry) as T;
+};
