@@ -360,8 +360,16 @@ export class GeographyResolver {
 		geography: string,
 		boundaryRelease: string,
 		box: Parameters<SpatialResolver["intersectingAreas"]>[2],
+		limit?: number,
+		includeGeometry?: boolean,
 	) {
-		return this.spatial.intersectingAreas(geography, boundaryRelease, box);
+		return this.spatial.intersectingAreas(
+			geography,
+			boundaryRelease,
+			box,
+			limit,
+			includeGeometry,
+		);
 	}
 
 	relationships(identity: AreaIdentity) {

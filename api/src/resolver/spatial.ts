@@ -39,8 +39,8 @@ export type ResolvedIntersectingArea = AreaRecord & {
 	id: string;
 	relation: IntersectingArea["relation"];
 	boundingBox: GeometryBounds;
-	geometry: GeoJsonGeometry;
-	geometrySource: GeometryProvenance;
+	geometry?: GeoJsonGeometry;
+	geometrySource?: GeometryProvenance;
 };
 export type ResolvedIntersectingAreas = {
 	matched: number;
@@ -241,16 +241,16 @@ export class SpatialResolver {
 		geography: string,
 		boundaryRelease: string,
 		box: GeometryBounds,
+		limit = Infinity,
+		includeGeometry = true,
 	): ResolvedIntersectingAreas | undefined {
 		const cache = this.cache;
 		if (!cache) return undefined;
 		const found = cache.findIntersecting(geography, boundaryRelease, box);
-		return {
-			matched: found.length,
-			matches: found.flatMap(({ code, relation, bounds }) => {
+		const matches = found
+			.flatMap(({ code, relation, bounds }) => {
 				const area = this.area({ geography, boundaryRelease, code });
-				const geometry = cache.get(geography, boundaryRelease, code);
-				return area && geometry
+				return area
 					? [
 							{
 								id: areaId({
@@ -261,16 +261,35 @@ export class SpatialResolver {
 								...area,
 								relation,
 								boundingBox: bounds,
-								geometry,
-								geometrySource: cache.provenance(
-									geography,
-									boundaryRelease,
-									code,
-								),
 							},
 						]
 					: [];
-			}),
+			})
+			.slice(0, limit);
+		return {
+			matched: found.length,
+			matches: includeGeometry
+				? matches.flatMap((match) => {
+						const geometry = cache.get(
+							geography,
+							boundaryRelease,
+							match.code,
+						);
+						return geometry
+							? [
+									{
+										...match,
+										geometry,
+										geometrySource: cache.provenance(
+											geography,
+											boundaryRelease,
+											match.code,
+										),
+									},
+								]
+							: [];
+					})
+				: matches,
 		};
 	}
 }

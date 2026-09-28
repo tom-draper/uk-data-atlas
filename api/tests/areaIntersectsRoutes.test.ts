@@ -216,3 +216,92 @@ test("bounds a box query by result count and rejects a malformed one", () => {
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("does not materialise geometry beyond the requested box-result limit", () => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		const directory = join(
+			root,
+			"data",
+			"boundaries",
+			"ward",
+			"2025-01-en-ward",
+		);
+		mkdirSync(directory, { recursive: true });
+		writeFileSync(
+			join(directory, "wards.geojson"),
+			JSON.stringify({
+				type: "FeatureCollection",
+				features: [
+					{
+						properties: { WD25CD: "E05000001" },
+						geometry: {
+							type: "Polygon",
+							coordinates: [
+								[
+									[-2, 54],
+									[-1, 54],
+									[-1, 55],
+									[-2, 55],
+									[-2, 54],
+								],
+							],
+						},
+					},
+					{
+						properties: { WD25CD: "E05000002" },
+						geometry: {
+							type: "Polygon",
+							coordinates: [
+								[
+									[1, 54],
+									[2, 54],
+									[2, 55],
+									[1, 55],
+									[1, 54],
+								],
+							],
+						},
+					},
+				],
+			}),
+		);
+		const sources: GeometrySourceLookup = new Map([
+			[
+				"ward/2025-01-en-ward",
+				{
+					input: "boundaries/ward/2025-01-en-ward/wards.geojson",
+					crs: "EPSG:4326",
+					codeProperty: "WD25CD",
+				},
+			],
+		]);
+		const cache = new AreaGeometryCache(root, sources);
+		const response = route(
+			"GET",
+			"/v1/areas:intersects?bbox=-3,53,3,56&geography=ward&release=2025-01-en-ward&limit=1",
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			undefined,
+			cache,
+		);
+		const data = ("data" in response.body && response.body.data) as {
+			matched: number;
+			returned: number;
+			matches: Array<{ code: string; geometry?: unknown }>;
+		};
+		assert.equal(data.matched, 2);
+		assert.equal(data.returned, 1);
+		assert.deepEqual(
+			data.matches.map(({ code }) => code),
+			["E05000001"],
+		);
+		assert.equal("geometry" in data.matches[0]!, false);
+		assert.equal(cache.stats().reads, 0);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
