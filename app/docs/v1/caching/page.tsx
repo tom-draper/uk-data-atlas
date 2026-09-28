@@ -88,9 +88,9 @@ export default function CachingPage() {
 			<H2 id="pinned">Checking current resources</H2>
 			<P>
 				Map resources are part of the current [Atlas
-				release](/docs/v1/concepts/releases). Store the release id with your
-				import and use its ETag when checking whether a current resource has
-				changed.
+				release](/docs/v1/concepts/releases). Store the release id with
+				your import and use its ETag when checking whether a current
+				resource has changed.
 			</P>
 		</DocPage>
 	);
