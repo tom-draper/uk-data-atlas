@@ -113,7 +113,7 @@ export const extractOnsWardHistory = (
 		join(directory, "meta.json"),
 		`${JSON.stringify(
 			{
-				id: "ward-history-2025-12-uk",
+				id: "2025-12-uk",
 				kind: "lookup",
 				title: "Electoral ward predecessor and successor codes",
 				description:
