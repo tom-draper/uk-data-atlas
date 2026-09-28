@@ -18,7 +18,7 @@ export const unemploymentDatasetDefinition: DatasetDefinition<UnemploymentDatase
 			licenceUrl:
 				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 			description:
-				"Model-based unemployment rate estimates by local authority for Great Britain.",
+				"Final model-based unemployment rate estimates by local authority for Great Britain. ONS discontinued this series in August 2022.",
 		},
 		// The local authority rates and levels sheets; the workbook also holds
 		// the same pair on 2010 constituencies.

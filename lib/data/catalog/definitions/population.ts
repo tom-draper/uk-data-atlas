@@ -23,7 +23,8 @@ export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
 			licence: "Open Government Licence v3.0",
 			licenceUrl:
 				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
-			description: "Ward population estimates.",
+			description:
+				"Ward population estimates for mid-2022. Newer ONS ward estimates use May 2025 boundaries, which are not yet mapped in the atlas.",
 		},
 		precompile: async ({ xlsxSheet }) => loadPopulation(xlsxSheet),
 	};

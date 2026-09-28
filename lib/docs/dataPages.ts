@@ -19,7 +19,7 @@ export function dataPageFacts(page: DataPage, catalogue = loadCatalogue()) {
 	const measures = measuresFromDatasets(catalogue, page.datasets);
 	const sources = sourceSummaries(catalogue, page.datasets);
 	const periods = sources.flatMap((s) => s.periods);
-	// Every year a period names, so 2020-2022 reaches 2022.
+	// Every year a period names, so 2022-2024 reaches 2024.
 	const years = periods.flatMap((p) =>
 		[...p.matchAll(/\d{4}/g)].map((match) => Number(match[0])),
 	);

@@ -10,20 +10,20 @@ export async function loadIMD(
 	read: (path: string) => Promise<string>,
 ): Promise<Record<string, IMDDataset>> {
 	const text = await read(
-		"deprivation/imd/File_7_-_All_IoD2019_Scores__Ranks__Deciles_and_Population_Denominators_3.csv",
+		"deprivation/imd/File_7_IoD2025_All_Ranks_Scores_Deciles_Population_Denominators.csv",
 	);
 	const { data } = await parseCsv(text, { header: true });
 
 	const records: Record<string, IMDLSOAData> = {};
 	for (const row of data) {
-		const lsoaCode = row["LSOA code (2011)"]?.trim();
+		const lsoaCode = row["LSOA code (2021)"]?.trim();
 		if (!lsoaCode || !lsoaCode.startsWith("E")) continue;
 
 		records[lsoaCode] = {
 			lsoaCode,
-			lsoaName: row["LSOA name (2011)"]?.trim() || "",
-			ladCode: row["Local Authority District code (2019)"]?.trim() || "",
-			ladName: row["Local Authority District name (2019)"]?.trim() || "",
+			lsoaName: row["LSOA name (2021)"]?.trim() || "",
+			ladCode: row["Local Authority District code (2024)"]?.trim() || "",
+			ladName: row["Local Authority District name (2024)"]?.trim() || "",
 			imdScore: parseNum(
 				row["Index of Multiple Deprivation (IMD) Score"],
 			),
@@ -50,9 +50,7 @@ export async function loadIMD(
 				row["Barriers to Housing and Services Score"],
 			),
 			livingEnvironmentScore: parseNum(row["Living Environment Score"]),
-			population: parseNumInt(
-				row["Total population: mid 2015 (excluding prisoners)"],
-			),
+			population: parseNumInt(row["Total population: mid 2022"]),
 		};
 	}
 
@@ -63,16 +61,16 @@ export async function loadIMD(
 	);
 
 	return {
-		2019: {
-			id: "imd2019",
-			year: 2019,
+		2025: {
+			id: "imd2025",
+			year: 2025,
 			type: "imd",
 			boundaryType: "lsoa",
-			boundaryYear: 2011,
+			boundaryYear: 2021,
 			data: records,
 			ladStats,
 			metadata: {
-				source: "Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2019.",
+				source: "Ministry of Housing, Communities & Local Government. English Indices of Deprivation 2025.",
 				notes: ["England only. Decile 1 = most deprived 10% of LSOAs."],
 			},
 		},

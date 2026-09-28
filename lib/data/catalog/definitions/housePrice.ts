@@ -18,7 +18,7 @@ export const housePriceDatasetDefinition: DatasetDefinition<HousePriceDataset> =
 			licenceUrl:
 				"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 			description:
-				"Median and mean house prices paid by ward for England and Wales.",
+				"Median and mean house prices paid by ward for England and Wales. This was the final ONS ward-level edition.",
 		},
 		// Table 1a of each workbook, read from inside the published zips.
 		precompile: async ({ xlsSheet }) =>

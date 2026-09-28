@@ -318,7 +318,7 @@ test("refuses a join the geometry cannot carry, and says what would work", () =>
 	// left guessing.
 	const refused = route(
 		"GET",
-		`/v1/map-resources/${RESOURCE}/join/imd-rank?period=2019`,
+		`/v1/map-resources/${RESOURCE}/join/imd-rank?period=2025`,
 		catalogues,
 	);
 	assert.equal(refused.status, 422);

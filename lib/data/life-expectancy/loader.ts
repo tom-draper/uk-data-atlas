@@ -70,15 +70,11 @@ export function addMergedLifeExpectancyAuthorities(
 
 export async function loadLE(
 	read: (path: string) => Promise<string>,
-	enableHLE = true,
 ): Promise<Record<string, LifeExpectancyDataset>> {
-	const reads: Promise<string>[] = [
+	const [leText, hleText] = await Promise.all([
 		read("health/life-expectancy/lifeexpectancylocalareas.xlsx"),
-	];
-	if (enableHLE)
-		reads.push(read("health/life-expectancy/healthylifeexpectancyuk.csv"));
-
-	const [leText, hleText] = await Promise.all(reads);
+		read("health/life-expectancy/healthylifeexpectancyuk.xlsx"),
+	]);
 
 	// Sheet 1 carries every period, area type and age band; the atlas charts
 	// life expectancy at birth for local areas in the latest period.
@@ -88,7 +84,7 @@ export async function loadLE(
 	});
 	const leData = (leDataAll as Record<string, string>[]).filter(
 		(row) =>
-			row["Period"]?.trim() === "2020 to 2022" &&
+			row["Period"]?.trim() === "2022 to 2024" &&
 			row["Age group"]?.trim() === "<1" &&
 			row["Area type"]?.trim() === "Local Areas",
 	);
@@ -97,38 +93,36 @@ export async function loadLE(
 		"Area code",
 		"Area name",
 		"Sex",
-		"Life expectancy (years)",
+		"Life expectancy",
 	);
 	addMergedLifeExpectancyAuthorities(leRecords);
 
 	const result: Record<string, LifeExpectancyDataset> = {
 		le: {
 			id: "le",
-			year: 2022,
+			year: 2024,
 			type: "lifeExpectancy",
 			boundaryType: "localAuthority",
 			boundaryYear: 2023,
-			dataPeriod: "2020–2022",
+			dataPeriod: "2022–2024",
 			label: "Life Expectancy",
-			coverageCountries: ["GB-ENG", "GB-WLS", "GB-NIR"],
+			coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
 			data: leRecords,
 			metadata: {
-				source: "Office for National Statistics. Life expectancy for local areas in England, Northern Ireland and Wales: 2020 to 2022.",
-				notes: [
-					"Life expectancy at birth. England, Wales and Northern Ireland only.",
-				],
+				source: "Office for National Statistics. Life expectancy for local areas of the UK: 2022 to 2024.",
+				notes: ["Life expectancy at birth. UK local authorities."],
 			},
 		},
 	};
 
-	if (enableHLE && hleText) {
+	if (hleText) {
 		const { data: hleDataAll } = await parseCsv(hleText, {
 			header: true,
 			skipLines: 6,
 		});
 		const hleData = (hleDataAll as Record<string, string>[]).filter(
 			(r) =>
-				r["Period"]?.trim() === "2020 to 2022" &&
+				r["Period"]?.trim() === "2022 to 2024" &&
 				r["Age group"]?.trim() === "<1" &&
 				r["Area type"]?.trim() === "Local Areas",
 		);
@@ -142,16 +136,16 @@ export async function loadLE(
 		addMergedLifeExpectancyAuthorities(hleRecords);
 		result.hle = {
 			id: "hle",
-			year: 2022,
+			year: 2024,
 			type: "lifeExpectancy",
 			boundaryType: "localAuthority",
 			boundaryYear: 2023,
-			dataPeriod: "2020–2022",
+			dataPeriod: "2022–2024",
 			label: "Healthy Life Expectancy",
 			coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
 			data: hleRecords,
 			metadata: {
-				source: "Office for National Statistics. Health state life expectancies, UK: 2020 to 2022.",
+				source: "Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
 				notes: [
 					"Healthy life expectancy at birth. UK local authorities.",
 				],

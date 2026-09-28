@@ -621,7 +621,7 @@ only **available** when its endpoint, contract and provenance are published.
       rolling windows that share years. Relative change is refused for a ratio,
       matching compare, and currency is nominal. Where intervals are published,
       each record says whether the start and end intervals overlap: no male
-      life expectancy fell between 2001-2003 and 2020-2022, and the smallest
+      life expectancy fell between 2001-2003 and 2022-2024, and the smallest
       gains, such as Ceredigion's 0.65 years, sit within overlapping intervals.
 - [x] Sum an extensive measure, or take the weighted mean of an intensive one
       that names its weight, over a curated named location through
@@ -3750,8 +3750,8 @@ catalogues by the contract tests:
 - `GET /v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
-- `GET /v1/data/imd-decile?period=2019&geography=lsoa&boundaryYear=2011&release=2011-12-ew-bgc-v3&include=area`
-- `GET /v1/data/life-expectancy-female/rankings?period=2020-2022&geography=localAuthority&boundaryYear=2021`
+- `GET /v1/data/imd-decile?period=2025&geography=lsoa&boundaryYear=2021&release=2021-12-ew-bgc-v5&include=area`
+- `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&boundaryYear=2021`
 - `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2021`
 - `GET /v1/data/population-estimate?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`

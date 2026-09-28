@@ -97,10 +97,10 @@ function PriceChart({
 
 	return (
 		<ChartCard
-			heading={`${measure === "mean" ? "Mean" : "Median"} House Price [${dataset.year}]`}
+			heading={`${measure === "mean" ? "Mean" : "Median"} House Price [Final ward data: ${dataset.year}]`}
 			accent={LINE_COLOR}
 			isActive={isActive}
-			title="Office for National Statistics. UK House Price Index (HPI): Mean and Median House Prices by Local Authority. ons.gov.uk"
+			title="Office for National Statistics. Final ward-level median and mean house-price data for England and Wales, year ending March 2023. ons.gov.uk"
 			onClick={() =>
 				setActiveViz({
 					datasetId: dataset.id,

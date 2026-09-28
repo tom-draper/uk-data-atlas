@@ -27,6 +27,7 @@ export const compileDeprivationIndices = (
 		nation: "England" | "Wales" | "Scotland";
 		otherNations: string;
 		geography: SourceGeography["type"];
+		boundaryYear: number;
 		areaNoun: string;
 		rankField: string;
 		decileField: string;
@@ -42,10 +43,10 @@ export const compileDeprivationIndices = (
 			);
 		if (
 			dataset.summary.boundaryYears.length !== 1 ||
-			dataset.summary.boundaryYears[0] !== 2011
+			dataset.summary.boundaryYears[0] !== index.boundaryYear
 		) {
 			throw new Error(
-				`${manifestPath}: ${index.datasetId} must declare boundary year 2011`,
+				`${manifestPath}: ${index.datasetId} must declare boundary year ${index.boundaryYear}`,
 			);
 		}
 		// The manifest's count is the compiled record count, checked below, so
@@ -77,12 +78,12 @@ export const compileDeprivationIndices = (
 			const periods = localAuthorityFieldPeriods(
 				index.path,
 				metric.field,
-				2011,
+				index.boundaryYear,
 				index.geography,
 			);
 			const sourceGeography = {
 				type: index.geography,
-				boundaryYear: 2011,
+				boundaryYear: index.boundaryYear,
 			};
 			const content = JSON.stringify({
 				schemaVersion: 1,
@@ -148,14 +149,13 @@ export const compileDeprivationIndices = (
 			nation: "England",
 			otherNations: "Welsh, Scottish and Northern Irish",
 			geography: "lsoa",
+			boundaryYear: 2021,
 			areaNoun: "LSOAs",
 			rankField: "imdRank",
 			decileField: "imdDecile",
-			rankNotes: [
-				"The published file itself contains 26 tied ranks; they are served as published rather than re-ranked.",
-			],
+			rankNotes: ["Ranks 1 to 33,755 are served as published."],
 			decileNotes: [
-				"Deciles divide England's 32,844 LSOAs into ten near-equal groups by rank.",
+				"Deciles divide England's 33,755 LSOAs into ten near-equal groups by rank.",
 			],
 		}),
 		...deprivationIndex({
@@ -165,6 +165,7 @@ export const compileDeprivationIndices = (
 			nation: "Wales",
 			otherNations: "English, Scottish and Northern Irish",
 			geography: "lsoa",
+			boundaryYear: 2011,
 			areaNoun: "LSOAs",
 			rankField: "wimdRank",
 			decileField: "wimdDecile",
@@ -182,6 +183,7 @@ export const compileDeprivationIndices = (
 			nation: "Scotland",
 			otherNations: "English, Welsh and Northern Irish",
 			geography: "dataZone",
+			boundaryYear: 2011,
 			areaNoun: "data zones",
 			rankField: "simdRank",
 			decileField: "simdDecile",

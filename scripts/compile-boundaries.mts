@@ -9,7 +9,7 @@
  * its generated TopoJSON asset.
  */
 import { createHash } from "crypto";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import {
 	copyFile,
 	mkdir,
@@ -123,6 +123,22 @@ const releaseSources = () =>
 			// served from, rather than into data/ and copied across after.
 			const releaseDir = dirname(join(ROOT, "data", relative));
 			const outputPath = join(ROOT, "public", "data", relative);
+			const propertiesPath = join(
+				dirname(outputPath),
+				PROPERTIES_FILENAME,
+			);
+			const metaPath = join(releaseDir, "meta.json");
+			// A checked-out application can retain compiled releases while its
+			// optional raw-source snapshot omits older boundary inputs. Preserve
+			// those exact committed assets; a release without either form is still
+			// an error, rather than silently vanishing from the build.
+			if (!existsSync(metaPath)) {
+				if (existsSync(outputPath) && existsSync(propertiesPath))
+					return [];
+				throw new Error(
+					`${type}/${release.id}: neither raw boundary metadata nor compiled assets are available`,
+				);
+			}
 			const corrections = correctionsFromMeta(releaseDir);
 			return [
 				{
@@ -132,10 +148,7 @@ const releaseSources = () =>
 					offsets: corrections.map(({ offset }) => offset),
 					// The meta and any correction it declares change the output as
 					// surely as the source does.
-					inputs: [
-						join(releaseDir, "meta.json"),
-						...corrections.map(({ path }) => path),
-					],
+					inputs: [metaPath, ...corrections.map(({ path }) => path)],
 					keep: new Set<string>([
 						release.codeKey,
 						release.nameKey,
@@ -152,10 +165,7 @@ const releaseSources = () =>
 					// derive the sidecar the runtime reads.
 					topologySourcePath: join(ROOT, "data", relative),
 					outputPath,
-					propertiesPath: join(
-						dirname(outputPath),
-						PROPERTIES_FILENAME,
-					),
+					propertiesPath,
 				},
 			];
 		}),
