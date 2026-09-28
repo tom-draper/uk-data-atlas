@@ -9,6 +9,7 @@ import {
 	registry,
 	compatibleWardAreaLookup,
 	crosswalkLookup,
+	namedLocationAreaLookup,
 	namedLocationInventory,
 	dataCatalog,
 	measureObservations,
@@ -69,7 +70,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 		reason: "No curated named location lists this area's code.",
 		membership: "direct-code-match",
 		locations: [],
-		note: "Membership is a direct code match against each named location's member codes. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
+		note: "Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
 	});
 	const measureData = capabilities.data as {
 		status: string;
@@ -136,6 +137,44 @@ test("reports an area's exact-release capability and availability matrix", () =>
 			],
 		},
 	]);
+});
+
+test("uses the boundary release month for named-location membership", () => {
+	const response = routeRequest(
+		"GET",
+		"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/capabilities",
+		testContext({
+			areaLookup: namedLocationAreaLookup,
+			namedLocationInventory: {
+				...namedLocationInventory,
+				locations: [
+					{
+						...namedLocationInventory.locations[0]!,
+						memberCodes: ["E08000001"],
+						memberAssertions: [
+							{
+								code: "E08000001",
+								validity: { from: null, to: "2023-04-01" },
+							},
+						],
+					},
+				],
+			},
+		}),
+	);
+	assert.equal(response.status, 200);
+	const data = ("data" in response.body && response.body.data) as {
+		capabilities: {
+			namedLocations: { status: string; locations: unknown[] };
+		};
+	};
+	assert.deepEqual(data.capabilities.namedLocations, {
+		status: "unsupported",
+		reason: "No curated named location lists this area's code.",
+		membership: "direct-code-match",
+		locations: [],
+		note: "Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
+	});
 });
 
 test("reports published geometry capability through the resolver", () => {

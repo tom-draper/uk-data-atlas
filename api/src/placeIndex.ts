@@ -36,6 +36,10 @@ export type CompiledPlace = {
 	 */
 	boundaryReleases: number[];
 	memberCodes?: string[];
+	memberAssertions?: Array<{
+		code: string;
+		validity: { from: string | null; to: string | null };
+	}>;
 	memberGeography?: string;
 	definitionRevision?: number;
 	validity?: { from: string | null; to: string | null };
@@ -156,6 +160,7 @@ export const compilePlaceIndex = (
 			names: new Map([["", location.label]]),
 			boundaryReleases: new Set(),
 			memberCodes: location.memberCodes,
+			memberAssertions: location.memberAssertions,
 			memberGeography: location.memberGeography,
 			definitionRevision: location.definitionRevision,
 			validity: location.validity,
@@ -191,6 +196,9 @@ export const compilePlaceIndex = (
 				boundaryReleases: positions,
 				...(place.memberCodes
 					? { memberCodes: place.memberCodes }
+					: {}),
+				...(place.memberAssertions
+					? { memberAssertions: place.memberAssertions }
 					: {}),
 				...(place.memberGeography
 					? { memberGeography: place.memberGeography }

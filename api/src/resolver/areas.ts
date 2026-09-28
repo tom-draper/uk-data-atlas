@@ -121,9 +121,9 @@ export class AreasResolver {
 		return this.inputs.placeIndex !== undefined;
 	}
 
-	places(query: string, limit: number) {
+	places(query: string, limit: number, asOf?: string) {
 		if (!this.inputs.placeIndex) return [];
-		return resolvePlaces(this.inputs.placeIndex, query, limit);
+		return resolvePlaces(this.inputs.placeIndex, query, limit, asOf);
 	}
 
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {

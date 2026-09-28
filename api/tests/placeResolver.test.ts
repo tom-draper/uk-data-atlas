@@ -55,7 +55,17 @@ const namedLocations = {
 			kind: "editorial-grouping",
 			definitionRevision: 1,
 			memberGeography: "localAuthority",
-			memberCodes: ["E08000003"],
+			memberCodes: ["E08000003", "E08000004"],
+			memberAssertions: [
+				{
+					code: "E08000003",
+					validity: { from: null, to: "2023-04-01" },
+				},
+				{
+					code: "E08000004",
+					validity: { from: "2023-04-01", to: null },
+				},
+			],
 			validity: { from: null, to: null },
 			bbox: [-2.5, 53.3, -2, 53.7],
 		},
@@ -131,14 +141,28 @@ test("lists names beginning with the query after names equal to it", () => {
 	);
 });
 
-test("finds a curated location by its label and keeps its member codes", () => {
+test("finds a curated location by its label and selects dated members", () => {
 	const [location] = resolvePlaces(index, "greater manchester");
 	assert.equal(location!.place, "location/greater-manchester");
 	assert.equal(location!.kind, "named-location");
 	assert.equal(location!.definitionRevision, 1);
 	assert.equal(location!.memberGeography, "localAuthority");
 	assert.deepEqual(location!.validity, { from: null, to: null });
-	assert.deepEqual(location!.memberCodes, ["E08000003"]);
+	assert.deepEqual(location!.memberCodes, ["E08000003", "E08000004"]);
+	assert.deepEqual(location!.memberAssertions, [
+		{ code: "E08000003", validity: { from: null, to: "2023-04-01" } },
+		{ code: "E08000004", validity: { from: "2023-04-01", to: null } },
+	]);
+	assert.deepEqual(
+		resolvePlaces(index, "greater manchester", 10, "2023-03-01")[0]
+			?.memberCodes,
+		["E08000003"],
+	);
+	assert.deepEqual(
+		resolvePlaces(index, "greater manchester", 10, "2023-05-01")[0]
+			?.memberCodes,
+		["E08000004"],
+	);
 });
 
 test("looks up a place reference and a bare area code directly", () => {

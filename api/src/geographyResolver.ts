@@ -274,8 +274,8 @@ export class GeographyResolver {
 	countryIdentity(code: string) {
 		return this.areas.countryIdentity(code);
 	}
-	places(query: string, limit = 10) {
-		return this.areas.places(query, limit);
+	places(query: string, limit = 10, asOf?: string) {
+		return this.areas.places(query, limit, asOf);
 	}
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {
 		return this.areas.hasAreaRelease(geography, boundaryRelease);
@@ -394,8 +394,8 @@ export class GeographyResolver {
 	namedLocations(asOf?: string) {
 		return this.locations.namedLocations(asOf);
 	}
-	namedLocationsForArea(identity: AreaIdentity) {
-		return this.locations.namedLocationsForArea(identity);
+	namedLocationsForArea(identity: AreaIdentity, asOf?: string) {
+		return this.locations.namedLocationsForArea(identity, asOf);
 	}
 	crosswalk(id: string): CrosswalkArtifact | undefined {
 		return this.translator.artifact(id);

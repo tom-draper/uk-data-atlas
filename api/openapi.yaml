@@ -3148,7 +3148,7 @@ paths:
         newest first. Equal matches are listed headline geographies first, then
         wards and smaller areas; that is a presentation order and asserts
         nothing about which was meant. Curated named locations appear with
-        their member codes.
+        their member codes, or the codes active on `asOf`.
 
 
         A unit postcode, typed in any case and with or without its space, leads
@@ -3177,6 +3177,11 @@ paths:
             maximum: 500
             default: 10
           description: How many candidate places to return, 1 to 500.
+        - name: asOf
+          in: query
+          required: false
+          schema: { type: string, format: date }
+          description: Select the member codes effective on this date for curated named locations. Omit it to return the complete dated definition.
       responses:
         "200":
           description: The candidate places, best match first. Empty when nothing matches.

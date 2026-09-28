@@ -9,7 +9,9 @@ const requirementDetail = (response: ApiResponse | undefined) =>
 		? response.body.detail
 		: "Catalogue data is unavailable.";
 
-const selectedAsOf = (parsedUrl: URL): string | undefined | ApiResponse => {
+export const selectedAsOf = (
+	parsedUrl: URL,
+): string | undefined | ApiResponse => {
 	const asOf = parsedUrl.searchParams.get("asOf");
 	if (asOf === null) return undefined;
 	const date = new Date(`${asOf}T00:00:00.000Z`);

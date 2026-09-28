@@ -2723,6 +2723,9 @@
 					"required": false,
 					"minimum": 1,
 					"maximum": 500
+				},
+				"query:asOf": {
+					"required": false
 				}
 			},
 			"responses": {
