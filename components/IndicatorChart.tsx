@@ -7,6 +7,10 @@ import type { IndicatorDataset } from "@/lib/types/indicator";
 import type { ActiveViz } from "@/lib/types";
 import type { NumericMapOptionsKey } from "@/lib/types/mapOptions";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import {
+	selectedAreaLadRecord,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 type Display = {
 	label: string;
@@ -69,12 +73,23 @@ const DISPLAY: Record<string, Display> = {
 const selectedRecord = (
 	dataset: IndicatorDataset,
 	selectedArea: ChartComponentProps["selectedArea"],
+	codeMapper: LadResolver | undefined,
 ) => {
 	if (!selectedArea) return null;
 	if (selectedArea.type === dataset.boundaryType)
 		return dataset.data[selectedArea.code] ?? null;
-	if (selectedArea.type === "ward" && "ladCode" in (selectedArea.data ?? {}))
-		return dataset.data[String(selectedArea.data?.ladCode)] ?? null;
+	if (
+		selectedArea.type === "ward" &&
+		dataset.boundaryType === "localAuthority"
+	)
+		return (
+			selectedAreaLadRecord(
+				dataset.data,
+				selectedArea,
+				codeMapper,
+				dataset.boundaryYear,
+			) ?? null
+		);
 	return null;
 };
 
@@ -89,8 +104,9 @@ export const resolveIndicatorValue = (
 	dataset: IndicatorDataset,
 	selectedArea: ChartComponentProps["selectedArea"],
 	isActive: boolean,
+	codeMapper?: LadResolver,
 ): number | undefined =>
-	selectedRecord(dataset, selectedArea)?.value ??
+	selectedRecord(dataset, selectedArea, codeMapper)?.value ??
 	(isActive ? hoveredIndicatorValue(selectedArea?.data) : undefined);
 
 /** Shared card for the newly added, count-like published indicators. */
@@ -100,6 +116,7 @@ export default function IndicatorChart({
 	aggregatedData,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: ChartComponentProps) {
 	const dataset = (availableDatasets as Record<string, IndicatorDataset>)[
@@ -110,7 +127,7 @@ export default function IndicatorChart({
 		activeDataset?.type === dataset?.type &&
 		activeDataset.id === dataset?.id;
 	const value = dataset
-		? resolveIndicatorValue(dataset, selectedArea, isActive)
+		? resolveIndicatorValue(dataset, selectedArea, isActive, codeMapper)
 		: undefined;
 	const aggregate = aggregatedData?.[year] as { value?: number } | undefined;
 	const resolvedValue =

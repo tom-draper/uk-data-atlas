@@ -6,6 +6,7 @@ import type {
 	SelectedArea,
 } from "@/lib/types";
 import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -20,7 +21,7 @@ interface PopulationDensityChartProps {
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: PopulationCodeResolver;
+	codeMapper?: PopulationCodeResolver & LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -124,13 +125,14 @@ export default function PopulationDensityChart({
 	const isDark = useIsDark();
 	const isActive =
 		activeViz.datasetId === dataset.id && activeViz.view === "density";
-	const { density, areaSqKm, total } = resolvePopulationDensity({
-		dataset,
-		aggregatedData,
-		boundaryData,
-		selectedArea,
-		codeMapper,
-	});
+	const { density, areaSqKm, total, fallbackLadCode } =
+		resolvePopulationDensity({
+			dataset,
+			aggregatedData,
+			boundaryData,
+			selectedArea,
+			codeMapper,
+		});
 	const accentColor =
 		density !== null ? getDensityCategory(density).hex : null;
 
@@ -191,6 +193,14 @@ export default function PopulationDensityChart({
 									{areaSqKm.toFixed(1)} km²
 								</div>
 							</div>
+							{fallbackLadCode && (
+								<div
+									className={`ml-auto pr-2 ${isDark ? "text-gray-400" : "text-gray-500"}`}
+									title={`No census population is published for this ward's boundaries, so the figures shown are for its local authority (${fallbackLadCode}).`}
+								>
+									Local authority
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

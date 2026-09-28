@@ -25,4 +25,25 @@ describe("resolveIndicatorValue", () => {
 			resolveIndicatorValue(dataset, hoveredWard, false),
 		).toBeUndefined();
 	});
+
+	it("rolls a ward up to its authority through the shared ward mapping", () => {
+		const hoveredWard = {
+			type: "ward",
+			code: "E05014827",
+			name: "Example ward",
+			data: { value: 7 },
+		} as any;
+		const withAuthority = {
+			...dataset,
+			data: {
+				E08000001: { code: "E08000001", name: "Bolton", value: 12 },
+			},
+		};
+
+		expect(
+			resolveIndicatorValue(withAuthority, hoveredWard, false, {
+				getLadForWard: () => "E08000001",
+			}),
+		).toBe(12);
+	});
 });

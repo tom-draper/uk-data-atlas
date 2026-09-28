@@ -6,6 +6,7 @@ export interface CodeMapper {
 		code: string,
 		targetYear: YearCode,
 	): string | undefined;
+	getLadForWard(wardCode: string): string | undefined;
 	getWardsForLad(ladCode: string, year: YearCode): string[];
 	getWardsForConstituency(
 		constituencyCode: string,
