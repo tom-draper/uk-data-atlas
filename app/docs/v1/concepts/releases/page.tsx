@@ -44,9 +44,9 @@ export default function ReleasesPage() {
 
 			<H2 id="availability">Availability</H2>
 			<P>
-				URLs serve the current release. A correction or preprocessing change
-				replaces it with a newly compiled release; the API retains no earlier
-				release data or runtime compatibility layer.
+				URLs serve the current release. A correction or preprocessing
+				change replaces it with a newly compiled release; the API
+				retains no earlier release data or runtime compatibility layer.
 			</P>
 
 			<H2 id="endpoints">Useful endpoints</H2>

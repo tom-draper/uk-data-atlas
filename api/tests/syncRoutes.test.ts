@@ -33,16 +33,15 @@ test("serves the current Atlas release manifest", () => {
 		releaseId: "current-release",
 		artifacts: [],
 	};
-	const response = handleRoute(request("/v1/atlas-release", { atlasRelease }));
+	const response = handleRoute(
+		request("/v1/atlas-release", { atlasRelease }),
+	);
 	assert.equal(response?.status, 200);
 	assert.deepEqual((response?.body as { data: unknown }).data, atlasRelease);
 });
 
 test("does not claim an archived release route", () => {
-	assert.equal(
-		handleRoute(request("/v1/unowned-resource")),
-		undefined,
-	);
+	assert.equal(handleRoute(request("/v1/unowned-resource")), undefined);
 });
 
 test("filters the data validation audit", () => {
@@ -52,11 +51,29 @@ test("filters the data validation audit", () => {
 				schemaVersion: 1,
 				contentHash: "sha256:validation",
 				inputs: { boundaryRegistry: "sha256:registry" },
-				summary: { resourceCount: 0, checkCount: 0, passedCount: 0, waivedCount: 0, coverage: { boundaryReleases: 0, areaIdentities: 0, servableGeometry: 0, withRelationships: 0, crosswalks: 0, weightedCrosswalks: 0, measures: 0, measureSources: 0 } },
+				summary: {
+					resourceCount: 0,
+					checkCount: 0,
+					passedCount: 0,
+					waivedCount: 0,
+					coverage: {
+						boundaryReleases: 0,
+						areaIdentities: 0,
+						servableGeometry: 0,
+						withRelationships: 0,
+						crosswalks: 0,
+						weightedCrosswalks: 0,
+						measures: 0,
+						measureSources: 0,
+					},
+				},
 				resources: [],
 			},
 		}),
 	);
 	assert.equal(response?.status, 200);
-	assert.equal((response?.body as { data: { scope: string } }).data.scope, "data");
+	assert.equal(
+		(response?.body as { data: { scope: string } }).data.scope,
+		"data",
+	);
 });
