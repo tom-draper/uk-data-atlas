@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import {
 	ActiveViz,
 	AggregatedFuelPovertyData,
@@ -10,6 +11,8 @@ import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import { fetchLsoaToLad } from "@/lib/data/boundaries/lsoaLadMappings";
+import { aggregateFuelPovertyByLad } from "@/lib/helpers/fuelPoverty";
 
 interface Props {
 	activeDataset: Dataset | null;
@@ -26,6 +29,30 @@ const formatCount = (count: number) =>
 		? `${(count / 1_000_000).toFixed(1)}m`
 		: `${Math.round(count / 1_000)}k`;
 
+/**
+ * Fuel-poverty estimates are published at LSOA level. A location aggregate is
+ * useful before a feature is hovered. Wards are resolved to their parent local
+ * authority and shown as a household-weighted LSOA summary, never as a ward
+ * estimate.
+ */
+export function resolveFuelPovertyStats(
+	dataset: FuelPovertyDataset,
+	aggregatedData: Record<number, AggregatedFuelPovertyData> | null,
+	selectedArea: SelectedArea | null,
+	ladStats: Record<string, AggregatedFuelPovertyData> | null,
+): AggregatedFuelPovertyData | null {
+	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
+	if (selectedArea.type === "lsoa")
+		return dataset.data[selectedArea.code] ?? null;
+	const ladCode =
+		selectedArea.type === "ward"
+			? selectedArea.data?.ladCode
+			: selectedArea.type === "localAuthority"
+				? selectedArea.code
+				: undefined;
+	return ladCode ? (ladStats?.[ladCode] ?? null) : null;
+}
+
 export default function FuelPovertyChart({
 	activeDataset,
 	availableDatasets,
@@ -36,18 +63,47 @@ export default function FuelPovertyChart({
 }: Props) {
 	const dataset = availableDatasets[year];
 	const isDark = useIsDark();
-	const record =
-		dataset && selectedArea?.type === "lsoa"
-			? dataset.data[selectedArea.code]
-			: null;
-	const stats = record
-		? {
-				fuelPovertyRate: record.fuelPovertyRate,
-				fuelPoorHouseholdCount: record.fuelPoorHouseholdCount,
-			}
-		: dataset
-			? (aggregatedData?.[dataset.year] ?? null)
-			: null;
+	const [lsoaToLad, setLsoaToLad] = useState<Record<string, string> | null>(
+		null,
+	);
+
+	useEffect(() => {
+		if (!dataset) return;
+		let cancelled = false;
+		setLsoaToLad(null);
+		fetchLsoaToLad(dataset.boundaryYear)
+			.then((mapping) => {
+				if (!cancelled) setLsoaToLad(mapping);
+			})
+			.catch((error: unknown) => {
+				console.warn(
+					"[fuel poverty] LSOA/LAD mapping unavailable:",
+					error,
+				);
+			});
+		return () => {
+			cancelled = true;
+		};
+	}, [dataset]);
+
+	const ladStats = useMemo(
+		() =>
+			dataset && lsoaToLad
+				? aggregateFuelPovertyByLad(dataset.data, lsoaToLad)
+				: null,
+		[dataset, lsoaToLad],
+	);
+	const stats = dataset
+		? resolveFuelPovertyStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				ladStats,
+			)
+		: null;
+	const isLocalAuthoritySummary =
+		selectedArea?.type === "ward" ||
+		selectedArea?.type === "localAuthority";
 	const active =
 		activeDataset?.type === "fuelPoverty" &&
 		activeDataset.id === dataset?.id;
@@ -61,7 +117,7 @@ export default function FuelPovertyChart({
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
 				>
-					England
+					{isLocalAuthoritySummary ? "LA aggregate" : "England"}
 				</span>
 			}
 			accent={accent}
