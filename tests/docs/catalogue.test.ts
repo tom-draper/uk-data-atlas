@@ -37,7 +37,7 @@ describe("data pages", () => {
 		const page = DATA_PAGES.find((p) => p.slug === "life-expectancy")!;
 		expect(dataPageFacts(page, catalogue).years).toEqual({
 			from: 2001,
-			to: 2022,
+			to: 2024,
 		});
 	});
 
