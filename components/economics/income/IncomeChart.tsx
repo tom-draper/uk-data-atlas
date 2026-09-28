@@ -7,7 +7,6 @@ import {
 	IncomeDataset,
 	SelectedArea,
 } from "@lib/types";
-import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
@@ -15,6 +14,10 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
+import {
+	selectedAreaLadRecord,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface IncomeChartProps {
 	activeDataset: Dataset | null;
@@ -22,7 +25,7 @@ interface IncomeChartProps {
 	aggregatedData: Record<number, AggregatedIncomeData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -104,26 +107,14 @@ export default function IncomeChart({
 			aggregatedData[dataset.year]
 		) {
 			medianIncome = aggregatedData[dataset.year].averageIncome || null;
-		} else if (
-			selectedArea &&
-			selectedArea.type === "localAuthority" &&
-			selectedArea.data
-		) {
-			const laCode = selectedArea.code;
-			medianIncome = dataset.data?.[laCode]?.annual?.median || null;
-
-			// Try code mapping if not found
-			if (!medianIncome && codeMapper) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"localAuthority",
-					laCode,
+		} else if (selectedArea) {
+			medianIncome =
+				selectedAreaLadRecord(
+					dataset.data,
+					selectedArea,
+					codeMapper,
 					year,
-				);
-				if (mappedCode) {
-					medianIncome =
-						dataset.data?.[mappedCode]?.annual?.median || null;
-				}
-			}
+				)?.annual?.median || null;
 		}
 	}
 

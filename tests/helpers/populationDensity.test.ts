@@ -115,4 +115,40 @@ describe("resolvePopulationDensity", () => {
 
 		expect(getWardsForConstituency).toHaveBeenCalledTimes(2);
 	});
+
+	it("falls back to the containing authority for an unmapped ward", () => {
+		const result = resolvePopulationDensity({
+			dataset: dataset({ W1: ward(100), W2: ward(300) }),
+			aggregatedData: null,
+			boundaryData: boundaryData({ W1: 2, W2: 3 }),
+			selectedArea: area("ward", "W2024"),
+			codeMapper: {
+				getCodeForYear: () => undefined,
+				getLadForWard: (code) =>
+					code === "W2024" ? "LAD-FALLBACK" : undefined,
+				getWardsForLad: (lad) =>
+					lad === "LAD-FALLBACK" ? ["W1", "W2"] : [],
+				getWardsForConstituency: () => [],
+				getMappingGeneration: () => 0,
+			},
+		});
+
+		expect(result).toEqual({
+			density: 80,
+			areaSqKm: 5,
+			total: 400,
+			fallbackLadCode: "LAD-FALLBACK",
+		});
+	});
+
+	it("reports no data for an unmapped ward outside any known authority", () => {
+		const result = resolvePopulationDensity({
+			dataset: dataset({ W1: ward(100) }),
+			aggregatedData: null,
+			boundaryData: boundaryData({ W1: 2 }),
+			selectedArea: area("ward", "W2024"),
+		});
+
+		expect(result).toEqual({ density: null, areaSqKm: null, total: null });
+	});
 });

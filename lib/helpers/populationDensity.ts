@@ -18,11 +18,17 @@ import {
 	resolvePopulationAreaWards,
 	type PopulationWardRecord,
 } from "./demographicData";
+import { selectedAreaLadCode, type LadResolver } from "./selectedAreaLad";
 
 export type PopulationDensity = {
 	density: number | null;
 	areaSqKm: number | null;
 	total: number | null;
+	/**
+	 * Set when a ward has no population record of its own and the figures are
+	 * those of the local authority containing it.
+	 */
+	fallbackLadCode?: string;
 };
 
 export type PopulationDensityInput = {
@@ -30,7 +36,7 @@ export type PopulationDensityInput = {
 	aggregatedData: Record<number, AggregatedPopulationData> | null;
 	boundaryData: BoundaryData;
 	selectedArea: SelectedArea | null;
-	codeMapper?: PopulationCodeResolver;
+	codeMapper?: PopulationCodeResolver & LadResolver;
 };
 
 const emptyDensity = (): PopulationDensity => ({
@@ -94,6 +100,34 @@ const densityForWards = (
 		: emptyDensity();
 };
 
+const densityForLad = (
+	dataset: PopulationDataset,
+	geojson: BoundaryGeojson,
+	ladCode: string,
+	codeMapper: PopulationCodeResolver | undefined,
+): PopulationDensity => {
+	if (!codeMapper?.getWardsForLad) return emptyDensity();
+	const ladArea: SelectedArea = {
+		type: "localAuthority",
+		code: ladCode,
+		name: ladCode,
+		data: null,
+	};
+	return getLadCachedValue(
+		densityCache,
+		ladCode,
+		dataset.year,
+		dataset,
+		codeMapper.getMappingGeneration(),
+		() =>
+			densityForWards(
+				resolvePopulationAreaWards(dataset, ladArea, codeMapper),
+				geojson,
+				dataset,
+			),
+	);
+};
+
 /** Resolves density values for the aggregate, ward, and mapped larger areas. */
 export const resolvePopulationDensity = ({
 	dataset,
@@ -122,21 +156,34 @@ export const resolvePopulationDensity = ({
 			selectedArea,
 			codeMapper,
 		)?.[0];
-		if (!wardRecord) return emptyDensity();
 		const wardCodeProp = detectWardCodeForYear(
 			geojson.features,
 			dataset.boundaryYear,
 		);
-		const feature = featureIndex(geojson, wardCodeProp).get(
-			wardRecord.code,
-		);
-		return feature
-			? densityForWard(feature, calculateTotal(wardRecord.data.total))
+		const feature =
+			wardRecord &&
+			featureIndex(geojson, wardCodeProp).get(wardRecord.code);
+		if (wardRecord && feature)
+			return densityForWard(
+				feature,
+				calculateTotal(wardRecord.data.total),
+			);
+
+		// Wards from a newer boundary release may have no counterpart in the
+		// census ward vintage; fall back to the authority containing them.
+		const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+		if (!ladCode) return emptyDensity();
+		const ladDensity = densityForLad(dataset, geojson, ladCode, codeMapper);
+		return ladDensity.total
+			? { ...ladDensity, fallbackLadCode: ladCode }
 			: emptyDensity();
 	}
 
 	if (!populationAreaMappingsAvailable(selectedArea, codeMapper))
 		return emptyDensity();
+
+	if (selectedArea.type === "localAuthority")
+		return densityForLad(dataset, geojson, selectedArea.code, codeMapper);
 
 	const mappingGeneration = codeMapper?.getMappingGeneration() ?? 0;
 	const calculate = () =>
@@ -145,16 +192,6 @@ export const resolvePopulationDensity = ({
 			geojson,
 			dataset,
 		);
-	if (selectedArea.type === "localAuthority") {
-		return getLadCachedValue(
-			densityCache,
-			selectedArea.code,
-			dataset.year,
-			dataset,
-			mappingGeneration,
-			calculate,
-		);
-	}
 	if (selectedArea.type === "constituency") {
 		return getAreaCachedValue(
 			densityCache,

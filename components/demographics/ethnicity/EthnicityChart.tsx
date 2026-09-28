@@ -16,6 +16,10 @@ import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { formatCount } from "@/lib/helpers/formatCount";
+import {
+	selectedAreaLadRecord,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface ProcessedEthnicityData {
 	ethnicity: string;
@@ -83,8 +87,7 @@ interface EthnicityChartProps {
 	dataset: EthnicityDataset | undefined;
 	aggregatedData: Record<number, AggregatedEthnicityData> | null;
 	selectedArea: SelectedArea | null;
-	// Accepted by the registry's common props but not needed by this chart.
-	codeMapper?: unknown;
+	codeMapper?: LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -113,6 +116,7 @@ export default function EthnicityChart({
 	dataset,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	activeViz,
 	setActiveViz,
 }: EthnicityChartProps) {
@@ -126,8 +130,15 @@ export default function EthnicityChart({
 	const isActive = activeViz.datasetId === datasetId;
 
 	const processedData = (() => {
-		const areaData = selectedArea?.code
-			? dataset.data[selectedArea.code]
+		const areaData = selectedArea
+			? selectedArea.type === dataset.boundaryType
+				? dataset.data[selectedArea.code]
+				: selectedAreaLadRecord(
+						dataset.data,
+						selectedArea,
+						codeMapper,
+						dataset.boundaryYear,
+					)
 			: aggregatedData?.[2021];
 
 		if (!areaData) {
