@@ -62,6 +62,8 @@ export type CatalogueOptions = {
 	terrainCoverageEndpoint?: string;
 	terrainRemoteTimeoutMs?: number;
 	terrainRemoteConcurrency?: number;
+	/** Receives optional startup timings; normal serving does not retain them. */
+	onStage?: (stage: "geography-resolver", milliseconds: number) => void;
 };
 
 export const readApiCatalogues = (
@@ -132,6 +134,7 @@ export const readApiCatalogues = (
 		apiRoot,
 		options.geometryCacheReleases,
 	);
+	const resolverStarted = performance.now();
 	const geographyResolver = createGeographyResolver({
 		boundaryRegistry,
 		geographyInventory,
@@ -157,6 +160,10 @@ export const readApiCatalogues = (
 		),
 		relationshipCandidateInventory,
 	});
+	options.onStage?.(
+		"geography-resolver",
+		performance.now() - resolverStarted,
+	);
 	return {
 		openapiDocument: readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 		boundaryRegistry,
