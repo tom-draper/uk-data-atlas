@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
+import type { NamedLocationGeometry } from "./namedLocationGeometry";
 
 type GazetteerCore = {
 	version?: unknown;
@@ -57,6 +58,8 @@ export type NamedLocation = {
 	/** Known temporal bounds of the definition; null means the source gives none. */
 	validity: { from: string | null; to: string | null };
 	bbox: [number, number, number, number];
+	/** A build-time union of members from one fully resolved boundary release. */
+	geometry?: NamedLocationGeometry;
 };
 
 export type NamedLocationInventory = {

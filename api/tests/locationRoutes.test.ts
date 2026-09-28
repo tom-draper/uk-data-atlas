@@ -35,6 +35,57 @@ const routeWithNamedLocations = (url: string) =>
 		}),
 	);
 
+test("serves a compiled named-location union geometry", () => {
+	const location = {
+		...namedLocationInventory.locations[0]!,
+		geometry: {
+			boundaryRelease: "2025-01-uk-lad",
+			bbox: [-2.5, 53.3, -2, 53.7] as [number, number, number, number],
+			geometry: {
+				type: "MultiPolygon",
+				coordinates: [
+					[
+						[
+							[-2.5, 53.3],
+							[-2, 53.3],
+							[-2, 53.7],
+							[-2.5, 53.3],
+						],
+					],
+				],
+			},
+		},
+	};
+	const response = routeRequest(
+		"GET",
+		"/v1/locations/greater-manchester/geometry",
+		testContext({
+			geographyInventory,
+			areaLookup: namedLocationAreaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			namedLocationInventory: {
+				...namedLocationInventory,
+				locations: [location],
+			},
+			namedLocationLookup: new Map([[location.id, location]]),
+		}),
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual("data" in response.body && response.body.data, {
+		type: "Feature",
+		id: "greater-manchester",
+		properties: {
+			id: "greater-manchester",
+			label: "Greater Manchester",
+			memberGeography: "localAuthority",
+			boundaryRelease: "2025-01-uk-lad",
+			bbox: [-2.5, 53.3, -2, 53.7],
+		},
+		geometry: location.geometry.geometry,
+	});
+});
+
 test("publishes curated named locations and reports unresolved legacy members", () => {
 	const list = routeWithNamedLocations("/v1/locations?q=greater");
 	assert.equal(list.status, 200);

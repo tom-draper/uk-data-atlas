@@ -87,6 +87,7 @@ export const handleIndexRoutes = ({
 				"/v1/corrections",
 				"/v1/locations",
 				"/v1/locations/{location-id}",
+				"/v1/locations/{location-id}/geometry",
 				"/v1/locations/{location-id}/capabilities",
 				"/v1/locations/{location-id}/members",
 				"/v1/locations/{location-id}/parents",

@@ -77,6 +77,41 @@ export const handleLocationRoutes = ({
 		segments.length === 4 &&
 		segments[0] === "v1" &&
 		segments[1] === "locations" &&
+		segments[3] === "geometry"
+	) {
+		const location = context.geographyResolver.namedLocation(segments[2]!);
+		if (!location)
+			return problem(
+				404,
+				"Not Found",
+				"No named location matches that identity.",
+			);
+		return location.geometry
+			? {
+					status: 200,
+					body: envelope(releaseId, {
+						type: "Feature",
+						id: location.id,
+						properties: {
+							id: location.id,
+							label: location.label,
+							memberGeography: location.memberGeography,
+							boundaryRelease: location.geometry.boundaryRelease,
+							bbox: location.geometry.bbox,
+						},
+						geometry: location.geometry.geometry,
+					}),
+				}
+			: problem(
+					503,
+					"Geometry Unavailable",
+					"No fully resolved member release with raw geometry is available for this location.",
+				);
+	}
+	if (
+		segments.length === 4 &&
+		segments[0] === "v1" &&
+		segments[1] === "locations" &&
 		segments[3] === "capabilities"
 	)
 		return locationCapabilities({ context, releaseId, segments });
