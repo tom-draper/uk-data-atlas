@@ -6,6 +6,7 @@ import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import type { DatasetDefinition } from "../data/catalog";
+import type { ValueCardConfig } from "./valueCard";
 
 /**
  * A client-side adapter from the generic chart-card pipeline to one chart
@@ -82,6 +83,9 @@ export interface ChartDefinition<
 	// rather than by year, such as one dataset backing several fixed charts.
 	datasetId?: string;
 	keyBy?: "year" | "id";
+	// Declares the card for charts rendered by the shared value card
+	// (`@/components/ValueCard`) rather than a component of their own.
+	card?: ValueCardConfig;
 }
 
 export type ChartDatasetLegendAggregation<

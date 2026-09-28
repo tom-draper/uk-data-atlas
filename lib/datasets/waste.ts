@@ -1,6 +1,7 @@
 import { wasteDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { indicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IndicatorDataset } from "@/lib/types/indicator";
+import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const wasteDefinition: ChartDatasetDefinition<
 	IndicatorDataset<"waste">
@@ -11,7 +12,12 @@ export const wasteDefinition: ChartDatasetDefinition<
 		key: "environment-waste",
 		label: "Collected Waste [2025]",
 		defaultVisible: true,
-		componentPath: "@/components/IndicatorChart",
+		componentPath: "@/components/ValueCard",
+		card: indicatorCard({
+			heading: "Collected waste",
+			unit: "tonnes",
+			maximum: 500_000,
+		}),
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(indicatorAggregation, g, d, l, id),
 		year: 2025,

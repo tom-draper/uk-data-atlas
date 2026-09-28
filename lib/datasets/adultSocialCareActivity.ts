@@ -1,6 +1,7 @@
 import { adultSocialCareActivityDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { averageIndicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IndicatorDataset } from "@/lib/types/indicator";
+import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const adultSocialCareActivityDefinition: ChartDatasetDefinition<
 	IndicatorDataset<"adultSocialCareActivity">
@@ -11,7 +12,12 @@ export const adultSocialCareActivityDefinition: ChartDatasetDefinition<
 		key: "health-adultSocialCareActivity",
 		label: "Long-term Support [2025]",
 		defaultVisible: true,
-		componentPath: "@/components/IndicatorChart",
+		componentPath: "@/components/ValueCard",
+		card: indicatorCard({
+			heading: "Long-term support clients",
+			unit: "clients",
+			maximum: 50_000,
+		}),
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(averageIndicatorAggregation, g, d, l, id),
 		year: 2025,

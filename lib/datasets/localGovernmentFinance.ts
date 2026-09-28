@@ -1,6 +1,7 @@
 import { localGovernmentFinanceDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { indicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IndicatorDataset } from "@/lib/types/indicator";
+import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const localGovernmentFinanceDefinition: ChartDatasetDefinition<
 	IndicatorDataset<"localGovernmentFinance">
@@ -11,7 +12,13 @@ export const localGovernmentFinanceDefinition: ChartDatasetDefinition<
 		key: "economics-localGovernmentFinance",
 		label: "Education Services Spending [2026]",
 		defaultVisible: false,
-		componentPath: "@/components/IndicatorChart",
+		componentPath: "@/components/ValueCard",
+		card: indicatorCard({
+			heading: "Education services spending",
+			unit: "£k",
+			prefix: "£",
+			maximum: 1_000_000,
+		}),
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(indicatorAggregation, g, d, l, id),
 		year: 2026,

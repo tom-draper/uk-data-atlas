@@ -127,6 +127,7 @@ export default function ChartCards({
 			activeViz,
 			setActiveViz,
 			boundaryData,
+			card: chart.card,
 		};
 		return <ViewportGatedChart key={chart.key} Chart={Chart} {...props} />;
 	});

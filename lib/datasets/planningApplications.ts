@@ -1,6 +1,7 @@
 import { planningApplicationsDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { averageIndicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IndicatorDataset } from "@/lib/types/indicator";
+import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const planningApplicationsDefinition: ChartDatasetDefinition<
 	IndicatorDataset<"planningApplications">
@@ -11,7 +12,12 @@ export const planningApplicationsDefinition: ChartDatasetDefinition<
 		key: "economics-planningApplications",
 		label: "Planning Applications [2026 Q1]",
 		defaultVisible: true,
-		componentPath: "@/components/IndicatorChart",
+		componentPath: "@/components/ValueCard",
+		card: indicatorCard({
+			heading: "Planning applications",
+			unit: "received",
+			maximum: 3_000,
+		}),
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(averageIndicatorAggregation, g, d, l, id),
 		year: 2026,

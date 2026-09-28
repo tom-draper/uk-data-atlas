@@ -19,6 +19,8 @@ const chartDefinitionExclusions = new Set([
 	"generated.ts",
 	"chartGroups.ts",
 	"boundaryRequirements.ts",
+	"valueCard.ts",
+	"indicatorCard.ts",
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
