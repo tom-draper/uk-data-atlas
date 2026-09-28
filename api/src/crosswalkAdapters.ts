@@ -100,6 +100,12 @@ export type AreaOverlapCrosswalkAdapter = {
 	 * Set to zero only for a deliberately partial spatial relationship.
 	 */
 	minimumTargetCoverage?: number;
+	/**
+	 * Individually reviewed intersections to omit when independently
+	 * generalised boundaries cannot distinguish a tiny overlap from border
+	 * noise. Each source-code/target-code pair carries its published reason.
+	 */
+	excludedPairs?: Record<string, Record<string, string>>;
 	minimumCoverage: number;
 };
 
@@ -240,6 +246,17 @@ const validAreaOverlapAdapter = (
 		(typeof adapter.minimumTargetCoverage === "number" &&
 			adapter.minimumTargetCoverage >= 0 &&
 			adapter.minimumTargetCoverage <= 1)) &&
+	(adapter.excludedPairs === undefined ||
+		(isRecord(adapter.excludedPairs) &&
+			Object.values(adapter.excludedPairs).every(
+				(targets) =>
+					isRecord(targets) &&
+					Object.values(targets).every(
+						(reason) =>
+							typeof reason === "string" &&
+							reason.trim().length > 0,
+					),
+			))) &&
 	typeof adapter.minimumCoverage === "number" &&
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;

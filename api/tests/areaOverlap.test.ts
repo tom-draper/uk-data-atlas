@@ -301,6 +301,25 @@ test("permits uncovered targets only when an adapter declares a partial relation
 	});
 });
 
+test("requires each reviewed excluded pair to exist in the geometry", () => {
+	withFixture((root) => {
+		assert.throws(
+			() =>
+				compileAreaOverlapCrosswalk(
+					root,
+					adapter({
+						excludedPairs: {
+							S9: { T1: "Reviewed boundary noise." },
+						},
+					}),
+					geometrySources(),
+					areaLookup(),
+				),
+			/ excluded pairs do not exist in the declared geometry: S9\|T1/,
+		);
+	});
+});
+
 test("fails on geometry without a compiled identity or a supported transformation", () => {
 	withFixture((root) => {
 		assert.throws(

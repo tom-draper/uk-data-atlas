@@ -448,6 +448,32 @@
 			"minimumCoverage": 0.99
 		},
 		{
+			"id": "national-park-2020-12-gb-bgc-to-local-authority-2020-12-uk-bgc-area-overlap",
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"from": {
+				"geography": "nationalPark",
+				"boundaryRelease": "2020-12-gb-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2020-12-uk-bgc"
+			},
+			"sliverWidthM": 100,
+			"minimumCoverage": 0.98,
+			"minimumTargetCoverage": 0,
+			"excludedPairs": {
+				"E26000007": {
+					"E07000148": "The Broads Authority and Norwich intersect by 0.022% of the park at a 118 m width, while independently generalised nearby borders leave intersections up to 37 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				}
+			}
+		},
+		{
 			"id": "super-output-area-2011-ni-to-local-authority-2018-12-uk-bgc-official-lookup",
 			"input": "lookups/super-output-area-to-local-authority/2018-ni/SA11_LSOA11_LAD18_NI_LU_classificationv2_942e0f54c76a4998becb14986dc0b0ca.geojson",
 			"method": "official-lookup",

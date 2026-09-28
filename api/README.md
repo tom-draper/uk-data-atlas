@@ -173,9 +173,14 @@ only **available** when its endpoint, contract and provenance are published.
       (April 2026) membership lookups. NHS England region codes changed in
       January 2024, so the latter is pinned to the matching January 2024
       boundary release rather than the superseded July 2022 release.
+- [x] Publish the December 2020 national park → local authority relationships
+      as geometry-derived, area-weighted overlaps. Every park is at least 98%
+      covered by the matching authority release (Snowdonia is 98.71%); a
+      0.022% Broads–Norwich intersection is explicitly excluded because its
+      118 m width falls inside the documented sliver rule's indeterminate band.
 - [ ] Relate the remaining geographies published with no relationship at all:
-      national parks, local planning authorities, major towns and cities, and
-      travel-to-work areas. These need a derived method stated as such.
+      local planning authorities, major towns and cities, and travel-to-work
+      areas. These need a derived method stated as such.
 - [x] Publish derived `same-code-continuity` identity between consecutive
       releases of one geography, where no piece of the difference between a
       shared code's two geometries is wider than generalisation slivers.

@@ -365,6 +365,15 @@ export const compileAreaOverlapCrosswalk = (
 ): AreaOverlapCrosswalkArtifact => {
 	const minimumTargetCoverage =
 		adapter.minimumTargetCoverage ?? adapter.minimumCoverage;
+	const excludedPairs = adapter.excludedPairs ?? {};
+	const declaredExcludedPairs = new Set(
+		Object.entries(excludedPairs).flatMap(([sourceCode, targets]) =>
+			Object.keys(targets).map(
+				(targetCode) => `${sourceCode}|${targetCode}`,
+			),
+		),
+	);
+	const appliedExcludedPairs = new Set<string>();
 	let sourceCodePattern: RegExp | undefined;
 	if (adapter.sourceCodePattern) {
 		try {
@@ -403,6 +412,11 @@ export const compileAreaOverlapCrosswalk = (
 	for (const [sourceCode, source] of sources.geometries) {
 		const overlaps: Array<{ code: string; overlapAreaM2: number }> = [];
 		for (const [targetCode, target] of targets.geometries) {
+			const excluded = excludedPairs[sourceCode]?.[targetCode];
+			if (excluded !== undefined) {
+				appliedExcludedPairs.add(`${sourceCode}|${targetCode}`);
+				continue;
+			}
 			if (!boundsIntersect(source.bounds, target.bounds)) continue;
 			candidatePairCount += 1;
 			const intersectionPieces = source.pieces.flatMap((sourcePiece) =>
@@ -445,6 +459,14 @@ export const compileAreaOverlapCrosswalk = (
 			);
 		}
 		overlapsBySource.set(sourceCode, overlaps);
+	}
+	const unappliedExcludedPairs = [...declaredExcludedPairs].filter(
+		(pair) => !appliedExcludedPairs.has(pair),
+	);
+	if (unappliedExcludedPairs.length > 0) {
+		throw new Error(
+			`${adapter.id}: excluded pairs do not exist in the declared geometry: ${unappliedExcludedPairs.slice(0, 10).join(", ")}`,
+		);
 	}
 
 	// A threshold is only trustworthy while no pair sits near it. Fail rather
@@ -566,6 +588,9 @@ export const compileAreaOverlapCrosswalk = (
 				},
 				{ side: "to" as const, ...targets.provenance },
 			],
+			...(adapter.excludedPairs === undefined
+				? {}
+				: { excludedPairs: adapter.excludedPairs }),
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
 		},
