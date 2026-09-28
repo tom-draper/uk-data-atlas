@@ -26,7 +26,6 @@ export const handleIndexRoutes = ({
 				"/v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt",
 				"/v1/map-resources/{geography}/{release}/features",
 				"/v1/map-resources/{geography}/{release}/join/{measure-id}",
-				"/v1/atlas-releases/{release-id}/map-resources/{geography}/{release}",
 				"/v1/boundary-releases",
 				"/v1/boundary-releases:resolve",
 				"/v1/boundary-releases:compare",
@@ -109,10 +108,6 @@ export const handleIndexRoutes = ({
 				"/v1/lookups",
 				"/v1/lookups/{lookup-id}",
 				"/v1/atlas-release",
-				"/v1/atlas-releases",
-				"/v1/atlas-releases/{release-id}/artifacts",
-				"/v1/atlas-releases/{release-id}",
-				"/v1/atlas-releases/compare",
 			],
 		}),
 	};

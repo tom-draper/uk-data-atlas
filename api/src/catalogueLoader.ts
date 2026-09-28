@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 import {
 	readMeasureObservations,
 	readPopulationLocalAuthorityObservations,
@@ -43,10 +43,6 @@ import {
 } from "./catalogueManifestLoader";
 import { readMapAssets, readMapResources } from "./mapResourceLoader";
 import { createAreaGeometryCache, readGeometrySources } from "./geometryLoader";
-import {
-	createReleaseArtifactReader,
-	readAtlasReleaseHistory,
-} from "./releaseLoader";
 import { createTerrainAsyncProvider } from "./terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 
@@ -81,11 +77,6 @@ export const readApiCatalogues = (
 	const dataCatalog = readDataCatalog(apiRoot);
 	const terrainCatalogue = readTerrainCatalogue(apiRoot);
 	const atlasRelease = readAtlasRelease(apiRoot);
-	const publicDirectory = join(apiRoot, "public");
-	const atlasReleaseHistory = readAtlasReleaseHistory(
-		publicDirectory,
-		atlasRelease,
-	);
 	const exportManifest = readExportManifest(apiRoot);
 	if (exportManifest.dataCatalogHash !== dataCatalog.contentHash) {
 		throw new Error(
@@ -175,12 +166,6 @@ export const readApiCatalogues = (
 		relationshipPathInventory,
 		crosswalkInventory,
 		atlasRelease,
-		atlasReleaseHistory,
-		readReleaseArtifact: createReleaseArtifactReader(
-			publicDirectory,
-			atlasRelease,
-			atlasReleaseHistory,
-		),
 		relationshipCandidateInventory,
 		validationReport: readValidationReport(apiRoot),
 		namedLocationInventory,

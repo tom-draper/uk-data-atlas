@@ -255,7 +255,6 @@ export const createApiServer = (
 			status: result.status,
 			durationMs: Math.round(durationSeconds * 1000 * 10) / 10,
 			bytes,
-			...(matched.pinnedTo ? { pinnedTo: matched.pinnedTo } : {}),
 			...(code ? { code } : {}),
 		};
 		if (failure !== undefined) {

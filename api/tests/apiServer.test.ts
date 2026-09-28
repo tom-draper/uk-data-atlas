@@ -190,7 +190,6 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 
 	await get("/v1/geographies");
 	await get("/v1/geographies", { method: "HEAD" });
-	await get(`/v1/atlas-releases/${atlasRelease.releaseId}/geographies`);
 
 	assert.equal((await get("/metrics")).status, 401);
 	assert.equal(
@@ -210,10 +209,6 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 	assert.match(
 		text,
 		/^atlas_api_requests_total\{route="\/v1\/geographies",method="HEAD",status="200"\} 1$/m,
-	);
-	assert.match(
-		text,
-		/^atlas_api_requests_total\{route="\/v1\/atlas-releases\/\{release-id\}\/geographies",method="GET",status="200"\} 1$/m,
 	);
 	assert.match(
 		text,

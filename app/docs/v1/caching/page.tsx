@@ -85,12 +85,12 @@ export default function CachingPage() {
 				Browsers and most HTTP caches do this for you automatically.
 			</Callout>
 
-			<H2 id="pinned">Resources that never change</H2>
+			<H2 id="pinned">Checking current resources</H2>
 			<P>
-				Map resources requested under a specific [Atlas
-				release](/docs/v1/concepts/releases#pinning) are sent with
-				`Cache-Control: public, max-age=31536000, immutable`. They can
-				be cached for good.
+				Map resources are part of the current [Atlas
+				release](/docs/v1/concepts/releases). Store the release id with your
+				import and use its ETag when checking whether a current resource has
+				changed.
 			</P>
 		</DocPage>
 	);

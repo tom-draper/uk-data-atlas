@@ -3,7 +3,6 @@ import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes } from "./openapiRoutes";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
-import { handlePinnedRoutes } from "./pinnedRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
 import { handleTerrainRoutes, handleTerrainRoutesAsync } from "./terrainRoutes";
@@ -502,26 +501,8 @@ const routeFamilies: RouteFamily[] = [
 		name: "sync",
 		owns: (segments) =>
 			segments[0] === "v1" &&
-			["atlas-release", "atlas-releases", "validation"].includes(
-				segments[1] ?? "",
-			) &&
-			// A path below a release id is a pinned resource, except an explicit
-			// immutable artifact download from an archived release.
-			!(
-				segments[1] === "atlas-releases" &&
-				segments.length >= 4 &&
-				!(segments.length === 4 && segments[3] === "artifacts")
-			),
+			["atlas-release", "validation"].includes(segments[1] ?? ""),
 		handle: handleSyncRoutes,
-	},
-	{
-		name: "pinned",
-		owns: (segments) =>
-			segments[0] === "v1" &&
-			segments[1] === "atlas-releases" &&
-			segments.length >= 4 &&
-			!(segments.length === 4 && segments[3] === "artifacts"),
-		handle: handlePinnedRoutes,
 	},
 ];
 

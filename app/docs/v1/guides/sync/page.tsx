@@ -1,4 +1,4 @@
-import { Callout, DocPage, P, Step, Steps } from "@/components/docs/Content";
+import { DocPage, P, Step, Steps } from "@/components/docs/Content";
 import { Request } from "@/components/docs/Example";
 import { RequestSamples } from "@/components/docs/CodePanel";
 import { docsMetadata } from "@/lib/docs/metadata";
@@ -6,7 +6,7 @@ import { API_BASE_URL } from "@/lib/docs/openapi";
 
 export const metadata = docsMetadata(
 	"Keep a copy in sync",
-	"A step-by-step guide to loading UK Data Atlas data into your own database: pin a release, download whole datasets, verify them and refresh only what changed.",
+	"A step-by-step guide to loading current UK Data Atlas data into your own database and verifying each download.",
 	"/docs/v1/guides/sync",
 );
 
@@ -37,18 +37,17 @@ export default function SyncGuidePage() {
 			href="/docs/v1/guides/sync"
 			eyebrow="Guide"
 			title="Keep a copy in sync"
-			lede="Loading the data into your own database or warehouse? This guide shows how to take whole datasets in one go, prove they arrived intact, and refresh only what changed."
+			lede="Loading the data into your own database or warehouse? This guide shows how to take whole datasets in one go, prove they arrived intact, and cheaply check for a current update."
 			toc={[
-				{ id: "pin", title: "Pin the release" },
+				{ id: "pin", title: "Record the release" },
 				{ id: "download", title: "Download a dataset" },
 				{ id: "verify", title: "Verify it" },
 				{ id: "revalidate", title: "Check for changes cheaply" },
-				{ id: "compare", title: "Refresh what moved" },
 				{ id: "lookups", title: "Add the lookup tables" },
 			]}
 		>
 			<Steps>
-				<Step id="pin" title="Pin the release">
+				<Step id="pin" title="Record the release">
 					<P>
 						Record which Atlas release you're loading. Its
 						`releaseId` identifies exactly the data you have.
@@ -91,21 +90,6 @@ export default function SyncGuidePage() {
 						`304` with no body. [Caching](/docs/v1/caching) has
 						examples.
 					</P>
-				</Step>
-
-				<Step id="compare" title="Refresh what moved">
-					<P>
-						When there's a new release, compare it with the one you
-						pinned. The summary lists what was added, removed and
-						changed, so you only reload those.
-					</P>
-					<Request
-						url={`${API}/atlas-releases/compare?from={your-pinned-release-id}`}
-						operationId="compareAtlasReleases"
-					/>
-					<Callout tone="tip">
-						Leave out `to` to compare against the current release.
-					</Callout>
 				</Step>
 
 				<Step id="lookups" title="Add the lookup tables">

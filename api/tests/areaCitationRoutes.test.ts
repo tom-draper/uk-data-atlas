@@ -140,7 +140,7 @@ test("cites an area with its release, identity hash, validation and attribution"
 	assert.ok(data);
 	assert.deepEqual(data.atlasRelease, {
 		id: "sha256:atlas-release",
-		href: "/v1/atlas-releases/sha256:atlas-release",
+		href: "/v1/atlas-release",
 	});
 	assert.deepEqual(data.identity, {
 		status: "available",

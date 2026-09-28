@@ -247,13 +247,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 
 	// Bulk data & releases
-	getPinnedMapResource: {
-		title: "Get a pinned map resource",
-		intro: "The same as [Get a map resource](/docs/v1/reference/geography/map-resource), but locked to one Atlas release so it never changes. Use this form in production: it can be cached for good.",
-		tips: [
-			"Only the release the server currently holds can be served. An older one returns `410 Gone` rather than quietly giving you newer data.",
-		],
-	},
 	listBulkExports: {
 		title: "List downloads",
 		intro: "See every complete dataset you can download in one go, with its size, how many records it holds and a hash to check it arrived intact.",
@@ -278,31 +271,10 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	getAtlasRelease: {
 		title: "Get the current release",
-		intro: "Every response comes from an Atlas release: a fingerprinted snapshot of all the data behind the API. This returns the current one, including its `releaseId`.",
+		intro: "Every response comes from the current Atlas release: a fingerprinted set of the artifacts behind the API. This returns its `releaseId` and artifact hashes.",
 		tips: [
 			"Building from the same inputs always gives the same `releaseId`, so recording it lets you reproduce a result exactly.",
 		],
-	},
-	listAtlasReleases: {
-		title: "List releases",
-		intro: "List the current Atlas release and the archived ones before it.",
-	},
-	downloadAtlasReleaseArtifact: {
-		title: "Download a release artifact",
-		intro: "Download one immutable artifact from a current or archived Atlas release, using the artifact id recorded in that release's manifest.",
-		tips: [
-			"Read the release manifest first so you can use its exact artifact id and verify the returned hash.",
-			"An archived release may return `410 Gone` when its manifest remains available but the artifact bytes are no longer retained.",
-		],
-	},
-	getArchivedAtlasRelease: {
-		title: "Get a release",
-		intro: "Get the manifest for one Atlas release, current or archived, by its `releaseId`.",
-	},
-	compareAtlasReleases: {
-		title: "Compare two releases",
-		intro: "See what changed between two Atlas releases: the datasets, measures, boundaries, crosswalks and more that were added, removed or changed. Useful for refreshing only what moved.",
-		tips: ["Leave out `to` to compare against the current release."],
 	},
 
 	// Areas & boundaries

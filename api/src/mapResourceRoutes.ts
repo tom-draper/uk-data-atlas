@@ -96,7 +96,6 @@ export const handleMapResourceRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
-	pinnedTo,
 }: RouteRequest): ApiResponse | undefined => {
 	if (segments[0] !== "v1" || segments[1] !== "map-resources")
 		return undefined;
@@ -143,12 +142,7 @@ export const handleMapResourceRoutes = ({
 	const id = releaseKey(geography, release);
 	const resource = mapResources.resources.find((entry) => entry.id === id);
 	if (!resource) return notFound(geography, release);
-	// A request that arrived pinned keeps its links pinned, so a renderer
-	// configured from a pinned TileJSON fetches pinned tiles and caches them
-	// for a year rather than revalidating every one.
-	const origin = pinnedTo
-		? `/v1/atlas-releases/${pinnedTo}/map-resources/${id}`
-		: `/v1/map-resources/${id}`;
+	const origin = `/v1/map-resources/${id}`;
 
 	if (asArchive) {
 		const archive = mapArchives?.get(id);
@@ -174,15 +168,7 @@ export const handleMapResourceRoutes = ({
 	if (segments.length === 4)
 		return {
 			status: 200,
-			body: envelope(releaseId, {
-				...resource,
-				// How to ask for this resource so it never needs revalidating.
-				pinned: {
-					atlasRelease: releaseId,
-					href: `/v1/atlas-releases/${releaseId}/map-resources/${id}`,
-					note: "Answers exactly this, with Cache-Control: immutable. The release it names stops being served when the Atlas rebuilds; a copy already held stays correct.",
-				},
-			}),
+			body: envelope(releaseId, resource),
 		};
 
 	if (segments.length === 5 && segments[4] === "tiles.json")
