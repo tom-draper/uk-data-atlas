@@ -7,3 +7,10 @@ const COUNT_FORMAT = new Intl.NumberFormat();
 export function formatCount(value: number): string {
 	return COUNT_FORMAT.format(value);
 }
+
+/** A count shortened to thousands or millions, such as `12k` or `1.4m`. */
+export function formatCompactCount(value: number): string {
+	if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}m`;
+	if (value >= 1_000) return `${Math.round(value / 1_000)}k`;
+	return formatCount(value);
+}

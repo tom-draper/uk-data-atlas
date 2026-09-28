@@ -1,6 +1,7 @@
 import { electricVehicleChargersDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { indicatorAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { IndicatorDataset } from "@/lib/types/indicator";
+import { indicatorCard } from "./indicatorCard";
 import type { ChartDatasetDefinition } from "./types";
 export const electricVehicleChargersDefinition: ChartDatasetDefinition<
 	IndicatorDataset<"electricVehicleChargers">
@@ -11,7 +12,12 @@ export const electricVehicleChargersDefinition: ChartDatasetDefinition<
 		key: "transport-electricVehicleChargers",
 		label: "Public EV Chargers [2026]",
 		defaultVisible: true,
-		componentPath: "@/components/IndicatorChart",
+		componentPath: "@/components/ValueCard",
+		card: indicatorCard({
+			heading: "Public EV chargers",
+			unit: "chargers",
+			maximum: 5_000,
+		}),
 		calculateStats: (m, g, d, l, id) =>
 			m.aggregate(indicatorAggregation, g, d, l, id),
 		year: 2026,
