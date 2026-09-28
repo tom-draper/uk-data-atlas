@@ -115,4 +115,16 @@ describe("resolveFuelPovertyStats", () => {
 			),
 		).toBeNull();
 	});
+
+	it("resolves a ward's authority through the ward mapping", () => {
+		expect(
+			resolveFuelPovertyStats(
+				dataset,
+				{ 2024: aggregate },
+				{ type: "ward", code: "E05014827", name: "Ward", data: null },
+				ladStats,
+				{ getLadForWard: () => "E09000001" },
+			),
+		).toEqual(localAuthorityAggregate);
+	});
 });

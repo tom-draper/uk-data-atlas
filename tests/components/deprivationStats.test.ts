@@ -41,6 +41,18 @@ describe("resolveDeprivation", () => {
 		).toEqual({ kind: "summary", summary: summary(3) });
 	});
 
+	it("rolls a ward without an authority on its record up through the ward mapping", () => {
+		expect(
+			resolveDeprivation({
+				aggregated: summary(5),
+				ladStats,
+				selectedArea: area("ward", "E05014827"),
+				fineArea: { type: "lsoa", records },
+				codeMapper: { getLadForWard: () => "E06000002" },
+			}),
+		).toEqual({ kind: "summary", summary: summary(7) });
+	});
+
 	it("shows a single small area as its published record", () => {
 		expect(resolve(area("lsoa", "E01000001"))).toEqual({
 			kind: "area",

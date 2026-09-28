@@ -8,6 +8,7 @@ import {
 } from "@lib/types";
 import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
 import { resolveDeprivation } from "../deprivationStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 
 const SIMD: DeprivationIndex = {
 	datasetType: "simd",
@@ -27,6 +28,7 @@ interface SIMDChartProps {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -36,6 +38,7 @@ export default function SIMDChart({
 	aggregatedData,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: SIMDChartProps) {
 	const dataset = availableDatasets?.[year];
@@ -46,6 +49,7 @@ export default function SIMDChart({
 		ladStats: dataset.councilStats,
 		selectedArea,
 		fineArea: { type: "dataZone", records: dataset.data },
+		codeMapper,
 	});
 
 	return (

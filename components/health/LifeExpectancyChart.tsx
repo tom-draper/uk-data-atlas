@@ -13,6 +13,10 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface LifeExpectancyChartProps {
 	activeDataset: Dataset | null;
@@ -21,6 +25,7 @@ interface LifeExpectancyChartProps {
 	selectedArea: SelectedArea | null;
 	datasetId: string;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -41,6 +46,7 @@ function computeLeStats(
 	dataset: LifeExpectancyDataset,
 	aggregatedData: Record<string, AggregatedLifeExpectancyData> | null,
 	selectedArea: SelectedArea | null,
+	codeMapper: LadResolver | undefined,
 	datasetId: string,
 	chartsLoading: boolean,
 ) {
@@ -51,27 +57,14 @@ function computeLeStats(
 		return null;
 	}
 
-	if (selectedArea.type === "localAuthority") {
-		const record = dataset.data[selectedArea.code];
-		return record
-			? {
-					averageMaleLE: record.maleBirthLE,
-					averageFemaleLE: record.femaleBirthLE,
-				}
-			: null;
-	}
-
-	if (selectedArea.type === "ward" && selectedArea.data) {
-		const record = dataset.data[selectedArea.data.ladCode];
-		return record
-			? {
-					averageMaleLE: record.maleBirthLE,
-					averageFemaleLE: record.femaleBirthLE,
-				}
-			: null;
-	}
-
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	const record = ladCode ? dataset.data[ladCode] : undefined;
+	return record
+		? {
+				averageMaleLE: record.maleBirthLE,
+				averageFemaleLE: record.femaleBirthLE,
+			}
+		: null;
 }
 
 function computeBarRange(
@@ -127,6 +120,7 @@ export default function LifeExpectancyChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	datasetId,
 	setActiveViz,
 }: LifeExpectancyChartProps) {
@@ -139,6 +133,7 @@ export default function LifeExpectancyChart({
 				dataset,
 				aggregatedData,
 				selectedArea,
+				codeMapper,
 				datasetId,
 				chartsLoading,
 			)

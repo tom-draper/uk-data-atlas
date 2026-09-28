@@ -13,6 +13,10 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface UnemploymentChartProps {
 	activeDataset: Dataset | null;
@@ -20,7 +24,7 @@ interface UnemploymentChartProps {
 	aggregatedData: Record<number, AggregatedUnemploymentData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: CodeYearResolver & LadResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
@@ -32,7 +36,7 @@ function computeStats(
 	dataset: UnemploymentDataset,
 	aggregatedData: Record<number, AggregatedUnemploymentData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeYearResolver | undefined,
+	codeMapper: (CodeYearResolver & LadResolver) | undefined,
 ): AggregatedUnemploymentData | null {
 	if (selectedArea === null) {
 		const agg = aggregatedData?.[dataset.latestYear] ?? null;
@@ -59,11 +63,8 @@ function computeStats(
 		return { years: dataset.years, latestYear: dataset.latestYear, rates };
 	};
 
-	if (selectedArea.type === "localAuthority")
-		return fromRecord(selectedArea.code);
-	if (selectedArea.type === "ward" && selectedArea.data?.ladCode)
-		return fromRecord(selectedArea.data.ladCode);
-	return null;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	return ladCode ? fromRecord(ladCode) : null;
 }
 
 function buildSparkline(stats: AggregatedUnemploymentData): {

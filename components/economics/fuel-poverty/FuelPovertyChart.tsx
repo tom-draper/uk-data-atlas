@@ -13,6 +13,10 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import { fetchLsoaToLad } from "@/lib/data/boundaries/lsoaLadMappings";
 import { aggregateFuelPovertyByLad } from "@/lib/helpers/fuelPoverty";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface Props {
 	activeDataset: Dataset | null;
@@ -21,6 +25,7 @@ interface Props {
 	selectedArea: SelectedArea | null;
 	year: number;
 	activeViz: ActiveViz;
+	codeMapper?: LadResolver;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
@@ -40,16 +45,12 @@ export function resolveFuelPovertyStats(
 	aggregatedData: Record<number, AggregatedFuelPovertyData> | null,
 	selectedArea: SelectedArea | null,
 	ladStats: Record<string, AggregatedFuelPovertyData> | null,
+	codeMapper?: LadResolver,
 ): AggregatedFuelPovertyData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
 	if (selectedArea.type === "lsoa")
 		return dataset.data[selectedArea.code] ?? null;
-	const ladCode =
-		selectedArea.type === "ward"
-			? selectedArea.data?.ladCode
-			: selectedArea.type === "localAuthority"
-				? selectedArea.code
-				: undefined;
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
 	return ladCode ? (ladStats?.[ladCode] ?? null) : null;
 }
 
@@ -59,6 +60,7 @@ export default function FuelPovertyChart({
 	aggregatedData,
 	selectedArea,
 	year,
+	codeMapper,
 	setActiveViz,
 }: Props) {
 	const dataset = availableDatasets[year];
@@ -99,6 +101,7 @@ export default function FuelPovertyChart({
 				aggregatedData,
 				selectedArea,
 				ladStats,
+				codeMapper,
 			)
 		: null;
 	const isLocalAuthoritySummary =

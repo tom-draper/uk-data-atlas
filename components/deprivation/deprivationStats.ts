@@ -1,4 +1,8 @@
 import type { SelectedArea } from "@lib/types";
+import {
+	selectedAreaLadCode,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 /**
  * What a deprivation card shows for the current selection.
@@ -18,6 +22,7 @@ export function resolveDeprivation<TRecord, TSummary>({
 	ladStats,
 	selectedArea,
 	fineArea,
+	codeMapper,
 }: {
 	aggregated: TSummary | null;
 	ladStats: Record<string, TSummary>;
@@ -26,17 +31,15 @@ export function resolveDeprivation<TRecord, TSummary>({
 		type: SelectedArea["type"];
 		records: Record<string, TRecord>;
 	};
+	codeMapper?: LadResolver;
 }): ResolvedDeprivation<TRecord, TSummary> | null {
 	const summary = (value: TSummary | null | undefined) =>
 		value ? { kind: "summary" as const, summary: value } : null;
 
 	if (selectedArea === null) return summary(aggregated);
 
-	if (selectedArea.type === "localAuthority")
-		return summary(ladStats[selectedArea.code]);
-
-	if (selectedArea.type === "ward" && selectedArea.data)
-		return summary(ladStats[selectedArea.data.ladCode]);
+	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
+	if (ladCode) return summary(ladStats[ladCode]);
 
 	if (selectedArea.type === fineArea.type) {
 		const record = fineArea.records[selectedArea.code];
