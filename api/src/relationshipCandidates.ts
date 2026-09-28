@@ -7,6 +7,7 @@ import {
 	readSync,
 } from "node:fs";
 import { join } from "node:path";
+import { readGeoJsonProperties } from "./geoJsonProperties";
 import { readDbfRecords } from "./dbf";
 import type { AreaReleaseArtifact } from "./areaInventory";
 
@@ -170,21 +171,16 @@ const sourceFor = (repositoryRoot: string, artifact: AreaReleaseArtifact) => {
 
 const readProperties = (path: string) => {
 	if (path.toLowerCase().endsWith(".dbf")) return readDbfRecords(path);
-	const source = JSON.parse(readFileSync(path, "utf8")) as FeatureCollection;
-	if (
-		source.type !== "FeatureCollection" ||
-		!Array.isArray(source.features)
-	) {
+	// Only the property table is read, so the geometry is never built.
+	const source = readGeoJsonProperties(path);
+	if (source.type !== "FeatureCollection") {
 		throw new Error(`${path}: source is not a GeoJSON FeatureCollection`);
 	}
-	return source.features.map((feature, index) => {
-		if (
-			typeof feature.properties !== "object" ||
-			feature.properties === null
-		) {
+	return source.properties.map((properties, index) => {
+		if (typeof properties !== "object" || properties === null) {
 			throw new Error(`${path}: feature ${index} has no properties`);
 		}
-		return feature.properties as Record<string, unknown>;
+		return properties as Record<string, unknown>;
 	});
 };
 
