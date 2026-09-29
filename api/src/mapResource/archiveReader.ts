@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { fstatSync, openSync, readSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
 import { tileId } from "./pmtiles";
 
@@ -6,9 +6,10 @@ import { tileId } from "./pmtiles";
  * Reading tiles back out of a published archive, for the server to answer a
  * tile request from.
  *
- * The archive is held in memory and its directories are decoded once. It is a
- * few megabytes against the hundred the catalogues already occupy, and it
- * turns a tile request into a lookup rather than a file read.
+ * The header and directories are read once and held decoded; a tile's bytes
+ * are read from the file when asked for. Every boundary release has an
+ * archive, together far more than the server should hold in memory, while a
+ * directory is a small fraction of its archive.
  */
 
 type Entry = {
@@ -76,29 +77,34 @@ export type MapArchive = {
 	bytes: number;
 	minZoom: number;
 	maxZoom: number;
-	/** The whole archive, for a caller downloading it rather than one tile. */
-	archive: Buffer;
+	/** Where the archive is, for a caller downloading it rather than one tile. */
+	path: string;
 	/** One tile's bytes, still gzipped as the archive stores them. */
 	tile: (z: number, x: number, y: number) => Buffer | undefined;
 };
 
 export const openArchive = (path: string): MapArchive => {
-	const archive = readFileSync(path);
-	if (archive.subarray(0, 7).toString("ascii") !== "PMTiles")
+	const descriptor = openSync(path, "r");
+	const bytes = fstatSync(descriptor).size;
+	const read = (at: number, length: number) => {
+		const buffer = Buffer.alloc(length);
+		readSync(descriptor, buffer, 0, length, at);
+		return buffer;
+	};
+	const header = read(0, Math.min(127, bytes));
+	if (header.subarray(0, 7).toString("ascii") !== "PMTiles")
 		throw new Error(`${path} is not a PMTiles archive.`);
-	if (archive.readUInt8(7) !== 3)
+	if (header.readUInt8(7) !== 3)
 		throw new Error(`${path} is not a version 3 PMTiles archive.`);
-	const offset = (at: number) => Number(archive.readBigUInt64LE(at));
+	const offset = (at: number) => Number(header.readBigUInt64LE(at));
 	const rootOffset = offset(8);
 	const rootLength = offset(16);
 	const leafOffset = offset(40);
 	const dataOffset = offset(56);
-	const minZoom = archive.readUInt8(100);
-	const maxZoom = archive.readUInt8(101);
+	const minZoom = header.readUInt8(100);
+	const maxZoom = header.readUInt8(101);
 
-	const root = readDirectory(
-		gunzipSync(archive.subarray(rootOffset, rootOffset + rootLength)),
-	);
+	const root = readDirectory(gunzipSync(read(rootOffset, rootLength)));
 	const leaves = new Map<number, Entry[]>();
 
 	const tile = (z: number, x: number, y: number) => {
@@ -117,20 +123,12 @@ export const openArchive = (path: string): MapArchive => {
 			if (!found) return undefined;
 			if (found.runLength > 0)
 				return wanted < found.tileId + found.runLength
-					? archive.subarray(
-							dataOffset + found.offset,
-							dataOffset + found.offset + found.length,
-						)
+					? read(dataOffset + found.offset, found.length)
 					: undefined;
 			let leaf = leaves.get(found.offset);
 			if (!leaf) {
 				leaf = readDirectory(
-					gunzipSync(
-						archive.subarray(
-							leafOffset + found.offset,
-							leafOffset + found.offset + found.length,
-						),
-					),
+					gunzipSync(read(leafOffset + found.offset, found.length)),
 				);
 				leaves.set(found.offset, leaf);
 			}
@@ -139,5 +137,5 @@ export const openArchive = (path: string): MapArchive => {
 		return undefined;
 	};
 
-	return { bytes: archive.length, minZoom, maxZoom, archive, tile };
+	return { bytes, minZoom, maxZoom, path, tile };
 };

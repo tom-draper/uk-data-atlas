@@ -176,6 +176,40 @@ test("serves a binary representation as its own bytes", () => {
 	);
 });
 
+test("validates a stored file by its recorded hash without reading it", () => {
+	// A whole-release download is streamed from disk, so its validator has to
+	// come from the hash the build recorded. It is the same tag the bytes
+	// would give, and the path does not even have to exist to compute it.
+	const bytes = Buffer.from("a boundary release");
+	const hex = createHash("sha256").update(bytes).digest("hex");
+	const stored = {
+		path: "/nowhere/release.parquet",
+		bytes: bytes.length,
+		contentHash: `sha256:${hex}`,
+	};
+	const serve = (ifNoneMatch?: string) =>
+		httpResponse(
+			{
+				method: "GET",
+				headers: ifNoneMatch ? { "if-none-match": ifNoneMatch } : {},
+			},
+			() => ({
+				status: 200,
+				body: ok.body,
+				representation: {
+					contentType: "application/vnd.apache.parquet",
+					body: stored,
+				},
+			}),
+		);
+	const response = serve();
+	assert.equal(response.status, 200);
+	assert.deepEqual(response.body, stored);
+	assert.equal(response.headers["content-length"], String(bytes.length));
+	assert.equal(response.headers.etag, entityTag(bytes));
+	assert.equal(serve(response.headers.etag).status, 304);
+});
+
 test("caches an empty answer but sends nothing to revalidate", () => {
 	// A tile covering no area is an ordinary answer for a renderer, not a
 	// failure, so it is stored rather than refetched every time.

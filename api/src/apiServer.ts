@@ -1,4 +1,5 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
+import { createReadStream } from "node:fs";
 import {
 	createServer,
 	type IncomingMessage,
@@ -7,6 +8,7 @@ import {
 } from "node:http";
 import { ApiMetrics } from "./apiMetrics";
 import {
+	bodyBytes,
 	httpResponse,
 	preflightResponse,
 	type HttpResponse,
@@ -18,7 +20,7 @@ import {
 	type MatchedOperation,
 } from "./operationTemplates";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
-import { problem, type ApiResponse } from "./routeResponse";
+import { isStoredFile, problem, type ApiResponse } from "./routeResponse";
 import { routeAsync } from "./routes";
 import type { RouteContext } from "./routing";
 import {
@@ -232,10 +234,14 @@ export const createApiServer = (
 			...(draining ? { connection: "close" } : {}),
 		};
 		response.writeHead(result.status, headers);
-		response.end(result.body);
+		if (isStoredFile(result.body))
+			createReadStream(result.body.path)
+				.on("error", (error) => response.destroy(error))
+				.pipe(response);
+		else response.end(result.body);
 
 		const durationSeconds = (performance.now() - startedAt) / 1000;
-		const bytes = result.body ? Buffer.byteLength(result.body) : 0;
+		const bytes = result.body ? bodyBytes(result.body) : 0;
 		metrics.observe({
 			route: matched.route,
 			method,

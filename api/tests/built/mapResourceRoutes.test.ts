@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { gunzipSync } from "node:zlib";
 import { httpResponse } from "../../src/httpResponse";
+import { isStoredFile } from "../../src/routeResponse";
 import { route } from "../../src/routes";
 import { readApiCatalogues } from "../../src/server";
 import { readParquet } from "../parquetFixtures";
@@ -22,6 +24,15 @@ const get = (url: string) =>
 	httpResponse({ method: "GET", headers: {} }, (method) =>
 		route(method, url, catalogues),
 	);
+
+/** A download's bytes, which the server streams from its file on disk. */
+const bytesOf = (body: unknown) => {
+	assert.ok(isStoredFile(body as never), "a download is served from disk");
+	const file = body as { path: string; bytes: number };
+	const bytes = readFileSync(file.path);
+	assert.equal(bytes.length, file.bytes);
+	return bytes;
+};
 
 const data = (url: string) => {
 	const response = route("GET", url, catalogues);
@@ -151,7 +162,7 @@ test("serves the whole archive with the hash its descriptor gives", () => {
 		response.headers["content-disposition"]!,
 		/attachment; filename=".*\.pmtiles"/,
 	);
-	const archive = response.body as Buffer;
+	const archive = bytesOf(response.body);
 	assert.equal(archive.length, descriptor.tiles.bytes);
 	assert.equal(archive.subarray(0, 7).toString("ascii"), "PMTiles");
 });
@@ -183,7 +194,7 @@ test("serves each tier flat, as the GeoParquet its descriptor lists", () => {
 			response.headers["content-disposition"]!,
 			new RegExp(`filename=".*-${entry.tier}\\.parquet"`),
 		);
-		const body = response.body as Buffer;
+		const body = bytesOf(response.body);
 		assert.equal(body.length, entry.bytes);
 		assert.equal(entry.rowCount, descriptor.areaCount);
 	}

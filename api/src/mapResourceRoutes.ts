@@ -157,7 +157,11 @@ export const handleMapResourceRoutes = ({
 			}),
 			representation: {
 				contentType: PMTILES_CONTENT_TYPE,
-				body: archive.archive,
+				body: {
+					path: archive.path,
+					bytes: resource.tiles.bytes,
+					contentHash: resource.tiles.contentHash,
+				},
 				headers: {
 					"content-disposition": `attachment; filename="${geography}-${release}.pmtiles"`,
 				},
