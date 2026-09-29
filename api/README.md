@@ -3653,7 +3653,7 @@ second inventory to maintain:
 - `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release's metadata
 - `GET /v1/geography-inventory` — Report resolver identity and relationship coverage, including the compiled backlog by geography
 - `GET /v1/areas` — List or search compiled area identities
-- `GET /v1/areas:validate` — Validate a batch of area codes or names against one release
+- `GET /v1/areas:validate` — Validate a batch of area codes or names, or infer their likely release
 - `GET /v1/areas/{geography}/{release}/{code}` — Get one compiled area by its full identity
 - `GET /v1/areas/{geography}/{release}/{code}/relationships` — Get published relationships for one compiled area
 - `GET /v1/areas/{geography}/{release}/{code}/history` — Explain a code's published historical relationships and same-code continuity
