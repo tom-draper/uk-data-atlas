@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { ValidatedValue } from "./batchValidation";
+import { envelope, type ApiResponse } from "./routeResponse";
 
 type MatchResult = {
 	likely?: {
@@ -124,4 +125,30 @@ export const exportMatchReport = (
 			),
 		].join("\n") + "\n"
 	);
+};
+
+/** Renders one match diagnosis consistently as JSON and as a downloadable CSV. */
+export const matchReportResponse = <T extends { values: ValidatedValue[] }>(
+	atlasRelease: string,
+	format: "json" | "csv",
+	manifest: MatchManifest,
+	body: T,
+): ApiResponse => {
+	const response = {
+		status: 200,
+		body: envelope(atlasRelease, body),
+	};
+	return format === "csv"
+		? {
+				...response,
+				representation: {
+					contentType: "text/csv; charset=utf-8",
+					body: exportMatchReport(manifest, body.values),
+					headers: {
+						"content-disposition":
+							'attachment; filename="area-match-report.csv"',
+					},
+				},
+			}
+		: response;
 };
