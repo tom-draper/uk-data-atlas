@@ -124,7 +124,7 @@ describe("catalogue helpers", () => {
 	it("says how a measure combines over areas", () => {
 		const measure = (id: string) =>
 			catalogue.measures.find((m) => m.id === id)!;
-		expect(combining(measure("population-estimate"))).toBe("Adds up");
+		expect(combining(measure("population"))).toBe("Adds up");
 		expect(combining(measure("house-price-median"))).toBe("Not combined");
 	});
 });

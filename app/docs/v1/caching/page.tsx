@@ -9,7 +9,7 @@ export const metadata = docsMetadata(
 	"/docs/v1/caching",
 );
 
-const URL = `${API_BASE_URL}/measures/population-estimate`;
+const URL = `${API_BASE_URL}/measures/population`;
 
 const CONDITIONAL = [
 	{

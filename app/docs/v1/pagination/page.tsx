@@ -9,7 +9,7 @@ export const metadata = docsMetadata(
 	"/docs/v1/pagination",
 );
 
-const URL = `${API_BASE_URL}/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=500`;
+const URL = `${API_BASE_URL}/data/population?period=2022&geography=ward&boundaryYear=2023&limit=500`;
 
 const LOOP_SAMPLES = [
 	{
@@ -44,7 +44,7 @@ records = []
 
 while True:
     response = requests.get(
-        "${API_BASE_URL}/data/population-estimate",
+        "${API_BASE_URL}/data/population",
         params=params,
     )
     response.raise_for_status()

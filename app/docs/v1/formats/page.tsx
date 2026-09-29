@@ -46,7 +46,7 @@ export default function FormatsPage() {
 				]}
 			/>
 			<Request
-				url={`${API_BASE_URL}/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv`}
+				url={`${API_BASE_URL}/data/population?period=2022&geography=ward&boundaryYear=2023&format=csv`}
 			/>
 			<P>
 				The API picks the format from this parameter only, not the

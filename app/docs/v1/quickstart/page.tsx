@@ -73,7 +73,7 @@ export default function QuickstartPage() {
 				<Step id="measures" title="See what's available">
 					<P>
 						A measure is something that's counted or measured, like
-						`population-estimate` or `median-annual-pay`. List them
+						`population` or `median-annual-pay`. List them
 						all to see their units, coverage and whether they can be
 						added up:
 					</P>
