@@ -19,7 +19,7 @@ import type {
 	LocationProjectionInventory,
 	LocationProjectionStore,
 } from "./locationProjections";
-import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
+import type { MapResources } from "./mapResourceLoader";
 import type { MapArchive } from "./mapResource/archiveReader";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { NamedLocationInventory } from "./namedLocations";
@@ -71,7 +71,7 @@ export type RouteContext = {
 	openapiDocument?: string;
 	lookupManifest?: LookupManifest;
 	/** The boundary releases published as map resources, and their tiles. */
-	mapResources?: { resources: MapResourceDescriptor[] };
+	mapResources?: MapResources;
 	/** Each map resource's archive, opened once and keyed by resource id. */
 	mapArchives?: Map<string, MapArchive>;
 	/** Each map resource tier's GeoParquet file, keyed by its artifact path. */

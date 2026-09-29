@@ -5,7 +5,15 @@ import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { StoredFile } from "./routeResponse";
 
-export type MapResources = { resources: MapResourceDescriptor[] };
+export type MapResources = {
+	resources: MapResourceDescriptor[];
+	/** Releases the build could not compile, such as one that is not a coverage. */
+	unavailable?: Array<{
+		geography: string;
+		boundaryRelease: string;
+		reason: string;
+	}>;
+};
 
 /** The published map resources, when the optional map build is present. */
 export const readMapResources = (apiRoot: string): MapResources => {
