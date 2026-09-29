@@ -899,7 +899,7 @@ paths:
     get:
       operationId: getBoundaryRelease
       tags: ["Geography"]
-      summary: Get one boundary release's metadata
+      summary: Get one boundary release, with links to download it whole
       x-likely-refusal:
         status: 404
         code: unsupported_geography
@@ -9573,7 +9573,53 @@ components:
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/BoundaryRelease"
+              allOf:
+                - $ref: "#/components/schemas/BoundaryRelease"
+                - type: object
+                  required: [downloads]
+                  properties:
+                    downloads:
+                      $ref: "#/components/schemas/BoundaryReleaseDownloads"
+
+    BoundaryReleaseDownloads:
+      description: >
+        Where to get the whole release: its vector tiles, and every
+        generalisation tier as GeoJSON and as GeoParquet. A release the map
+        build could not compile, such as one whose areas overlap, is
+        `unavailable` with the reason, and stays available area by area.
+      oneOf:
+        - type: object
+          required:
+            [status, mapResource, pmtiles, tileJson, geojson, geoparquet]
+          properties:
+            status:
+              type: string
+              const: available
+            mapResource:
+              type: string
+              description: The descriptor, with sizes, hashes and attribution.
+            pmtiles:
+              type: string
+            tileJson:
+              type: string
+            geojson:
+              type: object
+              description: The download for each tier, `full`, `high`, `medium` and `low`.
+              additionalProperties:
+                type: string
+            geoparquet:
+              type: object
+              description: The download for each tier, `full`, `high`, `medium` and `low`.
+              additionalProperties:
+                type: string
+        - type: object
+          required: [status, reason]
+          properties:
+            status:
+              type: string
+              const: unavailable
+            reason:
+              type: string
 
     AreaIdentityCoverage:
       oneOf:

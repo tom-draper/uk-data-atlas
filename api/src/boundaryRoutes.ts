@@ -1,4 +1,5 @@
 import { areaNotFound } from "./areaResources";
+import { releaseDownloads } from "./mapResourceLoader";
 import { parseSelectionDate } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -205,7 +206,18 @@ export const handleBoundaryRoutes = ({
 			segments[2]!,
 			segments[3]!,
 		);
-		if (release) return { status: 200, body: envelope(releaseId, release) };
+		if (release)
+			return {
+				status: 200,
+				body: envelope(releaseId, {
+					...release,
+					downloads: releaseDownloads(
+						context.mapResources,
+						release.geography,
+						release.id,
+					),
+				}),
+			};
 		return areaNotFound(context, segments[2], segments[3]);
 	}
 
