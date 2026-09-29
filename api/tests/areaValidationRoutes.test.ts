@@ -60,6 +60,51 @@ test("validates a batch of codes and names against one release", () => {
 	);
 });
 
+test("pins a matching manifest and downloads the same rows as CSV", () => {
+	const context = testContext({
+		boundaryRegistry: registry,
+		areaLookup,
+	});
+	const json = routeRequest(
+		"GET",
+		"/v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&value=enghraifft%20ward",
+		context,
+	);
+	const data = (json.body as { data: Record<string, any> }).data;
+	assert.equal(data.manifest.schemaVersion, 1);
+	assert.match(data.manifest.input.sha256, /^sha256:[a-f0-9]{64}$/);
+	assert.deepEqual(data.manifest.input.values, [
+		"E05000001",
+		"enghraifft ward",
+	]);
+	assert.deepEqual(data.manifest.result.likely, {
+		geography: "ward",
+		boundaryRelease: "2025-01-en-ward",
+		resolved: 2,
+	});
+
+	const csv = routeRequest(
+		"GET",
+		"/v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&value=enghraifft%20ward&format=csv",
+		context,
+	);
+	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
+	assert.equal(
+		csv.representation?.headers?.["content-disposition"],
+		'attachment; filename="area-match-report.csv"',
+	);
+	assert.match(String(csv.representation?.body), /inputSha256/);
+	assert.match(String(csv.representation?.body), /E05000001/);
+	assert.equal(
+		routeRequest(
+			"GET",
+			"/v1/areas:validate?geography=ward&release=2025-01-en-ward&value=E05000001&format=ndjson",
+			context,
+		).status,
+		400,
+	);
+});
+
 test("infers a likely release, reports a mixed code column, and recommends only its published path", () => {
 	const matchingAreas = createAreaLookup([
 		{
