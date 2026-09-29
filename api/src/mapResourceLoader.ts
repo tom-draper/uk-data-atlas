@@ -15,6 +15,50 @@ export type MapResources = {
 	}>;
 };
 
+/**
+ * Where to download a whole boundary release: its tiles and every tier in
+ * each flat format. A release the map build could not compile says why
+ * instead, and stays available area by area.
+ */
+export const releaseDownloads = (
+	mapResources: MapResources | undefined,
+	geography: string,
+	boundaryRelease: string,
+) => {
+	const resource = mapResources?.resources.find(
+		(entry) =>
+			entry.geography === geography &&
+			entry.boundaryRelease === boundaryRelease,
+	);
+	if (!resource) {
+		const unavailable = mapResources?.unavailable?.find(
+			(entry) =>
+				entry.geography === geography &&
+				entry.boundaryRelease === boundaryRelease,
+		);
+		return {
+			status: "unavailable" as const,
+			reason:
+				unavailable?.reason ??
+				"No map resource has been compiled for this release.",
+		};
+	}
+	const byTier = (format: string) =>
+		Object.fromEntries(
+			resource.features
+				.filter((entry) => entry.format === format)
+				.map((entry) => [entry.tier, entry.href]),
+		);
+	return {
+		status: "available" as const,
+		mapResource: `/v1/map-resources/${resource.id}`,
+		pmtiles: resource.tiles.href,
+		tileJson: `/v1/map-resources/${resource.id}/tiles.json`,
+		geojson: byTier("geojson"),
+		geoparquet: byTier("geoparquet-1.1"),
+	};
+};
+
 /** The published map resources, when the optional map build is present. */
 export const readMapResources = (apiRoot: string): MapResources => {
 	const path = join(apiRoot, "public", "map-resources.json");
