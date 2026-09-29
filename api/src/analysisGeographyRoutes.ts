@@ -1,5 +1,7 @@
 import { analysisConversion } from "./analysisGeographies";
 import { unsupported } from "./capability";
+import { coveragePlan } from "./coveragePlan";
+import { relationshipPurposeFor } from "./relationshipPaths";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -31,6 +33,113 @@ const supportFor = (
 					String(support.source.boundaryYear) ===
 						source.boundaryYear)),
 	);
+
+const operationFor = (purpose: "identity" | "membership" | "apportion") =>
+	purpose === "identity"
+		? "code-translation"
+		: purpose === "membership"
+			? "containment-aggregation"
+			: "weighted-allocation";
+
+/** The already-reviewed route, re-expressed with conversion-plan evidence. */
+const conversionPlanFor = (
+	context: RouteRequest["context"],
+	support: NonNullable<
+		RouteRequest["context"]["analysisGeographyInventory"]
+	>["supports"][number],
+) => {
+	if (support.crosswalk) {
+		const crosswalk = context.crosswalkInventory?.crosswalks.find(
+			(candidate) => candidate.id === support.crosswalk?.id,
+		);
+		const purpose = crosswalk && relationshipPurposeFor(crosswalk);
+		return crosswalk && purpose
+			? context.geographyResolver.conversionPlan(
+					crosswalk.from,
+					crosswalk.to,
+					purpose,
+					operationFor(purpose),
+				)
+			: undefined;
+	}
+	const path = context.relationshipPathInventory?.paths.find(
+		(candidate) => candidate.id === support.path?.id,
+	);
+	return path
+		? context.geographyResolver.conversionPlan(
+				path.from,
+				path.to,
+				path.purpose,
+				operationFor(path.purpose),
+			)
+		: undefined;
+};
+
+/** The evidence around a plan, without reading or transforming observations. */
+const planEvidence = (
+	context: RouteRequest["context"],
+	measureId: string,
+	period: string,
+	analysisGeography: { geography: string; boundaryRelease: string },
+	support: NonNullable<
+		RouteRequest["context"]["analysisGeographyInventory"]
+	>["supports"][number],
+	validation: RouteRequest["context"]["analysisGeographyValidationInventory"],
+) => {
+	const measure = context.dataCatalog?.measures.find(
+		(candidate) => candidate.id === measureId,
+	);
+	const coverage = measure
+		? coveragePlan(context, measure, analysisGeography)
+		: undefined;
+	const receipt = validation?.supports
+		.find(
+			(candidate) =>
+				candidate.measureId === measureId &&
+				candidate.analysisGeography.geography ===
+					analysisGeography.geography &&
+				candidate.analysisGeography.boundaryRelease ===
+					analysisGeography.boundaryRelease &&
+				candidate.source.datasetId === support.source.datasetId &&
+				candidate.source.geography === support.source.geography &&
+				candidate.source.boundaryYear === support.source.boundaryYear,
+		)
+		?.periods.find((candidate) => candidate.period === period);
+	const conversionPlan = conversionPlanFor(context, support);
+	return {
+		...(measure ? { aggregation: measure.aggregation } : {}),
+		...(coverage ? { coverage } : {}),
+		...(coverage
+			? {
+					expectedSize: {
+						targetAreaCount: coverage.target.areaCount,
+						coveredAreaCount: coverage.summary.coveredAreaCount,
+						outputRecordCount:
+							receipt?.outputRecordCount ??
+							coverage.summary.coveredAreaCount,
+					},
+				}
+			: {}),
+		...(conversionPlan ? { conversionPlan } : {}),
+		saferAlternatives: [
+			{
+				kind: "source-exact" as const,
+				href: `/v1/data/${measureId}?period=${encodeURIComponent(period)}&geography=${support.source.geography}&boundaryYear=${support.source.boundaryYear}`,
+				reason: "Keep the publisher's source partition when a conversion is not needed.",
+			},
+			...(coverage &&
+			coverage.summary.coveredAreaCount < coverage.target.areaCount
+				? [
+						{
+							kind: "coverage-plan" as const,
+							href: `/v1/measures/${measureId}/coverage-plan?geography=${analysisGeography.geography}&release=${analysisGeography.boundaryRelease}`,
+							reason: "Inspect the country-by-country gap before using a partial analysis frame.",
+						},
+					]
+				: []),
+		],
+	};
+};
 
 /**
  * Advertise and preflight only reviewed source-to-analysis conversions. This
@@ -149,6 +258,16 @@ export const handleAnalysisGeographyRoutes = ({
 	const support = supports.find((candidate) =>
 		candidate.source.periods.includes(period),
 	);
+	const unavailableEvidence = supports[0]
+		? planEvidence(
+				context,
+				requestedMeasure,
+				period,
+				analysisGeography,
+				supports[0],
+				validation,
+			)
+		: {};
 	if (!support)
 		return {
 			status: 200,
@@ -161,8 +280,17 @@ export const handleAnalysisGeographyRoutes = ({
 					supports.length > 0
 						? `${period} is not published by the requested source partition; supported periods are ${supports.flatMap((candidate) => candidate.source.periods).join(", ")}.`
 						: `No reviewed conversion is published from ${sourceGeography}/${sourceBoundaryYear} to ${analysisGeography.geography}/${analysisGeography.boundaryRelease} for ${requestedMeasure}.`,
+				...unavailableEvidence,
 			}),
 		};
+	const evidence = planEvidence(
+		context,
+		requestedMeasure,
+		period,
+		analysisGeography,
+		support,
+		validation,
+	);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -174,6 +302,7 @@ export const handleAnalysisGeographyRoutes = ({
 			source: support.source,
 			conversion: analysisConversion(support),
 			note: support.note,
+			...evidence,
 			result: `/v1/data/${requestedMeasure}/convert?period=${encodeURIComponent(period)}&geography=${support.source.geography}&boundaryYear=${support.source.boundaryYear}&${support.path ? "path" : "crosswalk"}=${encodeURIComponent(analysisConversion(support).id)}`,
 		}),
 	};

@@ -1322,13 +1322,10 @@ GET /v1/status
 - [ ] Let a caller provide a bounded list of canonical area references and
       receive a valid aggregate, comparison or profile, with every selected
       input, aggregation rule and coverage caveat echoed in the response.
-- [ ] Add a read-only analysis preflight which selects no data. It states the
-      source partition, conversion, aggregation rule, coverage, expected size
-      and safer alternatives for a requested analysis before a caller builds a
-      map, trend or data pipeline around it. `GET /v1/analysis:plan` states the
-      source partition, the crosswalk and whether the period is comparable;
-      the aggregation rule, coverage, expected size and alternatives are still
-      to add.
+- [x] Add a read-only analysis preflight which selects no data. It states the
+      source partition, reviewed conversion, aggregation rule, country-by-
+      country coverage, expected output size and safer alternatives before a
+      caller builds a map, trend or data pipeline around it.
 - [ ] Keep custom-geometry overlap as a design question, not a promised v1
       route. If evidence from the three golden paths justifies it, first define
       bounded input limits, caching, provenance, privacy/logging and a
