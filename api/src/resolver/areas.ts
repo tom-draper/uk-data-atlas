@@ -107,6 +107,26 @@ export class AreasResolver {
 		return this.inputs.areaLookup !== undefined;
 	}
 
+	/** Every exact geography/release pair with compiled area identities. */
+	areaReleases(): GeographyEndpoint[] {
+		return [...(this.inputs.areaLookup?.keys() ?? [])]
+			.map((identity) => {
+				const [geography, boundaryRelease] = identity.split("/", 2);
+				return geography && boundaryRelease
+					? { geography, boundaryRelease }
+					: undefined;
+			})
+			.filter(
+				(endpoint): endpoint is GeographyEndpoint =>
+					endpoint !== undefined,
+			)
+			.sort(
+				(left, right) =>
+					left.geography.localeCompare(right.geography) ||
+					right.boundaryRelease.localeCompare(left.boundaryRelease),
+			);
+	}
+
 	releaseAreas(geography: string, boundaryRelease: string) {
 		return this.inputs.areaLookup?.get(
 			releaseKey(geography, boundaryRelease),

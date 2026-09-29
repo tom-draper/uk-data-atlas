@@ -3960,13 +3960,17 @@
 			"operationId": "validateAreaValues",
 			"parameters": {
 				"query:geography": {
-					"required": true
+					"required": false
 				},
 				"query:release": {
-					"required": true
+					"required": false
 				},
 				"query:value": {
 					"required": true,
+					"maxItems": 500
+				},
+				"query:parent": {
+					"required": false,
 					"maxItems": 500
 				}
 			},
