@@ -84,6 +84,7 @@ test("finds the areas meeting a box, and says how each meets it", () => {
 					relation: string;
 					boundingBox: number[];
 					geometry?: unknown;
+					geometrySource?: unknown;
 					generalisation?: { vertices: number };
 				}[];
 			} & Record<string, never>;
@@ -110,6 +111,9 @@ test("finds the areas meeting a box, and says how each meets it", () => {
 
 		// Identities by default: the coordinates cost extra, and are opted into.
 		assert.equal("geometry" in data(enclosing).matches[0]!, false);
+		assert.deepEqual(data(enclosing).matches[0]!.geometrySource, {
+			sourceCrs: "EPSG:4326",
+		});
 		const withGeometry = get(`bbox=-3,53,0,56&${where}&tier=low`);
 		assert.ok(data(withGeometry).matches[0]!.geometry);
 		assert.equal(data(withGeometry).tier, "low");

@@ -4996,7 +4996,7 @@ paths:
                         - id: birmingham
                           label: Birmingham
                           href: /v1/locations/birmingham/members?geography=localAuthority&release=2023-05-uk-bgc-v2
-                      note: Membership is a direct code match against each named location's member codes. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.
+                      note: Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.
                     data:
                       status: available
                       counts:
