@@ -4256,15 +4256,17 @@ paths:
     get:
       operationId: validateAreaValues
       tags: ["Geography"]
-      summary: Validate a batch of area codes or names against one release
+      summary: Validate a batch of area codes or names, or infer their likely release
       x-likely-refusal:
         status: 400
         when: "No `value` is given to validate."
         x-example-request: "/v1/areas:validate?geography=ward&release=2024-12-uk-bgc"
       description: >
-        Checks each `value` against one exact boundary release before a caller
-        joins data to it, and says for every value what it names or why it
-        names nothing. At most 500 values may be sent in one request.
+        With `geography` and `release`, checks each `value` against one exact
+        boundary release before a caller joins data to it. Omit both to rank
+        compiled geography/releases by exact resolutions and report the likely
+        one; this is a diagnosis, never an automatic join or conversion. At
+        most 500 values may be sent in one request.
 
         A value shaped like an area code is `valid` when the release holds it.
         Otherwise it is `superseded` or `not-yet-current` when only older or
@@ -4279,25 +4281,27 @@ paths:
         `ambiguous` and lists them all; an `unmatched` name lists the other
         releases of the geography where it does match.
 
-        Each result says in `normalised` whether the value was trimmed or
+        Repeat `parent` alongside `value` to settle a shared name with a parent
+        code or name. It resolves only when exactly one candidate has a
+        published containment relationship to that parent. Each result says in `normalised` whether the value was trimmed or
         re-cased to be read, and in `duplicateOf` whether it repeats an earlier
         value. `summary.joinable` is true only when every value names exactly
         one area of the release.
       parameters:
         - name: geography
           in: query
-          required: true
+          required: false
           schema: { type: string }
           description: >
-            The geography of the boundary release to validate the values
-            against.
+            The geography of the boundary release to validate. Supply with
+            `release`, or omit both to infer a likely compiled release.
         - name: release
           in: query
-          required: true
+          required: false
           schema: { type: string }
           description: >
-            An exact boundary release id. `GET /boundary-releases:resolve`
-            selects one for a date.
+            An exact boundary release id. Supply with `geography`, or omit
+            both to infer a likely compiled release.
         - name: value
           in: query
           required: true
@@ -4306,6 +4310,14 @@ paths:
             maxItems: 500
             items: { type: string }
           description: A code or name to validate. Repeatable, in input order.
+        - name: parent
+          in: query
+          required: false
+          schema:
+            type: array
+            maxItems: 500
+            items: { type: string }
+          description: A parent code or name for the corresponding value. When supplied, repeat once per value in the same order.
       responses:
         "200":
           description: A result for every value, in input order, and a summary.

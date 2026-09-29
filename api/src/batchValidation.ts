@@ -19,7 +19,14 @@ import { areaKey, releaseKey } from "./geographyKeys";
 
 export const MAX_BATCH_VALUES = 500;
 
-type AreaRef = { id: string; code: string; name: string };
+export type AreaRef = { id: string; code: string; name: string };
+
+export type ParentMatch = {
+	value: string;
+	match: "code" | "name";
+	area: AreaRef;
+	crosswalk: string;
+};
 
 export type ValidatedValue = {
 	index: number;
@@ -28,6 +35,8 @@ export type ValidatedValue = {
 	normalised?: Array<"trimmed" | "uppercased">;
 	/** The position of the first identical value, when this repeats one. */
 	duplicateOf?: number;
+	/** The published parent relationship that made one shared name unique. */
+	parent?: ParentMatch;
 } & (
 	| { kind: "empty"; status: "empty" }
 	| { kind: "code"; status: "malformed-code"; detail: string }

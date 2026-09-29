@@ -20,11 +20,12 @@ export const handleAreaValidationRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	const values = parsedUrl.searchParams.getAll("value");
-	if (!geography || !boundaryRelease)
+	const parents = parsedUrl.searchParams.getAll("parent");
+	if (Boolean(geography) !== Boolean(boundaryRelease))
 		return problem(
 			400,
 			"Invalid Query",
-			"geography and release are required: values are validated against one exact boundary release. /v1/boundary-releases:resolve finds the release for a date.",
+			"geography and release must be supplied together, or both omitted to infer a likely compiled release.",
 		);
 	if (values.length === 0)
 		return problem(
@@ -38,10 +39,32 @@ export const handleAreaValidationRoutes = ({
 			"Invalid Query",
 			`At most ${MAX_BATCH_VALUES} values can be validated in one request; this one has ${values.length}.`,
 		);
+	if (parents.length > 0 && parents.length !== values.length)
+		return problem(
+			400,
+			"Invalid Query",
+			"parent, when supplied, must occur once for every value in the same input order.",
+		);
+	if (!geography || !boundaryRelease) {
+		const unavailable = geographyResolver.requires("areas");
+		if (unavailable) return unavailable;
+		const matched = geographyResolver.matchAreaValues(
+			values,
+			parents.length > 0 ? parents : undefined,
+		);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...matched,
+				note: "likely is the compiled geography/release with the most exact resolutions. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it.",
+			}),
+		};
+	}
 	const validated = geographyResolver.validateAreas(
 		geography,
 		boundaryRelease,
 		values,
+		parents.length > 0 ? parents : undefined,
 	);
 	if (!validated) return areaNotFound(context, geography, boundaryRelease);
 	return {

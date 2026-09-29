@@ -496,22 +496,17 @@ only **available** when its endpoint, contract and provenance are published.
       authorities, "Bristol" finds "Bristol, City of", "Ynys Mon" finds the
       Isle of Anglesey, and Allerdale's code is superseded, its name matching
       five older releases.
-- [ ] Accept a column of supplied codes or place names and return an auditable
-      match report: candidate geography/release, exact/alias/fuzzy match method,
-      ambiguity, unmatched values and recommended next action.
-      `/areas:validate` reports method, ambiguity and unmatched values, but
-      only against a release the caller names; choosing the candidate
-      geography and release from the values is still to do.
-- [ ] Settle a name shared by several areas with a parent column, such as a
-      ward's local authority, given by code or name. A name is resolved only
-      when the parent leaves exactly one area, and stays `ambiguous`
-      otherwise. The website's upload matching does this for wards and
-      parishes.
-- [ ] Detect mixed or stale code systems in the same input and propose only
-      published conversion paths; never silently normalise them.
-      `/areas:validate` already marks each stale or other-geography code;
-      diagnosing the input as a whole and proposing a conversion are still to
-      do.
+- [x] Accept a column of supplied codes or place names through
+      `GET /v1/areas:validate?value=`. With no geography/release it ranks the
+      likely compiled release by exact code/name/alias/title matches, reports
+      ambiguity and unmatched values, and never uses fuzzy matching.
+- [x] Settle a name shared by several areas with a repeated `parent` column,
+      given by code or name. A name is resolved only when one published
+      containment relationship matches that parent, and stays `ambiguous`
+      otherwise.
+- [x] Detect mixed or stale code systems in the same input. The whole-input
+      verdict remains unjoinable and recommends only published paths; it never
+      silently normalises or converts supplied values.
 - [ ] Provide a downloadable match result and a reproducible matching manifest,
       so a user can join their own dataset without redoing the Atlas's repair
       and code-resolution work.
@@ -1305,12 +1300,10 @@ GET /v1/status
 
 #### Geography-safe workflow primitives
 
-- [ ] Extend batch area validation to diagnose mixed or stale code systems,
+- [x] Extend batch area validation to diagnose mixed or stale code systems,
       duplicate values and ambiguous names, and to recommend only published
-      conversion paths. It must remain a diagnosis, not silently rewrite a
-      customer's data. Duplicates, ambiguous names and each stale code are
-      reported; a diagnosis of the whole input and a recommended conversion
-      are not.
+      conversion paths. It remains a diagnosis, not a rewrite of a customer's
+      data.
 - [ ] Find and rank declared conversion paths between two exact area identities,
       exposing each intermediate release, method, coverage and quality.
 - [ ] Make a small, carefully selected set of extensive measures available for
