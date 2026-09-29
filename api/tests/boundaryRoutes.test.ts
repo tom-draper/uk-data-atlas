@@ -5,7 +5,12 @@ import type { CrosswalkArtifact } from "../src/crosswalkInventory";
 import { createGeographyResolver } from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
 import type { RouteContext } from "../src/routing";
-import { route, registry, geographyInventory } from "./routeFixtures";
+import {
+	route,
+	registry,
+	geographyInventory,
+	testContext,
+} from "./routeFixtures";
 
 test("lists published geographies", () => {
 	const response = route("GET", "/v1/geographies", registry);
@@ -27,9 +32,77 @@ test("gets one boundary release", () => {
 		registry,
 	);
 	assert.equal(response.status, 200);
-	assert.equal(
-		"data" in response.body && response.body.data,
-		registry.releases[0],
+	assert.deepEqual("data" in response.body && response.body.data, {
+		...registry.releases[0],
+		downloads: {
+			status: "unavailable",
+			reason: "No map resource has been compiled for this release.",
+		},
+	});
+});
+
+test("links a boundary release to its whole-release downloads", () => {
+	const href = "/v1/map-resources/ward/2025-01-en-ward";
+	const withMap = (mapResources: RouteContext["mapResources"]) =>
+		routeRequest("GET", "/v1/boundary-releases/ward/2025-01-en-ward", {
+			...testContext({ boundaryRegistry: registry }),
+			mapResources,
+		}).body as { data: { downloads: unknown } };
+
+	const feature = (tier: string, format: string) => ({
+		tier,
+		format,
+		href: `${href}/features?tier=${tier}${format === "geojson" ? "&format=geojson" : ""}`,
+	});
+	assert.deepEqual(
+		withMap({
+			resources: [
+				{
+					id: "ward/2025-01-en-ward",
+					geography: "ward",
+					boundaryRelease: "2025-01-en-ward",
+					tiles: { href: `${href}.pmtiles` },
+					features: [
+						feature("full", "geoparquet-1.1"),
+						feature("low", "geoparquet-1.1"),
+						feature("full", "geojson"),
+						feature("low", "geojson"),
+					],
+				} as never,
+			],
+		}).data.downloads,
+		{
+			status: "available",
+			mapResource: href,
+			pmtiles: `${href}.pmtiles`,
+			tileJson: `${href}/tiles.json`,
+			geojson: {
+				full: `${href}/features?tier=full&format=geojson`,
+				low: `${href}/features?tier=low&format=geojson`,
+			},
+			geoparquet: {
+				full: `${href}/features?tier=full`,
+				low: `${href}/features?tier=low`,
+			},
+		},
+	);
+	// A release the build could not tile says why, rather than only that it
+	// is missing.
+	assert.deepEqual(
+		withMap({
+			resources: [],
+			unavailable: [
+				{
+					geography: "ward",
+					boundaryRelease: "2025-01-en-ward",
+					reason: "ward/2025-01-en-ward is not a coverage.",
+				},
+			],
+		}).data.downloads,
+		{
+			status: "unavailable",
+			reason: "ward/2025-01-en-ward is not a coverage.",
+		},
 	);
 });
 
