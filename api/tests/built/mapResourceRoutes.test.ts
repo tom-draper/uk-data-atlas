@@ -432,11 +432,11 @@ test("refuses a join the geometry cannot carry, and says what would work", () =>
 });
 
 test("refuses an ambiguous source rather than taking the first", () => {
-	// population-estimate publishes several partitions for 2022. Choosing one
+	// population publishes several partitions for 2022. Choosing one
 	// by catalogue order would make the answer depend on file ordering.
 	const refused = route(
 		"GET",
-		`/v1/map-resources/${RESOURCE}/join/population-estimate?period=2022`,
+		`/v1/map-resources/${RESOURCE}/join/population?period=2022`,
 		catalogues,
 	);
 	assert.equal(refused.status, 400);

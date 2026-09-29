@@ -5,7 +5,7 @@ import type { PlaceCandidate } from "../src/placeResolver";
 import { valueForPlace, type Dispatch } from "../src/placeValue";
 
 const measure = {
-	id: "population-estimate",
+	id: "population",
 	valueKind: "count",
 	unit: "people",
 	sources: [

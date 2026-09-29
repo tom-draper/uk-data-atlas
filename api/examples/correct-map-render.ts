@@ -174,7 +174,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 
 	// 5. The values, numbered with the ids the tiles carry.
 	const join = await client.get<Join>(
-		`${chosen.href}/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023`,
+		`${chosen.href}/join/population?period=2022&geography=localAuthority&boundaryYear=2023`,
 	);
 	if (join.data.join.method !== "code-match")
 		throw new Error("the join stopped being a code match");
@@ -205,7 +205,7 @@ export const plan = async (client: AtlasClient): Promise<MapPlan> => {
 	const tileJson = await client.get<TileJson>(`${href}/tiles.json`);
 	const layer = tileJson.data.vector_layers[0]!.id;
 	const join = await client.get<Join>(
-		`${href}/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023`,
+		`${href}/join/population?period=2022&geography=localAuthority&boundaryYear=2023`,
 	);
 	return {
 		style: mapStyle(tileJson.data, layer),

@@ -398,7 +398,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	const context = testContext(inputs);
 	const response = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards",
+		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards",
 		context,
 	);
 	assert.equal(response.status, 200);
@@ -436,7 +436,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	// also serves this measure.
 	const wrongGeography = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=test-wards",
+		"/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=test-wards",
 		context,
 	);
 	assert.equal(wrongGeography.status, 422);
@@ -455,7 +455,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	// question it can answer.
 	const withLegacy = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
+		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
 		context,
 	);
 	assert.equal(withLegacy.status, 200);
@@ -480,7 +480,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 	// unresolved code is refused rather than assumed to be harmless.
 	const unverifiable = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
+		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=incomplete-test-wards",
 		testContext({ ...inputs, areaLookup: undefined }),
 	);
 	assert.equal(unverifiable.status, 503);
@@ -494,7 +494,7 @@ test("aggregates an extensive measure only over a complete direct named-location
 
 	const conversion = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards&release=2023-05-uk-bgc",
+		"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=test-wards&release=2023-05-uk-bgc",
 		context,
 	);
 	assert.equal(conversion.status, 422);
@@ -563,7 +563,7 @@ test("sums a location whose members span several code vintages", () => {
 	});
 	const response = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=spanning",
+		"/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=spanning",
 		context,
 	);
 	assert.equal(
@@ -585,7 +585,7 @@ test("sums a location whose members span several code vintages", () => {
 	const detail = (locationId: string) => {
 		const refused = routeRequest(
 			"GET",
-			`/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=${locationId}`,
+			`/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&locationId=${locationId}`,
 			context,
 		);
 		assert.equal(refused.status, 422);

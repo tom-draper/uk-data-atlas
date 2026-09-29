@@ -115,6 +115,11 @@ export type Measure = {
 	};
 	links: { data: string };
 	/**
+	 * Other names the measure answers to, each naming it alone, accepted
+	 * wherever its id is.
+	 */
+	aliases?: string[];
+	/**
 	 * The question this measure answers, where another nation publishes its own
 	 * answer to the same one. Set alongside `elsewhere`.
 	 */
@@ -201,7 +206,7 @@ export const isNumericObservation = (
 export type PopulationObservationArtifact = {
 	schemaVersion: 1;
 	contentHash: string;
-	measureId: "population-estimate";
+	measureId: "population";
 	period: "2022";
 	sourceGeography: { type: "ward"; boundaryYear: 2023 };
 	records: PopulationObservation[];
@@ -229,7 +234,7 @@ export type AnyMeasureObservationArtifact =
 export type PopulationLocalAuthorityObservationArtifact = {
 	schemaVersion: 1;
 	contentHash: string;
-	measureId: "population-estimate";
+	measureId: "population";
 	sourceGeography: { type: "localAuthority"; boundaryYear: 2023 };
 	periods: Array<{ period: string; records: PopulationObservation[] }>;
 };
@@ -244,7 +249,7 @@ export const isLegacyPopulationSource = (
 	measureId: string,
 	source: MeasureSource,
 ) =>
-	measureId === "population-estimate" &&
+	measureId === "population" &&
 	LEGACY_POPULATION_DATASETS.has(source.datasetId);
 
 /**
@@ -257,7 +262,7 @@ export const observationArtifactName = (
 	source: MeasureSource,
 ) => {
 	if (source.observationArtifact) return source.observationArtifact;
-	if (measureId !== "population-estimate") return `${measureId}-observations`;
+	if (measureId !== "population") return `${measureId}-observations`;
 	if (source.datasetId === "population") return "population-observations";
 	if (source.datasetId === "population-uk")
 		return "population-local-authority-observations";

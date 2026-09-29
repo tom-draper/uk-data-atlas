@@ -3,11 +3,11 @@ import test from "node:test";
 import { dataCatalog, routeWithData } from "./routeFixtures";
 
 test("publishes source and boundary code coverage without claiming equal geometry", () => {
-	const response = routeWithData("/v1/measures/population-estimate/coverage");
+	const response = routeWithData("/v1/measures/population/coverage");
 	assert.equal(response.status, 200);
 	assert.deepEqual("data" in response.body && response.body.data, {
 		measure: {
-			id: "population-estimate",
+			id: "population",
 			valueKind: "count",
 			unit: "people",
 			availability: {
@@ -15,7 +15,7 @@ test("publishes source and boundary code coverage without claiming equal geometr
 				conversion: false,
 				aggregation: true,
 			},
-			href: "/v1/measures/population-estimate",
+			href: "/v1/measures/population",
 		},
 		sources: [
 			{
@@ -40,7 +40,7 @@ test("publishes source and boundary code coverage without claiming equal geometr
 				],
 				assessment: {
 					status: "assessed",
-					href: "/v1/measures/population-estimate/compatibility",
+					href: "/v1/measures/population/compatibility",
 					note: "Boundary coverage compares area-code membership only; it does not assert equal geometry.",
 				},
 			},

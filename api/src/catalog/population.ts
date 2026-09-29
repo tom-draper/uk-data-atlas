@@ -211,7 +211,7 @@ export const compilePopulation = (
 	}
 	const constituencyContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population-estimate",
+		measureId: "population",
 		sourceGeography: { type: "constituency", boundaryYear: 2024 },
 		periods: constituencyPeriods,
 	});
@@ -239,7 +239,7 @@ export const compilePopulation = (
 		);
 	}
 	const measure: Measure = {
-		id: "population-estimate",
+		id: "population",
 		label: "Population estimate",
 		valueKind: "count",
 		unit: "people",
@@ -288,18 +288,18 @@ export const compilePopulation = (
 			conversion: false,
 			aggregation: true,
 		},
-		links: { data: "/v1/data/population-estimate" },
+		links: { data: "/v1/data/population" },
 	};
 	const observationsContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population-estimate",
+		measureId: "population",
 		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
 		records,
 	});
 	const localAuthorityObservationsContent = JSON.stringify({
 		schemaVersion: 1,
-		measureId: "population-estimate",
+		measureId: "population",
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: localAuthorityPeriods,
 	});
@@ -308,7 +308,7 @@ export const compilePopulation = (
 		wardObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(observationsContent),
-			measureId: "population-estimate",
+			measureId: "population",
 			period: "2022",
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
 			records,
@@ -316,14 +316,14 @@ export const compilePopulation = (
 		localAuthorityObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(localAuthorityObservationsContent),
-			measureId: "population-estimate",
+			measureId: "population",
 			sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 			periods: localAuthorityPeriods,
 		},
 		constituencyObservations: {
 			schemaVersion: 1,
 			contentHash: sha256(constituencyContent),
-			measureId: "population-estimate",
+			measureId: "population",
 			sourceGeography: { type: "constituency", boundaryYear: 2024 },
 			periods: constituencyPeriods,
 		},

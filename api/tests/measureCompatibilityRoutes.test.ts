@@ -10,7 +10,7 @@ import {
 test("publishes measure boundary candidates as code compatibility only", () => {
 	const response = routeRequest(
 		"GET",
-		"/v1/measures/population-estimate/compatibility",
+		"/v1/measures/population/compatibility",
 		testContext({
 			boundaryRegistry: registry,
 			measureCompatibilityInventory,

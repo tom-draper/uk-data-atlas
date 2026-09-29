@@ -527,8 +527,18 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Catalogue compiled datasets with their source inputs, hashes, licences,
       temporal coverage and record counts through `GET /v1/datasets`; publish
       the first measure definitions through `GET /v1/measures`.
+- [x] Find a measure by the words people use through
+      `GET /v1/measures?q=`: `population`, `house prices` and `deprivation`
+      list their measures, best first, and a search never chooses one for the
+      caller. A small reviewed set of aliases, each naming one measure alone,
+      is accepted wherever a measure id is, in a path or a `measure`
+      parameter, and the response's `Content-Location` names the request it
+      was read as. `population-estimate`, the population measure's id before
+      it became `population`, is one of them. A word naming several measures,
+      such as `deprivation`, is never an alias; the build refuses an alias
+      that is already an id or names no published measure.
 - [x] Return source-exact population estimates through
-      `GET /v1/data/population-estimate`: 2022 Ward 2023 codes in England and
+      `GET /v1/data/population`: 2022 Ward 2023 codes in England and
       Wales, plus 2011–2024 Local Authority 2023 codes across all four UK
       nations. A caller can opt into a code-compatible geometry release for a
       map join; the route still has no implicit release selection, conversion
@@ -585,7 +595,7 @@ only **available** when its endpoint, contract and provenance are published.
       from their source partitions, country and named location from
       `/aggregate`, and constituency from ONS's own mid-2021 and mid-2022
       estimates for the 575 July 2024 constituencies in England and Wales,
-      served as a third partition of `population-estimate`. They are not ward
+      served as a third partition of `population`. They are not ward
       estimates added up: wards do not nest within these constituencies, and
       ONS's ward-to-constituency lookup splits some wards between them without
       weights, so no exact conversion exists.
@@ -1977,7 +1987,7 @@ series or field within it:
 
 ```
 dataset/population-uk@2026.09.0
-measure/population-estimate
+measure/population
 measure/population-density
 ```
 
@@ -2070,12 +2080,12 @@ GET /v1/locations
 Example:
 
 ```http
-GET /v1/measures/population-estimate
+GET /v1/measures/population
 ```
 
 ```json
 {
-	"id": "population-estimate",
+	"id": "population",
 	"label": "Population estimate",
 	"valueKind": "count",
 	"aggregation": { "kind": "extensive", "operation": "sum" },
@@ -2100,7 +2110,7 @@ GET /v1/measures/population-estimate
 		}
 	],
 	"links": {
-		"data": "/v1/data/population-estimate"
+		"data": "/v1/data/population"
 	}
 }
 ```
@@ -2354,7 +2364,7 @@ presentation rounding.
 Allow it only under explicit rules:
 
 ```
-GET /v1/data/population-estimate/aggregate?period={period}&geography={source-geography}&boundaryYear={source-boundary-year}&locationId={location-id}
+GET /v1/data/population/aggregate?period={period}&geography={source-geography}&boundaryYear={source-boundary-year}&locationId={location-id}
 GET /v1/data/population-density?area=location/devon@2026-09&period=2022
 ```
 
@@ -3751,16 +3761,16 @@ catalogues by the contract tests:
 - `GET /v1/geography-inventory`
 - `GET /v1/datasets`
 - `GET /v1/measures`
-- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023`
-- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
-- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
-- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv`
-- `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
-- `GET /v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023`
-- `GET /v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039`
-- `GET /v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022`
-- `GET /v1/data/population-estimate/value?place=Cornwall&period=2022`
+- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023`
+- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc`
+- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
+- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=csv`
+- `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
+- `GET /v1/data/population/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023`
+- `GET /v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039`
+- `GET /v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022`
+- `GET /v1/data/population/value?place=Cornwall&period=2022`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/measures/ghg-emissions/coverage`
@@ -3780,18 +3790,18 @@ catalogues by the contract tests:
 - `GET /v1/data/unemployment-rate/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2019`
 - `GET /v1/data/no2-background-mean/aggregate?period=2024&geography=localAuthority&boundaryYear=2024&areaCode=W92000004`
 - `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
-- `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
-- `GET /v1/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
+- `GET /v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap`
 - `GET /v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership`
-- `GET /v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc`
+- `GET /v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2025&geography=lsoa&boundaryYear=2021&release=2021-12-ew-bgc-v5&include=area`
 - `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/population-estimate?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
+- `GET /v1/data/population?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
 - `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`

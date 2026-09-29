@@ -94,7 +94,7 @@ const context = testContext({
 });
 
 const population = dataCatalog.measures.find(
-	(measure) => measure.id === "population-estimate",
+	(measure) => measure.id === "population",
 )!;
 
 test("answers each country on its own, and names the one with no source", () => {
@@ -179,7 +179,7 @@ test("has no plan for a release it holds no areas for", () => {
 
 test("the route answers one exact release, and says so when asked for less", () => {
 	const missing = routeWithData(
-		"/v1/measures/population-estimate/coverage-plan?geography=ward",
+		"/v1/measures/population/coverage-plan?geography=ward",
 	);
 	assert.equal(missing.status, 400);
 	assert.match(
@@ -193,7 +193,7 @@ test("the route answers one exact release, and says so when asked for less", () 
 		404,
 	);
 	const response = routeWithData(
-		"/v1/measures/population-estimate/coverage-plan?geography=ward&release=2025-01-en-ward",
+		"/v1/measures/population/coverage-plan?geography=ward&release=2025-01-en-ward",
 	);
 	assert.equal(response.status, 200);
 	const { data } = response.body as {

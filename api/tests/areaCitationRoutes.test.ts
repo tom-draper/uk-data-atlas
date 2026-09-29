@@ -208,16 +208,16 @@ test("cites an area with its release, identity hash, validation and attribution"
 
 test("cites a measure through the observations holding the area's value", () => {
 	const { status, data } = citation(
-		"/v1/areas/ward/2023-05-uk-bgc/E05000001/citation?measure=population-estimate",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001/citation?measure=population",
 	);
 	assert.equal(status, 200);
 	assert.ok(data);
 	assert.deepEqual(data.identity, { status: "not-published" });
 	assert.deepEqual(data.measures, [
 		{
-			id: "population-estimate",
+			id: "population",
 			label: "Population estimate",
-			href: "/v1/measures/population-estimate",
+			href: "/v1/measures/population",
 			sources: [
 				{
 					dataset: {
@@ -261,12 +261,12 @@ test("refuses to cite a resource that supplies nothing for the area", () => {
 		"crosswalk=constituency-2010-to-2024 publishes no relationship for ward/2025-01-en-ward/E05000001.",
 	);
 	const unassessedMeasure = citation(
-		"/v1/areas/ward/2025-01-en-ward/E05000001/citation?measure=population-estimate",
+		"/v1/areas/ward/2025-01-en-ward/E05000001/citation?measure=population",
 	);
 	assert.equal(unassessedMeasure.status, 422);
 	assert.equal(
 		unassessedMeasure.detail,
-		"measure=population-estimate publishes no observation for ward/2025-01-en-ward/E05000001 in a source assessed against this boundary release.",
+		"measure=population publishes no observation for ward/2025-01-en-ward/E05000001 in a source assessed against this boundary release.",
 	);
 	assert.equal(
 		citation(

@@ -4,7 +4,7 @@ import { routeWithData } from "./routeFixtures";
 
 test("compares two source-exact areas in an explicit direction", () => {
 	const response = routeWithData(
-		"/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001",
+		"/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001",
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
@@ -25,13 +25,13 @@ test("compares two source-exact areas in an explicit direction", () => {
 	});
 	assert.equal(
 		routeWithData(
-			"/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=E05000001",
+			"/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=E05000001",
 		).status,
 		400,
 	);
 	assert.equal(
 		routeWithData(
-			"/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001&release=2023-05-uk-bgc",
+			"/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000001&comparisonAreaCode=W05000001&release=2023-05-uk-bgc",
 		).status,
 		422,
 	);

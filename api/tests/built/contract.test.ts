@@ -430,10 +430,10 @@ test("names each operation's most likely refusal, and produces it", () => {
 const PAGINATED = [
 	"/v1/areas?geography=ward&release=2024-12-uk-bgc",
 	"/v1/crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment/records",
-	"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023",
-	"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
-	"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023",
-	"/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
+	"/v1/data/population?period=2022&geography=ward&boundaryYear=2023",
+	"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+	"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023",
+	"/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
 ];
 
 test("pages every cursor route the same way", () => {
@@ -483,7 +483,7 @@ test("serves each representation the OpenAPI document declares", () => {
 		);
 	};
 	const data =
-		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=1";
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=1";
 	assert.deepEqual(
 		[
 			served(data),
@@ -510,23 +510,23 @@ test("serves each representation the OpenAPI document declares", () => {
 	const page = route("GET", `${data}&format=csv`, catalogues);
 	assert.match(
 		page.representation?.headers?.link ?? "",
-		/^<\/v1\/data\/population-estimate\?[^>]*cursor=[^>]+>; rel="next"$/,
+		/^<\/v1\/data\/population\?[^>]*cursor=[^>]+>; rel="next"$/,
 	);
 });
 
 /** The derivative data routes, each with a query that reaches its work. */
 const DERIVATIVE = [
-	"/v1/data/population-estimate/series?areaCode=E05000932&geography=ward&boundaryYear=2023",
-	"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023",
-	"/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
-	"/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039",
-	"/v1/data/population-estimate/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=north-west",
-	"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
+	"/v1/data/population/series?areaCode=E05000932&geography=ward&boundaryYear=2023",
+	"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023",
+	"/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
+	"/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039",
+	"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=north-west",
+	"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
 ];
 
 test("keeps a geometry release from standing in for a conversion", () => {
 	const base =
-		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=3";
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=3";
 	const sourceExact = route("GET", base, catalogues);
 	const joined = route("GET", `${base}&release=2023-05-uk-bgc`, catalogues);
 	const records = (response: typeof sourceExact) =>
@@ -868,8 +868,8 @@ const CAPABILITY_REQUESTS = [
 	"/v1/areas/ward/2024-12-uk-bgc/E05011403/capabilities",
 	"/v1/areas/lsoa/2021-12-ew-bgc-v5/E01011264/capabilities",
 	"/v1/areas/region/2025-12-en-bgc/E12000003/capabilities",
-	"/v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc",
-	"/v1/measures/population-estimate/coverage?geography=localAuthority&release=2025-12-uk-bgc",
+	"/v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc",
+	"/v1/measures/population/coverage?geography=localAuthority&release=2025-12-uk-bgc",
 	"/v1/measures/road-collisions/coverage?geography=localAuthority&release=2023-05-uk-bgc-v2",
 	"/v1/measures/general-election-turnout/coverage?geography=localAuthority&release=2024-05-uk-bgc",
 	"/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership",

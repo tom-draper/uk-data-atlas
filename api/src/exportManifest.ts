@@ -197,7 +197,7 @@ const exportDataset = (dataCatalog: DataCatalog, id: string): ExportDataset => {
 };
 
 const legacyArtifactName = (measureId: string, datasetId: string) =>
-	measureId === "population-estimate" && datasetId === "population"
+	measureId === "population" && datasetId === "population"
 		? "population-observations"
 		: "population-local-authority-observations";
 

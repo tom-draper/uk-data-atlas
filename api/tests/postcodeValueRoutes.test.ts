@@ -144,7 +144,7 @@ const measureCompatibilityInventory = {
 	contentHash: "sha256:compatibility",
 	measures: [
 		{
-			measureId: "population-estimate",
+			measureId: "population",
 			sources: [
 				{
 					datasetId: "population",
@@ -213,7 +213,7 @@ const get = (url: string, routeContext = valueContext) => {
 
 test("answers for the finest area the data was published for that contains the postcode", () => {
 	const { status, data, body } = get(
-		"/v1/data/population-estimate/value?postcode=ec1a1aa",
+		"/v1/data/population/value?postcode=ec1a1aa",
 	);
 	assert.equal(status, 200, JSON.stringify(body).slice(0, 400));
 	assert.deepEqual(data.answer, {
@@ -235,13 +235,13 @@ test("answers for the finest area the data was published for that contains the p
 	assert.equal(data.postcode.postcode, "EC1A 1AA");
 	assert.equal(
 		data.via,
-		"/v1/data/population-estimate/series?areaCode=E05000001&geography=ward&boundaryYear=2023",
+		"/v1/data/population/series?areaCode=E05000001&geography=ward&boundaryYear=2023",
 	);
 	assert.deepEqual(data.otherGeographies, [
 		{
 			geography: "localAuthority",
 			boundaryYear: 2023,
-			ask: "/v1/data/population-estimate/value?postcode=EC1A+1AA&geography=localAuthority",
+			ask: "/v1/data/population/value?postcode=EC1A+1AA&geography=localAuthority",
 		},
 	]);
 	assert.equal(data.passedOver, undefined);
@@ -251,7 +251,7 @@ test("answers for the finest area the data was published for that contains the p
 
 test("falls back to a coarser geography when a finer one has no value there", () => {
 	const { status, data } = get(
-		"/v1/data/population-estimate/value?postcode=EC1A1AB",
+		"/v1/data/population/value?postcode=EC1A1AB",
 	);
 	assert.equal(status, 200);
 	assert.equal(data.area.id, "localAuthority/2023-05-uk-bgc-v2/E06000001");
@@ -263,7 +263,7 @@ test("falls back to a coarser geography when a finer one has no value there", ()
 
 test("reads the geography and period the caller names", () => {
 	const { data } = get(
-		"/v1/data/population-estimate/value?postcode=EC1A1AA&geography=localAuthority&period=2023",
+		"/v1/data/population/value?postcode=EC1A1AA&geography=localAuthority&period=2023",
 	);
 	assert.equal(data.answer.value, 290);
 	assert.equal(data.answer.periodDefaulted, false);
@@ -274,7 +274,7 @@ test("reads the geography and period the caller names", () => {
 
 test("passes over a source that does not cover the postcode's country", () => {
 	const { status, body } = get(
-		"/v1/data/population-estimate/value?postcode=EH11YZ",
+		"/v1/data/population/value?postcode=EH11YZ",
 	);
 	assert.equal(status, 422);
 	assert.deepEqual(
@@ -288,29 +288,29 @@ test("passes over a source that does not cover the postcode's country", () => {
 test("says why a postcode's value cannot be answered", () => {
 	const cases: Array<[string, number, RegExp]> = [
 		[
-			"/v1/data/population-estimate/value?postcode=EC1A1AA&place=Hartlepool",
+			"/v1/data/population/value?postcode=EC1A1AA&place=Hartlepool",
 			400,
 			/not both/,
 		],
-		["/v1/data/population-estimate/value?postcode=EC1A", 400, /district/],
-		["/v1/data/population-estimate/value?postcode=EC1A9ZZ", 404, /./],
+		["/v1/data/population/value?postcode=EC1A", 400, /district/],
+		["/v1/data/population/value?postcode=EC1A9ZZ", 404, /./],
 		[
-			"/v1/data/population-estimate/value?postcode=GY11AA",
+			"/v1/data/population/value?postcode=GY11AA",
 			422,
 			/no grid reference/,
 		],
 		[
-			"/v1/data/population-estimate/value?postcode=EC1A1AA&geography=msoa",
+			"/v1/data/population/value?postcode=EC1A1AA&geography=msoa",
 			422,
 			/not published for msoa/,
 		],
 		[
-			"/v1/data/population-estimate/value?postcode=EC1A1AA&period=1999",
+			"/v1/data/population/value?postcode=EC1A1AA&period=1999",
 			422,
 			/no source for 1999/,
 		],
 		[
-			"/v1/data/population-estimate/value?postcode=EC1A1AA&boundaryYear=23",
+			"/v1/data/population/value?postcode=EC1A1AA&boundaryYear=23",
 			400,
 			/four-digit/,
 		],
@@ -321,7 +321,7 @@ test("says why a postcode's value cannot be answered", () => {
 		assert.match(response.body.detail, detail, url);
 	}
 	const withoutCompatibility = get(
-		"/v1/data/population-estimate/value?postcode=EC1A1AA",
+		"/v1/data/population/value?postcode=EC1A1AA",
 		context({ measureCompatibilityInventory: undefined }),
 	);
 	assert.equal(withoutCompatibility.status, 503);
@@ -364,11 +364,11 @@ test("says why a query written as a postcode found no postcode", () => {
 
 test("answers a value for a postcode given as a place or its reference", () => {
 	const direct = get(
-		"/v1/data/population-estimate/value?postcode=EC1A1AA",
+		"/v1/data/population/value?postcode=EC1A1AA",
 	).data;
 	for (const place of ["postcode/EC1A1AA", "ec1a%201aa"]) {
 		const { status, data } = get(
-			`/v1/data/population-estimate/value?place=${place}`,
+			`/v1/data/population/value?place=${place}`,
 		);
 		assert.equal(status, 200, place);
 		assert.deepEqual(data.answer, direct.answer);
@@ -399,9 +399,9 @@ test("answers a postcode's value from the postcode area index without reading ge
 		}),
 	});
 	for (const url of [
-		"/v1/data/population-estimate/value?postcode=EC1A1AA",
-		"/v1/data/population-estimate/value?postcode=EC1A1AB",
-		"/v1/data/population-estimate/value?postcode=EH11YZ",
+		"/v1/data/population/value?postcode=EC1A1AA",
+		"/v1/data/population/value?postcode=EC1A1AB",
+		"/v1/data/population/value?postcode=EH11YZ",
 	])
 		assert.deepEqual(get(url, compiled).body, get(url).body, url);
 	assert.equal(areaGeometryCache.stats().loads, 0);

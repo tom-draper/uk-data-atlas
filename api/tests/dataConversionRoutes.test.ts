@@ -18,7 +18,7 @@ import {
 
 test("converts a measure only through a crosswalk the caller names", () => {
 	const base =
-		"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023";
+		"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023";
 
 	// The route never picks a conversion path on the caller's behalf.
 	assert.equal(routeWithData(base).status, 400);
@@ -159,7 +159,7 @@ const pathContext = (second: CrosswalkArtifact) =>
 
 test("converts a measure through every step of a published path the caller names", () => {
 	const base =
-		"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023";
+		"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023";
 	const context = pathContext(
 		authorityToArea([
 			[
@@ -227,7 +227,7 @@ test("converts a measure through every step of a published path the caller names
 test("refuses a path whose later step would drop a value", () => {
 	const refused = routeRequest(
 		"GET",
-		"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&path=ward-to-health-area",
+		"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&path=ward-to-health-area",
 		pathContext(authorityToArea([["E08000001", [["H1", 1]]]])),
 	);
 

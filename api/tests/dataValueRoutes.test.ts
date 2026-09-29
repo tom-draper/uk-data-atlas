@@ -47,7 +47,7 @@ test("answers a measure for a place named in words", () => {
 		["localAuthority/N09000001"],
 	);
 
-	const answered = get("/v1/data/population-estimate/value?place=Hartlepool");
+	const answered = get("/v1/data/population/value?place=Hartlepool");
 	assert.equal(
 		answered.status,
 		200,
@@ -83,7 +83,7 @@ test("answers a measure for a place named in words", () => {
 	assert.equal(direct.status, 200);
 
 	const earlier = get(
-		"/v1/data/population-estimate/value?place=Hartlepool&period=2022",
+		"/v1/data/population/value?place=Hartlepool&period=2022",
 	);
 	assert.equal(
 		(earlier.body as { data: { answer: { value: number } } }).data.answer
@@ -92,10 +92,10 @@ test("answers a measure for a place named in words", () => {
 	);
 
 	assert.equal(
-		get("/v1/data/population-estimate/value?place=Atlantis").status,
+		get("/v1/data/population/value?place=Atlantis").status,
 		404,
 	);
-	assert.equal(get("/v1/data/population-estimate/value").status, 400);
+	assert.equal(get("/v1/data/population/value").status, 400);
 	assert.equal(
 		get("/v1/data/no-such-measure/value?place=Hartlepool").status,
 		404,

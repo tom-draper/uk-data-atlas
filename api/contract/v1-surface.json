@@ -1433,7 +1433,11 @@
 		},
 		"GET /measures": {
 			"operationId": "listMeasures",
-			"parameters": {},
+			"parameters": {
+				"query:q": {
+					"required": false
+				}
+			},
 			"responses": {
 				"200 application/json": [
 					"apiVersion",

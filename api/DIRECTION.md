@@ -86,8 +86,9 @@ boundary release, answering common questions in one request.
 
 - The measures most questions reach for are present across all four nations
   where the sources allow, and coverage is stated where they don't.
-- They are discoverable by the words people use. `population` should find
-  `population-estimate`. Today it is a 404.
+- They are discoverable by the words people use. `GET /measures?q=` finds
+  them by id, alias, label or dataset title, and a reviewed alias is accepted
+  wherever a measure id is.
 - Any measure can be asked for any place (name, code, postcode, named
   location) in one request, with the method used named in the answer.
   `/data/{measure}/value` already does this well.
@@ -117,19 +118,19 @@ These are the acceptance tests. A pillar is done when its questions are
 answered in one or two obvious requests, without reading the README. Add
 questions as they occur to us. Status is from the local run on 2026-09-29.
 
-| Question                                                | Status         | Notes                                                                                                                                                                                              |
-| ------------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| What's the population of North Wales?                   | ✅ one request | `/data/population-estimate/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant. Only friction: the measure id.                              |
-| What's the population of North Wales? (guessing the id) | ❌             | `/data/population/value` is a 404. Needs measure aliases and search.                                                                                                                               |
-| I have 100 LAD codes; which boundary set are they?      | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. Codes travel as 100 query parameters; should also accept a body.                                                                    |
-| What replaced Allerdale?                                | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                |
-| Which wards are in Manchester?                          | ✅             | `children`.                                                                                                                                                                                        |
-| What's at this postcode?                                | ✅             | `/postcodes/{postcode}`.                                                                                                                                                                           |
-| What's the history of Lancashire?                       | ❌             | Lancashire county exists in one release (2025) with no lineage. The named location is an editorial list of 14 councils. There are no ceremonial or historic counties and no reorganisation events. |
-| Give me all 2019 ward boundaries as one file            | ❌             | No whole-release download except LADs, May 2023.                                                                                                                                                   |
-| Map my CSV of 2019 ward values                          | ❌             | Needs the above, plus a stateless join.                                                                                                                                                            |
-| Convert my 2019 ward counts to 2024 constituencies      | ⚠️             | Code translation exists for some pairs; there is no way to send your own values.                                                                                                                   |
-| What were the boundaries of X in 2005?                  | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                       |
+| Question                                           | Status         | Notes                                                                                                                                                                                              |
+| -------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What's the population of North Wales?              | ✅ one request | `/data/population/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant.                                                                      |
+| Which measures are about house prices?             | ✅ one request | `/measures?q=house prices` finds `house-price-median`, and `house-prices` is accepted wherever the id is. `q=deprivation` lists all four national indices rather than choosing one.                |
+| I have 100 LAD codes; which boundary set are they? | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. Codes travel as 100 query parameters; should also accept a body.                                                                    |
+| What replaced Allerdale?                           | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                |
+| Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                        |
+| What's at this postcode?                           | ✅             | `/postcodes/{postcode}`.                                                                                                                                                                           |
+| What's the history of Lancashire?                  | ❌             | Lancashire county exists in one release (2025) with no lineage. The named location is an editorial list of 14 councils. There are no ceremonial or historic counties and no reorganisation events. |
+| Give me all 2019 ward boundaries as one file       | ❌             | No whole-release download except LADs, May 2023.                                                                                                                                                   |
+| Map my CSV of 2019 ward values                     | ❌             | Needs the above, plus a stateless join.                                                                                                                                                            |
+| Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Code translation exists for some pairs; there is no way to send your own values.                                                                                                                   |
+| What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                       |
 
 ## UX rules
 

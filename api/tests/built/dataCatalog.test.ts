@@ -2118,7 +2118,7 @@ test("names what covers the nations a measure does not", () => {
 
 	// A measure with no national variant carries neither field, rather than an
 	// empty one a client would have to interpret.
-	const population = byId.get("population-estimate");
+	const population = byId.get("population");
 	assert.equal(population?.elsewhere, undefined);
 	assert.equal(population?.concept, undefined);
 });

@@ -163,7 +163,7 @@ test("records a geometry join only where one was asked for", () => {
 	// Without a release the response must say so rather than leaving the
 	// field out, because a reader cannot tell absence from omission.
 	const without = answered(
-		"/v1/data/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023&limit=1",
+		"/v1/data/population?period=2022&geography=localAuthority&boundaryYear=2023&limit=1",
 	).data.provenance;
 	assert.equal(
 		without.geography.match.status,
@@ -174,7 +174,7 @@ test("records a geometry join only where one was asked for", () => {
 	// With one, the release named must be the release asked for, and it must
 	// be recorded as a code join rather than a conversion.
 	const withRelease = answered(
-		"/v1/data/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc-v2&limit=1",
+		"/v1/data/population?period=2022&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc-v2&limit=1",
 	).data.provenance;
 	assert.equal(
 		withRelease.geography.match.status,
@@ -192,7 +192,7 @@ test("carries the same provenance into a tabular representation", () => {
 	// same request in JSON names the same artifact and hash. A download that
 	// cannot be traced back is the thing this guards against.
 	const url =
-		"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&limit=2";
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&limit=2";
 	const json = answered(url).data.provenance.source.observations;
 	const csv = route("GET", `${url}&format=csv`, catalogues);
 	assert.equal(csv.status, 200);

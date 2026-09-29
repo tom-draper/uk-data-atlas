@@ -1,10 +1,12 @@
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { searchMeasures } from "./measureTerms";
 
 /** Dataset and measure metadata discovery, separate from analytical operations. */
 export const handleCatalogueRoutes = ({
 	context,
 	releaseId,
+	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
 	const { dataCatalog } = context;
@@ -35,14 +37,26 @@ export const handleCatalogueRoutes = ({
 					"No published dataset matches that id.",
 				);
 	}
-	if (segments[1] === "measures" && segments.length === 2)
+	if (segments[1] === "measures" && segments.length === 2) {
+		// A search never picks one: it lists every match, best first, and an
+		// empty list is an answer, not a refusal.
+		const query = parsedUrl.searchParams.get("q");
 		return dataCatalog
-			? { status: 200, body: envelope(releaseId, dataCatalog.measures) }
+			? {
+					status: 200,
+					body: envelope(
+						releaseId,
+						query === null
+							? dataCatalog.measures
+							: searchMeasures(dataCatalog, query),
+					),
+				}
 			: problem(
 					503,
 					"Catalogue Unavailable",
 					"Build the data catalogue before listing measures.",
 				);
+	}
 	if (segments[1] === "measures" && segments.length === 3) {
 		if (!dataCatalog)
 			return problem(

@@ -70,7 +70,7 @@ const context = testContext({
 });
 
 const population = dataCatalog.measures.find(
-	(measure) => measure.id === "population-estimate",
+	(measure) => measure.id === "population",
 )!;
 
 test("answers from a source published on the release", () => {
@@ -103,7 +103,7 @@ test("offers only a conversion the convert route would accept", () => {
 				period: "2022",
 			},
 			method: "exact",
-			href: "/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=wards-to-lad-a",
+			href: "/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=wards-to-lad-a",
 		},
 	]);
 

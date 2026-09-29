@@ -20,7 +20,7 @@ const dataCatalog: DataCatalog = {
 	datasets: [],
 	measures: [
 		{
-			id: "population-estimate",
+			id: "population",
 			label: "Population estimate",
 			valueKind: "count",
 			unit: "people",
@@ -61,7 +61,7 @@ const dataCatalog: DataCatalog = {
 				conversion: false,
 				aggregation: false,
 			},
-			links: { data: "/v1/data/population-estimate" },
+			links: { data: "/v1/data/population" },
 		},
 	],
 };
@@ -130,7 +130,7 @@ const artifacts: AreaReleaseArtifact[] = [
 const wardObservations: PopulationObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:ward-observations",
-	measureId: "population-estimate",
+	measureId: "population",
 	period: "2022",
 	sourceGeography: { type: "ward", boundaryYear: 2023 },
 	records: [
@@ -143,7 +143,7 @@ const localAuthorityObservations: PopulationLocalAuthorityObservationArtifact =
 	{
 		schemaVersion: 1,
 		contentHash: "sha256:local-authority-observations",
-		measureId: "population-estimate",
+		measureId: "population",
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: [
 			{
@@ -229,6 +229,6 @@ test("assesses the codes of every period in a partition, not only the first", ()
 				localAuthorityObservations,
 				[emissionsObservations],
 			),
-		/No population-estimate observations exist for localAuthority in 2025\./,
+		/No population observations exist for localAuthority in 2025\./,
 	);
 });

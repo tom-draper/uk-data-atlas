@@ -187,7 +187,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 		...inventory,
 		supports: [
 			{
-				measureId: "population-estimate",
+				measureId: "population",
 				analysisGeography: {
 					geography: "localAuthority",
 					boundaryRelease: "2025-01-uk-lad",
@@ -209,7 +209,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 	};
 	const response = routeRequest(
 		"GET",
-		"/v1/analysis:plan?measure=population-estimate&period=2022&analysisGeography=localAuthority/2025-01-uk-lad&sourceGeography=ward&sourceBoundaryYear=2023",
+		"/v1/analysis:plan?measure=population&period=2022&analysisGeography=localAuthority/2025-01-uk-lad&sourceGeography=ward&sourceBoundaryYear=2023",
 		testContext({
 			analysisGeographyInventory: planInventory,
 			areaLookup: planAreaLookup,
@@ -285,7 +285,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 	assert.deepEqual(data.saferAlternatives, [
 		{
 			kind: "source-exact",
-			href: "/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023",
+			href: "/v1/data/population?period=2022&geography=ward&boundaryYear=2023",
 			reason: "Keep the publisher's source partition when a conversion is not needed.",
 		},
 	]);

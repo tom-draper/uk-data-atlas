@@ -27,7 +27,7 @@ const dataCatalog = {
 	],
 	measures: [
 		{
-			id: "population-estimate",
+			id: "population",
 			sources: [{ datasetId: "population" }],
 		},
 	],
@@ -82,7 +82,7 @@ const request = (over: Partial<Record<string, string[]>> = {}) => ({
 
 test("attributes a measure through the datasets behind it", () => {
 	const result = attributionFor(
-		request({ measures: ["population-estimate"] }),
+		request({ measures: ["population"] }),
 		dataCatalog,
 		boundaryRegistry,
 		crosswalkInventory,
@@ -127,7 +127,7 @@ test("lists a resource once however many ways it was named", () => {
 	const result = attributionFor(
 		request({
 			datasets: ["population"],
-			measures: ["population-estimate"],
+			measures: ["population"],
 			boundaryReleases: ["ward/2023-05-uk-bgc"],
 			crosswalks: ["ward-to-lad"],
 		}),
