@@ -24,7 +24,8 @@ test("resolves an exact code to dossiers without choosing a release", () => {
 				name: "Example ward",
 				aliases: ["Enghraifft ward"],
 				matches: ["code-exact"],
-				dossierHref: "/v1/areas/ward/2025-01-en-ward/E05000001/dossier",
+				dossierHref:
+					"/v1/areas/ward/2025-01-en-ward/E05000001?include=dossier",
 			},
 		],
 		search: {
@@ -72,7 +73,7 @@ test("resolves an alias exactly and directs prefixes to the search resource", ()
 			aliases: ["GM"],
 			matches: ["exact"],
 			dossierHref:
-				"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/dossier",
+				"/v1/areas/localAuthority/2025-01-uk-lad/E08000001?include=dossier",
 		},
 	]);
 	assert.equal(aliasData.search.href, "/v1/places?q=gm");

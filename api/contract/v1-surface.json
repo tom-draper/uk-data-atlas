@@ -4747,6 +4747,12 @@
 				},
 				"path:code": {
 					"required": true
+				},
+				"query:include": {
+					"required": false,
+					"enum": [
+						"dossier"
+					]
 				}
 			},
 			"responses": {
@@ -4757,6 +4763,7 @@
 					"data.aliases",
 					"data.boundaryRelease",
 					"data.code",
+					"data.dossier",
 					"data.geography",
 					"data.id",
 					"data.name",
@@ -4881,6 +4888,10 @@
 		},
 		"GET /areas/{geography}/{release}/{code}/dossier": {
 			"operationId": "getAreaDossier",
+			"deprecated": {
+				"since": "2026-09-29",
+				"sunset": "2027-09-29"
+			},
 			"parameters": {
 				"path:geography": {
 					"required": true

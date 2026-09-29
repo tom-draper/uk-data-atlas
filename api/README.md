@@ -97,7 +97,7 @@ only **available** when its endpoint, contract and provenance are published.
 ### Geography and place intelligence — next
 
 - [x] Resolve a canonical area page with validity, aliases, extent, provenance
-      and links to geometry and relationships. `GET /v1/areas/{geography}/{release}/{code}/dossier` gives the area's aliases,
+      and links to geometry and relationships. `GET /v1/areas/{geography}/{release}/{code}?include=dossier` gives the area's aliases,
       code span (the compiled releases holding it), WGS 84 extent where the
       release geometry is available, its boundary release's source, temporal
       coverage and metadata hash, geometry provenance, and links to geometry,
@@ -3631,7 +3631,6 @@ second inventory to maintain:
 - `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
 - `GET /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
-- `GET /v1/areas/{geography}/{release}/{code}/dossier` — Get the verified geography dossier for one exact area identity
 - `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity
 
 **Map**
@@ -3693,7 +3692,6 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
 - `GET /v1/geography-health` — Summarise relationship health across compiled releases
 - `GET /v1/relationships` — Discover, assess and plan published geography relationships
-- `GET /v1/relationships` — Discover, assess and plan conversions, or report release relationship coverage
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
