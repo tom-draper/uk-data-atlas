@@ -32,6 +32,7 @@ export const handleIndexRoutes = ({
 				"/v1/boundary-releases/{geography}/{release}",
 				"/v1/geography-inventory",
 				"/v1/geography-health",
+				"/v1/relationships",
 				"/v1/terrain",
 				"/v1/terrain/{terrain-id}",
 				"/v1/terrain/elevation/point",

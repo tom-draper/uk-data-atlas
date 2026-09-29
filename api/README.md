@@ -3663,7 +3663,7 @@ second inventory to maintain:
 - `GET /v1/map-resources` — List the boundary releases published as map resources
 - `GET /v1/map-resources/{geography}/{release}` — Describe one map resource, its tiles and what they were made from
 - `GET /v1/map-resources/{geography}/{release}/tiles.json` — The TileJSON a renderer is configured with
-- `GET /v1/map-resources/{geography}/{release}/features` — Every area of one tier as a GeoParquet file
+- `GET /v1/map-resources/{geography}/{release}/features` — A whole boundary release as one GeoParquet or GeoJSON file
 - `GET /v1/map-resources/{geography}/{release}/tiles/{z}/{x}/{y}.mvt` — One vector tile of a boundary release
 - `GET /v1/map-resources/{geography}/{release}/join/{measure-id}` — One measure's values, numbered to match this resource's tiles
 - `GET /v1/map-resources/{geography}/{release}.pmtiles` — The whole tile pyramid as one PMTiles archive
@@ -3671,7 +3671,7 @@ second inventory to maintain:
 - `GET /v1/boundary-releases` — List every compiled boundary release
 - `GET /v1/boundary-releases:resolve` — Select the boundary release to use for a date
 - `GET /v1/boundary-releases:compare` — Compare two releases of one geography without inferring geography change from codes
-- `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release's metadata
+- `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release, with links to download it whole
 - `GET /v1/geography-inventory` — Report resolver identity and relationship coverage, including the compiled backlog by geography
 - `GET /v1/areas` — List or search compiled area identities
 - `GET /v1/areas:validate` — Validate a batch of area codes or names, or infer their likely release
@@ -3681,6 +3681,7 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/parents` — List published clean-containment parents for an area
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
 - `GET /v1/geography-health` — Summarise relationship health across compiled releases
+- `GET /v1/relationships` — Discover, assess and plan published geography relationships
 - `GET /v1/relationship-paths` — Find the published paths from one boundary release to another for a purpose
 - `GET /v1/relationship-capabilities` — Diagnose whether a geography conversion is usable and complete
 - `GET /v1/conversion-plan` — Select a published conversion path and preflight its intended operation

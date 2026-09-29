@@ -20,7 +20,7 @@ export const handleRelationshipCoverageRoutes = ({
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
-		segments[1] !== "relationship-coverage"
+		!["relationship-coverage", "relationships"].includes(segments[1])
 	)
 		return undefined;
 	const geography = parsedUrl.searchParams.get("geography");

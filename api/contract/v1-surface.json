@@ -144,6 +144,7 @@
 					"data.features[].contentHash",
 					"data.features[].coordinates",
 					"data.features[].format",
+					"data.features[].gzipBytes",
 					"data.features[].href",
 					"data.features[].rowCount",
 					"data.features[].tier",
@@ -313,12 +314,14 @@
 				"query:format": {
 					"required": false,
 					"enum": [
+						"geojson",
 						"geoparquet"
 					]
 				}
 			},
 			"responses": {
 				"200 application/vnd.apache.parquet": [],
+				"200 application/geo+json": [],
 				"400 application/problem+json": [
 					"absence",
 					"areaCount",
@@ -897,6 +900,14 @@
 					"data.coverage",
 					"data.coverage.countries",
 					"data.description",
+					"data.downloads",
+					"data.downloads.geojson",
+					"data.downloads.geoparquet",
+					"data.downloads.mapResource",
+					"data.downloads.pmtiles",
+					"data.downloads.reason",
+					"data.downloads.status",
+					"data.downloads.tileJson",
 					"data.geography",
 					"data.id",
 					"data.metadataHash",
@@ -5891,6 +5902,108 @@
 						"isolated",
 						"vintage-only"
 					]
+				}
+			},
+			"responses": {
+				"200 application/json": [],
+				"400 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				]
+			}
+		},
+		"GET /relationships": {
+			"operationId": "queryRelationships",
+			"parameters": {
+				"query:sourceGeography": {
+					"required": false
+				},
+				"query:sourceRelease": {
+					"required": false
+				},
+				"query:targetGeography": {
+					"required": false
+				},
+				"query:targetRelease": {
+					"required": false
+				},
+				"query:purpose": {
+					"required": false,
+					"enum": [
+						"apportion",
+						"identity",
+						"membership"
+					]
+				},
+				"query:operation": {
+					"required": false,
+					"enum": [
+						"code-translation",
+						"containment-aggregation",
+						"identity-join",
+						"membership-join",
+						"weighted-allocation"
+					]
+				},
+				"query:measure": {
+					"required": false
+				},
+				"query:geography": {
+					"required": false
+				},
+				"query:release": {
+					"required": false
+				},
+				"query:relation": {
+					"required": false,
+					"enum": [
+						"contains",
+						"overlaps",
+						"predecessor",
+						"successor",
+						"within"
+					]
+				},
+				"query:limit": {
+					"required": false,
+					"minimum": 1,
+					"maximum": 100
 				}
 			},
 			"responses": {
