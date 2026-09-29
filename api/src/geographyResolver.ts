@@ -8,6 +8,7 @@ import type {
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import type { LocationProjectionStore } from "./locationProjections";
+import type { PlaceFilter } from "./placeResolver";
 import type {
 	NamedLocationInventory,
 	NamedLocationLookup,
@@ -279,8 +280,8 @@ export class GeographyResolver {
 	countryIdentity(code: string) {
 		return this.areas.countryIdentity(code);
 	}
-	places(query: string, limit = 10, asOf?: string) {
-		return this.areas.places(query, limit, asOf);
+	places(query: string, limit = 10, asOf?: string, filter?: PlaceFilter) {
+		return this.areas.places(query, limit, asOf, filter);
 	}
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {
 		return this.areas.hasAreaRelease(geography, boundaryRelease);

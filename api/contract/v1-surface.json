@@ -2737,6 +2737,24 @@
 				},
 				"query:asOf": {
 					"required": false
+				},
+				"query:geography": {
+					"required": false
+				},
+				"query:release": {
+					"required": false
+				},
+				"query:date": {
+					"required": false
+				},
+				"query:country": {
+					"required": false,
+					"enum": [
+						"GB-ENG",
+						"GB-NIR",
+						"GB-SCT",
+						"GB-WLS"
+					]
 				}
 			},
 			"responses": {

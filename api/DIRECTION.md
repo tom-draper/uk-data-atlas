@@ -193,7 +193,10 @@ different ways, or expose build internals as routes. Proposed shape:
   get from A to B, and how?" Make that one route. `/translations` then does
   the conversion.
 - `/places`, `/areas?q=` and `/areas:resolve` are three name searches. Make
-  `/places` the only one; `/areas` becomes a plain paged listing.
+  `/places` the only one; `/areas` becomes a plain paged listing. `/places`
+  now takes `geography`, `release` and `date`, so it answers everything the
+  other two do; they stay served, as the relationship routes do beside
+  `/relationships`, until the old routes are retired together.
 - `dossier`, `capabilities`, `citation` and `geometry/metadata` on an area,
   and `capabilities` on a location, become `include=` options on the area or
   location itself.

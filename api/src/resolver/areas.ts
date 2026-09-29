@@ -7,7 +7,7 @@ import {
 	type ValidatedValue,
 } from "../batchValidation";
 import type { BoundaryRegistry } from "../boundaryRegistry";
-import { resolvePlaces } from "../placeResolver";
+import { resolvePlaces, type PlaceFilter } from "../placeResolver";
 import type { PlaceIndexArtifact } from "../placeIndex";
 import {
 	AreaSearch,
@@ -162,9 +162,15 @@ export class AreasResolver {
 		return this.inputs.placeIndex !== undefined;
 	}
 
-	places(query: string, limit: number, asOf?: string) {
+	places(query: string, limit: number, asOf?: string, filter?: PlaceFilter) {
 		if (!this.inputs.placeIndex) return [];
-		return resolvePlaces(this.inputs.placeIndex, query, limit, asOf);
+		return resolvePlaces(
+			this.inputs.placeIndex,
+			query,
+			limit,
+			asOf,
+			filter,
+		);
 	}
 
 	hasAreaRelease(geography: string, boundaryRelease: string): boolean {

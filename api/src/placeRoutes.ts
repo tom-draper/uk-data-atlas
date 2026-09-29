@@ -4,8 +4,14 @@ import { postcodePlace } from "./postcodeRoutes";
 import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { chooseRelease } from "./releaseChoice";
 
-/** Resolve an area code or place name without selecting one ambiguous meaning. */
+/**
+ * Resolve an area code or place name without selecting one ambiguous meaning.
+ * This is the one name search: `geography` narrows it to one geography,
+ * `release` to one boundary release, and `date` to the release current then,
+ * so every exact identity a name can mean in a release is found here too.
+ */
 export const handlePlaceRoutes = ({
 	context,
 	releaseId,
@@ -34,19 +40,39 @@ export const handlePlaceRoutes = ({
 		);
 	const asOf = selectedAsOf(parsedUrl);
 	if (typeof asOf !== "string" && asOf !== undefined) return asOf;
+	const choice = chooseRelease(context, parsedUrl);
+	if ("status" in choice) return choice;
+	const { geography, boundaryRelease, selection } = choice;
+	const filtered = Boolean(geography || boundaryRelease);
 	const unavailable = context.geographyResolver.requires("places");
 	if (unavailable) return unavailable;
 	// A postcode is exactly one place, so it leads, and names fill the rest.
-	const postcode = postcodePlace(context, query);
+	// It belongs to no one geography, so a narrowed search leaves it out.
+	const postcode = filtered
+		? { candidate: undefined, hint: undefined }
+		: postcodePlace(context, query);
 	const candidates = context.geographyResolver.places(
 		query,
 		postcode.candidate ? limit - 1 : limit,
 		asOf,
+		{
+			...(geography ? { geography } : {}),
+			...(boundaryRelease ? { boundaryRelease } : {}),
+		},
 	);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
 			query,
+			...(filtered
+				? {
+						filter: {
+							...(geography ? { geography } : {}),
+							...(boundaryRelease ? { boundaryRelease } : {}),
+						},
+					}
+				: {}),
+			...(selection ? { selection } : {}),
 			...(postcode.hint ? { postcodeHint: postcode.hint } : {}),
 			candidates: [
 				...(postcode.candidate ? [postcode.candidate] : []),
@@ -67,6 +93,13 @@ export const handlePlaceRoutes = ({
 						: {}),
 					...(candidate.validity
 						? { validity: candidate.validity }
+						: {}),
+					// Pinned to one release, a candidate is one exact area
+					// identity, and says where to read it.
+					...(boundaryRelease && candidate.kind === "area"
+						? {
+								href: `/v1/areas/${candidate.geography}/${boundaryRelease}/${candidate.code}`,
+							}
 						: {}),
 				})),
 			],

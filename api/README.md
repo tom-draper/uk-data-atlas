@@ -116,6 +116,14 @@ only **available** when its endpoint, contract and provenance are published.
       inventory and named locations it was built from and a fingerprint of the
       name-normalisation rules; the API refuses to start on one that differs
       from any of them.
+- [x] Make `/places` the one name search. `geography` narrows it to one
+      geography and `release` to one boundary release, where each candidate
+      is an exact area identity with an `href` to read it; `date`, with
+      `geography`, selects the release current then by the same rule as
+      `/boundary-releases:resolve`, reported in `selection`. The filters apply
+      before `limit`. `/areas:resolve` and `/areas?q=` answer parts of the
+      same question and stay served until the old routes are retired
+      together; `/areas:resolve` now shares its release choice with `/places`.
 - [x] Answer a measure for a place given by name through
       `GET /v1/data/{measure-id}/value?place=`, so "what is the population of
       the North West?" is one request. Each place the name could mean is put to

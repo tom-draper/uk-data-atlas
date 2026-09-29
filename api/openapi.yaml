@@ -3181,6 +3181,17 @@ paths:
         for the postcode. A query that reads as a postcode district or sector,
         or a unit postcode the directory does not hold or this API may not
         serve, carries a `postcodeHint` saying so.
+
+
+        This is the one name search. `geography` narrows it to one geography,
+        and `release` to one boundary release, where each candidate is an
+        exact area identity with an `href` to read it; `date`, with
+        `geography`, selects the release current then by the rule
+        `/boundary-releases:resolve` uses and says how in `selection`. A
+        narrowed search leaves postcodes out, since a postcode belongs to no
+        one geography. The filters apply before `limit`, so it counts only
+        places that pass them. `/areas:resolve` and `/areas?q=` answer parts
+        of the same question and remain served.
       parameters:
         - name: q
           in: query
@@ -3203,6 +3214,28 @@ paths:
           required: false
           schema: { type: string, format: date }
           description: Select the member codes effective on this date for curated named locations. Omit it to return the complete dated definition.
+        - name: geography
+          in: query
+          required: false
+          schema: { type: string }
+          description: Only places in this geography, such as `ward` or `named-location`.
+        - name: release
+          in: query
+          required: false
+          schema: { type: string }
+          description: Only places held in this boundary release, each then an exact identity in it. Cannot be combined with `date`.
+        - name: date
+          in: query
+          required: false
+          schema: { type: string }
+          description: With `geography`, only places held in the release current on this date, as YYYY-MM-DD or YYYY-MM. The chosen release is reported in `selection`.
+        - name: country
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS]
+          description: With `date`, prefer a release covering this nation.
       responses:
         "200":
           description: The candidate places, best match first. Empty when nothing matches.

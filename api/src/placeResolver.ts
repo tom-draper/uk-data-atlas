@@ -160,6 +160,9 @@ const toCandidate = (
 	};
 };
 
+/** Narrow the places considered to one geography, or one of its releases. */
+export type PlaceFilter = { geography?: string; boundaryRelease?: string };
+
 /**
  * Every place the query could mean, best first.
  *
@@ -167,16 +170,35 @@ const toCandidate = (
  * Otherwise names are matched exactly, then with an administrative title set
  * aside, and only when those leave room, by prefix. Candidates that are the
  * same place reached through several labels are returned once, keeping the
- * best match.
+ * best match. A filter is applied as each place is considered, so the limit
+ * counts only places that pass it; with a release, a place carries only that
+ * release.
  */
 export const resolvePlaces = (
 	index: PlaceIndexArtifact,
 	query: string,
 	limit = 10,
 	asOf?: string,
+	filter: PlaceFilter = {},
 ): PlaceCandidate[] => {
 	const trimmed = query.trim();
 	if (!trimmed) return [];
+	const releaseAt = filter.boundaryRelease
+		? index.releases.indexOf(filter.boundaryRelease)
+		: undefined;
+	if (releaseAt === -1) return [];
+	const passes = (position: number) => {
+		const place = index.places[position]!;
+		return (
+			(!filter.geography || place.geography === filter.geography) &&
+			(releaseAt === undefined ||
+				place.boundaryReleases.includes(releaseAt))
+		);
+	};
+	const narrowed = (candidate: PlaceCandidate): PlaceCandidate =>
+		filter.boundaryRelease
+			? { ...candidate, boundaryReleases: [filter.boundaryRelease] }
+			: candidate;
 
 	const reference = parsePlaceReference(trimmed);
 	if (reference) {
@@ -185,8 +207,10 @@ export const resolvePlaces = (
 			placeReference(reference.kind, reference.geography, reference.code),
 			(place) => place.place,
 		);
-		if (position !== -1)
-			return [toCandidate(index, position, "exact", trimmed, asOf)];
+		if (position !== -1 && passes(position))
+			return [
+				narrowed(toCandidate(index, position, "exact", trimmed, asOf)),
+			];
 	}
 
 	const found = new Map<number, PlaceCandidate>();
@@ -195,11 +219,12 @@ export const resolvePlaces = (
 		match: PlaceMatch,
 		matchedLabel?: string,
 	) => {
+		if (!passes(position)) return;
 		const existing = found.get(position);
 		if (existing && MATCH_RANK[existing.match] <= MATCH_RANK[match]) return;
 		found.set(
 			position,
-			toCandidate(index, position, match, matchedLabel, asOf),
+			narrowed(toCandidate(index, position, match, matchedLabel, asOf)),
 		);
 	};
 	const considerLabels = (
