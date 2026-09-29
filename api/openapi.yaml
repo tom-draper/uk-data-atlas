@@ -6078,6 +6078,80 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /relationships:
+    get:
+      operationId: queryRelationships
+      tags: ["Geography"]
+      summary: Discover, assess and plan published geography relationships
+      x-likely-refusal:
+        status: 400
+        when: "A conversion does not name both exact releases and a purpose, or a coverage question omits its geography or release."
+        x-example-request: "/v1/relationships?sourceGeography=ward"
+      description: >
+        The front door for relationship evidence in the boundary archive.
+        Supply `sourceGeography` and `sourceRelease` to discover every
+        published conversion from a release. Add `targetGeography`,
+        `targetRelease` and `purpose` to assess the paths, their coverage,
+        trust and permitted operations. Add `operation` to select the best
+        published path for that intended operation, without translating any
+        codes or values.
+
+
+        Alternatively, supply `geography` and `release` to report how fully
+        a release is covered by its published relationships. `relation` limits
+        that report to one relationship kind. These two query shapes are
+        deliberately separate: conversion is directional between exact
+        releases, whereas coverage is an audit of one release's evidence.
+      parameters:
+        - { name: sourceGeography, in: query, required: false, schema: { type: string } }
+        - { name: sourceRelease, in: query, required: false, schema: { type: string } }
+        - { name: targetGeography, in: query, required: false, schema: { type: string } }
+        - { name: targetRelease, in: query, required: false, schema: { type: string } }
+        - name: purpose
+          in: query
+          required: false
+          schema: { type: string, enum: [identity, membership, apportion] }
+        - name: operation
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              [identity-join, code-translation, containment-aggregation, membership-join, weighted-allocation]
+          description: Select the best published path for this intended conversion operation.
+        - name: measure
+          in: query
+          required: false
+          schema: { type: string }
+          description: Preflight this measure against an exact conversion's relationship purpose.
+        - { name: geography, in: query, required: false, schema: { type: string } }
+        - { name: release, in: query, required: false, schema: { type: string } }
+        - name: relation
+          in: query
+          required: false
+          schema: { type: string, enum: [within, contains, successor, predecessor, overlaps] }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+      responses:
+        "200":
+          description: Published relationship paths and evidence, a selected conversion plan, or release-level relationship coverage.
+          content:
+            application/json:
+              schema: { type: object }
+              examples:
+                capability:
+                  x-example-request: "/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership"
+                plan:
+                  x-example-request: "/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership&operation=containment-aggregation"
+                coverage:
+                  x-example-request: "/v1/relationships?geography=ward&release=2023-05-uk-bgc&relation=within"
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+        "503":
+          $ref: "#/components/responses/CatalogueUnavailable"
+
   /relationship-paths:
     get:
       operationId: findRelationshipPaths

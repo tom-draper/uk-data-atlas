@@ -1,4 +1,8 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
+import {
+	RELATIONSHIP_OPERATIONS,
+	type RelationshipOperation,
+} from "./geographyResolver";
 import type { DataCatalog } from "./dataCatalog";
 import {
 	publishedSourcePartitionOf,
@@ -149,7 +153,7 @@ export const handleRelationshipCapabilityRoutes = ({
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
-		segments[1] !== "relationship-capabilities"
+		!["relationship-capabilities", "relationships"].includes(segments[1])
 	)
 		return undefined;
 	const from = {
@@ -162,6 +166,7 @@ export const handleRelationshipCapabilityRoutes = ({
 	};
 	const purposeParameter = parsedUrl.searchParams.get("purpose");
 	const measureId = parsedUrl.searchParams.get("measure");
+	const operation = parsedUrl.searchParams.get("operation");
 	if (
 		!from.geography ||
 		!from.boundaryRelease ||
@@ -174,12 +179,14 @@ export const handleRelationshipCapabilityRoutes = ({
 			to.boundaryRelease === null &&
 			purposeParameter !== null) ||
 		((to.geography === null || to.boundaryRelease === null) &&
-			measureId !== null)
+			(measureId !== null || operation !== null)) ||
+		(operation !== null &&
+			!RELATIONSHIP_OPERATIONS.includes(operation as RelationshipOperation))
 	) {
 		return problem(
 			400,
 			"Invalid Query",
-			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together.",
+			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together; operation must be a supported relationship operation when supplied.",
 		);
 	}
 	const geographyResolver = context.geographyResolver;
@@ -233,6 +240,23 @@ export const handleRelationshipCapabilityRoutes = ({
 		to as { geography: string; boundaryRelease: string },
 		purpose,
 	);
+	if (operation !== null) {
+		const plan = geographyResolver.conversionPlan(
+			from as { geography: string; boundaryRelease: string },
+			to as { geography: string; boundaryRelease: string },
+			purpose,
+			operation as RelationshipOperation,
+		);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				from,
+				to,
+				...plan,
+				note: "This plan chooses among published paths only. It does not translate codes, allocate values or treat matching identifiers as proof of geographic continuity.",
+			}),
+		};
+	}
 	return {
 		status: 200,
 		body: envelope(releaseId, {
