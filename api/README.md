@@ -225,7 +225,7 @@ only **available** when its endpoint, contract and provenance are published.
       conversion onto it names the conversion, with a ready link, rather
       than being left out. Contract tests hold the OpenAPI enum to the code
       and walk live answers across nations and geographies.
-- [x] Advertise `GET /v1/relationship-paths` in the API index and OpenAPI
+- [x] Consolidate relationship discovery, capability, planning and coverage under `GET /v1/relationships`
       document. It was served but undiscoverable.
 - [x] Return an area-specific citation bundle through
       `GET /v1/areas/{geography}/{release}/{code}/citation`: the immutable Atlas
@@ -250,10 +250,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Find published conversion paths between two area identities and rank
       them by source authority and exactness. Multi-step composition, declared
       or discovered, is published without hiding intermediate mappings.
-      `GET /v1/conversion-plan` selects the highest-ranked path, ordered by
+      `GET /v1/relationships` selects the highest-ranked path, ordered by
       complete source coverage, then evidence strength, path origin and step
       count, and returns every other path as an alternative with its rank,
-      trust and coverage; `GET /v1/relationship-capabilities` lists them all.
+      trust and coverage; the same route lists all declared capabilities without an operation.
 - [x] Compile named-location projections, so a request such as Greater
       Manchester → wards or North Wales → constituencies is an indexed read of
       a published result, not a runtime graph walk or polygon calculation.
@@ -1349,7 +1349,7 @@ GET /v1/status
       data.
 - [ ] Find and rank declared conversion paths between two exact area identities,
       exposing each intermediate release, method, coverage and quality.
-      `GET /v1/conversion-plan` ranks them and gives each step's method,
+      `GET /v1/relationships` ranks them and gives each step's method,
       purpose and coverage and the reasons for every path's rank. A step names
       its crosswalk and direction but not the intermediate release it passes
       through, which is still to add.
@@ -3692,10 +3692,7 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/children` — List published clean-containment children for an area
 - `GET /v1/geography-health` — Summarise relationship health across compiled releases
 - `GET /v1/relationships` — Discover, assess and plan published geography relationships
-- `GET /v1/relationship-paths` — Find the published paths from one boundary release to another for a purpose
-- `GET /v1/relationship-capabilities` — Diagnose whether a geography conversion is usable and complete
-- `GET /v1/conversion-plan` — Select a published conversion path and preflight its intended operation
-- `GET /v1/relationship-coverage` — Report relationship coverage and hierarchy gaps for one release
+- `GET /v1/relationships` — Discover, assess and plan conversions, or report release relationship coverage
 - `GET /v1/crosswalks` — List published crosswalks
 - `GET /v1/crosswalks/{crosswalk-id}` — Get one crosswalk's metadata
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
@@ -3794,7 +3791,7 @@ catalogues by the contract tests:
 - `GET /v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap`
-- `GET /v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership`
+- `GET /v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership`
 - `GET /v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`

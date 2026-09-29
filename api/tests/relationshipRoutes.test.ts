@@ -62,3 +62,12 @@ test("uses the same route for release relationship coverage", () => {
 	assert.equal(response.status, 200);
 	assert.equal((response.body as { data: any }).data.status, "available");
 });
+
+test("refuses a mixed conversion and coverage query", () => {
+	const response = route(
+		"GET",
+		"/v1/relationships?sourceGeography=ward&sourceRelease=2025-01-en-ward&geography=ward&release=2025-01-en-ward",
+		context(),
+	);
+	assert.equal(response.status, 400);
+});

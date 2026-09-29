@@ -1,4 +1,4 @@
-import type { ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "./routeResponse";
 import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
 import type { RouteRequest } from "./routing";
@@ -18,12 +18,29 @@ export const handleRelationshipRoutes = (
 		segments[1] !== "relationships"
 	)
 		return undefined;
-	return parsedUrl.searchParams.has("sourceGeography") ||
-		parsedUrl.searchParams.has("sourceRelease") ||
-		parsedUrl.searchParams.has("targetGeography") ||
-		parsedUrl.searchParams.has("targetRelease") ||
-		parsedUrl.searchParams.has("purpose") ||
-		parsedUrl.searchParams.has("operation")
+	const conversionParameters = [
+		"sourceGeography",
+		"sourceRelease",
+		"targetGeography",
+		"targetRelease",
+		"purpose",
+		"operation",
+		"measure",
+	];
+	const coverageParameters = ["geography", "release", "relation", "limit"];
+	const asksAboutConversion = conversionParameters.some((parameter) =>
+		parsedUrl.searchParams.has(parameter),
+	);
+	const asksAboutCoverage = coverageParameters.some((parameter) =>
+		parsedUrl.searchParams.has(parameter),
+	);
+	if (asksAboutConversion && asksAboutCoverage)
+		return problem(
+			400,
+			"Invalid Query",
+			"Supply either a conversion query (sourceGeography/sourceRelease) or a release-coverage query (geography/release), not both.",
+		);
+	return asksAboutConversion
 		? handleRelationshipCapabilityRoutes(request)
 		: handleRelationshipCoverageRoutes(request);
 };

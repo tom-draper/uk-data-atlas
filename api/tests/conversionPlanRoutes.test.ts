@@ -29,7 +29,7 @@ const context: RouteContext = {
 };
 
 const query =
-	"/v1/conversion-plan?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
+	"/v1/relationships?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
 
 test("selects the highest-ranked complete conversion path", () => {
 	const response = route(
