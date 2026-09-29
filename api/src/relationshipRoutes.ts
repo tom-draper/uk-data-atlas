@@ -1,10 +1,6 @@
 import type { ApiResponse } from "./routeResponse";
-import {
-	handleRelationshipCapabilityRoutes,
-} from "./relationshipCapabilityRoutes";
-import {
-	handleRelationshipCoverageRoutes,
-} from "./relationshipCoverageRoutes";
+import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
+import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
 import type { RouteRequest } from "./routing";
 
 /**

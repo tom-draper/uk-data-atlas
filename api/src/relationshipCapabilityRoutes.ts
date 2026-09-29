@@ -181,7 +181,9 @@ export const handleRelationshipCapabilityRoutes = ({
 		((to.geography === null || to.boundaryRelease === null) &&
 			(measureId !== null || operation !== null)) ||
 		(operation !== null &&
-			!RELATIONSHIP_OPERATIONS.includes(operation as RelationshipOperation))
+			!RELATIONSHIP_OPERATIONS.includes(
+				operation as RelationshipOperation,
+			))
 	) {
 		return problem(
 			400,
