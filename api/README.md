@@ -516,6 +516,23 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Detect mixed or stale code systems in the same input. The whole-input
       verdict remains unjoinable and recommends only published paths; it never
       silently normalises or converts supplied values.
+- [x] Accept a whole column in a request body. `POST /v1/areas:validate`
+      takes JSON (`values`, or `rows` with an `area`) or CSV with a header
+      naming the area column, up to 250,000 values in an 8 MiB body, and
+      answers exactly as the GET does for the same values. POST is the one
+      exception to a GET-only API, allowed only where a request carries more
+      than a URL can; any other route refuses it with `405`, and a POST answer
+      is never cached, since no cache keys on its body.
+- [x] Join your own rows to a boundary release through
+      `POST /v1/boundary-releases/{geography}/{release}:join`. Send codes or
+      names with a value each, as JSON or CSV, and get the values back
+      numbered as the release's tiles number their features, so a renderer
+      draws them on its map resource; `format=geojson` returns the joined
+      areas with their geometry at a chosen tier instead. Each row is read as
+      `areas:validate` reads it, and a row that does not name exactly one area
+      is listed in `unjoined` with the validator's reason. Two rows for one
+      area leave it out, both listed as `duplicate-area`, since which value
+      was meant is the caller's to say. Nothing is stored.
 - [ ] Provide a downloadable match result and a reproducible matching manifest,
       so a user can join their own dataset without redoing the Atlas's repair
       and code-resolution work.

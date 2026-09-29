@@ -1,14 +1,21 @@
 import { areaNotFound } from "./areaResources";
 import { MAX_BATCH_VALUES } from "./batchValidation";
+import { readPostedRows } from "./requestRows";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
-/** Validate many area codes or names against one published boundary release. */
+/**
+ * Validate many area codes or names against one published boundary release.
+ * A GET carries them as repeated value=, up to what a URL holds; a POST
+ * carries a whole column in its body, as JSON or CSV.
+ */
 export const handleAreaValidationRoutes = ({
 	context,
 	releaseId,
 	parsedUrl,
 	segments,
+	method,
+	body,
 }: RouteRequest): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
@@ -19,8 +26,17 @@ export const handleAreaValidationRoutes = ({
 	const geographyResolver = context.geographyResolver;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
-	const values = parsedUrl.searchParams.getAll("value");
-	const parents = parsedUrl.searchParams.getAll("parent");
+	const posted =
+		method === "POST"
+			? readPostedRows(body, { withValues: false })
+			: undefined;
+	if (posted && "status" in posted) return posted;
+	const values = posted
+		? posted.areas
+		: parsedUrl.searchParams.getAll("value");
+	const parents = posted
+		? (posted.parents ?? [])
+		: parsedUrl.searchParams.getAll("parent");
 	if (Boolean(geography) !== Boolean(boundaryRelease))
 		return problem(
 			400,
@@ -33,11 +49,12 @@ export const handleAreaValidationRoutes = ({
 			"Invalid Query",
 			"Supply at least one value to validate, as value=; it may be repeated.",
 		);
-	if (values.length > MAX_BATCH_VALUES)
+	// The body's own limit was checked as it was read.
+	if (!posted && values.length > MAX_BATCH_VALUES)
 		return problem(
 			400,
 			"Invalid Query",
-			`At most ${MAX_BATCH_VALUES} values can be validated in one request; this one has ${values.length}.`,
+			`At most ${MAX_BATCH_VALUES} values can be validated in one GET; this one has ${values.length}. POST the column as JSON or CSV to send more.`,
 		);
 	if (parents.length > 0 && parents.length !== values.length)
 		return problem(

@@ -1,4 +1,4 @@
-import type { ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes } from "./openapiRoutes";
@@ -59,6 +59,7 @@ import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
+import { handleReleaseJoinRoutes, joinRelease } from "./releaseJoinRoutes";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -66,6 +67,8 @@ type RouteFamily = {
 	name: string;
 	owns: (segments: string[]) => boolean;
 	handle: RouteHandler;
+	/** Set on the few families with an operation that reads a POST body. */
+	acceptsPost?: true;
 };
 
 /**
@@ -97,6 +100,7 @@ const routeFamilies: RouteFamily[] = [
 		name: "boundaries",
 		owns: (segments) =>
 			segments[0] === "v1" &&
+			!joinRelease(segments) &&
 			[
 				"geographies",
 				"geography-inventory",
@@ -105,6 +109,12 @@ const routeFamilies: RouteFamily[] = [
 				"boundary-releases:compare",
 			].includes(segments[1] ?? ""),
 		handle: handleBoundaryRoutes,
+	},
+	{
+		name: "release-join",
+		owns: (segments) => joinRelease(segments) !== undefined,
+		handle: handleReleaseJoinRoutes,
+		acceptsPost: true,
 	},
 	{
 		name: "catalogue",
@@ -314,6 +324,7 @@ const routeFamilies: RouteFamily[] = [
 		owns: (segments) =>
 			segments[0] === "v1" && segments[1] === "areas:validate",
 		handle: handleAreaValidationRoutes,
+		acceptsPost: true,
 	},
 	{
 		name: "area-identity",
@@ -521,6 +532,12 @@ export const routeFamiliesOwning = (segments: string[]) =>
 
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 	const family = routeFamilies.find(({ owns }) => owns(request.segments));
+	if (family && request.method === "POST" && !family.acceptsPost)
+		return problem(
+			405,
+			"Method Not Allowed",
+			"This resource answers GET only. POST is accepted by /v1/areas:validate and a boundary release's :join, where a request carries more than a URL can.",
+		);
 	return family?.handle(request);
 };
 

@@ -48,6 +48,41 @@ const HEADERS_TIMEOUT_MS = 15_000;
 const REQUEST_TIMEOUT_MS = 30_000;
 const KEEP_ALIVE_TIMEOUT_MS = 5_000;
 
+/**
+ * The largest POST body read. A column of every output area's code with a
+ * value is under 5 MB, so this holds any one release's worth of rows; a
+ * larger body is refused before it is buffered.
+ */
+export const MAX_BODY_BYTES = 8 * 1024 * 1024;
+
+type BodyRead = { text: string } | { tooLarge: true; bytes: number };
+
+const readBody = (request: IncomingMessage): Promise<BodyRead> =>
+	new Promise((resolve, reject) => {
+		const declared = Number(request.headers["content-length"]);
+		if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+			request.resume();
+			resolve({ tooLarge: true, bytes: declared });
+			return;
+		}
+		const chunks: Buffer[] = [];
+		let bytes = 0;
+		request.on("data", (chunk: Buffer) => {
+			bytes += chunk.length;
+			if (bytes > MAX_BODY_BYTES) {
+				request.removeAllListeners("data");
+				request.resume();
+				resolve({ tooLarge: true, bytes });
+				return;
+			}
+			chunks.push(chunk);
+		});
+		request.on("end", () =>
+			resolve({ text: Buffer.concat(chunks).toString("utf8") }),
+		);
+		request.on("error", reject);
+	});
+
 export type ApiServer = Server & {
 	/**
 	 * Stop reporting ready and close each connection after its current
@@ -202,6 +237,25 @@ export const createApiServer = (
 					);
 				} else if (method === "OPTIONS") {
 					result = preflightResponse();
+				} else if (method === "POST") {
+					const read = await readBody(request);
+					result =
+						"tooLarge" in read
+							? answer(() =>
+									problem(
+										413,
+										"Content Too Large",
+										`The request body is ${read.bytes} bytes or more; at most ${MAX_BODY_BYTES} are read. Split the rows over several requests.`,
+									),
+								)
+							: await answerAsync(() =>
+									routeAsync("POST", target, catalogues, {
+										contentType:
+											request.headers["content-type"] ??
+											"",
+										text: read.text,
+									}),
+								);
 				} else {
 					result = await answerAsync(() =>
 						routeAsync(
