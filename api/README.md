@@ -244,10 +244,13 @@ only **available** when its endpoint, contract and provenance are published.
       2019 one; a Wales-only subset is set aside for the release it was
       derived from; and data zones, published clipped and unclipped in the
       same month, are a 409 listing both rather than a guess.
-- [ ] Find published conversion paths between two area identities and rank
+- [x] Find published conversion paths between two area identities and rank
       them by source authority and exactness. Multi-step composition, declared
-      or discovered, is published without hiding intermediate mappings; the
-      ranking between several paths for one pair is still to do.
+      or discovered, is published without hiding intermediate mappings.
+      `GET /v1/conversion-plan` selects the highest-ranked path, ordered by
+      complete source coverage, then evidence strength, path origin and step
+      count, and returns every other path as an alternative with its rank,
+      trust and coverage; `GET /v1/relationship-capabilities` lists them all.
 - [x] Compile named-location projections, so a request such as Greater
       Manchester → wards or North Wales → constituencies is an indexed read of
       a published result, not a runtime graph walk or polygon calculation.
@@ -326,8 +329,11 @@ only **available** when its endpoint, contract and provenance are published.
       is 9%. `locationWithin` names the one parent holding every member, and
       members a lookup places in no parent, such as London's boroughs against
       combined authorities, are listed as `unplaced`.
-- [ ] Return a named location's boundary, bounding box and optional union
-      geometry.
+- [x] Return a named location's boundary, bounding box and optional union
+      geometry. `GET /v1/locations/{id}/geometry` serves the union of the
+      location's members, compiled once for their fully resolved release, as a
+      GeoJSON Feature carrying its bounding box and boundary release. It is
+      unavailable rather than estimated where no union has been built.
 - [ ] Compare location definitions and membership across releases.
 - [ ] Return explicit alternatives for ambiguous real-world names, for example
       ceremonial, historic and administrative definitions of Devon.
@@ -1283,6 +1289,10 @@ Implementation and documentation tasks:
 - [ ] Maintain a public correction register. The API remains read-only, while
       an editorial process records accepted correction reports, disputed
       mappings, resolutions and their effect on published resources.
+      `GET /v1/corrections` already records the API's own repairs, derived
+      calculations and normalisations with their scope, evidence and review;
+      correction reports from users and disputed mappings are not yet
+      recorded.
 - [ ] Publish a deprecation policy, availability and freshness targets, and a
       status endpoint before offering a paid reliability commitment.
 - [x] Add conditional request support and clear cache semantics. Every `200`
@@ -1313,6 +1323,10 @@ GET /v1/status
       are not.
 - [ ] Find and rank declared conversion paths between two exact area identities,
       exposing each intermediate release, method, coverage and quality.
+      `GET /v1/conversion-plan` ranks them and gives each step's method,
+      purpose and coverage and the reasons for every path's rank. A step names
+      its crosswalk and direction but not the intermediate release it passes
+      through, which is still to add.
 - [ ] Make a small, carefully selected set of extensive measures available for
       fully validated conversion. Do not mark a measure convertible merely
       because a crosswalk exists; conservation, coverage and uncertainty rules
