@@ -48,3 +48,56 @@ test("SpatialResolver reports absent cache data without inventing geometry", () 
 	assert.equal(resolver.areaGeometry(identity), undefined);
 	assert.equal(resolver.releaseGeometrySource("ward", "2024"), undefined);
 });
+
+test("SpatialResolver only loads geometry for the bounded result page", () => {
+	const geometryReads: string[] = [];
+	const candidates = ["W001", "W002", "W003"].map((code, index) => ({
+		code,
+		relation: "within" as const,
+		bounds: [-2 + index, 53, -1 + index, 54] as [
+			number,
+			number,
+			number,
+			number,
+		],
+	}));
+	const cache = {
+		findIntersecting: () => candidates,
+		get: (_geography: string, _release: string, code: string) => {
+			geometryReads.push(code);
+			return geometry;
+		},
+		provenance: () => provenance,
+	} as unknown as AreaGeometryCache;
+	const resolver = new SpatialResolver(cache, ({ code }) => ({
+		code,
+		name: `Ward ${code}`,
+	}));
+
+	const identities = resolver.intersectingAreas(
+		"ward",
+		"2024",
+		[-3, 52, 3, 55],
+		2,
+		false,
+	)!;
+	assert.equal(identities.matched, 3);
+	assert.deepEqual(
+		identities.matches.map(({ code }) => code),
+		["W001", "W002"],
+	);
+	assert.deepEqual(geometryReads, []);
+
+	const withGeometry = resolver.intersectingAreas(
+		"ward",
+		"2024",
+		[-3, 52, 3, 55],
+		2,
+		true,
+	)!;
+	assert.deepEqual(
+		withGeometry.matches.map(({ code }) => code),
+		["W001", "W002"],
+	);
+	assert.deepEqual(geometryReads, ["W001", "W002"]);
+});
