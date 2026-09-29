@@ -48,8 +48,9 @@ const CROSS_ORIGIN: Record<string, string> = {
 
 const PREFLIGHT: Record<string, string> = {
 	...CROSS_ORIGIN,
-	"access-control-allow-methods": "GET, HEAD, OPTIONS",
-	"access-control-allow-headers": "if-none-match, accept, x-request-id",
+	"access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
+	"access-control-allow-headers":
+		"if-none-match, accept, content-type, x-request-id",
 	"access-control-max-age": "86400",
 };
 
@@ -144,8 +145,10 @@ export const httpResponse = (
 		...(gzipped ? { "content-encoding": "gzip" } : {}),
 	};
 	// A tile that covers no area answers 204, which is an ordinary answer and
-	// is cached like any other; only a failure is left unstored.
-	if (result.status >= 400) {
+	// is cached like any other; only a failure is left unstored. An answer to
+	// a POST is a function of its body, which no cache keys on, so it is
+	// never stored either.
+	if (result.status >= 400 || request.method === "POST") {
 		headers["cache-control"] = ERROR_CACHE_CONTROL;
 		headers["content-length"] = String(bodyBytes(body));
 		return { status: result.status, headers, ...(isHead ? {} : { body }) };
