@@ -37,6 +37,12 @@ export type ResolvedSameCodeArea = AreaRecord & {
 	status: "same-code-continuity";
 };
 
+export type ResolvedCodeRelease = AreaRecord & {
+	id: string;
+	geography: string;
+	boundaryRelease: string;
+};
+
 export type ResolvedAreaCandidate = {
 	area: AreaRecord & AreaIdentity;
 	matches: Array<"code-exact" | Exclude<NameMatch, "prefix">>;
@@ -173,16 +179,11 @@ export class AreasResolver {
 		) as BoundaryRegistry["releases"];
 	}
 
-	/**
-	 * The code in every other release of its geography, oldest first. A
-	 * geography has a few dozen releases at most, so this is that many
-	 * lookups and needs no index of its own.
-	 */
-	sameCode(identity: AreaIdentity): ResolvedSameCodeArea[] {
+	/** Every compiled release of this geography holding the code, oldest first. */
+	codeReleases(identity: AreaIdentity): ResolvedCodeRelease[] {
 		const { geography, code } = identity;
 		return (this.geographyReleases.get(geography) ?? []).flatMap(
 			(boundaryRelease) => {
-				if (boundaryRelease === identity.boundaryRelease) return [];
 				const area = this.area({ geography, boundaryRelease, code });
 				return area
 					? [
@@ -195,12 +196,28 @@ export class AreasResolver {
 								geography,
 								boundaryRelease,
 								...area,
-								status: "same-code-continuity" as const,
 							},
 						]
 					: [];
 			},
 		);
+	}
+
+	/**
+	 * The code in every other release of its geography, oldest first. A
+	 * geography has a few dozen releases at most, so this is that many
+	 * lookups and needs no index of its own.
+	 */
+	sameCode(identity: AreaIdentity): ResolvedSameCodeArea[] {
+		return this.codeReleases(identity)
+			.filter(
+				(candidate) =>
+					candidate.boundaryRelease !== identity.boundaryRelease,
+			)
+			.map((candidate) => ({
+				...candidate,
+				status: "same-code-continuity" as const,
+			}));
 	}
 
 	explainAreaAbsence(

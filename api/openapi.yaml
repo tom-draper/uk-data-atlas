@@ -4883,9 +4883,13 @@ paths:
       description: >
         The geography dossier is the starting point for an exact area. It
         combines the compiled identity and boundary-release evidence with an
-        honest availability summary for geometry and published relationships,
-        then links to the detailed geometry, history, relationship, citation,
-        neighbourhood, overlap and data-capability resources.
+        honest availability summary for geometry and published relationships.
+        It lists every compiled boundary release holding the code and, when
+        the selected release's geometry is available, its WGS 84 bounding box.
+        Repeated codes show a published code span, not a legal validity date or
+        an unchanged-boundary claim. It then links to the detailed geometry,
+        history, relationship, citation, neighbourhood, overlap and
+        data-capability resources.
 
 
         It never infers an equivalence, a geometry, or a crosswalk. The data

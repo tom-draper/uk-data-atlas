@@ -1,4 +1,5 @@
 import { areaNotFound } from "./areaResources";
+import { geometryBounds } from "./areaContainment";
 import { notBuilt, unsupported } from "./capability";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
@@ -46,6 +47,7 @@ export const handleAreaDossierRoutes = ({
 			"The boundary registry does not describe this resolved area release.",
 		);
 	const baseHref = `/v1/areas/${geography}/${boundaryRelease}/${code}`;
+	const codeReleases = geographyResolver.codeReleases(identity);
 	const relationshipSummary =
 		geographyResolver.areaRelationshipSummary(identity);
 	const geometry = (() => {
@@ -57,6 +59,7 @@ export const handleAreaDossierRoutes = ({
 				? {
 						status: "available" as const,
 						provenance: resolved.geometrySource,
+						boundingBox: geometryBounds(resolved.geometry),
 					}
 				: unsupported(
 						"The release's geometry source has no feature for this area's code.",
@@ -69,6 +72,19 @@ export const handleAreaDossierRoutes = ({
 			);
 		}
 	})();
+	const extent =
+		geometry.status === "available"
+			? geometry.boundingBox
+				? {
+						status: "available" as const,
+						boundingBox: geometry.boundingBox,
+						crs: "OGC:CRS84",
+						href: `${baseHref}/geometry/metadata`,
+					}
+				: unsupported(
+						"The release's geometry has no coordinates from which to state an extent.",
+					)
+			: { ...geometry, href: `${baseHref}/geometry/metadata` };
 	const relationshipUnavailable = geographyResolver.requires("relationships");
 	const relationships = relationshipUnavailable
 		? notBuilt(requirementDetail(relationshipUnavailable))
@@ -93,6 +109,15 @@ export const handleAreaDossierRoutes = ({
 			geography,
 			boundaryRelease,
 			...area,
+			validity: {
+				releases: codeReleases.map((candidate) => ({
+					boundaryRelease: candidate.boundaryRelease,
+					name: candidate.name,
+					href: `/v1/areas/${geography}/${candidate.boundaryRelease}/${code}/dossier`,
+				})),
+				note: "These are the compiled boundary releases that hold this code. They show its published code span, not a legal validity date or unchanged extent.",
+			},
+			extent,
 			boundary: {
 				title: boundary.title,
 				...(boundary.description
