@@ -10,9 +10,7 @@ type Spec = {
 	tags: Array<{ name: string; description?: string }>;
 	paths: Record<
 		string,
-		{
-			get?: { tags?: string[]; summary?: string; deprecated?: boolean };
-		}
+		{ get?: { tags?: string[]; summary?: string; deprecated?: boolean } }
 	>;
 };
 

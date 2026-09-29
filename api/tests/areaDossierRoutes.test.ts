@@ -94,6 +94,50 @@ test("starts an exact geography query with an evidence-led area dossier", () => 
 	);
 });
 
+test("expands an exact area with its dossier without repeating its identity", () => {
+	const response = routeRequest(
+		"GET",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=dossier",
+		testContext({
+			boundaryRegistry: dossierRegistry,
+			areaLookup: compatibleWardAreaLookup,
+		}),
+	);
+	assert.equal(response.status, 200);
+	const data = (
+		response.body as {
+			data: {
+				id: string;
+				dossier?: { validity: { releases: unknown[] } };
+			};
+		}
+	).data;
+	assert.equal(data.id, "ward/2023-05-uk-bgc/E05000001");
+	assert.deepEqual(data.dossier?.validity.releases, [
+		{
+			boundaryRelease: "2023-05-uk-bgc",
+			name: "Compatible ward",
+			href: "/v1/areas/ward/2023-05-uk-bgc/E05000001?include=dossier",
+		},
+	]);
+});
+
+test("refuses unsupported exact-area expansions", () => {
+	const response = routeRequest(
+		"GET",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=geometry",
+		testContext({
+			boundaryRegistry: dossierRegistry,
+			areaLookup: compatibleWardAreaLookup,
+		}),
+	);
+	assert.equal(response.status, 400);
+	assert.equal(
+		(response.body as { title?: string }).title,
+		"Invalid Include",
+	);
+});
+
 test("keeps the usual helpful absence report for a missing dossier area", () => {
 	const response = routeRequest(
 		"GET",

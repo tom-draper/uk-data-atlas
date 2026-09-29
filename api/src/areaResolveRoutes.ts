@@ -136,7 +136,7 @@ export const resolveAreaQuery = ({
 			candidates: candidates.map(({ area, matches }) => ({
 				...area,
 				matches,
-				dossierHref: `/v1/areas/${area.geography}/${area.boundaryRelease}/${area.code}/dossier`,
+				dossierHref: `/v1/areas/${area.geography}/${area.boundaryRelease}/${area.code}?include=dossier`,
 			})),
 			search: {
 				href: `/v1/places?${searchParams.toString()}`,

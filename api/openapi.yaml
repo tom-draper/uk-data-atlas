@@ -4868,6 +4868,19 @@ paths:
           schema:
             type: string
           description: The official source code for this area on this boundary release.
+        - name: include
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [dossier]
+          style: form
+          explode: false
+          description: >
+            Optional comma-separated expansions. `dossier` adds boundary evidence,
+            availability and verified-resource links without repeating the area identity.
       responses:
         "200":
           description: The matching compiled area.
@@ -4963,28 +4976,22 @@ paths:
   /areas/{geography}/{release}/{code}/dossier:
     get:
       operationId: getAreaDossier
+      deprecated: true
+      x-deprecated-since: "2026-09-29"
+      x-sunset: "2027-09-29"
       tags: ["Start here"]
-      summary: Get the verified geography dossier for one exact area identity
+      summary: Get the verified geography dossier for one exact area identity (deprecated)
       x-likely-refusal:
         status: 404
         code: area_not_in_release
         when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
         x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/dossier"
       description: >
-        The geography dossier is the starting point for an exact area. It
-        combines the compiled identity and boundary-release evidence with an
-        honest availability summary for geometry and published relationships.
-        It lists every compiled boundary release holding the code and, when
-        the selected release's geometry is available, its WGS 84 bounding box.
-        Repeated codes show a published code span, not a legal validity date or
-        an unchanged-boundary claim. It then links to the detailed geometry,
-        history, relationship, citation, neighbourhood, overlap and
-        data-capability resources.
-
-
-        It never infers an equivalence, a geometry, or a crosswalk. The data
-        capability link lists all measures that are directly available, partly
-        available or convertible for this exact identity.
+        Deprecated compatibility route. Use
+        `/v1/areas/{geography}/{release}/{code}?include=dossier` instead.
+        The geography dossier combines the compiled identity and boundary-release
+        evidence with an honest availability summary for geometry and published
+        relationships. It never infers an equivalence, a geometry, or a crosswalk.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -10001,6 +10008,11 @@ components:
           properties:
             postcodes:
               $ref: "#/components/schemas/AreaPostcodeCounts"
+            dossier:
+              type: object
+              description: >
+                Present only with `include=dossier`; boundary evidence,
+                availability and links for this exact area identity.
 
     AreaPostcodeCounts:
       type: object

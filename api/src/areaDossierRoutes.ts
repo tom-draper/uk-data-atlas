@@ -5,47 +5,45 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 
+type AreaIdentity = {
+	geography: string;
+	boundaryRelease: string;
+	code: string;
+};
+
+type AreaDossierResult =
+	{ dossier: Record<string, unknown> } | { response: ApiResponse };
+
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body
 		? response.body.detail
 		: "Catalogue data is unavailable.";
 
-/**
- * A single, evidence-led starting point for an exact area identity. Detailed
- * geometry, relationships, history and data stay in their dedicated resources
- * so this response remains useful without pretending an absent artefact exists.
- */
-export const handleAreaDossierRoutes = ({
-	context,
-	releaseId,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 6 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas" ||
-		segments[5] !== "dossier"
-	)
-		return undefined;
-	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-		string,
-		string,
-		string,
-	];
+/** The selective evidence expansion shared by the exact-area and legacy routes. */
+export const areaDossier = (
+	context: RouteRequest["context"],
+	{ geography, boundaryRelease, code }: AreaIdentity,
+	dossierHref: (boundaryRelease: string) => string,
+): AreaDossierResult => {
 	const geographyResolver = context.geographyResolver;
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
+	if (!area)
+		return {
+			response: areaNotFound(context, geography, boundaryRelease, code),
+		};
 	const boundary = geographyResolver.boundaryRelease(
 		geography,
 		boundaryRelease,
 	);
 	if (!boundary)
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"The boundary registry does not describe this resolved area release.",
-		);
+		return {
+			response: problem(
+				503,
+				"Catalogue Unavailable",
+				"The boundary registry does not describe this resolved area release.",
+			),
+		};
 	const baseHref = `/v1/areas/${geography}/${boundaryRelease}/${code}`;
 	const codeReleases = geographyResolver.codeReleases(identity);
 	const relationshipSummary =
@@ -103,17 +101,12 @@ export const handleAreaDossierRoutes = ({
 				? "partial"
 				: "limited";
 	return {
-		status: 200,
-		body: envelope(releaseId, {
-			id: areaKey(geography, boundaryRelease, code),
-			geography,
-			boundaryRelease,
-			...area,
+		dossier: {
 			validity: {
 				releases: codeReleases.map((candidate) => ({
 					boundaryRelease: candidate.boundaryRelease,
 					name: candidate.name,
-					href: `/v1/areas/${geography}/${candidate.boundaryRelease}/${code}/dossier`,
+					href: dossierHref(candidate.boundaryRelease),
 				})),
 				note: "These are the compiled boundary releases that hold this code. They show its published code span, not a legal validity date or unchanged extent.",
 			},
@@ -178,6 +171,52 @@ export const handleAreaDossierRoutes = ({
 				overlap: `${baseHref}/overlap`,
 				boundaryRelease: `/v1/boundary-releases/${geography}/${boundaryRelease}`,
 			},
+		},
+	};
+};
+
+/**
+ * A legacy adapter for callers that still dereference the dossier as a route.
+ * The exact-area resource owns the canonical `include=dossier` interface.
+ */
+export const handleAreaDossierRoutes = ({
+	context,
+	releaseId,
+	segments,
+}: RouteRequest): ApiResponse | undefined => {
+	if (
+		segments.length !== 6 ||
+		segments[0] !== "v1" ||
+		segments[1] !== "areas" ||
+		segments[5] !== "dossier"
+	)
+		return undefined;
+	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
+		string,
+		string,
+		string,
+	];
+	const result = areaDossier(
+		context,
+		{ geography, boundaryRelease, code },
+		(candidateRelease) =>
+			`/v1/areas/${geography}/${candidateRelease}/${code}/dossier`,
+	);
+	if ("response" in result) return result.response;
+	const area = context.geographyResolver.area({
+		geography,
+		boundaryRelease,
+		code,
+	});
+	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
+	return {
+		status: 200,
+		body: envelope(releaseId, {
+			id: areaKey(geography, boundaryRelease, code),
+			geography,
+			boundaryRelease,
+			...area,
+			...result.dossier,
 		}),
 	};
 };
