@@ -34,6 +34,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Matching ignores case, accents, punctuation and ampersands, so `Brighton & Hove` and `Ynys Mon` find what was published.",
 			'Official titles are set aside too: "Bristol" finds the council published as "Bristol, City of".',
 			"Each result has a `place` reference, like `localAuthority/E06000023`, that you can pass straight to [Get a value for a place](/docs/v1/reference/start-here/measure-value-for-place).",
+			"Add `geography` to search one geography, and `release` or `date` to find the exact area a name means in one boundary release; each result then links to that area.",
 		],
 	},
 	resolvePostcode: {
