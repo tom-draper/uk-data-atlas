@@ -40,6 +40,9 @@ export const readMapAssets = (
 					path: join(apiRoot, "public", entry.artifact),
 					bytes: entry.bytes,
 					contentHash: entry.contentHash,
+					...(entry.gzipBytes === undefined
+						? {}
+						: { gzipBytes: entry.gzipBytes }),
 				},
 			]),
 		),

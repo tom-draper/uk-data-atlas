@@ -204,10 +204,66 @@ test("validates a stored file by its recorded hash without reading it", () => {
 		);
 	const response = serve();
 	assert.equal(response.status, 200);
-	assert.deepEqual(response.body, stored);
+	assert.deepEqual(response.body, {
+		path: stored.path,
+		bytes: bytes.length,
+		gunzip: false,
+	});
 	assert.equal(response.headers["content-length"], String(bytes.length));
 	assert.equal(response.headers.etag, entityTag(bytes));
 	assert.equal(serve(response.headers.etag).status, 304);
+});
+
+test("sends a gzip-stored file encoded only to a client that takes gzip", () => {
+	const stored = {
+		path: "/nowhere/release.geojson.gz",
+		bytes: 1000,
+		contentHash: `sha256:${"ab".repeat(32)}`,
+		gzipBytes: 120,
+	};
+	const serve = (acceptEncoding?: string) =>
+		httpResponse(
+			{
+				method: "GET",
+				headers: acceptEncoding
+					? { "accept-encoding": acceptEncoding }
+					: {},
+			},
+			() => ({
+				status: 200,
+				body: ok.body,
+				representation: {
+					contentType: "application/geo+json",
+					body: stored,
+				},
+			}),
+		);
+	for (const header of [undefined, "identity", "br", "gzip;q=0"]) {
+		const plain = serve(header);
+		assert.equal(
+			plain.headers["content-encoding"],
+			undefined,
+			String(header),
+		);
+		assert.equal(plain.headers["content-length"], "1000", String(header));
+		assert.deepEqual(plain.body, {
+			path: stored.path,
+			bytes: 1000,
+			gunzip: true,
+		});
+	}
+	for (const header of ["gzip", "br, gzip;q=0.5", "*"]) {
+		const encoded = serve(header);
+		assert.equal(encoded.headers["content-encoding"], "gzip", header);
+		assert.equal(encoded.headers["content-length"], "120", header);
+		assert.deepEqual(encoded.body, {
+			path: stored.path,
+			bytes: 120,
+			gunzip: false,
+		});
+		assert.notEqual(encoded.headers.etag, serve().headers.etag);
+	}
+	assert.equal(serve().headers.vary, "accept-encoding");
 });
 
 test("caches an empty answer but sends nothing to revalidate", () => {

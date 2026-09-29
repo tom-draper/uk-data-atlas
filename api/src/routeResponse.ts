@@ -63,14 +63,20 @@ export type ApiResponse = {
  */
 export type StoredFile = {
 	path: string;
+	/** The size of the content, once any stored encoding is undone. */
 	bytes: number;
-	/** `sha256:` followed by the hex digest of the file. */
+	/** `sha256:` followed by the hex digest of the content. */
 	contentHash: string;
+	/**
+	 * Set when the file is stored gzipped: its size on disk. It is sent as it
+	 * is to a client that accepts gzip, and decoded for one that does not.
+	 */
+	gzipBytes?: number;
 };
 
-export const isStoredFile = (
-	body: string | Buffer | StoredFile | undefined,
-): body is StoredFile =>
+export const isStoredFile = <T extends object>(
+	body: string | Buffer | T | undefined,
+): body is T =>
 	typeof body === "object" && body !== null && !Buffer.isBuffer(body);
 
 export const envelope = <T>(

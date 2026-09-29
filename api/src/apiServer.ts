@@ -1,5 +1,6 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
 import { createReadStream } from "node:fs";
+import { createGunzip } from "node:zlib";
 import {
 	createServer,
 	type IncomingMessage,
@@ -234,11 +235,18 @@ export const createApiServer = (
 			...(draining ? { connection: "close" } : {}),
 		};
 		response.writeHead(result.status, headers);
-		if (isStoredFile(result.body))
-			createReadStream(result.body.path)
-				.on("error", (error) => response.destroy(error))
-				.pipe(response);
-		else response.end(result.body);
+		if (isStoredFile(result.body)) {
+			const file = createReadStream(result.body.path).on(
+				"error",
+				(error) => response.destroy(error),
+			);
+			(result.body.gunzip
+				? file
+						.pipe(createGunzip())
+						.on("error", (error) => response.destroy(error))
+				: file
+			).pipe(response);
+		} else response.end(result.body);
 
 		const durationSeconds = (performance.now() - startedAt) / 1000;
 		const bytes = result.body ? bodyBytes(result.body) : 0;
