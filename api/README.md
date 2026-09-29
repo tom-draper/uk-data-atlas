@@ -1486,9 +1486,9 @@ GET /v1/boundary-releases/compare?from={geography}/{release}&to={geography}/{rel
       source partitions and lookups, and GeoParquet crosswalks, remain.
 - [x] Deliver boundaries and selected measure joins as cached vector tiles or
       PMTiles. This is the correct map-scale interface; nationwide GeoJSON is
-      not. One release is served as a PMTiles archive, its TileJSON and
-      per-tile `.mvt` reads, with every published measure joining to it by code
-      through a separate join table.
+      not. Every compiled release is served as a PMTiles archive, its TileJSON
+      and per-tile `.mvt` reads, with every published measure joining to it by
+      code through a separate join table.
 - [x] Compile topology-preserving collection/tile geometries for map delivery.
       The existing per-area simplification is appropriate for a feature query,
       but a map must not show cracks or divergent shared borders between
@@ -2749,9 +2749,9 @@ the non-binding [conceptual resource model](#2-find-places-and-inspect-geography
 and [commercial roadmap](#production-delivery); where they disagree, this
 section wins.
 
-All seven routes below are served. The flat
-`features` form is GeoParquet only; GeoJSON is not built, because a whole
-release at `full` detail is the nationwide GeoJSON a map should not download.
+All seven routes below are served, for every compiled boundary release. The
+flat `features` form is GeoParquet or GeoJSON, as whole-release downloads
+rather than something a web map should fetch: a map draws the tiles.
 
 ### What a map resource is
 
@@ -3229,8 +3229,8 @@ This is the shortest route to a useful external integration and validates the
 Atlas's core geography value without private state or universal conversion.
 
 - [x] Publish release-pinned, topology-preserving boundary tiles/PMTiles and
-      the associated attribution and licence metadata. One release is
-      published, as a PMTiles archive with its TileJSON and a descriptor
+      the associated attribution and licence metadata. Every compiled release
+      is published, as a PMTiles archive with its TileJSON and a descriptor
       carrying the licence, and every one of them answers under a pinned,
       immutable URL as well.
 - [x] Publish a small set of map-ready, source-exact value resources for the
