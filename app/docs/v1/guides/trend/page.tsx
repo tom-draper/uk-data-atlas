@@ -35,7 +35,7 @@ export default function TrendGuidePage() {
 						source on 2023 codes.
 					</P>
 					<Request
-						url={`${API}/measures/population-estimate`}
+						url={`${API}/measures/population`}
 						operationId="getMeasure"
 					/>
 				</Step>
@@ -47,7 +47,7 @@ export default function TrendGuidePage() {
 						`value`.
 					</P>
 					<Request
-						url={`${API}/data/population-estimate/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023`}
+						url={`${API}/data/population/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023`}
 						operationId="getSourceExactMeasureSeries"
 					/>
 				</Step>
@@ -61,7 +61,7 @@ export default function TrendGuidePage() {
 						says how many areas it was ranked against.
 					</P>
 					<Request
-						url={`${API}/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025`}
+						url={`${API}/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025`}
 						operationId="getSourceExactMeasureChange"
 					/>
 				</Step>
@@ -92,7 +92,7 @@ export default function TrendGuidePage() {
 						to show beside your chart.
 					</P>
 					<Request
-						url={`${API}/measures/population-estimate/quality`}
+						url={`${API}/measures/population/quality`}
 						operationId="getMeasureQuality"
 					/>
 				</Step>

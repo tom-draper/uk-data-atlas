@@ -68,7 +68,7 @@ export default function MapGuidePage() {
 						every area in the data exists in those boundaries.
 					</P>
 					<Request
-						url={`${API}/measures/population-estimate/compatibility`}
+						url={`${API}/measures/population/compatibility`}
 						operationId="getMeasureCompatibility"
 					/>
 				</Step>
@@ -81,7 +81,7 @@ export default function MapGuidePage() {
 						converted.
 					</P>
 					<Request
-						url={`${API}/data/population-estimate?period=2024&geography=localAuthority&boundaryYear=2023&release={release}&areaCode=E08000025`}
+						url={`${API}/data/population?period=2024&geography=localAuthority&boundaryYear=2023&release={release}&areaCode=E08000025`}
 						operationId="getMeasureObservations"
 					/>
 					<Callout tone="tip">
@@ -109,7 +109,7 @@ export default function MapGuidePage() {
 						boundaries:
 					</P>
 					<Request
-						url={`${API}/attribution?measure=population-estimate&boundaryRelease=localAuthority/{release}`}
+						url={`${API}/attribution?measure=population&boundaryRelease=localAuthority/{release}`}
 						operationId="getAttribution"
 					/>
 				</Step>

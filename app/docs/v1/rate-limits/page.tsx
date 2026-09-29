@@ -16,7 +16,7 @@ export const metadata = docsMetadata(
 	"/docs/v1/rate-limits",
 );
 
-const URL = `${API_BASE_URL}/measures/population-estimate`;
+const URL = `${API_BASE_URL}/measures/population`;
 
 const HEADERS: [string, string][] = [
 	[

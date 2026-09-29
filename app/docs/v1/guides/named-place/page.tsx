@@ -89,7 +89,7 @@ export default function NamedPlaceGuidePage() {
 						source partition and the coverage used to produce it.
 					</P>
 					<Request
-						url={`${API}/data/population-estimate/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=north-wales`}
+						url={`${API}/data/population/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=north-wales`}
 						operationId="aggregateSourceExactMeasure"
 					/>
 					<Callout tone="warning">
