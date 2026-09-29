@@ -8,7 +8,7 @@ export const housePriceDefinition: ChartDatasetDefinition<HousePriceDataset> = {
 	chart: {
 		group: "Economics",
 		key: "economics-housePrice",
-		label: "House Prices [Final ward data: 2023]",
+		label: "House Prices [2023]",
 		defaultVisible: true,
 		componentPath: "@/components/economics/house-price/HousePriceChart",
 		calculateStats: (aggregator, geojson, data, location, datasetId) =>
