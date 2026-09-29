@@ -14,6 +14,48 @@
 			},
 			"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
 			"note": "Reported collision counts are extensive. Every published 2021 LSOA in this source has one verified May 2023 local-authority parent, so values are regrouped exactly; no area weighting is used."
+		},
+		{
+			"measureId": "usual-residents-total",
+			"analysisGeography": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"source": {
+				"datasetId": "census-2021-ts001",
+				"geography": "lsoa",
+				"boundaryYear": 2021
+			},
+			"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"note": "Census 2021 usual-resident counts are extensive. Every 2021 LSOA in England and Wales has one verified May 2023 local-authority parent in the official ONS lookup, so counts are regrouped exactly, including into the four authorities created in April 2023; no area or population weighting is used."
+		},
+		{
+			"measureId": "usual-residents-in-households",
+			"analysisGeography": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"source": {
+				"datasetId": "census-2021-ts001",
+				"geography": "lsoa",
+				"boundaryYear": 2021
+			},
+			"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"note": "Census 2021 usual-resident counts are extensive. Every 2021 LSOA in England and Wales has one verified May 2023 local-authority parent in the official ONS lookup, so counts are regrouped exactly, including into the four authorities created in April 2023; no area or population weighting is used."
+		},
+		{
+			"measureId": "usual-residents-in-communal-establishments",
+			"analysisGeography": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-05-uk-bgc-v2"
+			},
+			"source": {
+				"datasetId": "census-2021-ts001",
+				"geography": "lsoa",
+				"boundaryYear": 2021
+			},
+			"crosswalkId": "lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup",
+			"note": "Census 2021 usual-resident counts are extensive. Every 2021 LSOA in England and Wales has one verified May 2023 local-authority parent in the official ONS lookup, so counts are regrouped exactly, including into the four authorities created in April 2023; no area or population weighting is used."
 		}
 	]
 }

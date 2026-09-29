@@ -7,6 +7,7 @@ import type {
 	AnyMeasureObservationArtifact,
 	DataCatalog,
 } from "../src/dataCatalog";
+import type { MeasureTableArtifact } from "../src/observationTables";
 
 const analysisGeographies: AnalysisGeographyInventory = {
 	schemaVersion: 1,
@@ -259,4 +260,46 @@ test("gates a reviewed path on exact coverage and conservation through every ste
 			),
 		/Step 2 of the path/,
 	);
+});
+
+test("gates a reviewed measure read from a shared census table", () => {
+	const table: MeasureTableArtifact = {
+		schemaVersion: 1,
+		kind: "measure-table",
+		contentHash: "sha256:table",
+		id: "fixture-table",
+		datasetId: "fixture-dataset",
+		sourceGeography: { type: "lsoa", boundaryYear: 2021 },
+		period: "2025",
+		measures: ["other", "fixture"],
+		records: [
+			["E01000001", 1, 40],
+			["E01000002", 2, 60],
+		],
+	};
+	const tableCatalogue = {
+		...catalogue,
+		measures: catalogue.measures.map((measure) => ({
+			...measure,
+			sources: measure.sources.map((source) => ({
+				...source,
+				observationArtifact: table.id,
+			})),
+		})),
+	} as DataCatalog;
+
+	const validated = validateAnalysisGeographies(
+		analysisGeographies,
+		tableCatalogue,
+		new Map([[crosswalk.id, crosswalk]]),
+		new Map([[table.id, table]]),
+	);
+	const [support] = validated.supports;
+	// The receipt names the table, since that is the artifact read.
+	assert.deepEqual(support?.observations, {
+		artifact: "fixture-table",
+		contentHash: "sha256:table",
+	});
+	assert.equal(support?.periods[0]?.inputTotal, 100);
+	assert.equal(support?.periods[0]?.outputTotal, 100);
 });
