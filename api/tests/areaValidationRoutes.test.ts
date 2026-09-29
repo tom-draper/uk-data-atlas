@@ -140,13 +140,14 @@ test("infers a likely release, reports a mixed code column, and recommends only 
 			},
 		],
 	};
+	const context = testContext({
+		areaLookup: matchingAreas,
+		crosswalkLookup: new Map([[succession.id, succession]]),
+	});
 	const response = routeRequest(
 		"GET",
 		"/v1/areas:validate?value=E05000001&value=E05000002",
-		testContext({
-			areaLookup: matchingAreas,
-			crosswalkLookup: new Map([[succession.id, succession]]),
-		}),
+		context,
 	);
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: Record<string, any> }).data;
@@ -167,6 +168,13 @@ test("infers a likely release, reports a mixed code column, and recommends only 
 		data.recommendations.map((path: { id: string }) => path.id),
 		["ward-2024-to-2025/forward/identity"],
 	);
+	const csv = routeRequest(
+		"GET",
+		"/v1/areas:validate?value=E05000001&value=E05000002&format=csv",
+		context,
+	);
+	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
+	assert.match(String(csv.representation?.body), /mixed-code-systems/);
 });
 
 test("uses a published parent relationship to settle a shared name", () => {
