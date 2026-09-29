@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
+import { gunzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -171,8 +172,11 @@ const wkbRings = (wkb: Buffer) => {
 
 test("publishes every tier as GeoParquet that matches its descriptor and the tiles", () => {
 	for (const resource of manifest.resources) {
+		const parquet = resource.features.filter(
+			(entry) => entry.format === "geoparquet-1.1",
+		);
 		assert.deepEqual(
-			resource.features.map((entry) => entry.tier),
+			parquet.map((entry) => entry.tier),
 			Object.keys(GEOMETRY_TIERS),
 		);
 		const archive = readFileSync(join(publicRoot, resource.tiles.artifact));
@@ -183,7 +187,7 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 				{ id: feature.id, name: feature.properties.name },
 			]),
 		);
-		for (const entry of resource.features) {
+		for (const entry of parquet) {
 			const bytes = readFileSync(join(publicRoot, entry.artifact));
 			assert.equal(bytes.length, entry.bytes, `${entry.artifact} size`);
 			assert.equal(
@@ -289,6 +293,75 @@ test("publishes every tier as GeoParquet that matches its descriptor and the til
 			);
 			assert.deepEqual(column.geometry_types, [...types].sort());
 			assert.deepEqual(column.bbox, extent);
+		}
+	}
+});
+
+test("publishes every tier as GeoJSON holding the GeoParquet's features", () => {
+	for (const resource of manifest.resources) {
+		const geoJson = resource.features.filter(
+			(entry) => entry.format === "geojson",
+		);
+		assert.deepEqual(
+			geoJson.map((entry) => entry.tier),
+			Object.keys(GEOMETRY_TIERS),
+			resource.id,
+		);
+		for (const entry of geoJson) {
+			const stored = readFileSync(join(publicRoot, entry.artifact));
+			assert.equal(
+				stored.length,
+				entry.gzipBytes,
+				`${entry.artifact} size`,
+			);
+			const text = gunzipSync(stored);
+			assert.equal(
+				text.length,
+				entry.bytes,
+				`${entry.artifact} decoded size`,
+			);
+			assert.equal(
+				sha256(text),
+				entry.contentHash,
+				`${entry.artifact} does not hash to what its descriptor records; rebuild with \`pnpm build:map-resource\``,
+			);
+			const collection = JSON.parse(text.toString("utf8")) as {
+				type: string;
+				features: Array<{
+					id: number;
+					properties: { id: number; code: string; name: string };
+					geometry: { type: string; coordinates: unknown };
+				}>;
+			};
+			assert.equal(collection.type, "FeatureCollection");
+			assert.equal(collection.features.length, resource.areaCount);
+			const parquet = readParquet(
+				readFileSync(
+					join(
+						publicRoot,
+						resource.features.find(
+							(candidate) =>
+								candidate.tier === entry.tier &&
+								candidate.format === "geoparquet-1.1",
+						)!.artifact,
+					),
+				),
+			);
+			assert.deepEqual(
+				collection.features.map((feature) => [
+					feature.id,
+					feature.properties.code,
+					feature.properties.name,
+				]),
+				parquet.rows.map((row) => [row.id, row.code, row.name]),
+				`${entry.artifact} holds different areas from its GeoParquet`,
+			);
+			for (const feature of collection.features)
+				assert.ok(
+					feature.geometry.type === "Polygon" ||
+						feature.geometry.type === "MultiPolygon",
+					`${feature.properties.code} is a ${feature.geometry.type}`,
+				);
 		}
 	}
 });

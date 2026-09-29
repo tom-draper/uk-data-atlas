@@ -448,7 +448,7 @@ paths:
     get:
       operationId: getMapResourceFeatures
       tags: ["Geography"]
-      summary: Every area of one tier as a GeoParquet file
+      summary: A whole boundary release as one GeoParquet or GeoJSON file
       x-likely-refusal:
         status: 400
         when: "No `tier` is given. The detail is the caller's to choose: `full`, `high`, `medium` or `low`."
@@ -467,7 +467,16 @@ paths:
         guaranteed to be a valid polygon everywhere, as the descriptor's
         `generalisation` says. The file's `uk-data-atlas` metadata names the
         resource, tier, attribution and publisher file hash, so a copy loaded
-        on its own is still citable. GeoJSON is not offered.
+        on its own is still citable.
+
+        `format=geojson` returns the same features as an RFC 7946
+        FeatureCollection, for the tools that open GeoJSON directly. Each
+        feature has the same `id`, and `code` and `name` properties;
+        coordinates are written to six decimal places, about 0.1 m. The file
+        is stored gzipped, so a client sending `Accept-Encoding: gzip` receives
+        it with `Content-Encoding: gzip` and one that does not receives it
+        decoded. The two encodings have different `ETag`s, and the
+        descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -485,14 +494,18 @@ paths:
           required: false
           schema:
             type: string
-            enum: [geoparquet]
+            enum: [geoparquet, geojson]
             default: geoparquet
-          description: The representation. GeoParquet is the only one served.
+          description: The representation, GeoParquet 1.1 or GeoJSON.
       responses:
         "200":
-          description: The GeoParquet file.
+          description: The GeoParquet or GeoJSON file.
           content:
             application/vnd.apache.parquet:
+              schema:
+                type: string
+                format: binary
+            application/geo+json:
               schema:
                 type: string
                 format: binary
@@ -9268,8 +9281,9 @@ components:
         features:
           type: array
           description: >
-            Every tier as a GeoParquet download, compiled from the same
-            shared-arc generalisation as the tiles.
+            Every tier as a whole-release download, in GeoParquet and in
+            GeoJSON, compiled from the same shared-arc generalisation as the
+            tiles.
           items:
             type: object
             required:
@@ -9292,7 +9306,7 @@ components:
                 type: number
               format:
                 type: string
-                const: geoparquet-1.1
+                enum: [geoparquet-1.1, geojson]
               artifact:
                 type: string
               href:
@@ -9307,7 +9321,10 @@ components:
                 type: integer
               contentHash:
                 type: string
-                description: SHA-256 of the file served at `href`.
+                description: SHA-256 of the file served at `href`, once any content encoding is undone.
+              gzipBytes:
+                type: integer
+                description: "Present when the file is stored gzipped, as GeoJSON is: its size as sent with `Content-Encoding: gzip`."
         generalisation:
           type: object
           description: The terms the tiers were compiled on, in plain words.

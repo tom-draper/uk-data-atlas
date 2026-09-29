@@ -13,8 +13,11 @@ export type HttpResponse = {
 	 * Absent for HEAD requests, 204 and 304 responses. A stored file is
 	 * streamed from disk by the server.
 	 */
-	body?: string | Buffer | StoredFile;
+	body?: string | Buffer | SentFile;
 };
+
+/** A stored file as the server sends it: which bytes, and whether to decode them. */
+export type SentFile = { path: string; bytes: number; gunzip: boolean };
 
 // A successful response is a function of the Atlas release the server loaded
 // and the request URL, so it stays fresh for a few minutes and is then
@@ -59,12 +62,31 @@ export const preflightResponse = (): HttpResponse => ({
 export const entityTag = (body: string | Buffer) =>
 	`"sha256-${createHash("sha256").update(body).digest("base64url")}"`;
 
-/** The same validator, from a hash the build recorded rather than the bytes. */
-const storedEntityTag = (file: StoredFile) =>
-	`"sha256-${Buffer.from(file.contentHash.replace(/^sha256:/, ""), "hex").toString("base64url")}"`;
+/**
+ * The same validator, from a hash the build recorded rather than the bytes.
+ * The gzipped form of a representation is different bytes, so it has its own.
+ */
+const storedEntityTag = (file: StoredFile, gzipped: boolean) =>
+	`"sha256-${Buffer.from(file.contentHash.replace(/^sha256:/, ""), "hex").toString("base64url")}${gzipped ? "-gzip" : ""}"`;
+
+/** Whether a client will take a gzip-encoded body, per RFC 9110 section 12.5.3. */
+const acceptsGzip = (header: string | string[] | undefined) =>
+	(Array.isArray(header) ? header.join(",") : (header ?? ""))
+		.split(",")
+		.some((entry) => {
+			const [coding, ...parameters] = entry
+				.trim()
+				.toLowerCase()
+				.split(";");
+			if (coding !== "gzip" && coding !== "*") return false;
+			const q = parameters
+				.map((parameter) => parameter.trim())
+				.find((parameter) => parameter.startsWith("q="));
+			return q === undefined || Number(q.slice(2)) > 0;
+		});
 
 /** How many bytes a body puts on the wire. */
-export const bodyBytes = (body: string | Buffer | StoredFile) =>
+export const bodyBytes = (body: string | Buffer | SentFile) =>
 	isStoredFile(body) ? body.bytes : Buffer.byteLength(body);
 
 /**
@@ -93,8 +115,21 @@ export const httpResponse = (
 ): HttpResponse => {
 	const isHead = request.method === "HEAD";
 	const result = route(isHead ? "GET" : request.method);
-	const body =
+	const represented =
 		result.representation?.body ?? `${JSON.stringify(result.body)}\n`;
+	const stored = isStoredFile<StoredFile>(represented)
+		? represented
+		: undefined;
+	const gzipped =
+		stored?.gzipBytes !== undefined &&
+		acceptsGzip(request.headers["accept-encoding"]);
+	const body: string | Buffer | SentFile = stored
+		? {
+				path: stored.path,
+				bytes: gzipped ? stored.gzipBytes! : stored.bytes,
+				gunzip: stored.gzipBytes !== undefined && !gzipped,
+			}
+		: (represented as string | Buffer);
 	const headers: Record<string, string> = {
 		...CROSS_ORIGIN,
 		"content-type":
@@ -103,6 +138,8 @@ export const httpResponse = (
 				: (result.representation?.contentType ?? "application/json"),
 		"x-content-type-options": "nosniff",
 		...result.representation?.headers,
+		...(stored?.gzipBytes !== undefined ? { vary: "accept-encoding" } : {}),
+		...(gzipped ? { "content-encoding": "gzip" } : {}),
 	};
 	// A tile that covers no area answers 204, which is an ordinary answer and
 	// is cached like any other; only a failure is left unstored.
@@ -119,7 +156,9 @@ export const httpResponse = (
 			status: 204,
 			headers: { ...headers, "cache-control": freshness },
 		};
-	const etag = isStoredFile(body) ? storedEntityTag(body) : entityTag(body);
+	const etag = stored
+		? storedEntityTag(stored, gzipped)
+		: entityTag(body as string | Buffer);
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
 	if (matchesEntityTag(request.headers["if-none-match"], etag)) {

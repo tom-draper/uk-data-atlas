@@ -27,6 +27,23 @@ const MVT_CONTENT_TYPE = "application/vnd.mapbox-vector-tile";
 const PMTILES_CONTENT_TYPE = "application/vnd.pmtiles";
 const PARQUET_CONTENT_TYPE = "application/vnd.apache.parquet";
 
+/** The whole-release downloads a tier is published in, by `format=`. */
+const FEATURE_FORMATS: Record<
+	string,
+	{ format: string; contentType: string; extension: string }
+> = {
+	geoparquet: {
+		format: "geoparquet-1.1",
+		contentType: PARQUET_CONTENT_TYPE,
+		extension: "parquet",
+	},
+	geojson: {
+		format: "geojson",
+		contentType: "application/geo+json",
+		extension: "geojson",
+	},
+};
+
 const TIER_NAMES = Object.keys(GEOMETRY_TIERS).join(", ");
 
 const unavailable = () =>
@@ -193,12 +210,17 @@ export const handleMapResourceRoutes = ({
 				`Ask for the detail to download with tier=, one of ${TIER_NAMES}.`,
 			);
 		const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
-		if (format !== "geoparquet")
-			return problem(400, "Invalid Query", "format must be geoparquet.", {
-				code: "invalid_format",
-			});
+		const download = FEATURE_FORMATS[format];
+		if (!download)
+			return problem(
+				400,
+				"Invalid Query",
+				"format must be geoparquet or geojson.",
+				{ code: "invalid_format" },
+			);
 		const entry = resource.features.find(
-			(candidate) => candidate.tier === tier,
+			(candidate) =>
+				candidate.tier === tier && candidate.format === download.format,
 		);
 		const body = entry && context.mapFeatures?.get(entry.artifact);
 		if (!entry || !body) return unavailable();
@@ -206,10 +228,10 @@ export const handleMapResourceRoutes = ({
 			status: 200,
 			body: envelope(releaseId, entry),
 			representation: {
-				contentType: PARQUET_CONTENT_TYPE,
+				contentType: download.contentType,
 				body,
 				headers: {
-					"content-disposition": `attachment; filename="${geography}-${release}-${tier}.parquet"`,
+					"content-disposition": `attachment; filename="${geography}-${release}-${tier}.${download.extension}"`,
 				},
 			},
 		};

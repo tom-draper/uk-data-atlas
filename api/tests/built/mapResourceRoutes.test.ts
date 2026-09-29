@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import test from "node:test";
@@ -28,7 +29,8 @@ const get = (url: string) =>
 /** A download's bytes, which the server streams from its file on disk. */
 const bytesOf = (body: unknown) => {
 	assert.ok(isStoredFile(body as never), "a download is served from disk");
-	const file = body as { path: string; bytes: number };
+	const file = body as { path: string; bytes: number; gunzip: boolean };
+	assert.equal(file.gunzip, false, "a binary download is sent as stored");
 	const bytes = readFileSync(file.path);
 	assert.equal(bytes.length, file.bytes);
 	return bytes;
@@ -172,18 +174,22 @@ test("serves each tier flat, as the GeoParquet its descriptor lists", () => {
 		areaCount: number;
 		features: Array<{
 			tier: string;
+			format: string;
 			href: string;
 			bytes: number;
 			rowCount: number;
 		}>;
 	};
-	assert.deepEqual(descriptor.features.map((entry) => entry.tier).sort(), [
+	const parquet = descriptor.features.filter(
+		(entry) => entry.format === "geoparquet-1.1",
+	);
+	assert.deepEqual(parquet.map((entry) => entry.tier).sort(), [
 		"full",
 		"high",
 		"low",
 		"medium",
 	]);
-	for (const entry of descriptor.features) {
+	for (const entry of parquet) {
 		const response = get(entry.href);
 		assert.equal(response.status, 200, entry.href);
 		assert.equal(
@@ -199,10 +205,91 @@ test("serves each tier flat, as the GeoParquet its descriptor lists", () => {
 		assert.equal(entry.rowCount, descriptor.areaCount);
 	}
 	// Asking for the default format by name is the same request.
-	const low = descriptor.features.find((entry) => entry.tier === "low")!;
+	const low = parquet.find((entry) => entry.tier === "low")!;
 	assert.equal(
 		get(`${low.href}&format=geoparquet`).headers.etag,
 		get(low.href).headers.etag,
+	);
+});
+
+test("serves each tier as GeoJSON with the same features as the GeoParquet", () => {
+	const descriptor = data(`/v1/map-resources/${RESOURCE}`) as {
+		areaCount: number;
+		features: Array<{
+			tier: string;
+			format: string;
+			href: string;
+			bytes: number;
+			contentHash: string;
+			gzipBytes: number;
+		}>;
+	};
+	const geoJson = descriptor.features.filter(
+		(entry) => entry.format === "geojson",
+	);
+	assert.deepEqual(geoJson.map((entry) => entry.tier).sort(), [
+		"full",
+		"high",
+		"low",
+		"medium",
+	]);
+	const low = geoJson.find((entry) => entry.tier === "low")!;
+	const parquet = readParquet(
+		bytesOf(
+			get(
+				descriptor.features.find(
+					(entry) =>
+						entry.tier === "low" &&
+						entry.format === "geoparquet-1.1",
+				)!.href,
+			).body,
+		),
+	);
+	// A client that takes gzip is sent the stored file as it is; one that
+	// does not is sent the GeoJSON itself. Each has its own validator.
+	const plain = get(low.href);
+	assert.equal(plain.status, 200);
+	assert.equal(plain.headers["content-type"], "application/geo+json");
+	assert.equal(plain.headers["content-encoding"], undefined);
+	assert.equal(plain.headers["content-length"], String(low.bytes));
+	assert.equal(plain.headers.vary, "accept-encoding");
+	assert.deepEqual(
+		{ ...(plain.body as object), path: undefined },
+		{ path: undefined, bytes: low.bytes, gunzip: true },
+	);
+	const gzipped = httpResponse(
+		{ method: "GET", headers: { "accept-encoding": "br, gzip" } },
+		(method) => route(method, low.href, catalogues),
+	);
+	assert.equal(gzipped.headers["content-encoding"], "gzip");
+	assert.equal(gzipped.headers["content-length"], String(low.gzipBytes));
+	assert.notEqual(gzipped.headers.etag, plain.headers.etag);
+
+	const stored = readFileSync((gzipped.body as { path: string }).path);
+	assert.equal(stored.length, low.gzipBytes);
+	const text = gunzipSync(stored);
+	assert.equal(text.length, low.bytes);
+	assert.equal(
+		`sha256:${createHash("sha256").update(text).digest("hex")}`,
+		low.contentHash,
+	);
+	const collection = JSON.parse(text.toString("utf8")) as {
+		type: string;
+		features: Array<{
+			id: number;
+			properties: { id: number; code: string; name: string };
+			geometry: { type: string };
+		}>;
+	};
+	assert.equal(collection.type, "FeatureCollection");
+	assert.equal(collection.features.length, descriptor.areaCount);
+	assert.deepEqual(
+		collection.features.map((feature) => [
+			feature.id,
+			feature.properties.code,
+			feature.properties.name,
+		]),
+		parquet.rows.map((row) => [row.id, row.code, row.name]),
 	);
 });
 
@@ -221,7 +308,7 @@ test("refuses a features download without a tier it publishes", () => {
 	}
 	const format = route(
 		"GET",
-		`/v1/map-resources/${RESOURCE}/features?tier=low&format=geojson`,
+		`/v1/map-resources/${RESOURCE}/features?tier=low&format=kml`,
 		catalogues,
 	);
 	assert.equal(format.status, 400);
