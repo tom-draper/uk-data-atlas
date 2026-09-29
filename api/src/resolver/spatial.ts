@@ -40,7 +40,7 @@ export type ResolvedIntersectingArea = AreaRecord & {
 	relation: IntersectingArea["relation"];
 	boundingBox: GeometryBounds;
 	geometry?: GeoJsonGeometry;
-	geometrySource?: GeometryProvenance;
+	geometrySource: GeometryProvenance;
 };
 export type ResolvedIntersectingAreas = {
 	matched: number;
@@ -261,6 +261,11 @@ export class SpatialResolver {
 								...area,
 								relation,
 								boundingBox: bounds,
+								geometrySource: cache.provenance(
+									geography,
+									boundaryRelease,
+									code,
+								),
 							},
 						]
 					: [];
@@ -280,11 +285,6 @@ export class SpatialResolver {
 									{
 										...match,
 										geometry,
-										geometrySource: cache.provenance(
-											geography,
-											boundaryRelease,
-											match.code,
-										),
 									},
 								]
 							: [];
