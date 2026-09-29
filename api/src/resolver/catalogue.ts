@@ -10,18 +10,48 @@ export type CatalogueResolverInputs = {
 
 /** Summary and inventory lookups for compiled geography catalogue artifacts. */
 export class CatalogueResolver {
-	constructor(private readonly inputs: CatalogueResolverInputs) {}
+	private readonly crosswalksById = new Map<
+		string,
+		CrosswalkInventory["crosswalks"][number]
+	>();
+	private readonly crosswalksByArtifact = new Map<
+		string,
+		CrosswalkInventory["crosswalks"][number]
+	>();
+	private readonly areaReleasesByIdentity = new Map<
+		string,
+		AreaInventory["releases"][number]
+	>();
+	private readonly areaReleasesByArtifact = new Map<
+		string,
+		AreaInventory["releases"][number]
+	>();
+
+	constructor(private readonly inputs: CatalogueResolverInputs) {
+		for (const crosswalk of inputs.crosswalkInventory?.crosswalks ?? []) {
+			if (!this.crosswalksById.has(crosswalk.id))
+				this.crosswalksById.set(crosswalk.id, crosswalk);
+			if (!this.crosswalksByArtifact.has(crosswalk.artifact))
+				this.crosswalksByArtifact.set(crosswalk.artifact, crosswalk);
+		}
+		for (const release of inputs.areaInventory?.releases ?? []) {
+			const identity = `${release.geography}/${release.id}`;
+			if (!this.areaReleasesByIdentity.has(identity))
+				this.areaReleasesByIdentity.set(identity, release);
+			if (
+				release.status === "available" &&
+				!this.areaReleasesByArtifact.has(release.artifact)
+			)
+				this.areaReleasesByArtifact.set(release.artifact, release);
+		}
+	}
 
 	crosswalkSummary(id: string) {
-		return this.inputs.crosswalkInventory?.crosswalks.find(
-			(crosswalk) => crosswalk.id === id,
-		);
+		return this.crosswalksById.get(id);
 	}
 
 	crosswalkSummaryForArtifact(artifact: string) {
-		return this.inputs.crosswalkInventory?.crosswalks.find(
-			(crosswalk) => crosswalk.artifact === artifact,
-		);
+		return this.crosswalksByArtifact.get(artifact);
 	}
 
 	crosswalkSummaries() {
@@ -29,18 +59,13 @@ export class CatalogueResolver {
 	}
 
 	areaIdentityRelease(geography: string, boundaryRelease: string) {
-		return this.inputs.areaInventory?.releases.find(
-			(release) =>
-				release.geography === geography &&
-				release.id === boundaryRelease,
+		return this.areaReleasesByIdentity.get(
+			`${geography}/${boundaryRelease}`,
 		);
 	}
 
 	areaIdentityReleaseForArtifact(artifact: string) {
-		return this.inputs.areaInventory?.releases.find(
-			(release) =>
-				release.status === "available" && release.artifact === artifact,
-		);
+		return this.areaReleasesByArtifact.get(artifact);
 	}
 
 	namedLocationMembershipInventory() {
