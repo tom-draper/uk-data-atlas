@@ -6103,10 +6103,30 @@ paths:
         deliberately separate: conversion is directional between exact
         releases, whereas coverage is an audit of one release's evidence.
       parameters:
-        - { name: sourceGeography, in: query, required: false, schema: { type: string } }
-        - { name: sourceRelease, in: query, required: false, schema: { type: string } }
-        - { name: targetGeography, in: query, required: false, schema: { type: string } }
-        - { name: targetRelease, in: query, required: false, schema: { type: string } }
+        - {
+            name: sourceGeography,
+            in: query,
+            required: false,
+            schema: { type: string },
+          }
+        - {
+            name: sourceRelease,
+            in: query,
+            required: false,
+            schema: { type: string },
+          }
+        - {
+            name: targetGeography,
+            in: query,
+            required: false,
+            schema: { type: string },
+          }
+        - {
+            name: targetRelease,
+            in: query,
+            required: false,
+            schema: { type: string },
+          }
         - name: purpose
           in: query
           required: false
@@ -6117,19 +6137,39 @@ paths:
           schema:
             type: string
             enum:
-              [identity-join, code-translation, containment-aggregation, membership-join, weighted-allocation]
+              [
+                identity-join,
+                code-translation,
+                containment-aggregation,
+                membership-join,
+                weighted-allocation,
+              ]
           description: Select the best published path for this intended conversion operation.
         - name: measure
           in: query
           required: false
           schema: { type: string }
           description: Preflight this measure against an exact conversion's relationship purpose.
-        - { name: geography, in: query, required: false, schema: { type: string } }
-        - { name: release, in: query, required: false, schema: { type: string } }
+        - {
+            name: geography,
+            in: query,
+            required: false,
+            schema: { type: string },
+          }
+        - {
+            name: release,
+            in: query,
+            required: false,
+            schema: { type: string },
+          }
         - name: relation
           in: query
           required: false
-          schema: { type: string, enum: [within, contains, successor, predecessor, overlaps] }
+          schema:
+            {
+              type: string,
+              enum: [within, contains, successor, predecessor, overlaps],
+            }
         - name: limit
           in: query
           required: false

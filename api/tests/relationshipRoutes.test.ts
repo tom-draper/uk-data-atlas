@@ -7,10 +7,7 @@ import {
 	containmentCrosswalk,
 	crosswalkInventory,
 } from "./geographyFixtures";
-import {
-	registry,
-	testContext,
-} from "./routeFixtures";
+import { registry, testContext } from "./routeFixtures";
 
 const conversion =
 	"sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
@@ -20,7 +17,9 @@ const context = () =>
 		boundaryRegistry: registry,
 		areaLookup,
 		crosswalkInventory,
-		crosswalkLookup: new Map([[containmentCrosswalk.id, containmentCrosswalk]]),
+		crosswalkLookup: new Map([
+			[containmentCrosswalk.id, containmentCrosswalk],
+		]),
 		relationshipPathInventory: compileRelationshipPaths(crosswalkInventory),
 	});
 
