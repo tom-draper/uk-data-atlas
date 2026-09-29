@@ -238,6 +238,9 @@ export class GeographyResolver {
 	area(identity: AreaIdentity): AreaRecord | undefined {
 		return this.areas.area(identity);
 	}
+	codeReleases(identity: AreaIdentity) {
+		return this.areas.codeReleases(identity);
+	}
 	releaseAreas(geography: string, boundaryRelease: string) {
 		return this.areas.releaseAreas(geography, boundaryRelease);
 	}

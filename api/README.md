@@ -92,13 +92,12 @@ only **available** when its endpoint, contract and provenance are published.
 
 ### Geography and place intelligence — next
 
-- [ ] Resolve a canonical area page with validity, aliases, extent, provenance
-      and links to geometry and relationships. Mostly served:
-      `GET /v1/areas/{geography}/{release}/{code}/dossier` gives the area's
-      aliases, its boundary release's source, temporal coverage and metadata
-      hash, geometry provenance, and links to geometry, relationships, history,
-      capabilities and citation. Still to add: the code's own validity span
-      (the releases holding it) and its extent.
+- [x] Resolve a canonical area page with validity, aliases, extent, provenance
+      and links to geometry and relationships. `GET /v1/areas/{geography}/{release}/{code}/dossier` gives the area's aliases,
+      code span (the compiled releases holding it), WGS 84 extent where the
+      release geometry is available, its boundary release's source, temporal
+      coverage and metadata hash, geometry provenance, and links to geometry,
+      relationships, history, capabilities and citation.
 - [x] Resolve a place name to every place it could mean through
       `GET /v1/places?q=`, each candidate saying what kind of place it is and
       none chosen. Names match with case, accents, punctuation and the
