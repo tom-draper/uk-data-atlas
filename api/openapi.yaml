@@ -1354,8 +1354,6 @@ paths:
         1000000, and percent is `proportion` with a scale of 0.01. This is
         descriptive metadata only: observation values and source artifacts
         are not rewritten.
-
-
         `q` searches by the words people use: `population`, `house prices`,
         `deprivation`. Every measure whose id, alias, label or dataset title
         holds all of the query's words is listed, best first: an exact id or

@@ -91,10 +91,7 @@ test("answers a measure for a place named in words", () => {
 		280,
 	);
 
-	assert.equal(
-		get("/v1/data/population/value?place=Atlantis").status,
-		404,
-	);
+	assert.equal(get("/v1/data/population/value?place=Atlantis").status, 404);
 	assert.equal(get("/v1/data/population/value").status, 400);
 	assert.equal(
 		get("/v1/data/no-such-measure/value?place=Hartlepool").status,
