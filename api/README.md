@@ -727,10 +727,10 @@ only **available** when its endpoint, contract and provenance are published.
       nineteen ethnic groups are exhaustive, so they sum to the resident
       population without a separate total, give or take the few residents
       ONS perturbation moves between tables.
-- [ ] Return Census 2021 small-area tables on 2021 LSOAs and MSOAs for England
-      and Wales (compiled by `pnpm --dir api build`; not yet in a published
-      release): usual residents (TS001, `usual-residents-*`), age in five-year
-      bands (TS007A, `age-*`), household composition (TS003,
+- [x] Return Census 2021 small-area tables on 2021 LSOAs and MSOAs for England
+      and Wales, from the Nomis bulk files in the pinned data release: usual
+      residents (TS001, `usual-residents-*`), age in five-year bands
+      (TS007A, `age-*`), household composition (TS003,
       `household-composition-*`), tenure (TS054, `tenure-*`), economic
       activity (TS066, `economic-activity-*`) and general health (TS037,
       `general-health-*`), and ethnic group (TS021) as LSOA and MSOA
@@ -1323,8 +1323,10 @@ GET /v1/status
       fully validated conversion. Do not mark a measure convertible merely
       because a crosswalk exists; conservation, coverage and uncertainty rules
       must be declared and tested per measure/method pair. The review and its
-      conservation gate are built, and road collisions (LSOA 2021 to May 2023
-      local authorities) is the first reviewed pair.
+      conservation gate are built. Road collisions and Census 2021 usual
+      residents (`usual-residents-total` and its household and communal
+      establishment parts), each from 2021 LSOAs to May 2023 local
+      authorities, are the reviewed pairs.
 - [ ] Let a caller provide a bounded list of canonical area references and
       receive a valid aggregate, comparison or profile, with every selected
       input, aggregation rule and coverage caveat echoed in the response.
@@ -3244,9 +3246,12 @@ comparability when geography changes.
       rounding and refusal behaviour. `road-collisions` is regrouped from
       2021 LSOAs to the May 2023 local-authority release through an official,
       one-parent containment lookup. It is exact rather than rounded: the
-      build verifies all 20,623 source records become 317 targets while the
-      total remains 46,649; any other period or source/frame pair is refused
-      or reported not-comparable.
+      build verifies all 27,178 2025 source records become 318 targets while
+      the total remains 97,418; any other period or source/frame pair is
+      refused or reported not-comparable. Census 2021 usual residents take the
+      same lookup: all 35,672 LSOAs in England and Wales become 318
+      authorities, the four created in April 2023 included, and the
+      59,597,601 residents are conserved.
 - [x] Return source-exact, derived and not-comparable observations distinctly.
       `/v1/data/{measure-id}/series` remains source-exact unless its explicit
       `analysisGeography` is reviewed; a reviewed result carries
