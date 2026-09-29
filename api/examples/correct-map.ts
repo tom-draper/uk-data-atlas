@@ -50,7 +50,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			sourceGeography: { type: string; boundaryYear: number };
 			candidates: Array<{ boundaryRelease: string; status: string }>;
 		}>;
-	}>("/v1/measures/population-estimate/compatibility");
+	}>("/v1/measures/population/compatibility");
 	const source = compatibility.data.sources.find((candidate) =>
 		candidate.candidates.some(
 			(entry) =>
@@ -78,7 +78,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			transformation: { status: string };
 		};
 	}>(
-		`/v1/data/population-estimate?period=2024&${partition}&release=${release}&areaCode=${authority.code}`,
+		`/v1/data/population?period=2024&${partition}&release=${release}&areaCode=${authority.code}`,
 	);
 	const record = values.data.records[0];
 	if (values.data.provenance.transformation.status !== "not-applied")
@@ -102,7 +102,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 
 	// 6. Anything published from this needs its attribution.
 	const attribution = await client.get<{ text: string }>(
-		`/v1/attribution?measure=population-estimate&boundaryRelease=localAuthority/${release}`,
+		`/v1/attribution?measure=population&boundaryRelease=localAuthority/${release}`,
 	);
 	steps.push({
 		title: "Attribute the map",

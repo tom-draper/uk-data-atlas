@@ -125,7 +125,7 @@ test("answers a failed tabular request with a JSON problem", () => {
 	const response = httpResponse({ method: "GET", headers: {} }, (method) =>
 		route(
 			method,
-			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv&cursor=not-a-cursor",
+			"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=csv&cursor=not-a-cursor",
 			catalogues,
 		),
 	);
@@ -143,7 +143,7 @@ test("answers a failed tabular request with a JSON problem", () => {
 	const served = httpResponse({ method: "GET", headers: {} }, (method) =>
 		route(
 			method,
-			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=csv&limit=1",
+			"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=csv&limit=1",
 			catalogues,
 		),
 	);

@@ -60,7 +60,7 @@ const analysisInventory: AnalysisGeographyInventory = {
 
 test("returns a source-exact series without selecting a geometry release", () => {
 	const response = routeWithData(
-		"/v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023",
+		"/v1/data/population/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023",
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
@@ -97,13 +97,13 @@ test("returns a source-exact series without selecting a geometry release", () =>
 
 	assert.equal(
 		routeWithData(
-			"/v1/data/population-estimate/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc",
+			"/v1/data/population/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc",
 		).status,
 		422,
 	);
 	assert.equal(
 		routeWithData(
-			"/v1/data/population-estimate/series?areaCode=unknown&geography=localAuthority&boundaryYear=2023",
+			"/v1/data/population/series?areaCode=unknown&geography=localAuthority&boundaryYear=2023",
 		).status,
 		404,
 	);

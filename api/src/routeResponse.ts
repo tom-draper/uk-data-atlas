@@ -43,6 +43,8 @@ export type Problem = {
 export type ApiResponse = {
 	status: number;
 	body: Envelope<unknown> | Problem;
+	/** Headers any representation of this response carries. */
+	headers?: Record<string, string>;
 	representation?: {
 		contentType: string;
 		/**

@@ -45,7 +45,7 @@ test("ranks change between two periods of one source partition", () => {
 	// Both authorities grow by 20 people between 2022 and 2024, so absolute
 	// change ties them at rank 1, and the next rank would account for both.
 	const absolute = ask(
-		"population-estimate",
+		"population",
 		`${partition}&startPeriod=2022&endPeriod=2024`,
 	);
 	assert.equal(
@@ -76,7 +76,7 @@ test("ranks change between two periods of one source partition", () => {
 
 	// Relative change separates them: 20 on 280 is more than 20 on 380.
 	const relative = ask(
-		"population-estimate",
+		"population",
 		`${partition}&startPeriod=2022&endPeriod=2024&by=relative`,
 	);
 	assert.equal(data(relative).change.unit, "proportion");
@@ -90,7 +90,7 @@ test("ranks change between two periods of one source partition", () => {
 
 	// One area, keeping its place among all of them.
 	const one = ask(
-		"population-estimate",
+		"population",
 		`${partition}&startPeriod=2022&endPeriod=2024&by=relative&areaCode=N09000001`,
 	);
 	assert.equal(data(one).records.length, 1);
@@ -101,20 +101,20 @@ test("ranks change between two periods of one source partition", () => {
 	const refusals: [string, string, number, RegExp][] = [
 		// The partition's periods are listed, not guessed at.
 		[
-			"population-estimate",
+			"population",
 			`${partition}&startPeriod=2019&endPeriod=2024`,
 			400,
 			/2022, 2023, 2024/,
 		],
 		[
-			"population-estimate",
+			"population",
 			`${partition}&startPeriod=2024&endPeriod=2022`,
 			400,
 			/before/,
 		],
 		// Naming no partition lists the partitions that exist.
 		[
-			"population-estimate",
+			"population",
 			"startPeriod=2022&endPeriod=2024",
 			400,
 			/boundaryYear=2023 \(3 periods\)/,
@@ -136,13 +136,13 @@ test("ranks change between two periods of one source partition", () => {
 			/single period/,
 		],
 		[
-			"population-estimate",
+			"population",
 			`${partition}&startPeriod=2022&endPeriod=2024&release=2023-05-uk-bgc-v2`,
 			422,
 			/one source partition/,
 		],
 		[
-			"population-estimate",
+			"population",
 			`${partition}&startPeriod=2022&endPeriod=2024&areaCode=E99999999`,
 			404,
 			/not in this partition/,

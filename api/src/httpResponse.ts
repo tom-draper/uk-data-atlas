@@ -32,7 +32,8 @@ const ERROR_CACHE_CONTROL = "no-store";
  * fetches a tile and then refuses to let the page read it.
  *
  * `ETag` and `Link` are exposed because a client that cannot read them cannot
- * revalidate or page, which are both part of the contract. The release and
+ * revalidate or page, which are both part of the contract. `Content-Location`
+ * names the canonical request a measure alias was read as. The release and
  * request id identify an answer, and the rate limit, `Retry-After`,
  * `Deprecation` and `Sunset` fields tell a browser client when to slow down or
  * move on, so they are exposed too. `If-None-Match` is
@@ -42,7 +43,7 @@ const ERROR_CACHE_CONTROL = "no-store";
 const CROSS_ORIGIN: Record<string, string> = {
 	"access-control-allow-origin": "*",
 	"access-control-expose-headers":
-		"etag, link, content-encoding, atlas-release, x-request-id, ratelimit, ratelimit-policy, retry-after, deprecation, sunset",
+		"etag, link, content-encoding, content-location, atlas-release, x-request-id, ratelimit, ratelimit-policy, retry-after, deprecation, sunset",
 };
 
 const PREFLIGHT: Record<string, string> = {
@@ -138,6 +139,7 @@ export const httpResponse = (
 				: (result.representation?.contentType ?? "application/json"),
 		"x-content-type-options": "nosniff",
 		...result.representation?.headers,
+		...result.headers,
 		...(stored?.gzipBytes !== undefined ? { vary: "accept-encoding" } : {}),
 		...(gzipped ? { "content-encoding": "gzip" } : {}),
 	};

@@ -94,7 +94,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 	);
 	assert.deepEqual(measureData.measures, [
 		{
-			id: "population-estimate",
+			id: "population",
 			valueKind: "count",
 			unit: "people",
 			availability: {
@@ -102,7 +102,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 				conversion: false,
 				aggregation: true,
 			},
-			href: "/v1/measures/population-estimate",
+			href: "/v1/measures/population",
 			status: "available",
 			sources: [
 				{

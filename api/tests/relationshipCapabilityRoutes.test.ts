@@ -185,7 +185,7 @@ test("reports a complete conversion path with its measured source coverage", () 
 test("preflights an extensive measure against containment aggregation", () => {
 	const response = route(
 		"GET",
-		`${query}&measure=population-estimate`,
+		`${query}&measure=population`,
 		contextFor({ catalog: dataCatalog }),
 	);
 	const data = (response.body as { data: any }).data;
@@ -221,7 +221,7 @@ test("refuses a measure whose source partition does not match the source release
 	};
 	const response = route(
 		"GET",
-		`${query}&measure=population-estimate`,
+		`${query}&measure=population`,
 		contextFor({ catalog: dataCatalog, compatibility }),
 	);
 	const data = (response.body as { data: any }).data;
@@ -270,7 +270,7 @@ test("returns partial code-set evidence instead of concealing it behind a refusa
 	};
 	const response = route(
 		"GET",
-		`${query}&measure=population-estimate`,
+		`${query}&measure=population`,
 		contextFor({ catalog: dataCatalog, compatibility }),
 	);
 	const data = (response.body as { data: any }).data;
@@ -285,7 +285,7 @@ test("returns partial code-set evidence instead of concealing it behind a refusa
 
 test("reports missing source compatibility evidence as not built", () => {
 	const context = contextFor({ catalog: dataCatalog });
-	const response = route("GET", `${query}&measure=population-estimate`, {
+	const response = route("GET", `${query}&measure=population`, {
 		...context,
 		measureCompatibilityInventory: undefined,
 	});

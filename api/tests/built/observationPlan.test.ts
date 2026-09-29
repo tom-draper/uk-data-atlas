@@ -35,12 +35,12 @@ const refusal = (request: Parameters<typeof resolveObservations>[1]) => {
 
 test("plans a named partition", () => {
 	const resolved = plan({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
 	});
-	assert.equal(resolved.measure.id, "population-estimate");
+	assert.equal(resolved.measure.id, "population");
 	assert.equal(resolved.source.sourceGeography.type, "localAuthority");
 	assert.deepEqual(resolved.periods, ["2022"]);
 	// No release was asked for, so no join is planned.
@@ -49,7 +49,7 @@ test("plans a named partition", () => {
 
 test("plans a join only where every source code is in the release", () => {
 	const resolved = plan({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -68,7 +68,7 @@ test("refuses an unknown measure and an unpublished period", () => {
 	assert.equal(unknown.status, 404);
 
 	const period = refusal({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["1801"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -85,7 +85,7 @@ test("plans a partition itself when no period is asked for", () => {
 	// geography is what narrows it; a route that needs a period asks for one
 	// itself, because only the route knows whether its contract requires it.
 	const whole = plan({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: [],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -98,7 +98,7 @@ test("plans a partition covering every period a change spans", () => {
 	// Change is measured inside one partition, so both ends must be in the
 	// same one. A partition holding only one of them is not a match.
 	const across = plan({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2012", "2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -107,7 +107,7 @@ test("plans a partition covering every period a change spans", () => {
 		assert.ok(across.source.periods.includes(period));
 
 	const straddling = refusal({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022", "1801"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -120,13 +120,13 @@ test("uses a dataset to choose between partitions that otherwise tie", () => {
 	// Nothing in the catalogue ties today, so this proves the discriminator
 	// narrows rather than that it is currently needed.
 	const named = plan({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
 	});
 	const byDataset = plan({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -135,7 +135,7 @@ test("uses a dataset to choose between partitions that otherwise tie", () => {
 	assert.equal(byDataset.source.datasetId, named.source.datasetId);
 
 	const wrong = refusal({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 		geography: "localAuthority",
 		boundaryYear: "2023",
@@ -148,7 +148,7 @@ test("refuses an ambiguous request with the partitions to choose from", () => {
 	// Several partitions serve 2022, so choosing one would mean choosing by
 	// catalogue order.
 	const ambiguous = refusal({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 	});
 	assert.equal(ambiguous.status, 400);
@@ -164,7 +164,7 @@ test("refuses an ambiguous request with the partitions to choose from", () => {
 
 test("refuses a partition the measure does not publish", () => {
 	const wrong = refusal({
-		measureId: "population-estimate",
+		measureId: "population",
 		periods: ["2022"],
 		geography: "ward",
 		boundaryYear: "1999",
@@ -213,7 +213,7 @@ test("reports possibilities without acting on them", () => {
 test("refuses without a catalogue rather than pretending", () => {
 	const resolved = resolveObservations(
 		{},
-		{ measureId: "population-estimate", periods: ["2022"] },
+		{ measureId: "population", periods: ["2022"] },
 	);
 	assert.equal(resolved.kind, "refusal");
 	assert.equal(

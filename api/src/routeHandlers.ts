@@ -59,6 +59,7 @@ import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
+import { canonicalMeasureId } from "./measureTerms";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -519,9 +520,59 @@ const routeFamilies: RouteFamily[] = [
 export const routeFamiliesOwning = (segments: string[]) =>
 	routeFamilies.filter(({ owns }) => owns(segments)).map(({ name }) => name);
 
+// Where a path carries a measure id: /v1/data/{id}, /v1/measures/{id} and a
+// map resource's /join/{id}.
+const measureSegment = (segments: string[]) =>
+	segments[0] !== "v1"
+		? undefined
+		: segments[1] === "data" || segments[1] === "measures"
+			? 2
+			: segments[1] === "map-resources" && segments[4] === "join"
+				? 5
+				: undefined;
+
+/**
+ * The request with every measure alias replaced by the id it names, or
+ * undefined when it names none. A route then only ever sees ids, and the
+ * response says what the alias was read as.
+ */
+const canonicalMeasureRequest = (
+	request: RouteRequest,
+): RouteRequest | undefined => {
+	const catalog = request.context.dataCatalog;
+	if (!catalog) return undefined;
+	const canonical = (term: string) =>
+		canonicalMeasureId(catalog, term) ?? term;
+	const segments = [...request.segments];
+	const position = measureSegment(segments);
+	if (position !== undefined && segments[position] !== undefined)
+		segments[position] = canonical(segments[position]!);
+	const url = new URL(request.parsedUrl);
+	const measures = url.searchParams.getAll("measure");
+	if (measures.length > 0) {
+		url.searchParams.delete("measure");
+		for (const measure of measures)
+			url.searchParams.append("measure", canonical(measure));
+	}
+	url.pathname = `/${segments.map(encodeURIComponent).join("/")}`;
+	const changed =
+		segments.some(
+			(segment, index) => segment !== request.segments[index],
+		) || measures.some((measure) => canonical(measure) !== measure);
+	return changed ? { ...request, parsedUrl: url, segments } : undefined;
+};
+
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
-	const family = routeFamilies.find(({ owns }) => owns(request.segments));
-	return family?.handle(request);
+	const canonical = canonicalMeasureRequest(request);
+	const routed = canonical ?? request;
+	const family = routeFamilies.find(({ owns }) => owns(routed.segments));
+	const response = family?.handle(routed);
+	if (!canonical || !response) return response;
+	const { pathname, search } = canonical.parsedUrl;
+	return {
+		...response,
+		headers: { ...response.headers, "content-location": pathname + search },
+	};
 };
 
 export const handleRouteAsync = async (

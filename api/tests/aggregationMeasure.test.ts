@@ -49,7 +49,7 @@ test("resolves available sum and weighted-mean policies", () => {
 				weight: {
 					description: "Population",
 					datasetField: "population",
-					measureId: "population-estimate",
+					measureId: "population",
 				},
 			}),
 		),
@@ -59,7 +59,7 @@ test("resolves available sum and weighted-mean policies", () => {
 	if ("status" in weighted) return;
 	assert.equal(
 		weighted.weightedAggregation?.weight.measureId,
-		"population-estimate",
+		"population",
 	);
 });
 

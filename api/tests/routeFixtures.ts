@@ -384,7 +384,7 @@ export const dataCatalog: DataCatalog = {
 	],
 	measures: [
 		{
-			id: "population-estimate",
+			id: "population",
 			label: "Population estimate",
 			valueKind: "count",
 			unit: "people",
@@ -425,7 +425,7 @@ export const dataCatalog: DataCatalog = {
 				conversion: false,
 				aggregation: true,
 			},
-			links: { data: "/v1/data/population-estimate" },
+			links: { data: "/v1/data/population" },
 		},
 		{
 			id: "ghg-emissions",
@@ -679,7 +679,7 @@ export const measureObservations: MeasureObservationArtifact[] = [
 export const populationObservations: PopulationObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:population-observations",
-	measureId: "population-estimate",
+	measureId: "population",
 	period: "2022",
 	sourceGeography: { type: "ward", boundaryYear: 2023 },
 	records: [
@@ -692,7 +692,7 @@ export const populationLocalAuthorityObservations: PopulationLocalAuthorityObser
 	{
 		schemaVersion: 1,
 		contentHash: "sha256:population-local-authority-observations",
-		measureId: "population-estimate",
+		measureId: "population",
 		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
 		periods: [
 			{
@@ -732,7 +732,7 @@ export const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 	},
 	measures: [
 		{
-			measureId: "population-estimate",
+			measureId: "population",
 			sources: [
 				{
 					datasetId: "population",

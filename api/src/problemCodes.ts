@@ -49,7 +49,7 @@ export const PROBLEM_CODES = {
 		meaning:
 			"The named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values.",
 		example:
-			"/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=constituency-2010-to-2024-official-lookup-v2",
+			"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=constituency-2010-to-2024-official-lookup-v2",
 	},
 	partial_coverage: {
 		statuses: [422],
@@ -66,7 +66,7 @@ export const PROBLEM_CODES = {
 		alternatives: ["choices"],
 		meaning:
 			"The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone.",
-		example: "/v1/data/population-estimate/value?place=Newport",
+		example: "/v1/data/population/value?place=Newport",
 	},
 	incompatible_geometry: {
 		statuses: [422],
@@ -75,7 +75,7 @@ export const PROBLEM_CODES = {
 		meaning:
 			"The requested boundary release does not hold every source area code of the partition, so no geometry join is offered.",
 		example:
-			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc",
+			"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc",
 	},
 	invalid_format: {
 		statuses: [400],
@@ -83,7 +83,7 @@ export const PROBLEM_CODES = {
 		alternatives: [],
 		meaning: "The `format` asked for is not one this route serves.",
 		example:
-			"/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=xml",
+			"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=xml",
 	},
 	invalid_cursor: {
 		statuses: [400],

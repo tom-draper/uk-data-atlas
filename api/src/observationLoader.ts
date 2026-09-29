@@ -22,7 +22,7 @@ export const readPopulationObservations = (
 	) as PopulationObservationArtifact;
 	if (
 		observations.schemaVersion !== 1 ||
-		observations.measureId !== "population-estimate" ||
+		observations.measureId !== "population" ||
 		observations.period !== "2022" ||
 		!Array.isArray(observations.records)
 	) {
@@ -44,7 +44,7 @@ export const readPopulationLocalAuthorityObservations = (
 	) as PopulationLocalAuthorityObservationArtifact;
 	if (
 		observations.schemaVersion !== 1 ||
-		observations.measureId !== "population-estimate" ||
+		observations.measureId !== "population" ||
 		observations.sourceGeography.type !== "localAuthority" ||
 		!Array.isArray(observations.periods)
 	) {

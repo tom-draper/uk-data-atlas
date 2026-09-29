@@ -4,7 +4,7 @@ import { routeWithData } from "./routeFixtures";
 
 test("ranks one source-exact partition with stable cursors", () => {
 	const first = routeWithData(
-		"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1",
+		"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1",
 	);
 	assert.equal(first.status, 200);
 	const firstData = "data" in first.body ? first.body.data : undefined;
@@ -26,7 +26,7 @@ test("ranks one source-exact partition with stable cursors", () => {
 	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
 	assert.equal(typeof cursor, "string");
 	const second = routeWithData(
-		`/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1&cursor=${cursor}`,
+		`/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1&cursor=${cursor}`,
 	);
 	assert.deepEqual(
 		"data" in second.body &&
@@ -44,13 +44,13 @@ test("ranks one source-exact partition with stable cursors", () => {
 
 	assert.equal(
 		routeWithData(
-			"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&order=sideways",
+			"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023&order=sideways",
 		).status,
 		400,
 	);
 	assert.equal(
 		routeWithData(
-			"/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc",
+			"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc",
 		).status,
 		422,
 	);

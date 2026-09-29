@@ -37,7 +37,7 @@ test("lists API-owned corrections without claiming source artifacts changed", ()
 	assert.equal(
 		route(
 			"GET",
-			"/v1/corrections?measure=ghg-emissions&measure=population-estimate",
+			"/v1/corrections?measure=ghg-emissions&measure=population",
 			registry,
 		).status,
 		400,

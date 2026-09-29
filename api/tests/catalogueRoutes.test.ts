@@ -14,7 +14,7 @@ test("declares a coverage share as intensive, so it is never summed", () => {
 				).map((measure) => [measure.id, measure.aggregation.kind])
 			: [],
 		[
-			["population-estimate", "extensive"],
+			["population", "extensive"],
 			["ghg-emissions", "extensive"],
 			["mobile-5g-coverage", "intensive"],
 			["travel-to-work-car", "extensive"],

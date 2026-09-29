@@ -180,7 +180,7 @@ x-quick-starts:
         request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/tiles.json"
       - title: Fetch values numbered for the tiles
         explain: The join table carries the same integer ids as the tiles, so a renderer sets feature state without reading any geometry. The source partition is named, never guessed.
-        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023"
+        request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population?period=2022&geography=localAuthority&boundaryYear=2023"
       - title: See a join refused, not a wrong map
         explain: The deprivation rank is published on LSOAs, which this release does not hold. The refusal names the releases that would carry it.
         request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/imd-rank?period=2025"
@@ -190,7 +190,7 @@ x-quick-starts:
         request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/features?tier=medium"
       - title: Attribute the map
         explain: The licence and publisher text to display, for both the boundaries and the values.
-        request: "/v1/attribution?measure=population-estimate&boundaryRelease=localAuthority/2023-05-uk-bgc-v2"
+        request: "/v1/attribution?measure=population&boundaryRelease=localAuthority/2023-05-uk-bgc-v2"
   - id: defensible-trend
     title: Defensible trend
     audience: Analyst or consultant
@@ -198,24 +198,24 @@ x-quick-starts:
     steps:
       - title: Read the measure
         explain: Its aggregation kind and source partitions say what it can be used for before any value is fetched.
-        request: "/v1/measures/population-estimate"
+        request: "/v1/measures/population"
       - title: Take one area's series
         explain: Source-exact, within one partition, so the code means the same place in every period.
-        request: "/v1/data/population-estimate/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
+        request: "/v1/data/population/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
       - title: Rank the change
         explain: The same change against every other area in the partition, so a figure is put in context rather than quoted alone.
-        request: "/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025"
+        request: "/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025"
       - title: See a median refused, not averaged
         explain: A median of medians is not a median, so the API refuses to combine one over areas.
         request: "/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001"
         status: 422
       - title: Keep geometry out of the trend
         explain: A boundary release selects shapes for a map. It is refused on a trend, because it would suggest the values were moved onto it.
-        request: "/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&release=2023-05-uk-bgc-v2"
+        request: "/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&release=2023-05-uk-bgc-v2"
         status: 422
       - title: Quote the caveat
         explain: Each partition's coverage note travels with the measure, ready to quote beside the figure.
-        request: "/v1/measures/population-estimate/quality"
+        request: "/v1/measures/population/quality"
   - id: reliable-sync
     title: Reliable sync
     audience: Data engineer
@@ -649,7 +649,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MapResourceJoinEnvelope"
-              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population-estimate?period=2022&geography=localAuthority&boundaryYear=2023"
+              x-example-request: "/v1/map-resources/localAuthority/2023-05-uk-bgc-v2/join/population?period=2022&geography=localAuthority&boundaryYear=2023"
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -1290,7 +1290,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "The id is a measure's, not a dataset's. A dataset is a publisher's source; `/v1/measures/{measure-id}` names the datasets behind a measure."
-        x-example-request: "/v1/datasets/population-estimate"
+        x-example-request: "/v1/datasets/house-price-median"
       parameters:
         - name: dataset-id
           in: path
@@ -1354,9 +1354,26 @@ paths:
         1000000, and percent is `proportion` with a scale of 0.01. This is
         descriptive metadata only: observation values and source artifacts
         are not rewritten.
+
+
+        `q` searches by the words people use: `population`, `house prices`,
+        `deprivation`. Every measure whose id, alias, label or dataset title
+        holds all of the query's words is listed, best first: an exact id or
+        alias, then a match in the label, then in the id, then anywhere. A
+        search never chooses one measure for the caller, and matching nothing
+        is an empty list rather than a refusal. A measure's `aliases`, where
+        it has any, are other names each naming it alone, accepted wherever
+        its id is.
       x-likely-refusal:
         status: 503
-        when: "Takes no input. Refused only when the server was started without the data catalogue built."
+        when: "Refused only when the server was started without the data catalogue built. A search that matches nothing is an empty list, not a refusal."
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Words to search measures by, such as `house prices`. Omit to list every measure.
       responses:
         "200":
           description: Measure definitions, coverage and supported operations.
@@ -1369,7 +1386,7 @@ paths:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  - id: population-estimate
+                  - id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -1398,7 +1415,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                 meta:
                   nextCursor: null
         "503":
@@ -1411,8 +1428,8 @@ paths:
       summary: Get one measure's semantics and availability
       x-likely-refusal:
         status: 404
-        when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids, such as `population-estimate`."
-        x-example-request: "/v1/measures/population"
+        when: "The measure id is guessed rather than listed, or names several measures. `deprivation` is four national indices, so it is no measure's id or alias; `/v1/measures?q=deprivation` lists them."
+        x-example-request: "/v1/measures/deprivation"
       description: >
         A measure's definition: what it counts, the unit, whether it may be
         summed or averaged, and which source partitions publish it with what
@@ -1442,12 +1459,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/measures/population-estimate"
+              x-example-request: "/v1/measures/population"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  id: population-estimate
+                  id: population
                   label: Population estimate
                   valueKind: count
                   unit: people
@@ -1476,7 +1493,7 @@ paths:
                     conversion: false
                     aggregation: true
                   links:
-                    data: /v1/data/population-estimate
+                    data: /v1/data/population
                 meta:
                   nextCursor: null
         "404":
@@ -1492,7 +1509,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids."
-        x-example-request: "/v1/measures/population/compatibility"
+        x-example-request: "/v1/measures/deprivation/compatibility"
       description: >
         Compares every source partition's area-code set with compiled boundary
         releases of the same geography and source boundary year. A
@@ -1507,12 +1524,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/measures/population-estimate/compatibility"
+              x-example-request: "/v1/measures/population/compatibility"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
-                  measureId: population-estimate
+                  measureId: population
                   sources:
                     - datasetId: population
                       sourceGeography:
@@ -1542,7 +1559,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "`geography` is given without `release`. They are asked together, to test coverage of one boundary release."
-        x-example-request: "/v1/measures/population-estimate/coverage?geography=ward"
+        x-example-request: "/v1/measures/population/coverage?geography=ward"
       description: >
         Summarises each source partition's published coverage and the proportion
         of its area codes found in every assessed boundary release. An eligible
@@ -1578,20 +1595,20 @@ paths:
                 $ref: "#/components/schemas/Envelope"
               examples:
                 all:
-                  x-example-request: "/v1/measures/population-estimate/coverage"
+                  x-example-request: "/v1/measures/population/coverage"
                   value:
                     apiVersion: v1
                     atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                     data:
                       measure:
-                        id: population-estimate
+                        id: population
                         valueKind: count
                         unit: people
                         availability:
                           sourceExact: true
                           conversion: false
                           aggregation: true
-                        href: /v1/measures/population-estimate
+                        href: /v1/measures/population
                       sources:
                         - dataset:
                             id: population
@@ -1614,12 +1631,12 @@ paths:
                                 - GB-ENG
                           assessment:
                             status: assessed
-                            href: /v1/measures/population-estimate/compatibility
+                            href: /v1/measures/population/compatibility
                             note: Boundary coverage compares area-code membership only; it does not assert equal geometry.
                     meta:
                       nextCursor: null
                 target:
-                  x-example-request: "/v1/measures/population-estimate/coverage?geography=ward&release=2023-05-uk-bgc"
+                  x-example-request: "/v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc"
                   value:
                     apiVersion: v1
                     atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -1655,7 +1672,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "`crosswalk` is given without `period`. A reconciliation compares one period."
-        x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment"
+        x-example-request: "/v1/measures/population/reconciliation?crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment"
       description: >
         Where the same measure is published on a fine geography and a coarse
         one, adding the fine one up through a published crosswalk should
@@ -1718,13 +1735,13 @@ paths:
                 $ref: "#/components/schemas/Envelope"
               examples:
                 compared:
-                  x-example-request: "/v1/measures/population-estimate/reconciliation?crosswalk=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap&period=2022"
+                  x-example-request: "/v1/measures/population/reconciliation?crosswalk=constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap&period=2022"
                   value:
                     apiVersion: v1
                     atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                     data:
                       measure:
-                        id: population-estimate
+                        id: population
                         unit: people
                       period: "2022"
                       pairing: by-codes
@@ -1774,7 +1791,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "`geography` or `release` is missing. A coverage plan answers one exact boundary release."
-        x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward"
+        x-example-request: "/v1/measures/population/coverage-plan?geography=ward"
       description: >
         A release-wide answer is one word for the whole of it, which hides the
         shape of a gap: ward population is published for England and Wales and
@@ -1812,13 +1829,13 @@ paths:
                 $ref: "#/components/schemas/Envelope"
               examples:
                 wards:
-                  x-example-request: "/v1/measures/population-estimate/coverage-plan?geography=ward&release=2023-05-uk-bgc"
+                  x-example-request: "/v1/measures/population/coverage-plan?geography=ward&release=2023-05-uk-bgc"
                   value:
                     apiVersion: v1
                     atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
                     data:
                       measure:
-                        id: population-estimate
+                        id: population
                         unit: people
                       target:
                         geography: ward
@@ -1877,7 +1894,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids."
-        x-example-request: "/v1/measures/population/quality"
+        x-example-request: "/v1/measures/deprivation/quality"
       description: >
         Reports every source partition and period before a data request,
         including source record-status counts, immutable artifact hash,
@@ -1892,13 +1909,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/measures/population-estimate/quality"
+              x-example-request: "/v1/measures/population/quality"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     valueKind: count
                     unit: people
                     aggregation:
@@ -2077,10 +2094,10 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not named. A measure may publish several for one period, so `geography` and `boundaryYear` are required rather than one being chosen."
-        x-example-request: "/v1/data/population-estimate?period=2022"
+        x-example-request: "/v1/data/population?period=2022"
       description: >
         Serves observed values for one published measure and source partition.
-        `population-estimate` covers 2022 Ward 2023 codes in England and Wales,
+        `population` covers 2022 Ward 2023 codes in England and Wales,
         2011–2024 Local Authority 2023 codes across all four UK nations, and
         ONS's own mid-2021 and mid-2022 estimates for the July 2024 Westminster
         constituencies in England and Wales.
@@ -2203,7 +2220,7 @@ paths:
           schema:
             type: string
           description: >
-            A published measure id, for example `population-estimate`,
+            A published measure id, for example `population`,
             `ghg-emissions` or `mobile-5g-coverage`. `GET /measures` lists
             them, each with the aggregation its values permit.
         - name: period
@@ -2287,13 +2304,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000932"
+              x-example-request: "/v1/data/population?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000932"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -2319,7 +2336,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                   source:
                     datasetId: population
                     periods:
@@ -2342,8 +2359,8 @@ paths:
                       id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                       href: /v1/atlas-release
                     measure:
-                      id: population-estimate
-                      href: /v1/measures/population-estimate
+                      id: population
+                      href: /v1/measures/population
                     geography:
                       source:
                         type: ward
@@ -2538,13 +2555,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&areaCode=W92000004"
+              x-example-request: "/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&areaCode=W92000004"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -2570,7 +2587,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                   source:
                     datasetId: population-uk
                     periods:
@@ -2600,8 +2617,8 @@ paths:
                       id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                       href: /v1/atlas-release
                     measure:
-                      id: population-estimate
-                      href: /v1/measures/population-estimate
+                      id: population
+                      href: /v1/measures/population
                     geography:
                       source:
                         type: localAuthority
@@ -2633,7 +2650,7 @@ paths:
                           includedAreaCount: 22
                           missingAreaCount: 0
                           missingAreaSample: []
-                      href: /v1/measures/population-estimate/coverage
+                      href: /v1/measures/population/coverage
                     note: Country membership follows the first character of the GSS area code, which the coding scheme assigns by country.
                   record:
                     value: 3134196
@@ -2665,7 +2682,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "Neither `crosswalk` nor `path` is named. This route never chooses a conversion path; `/v1/relationship-paths` finds the published ones."
-        x-example-request: "/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023"
+        x-example-request: "/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023"
       description: >
         Converts a source partition onto another geography or code vintage
         using the crosswalk, or the published relationship path, the caller
@@ -2739,13 +2756,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment&limit=1"
+              x-example-request: "/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment&limit=1"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -2771,7 +2788,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                   source:
                     datasetId: population
                     periods:
@@ -2797,8 +2814,8 @@ paths:
                       id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                       href: /v1/atlas-release
                     measure:
-                      id: population-estimate
-                      href: /v1/measures/population-estimate
+                      id: population
+                      href: /v1/measures/population
                     geography:
                       source:
                         type: ward
@@ -2861,7 +2878,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not named. A series stays within one partition, so `geography` and `boundaryYear` are required."
-        x-example-request: "/v1/data/population-estimate/series?areaCode=E05000932"
+        x-example-request: "/v1/data/population/series?areaCode=E05000932"
       description: >
         Returns all published observations for one area code within one source
         geography and code vintage. Without `analysisGeography`, the result is
@@ -2907,13 +2924,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
+              x-example-request: "/v1/data/population/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -2939,7 +2956,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                   source:
                     datasetId: population-uk
                     periods:
@@ -2962,8 +2979,8 @@ paths:
                       id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                       href: /v1/atlas-release
                     measure:
-                      id: population-estimate
-                      href: /v1/measures/population-estimate
+                      id: population
+                      href: /v1/measures/population
                     geography:
                       source:
                         type: localAuthority
@@ -3011,7 +3028,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not named, so there is no one set of areas to rank."
-        x-example-request: "/v1/data/population-estimate/rankings?period=2022"
+        x-example-request: "/v1/data/population/rankings?period=2022"
       description: >
         Ranks only the observations published for one period, geography and
         code vintage. Uses competition ranking: tied values share a rank and
@@ -3038,13 +3055,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1"
+              x-example-request: "/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023&limit=1"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -3070,7 +3087,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                   source:
                     datasetId: population
                     periods:
@@ -3093,8 +3110,8 @@ paths:
                       id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                       href: /v1/atlas-release
                     measure:
-                      id: population-estimate
-                      href: /v1/measures/population-estimate
+                      id: population
+                      href: /v1/measures/population
                     geography:
                       source:
                         type: ward
@@ -3517,7 +3534,7 @@ paths:
         status: 409
         code: ambiguous_place
         when: "The name means more than one place and the measure answers them differently. Each choice carries its value and a reference to ask again with."
-        x-example-request: "/v1/data/population-estimate/value?place=Newport"
+        x-example-request: "/v1/data/population/value?place=Newport"
       description: >
         A deliberately narrow convenience for a place-name question, not the
         primary way to fetch one observation: it resolves the name and
@@ -3532,7 +3549,7 @@ paths:
         partition publishes is used and the answer says so. Where a name may
         mean several places, `GET /v1/places?q=Newport` lists them first, and
         a candidate's place reference asks about that one alone:
-        `GET /v1/data/population-estimate/value?place=localAuthority/W06000022`.
+        `GET /v1/data/population/value?place=localAuthority/W06000022`.
 
 
         Nothing is computed here. Each place the name could mean is put to the
@@ -3623,13 +3640,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/value?place=North%20West&period=2022"
+              x-example-request: "/v1/data/population/value?place=North%20West&period=2022"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -3648,7 +3665,7 @@ paths:
                     code: north-west
                     match: exact
                   method: aggregate
-                  via: /v1/data/population-estimate/aggregate?locationId=north-west&geography=localAuthority&boundaryYear=2023&period=2022
+                  via: /v1/data/population/aggregate?locationId=north-west&geography=localAuthority&boundaryYear=2023&period=2022
                   otherMatches:
                     - place: region/E12000002
                       kind: area
@@ -3657,7 +3674,7 @@ paths:
                       code: E12000002
                       match: exact
                       served: false
-                      reason: population-estimate is not published for region areas.
+                      reason: population is not published for region areas.
                 meta:
                   nextCursor: null
         "400":
@@ -3695,7 +3712,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "A required part of the comparison is missing. Change is measured within one partition between two named periods."
-        x-example-request: "/v1/data/population-estimate/change?geography=localAuthority&startPeriod=2011"
+        x-example-request: "/v1/data/population/change?geography=localAuthority&startPeriod=2011"
       description: >
         Returns how each area changed between two periods, ranked: the question
         "where did population grow fastest between 2011 and 2022?" Pass
@@ -3790,7 +3807,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&limit=1"
+              x-example-request: "/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&limit=1"
               example:
                 apiVersion: v1
                 atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
@@ -3855,7 +3872,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not named, so the two areas are not known to be on the same codes."
-        x-example-request: "/v1/data/population-estimate/compare?period=2022&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
+        x-example-request: "/v1/data/population/compare?period=2022&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
       description: >
         Returns the comparison observation minus the baseline observation for
         one published period, geography and code vintage. The two named areas
@@ -3886,13 +3903,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population-estimate/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
+              x-example-request: "/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                 data:
                   measure:
-                    id: population-estimate
+                    id: population
                     label: Population estimate
                     valueKind: count
                     unit: people
@@ -3918,7 +3935,7 @@ paths:
                       conversion: false
                       aggregation: true
                     links:
-                      data: /v1/data/population-estimate
+                      data: /v1/data/population
                   source:
                     datasetId: population
                     periods:
@@ -3941,8 +3958,8 @@ paths:
                       id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
                       href: /v1/atlas-release
                     measure:
-                      id: population-estimate
-                      href: /v1/measures/population-estimate
+                      id: population
+                      href: /v1/measures/population
                     geography:
                       source:
                         type: ward
@@ -5058,14 +5075,14 @@ paths:
                                 period: "2025"
                               method: exact
                               href: /v1/data/road-collisions/convert?period=2025&geography=lsoa&boundaryYear=2021&crosswalk=lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
-                        - id: population-estimate
+                        - id: population
                           valueKind: count
                           unit: people
                           availability:
                             sourceExact: true
                             conversion: false
                             aggregation: true
-                          href: /v1/measures/population-estimate
+                          href: /v1/measures/population
                           status: available
                           sources:
                             - dataset:
@@ -5136,7 +5153,7 @@ paths:
           schema:
             type: array
             items: { type: string }
-          description: A measure id from `GET /measures`. Repeatable.
+          description: A measure id from `GET /measures`, or one of its aliases. Repeatable.
         - name: crosswalk
           in: query
           required: false
@@ -5151,7 +5168,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/citation?measure=population-estimate"
+              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/citation?measure=population"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -5178,9 +5195,9 @@ paths:
                   geometry:
                     status: available
                   measures:
-                    - id: population-estimate
+                    - id: population
                       label: Population estimate
-                      href: /v1/measures/population-estimate
+                      href: /v1/measures/population
                       sources:
                         - dataset:
                             id: population-uk
@@ -7026,7 +7043,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The optional measure filter is repeated. One filter narrows the register; several do not mean an intersection or union."
-        x-example-request: "/v1/corrections?measure=ghg-emissions&measure=population-estimate"
+        x-example-request: "/v1/corrections?measure=ghg-emissions&measure=population"
       description: >
         The correction register records API-owned repairs, derived calculations
         and normalisations separately from the publisher's artifacts. Each
@@ -7292,7 +7309,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "The measure id is guessed rather than listed. `/v1/measures` gives the ids."
-        x-example-request: "/v1/validation/measures/population"
+        x-example-request: "/v1/validation/measures/deprivation"
       description: >
         Checks that a measure's definition agrees with itself and with the
         catalogue: its availability matches its aggregation, a categorical
@@ -7337,7 +7354,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "A measure id is given where an export id is asked for. An export is one source partition; `/v1/exports` lists them."
-        x-example-request: "/v1/validation/exports/population-estimate"
+        x-example-request: "/v1/validation/exports/population"
       description: >
         Each export serves one source partition of a measure, and is checked
         from the observation artifact itself. `artifact-integrity`: the
@@ -7514,7 +7531,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "A measure id is given where an export id is asked for. An export is one source partition; `/v1/exports` lists them."
-        x-example-request: "/v1/exports/population-estimate"
+        x-example-request: "/v1/exports/population"
       description: >
         Returns the exact JSON artifact listed by `/exports`, after checking
         its content hash against the manifest. This response is intentionally
@@ -7926,7 +7943,7 @@ paths:
           schema:
             type: array
             items: { type: string }
-          description: A measure id from `GET /measures`. Repeatable.
+          description: A measure id from `GET /measures`, or one of its aliases. Repeatable.
         - name: boundaryRelease
           in: query
           required: false
@@ -8556,7 +8573,12 @@ components:
       required: true
       schema:
         type: string
-      description: A measure id from `GET /v1/measures`, such as `population-estimate`.
+      description: >
+        A measure id from `GET /v1/measures`, such as `population`, or one of
+        its `aliases`, such as `house-prices`. An alias is read as the id it
+        names, and the response's `Content-Location` header gives the request
+        it was read as. Case, spaces and punctuation are set aside, so
+        `House Prices` is `house-prices`.
     AreaCode:
       name: code
       in: path
@@ -8899,7 +8921,7 @@ components:
 
     ConversionNotAvailableProblem:
       description: >
-        The named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values. Produced by `GET /v1/data/population-estimate/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=constituency-2010-to-2024-official-lookup-v2`.
+        The named crosswalk or source release cannot carry the partition without dropping, splitting or assuming values. Produced by `GET /v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=constituency-2010-to-2024-official-lookup-v2`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -8942,7 +8964,7 @@ components:
 
     AmbiguousPlaceProblem:
       description: >
-        The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone. Produced by `GET /v1/data/population-estimate/value?place=Newport`.
+        The place name means more than one place, and the measure answers them differently; `choices` carries each answer and the request that asks about it alone. Produced by `GET /v1/data/population/value?place=Newport`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -8957,7 +8979,7 @@ components:
             "type": "https://api.ukdataatlas.com/problems/ambiguous-place",
             "title": "Ambiguous Place",
             "status": 409,
-            "detail": '"Newport" names 4 places that population-estimate answers differently. Each choice carries its answer; ask again with the place reference of the one meant.',
+            "detail": '"Newport" names 4 places that population answers differently. Each choice carries its answer; ask again with the place reference of the one meant.',
             "code": "ambiguous_place",
             "choices":
               [
@@ -8977,15 +8999,15 @@ components:
                       "status": "observed",
                       "periodDefaulted": true,
                     },
-                  "via": "/v1/data/population-estimate/series?areaCode=W06000022&geography=localAuthority&boundaryYear=2023",
-                  "ask": "/v1/data/population-estimate/value?place=localAuthority%2FW06000022",
+                  "via": "/v1/data/population/series?areaCode=W06000022&geography=localAuthority&boundaryYear=2023",
+                  "ask": "/v1/data/population/value?place=localAuthority%2FW06000022",
                 },
               ],
           }
 
     IncompatibleGeometryProblem:
       description: >
-        The requested boundary release does not hold every source area code of the partition, so no geometry join is offered. The refusal names the releases that would carry it in `alternatives.releases`, and `/v1/measures/{measure-id}/compatibility` has the full evidence. Produced by `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc`.
+        The requested boundary release does not hold every source area code of the partition, so no geometry join is offered. The refusal names the releases that would carry it in `alternatives.releases`, and `/v1/measures/{measure-id}/compatibility` has the full evidence. Produced by `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2016-12-gb-bgc`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -9000,7 +9022,7 @@ components:
             "type": "https://api.ukdataatlas.com/problems/operation-not-supported",
             "title": "Operation Not Supported",
             "status": 422,
-            "detail": "2016-12-gb-bgc does not hold every source area code for this partition of population-estimate, so its values cannot be drawn on it. Inspect /v1/measures/population-estimate/compatibility.",
+            "detail": "2016-12-gb-bgc does not hold every source area code for this partition of population, so its values cannot be drawn on it. Inspect /v1/measures/population/compatibility.",
             "code": "incompatible_geometry",
             "alternatives":
               { "releases": ["2023-05-uk-bgc", "2023-12-uk-bgc"] },
@@ -9008,7 +9030,7 @@ components:
 
     InvalidFormatProblem:
       description: >
-        The `format` asked for is not one this route serves. Produced by `GET /v1/data/population-estimate?period=2022&geography=ward&boundaryYear=2023&format=xml`.
+        The `format` asked for is not one this route serves. Produced by `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=xml`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object

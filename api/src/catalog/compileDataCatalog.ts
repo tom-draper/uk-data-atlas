@@ -30,6 +30,7 @@ import { compileUnemployment } from "./unemployment";
 import { compileAirQuality } from "./airQuality";
 import { compileCensus } from "./census";
 import { compileCensusSmallArea } from "./censusSmallArea";
+import { withAliases } from "./measureAliases";
 import type { MeasureTableArtifact } from "../observationTables";
 import type { MeasureSource } from "../dataCatalog";
 import { compileMobileCoverage } from "./mobileCoverage";
@@ -316,24 +317,26 @@ export const compileDataCatalog = ({
 		throw new Error(
 			`No census measure takes the small-area partitions of ${unclaimed.join(", ")}.`,
 		);
-	const measures = withNationalVariants([
-		population.measure,
-		...elections.measures,
-		density.measure,
-		housePrice.measure,
-		...deprivation.measures,
-		nimdm.measure,
-		...lifeExpectancy.measures,
-		emissions.measure,
-		...regionalGdp.measures,
-		...energyConsumption.measures,
-		jobs.measure,
-		...mobileCoverage.measures,
-		...indicatorMeasures,
-		...unemployment.measures,
-		...census.measures,
-		...(censusSmallArea?.measures ?? []),
-	]);
+	const measures = withAliases(
+		withNationalVariants([
+			population.measure,
+			...elections.measures,
+			density.measure,
+			housePrice.measure,
+			...deprivation.measures,
+			nimdm.measure,
+			...lifeExpectancy.measures,
+			emissions.measure,
+			...regionalGdp.measures,
+			...energyConsumption.measures,
+			jobs.measure,
+			...mobileCoverage.measures,
+			...indicatorMeasures,
+			...unemployment.measures,
+			...census.measures,
+			...(censusSmallArea?.measures ?? []),
+		]),
+	);
 	const catalogContent = JSON.stringify({
 		schemaVersion: 1,
 		source: {
