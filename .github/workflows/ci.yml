@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   check:
+    name: Quality checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +25,7 @@ jobs:
       - run: pnpm check
 
   website-build:
+    name: Website build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +41,7 @@ jobs:
         run: pnpm build
 
   website-e2e:
+    name: Website end-to-end tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
