@@ -31,18 +31,39 @@ if (recomputed !== contentHash) {
 	},
 ];
 
+const CHANGES = [
+	{
+		language: "javascript" as const,
+		label: "JavaScript",
+		code: `import { readFile, writeFile } from "node:fs/promises";
+
+// The manifest you kept from your last run, and the current one.
+const kept = JSON.parse(await readFile("atlas-release.json", "utf8"));
+const current = (await (await fetch("${API}/atlas-release")).json()).data;
+
+const before = kept.resources.exports;
+const after = current.resources.exports;
+const fetchNow = Object.keys(after).filter((id) => before[id] !== after[id]);
+const drop = Object.keys(before).filter((id) => !(id in after));
+
+// Fetch fetchNow, delete drop, then keep the current manifest.
+await writeFile("atlas-release.json", JSON.stringify(current));`,
+	},
+];
+
 export default function SyncGuidePage() {
 	return (
 		<DocPage
 			href="/docs/v1/guides/sync"
 			eyebrow="Guide"
 			title="Keep a copy in sync"
-			lede="Loading the data into your own database or warehouse? This guide shows how to take whole datasets in one go, prove they arrived intact, and cheaply check for a current update."
+			lede="Loading the data into your own database or warehouse? This guide shows how to take whole datasets in one go, prove they arrived intact, and fetch only what changed on your next run."
 			toc={[
 				{ id: "pin", title: "Record the release" },
 				{ id: "download", title: "Download a dataset" },
 				{ id: "verify", title: "Verify it" },
 				{ id: "revalidate", title: "Check for changes cheaply" },
+				{ id: "changes", title: "Fetch only what changed" },
 				{ id: "lookups", title: "Add the lookup tables" },
 			]}
 		>
@@ -90,6 +111,19 @@ export default function SyncGuidePage() {
 						`304` with no body. [Caching](/docs/v1/caching) has
 						examples.
 					</P>
+				</Step>
+
+				<Step id="changes" title="Fetch only what changed">
+					<P>
+						The API only serves the current release, so keep the
+						manifest from your last run. Its `resources` give a
+						fingerprint for every dataset, measure, crosswalk,
+						export and lookup, which changes exactly when that
+						resource does. Compare the kept fingerprints with the
+						current ones, fetch what was added or changed, and drop
+						what was removed.
+					</P>
+					<RequestSamples samples={CHANGES} />
 				</Step>
 
 				<Step id="lookups" title="Add the lookup tables">
