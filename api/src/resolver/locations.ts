@@ -87,15 +87,10 @@ export class LocationsResolver {
 	}
 
 	locationMemberProjectionShards(memberGeography: string) {
-		const summaries = new Map(
-			this.catalogue
-				.crosswalkSummaries()
-				.map((summary) => [summary.id, summary]),
-		);
 		return (
 			this.inputs.locationProjectionStore?.memberProjectionShards() ?? []
 		).flatMap((shard) => {
-			const summary = summaries.get(shard.crosswalkId);
+			const summary = this.catalogue.crosswalkSummary(shard.crosswalkId);
 			return summary?.to.geography === memberGeography
 				? [{ shard, summary }]
 				: [];
@@ -103,15 +98,10 @@ export class LocationsResolver {
 	}
 
 	locationParentProjectionShards(memberGeography: string) {
-		const summaries = new Map(
-			this.catalogue
-				.crosswalkSummaries()
-				.map((summary) => [summary.id, summary]),
-		);
 		return (
 			this.inputs.locationProjectionStore?.parentProjectionShards() ?? []
 		).flatMap((shard) => {
-			const summary = summaries.get(shard.crosswalkId);
+			const summary = this.catalogue.crosswalkSummary(shard.crosswalkId);
 			return summary?.from.geography === memberGeography
 				? [{ shard, summary }]
 				: [];

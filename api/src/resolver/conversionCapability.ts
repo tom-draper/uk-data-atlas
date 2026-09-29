@@ -336,11 +336,32 @@ export type ConversionCapabilityInputs = {
  */
 export class ConversionCapabilities {
 	private reachByRelease?: Map<string, GeographyReach>;
+	private readonly areaReleasesByEndpoint = new Map<
+		string,
+		AreaInventory["releases"][number]
+	>();
+	private readonly pathsBySource = new Map<string, RelationshipPath[]>();
 
 	constructor(
 		private readonly inputs: ConversionCapabilityInputs,
 		private readonly translator: CrosswalkTranslator,
-	) {}
+	) {
+		for (const release of inputs.areaInventory?.releases ?? []) {
+			const key = releaseKey(release.geography, release.id);
+			if (!this.areaReleasesByEndpoint.has(key))
+				this.areaReleasesByEndpoint.set(key, release);
+		}
+		for (const paths of inputs.relationshipPathIndex?.values() ?? [])
+			for (const path of paths) {
+				const key = releaseKey(
+					path.from.geography,
+					path.from.boundaryRelease,
+				);
+				const indexed = this.pathsBySource.get(key) ?? [];
+				indexed.push(path);
+				this.pathsBySource.set(key, indexed);
+			}
+	}
 
 	/** Compiled area count, falling back to the inventory when not loaded. */
 	private areaCount(endpoint: GeographyEndpoint): number | undefined {
@@ -348,10 +369,8 @@ export class ConversionCapabilities {
 			releaseKey(endpoint.geography, endpoint.boundaryRelease),
 		)?.size;
 		if (lookupCount !== undefined) return lookupCount;
-		const release = this.inputs.areaInventory?.releases.find(
-			(candidate) =>
-				candidate.geography === endpoint.geography &&
-				candidate.id === endpoint.boundaryRelease,
+		const release = this.areaReleasesByEndpoint.get(
+			releaseKey(endpoint.geography, endpoint.boundaryRelease),
 		);
 		return release?.status === "available"
 			? release.recordCount
@@ -510,20 +529,15 @@ export class ConversionCapabilities {
 			string,
 			{ to: GeographyEndpoint; purpose: RelationshipPurpose }
 		>();
-		for (const paths of this.inputs.relationshipPathIndex?.values() ?? []) {
-			for (const path of paths) {
-				if (
-					path.from.geography !== from.geography ||
-					path.from.boundaryRelease !== from.boundaryRelease
-				)
-					continue;
-				const key = [
-					path.to.geography,
-					path.to.boundaryRelease,
-					path.purpose,
-				].join("/");
-				discovered.set(key, { to: path.to, purpose: path.purpose });
-			}
+		for (const path of this.pathsBySource.get(
+			releaseKey(from.geography, from.boundaryRelease),
+		) ?? []) {
+			const key = [
+				path.to.geography,
+				path.to.boundaryRelease,
+				path.purpose,
+			].join("/");
+			discovered.set(key, { to: path.to, purpose: path.purpose });
 		}
 		return [...discovered.values()]
 			.map(({ to, purpose }) => ({
