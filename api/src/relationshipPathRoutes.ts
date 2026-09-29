@@ -1,15 +1,15 @@
 import { unsupported } from "./capability";
 import type { RelationshipPurpose } from "./relationshipPaths";
+import { envelope, problem, type ApiResponse } from "./routeResponse";
+import type { RouteRequest } from "./routing";
 
 const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"identity",
 	"membership",
 	"apportion",
 ];
-import { envelope, problem, type ApiResponse } from "./routeResponse";
-import type { RouteRequest } from "./routing";
 
-/** Discover published conversion paths without attempting an implicit conversion. */
+/** Legacy path-only relationship discovery. Prefer the unified relationships route. */
 export const handleRelationshipPathRoutes = ({
 	context,
 	releaseId,
@@ -38,7 +38,8 @@ export const handleRelationshipPathRoutes = ({
 		!from.boundaryRelease ||
 		!to.geography ||
 		!to.boundaryRelease ||
-		!["identity", "membership", "apportion"].includes(purpose ?? "")
+		!purpose ||
+		!RELATIONSHIP_PURPOSES.includes(purpose)
 	) {
 		return problem(
 			400,
@@ -55,9 +56,6 @@ export const handleRelationshipPathRoutes = ({
 		...endpoints,
 		purpose as RelationshipPurpose,
 	);
-	// A path published for another purpose between the same releases is the
-	// likeliest thing the caller wants instead, so it is named rather than
-	// left for them to find.
 	const otherPurposes = RELATIONSHIP_PURPOSES.filter(
 		(candidate) =>
 			candidate !== purpose &&
@@ -79,7 +77,7 @@ export const handleRelationshipPathRoutes = ({
 				? {
 						alternatives: otherPurposes.map((candidate) => ({
 							purpose: candidate,
-							href: `/v1/relationship-paths?sourceGeography=${from.geography}&sourceRelease=${from.boundaryRelease}&targetGeography=${to.geography}&targetRelease=${to.boundaryRelease}&purpose=${candidate}`,
+							href: `/v1/relationships?sourceGeography=${from.geography}&sourceRelease=${from.boundaryRelease}&targetGeography=${to.geography}&targetRelease=${to.boundaryRelease}&purpose=${candidate}`,
 						})),
 					}
 				: {}),

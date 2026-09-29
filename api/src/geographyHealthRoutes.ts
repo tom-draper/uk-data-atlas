@@ -59,7 +59,7 @@ export const handleGeographyHealthRoutes = ({
 		)
 		.map((release) => ({
 			...release,
-			href: `/v1/relationship-coverage?geography=${release.geography}&release=${release.boundaryRelease}`,
+			href: `/v1/relationships?geography=${release.geography}&release=${release.boundaryRelease}`,
 		}));
 	const countBy = <Key extends string>(
 		key: (release: (typeof releases)[number]) => Key,

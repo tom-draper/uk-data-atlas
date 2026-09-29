@@ -13,7 +13,7 @@ import {
 test("reports the hierarchy spine's coverage and names uncovered areas", () => {
 	const response = route(
 		"GET",
-		"/v1/relationship-coverage?geography=ward&release=2025-01-en-ward&relation=within",
+		"/v1/relationships?geography=ward&release=2025-01-en-ward&relation=within",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -38,7 +38,7 @@ test("rejects an unknown relationship kind", () => {
 	assert.equal(
 		route(
 			"GET",
-			"/v1/relationship-coverage?geography=ward&release=2025-01-en-ward&relation=adjacent",
+			"/v1/relationships?geography=ward&release=2025-01-en-ward&relation=adjacent",
 			registry,
 		).status,
 		400,

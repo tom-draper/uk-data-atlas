@@ -91,10 +91,10 @@ const contextFor = ({
 	});
 
 const query =
-	"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
+	"/v1/relationships?sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
 
 const intensiveQuery =
-	"/v1/relationship-capabilities?sourceGeography=localAuthority&sourceRelease=2025-01-uk-lad&targetGeography=ward&targetRelease=2025-01-en-ward&purpose=membership";
+	"/v1/relationships?sourceGeography=localAuthority&sourceRelease=2025-01-uk-lad&targetGeography=ward&targetRelease=2025-01-en-ward&purpose=membership";
 
 const mobileSourceRegistry = {
 	...registry,
@@ -112,7 +112,7 @@ const mobileSourceRegistry = {
 test("discovers every declared conversion from one source release", () => {
 	const response = route(
 		"GET",
-		"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2025-01-en-ward",
+		"/v1/relationships?sourceGeography=ward&sourceRelease=2025-01-en-ward",
 		contextFor(),
 	);
 	assert.equal(response.status, 200);
@@ -130,7 +130,7 @@ test("discovers every declared conversion from one source release", () => {
 test("reports an uncompiled discovery source as a build prerequisite", () => {
 	const response = route(
 		"GET",
-		"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=missing-release",
+		"/v1/relationships?sourceGeography=ward&sourceRelease=missing-release",
 		contextFor(),
 	);
 	const data = (response.body as { data: any }).data;

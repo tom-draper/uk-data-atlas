@@ -872,10 +872,9 @@ const CAPABILITY_REQUESTS = [
 	"/v1/measures/population/coverage?geography=localAuthority&release=2025-12-uk-bgc",
 	"/v1/measures/road-collisions/coverage?geography=localAuthority&release=2023-05-uk-bgc-v2",
 	"/v1/measures/general-election-turnout/coverage?geography=localAuthority&release=2024-05-uk-bgc",
-	"/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership",
-	"/v1/relationship-paths?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=identity",
-	"/v1/relationship-capabilities?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership",
-	"/v1/conversion-plan?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership&operation=containment-aggregation",
+	"/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership",
+	"/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=identity",
+	"/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership&operation=containment-aggregation",
 ];
 
 test("documents exactly the capability vocabulary the API speaks", () => {

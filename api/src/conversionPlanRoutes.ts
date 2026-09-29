@@ -12,10 +12,7 @@ const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
 	"apportion",
 ];
 
-/**
- * Selects a conversion path and validates its intended operation without
- * translating a code or aggregating a measure.
- */
+/** Legacy conversion planning. Prefer GET /v1/relationships with operation. */
 export const handleConversionPlanRoutes = ({
 	context,
 	releaseId,

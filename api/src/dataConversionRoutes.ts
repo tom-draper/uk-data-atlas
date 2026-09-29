@@ -105,7 +105,7 @@ export const handleDataConversionRoutes = ({
 		return problem(
 			400,
 			"Invalid Query",
-			"crosswalk or path is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published crosswalks and /v1/relationship-paths the published paths.",
+			"crosswalk or path is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published crosswalks and /v1/relationships discovers the published paths.",
 		);
 	// Either way the caller names the route: one crosswalk forward, or every
 	// step of a published relationship path.
