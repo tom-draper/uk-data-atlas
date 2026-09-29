@@ -292,7 +292,6 @@ paths:
                     - /v1/data/{measure-id}/compare
                     - /v1/data/{measure-id}/aggregate
                     - /v1/areas
-                    - /v1/areas:resolve
                     - /v1/areas/{geography}/{release}/{code}
                     - /v1/areas/{geography}/{release}/{code}/dossier
                     - /v1/areas/{geography}/{release}/{code}/relationships
@@ -3196,6 +3195,12 @@ paths:
         for the postcode. A query that reads as a postcode district or sector,
         or a unit postcode the directory does not hold or this API may not
         serve, carries a `postcodeHint` saying so.
+
+
+        Add `geography` or `release` to resolve only exact area identities in
+        that scope. `date`, with a geography, selects the latest published
+        release on or before that date; `country` can narrow that selection.
+        This is the replacement for the deprecated `/areas:resolve` route.
       parameters:
         - name: q
           in: query
@@ -3218,6 +3223,26 @@ paths:
           required: false
           schema: { type: string, format: date }
           description: Select the member codes effective on this date for curated named locations. Omit it to return the complete dated definition.
+        - name: geography
+          in: query
+          required: false
+          schema: { type: string }
+          description: Restrict an exact area lookup to one geography type.
+        - name: release
+          in: query
+          required: false
+          schema: { type: string }
+          description: Restrict an exact area lookup to one boundary release.
+        - name: date
+          in: query
+          required: false
+          schema: { type: string }
+          description: Calendar date (`YYYY-MM-DD`) or month (`YYYY-MM`) that selects a release. Requires `geography` and cannot be combined with `release`.
+        - name: country
+          in: query
+          required: false
+          schema: { enum: [GB-ENG, GB-NIR, GB-SCT, GB-WLS] }
+          description: Restrict a date-selected release to one country.
       responses:
         "200":
           description: The candidate places, best match first. Empty when nothing matches.
@@ -4011,6 +4036,9 @@ paths:
   /areas:resolve:
     get:
       operationId: resolveAreaIdentifier
+      deprecated: true
+      x-deprecated-since: "2026-09-29"
+      x-sunset: "2027-09-29"
       tags: ["Start here"]
       summary: Resolve a code, name or alias to every exact area identity it can mean
       x-likely-refusal:
@@ -4018,7 +4046,8 @@ paths:
         when: "No `q` is supplied. The Atlas cannot resolve an omitted identifier."
         x-example-request: "/v1/areas:resolve"
       description: >
-        Resolves an official code, official name or supplied alias, returning
+        Deprecated: use `/places` with the same `q`, geography, release, date
+        and country parameters. Resolves an official code, official name or supplied alias, returning
         every exact candidate and a link to each candidate's geography dossier.
         Codes match case insensitively. Names and aliases also set aside case,
         accents, punctuation, ampersands and administrative titles such as
@@ -4032,8 +4061,8 @@ paths:
         `date` with a geography instead of a release to select the latest
         dated release on or before that date; `country` can restrict this
         selection. The response explains the selected snapshot and any
-        same-month releases set aside. For prefix matching, use `/areas`,
-        whose paginated result is linked in every response.
+        same-month releases set aside. For prefix matching, use `/places`,
+        whose candidate results are linked in every response.
       parameters:
         - name: q
           in: query
@@ -4092,7 +4121,7 @@ paths:
     get:
       operationId: listAreas
       tags: ["Geography"]
-      summary: List or search compiled area identities
+      summary: List compiled area identities
       x-likely-refusal:
         status: 400
         code: invalid_cursor
@@ -4107,9 +4136,10 @@ paths:
         - name: q
           in: query
           required: false
+          deprecated: true
           schema:
             type: string
-          description: Official code, name or alias prefix. Omit to list areas.
+          description: Deprecated name/code prefix search. Use `/places?q=`; omit to list areas.
         - name: geography
           in: query
           required: false

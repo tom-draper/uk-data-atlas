@@ -8,7 +8,12 @@ export const INDEX_END = "<!-- route-index:end -->";
 
 type Spec = {
 	tags: Array<{ name: string; description?: string }>;
-	paths: Record<string, { get?: { tags?: string[]; summary?: string } }>;
+	paths: Record<
+		string,
+		{
+			get?: { tags?: string[]; summary?: string; deprecated?: boolean };
+		}
+	>;
 };
 
 /**
@@ -20,7 +25,7 @@ export const renderRouteIndex = (spec: Spec) => {
 	const lines = [INDEX_START, ""];
 	for (const tag of spec.tags) {
 		const operations = Object.entries(spec.paths).flatMap(([path, item]) =>
-			item.get?.tags?.includes(tag.name)
+			item.get?.tags?.includes(tag.name) && item.get.deprecated !== true
 				? [
 						[
 							path === "/" ? "/v1" : `/v1${path}`,

@@ -2125,8 +2125,8 @@ data.
 
 ```
 GET /v1/areas/{area-id}
-GET /v1/areas:resolve?q=manchester&type=local-authority&release=2025-05-uk-bgc-v2
-GET /v1/areas:resolve?code=E07000026
+GET /v1/places?q=manchester&geography=local-authority&release=2025-05-uk-bgc-v2
+GET /v1/places?q=E07000026
 GET /v1/areas/{area-id}/ancestors
 GET /v1/areas/{area-id}/descendants?type=ward
 GET /v1/areas/{area-id}/relations?type=constituency
@@ -3629,7 +3629,6 @@ second inventory to maintain:
 - `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
 - `GET /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
-- `GET /v1/areas:resolve` — Resolve a code, name or alias to every exact area identity it can mean
 - `GET /v1/areas/{geography}/{release}/{code}/dossier` — Get the verified geography dossier for one exact area identity
 - `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity
 
@@ -3683,7 +3682,7 @@ second inventory to maintain:
 - `GET /v1/boundary-releases:compare` — Compare two releases of one geography without inferring geography change from codes
 - `GET /v1/boundary-releases/{geography}/{release}` — Get one boundary release, with links to download it whole
 - `GET /v1/geography-inventory` — Report resolver identity and relationship coverage, including the compiled backlog by geography
-- `GET /v1/areas` — List or search compiled area identities
+- `GET /v1/areas` — List compiled area identities
 - `GET /v1/areas:validate` — Validate a batch of area codes or names, or infer their likely release
 - `GET /v1/areas/{geography}/{release}/{code}` — Get one compiled area by its full identity
 - `GET /v1/areas/{geography}/{release}/{code}/relationships` — Get published relationships for one compiled area

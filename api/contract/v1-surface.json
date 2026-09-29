@@ -2741,6 +2741,24 @@
 				},
 				"query:asOf": {
 					"required": false
+				},
+				"query:geography": {
+					"required": false
+				},
+				"query:release": {
+					"required": false
+				},
+				"query:date": {
+					"required": false
+				},
+				"query:country": {
+					"required": false,
+					"enum": [
+						"GB-ENG",
+						"GB-NIR",
+						"GB-SCT",
+						"GB-WLS"
+					]
 				}
 			},
 			"responses": {
@@ -3645,6 +3663,10 @@
 		},
 		"GET /areas:resolve": {
 			"operationId": "resolveAreaIdentifier",
+			"deprecated": {
+				"since": "2026-09-29",
+				"sunset": "2027-09-29"
+			},
 			"parameters": {
 				"query:q": {
 					"required": true
