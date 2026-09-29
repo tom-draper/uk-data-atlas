@@ -6,7 +6,11 @@ import { route } from "../src/routes";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import { testContext } from "./routeFixtures";
 
-type OpenApiOperation = { operationId?: string; tags?: string[] };
+type OpenApiOperation = {
+	operationId?: string;
+	tags?: string[];
+	deprecated?: boolean;
+};
 type OpenApiPathItem = Partial<
 	Record<
 		| "get"
@@ -110,8 +114,15 @@ test("documents exactly the routes advertised by the API index", () => {
 	// Placeholders are compared by name too, so the index and the spec
 	// cannot drift into two vocabularies for the same path.
 	const advertised = ["/v1", ...links].sort();
-	const documented = specPaths
-		.map((path) => (path === "/" ? "/v1" : `/v1${path}`))
+	const documented = Object.entries(spec.paths)
+		.filter(([, pathItem]) =>
+			httpMethods.some(
+				(method) =>
+					pathItem[method] !== undefined &&
+					pathItem[method]?.deprecated !== true,
+			),
+		)
+		.map(([path]) => (path === "/" ? "/v1" : `/v1${path}`))
 		.sort();
 	assert.deepEqual(documented, advertised);
 });

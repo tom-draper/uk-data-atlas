@@ -28,11 +28,25 @@ test("resolves an exact code to dossiers without choosing a release", () => {
 			},
 		],
 		search: {
-			href: "/v1/areas?q=e05000001",
-			note: "Use search for prefix matching when no exact official code, name or supplied alias resolves.",
+			href: "/v1/places?q=e05000001",
+			note: "Use place search for prefix matching when no exact official code, name or supplied alias resolves.",
 		},
 		note: "Candidates are every exact match within the requested filters. `matches` says whether the identifier matched an official code, name or supplied alias, including when accents, punctuation or an administrative title were set aside; this endpoint never chooses between geography or boundary-release candidates.",
 	});
+});
+
+test("uses places as the front door for a filtered exact area lookup", () => {
+	const response = route(
+		"GET",
+		"/v1/places?q=E05000001&geography=ward&release=2025-01-en-ward",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(response.status, 200);
+	const data = (response.body as { data: any }).data;
+	assert.equal(data.candidates.length, 1);
+	assert.equal(data.candidates[0].code, "E05000001");
 });
 
 test("resolves an alias exactly and directs prefixes to the search resource", () => {
@@ -61,10 +75,7 @@ test("resolves an alias exactly and directs prefixes to the search resource", ()
 				"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/dossier",
 		},
 	]);
-	assert.equal(
-		aliasData.search.href,
-		"/v1/areas?q=gm&geography=localAuthority",
-	);
+	assert.equal(aliasData.search.href, "/v1/places?q=gm");
 
 	const prefix = route(
 		"GET",
@@ -79,7 +90,7 @@ test("resolves an alias exactly and directs prefixes to the search resource", ()
 		search: { href: string };
 	};
 	assert.deepEqual(prefixData.candidates, []);
-	assert.equal(prefixData.search.href, "/v1/areas?q=Greater");
+	assert.equal(prefixData.search.href, "/v1/places?q=Greater");
 });
 
 test("resolves normalised names and aliases without hiding the matching rule", () => {

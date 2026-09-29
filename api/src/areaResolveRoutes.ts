@@ -3,23 +3,22 @@ import { parseSelectionDate } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
+type AreaQueryRequest = Pick<
+	RouteRequest,
+	"context" | "releaseId" | "parsedUrl"
+>;
+
 /**
  * Resolves one supplied identifier into every exact area identity it can mean.
  * It deliberately returns candidates, rather than selecting a geography or
  * boundary release from catalogue order.
  */
-export const handleAreaResolveRoutes = ({
+/** Shared exact area resolution for the legacy route and filtered place searches. */
+export const resolveAreaQuery = ({
 	context,
 	releaseId,
 	parsedUrl,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 2 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas:resolve"
-	)
-		return undefined;
+}: AreaQueryRequest): ApiResponse => {
 	const q = parsedUrl.searchParams.get("q")?.trim();
 	if (!q)
 		return problem(
@@ -107,8 +106,6 @@ export const handleAreaResolveRoutes = ({
 		query: q,
 	});
 	const searchParams = new URLSearchParams({ q });
-	if (geography) searchParams.set("geography", geography);
-	if (boundaryRelease) searchParams.set("release", boundaryRelease);
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -142,10 +139,24 @@ export const handleAreaResolveRoutes = ({
 				dossierHref: `/v1/areas/${area.geography}/${area.boundaryRelease}/${area.code}/dossier`,
 			})),
 			search: {
-				href: `/v1/areas?${searchParams.toString()}`,
-				note: "Use search for prefix matching when no exact official code, name or supplied alias resolves.",
+				href: `/v1/places?${searchParams.toString()}`,
+				note: "Use place search for prefix matching when no exact official code, name or supplied alias resolves.",
 			},
 			note: "Candidates are every exact match within the requested filters. `matches` says whether the identifier matched an official code, name or supplied alias, including when accents, punctuation or an administrative title were set aside; this endpoint never chooses between geography or boundary-release candidates.",
 		}),
 	};
+};
+
+/** Legacy exact-area resolution. Prefer GET /v1/places for new clients. */
+export const handleAreaResolveRoutes = (
+	request: RouteRequest,
+): ApiResponse | undefined => {
+	const { segments } = request;
+	if (
+		segments.length !== 2 ||
+		segments[0] !== "v1" ||
+		segments[1] !== "areas:resolve"
+	)
+		return undefined;
+	return resolveAreaQuery(request);
 };

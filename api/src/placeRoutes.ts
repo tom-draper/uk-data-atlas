@@ -1,4 +1,5 @@
 import { describeCandidate } from "./placeResponses";
+import { resolveAreaQuery } from "./areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";
 import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
@@ -25,6 +26,16 @@ export const handlePlaceRoutes = ({
 			"Invalid Query",
 			"q is required: a place name, an area code, or a place reference such as localAuthority/E08000003.",
 		);
+	if (
+		["geography", "release", "date", "country"].some((parameter) =>
+			parsedUrl.searchParams.has(parameter),
+		)
+	)
+		return resolveAreaQuery({
+			context,
+			releaseId,
+			parsedUrl,
+		});
 	const limit = readPageSize(parsedUrl.searchParams.get("limit"), 10);
 	if (limit === undefined)
 		return problem(
