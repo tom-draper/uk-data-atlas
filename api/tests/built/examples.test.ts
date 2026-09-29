@@ -69,6 +69,15 @@ test("walks the golden paths against a running server", async (t) => {
 		),
 		"the trend must show an unsafe period as not-comparable",
 	);
+
+	// The server keeps no history, so a resync must work from the manifest the
+	// consumer kept; against an unchanged release it fetches nothing.
+	const sync = await reliableSync(client);
+	assert.match(
+		sync.find((step) => step.title === "Resync only what changed")
+			?.detail ?? "",
+		/has 0 exports and 0 lookups to fetch, and 0 to drop/,
+	);
 });
 
 test("builds a map the tutorial page can actually draw", async (t) => {
