@@ -1,5 +1,9 @@
 # UK Data Atlas API proposal
 
+> **Direction and priorities live in [DIRECTION.md](DIRECTION.md).** It
+> supersedes the commercial roadmap, golden paths, delivery plan and focus
+> rules below, which remain as backlog and design history.
+
 ## Decision in brief
 
 Build a public, versioned **data-and-geography API**, not an API that merely
@@ -1075,6 +1079,8 @@ shown which workflows deserve that added state.
 
 ### Commercial read-only roadmap
 
+> Superseded by [DIRECTION.md](DIRECTION.md). Kept as backlog.
+
 These are product capabilities, not a reason to add endpoints indiscriminately.
 Each should make a recurring decision or production workflow safer, cheaper or
 faster. The initial target users are organisations that repeatedly assess or
@@ -1150,7 +1156,9 @@ roadmap and explanation of the resource model. A literal URI in this document
 that differs from OpenAPI is conceptual or superseded; it is not an endpoint a
 client should copy into production.
 
-Keep v1 paths stable rather than renaming routes for tidiness. Make the mental
+Until launch, nothing is frozen: [DIRECTION.md](DIRECTION.md) calls for
+renaming and merging routes while no client depends on them. After launch,
+keep v1 paths stable rather than renaming routes for tidiness. Make the mental
 model explicit instead:
 
 | Term                        | Meaning                                                                                                                                                                      |
@@ -3159,6 +3167,9 @@ Depth and traceability are more credible than breadth.
 
 ## Recommended delivery plan
 
+> Superseded by [DIRECTION.md](DIRECTION.md). Kept as design history; its
+> Phase 3 and Phase 4 work is parked.
+
 The API already has a substantial geography, provenance and source-exact data
 foundation. Do not restart that work or add every capability in the commercial
 backlog. Build the following phases in order, and do not begin the next phase
@@ -3323,6 +3334,8 @@ dataset expansion. OGC representations, extensive profile catalogues and
 signals are also deferred unless a Phase 1–3 design partner needs them.
 
 ## Focus rules
+
+> Superseded by the UX rules in [DIRECTION.md](DIRECTION.md).
 
 1. **Correctness before breadth.** One source, conversion or map resource that
    travels with complete evidence is more valuable than ten weakly documented
