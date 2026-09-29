@@ -973,10 +973,22 @@ fetch the postcode directory from ONS.
       that remain are published with their reasons, 47 waived checks in the
       current report, such as 2016 to 2019 ward election codes from outside
       their year's release.
-- [ ] Machine-readable change log and release notifications. The current
-      release manifest records artifact hashes, but this pre-public API does
-      not retain releases to compare. The [operations contract](#operations-contract)
-      sets out the deprecation policy.
+- [x] Machine-readable change log, worked out by the client. The API retains
+      no releases, so it cannot answer "what changed since X". Instead
+      `GET /v1/atlas-release` records a fingerprint for every dataset,
+      measure, boundary release, area identity set, geometry source,
+      crosswalk, validation exception, named location, export, lookup and
+      terrain layer, which changes exactly when that resource's published
+      entry does. A consumer keeps the manifest it last synced and compares
+      the two: `examples/releaseChanges.ts` does that in a few lines, naming
+      each resource added, removed or changed, and
+      `examples/reliable-sync.ts` uses it to fetch only the exports and
+      lookups that moved. It names a changed resource, not the field or rows
+      that changed. The [operations contract](#operations-contract) sets out
+      the deprecation policy.
+- [ ] Release notifications, such as a feed or webhook announcing a new
+      Atlas release. Until then a consumer polls `GET /v1/atlas-release`,
+      which answers `304` to its `ETag` while nothing has changed.
 - [x] Generate a ready-to-use attribution and licence block for selected
       resources through `GET /v1/attribution`, suitable for a map, report or
       bulk download. A measure is attributed through its source datasets; a
@@ -1270,7 +1282,10 @@ Implementation and documentation tasks:
 
 - [ ] Publish a machine-readable change feed, including the datasets, periods,
       values, definitions, boundary releases, crosswalks, named locations and
-      validation results affected by an Atlas release.
+      validation results affected by an Atlas release. Resource-level change
+      is available now, by comparing a kept manifest's fingerprints with the
+      current one's; which periods and values within a changed export moved
+      is not yet recorded.
 - [ ] Decide whether public historic-release retention is needed after the API
       has users. Until then, corrections replace the active compiled release.
 - [ ] State a source's publisher release date, Atlas ingestion date, expected
@@ -1305,10 +1320,11 @@ Implementation and documentation tasks:
       guessed date would be a weaker validator than the `ETag`. Quota headers
       arrive with quotas, under the API-key work in Phase 3.
 
-Candidate read-only routes:
+Candidate read-only routes. `GET /v1/changes?since=` is deliberately absent:
+answering it would need the history the API does not keep, and comparing a
+kept manifest with the current one answers the same question on the client.
 
 ```text
-GET /v1/changes?since={release-or-timestamp}
 GET /v1/api-versions/{version}/changes
 GET /v1/measures/{measure-id}/freshness
 GET /v1/corrections

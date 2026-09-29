@@ -219,10 +219,13 @@ x-quick-starts:
   - id: reliable-sync
     title: Reliable sync
     audience: Data engineer
-    promise: Ingest current data into an existing stack and verify it.
+    promise: Ingest current data into an existing stack, verify it, and refetch only what changed.
     steps:
       - title: Record the Atlas release
         explain: Every response names the release that produced it. Record it beside every table you load.
+        request: "/v1/atlas-release"
+      - title: Keep the manifest to compare against
+        explain: The API keeps no history, so keep this manifest. Its `resources` give a fingerprint for every dataset, measure, crosswalk, export and lookup, which changes exactly when that resource does. On the next run, compare the kept fingerprints with the current ones and fetch only the exports and lookups that were added or changed.
         request: "/v1/atlas-release"
       - title: List the whole-partition exports
         explain: Each export is one immutable source partition, with its record count, schema, content hash and the datasets to attribute.
