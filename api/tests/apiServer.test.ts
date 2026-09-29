@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import type { AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
-import { createApiServer } from "../src/apiServer";
+import { createApiServer, MAX_BODY_BYTES } from "../src/apiServer";
 import type { RouteContext } from "../src/routing";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import {
@@ -247,4 +247,36 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 	const during = await get("/v1/geographies");
 	assert.equal(during.status, 200);
 	assert.equal(during.headers.get("connection"), "close");
+});
+
+test("reads a POST body, refuses one too large, and never caches the answer", async (t) => {
+	const { get } = await serve(t);
+	const validate = "/v1/areas:validate?geography=ward&release=2023-05-uk-bgc";
+	const posted = await get(validate, {
+		method: "POST",
+		headers: { "content-type": "application/json" },
+		body: JSON.stringify({ values: ["E05000001"] }),
+	});
+	assert.equal(posted.status, 200);
+	// An answer that depends on a body no cache keys on is not stored.
+	assert.equal(posted.headers.get("cache-control"), "no-store");
+	assert.equal(posted.headers.get("etag"), null);
+
+	const tooLarge = await get(validate, {
+		method: "POST",
+		headers: { "content-type": "text/csv" },
+		body: `area\n${"E05000001\n".repeat(MAX_BODY_BYTES / 10 + 1)}`,
+	});
+	assert.equal(tooLarge.status, 413);
+
+	// A browser may send the body cross-origin once its preflight allows it.
+	const preflight = await get(validate, { method: "OPTIONS" });
+	assert.match(
+		preflight.headers.get("access-control-allow-methods")!,
+		/POST/,
+	);
+	assert.match(
+		preflight.headers.get("access-control-allow-headers")!,
+		/content-type/,
+	);
 });

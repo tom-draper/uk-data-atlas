@@ -30,6 +30,7 @@ export const handleIndexRoutes = ({
 				"/v1/boundary-releases:resolve",
 				"/v1/boundary-releases:compare",
 				"/v1/boundary-releases/{geography}/{release}",
+				"/v1/boundary-releases/{geography}/{release}:join",
 				"/v1/geography-inventory",
 				"/v1/geography-health",
 				"/v1/relationships",

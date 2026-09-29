@@ -78,8 +78,17 @@ export type RouteContext = {
 	mapFeatures?: Map<string, StoredFile>;
 };
 
+/** A request body, as sent: its declared media type and its text. */
+export type RequestBody = { contentType: string; text: string };
+
 export type RouteRequest = {
 	context: RouteContext;
+	/**
+	 * POST only for an operation that takes a body, such as a column of codes
+	 * too long for a URL; every other request is GET.
+	 */
+	method?: "GET" | "POST";
+	body?: RequestBody;
 	releaseId: string;
 	parsedUrl: URL;
 	segments: string[];

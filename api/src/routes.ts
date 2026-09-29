@@ -1,5 +1,5 @@
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
-import type { RouteContext } from "./routing";
+import type { RequestBody, RouteContext } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 
 export { type ApiResponse } from "./routeResponse";
@@ -47,19 +47,27 @@ const parseRoute = (
  * dependencies in one object prevents a newly added artifact from silently
  * shifting a long positional argument list at every call site.
  */
+const methodNotAllowed = () =>
+	problem(
+		405,
+		"Method Not Allowed",
+		"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join.",
+	);
+
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteContext,
+	body?: RequestBody,
 ): ApiResponse => {
-	if (method !== "GET") {
-		return problem(405, "Method Not Allowed", "This API is read-only.");
-	}
+	if (method !== "GET" && method !== "POST") return methodNotAllowed();
 	const parsed = parseRoute(url, context);
 	if ("status" in parsed) return parsed;
 	return (
 		handleRoute({
 			context,
+			method,
+			...(method === "POST" ? { body } : {}),
 			releaseId: parsed.releaseId,
 			parsedUrl: parsed.parsedUrl,
 			segments: parsed.segments,
@@ -72,8 +80,9 @@ export const routeAsync = async (
 	method: string | undefined,
 	url: string | undefined,
 	context: RouteContext,
+	body?: RequestBody,
 ): Promise<ApiResponse> => {
-	if (method !== "GET") return route(method, url, context);
+	if (method !== "GET") return route(method, url, context, body);
 	const parsed = parseRoute(url, context);
 	if ("status" in parsed) return parsed;
 	return (
