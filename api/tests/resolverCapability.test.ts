@@ -411,6 +411,143 @@ test("compares code sets, published continuity and mapping cardinality between r
 	);
 });
 
+test("views continuity published from the later release in reverse", () => {
+	const areaLookup: AreaLookup = new Map([
+		["ward/2024", areas("W1", "W2", "W3", "A", "B")],
+		["ward/2025", areas("W1", "W2", "W3", "M", "S1", "S2")],
+	]);
+	const continuity = {
+		schemaVersion: 1,
+		contentHash: "sha256:reverse-continuity",
+		id: "ward-2025-2024-continuity",
+		method: "same-code-continuity",
+		quality: "derived",
+		relationshipPurpose: "identity",
+		weighting: { status: "not-applicable" },
+		from: endpoint("ward", "2025"),
+		to: endpoint("ward", "2024"),
+		provenance: { inputs: [] },
+		validation: {
+			...validation,
+			continuity: {
+				changedExtent: [
+					{
+						code: "W2",
+						relation: "changed",
+						widestDifferenceM: 30,
+						sourceShare: 0.7,
+						targetShare: 0.9,
+					},
+				],
+				unmeasured: [{ code: "W3", reason: "No geometry." }],
+			},
+		},
+		records: [
+			{
+				source: { code: "W1", labels: [] },
+				targets: [{ code: "W1", labels: [] }],
+			},
+		],
+	} as unknown as CrosswalkArtifact;
+	// A and B merge into M, while M's neighbour splits: a many-to-many lookup.
+	const lookup = {
+		schemaVersion: 1,
+		contentHash: "sha256:merge-lookup",
+		id: "ward-2024-2025-lookup",
+		method: "official-lookup",
+		quality: "publisher-supplied",
+		weighting: { status: "not-provided" },
+		from: endpoint("ward", "2024"),
+		to: endpoint("ward", "2025"),
+		provenance: { input: "lookup.csv", inputHash: "sha256:merge-input" },
+		validation,
+		records: [
+			{
+				source: { code: "A", labels: [] },
+				targets: [{ code: "M", labels: [] }],
+			},
+			{
+				source: { code: "B", labels: [] },
+				targets: [
+					{ code: "M", labels: [] },
+					{ code: "S1", labels: [] },
+				],
+			},
+		],
+	} as unknown as CrosswalkArtifact;
+	const comparison = compareBoundaryReleases(
+		{
+			areaLookup,
+			crosswalkLookup: new Map([
+				[continuity.id, continuity],
+				[lookup.id, lookup],
+			]),
+		},
+		"ward",
+		"2024",
+		"2025",
+	)!;
+
+	assert.equal(comparison.summary.continuousCodeCount, 1);
+	assert.equal(comparison.summary.unmeasuredCodeCount, 1);
+	assert.equal(comparison.summary.unassessedSharedCodeCount, 0);
+	assert.equal(comparison.continuity.status, "available");
+	if (comparison.continuity.status === "available") {
+		// Shares are restated from the requested release's side.
+		assert.deepEqual(comparison.continuity.changedExtent, [
+			{
+				code: "W2",
+				relation: "changed",
+				widestDifferenceM: 30,
+				fromShare: 0.9,
+				toShare: 0.7,
+			},
+		]);
+		assert.deepEqual(comparison.continuity.unmeasured, [
+			{ code: "W3", reason: "No geometry." },
+		]);
+	}
+	const [published] = comparison.publishedRelationships;
+	assert.equal(published!.direction, "forward");
+	assert.equal(published!.mapping.shape, "many-to-many");
+	assert.deepEqual(published!.mapping.examples.manyToOne, [
+		{ toCode: "M", fromCodes: ["A", "B"] },
+	]);
+	assert.deepEqual(published!.mapping.examples.oneToMany, [
+		{ fromCode: "B", toCodes: ["M", "S1"] },
+	]);
+});
+
+test("says continuity is not published when no crosswalk compared the codes", () => {
+	const comparison = compareBoundaryReleases(
+		{
+			areaLookup: new Map([
+				["ward/2024", areas("W1", "W2")],
+				["ward/2025", areas("W1", "W3")],
+			]),
+		},
+		"ward",
+		"2024",
+		"2025",
+	)!;
+	assert.equal(comparison.continuity.status, "not-published");
+	assert.deepEqual(
+		{
+			shared: comparison.summary.sharedCodeCount,
+			unassessed: comparison.summary.unassessedSharedCodeCount,
+			onlyInFrom: comparison.codes.onlyInFrom.map((area) => area.id),
+			onlyInTo: comparison.codes.onlyInTo.map((area) => area.id),
+		},
+		{
+			shared: 1,
+			unassessed: 1,
+			onlyInFrom: ["ward/2024/W2"],
+			onlyInTo: ["ward/2025/W3"],
+		},
+	);
+	assert.deepEqual(comparison.publishedRelationships, []);
+});
+
 test("does not compare a release that has not been compiled", () => {
 	assert.equal(
 		compareBoundaryReleases(

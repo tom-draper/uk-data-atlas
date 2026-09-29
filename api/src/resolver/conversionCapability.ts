@@ -398,12 +398,18 @@ export class ConversionCapabilities {
 				missingPrerequisite: reason,
 			};
 		}
-		const mappedSourceAreaCount = this.translator.stepTargets(
-			artifact,
-			direction,
-		).size;
 		const stepSource =
 			direction === "forward" ? artifact.from : artifact.to;
+		// Count only codes the source release holds, as `pathReach` does, so a
+		// stray crosswalk code can never lift a step's share above 1.
+		const sourceCodes = this.inputs.areaLookup?.get(
+			releaseKey(stepSource.geography, stepSource.boundaryRelease),
+		);
+		const mapped = this.translator.stepTargets(artifact, direction);
+		let mappedSourceAreaCount = mapped.size;
+		if (sourceCodes)
+			for (const code of mapped.keys())
+				if (!sourceCodes.has(code)) mappedSourceAreaCount -= 1;
 		const sourceAreaCount = this.areaCount(stepSource);
 		if (sourceAreaCount === undefined) {
 			const reason = missing.add({
