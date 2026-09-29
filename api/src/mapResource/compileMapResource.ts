@@ -134,11 +134,17 @@ export const compileMapResource = (
 	descriptor: MapResourceDescriptor;
 } => {
 	const { geography, id: boundaryRelease } = release;
+	// Only the release's own areas. A release can take its shapes from a
+	// larger publisher file, as Welsh 2011 LSOAs come from the England and
+	// Wales one, and the rest of that file is not this release.
 	const areas = new Map(
-		cache.codes(geography, boundaryRelease).flatMap((code) => {
-			const geometry = cache.get(geography, boundaryRelease, code);
-			return geometry ? [[code, geometry] as const] : [];
-		}),
+		cache
+			.codes(geography, boundaryRelease)
+			.filter((code) => names.size === 0 || names.has(code))
+			.flatMap((code) => {
+				const geometry = cache.get(geography, boundaryRelease, code);
+				return geometry ? [[code, geometry] as const] : [];
+			}),
 	);
 	if (areas.size === 0)
 		throw new Error(
