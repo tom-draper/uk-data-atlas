@@ -31,12 +31,11 @@ export default function MeasuresPage() {
 		>
 			<H2 id="measures">What a measure is</H2>
 			<P>
-				Each measure has an `id` you use in requests, like
-				`population`, `claimant-count` or
-				`no2-background-mean`, plus a `label`, a `unit` and a note of
-				which areas and years it covers. Many come from the Office for
-				National Statistics; others come from bodies like Ofcom and
-				Defra.
+				Each measure has an `id` you use in requests, like `population`,
+				`claimant-count` or `no2-background-mean`, plus a `label`, a
+				`unit` and a note of which areas and years it covers. Many come
+				from the Office for National Statistics; others come from bodies
+				like Ofcom and Defra.
 			</P>
 			<P>
 				A measure is published as it was released. If a publisher only

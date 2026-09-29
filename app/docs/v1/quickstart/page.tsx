@@ -73,9 +73,9 @@ export default function QuickstartPage() {
 				<Step id="measures" title="See what's available">
 					<P>
 						A measure is something that's counted or measured, like
-						`population` or `median-annual-pay`. List them
-						all to see their units, coverage and whether they can be
-						added up:
+						`population` or `median-annual-pay`. List them all to
+						see their units, coverage and whether they can be added
+						up:
 					</P>
 					<SpecExample id="listMeasures" showResponse={false} />
 				</Step>

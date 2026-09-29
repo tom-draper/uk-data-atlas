@@ -31,9 +31,7 @@ import {
 // two wards of 100 and 180 in a district published as 280. Adding the wards
 // up should reproduce the district exactly.
 const measure: DataCatalog["measures"][number] = {
-	...dataCatalog.measures.find(
-		(candidate) => candidate.id === "population",
-	)!,
+	...dataCatalog.measures.find((candidate) => candidate.id === "population")!,
 	id: "fixture-people",
 	sources: [
 		{
@@ -245,9 +243,7 @@ test("lists the comparisons a measure allows, and needs a period to run one", ()
 			["wards-differ", ["2022"]],
 		],
 	);
-	const listed = routeWithData(
-		"/v1/measures/population/reconciliation",
-	);
+	const listed = routeWithData("/v1/measures/population/reconciliation");
 	assert.equal(listed.status, 200);
 	const withoutPeriod = routeWithData(
 		"/v1/measures/population/reconciliation?crosswalk=ward-to-local-authority-2025",

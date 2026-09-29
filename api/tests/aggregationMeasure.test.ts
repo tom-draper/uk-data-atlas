@@ -57,10 +57,7 @@ test("resolves available sum and weighted-mean policies", () => {
 	});
 	assert.equal("status" in weighted, false);
 	if ("status" in weighted) return;
-	assert.equal(
-		weighted.weightedAggregation?.weight.measureId,
-		"population",
-	);
+	assert.equal(weighted.weightedAggregation?.weight.measureId, "population");
 });
 
 test("reports missing, unknown and unsupported measures", () => {

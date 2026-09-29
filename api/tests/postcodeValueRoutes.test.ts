@@ -250,9 +250,7 @@ test("answers for the finest area the data was published for that contains the p
 });
 
 test("falls back to a coarser geography when a finer one has no value there", () => {
-	const { status, data } = get(
-		"/v1/data/population/value?postcode=EC1A1AB",
-	);
+	const { status, data } = get("/v1/data/population/value?postcode=EC1A1AB");
 	assert.equal(status, 200);
 	assert.equal(data.area.id, "localAuthority/2023-05-uk-bgc-v2/E06000001");
 	assert.equal(data.answer.value, 300);
@@ -273,9 +271,7 @@ test("reads the geography and period the caller names", () => {
 });
 
 test("passes over a source that does not cover the postcode's country", () => {
-	const { status, body } = get(
-		"/v1/data/population/value?postcode=EH11YZ",
-	);
+	const { status, body } = get("/v1/data/population/value?postcode=EH11YZ");
 	assert.equal(status, 422);
 	assert.deepEqual(
 		body.candidates.map((entry: any) => entry.geography),
@@ -294,11 +290,7 @@ test("says why a postcode's value cannot be answered", () => {
 		],
 		["/v1/data/population/value?postcode=EC1A", 400, /district/],
 		["/v1/data/population/value?postcode=EC1A9ZZ", 404, /./],
-		[
-			"/v1/data/population/value?postcode=GY11AA",
-			422,
-			/no grid reference/,
-		],
+		["/v1/data/population/value?postcode=GY11AA", 422, /no grid reference/],
 		[
 			"/v1/data/population/value?postcode=EC1A1AA&geography=msoa",
 			422,
@@ -363,9 +355,7 @@ test("says why a query written as a postcode found no postcode", () => {
 });
 
 test("answers a value for a postcode given as a place or its reference", () => {
-	const direct = get(
-		"/v1/data/population/value?postcode=EC1A1AA",
-	).data;
+	const direct = get("/v1/data/population/value?postcode=EC1A1AA").data;
 	for (const place of ["postcode/EC1A1AA", "ec1a%201aa"]) {
 		const { status, data } = get(
 			`/v1/data/population/value?place=${place}`,
