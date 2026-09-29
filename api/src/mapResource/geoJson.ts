@@ -40,28 +40,32 @@ export const buildGeoJson = (
 			`{"type":"FeatureCollection","name":${JSON.stringify(metadata.mapResource)},"tier":${JSON.stringify(metadata.tier)},"attribution":${JSON.stringify(metadata.attribution)},"features":[`,
 		),
 	];
-	features.forEach((feature, index) =>
-		chunks.push(
-			Buffer.from(
-				(index === 0 ? "" : ",") +
-					JSON.stringify({
-						type: "Feature",
-						id: feature.id,
-						properties: {
+	// In id order, as the GeoParquet rows are, so the two list the same
+	// features in the same order.
+	[...features]
+		.sort((left, right) => left.id - right.id)
+		.forEach((feature, index) =>
+			chunks.push(
+				Buffer.from(
+					(index === 0 ? "" : ",") +
+						JSON.stringify({
+							type: "Feature",
 							id: feature.id,
-							code: feature.code,
-							name: feature.name,
-						},
-						geometry: {
-							type: feature.geometry.type,
-							coordinates: roundCoordinates(
-								feature.geometry.coordinates,
-							),
-						},
-					}),
+							properties: {
+								id: feature.id,
+								code: feature.code,
+								name: feature.name,
+							},
+							geometry: {
+								type: feature.geometry.type,
+								coordinates: roundCoordinates(
+									feature.geometry.coordinates,
+								),
+							},
+						}),
+				),
 			),
-		),
-	);
+		);
 	chunks.push(Buffer.from("]}\n"));
 	const body = Buffer.concat(chunks);
 	return {
