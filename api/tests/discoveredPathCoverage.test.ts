@@ -167,3 +167,58 @@ test("caps a discovered path's trust at derived and says why", () => {
 		/path search composed this path/,
 	);
 });
+
+test("counts only a step's codes that its source release holds", () => {
+	// W9 is not a ward of release 1, so it must not lift the step's share.
+	const stray = artifact(
+		"ward-authority-stray",
+		["ward", "1"],
+		["authority", "1"],
+		"clean-containment",
+		"publisher-supplied",
+		[
+			["W1", "A"],
+			["W2", "A"],
+			["W9", "A"],
+		],
+	);
+	const strayResolver = createGeographyResolver({
+		areaLookup,
+		crosswalkLookup: new Map([[stray.id, stray]]),
+		relationshipPathIndex: createRelationshipPathIndex(
+			compileRelationshipPaths(
+				{
+					...crosswalkInventory,
+					crosswalks: [
+						{
+							...crosswalkInventory.crosswalks[1]!,
+							id: stray.id,
+							recordCount: stray.records.length,
+							artifact: `crosswalks/${stray.id}.json`,
+							contentHash: stray.contentHash,
+						},
+					],
+				},
+				[],
+				{
+					shapes: new Map([[stray.id, crosswalkShape(stray)]]),
+					maximumSteps: 1,
+				},
+			),
+		),
+	});
+	const [path] = strayResolver.relationshipCapability(
+		{ geography: "ward", boundaryRelease: "1" },
+		{ geography: "authority", boundaryRelease: "1" },
+		"membership",
+	).paths;
+	assert.deepEqual(
+		{
+			status: path?.coverage.steps[0]?.status,
+			mappedSourceAreaCount:
+				path?.coverage.steps[0]?.mappedSourceAreaCount,
+			sourceAreaCount: path?.coverage.steps[0]?.sourceAreaCount,
+		},
+		{ status: "partial", mappedSourceAreaCount: 2, sourceAreaCount: 3 },
+	);
+});
