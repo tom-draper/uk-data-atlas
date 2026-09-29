@@ -387,6 +387,28 @@ test("compares code sets, published continuity and mapping cardinality between r
 	assert.deepEqual(published!.mapping.examples.oneToMany, [
 		{ fromCode: "OLD", toCodes: ["NEW1", "NEW2"] },
 	]);
+
+	const limited = compareBoundaryReleases(
+		{
+			areaLookup,
+			crosswalkLookup: new Map([
+				[continuity.id, continuity],
+				[lookup.id, lookup],
+			]),
+		},
+		"ward",
+		"2024",
+		"2025",
+		1,
+	)!;
+	assert.equal(limited.summary.changedExtentCount, 1);
+	assert.equal(limited.summary.indeterminateExtentCount, 1);
+	assert.deepEqual(
+		limited.continuity.status === "available"
+			? limited.continuity.changedExtent.map(({ code }) => code)
+			: [],
+		["W2"],
+	);
 });
 
 test("does not compare a release that has not been compiled", () => {
