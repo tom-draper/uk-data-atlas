@@ -25,8 +25,8 @@ import {
  * A release takes from seconds to minutes, so one whose inputs have not changed
  * since it was last compiled is kept rather than rebuilt. Its inputs are the
  * geometry source file, the names the tiles carry, the release's title and
- * attribution, and the compiler's own code; `map-resources/build-keys.json`
- * records the hash of all four for each release.
+ * attribution, and the compiler's own code; `map-resources/build-state.json`
+ * records the hash of all four, and the descriptor, for each release.
  */
 
 /** The code a map resource is compiled by: a change to any of it rebuilds every release. */
@@ -81,24 +81,24 @@ export const buildMapResources = (
 			readFileSync(join(root, "api", path), "utf8"),
 		).join("\0"),
 	);
-	const keysPath = join(directory, "build-keys.json");
-	const previousKeys: Record<string, string> = existsSync(keysPath)
-		? JSON.parse(readFileSync(keysPath, "utf8"))
+	// Each compiled release's key and descriptor, saved as soon as it is
+	// written, so a build stopped part way resumes from the last release it
+	// finished rather than from nothing.
+	const statePath = join(directory, "build-state.json");
+	const previous: Record<
+		string,
+		{ key: string; descriptor: MapResourceDescriptor }
+	> = existsSync(statePath)
+		? JSON.parse(readFileSync(statePath, "utf8"))
 		: {};
-	const previousManifestPath = join(out, "map-resources.json");
-	const previous = new Map(
-		existsSync(previousManifestPath)
-			? (
-					JSON.parse(readFileSync(previousManifestPath, "utf8")) as {
-						resources: MapResourceDescriptor[];
-					}
-				).resources.map((resource) => [resource.id, resource] as const)
-			: [],
-	);
+	const state = { ...previous };
+	const saveState = () =>
+		writeFileSync(statePath, JSON.stringify(state) + "\n");
+	const manifestPath = join(out, "map-resources.json");
 
 	const resources: MapResourceDescriptor[] = [];
 	const unavailable: Unavailable[] = [];
-	const keys: Record<string, string> = {};
+	const compiledIds = new Set<string>();
 	for (const identity of inventory.releases) {
 		if (identity.status !== "available") continue;
 		const { geography, id: boundaryRelease } = identity;
@@ -127,17 +127,15 @@ export const buildMapResources = (
 				release,
 			}),
 		);
-		keys[id] = key;
-
-		const kept = previous.get(id);
+		const kept = previous[id];
 		if (
-			kept &&
-			previousKeys[id] === key &&
-			[kept.tiles, ...kept.features].every((entry) =>
-				existsSync(join(out, entry.artifact)),
+			kept?.key === key &&
+			[kept.descriptor.tiles, ...kept.descriptor.features].every(
+				(entry) => existsSync(join(out, entry.artifact)),
 			)
 		) {
-			resources.push(kept);
+			resources.push(kept.descriptor);
+			compiledIds.add(id);
 			continue;
 		}
 
@@ -152,7 +150,6 @@ export const buildMapResources = (
 			// here with the reason, rather than failing every other release.
 			const reason = (error as Error).message;
 			unavailable.push({ geography, boundaryRelease, reason });
-			delete keys[id];
 			log(`${id}: not compiled. ${reason}`);
 			continue;
 		}
@@ -161,6 +158,9 @@ export const buildMapResources = (
 		for (const feature of features)
 			writeFileSync(join(out, feature.artifact), feature.body);
 		resources.push(descriptor);
+		compiledIds.add(id);
+		state[id] = { key, descriptor };
+		saveState();
 		log(
 			`${descriptor.id}: ${descriptor.areaCount} areas, ${descriptor.tiles.tileCount} tiles, ${(descriptor.tiles.bytes / 1048576).toFixed(1)}MB; features ${descriptor.features.map((entry) => `${entry.tier} ${entry.format} ${((entry.gzipBytes ?? entry.bytes) / 1048576).toFixed(1)}MB`).join(", ")}; ${((performance.now() - started) / 1000).toFixed(1)}s`,
 		);
@@ -175,8 +175,14 @@ export const buildMapResources = (
 		]),
 	);
 	for (const name of readdirSync(directory))
-		if (name !== "build-keys.json" && !current.has(`map-resources/${name}`))
+		if (
+			name !== "build-state.json" &&
+			!current.has(`map-resources/${name}`)
+		)
 			rmSync(join(directory, name));
+	for (const id of Object.keys(state))
+		if (!compiledIds.has(id)) delete state[id];
+	saveState();
 
 	const withoutHash = { schemaVersion: 1 as const, resources, unavailable };
 	const manifest = {
@@ -185,12 +191,8 @@ export const buildMapResources = (
 			.update(JSON.stringify(withoutHash))
 			.digest("hex")}`,
 	};
-	writeFileSync(
-		previousManifestPath,
-		JSON.stringify(manifest, null, "\t") + "\n",
-	);
-	writeFileSync(keysPath, JSON.stringify(keys, null, "\t") + "\n");
-	return { path: previousManifestPath, resources, unavailable };
+	writeFileSync(manifestPath, JSON.stringify(manifest, null, "\t") + "\n");
+	return { path: manifestPath, resources, unavailable };
 };
 
 const path = fileURLToPath(import.meta.url);
