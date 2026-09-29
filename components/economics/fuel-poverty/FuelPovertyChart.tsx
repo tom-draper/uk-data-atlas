@@ -120,7 +120,7 @@ export default function FuelPovertyChart({
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
 				>
-					{isLocalAuthoritySummary ? "LA aggregate" : "England"}
+					{isLocalAuthoritySummary ? "Local authority" : "England"}
 				</span>
 			}
 			accent={accent}
