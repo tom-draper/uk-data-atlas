@@ -1,12 +1,19 @@
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
-import type { ApiResponse } from "./routeResponse";
+import {
+	isStoredFile,
+	type ApiResponse,
+	type StoredFile,
+} from "./routeResponse";
 
 export type HttpResponse = {
 	status: number;
 	headers: Record<string, string>;
-	/** Absent for HEAD requests, 204 and 304 responses. */
-	body?: string | Buffer;
+	/**
+	 * Absent for HEAD requests, 204 and 304 responses. A stored file is
+	 * streamed from disk by the server.
+	 */
+	body?: string | Buffer | StoredFile;
 };
 
 // A successful response is a function of the Atlas release the server loaded
@@ -52,6 +59,14 @@ export const preflightResponse = (): HttpResponse => ({
 export const entityTag = (body: string | Buffer) =>
 	`"sha256-${createHash("sha256").update(body).digest("base64url")}"`;
 
+/** The same validator, from a hash the build recorded rather than the bytes. */
+const storedEntityTag = (file: StoredFile) =>
+	`"sha256-${Buffer.from(file.contentHash.replace(/^sha256:/, ""), "hex").toString("base64url")}"`;
+
+/** How many bytes a body puts on the wire. */
+export const bodyBytes = (body: string | Buffer | StoredFile) =>
+	isStoredFile(body) ? body.bytes : Buffer.byteLength(body);
+
 /**
  * Whether an `If-None-Match` header matches the current validator, using the
  * weak comparison RFC 9110 requires for this header.
@@ -93,7 +108,7 @@ export const httpResponse = (
 	// is cached like any other; only a failure is left unstored.
 	if (result.status >= 400) {
 		headers["cache-control"] = ERROR_CACHE_CONTROL;
-		headers["content-length"] = String(Buffer.byteLength(body));
+		headers["content-length"] = String(bodyBytes(body));
 		return { status: result.status, headers, ...(isHead ? {} : { body }) };
 	}
 	// 204 says there is nothing to send, so it carries neither a body nor a
@@ -104,7 +119,7 @@ export const httpResponse = (
 			status: 204,
 			headers: { ...headers, "cache-control": freshness },
 		};
-	const etag = entityTag(body);
+	const etag = isStoredFile(body) ? storedEntityTag(body) : entityTag(body);
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
 	if (matchesEntityTag(request.headers["if-none-match"], etag)) {
@@ -117,6 +132,6 @@ export const httpResponse = (
 			},
 		};
 	}
-	headers["content-length"] = String(Buffer.byteLength(body));
+	headers["content-length"] = String(bodyBytes(body));
 	return { status: result.status, headers, ...(isHead ? {} : { body }) };
 };

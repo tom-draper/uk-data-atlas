@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { MapArchive } from "./mapResource/archiveReader";
 import { openArchive } from "./mapResource/archiveReader";
 import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
+import type { StoredFile } from "./routeResponse";
 
 export type MapResources = { resources: MapResourceDescriptor[] };
 
@@ -13,13 +14,17 @@ export const readMapResources = (apiRoot: string): MapResources => {
 	return JSON.parse(readFileSync(path, "utf8")) as MapResources;
 };
 
-/** Open map archives and load feature artifacts once for route-level reuse. */
+/**
+ * Open the map archives and locate the feature downloads. Neither is read into
+ * memory: a tile is read from its archive when asked for, and a download is
+ * streamed from its file.
+ */
 export const readMapAssets = (
 	apiRoot: string,
 	mapResources: MapResources,
 ): {
 	mapArchives: Map<string, MapArchive>;
-	mapFeatures: Map<string, Buffer>;
+	mapFeatures: Map<string, StoredFile>;
 } => ({
 	mapArchives: new Map(
 		mapResources.resources.map((resource) => [
@@ -31,7 +36,11 @@ export const readMapAssets = (
 		mapResources.resources.flatMap((resource) =>
 			(resource.features ?? []).map((entry) => [
 				entry.artifact,
-				readFileSync(join(apiRoot, "public", entry.artifact)),
+				{
+					path: join(apiRoot, "public", entry.artifact),
+					bytes: entry.bytes,
+					contentHash: entry.contentHash,
+				},
 			]),
 		),
 	),

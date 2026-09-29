@@ -50,10 +50,28 @@ export type ApiResponse = {
 		 * tile. It travels to the client as it is, and is hashed for the ETag
 		 * the same way a string body is.
 		 */
-		body: string | Buffer;
+		body: string | Buffer | StoredFile;
 		headers?: Record<string, string>;
 	};
 };
+
+/**
+ * A published artifact sent from disk rather than held in memory: a whole
+ * boundary release can run to hundreds of megabytes. Its validator is the
+ * content hash the build recorded, so the file is never read to answer a
+ * conditional request.
+ */
+export type StoredFile = {
+	path: string;
+	bytes: number;
+	/** `sha256:` followed by the hex digest of the file. */
+	contentHash: string;
+};
+
+export const isStoredFile = (
+	body: string | Buffer | StoredFile | undefined,
+): body is StoredFile =>
+	typeof body === "object" && body !== null && !Buffer.isBuffer(body);
 
 export const envelope = <T>(
 	atlasRelease: string,

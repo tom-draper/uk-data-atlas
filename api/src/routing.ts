@@ -25,7 +25,7 @@ import type { MeasureCompatibilityInventory } from "./measureCompatibility";
 import type { NamedLocationInventory } from "./namedLocations";
 import type { RelationshipCandidateInventory } from "./relationshipCandidates";
 import type { RelationshipPathInventory } from "./relationshipPaths";
-import type { ApiResponse } from "./routeResponse";
+import type { ApiResponse, StoredFile } from "./routeResponse";
 import type { ValidationReport } from "./validationReport";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
@@ -75,7 +75,7 @@ export type RouteContext = {
 	/** Each map resource's archive, opened once and keyed by resource id. */
 	mapArchives?: Map<string, MapArchive>;
 	/** Each map resource tier's GeoParquet file, keyed by its artifact path. */
-	mapFeatures?: Map<string, Buffer>;
+	mapFeatures?: Map<string, StoredFile>;
 };
 
 export type RouteRequest = {
