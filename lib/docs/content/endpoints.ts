@@ -423,6 +423,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"If nothing is published for your purpose but something is for another, `alternatives` points you to it.",
 		],
 	},
+	queryRelationships: {
+		title: "Explore geography relationships",
+		intro: "Use one route to discover conversions from a release, inspect a specific source and target pair, choose a path for an intended operation, or find relationship coverage gaps.",
+		tips: [
+			"Give `sourceGeography` and `sourceRelease` to discover available targets; add the target and `purpose` to inspect one conversion.",
+			"Add `operation` to choose a supported path. Use `geography` and `release`, without source parameters, to report coverage.",
+		],
+	},
 	planGeographyConversion: {
 		title: "Plan a geography conversion",
 		intro: "Choose a published path between two boundary releases before translating codes or values. It selects the best-supported route for your intended operation and shows the alternatives and any evidence gaps.",
