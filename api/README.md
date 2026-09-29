@@ -516,9 +516,11 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Detect mixed or stale code systems in the same input. The whole-input
       verdict remains unjoinable and recommends only published paths; it never
       silently normalises or converts supplied values.
-- [ ] Provide a downloadable match result and a reproducible matching manifest,
-      so a user can join their own dataset without redoing the Atlas's repair
-      and code-resolution work.
+- [x] Provide a downloadable CSV match result and a reproducible, versioned
+      matching manifest. It pins the Atlas release, submitted column digest,
+      candidate decision and published-path recommendations, so a user can
+      join their own dataset without redoing the Atlas's repair and
+      code-resolution work.
 - [ ] Add optional user-confirmed matching rules for repeated imports, kept
       separate from the public canonical aliases until reviewed.
 

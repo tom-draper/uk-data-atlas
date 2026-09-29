@@ -4009,6 +4009,13 @@
 				"query:parent": {
 					"required": false,
 					"maxItems": 500
+				},
+				"query:format": {
+					"required": false,
+					"enum": [
+						"csv",
+						"json"
+					]
 				}
 			},
 			"responses": {

@@ -4353,6 +4353,11 @@ paths:
         re-cased to be read, and in `duplicateOf` whether it repeats an earlier
         value. `summary.joinable` is true only when every value names exactly
         one area of the release.
+
+        Every JSON result carries a versioned matching manifest with the Atlas
+        release, exact submitted values and their digest, candidate decision and
+        published-path recommendations. Use `format=csv` to download the same
+        row-preserving result for a local join or audit.
       parameters:
         - name: geography
           in: query
@@ -4384,6 +4389,13 @@ paths:
             maxItems: 500
             items: { type: string }
           description: A parent code or name for the corresponding value. When supplied, repeat once per value in the same order.
+        - name: format
+          in: query
+          required: false
+          schema: { type: string, enum: [json, csv], default: json }
+          description: >
+            `json` returns the diagnostic and matching manifest. `csv`
+            downloads its row-preserving report.
       responses:
         "200":
           description: A result for every value, in input order, and a summary.
