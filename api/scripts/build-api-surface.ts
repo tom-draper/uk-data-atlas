@@ -11,6 +11,11 @@ import {
 /**
  * Locks the v1 surface after an additive change to `openapi.yaml`. It refuses
  * to lock a breaking change: that is what the lock exists to stop.
+ *
+ * Until the API is deployed there is no client to break (api/DIRECTION.md,
+ * "Nothing is deployed, so nothing is frozen yet"), so `--before-launch`
+ * locks a breaking change deliberately, listing what it breaks. Remove the
+ * flag at launch.
  */
 const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export const surfacePath = resolve(apiRoot, "contract", "v1-surface.json");
@@ -38,9 +43,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 				new Date().toISOString().slice(0, 10),
 			)
 		: [];
-	if (breaks.length > 0) {
+	const beforeLaunch = process.argv.includes("--before-launch");
+	if (breaks.length > 0 && beforeLaunch)
+		console.warn(
+			`Locking breaking changes to v1 before launch:\n${breaks.map((line) => `- ${line}`).join("\n")}`,
+		);
+	else if (breaks.length > 0) {
 		console.error(
-			`Refusing to lock a breaking change to v1:\n${breaks.map((line) => `- ${line}`).join("\n")}`,
+			`Refusing to lock a breaking change to v1:\n${breaks.map((line) => `- ${line}`).join("\n")}\nBefore launch, a deliberate break is locked with --before-launch.`,
 		);
 		process.exit(1);
 	}

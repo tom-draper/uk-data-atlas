@@ -2511,7 +2511,10 @@ Two things can change under a client, and each is pinned separately.
   breaking change. The one way out is deprecation: an operation marked
   `deprecated: true` with `x-deprecated-since` and `x-sunset` dates is served
   with `Deprecation` and `Sunset` headers, and may be removed once its sunset
-  has passed. A change that breaks anything else needs `/v2`.
+  has passed. A change that breaks anything else needs `/v2`. Until the
+  first deployment there is no client to break, so a deliberate break is
+  locked with `--before-launch`, which lists what it breaks; that flag goes
+  at launch.
 - **The data** is identified by the current Atlas release. Every response
   carries an `Atlas-Release` header, and JSON responses name it in the envelope
   too. A correction or preprocessing change replaces the current release; the
