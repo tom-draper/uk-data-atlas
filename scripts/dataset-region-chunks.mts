@@ -399,7 +399,6 @@ export async function writeDatasetRegionChunks({
 		const chunkLayout = compiled.layout?.regionChunks;
 		if (!chunkLayout || chunkLayout.kind !== "regional") continue;
 		const value = compiled.data as DatasetPayload;
-		const chunks = new Map<RegionChunkKey, DatasetPayload>();
 		const locationPopulations = chunkLayout.populationSummary
 			? populationLocationSummary(gazetteer, value)
 			: undefined;
@@ -418,8 +417,14 @@ export async function writeDatasetRegionChunks({
 							boundaryMappings?.wardToLad ?? {},
 						)
 					: undefined;
-		for (const region of REGION_CHUNK_KEYS) chunks.set(region, {});
 
+		// Keep each record in precisely one partition. The chunk metadata and JSON
+		// strings are built per region below, so twelve full output objects never
+		// need to coexist in memory.
+		const recordsByDataset = new Map<
+			string,
+			Map<RegionChunkKey, Record<string, unknown>>
+		>();
 		for (const [datasetId, dataset] of Object.entries(value)) {
 			if (!dataset.data) continue;
 			const records = new Map<RegionChunkKey, Record<string, unknown>>();
@@ -437,8 +442,14 @@ export async function writeDatasetRegionChunks({
 				regionRecords[code] = record;
 				records.set(region, regionRecords);
 			}
-			for (const region of REGION_CHUNK_KEYS) {
-				const data = records.get(region) ?? {};
+			recordsByDataset.set(datasetId, records);
+		}
+
+		for (const region of REGION_CHUNK_KEYS) {
+			const chunk: DatasetPayload = {};
+			for (const [datasetId, dataset] of Object.entries(value)) {
+				if (!dataset.data) continue;
+				const data = recordsByDataset.get(datasetId)?.get(region) ?? {};
 				const codeKeyedFields = Object.fromEntries(
 					codeKeyedFieldsFor(compiled.layout).flatMap((field) => {
 						if (field === "data") return [];
@@ -471,7 +482,7 @@ export async function writeDatasetRegionChunks({
 							region,
 						)
 					: undefined;
-				chunks.get(region)![datasetId] = {
+				chunk[datasetId] = {
 					...dataset,
 					...(locationPopulations && { locationPopulations }),
 					...(regionalAggregates && {
@@ -481,14 +492,10 @@ export async function writeDatasetRegionChunks({
 					data,
 				};
 			}
-		}
 
-		await Promise.all(
-			REGION_CHUNK_KEYS.map(async (region) => {
-				const json = JSON.stringify(chunks.get(region));
-				const relative = join(file, `${region}.json`);
-				await writeAtomically(join(outDir, relative), json);
-			}),
-		);
+			const json = JSON.stringify(chunk);
+			const relative = join(file, `${region}.json`);
+			await writeAtomically(join(outDir, relative), json);
+		}
 	}
 }
