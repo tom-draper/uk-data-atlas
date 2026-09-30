@@ -317,11 +317,16 @@
 						"geojson",
 						"geoparquet"
 					]
+				},
+				"header:Range": {
+					"required": false
 				}
 			},
 			"responses": {
+				"416": [],
 				"200 application/vnd.apache.parquet": [],
 				"200 application/geo+json": [],
+				"206 application/octet-stream": [],
 				"400 application/problem+json": [
 					"absence",
 					"areaCount",
@@ -622,10 +627,15 @@
 				},
 				"path:release": {
 					"required": true
+				},
+				"header:Range": {
+					"required": false
 				}
 			},
 			"responses": {
+				"416": [],
 				"200 application/vnd.pmtiles": [],
+				"206 application/octet-stream": [],
 				"404 application/problem+json": [
 					"absence",
 					"areaCount",
