@@ -82,7 +82,7 @@ export const handleAreaValidationRoutes = ({
 		const body = {
 			...matched,
 			manifest,
-			note: "likely is the compiled geography/release with the most exact resolutions. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it.",
+			note: "likely is the compiled geography/release with the most exact resolutions; where others resolve exactly as many, it is the newest of them and tiedWith lists the rest, since the values alone do not tell them apart. It is not an automatic join or conversion: mixed-code-systems and incomplete input remain unjoinable, and recommendations are published paths only. A parent resolves a shared name only when one published containment relationship matches it.",
 		};
 		return matchReportResponse(releaseId, format, manifest, body);
 	}

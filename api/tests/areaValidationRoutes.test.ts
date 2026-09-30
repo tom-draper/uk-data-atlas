@@ -162,8 +162,21 @@ test("infers a likely release, reports a mixed code column, and recommends only 
 			normalisedCount: 0,
 			joinable: false,
 		},
+		// Each release resolves one of the two codes, so the values alone
+		// do not say which is meant; the newer leads, and the other is named.
+		tiedWith: [{ geography: "ward", boundaryRelease: "2024-01-en-ward" }],
 	});
 	assert.equal(data.verdict, "mixed-code-systems");
+	// A release that resolves more of the values has no tie to report.
+	const clear = routeRequest(
+		"GET",
+		"/v1/areas:validate?value=E05000002",
+		context,
+	);
+	const clearLikely = (clear.body as { data: Record<string, any> }).data
+		.likely;
+	assert.equal(clearLikely.boundaryRelease, "2025-01-en-ward");
+	assert.equal(clearLikely.tiedWith, undefined);
 	assert.deepEqual(
 		data.recommendations.map((path: { id: string }) => path.id),
 		["ward-2024-to-2025/forward/identity"],

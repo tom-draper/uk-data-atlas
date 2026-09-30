@@ -411,12 +411,29 @@ export class GeographyResolver {
 				value.kind === "code" &&
 				(value.status === "other-geography" || "presentIn" in value),
 		);
+		// Releases that resolve the values exactly as well as the likely one,
+		// which the values alone cannot tell apart; the newest leads only by
+		// the sort, so they are named rather than passed over.
+		const tiedWith = likely
+			? candidates
+					.slice(1)
+					.filter(
+						(candidate) =>
+							candidate.resolved === likely.resolved &&
+							candidate.ambiguous === likely.ambiguous,
+					)
+					.map(({ geography, boundaryRelease }) => ({
+						geography,
+						boundaryRelease,
+					}))
+			: [];
 		return {
 			likely: likely && {
 				geography: likely.geography,
 				boundaryRelease: likely.boundaryRelease,
 				resolved: likely.resolved,
 				summary: likely.summary,
+				...(tiedWith.length > 0 ? { tiedWith } : {}),
 			},
 			candidates: candidates
 				.slice(0, 10)
