@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	canServeAsWgs84,
@@ -26,6 +26,7 @@ import {
 	reversedOffsetProvenance,
 	substitutionProvenance,
 } from "./geometrySubstitution";
+import { readGeometryStore } from "./geometryStore";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
 import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
@@ -70,8 +71,13 @@ const isGeometry = (value: unknown): value is GeoJsonGeometry =>
 type CachedRelease = {
 	identity: string;
 	crs: string;
-	/** Areas as published, packed; see packedGeometry.ts. */
-	geometries: Map<string, PackedGeometry>;
+	/**
+	 * Areas as published, packed; see packedGeometry.ts. A compiled release
+	 * holds them already in WGS84 and decodes each from its file on request.
+	 */
+	geometries: Pick<Map<string, PackedGeometry>, "get" | "keys">;
+	/** Every area's envelope, when the release was compiled with them. */
+	storedBounds?: (code: string) => GeometryBounds | undefined;
 	// Reprojected lazily, one requested area at a time: whole releases can
 	// hold millions of vertices, and most requests read a single area. Kept
 	// packed, so a release read in full costs its coordinates twice rather
@@ -126,12 +132,20 @@ export type AreaGeometryCacheStats = {
 	/** Area reads answered from a release already in memory. */
 	reads: number;
 	loads: number;
+	/** Of those loads, how many read a compiled release rather than its source. */
+	compiledLoads: number;
 	evictions: number;
 	loadSeconds: number;
 	/** Releases for which the compact point/box candidate index is ready. */
 	spatialIndexes: Array<{ release: string; areas: number; cells: number }>;
 	spatialIndexBuilds: number;
 };
+
+/** The file a compiled release is kept in, within the store directory. */
+export const compiledGeometryFile = (
+	geography: string,
+	boundaryRelease: string,
+) => `${geography}-${boundaryRelease}.bin`;
 
 export class AreaGeometryCache {
 	private readonly releases = new Map<string, CachedRelease>();
@@ -141,6 +155,7 @@ export class AreaGeometryCache {
 	private readonly counts = {
 		reads: 0,
 		loads: 0,
+		compiledLoads: 0,
 		evictions: 0,
 		loadSeconds: 0,
 		spatialIndexBuilds: 0,
@@ -149,6 +164,12 @@ export class AreaGeometryCache {
 		private readonly repositoryRoot: string,
 		private readonly sources: GeometrySourceLookup,
 		private readonly maxReleases = 2,
+		/**
+		 * Where compiled releases are kept (`build:geometry-store`). A release
+		 * compiled there from its current source is read from it; any other
+		 * is read from its source.
+		 */
+		private readonly storeDirectory?: string,
 	) {
 		if (!Number.isInteger(maxReleases) || maxReleases < 1)
 			throw new Error(
@@ -208,6 +229,7 @@ export class AreaGeometryCache {
 		geography: string,
 		boundaryRelease: string,
 		code: string,
+		keep = true,
 	): PackedGeometry | undefined {
 		const packed = release.geometries.get(code);
 		if (!packed || isWgs84(release.crs)) return packed;
@@ -223,7 +245,7 @@ export class AreaGeometryCache {
 		const reprojected = packGeometry(
 			toWgs84Geometry(corrected, release.crs),
 		);
-		release.wgs84.set(code, reprojected);
+		if (keep) release.wgs84.set(code, reprojected);
 		return reprojected;
 	}
 
@@ -270,6 +292,7 @@ export class AreaGeometryCache {
 		boundaryRelease: string,
 		code: string,
 	): GeometryBounds | undefined {
+		if (release.storedBounds) return release.storedBounds(code);
 		if (release.bounds.has(code)) return release.bounds.get(code);
 		const packed = this.wgs84Packed(
 			release,
@@ -396,6 +419,142 @@ export class AreaGeometryCache {
 			...(corrections.length > 0 ? { corrections } : {}),
 		};
 	}
+	/** A compiled release of this area set, if one is current. */
+	private readCompiled(
+		identity: string,
+		geography: string,
+		boundaryRelease: string,
+	): CachedRelease | undefined {
+		if (!this.storeDirectory) return undefined;
+		const path = join(
+			this.storeDirectory,
+			compiledGeometryFile(geography, boundaryRelease),
+		);
+		if (!existsSync(path)) return undefined;
+		const stored = readGeometryStore(
+			path,
+			this.source(geography, boundaryRelease),
+		);
+		if (!stored) return undefined;
+		this.counts.compiledLoads += 1;
+		return {
+			identity,
+			crs: "EPSG:4326",
+			geometries: { get: stored.get, keys: () => stored.codes.values() },
+			storedBounds: stored.bounds,
+			wgs84: new Map(),
+			bounds: new Map(),
+		};
+	}
+	/** A release read from its publisher's file, as it was registered. */
+	private readSource(
+		identity: string,
+		geography: string,
+		boundaryRelease: string,
+	): CachedRelease {
+		const source = this.source(geography, boundaryRelease);
+		const inputPath = join(this.repositoryRoot, "data", source.input);
+		const data: Collection = inputPath.toLowerCase().endsWith(".shp")
+			? {
+					type: "FeatureCollection",
+					features: readShapefileFeatures(inputPath),
+				}
+			: (JSON.parse(readFileSync(inputPath, "utf8")) as Collection);
+		if (data.type !== "FeatureCollection" || !Array.isArray(data.features))
+			throw new Error(
+				"Geometry source is not a GeoJSON FeatureCollection.",
+			);
+		const geometries = new Map<string, GeoJsonGeometry>();
+		for (const feature of data.features) {
+			const props = feature.properties;
+			const value =
+				typeof props === "object" && props !== null
+					? (props as Record<string, unknown>)[source.codeProperty]
+					: undefined;
+			if (typeof value !== "string" || !isGeometry(feature.geometry))
+				continue;
+			const existing = geometries.get(value);
+			geometries.set(
+				value,
+				existing
+					? {
+							type: "GeometryCollection",
+							geometries: [
+								...(existing.type === "GeometryCollection"
+									? (existing.geometries ?? [])
+									: [existing]),
+								feature.geometry,
+							],
+						}
+					: feature.geometry,
+			);
+		}
+		if (source.substitutions?.length) {
+			// Substituted areas arrive in WGS84, so they can only stand
+			// beside geometry that is already in it.
+			if (!isWgs84(source.crs))
+				throw new Error(
+					`${identity}: geometry substitutions need a WGS84 release, not ${source.crs}.`,
+				);
+			for (const { geometries: donor } of loadSubstitutions(
+				this.repositoryRoot,
+				this.sources,
+				identity,
+				source.substitutions,
+				geometries.keys(),
+			))
+				for (const [code, geometry] of donor)
+					geometries.set(code, geometry);
+		}
+		if (source.reversedOffsets?.length) {
+			if (!isWgs84(source.crs))
+				throw new Error(
+					`${identity}: reversed grid offsets need a WGS84 release, not ${source.crs}.`,
+				);
+			for (const [code, geometry] of geometries)
+				geometries.set(
+					code,
+					applyReversedOffsets(
+						this.repositoryRoot,
+						source.reversedOffsets,
+						code,
+						geometry,
+					),
+				);
+		}
+		const packed = new Map<string, PackedGeometry>();
+		for (const [code, geometry] of geometries)
+			packed.set(code, packGeometry(geometry));
+		return {
+			identity,
+			crs: source.crs,
+			geometries: packed,
+			wgs84: new Map(),
+			bounds: new Map(),
+		};
+	}
+	/**
+	 * Every area of a release in WGS84, packed, in source order, for
+	 * compiling it. Reprojections are not kept, so a whole release passes
+	 * through without being held twice.
+	 */
+	*compile(
+		geography: string,
+		boundaryRelease: string,
+	): Generator<readonly [string, PackedGeometry]> {
+		const identity = [geography, boundaryRelease].join("/");
+		const release = this.readSource(identity, geography, boundaryRelease);
+		for (const code of release.geometries.keys()) {
+			const packed = this.wgs84Packed(
+				release,
+				geography,
+				boundaryRelease,
+				code,
+				false,
+			);
+			if (packed) yield [code, packed];
+		}
+	}
 	/** The area's geometry in WGS84, reprojected from its source if needed. */
 	get(
 		geography: string,
@@ -406,91 +565,9 @@ export class AreaGeometryCache {
 		let release = this.releases.get(identity);
 		if (!release) {
 			const started = performance.now();
-			const source = this.source(geography, boundaryRelease);
-			const inputPath = join(this.repositoryRoot, "data", source.input);
-			const data: Collection = inputPath.toLowerCase().endsWith(".shp")
-				? {
-						type: "FeatureCollection",
-						features: readShapefileFeatures(inputPath),
-					}
-				: (JSON.parse(readFileSync(inputPath, "utf8")) as Collection);
-			if (
-				data.type !== "FeatureCollection" ||
-				!Array.isArray(data.features)
-			)
-				throw new Error(
-					"Geometry source is not a GeoJSON FeatureCollection.",
-				);
-			const geometries = new Map<string, GeoJsonGeometry>();
-			for (const feature of data.features) {
-				const props = feature.properties;
-				const value =
-					typeof props === "object" && props !== null
-						? (props as Record<string, unknown>)[
-								source.codeProperty
-							]
-						: undefined;
-				if (typeof value !== "string" || !isGeometry(feature.geometry))
-					continue;
-				const existing = geometries.get(value);
-				geometries.set(
-					value,
-					existing
-						? {
-								type: "GeometryCollection",
-								geometries: [
-									...(existing.type === "GeometryCollection"
-										? (existing.geometries ?? [])
-										: [existing]),
-									feature.geometry,
-								],
-							}
-						: feature.geometry,
-				);
-			}
-			if (source.substitutions?.length) {
-				// Substituted areas arrive in WGS84, so they can only stand
-				// beside geometry that is already in it.
-				if (!isWgs84(source.crs))
-					throw new Error(
-						`${identity}: geometry substitutions need a WGS84 release, not ${source.crs}.`,
-					);
-				for (const { geometries: donor } of loadSubstitutions(
-					this.repositoryRoot,
-					this.sources,
-					identity,
-					source.substitutions,
-					geometries.keys(),
-				))
-					for (const [code, geometry] of donor)
-						geometries.set(code, geometry);
-			}
-			if (source.reversedOffsets?.length) {
-				if (!isWgs84(source.crs))
-					throw new Error(
-						`${identity}: reversed grid offsets need a WGS84 release, not ${source.crs}.`,
-					);
-				for (const [code, geometry] of geometries)
-					geometries.set(
-						code,
-						applyReversedOffsets(
-							this.repositoryRoot,
-							source.reversedOffsets,
-							code,
-							geometry,
-						),
-					);
-			}
-			const packed = new Map<string, PackedGeometry>();
-			for (const [code, geometry] of geometries)
-				packed.set(code, packGeometry(geometry));
-			release = {
-				identity,
-				crs: source.crs,
-				geometries: packed,
-				wgs84: new Map(),
-				bounds: new Map(),
-			};
+			release =
+				this.readCompiled(identity, geography, boundaryRelease) ??
+				this.readSource(identity, geography, boundaryRelease);
 			this.releases.set(identity, release);
 			this.counts.loads += 1;
 			this.counts.loadSeconds += (performance.now() - started) / 1000;
