@@ -1,7 +1,8 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { pipeline } from "node:stream";
-import { createGunzip } from "node:zlib";
+import { promisify } from "node:util";
+import { createGunzip, gzip } from "node:zlib";
 import {
 	createServer,
 	type IncomingMessage,
@@ -56,6 +57,8 @@ const KEEP_ALIVE_TIMEOUT_MS = 5_000;
  * larger body is refused before it is buffered.
  */
 export const MAX_BODY_BYTES = 8 * 1024 * 1024;
+
+const gzipAsync = promisify(gzip);
 
 type BodyRead = { text: string } | { tooLarge: true; bytes: number };
 
@@ -308,6 +311,17 @@ export const createApiServer = (
 			"atlas-release": releaseId,
 			...(draining ? { connection: "close" } : {}),
 		};
+		// Compressed on the libuv thread pool, so a large body does not hold up
+		// every other request while it is encoded.
+		if (
+			result.gzip &&
+			result.body !== undefined &&
+			!isStoredFile(result.body)
+		) {
+			const encoded = await gzipAsync(result.body);
+			result = { ...result, body: encoded };
+			headers["content-length"] = String(encoded.length);
+		}
 		response.writeHead(result.status, headers);
 		if (isStoredFile(result.body)) sendFile(result.body, response);
 		else response.end(result.body);

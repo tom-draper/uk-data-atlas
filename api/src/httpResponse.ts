@@ -14,6 +14,12 @@ export type HttpResponse = {
 	 * streamed from disk by the server.
 	 */
 	body?: string | Buffer | SentFile;
+	/**
+	 * The body is to be sent gzipped. Compressing is left to the server so it
+	 * can be done off the event loop; the headers already say it is encoded,
+	 * and `content-length` is set once the encoded size is known.
+	 */
+	gzip?: boolean;
 };
 
 /**
@@ -79,6 +85,19 @@ export const entityTag = (body: string | Buffer) =>
  */
 const storedEntityTag = (file: StoredFile, gzipped: boolean) =>
 	`"sha256-${Buffer.from(file.contentHash.replace(/^sha256:/, ""), "hex").toString("base64url")}${gzipped ? "-gzip" : ""}"`;
+
+/**
+ * What is worth compressing: text and vector tiles, which shrink several
+ * times over. Parquet and PMTiles are compressed inside already.
+ */
+const COMPRESSIBLE =
+	/^(?:text\/|application\/(?:json|problem\+json|geo\+json|x-ndjson|yaml|vnd\.mapbox-vector-tile)\b)/;
+
+/** Below this the gzip header costs more than it saves. */
+export const MIN_COMPRESSED_BYTES = 1024;
+
+/** The validator of the gzipped form of a body, which is different bytes. */
+const gzippedTag = (etag: string) => `${etag.slice(0, -1)}-gzip"`;
 
 /** Whether a client will take a gzip-encoded body, per RFC 9110 section 12.5.3. */
 const acceptsGzip = (header: string | string[] | undefined) =>
@@ -178,14 +197,26 @@ export const httpResponse = (
 		...(stored?.gzipBytes !== undefined ? { vary: "accept-encoding" } : {}),
 		...(gzipped ? { "content-encoding": "gzip" } : {}),
 	};
+	// A body built for this request is compressed for a client that takes it,
+	// as a stored file is, unless its route has already encoded it.
+	const compressible =
+		!stored &&
+		headers["content-encoding"] === undefined &&
+		COMPRESSIBLE.test(headers["content-type"] ?? "");
+	const compress =
+		compressible &&
+		bodyBytes(body) >= MIN_COMPRESSED_BYTES &&
+		acceptsGzip(request.headers["accept-encoding"]);
+	if (compressible) headers.vary = "accept-encoding";
+	if (compress) headers["content-encoding"] = "gzip";
+
 	// A tile that covers no area answers 204, which is an ordinary answer and
 	// is cached like any other; only a failure is left unstored. An answer to
 	// a POST is a function of its body, which no cache keys on, so it is
 	// never stored either.
 	if (result.status >= 400 || request.method === "POST") {
 		headers["cache-control"] = ERROR_CACHE_CONTROL;
-		headers["content-length"] = String(bodyBytes(body));
-		return { status: result.status, headers, ...(isHead ? {} : { body }) };
+		return withBody(result.status, headers, body, isHead, compress);
 	}
 	// 204 says there is nothing to send, so it carries neither a body nor a
 	// validator to revalidate one with.
@@ -197,7 +228,9 @@ export const httpResponse = (
 		};
 	const etag = stored
 		? storedEntityTag(stored, gzipped)
-		: entityTag(body as string | Buffer);
+		: compress
+			? gzippedTag(entityTag(body as string | Buffer))
+			: entityTag(body as string | Buffer);
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
 	if (matchesEntityTag(request.headers["if-none-match"], etag)) {
@@ -207,6 +240,7 @@ export const httpResponse = (
 				...CROSS_ORIGIN,
 				etag,
 				"cache-control": freshness,
+				...(headers.vary ? { vary: headers.vary } : {}),
 			},
 		};
 	}
@@ -244,6 +278,23 @@ export const httpResponse = (
 			return { status: 206, headers, ...(isHead ? {} : { body: part }) };
 		}
 	}
+	return withBody(result.status, headers, body, isHead, compress);
+};
+
+/**
+ * The response with its body, or for HEAD without it. A body still to be
+ * gzipped has no length until it is, so the server sets it then; a HEAD
+ * answer to such a body carries none.
+ */
+const withBody = (
+	status: number,
+	headers: Record<string, string>,
+	body: string | Buffer | SentFile,
+	isHead: boolean,
+	gzip: boolean,
+): HttpResponse => {
+	if (gzip)
+		return { status, headers, ...(isHead ? {} : { body, gzip: true }) };
 	headers["content-length"] = String(bodyBytes(body));
-	return { status: result.status, headers, ...(isHead ? {} : { body }) };
+	return { status, headers, ...(isHead ? {} : { body }) };
 };
