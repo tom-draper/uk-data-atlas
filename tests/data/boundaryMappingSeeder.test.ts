@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+import type { AreaLineage } from "@/api/src/resolver/areaLineage";
 import {
+	applyAreaLineage,
 	applyBoundaryMappings,
 	type BoundaryMappingTarget,
 } from "@/lib/data/boundaries/mappingSeeder";
@@ -45,5 +47,27 @@ describe("precompiled boundary mapping seeding", () => {
 		expect(target.addConstituencyWardMappings).toHaveBeenCalledWith(2024, {
 			C2: ["W1"],
 		});
+	});
+
+	it("loads each geography's lineage the file holds", () => {
+		const lineage = (geography: string): AreaLineage => ({
+			schemaVersion: 1,
+			geography,
+			releases: ["2024"],
+			steps: [],
+			overrides: {},
+		});
+		const target: BoundaryMappingTarget = { setAreaLineage: vi.fn() };
+
+		applyAreaLineage(
+			{ ward: lineage("ward"), constituency: lineage("constituency") },
+			target,
+		);
+
+		expect(target.setAreaLineage).toHaveBeenCalledTimes(2);
+		expect(target.setAreaLineage).toHaveBeenCalledWith(
+			"ward",
+			lineage("ward"),
+		);
 	});
 });
