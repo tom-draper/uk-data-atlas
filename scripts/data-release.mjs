@@ -406,6 +406,23 @@ async function mergeSources(staging, base) {
 	return release;
 }
 
+/**
+ * How data/ has moved away from the release its marker names: files the
+ * release has that are gone, and files whose bytes are no longer the
+ * release's. Files added locally are not drift.
+ */
+async function driftFrom(marker) {
+	const missing = [];
+	const changed = [];
+	if (marker?.version !== 2) return { missing, changed };
+	for (const [path, releaseHash] of Object.entries(marker.files)) {
+		const localHash = await sha256OrNull(join(DATA, path));
+		if (localHash === null) missing.push(path);
+		else if (localHash !== releaseHash) changed.push(path);
+	}
+	return { missing, changed };
+}
+
 async function download(mode) {
 	const config = await readConfig();
 	if (!config) {
@@ -429,10 +446,32 @@ async function download(mode) {
 			);
 	}
 	if (!mode && marker?.tag === config.tag && (await hasLocalSources())) {
+		// The marker says which release data/ came from, not that data/ still
+		// matches it, so check the files themselves before trusting it.
+		const { missing, changed } = await driftFrom(marker);
+		const list = (paths) =>
+			paths
+				.slice(0, 20)
+				.map((path) => `  ${path}`)
+				.concat(
+					paths.length > 20
+						? [`  and ${paths.length - 20} more`]
+						: [],
+				)
+				.join("\n");
+		if (changed.length > 0)
+			console.warn(
+				`${changed.length} raw data files differ from ${config.tag} and are kept as local edits:\n${list(changed)}\nRun pnpm data:download --replace to restore the release exactly.`,
+			);
+		if (missing.length === 0) {
+			console.log(
+				`Raw data ${config.tag} is already present; skipping download.`,
+			);
+			return;
+		}
 		console.log(
-			`Raw data ${config.tag} is already present; skipping download.`,
+			`${missing.length} raw data files of ${config.tag} are missing:\n${list(missing)}`,
 		);
-		return;
 	}
 	console.log(`Synchronizing raw data from ${config.tag}...`);
 
