@@ -58,9 +58,7 @@ try {
 }
 
 const inputMtime = Math.max(
-	...(await Promise.all(
-		precompileInputs.map((path) => newestMtime(path)),
-	)),
+	...(await Promise.all(precompileInputs.map((path) => newestMtime(path)))),
 );
 if (!force && manifestMtime > inputMtime) {
 	console.log("Precompiled data is up to date; skipping regeneration.");
