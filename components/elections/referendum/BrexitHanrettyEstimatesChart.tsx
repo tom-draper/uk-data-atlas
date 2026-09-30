@@ -12,6 +12,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { ConstituencyEstimateIndicator } from "@/components/ConstituencyEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	selectedAreaConstituencyRecord,
@@ -102,18 +103,12 @@ export default function BrexitHanrettyEstimatesChart({
 		<ChartCard
 			heading={`Hanretty Estimates [${dataset?.year ?? year}]`}
 			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-					title={
-						selectedArea?.type === "ward"
-							? "This ward is represented by its best-fit constituency."
-							: undefined
-					}
-				>
-					{selectedArea?.type === "ward" && brexitStats
-						? "Constituency"
-						: "England"}
-				</span>
+				<ConstituencyEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={hasData}
+					isDark={isDark}
+					fallback="England"
+				/>
 			}
 			accent={accentColor}
 			isActive={isActive}

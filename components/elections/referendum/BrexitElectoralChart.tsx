@@ -11,6 +11,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	selectedAreaLadRecord,
@@ -115,6 +116,13 @@ export default function BrexitElectoralChart({
 	return (
 		<ChartCard
 			heading={`Electoral Commission [${dataset?.year ?? year}]`}
+			headerEnd={
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={hasData}
+					isDark={isDark}
+				/>
+			}
 			accent={accentColor}
 			isActive={isActive}
 			minHeightClassName="min-h-[65px]"

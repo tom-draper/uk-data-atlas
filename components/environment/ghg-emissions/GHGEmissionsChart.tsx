@@ -11,6 +11,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	selectedAreaLadCode,
@@ -128,6 +129,13 @@ export default function GHGEmissionsChart({
 	return (
 		<ChartCard
 			heading={`Greenhouse Gas Emissions [${dataset.year}]`}
+			headerEnd={
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={stats !== null}
+					isDark={isDark}
+				/>
+			}
 			accent={stats ? ACCENT : null}
 			isActive={isActive}
 			title="DESNZ. UK local authority greenhouse gas emissions. gov.uk"

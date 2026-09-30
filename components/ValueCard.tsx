@@ -2,6 +2,7 @@
 
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
@@ -79,18 +80,12 @@ export default function ValueCard({
 			headingClassName="min-w-0 truncate"
 			headingTitle={card.headingTitle ?? heading}
 			headerEnd={
-				note && (
-					<span
-						className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-						title={
-							resolved?.viaLocalAuthority
-								? `${card.heading} is published for local authorities, so the figures shown are for this area's local authority.`
-								: undefined
-						}
-					>
-						{note}
-					</span>
-				)
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={resolved?.viaLocalAuthority === true}
+					isDark={isDark}
+					fallback={note}
+				/>
 			}
 			accent={resolved ? color : null}
 			isActive={isActive}

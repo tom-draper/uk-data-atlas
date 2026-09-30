@@ -11,6 +11,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	selectedAreaLadCode,
@@ -123,6 +124,13 @@ export default function MobileCoverageChart({
 	return (
 		<ChartCard
 			heading={`Mobile Coverage [${dataset.year}]`}
+			headerEnd={
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={stats !== null}
+					isDark={isDark}
+				/>
+			}
 			accent={stats ? ACCENT : null}
 			isActive={isActive}
 			title="Ofcom. Connected Nations, mobile coverage. ofcom.org.uk"

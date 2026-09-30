@@ -11,6 +11,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	selectedAreaLadCode,
@@ -122,6 +123,13 @@ export default function AirQualityChart({
 	return (
 		<ChartCard
 			heading={`Air Quality, NO₂ [${dataset.year}]`}
+			headerEnd={
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={stats !== null}
+					isDark={isDark}
+				/>
+			}
 			accent={stats ? ACCENT : null}
 			isActive={isActive}
 			title="Defra. Pollution Climate Mapping background maps, 2024. uk-air.defra.gov.uk"

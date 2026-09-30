@@ -13,6 +13,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { formatCount } from "@/lib/helpers/formatCount";
@@ -180,11 +181,12 @@ export default function EthnicityChart({
 		<ChartCard
 			heading={`Ethnicity [${dataset.year}]`}
 			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-				>
-					England &amp; Wales
-				</span>
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={processedData.hasData}
+					isDark={isDark}
+					fallback="England & Wales"
+				/>
 			}
 			accent={accentColor}
 			isActive={isActive}
