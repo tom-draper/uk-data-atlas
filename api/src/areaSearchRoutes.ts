@@ -7,7 +7,10 @@ import {
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
-/** Search compiled area identities with stable cursor pagination. */
+/**
+ * List compiled area identities with stable cursor pagination. Finding an
+ * area by what a person typed is `/places`.
+ */
 export const handleAreaSearchRoutes = ({
 	context,
 	releaseId,
@@ -20,16 +23,23 @@ export const handleAreaSearchRoutes = ({
 		segments[1] !== "areas"
 	)
 		return undefined;
+	// Without this a search written the old way would quietly list every
+	// area instead of finding one.
+	const query = parsedUrl.searchParams.get("q");
+	if (query !== null)
+		return problem(
+			400,
+			"Invalid Query",
+			`/v1/areas lists areas and does not search them. Find an area by name, code or postcode with /v1/places?${new URLSearchParams({ q: query })}.`,
+		);
 	const geographyResolver = context.geographyResolver;
 	const unavailable = geographyResolver.requires("area-search");
 	if (unavailable) return unavailable;
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
-	const query = parsedUrl.searchParams.get("q")?.trim();
 	const matches = geographyResolver.searchAreas({
 		geography,
 		boundaryRelease,
-		query,
 	});
 	const limit = readPageSize(parsedUrl.searchParams.get("limit"));
 	if (limit === undefined)

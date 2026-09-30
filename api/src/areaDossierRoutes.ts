@@ -1,9 +1,8 @@
 import { areaNotFound } from "./areaResources";
 import { geometryBounds } from "./areaContainment";
 import { notBuilt, unsupported } from "./capability";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { areaKey } from "./geographyKeys";
 
 type AreaIdentity = {
 	geography: string;
@@ -19,7 +18,7 @@ const requirementDetail = (response: ApiResponse | undefined) =>
 		? response.body.detail
 		: "Catalogue data is unavailable.";
 
-/** The selective evidence expansion shared by the exact-area and legacy routes. */
+/** The evidence an exact area expands to with `include=dossier`. */
 export const areaDossier = (
 	context: RouteRequest["context"],
 	{ geography, boundaryRelease, code }: AreaIdentity,
@@ -172,51 +171,5 @@ export const areaDossier = (
 				boundaryRelease: `/v1/boundary-releases/${geography}/${boundaryRelease}`,
 			},
 		},
-	};
-};
-
-/**
- * A legacy adapter for callers that still dereference the dossier as a route.
- * The exact-area resource owns the canonical `include=dossier` interface.
- */
-export const handleAreaDossierRoutes = ({
-	context,
-	releaseId,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 6 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas" ||
-		segments[5] !== "dossier"
-	)
-		return undefined;
-	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-		string,
-		string,
-		string,
-	];
-	const result = areaDossier(
-		context,
-		{ geography, boundaryRelease, code },
-		(candidateRelease) =>
-			`/v1/areas/${geography}/${candidateRelease}/${code}/dossier`,
-	);
-	if ("response" in result) return result.response;
-	const area = context.geographyResolver.area({
-		geography,
-		boundaryRelease,
-		code,
-	});
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
-	return {
-		status: 200,
-		body: envelope(releaseId, {
-			id: areaKey(geography, boundaryRelease, code),
-			geography,
-			boundaryRelease,
-			...area,
-			...result.dossier,
-		}),
 	};
 };

@@ -9,11 +9,11 @@ type AreaQueryRequest = Pick<
 >;
 
 /**
- * Resolves one supplied identifier into every exact area identity it can mean.
+ * Resolves one supplied identifier into every exact area identity it can mean,
+ * for a `/places` search filtered to a geography, release, date or country.
  * It deliberately returns candidates, rather than selecting a geography or
  * boundary release from catalogue order.
  */
-/** Shared exact area resolution for the legacy route and filtered place searches. */
 export const resolveAreaQuery = ({
 	context,
 	releaseId,
@@ -145,18 +145,4 @@ export const resolveAreaQuery = ({
 			note: "Candidates are every exact match within the requested filters. `matches` says whether the identifier matched an official code, name or supplied alias, including when accents, punctuation or an administrative title were set aside; this endpoint never chooses between geography or boundary-release candidates.",
 		}),
 	};
-};
-
-/** Legacy exact-area resolution. Prefer GET /v1/places for new clients. */
-export const handleAreaResolveRoutes = (
-	request: RouteRequest,
-): ApiResponse | undefined => {
-	const { segments } = request;
-	if (
-		segments.length !== 2 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas:resolve"
-	)
-		return undefined;
-	return resolveAreaQuery(request);
 };
