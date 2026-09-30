@@ -179,13 +179,6 @@
 			"resources": [
 				"crosswalks/ward-2024-12-uk-bgc-to-2025-05-uk-bgc-v2-official-history"
 			]
-		},
-		{
-			"check": "endpoints-verified",
-			"reason": "The lookup gives NHS England regions their January 2024 codes, which the only held region release, July 2022, predates: E40000013 and E40000014 replaced E40000007 and E40000010. The January 2024 region boundaries are not yet in the data release, so the regions cannot be checked against a compiled release until they are added.",
-			"resources": [
-				"crosswalks/sub-integrated-care-board-location-2026-04-en-bgc-to-nhs-england-region-2024-01-en-bgc-official-lookup"
-			]
 		}
 	]
 }
