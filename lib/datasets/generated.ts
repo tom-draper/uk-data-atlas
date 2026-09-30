@@ -24,6 +24,7 @@ import { generalElectionDefinition } from "./generalElection";
 import { ghgEmissionsDefinition } from "./ghgEmissions";
 import { homelessnessDefinition } from "./homelessness";
 import { housePriceDefinition } from "./housePrice";
+import { housingAffordabilityDefinition } from "./housingAffordability";
 import { imdDefinition } from "./imd";
 import { incomeDefinition } from "./income";
 import { lifeExpectancyDefinition } from "./lifeExpectancy";
@@ -69,6 +70,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		ghgEmissionsDefinition,
 		homelessnessDefinition,
 		housePriceDefinition,
+		housingAffordabilityDefinition,
 		imdDefinition,
 		incomeDefinition,
 		lifeExpectancyDefinition,

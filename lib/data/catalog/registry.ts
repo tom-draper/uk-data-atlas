@@ -22,6 +22,7 @@ import { ghgEmissionsDatasetDefinition } from "./definitions/ghgEmissions";
 import { historicalGeneralElectionDatasetDefinition } from "./definitions/historicalGeneralElection";
 import { homelessnessDatasetDefinition } from "./definitions/homelessness";
 import { housePriceDatasetDefinition } from "./definitions/housePrice";
+import { housingAffordabilityDatasetDefinition } from "./definitions/housingAffordability";
 import { imdDatasetDefinition } from "./definitions/imd";
 import { incomeDatasetDefinition } from "./definitions/income";
 import { jobsDatasetDefinition } from "./definitions/jobs";
@@ -77,6 +78,7 @@ export const CATALOGUE_DATASET_DEFINITIONS: readonly DatasetDefinition[] = [
 	historicalGeneralElectionDatasetDefinition,
 	homelessnessDatasetDefinition,
 	housePriceDatasetDefinition,
+	housingAffordabilityDatasetDefinition,
 	imdDatasetDefinition,
 	incomeDatasetDefinition,
 	jobsDatasetDefinition,
