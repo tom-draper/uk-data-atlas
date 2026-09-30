@@ -3,7 +3,7 @@ import {
 	followLineageFromCode,
 	listedReleases,
 	type AreaLineage,
-} from "../../../api/src/resolver/areaLineage";
+} from "./areaLineage";
 import { BOUNDARY_CATALOG } from "./catalog";
 import type { CodeType, YearCode } from "./mappings";
 

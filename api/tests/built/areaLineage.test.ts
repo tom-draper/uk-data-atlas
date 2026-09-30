@@ -5,7 +5,7 @@ import { readApiCatalogues } from "../../src/catalogueLoader";
 import {
 	followLineage,
 	type AreaLineage,
-} from "../../src/resolver/areaLineage";
+} from "../../../lib/data/boundaries/areaLineage";
 
 const apiRoot = new URL("../..", import.meta.url).pathname;
 const lineagePath = new URL(

@@ -15,7 +15,7 @@ import {
 	followLineageFromCode,
 	listedReleases,
 	type AreaLineage,
-} from "../src/resolver/areaLineage";
+} from "../../lib/data/boundaries/areaLineage";
 
 const artifact = (
 	id: string,

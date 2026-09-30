@@ -1,4 +1,4 @@
-import type { AreaLineage } from "../../../api/src/resolver/areaLineage";
+import type { AreaLineage } from "./areaLineage";
 import { withCDN } from "../../helpers/cdn";
 import { LINEAGE_TYPES, type LineageType } from "./codeMapper";
 import {
