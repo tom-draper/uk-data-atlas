@@ -106,7 +106,28 @@ test("names the publisher file the shapes were compiled from", () => {
 });
 
 test("carries a real name, not the code again, into the tiles", () => {
+	// Some releases publish no names at all: an output area is known only by
+	// its code. There the code is the only label there is.
+	const unnamed = new Set(
+		(
+			JSON.parse(
+				readFileSync(join(publicRoot, "area-inventory.json"), "utf8"),
+			).releases as Array<{
+				id: string;
+				geography: string;
+				codeProperty?: string;
+				nameProperty?: string;
+			}>
+		)
+			.filter(
+				(release) =>
+					!release.nameProperty ||
+					release.nameProperty === release.codeProperty,
+			)
+			.map((release) => `${release.geography}/${release.id}`),
+	);
 	for (const resource of manifest.resources) {
+		if (unnamed.has(resource.id)) continue;
 		const archive = readFileSync(join(publicRoot, resource.tiles.artifact));
 		// Zoom 0 holds the whole release in one tile, so every area is in it.
 		const tile = readTile(archive, tileId(0, 0, 0));
