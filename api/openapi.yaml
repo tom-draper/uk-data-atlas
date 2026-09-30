@@ -4601,7 +4601,10 @@ paths:
         Supply WGS 84 `lng` and `lat` (the default), or set `crs=EPSG:27700`
         and supply British National Grid `easting` and `northing` or an
         Ordnance Survey `gridref` such as `TQ 30000 80000`. Set
-        `crs=EPSG:29902` for Irish Grid metres. A grid reference denotes a
+        `crs=EPSG:29902` for Irish Grid metres. Or give a unit `postcode`
+        instead of a coordinate: it is placed by its ONS Postcode Directory
+        centroid, with the directory's own stated accuracy, exactly as
+        `/postcodes/{postcode}` places it, and the answer names the postcode. A grid reference denotes a
         square, so its answer uses the cell centre and includes its whole
         half-diagonal as uncertainty. Every answer is normalised to WGS 84 and
         retains the input coordinate and named transformation.
@@ -4655,6 +4658,14 @@ paths:
         - $ref: "#/components/parameters/PointLookupEasting"
         - $ref: "#/components/parameters/PointLookupNorthing"
         - $ref: "#/components/parameters/PointLookupGridReference"
+        - name: postcode
+          in: query
+          required: false
+          schema: { type: string }
+          description: >
+            A unit postcode such as `SW1A 1AA`, the space optional, in place of
+            a coordinate. It cannot be combined with `lng`, `lat`, `easting`,
+            `northing`, `gridref`, `crs` or `accuracy`.
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
@@ -4732,7 +4743,8 @@ paths:
                       matches: []
         "400":
           description: >
-            The point is missing, malformed or out of range; no geography is
+            The point is missing, malformed or out of range; a postcode is not
+            a unit postcode, or is given with a coordinate; no geography is
             named; more than four are; a geography has neither a pinned release
             nor a date; a bare release id is given with several geographies; or
             `date` or `accuracy` is malformed.
@@ -4743,7 +4755,14 @@ paths:
         "404":
           description: >
             A pinned release is not published or not compiled, or a geography
-            is unknown.
+            is unknown; or the postcode is not in the directory edition served,
+            or the directory gives it no grid reference.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "451":
+          description: The postcode is in Northern Ireland, which this API is not licensed to serve.
           content:
             application/problem+json:
               schema:
@@ -10411,6 +10430,25 @@ components:
       type: object
       required: [point, country, boundaryRule, results, note]
       properties:
+        postcode:
+          type: object
+          description: Present when the point is a postcode's centroid.
+          required: [postcode, status, href, source]
+          properties:
+            postcode: { type: string }
+            status: { enum: [live, terminated] }
+            href: { type: string }
+            caution:
+              type: string
+              description: Present when the directory does not state how accurate the centroid is.
+            source:
+              type: object
+              properties:
+                title: { type: string }
+                edition: { type: string }
+                publisher: { type: string }
+                licence: {}
+                attribution: { type: string }
         point:
           $ref: "#/components/schemas/LookupPoint"
         date: { type: string }

@@ -10,6 +10,12 @@ import {
 	type LookupPoint,
 	type LookupInputCrs,
 } from "./pointLookup";
+import {
+	findPostcode,
+	POSTCODE_NOTE,
+	UNDECLARED_POSTCODE_ACCURACY,
+} from "./postcodeRoutes";
+import { compactPostcode, postcodeLookupPoint } from "./postcodes";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -30,7 +36,7 @@ const coordinateCrsProblem = () =>
 		"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 	);
 
-/** Areas of each requested geography that contain a WGS84 point. */
+/** Areas of each requested geography that contain a point or a postcode. */
 export const handleAreaContainsRoutes = ({
 	context,
 	releaseId,
@@ -43,6 +49,7 @@ export const handleAreaContainsRoutes = ({
 		segments[1] !== "areas:contains"
 	)
 		return undefined;
+	const postcodeText = parsedUrl.searchParams.get("postcode");
 	const accuracy = parseStatedAccuracy(
 		parsedUrl.searchParams.get("accuracy"),
 	);
@@ -52,25 +59,11 @@ export const handleAreaContainsRoutes = ({
 			"Invalid Query",
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
-	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));
-	if (!crs) return coordinateCrsProblem();
-	const point = parseLookupCoordinate(
-		crs,
-		{
-			lng: parsedUrl.searchParams.get("lng") ?? undefined,
-			lat: parsedUrl.searchParams.get("lat") ?? undefined,
-			easting: parsedUrl.searchParams.get("easting") ?? undefined,
-			northing: parsedUrl.searchParams.get("northing") ?? undefined,
-			gridReference: parsedUrl.searchParams.get("gridref") ?? undefined,
-		},
-		accuracy,
-	);
-	if (!point)
-		return problem(
-			400,
-			"Invalid Query",
-			`${coordinateDescription(crs)} are required for ${crs}.`,
-		);
+	const located = postcodeText
+		? postcodePoint(context, parsedUrl.searchParams, postcodeText)
+		: coordinatePoint(parsedUrl.searchParams, accuracy);
+	if ("status" in located) return located;
+	const { point, postcode } = located;
 	const geographyResolver = context.geographyResolver;
 	const unavailable = geographyResolver.requires("geometry");
 	if (unavailable) return unavailable;
@@ -82,6 +75,7 @@ export const handleAreaContainsRoutes = ({
 	return {
 		status: 200,
 		body: envelope(releaseId, {
+			...(postcode ? { postcode } : {}),
 			point,
 			...(request.date ? { date: request.date.date } : {}),
 			country,
@@ -90,8 +84,80 @@ export const handleAreaContainsRoutes = ({
 				...describeLookupRelease(geographyResolver, lookupRelease),
 				...results[index]!,
 			})),
-			note: CONTAINMENT_NOTE,
+			note: postcode
+				? `${POSTCODE_NOTE} ${CONTAINMENT_NOTE}`
+				: CONTAINMENT_NOTE,
 		}),
+	};
+};
+
+const COORDINATE_PARAMETERS = ["lng", "lat", "easting", "northing", "gridref"];
+
+/** The point a request's coordinates name, in whichever grid they are given. */
+const coordinatePoint = (
+	searchParams: URLSearchParams,
+	accuracy: number | undefined,
+): { point: LookupPoint; postcode?: undefined } | ApiResponse => {
+	const crs = parseLookupCrs(searchParams.get("crs"));
+	if (!crs) return coordinateCrsProblem();
+	const point = parseLookupCoordinate(
+		crs,
+		{
+			lng: searchParams.get("lng") ?? undefined,
+			lat: searchParams.get("lat") ?? undefined,
+			easting: searchParams.get("easting") ?? undefined,
+			northing: searchParams.get("northing") ?? undefined,
+			gridReference: searchParams.get("gridref") ?? undefined,
+		},
+		accuracy,
+	);
+	if (!point)
+		return problem(
+			400,
+			"Invalid Query",
+			`${coordinateDescription(crs)} are required for ${crs}, or give a postcode.`,
+		);
+	return { point };
+};
+
+/**
+ * A postcode's centroid as the point, with the directory's own accuracy for
+ * it, so a postcode is answered exactly as `/postcodes/{postcode}` places it.
+ */
+const postcodePoint = (
+	context: RouteRequest["context"],
+	searchParams: URLSearchParams,
+	text: string,
+): { point: LookupPoint; postcode: Record<string, unknown> } | ApiResponse => {
+	const clashing = [...COORDINATE_PARAMETERS, "crs", "accuracy"].filter(
+		(name) => searchParams.has(name),
+	);
+	if (clashing.length > 0)
+		return problem(
+			400,
+			"Invalid Query",
+			`Give a postcode or a coordinate, not both: ${clashing.join(", ")} cannot be combined with postcode, whose centroid and its accuracy come from the postcode directory.`,
+		);
+	const found = findPostcode(context, text);
+	if ("status" in found) return found;
+	const { record, source } = found;
+	if (!record.centroid)
+		return problem(
+			404,
+			"Postcode Not Placed",
+			`The directory gives ${record.postcode} no grid reference, so it cannot be placed in any area.`,
+		);
+	return {
+		point: postcodeLookupPoint(record.centroid),
+		postcode: {
+			postcode: record.postcode,
+			status: record.status,
+			href: `/v1/postcodes/${compactPostcode(record.postcode)}`,
+			...(record.centroid.positionalQuality.accuracyM === null
+				? { caution: UNDECLARED_POSTCODE_ACCURACY }
+				: {}),
+			source,
+		},
 	};
 };
 
@@ -156,6 +222,7 @@ export const handleAreaContainsBatchRoutes = ({
 		segments[1] !== "areas:containsBatch"
 	)
 		return undefined;
+	const postcodeText = parsedUrl.searchParams.get("postcode");
 	const accuracy = parseStatedAccuracy(
 		parsedUrl.searchParams.get("accuracy"),
 	);
