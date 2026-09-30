@@ -3802,7 +3802,7 @@ catalogues by the contract tests:
 - `GET /v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039`
 - `GET /v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022`
-- `GET /v1/data/population/value?place=Cornwall&period=2022`
+- `GET /v1/data/population/value?place=location/cornwall&period=2022`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/ghg-emissions?period=2024&geography=localAuthority&boundaryYear=2025&release=2025-05-uk-bgc-v2&include=area`
 - `GET /v1/measures/ghg-emissions/coverage`

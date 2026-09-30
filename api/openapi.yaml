@@ -7836,7 +7836,26 @@ paths:
         English regions, Greater Manchester and some counties are official
         areas (`kind: country`, `region`, `combined-authority` or `county`), and
         all but countries name the ONS lookup their current members come from
-        in `source`. None is a generic geographic location, and membership holds
+        in `source`.
+
+
+        The ceremonial counties of England and preserved counties of Wales,
+        which is what most people mean by Lancashire or Kent, are `kind:
+        ceremonial-county`. No ONS lookup defines them, so `source` names
+        Ordnance Survey's Boundary-Line polygons and the method: each local
+        authority of every compiled release is a member of the county holding
+        most of its area, and dated by the releases it appears in, so a county
+        keeps the councils it had before a reorganisation. An authority split
+        between counties, as Stockton-on-Tees is between County Durham and
+        North Yorkshire, is a member of the one holding most of it and listed
+        with its share in the other's `partialMembers`. A county that shares
+        its name with a different official area, as the West Midlands shares
+        the region's, is `{id}-ceremonial-county`; one with the same councils
+        as an official county is that county. Scotland's lieutenancy areas do
+        not follow council boundaries and are not included.
+
+
+        None is a generic geographic location, and membership holds
         only through a crosswalk the caller names. `q` matches an id or label
         prefix. `definitionRevision` identifies the curated definition used;
         `validity` gives its known bounds, with null bounds when the curator
@@ -7888,7 +7907,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "The id is guessed rather than listed. `/v1/locations?q=` searches them by name."
-        x-example-request: "/v1/locations/greater-london"
+        x-example-request: "/v1/locations/wessex"
       parameters:
         - $ref: "#/components/parameters/LocationId"
         - name: asOf
@@ -7987,7 +8006,7 @@ paths:
       x-likely-refusal:
         status: 404
         when: "The location id is not listed by `/v1/locations`."
-        x-example-request: "/v1/locations/greater-london/capabilities"
+        x-example-request: "/v1/locations/wessex/capabilities"
       description: >
         Lists the compiled releases where a location's declared member codes
         can be read directly, plus each materialised crosswalk view into those
