@@ -19,7 +19,7 @@ export const councilTaxDatasetDefinition: DatasetDefinition<
 		licenceUrl:
 			"https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
 		description:
-			"Average Band D council tax set by English billing authorities.",
+			"Average area Band D council tax in England, including relevant precepts.",
 	},
 	ingestion: {
 		minimumDataRecords: 100,

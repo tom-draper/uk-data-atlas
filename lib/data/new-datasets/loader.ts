@@ -141,20 +141,20 @@ export async function loadCouncilTax(read: (path: string) => Promise<string>) {
 	const rows = table(
 		await read(
 			source(
-				"economics/local-government-finance/council-tax/Table_10_2026-27.ods",
+				"economics/local-government-finance/council-tax/Tables_1-9_2026-27.ods",
 			),
 		),
-		"Data_Billing",
-		64,
+		"Table_9",
+		16,
 	);
-	const headers = rows[4] ?? [];
-	const valueColumn = headers.findIndex(
-		(header) =>
-			header.startsWith("8. Average") &&
-			header.includes("(current year)"),
-	);
+	const headers = rows[2] ?? [];
+	const valueColumn = headers.indexOf("Band D");
+	if (valueColumn < 0)
+		throw new Error(
+			"Could not find the Band D column in council-tax Table 9",
+		);
 	const records: Record<string, IndicatorRecord> = {};
-	for (const row of rows.slice(5)) {
+	for (const row of rows.slice(3)) {
 		const code = row[1]?.trim() ?? "";
 		const value = numeric(row[valueColumn]);
 		if (!mapAuthorityCode(code) || value === null) continue;

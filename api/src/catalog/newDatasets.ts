@@ -84,7 +84,7 @@ export const NEW_DATASET_MEASURES = (
 		path: paths.councilTax!,
 		boundaryYear: 2026,
 		period: "2026-27",
-		label: "Average Band D council tax",
+		label: "Average area Band D council tax",
 		unit: "£",
 		valueKind: "currency",
 		aggregation: {
@@ -96,7 +96,7 @@ export const NEW_DATASET_MEASURES = (
 			},
 			available: false,
 		},
-		note: "A published billing-authority average; it must not be summed or averaged flat.",
+		note: "The published average area Band D charge from MHCLG Table 9, including relevant major precepts; it must not be summed or averaged flat.",
 	},
 	{
 		datasetId: "waste",
