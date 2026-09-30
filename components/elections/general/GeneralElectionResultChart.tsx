@@ -27,6 +27,7 @@ interface ProcessedYearData {
 	isAggregated: boolean;
 	seatsSummary: { party: string; count: number; color: string }[] | null;
 	totalSeats: number | null;
+	viaConstituency: boolean;
 	hasData: boolean;
 }
 
@@ -137,10 +138,17 @@ export default function GeneralElectionResultChart({
 		<ChartCard
 			heading={`${data.year} General Election`}
 			headerEnd={
-				data.turnout !== null && (
-					<span className="text-[9px] text-gray-500 font-medium">
-						{data.turnout.toFixed(1)}% turnout
-					</span>
+				(data.viaConstituency || data.turnout !== null) && (
+					<div className="flex items-center gap-1 text-[9px] text-gray-500 font-medium">
+						{data.viaConstituency && (
+							<span title="This ward is represented by its best-fit constituency.">
+								Constituency
+							</span>
+						)}
+						{data.turnout !== null && (
+							<span>{data.turnout.toFixed(1)}% turnout</span>
+						)}
+					</div>
 				)
 			}
 			accent={accentColor}

@@ -7,6 +7,10 @@ export interface CodeMapper {
 		targetYear: YearCode,
 	): string | undefined;
 	getLadForWard(wardCode: string): string | undefined;
+	getConstituencyForWard(
+		wardCode: string,
+		constituencyYear: YearCode,
+	): string | undefined;
 	getWardsForLad(ladCode: string, year: YearCode): string[];
 	getWardsForConstituency(
 		constituencyCode: string,
@@ -75,6 +79,7 @@ export class CodeMapperStore implements CodeMapper {
 	private wardToLad: Record<string, string> = {};
 	private ladToWards: Record<number, Record<string, string[]>> = {};
 	private constituencyToWards: Record<number, Record<string, string[]>> = {};
+	private wardToConstituencies: Record<number, Record<string, string[]>> = {};
 	// Constituency mappings arrive asynchronously. Consumers use this token in
 	// their aggregate cache keys so an empty result produced before they arrive
 	// cannot be retained after the mappings are available.
@@ -134,8 +139,41 @@ export class CodeMapperStore implements CodeMapper {
 	): void => {
 		if (year) {
 			Object.assign((this.constituencyToWards[year] ??= {}), mappings);
+			const reverse = (this.wardToConstituencies[year] ??= {});
+			for (const [constituency, wards] of Object.entries(mappings))
+				for (const ward of wards) {
+					const constituencies = (reverse[ward] ??= []);
+					if (!constituencies.includes(constituency))
+						constituencies.push(constituency);
+				}
 			this.mappingGeneration++;
 		}
+	};
+
+	/**
+	 * Finds the best-fit constituency containing a ward. Split wards use the
+	 * one membership chosen for ward-data aggregation, so callers must label
+	 * the resulting figure as constituency-level rather than ward-level.
+	 */
+	getConstituencyForWard = (
+		wardCode: string,
+		constituencyYear: YearCode,
+	): string | undefined => {
+		const candidates = new Set<string>();
+		for (const code of this.getHighlightCodes("ward", wardCode))
+			for (const memberships of Object.values(this.wardToConstituencies))
+				for (const constituency of memberships[code] ?? [])
+					candidates.add(constituency);
+
+		for (const constituency of candidates) {
+			const mapped = this.getCodeForYear(
+				"constituency",
+				constituency,
+				constituencyYear,
+			);
+			if (mapped) return mapped;
+		}
+		return candidates.values().next().value;
 	};
 
 	getMappingGeneration = (): number => this.mappingGeneration;
@@ -234,6 +272,7 @@ export class CodeMapperStore implements CodeMapper {
 		this.wardToLad = {};
 		this.ladToWards = {};
 		this.constituencyToWards = {};
+		this.wardToConstituencies = {};
 		this.mappingGeneration++;
 		this.codeMappings = emptyCodeMappings();
 		this.reverseMappings = {};

@@ -9,8 +9,11 @@ import {
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
+import {
+	selectedAreaConstituencyRecord,
+	type ConstituencyResolver,
+} from "@/lib/helpers/selectedAreaConstituency";
 
 interface SchoolPerformanceConstituencyChartProps {
 	activeDataset: Dataset | null;
@@ -18,29 +21,25 @@ interface SchoolPerformanceConstituencyChartProps {
 	aggregatedData: Record<number, AggregatedSchoolPerformanceData> | null;
 	selectedArea: SelectedArea | null;
 	year: number;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: ConstituencyResolver;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
 }
 
-function computeStats(
+export function resolveSchoolPerformanceConstituencyStats(
 	dataset: SchoolPerformanceConstituencyDataset,
 	aggregatedData: Record<number, AggregatedSchoolPerformanceData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeYearResolver | undefined,
+	codeMapper: ConstituencyResolver | undefined,
 ): AggregatedSchoolPerformanceData | null {
 	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-	if (selectedArea.type !== "constituency") return null;
 
-	const record =
-		dataset.data[selectedArea.code] ??
-		dataset.data[
-			codeMapper?.getCodeForYear(
-				"constituency",
-				selectedArea.code,
-				dataset.boundaryYear,
-			) ?? ""
-		];
+	const record = selectedAreaConstituencyRecord(
+		dataset.data,
+		selectedArea,
+		codeMapper,
+		dataset.boundaryYear,
+	);
 	if (!record) return null;
 	return {
 		ptL2basics94: record.ptL2basics94,
@@ -63,7 +62,12 @@ export default function SchoolPerformanceConstituencyChart({
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
-		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
+		? resolveSchoolPerformanceConstituencyStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+			)
 		: null;
 
 	const isActive =
@@ -86,8 +90,15 @@ export default function SchoolPerformanceConstituencyChart({
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+					title={
+						selectedArea?.type === "ward"
+							? "This ward is represented by its best-fit constituency."
+							: undefined
+					}
 				>
-					England
+					{selectedArea?.type === "ward" && stats
+						? "Constituency"
+						: "England"}
 				</span>
 			}
 			accent={hasData ? color : null}

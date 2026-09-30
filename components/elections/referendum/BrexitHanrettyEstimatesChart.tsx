@@ -13,12 +13,17 @@ import {
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import {
+	selectedAreaConstituencyRecord,
+	type ConstituencyResolver,
+} from "@/lib/helpers/selectedAreaConstituency";
 
 interface BrexitHanrettyEstimatesChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, BrexitConstituencyDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
+	codeMapper?: ConstituencyResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -27,10 +32,11 @@ interface BrexitHanrettyEstimatesChartProps {
 const LEAVE_COLOR = "#b41414"; // rgb(180, 20, 20) — matches bar fill
 const REMAIN_COLOR = "#1e3cb4"; // rgb(30, 60, 180) — matches bar fill
 
-function computeBrexitHanrettyStats(
+export function resolveBrexitHanrettyStats(
 	dataset: BrexitConstituencyDataset,
 	aggregatedData: Record<number, AggregatedBrexitData> | null,
 	selectedArea: SelectedArea | null,
+	codeMapper?: ConstituencyResolver,
 ) {
 	if (
 		selectedArea === null &&
@@ -40,12 +46,13 @@ function computeBrexitHanrettyStats(
 		const agg = aggregatedData[dataset.year];
 		return { pctLeave: agg.pctLeave, pctRemain: agg.pctRemain };
 	}
-	if (
-		selectedArea &&
-		selectedArea.type === "constituency" &&
-		selectedArea.data
-	) {
-		const area = dataset.data?.[selectedArea.code];
+	if (selectedArea) {
+		const area = selectedAreaConstituencyRecord(
+			dataset.data,
+			selectedArea,
+			codeMapper,
+			dataset.boundaryYear,
+		);
 		if (area)
 			return { pctLeave: area.pctLeave, pctRemain: 100 - area.pctLeave };
 	}
@@ -57,6 +64,7 @@ export default function BrexitHanrettyEstimatesChart({
 	availableDatasets,
 	aggregatedData,
 	selectedArea,
+	codeMapper,
 	year,
 	activeViz,
 	setActiveViz,
@@ -66,7 +74,12 @@ export default function BrexitHanrettyEstimatesChart({
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = dataset
-		? computeBrexitHanrettyStats(dataset, aggregatedData, selectedArea)
+		? resolveBrexitHanrettyStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+			)
 		: null;
 
 	const isActive = !!(
@@ -91,8 +104,15 @@ export default function BrexitHanrettyEstimatesChart({
 			headerEnd={
 				<span
 					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+					title={
+						selectedArea?.type === "ward"
+							? "This ward is represented by its best-fit constituency."
+							: undefined
+					}
 				>
-					England
+					{selectedArea?.type === "ward" && brexitStats
+						? "Constituency"
+						: "England"}
 				</span>
 			}
 			accent={accentColor}
