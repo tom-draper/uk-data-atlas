@@ -126,6 +126,19 @@ export const mapStyle = (tileJson: TileJson, layer: string) => ({
 	],
 });
 
+/**
+ * The resource the population values below are drawn on: local authorities
+ * as they stood in May 2023. Every release is published as a map resource,
+ * so the example picks the one its measure is on rather than the first.
+ */
+const MAP_RESOURCE = "localAuthority/2023-05-uk-bgc-v2";
+
+const choose = <T extends { id: string }>(published: T[]) => {
+	const chosen = published.find((resource) => resource.id === MAP_RESOURCE);
+	if (!chosen) throw new Error(`the API does not publish ${MAP_RESOURCE}`);
+	return chosen;
+};
+
 export const run = async (client: AtlasClient): Promise<Step[]> => {
 	const steps: Step[] = [];
 
@@ -135,8 +148,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		await client.get<Array<{ id: string; title: string; href: string }>>(
 			"/v1/map-resources",
 		);
-	const chosen = published.data[0];
-	if (!chosen) throw new Error("the API publishes no map resource");
+	const chosen = choose(published.data);
 	steps.push({
 		title: "Choose a published map resource",
 		detail: `${published.data.length} published; took ${chosen.id}.`,
@@ -199,8 +211,10 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 /** The whole plan, for a caller that wants the style rather than the story. */
 export const plan = async (client: AtlasClient): Promise<MapPlan> => {
 	const published =
-		await client.get<Array<{ href: string }>>("/v1/map-resources");
-	const href = published.data[0]!.href;
+		await client.get<Array<{ id: string; href: string }>>(
+			"/v1/map-resources",
+		);
+	const href = choose(published.data).href;
 	const resource = await client.get<MapResource>(href);
 	const tileJson = await client.get<TileJson>(`${href}/tiles.json`);
 	const layer = tileJson.data.vector_layers[0]!.id;
