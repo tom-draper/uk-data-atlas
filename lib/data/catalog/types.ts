@@ -26,6 +26,12 @@ export interface DatasetReader {
 	text: (path: string) => Promise<string>;
 	/** One named worksheet from an .xlsx workbook, rendered as CSV. */
 	xlsxSheet: (path: string, sheet: string) => Promise<string>;
+	/** Visits populated cells in each row of an .xlsx worksheet. */
+	xlsxSheetRows: (
+		path: string,
+		sheet: string,
+		visit: (row: ReadonlyMap<number, string>) => void,
+	) => Promise<void>;
 	/**
 	 * The same for a legacy .xls workbook, which may be given directly or as
 	 * the single entry of a .zip, the form some publishers ship it in.

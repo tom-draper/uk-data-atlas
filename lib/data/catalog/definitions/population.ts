@@ -26,5 +26,5 @@ export const populationDatasetDefinition: DatasetDefinition<PopulationDataset> =
 			description:
 				"Ward population estimates for mid-2022. Newer ONS ward estimates use May 2025 boundaries, which are not yet mapped in the atlas.",
 		},
-		precompile: async ({ xlsxSheet }) => loadPopulation(xlsxSheet),
+		precompile: ({ xlsxSheetRows }) => loadPopulation(xlsxSheetRows),
 	};
