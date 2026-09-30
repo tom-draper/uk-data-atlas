@@ -6,7 +6,11 @@ import test from "node:test";
 import type { Polygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
-import type { GeometricContainmentCrosswalkAdapter } from "../src/crosswalkAdapters";
+import { createAreaRelationshipIndex } from "../src/areaRelationships";
+import type {
+	BestFitCrosswalkAdapter,
+	GeometricContainmentCrosswalkAdapter,
+} from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "../src/crosswalkInventory";
 import { measureContainment } from "../src/geometricContainment";
 
@@ -203,6 +207,80 @@ test("gives up on a pair that is not a hierarchy", () => {
 		assert.match(
 			measured.abandoned!.reason,
 			/1 areas are not within one localAuthority/,
+		);
+	});
+});
+
+const bestFitAdapter: BestFitCrosswalkAdapter = {
+	id: "child-1-to-parent-1-best-fit",
+	method: "best-fit",
+	quality: "derived",
+	weighting: { status: "not-applicable" },
+	from: { geography: "ward", boundaryRelease: "1" },
+	to: { geography: "localAuthority", boundaryRelease: "1" },
+	sliverWidthM: 100,
+};
+
+test("a best fit places a straddling child with the parent holding most of it", () => {
+	withFixture((root) => {
+		const [artifact] = compileCrosswalks(
+			root,
+			[bestFitAdapter],
+			areaLookup,
+			geometrySources,
+		).artifacts;
+		assert.equal(artifact?.method, "best-fit");
+		if (artifact?.method !== "best-fit") return;
+		assert.deepEqual(
+			artifact.records.map((record) => [
+				record.source.code,
+				record.targets[0]!.code,
+				record.targets[0]!.relation,
+			]),
+			[
+				["C1", "P1", "within"],
+				["C2", "P1", "within"],
+				["C3", "P2", "within"],
+				["C4", "P2", "straddles"],
+			],
+		);
+		assert.equal(artifact.relationshipPurpose, undefined);
+		const { minimumContainedShare, ...counts } =
+			artifact.validation.bestFit;
+		assert.ok(minimumContainedShare > 0.6 && minimumContainedShare < 1);
+		assert.deepEqual(counts, {
+			sliverWidthM: 100,
+			childCount: 4,
+			parentCount: 2,
+			withinCount: 3,
+			indeterminateCount: 0,
+			straddlingCount: 1,
+		});
+	});
+});
+
+test("a best fit claims containment only for the children within their parent", () => {
+	withFixture((root) => {
+		const index = createAreaRelationshipIndex(
+			compileCrosswalks(
+				root,
+				[bestFitAdapter],
+				areaLookup,
+				geometrySources,
+			).artifacts,
+		);
+		const relation = (code: string) =>
+			index.get(`ward/1/${code}`)?.map((entry) => entry.relation);
+		assert.deepEqual(relation("C3"), ["within"]);
+		assert.deepEqual(relation("C4"), ["overlaps"]);
+		assert.deepEqual(
+			index
+				.get("localAuthority/1/P2")
+				?.map((entry) => [entry.counterpart.code, entry.relation]),
+			[
+				["C3", "contains"],
+				["C4", "overlaps"],
+			],
 		);
 	});
 });

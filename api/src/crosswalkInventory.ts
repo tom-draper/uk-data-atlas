@@ -2,7 +2,10 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
-import { compileGeometricContainmentCrosswalk } from "./geometricContainment";
+import {
+	compileBestFitCrosswalk,
+	compileGeometricContainmentCrosswalk,
+} from "./geometricContainment";
 import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
 import { compileExtentContinuityCrosswalk } from "./extentContinuity";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
@@ -12,6 +15,7 @@ import {
 } from "./crosswalkGeometryValidation";
 import type {
 	AreaOverlapWeighting,
+	BestFitCrosswalkAdapter,
 	CrosswalkAdapter,
 	CrosswalkMethod,
 	CrosswalkQuality,
@@ -368,11 +372,50 @@ export type ExtentContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
 	}>;
 };
 
+export type BestFitValidation = {
+	sliverWidthM: number;
+	childCount: number;
+	parentCount: number;
+	/** Children that sit within their best-fit parent, as containment judges it. */
+	withinCount: number;
+	/** Children within a factor of two of the sliver width, where no rule decides. */
+	indeterminateCount: number;
+	/** Children that genuinely straddle, placed with the parent holding most of them. */
+	straddlingCount: number;
+	/** The smallest share of any child's area inside its best-fit parent. */
+	minimumContainedShare: number;
+};
+
+export type BestFitCrosswalkArtifact = CrosswalkArtifactBase & {
+	method: "best-fit";
+	quality: "derived";
+	weighting: BestFitCrosswalkAdapter["weighting"];
+	provenance: AreaOverlapCrosswalkArtifact["provenance"];
+	validation: {
+		sourceNameConflicts: Array<{ code: string; names: string[] }>;
+		endpoints: CrosswalkEndpoints;
+		bestFit: BestFitValidation;
+	};
+	records: Array<{
+		source: CrosswalkArea;
+		targets: Array<
+			CrosswalkArea & {
+				/** Share of the child's area inside this parent, the largest of any. */
+				containedShare: number;
+				/** The widest piece of the child left outside this parent, in metres. */
+				outsideWidthM: number;
+				relation: "within" | "indeterminate" | "straddles";
+			}
+		>;
+	}>;
+};
+
 export type CrosswalkArtifact =
 	| PropertyCrosswalkArtifact
 	| AreaOverlapCrosswalkArtifact
 	| PopulationOverlapCrosswalkArtifact
 	| GeometricContainmentCrosswalkArtifact
+	| BestFitCrosswalkArtifact
 	| ExtentContinuityCrosswalkArtifact;
 
 export type CrosswalkInventory = {
@@ -752,6 +795,14 @@ export const compileCrosswalks = (
 			}
 			if (adapter.method === "geometric-containment") {
 				return compileGeometricContainmentCrosswalk(
+					repositoryRoot,
+					adapter,
+					geometrySources,
+					areaLookup,
+				);
+			}
+			if (adapter.method === "best-fit") {
+				return compileBestFitCrosswalk(
 					repositoryRoot,
 					adapter,
 					geometrySources,

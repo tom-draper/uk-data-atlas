@@ -42,8 +42,17 @@ const areaId = (geography: string, boundaryRelease: string, code: string) =>
 
 const relationFor = (
 	{ method, relationshipPurpose }: CrosswalkArtifact,
+	target: CrosswalkArtifact["records"][number]["targets"][number],
 	direction: "from" | "to",
 ): AreaRelation => {
+	// A best fit claims containment only for a child it measured within its
+	// parent; one that straddles lies mostly there, which is an overlap.
+	if (method === "best-fit")
+		return "relation" in target && target.relation === "within"
+			? direction === "from"
+				? "within"
+				: "contains"
+			: "overlaps";
 	// An official lookup declared as membership, such as district to region,
 	// states belonging, not succession.
 	if (
@@ -112,7 +121,7 @@ export const createAreaRelationshipIndex = (
 					target.code,
 				);
 				addRelationship(index, sourceId, {
-					relation: relationFor(crosswalk, "from"),
+					relation: relationFor(crosswalk, target, "from"),
 					counterpart: {
 						id: targetId,
 						geography: crosswalk.to.geography,
@@ -124,7 +133,7 @@ export const createAreaRelationshipIndex = (
 					...overlapFor(crosswalk, target, "from"),
 				});
 				addRelationship(index, targetId, {
-					relation: relationFor(crosswalk, "to"),
+					relation: relationFor(crosswalk, target, "to"),
 					counterpart: {
 						id: sourceId,
 						geography: crosswalk.from.geography,

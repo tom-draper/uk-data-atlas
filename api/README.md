@@ -2062,6 +2062,7 @@ Each relation includes a `method` and `quality`:
 | `extent-continuity`     | An area whose extent held between two releases, under its code or a new one, by geometry | Identity migration between releases; derived, never assumed |
 | `clean-containment`     | A published parent code or verified nesting relation                                     | Membership and exact roll-up                                |
 | `geometric-containment` | Every child sits within one parent, established from the two releases' geometry          | Membership where no lookup carries the hierarchy; derived   |
+| `best-fit`              | The one parent holding most of each child, where the two do not nest                     | Placing an area, such as a ward in a constituency; derived  |
 | `area-overlap`          | Geometry intersection, weighted by area                                                  | Land-area quantities; not people by default                 |
 | `population-overlap`    | Fine-grained population building blocks apportioned across targets                       | Counts whose distribution follows resident population       |
 | `inferred`              | Carefully documented heuristic, for example recovered ward-to-LAD membership             | Discovery/matching; requires a warning                      |
@@ -4122,6 +4123,19 @@ reaching further straddles, and the build refuses the whole pair rather than
 publish a membership that is not one. A share of area could not make that
 call, because the same strip of disagreement is a larger share of a data zone
 than of a county.
+
+The seventh, `best-fit`, measures the same way where the two geographies do
+not nest, such as wards against Westminster constituencies, and publishes each
+child with the parent holding most of its area instead of refusing a release
+where a child straddles. Every record keeps the relation containment would
+give it, `within`, `indeterminate` or `straddles`, with the share inside and
+the width left outside, so a ward within its constituency reads differently
+from one placed there by most of its area. It declares no relationship
+purpose: a best fit places an area, it does not establish membership, so no
+conversion path or aggregation composes through it, and area relationships
+state `within` only for the children measured within. The atlas reads these
+to place each ward in a local authority where the ward release names none,
+and in a constituency of each code set.
 
 `pnpm tsx scripts/propose-geometric-containment.ts` searches for these
 hierarchies. It asks only pairs that could nest, where one release has more
