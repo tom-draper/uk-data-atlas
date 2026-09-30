@@ -6,9 +6,9 @@ import {
 	GeneralElectionDataset,
 	SelectedArea,
 } from "@lib/types";
-import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { computeGeneralElectionYearData } from "@/lib/helpers/generalElection";
+import type { ConstituencyResolver } from "@/lib/helpers/selectedAreaConstituency";
 import GeneralElectionResultChart from "./GeneralElectionResultChart";
 
 interface GeneralElectionRegistryChartProps {
@@ -16,7 +16,7 @@ interface GeneralElectionRegistryChartProps {
 	availableDatasets: Record<string, GeneralElectionDataset>;
 	aggregatedData: Record<number, AggregatedGeneralElectionData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: ConstituencyResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -42,7 +42,7 @@ export default function GeneralElectionRegistryChart({
 		availableDatasets?.[year],
 		aggregatedData,
 		selectedArea,
-		codeMapper?.getCodeForYear,
+		codeMapper,
 		// The legend filter belongs to the dataset on the map, so other years
 		// keep showing their full results.
 		isActive ? excludedGeneralParties : undefined,

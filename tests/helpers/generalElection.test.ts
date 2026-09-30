@@ -1,9 +1,14 @@
 import {
 	calculateTurnout,
+	computeGeneralElectionYearData,
 	getWinningParty,
 	processPartyVotes,
 } from "@/lib/helpers/generalElection";
-import type { GeneralElectionConstituencyData } from "@/lib/types";
+import type {
+	GeneralElectionConstituencyData,
+	GeneralElectionDataset,
+	SelectedArea,
+} from "@/lib/types";
 import type { PartyCode } from "@/lib/types";
 
 // Minimal fixture — only fields used by the functions under test
@@ -93,5 +98,68 @@ describe("processPartyVotes", () => {
 		const result = processPartyVotes({ LAB: 1000 }, partyInfo);
 		expect(result[0].votes).toBe(1000);
 		expect(result[0].name).toBe("Labour");
+	});
+});
+
+describe("computeGeneralElectionYearData", () => {
+	it("shows the best-fit constituency result for a hovered ward", () => {
+		const dataset: GeneralElectionDataset = {
+			id: "general-election-2024",
+			type: "generalElection",
+			year: 2024,
+			boundaryType: "constituency",
+			boundaryYear: 2024,
+			partyInfo: [
+				{ key: "LAB", name: "Labour" },
+				{ key: "CON", name: "Conservative" },
+			],
+			data: {
+				C1: {
+					constituencyName: "Example constituency",
+					onsId: "C1",
+					regionName: "Example region",
+					countryName: "England",
+					constituencyType: "Borough",
+					memberFirstName: "Example",
+					memberSurname: "Member",
+					memberGender: "F",
+					result: "LAB",
+					firstParty: "LAB",
+					secondParty: "CON",
+					electorate: 1_000,
+					validVotes: 700,
+					invalidVotes: 10,
+					majority: 100,
+					partyVotes: { LAB: 400, CON: 300 },
+					turnoutPercent: 71,
+				},
+			},
+			results: { C1: "LAB" },
+		};
+		const ward: SelectedArea = {
+			type: "ward",
+			code: "W1",
+			name: "Example ward",
+			data: null,
+		};
+
+		const result = computeGeneralElectionYearData(
+			2024,
+			dataset,
+			null,
+			ward,
+			{ getConstituencyForWard: () => "C1" },
+			undefined,
+			undefined,
+		);
+
+		expect(result).toMatchObject({
+			hasData: true,
+			viaConstituency: true,
+			partyData: [
+				{ key: "LAB", votes: 400 },
+				{ key: "CON", votes: 300 },
+			],
+		});
 	});
 });

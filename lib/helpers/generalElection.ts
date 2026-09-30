@@ -7,6 +7,10 @@ import {
 } from "../types/elections";
 import { PARTIES } from "../data/election/parties";
 import type { SelectedArea } from "../types/areas";
+import {
+	selectedAreaConstituencyRecord,
+	type ConstituencyResolver,
+} from "./selectedAreaConstituency";
 
 export const getWinningParty = (
 	data: GeneralElectionConstituencyData,
@@ -74,6 +78,7 @@ export interface ProcessedGeneralElectionYearData {
 	isAggregated: boolean;
 	seatsSummary: { party: string; count: number; color: string }[] | null;
 	totalSeats: number | null;
+	viaConstituency: boolean;
 	hasData: boolean;
 }
 
@@ -82,13 +87,7 @@ export function computeGeneralElectionYearData(
 	dataset: GeneralElectionDataset | undefined,
 	aggregatedData: Record<number, AggregatedGeneralElectionData> | null,
 	selectedArea: SelectedArea | null,
-	getCodeForYear:
-		| ((
-				type: "constituency",
-				code: string,
-				targetYear: number,
-		  ) => string | undefined)
-		| undefined,
+	codeMapper: ConstituencyResolver | undefined,
 	excluded: Set<string> | undefined,
 	selectedParty: string | undefined,
 ): ProcessedGeneralElectionYearData {
@@ -102,6 +101,7 @@ export function computeGeneralElectionYearData(
 			isAggregated: false,
 			seatsSummary: null,
 			totalSeats: null,
+			viaConstituency: false,
 			hasData: false,
 		};
 	}
@@ -113,21 +113,13 @@ export function computeGeneralElectionYearData(
 		null;
 	let totalSeats: number | null = null;
 
-	if (selectedArea && selectedArea.type === "constituency") {
-		const constituencyCode = selectedArea.code;
-		let data = dataset.data?.[constituencyCode];
-
-		if (!data && getCodeForYear) {
-			const mappedCode = getCodeForYear(
-				"constituency",
-				constituencyCode,
-				year,
-			);
-			if (mappedCode) {
-				data = dataset.data?.[mappedCode];
-			}
-		}
-
+	if (selectedArea) {
+		const data = selectedAreaConstituencyRecord(
+			dataset.data,
+			selectedArea,
+			codeMapper,
+			dataset.boundaryYear,
+		);
 		if (data) {
 			rawPartyVotes = data.partyVotes;
 			turnout = calculateTurnout(
@@ -168,6 +160,7 @@ export function computeGeneralElectionYearData(
 			isAggregated: false,
 			seatsSummary: null,
 			totalSeats: null,
+			viaConstituency: false,
 			hasData: false,
 		};
 	}
@@ -194,6 +187,8 @@ export function computeGeneralElectionYearData(
 		isAggregated,
 		seatsSummary,
 		totalSeats,
+		viaConstituency:
+			selectedArea?.type === "ward" && rawPartyVotes !== null,
 		hasData: partyData.length > 0,
 	};
 }

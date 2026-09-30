@@ -32,6 +32,17 @@ describe("CodeMapperStore", () => {
 		]);
 	});
 
+	it("resolves a ward to a constituency at the dataset boundary vintage", () => {
+		const mapper = new CodeMapperStore();
+		mapper.addCodeMappings("ward", { "W-2021": { 2025: "W-2025" } });
+		mapper.addCodeMappings("constituency", {
+			"C-2019": { 2024: "C-2024" },
+		});
+		mapper.addConstituencyWardMappings(2025, { "C-2019": ["W-2025"] });
+
+		expect(mapper.getConstituencyForWard("W-2021", 2024)).toBe("C-2024");
+	});
+
 	it("advances the mapping generation when constituency wards are loaded", () => {
 		const mapper = new CodeMapperStore();
 		expect(mapper.getMappingGeneration()).toBe(0);
