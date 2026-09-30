@@ -108,7 +108,7 @@ const readXlsWorkbook = async (path: string): Promise<Uint8Array> => {
 				maxBuffer: 512 * 1024 * 1024,
 			})
 		: await readFile(fullPath);
-	};
+};
 
 const readXlsSheet = async (
 	path: string,
