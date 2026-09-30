@@ -1,18 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { loadHousePrice } from "@/lib/data/house-price/loader";
 
-const csv = (rows: string[]) =>
+const rows = [
+	["Median price paid by ward"],
 	[
-		"Median price paid by ward",
-		"Local authority code,Local authority name,Ward code,Ward name,Year ending Dec 2021,Year ending Dec 2022",
-		...rows,
-	].join("\n");
+		"Local authority code",
+		"Local authority name",
+		"Ward code",
+		"Ward name",
+		"Year ending Dec 2021",
+		"Year ending Dec 2022",
+	],
+	["E08000006", "Salford", "E05000759", "Barton", "170000", "179500"],
+	["E06000001", "Hartlepool", "E05008945", "Foggy Furze", "90000", "95000"],
+];
 
-const read = async () =>
-	csv([
-		"E08000006,Salford,E05000759,Barton,170000,179500",
-		"E06000001,Hartlepool,E05008945,Foggy Furze,90000,95000",
-	]);
+const read = async (
+	_path: string,
+	_sheet: string,
+	visit: (row: ReadonlyMap<number, string>) => void,
+) => {
+	for (const row of rows)
+		visit(new Map(row.map((value, column) => [column, value])));
+};
 
 describe("loadHousePrice", () => {
 	it("keeps the publisher's code on a ward it moves for the map", async () => {
