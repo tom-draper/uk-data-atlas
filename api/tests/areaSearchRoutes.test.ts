@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAreaLookup } from "../src/areaInventory";
 import {
 	route,
 	registry,
@@ -8,45 +7,7 @@ import {
 	areaLookup,
 } from "./routeFixtures";
 
-test("searches and paginates compiled area identities", () => {
-	const byCode = route(
-		"GET",
-		"/v1/areas?q=e05000001",
-		registry,
-		geographyInventory,
-		areaLookup,
-	);
-	assert.equal(byCode.status, 200);
-	assert.deepEqual("data" in byCode.body && byCode.body.data, [
-		{
-			id: "ward/2025-01-en-ward/E05000001",
-			geography: "ward",
-			boundaryRelease: "2025-01-en-ward",
-			code: "E05000001",
-			name: "Example ward",
-			aliases: ["Enghraifft ward"],
-		},
-	]);
-
-	const byAlias = route(
-		"GET",
-		"/v1/areas?q=gm",
-		registry,
-		geographyInventory,
-		areaLookup,
-	);
-	assert.equal(byAlias.status, 200);
-	assert.deepEqual("data" in byAlias.body && byAlias.body.data, [
-		{
-			id: "localAuthority/2025-01-uk-lad/E08000001",
-			geography: "localAuthority",
-			boundaryRelease: "2025-01-uk-lad",
-			code: "E08000001",
-			name: "Greater Manchester",
-			aliases: ["GM"],
-		},
-	]);
-
+test("lists compiled area identities a page at a time", () => {
 	const first = route(
 		"GET",
 		"/v1/areas?geography=ward&limit=1",
@@ -89,39 +50,17 @@ test("searches and paginates compiled area identities", () => {
 	assert.equal("meta" in second.body && second.body.meta.nextCursor, null);
 });
 
-test("searches names and aliases with the resolver's published normalisation", () => {
-	const lookup = createAreaLookup([
-		{
-			schemaVersion: 1,
-			contentHash: "sha256:normalised-search",
-			geography: "localAuthority",
-			boundaryRelease: "2025-01-uk-lad",
-			codeProperty: "LAD25CD",
-			nameProperty: "LAD25NM",
-			areas: [
-				{
-					code: "W06000001",
-					name: "Bristol, City of",
-					aliases: ["Ynys Môn & Vale"],
-				},
-			],
-		},
-	]);
+test("sends a name search to places rather than listing every area", () => {
 	const response = route(
 		"GET",
-		"/v1/areas?q=ynys%20mon%20and",
+		"/v1/areas?q=manchester",
 		registry,
 		geographyInventory,
-		lookup,
+		areaLookup,
 	);
-	assert.deepEqual("data" in response.body && response.body.data, [
-		{
-			id: "localAuthority/2025-01-uk-lad/W06000001",
-			geography: "localAuthority",
-			boundaryRelease: "2025-01-uk-lad",
-			code: "W06000001",
-			name: "Bristol, City of",
-			aliases: ["Ynys Môn & Vale"],
-		},
-	]);
+	assert.equal(response.status, 400);
+	assert.match(
+		(response.body as { detail: string }).detail,
+		/\/v1\/places\?q=manchester/,
+	);
 });

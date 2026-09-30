@@ -27,7 +27,6 @@ import { handleDataAggregateRoutes } from "./dataAggregateRoutes";
 import { handleDataConversionRoutes } from "./dataConversionRoutes";
 import { handleAnalysisGeographyRoutes } from "./analysisGeographyRoutes";
 import { handleAreaSearchRoutes } from "./areaSearchRoutes";
-import { handleAreaResolveRoutes } from "./areaResolveRoutes";
 import {
 	handleAreaContainsBatchRoutes,
 	handleAreaContainsRoutes,
@@ -36,7 +35,6 @@ import { handleAreaNearRoutes } from "./areaNearRoutes";
 import { handleAreaIntersectsRoutes } from "./areaIntersectsRoutes";
 import { handleAreaValidationRoutes } from "./areaValidationRoutes";
 import { handleAreaIdentityRoutes } from "./areaIdentityRoutes";
-import { handleAreaDossierRoutes } from "./areaDossierRoutes";
 import { handleAreaHistoryRoutes } from "./areaHistoryRoutes";
 import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
 import { handleAreaChildGeometryRoutes } from "./areaChildGeometryRoutes";
@@ -47,10 +45,6 @@ import { handleAreaCitationRoutes } from "./areaCitationRoutes";
 import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
 import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
-import { handleConversionPlanRoutes } from "./conversionPlanRoutes";
-import { handleRelationshipPathRoutes } from "./relationshipPathRoutes";
-import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
-import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
 import { handleRelationshipRepairRoutes } from "./relationshipRepairRoutes";
 import { handleGeographyHealthRoutes } from "./geographyHealthRoutes";
@@ -279,14 +273,6 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleDataConversionRoutes,
 	},
 	{
-		name: "area-resolve",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas:resolve",
-		handle: handleAreaResolveRoutes,
-	},
-	{
 		name: "area-search",
 		owns: (segments) =>
 			segments[0] === "v1" &&
@@ -334,15 +320,6 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "areas" &&
 			segments.length === 5,
 		handle: handleAreaIdentityRoutes,
-	},
-	{
-		name: "area-dossier",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "dossier",
-		handle: handleAreaDossierRoutes,
 	},
 	{
 		name: "area-history",
@@ -436,14 +413,6 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleTranslationRoutes,
 	},
 	{
-		name: "conversion-plan",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "conversion-plan",
-		handle: handleConversionPlanRoutes,
-	},
-	{
 		name: "geography-health",
 		owns: (segments) =>
 			segments.length === 2 &&
@@ -458,30 +427,6 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			segments[1] === "relationships",
 		handle: handleRelationshipRoutes,
-	},
-	{
-		name: "relationship-paths",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "relationship-paths",
-		handle: handleRelationshipPathRoutes,
-	},
-	{
-		name: "relationship-capabilities",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "relationship-capabilities",
-		handle: handleRelationshipCapabilityRoutes,
-	},
-	{
-		name: "relationship-coverage",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "relationship-coverage",
-		handle: handleRelationshipCoverageRoutes,
 	},
 	{
 		name: "relationship-repairs",

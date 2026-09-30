@@ -153,7 +153,7 @@ export const handleRelationshipCapabilityRoutes = ({
 	if (
 		segments.length !== 2 ||
 		segments[0] !== "v1" ||
-		!["relationship-capabilities", "relationships"].includes(segments[1])
+		segments[1] !== "relationships"
 	)
 		return undefined;
 	const from = {

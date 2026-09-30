@@ -24,22 +24,25 @@ const dossierRegistry = {
 	})),
 };
 
-test("starts an exact geography query with an evidence-led area dossier", () => {
+test("expands an exact area with an evidence-led dossier", () => {
 	const response = routeRequest(
 		"GET",
-		"/v1/areas/ward/2023-05-uk-bgc/E05000001/dossier",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=dossier",
 		testContext({
 			boundaryRegistry: dossierRegistry,
 			areaLookup: compatibleWardAreaLookup,
 		}),
 	);
 	assert.equal(response.status, 200);
-	assert.equal(
-		(response.body as { data: { trust: { level: string } } }).data.trust
-			.level,
-		"limited",
-	);
-	const data = ("data" in response.body && response.body.data) as {
+	const area = ("data" in response.body && response.body.data) as {
+		id: string;
+		name: string;
+		dossier: unknown;
+	};
+	assert.equal(area.id, "ward/2023-05-uk-bgc/E05000001");
+	assert.equal(area.name, "Compatible ward");
+	const data = area.dossier as {
+		trust: { level: string };
 		id: string;
 		name: string;
 		boundary: { title: string; source: { publisher: string } };
@@ -52,8 +55,7 @@ test("starts an exact geography query with an evidence-led area dossier", () => 
 		extent: { status: string; reason: string; href: string };
 		links: Record<string, string>;
 	};
-	assert.equal(data.id, "ward/2023-05-uk-bgc/E05000001");
-	assert.equal(data.name, "Compatible ward");
+	assert.equal(data.trust.level, "limited");
 	assert.deepEqual(data.boundary, {
 		title: "Wards, May 2023",
 		temporalCoverage: "2023",
@@ -141,7 +143,7 @@ test("refuses unsupported exact-area expansions", () => {
 test("keeps the usual helpful absence report for a missing dossier area", () => {
 	const response = routeRequest(
 		"GET",
-		"/v1/areas/ward/2023-05-uk-bgc/E05000999/dossier",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000999?include=dossier",
 		testContext({
 			boundaryRegistry: dossierRegistry,
 			areaLookup: compatibleWardAreaLookup,
@@ -220,7 +222,7 @@ test("states the releases holding a code and its release-pinned extent", () => {
 		]);
 		const response = routeRequest(
 			"GET",
-			"/v1/areas/ward/2023-05-en-ward/E05000001/dossier",
+			"/v1/areas/ward/2023-05-en-ward/E05000001?include=dossier",
 			testContext({
 				boundaryRegistry: spanRegistry,
 				areaLookup: spanLookup,
@@ -228,17 +230,18 @@ test("states the releases holding a code and its release-pinned extent", () => {
 			}),
 		);
 		assert.equal(response.status, 200);
-		const data = (response.body as { data: Record<string, any> }).data;
+		const data = (response.body as { data: Record<string, any> }).data
+			.dossier;
 		assert.deepEqual(data.validity.releases, [
 			{
 				boundaryRelease: "2022-05-en-ward",
 				name: "Example ward",
-				href: "/v1/areas/ward/2022-05-en-ward/E05000001/dossier",
+				href: "/v1/areas/ward/2022-05-en-ward/E05000001?include=dossier",
 			},
 			{
 				boundaryRelease: "2023-05-en-ward",
 				name: "Example ward",
-				href: "/v1/areas/ward/2023-05-en-ward/E05000001/dossier",
+				href: "/v1/areas/ward/2023-05-en-ward/E05000001?include=dossier",
 			},
 		]);
 		assert.match(data.validity.note, /not a legal validity date/);

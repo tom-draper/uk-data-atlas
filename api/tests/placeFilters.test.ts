@@ -4,17 +4,17 @@ import { createAreaLookup } from "../src/areaInventory";
 import { route } from "./routeFixtures";
 import { areaLookup, geographyInventory, registry } from "./routeFixtures";
 
-test("resolves an exact code to dossiers without choosing a release", () => {
+test("resolves an exact code in a geography without choosing a release", () => {
 	const response = route(
 		"GET",
-		"/v1/areas:resolve?q=e05000001",
+		"/v1/places?q=e05000001&geography=ward",
 		registry,
 		geographyInventory,
 		areaLookup,
 	);
 	assert.equal(response.status, 200);
 	assert.deepEqual("data" in response.body && response.body.data, {
-		query: { value: "e05000001" },
+		query: { value: "e05000001", geography: "ward" },
 		candidates: [
 			{
 				id: "ward/2025-01-en-ward/E05000001",
@@ -53,7 +53,7 @@ test("uses places as the front door for a filtered exact area lookup", () => {
 test("resolves an alias exactly and directs prefixes to the search resource", () => {
 	const alias = route(
 		"GET",
-		"/v1/areas:resolve?q=gm&geography=localAuthority",
+		"/v1/places?q=gm&geography=localAuthority",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -80,7 +80,7 @@ test("resolves an alias exactly and directs prefixes to the search resource", ()
 
 	const prefix = route(
 		"GET",
-		"/v1/areas:resolve?q=Greater",
+		"/v1/places?q=Greater&geography=localAuthority",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -114,14 +114,14 @@ test("resolves normalised names and aliases without hiding the matching rule", (
 	]);
 	const title = route(
 		"GET",
-		"/v1/areas:resolve?q=Bristol",
+		"/v1/places?q=Bristol&geography=localAuthority",
 		registry,
 		geographyInventory,
 		lookup,
 	);
 	const alias = route(
 		"GET",
-		"/v1/areas:resolve?q=ynys%20mon%20and%20vale",
+		"/v1/places?q=ynys%20mon%20and%20vale&geography=localAuthority",
 		registry,
 		geographyInventory,
 		lookup,
@@ -161,7 +161,7 @@ test("keeps an exact name and another area's equal alias as separate candidates"
 	]);
 	const response = route(
 		"GET",
-		"/v1/areas:resolve?q=Example",
+		"/v1/places?q=Example&country=GB-ENG",
 		registry,
 		geographyInventory,
 		ambiguousLookup,
@@ -182,7 +182,7 @@ test("keeps an exact name and another area's equal alias as separate candidates"
 test("selects a dated release before resolving an exact identifier", () => {
 	const response = route(
 		"GET",
-		"/v1/areas:resolve?q=E05000001&geography=ward&date=2025-02",
+		"/v1/places?q=E05000001&geography=ward&date=2025-02",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -224,7 +224,7 @@ test("selects a dated release before resolving an exact identifier", () => {
 test("requires an explicit geography when resolving an identifier by date", () => {
 	const response = route(
 		"GET",
-		"/v1/areas:resolve?q=E05000001&date=2025-02",
+		"/v1/places?q=E05000001&date=2025-02",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -239,7 +239,7 @@ test("requires an explicit geography when resolving an identifier by date", () =
 test("requires an identifier before resolving area candidates", () => {
 	const response = route(
 		"GET",
-		"/v1/areas:resolve",
+		"/v1/places?geography=ward",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -247,6 +247,6 @@ test("requires an identifier before resolving area candidates", () => {
 	assert.equal(response.status, 400);
 	assert.equal(
 		(response.body as { detail?: string }).detail,
-		"q is required: an official area code, name or supplied alias.",
+		"q is required: a place name, an area code, or a place reference such as localAuthority/E08000003.",
 	);
 });

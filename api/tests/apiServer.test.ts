@@ -191,7 +191,7 @@ test("keys clients behind a trusted proxy by the address the proxy saw", async (
 
 test("refuses an overlong request target before routing it", async (t) => {
 	const { get } = await serve(t, { maxUrlLength: 300 });
-	const response = await get(`/v1/areas?q=${"a".repeat(400)}`);
+	const response = await get(`/v1/places?q=${"a".repeat(400)}`);
 	assert.equal(response.status, 414);
 	assert.equal(
 		response.headers.get("content-type"),
