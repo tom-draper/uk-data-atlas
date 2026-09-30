@@ -3,6 +3,7 @@ import { SelectedArea } from "@/lib/types/areas";
 
 export interface MapManagerCallbacks {
 	onAreaHover?: (location: SelectedArea | null) => void;
+	onAreaClick?: (location: SelectedArea) => void;
 	onLocationChange: (location: string) => void;
 }
 

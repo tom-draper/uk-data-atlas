@@ -101,6 +101,10 @@ export function useMapSession({
 		mapReady,
 		interactionHandlers,
 	});
+	useEffect(() => {
+		interactionHandlers.clearAreaLock();
+		mapManager?.eventHandler.clearAreaLock();
+	}, [selectedLocation, interactionHandlers, mapManager]);
 	const { onLocationClick, onZoomIn, onZoomOut, onExport } = useMapCamera(
 		mapRef,
 		selectedLocation,

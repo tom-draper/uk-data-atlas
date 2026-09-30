@@ -8,6 +8,7 @@ type UseMapManagerOptions = {
 	mapReady: boolean;
 	interactionHandlers: {
 		onAreaHover: (area: SelectedArea | null) => void;
+		onAreaClick: (area: SelectedArea) => void;
 		onLocationChange: (location: string) => void;
 	};
 };
@@ -28,6 +29,7 @@ export function useMapManager({
 
 		const manager = new MapManager(mapRef.current, {
 			onAreaHover: (data) => handlersRef.current.onAreaHover(data),
+			onAreaClick: (data) => handlersRef.current.onAreaClick(data),
 			onLocationChange: (location) =>
 				handlersRef.current.onLocationChange(location),
 		});
