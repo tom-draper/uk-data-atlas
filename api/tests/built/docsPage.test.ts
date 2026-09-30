@@ -138,11 +138,22 @@ test("serves the landing page the index points to", () => {
 	assert.match(html, /^<!doctype html>/);
 	assert.ok(html.includes(catalogues.atlasRelease.releaseId));
 	// Every operation, quick start step and glossary term is on the page.
-	for (const item of Object.values(openapi.paths))
-		assert.ok(
-			html.includes(`id="${item.get!.operationId}"`),
-			`${item.get!.operationId} is not on the page`,
-		);
+	for (const [path, item] of Object.entries(openapi.paths))
+		for (const method of ["get", "post"] as const) {
+			const operation = item[method];
+			if (!operation) continue;
+			assert.ok(
+				html.includes(`id="${operation.operationId}"`),
+				`${operation.operationId} is not on the page`,
+			);
+			// A POST is labelled as one, not as the GET most routes are.
+			if (method === "post")
+				assert.match(
+					html,
+					new RegExp(`id="${operation.operationId}">\\n<div>POST `),
+					`${path} is not shown as a POST`,
+				);
+		}
 	for (const guide of openapi["x-quick-starts"])
 		for (const step of guide.steps)
 			assert.ok(

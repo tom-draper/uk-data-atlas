@@ -23,7 +23,8 @@ type Operation = {
 	tags: string[];
 	summary: string;
 	deprecated?: boolean;
-	"x-likely-refusal": Refusal;
+	/** Every GET names one; a POST that takes the caller's own data need not. */
+	"x-likely-refusal"?: Refusal;
 };
 
 export type QuickStartStep = {
@@ -46,7 +47,7 @@ export type OpenApiGuide = {
 	info: { title: string; description: string };
 	servers: Array<{ url: string }>;
 	tags: Array<{ name: string; description: string }>;
-	paths: Record<string, { get?: Operation }>;
+	paths: Record<string, { get?: Operation; post?: Operation }>;
 	"x-glossary": Array<{ term: string; meaning: string }>;
 	"x-endpoint-chooser": Array<{ need: string; start: string[] }>;
 	"x-quick-starts": QuickStart[];
@@ -144,7 +145,10 @@ export const renderDocsPage = (
 ): string => {
 	const origin = document.servers[0]?.url.replace(/\/v1\/?$/, "") ?? "";
 	const operations = Object.entries(document.paths).flatMap(([path, item]) =>
-		item.get ? [{ path, operation: item.get }] : [],
+		(["get", "post"] as const).flatMap((method) => {
+			const operation = item[method];
+			return operation ? [{ path, method, operation }] : [];
+		}),
 	);
 	const [lead] = document.info.description.trim().split(/\n\s*\n/);
 
@@ -192,17 +196,16 @@ ${step.status ? `<div class="expect">Answers ${step.status}, deliberately.</div>
 <h3>${escape(tag.name)}</h3>
 <p class="lead">${inline(tag.description)}</p>
 ${tagged
-	.map(({ path, operation }) => {
+	.map(({ path, method, operation }) => {
 		const refusal = operation["x-likely-refusal"];
-		const example = refusal["x-example-request"];
-		const heading = refusal.status
+		const example = refusal?.["x-example-request"];
+		const heading = refusal?.status
 			? `<strong>${refusal.status}${refusal.code ? ` ${escape(refusal.code)}` : ""}</strong> `
 			: "";
 		return `<div class="operation" id="${escape(operation.operationId)}">
-<div>GET ${route(path)}${operation.deprecated ? " (deprecated)" : ""}</div>
+<div>${method.toUpperCase()} ${route(path)}${operation.deprecated ? " (deprecated)" : ""}</div>
 <p>${inline(operation.summary)}</p>
-<p class="refusal">Most likely refusal: ${heading}${inline(refusal.when)}${example ? ` <a href="${escape(example)}">See it</a>.` : ""}</p>
-</div>`;
+${refusal ? `<p class="refusal">Most likely refusal: ${heading}${inline(refusal.when)}${example ? ` <a href="${escape(example)}">See it</a>.` : ""}</p>\n` : ""}</div>`;
 	})
 	.join("\n")}
 </section>`;
