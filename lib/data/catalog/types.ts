@@ -37,6 +37,15 @@ export interface DatasetReader {
 	 * the single entry of a .zip, the form some publishers ship it in.
 	 */
 	xlsSheet: (path: string, sheet: string) => Promise<string>;
+	/**
+	 * Visits populated cells in each row of a legacy .xls worksheet. Use this
+	 * when a loader can consume a large workbook without an intermediate CSV.
+	 */
+	xlsSheetRows: (
+		path: string,
+		sheet: string,
+		visit: (row: ReadonlyMap<number, string>) => void,
+	) => Promise<void>;
 	odsContent: (path: string) => Promise<string>;
 	zipCsv: (path: string) => Promise<string>;
 }

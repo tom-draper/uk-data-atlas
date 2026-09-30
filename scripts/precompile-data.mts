@@ -23,7 +23,11 @@ import {
 import type { DatasetReader } from "../lib/data/catalog";
 import type { DatasetPayloadLayout } from "../lib/data/catalog/types";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
-import { readWorkbookStream, xlsSheetRows } from "../lib/data/spreadsheet/xls";
+import {
+	forEachXlsSheetRow,
+	readWorkbookStream,
+	xlsSheetRows,
+} from "../lib/data/spreadsheet/xls";
 import {
 	forEachSheetRow,
 	findSheetPath,
@@ -95,19 +99,33 @@ const readBoundaryAsset = async (path: string) => {
  * publishers ship the workbook inside a zip — HPSSA is 128 MB uncompressed
  * against 36 MB zipped — so a zip holding a single .xls is unwrapped first.
  */
-const readXlsSheet = async (
-	path: string,
-	sheetName: string,
-): Promise<string> => {
+const readXlsWorkbook = async (path: string): Promise<Uint8Array> => {
 	const fullPath = join(SOURCE_DATA, path);
 	await stat(fullPath);
-	const bytes = path.endsWith(".zip")
+	return path.endsWith(".zip")
 		? execSync(`unzip -p "${fullPath}" "*.xls"`, {
 				maxBuffer: 512 * 1024 * 1024,
 			})
 		: await readFile(fullPath);
+	};
+
+const readXlsSheet = async (
+	path: string,
+	sheetName: string,
+): Promise<string> => {
+	const bytes = await readXlsWorkbook(path);
 	const stream = readWorkbookStream(new Uint8Array(bytes));
 	return rowsToCsv(xlsSheetRows(stream, sheetName));
+};
+
+const visitXlsSheetRows = async (
+	path: string,
+	sheetName: string,
+	visit: (row: ReadonlyMap<number, string>) => void,
+) => {
+	const bytes = await readXlsWorkbook(path);
+	forEachXlsSheetRow(readWorkbookStream(bytes), sheetName, visit);
+	return bytes;
 };
 
 // Reads a file relative to data/ (raw source data, not synced to public)
@@ -244,6 +262,19 @@ const createTrackedReader = () => {
 			sha256: createHash("sha256").update(sheetXml).digest("hex"),
 		});
 	};
+	const trackXlsRows = async (
+		path: string,
+		sheet: string,
+		visit: (row: ReadonlyMap<number, string>) => void,
+	) => {
+		const bytes = await visitXlsSheetRows(path, sheet, visit);
+		artifacts.set(`xlsSheetRows:${path}#${sheet}`, {
+			kind: "xlsSheetRows",
+			path: `${path}#${sheet}`,
+			bytes: bytes.byteLength,
+			sha256: createHash("sha256").update(bytes).digest("hex"),
+		});
+	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
 		xlsxSheet: (path, sheet) =>
@@ -256,6 +287,7 @@ const createTrackedReader = () => {
 			track("xlsSheet", `${path}#${sheet}`, () =>
 				readXlsSheet(path, sheet),
 			),
+		xlsSheetRows: (path, sheet, visit) => trackXlsRows(path, sheet, visit),
 		odsContent: (path) =>
 			track("odsContent", path, () => readOdsContent(path)),
 		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
