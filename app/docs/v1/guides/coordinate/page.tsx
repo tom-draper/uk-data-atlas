@@ -91,7 +91,7 @@ export default function CoordinateGuidePage() {
 						2024.
 					</P>
 					<Request
-						url={`${API}/data/population?period=2024&geography=localAuthority&boundaryYear=2023&areaCode=E08000035`}
+						url={`${API}/data/population?period=2024&geography=localAuthority&boundaryYear=2023&place=E08000035`}
 						operationId="getMeasureObservations"
 					/>
 				</Step>

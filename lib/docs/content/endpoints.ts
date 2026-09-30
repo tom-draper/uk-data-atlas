@@ -171,8 +171,8 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Add up a measure",
 		intro: "Get a total over a group of areas, such as a country, a combined authority, a county or a named location like Greater Manchester. Shares with a published weight are averaged instead. It only combines values where the result genuinely means something.",
 		tips: [
-			"Pass exactly one of `locationId`, `areaCode` or `targetCode`.",
-			"`targetCode` sums onto whatever geography your chosen `crosswalk` maps to, so the same call gives you a combined authority, a county or a region. Find one with [List crosswalks](/docs/v1/reference/geography/list-crosswalks).",
+			"`place` is what to sum onto: `location/{id}` for a named location, a country code, or any other area a `crosswalk` groups members into.",
+			"An area that isn't a country is summed onto through whatever geography your chosen `crosswalk` maps to, so the same call gives you a combined authority, a county or a region. Find one with [List crosswalks](/docs/v1/reference/geography/list-crosswalks).",
 			"Only a crosswalk that establishes membership can be used. Clean containment and full area overlap qualify; a lookup that relates two vintages of the same area does not, and is refused rather than summed.",
 			"Counts add up. Medians and ranks don't, so asking for one gets a `422` that explains why, rather than a misleading number.",
 			"If a named location is missing some of its areas, you get a `partial_coverage` refusal. A country or membership total with gaps is still returned, with its coverage stated plainly.",
@@ -203,7 +203,7 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	},
 	getSourceExactMeasureChange: {
 		title: "Rank areas by change",
-		intro: "Find where things changed most between two periods, such as where population grew fastest between 2011 and 2022. Add `areaCode` to see one area's change and where it ranks against all the others.",
+		intro: "Find where things changed most between two periods, such as where population grew fastest between 2011 and 2022. Add `place` to see one area's change and where it ranks against all the others.",
 		tips: [
 			"`by=absolute` ranks the plain difference. `by=relative` ranks it as a proportion of the starting value.",
 			"Relative change isn't offered for percentages: going from 2% to 4% isn't really \"100% growth\".",
@@ -356,20 +356,11 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Check geography coverage",
 		intro: "For every boundary release, see whether its areas have been compiled and which crosswalks connect it to others, or the reason they haven't yet.",
 	},
-	resolveAreaIdentifier: {
-		title: "Resolve an area identifier",
-		intro: "Look up an official area code, name or alias and get every exact area identity it could mean. The Atlas never guesses which geography or boundary release you intended.",
-		tips: [
-			"Names and aliases ignore case, accents, punctuation, ampersands and titles such as `City of`. The response says exactly which matching rule applied.",
-			"If a name or code exists in more than one boundary release, use `geography` and `release` to choose the exact identity.",
-			"Use `date` with `geography` to select the latest boundary release dated on or before a date. Use [List or search areas](/docs/v1/reference/geography/list-areas) for prefix matching.",
-		],
-	},
 	listAreas: {
-		title: "List or search areas",
-		intro: "Browse or search areas by code, name or alias, optionally narrowed to one geography and boundary release.",
+		title: "List areas",
+		intro: "Page through areas, optionally narrowed to one geography and boundary release.",
 		tips: [
-			"Exact code matches come first, so searching a code finds that area in every release that holds it.",
+			"To find an area by name, code or postcode, use [Find a place](/docs/v1/reference/start-here/resolve-places) instead.",
 		],
 	},
 	validateAreaValues: {
@@ -389,14 +380,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 	getArea: {
 		title: "Get an area",
 		intro: "Look up one area by its geography, boundary release and code, and get its name and any aliases.",
-	},
-	getAreaDossier: {
-		title: "Get an area's dossier",
-		intro: "Start with one exact area identity and get its boundary evidence, availability summary and verified links to its geometry, relationships, history, citation and data options.",
-		tips: [
-			"Resolve a code, name or alias first with [Resolve an area identifier](/docs/v1/reference/start-here/resolve-area-identifier) when you do not already know its geography and boundary release.",
-			"A dossier only reports published evidence. It never assumes that matching codes or nearby shapes are the same area.",
-		],
 	},
 	getAreaRelationships: {
 		title: "Get an area's relationships",
@@ -430,45 +413,12 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "List crosswalk mappings",
 		intro: "Page through a crosswalk's mappings, or filter them to one `source` area.",
 	},
-	findRelationshipPaths: {
-		title: "Check how two releases connect",
-		intro: "Before translating codes between two boundary releases, check whether the Atlas publishes a way to do it, and how. You get each path step by step, with the method behind it, or a clear reason why there isn't one.",
-		tips: [
-			"`purpose` matters: `identity` for old codes to new, `membership` for what sits inside what, and `apportion` for areas that overlap.",
-			"If nothing is published for your purpose but something is for another, `alternatives` points you to it.",
-		],
-	},
 	queryRelationships: {
 		title: "Explore geography relationships",
 		intro: "Use one route to discover conversions from a release, inspect a specific source and target pair, choose a path for an intended operation, or find relationship coverage gaps.",
 		tips: [
 			"Give `sourceGeography` and `sourceRelease` to discover available targets; add the target and `purpose` to inspect one conversion.",
 			"Add `operation` to choose a supported path. Use `geography` and `release`, without source parameters, to report coverage.",
-		],
-	},
-	planGeographyConversion: {
-		title: "Plan a geography conversion",
-		intro: "Choose a published path between two boundary releases before translating codes or values. It selects the best-supported route for your intended operation and shows the alternatives and any evidence gaps.",
-		tips: [
-			"Set `purpose` to `identity`, `membership` or `apportion`; a path for one purpose is not automatically suitable for another.",
-			"Use `operation` to check whether the chosen path permits an identity join, aggregation, membership join or weighted allocation before doing the work.",
-		],
-	},
-	diagnoseRelationshipCapability: {
-		title: "Check a conversion works",
-		intro: "Ask whether you can get from one boundary release to another, and get an operational answer: the steps involved, how much of the source they actually cover, and what is missing when they don't. Give only a source and you get every conversion available from it.",
-		tips: [
-			"`trust` says how far to lean on a path: `verified` is publisher-supplied and complete, while `derived`, `partial` and `not-built` each name what limits it.",
-			"`operations` says what the path may be used for, so containment isn't mistaken for a weighted split or an identity match.",
-			"A `not-built` answer lists the artifacts still needed, so it's a to-do list rather than a dead end.",
-		],
-	},
-	reportRelationshipCoverage: {
-		title: "Find gaps in one release",
-		intro: "Counts how many areas in a release have published relationships, and lists ones that have none. Useful for seeing what is still missing before relying on a release.",
-		tips: [
-			"Narrow it with `relation` to ask about one kind of link, such as `within` or `successor`.",
-			"It reports what is published and never guesses at a relationship that isn't.",
 		],
 	},
 	translateAreaCode: {

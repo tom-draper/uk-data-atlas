@@ -18,7 +18,7 @@ const PROBLEM = `{
   "code": "aggregation_not_supported"
 }`;
 
-const URL = `${API_BASE_URL}/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001`;
+const URL = `${API_BASE_URL}/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001`;
 
 const HANDLING = [
 	{
