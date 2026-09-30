@@ -3937,6 +3937,9 @@
 					"required": false,
 					"minimum": 1,
 					"maximum": 1000
+				},
+				"query:cursor": {
+					"required": false
 				}
 			},
 			"responses": {

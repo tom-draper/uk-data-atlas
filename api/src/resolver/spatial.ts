@@ -44,6 +44,8 @@ export type ResolvedIntersectingArea = AreaRecord & {
 };
 export type ResolvedIntersectingAreas = {
 	matched: number;
+	/** Whether matches remain after this page. */
+	more: boolean;
 	matches: ResolvedIntersectingArea[];
 };
 export type ResolvedAreaNeighbour = Neighbour & {
@@ -243,11 +245,20 @@ export class SpatialResolver {
 		box: GeometryBounds,
 		limit = Infinity,
 		includeGeometry = true,
+		/** Resume after this code: matches come in code order. */
+		after?: string,
 	): ResolvedIntersectingAreas | undefined {
 		const cache = this.cache;
 		if (!cache) return undefined;
 		const found = cache.findIntersecting(geography, boundaryRelease, box);
-		const matches = found
+		const start =
+			after === undefined
+				? 0
+				: found.findIndex(({ code }) => code.localeCompare(after) > 0);
+		// Only the page is described: a wide box can meet tens of thousands of
+		// areas, and each description reads the area's identity and source.
+		const page = start === -1 ? [] : found.slice(start, start + limit + 1);
+		const matches = page
 			.flatMap(({ code, relation, bounds }) => {
 				const area = this.area({ geography, boundaryRelease, code });
 				return area
@@ -273,6 +284,7 @@ export class SpatialResolver {
 			.slice(0, limit);
 		return {
 			matched: found.length,
+			more: page.length > limit,
 			matches: includeGeometry
 				? matches.flatMap((match) => {
 						const geometry = cache.get(
