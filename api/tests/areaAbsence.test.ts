@@ -82,6 +82,7 @@ test("reports a geography with no published boundary release", () => {
 test("lists the published releases when the release is unknown", () => {
 	const absence = explain("localAuthority", "2031-01-uk", "E06000001");
 	assert.equal(absence.absence, "unknown-release");
+	assert.equal(absence.code, "unknown_release");
 	assert.deepEqual(
 		"availableReleases" in absence &&
 			absence.availableReleases.map((candidate) => candidate.id),
