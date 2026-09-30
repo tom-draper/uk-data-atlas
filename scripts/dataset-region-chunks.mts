@@ -38,13 +38,6 @@ type LocalElectionRecord = {
 	partyVotes?: Record<string, number | undefined>;
 };
 
-type PopulationRecord = {
-	ladCode?: string;
-	total?: Record<string, number>;
-	males?: Record<string, number>;
-	females?: Record<string, number>;
-};
-
 type BoundaryPropertiesFile = {
 	features?: Record<string, unknown>[];
 };
@@ -168,19 +161,6 @@ const populationLocationSummary = (
 	);
 };
 
-const locationMatchesRecord = (
-	location: string,
-	members: ReadonlySet<string>,
-	code: string,
-	record: { ladCode?: string },
-	wardToLad: Record<string, string>,
-) => {
-	if (location === "United Kingdom") return true;
-	const countryPrefix = COUNTRY_PREFIXES[location];
-	if (countryPrefix) return code.startsWith(countryPrefix);
-	return members.has(wardToLad[code] ?? record.ladCode ?? "");
-};
-
 const populationPropertiesPath = (root: string, boundaryYear: number) => {
 	const asset = BOUNDARY_CATALOG.ward.propertyVintages[boundaryYear];
 	if (!asset)
@@ -195,82 +175,107 @@ const populationLocationSummaries = async (
 	gazetteer: Gazetteer,
 	payload: DatasetPayload,
 	wardToLad: Record<string, string>,
-) =>
-	Object.fromEntries(
-		await Promise.all(
-			Object.entries(payload).map(async ([datasetId, dataset]) => {
-				const boundaryYear = dataset.boundaryYear;
-				if (typeof boundaryYear !== "number") return [datasetId, {}];
-				const properties = JSON.parse(
-					await readFile(
-						populationPropertiesPath(root, boundaryYear),
-						"utf8",
-					),
-				) as BoundaryPropertiesFile;
-				const codeProperty = "__populationCode";
-				const features = (properties.features ?? []).flatMap(
-					(properties, index) => {
+) => {
+	const locations = gazetteer.namedLocations();
+	const locationsByLad = new Map<string, Set<string>>();
+	for (const location of locations) {
+		if (location === "United Kingdom" || location in COUNTRY_PREFIXES)
+			continue;
+		for (const ladCode of gazetteer.namedLocation(location)?.memberCodes ??
+			[]) {
+			const matches = locationsByLad.get(ladCode) ?? new Set<string>();
+			matches.add(location);
+			locationsByLad.set(ladCode, matches);
+		}
+	}
+
+	const featuresForBoundary = new Map<
+		number,
+		Promise<Map<string, Record<string, unknown>>>
+	>();
+	const featureMapFor = (boundaryYear: number) => {
+		let result = featuresForBoundary.get(boundaryYear);
+		if (!result) {
+			result = readFile(
+				populationPropertiesPath(root, boundaryYear),
+				"utf8",
+			).then((raw) => {
+				const properties = JSON.parse(raw) as BoundaryPropertiesFile;
+				return new Map(
+					(properties.features ?? []).flatMap((feature, index) => {
 						const code = getProp(
-							properties,
+							feature,
 							BOUNDARY_CATALOG.ward.properties.code,
 						);
 						return code
 							? [
-									{
-										type: "Feature" as const,
-										id: index,
-										geometry: null,
-										properties: {
-											...properties,
-											[codeProperty]: code,
+									[
+										code,
+										{
+											type: "Feature" as const,
+											id: index,
+											geometry: null,
+											properties: {
+												...feature,
+												__populationCode: code,
+											},
 										},
-									},
+									],
 								]
 							: [];
-					},
+					}),
 				);
-				const featuresByCode = new Map(
-					features.map((feature) => [
-						Reflect.get(feature.properties, codeProperty) as string,
-						feature,
-					]),
+			});
+			featuresForBoundary.set(boundaryYear, result);
+		}
+		return result;
+	};
+
+	return Object.fromEntries(
+		await Promise.all(
+			Object.entries(payload).map(async ([datasetId, dataset]) => {
+				const boundaryYear = dataset.boundaryYear;
+				if (typeof boundaryYear !== "number") return [datasetId, {}];
+				const featuresByCode = await featureMapFor(boundaryYear);
+				const featuresByLocation = new Map(
+					locations.map((location) => [location, [] as unknown[]]),
 				);
 				const data = dataset.data ?? {};
+				for (const [code, record] of Object.entries(data)) {
+					const feature = featuresByCode.get(code);
+					if (!feature) continue;
+					featuresByLocation.get("United Kingdom")?.push(feature);
+					for (const [country, prefix] of Object.entries(
+						COUNTRY_PREFIXES,
+					))
+						if (code.startsWith(prefix))
+							featuresByLocation.get(country)?.push(feature);
+					const ladCode =
+						wardToLad[code] ??
+						(record && typeof record === "object"
+							? Reflect.get(record, "ladCode")
+							: undefined);
+					if (typeof ladCode !== "string") continue;
+					for (const location of locationsByLad.get(ladCode) ?? [])
+						featuresByLocation.get(location)?.push(feature);
+				}
 				return [
 					datasetId,
 					Object.fromEntries(
-						gazetteer.namedLocations().map((location) => {
-							const members = new Set(
-								gazetteer.namedLocation(location)
-									?.memberCodes ?? [],
-							);
-							const selectedFeatures = Object.entries(
-								data,
-							).flatMap(([code, record]) =>
-								locationMatchesRecord(
-									location,
-									members,
-									code,
-									(record ?? {}) as PopulationRecord,
-									wardToLad,
-								)
-									? [featuresByCode.get(code)].filter(Boolean)
-									: [],
-							);
-							return [
-								location,
-								aggregatePopulation(
-									selectedFeatures as never,
-									codeProperty as never,
-									data as never,
-								),
-							];
-						}),
+						locations.map((location) => [
+							location,
+							aggregatePopulation(
+								featuresByLocation.get(location) as never,
+								"__populationCode" as never,
+								data as never,
+							),
+						]),
 					),
 				];
 			}),
 		),
 	);
+};
 
 const locationBelongsToRegion = (
 	gazetteer: Gazetteer,
