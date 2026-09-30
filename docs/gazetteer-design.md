@@ -193,7 +193,8 @@ singleton `gazetteer` from `lib/data/gazetteer/static.ts`:
 
 Proposed but not built, and no longer planned in the gazetteer: `matchColumn`
 (upload matching reads the match index directly), `mapToVintage` (served by
-`codeMapper.getCodeForYear` over `boundary-mappings.json`), and
+`codeMapper.getCodeForYear` over `area-lineage.json`, the API geography
+resolver's same-area answers between years), and
 `population` / `density` (section 9.4).
 
 ## 7. Datasets and location scoping
