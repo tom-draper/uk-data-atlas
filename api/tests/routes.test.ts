@@ -44,7 +44,7 @@ test("uses problem details for missing resources and unsupported methods", () =>
 			missing.body.availableReleases,
 		],
 		[
-			"unsupported_geography",
+			"unknown_release",
 			"unknown-release",
 			[
 				{
@@ -94,7 +94,7 @@ test("explains why an area identity resolves to nothing", () => {
 		title: "Not Found",
 		status: 404,
 		detail: "No ward boundary release is published as 2019-12-en-ward.",
-		code: "unsupported_geography",
+		code: "unknown_release",
 		absence: "unknown-release",
 		availableReleases: [
 			{

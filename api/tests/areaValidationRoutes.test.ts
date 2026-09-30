@@ -56,7 +56,7 @@ test("validates a batch of codes and names against one release", () => {
 	assert.equal(unknownRelease.status, 404);
 	assert.equal(
 		"code" in unknownRelease.body && unknownRelease.body.code,
-		"unsupported_geography",
+		"unknown_release",
 	);
 });
 
