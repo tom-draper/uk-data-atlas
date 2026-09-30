@@ -533,10 +533,15 @@ async function compileDataset(
 				]),
 			)
 		: compiled;
-	compiledDatasets.set(definition.precompiledFile, {
-		data,
-		layout: definition.payload,
-	});
+	// Region chunk generation is the sole downstream consumer of a compiled
+	// payload. Retaining every dataset here needlessly keeps the entire atlas
+	// in V8's heap until the last loader completes.
+	if (definition.payload?.regionChunks?.kind === "regional") {
+		compiledDatasets.set(definition.precompiledFile, {
+			data,
+			layout: definition.payload,
+		});
+	}
 	const summary = validatePrecompiledDataset(definition, data);
 	if (preserved) return preserved;
 	const output = await out(definition.precompiledFile, data);
