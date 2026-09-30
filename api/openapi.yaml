@@ -393,8 +393,8 @@ paths:
       summary: Describe one map resource, its tiles and what they were made from
       x-likely-refusal:
         status: 404
-        when: "The boundary release is published, but not as a map resource. `/v1/map-resources` lists the ones that are."
-        x-example-request: "/v1/map-resources/ward/2024-12-uk-bgc"
+        when: "The boundary release is published but could not be compiled into a map resource, for example because its areas overlap. `/v1/boundary-releases/{geography}/{release}` says why under `downloads`, and `/v1/map-resources` lists the ones that are."
+        x-example-request: "/v1/map-resources/ward/2017-12-gb-bgc"
       description: >
         The only document a client needs to read to draw this release. It
         carries the tile and archive URLs, the zoom ladder and the tier behind
@@ -424,8 +424,8 @@ paths:
       summary: The TileJSON a renderer is configured with
       x-likely-refusal:
         status: 404
-        when: "The boundary release is published, but not as a map resource. `/v1/map-resources` lists the ones that are."
-        x-example-request: "/v1/map-resources/ward/2024-12-uk-bgc/tiles.json"
+        when: "The boundary release is published but could not be compiled into a map resource, for example because its areas overlap. `/v1/boundary-releases/{geography}/{release}` says why under `downloads`, and `/v1/map-resources` lists the ones that are."
+        x-example-request: "/v1/map-resources/ward/2017-12-gb-bgc/tiles.json"
       description: >
         TileJSON 3.0 for this resource, including the attribution a map must
         display. A tile cannot carry a licence, so a client handed only a tile
@@ -680,8 +680,8 @@ paths:
       summary: The whole tile pyramid as one PMTiles archive
       x-likely-refusal:
         status: 404
-        when: "The boundary release is published, but not as a map resource. `/v1/map-resources` lists the ones that are."
-        x-example-request: "/v1/map-resources/ward/2024-12-uk-bgc.pmtiles"
+        when: "The boundary release is published but could not be compiled into a map resource, for example because its areas overlap. `/v1/boundary-releases/{geography}/{release}` says why under `downloads`, and `/v1/map-resources` lists the ones that are."
+        x-example-request: "/v1/map-resources/ward/2017-12-gb-bgc.pmtiles"
       description: >
         Every tile of the resource in a single PMTiles v3 file, for an offline
         map, a CDN or a warehouse. Its SHA-256 is the `contentHash` the
