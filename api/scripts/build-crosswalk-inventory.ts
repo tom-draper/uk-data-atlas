@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
 	readCrosswalkAdapters,
 	type AreaOverlapCrosswalkAdapter,
+	type BestFitCrosswalkAdapter,
 	type PopulationOverlapCrosswalkAdapter,
 	type PropertyCrosswalkAdapter,
 	type ExtentContinuityCrosswalkAdapter,
@@ -13,6 +14,7 @@ import {
 	compileCrosswalks,
 	createCrosswalkInventory,
 	type AreaOverlapCrosswalkArtifact,
+	type BestFitCrosswalkArtifact,
 	type CrosswalkArtifact,
 	type PropertyCrosswalkArtifact,
 	type ExtentContinuityCrosswalkArtifact,
@@ -58,7 +60,9 @@ const readCompiledAreaLookup = (outputDirectory: string) => {
 };
 
 type GeometryCrosswalkAdapter =
-	AreaOverlapCrosswalkAdapter | ExtentContinuityCrosswalkAdapter;
+	| AreaOverlapCrosswalkAdapter
+	| ExtentContinuityCrosswalkAdapter
+	| BestFitCrosswalkAdapter;
 type CleanContainmentAdapter = PropertyCrosswalkAdapter & {
 	method: "clean-containment";
 };
@@ -75,6 +79,7 @@ const reusableGeometryCrosswalk = (
 ):
 	| AreaOverlapCrosswalkArtifact
 	| ExtentContinuityCrosswalkArtifact
+	| BestFitCrosswalkArtifact
 	| undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
 	if (!existsSync(path)) return undefined;
@@ -110,6 +115,12 @@ const reusableGeometryCrosswalk = (
 			if (
 				JSON.stringify(artifact.provenance.excludedPairs ?? {}) !==
 				JSON.stringify(overlap.excludedPairs ?? {})
+			)
+				return undefined;
+		} else if (artifact.method === "best-fit") {
+			if (
+				artifact.validation.bestFit.sliverWidthM !==
+				(adapter as BestFitCrosswalkAdapter).sliverWidthM
 			)
 				return undefined;
 		} else if (
@@ -315,7 +326,8 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 			);
 		} else if (
 			adapter.method === "area-overlap" ||
-			adapter.method === "extent-continuity"
+			adapter.method === "extent-continuity" ||
+			adapter.method === "best-fit"
 		) {
 			artifact = reusableGeometryCrosswalk(
 				outputDirectory,

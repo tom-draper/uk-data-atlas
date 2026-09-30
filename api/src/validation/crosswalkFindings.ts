@@ -108,7 +108,8 @@ export const crosswalkFindings = (
 
 	if (
 		artifact.method === "clean-containment" ||
-		artifact.method === "geometric-containment"
+		artifact.method === "geometric-containment" ||
+		artifact.method === "best-fit"
 	) {
 		const multiParent = artifact.records
 			.filter((record) => record.targets.length !== 1)
@@ -217,6 +218,48 @@ export const crosswalkFindings = (
 					childCount: containment.childCount,
 					widestOutsideM: containment.widestOutsideM,
 					minimumContainedShare: containment.minimumContainedShare,
+				},
+			),
+		);
+	}
+
+	if (artifact.method === "best-fit") {
+		// Recompute each child's relation from its published pair, and check
+		// every child of the release is placed.
+		const { bestFit } = artifact.validation;
+		const relationOf = (outsideWidthM: number) =>
+			outsideWidthM < bestFit.sliverWidthM / 2
+				? "within"
+				: outsideWidthM < bestFit.sliverWidthM * 2
+					? "indeterminate"
+					: "straddles";
+		const misstated = artifact.records
+			.filter(
+				(record) =>
+					relationOf(record.targets[0]!.outsideWidthM) !==
+					record.targets[0]!.relation,
+			)
+			.map((record) => record.source.code);
+		findings.push(
+			check(
+				"best-fit-verified",
+				misstated.length === 0 &&
+					artifact.records.length === bestFit.childCount,
+				[
+					misstated.length > 0
+						? `Children whose relation does not follow from what they leave outside: ${listed(misstated)}.`
+						: undefined,
+					artifact.records.length === bestFit.childCount
+						? undefined
+						: `The release has ${bestFit.childCount} areas but ${artifact.records.length} are published.`,
+				]
+					.filter(Boolean)
+					.join(" "),
+				{
+					sliverWidthM: bestFit.sliverWidthM,
+					childCount: bestFit.childCount,
+					straddlingCount: bestFit.straddlingCount,
+					minimumContainedShare: bestFit.minimumContainedShare,
 				},
 			),
 		);

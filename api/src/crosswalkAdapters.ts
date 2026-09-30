@@ -15,6 +15,7 @@ export type CrosswalkMethod =
 	| "area-overlap"
 	| "population-overlap"
 	| "geometric-containment"
+	| "best-fit"
 	| "extent-continuity";
 export type CrosswalkQuality = "publisher-supplied" | "derived";
 export type PropertyRelationshipPurpose = "identity" | "membership";
@@ -160,11 +161,27 @@ export type GeometricContainmentCrosswalkAdapter = {
 	sliverWidthM: number;
 };
 
+// Best-fit adapters name, for each child of one release, the one parent of
+// another holding most of its area, where the two do not nest: a ward and the
+// constituency it mostly lies in. The claim is a best fit, not membership, so
+// a child that straddles keeps its place and says so rather than failing.
+export type BestFitCrosswalkAdapter = {
+	id: string;
+	method: "best-fit";
+	quality: "derived";
+	weighting: { status: "not-applicable" };
+	from: { geography: GeographyKind; boundaryRelease: string };
+	to: { geography: GeographyKind; boundaryRelease: string };
+	/** A child reaching no further than half of this beyond its parent is within it. */
+	sliverWidthM: number;
+};
+
 export type CrosswalkAdapter =
 	| PropertyCrosswalkAdapter
 	| AreaOverlapCrosswalkAdapter
 	| PopulationOverlapCrosswalkAdapter
 	| GeometricContainmentCrosswalkAdapter
+	| BestFitCrosswalkAdapter
 	| ExtentContinuityCrosswalkAdapter;
 
 const PROPERTY_METHODS = ["official-lookup", "clean-containment"] as const;
@@ -296,6 +313,20 @@ const validGeometricContainmentAdapter = (
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0;
 
+const validBestFitAdapter = (
+	adapter: Record<string, unknown>,
+): adapter is BestFitCrosswalkAdapter =>
+	adapter.method === "best-fit" &&
+	adapter.quality === "derived" &&
+	adapter.relationshipPurpose === undefined &&
+	isRecord(adapter.weighting) &&
+	adapter.weighting.status === "not-applicable" &&
+	hasEndpoint(adapter.from) &&
+	hasEndpoint(adapter.to) &&
+	adapter.from.geography !== adapter.to.geography &&
+	typeof adapter.sliverWidthM === "number" &&
+	adapter.sliverWidthM > 0;
+
 const validExtentContinuityAdapter = (
 	adapter: Record<string, unknown>,
 ): adapter is ExtentContinuityCrosswalkAdapter =>
@@ -329,6 +360,7 @@ export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 				validAreaOverlapAdapter(adapter) ||
 				validPopulationOverlapAdapter(adapter) ||
 				validGeometricContainmentAdapter(adapter) ||
+				validBestFitAdapter(adapter) ||
 				validExtentContinuityAdapter(adapter)
 			)
 		) {

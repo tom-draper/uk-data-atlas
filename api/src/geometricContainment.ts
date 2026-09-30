@@ -14,9 +14,15 @@ import {
 	type AreaGeometry,
 } from "./areaOverlap";
 import { BoundedClipper } from "./boundedClipping";
-import type { GeometricContainmentCrosswalkAdapter } from "./crosswalkAdapters";
+import type {
+	BestFitCrosswalkAdapter,
+	GeometricContainmentCrosswalkAdapter,
+} from "./crosswalkAdapters";
 import type { GeographyKind } from "./geography";
-import type { GeometricContainmentCrosswalkArtifact } from "./crosswalkInventory";
+import type {
+	BestFitCrosswalkArtifact,
+	GeometricContainmentCrosswalkArtifact,
+} from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
 
 // About a millimetre, for a retry when polygon-clipping's sweep line fails.
@@ -351,6 +357,134 @@ export const compileGeometricContainmentCrosswalk = (
 				),
 				widestOutsideM: Math.max(
 					...measured.areas.map((area) => area.outsideWidthM),
+				),
+			},
+		},
+		records,
+	};
+	return {
+		...artifactWithoutHash,
+		contentHash: `sha256:${createHash("sha256")
+			.update(JSON.stringify(artifactWithoutHash))
+			.digest("hex")}`,
+	};
+};
+
+/**
+ * Publish the parent of another geography holding most of each child, where
+ * the two do not nest: wards and the constituencies they mostly lie in. Each
+ * child keeps the relation containment would give it, so a reader can tell a
+ * ward within its constituency from one placed there by most of its area. A
+ * child the clipper cannot measure, or that no parent touches, has no best
+ * fit, and the build refuses the release rather than leave it out.
+ */
+export const compileBestFitCrosswalk = (
+	repositoryRoot: string,
+	adapter: BestFitCrosswalkAdapter,
+	geometrySources: GeometrySourceLookup,
+	areaLookup: AreaLookup | undefined,
+): BestFitCrosswalkArtifact => {
+	const cache = new Map<string, ReturnType<typeof readGeometries>>();
+	const measured = measureContainment(
+		repositoryRoot,
+		adapter.id,
+		adapter.from,
+		adapter.to,
+		geometrySources,
+		adapter.sliverWidthM,
+		Infinity,
+		cache,
+	);
+	const unplaced = measured.areas.filter(
+		(area) => area.relation === "unmeasured" || area.parent === undefined,
+	);
+	if (unplaced.length > 0)
+		throw new Error(
+			`${adapter.id}: ${unplaced.length} of ${measured.childCount} areas have no best-fit ${adapter.to.geography}: ${unplaced
+				.slice(0, 10)
+				.map((area) => `${area.code} (${area.reason ?? area.relation})`)
+				.join(", ")}`,
+		);
+	const placed = measured.areas as Array<
+		ContainedArea & {
+			parent: string;
+			relation: "within" | "indeterminate" | "straddles";
+		}
+	>;
+	const records = placed.map((area) => ({
+		source: {
+			code: area.code,
+			labels: labelsFor(adapter.id, areaLookup, adapter.from, area.code),
+		},
+		targets: [
+			{
+				code: area.parent,
+				labels: labelsFor(
+					adapter.id,
+					areaLookup,
+					adapter.to,
+					area.parent,
+				),
+				containedShare: area.share,
+				outsideWidthM: area.outsideWidthM,
+				relation: area.relation,
+			},
+		],
+	}));
+	const release = (endpoint: BestFitCrosswalkAdapter["from"]) =>
+		cache.get(releaseKey(endpoint.geography, endpoint.boundaryRelease))!;
+	const count = (relation: ContainedArea["relation"]) =>
+		placed.filter((area) => area.relation === relation).length;
+	const artifactWithoutHash = {
+		schemaVersion: 1 as const,
+		id: adapter.id,
+		method: adapter.method,
+		quality: adapter.quality,
+		weighting: adapter.weighting,
+		from: {
+			geography: adapter.from.geography,
+			boundaryRelease: adapter.from.boundaryRelease,
+		},
+		to: {
+			geography: adapter.to.geography,
+			boundaryRelease: adapter.to.boundaryRelease,
+		},
+		provenance: {
+			inputs: [
+				{ side: "from" as const, ...release(adapter.from).provenance },
+				{ side: "to" as const, ...release(adapter.to).provenance },
+			],
+			areaProjection: "EPSG:6933" as const,
+			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
+		},
+		validation: {
+			sourceNameConflicts: [],
+			endpoints: {
+				from: validateEndpoint(
+					adapter.id,
+					"from",
+					adapter.from,
+					new Set(records.map((record) => record.source.code)),
+					areaLookup,
+				),
+				to: validateEndpoint(
+					adapter.id,
+					"to",
+					adapter.to,
+					new Set(records.map((record) => record.targets[0]!.code)),
+					areaLookup,
+				),
+			},
+			bestFit: {
+				sliverWidthM: adapter.sliverWidthM,
+				childCount: measured.childCount,
+				parentCount: measured.parentCount,
+				withinCount: count("within"),
+				indeterminateCount: count("indeterminate"),
+				straddlingCount: count("straddles"),
+				minimumContainedShare: round(
+					Math.min(...placed.map((area) => area.share)),
+					6,
 				),
 			},
 		},

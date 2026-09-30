@@ -17,6 +17,7 @@ export const VALIDATION_CHECKS = [
 	"continuity-extent",
 	"population-coverage",
 	"containment-verified",
+	"best-fit-verified",
 	"measure-definition",
 	"records-resolve",
 	"countries-declared",
