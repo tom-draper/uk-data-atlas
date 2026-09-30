@@ -4,6 +4,7 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
+import { cursorFor, keyFromCursor, nextPageHref } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -76,6 +77,12 @@ export const handleAreaIntersectsRoutes = ({
 			`limit must be a whole number from 1 to ${MAX_INTERSECTS_LIMIT}.`,
 		);
 	}
+	const cursor = parsedUrl.searchParams.get("cursor");
+	const after = cursor === null ? undefined : keyFromCursor(cursor);
+	if (cursor !== null && after === undefined)
+		return problem(400, "Invalid Query", "cursor is invalid.", {
+			code: "invalid_cursor",
+		});
 	if (!geographyResolver.hasAreaRelease(geography, boundaryRelease)) {
 		return problem(
 			404,
@@ -90,6 +97,7 @@ export const handleAreaIntersectsRoutes = ({
 			[west!, south!, east!, north!],
 			limit,
 			requestedTier !== null,
+			after,
 		);
 		if (!found)
 			return problem(
@@ -114,37 +122,50 @@ export const handleAreaIntersectsRoutes = ({
 				geometry: simplified.geometry,
 			};
 		});
+		const last = found.matches.at(-1);
+		const nextCursor = found.more && last ? cursorFor(last.code) : null;
 		return {
 			status: 200,
-			body: envelope(releaseId, {
-				bbox: [west!, south!, east!, north!],
-				geography,
-				boundaryRelease,
-				matched: found.matched,
-				returned: matches.length,
-				limit,
-				truncated: found.matched > limit,
-				relationRule:
-					"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.",
-				...(requestedTier === null
-					? {
-							geometry:
-								"Not included. Pass tier to receive it, at the cost of the coordinates.",
-						}
-					: {
-							tier: requestedTier,
-							toleranceM: GEOMETRY_TIERS[requestedTier],
-							minEffectiveAreaM2:
-								GEOMETRY_TIERS[requestedTier] ** 2,
-							...(requestedTier === "full"
-								? {}
-								: {
-										generalisationMethod:
-											GENERALISATION_METHOD,
-									}),
-						}),
-				matches,
-			}),
+			...(nextCursor
+				? {
+						headers: {
+							link: `<${nextPageHref(parsedUrl, nextCursor)}>; rel="next"`,
+						},
+					}
+				: {}),
+			body: envelope(
+				releaseId,
+				{
+					bbox: [west!, south!, east!, north!],
+					geography,
+					boundaryRelease,
+					matched: found.matched,
+					returned: matches.length,
+					limit,
+					truncated: found.more,
+					relationRule:
+						"within when the area lies entirely inside the box, overlaps when it meets the box without being contained by it. Both are exact: an area is tested against the box itself, not against its bounding box.",
+					...(requestedTier === null
+						? {
+								geometry:
+									"Not included. Pass tier to receive it, at the cost of the coordinates.",
+							}
+						: {
+								tier: requestedTier,
+								toleranceM: GEOMETRY_TIERS[requestedTier],
+								minEffectiveAreaM2:
+									GEOMETRY_TIERS[requestedTier] ** 2,
+								...(requestedTier === "full"
+									? {}
+									: {
+											generalisationMethod:
+												GENERALISATION_METHOD,
+										}),
+							}),
+					matches,
+				},
+				nextCursor,
+			),
 		};
 	} catch (error) {
 		return problem(
