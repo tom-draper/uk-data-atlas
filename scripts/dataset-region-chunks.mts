@@ -323,39 +323,55 @@ const localElectionLocationSummaries = (
 	gazetteer: Gazetteer,
 	payload: DatasetPayload,
 	wardToLad: Record<string, string>,
-) =>
-	Object.fromEntries(
-		Object.entries(payload).map(([datasetId, dataset]) => [
-			datasetId,
-			Object.fromEntries(
-				gazetteer.namedLocations().map((location) => {
-					const members = new Set(
-						gazetteer.namedLocation(location)?.memberCodes ?? [],
-					);
-					const records = Object.entries(dataset.data ?? {}).flatMap(
-						([code, record]) => {
-							const ladCode = ladCodeForRecord(
-								record,
-								code,
-								wardToLad,
-							);
-							if (!ladCode) return [];
-							if (location === "United Kingdom")
-								return [record as LocalElectionRecord];
-							const prefix = COUNTRY_PREFIXES[location];
-							const matches = prefix
-								? ladCode.startsWith(prefix)
-								: members.has(ladCode);
-							return matches
-								? [record as LocalElectionRecord]
-								: [];
-						},
-					);
-					return [location, localElectionAggregate(records)];
-				}),
-			),
-		]),
+) => {
+	const locations = gazetteer.namedLocations();
+	const locationsByLad = new Map<string, Set<string>>();
+	for (const location of locations) {
+		if (location === "United Kingdom" || location in COUNTRY_PREFIXES)
+			continue;
+		for (const ladCode of gazetteer.namedLocation(location)?.memberCodes ??
+			[]) {
+			const matches = locationsByLad.get(ladCode) ?? new Set<string>();
+			matches.add(location);
+			locationsByLad.set(ladCode, matches);
+		}
+	}
+
+	return Object.fromEntries(
+		Object.entries(payload).map(([datasetId, dataset]) => {
+			const recordsByLocation = new Map(
+				locations.map((location) => [
+					location,
+					[] as LocalElectionRecord[],
+				]),
+			);
+			for (const [code, record] of Object.entries(dataset.data ?? {})) {
+				const ladCode = ladCodeForRecord(record, code, wardToLad);
+				if (!ladCode) continue;
+				const electionRecord = record as LocalElectionRecord;
+				recordsByLocation.get("United Kingdom")?.push(electionRecord);
+				for (const [country, prefix] of Object.entries(
+					COUNTRY_PREFIXES,
+				))
+					if (ladCode.startsWith(prefix))
+						recordsByLocation.get(country)?.push(electionRecord);
+				for (const location of locationsByLad.get(ladCode) ?? [])
+					recordsByLocation.get(location)?.push(electionRecord);
+			}
+			return [
+				datasetId,
+				Object.fromEntries(
+					locations.map((location) => [
+						location,
+						localElectionAggregate(
+							recordsByLocation.get(location) ?? [],
+						),
+					]),
+				),
+			];
+		}),
 	);
+};
 
 const writeAtomically = async (path: string, contents: string) => {
 	await mkdir(dirname(path), { recursive: true });
