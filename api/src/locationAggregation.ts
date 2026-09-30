@@ -50,7 +50,7 @@ export const validateLocationAggregation = ({
 			return problem(
 				422,
 				"Operation Not Supported",
-				`${location.label} carries no member codes: it names an extent rather than a set of areas. Aggregate a country with areaCode, such as areaCode=E92000001 for England.`,
+				`${location.label} carries no member codes: it names an extent rather than a set of areas. Aggregate a country with its code as place, such as place=E92000001 for England.`,
 			);
 		}
 		const resolvedElsewhere = [

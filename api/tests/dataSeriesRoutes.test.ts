@@ -60,7 +60,7 @@ const analysisInventory: AnalysisGeographyInventory = {
 
 test("returns a source-exact series without selecting a geometry release", () => {
 	const response = routeWithData(
-		"/v1/data/population/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023",
+		"/v1/data/population/series?place=N09000001&geography=localAuthority&boundaryYear=2023",
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
@@ -97,13 +97,13 @@ test("returns a source-exact series without selecting a geometry release", () =>
 
 	assert.equal(
 		routeWithData(
-			"/v1/data/population/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc",
+			"/v1/data/population/series?place=N09000001&geography=localAuthority&boundaryYear=2023&release=2023-05-uk-bgc",
 		).status,
 		422,
 	);
 	assert.equal(
 		routeWithData(
-			"/v1/data/population/series?areaCode=unknown&geography=localAuthority&boundaryYear=2023",
+			"/v1/data/population/series?place=unknown&geography=localAuthority&boundaryYear=2023",
 		).status,
 		404,
 	);
@@ -118,7 +118,7 @@ test("returns a reviewed derived series on an explicit analysis geography", () =
 			analysisGeographyInventory: analysisInventory,
 		});
 	const response = route(
-		"/v1/data/small-area-fixture/series?areaCode=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=localAuthority/2023-05-uk-bgc-v2",
+		"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=localAuthority/2023-05-uk-bgc-v2",
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
@@ -136,12 +136,12 @@ test("returns a reviewed derived series on an explicit analysis geography", () =
 	]);
 	assert.equal(
 		route(
-			"/v1/data/small-area-fixture/series?areaCode=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=ward/2023-05-uk-bgc",
+			"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=ward/2023-05-uk-bgc",
 		).status,
 		200,
 	);
 	const unavailable = route(
-		"/v1/data/small-area-fixture/series?areaCode=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=ward/2023-05-uk-bgc",
+		"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=ward/2023-05-uk-bgc",
 	);
 	assert.deepEqual(
 		"data" in unavailable.body &&
@@ -193,7 +193,7 @@ test("returns a reviewed derived series through every step of a reviewed path", 
 		],
 	};
 	const response = routeWithCatalog(
-		"/v1/data/small-area-fixture/series?areaCode=E12000002&geography=lsoa&boundaryYear=2011&analysisGeography=region/2023-05-en-rgn",
+		"/v1/data/small-area-fixture/series?place=E12000002&geography=lsoa&boundaryYear=2011&analysisGeography=region/2023-05-en-rgn",
 		dataCatalog,
 		measureObservations,
 		{
@@ -227,4 +227,40 @@ test("returns a reviewed derived series through every step of a reviewed path", 
 		data.provenance.transformation.note,
 		/every step of the reviewed path/,
 	);
+});
+
+test("takes a place reference that carries its own geography", () => {
+	const byCode = routeWithData(
+		"/v1/data/population/series?place=N09000001&geography=localAuthority&boundaryYear=2023",
+	);
+	const byReference = routeWithData(
+		"/v1/data/population/series?place=localAuthority/N09000001&boundaryYear=2023",
+	);
+	assert.equal(byReference.status, 200);
+	assert.deepEqual(byReference.body, byCode.body);
+
+	const disagreeing = routeWithData(
+		"/v1/data/population/series?place=ward/N09000001&geography=localAuthority&boundaryYear=2023",
+	);
+	assert.equal(disagreeing.status, 400);
+	assert.match(
+		(disagreeing.body as { detail: string }).detail,
+		/place names a ward but geography is localAuthority/,
+	);
+
+	// A postcode or a curated location is answered by another route, which
+	// the refusal names.
+	for (const [place, route] of [
+		["postcode/SW1A1AA", "/value"],
+		["location/north-west", "/aggregate"],
+	] as const) {
+		const refused = routeWithData(
+			`/v1/data/population/series?place=${place}&geography=localAuthority&boundaryYear=2023`,
+		);
+		assert.equal(refused.status, 400, place);
+		assert.ok(
+			(refused.body as { detail: string }).detail.includes(route),
+			place,
+		);
+	}
 });

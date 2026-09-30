@@ -643,7 +643,7 @@ only **available** when its endpoint, contract and provenance are published.
       difference for ratio measures.
 - [x] Rank areas by change between two periods through
       `GET /v1/data/{measure-id}/change`, absolutely or as a proportion of the
-      start, with `areaCode` returning one area and its place among the rest.
+      start, with `place` returning one area and its place among the rest.
       Between 2011 and 2022 the City of London grew 56.7% and Tower Hamlets
       26.9%, while Kensington and Chelsea lost 11,915 people; Redcar and
       Cleveland cut emissions 93.8% from 2005 to 2024, the Teesside steelworks
@@ -856,7 +856,7 @@ only **available** when its endpoint, contract and provenance are published.
       rejected rather than summed.
 - [x] Aggregate an extensive or explicitly weighted measure onto any published
       membership target through `GET /v1/data/{measure-id}/aggregate`, with
-      `targetCode`, a code-set-compatible source release and the crosswalk that
+      `place`, a code-set-compatible source release and the crosswalk that
       establishes the membership. The target's geography is the crosswalk's, so
       a combined authority, a county and unitary authority, an English region
       and an integrated care board are each summed the same way, and a measure
@@ -868,8 +868,9 @@ only **available** when its endpoint, contract and provenance are published.
       parts of a larger one. `aggregation.membership` names which claim the
       total rests on. A split or partial overlap is refused rather than used as
       an implicit conversion, and a target the crosswalk never mentions is a
-      404 rather than a sum of nothing. `regionCode` remains the original
-      spelling for a region and is answered beside `target`.
+      404 rather than a sum of nothing. A place reference such as
+      `region/E12000001` also names the target's geography, which the
+      crosswalk must reach.
 - [x] Check a measure against itself across two geographies, through
       `GET /v1/measures/{measure-id}/reconciliation`. Adding the finer
       partition up through a published crosswalk should reproduce the coarser
@@ -2384,7 +2385,7 @@ presentation rounding.
 Allow it only under explicit rules:
 
 ```
-GET /v1/data/population/aggregate?period={period}&geography={source-geography}&boundaryYear={source-boundary-year}&locationId={location-id}
+GET /v1/data/population/aggregate?period={period}&geography={source-geography}&boundaryYear={source-boundary-year}&place=location/{location-id}
 GET /v1/data/population-density?area=location/devon@2026-09&period=2022
 ```
 
@@ -3797,7 +3798,7 @@ catalogues by the contract tests:
 - `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&include=area`
 - `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=csv`
 - `GET /v1/data/population?period=2022&geography=ward&boundaryYear=2023&format=ndjson`
-- `GET /v1/data/population/series?areaCode=N09000001&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/population/series?place=N09000001&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023`
 - `GET /v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039`
 - `GET /v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022`
@@ -3807,20 +3808,20 @@ catalogues by the contract tests:
 - `GET /v1/measures/ghg-emissions/coverage`
 - `GET /v1/data/mobile-5g-coverage?period=2025&geography=localAuthority&boundaryYear=2024`
 - `GET /v1/measures/mobile-4g-coverage`
-- `GET /v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&areaCode=S92000003`
-- `GET /v1/data/total-jobs/series?areaCode=E08000035&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&place=S92000003`
+- `GET /v1/data/total-jobs/series?place=E08000035&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/travel-to-work-bicycle?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/travel-to-work-total?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/car-availability-none?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/qualification-level-4-plus?period=2021&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/broadband-gigabit-availability?period=2025-07&geography=localAuthority&boundaryYear=2024`
-- `GET /v1/data/claimant-count/aggregate?period=2026-04&geography=localAuthority&boundaryYear=2024&areaCode=S92000003`
+- `GET /v1/data/claimant-count/aggregate?period=2026-04&geography=localAuthority&boundaryYear=2024&place=S92000003`
 - `GET /v1/data/temporary-accommodation-children?period=2026-Q1&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/median-annual-pay/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/median-annual-pay/series?place=E08000003&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/crime-total?period=year-ending-2026-03&geography=communitySafetyPartnership&boundaryYear=2023&release=2023-12-ew-bgc`
-- `GET /v1/data/unemployment-rate/series?areaCode=E08000003&geography=localAuthority&boundaryYear=2019`
-- `GET /v1/data/no2-background-mean/aggregate?period=2024&geography=localAuthority&boundaryYear=2024&areaCode=W92000004`
-- `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&areaCode=W92000004`
+- `GET /v1/data/unemployment-rate/series?place=E08000003&geography=localAuthority&boundaryYear=2019`
+- `GET /v1/data/no2-background-mean/aggregate?period=2024&geography=localAuthority&boundaryYear=2024&place=W92000004`
+- `GET /v1/data/ethnicity-indian/aggregate?period=2021&geography=localAuthority&boundaryYear=2023&place=W92000004`
 - `GET /v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment`
 - `GET /v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
@@ -3828,12 +3829,12 @@ catalogues by the contract tests:
 - `GET /v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership`
 - `GET /v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
-- `GET /v1/data/house-price-median/series?areaCode=E05008945&geography=ward&boundaryYear=2020`
+- `GET /v1/data/house-price-median/series?place=E05008945&geography=ward&boundaryYear=2020`
 - `GET /v1/data/imd-decile?period=2025&geography=lsoa&boundaryYear=2021&release=2021-12-ew-bgc-v5&include=area`
 - `GET /v1/data/life-expectancy-female/rankings?period=2022-2024&geography=localAuthority&boundaryYear=2025`
-- `GET /v1/data/life-expectancy-male/series?areaCode=E06000001&geography=localAuthority&boundaryYear=2025`
+- `GET /v1/data/life-expectancy-male/series?place=E06000001&geography=localAuthority&boundaryYear=2025`
 - `GET /v1/data/population?period=2022&geography=constituency&boundaryYear=2024&release=2024-07-uk-bgc&include=area`
-- `GET /v1/data/population-density/series?areaCode=E09000012&geography=localAuthority&boundaryYear=2023`
+- `GET /v1/data/population-density/series?place=E09000012&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`
 - `GET /v1/postcodes/SW1A1AA`

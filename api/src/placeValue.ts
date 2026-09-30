@@ -82,7 +82,7 @@ const seriesAttempt = (
 	let lastReason = "";
 	for (const source of sources) {
 		const { type, boundaryYear } = source.sourceGeography;
-		const via = `/v1/data/${measure.id}/series?areaCode=${encodeURIComponent(candidate.code)}&geography=${type}&boundaryYear=${boundaryYear}`;
+		const via = `/v1/data/${measure.id}/series?place=${encodeURIComponent(candidate.code)}&geography=${type}&boundaryYear=${boundaryYear}`;
 		const response = dispatch(via);
 		if (response.status !== 200) {
 			lastReason = detailOf(response.body);
@@ -158,8 +158,8 @@ const aggregateAttempt = (
 	const { boundaryYear } = source.sourceGeography;
 	const selector =
 		candidate.kind === "named-location"
-			? `locationId=${encodeURIComponent(candidate.code)}`
-			: `areaCode=${encodeURIComponent(candidate.code)}`;
+			? `place=location/${encodeURIComponent(candidate.code)}`
+			: `place=${encodeURIComponent(candidate.code)}`;
 	const via = `/v1/data/${measure.id}/aggregate?${selector}&geography=${memberGeography}&boundaryYear=${boundaryYear}&period=${encodeURIComponent(chosen)}`;
 	const response = dispatch(via);
 	if (response.status !== 200) {

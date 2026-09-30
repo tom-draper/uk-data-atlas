@@ -91,7 +91,7 @@ test("ranks change between two periods of one source partition", () => {
 	// One area, keeping its place among all of them.
 	const one = ask(
 		"population",
-		`${partition}&startPeriod=2022&endPeriod=2024&by=relative&areaCode=N09000001`,
+		`${partition}&startPeriod=2022&endPeriod=2024&by=relative&place=N09000001`,
 	);
 	assert.equal(data(one).records.length, 1);
 	assert.equal(data(one).records[0]!.rank, 2);
@@ -143,7 +143,7 @@ test("ranks change between two periods of one source partition", () => {
 		],
 		[
 			"population",
-			`${partition}&startPeriod=2022&endPeriod=2024&areaCode=E99999999`,
+			`${partition}&startPeriod=2022&endPeriod=2024&place=E99999999`,
 			404,
 			/not in this partition/,
 		],

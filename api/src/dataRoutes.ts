@@ -26,6 +26,7 @@ import {
 	readPageSize,
 } from "./pagination";
 import type { RouteRequest } from "./routing";
+import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** A measure's source-exact observations for one period, as JSON or a tabular export. */
@@ -62,8 +63,16 @@ export const handleDataRoutes = ({
 			"No published measure serves data at that path.",
 		);
 	}
+	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
+	if (place && "status" in place) return place;
+	if (place?.kind === "location")
+		return problem(
+			400,
+			"Invalid Query",
+			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${measureId}/aggregate sums it from its members.`,
+		);
 	const period = parsedUrl.searchParams.get("period");
-	const geography = parsedUrl.searchParams.get("geography");
+	const geography = requestedGeography(parsedUrl.searchParams, place);
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 	// This route documents all three as required, so a caller who leaves one
 	// out is answered the same way whatever the measure. Which partition those
@@ -110,7 +119,7 @@ export const handleDataRoutes = ({
 			"This source-exact endpoint does not yet convert observations or aggregate them.",
 		);
 	}
-	const areaCode = parsedUrl.searchParams.get("areaCode");
+	const areaCode = place?.code;
 	const include = parsedUrl.searchParams.get("include");
 	const requestedFormat = parsedUrl.searchParams.get("format") ?? "json";
 	const unitMode = parsedUrl.searchParams.get("units") ?? "source";

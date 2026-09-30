@@ -12,6 +12,7 @@ import {
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
 import type { RouteRequest } from "./routing";
+import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 const parseAnalysisGeography = (value: string) => {
@@ -72,15 +73,23 @@ export const handleDataSeriesRoutes = ({
 			"This source-exact series endpoint does not select geometry releases, convert observations or aggregate them.",
 		);
 	}
-	const areaCode = parsedUrl.searchParams.get("areaCode");
-	const geography = parsedUrl.searchParams.get("geography");
+	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
+	if (place && "status" in place) return place;
+	if (place?.kind === "location")
+		return problem(
+			400,
+			"Invalid Query",
+			`A series is one area's. A curated location is summed from its members by /v1/data/${measureId}/aggregate, or answered by /v1/data/${measureId}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
+		);
+	const areaCode = place?.code;
+	const geography = requestedGeography(parsedUrl.searchParams, place);
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 	const datasetId = parsedUrl.searchParams.get("datasetId");
 	if (!areaCode || !geography || !boundaryYear) {
 		return problem(
 			400,
 			"Invalid Query",
-			"areaCode, geography and boundaryYear are required for a source-exact series.",
+			"place, geography and boundaryYear are required for a source-exact series; a place reference such as localAuthority/E08000035 carries its geography.",
 		);
 	}
 	// A series is the whole partition rather than a moment in it, so no period

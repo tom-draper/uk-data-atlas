@@ -41,7 +41,7 @@ const refuse = (detail: string) =>
 /** Resolve an explicit membership target without inferring a crosswalk. */
 export const resolveAggregationTarget = ({
 	targetCode,
-	regionCode,
+	targetGeography,
 	crosswalkId,
 	pathId,
 	sourceRelease,
@@ -51,7 +51,7 @@ export const resolveAggregationTarget = ({
 	measureCompatibilityInventory,
 }: {
 	targetCode: string | null;
-	regionCode: string | null;
+	targetGeography: string | null;
 	crosswalkId: string | null;
 	pathId: string | null;
 	sourceRelease: string | null;
@@ -71,7 +71,7 @@ export const resolveAggregationTarget = ({
 		return problem(
 			400,
 			"Invalid Query",
-			"targetCode aggregation requires crosswalk, or a published membership path, and sourceRelease, so membership is explicit rather than inferred.",
+			"Summing members onto an area other than a country requires crosswalk, or a published membership path, and sourceRelease, so membership is explicit rather than inferred.",
 		);
 	}
 	if (!measureCompatibilityInventory) {
@@ -166,9 +166,9 @@ export const resolveAggregationTarget = ({
 		};
 	}
 	const noun = route.pathId ? "path" : "crosswalk";
-	if (regionCode && route.to.geography !== "region")
+	if (targetGeography && route.to.geography !== targetGeography)
 		return refuse(
-			`That ${noun} does not map to regions. Use targetCode to aggregate onto another geography.`,
+			`That ${noun} maps to ${route.to.geography}, not the ${targetGeography} the place names.`,
 		);
 	const established = route.claim();
 	if ("status" in established) return established;
