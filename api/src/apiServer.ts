@@ -290,10 +290,10 @@ export const createApiServer = (
 		};
 		response.writeHead(result.status, headers);
 		if (isStoredFile(result.body)) {
-			const file = createReadStream(result.body.path).on(
-				"error",
-				(error) => response.destroy(error),
-			);
+			const file = createReadStream(result.body.path, {
+				start: result.body.start,
+				end: result.body.end,
+			}).on("error", (error) => response.destroy(error));
 			(result.body.gunzip
 				? file
 						.pipe(createGunzip())

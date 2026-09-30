@@ -479,6 +479,10 @@ paths:
         it with `Content-Encoding: gzip` and one that does not receives it
         decoded. The two encodings have different `ETag`s, and the
         descriptor's `bytes` and `contentHash` describe the decoded GeoJSON.
+
+        The GeoParquet file honours byte-range requests, so DuckDB, GDAL or
+        any reader that fetches Parquet over HTTP can read its footer and
+        only the row groups it needs. The GeoJSON is always sent whole.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -499,6 +503,7 @@ paths:
             enum: [geoparquet, geojson]
             default: geoparquet
           description: The representation, GeoParquet 1.1 or GeoJSON.
+        - $ref: "#/components/parameters/ByteRange"
       responses:
         "200":
           description: The GeoParquet or GeoJSON file.
@@ -511,6 +516,10 @@ paths:
               schema:
                 type: string
                 format: binary
+        "206":
+          $ref: "#/components/responses/PartialContent"
+        "416":
+          $ref: "#/components/responses/RangeNotSatisfiable"
         "400":
           $ref: "#/components/responses/InvalidQuery"
         "404":
@@ -678,9 +687,15 @@ paths:
         map, a CDN or a warehouse. Its SHA-256 is the `contentHash` the
         descriptor publishes, so a drawing made from it can be tied to the
         Atlas release that produced it.
+
+        It can also be read in place: the archive honours byte-range
+        requests, so a map library such as MapLibre with the `pmtiles`
+        protocol can draw from this URL directly, fetching only the tiles in
+        view.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
+        - $ref: "#/components/parameters/ByteRange"
       responses:
         "200":
           description: The PMTiles archive.
@@ -689,6 +704,10 @@ paths:
               schema:
                 type: string
                 format: binary
+        "206":
+          $ref: "#/components/responses/PartialContent"
+        "416":
+          $ref: "#/components/responses/RangeNotSatisfiable"
         "404":
           $ref: "#/components/responses/NotFound"
         "503":
@@ -8713,6 +8732,20 @@ paths:
 
 components:
   parameters:
+    ByteRange:
+      name: Range
+      in: header
+      required: false
+      schema:
+        type: string
+        example: bytes=0-16383
+      description: >
+        One byte range of the file, as `bytes=start-end`, `bytes=start-` or
+        `bytes=-length`. This is how a PMTiles client reads an archive: the
+        header, then a directory, then only the tiles it needs. Several
+        ranges in one request are not supported and get the whole file, as
+        does an `If-Range` that no longer matches the ETag. Files stored
+        gzipped (the GeoJSON downloads) are always sent whole.
     PointLookupCrs:
       name: crs
       in: query
@@ -8933,6 +8966,29 @@ components:
       description: How many records to return, 1 to 500.
 
   responses:
+    PartialContent:
+      description: >
+        The requested byte range. `Content-Range` says which bytes these are
+        and how long the whole file is; the ETag is the whole file's.
+      headers:
+        Content-Range:
+          schema:
+            type: string
+            example: bytes 0-16383/684673
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+    RangeNotSatisfiable:
+      description: >
+        The range starts past the end of the file. `Content-Range` gives the
+        file's length as `bytes */length`.
+      headers:
+        Content-Range:
+          schema:
+            type: string
+            example: bytes */684673
     NotFound:
       description: No resource matches that identity.
       content:
