@@ -4358,7 +4358,10 @@ paths:
         With `geography` and `release`, checks each `value` against one exact
         boundary release before a caller joins data to it. Omit both to rank
         compiled geography/releases by exact resolutions and report the likely
-        one; this is a diagnosis, never an automatic join or conversion. At
+        one; this is a diagnosis, never an automatic join or conversion. Where
+        other releases resolve exactly as many values, the likely one is the
+        newest of them and `likely.tiedWith` names the rest, since the values
+        alone cannot tell them apart. At
         most 500 values may be sent in one GET; POST the column as JSON or CSV
         to send more.
 
