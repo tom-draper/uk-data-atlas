@@ -76,6 +76,9 @@ export const proposeExtentContinuity = (repositoryRoot: string) => {
 			new Set(artifact.areas.map((area) => area.code)),
 		);
 	}
+	// A lookup that lists only the areas that changed, as ONS's ward code
+	// history does, leaves the rest to continuity, so only one covering every
+	// area of its release replaces it.
 	const publishedIdentity = new Set(
 		read<CrosswalkInventory>("crosswalk-inventory.json")
 			.crosswalks.filter(
@@ -84,7 +87,11 @@ export const proposeExtentContinuity = (repositoryRoot: string) => {
 					(crosswalk.relationshipPurpose ??
 						(crosswalk.method === "official-lookup"
 							? "identity"
-							: undefined)) === "identity",
+							: undefined)) === "identity" &&
+					crosswalk.recordCount >=
+						(codes.get(
+							`${crosswalk.from.geography}/${crosswalk.from.boundaryRelease}`,
+						)?.size ?? Infinity),
 			)
 			.flatMap((crosswalk) => {
 				const from = `${crosswalk.from.geography}/${crosswalk.from.boundaryRelease}`;
