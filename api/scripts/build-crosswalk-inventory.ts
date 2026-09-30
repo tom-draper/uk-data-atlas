@@ -354,12 +354,21 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	console.log(
 		`Reusing ${reusable.size} validated crosswalks; compiling ${pending.length} changed or uncached crosswalks.`,
 	);
+	const writeArtifact = (artifact: CrosswalkArtifact) => {
+		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);
+		mkdirSync(dirname(path), { recursive: true });
+		writeFileSync(path, `${JSON.stringify(artifact, null, "\t")}\n`);
+	};
+	// Geometry crosswalks take minutes each, so each is written as it compiles:
+	// a build stopped part way reuses those on its next run, which revalidates
+	// every one against its inputs before trusting it.
 	const compiled = compileCrosswalks(
 		repositoryRoot,
 		pending,
 		readCompiledAreaLookup(outputDirectory),
 		geometrySources,
 		reusable,
+		writeArtifact,
 	);
 	const artifactById = new Map([
 		...reusable,
@@ -374,11 +383,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 		return artifact;
 	});
 	const inventory = createCrosswalkInventory(artifacts);
-	for (const artifact of artifacts) {
-		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);
-		mkdirSync(dirname(path), { recursive: true });
-		writeFileSync(path, `${JSON.stringify(artifact, null, "\t")}\n`);
-	}
+	for (const artifact of artifacts) writeArtifact(artifact);
 	const inventoryPath = join(outputDirectory, "crosswalk-inventory.json");
 	writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, "\t")}\n`);
 	return { inventoryPath, crosswalkCount: artifacts.length };
