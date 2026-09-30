@@ -6,20 +6,23 @@ import {
 	BrexitLADDataset,
 	SelectedArea,
 } from "@lib/types";
-import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import {
+	selectedAreaLadRecord,
+	type LadResolver,
+} from "@/lib/helpers/selectedAreaLad";
 
 interface BrexitChartProps {
 	activeDataset: Dataset | null;
 	availableDatasets: Record<string, BrexitLADDataset>;
 	aggregatedData: Record<number, AggregatedBrexitData> | null;
 	selectedArea: SelectedArea | null;
-	codeMapper?: CodeYearResolver;
+	codeMapper?: LadResolver;
 	year: number;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
@@ -28,12 +31,11 @@ interface BrexitChartProps {
 const LEAVE_COLOR = "#b41414"; // rgb(180, 20, 20) — matches bar fill
 const REMAIN_COLOR = "#1e3cb4"; // rgb(30, 60, 180) — matches bar fill
 
-function computeBrexitElectoralStats(
+export function resolveBrexitElectoralStats(
 	dataset: BrexitLADDataset,
 	aggregatedData: Record<number, AggregatedBrexitData> | null,
 	selectedArea: SelectedArea | null,
-	codeMapper: CodeYearResolver | undefined,
-	year: number,
+	codeMapper?: LadResolver,
 ) {
 	if (
 		selectedArea === null &&
@@ -50,23 +52,13 @@ function computeBrexitElectoralStats(
 		};
 	}
 
-	if (
-		selectedArea &&
-		selectedArea.type === "localAuthority" &&
-		selectedArea.data
-	) {
-		const laCode = selectedArea.code;
-		let area = dataset.data?.[laCode];
-		if (!area && codeMapper) {
-			const mappedCode = codeMapper.getCodeForYear(
-				"localAuthority",
-				laCode,
-				year,
-			);
-			if (mappedCode) {
-				area = dataset.data?.[mappedCode];
-			}
-		}
+	if (selectedArea) {
+		const area = selectedAreaLadRecord(
+			dataset.data,
+			selectedArea,
+			codeMapper,
+			dataset.boundaryYear,
+		);
 		if (area) {
 			return {
 				pctLeave: area.pctLeave,
@@ -96,12 +88,11 @@ export default function BrexitElectoralChart({
 	const dataset = availableDatasets?.[year];
 
 	const brexitStats = dataset
-		? computeBrexitElectoralStats(
+		? resolveBrexitElectoralStats(
 				dataset,
 				aggregatedData,
 				selectedArea,
 				codeMapper,
-				year,
 			)
 		: null;
 
