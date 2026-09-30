@@ -325,3 +325,43 @@ test(
 		assert.ok(source!.bytesRead < bytes);
 	},
 );
+
+test("gzips a large JSON answer for a client that takes it, and revalidates it", async (t) => {
+	const { get } = await serve(t);
+	const plain = await get("/v1/openapi.yaml", {
+		headers: { "accept-encoding": "identity" },
+	});
+	const text = await plain.text();
+	assert.ok(text.length > 1024);
+	assert.equal(plain.headers.get("content-encoding"), null);
+	assert.equal(
+		plain.headers.get("content-length"),
+		String(Buffer.byteLength(text)),
+	);
+	assert.equal(plain.headers.get("vary"), "accept-encoding");
+
+	const gzipped = await get("/v1/openapi.yaml", {
+		headers: { "accept-encoding": "gzip" },
+	});
+	assert.equal(gzipped.headers.get("content-encoding"), "gzip");
+	assert.equal(gzipped.headers.get("vary"), "accept-encoding");
+	const encodedLength = Number(gzipped.headers.get("content-length"));
+	assert.ok(encodedLength > 0 && encodedLength < text.length / 2);
+	// fetch decodes it, so the text is the plain answer again.
+	assert.equal(await gzipped.text(), text);
+	// The encoded form is different bytes, so it has its own validator,
+	// and that validator is the one that revalidates it.
+	const etag = gzipped.headers.get("etag")!;
+	assert.match(etag, /-gzip"$/);
+	assert.notEqual(etag, plain.headers.get("etag"));
+	const revalidated = await get("/v1/openapi.yaml", {
+		headers: { "accept-encoding": "gzip", "if-none-match": etag },
+	});
+	assert.equal(revalidated.status, 304);
+
+	// A small answer is not worth the gzip header.
+	const small = await get("/v1/no/such/thing", {
+		headers: { "accept-encoding": "gzip" },
+	});
+	assert.equal(small.headers.get("content-encoding"), null);
+});

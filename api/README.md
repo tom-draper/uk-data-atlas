@@ -2556,6 +2556,10 @@ line up.
   100,000 clients are remembered; the least recently seen is forgotten first,
   and starts again with the full bucket it would have earned anyway.
 - **Request target:** longer than `ATLAS_MAX_URL_LENGTH` is `414`.
+- **Compression:** a JSON, GeoJSON, CSV, NDJSON or YAML answer of 1 KB or
+  more is gzipped for a client that sends `Accept-Encoding: gzip`, on the
+  thread pool rather than the event loop. The gzipped form has its own ETag,
+  ending `-gzip"`.
 - **Slow clients:** headers must arrive within 15 seconds and the whole
   request within 30; idle keep-alive connections close after 5.
 - **Geometry cache:** a count of releases. One costs some 10 to 200 MB of
