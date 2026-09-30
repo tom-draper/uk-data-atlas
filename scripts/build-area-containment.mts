@@ -6,8 +6,9 @@
  *
  * Needs the API's build output (pnpm --dir api build); the file it writes is
  * committed with the rest of public/data, and the precompile reads it.
+ * `--check` fails instead of writing when the committed file is out of date.
  */
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readApiCatalogues } from "../api/src/catalogueLoader";
@@ -61,9 +62,23 @@ const crosswalks = geographyResolver
 	});
 
 const containment = compileAreaContainment(wardReleases, crosswalks);
-writeFileSync(OUTPUT, JSON.stringify(encodeBoundaryMappings(containment)));
-console.log(
-	`${Object.keys(containment.wardToLad).length} wards placed in a local authority; ` +
-		`constituencies for ${Object.keys(containment.constituencyToWards).length} ward releases`,
-);
-console.log(`Wrote ${OUTPUT}`);
+const json = JSON.stringify(encodeBoundaryMappings(containment));
+
+// `--check` compares the committed file with what the resolver now says, so
+// a rebuilt API that places a ward elsewhere fails the full check.
+if (process.argv.includes("--check")) {
+	if (readFileSync(OUTPUT, "utf8") !== json) {
+		console.error(
+			`${OUTPUT} differs from the resolver's containment; run pnpm containment:build.`,
+		);
+		process.exit(1);
+	}
+	console.log("The committed ward containment is the resolver's.");
+} else {
+	writeFileSync(OUTPUT, json);
+	console.log(
+		`${Object.keys(containment.wardToLad).length} wards placed in a local authority; ` +
+			`constituencies for ${Object.keys(containment.constituencyToWards).length} ward releases`,
+	);
+	console.log(`Wrote ${OUTPUT}`);
+}

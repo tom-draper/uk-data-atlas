@@ -769,6 +769,8 @@ export const compileCrosswalks = (
 	areaLookup?: AreaLookup,
 	geometrySources?: GeometrySourceLookup,
 	prior: ReadonlyMap<string, CrosswalkArtifact> = new Map(),
+	/** Called with each artifact as it is compiled, before the next starts. */
+	onCompiled?: (artifact: CrosswalkArtifact) => void,
 ): { inventory: CrosswalkInventory; artifacts: CrosswalkArtifact[] } => {
 	const compiled = new Map(prior);
 	const geometryCache = geometrySources
@@ -839,6 +841,7 @@ export const compileCrosswalks = (
 			);
 		})();
 		compiled.set(artifact.id, artifact);
+		onCompiled?.(artifact);
 		return artifact;
 	});
 	return { inventory: createCrosswalkInventory(artifacts), artifacts };
