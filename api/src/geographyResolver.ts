@@ -701,6 +701,9 @@ export class GeographyResolver {
 	): ResolvedAreaTranslation[] {
 		return this.translator.translateArea(source, to, purpose);
 	}
+	sameArea(source: AreaIdentity, to: GeographyEndpoint) {
+		return this.translator.sameArea(source, to);
+	}
 
 	relationshipCapability(
 		from: GeographyEndpoint,
