@@ -12,8 +12,8 @@ import {
 	round,
 	type AreaGeometry,
 } from "./areaOverlap";
-import type { SameCodeContinuityCrosswalkAdapter } from "./crosswalkAdapters";
-import type { SameCodeContinuityCrosswalkArtifact } from "./crosswalkInventory";
+import type { ExtentContinuityCrosswalkAdapter } from "./crosswalkAdapters";
+import type { ExtentContinuityCrosswalkArtifact } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
 import { releaseKey } from "./geographyKeys";
 
@@ -89,12 +89,12 @@ const difference = (
  * or official lookup, and never treated as identity. So is a code the clipper
  * cannot measure.
  */
-export const compileSameCodeContinuityCrosswalk = (
+export const compileExtentContinuityCrosswalk = (
 	repositoryRoot: string,
-	adapter: SameCodeContinuityCrosswalkAdapter,
+	adapter: ExtentContinuityCrosswalkAdapter,
 	geometrySources: GeometrySourceLookup,
 	areaLookup: AreaLookup | undefined,
-): SameCodeContinuityCrosswalkArtifact => {
+): ExtentContinuityCrosswalkArtifact => {
 	const sources = readGeometries(
 		repositoryRoot,
 		adapter.id,
@@ -114,8 +114,8 @@ export const compileSameCodeContinuityCrosswalk = (
 		releaseKey(adapter.to.geography, adapter.to.boundaryRelease),
 	);
 	type Continuity =
-		SameCodeContinuityCrosswalkArtifact["validation"]["continuity"];
-	const records: SameCodeContinuityCrosswalkArtifact["records"] = [];
+		ExtentContinuityCrosswalkArtifact["validation"]["continuity"];
+	const records: ExtentContinuityCrosswalkArtifact["records"] = [];
 	const changedExtent: Continuity["changedExtent"] = [];
 	const unmeasured: Continuity["unmeasured"] = [];
 	let sharedCodeCount = 0;

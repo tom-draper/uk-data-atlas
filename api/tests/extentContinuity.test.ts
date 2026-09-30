@@ -9,11 +9,11 @@ import { createAreaLookup } from "../src/areaInventory";
 import { createAreaRelationshipIndex } from "../src/areaRelationships";
 import {
 	readCrosswalkAdapters,
-	type SameCodeContinuityCrosswalkAdapter,
+	type ExtentContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "../src/crosswalkInventory";
 import { compileRelationshipPaths } from "../src/relationshipPaths";
-import { compileSameCodeContinuityCrosswalk } from "../src/sameCodeContinuity";
+import { compileExtentContinuityCrosswalk } from "../src/extentContinuity";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;
@@ -114,9 +114,9 @@ const areaLookup = createAreaLookup([
 	},
 ]);
 
-const adapter: SameCodeContinuityCrosswalkAdapter = {
-	id: "ward-1-to-2-same-code-continuity",
-	method: "same-code-continuity",
+const adapter: ExtentContinuityCrosswalkAdapter = {
+	id: "ward-1-to-2-extent-continuity",
+	method: "extent-continuity",
 	quality: "derived",
 	relationshipPurpose: "identity",
 	weighting: { status: "not-applicable" },
@@ -137,7 +137,7 @@ const withFixture = (run: (root: string) => void) => {
 
 test("publishes a shared code as identity only where its extent held", () => {
 	withFixture((root) => {
-		const artifact = compileSameCodeContinuityCrosswalk(
+		const artifact = compileExtentContinuityCrosswalk(
 			root,
 			adapter,
 			geometrySources,
@@ -229,10 +229,10 @@ test("compiles through the inventory as a derived identity path of history", () 
 	});
 });
 
-test("refuses to compile same-code continuity without geometry", () => {
+test("refuses to compile extent continuity without geometry", () => {
 	assert.throws(
 		() => compileCrosswalks(".", [adapter], areaLookup),
-		/same-code-continuity crosswalks need the geometry source registry/,
+		/extent-continuity crosswalks need the geometry source registry/,
 	);
 });
 

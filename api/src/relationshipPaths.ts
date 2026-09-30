@@ -90,7 +90,7 @@ export const relationshipPurposeFor = (
 			: crosswalk.method === "area-overlap" ||
 				  crosswalk.method === "population-overlap"
 				? "apportion"
-				: crosswalk.method === "same-code-continuity"
+				: crosswalk.method === "extent-continuity"
 					? "identity"
 					: undefined);
 

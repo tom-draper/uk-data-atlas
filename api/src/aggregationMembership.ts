@@ -51,13 +51,13 @@ export const membershipClaimFor = (crosswalk: CrosswalkArtifact) => {
 
 /**
  * A step a composed membership path may take: one that establishes
- * membership, or same-code continuity, whose records are published only where
+ * membership, or extent continuity, whose records are published only where
  * a code's extent held and so carry an area onto itself in a later release.
  * An identity lookup is not one: it names a successor, not the same extent.
  */
 const pathStepClaimFor = (crosswalk: CrosswalkArtifact) =>
-	crosswalk.method === "same-code-continuity"
-		? "verified-same-code-continuity"
+	crosswalk.method === "extent-continuity"
+		? "verified-extent-continuity"
 		: membershipClaimFor(crosswalk);
 
 /**
@@ -144,7 +144,7 @@ export const fullMembership = (
 /**
  * Why a path establishes membership, step by step, or the first step that
  * does not. Every step must run forward and carry a membership claim or
- * same-code continuity: a reversed containment lists an area's parts, and no
+ * extent continuity: a reversed containment lists an area's parts, and no
  * other step says a whole area lies inside another.
  */
 export const pathMembershipClaims = (

@@ -7,7 +7,7 @@ import {
 	type AreaOverlapCrosswalkAdapter,
 	type PopulationOverlapCrosswalkAdapter,
 	type PropertyCrosswalkAdapter,
-	type SameCodeContinuityCrosswalkAdapter,
+	type ExtentContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import {
 	compileCrosswalks,
@@ -15,7 +15,7 @@ import {
 	type AreaOverlapCrosswalkArtifact,
 	type CrosswalkArtifact,
 	type PropertyCrosswalkArtifact,
-	type SameCodeContinuityCrosswalkArtifact,
+	type ExtentContinuityCrosswalkArtifact,
 } from "../src/crosswalkInventory";
 import {
 	CONTAINMENT_TOLERANCE_M,
@@ -57,7 +57,7 @@ const readCompiledAreaLookup = (outputDirectory: string) => {
 };
 
 type GeometryCrosswalkAdapter =
-	AreaOverlapCrosswalkAdapter | SameCodeContinuityCrosswalkAdapter;
+	AreaOverlapCrosswalkAdapter | ExtentContinuityCrosswalkAdapter;
 type CleanContainmentAdapter = PropertyCrosswalkAdapter & {
 	method: "clean-containment";
 };
@@ -73,7 +73,7 @@ const reusableGeometryCrosswalk = (
 	geometrySources: ReturnType<typeof readGeometrySourceLookup>,
 ):
 	| AreaOverlapCrosswalkArtifact
-	| SameCodeContinuityCrosswalkArtifact
+	| ExtentContinuityCrosswalkArtifact
 	| undefined => {
 	const path = join(outputDirectory, "crosswalks", `${adapter.id}.json`);
 	if (!existsSync(path)) return undefined;
@@ -112,7 +112,7 @@ const reusableGeometryCrosswalk = (
 			)
 				return undefined;
 		} else if (
-			artifact.method !== "same-code-continuity" ||
+			artifact.method !== "extent-continuity" ||
 			artifact.validation.continuity.sliverWidthM !== adapter.sliverWidthM
 		)
 			return undefined;
@@ -311,7 +311,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 			);
 		} else if (
 			adapter.method === "area-overlap" ||
-			adapter.method === "same-code-continuity"
+			adapter.method === "extent-continuity"
 		) {
 			artifact = reusableGeometryCrosswalk(
 				outputDirectory,

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { compileAreaOverlapCrosswalk } from "./areaOverlap";
 import { compileGeometricContainmentCrosswalk } from "./geometricContainment";
 import { compilePopulationOverlapCrosswalk } from "./populationOverlap";
-import { compileSameCodeContinuityCrosswalk } from "./sameCodeContinuity";
+import { compileExtentContinuityCrosswalk } from "./extentContinuity";
 import { AreaGeometryCache, type GeometrySourceLookup } from "./areaGeometry";
 import {
 	validateGeometryContainment,
@@ -20,7 +20,7 @@ import type {
 	GeometricContainmentCrosswalkAdapter,
 	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
-	SameCodeContinuityCrosswalkAdapter,
+	ExtentContinuityCrosswalkAdapter,
 } from "./crosswalkAdapters";
 import {
 	validateEndpoint,
@@ -255,7 +255,7 @@ export type GeometricContainmentCrosswalkArtifact = CrosswalkArtifactBase & {
 	}>;
 };
 
-export type SameCodeContinuityValidation = {
+export type ExtentContinuityValidation = {
 	sliverWidthM: number;
 	sourceAreaCount: number;
 	targetAreaCount: number;
@@ -280,16 +280,16 @@ export type SameCodeContinuityValidation = {
 	unmeasured: Array<{ code: string; reason: string }>;
 };
 
-export type SameCodeContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
-	method: "same-code-continuity";
+export type ExtentContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
+	method: "extent-continuity";
 	quality: "derived";
 	relationshipPurpose: "identity";
-	weighting: SameCodeContinuityCrosswalkAdapter["weighting"];
+	weighting: ExtentContinuityCrosswalkAdapter["weighting"];
 	provenance: AreaOverlapCrosswalkArtifact["provenance"];
 	validation: {
 		sourceNameConflicts: Array<{ code: string; names: string[] }>;
 		endpoints: CrosswalkEndpoints;
-		continuity: SameCodeContinuityValidation;
+		continuity: ExtentContinuityValidation;
 	};
 	records: Array<{
 		source: CrosswalkArea;
@@ -311,7 +311,7 @@ export type CrosswalkArtifact =
 	| AreaOverlapCrosswalkArtifact
 	| PopulationOverlapCrosswalkArtifact
 	| GeometricContainmentCrosswalkArtifact
-	| SameCodeContinuityCrosswalkArtifact;
+	| ExtentContinuityCrosswalkArtifact;
 
 export type CrosswalkInventory = {
 	schemaVersion: 1;
@@ -696,8 +696,8 @@ export const compileCrosswalks = (
 					areaLookup,
 				);
 			}
-			if (adapter.method === "same-code-continuity") {
-				return compileSameCodeContinuityCrosswalk(
+			if (adapter.method === "extent-continuity") {
+				return compileExtentContinuityCrosswalk(
 					repositoryRoot,
 					adapter,
 					geometrySources,

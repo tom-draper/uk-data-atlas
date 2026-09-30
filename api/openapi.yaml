@@ -877,7 +877,7 @@ paths:
         Compares the two compiled code sets, with identifiers present in only
         one release kept distinct from a claim that an area was added or
         removed. Shared codes are called continuous only where a published
-        same-code-continuity crosswalk measured their geometry. Its changed,
+        extent-continuity crosswalk measured their geometry. Its changed,
         indeterminate and unmeasured findings remain review evidence, not
         conversion claims. Other published crosswalks between the releases are
         named separately with their directional code cardinality and bounded
@@ -2622,8 +2622,8 @@ paths:
         A published relationship path may be named with `path` in place of
         `crosswalk`, to reach a target no single crosswalk maps to, such as
         wards summed into a region through their local authorities. Every step
-        must run forward and declare membership, as a crosswalk must, or be a
-        same-code continuity step, which carries an area onto itself in a later
+        must run forward and declare membership, as a crosswalk must, or be an
+        extent continuity step, which carries an area onto itself in a later
         release; an identity lookup or a reversed step is refused. A source
         area is a member only if every step carries it wholly into one area and
         the last of those is the target, and any source that reaches the target

@@ -374,7 +374,7 @@ export const crosswalkFindings = (
 		);
 	}
 
-	if (artifact.method === "same-code-continuity") {
+	if (artifact.method === "extent-continuity") {
 		// Recompute the identity claim from each published pair rather than
 		// trusting the compiler's own count.
 		const { continuity } = artifact.validation;

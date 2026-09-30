@@ -184,7 +184,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [ ] Relate the remaining geographies published with no relationship at all:
       local planning authorities, major towns and cities, and travel-to-work
       areas. These need a derived method stated as such.
-- [x] Publish derived `same-code-continuity` identity between consecutive
+- [x] Publish derived `extent-continuity` identity between consecutive
       releases of one geography, where no piece of the difference between a
       shared code's two geometries is wider than generalisation slivers.
       Shared codes whose extent moved are listed as `changedExtent`, not
@@ -458,7 +458,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Compare two boundary releases through
       `GET /v1/boundary-releases:compare`. Codes held by only one release are
       kept apart from any claim that an area was added or removed; shared codes
-      are continuous only where a same-code-continuity crosswalk measured their
+      are continuous only where a extent-continuity crosswalk measured their
       geometry, with changed and unmeasured ones listed for review; and other
       published crosswalks between the releases are named with their code
       cardinality and split- or merge-shaped examples.
@@ -906,7 +906,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Aggregate onto a membership target through a published path with
       `path` in place of `crosswalk`, such as wards into a region through
       their local authorities. Every step must run forward and declare
-      membership, or be same-code continuity; a source is summed only if every
+      membership, or be extent continuity; a source is summed only if every
       step carries it wholly into one area ending at the target, and any
       source that reaches the target another way refuses the sum.
 
@@ -2058,7 +2058,7 @@ Each relation includes a `method` and `quality`:
 | ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | `official-lookup`       | Publisher supplied an explicit correspondence                                          | Preferred whenever available                                |
 | `same-geometry-recode`  | 1:1 code/name change with unchanged geometry                                           | Safe identity migration                                     |
-| `same-code-continuity`  | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
+| `extent-continuity`     | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
 | `clean-containment`     | A published parent code or verified nesting relation                                   | Membership and exact roll-up                                |
 | `geometric-containment` | Every child sits within one parent, established from the two releases' geometry        | Membership where no lookup carries the hierarchy; derived   |
 | `area-overlap`          | Geometry intersection, weighted by area                                                | Land-area quantities; not people by default                 |
@@ -3938,7 +3938,7 @@ that a slightly different rule would change. Its remaining limit is the
 generalisation itself: a genuine overlap narrower than the threshold would be
 dropped with the slivers, and generalised files cannot tell the two apart.
 
-The fourth method, `same-code-continuity`, is also computed. GSS codes are
+The fourth method, `extent-continuity`, is also computed. GSS codes are
 meant to change when a boundary does, but a code can survive a realignment
 and a recycled code need not mean the same place, so a code two releases
 share is treated as evidence rather than as identity. Each shared code's two
@@ -3973,7 +3973,7 @@ that lookup, and a pair sharing fewer than half its codes is skipped, which
 leaves the 2024 constituency redistribution and the 2011 move to GSS local
 authority codes to methods that can describe them. So is a release whose
 geometry file holds no shapes, such as the names-and-codes 2011 data zone
-file. `pnpm tsx scripts/propose-same-code-continuity.ts --write` regenerates
+file. `pnpm tsx scripts/propose-extent-continuity.ts --write` regenerates
 the adapters when a release is added.
 
 Chaining the releases makes an area's history long, and every crosswalk

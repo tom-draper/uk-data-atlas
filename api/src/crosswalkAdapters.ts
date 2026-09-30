@@ -15,7 +15,7 @@ export type CrosswalkMethod =
 	| "area-overlap"
 	| "population-overlap"
 	| "geometric-containment"
-	| "same-code-continuity";
+	| "extent-continuity";
 export type CrosswalkQuality = "publisher-supplied" | "derived";
 export type PropertyRelationshipPurpose = "identity" | "membership";
 export type AreaOverlapWeighting = {
@@ -109,12 +109,12 @@ export type AreaOverlapCrosswalkAdapter = {
 	minimumCoverage: number;
 };
 
-// Same-code continuity adapters pair the codes two releases of one geography
+// Extent continuity adapters pair the codes two releases of one geography
 // share, and publish a pair as identity only where its two geometries differ
 // by no more than generalisation slivers.
-export type SameCodeContinuityCrosswalkAdapter = {
+export type ExtentContinuityCrosswalkAdapter = {
 	id: string;
-	method: "same-code-continuity";
+	method: "extent-continuity";
 	quality: "derived";
 	relationshipPurpose: "identity";
 	weighting: { status: "not-applicable" };
@@ -165,7 +165,7 @@ export type CrosswalkAdapter =
 	| AreaOverlapCrosswalkAdapter
 	| PopulationOverlapCrosswalkAdapter
 	| GeometricContainmentCrosswalkAdapter
-	| SameCodeContinuityCrosswalkAdapter;
+	| ExtentContinuityCrosswalkAdapter;
 
 const PROPERTY_METHODS = ["official-lookup", "clean-containment"] as const;
 const PROPERTY_WEIGHTING_STATUSES = ["not-provided", "not-applicable"] as const;
@@ -296,10 +296,10 @@ const validGeometricContainmentAdapter = (
 	typeof adapter.sliverWidthM === "number" &&
 	adapter.sliverWidthM > 0;
 
-const validSameCodeContinuityAdapter = (
+const validExtentContinuityAdapter = (
 	adapter: Record<string, unknown>,
-): adapter is SameCodeContinuityCrosswalkAdapter =>
-	adapter.method === "same-code-continuity" &&
+): adapter is ExtentContinuityCrosswalkAdapter =>
+	adapter.method === "extent-continuity" &&
 	adapter.quality === "derived" &&
 	adapter.relationshipPurpose === "identity" &&
 	isRecord(adapter.weighting) &&
@@ -329,7 +329,7 @@ export const readCrosswalkAdapters = (path: string): CrosswalkAdapter[] => {
 				validAreaOverlapAdapter(adapter) ||
 				validPopulationOverlapAdapter(adapter) ||
 				validGeometricContainmentAdapter(adapter) ||
-				validSameCodeContinuityAdapter(adapter)
+				validExtentContinuityAdapter(adapter)
 			)
 		) {
 			throw new Error(`Invalid crosswalk adapter at ${path}`);
