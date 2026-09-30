@@ -3,8 +3,6 @@ import { withCDN } from "../../helpers/cdn";
 import { LINEAGE_TYPES, type LineageType } from "./codeMapper";
 import {
 	parsePrecompiledBoundaryMappings,
-	type CodeMapping,
-	type CodeType,
 	type PrecompiledBoundaryMappings,
 	type YearCode,
 } from "./mappings";
@@ -20,7 +18,6 @@ export type BoundaryMappingTarget = {
 		year: YearCode,
 		mappings: Record<string, string[]>,
 	) => void;
-	addCodeMappings?: (type: CodeType, mappings: CodeMapping) => void;
 	addConstituencyWardMappings?: (
 		year: YearCode,
 		mappings: Record<string, string[]>,
@@ -55,15 +52,6 @@ export const applyBoundaryMappings = (
 	target.addWardLadMappings?.(mappings.wardToLad);
 	for (const [year, ladMappings] of Object.entries(mappings.ladToWards))
 		target.addLadWardMappings?.(Number(year), ladMappings);
-	target.addCodeMappings?.("ward", mappings.codeMappings.ward);
-	target.addCodeMappings?.(
-		"constituency",
-		mappings.codeMappings.constituency,
-	);
-	target.addCodeMappings?.(
-		"localAuthority",
-		mappings.codeMappings.localAuthority,
-	);
 	for (const [year, constituencyMappings] of Object.entries(
 		mappings.constituencyToWards,
 	))

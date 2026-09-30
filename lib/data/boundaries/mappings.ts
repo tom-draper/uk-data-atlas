@@ -6,19 +6,9 @@ import { BOUNDARY_CATALOG } from "./catalog";
 export type CodeType = BoundaryType;
 export type YearCode = number;
 
-export interface CodeMapping {
-	[fromCode: string]: {
-		[toYear: number]: string;
-	};
-}
-
 export interface PrecompiledBoundaryMappings {
 	wardToLad: Record<string, string>;
 	ladToWards: Record<number, Record<string, string[]>>;
-	codeMappings: Pick<
-		Record<CodeType, CodeMapping>,
-		"ward" | "localAuthority" | "constituency"
-	>;
 	constituencyToWards: Record<number, Record<string, string[]>>;
 }
 
@@ -31,15 +21,15 @@ type YearMasked<K extends string> = {
 	years: number[];
 } & Record<K, Record<string, Record<string, number>>>;
 
-/** The file `boundary-mappings.json` holds. */
+/**
+ * The file `boundary-mappings.json` holds. Version 4 dropped the name-matched
+ * code mappings between years: the area lineage the API's geography resolver
+ * writes (`area-lineage.json`) carries areas across years instead.
+ */
 export interface BoundaryMappingsFile {
-	version: 3;
+	version: 4;
 	wardToLad: Record<string, string>;
 	ladToWards: YearMasked<"members">;
-	codeMappings: Record<
-		keyof PrecompiledBoundaryMappings["codeMappings"],
-		YearMasked<"targets">
-	>;
 	constituencyToWards: YearMasked<"members">;
 }
 
@@ -107,32 +97,6 @@ const unmaskYears = (
 	return byYear;
 };
 
-// A code with no counterpart in any other year has nothing to store, so it is
-// absent after a round trip rather than an empty entry; every reader of a
-// CodeMapping already treats the two alike.
-const encodeCodeMapping = (mapping: CodeMapping): YearMasked<"targets"> => {
-	const byYear: Record<number, Record<string, string[]>> = {};
-	for (const [fromCode, targets] of Object.entries(mapping))
-		for (const [year, toCode] of Object.entries(targets))
-			(byYear[Number(year)] ??= {})[fromCode] = [toCode];
-	const { years, masked } = maskYears(byYear);
-	return { years, targets: masked };
-};
-
-const decodeCodeMapping = (value: unknown): CodeMapping => {
-	if (!isRecord(value)) throw invalid();
-	const mapping: CodeMapping = {};
-	for (const [year, codes] of Object.entries(
-		unmaskYears(value.years, value.targets),
-	))
-		for (const [fromCode, toCodes] of Object.entries(codes)) {
-			// One code maps to one code per year; a second is a corrupt file.
-			if (toCodes.length !== 1) throw invalid();
-			(mapping[fromCode] ??= {})[Number(year)] = toCodes[0];
-		}
-	return mapping;
-};
-
 export const encodeBoundaryMappings = (
 	mappings: PrecompiledBoundaryMappings,
 ): BoundaryMappingsFile => {
@@ -143,16 +107,9 @@ export const encodeBoundaryMappings = (
 		return { years, members: masked };
 	};
 	return {
-		version: 3,
+		version: 4,
 		wardToLad: mappings.wardToLad,
 		ladToWards: maskedMembers(mappings.ladToWards),
-		codeMappings: {
-			ward: encodeCodeMapping(mappings.codeMappings.ward),
-			constituency: encodeCodeMapping(mappings.codeMappings.constituency),
-			localAuthority: encodeCodeMapping(
-				mappings.codeMappings.localAuthority,
-			),
-		},
 		constituencyToWards: maskedMembers(mappings.constituencyToWards),
 	};
 };
@@ -166,7 +123,7 @@ export const parseBoundaryWardToLad = (
 ): Record<string, string> => {
 	if (
 		!isRecord(value) ||
-		value.version !== 3 ||
+		value.version !== 4 ||
 		!isStringRecord(value.wardToLad)
 	)
 		throw invalid();
@@ -178,10 +135,9 @@ export const parsePrecompiledBoundaryMappings = (
 ): PrecompiledBoundaryMappings => {
 	if (
 		!isRecord(value) ||
-		value.version !== 3 ||
+		value.version !== 4 ||
 		!isStringRecord(value.wardToLad) ||
 		!isRecord(value.ladToWards) ||
-		!isRecord(value.codeMappings) ||
 		!isRecord(value.constituencyToWards)
 	)
 		throw invalid();
@@ -191,13 +147,6 @@ export const parsePrecompiledBoundaryMappings = (
 			value.ladToWards.years,
 			value.ladToWards.members,
 		),
-		codeMappings: {
-			ward: decodeCodeMapping(value.codeMappings.ward),
-			constituency: decodeCodeMapping(value.codeMappings.constituency),
-			localAuthority: decodeCodeMapping(
-				value.codeMappings.localAuthority,
-			),
-		},
 		constituencyToWards: unmaskYears(
 			value.constituencyToWards.years,
 			value.constituencyToWards.members,
@@ -241,76 +190,6 @@ export const extractWardLadMappings = (
 			]),
 		),
 	};
-};
-
-export const buildCrossYearMappings = (
-	boundaryData: Record<number, BoundaryGeojson>,
-	type: Extract<CodeType, "ward" | "constituency" | "localAuthority">,
-	years: number[],
-): CodeMapping => {
-	const mappings: CodeMapping = {};
-	const codeKeys =
-		type === "ward"
-			? BOUNDARY_CATALOG.ward.properties.code
-			: type === "constituency"
-				? BOUNDARY_CATALOG.constituency.properties.code
-				: BOUNDARY_CATALOG.localAuthority.properties.code;
-	const nameKeys =
-		type === "ward"
-			? BOUNDARY_CATALOG.ward.properties.name
-			: type === "constituency"
-				? BOUNDARY_CATALOG.constituency.properties.name
-				: BOUNDARY_CATALOG.localAuthority.properties.name;
-	const nameIndex: Record<string, Set<{ code: string; year: number }>> = {};
-
-	for (const year of years) {
-		const geojson = boundaryData[year];
-		if (!geojson?.features) continue;
-
-		for (const feature of geojson.features) {
-			const props = feature.properties;
-			if (!props) continue;
-
-			const code = getProp(props, codeKeys);
-			const name = getProp(props, nameKeys);
-			if (!code || !name) continue;
-
-			const ladCode =
-				type === "ward"
-					? getProp(
-							props,
-							BOUNDARY_CATALOG.localAuthority.properties.code,
-						)
-					: null;
-			// The Dec 2017 constituencies are published as "St. Albans" where
-			// every other release says "St Albans", and names are all these
-			// mappings have to match on, so drop abbreviation stops before
-			// comparing. Only for constituencies: ward names are only
-			// qualified by a local authority when the release publishes one,
-			// and without that qualifier dropping stops merges same-named
-			// wards in different countries.
-			const plainName =
-				type === "constituency"
-					? name.toLowerCase().replace(/\./g, "").trim()
-					: name.toLowerCase().trim();
-			const normalizedName = ladCode
-				? `${plainName}|${ladCode}`
-				: plainName;
-			(nameIndex[normalizedName] ??= new Set()).add({ code, year });
-		}
-	}
-
-	for (const codeSet of Object.values(nameIndex)) {
-		const codes = [...codeSet];
-		for (const { code: fromCode, year: fromYear } of codes) {
-			const targets = (mappings[fromCode] ??= {});
-			for (const { code: toCode, year: toYear } of codes) {
-				if (fromYear !== toYear) targets[toYear] = toCode;
-			}
-		}
-	}
-
-	return mappings;
 };
 
 function pointInRing(px: number, py: number, ring: number[][]): boolean {
