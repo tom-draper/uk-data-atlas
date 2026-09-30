@@ -18,4 +18,5 @@ export const createAreaGeometryCache = (
 		resolve(apiRoot, ".."),
 		readGeometrySources(apiRoot),
 		maxReleases,
+		resolve(apiRoot, "public", "geometry-store"),
 	);
