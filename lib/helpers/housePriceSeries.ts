@@ -6,6 +6,7 @@ import type {
 } from "@/lib/types";
 import type { HousePriceOptions } from "@/lib/types/mapOptions";
 import { cacheKey } from "./cacheKey";
+import { areaInYear } from "./areaInYear";
 
 type HousePriceMeasure = HousePriceOptions["measure"];
 
@@ -113,15 +114,14 @@ export const resolveHousePriceSeries = ({
 	}
 
 	if (selectedArea.type === "ward") {
-		let wardData = dataset.data[selectedArea.code];
-		if (!wardData && codeMapper) {
-			const mappedCode = codeMapper.getCodeForYear(
-				"ward",
-				selectedArea.code,
-				dataset.boundaryYear,
-			);
-			if (mappedCode) wardData = dataset.data[mappedCode];
-		}
+		const found = areaInYear(
+			codeMapper,
+			selectedArea,
+			dataset.boundaryYear,
+			(code) => dataset.data[code] !== undefined,
+		);
+		const wardData =
+			found?.status === "found" ? dataset.data[found.code] : undefined;
 		return wardData
 			? seriesFromPrices(pricesFor(wardData, measure))
 			: emptySeries();

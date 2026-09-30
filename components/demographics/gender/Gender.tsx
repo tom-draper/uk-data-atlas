@@ -8,6 +8,7 @@ import {
 import GenderBalanceByAgeChart from "./GenderBalanceByAgeChart";
 import type { PopulationCodeResolver } from "@/lib/data/boundaries/codeMapper";
 import { ChartCard } from "@/components/ChartCard";
+import { areaInYear } from "@/lib/helpers/areaInYear";
 import { formatCount } from "@/lib/helpers/formatCount";
 
 const MALE_COLOR = "#60a5fa"; // blue-400, matches chart bars
@@ -50,20 +51,16 @@ function Gender({
 
 		// Handle Ward Selection
 		if (selectedArea && selectedArea.type === "ward") {
-			const wardCode = selectedArea.code;
-			let wardData = dataset.data[wardCode];
-
-			// Try to map ward code if not found
-			if (!wardData && codeMapper?.getCodeForYear) {
-				const mappedCode = codeMapper.getCodeForYear(
-					"ward",
-					wardCode,
-					dataset.boundaryYear,
-				);
-				if (mappedCode) {
-					wardData = dataset.data[mappedCode];
-				}
-			}
+			const found = areaInYear(
+				codeMapper,
+				selectedArea,
+				dataset.boundaryYear,
+				(code) => dataset.data[code] !== undefined,
+			);
+			const wardData =
+				found?.status === "found"
+					? dataset.data[found.code]
+					: undefined;
 
 			if (wardData) {
 				// Use faster iteration than Object.values().reduce()

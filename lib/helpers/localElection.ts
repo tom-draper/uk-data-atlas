@@ -7,6 +7,8 @@ import {
 import type { SelectedArea } from "../types/areas";
 import { calculateTurnout, processPartyVotes } from "./generalElection";
 import { cacheKey } from "./cacheKey";
+import type { CodeMapper } from "../data/boundaries/codeMapper";
+import { areaInYear } from "./areaInYear";
 
 export interface ProcessedLocalElectionYearData {
 	year: number;
@@ -15,6 +17,8 @@ export interface ProcessedLocalElectionYearData {
 	totalVotes: number;
 	turnout: number | null;
 	hasData: boolean;
+	/** No ward of this election's boundaries is the one picked on the map. */
+	boundariesChanged?: boolean;
 }
 
 // Cache area vote aggregations by area, dataset slice and election year.
@@ -49,12 +53,9 @@ export function computeLocalElectionYearData(
 	dataset: LocalElectionDataset | undefined,
 	aggregatedData: Record<number, AggregatedLocalElectionData> | null,
 	selectedArea: SelectedArea | null,
-	getCodeForYear:
-		| ((
-				type: "ward",
-				code: string,
-				targetYear: number,
-		  ) => string | undefined)
+	codeMapper:
+		| (Pick<CodeMapper, "getCodeForYear"> &
+				Partial<Pick<CodeMapper, "hasAreaLineage">>)
 		| undefined,
 	getWardsForLad: ((ladCode: string, year: number) => string[]) | undefined,
 	getWardsForConstituency:
@@ -79,15 +80,23 @@ export function computeLocalElectionYearData(
 
 	// Handle Ward Selection
 	if (selectedArea && selectedArea.type === "ward") {
-		const wardCode = selectedArea.code;
-		let data = dataset.data[wardCode];
-
-		if (!data && getCodeForYear) {
-			const mappedCode = getCodeForYear("ward", wardCode, year);
-			if (mappedCode) {
-				data = dataset.data[mappedCode];
-			}
-		}
+		const found = areaInYear(
+			codeMapper,
+			selectedArea,
+			dataset.boundaryYear ?? year,
+			(code) => dataset.data[code] !== undefined,
+		);
+		if (found?.status === "boundaries-changed")
+			return {
+				year,
+				dataset,
+				partyData: [],
+				totalVotes: 0,
+				turnout: null,
+				hasData: false,
+				boundariesChanged: true,
+			};
+		const data = found && dataset.data[found.code];
 
 		if (data) {
 			rawPartyVotes = data.partyVotes;
@@ -128,8 +137,12 @@ export function computeLocalElectionYearData(
 			for (const wardCode of wardCodes) {
 				let wardData = dataset.data[wardCode];
 
-				if (!wardData && getCodeForYear) {
-					const mappedCode = getCodeForYear("ward", wardCode, year);
+				if (!wardData && codeMapper) {
+					const mappedCode = codeMapper?.getCodeForYear(
+						"ward",
+						wardCode,
+						year,
+					);
 					if (mappedCode) {
 						wardData = dataset.data[mappedCode];
 					}
@@ -204,8 +217,12 @@ export function computeLocalElectionYearData(
 
 			for (const wardCode of wardCodes) {
 				let wardData = dataset.data[wardCode];
-				if (!wardData && getCodeForYear) {
-					const mapped = getCodeForYear("ward", wardCode, year);
+				if (!wardData && codeMapper) {
+					const mapped = codeMapper?.getCodeForYear(
+						"ward",
+						wardCode,
+						year,
+					);
 					if (mapped) wardData = dataset.data[mapped];
 				}
 				if (wardData?.partyVotes) {
