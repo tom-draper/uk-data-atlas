@@ -1,7 +1,7 @@
 import type { AreaLookup, AreaRecord } from "../areaInventory";
 import type {
 	CrosswalkArtifact,
-	SameCodeContinuityCrosswalkArtifact,
+	ExtentContinuityCrosswalkArtifact,
 } from "../crosswalkInventory";
 import type { CrosswalkLookup, GeographyEndpoint } from "./translation";
 import { areaKey, releaseKey } from "../geographyKeys";
@@ -188,7 +188,7 @@ const summarisePublishedRelationshipMapping = (
 
 /**
  * Compare two compiled releases of one geography without promoting code-set
- * differences into geographical change claims. Same-code continuity is only
+ * differences into geographical change claims. Extent continuity is only
  * reported where its dedicated geometry comparison has published evidence.
  */
 export const compareBoundaryReleases = (
@@ -245,9 +245,9 @@ export const compareBoundaryReleases = (
 		(
 			entry,
 		): entry is {
-			crosswalk: SameCodeContinuityCrosswalkArtifact;
+			crosswalk: ExtentContinuityCrosswalkArtifact;
 			direction: "forward" | "reverse";
-		} => entry.crosswalk.method === "same-code-continuity",
+		} => entry.crosswalk.method === "extent-continuity",
 	);
 	const continuousCodes = new Set<string>();
 	const changedExtent = new Map<string, BoundaryExtentChange>();
@@ -296,7 +296,7 @@ export const compareBoundaryReleases = (
 			left.code.localeCompare(right.code),
 	);
 	const publishedRelationships = between
-		.filter(({ crosswalk }) => crosswalk.method !== "same-code-continuity")
+		.filter(({ crosswalk }) => crosswalk.method !== "extent-continuity")
 		.map(({ crosswalk, direction }) => ({
 			id: crosswalk.id,
 			direction,
@@ -359,7 +359,7 @@ export const compareBoundaryReleases = (
 					}
 				: {
 						status: "not-published",
-						reason: "No same-code continuity crosswalk has compared these releases' shared identifiers.",
+						reason: "No extent continuity crosswalk has compared these releases' shared identifiers.",
 					},
 		publishedRelationships,
 	};

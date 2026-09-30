@@ -135,7 +135,7 @@ test("leaves out a source whose area a later step does not carry", () => {
 
 test("names why each path step establishes membership, or the first that does not", () => {
 	const continuity = crosswalk("ward-continuity", [["W1", ["W1"]]], {
-		method: "same-code-continuity",
+		method: "extent-continuity",
 	});
 	const identity = crosswalk("ward-lookup", [["W1", ["W9"]]], {
 		method: "official-lookup",
@@ -149,7 +149,7 @@ test("names why each path step establishes membership, or the first that does no
 		]),
 		{
 			claims: [
-				"verified-same-code-continuity",
+				"verified-extent-continuity",
 				"verified-clean-containment",
 			],
 		},

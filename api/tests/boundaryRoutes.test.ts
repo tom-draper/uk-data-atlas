@@ -334,7 +334,7 @@ test("compares release code sets without claiming that differences are geography
 	});
 	assert.deepEqual(data.continuity, {
 		status: "not-published",
-		reason: "No same-code continuity crosswalk has compared these releases' shared identifiers.",
+		reason: "No extent continuity crosswalk has compared these releases' shared identifiers.",
 	});
 	assert.equal(
 		routeRequest(
@@ -475,7 +475,7 @@ test("summarises published release mappings as directional cardinality evidence"
 	});
 });
 
-test("reports published same-code continuity findings separately from code-set evidence", () => {
+test("reports published extent continuity findings separately from code-set evidence", () => {
 	const boundaryRegistry = {
 		...registry,
 		releases: [
@@ -513,7 +513,7 @@ test("reports published same-code continuity findings separately from code-set e
 		schemaVersion: 1,
 		contentHash: "sha256:continuity",
 		id: "ward-continuity",
-		method: "same-code-continuity",
+		method: "extent-continuity",
 		quality: "derived",
 		relationshipPurpose: "identity",
 		weighting: { status: "not-applicable" },

@@ -182,7 +182,7 @@ export const handleBoundaryRoutes = ({
 			body: envelope(releaseId, {
 				...comparison,
 				limit,
-				note: "Code-set differences are reported as identifiers present in only one release, not as proof that a place was added or removed. Same-code continuity is available only where a dedicated geometric comparison published it; changed, indeterminate and unmeasured extents remain evidence for review rather than a conversion claim.",
+				note: "Code-set differences are reported as identifiers present in only one release, not as proof that a place was added or removed. Extent continuity is available only where a dedicated geometric comparison published it; changed, indeterminate and unmeasured extents remain evidence for review rather than a conversion claim.",
 			}),
 		};
 	}

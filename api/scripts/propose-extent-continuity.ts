@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import { readShapefileFeatures } from "../src/shapefile";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import type { SameCodeContinuityCrosswalkAdapter } from "../src/crosswalkAdapters";
+import type { ExtentContinuityCrosswalkAdapter } from "../src/crosswalkAdapters";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import { isGeographyKind } from "../src/geography";
 
@@ -21,14 +21,14 @@ const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
 /**
- * Propose the same-code continuity adapters that chain each geography's
+ * Propose the extent continuity adapters that chain each geography's
  * compiled releases in date order. Each month links to the next through its
  * widest-coverage release, and same-month variants link to that release. A
  * pair a publisher identity lookup already joins, or one sharing fewer than
  * half its codes, is skipped and reported. The compiler still decides which
  * shared codes become identity; this only chooses which releases to compare.
  */
-export const proposeSameCodeContinuity = (repositoryRoot: string) => {
+export const proposeExtentContinuity = (repositoryRoot: string) => {
 	const directory = join(repositoryRoot, "api", "public");
 	const read = <T>(path: string) =>
 		JSON.parse(readFileSync(join(directory, path), "utf8")) as T;
@@ -80,7 +80,7 @@ export const proposeSameCodeContinuity = (repositoryRoot: string) => {
 		read<CrosswalkInventory>("crosswalk-inventory.json")
 			.crosswalks.filter(
 				(crosswalk) =>
-					crosswalk.method !== "same-code-continuity" &&
+					crosswalk.method !== "extent-continuity" &&
 					(crosswalk.relationshipPurpose ??
 						(crosswalk.method === "official-lookup"
 							? "identity"
@@ -106,7 +106,7 @@ export const proposeSameCodeContinuity = (repositoryRoot: string) => {
 		});
 		byGeography.set(release.geography, releases);
 	}
-	const adapters: SameCodeContinuityCrosswalkAdapter[] = [];
+	const adapters: ExtentContinuityCrosswalkAdapter[] = [];
 	const skipped: string[] = [];
 	for (const [geography, releases] of [...byGeography].sort(
 		([left], [right]) => left.localeCompare(right),
@@ -165,8 +165,8 @@ export const proposeSameCodeContinuity = (repositoryRoot: string) => {
 				continue;
 			}
 			adapters.push({
-				id: `${toKebabCase(geography)}-${from.id}-to-${to.id}-same-code-continuity`,
-				method: "same-code-continuity",
+				id: `${toKebabCase(geography)}-${from.id}-to-${to.id}-extent-continuity`,
+				method: "extent-continuity",
 				quality: "derived",
 				relationshipPurpose: "identity",
 				weighting: { status: "not-applicable" },
@@ -182,7 +182,7 @@ export const proposeSameCodeContinuity = (repositoryRoot: string) => {
 const scriptPath = fileURLToPath(import.meta.url);
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 	const repositoryRoot = resolve(dirname(scriptPath), "../..");
-	const { adapters, skipped } = proposeSameCodeContinuity(repositoryRoot);
+	const { adapters, skipped } = proposeExtentContinuity(repositoryRoot);
 	for (const reason of skipped) console.log(`Skipped ${reason}`);
 	if (process.argv.includes("--write")) {
 		const path = join(
@@ -197,13 +197,13 @@ if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
 		};
 		file.crosswalks = [
 			...file.crosswalks.filter(
-				(adapter) => adapter.method !== "same-code-continuity",
+				(adapter) => adapter.method !== "extent-continuity",
 			),
 			...adapters,
 		];
 		writeFileSync(path, `${JSON.stringify(file, null, "\t")}\n`);
 		console.log(
-			`Wrote ${adapters.length} same-code continuity adapters to ${path}`,
+			`Wrote ${adapters.length} extent continuity adapters to ${path}`,
 		);
 	} else {
 		console.log(JSON.stringify(adapters, null, "\t"));

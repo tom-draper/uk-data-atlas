@@ -46,7 +46,7 @@ const artifact = (
 		id,
 		method,
 		quality,
-		...(method === "same-code-continuity"
+		...(method === "extent-continuity"
 			? { relationshipPurpose: "identity" }
 			: {}),
 		weighting: { status: "not-applicable" },
@@ -63,7 +63,7 @@ const artifacts = [
 		"wards",
 		["ward", "2"],
 		["ward", "1"],
-		"same-code-continuity",
+		"extent-continuity",
 		"derived",
 		[
 			["W1", "W1"],
@@ -86,7 +86,7 @@ const artifacts = [
 		"authorities",
 		["authority", "1"],
 		["authority", "2"],
-		"same-code-continuity",
+		"extent-continuity",
 		"derived",
 		[
 			["A", "A"],

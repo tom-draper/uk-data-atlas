@@ -154,7 +154,7 @@ const graph: CrosswalkInventory = {
 			"l1-l2",
 			"authority/1",
 			"authority/2",
-			"same-code-continuity",
+			"extent-continuity",
 			"derived",
 			"identity",
 		),
