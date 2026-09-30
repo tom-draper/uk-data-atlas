@@ -3968,8 +3968,10 @@ predecessor.
 They chain each geography's releases in date order. Each date links to the
 next through its widest-coverage release, and same-month variants, such as
 the Great Britain and United Kingdom ward files of December 2019, link to
-that release. A pair already joined by a publisher identity lookup is left to
-that lookup, and a pair sharing fewer than half its codes is skipped, which
+that release. A pair already joined by a publisher identity lookup covering
+every area of its release is left to that lookup; one listing only the areas
+that changed, as ONS's ward code history does, keeps its continuity crosswalk
+beside it. A pair sharing fewer than half its codes is skipped, which
 leaves the 2024 constituency redistribution and the 2011 move to GSS local
 authority codes to methods that can describe them. So is a release whose
 geometry file holds no shapes, such as the names-and-codes 2011 data zone
