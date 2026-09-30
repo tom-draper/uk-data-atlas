@@ -1,10 +1,32 @@
-import type { CodeMapping, CodeType, YearCode } from "./mappings";
+import {
+	followLineage,
+	followLineageFromCode,
+	listedReleases,
+	type AreaLineage,
+} from "../../../api/src/resolver/areaLineage";
+import { BOUNDARY_CATALOG } from "./catalog";
+import type { CodeType, YearCode } from "./mappings";
+
+/** The geographies whose areas are carried across years by a lineage. */
+export const LINEAGE_TYPES = [
+	"ward",
+	"localAuthority",
+	"constituency",
+] as const;
+export type LineageType = (typeof LINEAGE_TYPES)[number];
 
 export interface CodeMapper {
+	/**
+	 * The code of the same area in the target year's boundaries, as the API's
+	 * geography resolver answers it, or undefined where no area of that year
+	 * is the same. Pass the year the code is from where it is known, as for a
+	 * hovered area; otherwise it is inferred from the code.
+	 */
 	getCodeForYear(
 		type: CodeType,
 		code: string,
 		targetYear: YearCode,
+		fromYear?: YearCode,
 	): string | undefined;
 	getLadForWard(wardCode: string): string | undefined;
 	getConstituencyForWard(
@@ -37,42 +59,11 @@ export type MappingGenerationReader = Pick<CodeMapper, "getMappingGeneration">;
 /** Read-only resolver required by population charts that aggregate wards. */
 export type PopulationCodeResolver = WardDataResolver & MappingGenerationReader;
 
-type CodeMappings = Record<CodeType, CodeMapping>;
-type ReverseCodeMappings = Record<CodeType, Record<string, Set<string>>>;
-
-const emptyCodeMappings = (): CodeMappings => ({
-	ward: {},
-	localAuthority: {},
-	constituency: {},
-	lsoa: {},
-	dataZone: {},
-	superOutputArea: {},
-	country: {},
-	localPlanningAuthority: {},
-	region: {},
-	countyAndUnitaryAuthority: {},
-	integratedCareBoard: {},
-	msoa: {},
-	communitySafetyPartnership: {},
-	policeForceArea: {},
-	combinedAuthority: {},
-	itl1: {},
-	itl2: {},
-	itl3: {},
-	majorTownAndCity: {},
-	scottishParliamentaryConstituency: {},
-	scottishParliamentaryRegion: {},
-	seneddConstituency: {},
-	seneddElectoralRegion: {},
-	localHealthBoard: {},
-	nhsEnglandRegion: {},
-	subIntegratedCareBoardLocation: {},
-	fireAndRescueAuthority: {},
-	nationalPark: {},
-	countyElectoralDivision: {},
-	travelToWorkArea: {},
-	parish: {},
-});
+/** The release a year's boundaries are served from: the asset's directory. */
+const catalogRelease = (type: CodeType, year: YearCode) =>
+	(BOUNDARY_CATALOG[type].vintages as Record<number, string>)[year]
+		?.split("/")
+		.at(-2);
 
 /** Mutable, framework-independent boundary-code lookup. */
 export class CodeMapperStore implements CodeMapper {
@@ -84,20 +75,50 @@ export class CodeMapperStore implements CodeMapper {
 	// their aggregate cache keys so an empty result produced before they arrive
 	// cannot be retained after the mappings are available.
 	private mappingGeneration = 0;
-	private codeMappings = emptyCodeMappings();
-	// Built per geography on first read rather than alongside the forward
-	// mappings. The precompiled file carries 124k ward pairs, so maintaining it
-	// eagerly cost ~15k Sets (5 MB) on every load for a lookup only the
-	// highlight helpers below ever perform.
-	private reverseMappings: Partial<ReverseCodeMappings> = {};
+	private lineages: Partial<
+		Record<
+			LineageType,
+			{ lineage: AreaLineage; listed: Map<string, number[]> }
+		>
+	> = {};
+
+	constructor(
+		private readonly releaseForYear: (
+			type: CodeType,
+			year: YearCode,
+		) => string | undefined = catalogRelease,
+	) {}
+
+	/** Load the API resolver's lineage for one geography. */
+	setAreaLineage = (type: LineageType, lineage: AreaLineage): void => {
+		this.lineages[type] = { lineage, listed: listedReleases(lineage) };
+		this.mappingGeneration++;
+	};
+
+	/**
+	 * The same area's code in every year its lineage holds, the code itself
+	 * among them, for a lookup keyed on some other year's codes.
+	 */
+	private sameAreaCodes = (type: LineageType, code: string): Set<string> => {
+		const codes = new Set([code]);
+		const entry = this.lineages[type];
+		for (const release of entry?.lineage.releases ?? []) {
+			const same = followLineageFromCode(
+				entry!.lineage,
+				entry!.listed,
+				code,
+				release,
+			);
+			if (same) codes.add(same);
+		}
+		return codes;
+	};
 
 	getLadForWard = (wardCode: string): string | undefined => {
 		const direct = this.wardToLad[wardCode];
 		if (direct) return direct;
-		for (const equivalentCode of Object.values(
-			this.codeMappings.ward[wardCode] ?? {},
-		)) {
-			const lad = this.wardToLad[equivalentCode];
+		for (const sameCode of this.sameAreaCodes("ward", wardCode)) {
+			const lad = this.wardToLad[sameCode];
 			if (lad) return lad;
 		}
 		return undefined;
@@ -160,7 +181,7 @@ export class CodeMapperStore implements CodeMapper {
 		constituencyYear: YearCode,
 	): string | undefined => {
 		const candidates = new Set<string>();
-		for (const code of this.getHighlightCodes("ward", wardCode))
+		for (const code of this.sameAreaCodes("ward", wardCode))
 			for (const memberships of Object.values(this.wardToConstituencies))
 				for (const constituency of memberships[code] ?? [])
 					candidates.add(constituency);
@@ -184,88 +205,32 @@ export class CodeMapperStore implements CodeMapper {
 	): string[] => {
 		const direct = this.constituencyToWards[wardYear]?.[constituencyCode];
 		if (direct?.length) return direct;
-		const currentCode =
-			this.codeMappings.constituency[constituencyCode]?.[2024];
+		const currentCode = this.getCodeForYear(
+			"constituency",
+			constituencyCode,
+			2024,
+		);
 		return currentCode
 			? (this.constituencyToWards[wardYear]?.[currentCode] ?? [])
 			: [];
-	};
-
-	/**
-	 * Which codes map *to* each code, for one geography. Derived from the
-	 * forward mappings the first time something asks, and kept in step by the
-	 * add methods only once it exists.
-	 */
-	private reverseFor = (type: CodeType): Record<string, Set<string>> => {
-		const cached = this.reverseMappings[type];
-		if (cached) return cached;
-
-		const reverse: Record<string, Set<string>> = {};
-		for (const [fromCode, yearMap] of Object.entries(
-			this.codeMappings[type],
-		)) {
-			for (const toCode of Object.values(yearMap)) {
-				(reverse[toCode] ??= new Set()).add(fromCode);
-			}
-		}
-		this.reverseMappings[type] = reverse;
-		return reverse;
-	};
-
-	addCodeMapping = (
-		type: CodeType,
-		fromCode: string,
-		toYear: YearCode,
-		toCode: string,
-	): void => {
-		if (!fromCode || !toYear || !toCode) return;
-		(this.codeMappings[type][fromCode] ??= {})[toYear] = toCode;
-		const reverse = this.reverseMappings[type];
-		if (reverse) (reverse[toCode] ??= new Set()).add(fromCode);
-	};
-
-	addCodeMappings = (type: CodeType, mappings: CodeMapping): void => {
-		Object.assign(this.codeMappings[type], mappings);
-		const reverse = this.reverseMappings[type];
-		if (!reverse) return;
-		for (const [fromCode, yearMap] of Object.entries(mappings)) {
-			for (const toCode of Object.values(yearMap)) {
-				(reverse[toCode] ??= new Set()).add(fromCode);
-			}
-		}
 	};
 
 	getCodeForYear = (
 		type: CodeType,
 		code: string,
 		targetYear: YearCode,
-	): string | undefined => this.codeMappings[type][code]?.[targetYear];
-
-	findSourceCodes = (
-		type: CodeType,
-		targetCode: string,
-		targetYear: YearCode,
-	): string[] =>
-		[...(this.reverseFor(type)[targetCode] ?? [])].filter(
-			(sourceCode) =>
-				this.codeMappings[type][sourceCode]?.[targetYear] ===
-				targetCode,
-		);
-
-	getHighlightCodes = (type: CodeType, code: string): Set<string> => {
-		const codes = new Set<string>([code]);
-		for (const mappedCode of Object.values(
-			this.codeMappings[type][code] ?? {},
-		))
-			codes.add(mappedCode);
-		for (const sourceCode of this.reverseFor(type)[code] ?? []) {
-			codes.add(sourceCode);
-			for (const mappedCode of Object.values(
-				this.codeMappings[type][sourceCode] ?? {},
-			))
-				codes.add(mappedCode);
-		}
-		return codes;
+		fromYear?: YearCode,
+	): string | undefined => {
+		const entry = this.lineages[type as LineageType];
+		const to = this.releaseForYear(type, targetYear);
+		if (!entry || !to) return undefined;
+		const from =
+			fromYear === undefined
+				? undefined
+				: this.releaseForYear(type, fromYear);
+		return from
+			? followLineage(entry.lineage, code, from, to)
+			: followLineageFromCode(entry.lineage, entry.listed, code, to);
 	};
 
 	clearAllMappings = (): void => {
@@ -273,18 +238,7 @@ export class CodeMapperStore implements CodeMapper {
 		this.ladToWards = {};
 		this.constituencyToWards = {};
 		this.wardToConstituencies = {};
+		this.lineages = {};
 		this.mappingGeneration++;
-		this.codeMappings = emptyCodeMappings();
-		this.reverseMappings = {};
-	};
-
-	clearCodeMappings = (type?: CodeType): void => {
-		if (type) {
-			this.codeMappings[type] = {};
-			delete this.reverseMappings[type];
-		} else {
-			this.codeMappings = emptyCodeMappings();
-			this.reverseMappings = {};
-		}
 	};
 }

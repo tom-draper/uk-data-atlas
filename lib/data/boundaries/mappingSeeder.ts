@@ -1,4 +1,6 @@
+import type { AreaLineage } from "../../../api/src/resolver/areaLineage";
 import { withCDN } from "../../helpers/cdn";
+import { LINEAGE_TYPES, type LineageType } from "./codeMapper";
 import {
 	parsePrecompiledBoundaryMappings,
 	type CodeMapping,
@@ -8,6 +10,7 @@ import {
 } from "./mappings";
 
 const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
+const AREA_LINEAGE_URL = withCDN("/data/datasets/area-lineage.json");
 
 /** The mutable boundary-code lookup populated from precompiled mappings. */
 export type BoundaryMappingTarget = {
@@ -22,6 +25,27 @@ export type BoundaryMappingTarget = {
 		year: YearCode,
 		mappings: Record<string, string[]>,
 	) => void;
+	setAreaLineage?: (type: LineageType, lineage: AreaLineage) => void;
+};
+
+/** Load the API resolver's lineages, written by `pnpm lineage:build`. */
+export const applyAreaLineage = (
+	lineages: Partial<Record<LineageType, AreaLineage>>,
+	target: BoundaryMappingTarget,
+) => {
+	for (const type of LINEAGE_TYPES) {
+		const lineage = lineages[type];
+		if (lineage) target.setAreaLineage?.(type, lineage);
+	}
+};
+
+const fetchJson = async (url: string, what: string) => {
+	const response = await fetch(url);
+	if (!response.ok)
+		throw new Error(
+			`Failed to fetch ${what}: ${response.status} ${response.statusText}`,
+		);
+	return response.json();
 };
 
 export const applyBoundaryMappings = (
@@ -58,16 +82,16 @@ export const seedBoundaryMappings = (
 	const seeded = seededMappers.get(target);
 	if (seeded) return seeded;
 
-	const seeding = fetch(BOUNDARY_MAPPINGS_URL)
-		.then(async (response) => {
-			if (!response.ok)
-				throw new Error(
-					`Failed to fetch boundary mappings: ${response.status} ${response.statusText}`,
-				);
+	const seeding = Promise.all([
+		fetchJson(BOUNDARY_MAPPINGS_URL, "boundary mappings"),
+		fetchJson(AREA_LINEAGE_URL, "area lineage"),
+	])
+		.then(([mappings, lineages]) => {
 			applyBoundaryMappings(
-				parsePrecompiledBoundaryMappings(await response.json()),
+				parsePrecompiledBoundaryMappings(mappings),
 				target,
 			);
+			applyAreaLineage(lineages, target);
 			return true;
 		})
 		.catch((error) => {
