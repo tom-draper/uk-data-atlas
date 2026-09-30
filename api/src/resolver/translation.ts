@@ -463,6 +463,33 @@ export class CrosswalkTranslator {
 	}
 
 	/**
+	 * The one area of another release that is the same area as `source`, or
+	 * undefined. The best-ranked identity path with an answer decides, so a
+	 * publisher's lookup is heard before a derived crosswalk, and its answer
+	 * stands even where it is no: an official split is not overruled by a
+	 * derived match. The answer must be one area, and translating that area
+	 * back must reach only `source`, so a successor that merged several areas,
+	 * or took part of one, is not the same area.
+	 */
+	sameArea(
+		source: AreaIdentity,
+		to: GeographyEndpoint,
+	): { code: string; path: RelationshipPath } | undefined {
+		const [forward] = this.translateArea(source, to, "identity");
+		const [target, ...others] = forward?.targets ?? [];
+		if (!forward || !target || others.length > 0) return undefined;
+		const [back] = this.translateArea(
+			{ ...to, code: target.code },
+			source,
+			"identity",
+		);
+		const [returned, ...more] = back?.targets ?? [];
+		return returned?.code === source.code && more.length === 0
+			? { code: target.code, path: forward.path }
+			: undefined;
+	}
+
+	/**
 	 * How many of a path's source areas reach its target through every step.
 	 * Walking back from the last step, each step keeps the codes with a target
 	 * the next step still carries, so the pass is linear in the records.
