@@ -4240,9 +4240,11 @@ paths:
         neighbours drawn together may disagree along a shared border.
 
 
-        Results are capped at `limit`, 200 by default and 1000 at most, and
-        `matched` against `returned` with `truncated` says whether the cap bit.
-        The cap is on results rather than on the box: a box covering the whole
+        Results come a page at a time in code order, `limit` to a page, 200 by
+        default and 1000 at most. `matched` counts every area the box meets,
+        `truncated` says whether more follow this page, and `nextCursor`, with
+        a `Link: rel="next"` header, fetches them. For every area of a
+        release, the whole-release download is quicker. The cap is on results rather than on the box: a box covering the whole
         country is a reasonable analysis question, and it is the geometry that
         is expensive, not the extent. A box matching nothing is an empty
         answer, not an error; a geography and release the catalogue does not
@@ -4289,8 +4291,9 @@ paths:
             maximum: 1000
             default: 200
           description: >
-            How many matching areas to return, 1 to 1000. `truncated` says
-            whether the cap bit.
+            How many matching areas to return in a page, 1 to 1000.
+            `truncated` says whether more follow.
+        - $ref: "#/components/parameters/PageCursor"
       responses:
         "200":
           description: The areas meeting the box, and how each meets it.

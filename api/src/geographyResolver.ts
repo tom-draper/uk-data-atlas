@@ -580,6 +580,7 @@ export class GeographyResolver {
 		box: Parameters<SpatialResolver["intersectingAreas"]>[2],
 		limit?: number,
 		includeGeometry?: boolean,
+		after?: string,
 	) {
 		return this.spatial.intersectingAreas(
 			geography,
@@ -587,6 +588,7 @@ export class GeographyResolver {
 			box,
 			limit,
 			includeGeometry,
+			after,
 		);
 	}
 

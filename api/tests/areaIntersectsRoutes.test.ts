@@ -309,3 +309,91 @@ test("does not materialise geometry beyond the requested box-result limit", () =
 		rmSync(root, { recursive: true, force: true });
 	}
 });
+
+test("pages through every area a box meets", (t) => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	t.after(() => rmSync(root, { recursive: true, force: true }));
+	const directory = join(
+		root,
+		"data",
+		"boundaries",
+		"ward",
+		"2025-01-en-ward",
+	);
+	mkdirSync(directory, { recursive: true });
+	const square = (west: number) => [
+		[
+			[west, 54],
+			[west + 1, 54],
+			[west + 1, 55],
+			[west, 55],
+			[west, 54],
+		],
+	];
+	writeFileSync(
+		join(directory, "wards.geojson"),
+		JSON.stringify({
+			type: "FeatureCollection",
+			// Listed out of code order: pages follow the codes.
+			features: [
+				["E05000002", -1],
+				["E05000001", -2],
+			].map(([code, west]) => ({
+				properties: { WD25CD: code },
+				geometry: {
+					type: "Polygon",
+					coordinates: square(west as number),
+				},
+			})),
+		}),
+	);
+	const sources: GeometrySourceLookup = new Map([
+		[
+			"ward/2025-01-en-ward",
+			{
+				input: "boundaries/ward/2025-01-en-ward/wards.geojson",
+				crs: "EPSG:4326",
+				codeProperty: "WD25CD",
+			},
+		],
+	]);
+	const cache = new AreaGeometryCache(root, sources);
+	const get = (query: string) =>
+		route(
+			"GET",
+			`/v1/areas:intersects?bbox=-3,53,1,56&geography=ward&release=2025-01-en-ward&limit=1${query}`,
+			registry,
+			geographyInventory,
+			areaLookup,
+			crosswalkInventory,
+			crosswalkLookup,
+			undefined,
+			cache,
+		);
+	const page = (response: ReturnType<typeof get>) => ({
+		codes: (
+			response.body as { data: { matches: Array<{ code: string }> } }
+		).data.matches.map((match) => match.code),
+		truncated: (response.body as { data: { truncated: boolean } }).data
+			.truncated,
+		nextCursor: (response.body as { meta: { nextCursor: string | null } })
+			.meta.nextCursor,
+	});
+
+	const first = get("");
+	assert.deepEqual(page(first).codes, ["E05000001"]);
+	assert.equal(page(first).truncated, true);
+	const cursor = page(first).nextCursor!;
+	assert.ok(cursor);
+	assert.match(first.headers!.link!, /cursor=.*rel="next"/);
+
+	const second = get(`&cursor=${cursor}`);
+	assert.deepEqual(page(second), {
+		codes: ["E05000002"],
+		truncated: false,
+		nextCursor: null,
+	});
+	assert.equal(second.headers?.link, undefined);
+
+	assert.equal(get("&cursor=not-ours!").status, 400);
+});
