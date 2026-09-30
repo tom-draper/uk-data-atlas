@@ -2552,8 +2552,11 @@ line up.
 
 ### Limits
 
-- **Rate limit:** a token bucket per client, see the checklist above. At most
-  100,000 clients are remembered; the least recently seen is forgotten first,
+- **Rate limit:** a token bucket per client, see the checklist above. A
+  request costs one token, except where its operation declares
+  `x-rate-limit-cost` in `openapi.yaml`: the routes that read many areas'
+  shapes or take a batch cost 5 or 10. At most 100,000 clients are
+  remembered; the least recently seen is forgotten first,
   and starts again with the full bucket it would have earned anyway.
 - **Request target:** longer than `ATLAS_MAX_URL_LENGTH` is `414`.
 - **Compression:** a JSON, GeoJSON, CSV, NDJSON or YAML answer of 1 KB or

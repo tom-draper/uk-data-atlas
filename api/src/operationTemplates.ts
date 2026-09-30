@@ -15,6 +15,12 @@ export type OperationTemplate = {
 	 * the operation may be removed.
 	 */
 	deprecation?: { since?: string; sunset?: string };
+	/**
+	 * What a request costs from its client's rate-limit bucket, from
+	 * `x-rate-limit-cost`, when it is more than one: an operation that reads
+	 * many areas' shapes or takes a batch is priced by the work it does.
+	 */
+	cost?: number;
 };
 
 export type MatchedOperation = {
@@ -26,8 +32,8 @@ export type MatchedOperation = {
 const UNMATCHED = "unmatched";
 
 /**
- * Reads path keys, and each operation's `deprecated`, `x-deprecated-since` and
- * `x-sunset`, by line: path keys sit at a two-space indent under `paths:` and
+ * Reads path keys, and each operation's `deprecated`, `x-deprecated-since`,
+ * `x-sunset` and `x-rate-limit-cost`, by line: path keys sit at a two-space indent under `paths:` and
  * operation fields at six. The server does not load a YAML parser at runtime.
  */
 export const readOperationTemplates = (
@@ -58,6 +64,9 @@ export const readOperationTemplates = (
 		if (since) current.deprecation = { ...current.deprecation, since };
 		const sunset = /^ {6}x-sunset:\s*"?([^"\s]+)"?\s*$/.exec(line)?.[1];
 		if (sunset) current.deprecation = { ...current.deprecation, sunset };
+		// A path with two operations costs what its dearer one does.
+		const cost = /^ {6}x-rate-limit-cost:\s*(\d+)\s*$/.exec(line)?.[1];
+		if (cost) current.cost = Math.max(current.cost ?? 1, Number(cost));
 	}
 	return templates;
 };

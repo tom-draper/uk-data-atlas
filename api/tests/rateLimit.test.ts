@@ -23,6 +23,20 @@ test("spends a burst and earns requests back at the refill rate", () => {
 	assert.equal(limiter.take("a").remaining, 2);
 });
 
+test("charges a request dearer than the bucket the whole bucket", () => {
+	let now = 0;
+	const limiter = new RateLimiter(
+		{ capacity: 3, refillPerSecond: 1 },
+		() => now,
+	);
+	assert.equal(limiter.take("a", 10).allowed, true);
+	const refused = limiter.take("a", 10);
+	assert.equal(refused.allowed, false);
+	assert.equal(refused.retryAfterSeconds, 3);
+	now = 3;
+	assert.equal(limiter.take("a", 10).allowed, true);
+});
+
 test("forgets the least recently seen client first", () => {
 	const limiter = new RateLimiter(
 		{ capacity: 1, refillPerSecond: 0.001, maxClients: 2 },

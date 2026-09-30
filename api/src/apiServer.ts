@@ -229,6 +229,7 @@ export const createApiServer = (
 									options.rateLimit?.trustedProxyHops,
 								),
 							),
+							matched.operation?.cost,
 						)
 					: undefined;
 			if (decision) limitHeaders = limiter!.headers(decision);

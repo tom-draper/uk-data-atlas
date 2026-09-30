@@ -75,7 +75,10 @@ info:
     because it comes from the server rather than the route. `429` means the
     client has spent its requests: each client has a bucket, described by
     the IETF draft `RateLimit-Policy` and `RateLimit` headers on every
-    response, and a refusal carries `Retry-After` in seconds. `414` means the
+    response, and a refusal carries `Retry-After` in seconds. A request
+    costs one from the bucket, except where an operation declares
+    `x-rate-limit-cost`: those that read many areas' shapes, or take a
+    batch, cost that many. `414` means the
     request target is longer than the server accepts. `500` means the route
     failed unexpectedly, and carries a `requestId`. Every response carries
     `X-Request-Id`, echoing a well-formed one the client sent, so a failure
@@ -962,6 +965,7 @@ paths:
   /boundary-releases/{geography}/{release}:join:
     post:
       operationId: joinRowsToBoundaryRelease
+      x-rate-limit-cost: 10
       tags: ["Geography"]
       summary: Join your own rows of codes or names and values to a boundary release
       description: >
@@ -3575,6 +3579,7 @@ paths:
   /postcodes:batch:
     get:
       operationId: resolvePostcodes
+      x-rate-limit-cost: 5
       tags: ["Start here"]
       summary: Find where each of a batch of postcodes is and the areas containing it
       x-likely-refusal:
@@ -4342,6 +4347,7 @@ paths:
   /areas:intersects:
     get:
       operationId: findAreasIntersectingBox
+      x-rate-limit-cost: 10
       tags: ["Map"]
       summary: Find the areas meeting a bounding box in one release
       x-likely-refusal:
@@ -4477,6 +4483,7 @@ paths:
   /areas:validate:
     get:
       operationId: validateAreaValues
+      x-rate-limit-cost: 10
       tags: ["Geography"]
       summary: Validate a batch of area codes or names, or infer their likely release
       x-likely-refusal:
@@ -4593,6 +4600,7 @@ paths:
           $ref: "#/components/responses/NotFound"
     post:
       operationId: validateAreaValuesPosted
+      x-rate-limit-cost: 10
       tags: ["Geography"]
       summary: Validate a whole column of area codes or names sent as the body
       description: >
@@ -4839,6 +4847,7 @@ paths:
   /areas:containsBatch:
     get:
       operationId: findContainingAreasForPoints
+      x-rate-limit-cost: 10
       tags: ["Map"]
       summary: Find the areas containing each of a bounded batch of points
       x-likely-refusal:
@@ -4968,6 +4977,7 @@ paths:
   /areas:near:
     get:
       operationId: findNearestAreas
+      x-rate-limit-cost: 5
       tags: ["Map"]
       summary: Rank the areas nearest a point by distance
       x-likely-refusal:
@@ -5718,6 +5728,7 @@ paths:
   /areas/{geography}/{release}/{code}/children/geometry:
     get:
       operationId: getAreaChildrenGeometry
+      x-rate-limit-cost: 10
       tags: ["Map"]
       summary: Get every child of an area as one GeoJSON FeatureCollection
       x-likely-refusal:
@@ -5872,6 +5883,7 @@ paths:
   /areas/{geography}/{release}/{code}/neighbours:
     get:
       operationId: getAreaNeighbours
+      x-rate-limit-cost: 5
       tags: ["Map"]
       summary: List the areas whose boundary meets this one's
       x-likely-refusal:
@@ -5989,6 +6001,7 @@ paths:
   /areas/{geography}/{release}/{code}/overlap:
     get:
       operationId: getAreaOverlap
+      x-rate-limit-cost: 5
       tags: ["Map"]
       summary: Measure how one area overlaps another
       x-likely-refusal:
