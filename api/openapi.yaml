@@ -8507,8 +8507,11 @@ components:
       schema:
         type: integer
       description: >
-        The code vintage the partition's areas are published on, e.g. `2023`.
-        This is the source's own vintage, not a boundary release to draw.
+        The year of the boundaries the values are published on: `2023` with
+        `geography=localAuthority` means local authorities as they were in
+        2023. It names the publisher's area set, not one boundary release; a
+        year can have several releases (May and December), and `release`
+        chooses which to draw where a route offers it.
     Place:
       name: place
       in: query
