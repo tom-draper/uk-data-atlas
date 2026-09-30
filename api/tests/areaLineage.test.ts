@@ -12,6 +12,8 @@ import {
 import {
 	compileAreaLineage,
 	followLineage,
+	followLineageFromCode,
+	listedReleases,
 	type AreaLineage,
 } from "../src/resolver/areaLineage";
 
@@ -140,4 +142,16 @@ test("follows an area release by release, in either direction", () => {
 	assert.equal(followLineage(lineage, "R", "1", "3"), undefined);
 	assert.equal(followLineage(lineage, "R", "1", "1"), "R");
 	assert.equal(followLineage(lineage, "K", "1", "9"), undefined);
+});
+
+test("follows a code whose release is not known from the nearest release that lists it", () => {
+	const listed = listedReleases(lineage);
+	assert.deepEqual(listed.get("P"), [0]);
+	assert.deepEqual(listed.get("Q"), [1]);
+	assert.equal(listed.has("K"), false);
+	assert.equal(followLineageFromCode(lineage, listed, "K", "3"), "K");
+	assert.equal(followLineageFromCode(lineage, listed, "Q", "1"), "P");
+	assert.equal(followLineageFromCode(lineage, listed, "Q", "3"), undefined);
+	assert.equal(followLineageFromCode(lineage, listed, "P", "3"), "N");
+	assert.equal(followLineageFromCode(lineage, listed, "K", "9"), undefined);
 });
