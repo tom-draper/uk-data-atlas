@@ -985,6 +985,15 @@ const CATALOG = {
 	nhsEnglandRegion: {
 		releases: [
 			{
+				id: "2024-01-en-bgc",
+				year: 2024,
+				month: 1,
+				extent: "en",
+				codeKey: "NHSER24CD",
+				nameKey: "NHSER24NM",
+				asset: asset("nhs-england-region", "2024-01-en-bgc"),
+			},
+			{
 				id: "2022-07-en-bgc",
 				year: 2022,
 				month: 7,

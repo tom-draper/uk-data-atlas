@@ -397,6 +397,11 @@ interface NhsEnglandRegionProperties2022 {
 	NHSER22NM: string;
 }
 
+interface NhsEnglandRegionProperties2024 {
+	NHSER24CD: string;
+	NHSER24NM: string;
+}
+
 interface SubIntegratedCareBoardLocationProperties2026 {
 	SICBL26CD: string;
 	SICBL26NM: string;
@@ -553,6 +558,7 @@ export type YearToProperties = {
 	seneddElectoralRegion_2022: SeneddElectoralRegionProperties2022;
 	localHealthBoard_2023: LocalHealthBoardProperties2023;
 	nhsEnglandRegion_2022: NhsEnglandRegionProperties2022;
+	nhsEnglandRegion_2024: NhsEnglandRegionProperties2024;
 	subIntegratedCareBoardLocation_2026: SubIntegratedCareBoardLocationProperties2026;
 	fireAndRescueAuthority_2021: FireAndRescueAuthorityProperties2021;
 	nationalPark_2020: NationalParkProperties2020;
