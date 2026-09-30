@@ -116,19 +116,20 @@ fix what's broken, convert it to where you need it, and put it on a map.
 
 These are the acceptance tests. A pillar is done when its questions are
 answered in one or two obvious requests, without reading the README. Add
-questions as they occur to us. Status is from the local run on 2026-09-29.
+questions as they occur to us. Status is from the local run on 2026-09-29,
+updated against a local build on 2026-09-30.
 
 | Question                                           | Status         | Notes                                                                                                                                                                                              |
 | -------------------------------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | What's the population of North Wales?              | ✅ one request | `/data/population/value?place=north wales` gives 697,115 (2024) and lists the other "North Wales" places it could have meant.                                                                      |
 | Which measures are about house prices?             | ✅ one request | `/measures?q=house prices` finds `house-price-median`, and `house-prices` is accepted wherever the id is. `q=deprivation` lists all four national indices rather than choosing one.                |
-| I have 100 LAD codes; which boundary set are they? | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. Codes travel as 100 query parameters; should also accept a body.                                                                    |
+| I have 100 LAD codes; which boundary set are they? | ✅ one request | `/areas:validate` ranks releases, and 2019-12 matches all 100. The codes can be POSTed as CSV or JSON, and releases that match equally well are named in `likely.tiedWith`.                        |
 | What replaced Allerdale?                           | ✅             | `history` gives Cumberland (E06000063), April 2023.                                                                                                                                                |
 | Which wards are in Manchester?                     | ✅             | `children`.                                                                                                                                                                                        |
-| What's at this postcode?                           | ✅             | `/postcodes/{postcode}`.                                                                                                                                                                           |
+| What's at this postcode?                           | ✅             | `/postcodes/{postcode}`, or `/areas:contains?postcode=` for the geographies you name.                                                                                                              |
 | What's the history of Lancashire?                  | ❌             | Lancashire county exists in one release (2025) with no lineage. The named location is an editorial list of 14 councils. There are no ceremonial or historic counties and no reorganisation events. |
-| Give me all 2019 ward boundaries as one file       | ❌             | No whole-release download except LADs, May 2023.                                                                                                                                                   |
-| Map my CSV of 2019 ward values                     | ❌             | Needs the above, plus a stateless join.                                                                                                                                                            |
+| Give me all 2019 ward boundaries as one file       | ✅ one request | `/boundary-releases/ward/2019-12-uk-bgc` links GeoJSON, GeoParquet and PMTiles. 98 of 99 releases download whole; four that are not coverages have no tiles and download at full detail only.      |
+| Map my CSV of 2019 ward values                     | ✅ one request | `POST /boundary-releases/ward/2019-12-uk-bgc:join` with the CSV returns a join table, the unjoined rows with reasons, and the tiles to draw it on.                                                 |
 | Convert my 2019 ward counts to 2024 constituencies | ⚠️             | Code translation exists for some pairs; there is no way to send your own values.                                                                                                                   |
 | What were the boundaries of X in 2005?             | ❌             | Nothing earlier than 2008 for LADs, 2011 for wards, 2015 for constituencies.                                                                                                                       |
 
@@ -144,11 +145,13 @@ questions as they occur to us. Status is from the local run on 2026-09-29.
 3. **A small front door.** About twenty routes should answer most questions
    (see below). Everything else is either folded into those as an option, or
    kept as an advanced or transparency route, clearly labelled.
-4. **One vocabulary.** The area routes say `release`. The data routes say
-   `boundaryYear`. The aggregate route accepts `locationId`, `areaCode`,
-   `targetCode` and `regionCode`. Pick one word for each concept and use it
-   everywhere: `geography`, `release` (or `date` to let the API pick),
-   `place` for anything a person might type, `period` for observation time.
+4. **One vocabulary.** Pick one word for each concept and use it everywhere:
+   `geography`, `release` (or `date` to let the API pick), `place` for
+   anything a person might type, `period` for observation time. Done for
+   `place`: every data route takes it in place of `areaCode`, `locationId`,
+   `targetCode` and `regionCode`. Still open: the data routes name their
+   source partition's code vintage `boundaryYear`, which is not a boundary
+   release, so it needs its own word rather than `release`.
 5. **Accept what people have.** Wherever an area is expected, accept a code,
    a name, a postcode or a named location, and resolve it the same way
    `/data/{measure}/value?place=` does, reporting the other matches.
@@ -162,8 +165,9 @@ questions as they occur to us. Status is from the local run on 2026-09-29.
 
 ## Surface: 93 paths to a front door
 
-The API has 93 documented paths. Many answer the same question in slightly
-different ways, or expose build internals as routes. Proposed shape:
+The API had 93 documented paths on 2026-09-29, and 89 after the first merges
+below. Many answer the same question in slightly different ways, or expose
+build internals as routes. Proposed shape:
 
 ### Front door
 
@@ -189,17 +193,19 @@ different ways, or expose build internals as routes. Proposed shape:
 
 ### Merge
 
-- `/relationship-paths`, `/relationship-capabilities`, `/conversion-plan`
-  and `/relationship-coverage` take the same six parameters and answer "can I
-  get from A to B, and how?" Make that one route. `/translations` then does
-  the conversion.
-- `/places`, `/areas?q=` and `/areas:resolve` are three name searches. Make
-  `/places` the only one; `/areas` becomes a plain paged listing.
-- `dossier`, `capabilities`, `citation` and `geometry/metadata` on an area,
-  and `capabilities` on a location, become `include=` options on the area or
-  location itself.
-- `/data/{measure}/compare`, `/change` and `/rankings` stay, but take the same
-  `place` and `release` vocabulary as `value`.
+- Done: `/relationship-paths`, `/relationship-capabilities`,
+  `/conversion-plan` and `/relationship-coverage` took the same six
+  parameters and answered "can I get from A to B, and how?"; they are now
+  `/relationships`, and `/translations` does the conversion.
+- Done: `/places`, `/areas?q=` and `/areas:resolve` were three name searches.
+  `/places` is the only one; `/areas` is a plain paged listing.
+- Started: `dossier` is `include=dossier` on the area. `capabilities`,
+  `citation` and `geometry/metadata` on an area, and `capabilities` on a
+  location, still to become `include=` options.
+- Started: `/data/{measure}`, `/series`, `/change` and `/aggregate` take
+  `place`, as a code or a `/places` reference. Still to do: resolve a name in
+  `place` there as `value` does, with the partition defaulted, and bring
+  `/compare` and `/rankings` into line.
 - `/data/{measure}/aggregate` folds into `value`, which already dispatches to
   it.
 
@@ -223,22 +229,26 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Whole-release boundary downloads and tiles for every release.** The map
-   resource pipeline already produces GeoParquet, PMTiles and TileJSON for one
-   release. Run it for all 99, and add a plain GeoJSON download. This is the
-   single biggest gap between the mission and the API.
+1. **Whole-release boundary downloads and tiles for every release.** Done
+   for 98 of 99: 94 with tiles and every tier, four that are not coverages
+   (ward 2017, data zones 2021 and 2022, LSOA 2001) as full-detail downloads
+   without tiles. `dataZone/2011-12-sc-nc` has no readable geometry, and the
+   2022 and 2021 data zone ids carry no month, so `latest` cannot place them.
 2. **Simplify the surface.** Apply the merges, the one vocabulary and the
    `include=` folding above while it costs nothing. Update `openapi.yaml`, the
-   docs page and the contract tests in the same passes.
-3. **Measure discovery.** `GET /measures?q=` with aliases, so `population`,
-   `house prices` and `deprivation` find their measures. Accept an alias
-   wherever a measure id is expected.
-4. **Your own data, stateless.** A `POST` body for `areas:validate`; a
-   `:join` that returns GeoJSON for your values; then the matcher work
-   already ranked in `docs/geography-resolver-work.md`.
-5. **Places with history.** Ceremonial counties (the source is already in
-   `data/geography/ceremonial-counties` locally, but not in the published
-   data release), then historic counties, then reorganisation events as
+   docs page and the contract tests in the same passes. Under way: see
+   [Merge](#merge); `latest` is accepted wherever a path names a release, and
+   `/areas:contains` takes a postcode. `pnpm contract:surface
+--before-launch` locks a deliberate break until launch.
+3. **Measure discovery.** Done: `GET /measures?q=` with aliases, and an alias
+   is accepted wherever a measure id is.
+4. **Your own data, stateless.** Done: a `POST` body for `areas:validate`, a
+   match report, and a `:join` for your values. Next, the matcher work
+   ranked in `docs/geography-resolver-work.md`.
+5. **Places with history.** Ceremonial counties (the source is in
+   `data/geography/ceremonial-counties` and, since `data-2026-09-29`, in the
+   published data release, but not yet compiled into the API), then historic
+   counties, then reorganisation events as
    first-class lineage, so a county, a district and its successors can be told
    as one story.
 
@@ -294,7 +304,7 @@ geographies have only one release, so they can't answer anything historical.
 | Police force area, fire and rescue, community safety partnership | 1 each               | Earlier releases                                    |
 | Integrated care board                                            | 1 (2026)             | 2022–2025, and CCGs/STPs before them                |
 | Senedd constituency                                              | 1 (2022)             | The 2026 constituencies                             |
-| Ceremonial county                                                | not published        | Everything (local source exists)                    |
+| Ceremonial county                                                | not compiled         | Everything (source is in the data release)          |
 | Historic county                                                  | none                 | Everything                                          |
 | Built-up areas                                                   | none                 | 2022                                                |
 | National Landscapes (AONBs)                                      | none                 | Current                                             |
