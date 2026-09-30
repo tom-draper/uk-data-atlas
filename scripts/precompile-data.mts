@@ -40,14 +40,8 @@ import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import { loadMatchIndex } from "../lib/data/gazetteer/matchIndex";
-import {
-	loadBoundaryMappings,
-	loadLsoaLadMappings,
-} from "../lib/data/boundaries/mappingLoader";
-import {
-	encodeBoundaryMappings,
-	parseBoundaryWardToLad,
-} from "../lib/data/boundaries/mappings";
+import { loadLsoaLadMappings } from "../lib/data/boundaries/mappingLoader";
+import { parseBoundaryWardToLad } from "../lib/data/boundaries/mappings";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {
@@ -442,14 +436,13 @@ async function main() {
 			return data;
 		},
 	);
-	const boundaryMappings = loadBoundaryMappings(readBoundaryAsset).then(
-		async (data) => {
-			await out("boundary-mappings", encodeBoundaryMappings(data));
-			return data;
-		},
-	);
-	// Upload matching reads ward parents from the mappings just built, so the
-	// index is compiled here, in step with the boundary catalogue.
+	// Ward containment comes from the API's geography resolver, written by
+	// `pnpm containment:build` and committed; upload matching reads ward
+	// parents from it, so the index is compiled in step with that file.
+	const boundaryMappings = readFile(
+		join(OUT_DIR, "boundary-mappings.json"),
+		"utf8",
+	).then((json) => ({ wardToLad: parseBoundaryWardToLad(JSON.parse(json)) }));
 	const matchIndex = boundaryMappings.then(async ({ wardToLad }) =>
 		out(
 			"gazetteer.matchindex",

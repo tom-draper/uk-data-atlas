@@ -18,6 +18,7 @@
 		"precompile:verify": "npx tsx scripts/verify-precompiled.mts",
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
 		"lineage:build": "npx tsx --max-old-space-size=6144 scripts/build-area-lineage.mts",
+		"containment:build": "npx tsx --max-old-space-size=6144 scripts/build-area-containment.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
 		"build": "pnpm precompile:verify && next build --turbopack",
 		"hooks:install": "git config core.hooksPath .githooks",
@@ -29,7 +30,7 @@
 		"test:e2e": "playwright test",
 		"typecheck": "tsc --noEmit",
 		"check": "pnpm typecheck && pnpm format:check && vitest run --project unit --project data && pnpm --dir api typecheck && pnpm --dir api test:unbuilt",
-		"check:full": "pnpm precompile && pnpm boundaries:compile && pnpm --dir api build && pnpm lineage:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir api typecheck && pnpm --dir api test",
+		"check:full": "pnpm precompile && pnpm boundaries:compile && pnpm --dir api build && pnpm lineage:build && pnpm containment:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir api typecheck && pnpm --dir api test",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
 		"roads:serve": "node scripts/serve-os-open-roads.mjs",
 		"doctor": "npx react-doctor@latest"

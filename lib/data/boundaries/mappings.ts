@@ -1,7 +1,6 @@
-import type { BoundaryGeojson, BoundaryGeometry, Features } from "@lib/types";
+import type { BoundaryGeojson, BoundaryGeometry } from "@lib/types";
 import type { BoundaryType } from "./boundaries";
 import { getProp } from "./properties";
-import { BOUNDARY_CATALOG } from "./catalog";
 
 export type CodeType = BoundaryType;
 export type YearCode = number;
@@ -154,44 +153,6 @@ export const parsePrecompiledBoundaryMappings = (
 	};
 };
 
-export const extractWardLadMappings = (
-	features: Features,
-	wardCodeKeys: readonly string[],
-	localAuthorityCodeKeys: readonly string[],
-): {
-	wardToLad: Record<string, string>;
-	ladToWards: Record<string, string[]>;
-} => {
-	const wardToLad: Record<string, string> = {};
-	const ladToWardSets: Record<string, Set<string>> = {};
-
-	for (const feature of features) {
-		const props = feature.properties;
-		if (!props) continue;
-
-		const wardCode = getProp(props, wardCodeKeys);
-		const localAuthorityCode = getProp(props, localAuthorityCodeKeys);
-
-		if (wardCode && localAuthorityCode) {
-			wardToLad[wardCode] = localAuthorityCode;
-			if (!ladToWardSets[localAuthorityCode]) {
-				ladToWardSets[localAuthorityCode] = new Set();
-			}
-			ladToWardSets[localAuthorityCode].add(wardCode);
-		}
-	}
-
-	return {
-		wardToLad,
-		ladToWards: Object.fromEntries(
-			Object.entries(ladToWardSets).map(([code, wards]) => [
-				code,
-				[...wards],
-			]),
-		),
-	};
-};
-
 function pointInRing(px: number, py: number, ring: number[][]): boolean {
 	let inside = false;
 	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
@@ -297,28 +258,4 @@ export const bestFitContainer = (
 		if (best) fits[areaCode] = best;
 	}
 	return fits;
-};
-
-/**
- * Which wards each constituency holds, best fit (see `bestFitContainer`). A
- * ward straddling a boundary is counted once, never twice, so ward values sum
- * to constituency totals. Against the ONS ward/constituency lookups this
- * agrees on 99.94% (2025 wards, 2024 constituencies) and 99.99% (2022, 2010
- * set) of wards the lookup places in a single constituency.
- */
-export const buildConstituencyWardMappings = (
-	wardGeoJSON: BoundaryGeojson,
-	constituencyGeoJSON: BoundaryGeojson,
-): Record<string, string[]> => {
-	const mappings: Record<string, string[]> = {};
-	for (const [ward, constituency] of Object.entries(
-		bestFitContainer(
-			wardGeoJSON,
-			BOUNDARY_CATALOG.ward.properties.code,
-			constituencyGeoJSON,
-			BOUNDARY_CATALOG.constituency.properties.code,
-		),
-	))
-		(mappings[constituency] ??= []).push(ward);
-	return mappings;
 };
