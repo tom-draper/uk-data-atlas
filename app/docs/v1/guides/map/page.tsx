@@ -81,7 +81,7 @@ export default function MapGuidePage() {
 						converted.
 					</P>
 					<Request
-						url={`${API}/data/population?period=2024&geography=localAuthority&boundaryYear=2023&release={release}&areaCode=E08000025`}
+						url={`${API}/data/population?period=2024&geography=localAuthority&boundaryYear=2023&release={release}&place=E08000025`}
 						operationId="getMeasureObservations"
 					/>
 					<Callout tone="tip">

@@ -89,9 +89,9 @@ export default function QuickstartPage() {
 					</P>
 					<SpecExample id="getMeasureObservations" />
 					<P>
-						Leave out `areaCode` to get every ward, a page at a
-						time. [Pagination](/docs/v1/pagination) shows how to
-						fetch the rest.
+						Leave out `place` to get every ward, a page at a time.
+						[Pagination](/docs/v1/pagination) shows how to fetch the
+						rest.
 					</P>
 				</Step>
 
