@@ -375,3 +375,48 @@ test("answers from the postcode area index as the geometry would, without readin
 	);
 	assert.equal(areaGeometryCache.stats().loads, 1);
 });
+
+test("finds the areas containing a postcode as it would a coordinate", () => {
+	const byPostcode = get(
+		"/v1/areas:contains?postcode=EC1A%201AA&geography=ward&release=ward/2026-05-uk-bgc",
+	);
+	assert.equal(byPostcode.status, 200);
+	assert.equal(byPostcode.data.postcode.postcode, "EC1A 1AA");
+	assert.equal(byPostcode.data.postcode.href, "/v1/postcodes/EC1A1AA");
+	assert.deepEqual(matched(byPostcode.data.results[0]), [
+		"ward/2026-05-uk-bgc/E05000001",
+	]);
+	// The postcode's own answer places it in the same area.
+	const postcode = get(
+		"/v1/postcodes/EC1A1AA?geography=ward&release=ward/2026-05-uk-bgc",
+	);
+	assert.deepEqual(byPostcode.data.point, postcode.data.point);
+	assert.deepEqual(
+		matched(byPostcode.data.results[0]),
+		matched(postcode.data.results[0]),
+	);
+	assert.match(byPostcode.data.note, /centroid/);
+
+	// Undeclared accuracy is carried as the postcode route carries it.
+	const undeclared = get(
+		"/v1/areas:contains?postcode=EC1A1AD&release=ward/2026-05-uk-bgc",
+	);
+	assert.equal(undeclared.status, 200);
+	assert.ok(undeclared.data.postcode.caution);
+});
+
+test("refuses a postcode it cannot place, and a postcode given with a coordinate", () => {
+	const scope = "&release=ward/2026-05-uk-bgc";
+	assert.equal(get(`/v1/areas:contains?postcode=EC1A${scope}`).status, 400);
+	assert.equal(
+		get(`/v1/areas:contains?postcode=EC1A1ZZ${scope}`).status,
+		404,
+	);
+	assert.equal(get(`/v1/areas:contains?postcode=BT11AA${scope}`).status, 451);
+	assert.equal(get(`/v1/areas:contains?postcode=GY11AA${scope}`).status, 404);
+	const both = get(
+		`/v1/areas:contains?postcode=EC1A1AA&lng=${lng}&lat=${lat}${scope}`,
+	);
+	assert.equal(both.status, 400);
+	assert.match(both.body.detail, /not both: lng, lat/);
+});

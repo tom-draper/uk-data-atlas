@@ -4262,6 +4262,9 @@
 				"query:gridref": {
 					"required": false
 				},
+				"query:postcode": {
+					"required": false
+				},
 				"query:geography": {
 					"required": false,
 					"maxItems": 4
@@ -4319,6 +4322,17 @@
 					"data.point.precision.decimalPlaces.lng",
 					"data.point.precision.decimalPlaces.northing",
 					"data.point.precision.uncertaintyM",
+					"data.postcode",
+					"data.postcode.caution",
+					"data.postcode.href",
+					"data.postcode.postcode",
+					"data.postcode.source",
+					"data.postcode.source.attribution",
+					"data.postcode.source.edition",
+					"data.postcode.source.licence",
+					"data.postcode.source.publisher",
+					"data.postcode.source.title",
+					"data.postcode.status",
 					"data.results",
 					"data.results[].boundaryRelease",
 					"data.results[].boundaryResolution",
@@ -4416,6 +4430,26 @@
 					"type"
 				],
 				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"title",
+					"type"
+				],
+				"451 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",
