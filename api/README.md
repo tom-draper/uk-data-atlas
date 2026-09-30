@@ -2313,6 +2313,28 @@ a published parent code, a separately maintained lookup, or an inference.
 Membership is naturally reversible: asking for an LAD's wards or a ward's LAD
 should use the same relationship records and yield the same evidence.
 
+#### The same area in another release
+
+`sameArea` on the geography resolver answers the question the website asks
+when it shows one area's figures from other years: which single area of that
+release is this one? The best-ranked identity path with an answer decides, so
+a publisher's lookup is heard before a derived crosswalk, and its answer
+stands even where it is no. It must name one area, and translating that area
+back must reach only the one asked about, so a successor that merged several
+areas, or took part of one, is not the same area.
+
+The website cannot hold the crosswalks, so `pnpm lineage:build`, run after
+the API build, writes what `sameArea` answers between the ward, local
+authority and constituency releases the website serves to the committed
+`public/data/datasets/area-lineage.json` (about 70 KB gzipped). It stores the
+codes that do not carry on unchanged between neighbouring releases, and
+overrides for the few pairs further apart whose direct answer is not what
+those steps compose to: a lookup joining two releases directly, as the 2010 to
+2024 constituency lookup does, can say an area held where a derived step in
+between cannot. `followLineage` in `src/resolver/areaLineage.ts` reads it, in
+the website and the API alike, and a built test checks a sample of its answers
+against the resolver, so the map shows what the API would say.
+
 ### 5. Retrieve data
 
 The core query endpoint is deliberately constrained:
