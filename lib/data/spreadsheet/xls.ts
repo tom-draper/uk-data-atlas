@@ -290,15 +290,14 @@ export function xlsSheets(stream: Uint8Array): XlsSheet[] {
 const numberToCell = (value: number) =>
 	Number.isFinite(value) ? String(value) : "";
 
-/**
- * One worksheet as a grid of strings, sized to the cells that carry a value.
- * Numbers are rendered plainly, without the workbook's display formatting, so
- * a reader never has to undo thousands separators or currency symbols.
- */
-export function xlsSheetRows(
+type CellVisitor = (row: number, column: number, value: string) => void;
+
+/** Visit populated cells in their worksheet order without materialising a grid. */
+const visitXlsSheetCells = (
 	stream: Uint8Array,
 	sheetName: string,
-): string[][] {
+	visit: CellVisitor,
+) => {
 	const sheets = xlsSheets(stream);
 	const wanted =
 		sheets.find((sheet) => sheet.name === sheetName) ??
@@ -326,12 +325,8 @@ export function xlsSheetRows(
 	if (sstFragments.length > 0)
 		sharedStrings = readSharedStrings(sstFragments);
 
-	const cells = new Map<number, Map<number, string>>();
 	const put = (row: number, column: number, value: string) => {
-		if (value === "") return;
-		let line = cells.get(row);
-		if (!line) cells.set(row, (line = new Map()));
-		line.set(column, value);
+		if (value !== "") visit(row, column, value);
 	};
 
 	let pendingFormula: { row: number; column: number } | null = null;
@@ -431,6 +426,24 @@ export function xlsSheetRows(
 				break;
 		}
 	}
+};
+
+/**
+ * One worksheet as a grid of strings, sized to the cells that carry a value.
+ * Numbers are rendered plainly, without the workbook's display formatting, so
+ * a reader never has to undo thousands separators or currency symbols.
+ */
+export function xlsSheetRows(
+	stream: Uint8Array,
+	sheetName: string,
+): string[][] {
+	const cells = new Map<number, Map<number, string>>();
+	const put = (row: number, column: number, value: string) => {
+		let line = cells.get(row);
+		if (!line) cells.set(row, (line = new Map()));
+		line.set(column, value);
+	};
+	visitXlsSheetCells(stream, sheetName, put);
 
 	if (cells.size === 0) return [];
 	const lastRow = Math.max(...cells.keys());
@@ -444,4 +457,28 @@ export function xlsSheetRows(
 			(_, column) => line?.get(column) ?? "",
 		);
 	});
+}
+
+/**
+ * Visits one sparse row at a time. XLS cell records are row-ordered, so this
+ * avoids retaining a full worksheet when a loader can consume rows directly.
+ */
+export function forEachXlsSheetRow(
+	stream: Uint8Array,
+	sheetName: string,
+	visit: (row: ReadonlyMap<number, string>) => void,
+) {
+	let currentRow: number | undefined;
+	let cells = new Map<number, string>();
+	visitXlsSheetCells(stream, sheetName, (row, column, value) => {
+		if (currentRow !== undefined && row !== currentRow) {
+			if (row < currentRow)
+				throw new Error("XLS cells are not ordered by row.");
+			visit(cells);
+			cells = new Map<number, string>();
+		}
+		currentRow = row;
+		cells.set(column, value);
+	});
+	if (currentRow !== undefined) visit(cells);
 }

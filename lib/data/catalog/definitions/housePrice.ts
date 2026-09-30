@@ -21,6 +21,5 @@ export const housePriceDatasetDefinition: DatasetDefinition<HousePriceDataset> =
 				"Median and mean house prices paid by ward for England and Wales. This was the final ONS ward-level edition.",
 		},
 		// Table 1a of each workbook, read from inside the published zips.
-		precompile: async ({ xlsSheet }) =>
-			loadHousePrice((path) => xlsSheet(path, "1a")),
+		precompile: ({ xlsSheetRows }) => loadHousePrice(xlsSheetRows),
 	};

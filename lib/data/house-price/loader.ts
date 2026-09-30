@@ -1,5 +1,4 @@
 import { HousePriceDataset, HousePriceWardData } from "@/lib/types/housePrice";
-import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
 import { parseNullableNum } from "@/lib/helpers/parseNumber";
 
 /**
@@ -37,78 +36,129 @@ const MEDIAN_PRICE_PATH =
 const MEAN_PRICE_PATH =
 	"economics/housing/mean-price-by-ward/hpssadataset38meanpricepaidbyward.zip";
 
-async function parsePriceRows(csvText: string) {
-	const skipLines = findHeaderLine(csvText, "local authority code");
-	return parseCsv(csvText, { header: true, skipLines });
-}
+type XlsSheetRowReader = (
+	path: string,
+	sheet: string,
+	visit: (row: ReadonlyMap<number, string>) => void,
+) => Promise<void>;
+
+type PriceColumn = { index: number; year: number };
+
+const cell = (
+	row: ReadonlyMap<number, string>,
+	headers: ReadonlyMap<string, number>,
+	name: string,
+) => row.get(headers.get(name) ?? -1)?.trim() ?? "";
+
+const priceColumnsFor = (headers: ReadonlyMap<string, number>) =>
+	[...headers.entries()].flatMap(([header, index]) => {
+		const year = index >= 4 ? header.match(/\d{4}/)?.[0] : undefined;
+		return year ? [{ index, year: Number(year) }] : [];
+	});
 
 function pricesForRow(
-	row: Record<string, string>,
-	timePeriodHeaders: string[],
+	row: ReadonlyMap<number, string>,
+	priceColumns: readonly PriceColumn[],
 ): Record<number, number> {
 	const prices: Record<number, number> = {};
-	for (const period of timePeriodHeaders) {
+	for (const { index, year } of priceColumns) {
 		// Medians of an even number of sales land on a half penny, and the
 		// workbooks hold that rather than the rounded figure they display.
-		const rawPrice = parseNullableNum(row[period]);
+		const rawPrice = parseNullableNum(row.get(index));
 		const price = rawPrice === null ? null : Math.round(rawPrice);
 		if (price === null) continue;
-		const yearMatch = period.match(/\d{4}/);
-		if (yearMatch) prices[parseInt(yearMatch[0])] = price;
+		prices[year] = price;
 	}
 	return prices;
 }
 
+const readPriceRows = async (
+	readRows: XlsSheetRowReader,
+	path: string,
+	visit: (
+		row: ReadonlyMap<number, string>,
+		headers: ReadonlyMap<string, number>,
+		priceColumns: readonly PriceColumn[],
+	) => void,
+) => {
+	let headers: Map<string, number> | undefined;
+	let priceColumns: PriceColumn[] = [];
+	await readRows(path, "1a", (row) => {
+		if (!headers) {
+			const values = [...row.values()];
+			if (
+				!values.some((value) =>
+					value.toLowerCase().includes("local authority code"),
+				)
+			)
+				return;
+			headers = new Map(
+				[...row.entries()].map(([index, value]) => [
+					value.trim(),
+					index,
+				]),
+			);
+			priceColumns = priceColumnsFor(headers);
+			return;
+		}
+		visit(row, headers, priceColumns);
+	});
+	if (!headers)
+		throw new Error(
+			`${path}: no header row containing local authority code`,
+		);
+};
+
 export async function loadHousePrice(
-	read: (path: string) => Promise<string>,
+	readRows: XlsSheetRowReader,
 ): Promise<Record<string, HousePriceDataset>> {
-	const [medianCsv, meanCsv] = await Promise.all([
-		read(MEDIAN_PRICE_PATH),
-		read(MEAN_PRICE_PATH),
-	]);
-	const [median, mean] = await Promise.all([
-		parsePriceRows(medianCsv),
-		parsePriceRows(meanCsv),
-	]);
 	const wardData: Record<string, HousePriceWardData> = {};
 
-	for (const row of median.data) {
-		const rawCode = row["Ward code"]?.trim();
-		if (!rawCode) continue;
-		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
+	await readPriceRows(
+		readRows,
+		MEDIAN_PRICE_PATH,
+		(row, headers, priceColumns) => {
+			const rawCode = cell(row, headers, "Ward code");
+			if (!rawCode) return;
+			const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
 
-		wardData[wardCode] = {
-			ladCode: row["Local authority code"]?.trim() || "",
-			ladName: row["Local authority name"]?.trim() || "",
-			wardCode,
-			wardName: row["Ward name"]?.trim() || "",
-			...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
-			prices: pricesForRow(row, median.fields.slice(4)),
-			meanPrices: {},
-		};
-	}
+			wardData[wardCode] = {
+				ladCode: cell(row, headers, "Local authority code"),
+				ladName: cell(row, headers, "Local authority name"),
+				wardCode,
+				wardName: cell(row, headers, "Ward name"),
+				...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
+				prices: pricesForRow(row, priceColumns),
+				meanPrices: {},
+			};
+		},
+	);
 
-	for (const row of mean.data) {
-		const rawCode = row["Ward code"]?.trim();
-		if (!rawCode) continue;
-		const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
-		const meanPrices = pricesForRow(row, mean.fields.slice(4));
-		const existing = wardData[wardCode];
-		if (existing) {
-			existing.meanPrices = meanPrices;
-			continue;
-		}
+	await readPriceRows(
+		readRows,
+		MEAN_PRICE_PATH,
+		(row, headers, priceColumns) => {
+			const rawCode = cell(row, headers, "Ward code");
+			if (!rawCode) return;
+			const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
+			const meanPrices = pricesForRow(row, priceColumns);
+			const existing = wardData[wardCode];
+			if (existing) {
+				existing.meanPrices = meanPrices;
+				return;
+			}
 
-		wardData[wardCode] = {
-			ladCode: row["Local authority code"]?.trim() || "",
-			ladName: row["Local authority name"]?.trim() || "",
-			wardCode,
-			wardName: row["Ward name"]?.trim() || "",
-			...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
-			prices: {},
-			meanPrices,
-		};
-	}
+			wardData[wardCode] = {
+				ladCode: cell(row, headers, "Local authority code"),
+				ladName: cell(row, headers, "Local authority name"),
+				wardCode,
+				wardName: cell(row, headers, "Ward name"),
+				...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
+				prices: {},
+				meanPrices,
+			};
+		},
+	);
 
 	return {
 		2023: {
