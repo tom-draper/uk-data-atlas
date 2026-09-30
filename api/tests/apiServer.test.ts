@@ -186,7 +186,7 @@ test("refuses an overlong request target before routing it", async (t) => {
 });
 
 test("reports health, readiness and metrics outside the versioned API", async (t) => {
-	const { get, server } = await serve(t, { metricsToken: "secret" });
+	const { get, server } = await serve(t, { metrics: { token: "secret" } });
 	const health = await get("/healthz");
 	assert.equal(health.status, 200);
 	assert.equal(health.headers.get("cache-control"), "no-store");
@@ -195,6 +195,11 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 	await get("/v1/geographies", { method: "HEAD" });
 
 	assert.equal((await get("/metrics")).status, 401);
+	// Without a token or an explicit opening, metrics are not there at all.
+	const closed = await serve(t);
+	assert.equal((await closed.get("/metrics")).status, 404);
+	const open = await serve(t, { metrics: "open" });
+	assert.equal((await open.get("/metrics")).status, 200);
 	assert.equal(
 		(await get("/metrics", { headers: { authorization: "Bearer wrong!" } }))
 			.status,

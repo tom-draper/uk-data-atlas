@@ -178,9 +178,10 @@ export const createApiServer = (
 				geometryCache:
 					catalogues.geographyResolver.geometryCacheStats() ?? null,
 			});
+		if (!options.metrics) return json(404, { status: "not-found" });
 		if (
-			options.metricsToken &&
-			!bearerMatches(request.headers.authorization, options.metricsToken)
+			options.metrics !== "open" &&
+			!bearerMatches(request.headers.authorization, options.metrics.token)
 		) {
 			const refused = json(401, { status: "unauthorised" });
 			refused.headers["www-authenticate"] = 'Bearer realm="metrics"';

@@ -2523,7 +2523,7 @@ Two things can change under a client, and each is pinned separately.
 | ---------- | ------------------------------------------------------------------------------------------------ |
 | `/healthz` | `200` while the process is serving.                                                              |
 | `/readyz`  | `200` with the release served and the geometry cache's state; `503` once the server is draining. |
-| `/metrics` | Prometheus text. Behind `Authorization: Bearer` when `ATLAS_METRICS_TOKEN` is set.               |
+| `/metrics` | Prometheus text. Off (`404`) unless `ATLAS_METRICS_TOKEN` or `ATLAS_METRICS_OPEN` is set.        |
 
 None is cached or rate limited: a refused probe would take a healthy instance
 out of service.
@@ -2583,7 +2583,8 @@ rather than falling back to the default.
 | `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                            |
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                             |
 | `ATLAS_GEOMETRY_CACHE_RELEASES`      | `3`         | Geometry releases held in memory at once.                                                    |
-| `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires; unset, it is open.                                         |
+| `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                  |
+| `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                      |
 | `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                        |
 | `ATLAS_MAX_URL_LENGTH`               | `4096`      | Longest request target served.                                                               |
 | `ATLAS_SHUTDOWN_GRACE_SECONDS`       | `10`        | Time to finish open requests after `SIGTERM`.                                                |
@@ -2604,7 +2605,7 @@ a `304` revalidation, `HEAD`, a cross-origin preflight, problem details for
 `404` and `405`, the release manifest, an immutable pinned response and a
 refused unknown pin, an area and an observation, the validation report, rate
 limit headers and metrics. Where a check cannot apply, such as rate limit
-headers with limiting off or protected metrics without
+headers with limiting off, metrics turned off, or protected metrics without
 `ATLAS_METRICS_TOKEN`, it is skipped with the reason rather than passed.
 
 ## Resolution contract

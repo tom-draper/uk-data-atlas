@@ -50,7 +50,12 @@ server.listen(configuration.port, configuration.host, () => {
 		loadSeconds: Math.round(performance.now() - loading) / 1000,
 		rateLimit: configuration.server.rateLimit ?? null,
 		geometryCacheReleases: configuration.geometryCacheReleases,
-		metricsProtected: configuration.server.metricsToken !== undefined,
+		metrics:
+			configuration.server.metrics === undefined
+				? "off"
+				: configuration.server.metrics === "open"
+					? "open"
+					: "token",
 	});
 });
 

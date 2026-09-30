@@ -345,6 +345,10 @@ export const runSmoke = async (
 						"metrics are protected and no token was given",
 					);
 				}
+				if (response.status === 404) {
+					await response.body?.cancel();
+					throw new Skip("metrics are not enabled on this server");
+				}
 				expect(response.status === 200, `answered ${response.status}`);
 				const text = await response.text();
 				expect(

@@ -16,7 +16,7 @@ const apiRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 test("passes the deployment smoke suite against a local server", async (t) => {
 	const server = createApiServer(readApiCatalogues(apiRoot), {
 		rateLimit: { capacity: 1000, refillPerSecond: 100 },
-		metricsToken: "smoke",
+		metrics: { token: "smoke" },
 	});
 	await new Promise<void>((ready) => server.listen(0, "127.0.0.1", ready));
 	t.after(() => {
