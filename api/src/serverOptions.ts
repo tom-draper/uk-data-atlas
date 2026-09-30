@@ -30,8 +30,13 @@ export type ServerOptions = {
 			path: string;
 		},
 	) => void;
-	/** Absent, `/metrics` is open; present, it needs `Authorization: Bearer`. */
-	metricsToken?: string;
+	/**
+	 * Who may read `/metrics`: whoever sends this `Authorization: Bearer`
+	 * token, or anyone when `"open"`. Absent, no one: it answers 404, as a
+	 * path that is not there, so a public instance does not publish its
+	 * traffic by default.
+	 */
+	metrics?: { token: string } | "open";
 	/** Longest request target served; a longer one is refused with 414. */
 	maxUrlLength?: number;
 };
@@ -151,8 +156,10 @@ export const readServeConfiguration = (
 			...(log ? { log } : {}),
 			accessLog: toggle(env, "ATLAS_ACCESS_LOG", true),
 			...(env.ATLAS_METRICS_TOKEN
-				? { metricsToken: env.ATLAS_METRICS_TOKEN }
-				: {}),
+				? { metrics: { token: env.ATLAS_METRICS_TOKEN } }
+				: toggle(env, "ATLAS_METRICS_OPEN", false)
+					? { metrics: "open" as const }
+					: {}),
 			maxUrlLength: integer(
 				env,
 				"ATLAS_MAX_URL_LENGTH",

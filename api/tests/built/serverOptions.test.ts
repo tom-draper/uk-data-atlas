@@ -14,7 +14,11 @@ test("defaults to a limited, logged single public instance", () => {
 		trustedProxyHops: 0,
 	});
 	assert.equal(configuration.server.accessLog, true);
-	assert.equal(configuration.server.metricsToken, undefined);
+	assert.equal(configuration.server.metrics, undefined);
+	assert.equal(
+		readServeConfiguration({ ATLAS_METRICS_OPEN: "on" }).server.metrics,
+		"open",
+	);
 });
 
 test("reads every setting from the environment", () => {
@@ -39,7 +43,7 @@ test("reads every setting from the environment", () => {
 		trustedProxyHops: 2,
 	});
 	assert.equal(configuration.server.accessLog, false);
-	assert.equal(configuration.server.metricsToken, "token");
+	assert.deepEqual(configuration.server.metrics, { token: "token" });
 	assert.equal(configuration.server.maxUrlLength, 2048);
 	assert.equal(
 		readServeConfiguration({ ATLAS_RATE_LIMIT_CAPACITY: "0" }).server
@@ -55,6 +59,7 @@ test("refuses a malformed setting rather than quietly using the default", () => 
 		{ ATLAS_RATE_LIMIT_CAPACITY: "many" },
 		{ ATLAS_RATE_LIMIT_REFILL_PER_SECOND: "-1" },
 		{ ATLAS_ACCESS_LOG: "sometimes" },
+		{ ATLAS_METRICS_OPEN: "maybe" },
 		{ ATLAS_MAX_URL_LENGTH: "10" },
 	])
 		assert.throws(() => readServeConfiguration(env), Object.keys(env)[0]);
