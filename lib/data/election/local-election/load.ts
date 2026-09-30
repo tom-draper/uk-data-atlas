@@ -47,6 +47,8 @@ const partyCode = (label: string) => PARTY_CODES[label.trim()] ?? "OTHER";
 
 type TableRow = Record<string, string | undefined>;
 
+type SheetRow = ReadonlyMap<number, string>;
+
 type WardIdentityFields = { code?: string; name: string; ladName: string };
 
 type Candidate = { party: string; votes: number; elected?: boolean };
@@ -124,6 +126,45 @@ const parseSheet = (text: string, headerField: string) => {
 	}).data;
 };
 
+/**
+ * Builds the same table rows directly from worksheet cells, avoiding a CSV
+ * rendering and a second parse for the House of Commons workbooks.
+ */
+const parseSheetRows = (
+	readRows: (visit: (row: SheetRow) => void) => Promise<void>,
+	headerField: string,
+) => {
+	let headers: ReadonlyMap<number, string> | undefined;
+	const rows: TableRow[] = [];
+	return readRows((cells) => {
+		if (!headers) {
+			if (
+				![...cells.values()].some((value) =>
+					value.includes(headerField),
+				)
+			)
+				return;
+			headers = new Map(
+				[...cells].map(([column, value]) => [column, value.trim()]),
+			);
+			return;
+		}
+		if (cells.size === 0) return;
+		rows.push(
+			Object.fromEntries(
+				[...headers].map(([column, header]) => [
+					header,
+					cells.get(column),
+				]),
+			),
+		);
+	}).then(() => {
+		if (!headers)
+			throw new Error(`No header row containing "${headerField}"`);
+		return rows;
+	});
+};
+
 const cell = (row: TableRow, field: string | undefined) =>
 	field ? (row[field] ?? "").trim() : "";
 
@@ -155,6 +196,19 @@ export const parseLocalElectionTable = (
 	candidateText: string,
 	config: ElectionTableSourceConfig,
 	wardList?: Map<string, string[]>,
+): LocalElectionDataset =>
+	parseLocalElectionRows(
+		parseSheet(wardText, config.fields.name),
+		parseSheet(candidateText, config.candidates.fields.name),
+		config,
+		wardList,
+	);
+
+const parseLocalElectionRows = (
+	wardRows: TableRow[],
+	candidateRows: TableRow[],
+	config: ElectionTableSourceConfig,
+	wardList?: Map<string, string[]>,
 ): LocalElectionDataset => {
 	const { fields, candidates: candidateSheet } = config;
 	const excludedWards: LocalElectionExcludedWard[] = [];
@@ -171,7 +225,7 @@ export const parseLocalElectionTable = (
 		string,
 		Array<Candidate & { name: string }>
 	>();
-	for (const row of parseSheet(candidateText, candidateSheet.fields.name)) {
+	for (const row of candidateRows) {
 		if (!cell(row, candidateSheet.fields.name)) continue;
 		const key = keyFor(row, candidateSheet.fields);
 		candidatesByWard.set(key, [
@@ -184,14 +238,14 @@ export const parseLocalElectionTable = (
 		]);
 	}
 
-	const wardRows = parseSheet(wardText, fields.name).filter(
+	const populatedWardRows = wardRows.filter(
 		(row) => cell(row, fields.name) && cell(row, fields.name) !== "NA",
 	);
 	// The 2022 workbook gives two different wards the same code, so a code
 	// that names more than one ward in the ward worksheet identifies neither.
 	const wardNamesByCode = new Map<string, Set<string>>();
 	if (fields.code) {
-		for (const row of wardRows) {
+		for (const row of populatedWardRows) {
 			const code = remap(cell(row, fields.code));
 			wardNamesByCode.set(
 				code,
@@ -204,7 +258,7 @@ export const parseLocalElectionTable = (
 
 	const results: Record<string, string> = {};
 	const data: Record<string, LocalElectionWardData> = {};
-	for (const row of wardRows) {
+	for (const row of populatedWardRows) {
 		const wardName = cell(row, fields.name);
 		const ladName = cell(row, fields.ladName);
 		const exclude = (reason: LocalElectionExcludedWard["reason"]) =>
@@ -360,7 +414,12 @@ export const parseLeapLocalElection = (
 
 export type LocalElectionReader = {
 	text: (path: string) => Promise<string>;
-	xlsxSheet: (path: string, sheet: string) => Promise<string>;
+	xlsxSheet?: (path: string, sheet: string) => Promise<string>;
+	xlsxSheetRows?: (
+		path: string,
+		sheet: string,
+		visit: (row: SheetRow) => void,
+	) => Promise<void>;
 };
 
 // Loads and parses every configured local election source via the provided
@@ -383,6 +442,31 @@ export const loadLocalElection = async (
 					config.wardList,
 				)
 			: undefined;
+		if (reader.xlsxSheetRows) {
+			const wardRows = await parseSheetRows(
+				(visit) =>
+					reader.xlsxSheetRows!(config.path, config.sheet, visit),
+				config.fields.name,
+			);
+			const candidateRows = await parseSheetRows(
+				(visit) =>
+					reader.xlsxSheetRows!(
+						config.path,
+						config.candidates.sheet,
+						visit,
+					),
+				config.candidates.fields.name,
+			);
+			datasets[config.year] = parseLocalElectionRows(
+				wardRows,
+				candidateRows,
+				config,
+				wardList,
+			);
+			continue;
+		}
+		if (!reader.xlsxSheet)
+			throw new Error("Local election reader needs an XLSX sheet reader");
 		datasets[config.year] = parseLocalElectionTable(
 			await reader.xlsxSheet(config.path, config.sheet),
 			await reader.xlsxSheet(config.path, config.candidates.sheet),
