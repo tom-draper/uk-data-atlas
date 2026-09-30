@@ -22,8 +22,16 @@ export const PROBLEM_CODES = {
 		members: ["absence"],
 		alternatives: ["links", "availableReleases"],
 		meaning:
-			"The geography or boundary release is not published, or its area identities are not compiled.",
+			"The geography is not published, or the release's area identities are not compiled.",
 		example: "/v1/areas/nowhere/2024-12-uk-bgc/E05000932",
+	},
+	unknown_release: {
+		statuses: [404],
+		members: ["absence", "availableReleases"],
+		alternatives: ["availableReleases"],
+		meaning:
+			"The geography is published but no release of it has that id; `availableReleases` lists those that do exist.",
+		example: "/v1/areas/ward/1999-12-uk-bgc/E05000932",
 	},
 	area_not_in_release: {
 		statuses: [404],

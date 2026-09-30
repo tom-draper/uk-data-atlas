@@ -23,7 +23,7 @@ export type AreaAbsence =
 			links: { geographies: string };
 	  }
 	| {
-			code: "unsupported_geography";
+			code: "unknown_release";
 			absence: "unknown-release";
 			detail: string;
 			availableReleases: Array<{ id: string; href: string }>;
@@ -76,7 +76,7 @@ export const explainAreaAbsence = (
 	}
 	if (!releases.some((release) => release.id === boundaryRelease)) {
 		return {
-			code: "unsupported_geography",
+			code: "unknown_release",
 			absence: "unknown-release",
 			detail: `No ${geography} boundary release is published as ${boundaryRelease}.`,
 			availableReleases: releases.map((release) => ({

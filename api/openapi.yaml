@@ -925,7 +925,7 @@ paths:
       summary: Get one boundary release, with links to download it whole
       x-likely-refusal:
         status: 404
-        code: unsupported_geography
+        code: unknown_release
         when: "The release is named by a date alone. A release id also names its coverage and product, such as `2024-12-uk-bgc`; `/v1/boundary-releases` lists them."
         x-example-request: "/v1/boundary-releases/ward/2024-12"
       parameters:
@@ -8636,6 +8636,7 @@ components:
           type: string
           enum:
             - unsupported_geography
+            - unknown_release
             - area_not_in_release
             - aggregation_not_supported
             - conversion_not_available
@@ -8648,8 +8649,9 @@ components:
             - ambiguous_release
           description: >
             On a 404 from an area or boundary release route: `unsupported_geography` when the
-            geography or release is not published or its area identities are
-            not compiled, and `area_not_in_release` when the release does not
+            geography is not published or the release's area identities are
+            not compiled, `unknown_release` when the geography has no release
+            with that id, and `area_not_in_release` when the release does not
             hold the code. On a 422 from an aggregate or a conversion:
             `aggregation_not_supported` when the measure's values do not add
             over areas or its weights cannot be used, `conversion_not_available`
@@ -8732,7 +8734,7 @@ components:
 
     UnsupportedGeographyProblem:
       description: >
-        The geography or boundary release is not published, or its area identities are not compiled. A caller can act on `links` or `availableReleases` instead of reading the detail. Produced by `GET /v1/areas/nowhere/2024-12-uk-bgc/E05000932`.
+        The geography is not published, or the release's area identities are not compiled. A caller can act on `links` instead of reading the detail. Produced by `GET /v1/areas/nowhere/2024-12-uk-bgc/E05000932`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -8751,6 +8753,35 @@ components:
             "code": "unsupported_geography",
             "absence": "unknown-geography",
             "links": { "geographies": "/v1/geographies" },
+          }
+
+    UnknownReleaseProblem:
+      description: >
+        The geography is published but no release of it has that id; `availableReleases` lists those that do exist. A caller can act on `availableReleases` instead of reading the detail. Produced by `GET /v1/areas/ward/1999-12-uk-bgc/E05000932`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, absence, availableReleases]
+          properties:
+            status:
+              enum: [404]
+            code:
+              const: unknown_release
+      examples:
+        - {
+            "type": "https://api.ukdataatlas.com/problems/not-found",
+            "title": "Not Found",
+            "status": 404,
+            "detail": "No ward boundary release is published as 1999-12-uk-bgc.",
+            "code": "unknown_release",
+            "absence": "unknown-release",
+            "availableReleases":
+              [
+                {
+                  "id": "2026-05-uk-bgc",
+                  "href": "/v1/boundary-releases/ward/2026-05-uk-bgc",
+                },
+              ],
           }
 
     AreaNotInReleaseProblem:
