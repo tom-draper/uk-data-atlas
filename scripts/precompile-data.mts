@@ -55,6 +55,7 @@ import {
 	parseOnlyArgument,
 	selectDefinitions,
 } from "./precompile-selection";
+import { precompileFingerprint } from "./precompile-fingerprint.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -499,6 +500,7 @@ async function main() {
 	});
 	await out("dataset-manifest", {
 		version: 1,
+		precompiler: { fingerprint: await precompileFingerprint(ROOT) },
 		datasets: results
 			.slice(0, CATALOGUE_DATASET_DEFINITIONS.length)
 			.map((result) => (result as PromiseFulfilledResult<unknown>).value),

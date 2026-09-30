@@ -1,0 +1,52 @@
+import { createHash } from "node:crypto";
+import { readdir, readFile, stat } from "node:fs/promises";
+import { join, relative } from "node:path";
+
+const inputs = [
+	"data-release.json",
+	"package.json",
+	"pnpm-lock.yaml",
+	"tsconfig.json",
+	"scripts/compile-boundaries.mts",
+	"scripts/dataset-discovery.ts",
+	"scripts/dataset-region-chunks.mts",
+	"scripts/generate-dataset-registry.ts",
+	"scripts/generate-sources-readme.mts",
+	"scripts/precompile-data.mts",
+	"scripts/precompile-fingerprint.mjs",
+	"scripts/precompile-selection.ts",
+	"lib/data",
+	"lib/helpers",
+	"lib/types",
+];
+
+const filesUnder = async (root, path) => {
+	const entry = await stat(path);
+	if (!entry.isDirectory()) return [path];
+	const files = [];
+	for (const child of await readdir(path, { withFileTypes: true })) {
+		if (child.name === "node_modules") continue;
+		files.push(...(await filesUnder(root, join(path, child.name))));
+	}
+	return files;
+};
+
+/** A content fingerprint for files that can change a browser data artifact. */
+export const precompileFingerprint = async (root) => {
+	const files = (
+		await Promise.all(
+			inputs.map((input) => filesUnder(root, join(root, input))),
+		)
+	)
+		.flat()
+		.sort((left, right) => left.localeCompare(right));
+	const hash = createHash("sha256");
+	hash.update("uk-data-atlas-precompiler-v1\0");
+	for (const path of files) {
+		hash.update(relative(root, path));
+		hash.update("\0");
+		hash.update(await readFile(path));
+		hash.update("\0");
+	}
+	return `sha256:${hash.digest("hex")}`;
+};
