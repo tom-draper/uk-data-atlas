@@ -189,6 +189,8 @@ only **available** when its endpoint, contract and provenance are published.
       shared code's two geometries is wider than generalisation slivers.
       Shared codes whose extent moved are listed as `changedExtent`, not
       published, so a conversion needing one of them still refuses.
+- [x] Carry renumbered areas on where their extent held, matched against how
+      far the two releases' generalisation drifts, in the same crosswalks.
 - [x] Find and explain declared multi-step relationship paths, such as current
       ward → local authority → country or region. Every step's crosswalk,
       direction and method is returned.
@@ -1792,7 +1794,7 @@ type AreaRelation = {
 	method:
 		| "official-lookup"
 		| "clean-containment"
-		| "same-geometry-recode"
+		| "extent-continuity"
 		| "area-overlap"
 		| "population-overlap"
 		| "inferred";
@@ -2054,16 +2056,15 @@ crosswalk/ward/2020-12-uk-bgc/to/local-authority/2024-05-uk-bgc
 
 Each relation includes a `method` and `quality`:
 
-| Method                  | Meaning                                                                                | Appropriate use                                             |
-| ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `official-lookup`       | Publisher supplied an explicit correspondence                                          | Preferred whenever available                                |
-| `same-geometry-recode`  | 1:1 code/name change with unchanged geometry                                           | Safe identity migration                                     |
-| `extent-continuity`     | A code shared by two releases of one geography whose extent held, verified by geometry | Identity migration between releases; derived, never assumed |
-| `clean-containment`     | A published parent code or verified nesting relation                                   | Membership and exact roll-up                                |
-| `geometric-containment` | Every child sits within one parent, established from the two releases' geometry        | Membership where no lookup carries the hierarchy; derived   |
-| `area-overlap`          | Geometry intersection, weighted by area                                                | Land-area quantities; not people by default                 |
-| `population-overlap`    | Fine-grained population building blocks apportioned across targets                     | Counts whose distribution follows resident population       |
-| `inferred`              | Carefully documented heuristic, for example recovered ward-to-LAD membership           | Discovery/matching; requires a warning                      |
+| Method                  | Meaning                                                                                  | Appropriate use                                             |
+| ----------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `official-lookup`       | Publisher supplied an explicit correspondence                                            | Preferred whenever available                                |
+| `extent-continuity`     | An area whose extent held between two releases, under its code or a new one, by geometry | Identity migration between releases; derived, never assumed |
+| `clean-containment`     | A published parent code or verified nesting relation                                     | Membership and exact roll-up                                |
+| `geometric-containment` | Every child sits within one parent, established from the two releases' geometry          | Membership where no lookup carries the hierarchy; derived   |
+| `area-overlap`          | Geometry intersection, weighted by area                                                  | Land-area quantities; not people by default                 |
+| `population-overlap`    | Fine-grained population building blocks apportioned across targets                       | Counts whose distribution follows resident population       |
+| `inferred`              | Carefully documented heuristic, for example recovered ward-to-LAD membership             | Discovery/matching; requires a warning                      |
 
 The response must always state whether weights cover all source area, whether
 they sum to one, the weighting denominator/date, topology/geometry inputs, and
@@ -2256,7 +2257,7 @@ The API needs separate `purpose` values:
 
 - `membership`: return all intersecting/mapped target areas; weights are useful
   metadata, not an instruction to apportion values.
-- `identity`: allow only `official-lookup` or `same-geometry-recode`; otherwise
+- `identity`: allow only `official-lookup` or `extent-continuity`; otherwise
   return no single answer.
 - `apportion`: return weights and require the caller to acknowledge the chosen
   method, or use the data endpoint's conversion option.
@@ -2285,7 +2286,7 @@ ward release, or ask whether a code is still current:
 	},
 	"target": { "type": "ward", "release": "2024-12-uk-bgc" },
 	"purpose": "identity",
-	"methodPreference": ["official-lookup", "same-geometry-recode"]
+	"methodPreference": ["official-lookup", "extent-continuity"]
 }
 ```
 
@@ -3169,7 +3170,7 @@ Use a controlled vocabulary, not prose alone:
 | Field            | Example values                                                                        |
 | ---------------- | ------------------------------------------------------------------------------------- |
 | `recordStatus`   | `observed`, `cleaned`, `derived`, `suppressed`, `missing`                             |
-| `geographyMatch` | `source-exact`, `official-lookup`, `same-geometry-recode`, `best-fit`, `inferred`     |
+| `geographyMatch` | `source-exact`, `official-lookup`, `extent-continuity`, `best-fit`, `inferred`        |
 | `coverage`       | fraction plus list of missing/suppressed areas                                        |
 | `comparability`  | `within-release`, `cross-release-qualified`, `not-comparable`                         |
 | `confidence`     | `high`, `medium`, `low`, with a linked explanation—not a fake statistical probability |
@@ -3964,6 +3965,35 @@ both releases identify are compared: the Welsh 2011 LSOA geometry file also
 holds English features. The crosswalks are `derived`, declare
 `relationshipPurpose: identity`, and relate their records as successor and
 predecessor.
+
+A code can also change while the boundary does not, as when a council is
+reorganised and its wards renumbered, so the same crosswalk pairs a code only
+the first release holds with one only the second holds, each record saying
+which it is in `match`: `same-code` or `recoded`. The rule is stricter, since
+a new code is itself a sign that something changed. The pair's widest
+difference must be no wider than the one 99% of the release pair's published
+same-code pairs stay within, which measures how far the two releases'
+generalisation drifts: from 6.5 m between the December 2024 and May 2025
+wards to 33.4 m between December 2018 and December 2019. The two must choose
+only each other. A pair wider than that but under half the sliver width, as a
+small realignment released under a new code is, is listed in
+`validation.continuity.recoded.nearMisses` for review and not published; so is
+an extent more than one new code shares. A release pair with fewer than 50
+same-code pairs has too little noise to measure, and is not compared.
+
+Checked against ONS's ward code history for December 2024 to May 2025, all
+25 of the rule's pairs are successors the history names: 23 it lists as one
+to one, and 2, 4.1 m and 6.4 m apart, it lists as splits with a second ward
+taking a sliver no generalised boundary can show. A rule allowing half the
+sliver width would have taken 9 more splits, 11 m to 47 m apart. The rule is
+cautious rather than complete: 16 pairs the history lists as one to one differ
+by more than that release pair's noise, and stay near misses. The LSOA and
+local authority lookups agree too, and a built test keeps it so. Across the
+ward releases it carries 1,388 renumbered wards on, such as Manchester's
+Baguley, renumbered in 2018: among December 2024 wards, 1,118 earlier local
+election results are reached only this way. Because the recoded pairs sit in
+the same crosswalk as the same-code ones, an identity path through several
+releases carries an area renumbered at any step of it.
 
 They chain each geography's releases in date order. Each date links to the
 next through its widest-coverage release, and same-month variants, such as
