@@ -52,6 +52,7 @@ export default function GeneralElectionRegistryChart({
 	return (
 		<GeneralElectionResultChart
 			data={data}
+			selectedArea={selectedArea}
 			isActive={isActive}
 			setActiveViz={setActiveViz}
 		/>

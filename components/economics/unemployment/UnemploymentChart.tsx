@@ -11,6 +11,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
@@ -130,6 +131,13 @@ export default function UnemploymentChart({
 	return (
 		<ChartCard
 			heading={`Historic Unemployment Rate [1996-${dataset.latestYear}]`}
+			headerEnd={
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={hasData}
+					isDark={isDark}
+				/>
+			}
 			accent={hasData ? ACCENT : null}
 			isActive={isActive}
 			title="ONS. Final model-based unemployment estimates for local and unitary authorities; this series was discontinued in August 2022. ons.gov.uk"

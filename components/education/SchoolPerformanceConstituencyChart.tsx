@@ -8,6 +8,7 @@ import {
 } from "@lib/types";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
+import { ConstituencyEstimateIndicator } from "@/components/ConstituencyEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import {
@@ -88,18 +89,12 @@ export default function SchoolPerformanceConstituencyChart({
 		<ChartCard
 			heading="GCSE Performance [2024/25]"
 			headerEnd={
-				<span
-					className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
-					title={
-						selectedArea?.type === "ward"
-							? "This ward is represented by its best-fit constituency."
-							: undefined
-					}
-				>
-					{selectedArea?.type === "ward" && stats
-						? "Constituency"
-						: "England"}
-				</span>
+				<ConstituencyEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={hasData}
+					isDark={isDark}
+					fallback="England"
+				/>
 			}
 			accent={hasData ? color : null}
 			isActive={isActive}

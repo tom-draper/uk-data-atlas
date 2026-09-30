@@ -11,6 +11,7 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
@@ -117,6 +118,13 @@ export default function BroadbandChart({
 	return (
 		<ChartCard
 			heading={`Fixed Broadband Coverage [${dataset.year}]`}
+			headerEnd={
+				<LocalAuthorityEstimateIndicator
+					selectedArea={selectedArea}
+					hasData={hasData}
+					isDark={isDark}
+				/>
+			}
 			accent={hasData ? ACCENT : null}
 			isActive={isActive}
 			title="Ofcom. Connected Nations Report 2025. ofcom.org.uk"
