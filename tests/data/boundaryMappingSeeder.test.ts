@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import type { AreaLineage } from "@/api/src/resolver/areaLineage";
+import type { AreaLineage } from "@/lib/data/boundaries/areaLineage";
 import {
 	applyAreaLineage,
 	applyBoundaryMappings,

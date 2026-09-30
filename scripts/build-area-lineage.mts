@@ -14,7 +14,7 @@ import { readApiCatalogues } from "../api/src/catalogueLoader";
 import {
 	compileAreaLineage,
 	type AreaLineage,
-} from "../api/src/resolver/areaLineage";
+} from "../lib/data/boundaries/areaLineage";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");

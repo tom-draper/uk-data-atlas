@@ -2331,7 +2331,7 @@ codes that do not carry on unchanged between neighbouring releases, and
 overrides for the few pairs further apart whose direct answer is not what
 those steps compose to: a lookup joining two releases directly, as the 2010 to
 2024 constituency lookup does, can say an area held where a derived step in
-between cannot. `followLineage` in `src/resolver/areaLineage.ts` reads it, in
+between cannot. `followLineage` in `lib/data/boundaries/areaLineage.ts` reads it, in
 the website and the API alike, and a built test checks a sample of its answers
 against the resolver, so the map shows what the API would say.
 
