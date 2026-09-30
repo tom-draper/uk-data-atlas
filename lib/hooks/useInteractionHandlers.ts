@@ -6,15 +6,20 @@ interface UseInteractionHandlersParams {
 	setSelectedArea: (area: SelectedArea | null) => void;
 }
 
+const isSameArea = (left: SelectedArea, right: SelectedArea) =>
+	left.type === right.type && left.code === right.code;
+
 export function useInteractionHandlers({
 	setSelectedLocation,
 	setSelectedArea,
 }: UseInteractionHandlersParams) {
 	const lastHoveredCodeRef = useRef<string | null>(null);
+	const lockedAreaRef = useRef<SelectedArea | null>(null);
 	const [, startTransition] = useTransition();
 
 	const onAreaHover = useCallback(
 		(hoverData: SelectedArea | null) => {
+			if (lockedAreaRef.current) return;
 			if (!hoverData) {
 				lastHoveredCodeRef.current = null;
 				startTransition(() => setSelectedArea(null));
@@ -27,17 +32,33 @@ export function useInteractionHandlers({
 		[setSelectedArea, startTransition],
 	);
 
+	const onAreaClick = useCallback(
+		(area: SelectedArea) => {
+			const lockedArea = lockedAreaRef.current;
+			if (lockedArea && !isSameArea(lockedArea, area)) return;
+			lockedAreaRef.current = lockedArea ? null : area;
+			lastHoveredCodeRef.current = area.code;
+			startTransition(() => setSelectedArea(area));
+		},
+		[setSelectedArea, startTransition],
+	);
+
+	const clearAreaLock = useCallback(() => {
+		lockedAreaRef.current = null;
+		lastHoveredCodeRef.current = null;
+		startTransition(() => setSelectedArea(null));
+	}, [setSelectedArea, startTransition]);
+
 	const onLocationChange = useCallback(
 		(location: string) => {
-			setSelectedArea(null);
+			clearAreaLock();
 			setSelectedLocation(location);
-			lastHoveredCodeRef.current = null;
 		},
-		[setSelectedArea, setSelectedLocation],
+		[clearAreaLock, setSelectedLocation],
 	);
 
 	return useMemo(
-		() => ({ onAreaHover, onLocationChange }),
-		[onAreaHover, onLocationChange],
+		() => ({ onAreaHover, onAreaClick, onLocationChange, clearAreaLock }),
+		[onAreaHover, onAreaClick, onLocationChange, clearAreaLock],
 	);
 }

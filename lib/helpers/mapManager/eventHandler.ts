@@ -58,12 +58,18 @@ export class EventHandler {
 	private currentCodeProp: string = "";
 	private currentNameProp: string = "";
 	private currentBoundaryType: BoundaryType = "ward";
+	private lockedArea:
+		Parameters<NonNullable<MapManagerCallbacks["onAreaClick"]>>[0] | null =
+		null;
 	private canvas: HTMLCanvasElement;
 	private _mouseMoveHandler: (
 		e: MapMouseEventType & { features?: MapFeature[] },
 	) => void;
 	private _cancelMouseMove: () => void;
 	private _mouseLeaveHandler: () => void;
+	private _clickHandler: (
+		e: MapMouseEventType & { features?: MapFeature[] },
+	) => void;
 	private handlersAttached = false;
 
 	constructor(
@@ -77,6 +83,7 @@ export class EventHandler {
 		this._mouseMoveHandler = handler;
 		this._cancelMouseMove = cancel;
 		this._mouseLeaveHandler = this.handleMouseLeave.bind(this);
+		this._clickHandler = this.handleAreaClick.bind(this);
 	}
 
 	setupEventHandlers(data: Record<string, unknown>, codeProp: string): void {
@@ -98,6 +105,11 @@ export class EventHandler {
 			this._mouseMoveHandler as MapLayerMouseHandler,
 		);
 		this.map.on("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		this.map.on(
+			"click",
+			FILL_LAYER_ID,
+			this._clickHandler as MapLayerMouseHandler,
+		);
 		this.handlersAttached = true;
 	}
 
@@ -114,6 +126,10 @@ export class EventHandler {
 	private handleMouseMove(
 		e: MapMouseEventType & { features?: MapFeature[] },
 	): void {
+		if (this.lockedArea) {
+			this.canvas.style.cursor = "";
+			return;
+		}
 		const features = e.features;
 		if (!features?.length) return;
 
@@ -128,22 +144,51 @@ export class EventHandler {
 		this.canvas.style.cursor = "pointer";
 
 		// Trigger callback immediately (perceived performance boost)
+		const area = this.areaForFeature(feature);
+		if (area) this.callbacks.onAreaHover?.(area);
+
+		this.setHoveredFeature(featureId);
+	}
+
+	private areaForFeature(feature: MapFeature) {
 		const code = feature.properties?.[this.currentCodeProp];
-		if (code && this.currentData) {
-			const name = feature.properties?.[this.currentNameProp];
-			// Type assertion needed: TypeScript can't narrow the discriminated
-			// SelectedArea union from a string variable at runtime
-			this.callbacks.onAreaHover?.({
-				type: this.currentBoundaryType,
-				code,
-				name,
-				data: (this.currentData[code] ?? null) as ElectionData | null,
-			} as Parameters<
-				NonNullable<MapManagerCallbacks["onAreaHover"]>
-			>[0]);
+		if (!code || !this.currentData) return null;
+		const name = feature.properties?.[this.currentNameProp];
+		// Type assertion needed: TypeScript can't narrow the discriminated
+		// SelectedArea union from a string variable at runtime.
+		return {
+			type: this.currentBoundaryType,
+			code,
+			name,
+			data: (this.currentData[code] ?? null) as ElectionData | null,
+		} as Parameters<NonNullable<MapManagerCallbacks["onAreaClick"]>>[0];
+	}
+
+	private handleAreaClick(
+		e: MapMouseEventType & { features?: MapFeature[] },
+	): void {
+		const feature = e.features?.[0];
+		if (!feature) return;
+		const area = this.areaForFeature(feature);
+		if (!area) return;
+
+		if (this.lockedArea) {
+			if (
+				this.lockedArea.type !== area.type ||
+				this.lockedArea.code !== area.code
+			)
+				return;
+			this.lockedArea = null;
+			this.callbacks.onAreaClick?.(area);
+			return;
 		}
 
-		// Then update feature states
+		this.lockedArea = area;
+		if (feature.id !== undefined) this.setHoveredFeature(feature.id);
+		this.callbacks.onAreaClick?.(area);
+	}
+
+	private setHoveredFeature(featureId: string | number): void {
 		if (!this.map.getSource(SOURCE_ID)) return;
 		if (this.lastHoveredFeatureId !== null) {
 			this.map.setFeatureState(
@@ -159,6 +204,10 @@ export class EventHandler {
 	}
 
 	private handleMouseLeave(): void {
+		if (this.lockedArea) {
+			this.canvas.style.cursor = "";
+			return;
+		}
 		if (this.lastHoveredFeatureId !== null) {
 			if (this.map.getSource(SOURCE_ID)) {
 				this.map.setFeatureState(
@@ -180,7 +229,17 @@ export class EventHandler {
 			this._mouseMoveHandler as MapLayerMouseHandler,
 		);
 		this.map.off("mouseleave", FILL_LAYER_ID, this._mouseLeaveHandler);
+		this.map.off(
+			"click",
+			FILL_LAYER_ID,
+			this._clickHandler as MapLayerMouseHandler,
+		);
 		this.handlersAttached = false;
+	}
+
+	clearAreaLock(): void {
+		this.lockedArea = null;
+		this.handleMouseLeave();
 	}
 
 	destroy(): void {
@@ -197,6 +256,8 @@ export class EventHandler {
 		}
 		this._mouseMoveHandler = () => {};
 		this._mouseLeaveHandler = () => {};
+		this._clickHandler = () => {};
 		this.currentData = null;
+		this.lockedArea = null;
 	}
 }
