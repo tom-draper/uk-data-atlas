@@ -163,6 +163,20 @@ test("limits each client and tells it when to come back", async (t) => {
 	assert.equal(server.metrics.rateLimited.value(), 1);
 });
 
+test("charges an operation that reads many shapes what it declares", async (t) => {
+	const { get } = await serve(t, {
+		rateLimit: { capacity: 12, refillPerSecond: 0.01 },
+	});
+	// areas:intersects declares a cost of 10 in the contract.
+	const costly = await get(
+		"/v1/areas:intersects?geography=ward&release=2023-05-uk-bgc&bbox=-1,53,0,54",
+	);
+	assert.equal(costly.headers.get("ratelimit"), '"default";r=2;t=1000');
+	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/geographies")).status, 429);
+});
+
 test("keys clients behind a trusted proxy by the address the proxy saw", async (t) => {
 	const { get } = await serve(t, {
 		rateLimit: { capacity: 1, refillPerSecond: 0.01, trustedProxyHops: 1 },

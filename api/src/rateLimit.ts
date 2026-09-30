@@ -59,8 +59,11 @@ export class RateLimiter {
 						(now - previous.updated) * refillPerSecond,
 				)
 			: capacity;
-		const allowed = tokens >= cost;
-		const left = allowed ? tokens - cost : tokens;
+		// A request dearer than the whole bucket costs the whole bucket, so a
+		// small policy still lets it through now and then.
+		const charged = Math.min(cost, capacity);
+		const allowed = tokens >= charged;
+		const left = allowed ? tokens - charged : tokens;
 		// Re-inserting keeps the map in order of last use, so the first key is
 		// always the client to forget.
 		this.buckets.delete(client);
@@ -79,7 +82,7 @@ export class RateLimiter {
 				: {
 						retryAfterSeconds: Math.max(
 							1,
-							Math.ceil((cost - left) / refillPerSecond),
+							Math.ceil((charged - left) / refillPerSecond),
 						),
 					}),
 		};

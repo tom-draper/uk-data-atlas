@@ -67,3 +67,24 @@ test("announces a deprecated operation on every response it serves", () => {
 	});
 	assert.deepEqual(deprecationHeaders(templates[0]), {});
 });
+
+test("prices an operation by its declared cost, the dearer of two on one path", () => {
+	const [cheap, dear] = readOperationTemplates(
+		[
+			"openapi: 3.1.0",
+			"paths:",
+			"  /cheap:",
+			"    get:",
+			"      operationId: getCheap",
+			"  /areas:validate:",
+			"    get:",
+			"      operationId: validate",
+			"      x-rate-limit-cost: 5",
+			"    post:",
+			"      operationId: validatePosted",
+			"      x-rate-limit-cost: 10",
+		].join("\n"),
+	);
+	assert.equal(cheap!.cost, undefined);
+	assert.equal(dear!.cost, 10);
+});
