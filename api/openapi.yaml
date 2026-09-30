@@ -9650,9 +9650,12 @@ components:
     BoundaryReleaseDownloads:
       description: >
         Where to get the whole release: its vector tiles, and every
-        generalisation tier as GeoJSON and as GeoParquet. A release the map
-        build could not compile, such as one whose areas overlap, is
-        `unavailable` with the reason, and stays available area by area.
+        generalisation tier as GeoJSON and as GeoParquet. A release whose
+        areas are not a coverage, because some edge lies on more than two of
+        them, cannot be tiled or generalised with shared borders: it is
+        `untiled`, with the reason, and downloadable whole at `full` detail
+        only. A release with no readable geometry is `unavailable`. Either
+        stays available area by area.
       oneOf:
         - type: object
           required:
@@ -9676,6 +9679,24 @@ components:
             geoparquet:
               type: object
               description: The download for each tier, `full`, `high`, `medium` and `low`.
+              additionalProperties:
+                type: string
+        - type: object
+          required: [status, reason, geojson, geoparquet]
+          properties:
+            status:
+              type: string
+              const: untiled
+            reason:
+              type: string
+            geojson:
+              type: object
+              description: The download at `full` detail.
+              additionalProperties:
+                type: string
+            geoparquet:
+              type: object
+              description: The download at `full` detail.
               additionalProperties:
                 type: string
         - type: object
