@@ -23,27 +23,29 @@ export async function loadPopulation(
 		(row) => {
 			if (rowIndex++ < 3) return;
 			if (!ageColumns) {
-				ageColumns = [...row.entries()].flatMap(([index, name]) => {
-					if (index < 5) return [];
-					const column = name.trim();
-					if (column.startsWith("F"))
-						return [
-							{
-								index,
-								age: column.substring(1),
-								sex: "F" as const,
-							},
-						];
-					if (column.startsWith("M"))
-						return [
-							{
-								index,
-								age: column.substring(1),
-								sex: "M" as const,
-							},
-						];
-					return [];
-				});
+				ageColumns = [...row.entries()].flatMap<AgeColumn>(
+					([index, name]) => {
+						if (index < 5) return [];
+						const column = name.trim();
+						if (column.startsWith("F"))
+							return [
+								{
+									index,
+									age: column.substring(1),
+									sex: "F" as const,
+								},
+							];
+						if (column.startsWith("M"))
+							return [
+								{
+									index,
+									age: column.substring(1),
+									sex: "M" as const,
+								},
+							];
+						return [];
+					},
+				);
 				return;
 			}
 
