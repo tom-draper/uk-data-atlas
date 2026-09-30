@@ -23,10 +23,28 @@ export interface ParseCsvConfig<T> extends Omit<
  */
 export function findHeaderLine(text: string, marker: string): number {
 	const lower = marker.toLowerCase();
-	const lines = text.split("\n");
-	const idx = lines.findIndex((line) => line.toLowerCase().includes(lower));
-	return idx === -1 ? 0 : idx;
+	let start = 0;
+	let line = 0;
+	while (start <= text.length) {
+		const end = text.indexOf("\n", start);
+		const lineText = text.slice(start, end === -1 ? text.length : end);
+		if (lineText.toLowerCase().includes(lower)) return line;
+		if (end === -1) break;
+		start = end + 1;
+		line++;
+	}
+	return 0;
 }
+
+const afterLeadingLines = (text: string, lines: number) => {
+	let start = 0;
+	for (let line = 0; line < lines; line++) {
+		const end = text.indexOf("\n", start);
+		if (end === -1) return "";
+		start = end + 1;
+	}
+	return text.slice(start);
+};
 
 /**
  * Promise-based PapaParse wrapper.
@@ -40,8 +58,7 @@ export async function parseCsv<T = Record<string, string>>(
 ): Promise<ParseCsvResult<T>> {
 	const { skipLines = 0, ...papaConfig } = config;
 
-	const input =
-		skipLines > 0 ? text.split("\n").slice(skipLines).join("\n") : text;
+	const input = skipLines > 0 ? afterLeadingLines(text, skipLines) : text;
 
 	return new Promise((resolve, reject) => {
 		Papa.parse<T>(input, {
