@@ -30,6 +30,6 @@ export const localElectionDatasetDefinition: DatasetDefinition<LocalElectionData
 			description:
 				"Ward-level local election results for England and Wales. Party votes count each party's highest-polling candidate in a ward, the House of Commons Library's method for vote share in multi-member wards. The 2016–2019 archive has no electorate or turnout, and excludes Scottish STV results. The 2023 workbook has no ward codes, so they are matched by exact name to the ONS May 2023 ward list.",
 		},
-		precompile: async ({ text, xlsxSheet }) =>
-			loadLocalElection({ text, xlsxSheet }),
+		precompile: async ({ text, xlsxSheetRows }) =>
+			loadLocalElection({ text, xlsxSheetRows }),
 	};
