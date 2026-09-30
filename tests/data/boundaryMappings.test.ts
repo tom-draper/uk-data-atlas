@@ -2,51 +2,12 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-	buildConstituencyWardMappings,
+	bestFitContainer,
 	encodeBoundaryMappings,
-	extractWardLadMappings,
 	parseBoundaryWardToLad,
 	parsePrecompiledBoundaryMappings,
 	type PrecompiledBoundaryMappings,
 } from "@/lib/data/boundaries/mappings";
-
-const geojson = (properties: Record<string, string>) =>
-	({
-		type: "FeatureCollection",
-		crs: { type: "name", properties: { name: "CRS84" } },
-		features: [
-			{
-				type: "Feature",
-				properties,
-				geometry: {
-					type: "Polygon",
-					coordinates: [
-						[
-							[0, 0],
-							[1, 0],
-							[0, 1],
-							[0, 0],
-						],
-					],
-				},
-			},
-		],
-	}) as any;
-
-describe("boundary mappings", () => {
-	it("extracts ward and local-authority indexes in one pass", () => {
-		const mappings = extractWardLadMappings(
-			geojson({ WD24CD: "W1", LAD24CD: "L1" }).features,
-			["WD24CD"],
-			["LAD24CD"],
-		);
-
-		expect(mappings).toEqual({
-			wardToLad: { W1: "L1" },
-			ladToWards: { L1: ["W1"] },
-		});
-	});
-});
 
 describe("shipped boundary mappings", () => {
 	const mappings: PrecompiledBoundaryMappings = {
@@ -129,7 +90,7 @@ describe("shipped boundary mappings", () => {
 	});
 });
 
-describe("constituency to ward membership", () => {
+describe("best-fit container", () => {
 	const square = (x0: number, x1: number) => [
 		[x0, 0],
 		[x1, 0],
@@ -154,9 +115,11 @@ describe("constituency to ward membership", () => {
 		["B", square(10, 20)],
 	]);
 	const membership = (wards: Array<[string, number[][]]>) =>
-		buildConstituencyWardMappings(
+		bestFitContainer(
 			collection("WD24CD", wards),
+			["WD24CD"],
 			constituencies,
+			["PCON24CD"],
 		);
 
 	it("places a ward in the constituency holding most of its area", () => {
@@ -171,11 +134,11 @@ describe("constituency to ward membership", () => {
 			...leftEdge,
 			[8, 0],
 		];
-		expect(membership([["W1", leaning]])).toEqual({ B: ["W1"] });
+		expect(membership([["W1", leaning]])).toEqual({ W1: "B" });
 	});
 
 	it("places a straddling ward once, where most of it is", () => {
-		expect(membership([["W1", square(6, 12)]])).toEqual({ A: ["W1"] });
+		expect(membership([["W1", square(6, 12)]])).toEqual({ W1: "A" });
 	});
 
 	it("still places a ward too thin for any sample to land inside", () => {
@@ -185,6 +148,6 @@ describe("constituency to ward membership", () => {
 			[6, 6],
 			[2, 2],
 		];
-		expect(membership([["W1", sliver]])).toEqual({ A: ["W1"] });
+		expect(membership([["W1", sliver]])).toEqual({ W1: "A" });
 	});
 });
