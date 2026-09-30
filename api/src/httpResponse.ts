@@ -16,8 +16,17 @@ export type HttpResponse = {
 	body?: string | Buffer | SentFile;
 };
 
-/** A stored file as the server sends it: which bytes, and whether to decode them. */
-export type SentFile = { path: string; bytes: number; gunzip: boolean };
+/**
+ * A stored file as the server sends it: which bytes, and whether to decode
+ * them. `start` and `end` (inclusive) pick out one byte range of it.
+ */
+export type SentFile = {
+	path: string;
+	bytes: number;
+	gunzip: boolean;
+	start?: number;
+	end?: number;
+};
 
 // A successful response is a function of the Atlas release the server loaded
 // and the request URL, so it stays fresh for a few minutes and is then
@@ -43,14 +52,14 @@ const ERROR_CACHE_CONTROL = "no-store";
 const CROSS_ORIGIN: Record<string, string> = {
 	"access-control-allow-origin": "*",
 	"access-control-expose-headers":
-		"etag, link, content-encoding, content-location, atlas-release, x-request-id, ratelimit, ratelimit-policy, retry-after, deprecation, sunset",
+		"etag, link, content-encoding, content-location, content-range, accept-ranges, atlas-release, x-request-id, ratelimit, ratelimit-policy, retry-after, deprecation, sunset",
 };
 
 const PREFLIGHT: Record<string, string> = {
 	...CROSS_ORIGIN,
 	"access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
 	"access-control-allow-headers":
-		"if-none-match, accept, content-type, x-request-id",
+		"if-none-match, if-range, range, accept, content-type, x-request-id",
 	"access-control-max-age": "86400",
 };
 
@@ -86,6 +95,31 @@ const acceptsGzip = (header: string | string[] | undefined) =>
 				.find((parameter) => parameter.startsWith("q="));
 			return q === undefined || Number(q.slice(2)) > 0;
 		});
+
+/**
+ * The one byte range a `Range` header asks of a file `size` bytes long, per
+ * RFC 9110 section 14. A header this server does not honour, several ranges
+ * or a malformed one, is ignored and the whole file sent, as the RFC allows.
+ * A range that starts past the end cannot be satisfied.
+ */
+export const requestedRange = (
+	header: string | undefined,
+	size: number,
+): { start: number; end: number } | "unsatisfiable" | undefined => {
+	const match = /^bytes=(\d*)-(\d*)$/.exec(header?.trim() ?? "");
+	if (!match || (match[1] === "" && match[2] === "")) return undefined;
+	if (match[1] === "") {
+		// A suffix: the last n bytes.
+		const length = Number(match[2]);
+		if (length === 0) return "unsatisfiable";
+		return { start: Math.max(0, size - length), end: size - 1 };
+	}
+	const start = Number(match[1]);
+	const end = match[2] === "" ? Infinity : Number(match[2]);
+	if (end < start) return undefined;
+	if (start >= size) return "unsatisfiable";
+	return { start, end: Math.min(end, size - 1) };
+};
 
 /** How many bytes a body puts on the wire. */
 export const bodyBytes = (body: string | Buffer | SentFile) =>
@@ -175,6 +209,40 @@ export const httpResponse = (
 				"cache-control": freshness,
 			},
 		};
+	}
+	// A file sent as it is stored can be read in pieces, which is how a
+	// PMTiles client reads an archive: the header, then a directory, then
+	// the tiles it needs, never the whole file.
+	if (stored && stored.gzipBytes === undefined && result.status === 200) {
+		headers["accept-ranges"] = "bytes";
+		const ifRange = [request.headers["if-range"]].flat()[0];
+		const range =
+			ifRange === undefined || ifRange.trim() === etag
+				? requestedRange(request.headers.range, stored.bytes)
+				: undefined;
+		if (range === "unsatisfiable")
+			return {
+				status: 416,
+				headers: {
+					...CROSS_ORIGIN,
+					"content-range": `bytes */${stored.bytes}`,
+					"cache-control": ERROR_CACHE_CONTROL,
+					"content-length": "0",
+				},
+			};
+		if (range) {
+			const part: SentFile = {
+				path: stored.path,
+				bytes: range.end - range.start + 1,
+				gunzip: false,
+				start: range.start,
+				end: range.end,
+			};
+			headers["content-range"] =
+				`bytes ${range.start}-${range.end}/${stored.bytes}`;
+			headers["content-length"] = String(part.bytes);
+			return { status: 206, headers, ...(isHead ? {} : { body: part }) };
+		}
 	}
 	headers["content-length"] = String(bodyBytes(body));
 	return { status: result.status, headers, ...(isHead ? {} : { body }) };

@@ -214,6 +214,101 @@ test("validates a stored file by its recorded hash without reading it", () => {
 	assert.equal(serve(response.headers.etag).status, 304);
 });
 
+test("reads a stored file in byte ranges, as a PMTiles client does", () => {
+	// A map library opens an archive by reading its header, then a directory,
+	// then only the tiles it needs. Without ranges it gets the whole file.
+	const bytes = Buffer.from("0123456789");
+	const stored = {
+		path: "/nowhere/release.pmtiles",
+		bytes: bytes.length,
+		contentHash: `sha256:${createHash("sha256").update(bytes).digest("hex")}`,
+	};
+	const serve = (headers: Record<string, string>, method = "GET") =>
+		httpResponse({ method, headers }, () => ({
+			status: 200,
+			body: ok.body,
+			representation: {
+				contentType: "application/vnd.pmtiles",
+				body: stored,
+			},
+		}));
+	const whole = serve({});
+	assert.equal(whole.status, 200);
+	assert.equal(whole.headers["accept-ranges"], "bytes");
+
+	for (const [range, start, end] of [
+		["bytes=0-3", 0, 3],
+		["bytes=7-", 7, 9],
+		["bytes=-2", 8, 9],
+		["bytes=5-100", 5, 9],
+	] as const) {
+		const part = serve({ range });
+		assert.equal(part.status, 206, range);
+		assert.deepEqual(part.body, {
+			path: stored.path,
+			bytes: end - start + 1,
+			gunzip: false,
+			start,
+			end,
+		});
+		assert.equal(part.headers["content-range"], `bytes ${start}-${end}/10`);
+		assert.equal(part.headers["content-length"], String(end - start + 1));
+		assert.equal(part.headers.etag, whole.headers.etag);
+	}
+
+	// HEAD answers as GET would, without the bytes.
+	const head = serve({ range: "bytes=0-3" }, "HEAD");
+	assert.equal(head.status, 206);
+	assert.equal(head.body, undefined);
+
+	// Past the end cannot be satisfied, and says how long the file is.
+	const beyond = serve({ range: "bytes=10-" });
+	assert.equal(beyond.status, 416);
+	assert.equal(beyond.headers["content-range"], "bytes */10");
+
+	// Several ranges, a malformed one or a stale If-Range get the whole file.
+	for (const headers of [
+		{ range: "bytes=0-1,4-5" } as Record<string, string>,
+		{ range: "items=0-3" },
+		{ range: "bytes=5-2" },
+		{ range: "bytes=0-3", "if-range": '"stale"' },
+	])
+		assert.equal(serve(headers).status, 200, JSON.stringify(headers));
+	assert.equal(
+		serve({ range: "bytes=0-3", "if-range": whole.headers.etag! }).status,
+		206,
+	);
+
+	// A conditional request that still matches is answered 304 first.
+	assert.equal(
+		serve({ range: "bytes=0-3", "if-none-match": whole.headers.etag! })
+			.status,
+		304,
+	);
+});
+
+test("never ranges over a file stored gzipped", () => {
+	const stored = {
+		path: "/nowhere/release.geojson.gz",
+		bytes: 100,
+		gzipBytes: 40,
+		contentHash: `sha256:${"0".repeat(64)}`,
+	};
+	const response = httpResponse(
+		{ method: "GET", headers: { range: "bytes=0-3" } },
+		() => ({
+			status: 200,
+			body: ok.body,
+			representation: {
+				contentType: "application/geo+json",
+				body: stored,
+			},
+		}),
+	);
+	assert.equal(response.status, 200);
+	assert.equal(response.headers["accept-ranges"], undefined);
+});
+
 test("sends a gzip-stored file encoded only to a client that takes gzip", () => {
 	const stored = {
 		path: "/nowhere/release.geojson.gz",
@@ -320,5 +415,11 @@ test("answers a preflight for a conditional cross-origin request", () => {
 	assert.match(
 		preflight.headers["access-control-allow-headers"]!,
 		/if-none-match/,
+	);
+	// A PMTiles client reads ranges and must see which bytes it was sent.
+	assert.match(preflight.headers["access-control-allow-headers"]!, /range/);
+	assert.match(
+		preflight.headers["access-control-expose-headers"]!,
+		/content-range/,
 	);
 });
