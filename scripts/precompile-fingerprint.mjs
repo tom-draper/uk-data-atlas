@@ -20,6 +20,19 @@ const inputs = [
 	"lib/types",
 ];
 
+// Only these package.json fields can change what the precompiler emits; its
+// scripts change often and never do, so hashing them would stale the data.
+const packageFields = ["engines", "dependencies", "devDependencies"];
+
+const contentsOf = async (root, path) => {
+	const contents = await readFile(path);
+	if (relative(root, path) !== "package.json") return contents;
+	const manifest = JSON.parse(contents.toString("utf8"));
+	return JSON.stringify(
+		packageFields.map((field) => [field, manifest[field] ?? null]),
+	);
+};
+
 const filesUnder = async (root, path) => {
 	const entry = await stat(path);
 	if (!entry.isDirectory()) return [path];
@@ -45,7 +58,7 @@ export const precompileFingerprint = async (root) => {
 	for (const path of files) {
 		hash.update(relative(root, path));
 		hash.update("\0");
-		hash.update(await readFile(path));
+		hash.update(await contentsOf(root, path));
 		hash.update("\0");
 	}
 	return `sha256:${hash.digest("hex")}`;
