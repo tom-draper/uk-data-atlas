@@ -1,5 +1,6 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
 import { createReadStream } from "node:fs";
+import { pipeline } from "node:stream";
 import { createGunzip } from "node:zlib";
 import {
 	createServer,
@@ -13,6 +14,7 @@ import {
 	httpResponse,
 	preflightResponse,
 	type HttpResponse,
+	type SentFile,
 } from "./httpResponse";
 import {
 	createOperationMatcher,
@@ -82,6 +84,24 @@ const readBody = (request: IncomingMessage): Promise<BodyRead> =>
 		);
 		request.on("error", reject);
 	});
+
+/**
+ * Streams a stored file to the client. A client that goes away mid-download,
+ * as a map does when it pans past a tile, tears the whole chain down, so the
+ * file is closed rather than left open waiting for a reader that never comes.
+ */
+export const sendFile = (file: SentFile, response: ServerResponse) => {
+	const source = createReadStream(file.path, {
+		start: file.start,
+		end: file.end,
+	});
+	const done = (error?: Error | null) => {
+		if (error) response.destroy(error);
+	};
+	if (file.gunzip) pipeline(source, createGunzip(), response, done);
+	else pipeline(source, response, done);
+	return source;
+};
 
 export type ApiServer = Server & {
 	/**
@@ -289,18 +309,8 @@ export const createApiServer = (
 			...(draining ? { connection: "close" } : {}),
 		};
 		response.writeHead(result.status, headers);
-		if (isStoredFile(result.body)) {
-			const file = createReadStream(result.body.path, {
-				start: result.body.start,
-				end: result.body.end,
-			}).on("error", (error) => response.destroy(error));
-			(result.body.gunzip
-				? file
-						.pipe(createGunzip())
-						.on("error", (error) => response.destroy(error))
-				: file
-			).pipe(response);
-		} else response.end(result.body);
+		if (isStoredFile(result.body)) sendFile(result.body, response);
+		else response.end(result.body);
 
 		const durationSeconds = (performance.now() - startedAt) / 1000;
 		const bytes = result.body ? bodyBytes(result.body) : 0;
