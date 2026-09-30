@@ -104,6 +104,86 @@ test("links a boundary release to its whole-release downloads", () => {
 			reason: "ward/2025-01-en-ward is not a coverage.",
 		},
 	);
+	// One that could not be tiled but whose areas could be read is still
+	// downloadable whole, at full detail.
+	assert.deepEqual(
+		withMap({
+			resources: [],
+			unavailable: [
+				{
+					geography: "ward",
+					boundaryRelease: "2025-01-en-ward",
+					reason: "ward/2025-01-en-ward is not a coverage.",
+					features: [
+						feature("full", "geoparquet-1.1"),
+						feature("full", "geojson"),
+					] as never,
+				},
+			],
+		}).data.downloads,
+		{
+			status: "untiled",
+			reason: "No tiles: ward/2025-01-en-ward is not a coverage. The release is still downloadable whole, at full detail as published.",
+			geojson: { full: `${href}/features?tier=full&format=geojson` },
+			geoparquet: { full: `${href}/features?tier=full` },
+		},
+	);
+	const untiled: RouteContext = {
+		...testContext({ boundaryRegistry: registry }),
+		mapResources: {
+			resources: [],
+			unavailable: [
+				{
+					geography: "ward",
+					boundaryRelease: "2025-01-en-ward",
+					reason: "ward/2025-01-en-ward is not a coverage.",
+					features: [
+						{
+							...feature("full", "geojson"),
+							artifact:
+								"map-resources/ward-2025-01-en-ward-full.geojson.gz",
+							bytes: 10,
+							contentHash: "sha256:00",
+							gzipBytes: 5,
+						},
+					] as never,
+				},
+			],
+		},
+		mapFeatures: new Map([
+			[
+				"map-resources/ward-2025-01-en-ward-full.geojson.gz",
+				{
+					path: "/nowhere",
+					bytes: 10,
+					contentHash: "sha256:00",
+					gzipBytes: 5,
+				},
+			],
+		]),
+	};
+	const download = routeRequest(
+		"GET",
+		`${href}/features?tier=full&format=geojson`,
+		untiled,
+	);
+	assert.equal(download.status, 200);
+	assert.equal(download.representation?.contentType, "application/geo+json");
+	const coarser = routeRequest(
+		"GET",
+		`${href}/features?tier=low&format=geojson`,
+		untiled,
+	);
+	assert.equal(coarser.status, 404);
+	assert.match(
+		(coarser.body as { detail: string }).detail,
+		/downloadable at full only/,
+	);
+	// Tiles are not offered for it.
+	assert.equal(
+		routeRequest("GET", `${href}/tiles.json`, untiled).status,
+		404,
+	);
 });
 
 test("publishes the geography compiler coverage", () => {

@@ -7,13 +7,42 @@ import type { StoredFile } from "./routeResponse";
 
 export type MapResources = {
 	resources: MapResourceDescriptor[];
-	/** Releases the build could not compile, such as one that is not a coverage. */
+	/**
+	 * Releases the build could not tile, such as one that is not a coverage.
+	 * One whose areas could still be read is downloadable whole at full
+	 * detail, listed in `features`.
+	 */
 	unavailable?: Array<{
 		geography: string;
 		boundaryRelease: string;
 		reason: string;
+		features?: MapResourceDescriptor["features"];
 	}>;
 };
+
+/** Every whole-release download the build wrote, tiled or not. */
+const allFeatures = (mapResources: MapResources) => [
+	...mapResources.resources.flatMap((resource) => resource.features ?? []),
+	...(mapResources.unavailable ?? []).flatMap(
+		(entry) => entry.features ?? [],
+	),
+];
+
+/**
+ * The downloads of a release that has no map resource but was still written
+ * whole, found by its geography and release.
+ */
+export const untiledFeatures = (
+	mapResources: MapResources | undefined,
+	geography: string,
+	boundaryRelease: string,
+) =>
+	mapResources?.unavailable?.find(
+		(entry) =>
+			entry.geography === geography &&
+			entry.boundaryRelease === boundaryRelease &&
+			(entry.features?.length ?? 0) > 0,
+	);
 
 /**
  * Where to download a whole boundary release: its tiles and every tier in
@@ -36,6 +65,13 @@ export const releaseDownloads = (
 				entry.geography === geography &&
 				entry.boundaryRelease === boundaryRelease,
 		);
+		if (unavailable?.features?.length)
+			return {
+				status: "untiled" as const,
+				reason: `No tiles: ${unavailable.reason} The release is still downloadable whole, at full detail as published.`,
+				geojson: byTier(unavailable.features, "geojson"),
+				geoparquet: byTier(unavailable.features, "geoparquet-1.1"),
+			};
 		return {
 			status: "unavailable" as const,
 			reason:
@@ -43,21 +79,22 @@ export const releaseDownloads = (
 				"No map resource has been compiled for this release.",
 		};
 	}
-	const byTier = (format: string) =>
-		Object.fromEntries(
-			resource.features
-				.filter((entry) => entry.format === format)
-				.map((entry) => [entry.tier, entry.href]),
-		);
 	return {
 		status: "available" as const,
 		mapResource: `/v1/map-resources/${resource.id}`,
 		pmtiles: resource.tiles.href,
 		tileJson: `/v1/map-resources/${resource.id}/tiles.json`,
-		geojson: byTier("geojson"),
-		geoparquet: byTier("geoparquet-1.1"),
+		geojson: byTier(resource.features, "geojson"),
+		geoparquet: byTier(resource.features, "geoparquet-1.1"),
 	};
 };
+
+const byTier = (features: MapResourceDescriptor["features"], format: string) =>
+	Object.fromEntries(
+		features
+			.filter((entry) => entry.format === format)
+			.map((entry) => [entry.tier, entry.href]),
+	);
 
 /** The published map resources, when the optional map build is present. */
 export const readMapResources = (apiRoot: string): MapResources => {
@@ -85,18 +122,16 @@ export const readMapAssets = (
 		]),
 	),
 	mapFeatures: new Map(
-		mapResources.resources.flatMap((resource) =>
-			(resource.features ?? []).map((entry) => [
-				entry.artifact,
-				{
-					path: join(apiRoot, "public", entry.artifact),
-					bytes: entry.bytes,
-					contentHash: entry.contentHash,
-					...(entry.gzipBytes === undefined
-						? {}
-						: { gzipBytes: entry.gzipBytes }),
-				},
-			]),
-		),
+		allFeatures(mapResources).map((entry) => [
+			entry.artifact,
+			{
+				path: join(apiRoot, "public", entry.artifact),
+				bytes: entry.bytes,
+				contentHash: entry.contentHash,
+				...(entry.gzipBytes === undefined
+					? {}
+					: { gzipBytes: entry.gzipBytes }),
+			},
+		]),
 	),
 });

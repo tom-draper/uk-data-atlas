@@ -1,5 +1,9 @@
 import { isNumericObservation } from "./dataCatalog";
-import { featureIds } from "./mapResource/compileMapResource";
+import {
+	featureIds,
+	type MapResourceDescriptor,
+} from "./mapResource/compileMapResource";
+import { untiledFeatures } from "./mapResourceLoader";
 import { releaseKey } from "./geographyKeys";
 import { observationsFor } from "./observationArtifacts";
 import { writeParquet } from "./parquet";
@@ -52,6 +56,63 @@ const unavailable = () =>
 		"Catalogue Unavailable",
 		"Build the map resources before requesting them.",
 	);
+
+/** One tier of a release, whole, in the format asked for. */
+const featureDownload = (
+	context: RouteRequest["context"],
+	releaseId: string,
+	parsedUrl: URL,
+	features: MapResourceDescriptor["features"],
+	geography: string,
+	release: string,
+): ApiResponse => {
+	const tier = parsedUrl.searchParams.get("tier");
+	// Like a join's period, the detail is the caller's to choose: the finest
+	// is twenty times the coarsest, and neither is a safe default for both a
+	// warehouse and a web page.
+	if (tier === null || !isGeometryTier(tier))
+		return problem(
+			400,
+			"Invalid Query",
+			`Ask for the detail to download with tier=, one of ${TIER_NAMES}.`,
+		);
+	const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
+	const download = FEATURE_FORMATS[format];
+	if (!download)
+		return problem(
+			400,
+			"Invalid Query",
+			"format must be geoparquet or geojson.",
+			{
+				code: "invalid_format",
+			},
+		);
+	const entry = features.find(
+		(candidate) =>
+			candidate.tier === tier && candidate.format === download.format,
+	);
+	if (!entry) {
+		const tiers = [...new Set(features.map((candidate) => candidate.tier))];
+		return problem(
+			404,
+			"Not Found",
+			`${geography}/${release} is downloadable at ${tiers.join(", ")} only: its areas are not a coverage, so they cannot be generalised together without opening gaps between them.`,
+		);
+	}
+	const body = context.mapFeatures?.get(entry.artifact);
+	if (!body) return unavailable();
+	return {
+		status: 200,
+		body: envelope(releaseId, entry),
+		representation: {
+			contentType: download.contentType,
+			body,
+			headers: {
+				"content-disposition": `attachment; filename="${geography}-${release}-${tier}.${download.extension}"`,
+			},
+		},
+	};
+};
 
 const notFound = (geography: string, release: string) =>
 	problem(
@@ -158,7 +219,20 @@ export const handleMapResourceRoutes = ({
 		: segments[3]!;
 	const id = releaseKey(geography, release);
 	const resource = mapResources.resources.find((entry) => entry.id === id);
-	if (!resource) return notFound(geography, release);
+	if (!resource) {
+		// A release that cannot be tiled may still be downloadable whole.
+		const untiled = untiledFeatures(mapResources, geography, release);
+		if (untiled && segments.length === 5 && segments[4] === "features")
+			return featureDownload(
+				context,
+				releaseId,
+				parsedUrl,
+				untiled.features!,
+				geography,
+				release,
+			);
+		return notFound(geography, release);
+	}
 	const origin = `/v1/map-resources/${id}`;
 
 	if (asArchive) {
@@ -198,44 +272,15 @@ export const handleMapResourceRoutes = ({
 			body: envelope(releaseId, tileJson(resource, origin)),
 		};
 
-	if (segments.length === 5 && segments[4] === "features") {
-		const tier = parsedUrl.searchParams.get("tier");
-		// Like a join's period, the detail is the caller's to choose: the
-		// finest is twenty times the coarsest, and neither is a safe default
-		// for both a warehouse and a web page.
-		if (tier === null || !isGeometryTier(tier))
-			return problem(
-				400,
-				"Invalid Query",
-				`Ask for the detail to download with tier=, one of ${TIER_NAMES}.`,
-			);
-		const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
-		const download = FEATURE_FORMATS[format];
-		if (!download)
-			return problem(
-				400,
-				"Invalid Query",
-				"format must be geoparquet or geojson.",
-				{ code: "invalid_format" },
-			);
-		const entry = resource.features.find(
-			(candidate) =>
-				candidate.tier === tier && candidate.format === download.format,
+	if (segments.length === 5 && segments[4] === "features")
+		return featureDownload(
+			context,
+			releaseId,
+			parsedUrl,
+			resource.features,
+			geography,
+			release,
 		);
-		const body = entry && context.mapFeatures?.get(entry.artifact);
-		if (!entry || !body) return unavailable();
-		return {
-			status: 200,
-			body: envelope(releaseId, entry),
-			representation: {
-				contentType: download.contentType,
-				body,
-				headers: {
-					"content-disposition": `attachment; filename="${geography}-${release}-${tier}.${download.extension}"`,
-				},
-			},
-		};
-	}
 
 	if (segments.length === 6 && segments[4] === "join") {
 		const measureId = segments[5]!;

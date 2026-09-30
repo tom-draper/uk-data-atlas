@@ -10,6 +10,7 @@ import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { AreaGeometryCache } from "../src/areaGeometry";
+import { compileFlatDownloads } from "../src/flatDownloads";
 import { releaseKey } from "../src/geographyKeys";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import {
@@ -47,6 +48,7 @@ type Unavailable = {
 	geography: string;
 	boundaryRelease: string;
 	reason: string;
+	features?: MapResourceDescriptor["features"];
 };
 
 export const buildMapResources = (
@@ -85,9 +87,12 @@ export const buildMapResources = (
 	// written, so a build stopped part way resumes from the last release it
 	// finished rather than from nothing.
 	const statePath = join(directory, "build-state.json");
+	// A release that cannot be tiled is kept too, with the downloads it was
+	// still given, so it is not tried again until its inputs change.
 	const previous: Record<
 		string,
-		{ key: string; descriptor: MapResourceDescriptor }
+		| { key: string; descriptor: MapResourceDescriptor }
+		| { key: string; unavailable: Unavailable }
 	> = existsSync(statePath)
 		? JSON.parse(readFileSync(statePath, "utf8"))
 		: {};
@@ -130,11 +135,23 @@ export const buildMapResources = (
 		const kept = previous[id];
 		if (
 			kept?.key === key &&
+			"descriptor" in kept &&
 			[kept.descriptor.tiles, ...kept.descriptor.features].every(
 				(entry) => existsSync(join(out, entry.artifact)),
 			)
 		) {
 			resources.push(kept.descriptor);
+			compiledIds.add(id);
+			continue;
+		}
+		if (
+			kept?.key === key &&
+			"unavailable" in kept &&
+			(kept.unavailable.features ?? []).every((entry) =>
+				existsSync(join(out, entry.artifact)),
+			)
+		) {
+			unavailable.push(kept.unavailable);
 			compiledIds.add(id);
 			continue;
 		}
@@ -147,10 +164,31 @@ export const buildMapResources = (
 		} catch (error) {
 			// A release that is not a coverage cannot be tiled without drawing one
 			// area over another. It stays served area by area, and is listed
-			// here with the reason, rather than failing every other release.
+			// here with the reason, rather than failing every other release; if
+			// its areas can be read it is still downloadable whole.
 			const reason = (error as Error).message;
-			unavailable.push({ geography, boundaryRelease, reason });
-			log(`${id}: not compiled. ${reason}`);
+			const flat = compileFlatDownloads(
+				cache,
+				release,
+				names,
+				`map-resources/${geography}-${boundaryRelease}`,
+				reason,
+			);
+			for (const file of flat?.files ?? [])
+				writeFileSync(join(out, file.artifact), file.body);
+			const entry: Unavailable = {
+				geography,
+				boundaryRelease,
+				reason,
+				...(flat ? { features: flat.downloads.features } : {}),
+			};
+			unavailable.push(entry);
+			compiledIds.add(id);
+			state[id] = { key, unavailable: entry };
+			saveState();
+			log(
+				`${id}: not tiled. ${reason}${flat ? ` Downloads at full detail: ${flat.downloads.features.map((feature) => `${feature.format} ${((feature.gzipBytes ?? feature.bytes) / 1048576).toFixed(1)}MB`).join(", ")}.` : ""}`,
+			);
 			continue;
 		}
 		const { archive, features, descriptor } = compiled;
@@ -168,12 +206,15 @@ export const buildMapResources = (
 
 	// Files left by a release that is no longer compiled, or by an artifact
 	// name that has changed, would otherwise be carried into every deployment.
-	const current = new Set(
-		resources.flatMap((resource) => [
+	const current = new Set([
+		...resources.flatMap((resource) => [
 			resource.tiles.artifact,
 			...resource.features.map((entry) => entry.artifact),
 		]),
-	);
+		...unavailable.flatMap((entry) =>
+			(entry.features ?? []).map((feature) => feature.artifact),
+		),
+	]);
 	for (const name of readdirSync(directory))
 		if (
 			name !== "build-state.json" &&
@@ -203,7 +244,7 @@ if (process.argv[1] && resolve(process.argv[1]) === path) {
 	console.log(
 		`Wrote ${result.resources.length} map resources to ${result.path}` +
 			(result.unavailable.length
-				? `; ${result.unavailable.length} releases could not be compiled`
+				? `; ${result.unavailable.length} releases could not be tiled`
 				: ""),
 	);
 }
