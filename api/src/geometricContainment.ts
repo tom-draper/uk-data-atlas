@@ -25,8 +25,9 @@ import type {
 } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";
 
-// About a millimetre, for a retry when polygon-clipping's sweep line fails.
-const RETRY_PRECISION = 1e8;
+// About a millimetre, then about ten centimetres, for retries when
+// polygon-clipping's sweep line fails; both far below any sliver width.
+const RETRY_PRECISIONS = [1e8, 1e6];
 
 // A pair clips in well under a second; one that runs this long has hit
 // polygon-clipping's non-terminating case.
@@ -135,18 +136,20 @@ export const measureContainment = (
 				operation: "intersection" | "difference",
 				parent: string,
 			) => {
-				const first = clipper.clip(
+				let result = clipper.clip(
 					operation,
 					geometry,
 					`parent/${parent}`,
 				);
-				return first.status === "clipped"
-					? first
-					: clipper.clip(
-							operation,
-							multiPolygon(child, RETRY_PRECISION),
-							`parent/${parent}`,
-						);
+				for (const precision of RETRY_PRECISIONS) {
+					if (result.status === "clipped") break;
+					result = clipper.clip(
+						operation,
+						multiPolygon(child, precision),
+						`parent/${parent}`,
+					);
+				}
+				return result;
 			};
 			let best: { code: string; areaM2: number } | undefined;
 			let failure: string | undefined;
