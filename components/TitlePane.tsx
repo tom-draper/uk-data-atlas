@@ -41,7 +41,7 @@ export default function TitlePane() {
 				>
 					UK Data Atlas
 					<span
-						className={`ml-2 inline-flex rounded-full px-2 py-0.5 font-mono text-[11px] font-normal ring-1 ${
+						className={`ml-2 inline-flex rounded-full px-2 py-0.5 font-mono text-[11px] font-normal ring-1 tracking-normal ${
 							isDark
 								? "bg-white/10 text-gray-400 ring-white/10"
 								: "bg-white/60 text-slate-500 ring-slate-900/5"
