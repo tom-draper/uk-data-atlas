@@ -310,6 +310,7 @@ test("compares release code sets without claiming that differences are geography
 		codesOnlyInFromCount: 1,
 		codesOnlyInToCount: 1,
 		continuousCodeCount: 0,
+		recodedCodeCount: 0,
 		changedExtentCount: 0,
 		indeterminateExtentCount: 0,
 		unmeasuredCodeCount: 0,
@@ -494,6 +495,7 @@ test("reports published extent continuity findings separately from code-set evid
 			areas: [
 				{ code: "E05000001", name: "Continuous ward" },
 				{ code: "E05000002", name: "Changed ward" },
+				{ code: "E05000003", name: "Renumbered ward" },
 			],
 		},
 		{
@@ -506,6 +508,7 @@ test("reports published extent continuity findings separately from code-set evid
 			areas: [
 				{ code: "E05000001", name: "Continuous ward" },
 				{ code: "E05000002", name: "Changed ward" },
+				{ code: "E05000009", name: "Renumbered ward" },
 			],
 		},
 	]);
@@ -542,19 +545,19 @@ test("reports published extent continuity findings separately from code-set evid
 			endpoints: {
 				from: {
 					status: "verified",
-					availableAreaCount: 2,
-					referencedCodeCount: 1,
+					availableAreaCount: 3,
+					referencedCodeCount: 2,
 				},
 				to: {
 					status: "verified",
-					availableAreaCount: 2,
-					referencedCodeCount: 1,
+					availableAreaCount: 3,
+					referencedCodeCount: 2,
 				},
 			},
 			continuity: {
 				sliverWidthM: 100,
-				sourceAreaCount: 2,
-				targetAreaCount: 2,
+				sourceAreaCount: 3,
+				targetAreaCount: 3,
 				sharedCodeCount: 2,
 				continuousCount: 1,
 				changedExtent: [
@@ -567,6 +570,17 @@ test("reports published extent continuity findings separately from code-set evid
 					},
 				],
 				unmeasured: [],
+				recoded: {
+					status: "compared",
+					widthCeilingM: 6.5,
+					noiseSampleCount: 1,
+					retiredCodeCount: 1,
+					introducedCodeCount: 1,
+					matchedCount: 1,
+					ambiguous: [],
+					nearMisses: [],
+					unmeasured: [],
+				},
 			},
 		},
 		records: [
@@ -576,7 +590,21 @@ test("reports published extent continuity findings separately from code-set evid
 					{
 						code: "E05000001",
 						labels: ["Continuous ward"],
+						match: "same-code",
 						widestDifferenceM: 2,
+						sourceShare: 1,
+						targetShare: 1,
+					},
+				],
+			},
+			{
+				source: { code: "E05000003", labels: ["Renumbered ward"] },
+				targets: [
+					{
+						code: "E05000009",
+						labels: ["Renumbered ward"],
+						match: "recoded",
+						widestDifferenceM: 0,
 						sourceShare: 1,
 						targetShare: 1,
 					},
@@ -600,11 +628,19 @@ test("reports published extent continuity findings separately from code-set evid
 	assert.equal(response.status, 200);
 	const data = (response.body as { data: any }).data;
 	assert.equal(data.summary.continuousCodeCount, 1);
+	assert.equal(data.summary.recodedCodeCount, 1);
 	assert.equal(data.summary.changedExtentCount, 1);
 	assert.equal(data.summary.unassessedSharedCodeCount, 0);
 	assert.deepEqual(data.continuity, {
 		status: "available",
 		crosswalks: ["ward-continuity"],
+		recoded: [
+			{
+				fromCode: "E05000003",
+				toCode: "E05000009",
+				widestDifferenceM: 0,
+			},
+		],
 		changedExtent: [
 			{
 				code: "E05000002",

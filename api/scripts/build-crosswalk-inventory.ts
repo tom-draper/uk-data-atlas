@@ -113,7 +113,9 @@ const reusableGeometryCrosswalk = (
 				return undefined;
 		} else if (
 			artifact.method !== "extent-continuity" ||
-			artifact.validation.continuity.sliverWidthM !== adapter.sliverWidthM
+			artifact.validation.continuity.sliverWidthM !==
+				adapter.sliverWidthM ||
+			artifact.validation.continuity.recoded === undefined
 		)
 			return undefined;
 		const sourceCodePattern =

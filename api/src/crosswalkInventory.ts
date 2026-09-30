@@ -261,7 +261,7 @@ export type ExtentContinuityValidation = {
 	targetAreaCount: number;
 	/** Codes present in both releases, whether or not published. */
 	sharedCodeCount: number;
-	/** Shared codes whose extent held, which are the published records. */
+	/** Shared codes whose extent held, published as same-code records. */
 	continuousCount: number;
 	/**
 	 * Shared codes left out because their geometries differ by more than
@@ -278,7 +278,49 @@ export type ExtentContinuityValidation = {
 	}>;
 	/** Shared codes the clipper could not intersect, so not published. */
 	unmeasured: Array<{ code: string; reason: string }>;
+	/**
+	 * Codes only one release holds, paired where their extents match to
+	 * within how far the published same-code pairs drift.
+	 */
+	recoded: RecodedExtentComparison;
 };
+
+export type RecodedExtentComparison =
+	| {
+			status: "compared";
+			/**
+			 * The widest difference a recoded pair may have: the one 99% of the
+			 * published same-code pairs stay within.
+			 */
+			widthCeilingM: number;
+			/** The published same-code pairs that ceiling was measured from. */
+			noiseSampleCount: number;
+			/** Codes only the first release holds. */
+			retiredCodeCount: number;
+			/** Codes only the second release holds. */
+			introducedCodeCount: number;
+			/** Recoded pairs published, each choosing only the other. */
+			matchedCount: number;
+			/** Codes within the ceiling of more than one code, so not published. */
+			ambiguous: Array<{ code: string; candidates: string[] }>;
+			/**
+			 * Pairs wider than the ceiling but under half the sliver width, such
+			 * as a small realignment released under a new code. Not published.
+			 */
+			nearMisses: Array<{
+				code: string;
+				candidate: string;
+				widestDifferenceM: number;
+				sourceShare: number;
+				targetShare: number;
+			}>;
+			unmeasured: Array<{
+				code: string;
+				candidate: string;
+				reason: string;
+			}>;
+	  }
+	| { status: "not-compared"; reason: string };
 
 export type ExtentContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
 	method: "extent-continuity";
@@ -295,6 +337,11 @@ export type ExtentContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
 		source: CrosswalkArea;
 		targets: Array<
 			CrosswalkArea & {
+				/**
+				 * Whether the area kept its code, or carries on under a new one
+				 * with the same extent.
+				 */
+				match: "same-code" | "recoded";
 				/** Width of the difference's widest piece, in metres. */
 				widestDifferenceM: number;
 				/** Overlap as a share of the source area. */

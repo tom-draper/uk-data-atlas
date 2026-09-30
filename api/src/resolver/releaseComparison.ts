@@ -21,6 +21,13 @@ export type BoundaryExtentChange = {
 	toShare: number;
 };
 
+/** An area carried on under a new code, its extent unchanged. */
+export type RecodedArea = {
+	fromCode: string;
+	toCode: string;
+	widestDifferenceM: number;
+};
+
 /**
  * The cardinality of codes in a published crosswalk, viewed in the direction
  * requested by a release comparison. This describes its records, rather than
@@ -63,6 +70,8 @@ export type BoundaryReleaseComparison = {
 		codesOnlyInFromCount: number;
 		codesOnlyInToCount: number;
 		continuousCodeCount: number;
+		/** Codes carried on under a new code with the same extent. */
+		recodedCodeCount: number;
 		changedExtentCount: number;
 		indeterminateExtentCount: number;
 		unmeasuredCodeCount: number;
@@ -77,6 +86,7 @@ export type BoundaryReleaseComparison = {
 		| {
 				status: "available";
 				crosswalks: string[];
+				recoded: RecodedArea[];
 				changedExtent: BoundaryExtentChange[];
 				unmeasured: Array<{ code: string; reason: string }>;
 				unassessedSharedCodes: string[];
@@ -250,14 +260,25 @@ export const compareBoundaryReleases = (
 		} => entry.crosswalk.method === "extent-continuity",
 	);
 	const continuousCodes = new Set<string>();
+	const recoded = new Map<string, RecodedArea>();
 	const changedExtent = new Map<string, BoundaryExtentChange>();
 	const unmeasured = new Map<string, string>();
 	for (const { crosswalk, direction } of continuityArtifacts) {
 		for (const record of crosswalk.records)
-			for (const target of record.targets)
-				continuousCodes.add(
-					direction === "forward" ? record.source.code : target.code,
-				);
+			for (const target of record.targets) {
+				const fromCode =
+					direction === "forward" ? record.source.code : target.code;
+				if (target.match === "recoded")
+					recoded.set(fromCode, {
+						fromCode,
+						toCode:
+							direction === "forward"
+								? target.code
+								: record.source.code,
+						widestDifferenceM: target.widestDifferenceM,
+					});
+				else continuousCodes.add(fromCode);
+			}
 		for (const finding of crosswalk.validation.continuity.changedExtent) {
 			const current = changedExtent.get(finding.code);
 			const candidate = {
@@ -324,6 +345,7 @@ export const compareBoundaryReleases = (
 			codesOnlyInFromCount: onlyInFrom.length,
 			codesOnlyInToCount: onlyInTo.length,
 			continuousCodeCount: continuousCodes.size,
+			recodedCodeCount: recoded.size,
 			changedExtentCount: changed.filter(
 				({ relation }) => relation === "changed",
 			).length,
@@ -345,6 +367,11 @@ export const compareBoundaryReleases = (
 						crosswalks: continuityArtifacts.map(
 							({ crosswalk }) => crosswalk.id,
 						),
+						recoded: [...recoded.values()]
+							.sort((left, right) =>
+								left.fromCode.localeCompare(right.fromCode),
+							)
+							.slice(0, limit),
 						changedExtent: changed.slice(0, limit),
 						unmeasured: [...unmeasured]
 							.map(([code, reason]) => ({ code, reason }))
