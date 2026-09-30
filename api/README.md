@@ -2562,10 +2562,16 @@ line up.
   ending `-gzip"`.
 - **Slow clients:** headers must arrive within 15 seconds and the whole
   request within 30; idle keep-alive connections close after 5.
-- **Geometry cache:** a count of releases. One costs some 10 to 200 MB of
-  heap with its coordinates packed, the 2021 output areas being the largest,
-  plus the 256 most recently read areas held as GeoJSON. A rising eviction
-  count means the cache is too small for the traffic.
+- **Geometry cache:** a count of releases. Each is read from
+  `public/geometry-store`, which `pnpm build:geometry-store` compiles
+  already in WGS84 and with every area's envelope, so loading one costs the
+  file's size in memory (1 to 94 MB, the 2021 output areas being the
+  largest) and some 100 ms rather than a parse of its source. A release
+  with no current compiled file, as `compiledLoads` below `loads` in
+  `/readyz` shows, is read from its source instead, which takes seconds and
+  blocks every other request while it does. The 256 most recently read
+  areas are also held as GeoJSON. A rising eviction count means the cache
+  is too small for the traffic.
 - **Shutdown:** on `SIGTERM` the server reports not ready, stops accepting
   connections, finishes what it holds, and closes whatever is left after the
   grace period.
