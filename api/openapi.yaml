@@ -8431,7 +8431,14 @@ components:
       required: true
       schema:
         type: string
-      description: A boundary release id, e.g. `2024-07-uk-bgc`.
+      description: >
+        A boundary release id, e.g. `2024-07-uk-bgc`, or `latest` for the
+        geography's newest release: the one `/boundary-releases:resolve`
+        chooses for the furthest date. A response to `latest` names the
+        release it read in `Content-Location`. A geography whose newest month
+        holds several releases that differ in more than coverage, or that has
+        a release whose id carries no month, is refused with `409` and the
+        releases that could be newest.
     CrosswalkId:
       name: crosswalk-id
       in: path

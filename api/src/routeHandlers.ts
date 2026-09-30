@@ -1,4 +1,5 @@
 import { problem, type ApiResponse } from "./routeResponse";
+import { releaseMonth } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes } from "./openapiRoutes";
@@ -518,8 +519,114 @@ const canonicalMeasureRequest = (
 	return changed ? { ...request, parsedUrl: url, segments } : undefined;
 };
 
+/** The word that stands for a geography's newest release in a path. */
+export const LATEST_RELEASE = "latest";
+
+/**
+ * Where a path names a boundary release as `latest`, and what the segment
+ * carries after it: `:join` on a release, `.pmtiles` on a map resource.
+ */
+const latestReleaseSegment = (segments: string[]) => {
+	if (
+		segments[0] !== "v1" ||
+		!["areas", "boundary-releases", "map-resources"].includes(
+			segments[1] ?? "",
+		) ||
+		segments[2] === undefined
+	)
+		return undefined;
+	const suffix = new RegExp(`^${LATEST_RELEASE}(:join|\\.pmtiles)?$`).exec(
+		segments[3] ?? "",
+	);
+	return suffix
+		? { geography: segments[2], suffix: suffix[1] ?? "" }
+		: undefined;
+};
+
+/**
+ * The request with `latest` replaced by the geography's newest release, the
+ * one `/boundary-releases:resolve` would choose for the furthest date, or
+ * the problem that says why there is no one newest release. A route only
+ * ever sees a release id, and the response names the release it read.
+ */
+const canonicalReleaseRequest = (
+	request: RouteRequest,
+): RouteRequest | ApiResponse | undefined => {
+	const latest = latestReleaseSegment(request.segments);
+	if (!latest) return undefined;
+	const releases = request.context.boundaryRegistry.releases.filter(
+		(release) => release.geography === latest.geography,
+	);
+	const selection =
+		releases.length === 1
+			? undefined
+			: request.context.geographyResolver.selectReleaseForDate(
+					latest.geography,
+					"9999-12",
+				);
+	if (releases.length === 0)
+		return problem(
+			404,
+			"Not Found",
+			`No boundary release is published for the geography ${latest.geography}.`,
+			{
+				code: "unsupported_geography",
+				links: { geographies: "/v1/geographies" },
+			},
+		);
+	// A release id without a month cannot be placed in time, so while one
+	// stands beside others which of them is newest is not something to guess.
+	const undated = releases.filter(
+		(release) => releaseMonth(release.id) === undefined,
+	);
+	if (
+		releases.length > 1 &&
+		(undated.length > 0 || selection?.status !== "selected")
+	)
+		return problem(
+			409,
+			"Ambiguous Release",
+			undated.length > 0
+				? `${undated.map((release) => release.id).join(" and ")} ${undated.length === 1 ? "carries" : "carry"} no month, so which ${latest.geography} release is newest cannot be told. Name one by id; each is listed in choices.`
+				: `Several ${latest.geography} boundary releases share the latest month and differ in more than coverage. Name one by id; each is listed in choices.`,
+			{
+				code: "ambiguous_release",
+				// The newest dated release, or those tied for it, and every
+				// undated one, since any of them may be the newest.
+				choices: [
+					...(selection?.status === "selected"
+						? [selection.selected]
+						: selection?.status === "ambiguous"
+							? selection.choices
+							: []),
+					...undated.map((release) => ({
+						id: release.id,
+						title: release.title,
+						countries: release.coverage.countries,
+						href: `/v1/boundary-releases/${latest.geography}/${release.id}`,
+					})),
+				],
+			},
+		);
+	const newest =
+		selection?.status === "selected"
+			? selection.selected.id
+			: releases[0]!.id;
+	const segments = [...request.segments];
+	segments[3] = `${newest}${latest.suffix}`;
+	const url = new URL(request.parsedUrl);
+	// A colon is legal in a path segment, and `:join` reads better as one.
+	url.pathname = `/${segments
+		.map((segment) => encodeURIComponent(segment).replaceAll("%3A", ":"))
+		.join("/")}`;
+	return { ...request, parsedUrl: url, segments };
+};
+
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
-	const canonical = canonicalMeasureRequest(request);
+	const release = canonicalReleaseRequest(request);
+	if (release && "status" in release) return release;
+	const measure = canonicalMeasureRequest(release ?? request);
+	const canonical = measure ?? release;
 	const routed = canonical ?? request;
 	const family = routeFamilies.find(({ owns }) => owns(routed.segments));
 	if (family && routed.method === "POST" && !family.acceptsPost)
