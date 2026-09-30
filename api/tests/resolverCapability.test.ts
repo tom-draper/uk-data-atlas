@@ -363,6 +363,7 @@ test("compares code sets, published continuity and mapping cardinality between r
 		codesOnlyInFromCount: 1,
 		codesOnlyInToCount: 2,
 		continuousCodeCount: 1,
+		recodedCodeCount: 0,
 		changedExtentCount: 1,
 		indeterminateExtentCount: 1,
 		unmeasuredCodeCount: 0,

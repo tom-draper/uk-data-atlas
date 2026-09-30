@@ -52,7 +52,8 @@ export const membershipClaimFor = (crosswalk: CrosswalkArtifact) => {
 /**
  * A step a composed membership path may take: one that establishes
  * membership, or extent continuity, whose records are published only where
- * a code's extent held and so carry an area onto itself in a later release.
+ * an area's extent held, and so carry it onto the same extent in a later
+ * release, under its own code or a new one.
  * An identity lookup is not one: it names a successor, not the same extent.
  */
 const pathStepClaimFor = (crosswalk: CrosswalkArtifact) =>

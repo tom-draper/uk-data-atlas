@@ -12,8 +12,16 @@ import {
 	type ExtentContinuityCrosswalkAdapter,
 } from "../src/crosswalkAdapters";
 import { compileCrosswalks } from "../src/crosswalkInventory";
-import { compileRelationshipPaths } from "../src/relationshipPaths";
-import { compileExtentContinuityCrosswalk } from "../src/extentContinuity";
+import { createGeographyResolver } from "../src/geographyResolver";
+import {
+	compileRelationshipPaths,
+	createRelationshipPathIndex,
+	crosswalkShape,
+} from "../src/relationshipPaths";
+import {
+	compileExtentContinuityCrosswalk,
+	MINIMUM_NOISE_SAMPLE,
+} from "../src/extentContinuity";
 
 // Squares near the equator, in degrees; D is about 1.1 km.
 const D = 0.01;
@@ -150,6 +158,7 @@ test("publishes a shared code as identity only where its extent held", () => {
 					{
 						code: "W1",
 						labels: ["Ward One North"],
+						match: "same-code",
 						widestDifferenceM: 5.5,
 						sourceShare: 1,
 						targetShare: 0.995025,
@@ -162,6 +171,7 @@ test("publishes a shared code as identity only where its extent held", () => {
 					{
 						code: "W5",
 						labels: ["Ward Five"],
+						match: "same-code",
 						widestDifferenceM: 21.8,
 						sourceShare: 0.98,
 						targetShare: 0.98,
@@ -192,6 +202,10 @@ test("publishes a shared code as identity only where its extent held", () => {
 				},
 			],
 			unmeasured: [],
+			recoded: {
+				status: "not-compared",
+				reason: "Only 2 same-code pairs were published, fewer than the 50 needed to measure how far the releases' generalisation drifts.",
+			},
 		});
 		assert.equal(artifact.relationshipPurpose, "identity");
 		assert.equal(artifact.validation.endpoints.to.status, "verified");
@@ -261,4 +275,199 @@ test("reads a same-code adapter only between two releases of one geography", () 
 	} finally {
 		rmSync(directory, { recursive: true, force: true });
 	}
+});
+
+// A row of squares, each D high, starting `row` squares north of the equator.
+const rect = (west: number, east: number, row: number): Polygon => [
+	[
+		[west, row * D],
+		[east, row * D],
+		[east, (row + 1) * D],
+		[west, (row + 1) * D],
+		[west, row * D],
+	],
+];
+
+// Sixty wards keep their codes into release 2, each drifting 5.5 m as W1 does
+// above: the releases' generalisation noise. Beside them, R1 is renumbered N1
+// with its extent unchanged, R2 is renumbered N2 but 22 m east, R3's extent is
+// shared by two new codes, N3A and N3B, and R4 is merged into the larger N4.
+const unchanged = Array.from(
+	{ length: MINIMUM_NOISE_SAMPLE + 10 },
+	(_, index) => `U${index}`,
+);
+const recodedReleases: Record<string, Array<[string, Polygon]>> = {
+	"1": [
+		...unchanged.map((code, index): [string, Polygon] => [
+			code,
+			rect(index * 2 * D, (index * 2 + 1) * D, 2),
+		]),
+		["R1", rect(0, D, 4)],
+		["R2", rect(2 * D, 3 * D, 4)],
+		["R3", rect(4 * D, 5 * D, 4)],
+		["R4", rect(6 * D, 7 * D, 4)],
+	],
+	"2": [
+		...unchanged.map((code, index): [string, Polygon] => [
+			code,
+			rect(index * 2 * D, (index * 2 + 1.005) * D, 2),
+		]),
+		["N1", rect(0, D, 4)],
+		["N2", rect(2.02 * D, 3.02 * D, 4)],
+		["N3A", rect(4 * D, 5 * D, 4)],
+		["N3B", rect(4 * D, 5 * D, 4)],
+		["N4", rect(6 * D, 8 * D, 4)],
+	],
+};
+// Release 3 is release 2 again, so N1 keeps its code into it.
+recodedReleases["3"] = recodedReleases["2"]!;
+
+const recodedSources: GeometrySourceLookup = new Map(
+	Object.keys(recodedReleases).map((release) => [
+		`ward/${release}`,
+		{
+			input: `ward-${release}.geojson`,
+			crs: "EPSG:4326",
+			codeProperty: "WDCD",
+		},
+	]),
+);
+
+const recodedLookup = createAreaLookup(
+	Object.entries(recodedReleases).map(([release, features]) => ({
+		schemaVersion: 1 as const,
+		contentHash: `sha256:ward-${release}`,
+		geography: "ward",
+		boundaryRelease: release,
+		codeProperty: "WDCD",
+		nameProperty: "WDNM",
+		areas: features.map(([code]) => ({ code, name: code })),
+	})),
+);
+
+const continuity = (
+	from: string,
+	to: string,
+): ExtentContinuityCrosswalkAdapter => ({
+	...adapter,
+	id: `ward-${from}-to-${to}-extent-continuity`,
+	from: { geography: "ward", boundaryRelease: from },
+	to: { geography: "ward", boundaryRelease: to },
+});
+
+const withRecodedFixture = (run: (root: string) => void) => {
+	const root = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
+	try {
+		for (const [release, features] of Object.entries(recodedReleases))
+			writeCollection(root, `ward-${release}.geojson`, features);
+		run(root);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+};
+
+test("carries a renumbered area on only where its extent matches within the releases' noise", () => {
+	withRecodedFixture((root) => {
+		const artifact = compileExtentContinuityCrosswalk(
+			root,
+			continuity("1", "2"),
+			recodedSources,
+			recodedLookup,
+		);
+		const recoded = artifact.records.filter(
+			(record) => record.targets[0]?.match === "recoded",
+		);
+		assert.deepEqual(recoded, [
+			{
+				source: { code: "R1", labels: ["R1"] },
+				targets: [
+					{
+						code: "N1",
+						labels: ["N1"],
+						match: "recoded",
+						widestDifferenceM: 0,
+						sourceShare: 1,
+						targetShare: 1,
+					},
+				],
+			},
+		]);
+		assert.equal(
+			artifact.validation.continuity.continuousCount,
+			unchanged.length,
+		);
+		assert.deepEqual(artifact.validation.continuity.recoded, {
+			status: "compared",
+			widthCeilingM: 5.5,
+			noiseSampleCount: unchanged.length,
+			retiredCodeCount: 4,
+			introducedCodeCount: 5,
+			matchedCount: 1,
+			ambiguous: [{ code: "R3", candidates: ["N3A", "N3B"] }],
+			nearMisses: [
+				{
+					code: "R2",
+					candidate: "N2",
+					widestDifferenceM: 21.8,
+					sourceShare: 0.98,
+					targetShare: 0.98,
+				},
+			],
+			unmeasured: [],
+		});
+		assert.equal(artifact.validation.endpoints.to.status, "verified");
+	});
+});
+
+test("translates a renumbered area through a chain of releases as one identity", () => {
+	withRecodedFixture((root) => {
+		const { inventory, artifacts } = compileCrosswalks(
+			root,
+			[continuity("1", "2"), continuity("2", "3")],
+			recodedLookup,
+			recodedSources,
+		);
+		const resolver = createGeographyResolver({
+			areaLookup: recodedLookup,
+			crosswalkLookup: new Map(
+				artifacts.map((artifact) => [artifact.id, artifact]),
+			),
+			relationshipPathIndex: createRelationshipPathIndex(
+				compileRelationshipPaths(inventory, [], {
+					shapes: new Map(
+						artifacts.map((artifact) => [
+							artifact.id,
+							crosswalkShape(artifact),
+						]),
+					),
+					maximumSteps: 8,
+				}),
+			),
+		});
+		const translate = (code: string) =>
+			resolver
+				.translateArea(
+					{ geography: "ward", boundaryRelease: "1", code },
+					{ geography: "ward", boundaryRelease: "3" },
+					"identity",
+				)
+				.map((translation) =>
+					translation.targets.map(({ code }) => code),
+				);
+		assert.deepEqual(translate("R1"), [["N1"]]);
+		assert.deepEqual(translate("U0"), [["U0"]]);
+		// Neither a near miss nor an ambiguous extent is carried on.
+		assert.deepEqual(translate("R2"), []);
+		assert.deepEqual(translate("R3"), []);
+		const index = createAreaRelationshipIndex(artifacts);
+		assert.deepEqual(
+			index
+				.get("ward/1/R1")
+				?.map(({ relation, counterpart }) => [
+					relation,
+					counterpart.id,
+				]),
+			[["successor", "ward/2/N1"]],
+		);
+	});
 });

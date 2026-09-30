@@ -378,25 +378,46 @@ export const crosswalkFindings = (
 		// Recompute the identity claim from each published pair rather than
 		// trusting the compiler's own count.
 		const { continuity } = artifact.validation;
+		const { recoded } = continuity;
+		const recodedTargets = artifact.records.flatMap((record) =>
+			record.targets[0]?.match === "recoded"
+				? [record.targets[0].code]
+				: [],
+		);
 		const broken = artifact.records
-			.filter(
-				(record) =>
-					record.targets.length !== 1 ||
-					record.targets[0]!.code !== record.source.code ||
-					record.targets[0]!.widestDifferenceM >=
-						continuity.sliverWidthM / 2,
-			)
+			.filter((record) => {
+				const [target] = record.targets;
+				if (record.targets.length !== 1 || !target) return true;
+				if (target.match === "same-code")
+					return (
+						target.code !== record.source.code ||
+						target.widestDifferenceM >= continuity.sliverWidthM / 2
+					);
+				return (
+					recoded.status !== "compared" ||
+					target.code === record.source.code ||
+					target.widestDifferenceM > recoded.widthCeilingM ||
+					recodedTargets.filter((code) => code === target.code)
+						.length !== 1
+				);
+			})
 			.map((record) => record.source.code);
+		const sameCodeCount = artifact.records.length - recodedTargets.length;
 		findings.push(
 			check(
-				"same-code-extent",
+				"continuity-extent",
 				broken.length === 0 &&
-					continuity.continuousCount === artifact.records.length,
-				`Pairs that are not one same-code target differing by less than ${continuity.sliverWidthM / 2} m: ${listed(broken)}.`,
+					continuity.continuousCount === sameCodeCount &&
+					recodedTargets.length ===
+						(recoded.status === "compared"
+							? recoded.matchedCount
+							: 0),
+				`Pairs that are not one same-code target differing by less than ${continuity.sliverWidthM / 2} m, nor one recoded target within the release pair's noise: ${listed(broken)}.`,
 				{
 					sliverWidthM: continuity.sliverWidthM,
 					sharedCodeCount: continuity.sharedCodeCount,
 					changedExtentCount: continuity.changedExtent.length,
+					recodedCount: recodedTargets.length,
 				},
 			),
 		);

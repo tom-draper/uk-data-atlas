@@ -14,7 +14,7 @@ export const VALIDATION_CHECKS = [
 	"weights-sum-to-one",
 	"area-coverage",
 	"sliver-separation",
-	"same-code-extent",
+	"continuity-extent",
 	"population-coverage",
 	"containment-verified",
 	"measure-definition",
