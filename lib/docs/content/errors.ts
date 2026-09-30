@@ -11,8 +11,15 @@ export interface ErrorCodeContent {
 export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 	unsupported_geography: {
 		status: 404,
-		meaning: "That geography or boundary release isn't available.",
-		fix: "Check the spelling against [List geographies](/docs/v1/reference/geography/list-geographies) and [List boundary releases](/docs/v1/reference/geography/list-boundary-releases).",
+		meaning:
+			"That geography isn't available, or its areas aren't compiled.",
+		fix: "Check the spelling against [List geographies](/docs/v1/reference/geography/list-geographies).",
+	},
+	unknown_release: {
+		status: 404,
+		meaning:
+			"The geography exists, but has no boundary release with that id.",
+		fix: "The response's `availableReleases` lists the ones it has. A release id names its coverage and product as well as its date, such as `2024-12-uk-bgc`; `latest` picks the newest.",
 	},
 	area_not_in_release: {
 		status: 404,
