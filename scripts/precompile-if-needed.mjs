@@ -57,35 +57,19 @@ try {
 	// A fresh checkout or an incomplete build needs a full precompile.
 }
 
-const isDeploymentBuild =
-	process.env.CI === "true" ||
-	process.env.CI === "1" ||
-	process.env.VERCEL === "1";
-const useCommittedPrecompile = isDeploymentBuild && manifestMtime > 0;
-
-// Checkout timestamps are assigned while deployment services restore the
-// worktree, so source files routinely appear newer than the committed manifest.
-// A missing manifest still falls through to a full precompile, and
-// ATLAS_FORCE_PRECOMPILE=1 can explicitly request one.
-if (!force && useCommittedPrecompile) {
-	console.log("Using committed precompiled data in the deployment build.");
+const inputMtime = Math.max(
+	...(await Promise.all(precompileInputs.map((path) => newestMtime(path)))),
+);
+if (!force && manifestMtime > inputMtime) {
+	console.log("Precompiled data is up to date; skipping regeneration.");
 } else {
-	const inputMtime = Math.max(
-		...(await Promise.all(
-			precompileInputs.map((path) => newestMtime(path)),
-		)),
-	);
-	if (!force && manifestMtime > inputMtime) {
-		console.log("Precompiled data is up to date; skipping regeneration.");
-	} else {
-		const child = spawn("pnpm", ["precompile"], {
-			cwd: root,
-			stdio: "inherit",
-			shell: process.platform === "win32",
-		});
-		child.on("exit", (code, signal) => {
-			if (signal) process.kill(process.pid, signal);
-			else process.exit(code ?? 1);
-		});
-	}
+	const child = spawn("pnpm", ["precompile"], {
+		cwd: root,
+		stdio: "inherit",
+		shell: process.platform === "win32",
+	});
+	child.on("exit", (code, signal) => {
+		if (signal) process.kill(process.pid, signal);
+		else process.exit(code ?? 1);
+	});
 }
