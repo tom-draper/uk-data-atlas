@@ -23,27 +23,42 @@ export const DEFAULT_NAMED_LOCATION_MEMBER_GEOGRAPHY = "localAuthority";
 
 /**
  * What a named location is. An official kind is an area ONS defines, with its
- * members taken from the ONS lookup in `source`; `editorial-grouping` is a
- * curated set that claims no official status.
+ * members taken from the ONS lookup in `source`; a `ceremonial-county` is a
+ * county lord-lieutenants are appointed to, with its members worked out from
+ * Ordnance Survey's boundaries (see ceremonialCounties.ts);
+ * `editorial-grouping` is a curated set that claims no official status.
  */
 export type NamedLocationKind =
 	| "editorial-grouping"
 	| "country"
 	| "region"
 	| "combined-authority"
-	| "county";
+	| "county"
+	| "ceremonial-county";
 
 export type NamedLocation = {
 	id: string;
 	label: string;
 	kind: NamedLocationKind;
-	/** For an official kind, the ONS lookup its current members come from. */
-	source?: {
-		publisher: "Office for National Statistics";
-		/** Directory under data/lookups in the Atlas repository. */
-		lookup: string;
-		code: string;
-	};
+	/**
+	 * For an official kind, the ONS lookup its current members come from; for
+	 * a ceremonial county, the boundaries they were worked out from.
+	 */
+	source?:
+		| {
+				publisher: "Office for National Statistics";
+				/** Directory under data/lookups in the Atlas repository. */
+				lookup: string;
+				code: string;
+		  }
+		| {
+				publisher: "Ordnance Survey";
+				dataset: string;
+				edition: string;
+				/** The county's name in that dataset. */
+				name: string;
+				method: string;
+		  };
 	/** Revision of this definition in the curated gazetteer. */
 	definitionRevision: number;
 	/** The geography whose codes define this editorial grouping. */
@@ -58,6 +73,16 @@ export type NamedLocation = {
 	/** Known temporal bounds of the definition; null means the source gives none. */
 	validity: { from: string | null; to: string | null };
 	bbox: [number, number, number, number];
+	/**
+	 * Areas only partly in this location, with the share that is. A member
+	 * is counted whole where most of it lies, so its other part is listed on
+	 * the location that holds it rather than summed twice.
+	 */
+	partialMembers?: Array<{
+		code: string;
+		share: number;
+		memberOf: string;
+	}>;
 	/** A build-time union of members from one fully resolved boundary release. */
 	geometry?: NamedLocationGeometry;
 };
@@ -77,7 +102,7 @@ export type NamedLocationLookup = Map<string, NamedLocation>;
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
-const idFor = (label: string) =>
+export const idFor = (label: string) =>
 	label
 		.trim()
 		.toLocaleLowerCase()

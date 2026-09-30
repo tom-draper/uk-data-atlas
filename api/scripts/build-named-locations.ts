@@ -2,10 +2,48 @@ import { createHash } from "node:crypto";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { compileNamedLocations } from "../src/namedLocations";
+import { geometryBounds } from "../src/areaContainment";
+import {
+	countyMemberships,
+	SCOTTISH_LIEUTENANCY_AREAS,
+	withCeremonialCounties,
+	type CountyShape,
+} from "../src/ceremonialCounties";
+import { compileNamedLocations, membersAt } from "../src/namedLocations";
+import { releaseMonth } from "../src/releaseForDate";
+import { toWgs84Geometry } from "../src/reprojection";
+import { readShapefileFeatures } from "../src/shapefile";
 import { createAreaGeometryCache } from "../src/geometryLoader";
 import { readAreaInventory, readAreaLookup } from "../src/boundaryLoader";
 import { compileNamedLocationGeometry } from "../src/namedLocationGeometry";
+
+/**
+ * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
+ * file's Scottish lieutenancy areas are left out: see ceremonialCounties.ts.
+ */
+const readCeremonialCounties = (repositoryRoot: string): CountyShape[] =>
+	readShapefileFeatures(
+		join(
+			repositoryRoot,
+			"data",
+			"geography",
+			"ceremonial-counties",
+			"source",
+			"Boundary-line-ceremonial-counties_region.shp",
+		),
+	)
+		.filter(
+			({ properties }) =>
+				!SCOTTISH_LIEUTENANCY_AREAS.has(properties.NAME!),
+		)
+		.map(({ properties, geometry }) => {
+			const wgs84 = toWgs84Geometry(geometry, "EPSG:27700");
+			return {
+				name: properties.NAME!,
+				geometry: wgs84,
+				bounds: geometryBounds(wgs84)!,
+			};
+		});
 
 export const buildNamedLocations = (repositoryRoot: string) => {
 	const source = join(
@@ -30,7 +68,36 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 	const areaInventory = readAreaInventory(join(repositoryRoot, "api"));
 	const areas = readAreaLookup(join(repositoryRoot, "api"), areaInventory);
 	const cache = createAreaGeometryCache(join(repositoryRoot, "api"), 1);
-	const locations = parsed.locations.map((location) => {
+	const counties = readCeremonialCounties(repositoryRoot);
+	const authorityReleases = areaInventory.releases
+		.filter(
+			(release) =>
+				release.status === "available" &&
+				release.geography === "localAuthority" &&
+				releaseMonth(release.id) !== undefined,
+		)
+		.map((release) => ({
+			month: releaseMonth(release.id)!,
+			authorities: cache
+				.codes("localAuthority", release.id)
+				.flatMap((code) => {
+					const geometry = cache.get(
+						"localAuthority",
+						release.id,
+						code,
+					);
+					return geometry ? [{ code, geometry }] : [];
+				}),
+		}));
+	const withCounties = withCeremonialCounties(
+		parsed.locations,
+		countyMemberships(authorityReleases, counties),
+		counties,
+	);
+	const locations = withCounties.map((location) => {
+		// The members current at the latest release, so a location whose
+		// members were reorganised is drawn as it is now.
+		const current = membersAt(location, "9999-12-31");
 		const release = areaInventory.releases
 			.filter(
 				(candidate) =>
@@ -38,8 +105,8 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 					candidate.geography === location.memberGeography &&
 					areas
 						.get(`${candidate.geography}/${candidate.id}`)
-						?.has(location.memberCodes[0] ?? "") &&
-					location.memberCodes.every((code) =>
+						?.has(current[0] ?? "") &&
+					current.every((code) =>
 						areas
 							.get(`${candidate.geography}/${candidate.id}`)
 							?.has(code),
@@ -52,7 +119,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 				cache,
 				location.memberGeography,
 				release.id,
-				location.memberCodes,
+				current,
 			);
 			return geometry
 				? { ...location, bbox: geometry.bbox, geometry }
