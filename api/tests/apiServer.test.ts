@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createServer, request as httpRequest } from "node:http";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import type { AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
-import { createApiServer, MAX_BODY_BYTES } from "../src/apiServer";
+import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
 import type { RouteContext } from "../src/routing";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import {
@@ -280,3 +283,45 @@ test("reads a POST body, refuses one too large, and never caches the answer", as
 		/content-type/,
 	);
 });
+
+test(
+	"closes a stored file when its client goes away mid-download",
+	{ timeout: 10_000 },
+	async (t) => {
+		const directory = mkdtempSync(join(tmpdir(), "atlas-send-file-"));
+		t.after(() => rmSync(directory, { recursive: true, force: true }));
+		const path = join(directory, "large.bin");
+		// Far more than a socket buffers, so the stream is still reading when the
+		// client leaves.
+		const bytes = 64 * 1024 * 1024;
+		writeFileSync(path, Buffer.alloc(bytes));
+		let source: ReturnType<typeof sendFile> | undefined;
+		const server = createServer((_, response) => {
+			response.writeHead(200, { "content-length": String(bytes) });
+			source = sendFile({ path, bytes, gunzip: false }, response);
+		});
+		await new Promise<void>((ready) =>
+			server.listen(0, "127.0.0.1", ready),
+		);
+		t.after(() => server.close());
+		const { port } = server.address() as AddressInfo;
+
+		await new Promise<void>((received) => {
+			const request = httpRequest(
+				{ port, host: "127.0.0.1" },
+				(response) =>
+					response.once("data", () => {
+						request.destroy();
+						received();
+					}),
+			);
+			request.on("error", () => {});
+			request.end();
+		});
+		await new Promise<void>((closed) =>
+			source!.closed ? closed() : source!.once("close", () => closed()),
+		);
+		assert.ok(source!.destroyed);
+		assert.ok(source!.bytesRead < bytes);
+	},
+);
