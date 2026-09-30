@@ -25,6 +25,7 @@ import type { DatasetPayloadLayout } from "../lib/data/catalog/types";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { readWorkbookStream, xlsSheetRows } from "../lib/data/spreadsheet/xls";
 import {
+	forEachSheetRow,
 	findSheetPath,
 	parseSharedStrings,
 	percentageStyles,
@@ -125,10 +126,14 @@ const readZip = (path: string): Promise<string> => {
 // Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
 // workbook can stay in data/ exactly as published and no extracted copy has to
 // be committed alongside it.
-const readXlsxSheetFile = async (
+const readXlsxSheetParts = async (
 	fullPath: string,
 	sheetName: string,
-): Promise<string> => {
+): Promise<{
+	sheetXml: string;
+	sharedStrings: string[];
+	percentStyleIds: Set<number>;
+}> => {
 	await stat(fullPath);
 	const entry = (name: string) =>
 		execSync(`unzip -p "${fullPath}" "${name}"`, {
@@ -152,13 +157,35 @@ const readXlsxSheetFile = async (
 	// out a hundred times too small.
 	const percentStyleIds = percentageStyles(entry("xl/styles.xml"));
 
-	return rowsToCsv(
-		sheetRows(entry(sheetPath), sharedStrings, percentStyleIds),
-	);
+	return {
+		sheetXml: entry(sheetPath),
+		sharedStrings,
+		percentStyleIds,
+	};
+};
+
+const readXlsxSheetFile = async (
+	fullPath: string,
+	sheetName: string,
+): Promise<string> => {
+	const { sheetXml, sharedStrings, percentStyleIds } =
+		await readXlsxSheetParts(fullPath, sheetName);
+	return rowsToCsv(sheetRows(sheetXml, sharedStrings, percentStyleIds));
 };
 
 const readXlsxSheet = (path: string, sheetName: string) =>
 	readXlsxSheetFile(join(SOURCE_DATA, path), sheetName);
+
+const visitXlsxSheetRows = async (
+	path: string,
+	sheetName: string,
+	visit: (row: ReadonlyMap<number, string>) => void,
+) => {
+	const { sheetXml, sharedStrings, percentStyleIds } =
+		await readXlsxSheetParts(join(SOURCE_DATA, path), sheetName);
+	forEachSheetRow(sheetXml, sharedStrings, percentStyleIds, visit);
+	return sheetXml;
+};
 
 // ODS source files are never exposed by the application. The child-poverty
 // loader only needs its worksheet XML, which is then reduced to compact JSON.
@@ -204,12 +231,27 @@ const createTrackedReader = () => {
 		});
 		return content;
 	};
+	const trackXlsxRows = async (
+		path: string,
+		sheet: string,
+		visit: (row: ReadonlyMap<number, string>) => void,
+	) => {
+		const sheetXml = await visitXlsxSheetRows(path, sheet, visit);
+		artifacts.set(`xlsxSheetRows:${path}#${sheet}`, {
+			kind: "xlsxSheetRows",
+			path: `${path}#${sheet}`,
+			bytes: Buffer.byteLength(sheetXml, "utf8"),
+			sha256: createHash("sha256").update(sheetXml).digest("hex"),
+		});
+	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
 		xlsxSheet: (path, sheet) =>
 			track("xlsxSheet", `${path}#${sheet}`, () =>
 				readXlsxSheet(path, sheet),
 			),
+		xlsxSheetRows: (path, sheet, visit) =>
+			trackXlsxRows(path, sheet, visit),
 		xlsSheet: (path, sheet) =>
 			track("xlsSheet", `${path}#${sheet}`, () =>
 				readXlsSheet(path, sheet),

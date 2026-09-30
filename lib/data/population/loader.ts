@@ -1,120 +1,80 @@
 import { AgeData, PopulationDataset } from "@/lib/types";
-import { parseCsv } from "@/lib/helpers/parseCsv";
 
-interface CategoryPopulationWardData {
-	[wardCode: string]: {
-		ageData: AgeData;
-		wardName: string;
-		laCode: string;
-		laName: string;
-	};
-}
+type XlsxSheetRowReader = (
+	path: string,
+	sheet: string,
+	visit: (row: ReadonlyMap<number, string>) => void,
+) => Promise<void>;
 
-async function parsePopulationDataCombined(csvText: string) {
-	const malesData: CategoryPopulationWardData = {};
-	const femalesData: CategoryPopulationWardData = {};
-	const totalData: CategoryPopulationWardData = {};
+type AgeColumn = { index: number; age: string; sex: "F" | "M" };
 
-	const { data } = await parseCsv<string[]>(csvText, {
-		header: false,
-		skipLines: 3,
-	});
-	const rows = data as string[][];
-	if (rows.length === 0) return { malesData, femalesData, totalData };
-
-	const headerRow = rows[0];
-
-	interface ColMeta {
-		index: number;
-		age: string;
-		sex: "F" | "M";
-	}
-	const ageCols: ColMeta[] = [];
-	for (let i = 5; i < headerRow.length; i++) {
-		const colName = headerRow[i]?.trim() ?? "";
-		if (colName.startsWith("F"))
-			ageCols.push({ index: i, age: colName.substring(1), sex: "F" });
-		else if (colName.startsWith("M"))
-			ageCols.push({ index: i, age: colName.substring(1), sex: "M" });
-	}
-
-	for (let rowIdx = 1; rowIdx < rows.length; rowIdx++) {
-		const row = rows[rowIdx];
-		if (!Array.isArray(row) || row.length < 5) continue;
-		const laCode = row[0]?.trim();
-		const laName = row[1]?.trim() || "";
-		const wardCode = row[2]?.trim();
-		const wardName = row[3]?.trim() || "";
-		if (!laCode || !wardCode) continue;
-
-		const femaleAgeData: AgeData = {};
-		const maleAgeData: AgeData = {};
-		const totalAgeData: AgeData = {};
-
-		for (const { index, age, sex } of ageCols) {
-			const value = row[index]?.trim();
-			if (!value || value === "") continue;
-			const count = parseInt(value.replace(/,/g, ""), 10);
-			if (isNaN(count)) continue;
-			if (sex === "F") femaleAgeData[age] = count;
-			else maleAgeData[age] = count;
-			totalAgeData[age] = (totalAgeData[age] || 0) + count;
-		}
-
-		if (Object.keys(femaleAgeData).length > 0)
-			femalesData[wardCode] = {
-				ageData: femaleAgeData,
-				wardName,
-				laCode,
-				laName,
-			};
-		if (Object.keys(maleAgeData).length > 0)
-			malesData[wardCode] = {
-				ageData: maleAgeData,
-				wardName,
-				laCode,
-				laName,
-			};
-		if (Object.keys(totalAgeData).length > 0)
-			totalData[wardCode] = {
-				ageData: totalAgeData,
-				wardName,
-				laCode,
-				laName,
-			};
-	}
-
-	return { malesData, femalesData, totalData };
-}
+const cell = (row: ReadonlyMap<number, string>, index: number) =>
+	row.get(index)?.trim() ?? "";
 
 export async function loadPopulation(
-	readSheet: (path: string, sheet: string) => Promise<string>,
+	readRows: XlsxSheetRowReader,
 ): Promise<Record<string, PopulationDataset>> {
-	const { malesData, femalesData, totalData } =
-		await parsePopulationDataCombined(
-			await readSheet(
-				"demographics/population/small-area-estimates/population-ward-estimates/sapewardstablefinal.xlsx",
-				"Mid-2022 Ward 2023",
-			),
-		);
-
-	const allWardCodes = new Set([
-		...Object.keys(femalesData),
-		...Object.keys(malesData),
-		...Object.keys(totalData),
-	]);
-
 	const combinedData: PopulationDataset["data"] = {};
-	for (const wardCode of allWardCodes) {
-		combinedData[wardCode] = {
-			total: totalData[wardCode]?.ageData || {},
-			males: malesData[wardCode]?.ageData || {},
-			females: femalesData[wardCode]?.ageData || {},
-			wardName: totalData[wardCode]?.wardName || "",
-			ladCode: totalData[wardCode]?.laCode || "",
-			ladName: totalData[wardCode]?.laName || "",
-		};
-	}
+	let rowIndex = 0;
+	let ageColumns: AgeColumn[] | undefined;
+	await readRows(
+		"demographics/population/small-area-estimates/population-ward-estimates/sapewardstablefinal.xlsx",
+		"Mid-2022 Ward 2023",
+		(row) => {
+			if (rowIndex++ < 3) return;
+			if (!ageColumns) {
+				ageColumns = [...row.entries()].flatMap(([index, name]) => {
+					if (index < 5) return [];
+					const column = name.trim();
+					if (column.startsWith("F"))
+						return [
+							{
+								index,
+								age: column.substring(1),
+								sex: "F" as const,
+							},
+						];
+					if (column.startsWith("M"))
+						return [
+							{
+								index,
+								age: column.substring(1),
+								sex: "M" as const,
+							},
+						];
+					return [];
+				});
+				return;
+			}
+
+			const laCode = cell(row, 0);
+			const wardCode = cell(row, 2);
+			if (!laCode || !wardCode) return;
+
+			const females: AgeData = {};
+			const males: AgeData = {};
+			const total: AgeData = {};
+			for (const { index, age, sex } of ageColumns) {
+				const value = cell(row, index);
+				if (!value) continue;
+				const count = parseInt(value.replace(/,/g, ""), 10);
+				if (isNaN(count)) continue;
+				if (sex === "F") females[age] = count;
+				else males[age] = count;
+				total[age] = (total[age] || 0) + count;
+			}
+			if (Object.keys(total).length === 0) return;
+
+			combinedData[wardCode] = {
+				total,
+				males,
+				females,
+				wardName: cell(row, 3),
+				ladCode: laCode,
+				ladName: cell(row, 1),
+			};
+		},
+	);
 
 	return {
 		2022: {

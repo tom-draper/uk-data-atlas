@@ -133,20 +133,20 @@ const tidyNumber = (raw: string): string => {
 };
 
 /**
- * The sheet as rows of cell text. Cells are placed by their own reference, so
- * skipped columns become empty strings rather than shifting a row left.
+ * Visits sparse worksheet rows. Cells are placed by their own reference, so
+ * callers can consume large sheets without materialising a dense grid.
  */
-export function sheetRows(
+export function forEachSheetRow(
 	sheetXml: string,
 	sharedStrings: string[],
 	percentageStyleIds: ReadonlySet<number> = new Set(),
-): string[][] {
-	const rows: string[][] = [];
-
+	visit: (row: ReadonlyMap<number, string>) => void,
+) {
 	for (const rowMatch of sheetXml.matchAll(
 		/<row\b[^>]*>([\s\S]*?)<\/row>|<row\b[^>]*\/>/g,
 	)) {
-		const row: string[] = [];
+		const row = new Map<number, string>();
+		let nextColumn = 0;
 		for (const cellMatch of (rowMatch[1] ?? "").matchAll(
 			// Self-closing form must be tried first: its attrs can end in "/",
 			// which the open/close alternative's [^>]* also matches, causing it
@@ -179,12 +179,32 @@ export function sheetRows(
 			}
 
 			const reference = /\br="([^"]*)"/.exec(attrs)?.[1];
-			const column = reference ? columnIndex(reference) : row.length;
+			const column = reference ? columnIndex(reference) : nextColumn;
+			row.set(column, value);
+			nextColumn = Math.max(nextColumn, column + 1);
+		}
+		visit(row);
+	}
+}
+
+/**
+ * The sheet as rows of cell text. Cells are placed by their own reference, so
+ * skipped columns become empty strings rather than shifting a row left.
+ */
+export function sheetRows(
+	sheetXml: string,
+	sharedStrings: string[],
+	percentageStyleIds: ReadonlySet<number> = new Set(),
+): string[][] {
+	const rows: string[][] = [];
+	forEachSheetRow(sheetXml, sharedStrings, percentageStyleIds, (cells) => {
+		const row: string[] = [];
+		for (const [column, value] of cells) {
 			while (row.length < column) row.push("");
 			row[column] = value;
 		}
 		rows.push(row);
-	}
+	});
 
 	return rows;
 }
