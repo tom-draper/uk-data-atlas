@@ -25,6 +25,7 @@ interface ProcessedYearData {
 	totalVotes: number;
 	turnout: number | null;
 	hasData: boolean;
+	boundariesChanged?: boolean;
 }
 
 function VoteBar({ data }: { data: ProcessedPartyData[] }) {
@@ -121,7 +122,9 @@ export default function LocalElectionResultChart({
 						<div
 							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
 						>
-							No data available
+							{data.boundariesChanged
+								? "Ward boundaries changed"
+								: "No data available"}
 						</div>
 					)
 				) : (
