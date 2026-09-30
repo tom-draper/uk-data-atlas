@@ -204,13 +204,13 @@ x-quick-starts:
         request: "/v1/measures/population"
       - title: Take one area's series
         explain: Source-exact, within one partition, so the code means the same place in every period.
-        request: "/v1/data/population/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
+        request: "/v1/data/population/series?place=E08000025&geography=localAuthority&boundaryYear=2023"
       - title: Rank the change
         explain: The same change against every other area in the partition, so a figure is put in context rather than quoted alone.
-        request: "/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&areaCode=E08000025"
+        request: "/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022&by=relative&place=E08000025"
       - title: See a median refused, not averaged
         explain: A median of medians is not a median, so the API refuses to combine one over areas.
-        request: "/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001"
+        request: "/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001"
         status: 422
       - title: Keep geometry out of the trend
         explain: A boundary release selects shapes for a map. It is refused on a trend, because it would suggest the values were moved onto it.
@@ -2404,12 +2404,7 @@ paths:
             Caller-selected geometry release. Accepted only when every source
             code is present in a published compatibility candidate; it does
             not convert values or assert equal geometry.
-        - name: areaCode
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Return the one observed source-area code, if present.
+        - $ref: "#/components/parameters/Place"
         - name: include
           in: query
           required: false
@@ -2461,7 +2456,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000932"
+              x-example-request: "/v1/data/population?period=2022&geography=ward&boundaryYear=2023&place=E05000932"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -2570,13 +2565,13 @@ paths:
         status: 422
         code: aggregation_not_supported
         when: "The measure is a rank, median or share that cannot be combined over areas. Only a measure declared additive is aggregated."
-        x-example-request: "/v1/data/imd-rank/aggregate?period=2025&locationId=north-west"
+        x-example-request: "/v1/data/imd-rank/aggregate?period=2025&place=location/north-west"
       description: >
         Returns a derived sum for a measure declared extensive, or a weighted
-        mean for a measure that publishes an available weight measure. Supply
-        exactly one of `locationId`, `areaCode`, or `targetCode`.
+        mean for a measure that publishes an available weight measure. `place`
+        names what to sum onto.
 
-        With `locationId`, the location's member codes are matched in the
+        With `place=location/{id}`, the location's member codes are matched in the
         requested source partition. A location lists every code it has been
         made of, so a code of another vintage, whose successor or predecessor
         the partition holds instead, is passed over, as is a legacy code
@@ -2588,8 +2583,7 @@ paths:
         is an official area sourced from an ONS lookup or an editorial code
         grouping that claims no official status.
 
-        With `areaCode`, which currently accepts a country code such as
-        `E92000001`, membership follows the first character of the GSS area
+        With a country code such as `place=E92000001`, membership follows the first character of the GSS area
         code, which the coding scheme assigns by country. That is definitional
         rather than geometric, so it needs no boundary comparison and cannot
         drift between releases. The sum covers every area of that country the
@@ -2603,7 +2597,7 @@ paths:
         election does for wards that did not go to the polls, and
         `not-assessed` when no matching release is compiled.
 
-        With `targetCode`, callers must also name a code-set-compatible
+        With any other area code, callers must also name a code-set-compatible
         `sourceRelease` and a published `crosswalk`; the target's geography is
         the crosswalk's, so a combined authority, county, integrated care
         board or any other published membership target is summed the same way
@@ -2620,10 +2614,9 @@ paths:
         the partition has no value for some of the areas the crosswalk places
         in the target.
 
-        `regionCode` is the original spelling of `targetCode`, from when a
-        region was the only membership target. It still selects the same way,
-        and is answered with `region` beside `target` in the response; it
-        refuses a crosswalk that maps to any other geography.
+        A place reference such as `region/E12000001` names the target's
+        geography as well as its code, and a crosswalk that maps to any other
+        geography is refused.
 
 
         A published relationship path may be named with `path` in place of
@@ -2645,42 +2638,18 @@ paths:
         - $ref: "#/components/parameters/SourcePeriod"
         - $ref: "#/components/parameters/SourceGeography"
         - $ref: "#/components/parameters/SourceBoundaryYear"
-        - name: locationId
+        - name: place
           in: query
-          required: false
+          required: true
           schema:
             type: string
           description: >
-            An id returned by `GET /locations`. Supply exactly one target
-            selector.
-        - name: areaCode
-          in: query
-          required: false
-          schema:
-            type: string
-          description: >
-            A country code, such as `E92000001`. Supply exactly one target
-            selector.
-        - name: targetCode
-          in: query
-          required: false
-          schema:
-            type: string
-          description: >
-            The code of the area to sum onto, in the geography the named
-            crosswalk maps to, such as `E47000006` for the Tees Valley combined
-            authority. Requires `crosswalk` and `sourceRelease`; supply exactly
-            one target selector.
-        - name: regionCode
-          in: query
-          required: false
-          schema:
-            type: string
-          description: >
-            An official English region code. The original spelling of
-            `targetCode`, kept for callers that use it; it refuses a crosswalk
-            that maps to any geography but `region`. Requires `crosswalk` and
-            `sourceRelease`; supply exactly one target selector.
+            What to sum onto: `location/{id}` for a curated named location, a
+            country code such as `E92000001`, or the code of an area a named
+            membership `crosswalk` or `path` groups the members into, such as
+            `E47000006` for the Tees Valley combined authority. A reference
+            such as `region/E12000001` also names the target's geography, and
+            the crosswalk must map to it.
         - name: sourceRelease
           in: query
           required: false
@@ -2696,7 +2665,7 @@ paths:
             type: string
           description: >
             A membership crosswalk returned by `GET /crosswalks`. Name either
-            this or `path` with `targetCode`.
+            this or `path` when `place` is neither a location nor a country.
         - name: path
           in: query
           required: false
@@ -2712,7 +2681,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&areaCode=W92000004"
+              x-example-request: "/v1/data/population/aggregate?period=2022&geography=localAuthority&boundaryYear=2023&place=W92000004"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -3035,7 +3004,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not named. A series stays within one partition, so `geography` and `boundaryYear` are required."
-        x-example-request: "/v1/data/population/series?areaCode=E05000932"
+        x-example-request: "/v1/data/population/series?place=E05000932"
       description: >
         Returns all published observations for one area code within one source
         geography and code vintage. Without `analysisGeography`, the result is
@@ -3047,15 +3016,8 @@ paths:
         geography and boundary year.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
-        - name: areaCode
-          in: query
-          required: true
-          schema:
-            type: string
-          description: >
-            The one area to return the series for, by its code in the source
-            partition.
-        - $ref: "#/components/parameters/SourceGeography"
+        - $ref: "#/components/parameters/Place"
+        - $ref: "#/components/parameters/PlaceSourceGeography"
         - $ref: "#/components/parameters/SourceBoundaryYear"
         - name: analysisGeography
           in: query
@@ -3081,7 +3043,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/data/population/series?areaCode=E08000025&geography=localAuthority&boundaryYear=2023"
+              x-example-request: "/v1/data/population/series?place=E08000025&geography=localAuthority&boundaryYear=2023"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -3848,7 +3810,7 @@ paths:
                     code: north-west
                     match: exact
                   method: aggregate
-                  via: /v1/data/population/aggregate?locationId=north-west&geography=localAuthority&boundaryYear=2023&period=2022
+                  via: /v1/data/population/aggregate?place=location/north-west&geography=localAuthority&boundaryYear=2023&period=2022
                   otherMatches:
                     - place: region/E12000002
                       kind: area
@@ -3899,7 +3861,7 @@ paths:
       description: >
         Returns how each area changed between two periods, ranked: the question
         "where did population grow fastest between 2011 and 2022?" Pass
-        `areaCode` for one area, which keeps its rank among all of them, so
+        `place` for one area, which keeps its rank among all of them, so
         "Manchester grew 13.2%, 42nd of 361" is a single call.
 
 
@@ -3975,12 +3937,7 @@ paths:
           schema:
             enum: [asc, desc]
             default: desc
-        - name: areaCode
-          in: query
-          required: false
-          description: Return only this area, with its rank among all of them.
-          schema:
-            type: string
+        - $ref: "#/components/parameters/Place"
         - $ref: "#/components/parameters/PageLimit"
         - $ref: "#/components/parameters/PageCursor"
       responses:
@@ -8498,6 +8455,26 @@ components:
         The geography the publisher observed the values on. With `boundaryYear`
         it selects one source partition of the measure; it never converts
         values onto another geography.
+    PlaceSourceGeography:
+      name: geography
+      in: query
+      required: false
+      schema:
+        enum:
+          [
+            ward,
+            localAuthority,
+            constituency,
+            lsoa,
+            msoa,
+            dataZone,
+            superOutputArea,
+          ]
+      description: >
+        The geography the publisher observed the values on. With `boundaryYear`
+        it selects one source partition of the measure; it never converts
+        values onto another geography. It may be left out when `place` is a
+        reference such as `localAuthority/E08000035`, which names it.
     SourceBoundaryYear:
       name: boundaryYear
       in: query
@@ -8507,6 +8484,17 @@ components:
       description: >
         The code vintage the partition's areas are published on, e.g. `2023`.
         This is the source's own vintage, not a boundary release to draw.
+    Place:
+      name: place
+      in: query
+      required: false
+      schema:
+        type: string
+      description: >
+        The area, as its code in the source partition, such as `E08000035`,
+        or as a place reference from `/places`, such as
+        `localAuthority/E08000035`, which also names its geography. A
+        postcode or a place name is answered by `/data/{measure-id}/value`.
     SourcePeriod:
       name: period
       in: query
@@ -8802,7 +8790,7 @@ components:
 
     AggregationNotSupportedProblem:
       description: >
-        The measure's values do not add over areas, or its weights cannot be used. Produced by `GET /v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001`.
+        The measure's values do not add over areas, or its weights cannot be used. Produced by `GET /v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -8845,7 +8833,7 @@ components:
 
     PartialCoverageProblem:
       description: >
-        A named location or a weight partition leaves out areas the sum would need, so no partial sum is served. Produced by `GET /v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=belfast`.
+        A named location or a weight partition leaves out areas the sum would need, so no partial sum is served. Produced by `GET /v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&place=location/belfast`.
       allOf:
         - $ref: "#/components/schemas/Problem"
         - type: object
@@ -8901,7 +8889,7 @@ components:
                       "status": "observed",
                       "periodDefaulted": true,
                     },
-                  "via": "/v1/data/population/series?areaCode=W06000022&geography=localAuthority&boundaryYear=2023",
+                  "via": "/v1/data/population/series?place=W06000022&geography=localAuthority&boundaryYear=2023",
                   "ask": "/v1/data/population/value?place=localAuthority%2FW06000022",
                 },
               ],

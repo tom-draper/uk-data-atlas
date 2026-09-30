@@ -113,7 +113,7 @@ test("builds regional target and weighting metadata", () => {
 		}),
 	);
 	assert.equal(data.target.id, "region/2024-01/R1");
-	assert.equal(data.region.code, "R1");
+	assert.equal(data.region, undefined);
 	assert.equal(data.aggregation.operation, "weighted-mean");
 	assert.equal(data.aggregation.crosswalk.id, "crosswalk.example");
 	assert.deepEqual(data.aggregation.weight, {

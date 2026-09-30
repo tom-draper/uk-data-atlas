@@ -40,7 +40,7 @@ export const PROBLEM_CODES = {
 		meaning:
 			"The measure's values do not add over areas, or its weights cannot be used.",
 		example:
-			"/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&areaCode=E92000001",
+			"/v1/data/house-price-median/aggregate?period=2022&geography=ward&boundaryYear=2020&place=E92000001",
 	},
 	conversion_not_available: {
 		statuses: [422],
@@ -58,7 +58,7 @@ export const PROBLEM_CODES = {
 		meaning:
 			"A named location or a weight partition leaves out areas the sum would need, so no partial sum is served.",
 		example:
-			"/v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&locationId=belfast",
+			"/v1/data/total-jobs/aggregate?period=2024&geography=localAuthority&boundaryYear=2023&place=location/belfast",
 	},
 	ambiguous_place: {
 		statuses: [409],

@@ -91,7 +91,7 @@ test("answers an area from its series, latest period when none is given", () => 
 		undefined,
 		dispatcher([
 			[
-				"areaCode=E08000003",
+				"place=E08000003",
 				series([
 					["2022", 100],
 					["2023", 110],
@@ -105,7 +105,7 @@ test("answers an area from its series, latest period when none is given", () => 
 	assert.equal(outcome.chosen.answer.value, 110);
 	assert.equal(outcome.chosen.answer.period, "2023");
 	assert.equal(outcome.chosen.answer.periodDefaulted, true);
-	assert.match(outcome.chosen.via, /series\?areaCode=E08000003/);
+	assert.match(outcome.chosen.via, /series\?place=E08000003/);
 });
 
 test("answers a curated location by summing its authorities", () => {
@@ -113,7 +113,7 @@ test("answers a curated location by summing its authorities", () => {
 		measure,
 		[candidate("location/north-west", "exact", ["A", "B"])],
 		"2022",
-		dispatcher([["locationId=north-west", aggregate(500)]]),
+		dispatcher([["place=location/north-west", aggregate(500)]]),
 	);
 	assert.equal(outcome.outcome, "answered");
 	if (outcome.outcome !== "answered") return;
@@ -134,9 +134,9 @@ test("counts the same ground once, keeping the publisher's own reading", () => {
 		],
 		"2023",
 		dispatcher([
-			["locationId=manchester", aggregate(110, ["OLD"])],
+			["place=location/manchester", aggregate(110, ["OLD"])],
 			[
-				"areaCode=E08000003",
+				"place=E08000003",
 				series([
 					["2022", 100],
 					["2023", 110],
@@ -156,8 +156,8 @@ test("hands back every distinct answer when a name means several places", () => 
 		[candidate("localAuthority/W06000022"), candidate("ward/E05000009")],
 		"2022",
 		dispatcher([
-			["areaCode=W06000022", series([["2022", 160000]])],
-			["areaCode=E05000009", series([["2022", 5000]])],
+			["place=W06000022", series([["2022", 160000]])],
+			["place=E05000009", series([["2022", 5000]])],
 		]),
 	);
 	assert.equal(outcome.outcome, "ambiguous");
@@ -176,7 +176,7 @@ test("tries names that merely begin with the query only when no exact match answ
 			candidate("localAuthority/E09000027", "prefix"),
 		],
 		"2022",
-		dispatcher([["areaCode=E09000027", series([["2022", 195000]])]]),
+		dispatcher([["place=E09000027", series([["2022", 195000]])]]),
 	);
 	assert.equal(exactUnserved.outcome, "answered");
 	if (exactUnserved.outcome === "answered") {
@@ -214,7 +214,7 @@ test("says why each candidate went unanswered", () => {
 			candidate("location/devon", "exact", ["A"]),
 		],
 		"2022",
-		dispatcher([["locationId=devon", refused("not a complete match")]]),
+		dispatcher([["place=location/devon", refused("not a complete match")]]),
 	);
 	assert.equal(outcome.outcome, "unserved");
 	if (outcome.outcome !== "unserved") return;

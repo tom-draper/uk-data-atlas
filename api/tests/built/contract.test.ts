@@ -516,11 +516,11 @@ test("serves each representation the OpenAPI document declares", () => {
 
 /** The derivative data routes, each with a query that reaches its work. */
 const DERIVATIVE = [
-	"/v1/data/population/series?areaCode=E05000932&geography=ward&boundaryYear=2023",
+	"/v1/data/population/series?place=E05000932&geography=ward&boundaryYear=2023",
 	"/v1/data/population/rankings?period=2022&geography=ward&boundaryYear=2023",
 	"/v1/data/population/change?geography=localAuthority&boundaryYear=2023&startPeriod=2011&endPeriod=2022",
 	"/v1/data/population/compare?period=2022&geography=ward&boundaryYear=2023&baselineAreaCode=E05000932&comparisonAreaCode=W05001039",
-	"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&locationId=north-west",
+	"/v1/data/population/aggregate?period=2022&geography=ward&boundaryYear=2023&place=location/north-west",
 	"/v1/data/population/convert?period=2022&geography=ward&boundaryYear=2023&crosswalk=ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment",
 ];
 

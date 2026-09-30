@@ -161,7 +161,7 @@ export const readSeries = (
 	dispatch: Dispatch,
 ): { via: string; answer: SeriesAnswer } | { via: string; reason: string } => {
 	const { type, boundaryYear } = source.sourceGeography;
-	const via = `/v1/data/${measure.id}/series?areaCode=${encodeURIComponent(match.code)}&geography=${type}&boundaryYear=${boundaryYear}`;
+	const via = `/v1/data/${measure.id}/series?place=${encodeURIComponent(match.code)}&geography=${type}&boundaryYear=${boundaryYear}`;
 	const response = dispatch(via);
 	if (response.status !== 200)
 		return {

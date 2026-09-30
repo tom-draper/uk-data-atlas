@@ -71,14 +71,7 @@ export const buildAggregateResponse = ({
 			...(location
 				? { location }
 				: regional
-					? {
-							target: regional.target,
-							// `region` predates `target` and still names a
-							// region, so a caller reading it keeps working.
-							...(regional.target.geography === "region"
-								? { region: regional.target }
-								: {}),
-						}
+					? { target: regional.target }
 					: { area: country }),
 			provenance: {
 				...sourceExactProvenance({

@@ -2298,7 +2298,7 @@
 				"query:release": {
 					"required": false
 				},
-				"query:areaCode": {
+				"query:place": {
 					"required": false
 				},
 				"query:include": {
@@ -2426,17 +2426,8 @@
 				"query:boundaryYear": {
 					"required": true
 				},
-				"query:locationId": {
-					"required": false
-				},
-				"query:areaCode": {
-					"required": false
-				},
-				"query:targetCode": {
-					"required": false
-				},
-				"query:regionCode": {
-					"required": false
+				"query:place": {
+					"required": true
 				},
 				"query:sourceRelease": {
 					"required": false
@@ -2671,11 +2662,11 @@
 				"path:measure-id": {
 					"required": true
 				},
-				"query:areaCode": {
-					"required": true
+				"query:place": {
+					"required": false
 				},
 				"query:geography": {
-					"required": true,
+					"required": false,
 					"enum": [
 						"constituency",
 						"dataZone",
@@ -3626,7 +3617,7 @@
 						"desc"
 					]
 				},
-				"query:areaCode": {
+				"query:place": {
 					"required": false
 				},
 				"query:limit": {

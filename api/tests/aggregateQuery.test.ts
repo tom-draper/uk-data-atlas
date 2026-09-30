@@ -9,7 +9,7 @@ test("parses a country aggregation query", () => {
 	assert.deepEqual(
 		parseAggregateQuery({
 			parsedUrl: url(
-				"period=2024&geography=localAuthority&boundaryYear=2024&areaCode=E92000001",
+				"period=2024&geography=localAuthority&boundaryYear=2024&place=E92000001",
 			),
 			measureId: "measure.example",
 		}),
@@ -19,8 +19,8 @@ test("parses a country aggregation query", () => {
 			boundaryYear: "2024",
 			locationId: null,
 			areaCode: "E92000001",
-			regionCode: null,
 			targetCode: null,
+			targetGeography: null,
 			crosswalkId: null,
 			pathId: null,
 			sourceRelease: null,
@@ -28,16 +28,16 @@ test("parses a country aggregation query", () => {
 	);
 });
 
-test("keeps the legacy regionCode alias", () => {
+test("reads a place reference's geography as the target's", () => {
 	const result = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&regionCode=R1&crosswalk=x&sourceRelease=release",
+			"period=2024&geography=localAuthority&boundaryYear=2024&place=region/R1&crosswalk=x&sourceRelease=release",
 		),
 		measureId: "measure.example",
 	});
 	assert.equal("status" in result, false);
 	if ("status" in result) return;
-	assert.equal(result.regionCode, "R1");
+	assert.equal(result.targetGeography, "region");
 	assert.equal(result.targetCode, "R1");
 	assert.equal(result.crosswalkId, "x");
 	assert.equal(result.sourceRelease, "release");
@@ -46,7 +46,7 @@ test("keeps the legacy regionCode alias", () => {
 test("rejects unsupported selectors and malformed targets", () => {
 	const conversion = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&areaCode=E92000001&conversion=x",
+			"period=2024&geography=localAuthority&boundaryYear=2024&place=E92000001&conversion=x",
 		),
 		measureId: "measure.example",
 	});
@@ -54,7 +54,7 @@ test("rejects unsupported selectors and malformed targets", () => {
 
 	const invalidCountry = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&areaCode=E1",
+			"period=2024&geography=localAuthority&boundaryYear=2024&place=E1",
 		),
 		measureId: "measure.example",
 	});
@@ -64,7 +64,7 @@ test("rejects unsupported selectors and malformed targets", () => {
 	);
 
 	const missingSource = parseAggregateQuery({
-		parsedUrl: url("areaCode=E92000001"),
+		parsedUrl: url("place=E92000001"),
 		measureId: "measure.example",
 	});
 	assert.equal(

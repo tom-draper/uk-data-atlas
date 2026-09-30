@@ -235,7 +235,7 @@ test("answers for the finest area the data was published for that contains the p
 	assert.equal(data.postcode.postcode, "EC1A 1AA");
 	assert.equal(
 		data.via,
-		"/v1/data/population/series?areaCode=E05000001&geography=ward&boundaryYear=2023",
+		"/v1/data/population/series?place=E05000001&geography=ward&boundaryYear=2023",
 	);
 	assert.deepEqual(data.otherGeographies, [
 		{

@@ -125,7 +125,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	});
 
 	const localAuthority = routeWithData(
-		"/v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023&areaCode=N09000001",
+		"/v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023&place=N09000001",
 	);
 	assert.equal(localAuthority.status, 200);
 	assert.deepEqual(
@@ -150,7 +150,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 
 	const withGeometry = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&areaCode=E05000001",
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&place=E05000001",
 	);
 	assert.equal(withGeometry.status, 200);
 	assert.deepEqual("data" in withGeometry.body && withGeometry.body.data, {
@@ -183,7 +183,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 
 	const withArea = routeRequest(
 		"GET",
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&areaCode=E05000001&include=area",
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&release=2023-05-uk-bgc&place=E05000001&include=area",
 		testContext({
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
@@ -215,7 +215,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	assert.equal(includeWithoutRelease.status, 400);
 
 	const csv = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000001&format=csv",
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&place=E05000001&format=csv",
 	);
 	assert.equal(csv.status, 200);
 	assert.equal(csv.representation?.contentType, "text/csv; charset=utf-8");
@@ -225,7 +225,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 	);
 
 	const ndjson = routeWithData(
-		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&areaCode=E05000001&format=ndjson",
+		"/v1/data/population?period=2022&geography=ward&boundaryYear=2023&place=E05000001&format=ndjson",
 	);
 	assert.equal(ndjson.status, 200);
 	assert.equal(

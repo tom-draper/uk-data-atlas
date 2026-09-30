@@ -24,7 +24,7 @@ export const resolveAggregationPartition = ({
 	geography,
 	boundaryYear,
 	targetCode,
-	regionCode,
+	targetGeography,
 	crosswalkId,
 	pathId,
 	sourceRelease,
@@ -35,7 +35,7 @@ export const resolveAggregationPartition = ({
 	geography: string;
 	boundaryYear: string;
 	targetCode: string | null;
-	regionCode: string | null;
+	targetGeography: string | null;
 	crosswalkId: string | null;
 	pathId: string | null;
 	sourceRelease: string | null;
@@ -56,7 +56,7 @@ export const resolveAggregationPartition = ({
 	});
 	const regional = resolveAggregationTarget({
 		targetCode,
-		regionCode,
+		targetGeography,
 		crosswalkId,
 		pathId,
 		sourceRelease,

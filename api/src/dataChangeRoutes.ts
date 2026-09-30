@@ -18,6 +18,7 @@ import {
 	readPageSize,
 } from "./pagination";
 import type { RouteRequest } from "./routing";
+import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** Change between two periods of a measure for areas published in both, ranked in stable pages. */
@@ -73,7 +74,15 @@ export const handleDataChangeRoutes = ({
 			"Change is measured within one source partition. It does not select geometry releases, convert observations or aggregate them.",
 		);
 	}
-	const geography = parsedUrl.searchParams.get("geography");
+	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
+	if (place && "status" in place) return place;
+	if (place?.kind === "location")
+		return problem(
+			400,
+			"Invalid Query",
+			"Change is measured area by area within one partition, and a curated location is not one of its areas. Ask for each of its member areas, or for the location's value in each period.",
+		);
+	const geography = requestedGeography(parsedUrl.searchParams, place);
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 	const startPeriod = parsedUrl.searchParams.get("startPeriod");
 	const endPeriod = parsedUrl.searchParams.get("endPeriod");
@@ -231,7 +240,7 @@ export const handleDataChangeRoutes = ({
 	});
 
 	// One area, with its place among all of them: "rose 12%, fifth fastest".
-	const areaCode = parsedUrl.searchParams.get("areaCode");
+	const areaCode = place?.code;
 	let records = ranked;
 	let nextCursor: string | null = null;
 	if (areaCode) {

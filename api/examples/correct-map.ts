@@ -78,7 +78,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 			transformation: { status: string };
 		};
 	}>(
-		`/v1/data/population?period=2024&${partition}&release=${release}&areaCode=${authority.code}`,
+		`/v1/data/population?period=2024&${partition}&release=${release}&place=${authority.code}`,
 	);
 	const record = values.data.records[0];
 	if (values.data.provenance.transformation.status !== "not-applied")

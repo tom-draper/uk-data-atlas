@@ -66,7 +66,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		};
 		series: Array<{ period: string; value: number; status: "derived" }>;
 	}>(
-		`/v1/data/${measureId}/series?areaCode=${areaCode}&${source}&analysisGeography=${analysisGeography}`,
+		`/v1/data/${measureId}/series?place=${areaCode}&${source}&analysisGeography=${analysisGeography}`,
 	);
 	const collisionCount = series.data.series.find(
 		(record) => record.period === period,
