@@ -102,11 +102,13 @@ describe("the published API contract", () => {
 	const operations = allOperations(contract);
 
 	it("files every operation under a section", () => {
-		const specPaths = contract.sections.flatMap((s) =>
-			s.operations.map((o) => o.path),
+		const specOperations = contract.sections.flatMap((section) =>
+			section.operations.map(
+				(operation) => `${operation.method} ${operation.path}`,
+			),
 		);
 		expect(operations.length).toBeGreaterThan(0);
-		expect(new Set(specPaths).size).toBe(operations.length);
+		expect(new Set(specOperations).size).toBe(operations.length);
 	});
 
 	it("gives every operation a unique page", () => {

@@ -344,6 +344,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		title: "Get a boundary release",
 		intro: "Get the details of one boundary release: who published it, under what licence, and which countries it covers.",
 	},
+	joinRowsToBoundaryRelease: {
+		title: "Join your rows to a release",
+		intro: "Send your own area codes or names and values, then receive the rows matched to one boundary release and keyed by the numeric `id` its tiles use.",
+		tips: [
+			"Rows that cannot identify exactly one area are returned in `unjoined` with the reason, rather than being guessed or dropped.",
+			"Use `format=geojson` with a suitable `tier` when you need the matched shapes as well as the join table.",
+		],
+	},
 	getGeographyInventory: {
 		title: "Check geography coverage",
 		intro: "For every boundary release, see whether its areas have been compiled and which crosswalks connect it to others, or the reason they haven't yet.",
@@ -369,6 +377,13 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "Got a spreadsheet column of area codes or names? Check up to 500 at once against a boundary release before you join data to it. Each comes back as `valid`, `superseded`, `ambiguous` and so on, with the reason.",
 		tips: [
 			"Repeat `value` once for each code or name, like `value=Bristol&value=E07000026`.",
+		],
+	},
+	validateAreaValuesPosted: {
+		title: "Validate a whole column",
+		intro: "Validate up to 250,000 area codes or names from a JSON or CSV request body before joining data to a boundary release.",
+		tips: [
+			"Use this POST endpoint when the column is too long for the GET endpoint's repeated `value` query parameter.",
 		],
 	},
 	getArea: {
