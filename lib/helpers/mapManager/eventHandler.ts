@@ -5,6 +5,7 @@ import { MapManagerCallbacks, type MapLayerMouseHandler } from "./callbacks";
 import { BoundaryType, ElectionData } from "@/lib/types";
 import {
 	boundaryTypeForCodeKey,
+	boundaryYearForCodeKey,
 	nameKeyForCodeKey,
 } from "@/lib/data/boundaries/catalog";
 
@@ -156,11 +157,13 @@ export class EventHandler {
 		const name = feature.properties?.[this.currentNameProp];
 		// Type assertion needed: TypeScript can't narrow the discriminated
 		// SelectedArea union from a string variable at runtime.
+		const boundaryYear = boundaryYearForCodeKey(this.currentCodeProp);
 		return {
 			type: this.currentBoundaryType,
 			code,
 			name,
 			data: (this.currentData[code] ?? null) as ElectionData | null,
+			...(boundaryYear === undefined ? {} : { boundaryYear }),
 		} as Parameters<NonNullable<MapManagerCallbacks["onAreaClick"]>>[0];
 	}
 

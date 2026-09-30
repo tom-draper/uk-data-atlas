@@ -28,6 +28,8 @@ export interface CodeMapper {
 		targetYear: YearCode,
 		fromYear?: YearCode,
 	): string | undefined;
+	/** Whether the lineage for a geography has loaded, holding every year given. */
+	hasAreaLineage(type: CodeType, ...years: YearCode[]): boolean;
 	getLadForWard(wardCode: string): string | undefined;
 	getConstituencyForWard(
 		wardCode: string,
@@ -93,6 +95,19 @@ export class CodeMapperStore implements CodeMapper {
 	setAreaLineage = (type: LineageType, lineage: AreaLineage): void => {
 		this.lineages[type] = { lineage, listed: listedReleases(lineage) };
 		this.mappingGeneration++;
+	};
+
+	hasAreaLineage = (type: CodeType, ...years: YearCode[]): boolean => {
+		const lineage = this.lineages[type as LineageType]?.lineage;
+		return (
+			lineage !== undefined &&
+			years.every((year) => {
+				const release = this.releaseForYear(type, year);
+				return (
+					release !== undefined && lineage.releases.includes(release)
+				);
+			})
+		);
 	};
 
 	/**

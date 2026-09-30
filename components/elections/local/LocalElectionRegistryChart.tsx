@@ -42,7 +42,7 @@ export default function LocalElectionRegistryChart({
 		availableDatasets?.[year],
 		aggregatedData,
 		selectedArea,
-		codeMapper?.getCodeForYear,
+		codeMapper,
 		codeMapper?.getWardsForLad,
 		codeMapper?.getWardsForConstituency,
 		codeMapper?.getMappingGeneration() ?? 0,

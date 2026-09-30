@@ -1268,3 +1268,22 @@ export const boundaryTypeForCodeKey = (
 /** The name property paired with a code property in the same boundary file. */
 export const nameKeyForCodeKey = (codeKey: string): string | undefined =>
 	CODE_KEY_INDEX.get(codeKey)?.nameKey;
+
+// The latest year each code property is served for. A property several years
+// share, as PCON17CD serves 2010, 2015 and 2017, names one release in all of
+// them, so any of those years finds it.
+const YEAR_BY_CODE_KEY = new Map<string, number>(
+	BOUNDARY_TYPES.flatMap((type) => {
+		const { releases, vintages } = BOUNDARY_CATALOG[type];
+		return Object.entries(vintages).flatMap(([year, asset]) => {
+			const release = releases.find((entry) => entry.asset === asset);
+			return release
+				? [[String(release.codeKey), Number(year)] as const]
+				: [];
+		});
+	}).sort(([, left], [, right]) => left - right),
+);
+
+/** The boundary year a file is served for, from the code property it carries. */
+export const boundaryYearForCodeKey = (codeKey: string): number | undefined =>
+	YEAR_BY_CODE_KEY.get(codeKey);

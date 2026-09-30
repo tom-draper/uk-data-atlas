@@ -1,9 +1,11 @@
 import type { BoundaryType } from "@/lib/types";
 import type { AggregatedCustomData, CustomDataset } from "@/lib/types/custom";
+import { areaInYear } from "@/lib/helpers/areaInYear";
 
 interface SelectedCustomArea {
 	code: string;
 	type: BoundaryType;
+	boundaryYear?: number;
 }
 
 interface CustomCodeMapper {
@@ -27,16 +29,16 @@ export function getCustomDatasetDisplayValue(
 	aggregatedData: Record<string, AggregatedCustomData | null> | null,
 ): CustomDatasetDisplayValue | null {
 	if (selectedArea) {
-		const directValue = dataset.data[selectedArea.code];
-		if (directValue !== undefined) return { value: directValue, count: 1 };
-
-		const mappedCode = codeMapper.getCodeForYear(
-			selectedArea.type,
-			selectedArea.code,
+		const found = areaInYear(
+			codeMapper,
+			selectedArea,
 			dataset.boundaryYear,
+			(code) => dataset.data[code] !== undefined,
 		);
-		const mappedValue = mappedCode ? dataset.data[mappedCode] : undefined;
-		if (mappedValue !== undefined) return { value: mappedValue, count: 1 };
+		const value =
+			found?.status === "found" ? dataset.data[found.code] : undefined;
+		if (value !== undefined) return { value, count: 1 };
+		if (found?.status === "boundaries-changed") return null;
 
 		if (selectedArea.type === "localAuthority") {
 			let value = 0;

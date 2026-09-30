@@ -61,4 +61,39 @@ describe("computeLocalElectionYearData", () => {
 		expect(compute(replacementDataset, 1).totalVotes).toBe(30);
 		expect(wards).toHaveBeenCalledTimes(3);
 	});
+
+	it("finds a picked ward's result for the same area, not for its code", () => {
+		// W-OLD was renumbered W-NEW with its extent unchanged; S kept its code
+		// though its boundary moved.
+		const codeMapper = {
+			hasAreaLineage: () => true,
+			getCodeForYear: (_: string, code: string) =>
+				({ "W-OLD": "W-NEW", K: "K" })[code],
+		};
+		const results = dataset({ "W-NEW": { votes: 7 }, S: { votes: 9 } });
+		const pick = (code: string, boundaryYear?: number) =>
+			computeLocalElectionYearData(
+				2024,
+				results,
+				null,
+				{ type: "ward", code, name: code, data: null, boundaryYear },
+				codeMapper,
+				undefined,
+				undefined,
+				0,
+				undefined,
+				undefined,
+			);
+
+		expect(pick("W-OLD", 2021).totalVotes).toBe(7);
+		expect(pick("S", 2021)).toMatchObject({
+			hasData: false,
+			boundariesChanged: true,
+		});
+		// A ward in the same area with no election that year.
+		expect(pick("K", 2021)).toMatchObject({ hasData: false });
+		expect(pick("K", 2021).boundariesChanged).toBeUndefined();
+		// Without its boundary year, a ward is found by its code.
+		expect(pick("S").totalVotes).toBe(9);
+	});
 });

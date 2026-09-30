@@ -27,5 +27,11 @@ export type SelectedArea = {
 		code: string;
 		name: string;
 		data: AreaMap[K] | null;
+		/**
+		 * The boundary year of the map the area was picked from, so figures
+		 * from other years can be found for the same area rather than for
+		 * whatever carries its code.
+		 */
+		boundaryYear?: number;
 	};
 }[keyof AreaMap];
