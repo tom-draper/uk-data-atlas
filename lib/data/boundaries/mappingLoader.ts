@@ -6,7 +6,6 @@ import { decodeBoundaryData } from "./decode";
 import { getProp } from "./properties";
 import {
 	buildConstituencyWardMappings,
-	buildCrossYearMappings,
 	extractWardLadMappings,
 	type PrecompiledBoundaryMappings,
 } from "./mappings";
@@ -246,23 +245,6 @@ export async function loadBoundaryMappings(
 	return {
 		wardToLad,
 		ladToWards,
-		codeMappings: {
-			ward: buildCrossYearMappings(
-				wards,
-				"ward",
-				Object.keys(wards).map(Number),
-			),
-			constituency: buildCrossYearMappings(
-				constituencies,
-				"constituency",
-				Object.keys(constituencies).map(Number),
-			),
-			localAuthority: buildCrossYearMappings(
-				localAuthorities,
-				"localAuthority",
-				Object.keys(localAuthorities).map(Number),
-			),
-		},
 		constituencyToWards,
 	};
 }

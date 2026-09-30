@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	buildConstituencyWardMappings,
-	buildCrossYearMappings,
 	encodeBoundaryMappings,
 	extractWardLadMappings,
 	parseBoundaryWardToLad,
@@ -47,34 +46,6 @@ describe("boundary mappings", () => {
 			ladToWards: { L1: ["W1"] },
 		});
 	});
-
-	it("maps same-named wards only within the same local authority", () => {
-		const mappings = buildCrossYearMappings(
-			{
-				2023: geojson({
-					WD23CD: "W-old",
-					WD23NM: "Central",
-					LAD23CD: "L1",
-				}),
-				2024: geojson({
-					WD24CD: "W-new",
-					WD24NM: " central ",
-					LAD24CD: "L1",
-				}),
-				2025: geojson({
-					WD25CD: "W-other",
-					WD25NM: "Central",
-					LAD25CD: "L2",
-				}),
-			},
-			"ward",
-			[2023, 2024, 2025],
-		);
-
-		expect(mappings["W-old"]).toEqual({ 2024: "W-new" });
-		expect(mappings["W-new"]).toEqual({ 2023: "W-old" });
-		expect(mappings["W-other"]).toEqual({});
-	});
 });
 
 describe("shipped boundary mappings", () => {
@@ -84,14 +55,6 @@ describe("shipped boundary mappings", () => {
 			2024: { L1: ["W1", "W2"] },
 			2025: { L1: ["W1", "W2"] },
 			2026: { L1: ["W2"] },
-		},
-		codeMappings: {
-			ward: {
-				W1: { 2024: "W1", 2025: "W1", 2026: "W2" },
-				W2: { 2024: "W1", 2025: "W1", 2026: "W2" },
-			},
-			constituency: { C1: { 2024: "C2" } },
-			localAuthority: { L1: { 2025: "L1" } },
 		},
 		constituencyToWards: {
 			2024: { C1: ["W1", "W2"] },
@@ -108,10 +71,6 @@ describe("shipped boundary mappings", () => {
 
 	it("stores a target shared by several years once", () => {
 		const shipped = encodeBoundaryMappings(mappings);
-		expect(shipped.codeMappings.ward.targets.W1).toEqual({
-			W1: 0b011,
-			W2: 0b100,
-		});
 		expect(shipped.ladToWards.members.L1).toEqual({
 			W1: 0b011,
 			W2: 0b111,
@@ -122,7 +81,7 @@ describe("shipped boundary mappings", () => {
 		const shipped = JSON.parse(
 			JSON.stringify(encodeBoundaryMappings(mappings)),
 		);
-		shipped.codeMappings.constituency.targets.C1 = { C2: 0b10 };
+		shipped.constituencyToWards.members.C1 = { W1: 0b100 };
 		expect(() => parsePrecompiledBoundaryMappings(shipped)).toThrow();
 	});
 
@@ -136,13 +95,14 @@ describe("shipped boundary mappings", () => {
 		).toThrow();
 	});
 
-	it("rejects the version 2 file, whose ward membership is unmasked", () => {
+	it("rejects earlier versions, such as the one holding name-matched code mappings", () => {
 		const shipped = JSON.parse(
 			JSON.stringify(encodeBoundaryMappings(mappings)),
 		);
-		expect(() =>
-			parsePrecompiledBoundaryMappings({ ...shipped, version: 2 }),
-		).toThrow();
+		for (const version of [2, 3])
+			expect(() =>
+				parsePrecompiledBoundaryMappings({ ...shipped, version }),
+			).toThrow();
 	});
 
 	it("rejects the unencoded version 1 file", () => {
