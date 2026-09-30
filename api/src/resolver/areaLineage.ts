@@ -119,3 +119,53 @@ export const followLineage = (
 	if (override !== undefined) return override ?? undefined;
 	return compose(lineage, code, from, to) ?? undefined;
 };
+
+/**
+ * The releases each code is listed in, as a code that does not carry on
+ * unchanged into a neighbour. A code never listed is the same area under the
+ * same code in every release that holds it.
+ */
+export const listedReleases = (lineage: AreaLineage): Map<string, number[]> => {
+	const listed = new Map<string, Set<number>>();
+	const add = (code: string, index: number) => {
+		const releases = listed.get(code) ?? new Set<number>();
+		releases.add(index);
+		listed.set(code, releases);
+	};
+	lineage.steps.forEach((step, index) => {
+		for (const code of Object.keys(step.forward)) add(code, index);
+		for (const code of Object.keys(step.backward)) add(code, index + 1);
+	});
+	return new Map(
+		[...listed].map(([code, releases]) => [
+			code,
+			[...releases].sort((left, right) => left - right),
+		]),
+	);
+};
+
+/**
+ * The code of the same area in another release, for a code whose own release
+ * is not known, such as one a dataset publishes. It is followed from the
+ * nearest release the lineage lists it in, which holds it; a code the lineage
+ * never lists carries on unchanged. Where one code named two extents, as when
+ * a boundary moved but its code did not, the nearer one is meant.
+ */
+export const followLineageFromCode = (
+	lineage: AreaLineage,
+	listed: Map<string, number[]>,
+	code: string,
+	toRelease: string,
+): string | undefined => {
+	const to = lineage.releases.indexOf(toRelease);
+	if (to < 0) return undefined;
+	const releases = listed.get(code);
+	if (!releases) return code;
+	const nearest = releases.reduce((best, index) =>
+		Math.abs(index - to) < Math.abs(best - to) ||
+		(Math.abs(index - to) === Math.abs(best - to) && index > best)
+			? index
+			: best,
+	);
+	return followLineage(lineage, code, lineage.releases[nearest]!, toRelease);
+};
