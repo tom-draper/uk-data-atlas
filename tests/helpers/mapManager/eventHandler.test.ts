@@ -40,7 +40,7 @@ describe("EventHandler", () => {
 		expect(map.off).toHaveBeenCalledTimes(6);
 	});
 
-	it("locks an area on click until the same area is clicked again", () => {
+	it("switches the locked area on click and releases it on a second click", () => {
 		const map = createMap();
 		const onAreaHover = vi.fn();
 		const onAreaClick = vi.fn();
@@ -69,24 +69,32 @@ describe("EventHandler", () => {
 		});
 		click({ features: [feature(2, "E09000002")] });
 
-		expect(onAreaClick).toHaveBeenCalledTimes(1);
-		expect(onAreaClick).toHaveBeenCalledWith(
+		expect(onAreaClick).toHaveBeenCalledTimes(2);
+		expect(onAreaClick).toHaveBeenNthCalledWith(
+			1,
 			expect.objectContaining({
 				code: "E09000001",
 				type: "localAuthority",
 			}),
 		);
-		expect(onAreaHover).not.toHaveBeenCalled();
-
-		click({ features: [feature(1, "E09000001")] });
-		(handler as any).handleMouseMove({
-			features: [feature(2, "E09000002")],
-		});
-
-		expect(onAreaClick).toHaveBeenCalledTimes(2);
-		expect(onAreaHover).toHaveBeenCalledWith(
+		expect(onAreaClick).toHaveBeenNthCalledWith(
+			2,
 			expect.objectContaining({
 				code: "E09000002",
+				type: "localAuthority",
+			}),
+		);
+		expect(onAreaHover).not.toHaveBeenCalled();
+
+		click({ features: [feature(2, "E09000002")] });
+		(handler as any).handleMouseMove({
+			features: [feature(1, "E09000001")],
+		});
+
+		expect(onAreaClick).toHaveBeenCalledTimes(3);
+		expect(onAreaHover).toHaveBeenCalledWith(
+			expect.objectContaining({
+				code: "E09000001",
 				type: "localAuthority",
 			}),
 		);

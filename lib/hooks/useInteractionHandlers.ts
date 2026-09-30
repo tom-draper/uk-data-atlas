@@ -35,8 +35,8 @@ export function useInteractionHandlers({
 	const onAreaClick = useCallback(
 		(area: SelectedArea) => {
 			const lockedArea = lockedAreaRef.current;
-			if (lockedArea && !isSameArea(lockedArea, area)) return;
-			lockedAreaRef.current = lockedArea ? null : area;
+			lockedAreaRef.current =
+				lockedArea && isSameArea(lockedArea, area) ? null : area;
 			lastHoveredCodeRef.current = area.code;
 			startTransition(() => setSelectedArea(area));
 		},

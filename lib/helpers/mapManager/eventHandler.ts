@@ -174,11 +174,15 @@ export class EventHandler {
 
 		if (this.lockedArea) {
 			if (
-				this.lockedArea.type !== area.type ||
-				this.lockedArea.code !== area.code
-			)
+				this.lockedArea.type === area.type &&
+				this.lockedArea.code === area.code
+			) {
+				this.lockedArea = null;
+				this.callbacks.onAreaClick?.(area);
 				return;
-			this.lockedArea = null;
+			}
+			this.lockedArea = area;
+			if (feature.id !== undefined) this.setHoveredFeature(feature.id);
 			this.callbacks.onAreaClick?.(area);
 			return;
 		}
