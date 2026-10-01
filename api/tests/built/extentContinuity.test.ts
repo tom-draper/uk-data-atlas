@@ -52,3 +52,34 @@ test("carries a renumbered area only onto a successor an official lookup also na
 	}
 	assert.ok(compared > 0, "No recoded pair had an official lookup to check");
 });
+
+test("never marks a 2010-set constituency as changed, since none did until 2024", () => {
+	// The December 2015 file is Great Britain only, and 2024 is a new set.
+	const between = inventory.crosswalks.filter(
+		(entry) =>
+			entry.method === "extent-continuity" &&
+			entry.from.geography === "constituency" &&
+			entry.from.boundaryRelease >= "2016-12" &&
+			entry.to.boundaryRelease <= "2022-12-uk-bgc",
+	);
+	assert.ok(between.length >= 5);
+	for (const entry of between) {
+		const crosswalk = artifact(entry);
+		if (crosswalk.method !== "extent-continuity") continue;
+		const { continuity } = crosswalk.validation;
+		// Generalisation can still leave a pair undecided, as when two
+		// neighbours each claim a 75 m strip of their shared border; it must
+		// never be called a change.
+		assert.deepEqual(
+			continuity.changedExtent
+				.filter(({ relation }) => relation === "changed")
+				.map(({ code }) => code),
+			[],
+			`${entry.id} marks unchanged constituencies as changed`,
+		);
+		assert.ok(
+			continuity.continuousCount >= continuity.sharedCodeCount * 0.99,
+			`${entry.id} carries on only ${continuity.continuousCount} of ${continuity.sharedCodeCount}`,
+		);
+	}
+});
