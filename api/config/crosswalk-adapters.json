@@ -1942,7 +1942,18 @@
 				"boundaryRelease": "2025-05-uk-bgc-v2"
 			},
 			"sliverWidthM": 100,
-			"minimumCoverage": 0.99
+			"minimumCoverage": 0.99,
+			"excludedPairs": {
+				"N06000013": {
+					"N09000003": "North Down and Belfast intersect by 0.17% of the constituency at a 103 m width, while independently generalised borders elsewhere leave intersections up to 42 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"S14000018": {
+					"S12000049": "East Dunbartonshire and Glasgow City intersect by 0.17% of the constituency at a 119 m width, while independently generalised borders elsewhere leave intersections up to 42 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"S14000030": {
+					"S12000050": "Glasgow East and North Lanarkshire intersect by 0.51% of the constituency at a 141 m width, while independently generalised borders elsewhere leave intersections up to 42 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				}
+			}
 		},
 		{
 			"id": "constituency-2022-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-population-overlap",
