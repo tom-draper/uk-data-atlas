@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
 	compileAreaContainment,
+	compileConstituencyLadOverlaps,
 	compileLsoaLadContainment,
 	type ContainmentCrosswalk,
+	type OverlapCrosswalk,
 } from "@/scripts/area-containment";
 
 const crosswalk = (
@@ -226,5 +228,78 @@ describe("LSOA local authorities from the resolver", () => {
 				carryOn,
 			),
 		).toThrow("places lsoa/2001-12 in no local authority");
+	});
+});
+
+const overlap = (
+	method: "area-overlap" | "population-overlap",
+	from: string,
+	pairs: Array<[string, ...Array<[string, number]>]>,
+): OverlapCrosswalk => ({
+	id: `constituency-${from}-${method}`,
+	method,
+	from: { geography: "constituency", boundaryRelease: from },
+	to: { geography: "localAuthority", boundaryRelease: "2025" },
+	weighting:
+		method === "area-overlap"
+			? { basis: "area" }
+			: {
+					basis: "population",
+					population: "Census 2021 usual residents",
+				},
+	records: pairs.map(([code, ...targets]) => ({
+		source: { code },
+		targets: targets.map(([target, weight]) => ({ code: target, weight })),
+	})),
+});
+
+describe("constituency local authority overlaps from the resolver", () => {
+	const crosswalks = [
+		overlap("area-overlap", "2022", [
+			["E1", ["L1", 0.6], ["L2", 0.4]],
+			["N1", ["L9", 1]],
+		]),
+		overlap("population-overlap", "2022", [
+			["E1", ["L1", 0.333333], ["L2", 0.666667]],
+		]),
+		overlap("area-overlap", "2024", [["E2", ["L1", 1]]]),
+	];
+
+	it("weighs by residents where it can and by area elsewhere, for every release of a code set", () => {
+		const { weighting, releases } = compileConstituencyLadOverlaps(
+			[
+				{ release: "2019", codes: ["E1", "N1"] },
+				{ release: "2022", codes: ["E1", "N1"] },
+				{ release: "2024", codes: ["E2"] },
+			],
+			crosswalks,
+		);
+		const set2010 = {
+			E1: [
+				{ code: "L2", weight: 0.6667 },
+				{ code: "L1", weight: 0.3333 },
+			],
+			N1: [{ code: "L9", weight: 1 }],
+		};
+		expect(releases).toEqual({
+			2019: set2010,
+			2022: set2010,
+			2024: { E2: [{ code: "L1", weight: 1 }] },
+		});
+		expect(weighting).toEqual({
+			"constituency-2022-area-overlap": "area",
+			"constituency-2022-population-overlap":
+				"Census 2021 usual residents",
+			"constituency-2024-area-overlap": "area",
+		});
+	});
+
+	it("refuses a release no overlap covers", () => {
+		expect(() =>
+			compileConstituencyLadOverlaps(
+				[{ release: "2016", codes: ["E1", "E9"] }],
+				crosswalks,
+			),
+		).toThrow("no local authority overlap for every constituency of 2016");
 	});
 });

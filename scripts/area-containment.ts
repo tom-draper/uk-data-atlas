@@ -185,3 +185,117 @@ export const compileLsoaLadContainment = (
 	}
 	return lsoaToLad;
 };
+
+/** The parts of a resolver overlap crosswalk the atlas's overlaps read. */
+export type OverlapCrosswalk = {
+	id: string;
+	method: string;
+	from: { geography: string; boundaryRelease: string };
+	to: { geography: string; boundaryRelease: string };
+	weighting: { basis?: string; population?: string };
+	records: Array<{
+		source: { code: string };
+		targets: Array<{ code: string; weight?: number }>;
+	}>;
+};
+
+/** A served constituency release and the codes it holds. */
+export type ConstituencyRelease = { release: string; codes: string[] };
+
+const WEIGHT_PLACES = 4;
+
+/**
+ * Each served constituency release's local authorities, with the share of
+ * each constituency they hold, from the resolver's overlap crosswalks into
+ * one local authority release. Releases of one code set differ only in how
+ * their boundaries are generalised, so each reads the crosswalks of the
+ * release that holds every code it does. A constituency is weighted by
+ * residents where a population overlap covers it, and by area elsewhere, as
+ * in Northern Ireland.
+ */
+export const compileConstituencyLadOverlaps = (
+	releases: ConstituencyRelease[],
+	crosswalks: OverlapCrosswalk[],
+): {
+	weighting: Record<string, string>;
+	releases: Record<
+		string,
+		Record<string, Array<{ code: string; weight: number }>>
+	>;
+} => {
+	const areaOverlaps = crosswalks.filter(
+		(crosswalk) => crosswalk.method === "area-overlap",
+	);
+	const used = new Set<OverlapCrosswalk>();
+	const compiled: Record<
+		string,
+		Record<string, Array<{ code: string; weight: number }>>
+	> = {};
+	for (const { release, codes } of releases) {
+		const holds = (crosswalk: OverlapCrosswalk) => {
+			const sources = new Set(
+				crosswalk.records.map(({ source }) => source.code),
+			);
+			return codes.every((code) => sources.has(code));
+		};
+		// The release's own crosswalk where there is one, else another
+		// release of its code set.
+		const area =
+			areaOverlaps.find(
+				(crosswalk) => crosswalk.from.boundaryRelease === release,
+			) ?? areaOverlaps.find(holds);
+		if (!area || !holds(area))
+			throw new Error(
+				`The resolver has no local authority overlap for every constituency of ${release}.`,
+			);
+		const population = crosswalks.filter(
+			(crosswalk) =>
+				crosswalk.method === "population-overlap" &&
+				crosswalk.from.boundaryRelease === area.from.boundaryRelease,
+		);
+		const targetsOf = new Map(
+			[area, ...population].flatMap((crosswalk) =>
+				crosswalk.records.map(
+					(record) =>
+						[record.source.code, { crosswalk, record }] as const,
+				),
+			),
+		);
+		const wanted = new Set(codes);
+		const overlaps: Record<
+			string,
+			Array<{ code: string; weight: number }>
+		> = {};
+		for (const [code, { crosswalk, record }] of [...targetsOf].sort(
+			([left], [right]) => left.localeCompare(right),
+		)) {
+			if (!wanted.has(code)) continue;
+			used.add(crosswalk);
+			overlaps[code] = record.targets
+				.map((target) => ({
+					code: target.code,
+					weight: Number((target.weight ?? 0).toFixed(WEIGHT_PLACES)),
+				}))
+				.filter(({ weight }) => weight > 0)
+				.sort(
+					(left, right) =>
+						right.weight - left.weight ||
+						left.code.localeCompare(right.code),
+				);
+		}
+		compiled[release] = overlaps;
+	}
+	return {
+		weighting: Object.fromEntries(
+			[...used]
+				.sort((left, right) => left.id.localeCompare(right.id))
+				.map((crosswalk) => [
+					crosswalk.id,
+					crosswalk.weighting.population ??
+						crosswalk.weighting.basis ??
+						"unweighted",
+				]),
+		),
+		releases: compiled,
+	};
+};
