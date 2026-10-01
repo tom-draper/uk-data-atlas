@@ -2518,6 +2518,91 @@
 			"sliverWidthM": 100
 		},
 		{
+			"id": "parish-2021-12-ew-bgc-to-local-authority-2021-12-uk-bgc-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2021-12-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2021-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2022-12-ew-bgc-v3-to-local-authority-2022-12-uk-bgc-v2-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2022-12-ew-bgc-v3"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2022-12-uk-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2023-12-ew-bgc-to-local-authority-2023-12-uk-bgc-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2023-12-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2023-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2024-12-ew-bgc-to-local-authority-2024-12-uk-bgc-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2024-12-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-12-uk-bgc"
+			},
+			"sliverWidthM": 100
+		},
+		{
+			"id": "parish-2025-05-ew-bgc-to-local-authority-2025-05-uk-bgc-v2-best-fit",
+			"method": "best-fit",
+			"quality": "derived",
+			"weighting": {
+				"status": "not-applicable"
+			},
+			"from": {
+				"geography": "parish",
+				"boundaryRelease": "2025-05-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"sliverWidthM": 100
+		},
+		{
 			"id": "ward-2011-12-ew-bgc-to-constituency-2022-12-uk-bgc-best-fit",
 			"method": "best-fit",
 			"quality": "derived",
