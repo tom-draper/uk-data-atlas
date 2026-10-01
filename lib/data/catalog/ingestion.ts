@@ -1,10 +1,17 @@
 import type { DatasetDefinition, DatasetReader } from "./types";
 
+export interface SourceArtifactInput {
+	bytes: number;
+	modifiedAt: number;
+}
+
 export interface SourceArtifact {
 	kind: keyof DatasetReader;
 	path: string;
 	sha256: string;
 	bytes: number;
+	/** Raw-file state used for fast incremental precompile checks. */
+	input: SourceArtifactInput;
 }
 
 export interface DatasetPrecompileSummary {

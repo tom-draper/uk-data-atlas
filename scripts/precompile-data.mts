@@ -307,6 +307,7 @@ const createTrackedReader = () => {
 			path,
 			bytes: Buffer.byteLength(content, "utf8"),
 			sha256: createHash("sha256").update(content).digest("hex"),
+			input: await fileStamp(sourceInputPath(kind, path)),
 		});
 		return content;
 	};
@@ -322,6 +323,7 @@ const createTrackedReader = () => {
 			path: `${path}#${sheet}`,
 			bytes: Buffer.byteLength(content, "utf8"),
 			sha256: createHash("sha256").update(content).digest("hex"),
+			input: await fileStamp(join(SOURCE_DATA, path)),
 		});
 	};
 	const trackXlsRows = async (
@@ -335,6 +337,7 @@ const createTrackedReader = () => {
 			path: `${path}#${sheet}`,
 			bytes: bytes.byteLength,
 			sha256: createHash("sha256").update(bytes).digest("hex"),
+			input: await fileStamp(join(SOURCE_DATA, path)),
 		});
 	};
 	const reader: DatasetReader = {
@@ -357,43 +360,6 @@ const createTrackedReader = () => {
 	return { reader, artifacts };
 };
 
-const sourceArtifact = async (artifact: SourceArtifact) => {
-	const source = async () => {
-		switch (artifact.kind) {
-			case "text":
-				return read(artifact.path);
-			case "xlsxSheet": {
-				const [path, sheet] = splitSheetArtifactPath(artifact.path);
-				return readXlsxSheet(path, sheet);
-			}
-			case "xlsxSheetRows": {
-				const [path, sheet] = splitSheetArtifactPath(artifact.path);
-				return xlsxRowsArtifact(
-					await visitXlsxSheetRows(path, sheet, () => undefined),
-				);
-			}
-			case "xlsSheet": {
-				const [path, sheet] = splitSheetArtifactPath(artifact.path);
-				return readXlsSheet(path, sheet);
-			}
-			case "xlsSheetRows": {
-				const [path] = splitSheetArtifactPath(artifact.path);
-				return readXlsWorkbook(path);
-			}
-			case "odsContent":
-				return readOdsContent(artifact.path);
-			case "zipCsv":
-				return readZip(artifact.path);
-		}
-	};
-	const content = await source();
-	return {
-		...artifact,
-		bytes: Buffer.byteLength(content),
-		sha256: createHash("sha256").update(content).digest("hex"),
-	};
-};
-
 const splitSheetArtifactPath = (path: string): [string, string] => {
 	const separator = path.lastIndexOf("#");
 	if (separator === -1)
@@ -401,11 +367,16 @@ const splitSheetArtifactPath = (path: string): [string, string] => {
 	return [path.slice(0, separator), path.slice(separator + 1)];
 };
 
-const sameArtifact = (left: SourceArtifact, right: SourceArtifact) =>
-	left.kind === right.kind &&
-	left.path === right.path &&
-	left.bytes === right.bytes &&
-	left.sha256 === right.sha256;
+const sourceInputPath = (kind: SourceArtifact["kind"], path: string) =>
+	join(
+		SOURCE_DATA,
+		kind === "xlsxSheet" ||
+			kind === "xlsxSheetRows" ||
+			kind === "xlsSheet" ||
+			kind === "xlsSheetRows"
+			? splitSheetArtifactPath(path)[0]
+			: path,
+	);
 
 const fileStamp = async (path: string): Promise<SourceFileStamp> => {
 	const input = await stat(path);
@@ -462,10 +433,17 @@ const isSourceArtifact = (value: unknown): value is SourceArtifact =>
 	"path" in value &&
 	"bytes" in value &&
 	"sha256" in value &&
+	"input" in value &&
 	typeof value.kind === "string" &&
 	typeof value.path === "string" &&
 	typeof value.bytes === "number" &&
-	typeof value.sha256 === "string";
+	typeof value.sha256 === "string" &&
+	typeof value.input === "object" &&
+	value.input !== null &&
+	"bytes" in value.input &&
+	"modifiedAt" in value.input &&
+	typeof value.input.bytes === "number" &&
+	typeof value.input.modifiedAt === "number";
 
 const canReuseDataset = async (
 	existing: ExistingManifestDataset | undefined,
@@ -482,7 +460,18 @@ const canReuseDataset = async (
 
 	try {
 		for (const artifact of existing.inputs) {
-			if (!sameArtifact(artifact, await sourceArtifact(artifact)))
+			// Re-reading and unzipping every source made a cache hit nearly as
+			// expensive as a build. The raw-file stamp is sufficient to decide
+			// whether to reuse a compiler output; precompile:verify remains the
+			// full checksum guard for committed browser assets.
+			if (
+				!sameFileStamp(
+					artifact.input,
+					await fileStamp(
+						sourceInputPath(artifact.kind, artifact.path),
+					),
+				)
+			)
 				return false;
 		}
 		const output = await readFile(
