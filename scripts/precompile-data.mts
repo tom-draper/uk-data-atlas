@@ -283,6 +283,15 @@ const writeAtomically = async (path: string, contents: string) => {
 const elapsed = (startedAt: number) =>
 	`${((performance.now() - startedAt) / 1_000).toFixed(2)}s`;
 
+const timeStage = async <T,>(label: string, work: () => Promise<T>) => {
+	const startedAt = performance.now();
+	try {
+		return await work();
+	} finally {
+		console.log(`  timing: ${label} ${elapsed(startedAt)}`);
+	}
+};
+
 const out = async (name: string, data: unknown, log = true) => {
 	const json = JSON.stringify(data);
 	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
@@ -645,6 +654,18 @@ async function main() {
 		);
 	}
 	const boundaryInputs = await fileSnapshots(join(PUBLIC_DATA, "boundaries"));
+	// The gazetteer, mappings and upload index all traverse overlapping boundary
+	// releases. Share each raw asset for this build; each loader still owns its
+	// decoded representation, so their contracts and mutations remain isolated.
+	const boundaryReads = new Map<string, Promise<string>>();
+	const readBoundaryOnce = (path: string) => {
+		let content = boundaryReads.get(path);
+		if (!content) {
+			content = readBoundaryAsset(path);
+			boundaryReads.set(path, content);
+		}
+		return content;
+	};
 	const cachedAtlasAssets = existingManifest.artifacts?.atlasAssets;
 	const canReuseAtlasAssets =
 		canReuse &&
@@ -669,10 +690,12 @@ async function main() {
 				),
 				compiled: cachedAtlasAssets.outputs.gazetteerCore,
 			})
-		: loadGazetteerCore(readBoundaryAsset).then(async (data) => ({
-				data,
-				compiled: await out("gazetteer.core", data),
-			}));
+		: timeStage("gazetteer core", () =>
+				loadGazetteerCore(readBoundaryOnce).then(async (data) => ({
+					data,
+					compiled: await out("gazetteer.core", data),
+				})),
+			);
 	// Ward and parish containment come from the API's geography resolver,
 	// written by `pnpm containment:build` and committed; upload matching reads
 	// ward and parish parents from them, so the index is compiled in step.
@@ -688,24 +711,26 @@ async function main() {
 	).then((json) => parseParishLadMappings(JSON.parse(json)));
 	const matchIndex = canReuseAtlasAssets
 		? Promise.resolve(cachedAtlasAssets.outputs.matchIndex)
-		: Promise.all([boundaryMappings, parishToLad]).then(
-				async ([{ wardToLad }, parishParents]) =>
-					out(
-						"gazetteer.matchindex",
-						await loadMatchIndex(
-							readBoundaryAsset,
-							wardToLad,
-							parishParents,
+		: timeStage("gazetteer match index", () =>
+				Promise.all([boundaryMappings, parishToLad]).then(
+					async ([{ wardToLad }, parishParents]) =>
+						out(
+							"gazetteer.matchindex",
+							await loadMatchIndex(
+								readBoundaryOnce,
+								wardToLad,
+								parishParents,
+							),
 						),
-					),
+				),
 			);
 	if (canReuseAtlasAssets) console.log("  atlas assets: cached");
 	// The collisions are written apart from the dataset that describes them, so
 	// the card can be drawn from the small file and the 6 MB of points is only
 	// fetched once someone selects the dataset. Counting them per location needs
 	// the gazetteer's bounding boxes, so this waits on the core built above.
-	const roadSafety = gazetteerCore.then(
-		async ({ data: core, compiled: coreOutput }) => {
+	const roadSafety = timeStage("road safety", () =>
+		gazetteerCore.then(async ({ data: core, compiled: coreOutput }) => {
 			const input = await fileStamp(
 				join(
 					SOURCE_DATA,
@@ -742,7 +767,7 @@ async function main() {
 					points: await out("road-safety-points", points),
 				},
 			};
-		},
+		}),
 	);
 	const results = await Promise.allSettled([
 		...chartResults,
@@ -759,12 +784,15 @@ async function main() {
 		for (const f of failures) console.error("  ERROR:", f.reason);
 		process.exit(1);
 	}
-	await writeDatasetRegionChunks({
-		root: ROOT,
-		datasets: compiledDatasets,
-		core: (await gazetteerCore).data,
-		boundaryMappings: await boundaryMappings,
-	});
+	boundaryReads.clear();
+	await timeStage("regional chunks", async () =>
+		writeDatasetRegionChunks({
+			root: ROOT,
+			datasets: compiledDatasets,
+			core: (await gazetteerCore).data,
+			boundaryMappings: await boundaryMappings,
+		}),
+	);
 	await out("dataset-manifest", {
 		version: 1,
 		precompiler: { fingerprint: compilerFingerprint },
