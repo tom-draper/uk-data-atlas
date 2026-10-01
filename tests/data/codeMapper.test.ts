@@ -40,6 +40,32 @@ const mapperWith = (...lineages: AreaLineage[]) => {
 };
 
 describe("CodeMapperStore", () => {
+	it("says when another year's area is a realigned successor", () => {
+		// R is redrawn by a street as R2 in 2024, then keeps its code.
+		const mapper = mapperWith({
+			...wards,
+			steps: [
+				{
+					forward: { ...wards.steps[0]!.forward, R: "R2" },
+					backward: { ...wards.steps[0]!.backward, R2: "R" },
+				},
+				wards.steps[1]!,
+			],
+			realigned: {
+				steps: [
+					{ forward: ["R"], backward: ["R2"] },
+					{ forward: [], backward: [] },
+				],
+				overrides: {},
+			},
+		});
+		expect(mapper.getCodeForYear("ward", "R", 2025, 2021)).toBe("R2");
+		expect(mapper.isRealigned("ward", "R", 2025, 2021)).toBe(true);
+		expect(mapper.isRealigned("ward", "R2", 2021, 2025)).toBe(true);
+		expect(mapper.isRealigned("ward", "R2", 2025, 2024)).toBe(false);
+		expect(mapper.isRealigned("ward", "W-2021", 2025, 2021)).toBe(false);
+	});
+
 	it("finds the same area in another year from the year it is from", () => {
 		const mapper = mapperWith(wards);
 		expect(mapper.getCodeForYear("ward", "W-2021", 2025, 2021)).toBe(

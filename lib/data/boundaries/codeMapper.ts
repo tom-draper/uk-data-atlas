@@ -1,6 +1,7 @@
 import {
 	followLineage,
 	followLineageFromCode,
+	isRealigned,
 	listedReleases,
 	type AreaLineage,
 } from "./areaLineage";
@@ -30,6 +31,17 @@ export interface CodeMapper {
 	): string | undefined;
 	/** Whether the lineage for a geography has loaded, holding every year given. */
 	hasAreaLineage(type: CodeType, ...years: YearCode[]): boolean;
+	/**
+	 * Whether `getCodeForYear` from a known year leads to a realigned
+	 * successor: the area redrawn by a street between the two years, rather
+	 * than the same area.
+	 */
+	isRealigned(
+		type: CodeType,
+		code: string,
+		targetYear: YearCode,
+		fromYear: YearCode,
+	): boolean;
 	getLadForWard(wardCode: string): string | undefined;
 	getConstituencyForWard(
 		wardCode: string,
@@ -246,6 +258,23 @@ export class CodeMapperStore implements CodeMapper {
 		return from
 			? followLineage(entry.lineage, code, from, to)
 			: followLineageFromCode(entry.lineage, entry.listed, code, to);
+	};
+
+	isRealigned = (
+		type: CodeType,
+		code: string,
+		targetYear: YearCode,
+		fromYear: YearCode,
+	): boolean => {
+		const entry = this.lineages[type as LineageType];
+		const to = this.releaseForYear(type, targetYear);
+		const from = this.releaseForYear(type, fromYear);
+		return (
+			entry !== undefined &&
+			to !== undefined &&
+			from !== undefined &&
+			isRealigned(entry.lineage, code, from, to)
+		);
 	};
 
 	clearAllMappings = (): void => {
