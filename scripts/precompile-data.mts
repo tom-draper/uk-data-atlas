@@ -9,7 +9,15 @@
  * type or output file, against the boundaries and gazetteer a full run has
  * already written: pnpm precompile:only claimantCount
  */
-import { readFile, mkdir, rename, stat, utimes, writeFile } from "fs/promises";
+import {
+	readFile,
+	mkdir,
+	readdir,
+	rename,
+	stat,
+	utimes,
+	writeFile,
+} from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
@@ -65,11 +73,43 @@ type ExistingManifestDataset = {
 	output: string;
 	source: unknown;
 	contract: unknown;
-	inputs: unknown;
+	inputs: SourceArtifact[];
 	summary: unknown;
 	compiled: {
 		bytes: number;
 		sha256: string;
+	};
+};
+
+type CompiledOutput = { bytes: number; sha256: string };
+
+type SourceFileStamp = { bytes: number; modifiedAt: number };
+
+type FileSnapshot = SourceFileStamp & { path: string };
+
+type AtlasAssetsCache = {
+	inputs: FileSnapshot[];
+	outputs: {
+		gazetteerCore: CompiledOutput;
+		matchIndex: CompiledOutput;
+	};
+};
+
+type RoadSafetyCache = {
+	input: SourceFileStamp;
+	gazetteerCore: CompiledOutput;
+	outputs: {
+		dataset: CompiledOutput;
+		points: CompiledOutput;
+	};
+};
+
+type ExistingManifest = {
+	precompiler?: { fingerprint?: string };
+	datasets?: ExistingManifestDataset[];
+	artifacts?: {
+		atlasAssets?: AtlasAssetsCache;
+		roadSafety?: RoadSafetyCache;
 	};
 };
 
@@ -199,8 +239,29 @@ const visitXlsxSheetRows = async (
 	const { sheetXml, sharedStrings, percentStyleIds } =
 		await readXlsxSheetParts(join(SOURCE_DATA, path), sheetName);
 	forEachSheetRow(sheetXml, sharedStrings, percentStyleIds, visit);
-	return sheetXml;
+	return { sheetXml, sharedStrings, percentStyleIds };
 };
+
+// The worksheet XML alone does not fully describe an .xlsx input: values can
+// be resolved through the shared-string table and percentages through styles.
+// Keep all three in the tracked source artifact, so a cache hit cannot hide a
+// change to either supporting file.
+const xlsxRowsArtifact = ({
+	sheetXml,
+	sharedStrings,
+	percentStyleIds,
+}: {
+	sheetXml: string;
+	sharedStrings: string[];
+	percentStyleIds: Set<number>;
+}) =>
+	JSON.stringify({
+		sheetXml,
+		sharedStrings,
+		percentStyleIds: [...percentStyleIds].sort(
+			(left, right) => left - right,
+		),
+	});
 
 // ODS source files are never exposed by the application. The child-poverty
 // loader only needs its worksheet XML, which is then reduced to compact JSON.
@@ -219,11 +280,14 @@ const writeAtomically = async (path: string, contents: string) => {
 	await rename(temporaryPath, path);
 };
 
-const out = async (name: string, data: unknown) => {
+const elapsed = (startedAt: number) =>
+	`${((performance.now() - startedAt) / 1_000).toFixed(2)}s`;
+
+const out = async (name: string, data: unknown, log = true) => {
 	const json = JSON.stringify(data);
 	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
-	console.log(`  dataset: ${name}.json (${kb} KB)`);
+	if (log) console.log(`  dataset: ${name}.json (${kb} KB)`);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
 		sha256: createHash("sha256").update(json).digest("hex"),
@@ -251,12 +315,13 @@ const createTrackedReader = () => {
 		sheet: string,
 		visit: (row: ReadonlyMap<number, string>) => void,
 	) => {
-		const sheetXml = await visitXlsxSheetRows(path, sheet, visit);
+		const input = await visitXlsxSheetRows(path, sheet, visit);
+		const content = xlsxRowsArtifact(input);
 		artifacts.set(`xlsxSheetRows:${path}#${sheet}`, {
 			kind: "xlsxSheetRows",
 			path: `${path}#${sheet}`,
-			bytes: Buffer.byteLength(sheetXml, "utf8"),
-			sha256: createHash("sha256").update(sheetXml).digest("hex"),
+			bytes: Buffer.byteLength(content, "utf8"),
+			sha256: createHash("sha256").update(content).digest("hex"),
 		});
 	};
 	const trackXlsRows = async (
@@ -290,6 +355,147 @@ const createTrackedReader = () => {
 		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
 	};
 	return { reader, artifacts };
+};
+
+const sourceArtifact = async (artifact: SourceArtifact) => {
+	const source = async () => {
+		switch (artifact.kind) {
+			case "text":
+				return read(artifact.path);
+			case "xlsxSheet": {
+				const [path, sheet] = splitSheetArtifactPath(artifact.path);
+				return readXlsxSheet(path, sheet);
+			}
+			case "xlsxSheetRows": {
+				const [path, sheet] = splitSheetArtifactPath(artifact.path);
+				return xlsxRowsArtifact(
+					await visitXlsxSheetRows(path, sheet, () => undefined),
+				);
+			}
+			case "xlsSheet": {
+				const [path, sheet] = splitSheetArtifactPath(artifact.path);
+				return readXlsSheet(path, sheet);
+			}
+			case "xlsSheetRows": {
+				const [path] = splitSheetArtifactPath(artifact.path);
+				return readXlsWorkbook(path);
+			}
+			case "odsContent":
+				return readOdsContent(artifact.path);
+			case "zipCsv":
+				return readZip(artifact.path);
+		}
+	};
+	const content = await source();
+	return {
+		...artifact,
+		bytes: Buffer.byteLength(content),
+		sha256: createHash("sha256").update(content).digest("hex"),
+	};
+};
+
+const splitSheetArtifactPath = (path: string): [string, string] => {
+	const separator = path.lastIndexOf("#");
+	if (separator === -1)
+		throw new Error(`Expected worksheet source artifact, got ${path}`);
+	return [path.slice(0, separator), path.slice(separator + 1)];
+};
+
+const sameArtifact = (left: SourceArtifact, right: SourceArtifact) =>
+	left.kind === right.kind &&
+	left.path === right.path &&
+	left.bytes === right.bytes &&
+	left.sha256 === right.sha256;
+
+const fileStamp = async (path: string): Promise<SourceFileStamp> => {
+	const input = await stat(path);
+	return { bytes: input.size, modifiedAt: input.mtimeMs };
+};
+
+const sameFileStamp = (left: SourceFileStamp, right: SourceFileStamp) =>
+	left.bytes === right.bytes && left.modifiedAt === right.modifiedAt;
+
+const fileSnapshots = async (
+	directory: string,
+	prefix = "",
+): Promise<FileSnapshot[]> => {
+	const snapshots: FileSnapshot[] = [];
+	for (const entry of await readdir(directory, { withFileTypes: true })) {
+		const path = join(directory, entry.name);
+		const relative = join(prefix, entry.name);
+		if (entry.isDirectory())
+			snapshots.push(...(await fileSnapshots(path, relative)));
+		else if (entry.isFile())
+			snapshots.push({ path: relative, ...(await fileStamp(path)) });
+	}
+	return snapshots.sort((left, right) => left.path.localeCompare(right.path));
+};
+
+const sameFileSnapshots = (
+	left: readonly FileSnapshot[],
+	right: readonly FileSnapshot[],
+) =>
+	left.length === right.length &&
+	left.every(
+		(snapshot, index) =>
+			snapshot.path === right[index]?.path &&
+			sameFileStamp(snapshot, right[index]!),
+	);
+
+const outputMatches = async (name: string, expected: CompiledOutput) => {
+	try {
+		const output = await readFile(join(OUT_DIR, `${name}.json`));
+		return (
+			output.byteLength === expected.bytes &&
+			createHash("sha256").update(output).digest("hex") ===
+				expected.sha256
+		);
+	} catch {
+		return false;
+	}
+};
+
+const isSourceArtifact = (value: unknown): value is SourceArtifact =>
+	typeof value === "object" &&
+	value !== null &&
+	"kind" in value &&
+	"path" in value &&
+	"bytes" in value &&
+	"sha256" in value &&
+	typeof value.kind === "string" &&
+	typeof value.path === "string" &&
+	typeof value.bytes === "number" &&
+	typeof value.sha256 === "string";
+
+const canReuseDataset = async (
+	existing: ExistingManifestDataset | undefined,
+	definition: (typeof CATALOGUE_DATASET_DEFINITIONS)[number],
+) => {
+	if (
+		!existing ||
+		existing.type !== definition.type ||
+		existing.output !== definition.precompiledFile ||
+		!Array.isArray(existing.inputs) ||
+		!existing.inputs.every(isSourceArtifact)
+	)
+		return false;
+
+	try {
+		for (const artifact of existing.inputs) {
+			if (!sameArtifact(artifact, await sourceArtifact(artifact)))
+				return false;
+		}
+		const output = await readFile(
+			join(OUT_DIR, `${definition.precompiledFile}.json`),
+		);
+		return (
+			output.byteLength === existing.compiled.bytes &&
+			createHash("sha256").update(output).digest("hex") ===
+				existing.compiled.sha256
+		);
+	} catch {
+		return false;
+	}
 };
 
 /** Checks that every file a meta.json promises is actually present. */
@@ -385,8 +591,11 @@ async function main() {
 	if (only) return compileSelected(only);
 
 	console.log("Pre-compiling datasets...");
+	const startedAt = performance.now();
 	await mkdir(OUT_DIR, { recursive: true });
+	const boundariesStartedAt = performance.now();
 	await compileBoundaryAssets();
+	console.log(`  timing: boundary assets ${elapsed(boundariesStartedAt)}`);
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder
@@ -408,9 +617,21 @@ async function main() {
 		string,
 		{ data: unknown; layout?: DatasetPayloadLayout }
 	>();
-	const existingManifest = JSON.parse(
-		await readFile(join(OUT_DIR, "dataset-manifest.json"), "utf8"),
-	) as { datasets?: ExistingManifestDataset[] };
+	let existingManifest: ExistingManifest = {};
+	try {
+		existingManifest = JSON.parse(
+			await readFile(join(OUT_DIR, "dataset-manifest.json"), "utf8"),
+		);
+	} catch {
+		// A fresh checkout has no cache to reuse.
+	}
+	const compilerFingerprint = await precompileFingerprint(ROOT);
+	const canReuse =
+		existingManifest.precompiler?.fingerprint === compilerFingerprint;
+	if (!canReuse)
+		console.log(
+			"  cache: compiler inputs changed; rebuilding all datasets",
+		);
 	const existingDatasets = new Map(
 		(existingManifest.datasets ?? []).map((dataset) => [
 			dataset.type,
@@ -429,18 +650,45 @@ async function main() {
 				definition,
 				compiledDatasets,
 				existingDatasets,
+				canReuse,
+				performance.now(),
 			),
 		);
 	}
-	const gazetteerCore = loadGazetteerCore(readBoundaryAsset).then(
-		async (data) => {
-			await out("gazetteer.core", data);
-			return data;
-		},
-	);
+	const boundaryInputs = await fileSnapshots(join(PUBLIC_DATA, "boundaries"));
+	const cachedAtlasAssets = existingManifest.artifacts?.atlasAssets;
+	const canReuseAtlasAssets =
+		canReuse &&
+		cachedAtlasAssets &&
+		sameFileSnapshots(cachedAtlasAssets.inputs, boundaryInputs) &&
+		(await outputMatches(
+			"gazetteer.core",
+			cachedAtlasAssets.outputs.gazetteerCore,
+		)) &&
+		(await outputMatches(
+			"gazetteer.matchindex",
+			cachedAtlasAssets.outputs.matchIndex,
+		));
+
+	const gazetteerCore = canReuseAtlasAssets
+		? Promise.resolve({
+				data: JSON.parse(
+					await readFile(
+						join(OUT_DIR, "gazetteer.core.json"),
+						"utf8",
+					),
+				),
+				compiled: cachedAtlasAssets.outputs.gazetteerCore,
+			})
+		: loadGazetteerCore(readBoundaryAsset).then(async (data) => ({
+				data,
+				compiled: await out("gazetteer.core", data),
+			}));
 	// Ward and parish containment come from the API's geography resolver,
 	// written by `pnpm containment:build` and committed; upload matching reads
 	// ward and parish parents from them, so the index is compiled in step.
+	// Both files are part of the precompiler fingerprint, so a cached index
+	// is only reused while they are unchanged.
 	const boundaryMappings = readFile(
 		join(OUT_DIR, "boundary-mappings.json"),
 		"utf8",
@@ -449,27 +697,64 @@ async function main() {
 		join(OUT_DIR, "parish-lad-mappings.json"),
 		"utf8",
 	).then((json) => parseParishLadMappings(JSON.parse(json)));
-	const matchIndex = Promise.all([boundaryMappings, parishToLad]).then(
-		async ([{ wardToLad }, parishParents]) =>
-			out(
-				"gazetteer.matchindex",
-				await loadMatchIndex(
-					readBoundaryAsset,
-					wardToLad,
-					parishParents,
-				),
-			),
-	);
+	const matchIndex = canReuseAtlasAssets
+		? Promise.resolve(cachedAtlasAssets.outputs.matchIndex)
+		: Promise.all([boundaryMappings, parishToLad]).then(
+				async ([{ wardToLad }, parishParents]) =>
+					out(
+						"gazetteer.matchindex",
+						await loadMatchIndex(
+							readBoundaryAsset,
+							wardToLad,
+							parishParents,
+						),
+					),
+			);
+	if (canReuseAtlasAssets) console.log("  atlas assets: cached");
 	// The collisions are written apart from the dataset that describes them, so
 	// the card can be drawn from the small file and the 6 MB of points is only
 	// fetched once someone selects the dataset. Counting them per location needs
 	// the gazetteer's bounding boxes, so this waits on the core built above.
-	const roadSafety = gazetteerCore
-		.then((core) => loadRoadSafety(readSource, new Gazetteer(core)))
-		.then(async ({ datasets, points }) => {
-			await out("road-safety", datasets);
-			await out("road-safety-points", points);
-		});
+	const roadSafety = gazetteerCore.then(
+		async ({ data: core, compiled: coreOutput }) => {
+			const input = await fileStamp(
+				join(
+					SOURCE_DATA,
+					"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
+				),
+			);
+			const cached = existingManifest.artifacts?.roadSafety;
+			if (
+				canReuse &&
+				cached &&
+				sameFileStamp(cached.input, input) &&
+				cached.gazetteerCore.sha256 === coreOutput.sha256 &&
+				cached.gazetteerCore.bytes === coreOutput.bytes &&
+				(await outputMatches("road-safety", cached.outputs.dataset)) &&
+				(await outputMatches(
+					"road-safety-points",
+					cached.outputs.points,
+				))
+			) {
+				console.log("  dataset: road-safety.json (cached)");
+				console.log("  dataset: road-safety-points.json (cached)");
+				return cached;
+			}
+
+			const { datasets, points } = await loadRoadSafety(
+				readSource,
+				new Gazetteer(core),
+			);
+			return {
+				input,
+				gazetteerCore: coreOutput,
+				outputs: {
+					dataset: await out("road-safety", datasets),
+					points: await out("road-safety-points", points),
+				},
+			};
+		},
+	);
 	const results = await Promise.allSettled([
 		...chartResults,
 		roadSafety,
@@ -488,18 +773,28 @@ async function main() {
 	await writeDatasetRegionChunks({
 		root: ROOT,
 		datasets: compiledDatasets,
-		core: await gazetteerCore,
+		core: (await gazetteerCore).data,
 		boundaryMappings: await boundaryMappings,
 	});
 	await out("dataset-manifest", {
 		version: 1,
-		precompiler: { fingerprint: await precompileFingerprint(ROOT) },
+		precompiler: { fingerprint: compilerFingerprint },
+		artifacts: {
+			atlasAssets: {
+				inputs: boundaryInputs,
+				outputs: {
+					gazetteerCore: (await gazetteerCore).compiled,
+					matchIndex: await matchIndex,
+				},
+			},
+			roadSafety: await roadSafety,
+		},
 		datasets: results
 			.slice(0, CATALOGUE_DATASET_DEFINITIONS.length)
 			.map((result) => (result as PromiseFulfilledResult<unknown>).value),
 	});
 
-	console.log("Done.");
+	console.log(`Done in ${elapsed(startedAt)}.`);
 }
 
 async function compileDataset(
@@ -508,8 +803,28 @@ async function compileDataset(
 		string,
 		{ data: unknown; layout?: DatasetPayloadLayout }
 	>,
-	existingDatasets: Map<string, ExistingManifestDataset>,
+	existingDatasets = new Map<string, ExistingManifestDataset>(),
+	canReuse = false,
+	startedAt = performance.now(),
 ) {
+	const existing = existingDatasets.get(definition.type);
+	if (canReuse && (await canReuseDataset(existing, definition))) {
+		if (definition.payload?.regionChunks?.kind === "regional") {
+			compiledDatasets.set(definition.precompiledFile, {
+				data: JSON.parse(
+					await readFile(
+						join(OUT_DIR, `${definition.precompiledFile}.json`),
+						"utf8",
+					),
+				),
+				layout: definition.payload,
+			});
+		}
+		console.log(
+			`  dataset: ${definition.precompiledFile}.json (cached; ${Math.round(existing.compiled.bytes / 1024)} KB; ${elapsed(startedAt)})`,
+		);
+		return existing;
+	}
 	const { reader, artifacts } = createTrackedReader();
 	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
 	let preserved: ExistingManifestDataset | undefined;
@@ -527,7 +842,6 @@ async function compileDataset(
 
 		if (!missingRawSource) throw error;
 
-		const existing = existingDatasets.get(definition.type);
 		const compiledPath = join(
 			OUT_DIR,
 			`${definition.precompiledFile}.json`,
@@ -545,9 +859,6 @@ async function compileDataset(
 
 		compiled = JSON.parse(content);
 		preserved = existing;
-		console.log(
-			`  dataset: ${definition.precompiledFile}.json (preserved; raw source unavailable)`,
-		);
 	}
 	const data = definition.coverageCountries
 		? Object.fromEntries(
@@ -570,8 +881,16 @@ async function compileDataset(
 		});
 	}
 	const summary = validatePrecompiledDataset(definition, data);
-	if (preserved) return preserved;
-	const output = await out(definition.precompiledFile, data);
+	if (preserved) {
+		console.log(
+			`  dataset: ${definition.precompiledFile}.json (preserved; raw source unavailable; ${elapsed(startedAt)})`,
+		);
+		return preserved;
+	}
+	const output = await out(definition.precompiledFile, data, false);
+	console.log(
+		`  dataset: ${definition.precompiledFile}.json (${Math.round(output.bytes / 1024)} KB; ${elapsed(startedAt)})`,
+	);
 	return {
 		type: definition.type,
 		output: definition.precompiledFile,
