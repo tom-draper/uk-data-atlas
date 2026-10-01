@@ -235,6 +235,19 @@ const NOISE_QUANTILE = 0.99;
 const MINIMUM_AREA_RATIO = 0.9;
 
 /**
+ * The share of each other two areas must both keep to be realigned: the
+ * same area to anyone looking at it, redrawn by a street or a field.
+ */
+export const REALIGNED_SHARE = 0.95;
+
+type Realigned =
+	ExtentContinuityCrosswalkArtifact["validation"]["continuity"]["realigned"][number];
+
+const realignedEnough = (measured: Measured) =>
+	measured.sourceShare >= REALIGNED_SHARE &&
+	measured.targetShare >= REALIGNED_SHARE;
+
+/**
  * Carry each area of one release onto the next where its extent held, as
  * identity: under the same code, or under a new one.
  *
@@ -268,6 +281,11 @@ const MINIMUM_AREA_RATIO = 0.9;
  * generalisation drifts, and the two must choose only each other. A pair
  * released under a new code for a small realignment differs by little more
  * than that, and is listed for review rather than published.
+ *
+ * A pair beyond noise whose overlap still keeps `REALIGNED_SHARE` of each,
+ * choosing only each other, is listed as realigned: not identity, since its
+ * extent did change, but the area that succeeded the other, which is how a
+ * map carries a redrawn ward's history on.
  */
 export const compileExtentContinuityCrosswalk = (
 	repositoryRoot: string,
@@ -299,6 +317,7 @@ export const compileExtentContinuityCrosswalk = (
 	const records: Record[] = [];
 	const changedExtent: Continuity["changedExtent"] = [];
 	const unmeasured: Continuity["unmeasured"] = [];
+	const realigned: Realigned[] = [];
 	let sharedCodeCount = 0;
 	const record = (
 		sourceCode: string,
@@ -370,6 +389,13 @@ export const compileExtentContinuityCrosswalk = (
 								: "changed",
 						...judged,
 					});
+					if (realignedEnough(measured))
+						realigned.push({
+							code,
+							successor: code,
+							match: "same-code",
+							...measured,
+						});
 					continue;
 				}
 				records.push(record(code, code, "same-code", judged));
@@ -391,6 +417,7 @@ export const compileExtentContinuityCrosswalk = (
 				records.push(
 					record(sourceCode, targetCode, "recoded", measured),
 				),
+			(entry) => realigned.push(entry),
 		);
 	} finally {
 		clipper.close();
@@ -404,6 +431,7 @@ export const compileExtentContinuityCrosswalk = (
 			left.code.localeCompare(right.code),
 	);
 	unmeasured.sort((left, right) => left.code.localeCompare(right.code));
+	realigned.sort((left, right) => left.code.localeCompare(right.code));
 	const codes = new Set(records.map((entry) => entry.source.code));
 	const artifactWithoutHash = {
 		schemaVersion: 1 as const,
@@ -456,6 +484,8 @@ export const compileExtentContinuityCrosswalk = (
 				changedExtent,
 				unmeasured,
 				recoded,
+				realignedShare: REALIGNED_SHARE,
+				realigned,
 			},
 		},
 		records,
@@ -483,6 +513,7 @@ const compareRecoded = (
 		targetCode: string,
 		measured: Measured,
 	) => void,
+	realign: (entry: Realigned) => void,
 ): ExtentContinuityCrosswalkArtifact["validation"]["continuity"]["recoded"] => {
 	if (retired.length === 0 || introduced.length === 0)
 		return {
@@ -501,6 +532,7 @@ const compareRecoded = (
 	const choosers = new Map<string, string[]>();
 	const nearMisses: Array<{ code: string; candidate: string } & Measured> =
 		[];
+	const close: Array<{ code: string; candidate: string } & Measured> = [];
 	const unmeasured: Array<{
 		code: string;
 		candidate: string;
@@ -529,10 +561,36 @@ const compareRecoded = (
 					...(choosers.get(candidate) ?? []),
 					code,
 				]);
-			} else if (measured.widestDifferenceM < adapter.sliverWidthM / 2)
-				nearMisses.push({ code, candidate, ...measured });
+			} else {
+				if (measured.widestDifferenceM < adapter.sliverWidthM / 2)
+					nearMisses.push({ code, candidate, ...measured });
+				if (realignedEnough(measured))
+					close.push({ code, candidate, ...measured });
+			}
 		}
 	}
+	// A pair is realigned only where neither side has a match within noise,
+	// and each is the other's only close pair.
+	const count = (codes: string[]) =>
+		codes.reduce(
+			(counts, code) => counts.set(code, (counts.get(code) ?? 0) + 1),
+			new Map<string, number>(),
+		);
+	const closeCodes = count(close.map(({ code }) => code));
+	const closeCandidates = count(close.map(({ candidate }) => candidate));
+	for (const { code, candidate, ...measured } of close)
+		if (
+			!within.has(code) &&
+			!choosers.has(candidate) &&
+			closeCodes.get(code) === 1 &&
+			closeCandidates.get(candidate) === 1
+		)
+			realign({
+				code,
+				successor: candidate,
+				match: "recoded",
+				...measured,
+			});
 	const ambiguous: Array<{ code: string; candidates: string[] }> = [];
 	let matchedCount = 0;
 	for (const [code, matches] of [...within].sort(([left], [right]) =>

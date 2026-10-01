@@ -62,7 +62,8 @@ const writeCollection = (
 // the new W4, where the build will not decide, and W6 one that measures 256 m
 // to the new W7, a boundary that moved. W8 loses a strip as wide that no area
 // takes, as a coast one outline draws and the next leaves out. W3 is
-// abolished.
+// abolished. W9 loses a strip that measures 52 m to the new W10, but keeps
+// 95% of its extent: not identity, but realigned.
 const writeFixture = (root: string) => {
 	writeCollection(root, "ward-1.geojson", [
 		["W1", box(0, D)],
@@ -71,6 +72,7 @@ const writeFixture = (root: string) => {
 		["W5", box(4 * D, 5 * D)],
 		["W6", box(6 * D, 7 * D)],
 		["W8", box(8 * D, 9 * D)],
+		["W9", box(10 * D, 11 * D)],
 	]);
 	writeCollection(root, "ward-2.geojson", [
 		["W1", box(0, 1.005 * D)],
@@ -80,6 +82,8 @@ const writeFixture = (root: string) => {
 		["W6", box(6 * D, 6.7 * D)],
 		["W7", box(6.7 * D, 7 * D)],
 		["W8", box(8 * D, 8.7 * D)],
+		["W9", box(10 * D, 10.951 * D)],
+		["W10", box(10.951 * D, 11 * D)],
 	]);
 };
 
@@ -109,6 +113,7 @@ const areaLookup = createAreaLookup([
 			{ code: "W5", name: "Ward Five" },
 			{ code: "W6", name: "Ward Six" },
 			{ code: "W8", name: "Ward Eight" },
+			{ code: "W9", name: "Ward Nine" },
 		],
 	},
 	{
@@ -126,6 +131,8 @@ const areaLookup = createAreaLookup([
 			{ code: "W6", name: "Ward Six" },
 			{ code: "W7", name: "Ward Seven" },
 			{ code: "W8", name: "Ward Eight" },
+			{ code: "W9", name: "Ward Nine" },
+			{ code: "W10", name: "Ward Ten" },
 		],
 	},
 ]);
@@ -204,9 +211,9 @@ test("publishes a shared code as identity only where its extent held", () => {
 		assert.deepEqual(artifact.validation.continuity, {
 			sliverWidthM: 100,
 			differenceRule: "claimed-by-another-area",
-			sourceAreaCount: 6,
-			targetAreaCount: 7,
-			sharedCodeCount: 5,
+			sourceAreaCount: 7,
+			targetAreaCount: 9,
+			sharedCodeCount: 6,
 			continuousCount: 3,
 			changedExtent: [
 				{
@@ -225,12 +232,31 @@ test("publishes a shared code as identity only where its extent held", () => {
 					sourceShare: 0.895,
 					targetShare: 1,
 				},
+				{
+					code: "W9",
+					relation: "indeterminate",
+					widestDifferenceM: 52,
+					claimedDifferenceM: 52,
+					sourceShare: 0.951,
+					targetShare: 1,
+				},
 			],
 			unmeasured: [],
 			recoded: {
 				status: "not-compared",
 				reason: "Only 3 same-code pairs were published, fewer than the 50 needed to measure how far the releases' generalisation drifts.",
 			},
+			realignedShare: 0.95,
+			realigned: [
+				{
+					code: "W9",
+					successor: "W9",
+					match: "same-code",
+					widestDifferenceM: 52,
+					sourceShare: 0.951,
+					targetShare: 1,
+				},
+			],
 		});
 		assert.equal(artifact.relationshipPurpose, "identity");
 		assert.equal(artifact.validation.endpoints.to.status, "verified");
@@ -440,6 +466,17 @@ test("carries a renumbered area on only where its extent matches within the rele
 			],
 			unmeasured: [],
 		});
+		// R2 is realigned; R3 has two close candidates, so is not.
+		assert.deepEqual(artifact.validation.continuity.realigned, [
+			{
+				code: "R2",
+				successor: "N2",
+				match: "recoded",
+				widestDifferenceM: 21.8,
+				sourceShare: 0.98,
+				targetShare: 0.98,
+			},
+		]);
 		assert.equal(artifact.validation.endpoints.to.status, "verified");
 	});
 });
@@ -493,6 +530,32 @@ test("translates a renumbered area through a chain of releases as one identity",
 					counterpart.id,
 				]),
 			[["successor", "ward/2/N1"]],
+		);
+		// A successor carries an area's history on through a realignment,
+		// but not through an ambiguous extent or a merger.
+		const successor = (code: string, from: string, to: string) =>
+			resolver.successorArea(
+				{ geography: "ward", boundaryRelease: from, code },
+				{ geography: "ward", boundaryRelease: to },
+			);
+		assert.deepEqual(
+			[successor("R1", "1", "3"), successor("R2", "1", "3")].map(
+				(answer) => answer && [answer.code, answer.realigned],
+			),
+			[
+				["N1", false],
+				["N2", true],
+			],
+		);
+		assert.equal(successor("N2", "3", "1")?.code, "R2");
+		assert.equal(successor("R3", "1", "3"), undefined);
+		assert.equal(successor("R4", "1", "3"), undefined);
+		assert.equal(
+			resolver.sameArea(
+				{ geography: "ward", boundaryRelease: "1", code: "R2" },
+				{ geography: "ward", boundaryRelease: "3" },
+			),
+			undefined,
 		);
 	});
 });

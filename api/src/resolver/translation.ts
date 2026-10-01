@@ -328,6 +328,10 @@ export class CrosswalkTranslator {
 		Map<string, TranslationStep>
 	>();
 	private readonly stepTargetCache = new Map<string, Map<string, string[]>>();
+	private readonly successorStepCache = new Map<
+		string,
+		Map<string, TranslationStep>
+	>();
 	private readonly pathReachCache = new Map<string, number>();
 	private pathsById?: Map<string, RelationshipPath>;
 
@@ -487,6 +491,89 @@ export class CrosswalkTranslator {
 		return returned?.code === source.code && more.length === 0
 			? { code: target.code, path: forward.path }
 			: undefined;
+	}
+
+	/**
+	 * The area of another release that succeeded `source`: the same area where
+	 * there is one, or else one an extent-continuity crosswalk lists as
+	 * realigned, its extent moved by a street but each keeping nearly all of
+	 * the other. Unlike `sameArea`, a path that cannot answer one-to-one does
+	 * not decide: a publisher's split of a ward that kept nearly all its
+	 * extent does not stop the ward succeeding itself. Never use it to convert
+	 * a value; it carries an area's history on, as a map's year picker does.
+	 */
+	successorArea(
+		source: AreaIdentity,
+		to: GeographyEndpoint,
+	):
+		| { code: string; path: RelationshipPath; realigned: boolean }
+		| undefined {
+		const same = this.sameArea(source, to);
+		if (same) return { ...same, realigned: false };
+		const stepsFor = (step: RelationshipPath["steps"][number]) => {
+			const artifact = this.artifact(step.crosswalkId);
+			return artifact && this.successorSteps(artifact, step.direction);
+		};
+		const only = (translation: ResolvedAreaTranslation) =>
+			translation.targets.length === 1
+				? translation.targets[0]!.code
+				: undefined;
+		const backPaths = this.paths(to, source, "identity");
+		for (const forward of translateArea(
+			this.paths(source, to, "identity"),
+			source,
+			stepsFor,
+		)) {
+			const code = only(forward);
+			if (code === undefined) continue;
+			const returned = translateArea(
+				backPaths,
+				{ ...to, code },
+				stepsFor,
+			).map(only);
+			if (returned.find((back) => back !== undefined) === source.code)
+				return { code, path: forward.path, realigned: true };
+		}
+		return undefined;
+	}
+
+	/** A crosswalk's steps with its realigned pairs added as records. */
+	private successorSteps(
+		artifact: CrosswalkArtifact,
+		direction: StepDirection,
+	): Map<string, TranslationStep> {
+		if (
+			artifact.method !== "extent-continuity" ||
+			!artifact.validation.continuity.realigned?.length
+		)
+			return this.translationSteps(artifact, direction);
+		const key = `${artifact.id}/${direction}`;
+		let steps = this.successorStepCache.get(key);
+		if (!steps) {
+			steps = buildTranslationSteps(
+				{
+					...artifact,
+					records: [
+						...artifact.records,
+						...artifact.validation.continuity.realigned.map(
+							({ code, successor, ...measured }) => ({
+								source: { code, labels: [] },
+								targets: [
+									{
+										code: successor,
+										labels: [],
+										...measured,
+									},
+								],
+							}),
+						),
+					],
+				},
+				direction,
+			);
+			this.successorStepCache.set(key, steps);
+		}
+		return steps;
 	}
 
 	/**

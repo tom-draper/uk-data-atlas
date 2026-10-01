@@ -25,7 +25,7 @@ import {
 	CONTAINMENT_TOLERANCE_M,
 	geometryContainmentInputs,
 } from "../src/crosswalkGeometryValidation";
-import { DIFFERENCE_RULE } from "../src/extentContinuity";
+import { DIFFERENCE_RULE, REALIGNED_SHARE } from "../src/extentContinuity";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import {
 	createAreaLookup,
@@ -138,7 +138,8 @@ const reusableGeometryCrosswalk = (
 			artifact.validation.continuity.sliverWidthM !==
 				adapter.sliverWidthM ||
 			artifact.validation.continuity.recoded === undefined ||
-			artifact.validation.continuity.differenceRule !== DIFFERENCE_RULE
+			artifact.validation.continuity.differenceRule !== DIFFERENCE_RULE ||
+			artifact.validation.continuity.realignedShare !== REALIGNED_SHARE
 		)
 			return undefined;
 		const sourceCodePattern =
