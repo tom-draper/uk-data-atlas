@@ -28,6 +28,7 @@ export type MapEngine = Pick<
 >;
 
 export type MapPopupOptions = {
+	className?: string;
 	closeButton?: boolean;
 	closeOnClick?: boolean;
 	offset?: number;

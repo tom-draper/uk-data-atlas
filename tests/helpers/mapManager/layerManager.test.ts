@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { LayerManager } from "@/lib/helpers/mapManager/layerManager";
 import {
 	featureColorPaint,
@@ -10,6 +10,18 @@ function createMap(styleLoaded = true) {
 	const layers = new Set<string>();
 	let isStyleLoaded = styleLoaded;
 	let idleCallback: (() => void) | undefined;
+	let mouseEnter: ((event: unknown) => void) | undefined;
+	const popup: Record<string, ReturnType<typeof vi.fn>> = {};
+	for (const method of [
+		"addClassName",
+		"addTo",
+		"remove",
+		"removeClassName",
+		"setDOMContent",
+		"setLngLat",
+	]) {
+		popup[method] = vi.fn(() => popup);
+	}
 
 	return {
 		isStyleLoaded: () => isStyleLoaded,
@@ -28,9 +40,19 @@ function createMap(styleLoaded = true) {
 		removeSource: (id: string) => sources.delete(id),
 		setPaintProperty: vi.fn(),
 		setFilter: vi.fn(),
+		getCanvas: () => ({ style: { cursor: "" } }),
+		getZoom: () => 10,
+		on: vi.fn((event: string, _layer: string, handler: unknown) => {
+			if (event === "mouseenter") mouseEnter = handler as () => void;
+		}),
+		off: vi.fn(),
+		createPopup: vi.fn(() => popup),
+		triggerMouseEnter: (event: unknown) => mouseEnter?.(event),
 		sources,
 	};
 }
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe("LayerManager visibility updates", () => {
 	it("uses the configured marker size for a point dataset", () => {
@@ -55,6 +77,43 @@ describe("LayerManager visibility updates", () => {
 			"custom-points-circle",
 			"circle-radius",
 			["interpolate", ["linear"], ["zoom"], 6, 1.5, 10, 3.5],
+		);
+	});
+
+	it("creates point popups with the active map theme class", () => {
+		const element = () => ({
+			append: vi.fn(),
+			appendChild: vi.fn(),
+			className: "",
+			textContent: "",
+		});
+		vi.stubGlobal("document", { createElement: element });
+		const map = createMap();
+		const manager = new LayerManager(map as any);
+
+		manager.render({
+			kind: "points",
+			data: { type: "FeatureCollection", features: [] },
+			visibility: {
+				hideDataLayer: false,
+				hideBorders: false,
+				hideBoundaryLayer: false,
+				hideOverlay: false,
+				overlayOpacity: 0.6,
+			},
+			tooltip: { title: "Collision", fields: ["Severity"] },
+			isDark: true,
+		});
+
+		map.triggerMouseEnter({
+			features: [{ properties: { detail0: "Fatal" } }],
+			lngLat: [0, 0],
+		});
+
+		expect(map.createPopup).toHaveBeenCalledWith(
+			expect.objectContaining({
+				className: "atlas-point-popup atlas-point-popup--dark",
+			}),
 		);
 	});
 

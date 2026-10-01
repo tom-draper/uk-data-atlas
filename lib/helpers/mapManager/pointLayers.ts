@@ -59,9 +59,13 @@ export class PointLayerController {
 			]),
 		);
 		this.tooltip = tooltip;
+		if (this.tooltipIsDark !== isDark) {
+			// MapLibre recreates a popup's DOM after `remove()`. Recreate this
+			// popup too so its creation-time class names match the map style.
+			this.popup?.remove();
+			this.popup = null;
+		}
 		this.tooltipIsDark = isDark;
-		this.popup?.removeClassName("atlas-point-popup--dark");
-		if (isDark) this.popup?.addClassName("atlas-point-popup--dark");
 		if (tooltip?.fields.length) this.addTooltipHandlers();
 		else this.removeTooltipHandlers();
 
@@ -135,15 +139,17 @@ export class PointLayerController {
 		});
 
 		if (!this.popup) {
-			this.popup = this.map
-				.createPopup({
-					closeButton: false,
-					closeOnClick: false,
-					offset: 8,
-				})
-				.addClassName("atlas-point-popup");
-			if (this.tooltipIsDark)
-				this.popup.addClassName("atlas-point-popup--dark");
+			this.popup = this.map.createPopup({
+				className: [
+					"atlas-point-popup",
+					this.tooltipIsDark && "atlas-point-popup--dark",
+				]
+					.filter(Boolean)
+					.join(" "),
+				closeButton: false,
+				closeOnClick: false,
+				offset: 8,
+			});
 		}
 		this.popup.setLngLat(event.lngLat).setDOMContent(content).addTo();
 	};
