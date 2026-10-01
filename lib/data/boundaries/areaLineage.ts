@@ -1,6 +1,7 @@
 /**
  * Where each area of one geography goes from release to release, as the
- * resolver's `sameArea` answers it, compacted for a client that cannot hold
+ * resolver's `successorArea` answers it: the same area, or the one that
+ * succeeded it across a redrawing that kept nearly all of each, compacted for a client that cannot hold
  * the crosswalks: the atlas reads it to find a hovered area in another year's
  * data. Pure and dependency-free, so the site and the API share it.
  */
