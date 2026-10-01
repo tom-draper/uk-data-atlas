@@ -238,7 +238,7 @@ const MINIMUM_AREA_RATIO = 0.9;
  * The share of each other two areas must both keep to be realigned: the
  * same area to anyone looking at it, redrawn by a street or a field.
  */
-export const REALIGNED_SHARE = 0.95;
+export const REALIGNED_SHARE = 0.9;
 
 type Realigned =
 	ExtentContinuityCrosswalkArtifact["validation"]["continuity"]["realigned"][number];

@@ -62,8 +62,8 @@ const writeCollection = (
 // the new W4, where the build will not decide, and W6 one that measures 256 m
 // to the new W7, a boundary that moved. W8 loses a strip as wide that no area
 // takes, as a coast one outline draws and the next leaves out. W3 is
-// abolished. W9 loses a strip that measures 52 m to the new W10, but keeps
-// 95% of its extent: not identity, but realigned.
+// abolished. W9 loses a strip that measures 97 m to the new W10, but keeps
+// 90% of its extent: not identity, but realigned.
 const writeFixture = (root: string) => {
 	writeCollection(root, "ward-1.geojson", [
 		["W1", box(0, D)],
@@ -82,8 +82,8 @@ const writeFixture = (root: string) => {
 		["W6", box(6 * D, 6.7 * D)],
 		["W7", box(6.7 * D, 7 * D)],
 		["W8", box(8 * D, 8.7 * D)],
-		["W9", box(10 * D, 10.951 * D)],
-		["W10", box(10.951 * D, 11 * D)],
+		["W9", box(10 * D, 10.905 * D)],
+		["W10", box(10.905 * D, 11 * D)],
 	]);
 };
 
@@ -235,9 +235,9 @@ test("publishes a shared code as identity only where its extent held", () => {
 				{
 					code: "W9",
 					relation: "indeterminate",
-					widestDifferenceM: 52,
-					claimedDifferenceM: 52,
-					sourceShare: 0.951,
+					widestDifferenceM: 96.5,
+					claimedDifferenceM: 96.5,
+					sourceShare: 0.905,
 					targetShare: 1,
 				},
 			],
@@ -246,14 +246,14 @@ test("publishes a shared code as identity only where its extent held", () => {
 				status: "not-compared",
 				reason: "Only 3 same-code pairs were published, fewer than the 50 needed to measure how far the releases' generalisation drifts.",
 			},
-			realignedShare: 0.95,
+			realignedShare: 0.9,
 			realigned: [
 				{
 					code: "W9",
 					successor: "W9",
 					match: "same-code",
-					widestDifferenceM: 52,
-					sourceShare: 0.951,
+					widestDifferenceM: 96.5,
+					sourceShare: 0.905,
 					targetShare: 1,
 				},
 			],
