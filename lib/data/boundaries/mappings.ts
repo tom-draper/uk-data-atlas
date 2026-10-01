@@ -114,6 +114,51 @@ export const encodeBoundaryMappings = (
 };
 
 /**
+ * The file `parish-lad-mappings.json` holds: each parish's local authority
+ * in the release of its own era, for every served parish release. Only the
+ * precompile reads it, to tell same-named parishes apart in upload matching.
+ */
+export interface ParishLadMappingsFile {
+	version: 1;
+	parishToLad: YearMasked<"parents">;
+}
+
+export const encodeParishLadMappings = (
+	byYear: Record<number, Record<string, string>>,
+): ParishLadMappingsFile => {
+	const { years, masked } = maskYears(
+		Object.fromEntries(
+			Object.entries(byYear).map(([year, parents]) => [
+				year,
+				Object.fromEntries(
+					Object.entries(parents).map(([code, lad]) => [code, [lad]]),
+				),
+			]),
+		),
+	);
+	return { version: 1, parishToLad: { years, parents: masked } };
+};
+
+export const parseParishLadMappings = (
+	value: unknown,
+): Record<number, Record<string, string>> => {
+	if (!isRecord(value) || value.version !== 1 || !isRecord(value.parishToLad))
+		throw invalid();
+	const byYear = unmaskYears(
+		value.parishToLad.years,
+		value.parishToLad.parents,
+	);
+	return Object.fromEntries(
+		Object.entries(byYear).map(([year, parents]) => [
+			year,
+			Object.fromEntries(
+				Object.entries(parents).map(([code, [lad]]) => [code, lad!]),
+			),
+		]),
+	);
+};
+
+/**
  * Just the ward to local authority map, for a worker that filters wards by
  * location and has no use for expanding the rest of the file.
  */

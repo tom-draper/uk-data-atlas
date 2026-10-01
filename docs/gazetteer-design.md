@@ -259,11 +259,13 @@ Fixed on 2026-09-27:
   a column of current ward names was read as 2011 wards.
 
 Parishes followed the same day. Their releases publish no parent, so the
-match index finds each shared-name parish's council from the geometry: the
-local authority holding most of it (the best-fit sampler used for
-constituency membership, 9.3) in the nearest release not after the parish's.
-All 1,545 such parishes have one; the 2025 parents agree with the ONS
-parish/ward/LAD lookup on all 1,442 it covers.
+match index takes each shared-name parish's council from the API resolver,
+via `parish-lad-mappings.json` (written by `pnpm containment:build`, read only
+by the precompile): the ONS parish lookup for the 2019 and 2026 releases, and
+otherwise the local authority holding most of the parish, in the newest
+release not after the parish's. It used to sample the geometry itself; the
+2025 parents it found agreed with the ONS parish/ward/LAD lookup on all 1,442
+it covers.
 
 ### 9.2 Build every lookup in one place (done)
 

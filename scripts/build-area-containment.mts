@@ -1,27 +1,31 @@
 /**
- * Write the atlas's area containment: the local authority and constituencies
- * each served ward release sits in, the local authority of each served LSOA
- * release, and the authorities each served constituency release overlaps,
- * as the API's geography resolver places them. The atlas reads
+ * Write the atlas's area containment, as the API's geography resolver places
+ * it: the local authority and constituencies each served ward release sits
+ * in, the local authority of each served LSOA and parish release, and the
+ * authorities each served constituency release overlaps. The atlas reads
  * these files in place of deriving containment from boundary files, so what
  * the map shows is what the API would say.
  *
  * Needs the API's build output (pnpm --dir api build); the files it writes
  * are committed with the rest of public/data, and the precompile reads the
- * ward one. `--check` fails instead of writing when a committed file is out
- * of date.
+ * ward and parish ones. `--check` fails instead of writing when a committed
+ * file is out of date.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readApiCatalogues } from "../api/src/catalogueLoader";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
-import { encodeBoundaryMappings } from "../lib/data/boundaries/mappings";
+import {
+	encodeBoundaryMappings,
+	encodeParishLadMappings,
+} from "../lib/data/boundaries/mappings";
 import type { LsoaLadMapping } from "../lib/data/boundaries/lsoaLadMappings";
 import {
 	compileAreaContainment,
 	compileConstituencyLadOverlaps,
 	compileLsoaLadContainment,
+	compileParishLadContainment,
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
 } from "./area-containment";
@@ -52,15 +56,27 @@ for (const { release } of lsoaReleases)
 			`lsoa/${release} is served by the atlas but not compiled by the API.`,
 		);
 
+const parishReleases = Object.entries(BOUNDARY_CATALOG.parish.vintages).map(
+	([year, asset]) => ({ year: Number(year), release: releaseOf(asset) }),
+);
+for (const { release } of parishReleases)
+	if (!geographyResolver.hasAreaRelease("parish", release))
+		throw new Error(
+			`parish/${release} is served by the atlas but not compiled by the API.`,
+		);
+
 const served = new Set(
-	[...wardReleases, ...lsoaReleases].map(({ release }) => release),
+	[...wardReleases, ...lsoaReleases, ...parishReleases].map(
+		({ release }) => release,
+	),
 );
 const crosswalks = geographyResolver
 	.crosswalkSummaries()
 	.filter(
 		(summary) =>
 			(summary.from.geography === "ward" ||
-				summary.from.geography === "lsoa") &&
+				summary.from.geography === "lsoa" ||
+				summary.from.geography === "parish") &&
 			served.has(summary.from.boundaryRelease) &&
 			(summary.to.geography === "localAuthority" ||
 				summary.to.geography === "constituency"),
@@ -132,7 +148,16 @@ const constituencyOverlaps = compileConstituencyLadOverlaps(
 	overlapCrosswalks,
 );
 
+const parishToLad = compileParishLadContainment(
+	parishReleases,
+	crosswalks.filter(({ from }) => from.geography === "parish"),
+);
+
 const outputs = new Map<string, string>([
+	[
+		"parish-lad-mappings.json",
+		JSON.stringify(encodeParishLadMappings(parishToLad)),
+	],
 	[
 		"boundary-mappings.json",
 		JSON.stringify(encodeBoundaryMappings(containment)),

@@ -19,6 +19,7 @@ const inputs = [
 	"lib/helpers",
 	"lib/types",
 	"public/data/datasets/boundary-mappings.json",
+	"public/data/datasets/parish-lad-mappings.json",
 ];
 
 // Only these package.json fields can change what the precompiler emits; its
