@@ -1,6 +1,7 @@
 "use client";
 
 import type { CustomDataset } from "@/lib/types";
+import { getSequentialColorForValue } from "@/lib/helpers/colorScale/datasetColors";
 import { renderCategoryLegend } from "../legendUtils";
 import { DynamicRangeLegend, type RangeLegendControls } from "./RangeLegends";
 
@@ -17,12 +18,21 @@ export function CustomLegend({
 	onPointLegendRightClick: (value: string) => void;
 } & RangeLegendControls) {
 	if (dataset.kind === "points" && dataset.pointStyle?.legend) {
-		const { colorByValue, legend } = dataset.pointStyle;
+		const { legend } = dataset.pointStyle;
 		const options = rangeControls.displayOptions.custom;
+		const values = legend.map(({ value }) => value);
+		const range = {
+			min: dataset.valueMin ?? Math.min(...values),
+			max: dataset.valueMax ?? Math.max(...values),
+		};
 		return renderCategoryLegend(
 			legend.map(({ value, label }) => ({
 				id: String(value),
-				color: colorByValue?.[value] ?? "#999",
+				color: getSequentialColorForValue(
+					value,
+					range,
+					rangeControls.displayOptions.theme.id,
+				),
 				name: label,
 			})),
 			options.selectedPointValue !== undefined,

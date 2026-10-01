@@ -68,6 +68,7 @@ describe("loadRoadSafety", () => {
 			valueMin: 1,
 			valueMax: 3,
 		});
+		expect(dataset.pointStyle).not.toHaveProperty("colorByValue");
 	});
 
 	it("summarises each named location exactly as the card would count it", async () => {

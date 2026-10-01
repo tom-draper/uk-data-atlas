@@ -31,10 +31,9 @@ const AREA_TYPE: Record<string, string> = {
 	"3": "Unallocated",
 };
 
-// These are categories rather than a continuous measure, so keep their visual
-// treatment consistent regardless of the selected choropleth colour theme.
+// These values are sampled along the active heatmap theme: Slight at its low
+// end, Serious in the middle and Fatal at its high end.
 const SEVERITY_STYLE = {
-	colorByValue: { 1: "#facc15", 2: "#f97316", 3: "#991b1b" },
 	legend: [
 		{ value: 3, label: "Fatal" },
 		{ value: 2, label: "Serious" },

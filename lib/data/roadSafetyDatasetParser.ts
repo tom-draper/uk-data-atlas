@@ -25,14 +25,6 @@ const isCustomPoint = (value: unknown): value is CustomPoint =>
 const isPointStyle = (value: unknown): value is PointStyle => {
 	if (!isRecord(value)) return false;
 	if (
-		value.colorByValue !== undefined &&
-		(!isRecord(value.colorByValue) ||
-			!Object.values(value.colorByValue).every(
-				(color) => typeof color === "string",
-			))
-	)
-		return false;
-	if (
 		value.legend !== undefined &&
 		(!Array.isArray(value.legend) ||
 			!value.legend.every(
