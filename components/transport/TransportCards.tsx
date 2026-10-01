@@ -8,7 +8,8 @@ import { NetworkDataset } from "@/lib/types/network";
 import { MapManager } from "@/lib/helpers/mapManager/mapManager";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import { getPointsInLocation } from "@/lib/helpers/locationPoints";
-import { rgbToHex } from "@/lib/helpers/colorScale/interpolation";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
+import { getSequentialColorForValue } from "@/lib/helpers/colorScale/datasetColors";
 import { ChartCard } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
 import { formatCount } from "@/lib/helpers/formatCount";
@@ -63,25 +64,6 @@ function useVisibleRoadBreakdown(
 	}, [counts, dataset.legend]);
 }
 
-const SEVERITY_COLORS = [
-	[250, 204, 21], // Slight
-	[249, 115, 22], // Serious
-	[153, 27, 27], // Fatal
-] as const;
-
-function severityColor(averageSeverity: number): string {
-	const position = Math.max(0, Math.min(1, (averageSeverity - 1) / 2));
-	const segment = position <= 0.5 ? 0 : 1;
-	const localPosition = (position - segment * 0.5) * 2;
-	const from = SEVERITY_COLORS[segment];
-	const to = SEVERITY_COLORS[segment + 1];
-	return rgbToHex(
-		from[0] + (to[0] - from[0]) * localPosition,
-		from[1] + (to[1] - from[1]) * localPosition,
-		from[2] + (to[2] - from[2]) * localPosition,
-	);
-}
-
 function RoadSafetyCard({
 	dataset,
 	isActive,
@@ -94,6 +76,7 @@ function RoadSafetyCard({
 	location: string;
 }) {
 	const isDark = useIsDark();
+	const mapOptions = useCurrentMapOptions();
 	const { excludedPointValues, selectedPointValue } = useExcludedCategories();
 	const loadedPoints = dataset.points;
 	const points = useMemo(() => {
@@ -131,7 +114,16 @@ function RoadSafetyCard({
 				points.length
 			: (summary?.averageValue ?? 0);
 	const severityBarWidth = (averageSeverity / 3) * 100;
-	const accent = hasData ? severityColor(averageSeverity) : null;
+	const accent = hasData
+		? getSequentialColorForValue(
+				averageSeverity,
+				{
+					min: dataset.valueMin ?? 1,
+					max: dataset.valueMax ?? 3,
+				},
+				mapOptions.theme.id,
+			)
+		: null;
 	return (
 		<ChartCard
 			heading={dataset.dataColumn}
