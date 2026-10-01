@@ -505,11 +505,14 @@ const snapshotFileContents = async (
 
 const outputMatches = async (name: string, expected: CompiledOutput) => {
 	try {
-		const output = await readFile(join(OUT_DIR, `${name}.json`));
+		const path = join(OUT_DIR, `${name}.json`);
+		const output = await stat(path);
+		if (output.size !== expected.bytes) return false;
+		if (expected.modifiedAt === output.mtimeMs) return true;
+		const contents = await readFile(path);
 		return (
-			output.byteLength === expected.bytes &&
-			createHash("sha256").update(output).digest("hex") ===
-				expected.sha256
+			createHash("sha256").update(contents).digest("hex") ===
+			expected.sha256
 		);
 	} catch {
 		return false;
