@@ -822,17 +822,17 @@ async function main() {
 	// the gazetteer's bounding boxes, so this waits on the core built above.
 	const roadSafety = timeStage("road safety", () =>
 		gazetteerCore.then(async ({ data: core, compiled: coreOutput }) => {
-			const input = await fileStamp(
-				join(
-					SOURCE_DATA,
-					"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
-				),
+			const path = join(
+				SOURCE_DATA,
+				"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
 			);
+			const input = await fileStamp(path);
 			const cached = existingManifest.artifacts?.roadSafety;
 			if (
 				canReuse &&
 				cached &&
-				sameFileStamp(cached.input, input) &&
+				(sameFileStamp(cached.input, input) ||
+					isReleasedSource(sourceRelease, path, input)) &&
 				cached.gazetteerCore.sha256 === coreOutput.sha256 &&
 				cached.gazetteerCore.bytes === coreOutput.bytes &&
 				(await outputMatches("road-safety", cached.outputs.dataset)) &&
