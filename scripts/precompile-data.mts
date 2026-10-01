@@ -18,7 +18,7 @@ import {
 	utimes,
 	writeFile,
 } from "fs/promises";
-import { join, dirname } from "path";
+import { join, dirname, relative } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 import { createHash } from "crypto";
@@ -84,6 +84,11 @@ type ExistingManifestDataset = {
 type CompiledOutput = { bytes: number; sha256: string };
 
 type SourceFileStamp = { bytes: number; modifiedAt: number };
+
+type SourceRelease = {
+	validatedAt: number;
+	files: Set<string>;
+};
 
 type FileSnapshot = SourceFileStamp & { path: string };
 
@@ -395,6 +400,50 @@ const fileStamp = async (path: string): Promise<SourceFileStamp> => {
 const sameFileStamp = (left: SourceFileStamp, right: SourceFileStamp) =>
 	left.bytes === right.bytes && left.modifiedAt === right.modifiedAt;
 
+// Raw data is restored from an immutable, checksummed release. Restoring it
+// necessarily gives every file a new mtime, which must not discard otherwise
+// valid compiled datasets. The marker is written only after that release has
+// been verified; any local edit made later has a newer mtime and still forces
+// its dependent dataset to rebuild.
+const readSourceRelease = async (): Promise<SourceRelease | undefined> => {
+	try {
+		const path = join(SOURCE_DATA, ".source-release.json");
+		const [contents, marker] = await Promise.all([
+			readFile(path, "utf8"),
+			stat(path),
+		]);
+		const parsed: unknown = JSON.parse(contents);
+		if (
+			typeof parsed !== "object" ||
+			parsed === null ||
+			!("version" in parsed) ||
+			parsed.version !== 2 ||
+			!("files" in parsed) ||
+			typeof parsed.files !== "object" ||
+			parsed.files === null
+		)
+			return undefined;
+		const files = Object.entries(parsed.files).filter(
+			([, sha256]) => typeof sha256 === "string",
+		);
+		return {
+			validatedAt: marker.mtimeMs,
+			files: new Set(files.map(([path]) => path)),
+		};
+	} catch {
+		return undefined;
+	}
+};
+
+const isReleasedSource = (
+	release: SourceRelease | undefined,
+	path: string,
+	input: SourceFileStamp,
+) =>
+	release !== undefined &&
+	input.modifiedAt <= release.validatedAt &&
+	release.files.has(relative(SOURCE_DATA, path));
+
 const fileSnapshots = async (
 	directory: string,
 	prefix = "",
@@ -457,6 +506,7 @@ const isSourceArtifact = (value: unknown): value is SourceArtifact =>
 const canReuseDataset = async (
 	existing: ExistingManifestDataset | undefined,
 	definition: (typeof CATALOGUE_DATASET_DEFINITIONS)[number],
+	sourceRelease: SourceRelease | undefined,
 ) => {
 	if (
 		!existing ||
@@ -469,17 +519,11 @@ const canReuseDataset = async (
 
 	try {
 		for (const artifact of existing.inputs) {
-			// Re-reading and unzipping every source made a cache hit nearly as
-			// expensive as a build. The raw-file stamp is sufficient to decide
-			// whether to reuse a compiler output; precompile:verify remains the
-			// full checksum guard for committed browser assets.
+			const path = sourceInputPath(artifact.kind, artifact.path);
+			const input = await fileStamp(path);
 			if (
-				!sameFileStamp(
-					artifact.input,
-					await fileStamp(
-						sourceInputPath(artifact.kind, artifact.path),
-					),
-				)
+				!sameFileStamp(artifact.input, input) &&
+				!isReleasedSource(sourceRelease, path, input)
 			)
 				return false;
 		}
@@ -624,6 +668,7 @@ async function main() {
 		// A fresh checkout has no cache to reuse.
 	}
 	const compilerFingerprint = await precompileFingerprint(ROOT);
+	const sourceRelease = await readSourceRelease();
 	const canReuse =
 		existingManifest.precompiler?.fingerprint === compilerFingerprint;
 	if (!canReuse)
@@ -649,6 +694,7 @@ async function main() {
 				compiledDatasets,
 				existingDatasets,
 				canReuse,
+				sourceRelease,
 				performance.now(),
 			),
 		);
@@ -822,10 +868,14 @@ async function compileDataset(
 	>,
 	existingDatasets = new Map<string, ExistingManifestDataset>(),
 	canReuse = false,
+	sourceRelease: SourceRelease | undefined = undefined,
 	startedAt = performance.now(),
 ) {
 	const existing = existingDatasets.get(definition.type);
-	if (canReuse && (await canReuseDataset(existing, definition))) {
+	if (
+		canReuse &&
+		(await canReuseDataset(existing, definition, sourceRelease))
+	) {
 		if (definition.payload?.regionChunks?.kind === "regional") {
 			compiledDatasets.set(definition.precompiledFile, {
 				data: JSON.parse(
