@@ -18,6 +18,7 @@ import {
 	utimes,
 	writeFile,
 } from "fs/promises";
+import { createReadStream } from "fs";
 import { join, dirname, relative } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
@@ -90,7 +91,10 @@ type SourceRelease = {
 	files: Set<string>;
 };
 
-type FileSnapshot = SourceFileStamp & { path: string };
+type FileSnapshot = SourceFileStamp & {
+	path: string;
+	sha256?: string;
+};
 
 type AtlasAssetsCache = {
 	inputs: FileSnapshot[];
@@ -444,6 +448,12 @@ const isReleasedSource = (
 	input.modifiedAt <= release.validatedAt &&
 	release.files.has(relative(SOURCE_DATA, path));
 
+const fileHash = async (path: string) => {
+	const hash = createHash("sha256");
+	for await (const chunk of createReadStream(path)) hash.update(chunk);
+	return hash.digest("hex");
+};
+
 const fileSnapshots = async (
 	directory: string,
 	prefix = "",
@@ -460,15 +470,34 @@ const fileSnapshots = async (
 	return snapshots.sort((left, right) => left.path.localeCompare(right.path));
 };
 
-const sameFileSnapshots = (
+const sameFileSnapshots = async (
 	left: readonly FileSnapshot[],
 	right: readonly FileSnapshot[],
+	directory: string,
+) => {
+	if (left.length !== right.length) return false;
+	for (const [index, snapshot] of left.entries()) {
+		const current = right[index];
+		if (!current || snapshot.path !== current.path) return false;
+		if (sameFileStamp(snapshot, current)) continue;
+		if (
+			!snapshot.sha256 ||
+			(await fileHash(join(directory, current.path))) !== snapshot.sha256
+		)
+			return false;
+	}
+	return true;
+};
+
+const snapshotFileContents = async (
+	snapshots: readonly FileSnapshot[],
+	directory: string,
 ) =>
-	left.length === right.length &&
-	left.every(
-		(snapshot, index) =>
-			snapshot.path === right[index]?.path &&
-			sameFileStamp(snapshot, right[index]!),
+	Promise.all(
+		snapshots.map(async (snapshot) => ({
+			...snapshot,
+			sha256: await fileHash(join(directory, snapshot.path)),
+		})),
 	);
 
 const outputMatches = async (name: string, expected: CompiledOutput) => {
@@ -699,7 +728,8 @@ async function main() {
 			),
 		);
 	}
-	const boundaryInputs = await fileSnapshots(join(PUBLIC_DATA, "boundaries"));
+	const boundaryDirectory = join(PUBLIC_DATA, "boundaries");
+	const boundaryInputs = await fileSnapshots(boundaryDirectory);
 	// The gazetteer, mappings and upload index all traverse overlapping boundary
 	// releases. Share each raw asset for this build; each loader still owns its
 	// decoded representation, so their contracts and mutations remain isolated.
@@ -713,10 +743,19 @@ async function main() {
 		return content;
 	};
 	const cachedAtlasAssets = existingManifest.artifacts?.atlasAssets;
+	const hasBoundaryContentHashes =
+		cachedAtlasAssets?.inputs.every(
+			(snapshot) => typeof snapshot.sha256 === "string",
+		) ?? false;
 	const canReuseAtlasAssets =
 		canReuse &&
 		cachedAtlasAssets &&
-		sameFileSnapshots(cachedAtlasAssets.inputs, boundaryInputs) &&
+		hasBoundaryContentHashes &&
+		(await sameFileSnapshots(
+			cachedAtlasAssets.inputs,
+			boundaryInputs,
+			boundaryDirectory,
+		)) &&
 		(await outputMatches(
 			"gazetteer.core",
 			cachedAtlasAssets.outputs.gazetteerCore,
@@ -771,6 +810,12 @@ async function main() {
 				),
 			);
 	if (canReuseAtlasAssets) console.log("  atlas assets: cached");
+	const recordedBoundaryInputs = canReuseAtlasAssets
+		? boundaryInputs.map((snapshot, index) => ({
+				...snapshot,
+				sha256: cachedAtlasAssets.inputs[index]!.sha256,
+			}))
+		: await snapshotFileContents(boundaryInputs, boundaryDirectory);
 	// The collisions are written apart from the dataset that describes them, so
 	// the card can be drawn from the small file and the 6 MB of points is only
 	// fetched once someone selects the dataset. Counting them per location needs
@@ -844,7 +889,7 @@ async function main() {
 		precompiler: { fingerprint: compilerFingerprint },
 		artifacts: {
 			atlasAssets: {
-				inputs: boundaryInputs,
+				inputs: recordedBoundaryInputs,
 				outputs: {
 					gazetteerCore: (await gazetteerCore).compiled,
 					matchIndex: await matchIndex,
