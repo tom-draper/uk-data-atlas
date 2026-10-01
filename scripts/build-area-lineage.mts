@@ -53,7 +53,7 @@ for (const geography of LINEAGE_GEOGRAPHIES) {
 			geographyResolver.successorArea(
 				{ geography, boundaryRelease: from, code },
 				{ geography, boundaryRelease: to },
-			)?.code,
+			),
 	);
 	const exceptions = lineage[geography].steps.reduce(
 		(count, step) =>
