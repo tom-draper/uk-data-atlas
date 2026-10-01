@@ -7,7 +7,10 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
-import { ConstituencyEstimateIndicator } from "@/components/ConstituencyEstimateIndicator";
+import {
+	CONSTITUENCY_ESTIMATE_NOTE,
+	isConstituencyEstimate,
+} from "@/components/ConstituencyEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
 
@@ -140,17 +143,15 @@ export default function GeneralElectionResultChart({
 	return (
 		<ChartCard
 			heading={`${data.year} General Election`}
+			estimateNote={
+				isConstituencyEstimate(selectedArea, data.viaConstituency)
+					? CONSTITUENCY_ESTIMATE_NOTE
+					: undefined
+			}
 			headerEnd={
-				(data.viaConstituency || data.turnout !== null) && (
+				data.turnout !== null && (
 					<div className="flex items-center gap-1 text-[9px] text-gray-500 font-medium">
-						<ConstituencyEstimateIndicator
-							selectedArea={selectedArea}
-							hasData={data.viaConstituency}
-							isDark={isDark}
-						/>
-						{data.turnout !== null && (
-							<span>{data.turnout.toFixed(1)}% turnout</span>
-						)}
+						<span>{data.turnout.toFixed(1)}% turnout</span>
 					</div>
 				)
 			}
