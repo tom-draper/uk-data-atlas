@@ -41,7 +41,7 @@ artifact and the old modules read those artifacts:
 | Named locations, extents       | `LOCATIONS` at runtime           | gazetteer core (`membersOf`, `boundsOf`)                                             |
 | Upload column matching         | `buildAreaBank` from geometry    | `gazetteer.matchindex.json` into `areaBank`                                          |
 | Ward/LAD, cross-year codes     | derived from geometry in browser | API resolver, via `boundary-mappings.json` and `area-lineage.json` into `codeMapper` |
-| LSOA to LAD                    | named-location boxes             | `lsoa-lad-mappings-<year>.json`                                                      |
+| LSOA to LAD                    | named-location boxes             | API resolver, via `lsoa-lad-mappings-<year>.json`                                    |
 | Constituency to LAD membership | ward centroid point-in-polygon   | `constituency-lad-overlaps.json` crosswalk                                           |
 | How a family scopes a location | per-consumer type switches       | `BOUNDARY_CAPABILITIES` (`boundaries/capabilities`)                                  |
 
@@ -63,7 +63,7 @@ All live in `public/data/datasets/`. Sizes as of 2026-09-27.
 | `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | 305 KB / 44 KB  |
 | `gazetteer.matchindex.json`      | `precompile-data.mts`             | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
 | `boundary-mappings.json`         | `build-area-containment.mts`      | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
-| `lsoa-lad-mappings-<year>.json`  | `precompile-data.mts`             | on demand, LSOA location filter         | small           |
+| `lsoa-lad-mappings-<year>.json`  | `build-area-containment.mts`      | on demand, LSOA location filter         | small           |
 
 **Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
 named locations still reference, 650 constituencies (2024), the 9 English

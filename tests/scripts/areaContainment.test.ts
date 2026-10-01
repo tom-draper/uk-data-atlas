@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
 	compileAreaContainment,
+	compileLsoaLadContainment,
 	type ContainmentCrosswalk,
 } from "@/scripts/area-containment";
 
@@ -169,5 +170,61 @@ describe("area containment from the resolver", () => {
 				...constituencies.slice(2),
 			]),
 		).toThrow("places ward/2017-12 in no constituency");
+	});
+});
+
+const lsoaCrosswalk = (
+	method: string,
+	from: string,
+	to: string,
+	pairs: Array<[string, ...string[]]>,
+): ContainmentCrosswalk => ({
+	...crosswalk(method, from, ["localAuthority", to], pairs),
+	from: { geography: "lsoa", boundaryRelease: from },
+});
+
+describe("LSOA local authorities from the resolver", () => {
+	// LAD23B was abolished by 2026; LAD23A carries on as LAD26A.
+	const carryOn = (code: string, release: string) =>
+		release === "2023" ? { LAD23A: "LAD26A" }[code] : undefined;
+
+	it("lets a published authority decide where it carries on to the newest release", () => {
+		expect(
+			compileLsoaLadContainment(
+				[
+					{ year: 2021, release: "2021-12" },
+					{ year: 2011, release: "2011-12" },
+				],
+				[
+					lsoaCrosswalk("best-fit", "2021-12", "2026", [
+						["L1", "LAD26B"],
+						["L2", "LAD26C"],
+						["L3", "LAD26C"],
+					]),
+					lsoaCrosswalk("clean-containment", "2021-12", "2023", [
+						["L1", "LAD23A"],
+						// Its authority ended, so the best fit keeps it.
+						["L2", "LAD23B"],
+					]),
+					lsoaCrosswalk("best-fit", "2011-12", "2026", [
+						["K1", "LAD26A"],
+					]),
+				],
+				carryOn,
+			),
+		).toEqual({
+			2021: { L1: "LAD26A", L2: "LAD26C", L3: "LAD26C" },
+			2011: { K1: "LAD26A" },
+		});
+	});
+
+	it("refuses an LSOA release the resolver cannot place", () => {
+		expect(() =>
+			compileLsoaLadContainment(
+				[{ year: 2001, release: "2001-12" }],
+				[],
+				carryOn,
+			),
+		).toThrow("places lsoa/2001-12 in no local authority");
 	});
 });
