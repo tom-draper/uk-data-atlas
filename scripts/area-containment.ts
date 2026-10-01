@@ -138,3 +138,50 @@ export const compileAreaContainment = (
 
 	return { wardToLad, ladToWards, constituencyToWards };
 };
+
+/** A served LSOA release: the atlas year and the release it is drawn from. */
+export type LsoaRelease = { year: number; release: string };
+
+/**
+ * Each served LSOA release placed in the newest local authorities, the
+ * vocabulary the gazetteer's locations speak. Where ONS publishes an LSOA's
+ * authority, it decides wherever that authority carries on to the newest
+ * release under the resolver's lineage; every other LSOA takes the
+ * authority holding most of it.
+ */
+export const compileLsoaLadContainment = (
+	lsoaReleases: LsoaRelease[],
+	crosswalks: ContainmentCrosswalk[],
+	carryOn: (code: string, release: string) => string | undefined,
+): Record<number, Record<string, string>> => {
+	const fromLsoas = (crosswalk: ContainmentCrosswalk, release: string) =>
+		crosswalk.from.geography === "lsoa" &&
+		crosswalk.from.boundaryRelease === release &&
+		crosswalk.to.geography === "localAuthority";
+	const lsoaToLad: Record<number, Record<string, string>> = {};
+	for (const { year, release } of lsoaReleases) {
+		const bestFit = crosswalks.find(
+			(crosswalk) =>
+				fromLsoas(crosswalk, release) &&
+				crosswalk.method === "best-fit",
+		);
+		if (!bestFit)
+			throw new Error(
+				`The resolver places lsoa/${release} in no local authority.`,
+			);
+		const parents = singleTargets(bestFit);
+		for (const published of crosswalks.filter(
+			(crosswalk) =>
+				fromLsoas(crosswalk, release) &&
+				crosswalk.method === "clean-containment",
+		))
+			for (const [lsoa, lad] of singleTargets(published)) {
+				const newest = carryOn(lad, published.to.boundaryRelease);
+				if (newest) parents.set(lsoa, newest);
+			}
+		lsoaToLad[year] = Object.fromEntries(
+			[...parents].sort(([left], [right]) => left.localeCompare(right)),
+		);
+	}
+	return lsoaToLad;
+};
