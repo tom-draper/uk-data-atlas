@@ -44,6 +44,43 @@ const multiPolygon = (
 				),
 	);
 
+const rounded = (geometry: MultiPolygon, precision: number): MultiPolygon =>
+	geometry.map((polygon) =>
+		polygon.map((ring) =>
+			ring.map(
+				([x, y]) =>
+					[
+						Math.round(x * precision) / precision,
+						Math.round(y * precision) / precision,
+					] as [number, number],
+			),
+		),
+	);
+
+/**
+ * One clip, retried at a millimetre's precision if polygon-clipping's sweep
+ * line fails on near-coincident edges, or why it could not be made.
+ */
+const clipRetried = (
+	clipper: BoundedClipper,
+	operation: "difference" | "intersection",
+	first: MultiPolygon,
+	second: MultiPolygon,
+): { geometry: MultiPolygon } | { reason: string } => {
+	const attempt = clipper.clip(operation, first, second);
+	if (attempt.status === "clipped") return { geometry: attempt.geometry };
+	const retry = clipper.clip(
+		operation,
+		rounded(first, RETRY_PRECISION),
+		rounded(second, RETRY_PRECISION),
+	);
+	return retry.status === "clipped"
+		? { geometry: retry.geometry }
+		: {
+				reason: `${attempt.reason} Retried at 1e-8 degrees: ${retry.reason}`,
+			};
+};
+
 /**
  * Where two releases of one code disagree: the symmetric difference of the
  * whole multipolygons, retried at a millimetre's precision if the clipper
@@ -122,12 +159,13 @@ const claimedWidthM = (
 	let widest = 0;
 	for (const [, other] of others) {
 		if (!boundsIntersect(bounds, other.bounds)) continue;
-		const claimed = clipper.clip(
+		const claimed = clipRetried(
+			clipper,
 			"intersection",
 			difference,
 			multiPolygon(other),
 		);
-		if (claimed.status !== "clipped") return { reason: claimed.reason };
+		if ("reason" in claimed) return claimed;
 		widest = Math.max(widest, ...claimed.geometry.map(polygonWidthM));
 	}
 	return round(widest, 1);
@@ -145,18 +183,20 @@ const claimedDifference = (
 	sources: Array<[string, AreaGeometry]>,
 	targets: Array<[string, AreaGeometry]>,
 ): number | { reason: string } => {
-	const lost = clipper.clip(
+	const lost = clipRetried(
+		clipper,
 		"difference",
 		multiPolygon(source),
 		multiPolygon(target),
 	);
-	const gained = clipper.clip(
+	if ("reason" in lost) return lost;
+	const gained = clipRetried(
+		clipper,
 		"difference",
 		multiPolygon(target),
 		multiPolygon(source),
 	);
-	if (lost.status !== "clipped") return { reason: lost.reason };
-	if (gained.status !== "clipped") return { reason: gained.reason };
+	if ("reason" in gained) return gained;
 	const others = (areas: Array<[string, AreaGeometry]>) =>
 		areas.filter(([other]) => other !== code);
 	const toNeighbours = claimedWidthM(
