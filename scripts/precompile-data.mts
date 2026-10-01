@@ -76,13 +76,14 @@ type ExistingManifestDataset = {
 	contract: unknown;
 	inputs: SourceArtifact[];
 	summary: unknown;
-	compiled: {
-		bytes: number;
-		sha256: string;
-	};
+	compiled: CompiledOutput;
 };
 
-type CompiledOutput = { bytes: number; sha256: string };
+type CompiledOutput = {
+	bytes: number;
+	sha256: string;
+	modifiedAt?: number;
+};
 
 type SourceFileStamp = { bytes: number; modifiedAt: number };
 
@@ -303,12 +304,14 @@ const timeStage = async <T,>(label: string, work: () => Promise<T>) => {
 
 const out = async (name: string, data: unknown, log = true) => {
 	const json = JSON.stringify(data);
-	await writeAtomically(join(OUT_DIR, `${name}.json`), json);
+	const path = join(OUT_DIR, `${name}.json`);
+	await writeAtomically(path, json);
 	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
 	if (log) console.log(`  dataset: ${name}.json (${kb} KB)`);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
 		sha256: createHash("sha256").update(json).digest("hex"),
+		modifiedAt: (await stat(path)).mtimeMs,
 	};
 };
 
@@ -513,6 +516,28 @@ const outputMatches = async (name: string, expected: CompiledOutput) => {
 	}
 };
 
+const cachedDatasetOutput = async (
+	name: string,
+	expected: CompiledOutput,
+): Promise<CompiledOutput | undefined> => {
+	try {
+		const path = join(OUT_DIR, `${name}.json`);
+		const output = await stat(path);
+		if (output.size !== expected.bytes) return undefined;
+		if (expected.modifiedAt === output.mtimeMs)
+			return { ...expected, modifiedAt: output.mtimeMs };
+		const contents = await readFile(path);
+		if (
+			createHash("sha256").update(contents).digest("hex") !==
+			expected.sha256
+		)
+			return undefined;
+		return { ...expected, modifiedAt: output.mtimeMs };
+	} catch {
+		return undefined;
+	}
+};
+
 const isSourceArtifact = (value: unknown): value is SourceArtifact =>
 	typeof value === "object" &&
 	value !== null &&
@@ -544,7 +569,7 @@ const canReuseDataset = async (
 		!Array.isArray(existing.inputs) ||
 		!existing.inputs.every(isSourceArtifact)
 	)
-		return false;
+		return undefined;
 
 	try {
 		for (const artifact of existing.inputs) {
@@ -554,18 +579,14 @@ const canReuseDataset = async (
 				!sameFileStamp(artifact.input, input) &&
 				!isReleasedSource(sourceRelease, path, input)
 			)
-				return false;
+				return undefined;
 		}
-		const output = await readFile(
-			join(OUT_DIR, `${definition.precompiledFile}.json`),
-		);
-		return (
-			output.byteLength === existing.compiled.bytes &&
-			createHash("sha256").update(output).digest("hex") ===
-				existing.compiled.sha256
+		return cachedDatasetOutput(
+			definition.precompiledFile,
+			existing.compiled,
 		);
 	} catch {
-		return false;
+		return undefined;
 	}
 };
 
@@ -917,10 +938,11 @@ async function compileDataset(
 	startedAt = performance.now(),
 ) {
 	const existing = existingDatasets.get(definition.type);
-	if (
-		canReuse &&
-		(await canReuseDataset(existing, definition, sourceRelease))
-	) {
+	const cached = canReuse
+		? await canReuseDataset(existing, definition, sourceRelease)
+		: undefined;
+	if (cached && existing) {
+		const reused = { ...existing, compiled: cached };
 		if (definition.payload?.regionChunks?.kind === "regional") {
 			compiledDatasets.set(definition.precompiledFile, {
 				data: JSON.parse(
@@ -933,9 +955,9 @@ async function compileDataset(
 			});
 		}
 		console.log(
-			`  dataset: ${definition.precompiledFile}.json (cached; ${Math.round(existing.compiled.bytes / 1024)} KB; ${elapsed(startedAt)})`,
+			`  dataset: ${definition.precompiledFile}.json (cached; ${Math.round(cached.bytes / 1024)} KB; ${elapsed(startedAt)})`,
 		);
-		return existing;
+		return reused;
 	}
 	const { reader, artifacts } = createTrackedReader();
 	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
