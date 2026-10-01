@@ -19,6 +19,11 @@ export interface ProcessedLocalElectionYearData {
 	hasData: boolean;
 	/** No ward of this election's boundaries is the one picked on the map. */
 	boundariesChanged?: boolean;
+	/**
+	 * The results are of the ward the picked one succeeded, or succeeded it,
+	 * across a small redrawing, rather than of the same ward.
+	 */
+	boundariesRedrawn?: boolean;
 }
 
 // Cache area vote aggregations by area, dataset slice and election year.
@@ -77,6 +82,7 @@ export function computeLocalElectionYearData(
 
 	let rawPartyVotes: PartyVotes | null = null;
 	let turnout: number | null = null;
+	let boundariesRedrawn = false;
 
 	// Handle Ward Selection
 	if (selectedArea && selectedArea.type === "ward") {
@@ -97,6 +103,7 @@ export function computeLocalElectionYearData(
 				boundariesChanged: true,
 			};
 		const data = found && dataset.data[found.code];
+		boundariesRedrawn = found?.status === "found" && !!found.realigned;
 
 		if (data) {
 			rawPartyVotes = data.partyVotes;
@@ -300,5 +307,8 @@ export function computeLocalElectionYearData(
 		totalVotes,
 		turnout,
 		hasData: partyData.length > 0,
+		...(boundariesRedrawn && partyData.length > 0
+			? { boundariesRedrawn: true }
+			: {}),
 	};
 }

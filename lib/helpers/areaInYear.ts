@@ -3,7 +3,11 @@ import { LINEAGE_TYPES } from "@/lib/data/boundaries/codeMapper";
 import type { BoundaryType } from "@/lib/types";
 
 export type AreaInYear =
-	| { status: "found"; code: string }
+	/**
+	 * `realigned` where the area found succeeded the picked one across a
+	 * small redrawing, rather than being the same area.
+	 */
+	| { status: "found"; code: string; realigned?: true }
 	/** No area of that year's boundaries is the same as the one picked. */
 	| { status: "boundaries-changed" };
 
@@ -21,7 +25,7 @@ type PickedArea = { type: BoundaryType; code: string; boundaryYear?: number };
 export const areaInYear = (
 	mapper:
 		| (Pick<CodeMapper, "getCodeForYear"> &
-				Partial<Pick<CodeMapper, "hasAreaLineage">>)
+				Partial<Pick<CodeMapper, "hasAreaLineage" | "isRealigned">>)
 		| undefined,
 	area: PickedArea,
 	targetYear: number,
@@ -40,8 +44,14 @@ export const areaInYear = (
 			targetYear,
 			area.boundaryYear,
 		);
-		return code === undefined
-			? { status: "boundaries-changed" }
+		if (code === undefined) return { status: "boundaries-changed" };
+		return mapper.isRealigned?.(
+			area.type,
+			area.code,
+			targetYear,
+			area.boundaryYear,
+		)
+			? { status: "found", code, realigned: true }
 			: { status: "found", code };
 	}
 	if (holds(area.code)) return { status: "found", code: area.code };

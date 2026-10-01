@@ -96,4 +96,41 @@ describe("computeLocalElectionYearData", () => {
 		// Without its boundary year, a ward is found by its code.
 		expect(pick("S").totalVotes).toBe(9);
 	});
+
+	it("shows a redrawn ward's result, marked as redrawn", () => {
+		// R was redrawn by a street as R2: its realigned successor.
+		const codeMapper = {
+			hasAreaLineage: () => true,
+			getCodeForYear: (_: string, code: string) =>
+				({ R: "R2", K: "K" })[code],
+			isRealigned: (_: string, code: string) => code === "R",
+		};
+		const results = dataset({ R2: { votes: 5 }, K: { votes: 3 } });
+		const pick = (code: string) =>
+			computeLocalElectionYearData(
+				2024,
+				results,
+				null,
+				{
+					type: "ward",
+					code,
+					name: code,
+					data: null,
+					boundaryYear: 2021,
+				},
+				codeMapper,
+				undefined,
+				undefined,
+				0,
+				undefined,
+				undefined,
+			);
+
+		expect(pick("R")).toMatchObject({
+			totalVotes: 5,
+			hasData: true,
+			boundariesRedrawn: true,
+		});
+		expect(pick("K").boundariesRedrawn).toBeUndefined();
+	});
 });

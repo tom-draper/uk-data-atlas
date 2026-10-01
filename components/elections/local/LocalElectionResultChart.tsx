@@ -26,6 +26,7 @@ interface ProcessedYearData {
 	turnout: number | null;
 	hasData: boolean;
 	boundariesChanged?: boolean;
+	boundariesRedrawn?: boolean;
 }
 
 function VoteBar({ data }: { data: ProcessedPartyData[] }) {
@@ -102,9 +103,16 @@ export default function LocalElectionResultChart({
 		<ChartCard
 			heading={`${data.year} Local Elections`}
 			headerEnd={
-				data.turnout ? (
-					<span className="text-[9px] text-gray-500 font-medium">
-						{data.turnout.toFixed(1)}% turnout
+				data.turnout || data.boundariesRedrawn ? (
+					<span className="flex items-center gap-1.5 text-[9px] text-gray-500 font-medium">
+						{data.boundariesRedrawn && (
+							<span title="This ward was redrawn slightly between this election and the map's boundaries; these are the results for the ward as it was then.">
+								Redrawn
+							</span>
+						)}
+						{data.turnout ? (
+							<span>{data.turnout.toFixed(1)}% turnout</span>
+						) : null}
 					</span>
 				) : null
 			}
