@@ -11,7 +11,10 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
@@ -118,12 +121,10 @@ export default function BroadbandChart({
 	return (
 		<ChartCard
 			heading={`Fixed Broadband Coverage [${dataset.year}]`}
-			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={hasData}
-					isDark={isDark}
-				/>
+			estimateNote={
+				isLocalAuthorityEstimate(selectedArea, hasData)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
 			}
 			accent={hasData ? ACCENT : null}
 			isActive={isActive}

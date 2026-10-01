@@ -6,9 +6,12 @@ import {
 	Dataset,
 	SelectedArea,
 } from "@lib/types";
-import { ChartCard } from "@/components/ChartCard";
+import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
-import { ConstituencyEstimateIndicator } from "@/components/ConstituencyEstimateIndicator";
+import {
+	CONSTITUENCY_ESTIMATE_NOTE,
+	isConstituencyEstimate,
+} from "@/components/ConstituencyEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import {
@@ -88,13 +91,15 @@ export default function SchoolPerformanceConstituencyChart({
 	return (
 		<ChartCard
 			heading="GCSE Performance [2024/25]"
+			estimateNote={
+				isConstituencyEstimate(selectedArea, hasData)
+					? CONSTITUENCY_ESTIMATE_NOTE
+					: undefined
+			}
 			headerEnd={
-				<ConstituencyEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={hasData}
-					isDark={isDark}
-					fallback="England"
-				/>
+				<ChartCardHeaderNote isDark={isDark}>
+					England
+				</ChartCardHeaderNote>
 			}
 			accent={hasData ? color : null}
 			isActive={isActive}

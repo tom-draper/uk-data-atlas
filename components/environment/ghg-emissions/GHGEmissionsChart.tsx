@@ -11,7 +11,10 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import {
 	selectedAreaLadCode,
@@ -129,12 +132,10 @@ export default function GHGEmissionsChart({
 	return (
 		<ChartCard
 			heading={`Greenhouse Gas Emissions [${dataset.year}]`}
-			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={stats !== null}
-					isDark={isDark}
-				/>
+			estimateNote={
+				isLocalAuthorityEstimate(selectedArea, stats !== null)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
 			}
 			accent={stats ? ACCENT : null}
 			isActive={isActive}

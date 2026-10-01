@@ -11,7 +11,10 @@ import {
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { hexToRgb, rgbToHex } from "@/lib/helpers/colorScale/interpolation";
 import {
@@ -179,12 +182,10 @@ export default function LifeExpectancyChart({
 	return (
 		<ChartCard
 			heading={`${dataset.label} [${dataset.dataPeriod}]`}
-			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={leStats !== null}
-					isDark={isDark}
-				/>
+			estimateNote={
+				isLocalAuthorityEstimate(selectedArea, leStats !== null)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
 			}
 			headerClassName="mb-0"
 			accent={accentColor}

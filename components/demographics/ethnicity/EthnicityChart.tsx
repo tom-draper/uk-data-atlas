@@ -12,8 +12,11 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard } from "@/components/ChartCard";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useExcludedCategories } from "@/lib/context/ExcludedCategoriesContext";
 import { formatCount } from "@/lib/helpers/formatCount";
@@ -180,13 +183,15 @@ export default function EthnicityChart({
 	return (
 		<ChartCard
 			heading={`Ethnicity [${dataset.year}]`}
+			estimateNote={
+				isLocalAuthorityEstimate(selectedArea, processedData.hasData)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
+			}
 			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={processedData.hasData}
-					isDark={isDark}
-					fallback="England & Wales"
-				/>
+				<ChartCardHeaderNote isDark={isDark}>
+					England & Wales
+				</ChartCardHeaderNote>
 			}
 			accent={accentColor}
 			isActive={isActive}

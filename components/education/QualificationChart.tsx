@@ -15,8 +15,11 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard } from "@/components/ChartCard";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
 import {
@@ -96,13 +99,15 @@ export default function QualificationChart({
 	return (
 		<ChartCard
 			heading={`Qualifications [${dataset.year}]`}
+			estimateNote={
+				isLocalAuthorityEstimate(selectedArea, hasData)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
+			}
 			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={hasData}
-					isDark={isDark}
-					fallback="England & Wales"
-				/>
+				<ChartCardHeaderNote isDark={isDark}>
+					England & Wales
+				</ChartCardHeaderNote>
 			}
 			accent={hasData ? accentColor : null}
 			isActive={isActive}

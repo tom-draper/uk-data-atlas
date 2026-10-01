@@ -22,6 +22,7 @@ interface ChartCardProps {
 	heading: ReactNode;
 	headingClassName?: string;
 	headingTitle?: string;
+	estimateNote?: string;
 	headerClassName?: string;
 	headerEnd?: ReactNode;
 	accent: string | null;
@@ -33,6 +34,22 @@ interface ChartCardProps {
 	activeStyle?: CSSProperties;
 	title?: string;
 	minHeightClassName?: string;
+}
+
+export function ChartCardHeaderNote({
+	children,
+	isDark,
+}: {
+	children: ReactNode;
+	isDark: boolean;
+}) {
+	return (
+		<span
+			className={`text-[9px] shrink-0 ml-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}
+		>
+			{children}
+		</span>
+	);
 }
 
 function useActiveHeightFloor(isActive: boolean) {
@@ -70,6 +87,7 @@ export function ChartCard({
 	heading,
 	headingClassName,
 	headingTitle,
+	estimateNote,
 	headerClassName,
 	headerEnd,
 	accent,
@@ -141,6 +159,15 @@ export function ChartCard({
 						title={headingTitle}
 					>
 						{displayHeading}
+						{estimateNote && (
+							<span
+								className="ml-px"
+								title={estimateNote}
+								aria-label={`Estimated: ${estimateNote}`}
+							>
+								*
+							</span>
+						)}
 					</h3>
 					{headerEnd}
 				</div>

@@ -11,8 +11,11 @@ import {
 	ChartContentPlaceholder,
 	useChartsLoading,
 } from "@/components/ChartLoadingPlaceholder";
-import { ChartCard } from "@/components/ChartCard";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { formatCount } from "@/lib/helpers/formatCount";
 import {
@@ -135,13 +138,15 @@ export default function IncomeChart({
 	return (
 		<ChartCard
 			heading={`Median Income [${dataset.year}]`}
+			estimateNote={
+				isLocalAuthorityEstimate(selectedArea, medianIncome !== null)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
+			}
 			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={medianIncome !== null}
-					isDark={isDark}
-					fallback="England"
-				/>
+				<ChartCardHeaderNote isDark={isDark}>
+					England
+				</ChartCardHeaderNote>
 			}
 			accent="#10b981"
 			isActive={isActive}

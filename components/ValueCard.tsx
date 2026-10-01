@@ -1,8 +1,11 @@
 "use client";
 
-import { ChartCard } from "@/components/ChartCard";
+import { ChartCard, ChartCardHeaderNote } from "@/components/ChartCard";
 import { ChartCardValueBar } from "@/components/ChartCardValueBar";
-import { LocalAuthorityEstimateIndicator } from "@/components/LocalAuthorityEstimateIndicator";
+import {
+	isLocalAuthorityEstimate,
+	LOCAL_AUTHORITY_ESTIMATE_NOTE,
+} from "@/components/LocalAuthorityEstimateIndicator";
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import type { ValueCardConfig } from "@/lib/datasets/valueCard";
@@ -69,9 +72,7 @@ export default function ValueCard({
 	if (!card || !dataset) return null;
 
 	const heading = `${card.heading} [${card.period ?? dataset.year}]`;
-	const note = resolved?.viaLocalAuthority
-		? "Local authority"
-		: card.coverage;
+	const note = card.coverage;
 	const value = resolved?.stats.value;
 
 	return (
@@ -79,13 +80,20 @@ export default function ValueCard({
 			heading={heading}
 			headingClassName="min-w-0 truncate"
 			headingTitle={card.headingTitle ?? heading}
+			estimateNote={
+				isLocalAuthorityEstimate(
+					selectedArea,
+					resolved?.viaLocalAuthority === true,
+				)
+					? LOCAL_AUTHORITY_ESTIMATE_NOTE
+					: undefined
+			}
 			headerEnd={
-				<LocalAuthorityEstimateIndicator
-					selectedArea={selectedArea}
-					hasData={resolved?.viaLocalAuthority === true}
-					isDark={isDark}
-					fallback={note}
-				/>
+				note && (
+					<ChartCardHeaderNote isDark={isDark}>
+						{note}
+					</ChartCardHeaderNote>
+				)
 			}
 			accent={resolved ? color : null}
 			isActive={isActive}
