@@ -246,11 +246,13 @@ describe("life expectancy map measures", () => {
 });
 
 describe("renderCustomPoints", () => {
+	const points = [
+		{ value: 1, lon: 0, lat: 51 },
+		{ value: 2, lon: 0, lat: 52 },
+	];
 	const dataset = {
-		points: [
-			{ value: 1, lon: 0, lat: 51 },
-			{ value: 2, lon: 0, lat: 52 },
-		],
+		points,
+		pointStyle: { colorByValue: { 1: "#facc15", 2: "#f97316" } },
 	} as never;
 
 	it("clears the point layers when the filters leave nothing to draw", () => {
@@ -269,7 +271,7 @@ describe("renderCustomPoints", () => {
 	});
 
 	it("draws the points before blanking the choropleth underneath", () => {
-		const { ctx, layerManager } = fakeContext();
+		const { ctx, layerManager, featureBuilder } = fakeContext();
 		const order: string[] = [];
 		layerManager.render.mockImplementation(() => order.push("render"));
 		layerManager.clearBoundaryData.mockImplementation(() =>
@@ -279,5 +281,11 @@ describe("renderCustomPoints", () => {
 		renderCustomPoints(ctx, dataset, DEFAULT_MAP_OPTIONS);
 
 		expect(order).toEqual(["render", "clear"]);
+		expect(featureBuilder.buildPointCollection).toHaveBeenCalledWith(
+			points,
+			1,
+			2,
+			"viridis",
+		);
 	});
 });

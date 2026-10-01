@@ -21,9 +21,7 @@ export interface PointTooltip {
 }
 
 export interface PointStyle {
-	// Optional fixed colours for discrete point values, keyed by value.
-	colorByValue?: Record<number, string>;
-	// A key displayed instead of the generic continuous range control.
+	// A key displayed with colours sampled from the active heatmap theme.
 	legend?: { value: number; label: string }[];
 	tooltip?: PointTooltip;
 	// Circle radii at the point layer's minimum and maximum zoom levels.

@@ -99,7 +99,6 @@ export function renderCustomPoints(
 		min,
 		max,
 		mapOptions.theme.id,
-		dataset.pointStyle?.colorByValue,
 	);
 	// Add the point layers first, then blank the choropleth beneath. Doing it
 	// in this order matters: clearBoundaryData() calls setData() on the boundary
