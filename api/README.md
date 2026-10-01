@@ -4028,7 +4028,7 @@ releases carries an area renumbered at any step of it.
 Identity is deliberately strict, and a ward redrawn by a street is not the
 same area. It is still the ward a map reader recognises, so each crosswalk
 also lists, in `validation.continuity.realigned`, the pairs beyond noise
-whose overlap keeps at least 95% of each (`realignedShare`), choosing only
+whose overlap keeps at least 90% of each (`realignedShare`), choosing only
 each other: a shared code whose extent changed by that little, or a recoded
 pair such as Wigan's Ince, renumbered in 2023 with a strip 47 m wide moved.
 They are not records, so no identity path or conversion follows them. The
