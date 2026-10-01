@@ -19,7 +19,7 @@ type Manifest = {
 
 const fail = (message: string): never => {
 	throw new Error(
-		`${message} Run pnpm precompile locally and commit public/data/.`,
+		`${message} Run pnpm precompile locally.`,
 	);
 };
 

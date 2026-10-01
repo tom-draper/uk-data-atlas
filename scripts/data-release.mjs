@@ -528,7 +528,7 @@ async function verifyPrecompiled() {
 		await stat(join(ROOT, "public", "data", "boundaries"));
 	} catch {
 		fail(
-			"Committed browser data is incomplete. Run pnpm precompile locally and commit public/data/.",
+			"Committed browser data is incomplete. Run pnpm precompile locally.",
 		);
 	}
 }
