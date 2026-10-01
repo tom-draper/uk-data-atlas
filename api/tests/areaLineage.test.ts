@@ -13,6 +13,7 @@ import {
 	compileAreaLineage,
 	followLineage,
 	followLineageFromCode,
+	isRealigned,
 	listedReleases,
 	type AreaLineage,
 } from "../../lib/data/boundaries/areaLineage";
@@ -100,9 +101,10 @@ test("hears a publisher's lookup first, and accepts only a one-to-one answer", (
 	assert.equal(same("S1", "2", "1"), undefined);
 });
 
-// Three releases: P is renumbered Q in 2, and Q ends in 3, though a lookup
-// joining 1 and 3 directly says P is N there; K keeps its code throughout;
-// R ends in 2.
+// Three releases: P is renumbered Q in 2, redrawn by a street, so Q is its
+// realigned successor; Q ends in 3, though a lookup joining 1 and 3 directly
+// says P is the same area as N there; K keeps its code throughout; R ends in
+// 2.
 const answers: Record<string, Record<string, string>> = {
 	"1>2": { K: "K", P: "Q" },
 	"2>1": { K: "K", Q: "P" },
@@ -116,7 +118,17 @@ const lineage: AreaLineage = compileAreaLineage(
 	["1", "2", "3"],
 	(release) =>
 		({ "1": ["K", "P", "R"], "2": ["K", "Q"], "3": ["K", "N"] })[release]!,
-	(code, from, to) => answers[`${from}>${to}`]![code],
+	(code, from, to) => {
+		const answer = answers[`${from}>${to}`]![code];
+		return answer === undefined
+			? undefined
+			: {
+					code: answer,
+					realigned:
+						(code === "P" && to === "2") ||
+						(code === "Q" && to === "1"),
+				};
+	},
 );
 
 test("stores only the codes that do not carry on under their own code", () => {
@@ -129,6 +141,21 @@ test("stores only the codes that do not carry on under their own code", () => {
 		"1>3": { P: "N" },
 		"3>1": { N: "P" },
 	});
+	// The realigned step is listed apart; the direct lookup is not realigned.
+	assert.deepEqual(lineage.realigned, {
+		steps: [
+			{ forward: ["P"], backward: ["Q"] },
+			{ forward: [], backward: [] },
+		],
+		overrides: {},
+	});
+});
+
+test("says which answers lead to a realigned successor", () => {
+	assert.equal(isRealigned(lineage, "P", "1", "2"), true);
+	assert.equal(isRealigned(lineage, "Q", "2", "1"), true);
+	assert.equal(isRealigned(lineage, "P", "1", "3"), false);
+	assert.equal(isRealigned(lineage, "K", "1", "3"), false);
 });
 
 test("follows an area release by release, in either direction", () => {

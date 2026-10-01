@@ -4,6 +4,7 @@ import test from "node:test";
 import { readApiCatalogues } from "../../src/catalogueLoader";
 import {
 	followLineage,
+	isRealigned,
 	type AreaLineage,
 } from "../../../lib/data/boundaries/areaLineage";
 
@@ -37,11 +38,12 @@ test("the atlas's committed area lineage answers as the resolver does", () => {
 				) {
 					const code = codes[index]!;
 					checked += 1;
-					const expected = geographyResolver.successorArea(
+					const answer = geographyResolver.successorArea(
 						{ geography, boundaryRelease: from, code },
 						{ geography, boundaryRelease: to },
-					)?.code;
-					const actual = followLineage(lineage, code, from, to);
+					);
+					const expected = `${answer?.code}${answer?.realigned ? " (realigned)" : ""}`;
+					const actual = `${followLineage(lineage, code, from, to)}${isRealigned(lineage, code, from, to) ? " (realigned)" : ""}`;
 					if (actual !== expected)
 						differences.push(
 							`${geography} ${from}>${to} ${code}: ${actual} not ${expected}`,
