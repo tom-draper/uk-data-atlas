@@ -257,6 +257,13 @@ export type GeometricContainmentCrosswalkArtifact = CrosswalkArtifactBase & {
 
 export type ExtentContinuityValidation = {
 	sliverWidthM: number;
+	/**
+	 * How a shared code's difference wider than slivers is judged: by the
+	 * widest piece another area of the other release holds, since the rest,
+	 * such as coast one generalised outline includes and the other leaves
+	 * out, moves no boundary between areas.
+	 */
+	differenceRule: "claimed-by-another-area";
 	sourceAreaCount: number;
 	targetAreaCount: number;
 	/** Codes present in both releases, whether or not published. */
@@ -273,6 +280,8 @@ export type ExtentContinuityValidation = {
 		relation: "changed" | "indeterminate";
 		/** Width of the difference's widest piece, twice area over perimeter. */
 		widestDifferenceM: number;
+		/** Width of the widest piece of it another area holds. */
+		claimedDifferenceM: number;
 		sourceShare: number;
 		targetShare: number;
 	}>;
@@ -344,6 +353,12 @@ export type ExtentContinuityCrosswalkArtifact = CrosswalkArtifactBase & {
 				match: "same-code" | "recoded";
 				/** Width of the difference's widest piece, in metres. */
 				widestDifferenceM: number;
+				/**
+				 * Where the difference is wider than slivers, the width of the
+				 * widest piece of it another area holds, which is what was
+				 * judged: the rest is coast or estuary one outline draws.
+				 */
+				claimedDifferenceM?: number;
 				/** Overlap as a share of the source area. */
 				sourceShare: number;
 				/** Overlap as a share of the target area. */

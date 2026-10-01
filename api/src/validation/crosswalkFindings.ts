@@ -391,7 +391,9 @@ export const crosswalkFindings = (
 				if (target.match === "same-code")
 					return (
 						target.code !== record.source.code ||
-						target.widestDifferenceM >= continuity.sliverWidthM / 2
+						(target.claimedDifferenceM ??
+							target.widestDifferenceM) >=
+							continuity.sliverWidthM / 2
 					);
 				return (
 					recoded.status !== "compared" ||

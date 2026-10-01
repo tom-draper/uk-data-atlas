@@ -556,6 +556,7 @@ test("reports published extent continuity findings separately from code-set evid
 			},
 			continuity: {
 				sliverWidthM: 100,
+				differenceRule: "claimed-by-another-area",
 				sourceAreaCount: 3,
 				targetAreaCount: 3,
 				sharedCodeCount: 2,
@@ -565,6 +566,7 @@ test("reports published extent continuity findings separately from code-set evid
 						code: "E05000002",
 						relation: "changed",
 						widestDifferenceM: 250,
+						claimedDifferenceM: 250,
 						sourceShare: 0.8,
 						targetShare: 0.75,
 					},
