@@ -4135,7 +4135,8 @@ purpose: a best fit places an area, it does not establish membership, so no
 conversion path or aggregation composes through it, and area relationships
 state `within` only for the children measured within. The atlas reads these
 to place each ward in a local authority where the ward release names none,
-and in a constituency of each code set.
+and in a constituency of each code set, and each LSOA in the newest local
+authorities.
 
 `pnpm tsx scripts/propose-geometric-containment.ts` searches for these
 hierarchies. It asks only pairs that could nest, where one release has more
