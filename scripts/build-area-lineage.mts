@@ -1,7 +1,8 @@
 /**
  * Write the atlas's area lineage: for each geography it maps data across
  * years, where each area goes between the releases it serves, as the API's
- * geography resolver answers it. The atlas reads this file in place of
+ * geography resolver answers it: the same area, or the one that succeeded it
+ * across a small redrawing. The atlas reads this file in place of
  * matching areas by name, so what the map shows is what the API would say.
  *
  * Needs the API's build output (pnpm --dir api build); the file it writes is
@@ -49,7 +50,7 @@ for (const geography of LINEAGE_GEOGRAPHIES) {
 		releases,
 		(release) => geographyResolver.areaCodes(geography, release) ?? [],
 		(code, from, to) =>
-			geographyResolver.sameArea(
+			geographyResolver.successorArea(
 				{ geography, boundaryRelease: from, code },
 				{ geography, boundaryRelease: to },
 			)?.code,

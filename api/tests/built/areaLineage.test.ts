@@ -37,7 +37,7 @@ test("the atlas's committed area lineage answers as the resolver does", () => {
 				) {
 					const code = codes[index]!;
 					checked += 1;
-					const expected = geographyResolver.sameArea(
+					const expected = geographyResolver.successorArea(
 						{ geography, boundaryRelease: from, code },
 						{ geography, boundaryRelease: to },
 					)?.code;
