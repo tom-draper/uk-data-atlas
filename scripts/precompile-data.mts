@@ -40,7 +40,10 @@ import { loadRoadSafety } from "../lib/data/road-safety/loader";
 import { loadGazetteerCore } from "../lib/data/gazetteer/loader";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import { loadMatchIndex } from "../lib/data/gazetteer/matchIndex";
-import { parseBoundaryWardToLad } from "../lib/data/boundaries/mappings";
+import {
+	parseBoundaryWardToLad,
+	parseParishLadMappings,
+} from "../lib/data/boundaries/mappings";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {
@@ -435,18 +438,27 @@ async function main() {
 			return data;
 		},
 	);
-	// Ward containment comes from the API's geography resolver, written by
-	// `pnpm containment:build` and committed; upload matching reads ward
-	// parents from it, so the index is compiled in step with that file.
+	// Ward and parish containment come from the API's geography resolver,
+	// written by `pnpm containment:build` and committed; upload matching reads
+	// ward and parish parents from them, so the index is compiled in step.
 	const boundaryMappings = readFile(
 		join(OUT_DIR, "boundary-mappings.json"),
 		"utf8",
 	).then((json) => ({ wardToLad: parseBoundaryWardToLad(JSON.parse(json)) }));
-	const matchIndex = boundaryMappings.then(async ({ wardToLad }) =>
-		out(
-			"gazetteer.matchindex",
-			await loadMatchIndex(readBoundaryAsset, wardToLad),
-		),
+	const parishToLad = readFile(
+		join(OUT_DIR, "parish-lad-mappings.json"),
+		"utf8",
+	).then((json) => parseParishLadMappings(JSON.parse(json)));
+	const matchIndex = Promise.all([boundaryMappings, parishToLad]).then(
+		async ([{ wardToLad }, parishParents]) =>
+			out(
+				"gazetteer.matchindex",
+				await loadMatchIndex(
+					readBoundaryAsset,
+					wardToLad,
+					parishParents,
+				),
+			),
 	);
 	// The collisions are written apart from the dataset that describes them, so
 	// the card can be drawn from the small file and the 6 MB of points is only

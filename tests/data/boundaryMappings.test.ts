@@ -4,7 +4,9 @@ import { join } from "node:path";
 import {
 	bestFitContainer,
 	encodeBoundaryMappings,
+	encodeParishLadMappings,
 	parseBoundaryWardToLad,
+	parseParishLadMappings,
 	parsePrecompiledBoundaryMappings,
 	type PrecompiledBoundaryMappings,
 } from "@/lib/data/boundaries/mappings";
@@ -87,6 +89,29 @@ describe("shipped boundary mappings", () => {
 		expect(actual.constituencyToWards[2025]?.E14001463).toContain(
 			"E05000932",
 		);
+	});
+});
+
+describe("parish local authority mappings", () => {
+	it("round-trips, storing a parent held in several years once", () => {
+		const byYear = {
+			2023: { P1: "L1", P2: "L2" },
+			2024: { P1: "L1", P2: "L3" },
+		};
+		const encoded = encodeParishLadMappings(byYear);
+		expect(encoded.parishToLad.parents.P1).toEqual({ L1: 0b11 });
+		expect(
+			parseParishLadMappings(JSON.parse(JSON.stringify(encoded))),
+		).toEqual(byYear);
+	});
+
+	it("rejects another version", () => {
+		expect(() =>
+			parseParishLadMappings({
+				...encodeParishLadMappings({}),
+				version: 2,
+			}),
+		).toThrow();
 	});
 });
 

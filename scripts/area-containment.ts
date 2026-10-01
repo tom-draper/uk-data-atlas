@@ -299,3 +299,58 @@ export const compileConstituencyLadOverlaps = (
 		releases: compiled,
 	};
 };
+
+/** A served parish release: the atlas year and the release it is drawn from. */
+export type ParishRelease = { year: number; release: string };
+
+/** A release id's date, `2019-04` of `2019-04-ew-bgc`. */
+const releaseDate = (release: string) => release.slice(0, 7);
+
+/**
+ * Each served parish release placed in the local authorities of its own era:
+ * the newest local authority release not after the parish release, as the
+ * authority an upload of that era names. Where ONS publishes a release's
+ * lookup it decides; another release takes the authority holding most of
+ * each parish.
+ */
+export const compileParishLadContainment = (
+	parishReleases: ParishRelease[],
+	crosswalks: ContainmentCrosswalk[],
+): Record<number, Record<string, string>> => {
+	const METHOD_RANK = ["clean-containment", "best-fit"];
+	const parishToLad: Record<number, Record<string, string>> = {};
+	for (const { year, release } of parishReleases) {
+		const candidates = crosswalks.filter(
+			(crosswalk) =>
+				crosswalk.from.geography === "parish" &&
+				crosswalk.from.boundaryRelease === release &&
+				crosswalk.to.geography === "localAuthority" &&
+				METHOD_RANK.includes(crosswalk.method),
+		);
+		const era = (crosswalk: ContainmentCrosswalk) =>
+			releaseDate(crosswalk.to.boundaryRelease) <= releaseDate(release);
+		const [chosen] = candidates.sort(
+			(left, right) =>
+				METHOD_RANK.indexOf(left.method) -
+					METHOD_RANK.indexOf(right.method) ||
+				Number(era(right)) - Number(era(left)) ||
+				(era(left)
+					? right.to.boundaryRelease.localeCompare(
+							left.to.boundaryRelease,
+						)
+					: left.to.boundaryRelease.localeCompare(
+							right.to.boundaryRelease,
+						)),
+		);
+		if (!chosen)
+			throw new Error(
+				`The resolver places parish/${release} in no local authority.`,
+			);
+		parishToLad[year] = Object.fromEntries(
+			[...singleTargets(chosen)].sort(([left], [right]) =>
+				left.localeCompare(right),
+			),
+		);
+	}
+	return parishToLad;
+};

@@ -3,6 +3,7 @@ import {
 	compileAreaContainment,
 	compileConstituencyLadOverlaps,
 	compileLsoaLadContainment,
+	compileParishLadContainment,
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
 } from "@/scripts/area-containment";
@@ -301,5 +302,59 @@ describe("constituency local authority overlaps from the resolver", () => {
 				crosswalks,
 			),
 		).toThrow("no local authority overlap for every constituency of 2016");
+	});
+});
+
+const parishCrosswalk = (
+	method: string,
+	from: string,
+	to: string,
+	pairs: Array<[string, string]>,
+): ContainmentCrosswalk => ({
+	...crosswalk(method, from, ["localAuthority", to], pairs),
+	id: `parish-${from}-to-${to}-${method}`,
+	from: { geography: "parish", boundaryRelease: from },
+});
+
+describe("parish local authorities from the resolver", () => {
+	it("prefers a published lookup, in the newest authorities not after the parish release", () => {
+		expect(
+			compileParishLadContainment(
+				[
+					{ year: 2019, release: "2019-04-ew" },
+					{ year: 2024, release: "2024-12-ew" },
+				],
+				[
+					parishCrosswalk(
+						"clean-containment",
+						"2019-04-ew",
+						"2019-12-uk",
+						[["P1", "LAD19B"]],
+					),
+					parishCrosswalk(
+						"clean-containment",
+						"2019-04-ew",
+						"2019-04-uk",
+						[["P1", "LAD19A"]],
+					),
+					parishCrosswalk("best-fit", "2024-12-ew", "2024-12-uk", [
+						["P1", "LAD24"],
+						["P2", "LAD24"],
+					]),
+				],
+			),
+		).toEqual({
+			2019: { P1: "LAD19A" },
+			2024: { P1: "LAD24", P2: "LAD24" },
+		});
+	});
+
+	it("refuses a parish release the resolver cannot place", () => {
+		expect(() =>
+			compileParishLadContainment(
+				[{ year: 2021, release: "2021-12-ew" }],
+				[],
+			),
+		).toThrow("places parish/2021-12-ew in no local authority");
 	});
 });
