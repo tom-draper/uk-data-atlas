@@ -371,6 +371,7 @@ async function compileSelected(names: readonly string[]) {
 
 	await out("dataset-manifest", {
 		...manifest,
+		precompiler: { fingerprint: await precompileFingerprint(ROOT) },
 		datasets: mergeManifestEntries(
 			manifest.datasets,
 			results,
