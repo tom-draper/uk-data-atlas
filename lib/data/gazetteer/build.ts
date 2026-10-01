@@ -1,9 +1,8 @@
 // Pure build functions: geometry features -> gazetteer artifacts.
 import { getProp } from "../boundaries/properties";
-import { areaM2, bboxOf, centroidOf, inBox, pointInGeom } from "./geometry";
+import { areaM2, bboxOf } from "./geometry";
 import { SOURCED_DEFINITION_REVISION, type ResolvedPlace } from "./places";
 import type {
-	Crosswalk,
 	GazetteerCore,
 	GazetteerEntry,
 	Level,
@@ -91,73 +90,4 @@ export function buildCore(
 	}
 
 	return { version, byCode, nameIndex, namedLocations };
-}
-
-// Weighted crosswalk from source areas to target areas, via a finer building
-// block (e.g. LSOA / data zone). weight = share of the source's building-block
-// measure that falls in each target: area by default, or residents for a
-// population-weighted best fit.
-export function buildCrosswalk(
-	blocks: Feat[],
-	sources: Feat[],
-	sourceCodeKeys: readonly string[],
-	targets: Feat[],
-	targetCodeKeys: readonly string[],
-	{
-		measure = (block: Feat) => areaM2(block.geometry),
-		onProgress,
-	}: {
-		measure?: (block: Feat) => number;
-		onProgress?: (done: number, total: number) => void;
-	} = {},
-): { crosswalk: Crosswalk; assigned: number; total: number } {
-	const index = (feats: Feat[], keys: readonly string[]) =>
-		feats.map((f) => ({
-			code: getProp(f.properties, keys)!,
-			bbox: bboxOf(f.geometry),
-			geom: f.geometry,
-		}));
-	const srcIdx = index(sources, sourceCodeKeys);
-	const tgtIdx = index(targets, targetCodeKeys);
-
-	const assign = (
-		px: number,
-		py: number,
-		cand: typeof srcIdx,
-	): string | null => {
-		for (const c of cand)
-			if (inBox(px, py, c.bbox) && pointInGeom(px, py, c.geom))
-				return c.code;
-		return null;
-	};
-
-	const accum: Record<string, Record<string, number>> = {};
-	let assigned = 0;
-	for (let i = 0; i < blocks.length; i++) {
-		const [px, py] = centroidOf(blocks[i].geometry);
-		const s = assign(
-			px,
-			py,
-			srcIdx.filter((c) => inBox(px, py, c.bbox)),
-		);
-		const t = assign(
-			px,
-			py,
-			tgtIdx.filter((c) => inBox(px, py, c.bbox)),
-		);
-		if (!s || !t) continue;
-		const w = measure(blocks[i]);
-		(accum[s] ??= {})[t] = (accum[s][t] ?? 0) + w;
-		assigned++;
-		if (onProgress && i % 5000 === 0) onProgress(i, blocks.length);
-	}
-
-	const crosswalk: Crosswalk = {};
-	for (const [s, tgts] of Object.entries(accum)) {
-		const total = Object.values(tgts).reduce((a, b) => a + b, 0);
-		crosswalk[s] = Object.entries(tgts)
-			.map(([code, a]) => ({ code, weight: +(a / total).toFixed(4) }))
-			.sort((a, b) => b.weight - a.weight);
-	}
-	return { crosswalk, assigned, total: blocks.length };
 }

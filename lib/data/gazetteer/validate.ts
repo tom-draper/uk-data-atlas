@@ -1,6 +1,6 @@
 // Build-time invariants (design doc 6.1). Returns a list of violations;
 // an empty list means the artifact is sound.
-import type { Crosswalk, GazetteerCore } from "./types";
+import type { GazetteerCore } from "./types";
 
 export interface ValidationResult {
 	errors: string[]; // must be empty to ship
@@ -78,21 +78,4 @@ export function validateCore(
 	}
 
 	return { errors, warnings };
-}
-
-export function validateCrosswalk(
-	name: string,
-	cw: Crosswalk,
-	targetCodes: Set<string>,
-): string[] {
-	const errors: string[] = [];
-	for (const [src, tgts] of Object.entries(cw)) {
-		const sum = tgts.reduce((s, t) => s + t.weight, 0);
-		if (Math.abs(sum - 1) > 0.01)
-			errors.push(`${name}: weights for ${src} sum to ${sum.toFixed(3)}`);
-		for (const t of tgts)
-			if (!targetCodes.has(t.code))
-				errors.push(`${name}: ${src} -> unknown target ${t.code}`);
-	}
-	return errors;
 }
