@@ -571,6 +571,8 @@ test("reports published extent continuity findings separately from code-set evid
 						targetShare: 0.75,
 					},
 				],
+				realignedShare: 0.95,
+				realigned: [],
 				unmeasured: [],
 				recoded: {
 					status: "compared",

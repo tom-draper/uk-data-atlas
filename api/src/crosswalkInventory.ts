@@ -296,6 +296,23 @@ export type ExtentContinuityValidation = {
 	 * within how far the published same-code pairs drift.
 	 */
 	recoded: RecodedExtentComparison;
+	/** The share of each other a realigned pair must both keep. */
+	realignedShare: number;
+	/**
+	 * Pairs whose extent moved by more than noise, but so little that each
+	 * keeps at least `realignedShare` of the other, choosing only each other:
+	 * a ward redrawn by a street, under its code or a new one. Not identity,
+	 * so no conversion follows them; the resolver's `successorArea` does, to
+	 * carry an area's history on to the area that succeeded it.
+	 */
+	realigned: Array<{
+		code: string;
+		successor: string;
+		match: "same-code" | "recoded";
+		widestDifferenceM: number;
+		sourceShare: number;
+		targetShare: number;
+	}>;
 };
 
 export type RecodedExtentComparison =
