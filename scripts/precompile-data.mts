@@ -114,12 +114,19 @@ type RoadSafetyCache = {
 	};
 };
 
+type RegionChunksCache = {
+	datasets: Record<string, CompiledOutput>;
+	gazetteerCore: CompiledOutput;
+	outputs: FileSnapshot[];
+};
+
 type ExistingManifest = {
 	precompiler?: { fingerprint?: string };
 	datasets?: ExistingManifestDataset[];
 	artifacts?: {
 		atlasAssets?: AtlasAssetsCache;
 		roadSafety?: RoadSafetyCache;
+		regionChunks?: RegionChunksCache;
 	};
 };
 
@@ -407,6 +414,29 @@ const fileStamp = async (path: string): Promise<SourceFileStamp> => {
 const sameFileStamp = (left: SourceFileStamp, right: SourceFileStamp) =>
 	left.bytes === right.bytes && left.modifiedAt === right.modifiedAt;
 
+const sameCompiledOutput = (left: CompiledOutput, right: CompiledOutput) =>
+	left.bytes === right.bytes && left.sha256 === right.sha256;
+
+const sameCompiledOutputs = (
+	left: Readonly<Record<string, CompiledOutput>>,
+	right: Readonly<Record<string, CompiledOutput>>,
+) => {
+	const leftEntries = Object.entries(left).sort(([a], [b]) =>
+		a.localeCompare(b),
+	);
+	const rightEntries = Object.entries(right).sort(([a], [b]) =>
+		a.localeCompare(b),
+	);
+	return (
+		leftEntries.length === rightEntries.length &&
+		leftEntries.every(
+			([name, output], index) =>
+				name === rightEntries[index]?.[0] &&
+				sameCompiledOutput(output, rightEntries[index]![1]),
+		)
+	);
+};
+
 // Raw data is restored from an immutable, checksummed release. Restoring it
 // necessarily gives every file a new mtime, which must not discard otherwise
 // valid compiled datasets. The marker is written only after that release has
@@ -471,6 +501,21 @@ const fileSnapshots = async (
 			snapshots.push({ path: relative, ...(await fileStamp(path)) });
 	}
 	return snapshots.sort((left, right) => left.path.localeCompare(right.path));
+};
+
+const fileSnapshotsOrEmpty = async (directory: string) => {
+	try {
+		return await fileSnapshots(directory);
+	} catch (error) {
+		if (
+			typeof error === "object" &&
+			error !== null &&
+			"code" in error &&
+			error.code === "ENOENT"
+		)
+			return [];
+		throw error;
+	}
 };
 
 const sameFileSnapshots = async (
@@ -900,14 +945,55 @@ async function main() {
 		process.exit(1);
 	}
 	boundaryReads.clear();
-	await timeStage("regional chunks", async () =>
-		writeDatasetRegionChunks({
-			root: ROOT,
-			datasets: compiledDatasets,
-			core: (await gazetteerCore).data,
-			boundaryMappings: await boundaryMappings,
-		}),
+	const regionalDatasets = Object.fromEntries(
+		CATALOGUE_DATASET_DEFINITIONS.flatMap((definition, index) =>
+			definition.payload?.regionChunks?.kind === "regional"
+				? [[definition.precompiledFile, chartResults[index]!.compiled]]
+				: [],
+		),
 	);
+	const chunkDirectory = join(OUT_DIR, "chunks");
+	const chunkOutputs = await fileSnapshotsOrEmpty(chunkDirectory);
+	const cachedRegionChunks = existingManifest.artifacts?.regionChunks;
+	const hasChunkContentHashes =
+		cachedRegionChunks?.outputs.every(
+			(snapshot) => typeof snapshot.sha256 === "string",
+		) ?? false;
+	const canReuseRegionChunks =
+		canReuse &&
+		cachedRegionChunks &&
+		hasChunkContentHashes &&
+		sameCompiledOutputs(cachedRegionChunks.datasets, regionalDatasets) &&
+		sameCompiledOutput(
+			cachedRegionChunks.gazetteerCore,
+			(await gazetteerCore).compiled,
+		) &&
+		(await sameFileSnapshots(
+			cachedRegionChunks.outputs,
+			chunkOutputs,
+			chunkDirectory,
+		));
+	let recordedChunkOutputs: FileSnapshot[];
+	if (canReuseRegionChunks) {
+		console.log("  regional chunks: cached");
+		recordedChunkOutputs = chunkOutputs.map((snapshot, index) => ({
+			...snapshot,
+			sha256: cachedRegionChunks.outputs[index]!.sha256,
+		}));
+	} else {
+		await timeStage("regional chunks", async () =>
+			writeDatasetRegionChunks({
+				root: ROOT,
+				datasets: compiledDatasets,
+				core: (await gazetteerCore).data,
+				boundaryMappings: await boundaryMappings,
+			}),
+		);
+		recordedChunkOutputs = await snapshotFileContents(
+			await fileSnapshots(chunkDirectory),
+			chunkDirectory,
+		);
+	}
 	await out("dataset-manifest", {
 		version: 1,
 		precompiler: { fingerprint: compilerFingerprint },
@@ -920,6 +1006,11 @@ async function main() {
 				},
 			},
 			roadSafety: await roadSafety,
+			regionChunks: {
+				datasets: regionalDatasets,
+				gazetteerCore: (await gazetteerCore).compiled,
+				outputs: recordedChunkOutputs,
+			},
 		},
 		datasets: results
 			.slice(0, CATALOGUE_DATASET_DEFINITIONS.length)
