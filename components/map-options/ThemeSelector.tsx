@@ -69,7 +69,7 @@ export function ThemeSelector({
 						)?.gradient,
 					}}
 				/>
-				Heatmap
+				Theme
 				<ChevronDown
 					size={12}
 					className={`transition-transform duration-200 ${isOpen ? "rotate-180" : "rotate-0"}`}
