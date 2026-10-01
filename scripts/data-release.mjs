@@ -233,10 +233,39 @@ async function createArchives(tag) {
 	}
 }
 
-const writeMarker = (tag, repository, files) =>
+const fileStamp = async (path) => {
+	const metadata = await stat(path);
+	return {
+		bytes: metadata.size,
+		modifiedAt: metadata.mtimeMs,
+		changedAt: metadata.ctimeMs,
+	};
+};
+
+const fileStamps = async (files) =>
+	Object.fromEntries(
+		await Promise.all(
+			Object.keys(files).map(async (path) => [
+				path,
+				await fileStamp(join(DATA, path)),
+			]),
+		),
+	);
+
+const writeMarker = async (tag, repository, files) =>
 	writeFile(
 		LOCAL_MARKER,
-		`${JSON.stringify({ version: 2, tag, repository, files }, null, "\t")}\n`,
+		`${JSON.stringify(
+			{
+				version: 3,
+				tag,
+				repository,
+				files,
+				fileStamps: await fileStamps(files),
+			},
+			null,
+			"\t",
+		)}\n`,
 	);
 
 async function publish(tag, targetRef = "HEAD") {
@@ -414,13 +443,43 @@ async function mergeSources(staging, base) {
 async function driftFrom(marker) {
 	const missing = [];
 	const changed = [];
-	if (marker?.version !== 2) return { missing, changed };
+	if (marker?.version !== 2 && marker?.version !== 3)
+		return { missing, changed };
 	for (const [path, releaseHash] of Object.entries(marker.files)) {
 		const localHash = await sha256OrNull(join(DATA, path));
 		if (localHash === null) missing.push(path);
 		else if (localHash !== releaseHash) changed.push(path);
 	}
 	return { missing, changed };
+}
+
+async function markerStampsMatch(marker) {
+	if (marker?.version !== 3 || !marker.fileStamps) return false;
+	const paths = Object.keys(marker.files);
+	if (Object.keys(marker.fileStamps).length !== paths.length) return false;
+	for (const path of paths) {
+		const expected = marker.fileStamps[path];
+		if (
+			!expected ||
+			!Number.isFinite(expected.bytes) ||
+			!Number.isFinite(expected.modifiedAt) ||
+			!Number.isFinite(expected.changedAt)
+		)
+			return false;
+		try {
+			const actual = await fileStamp(join(DATA, path));
+			if (
+				actual.bytes !== expected.bytes ||
+				actual.modifiedAt !== expected.modifiedAt ||
+				actual.changedAt !== expected.changedAt
+			)
+				return false;
+		} catch (error) {
+			if (error?.code === "ENOENT") return false;
+			throw error;
+		}
+	}
+	return true;
 }
 
 async function download(mode) {
@@ -446,8 +505,14 @@ async function download(mode) {
 			);
 	}
 	if (!mode && marker?.tag === config.tag && (await hasLocalSources())) {
-		// The marker says which release data/ came from, not that data/ still
-		// matches it, so check the files themselves before trusting it.
+		if (await markerStampsMatch(marker)) {
+			console.log(
+				`Raw data ${config.tag} is already present; verified file stamps match; skipping checksum scan.`,
+			);
+			return;
+		}
+		// A stamp mismatch can be an edit or a benign timestamp change. Hash every
+		// file before trusting it, then refresh the stamps if the release is intact.
 		const { missing, changed } = await driftFrom(marker);
 		const list = (paths) =>
 			paths
@@ -464,6 +529,8 @@ async function download(mode) {
 				`${changed.length} raw data files differ from ${config.tag} and are kept as local edits:\n${list(changed)}\nRun pnpm data:download --replace to restore the release exactly.`,
 			);
 		if (missing.length === 0) {
+			if (changed.length === 0)
+				await writeMarker(config.tag, config.repository, marker.files);
 			console.log(
 				`Raw data ${config.tag} is already present; skipping download.`,
 			);
@@ -509,7 +576,9 @@ async function download(mode) {
 			await mkdir(DATA, { recursive: true });
 			files = await mergeSources(
 				workspace,
-				marker?.version === 2 ? marker.files : {},
+				marker?.version === 2 || marker?.version === 3
+					? marker.files
+					: {},
 			);
 		}
 		await writeMarker(config.tag, config.repository, files);
