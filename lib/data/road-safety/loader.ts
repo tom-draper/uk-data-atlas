@@ -1,7 +1,6 @@
 import { CustomDataset, CustomPoint, PointSummary } from "@/lib/types/custom";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import type { Gazetteer } from "@/lib/data/gazetteer/gazetteer";
-import { getPointsInLocation } from "@/lib/helpers/locationPoints";
 
 const YEAR = 2025;
 const ID = `roadSafety${YEAR}`;
@@ -66,36 +65,97 @@ const LOCATION_AREA_CODES: Record<string, string> = {
 	EHEATHROW: "E09000017",
 };
 
+const COUNTRY_PREFIXES: Record<string, string> = {
+	England: "E",
+	Scotland: "S",
+	Wales: "W",
+	"Northern Ireland": "N",
+};
+
+type Bounds = [number, number, number, number];
+
+const inBounds = (point: CustomPoint, [west, south, east, north]: Bounds) =>
+	point.lng >= west &&
+	point.lng <= east &&
+	point.lat >= south &&
+	point.lat <= north;
+
 /**
  * What the card shows for each named location, counted the same way the client
- * does once the points load: by `getPointsInLocation`. Precomputing it is what
- * lets the 6 MB point file stay unfetched until someone selects the dataset.
+ * does once the points load. Coded points make up almost every DfT collision,
+ * so index locations by their code membership and assign each point once rather
+ * than filtering the national point set once per location. Uncoded points and
+ * locations with no members retain the client's bounding-box behaviour.
  */
-const summariseByLocation = (
-	points: CustomPoint[],
-	gazetteer: Gazetteer,
-): Record<string, PointSummary> =>
-	Object.fromEntries(
-		gazetteer.namedLocations().flatMap((name) => {
-			if (!gazetteer.boundsOf(name)) return [];
-			const located = getPointsInLocation(points, name, gazetteer);
-			const total = located.reduce((sum, point) => sum + point.value, 0);
-			return [
-				[
-					name,
-					{
-						count: located.length,
-						// Three decimal places is well beyond the one the card renders.
-						averageValue:
-							located.length > 0
-								? Math.round((total / located.length) * 1e3) /
-									1e3
-								: 0,
-					},
-				],
-			];
-		}),
+const summariseByLocation = (points: CustomPoint[], gazetteer: Gazetteer) => {
+	const locations = gazetteer.namedLocations().flatMap((name) => {
+		const bounds = gazetteer.boundsOf(name);
+		return bounds
+			? [{ name, bounds, members: gazetteer.membersOf(name) }]
+			: [];
+	});
+	const summaries = new Map<string, { count: number; total: number }>(
+		locations.map(({ name }) => [name, { count: 0, total: 0 }]),
 	);
+	const locationsByAreaCode = new Map<string, string[]>();
+	const countryLocations = new Map<string, string>();
+	const boundsOnlyLocations: Array<{ name: string; bounds: Bounds }> = [];
+
+	for (const { name, bounds, members } of locations) {
+		if (name === "United Kingdom") continue;
+		const prefix = COUNTRY_PREFIXES[name];
+		if (prefix) {
+			countryLocations.set(prefix, name);
+			continue;
+		}
+		if (members.length === 0) {
+			boundsOnlyLocations.push({ name, bounds });
+			continue;
+		}
+		for (const code of members) {
+			const names = locationsByAreaCode.get(code) ?? [];
+			names.push(name);
+			locationsByAreaCode.set(code, names);
+		}
+	}
+
+	const add = (name: string, point: CustomPoint) => {
+		const summary = summaries.get(name);
+		if (!summary) return;
+		summary.count += 1;
+		summary.total += point.value;
+	};
+
+	for (const point of points) {
+		if (!point.areaCode) {
+			if (summaries.has("United Kingdom")) add("United Kingdom", point);
+			for (const { name, bounds } of locations)
+				if (name !== "United Kingdom" && inBounds(point, bounds))
+					add(name, point);
+			continue;
+		}
+
+		if (summaries.has("United Kingdom")) add("United Kingdom", point);
+		const country = countryLocations.get(point.areaCode[0]!);
+		if (country) add(country, point);
+		for (const name of locationsByAreaCode.get(point.areaCode) ?? [])
+			add(name, point);
+		for (const { name, bounds } of boundsOnlyLocations)
+			if (inBounds(point, bounds)) add(name, point);
+	}
+
+	return Object.fromEntries(
+		[...summaries].map(([name, { count, total }]) => [
+			name,
+			{
+				count,
+				// Three decimal places is well beyond the one the card renders.
+				averageValue:
+					count > 0 ? Math.round((total / count) * 1e3) / 1e3 : 0,
+			},
+		]),
+	) as Record<string, PointSummary>;
+};
 
 export interface RoadSafetyCompilation {
 	/** The card's dataset, small enough to fetch on every page load. */

@@ -43,6 +43,7 @@ const core = {
 			bbox: bbox(-8.3, 53.9, -5.3, 55.4),
 		},
 		Scotland: { memberCodes: [], bbox: bbox(-8.6, 54.6, 1.8, 60.9) },
+		"Bounds only": { memberCodes: [], bbox: bbox(-0.2, 51.4, -0.05, 51.6) },
 		// No bbox, so it cannot be summarised and must be left out entirely.
 		Nowhere: { memberCodes: [] },
 	},
