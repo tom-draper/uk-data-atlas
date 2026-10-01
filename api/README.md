@@ -4025,6 +4025,18 @@ election results are reached only this way. Because the recoded pairs sit in
 the same crosswalk as the same-code ones, an identity path through several
 releases carries an area renumbered at any step of it.
 
+Identity is deliberately strict, and a ward redrawn by a street is not the
+same area. It is still the ward a map reader recognises, so each crosswalk
+also lists, in `validation.continuity.realigned`, the pairs beyond noise
+whose overlap keeps at least 95% of each (`realignedShare`), choosing only
+each other: a shared code whose extent changed by that little, or a recoded
+pair such as Wigan's Ince, renumbered in 2023 with a strip 47 m wide moved.
+They are not records, so no identity path or conversion follows them. The
+resolver's `successorArea` does: it answers `sameArea` where there is one,
+and otherwise the area a realigned step leads to, one to one both ways, with
+`realigned: true`. The atlas's area lineage is built from it, so a ward's
+election history carries on across a small redrawing.
+
 They chain each geography's releases in date order. Each date links to the
 next through its widest-coverage release, and same-month variants, such as
 the Great Britain and United Kingdom ward files of December 2019, link to
