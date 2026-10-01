@@ -58,9 +58,11 @@ const writeCollection = (
 
 // Widths are twice area over perimeter. W1 keeps its code while renamed, its
 // east edge 5.6 m out: generalisation noise. W5 shifts 22 m east, a sliver on
-// each side though 2% of its area. W2 loses a strip that measures 101 m,
-// where the build will not decide, and W6 one that measures 256 m, a boundary
-// that moved. W3 is abolished and W4 is new.
+// each side though 2% of its area. W2 loses a strip that measures 101 m to
+// the new W4, where the build will not decide, and W6 one that measures 256 m
+// to the new W7, a boundary that moved. W8 loses a strip as wide that no area
+// takes, as a coast one outline draws and the next leaves out. W3 is
+// abolished.
 const writeFixture = (root: string) => {
 	writeCollection(root, "ward-1.geojson", [
 		["W1", box(0, D)],
@@ -68,13 +70,16 @@ const writeFixture = (root: string) => {
 		["W3", box(2 * D, 3 * D)],
 		["W5", box(4 * D, 5 * D)],
 		["W6", box(6 * D, 7 * D)],
+		["W8", box(8 * D, 9 * D)],
 	]);
 	writeCollection(root, "ward-2.geojson", [
 		["W1", box(0, 1.005 * D)],
 		["W2", box(1.005 * D, 1.9 * D)],
-		["W4", box(3 * D, 4 * D)],
+		["W4", box(1.9 * D, 4 * D)],
 		["W5", box(4.02 * D, 5.02 * D)],
 		["W6", box(6 * D, 6.7 * D)],
+		["W7", box(6.7 * D, 7 * D)],
+		["W8", box(8 * D, 8.7 * D)],
 	]);
 };
 
@@ -103,6 +108,7 @@ const areaLookup = createAreaLookup([
 			{ code: "W3", name: "Ward Three" },
 			{ code: "W5", name: "Ward Five" },
 			{ code: "W6", name: "Ward Six" },
+			{ code: "W8", name: "Ward Eight" },
 		],
 	},
 	{
@@ -118,6 +124,8 @@ const areaLookup = createAreaLookup([
 			{ code: "W4", name: "Ward Four" },
 			{ code: "W5", name: "Ward Five" },
 			{ code: "W6", name: "Ward Six" },
+			{ code: "W7", name: "Ward Seven" },
+			{ code: "W8", name: "Ward Eight" },
 		],
 	},
 ]);
@@ -178,18 +186,34 @@ test("publishes a shared code as identity only where its extent held", () => {
 					},
 				],
 			},
+			{
+				source: { code: "W8", labels: ["Ward Eight"] },
+				targets: [
+					{
+						code: "W8",
+						labels: ["Ward Eight"],
+						match: "same-code",
+						widestDifferenceM: 256.5,
+						claimedDifferenceM: 0,
+						sourceShare: 0.7,
+						targetShare: 1,
+					},
+				],
+			},
 		]);
 		assert.deepEqual(artifact.validation.continuity, {
 			sliverWidthM: 100,
-			sourceAreaCount: 5,
-			targetAreaCount: 5,
-			sharedCodeCount: 4,
-			continuousCount: 2,
+			differenceRule: "claimed-by-another-area",
+			sourceAreaCount: 6,
+			targetAreaCount: 7,
+			sharedCodeCount: 5,
+			continuousCount: 3,
 			changedExtent: [
 				{
 					code: "W6",
 					relation: "changed",
 					widestDifferenceM: 256.5,
+					claimedDifferenceM: 256.5,
 					sourceShare: 0.7,
 					targetShare: 1,
 				},
@@ -197,6 +221,7 @@ test("publishes a shared code as identity only where its extent held", () => {
 					code: "W2",
 					relation: "indeterminate",
 					widestDifferenceM: 101.1,
+					claimedDifferenceM: 101.1,
 					sourceShare: 0.895,
 					targetShare: 1,
 				},
@@ -204,7 +229,7 @@ test("publishes a shared code as identity only where its extent held", () => {
 			unmeasured: [],
 			recoded: {
 				status: "not-compared",
-				reason: "Only 2 same-code pairs were published, fewer than the 50 needed to measure how far the releases' generalisation drifts.",
+				reason: "Only 3 same-code pairs were published, fewer than the 50 needed to measure how far the releases' generalisation drifts.",
 			},
 		});
 		assert.equal(artifact.relationshipPurpose, "identity");

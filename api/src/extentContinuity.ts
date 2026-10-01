@@ -108,6 +108,78 @@ const measure = (
 };
 
 /**
+ * The widest piece of `difference` another area of the other release holds:
+ * land that changed hands. The rest belongs to no area there, such as coast
+ * or estuary one release's generalised outline includes and the other's
+ * leaves out, and moves no boundary between areas.
+ */
+const claimedWidthM = (
+	clipper: BoundedClipper,
+	difference: MultiPolygon,
+	bounds: AreaGeometry["bounds"],
+	others: Array<[string, AreaGeometry]>,
+): number | { reason: string } => {
+	let widest = 0;
+	for (const [, other] of others) {
+		if (!boundsIntersect(bounds, other.bounds)) continue;
+		const claimed = clipper.clip(
+			"intersection",
+			difference,
+			multiPolygon(other),
+		);
+		if (claimed.status !== "clipped") return { reason: claimed.reason };
+		widest = Math.max(widest, ...claimed.geometry.map(polygonWidthM));
+	}
+	return round(widest, 1);
+};
+
+/**
+ * The widest piece of a shared code's difference that another area claims,
+ * in either direction, or why it could not be measured.
+ */
+const claimedDifference = (
+	clipper: BoundedClipper,
+	code: string,
+	source: AreaGeometry,
+	target: AreaGeometry,
+	sources: Array<[string, AreaGeometry]>,
+	targets: Array<[string, AreaGeometry]>,
+): number | { reason: string } => {
+	const lost = clipper.clip(
+		"difference",
+		multiPolygon(source),
+		multiPolygon(target),
+	);
+	const gained = clipper.clip(
+		"difference",
+		multiPolygon(target),
+		multiPolygon(source),
+	);
+	if (lost.status !== "clipped") return { reason: lost.reason };
+	if (gained.status !== "clipped") return { reason: gained.reason };
+	const others = (areas: Array<[string, AreaGeometry]>) =>
+		areas.filter(([other]) => other !== code);
+	const toNeighbours = claimedWidthM(
+		clipper,
+		lost.geometry,
+		source.bounds,
+		others(targets),
+	);
+	if (typeof toNeighbours !== "number") return toNeighbours;
+	const fromNeighbours = claimedWidthM(
+		clipper,
+		gained.geometry,
+		target.bounds,
+		others(sources),
+	);
+	if (typeof fromNeighbours !== "number") return fromNeighbours;
+	return Math.max(toNeighbours, fromNeighbours);
+};
+
+/** The rule a crosswalk's same-code differences were judged by, for the cache. */
+export const DIFFERENCE_RULE = "claimed-by-another-area" as const;
+
+/**
  * How many same-code pairs a release pair needs before its noise is measured
  * well enough to judge a recoded pair against.
  */
@@ -136,10 +208,16 @@ const MINIMUM_AREA_RATIO = 0.9;
  * distinction, because the same strip is a larger share of a small area.
  *
  * A shared code is published when every piece is narrower than half
- * `sliverWidthM`. Within a factor of two of it the pair is indeterminate, and
- * beyond that its extent changed; both are listed, as repair evidence for a
- * later area overlap or official lookup, and never treated as identity. So is
- * a code the clipper cannot measure.
+ * `sliverWidthM`. Where one is wider, only the land another area of the other
+ * release holds is judged: a boundary that moved hands its land to a
+ * neighbour, while coast or estuary one generalised outline includes and the
+ * other leaves out belongs to no area there. Every 2010-set constituency the
+ * whole difference once marked as changed between the 2018 and 2019 files
+ * differed only in such unclaimed land. Judged so, a claimed piece within a
+ * factor of two of the bound leaves the pair indeterminate, and beyond that
+ * its extent changed; both are listed, as repair evidence for a later area
+ * overlap or official lookup, and never treated as identity. So is a code the
+ * clipper cannot measure.
  *
  * Codes also change without the boundary moving, as when a council is
  * reorganised and its wards are renumbered. A code only the first release
@@ -186,7 +264,7 @@ export const compileExtentContinuityCrosswalk = (
 		sourceCode: string,
 		targetCode: string,
 		match: "same-code" | "recoded",
-		measured: Measured,
+		measured: Measured & { claimedDifferenceM?: number },
 	): Record => ({
 		source: {
 			code: sourceCode,
@@ -228,14 +306,33 @@ export const compileExtentContinuityCrosswalk = (
 				continue;
 			}
 			if (measured.widestDifferenceM >= adapter.sliverWidthM / 2) {
-				changedExtent.push({
+				// Judge the difference by the land another area holds, not
+				// by coast one outline draws and the other does not.
+				const claimed = claimedDifference(
+					clipper,
 					code,
-					relation:
-						measured.widestDifferenceM < adapter.sliverWidthM * 2
-							? "indeterminate"
-							: "changed",
-					...measured,
-				});
+					source,
+					target,
+					sourceGeometries,
+					targetGeometries,
+				);
+				if (typeof claimed !== "number") {
+					unmeasured.push({ code, reason: claimed.reason });
+					continue;
+				}
+				const judged = { ...measured, claimedDifferenceM: claimed };
+				if (claimed >= adapter.sliverWidthM / 2) {
+					changedExtent.push({
+						code,
+						relation:
+							claimed < adapter.sliverWidthM * 2
+								? "indeterminate"
+								: "changed",
+						...judged,
+					});
+					continue;
+				}
+				records.push(record(code, code, "same-code", judged));
 				continue;
 			}
 			records.push(record(code, code, "same-code", measured));
@@ -244,7 +341,10 @@ export const compileExtentContinuityCrosswalk = (
 		recoded = compareRecoded(
 			clipper,
 			adapter,
-			records.map((entry) => entry.targets[0]!.widestDifferenceM),
+			records.map(
+				({ targets: [target] }) =>
+					target!.claimedDifferenceM ?? target!.widestDifferenceM,
+			),
 			sourceGeometries.filter(([code]) => !targetAreas?.has(code)),
 			targetGeometries.filter(([code]) => !sourceAreas?.has(code)),
 			(sourceCode, targetCode, measured) =>
@@ -308,6 +408,7 @@ export const compileExtentContinuityCrosswalk = (
 			},
 			continuity: {
 				sliverWidthM: adapter.sliverWidthM,
+				differenceRule: DIFFERENCE_RULE,
 				sourceAreaCount: sourceAreas?.size ?? 0,
 				targetAreaCount: targetAreas?.size ?? 0,
 				sharedCodeCount,
