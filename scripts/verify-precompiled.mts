@@ -18,9 +18,7 @@ type Manifest = {
 };
 
 const fail = (message: string): never => {
-	throw new Error(
-		`${message} Run pnpm precompile locally.`,
-	);
+	throw new Error(`${message} Run pnpm precompile locally.`);
 };
 
 const manifest = JSON.parse(await readFile(manifestPath, "utf8")) as Manifest;
