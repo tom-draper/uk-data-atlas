@@ -42,7 +42,7 @@ artifact and the old modules read those artifacts:
 | Upload column matching         | `buildAreaBank` from geometry    | `gazetteer.matchindex.json` into `areaBank`                                          |
 | Ward/LAD, cross-year codes     | derived from geometry in browser | API resolver, via `boundary-mappings.json` and `area-lineage.json` into `codeMapper` |
 | LSOA to LAD                    | named-location boxes             | API resolver, via `lsoa-lad-mappings-<year>.json`                                    |
-| Constituency to LAD membership | ward centroid point-in-polygon   | `constituency-lad-overlaps.json` crosswalk                                           |
+| Constituency to LAD membership | ward centroid point-in-polygon   | API resolver, via `constituency-lad-overlaps.json`                                   |
 | How a family scopes a location | per-consumer type switches       | `BOUNDARY_CAPABILITIES` (`boundaries/capabilities`)                                  |
 
 `LOCATIONS` survives only as the build-time curated source for the gazetteer
@@ -57,13 +57,13 @@ One runtime geometry path remains: `polygonAreaSqKm` in
 
 All live in `public/data/datasets/`. Sizes as of 2026-09-27.
 
-| Artifact                         | Built by                          | Loaded                                  | Size (raw / gz) |
-| -------------------------------- | --------------------------------- | --------------------------------------- | --------------- |
-| `gazetteer.core.json`            | `precompile-data.mts`             | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
-| `constituency-lad-overlaps.json` | `scripts/gazetteer-crosswalks.ts` | on demand, constituency location filter | 305 KB / 44 KB  |
-| `gazetteer.matchindex.json`      | `precompile-data.mts`             | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
-| `boundary-mappings.json`         | `build-area-containment.mts`      | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
-| `lsoa-lad-mappings-<year>.json`  | `build-area-containment.mts`      | on demand, LSOA location filter         | small           |
+| Artifact                         | Built by                     | Loaded                                  | Size (raw / gz) |
+| -------------------------------- | ---------------------------- | --------------------------------------- | --------------- |
+| `gazetteer.core.json`            | `precompile-data.mts`        | **bundled** (`gazetteer/static.ts`)     | — / 53 KB       |
+| `constituency-lad-overlaps.json` | `build-area-containment.mts` | on demand, constituency location filter | 305 KB / 44 KB  |
+| `gazetteer.matchindex.json`      | `precompile-data.mts`        | on demand, when the upload panel opens  | 4.5 MB / 923 KB |
+| `boundary-mappings.json`         | `build-area-containment.mts` | every `/atlas` load; workers on demand  | 1.3 MB / 200 KB |
+| `lsoa-lad-mappings-<year>.json`  | `build-area-containment.mts` | on demand, LSOA location filter         | small           |
 
 **Core contents.** 361 LADs (2025) plus 45 superseded 2016 and 2 2024 LADs that
 named locations still reference, 650 constituencies (2024), the 9 English
@@ -71,10 +71,12 @@ regions, 162 named locations and 936 indexed names. `version` is
 `GAZETTEER_VERSION` (currently 1).
 
 **Crosswalk.** Constituency to 2025 LAD, one table per served constituency
-release (eight, 2016-12 to 2024-07), covering all 650 constituencies. Weights
-are **residents**-weighted over UK-wide building blocks, except in Northern
-Ireland, where they are area-weighted (section 9.6); the file's `weighting`
-field says which. The app reads only membership from it today; the weights
+release (eight, 2016-12 to 2024-07), covering all 650 constituencies, read
+from the API resolver's overlap crosswalks. The releases of one code set share
+the crosswalks of the release holding all its codes (2022-12 for the 2010
+set). Weights are **residents**-weighted, apportioning each block's residents
+by area, except in Northern Ireland, where they are area-weighted (section
+9.6); the file's `weighting` field names each crosswalk used. The app reads only membership from it today; the weights
 matter once values are apportioned (9.8).
 
 **Year masks.** The match index and the cross-year parts of the boundary
@@ -271,13 +273,14 @@ until 2026-09-27. It is now built by `precompile-data.mts`
 (`lib/data/gazetteer/matchIndex.ts`), straight after the boundary mappings it
 takes ward parents from.
 
-The constituency/LAD crosswalk stays a separate script
-(`scripts/gazetteer-crosswalks.ts`) because it is expensive and changes only
-with boundaries. `tests/data/compiledBoundaryAssets.test.ts` fails if either
-artifact drifts from the catalogue: the match index must cover every served
-vintage, and the crosswalk must have a table for every served constituency
-release and target the served 2025 LAD release. (Every served release has a
-table; the catalogue's 2010 and 2015 constituency years map onto them.)
+The constituency/LAD crosswalk is written by `pnpm containment:build` from the
+API resolver's area and population overlaps, whose geometry is expensive and
+runs in the API build. `tests/data/compiledBoundaryAssets.test.ts` fails if
+either artifact drifts from the catalogue: the match index must cover every
+served vintage, and the crosswalk must have a table for every served
+constituency release and target the served 2025 LAD release. (Every served
+release has a table; the catalogue's 2010 and 2015 constituency years map onto
+them.)
 
 ### 9.3 Constituency/ward membership (done)
 

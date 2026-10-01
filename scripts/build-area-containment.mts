@@ -1,7 +1,8 @@
 /**
  * Write the atlas's area containment: the local authority and constituencies
- * each served ward release sits in, and the local authority of each served
- * LSOA release, as the API's geography resolver places them. The atlas reads
+ * each served ward release sits in, the local authority of each served LSOA
+ * release, and the authorities each served constituency release overlaps,
+ * as the API's geography resolver places them. The atlas reads
  * these files in place of deriving containment from boundary files, so what
  * the map shows is what the API would say.
  *
@@ -19,8 +20,10 @@ import { encodeBoundaryMappings } from "../lib/data/boundaries/mappings";
 import type { LsoaLadMapping } from "../lib/data/boundaries/lsoaLadMappings";
 import {
 	compileAreaContainment,
+	compileConstituencyLadOverlaps,
 	compileLsoaLadContainment,
 	type ContainmentCrosswalk,
+	type OverlapCrosswalk,
 } from "./area-containment";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -97,10 +100,50 @@ const lsoaToLad = compileLsoaLadContainment(
 		)?.code,
 );
 
+// Constituencies straddle authorities, so each is listed with the share of
+// it every authority holds, in the authorities the gazetteer speaks.
+const overlapLad = releaseOf(BOUNDARY_CATALOG.localAuthority.vintages[2025]!);
+const constituencyReleases = [
+	...new Set(
+		Object.values(BOUNDARY_CATALOG.constituency.vintages).map(releaseOf),
+	),
+]
+	.sort()
+	.map((release) => ({
+		release,
+		codes: geographyResolver.areaCodes("constituency", release) ?? [],
+	}));
+const overlapCrosswalks = geographyResolver
+	.crosswalkSummaries()
+	.filter(
+		(summary) =>
+			summary.from.geography === "constituency" &&
+			summary.to.geography === "localAuthority" &&
+			summary.to.boundaryRelease === overlapLad &&
+			(summary.method === "area-overlap" ||
+				summary.method === "population-overlap"),
+	)
+	.map(
+		(summary) =>
+			geographyResolver.crosswalk(summary.id) as OverlapCrosswalk,
+	);
+const constituencyOverlaps = compileConstituencyLadOverlaps(
+	constituencyReleases,
+	overlapCrosswalks,
+);
+
 const outputs = new Map<string, string>([
 	[
 		"boundary-mappings.json",
 		JSON.stringify(encodeBoundaryMappings(containment)),
+	],
+	[
+		"constituency-lad-overlaps.json",
+		JSON.stringify({
+			version: 1,
+			targetLocalAuthorityRelease: overlapLad,
+			...constituencyOverlaps,
+		}),
 	],
 	...Object.entries(lsoaToLad).map(
 		([year, mapping]) =>
