@@ -3975,9 +3975,16 @@ small area: in a sample of 5,000 LSOAs shared by 2001 and 2011, the typical
 difference is 3 to 4% of the area, yet no piece of it is wider than 30 m.
 
 A pair is published when its widest difference is under half the sliver
-width. Within a factor of two of it the pair is `indeterminate`, and beyond
-that its extent `changed`; both are listed in
-`validation.continuity.changedExtent` with the width and each side's share,
+width. Where a piece is wider, only the land another area of the other release
+holds is judged, recorded as `claimedDifferenceM`: a boundary that moved hands
+its land to a neighbour, while coast or estuary that one generalised outline
+includes and the other leaves out belongs to no area in the other release.
+Judged by the whole difference, 77 of the 650 constituencies of the 2010 set,
+which did not change until 2024, differed by 50 m to 718 m between the
+December 2018 and 2019 files; judged by what a neighbour claims, all 77 differ
+by under 50 m. Within a factor of two of the bound the pair is
+`indeterminate`, and beyond that its extent `changed`; both are listed in
+`validation.continuity.changedExtent` with the widths and each side's share,
 as repair evidence for a later area overlap or official lookup, and never
 treated as identity. A code the clipper cannot measure, even retried at a
 millimetre's precision, is listed as `unmeasured`. The clip runs in a worker
