@@ -3,7 +3,7 @@ import path from "node:path";
 import { parse } from "yaml";
 
 /**
- * The API reference as the docs pages need it, read from `api/openapi.yaml`
+ * The API reference as the docs pages need it, read from `services/api/openapi.yaml`
  * when the site builds. The spec is the single source: nothing here restates
  * an endpoint, so the docs cannot drift from the contract the API is tested
  * against.
@@ -12,7 +12,7 @@ import { parse } from "yaml";
 export const API_ORIGIN = "https://api.ukdataatlas.com";
 export const API_BASE_URL = `${API_ORIGIN}/v1`;
 
-const SPEC_PATH = path.join(process.cwd(), "api", "openapi.yaml");
+const SPEC_PATH = path.join(process.cwd(), "services", "api", "openapi.yaml");
 const MAX_SCHEMA_DEPTH = 4;
 
 export type HttpMethod = "get" | "head" | "post" | "put" | "patch" | "delete";

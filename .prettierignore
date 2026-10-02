@@ -1,8 +1,8 @@
 # Generated browser payloads. They are committed for deployment but are not
 # hand-authored source files.
 /public/data/
-/api/public/
-/api/contract/
+/services/api/public/
+/services/api/contract/
 /pnpm-lock.yaml
 
 # Restored raw source data and transient data-release workspaces.

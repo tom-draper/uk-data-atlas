@@ -4,7 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const apiPublic = join(root, "api", "public");
+const apiPublic = join(root, "services", "api", "public");
 const output = join(root, "public", "data", "datasets", "docs-catalogue.json");
 
 type ApiArtifact<T> = { path: string; sha256: string; data: T };
