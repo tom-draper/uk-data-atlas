@@ -26,5 +26,5 @@ export const planningApplicationsDatasetDefinition: DatasetDefinition<
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	precompile: ({ text }) => loadPlanningApplications(text),
+	precompile: ({ csvRows }) => loadPlanningApplications(csvRows),
 };

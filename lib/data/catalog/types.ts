@@ -24,6 +24,12 @@ export interface DatasetSource {
 
 export interface DatasetReader {
 	text: (path: string) => Promise<string>;
+	/** Streams parsed records from a CSV file. */
+	csvRows: (
+		path: string,
+		options: { skipLines?: number },
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => Promise<void>;
 	/** One named worksheet from an .xlsx workbook, rendered as CSV. */
 	xlsxSheet: (path: string, sheet: string) => Promise<string>;
 	/** Visits populated cells in each row of an .xlsx worksheet. */

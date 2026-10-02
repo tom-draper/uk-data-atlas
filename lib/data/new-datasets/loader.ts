@@ -270,26 +270,28 @@ export async function loadAdultSocialCareOutcomes(
 }
 
 export async function loadPlanningApplications(
-	read: (path: string) => Promise<string>,
+	readRows: (
+		path: string,
+		options: { skipLines?: number },
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => Promise<void>,
 ) {
-	const { data } = await parseCsv<Record<string, string>>(
-		await read(
-			source("housing/planning-applications/ps1-full-2026-03.csv"),
-		),
-		{ header: true, skipLines: 3 },
-	);
 	const records: Record<string, IndicatorRecord> = {};
-	for (const row of data) {
-		const code = row.LPACD?.trim() ?? "";
-		const value = numeric(row["Applications received"]);
-		if (
-			row.Quarter !== "2026 Q1" ||
-			!mapAuthorityCode(code) ||
-			value === null
-		)
-			continue;
-		records[code] = { code, name: row.LPANM?.trim() || code, value };
-	}
+	await readRows(
+		source("housing/planning-applications/ps1-full-2026-03.csv"),
+		{ skipLines: 3 },
+		(row) => {
+			const code = row.LPACD?.trim() ?? "";
+			const value = numeric(row["Applications received"]);
+			if (
+				row.Quarter !== "2026 Q1" ||
+				!mapAuthorityCode(code) ||
+				value === null
+			)
+				return;
+			records[code] = { code, name: row.LPANM?.trim() || code, value };
+		},
+	);
 	return dataset(
 		"planningApplications",
 		2026,
