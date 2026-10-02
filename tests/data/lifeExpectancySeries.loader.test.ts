@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { loadLifeExpectancySeries } from "@/lib/data/life-expectancy/seriesLoader";
+import {
+	loadLifeExpectancySeries,
+	loadLifeExpectancySeriesRows,
+} from "@/lib/data/life-expectancy/seriesLoader";
 
 const HEADER =
 	"Period,Country,Area type,Area code,Area name,Sex,Sex code,Age band,Age group,Life expectancy,Lower confidence interval,Upper confidence interval";
@@ -32,6 +35,64 @@ const complete = [
 ];
 
 describe("loadLifeExpectancySeries", () => {
+	it("streams only the columns needed for each estimate", async () => {
+		const requests: Array<{ path: string; columns: readonly number[] }> =
+			[];
+		const headers = new Map([
+			[0, "Period"],
+			[2, "Area type"],
+			[3, "Area code"],
+			[4, "Area name"],
+			[5, "Sex"],
+			[7, "Age group"],
+			[9, "Life expectancy"],
+			[10, "Lower confidence interval"],
+			[11, "Upper confidence interval"],
+		]);
+		const streamRows = async (
+			path: string,
+			_sheet: string,
+			columns: readonly number[],
+			visit: (row: ReadonlyMap<number, string>) => void,
+		) => {
+			requests.push({ path, columns });
+			visit(headers);
+			for (const [period, sex, values] of [
+				["2001 to 2003", "Male", [73.42, 72.68, 74.16]],
+				["2001 to 2003", "Female", [79.1, 78.4, 79.8]],
+				["2020 to 2022", "Male", [75.97, 75.21, 76.74]],
+				["2020 to 2022", "Female", [80.08, 79.37, 80.79]],
+			] as const)
+				visit(
+					new Map([
+						[0, period],
+						[2, "Local Areas"],
+						[3, "E06000001"],
+						[4, "Hartlepool"],
+						[5, sex],
+						[7, "<1"],
+						[9, String(values[0])],
+						[10, String(values[1])],
+						[11, String(values[2])],
+					]),
+				);
+		};
+
+		const datasets = await loadLifeExpectancySeriesRows(streamRows);
+
+		expect(requests).toEqual([
+			{
+				path: "health/life-expectancy/lifeexpectancylocalareas.xlsx",
+				columns: [0, 2, 3, 4, 5, 7, 9, 10, 11],
+			},
+		]);
+		expect(datasets[2003].data.E06000001.male).toEqual({
+			value: 73.42,
+			lower: 72.68,
+			upper: 74.16,
+		});
+	});
+
 	it("keeps every period's estimate with its confidence interval", async () => {
 		const datasets = await loadLifeExpectancySeries(sheet(complete));
 
