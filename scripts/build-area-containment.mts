@@ -14,7 +14,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "../services/api/src/catalogueLoader";
+import { readApiCatalogues } from "@uk-data-atlas/api/catalogues";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import {
 	encodeBoundaryMappings,
@@ -29,6 +29,7 @@ import {
 	type ContainmentCrosswalk,
 	type OverlapCrosswalk,
 } from "./area-containment";
+import { recordResolverProjections } from "./resolver-projections";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DATASETS = join(ROOT, "public", "data", "datasets");
@@ -36,7 +37,9 @@ const DATASETS = join(ROOT, "public", "data", "datasets");
 /** A served asset's release id: `boundaries/ward/2024-12-uk-bgc/...`. */
 const releaseOf = (asset: string) => asset.split("/").at(-2)!;
 
-const { geographyResolver } = readApiCatalogues(join(ROOT, "services", "api"));
+const { geographyResolver, atlasRelease } = readApiCatalogues(
+	join(ROOT, "services", "api"),
+);
 
 const wardReleases = Object.entries(BOUNDARY_CATALOG.ward.vintages).map(
 	([year, asset]) => ({ year: Number(year), release: releaseOf(asset) }),
@@ -200,6 +203,12 @@ if (process.argv.includes("--check")) {
 		writeFileSync(join(DATASETS, name), json);
 		console.log(`Wrote ${name}`);
 	}
+	recordResolverProjections(
+		DATASETS,
+		atlasRelease.releaseId,
+		"pnpm containment:build",
+		outputs,
+	);
 	console.log(
 		`${Object.keys(containment.wardToLad).length} wards placed in a local authority; ` +
 			`constituencies for ${Object.keys(containment.constituencyToWards).length} ward releases; ` +

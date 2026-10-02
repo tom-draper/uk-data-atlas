@@ -3,6 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { precompileFingerprint } from "./precompile-fingerprint.mjs";
+import { resolverProjectionProblems } from "./resolver-projections";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const datasets = join(root, "public", "data", "datasets");
@@ -41,8 +42,14 @@ for (const dataset of manifest.datasets ?? []) {
 		);
 }
 
+// The resolver's answers are compiled from the API build, which is not
+// committed, so they are checked against their own record instead.
+const projectionProblems = resolverProjectionProblems(datasets);
+if (projectionProblems.length > 0)
+	throw new Error(projectionProblems.join("\n"));
+
 await stat(join(datasets, "docs-catalogue.json"));
 await stat(join(root, "public", "data", "boundaries"));
 console.log(
-	"Committed precompiled data matches its manifest and compiler inputs.",
+	"Committed precompiled data matches its manifest, compiler inputs and API build.",
 );

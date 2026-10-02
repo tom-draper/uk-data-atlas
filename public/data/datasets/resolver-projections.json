@@ -1,0 +1,40 @@
+{
+	"version": 1,
+	"files": {
+		"area-lineage.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "fcb335421c29937a9043e17dd4afbca12e68fefa3785007ce8e7059a1f566558",
+			"writtenBy": "pnpm lineage:build"
+		},
+		"boundary-mappings.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "4bc78da640dd8ab2f978d2cc2249036b547417ea1c1709a2ad7a83bf9909a0f9",
+			"writtenBy": "pnpm containment:build"
+		},
+		"constituency-lad-overlaps.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "fe8c1bf7d88c8a5202be767410a063669ed8cbfb2f3c47682df18979ed4a7cc2",
+			"writtenBy": "pnpm containment:build"
+		},
+		"lsoa-lad-mappings-2001.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "8d7b07e9696e95364999a2473a29c42a042f33c4e94d1b20fe5e2588ce6bd83d",
+			"writtenBy": "pnpm containment:build"
+		},
+		"lsoa-lad-mappings-2011.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "6e421be22d1ed89ca786b4d9496f87eb0f7fa941af4cee2beba0d65146eed1da",
+			"writtenBy": "pnpm containment:build"
+		},
+		"lsoa-lad-mappings-2021.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "59b9eddad4d64a7d22f02560c8d08741cc7463d4b189b067c5eb6953ed6d7913",
+			"writtenBy": "pnpm containment:build"
+		},
+		"parish-lad-mappings.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "dfff9aa3fc6f011fcdd53423009a8113dda70d995907a36f99bd12380e7b6bfb",
+			"writtenBy": "pnpm containment:build"
+		}
+	}
+}
