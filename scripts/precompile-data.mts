@@ -39,11 +39,11 @@ import {
 	xlsSheetRows,
 } from "../lib/data/spreadsheet/xls";
 import {
-	forEachSheetRow,
 	findSheetPath,
 	parseSharedStrings,
 	percentageStyles,
 	rowsToCsv,
+	sheetRow,
 	selectedSheetRow,
 	sheetRows,
 } from "../lib/data/spreadsheet/xlsx";
@@ -319,6 +319,30 @@ const readXlsxSheetParts = async (
 	};
 };
 
+const readXlsxSheetMetadata = async (fullPath: string, sheetName: string) => {
+	await stat(fullPath);
+	const entry = (name: string) =>
+		execSync(`unzip -p "${fullPath}" "${name}"`, {
+			maxBuffer: 64 * 1024 * 1024,
+		}).toString("utf8");
+	const sheetPath = findSheetPath(
+		entry("xl/workbook.xml"),
+		entry("xl/_rels/workbook.xml.rels"),
+		sheetName,
+	);
+	let sharedStrings: string[] = [];
+	try {
+		sharedStrings = parseSharedStrings(entry("xl/sharedStrings.xml"));
+	} catch {
+		sharedStrings = [];
+	}
+	return {
+		sheetPath,
+		sharedStrings,
+		percentStyleIds: percentageStyles(entry("xl/styles.xml")),
+	};
+};
+
 const readXlsxSheetFile = async (
 	fullPath: string,
 	sheetName: string,
@@ -415,32 +439,70 @@ const visitXlsxSheetRows = async (
 	sheetName: string,
 	visit: (row: ReadonlyMap<number, string>) => void,
 ) => {
-	const { sheetXml, sharedStrings, percentStyleIds } =
-		await readXlsxSheetParts(join(SOURCE_DATA, path), sheetName);
-	forEachSheetRow(sheetXml, sharedStrings, percentStyleIds, visit);
-	return { sheetXml, sharedStrings, percentStyleIds };
+	const fullPath = join(SOURCE_DATA, path);
+	const { sheetPath, sharedStrings, percentStyleIds } =
+		await readXlsxSheetMetadata(fullPath, sheetName);
+	await new Promise<void>((resolve, reject) => {
+		const unzip = spawn("unzip", ["-p", fullPath, sheetPath]);
+		if (!unzip.stdout) {
+			reject(new Error(`Could not stream ${path}#${sheetName}.`));
+			return;
+		}
+		unzip.stdout.setEncoding("utf8");
+		let pending = "";
+		let failed = false;
+		const fail = (error: unknown) => {
+			if (failed) return;
+			failed = true;
+			unzip.kill();
+			reject(error);
+		};
+		const consume = () => {
+			while (true) {
+				const start = pending.search(/<row\b/);
+				if (start === -1) {
+					pending = pending.slice(-4);
+					return;
+				}
+				if (start > 0) pending = pending.slice(start);
+				const closing = pending.indexOf("</row>");
+				const selfClosing = /^<row\b[^>]*\/>/.exec(pending)?.[0];
+				if (closing === -1 && !selfClosing) return;
+				const rowXml = selfClosing ?? pending.slice(0, closing + 6);
+				pending = pending.slice(rowXml.length);
+				visit(sheetRow(rowXml, sharedStrings, percentStyleIds));
+			}
+		};
+		unzip.stdout.on("data", (chunk: string) => {
+			try {
+				pending += chunk;
+				consume();
+			} catch (error) {
+				fail(error);
+			}
+		});
+		unzip.on("error", fail);
+		unzip.on("close", (code) => {
+			if (failed) return;
+			try {
+				consume();
+				if (code !== 0)
+					throw new Error(`Could not stream ${path}#${sheetName}.`);
+				resolve();
+			} catch (error) {
+				fail(error);
+			}
+		});
+	});
+	return { sheetPath };
 };
 
 // The worksheet XML alone does not fully describe an .xlsx input: values can
 // be resolved through the shared-string table and percentages through styles.
 // Keep all three in the tracked source artifact, so a cache hit cannot hide a
 // change to either supporting file.
-const xlsxRowsArtifact = ({
-	sheetXml,
-	sharedStrings,
-	percentStyleIds,
-}: {
-	sheetXml: string;
-	sharedStrings: string[];
-	percentStyleIds: Set<number>;
-}) =>
-	JSON.stringify({
-		sheetXml,
-		sharedStrings,
-		percentStyleIds: [...percentStyleIds].sort(
-			(left, right) => left - right,
-		),
-	});
+const xlsxRowsArtifact = (sheetPath: string) =>
+	JSON.stringify({ sheetPath, streaming: true });
 
 const xlsxSelectedRowsArtifact = (sheet: string, columns: readonly number[]) =>
 	JSON.stringify({ version: 1, sheet, columns });
@@ -510,7 +572,7 @@ const createTrackedReader = () => {
 		visit: (row: ReadonlyMap<number, string>) => void,
 	) => {
 		const input = await visitXlsxSheetRows(path, sheet, visit);
-		const content = xlsxRowsArtifact(input);
+		const content = xlsxRowsArtifact(input.sheetPath);
 		artifacts.set(`xlsxSheetRows:${path}#${sheet}`, {
 			kind: "xlsxSheetRows",
 			path: `${path}#${sheet}`,

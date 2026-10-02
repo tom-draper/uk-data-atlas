@@ -191,11 +191,11 @@ export function forEachSheetRow(
  * Reads a single worksheet row while decoding only requested columns. This is
  * useful for streaming large workbooks whose loaders need a small projection.
  */
-export function selectedSheetRow(
+export function sheetRow(
 	rowXml: string,
 	sharedStrings: string[],
-	columns: ReadonlySet<number>,
 	percentageStyleIds: ReadonlySet<number> = new Set(),
+	columns?: ReadonlySet<number>,
 ): ReadonlyMap<number, string> {
 	const row = new Map<number, string>();
 	let nextColumn = 0;
@@ -207,7 +207,7 @@ export function selectedSheetRow(
 		const reference = /\br="([^"]*)"/.exec(attrs)?.[1];
 		const column = reference ? columnIndex(reference) : nextColumn;
 		nextColumn = Math.max(nextColumn, column + 1);
-		if (!columns.has(column)) continue;
+		if (columns && !columns.has(column)) continue;
 
 		const type = /\bt="([^"]*)"/.exec(attrs)?.[1];
 		let value = "";
@@ -228,6 +228,15 @@ export function selectedSheetRow(
 		row.set(column, value);
 	}
 	return row;
+}
+
+export function selectedSheetRow(
+	rowXml: string,
+	sharedStrings: string[],
+	columns: ReadonlySet<number>,
+	percentageStyleIds: ReadonlySet<number> = new Set(),
+): ReadonlyMap<number, string> {
+	return sheetRow(rowXml, sharedStrings, percentageStyleIds, columns);
 }
 
 /**
