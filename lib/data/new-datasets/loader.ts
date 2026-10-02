@@ -1,4 +1,4 @@
-import { odsTableRows } from "../spreadsheet/ods";
+import { odsTableRows, type OdsTableOptions } from "../spreadsheet/ods";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableNum } from "@/lib/helpers/parseNumber";
 import type { IndicatorDataset, IndicatorRecord } from "@/lib/types/indicator";
@@ -163,35 +163,40 @@ export async function loadCouncilTax(read: (path: string) => Promise<string>) {
 	return dataset("councilTax", 2026, "localAuthority", 2026, records);
 }
 
-export async function loadWaste(read: (path: string) => Promise<string>) {
-	const rows = table(
-		await read(
-			source("environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods"),
-		),
-		"Table_1",
-		32,
-	);
+export async function loadWaste(
+	readRows: (
+		path: string,
+		options: OdsTableOptions,
+		visit: (row: readonly string[]) => void,
+	) => Promise<void>,
+) {
 	const records: Record<string, IndicatorRecord> = {};
-	for (const row of rows.slice(4)) {
-		const code = row[2]?.trim() ?? "";
-		const total = numeric(row[6]);
-		const recycled = numeric(row[20]);
-		if (
-			row[0] !== "2024-25" ||
-			row[5] !== "Collection" ||
-			!mapAuthorityCode(code) ||
-			total === null
-		)
-			continue;
-		records[code] = {
-			code,
-			name: row[4]?.trim() || code,
-			value: total,
-			...(recycled === null
-				? {}
-				: { metrics: { recycledTonnes: recycled } }),
-		};
-	}
+	let rowIndex = 0;
+	await readRows(
+		source("environment/waste/LA_and_Regional_Spreadsheet_2024-25.ods"),
+		{ table: "Table_1", label: "Table_1", maxColumns: 32 },
+		(row) => {
+			if (rowIndex++ < 4) return;
+			const code = row[2]?.trim() ?? "";
+			const total = numeric(row[6]);
+			const recycled = numeric(row[20]);
+			if (
+				row[0] !== "2024-25" ||
+				row[5] !== "Collection" ||
+				!mapAuthorityCode(code) ||
+				total === null
+			)
+				return;
+			records[code] = {
+				code,
+				name: row[4]?.trim() || code,
+				value: total,
+				...(recycled === null
+					? {}
+					: { metrics: { recycledTonnes: recycled } }),
+			};
+		},
+	);
 	return dataset("waste", 2025, "localAuthority", 2025, records);
 }
 
