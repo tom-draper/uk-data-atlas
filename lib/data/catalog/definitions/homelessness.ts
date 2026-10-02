@@ -20,10 +20,5 @@ export const homelessnessDatasetDefinition: DatasetDefinition<HomelessnessDatase
 			description:
 				"Households in temporary accommodation by English local authority, including households with children.",
 		},
-		precompile: async (reader) =>
-			loadHomelessness(
-				await reader.odsContent(
-					"economics/homelessness/homelessness-2026-q1.ods",
-				),
-			),
+		precompile: ({ odsTableRows }) => loadHomelessness(odsTableRows),
 	};
