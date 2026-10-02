@@ -1,6 +1,5 @@
 import { NHSWaitingDataset, NHSWaitingICBData } from "@/lib/types/nhsWaiting";
 import { LAD_TO_ICB } from "./ladToIcb";
-import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNumOrZero } from "@/lib/helpers/parseNumber";
 
 // Column names for weekly bands ≥18 weeks
@@ -12,30 +11,24 @@ function isOver18WeeksBand(col: string): boolean {
 }
 
 export async function loadNHSWaiting(
-	readZip: (path: string) => Promise<string>,
+	readRows: (
+		path: string,
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => Promise<void>,
 ): Promise<Record<string, NHSWaitingDataset>> {
-	const csv = await readZip("health/nhs-waiting-times/rtt-mar-2026.zip");
-	const { data } = await parseCsv<Record<string, string>>(csv, {
-		header: true,
-	});
-
 	const icbTotals: Record<
 		string,
 		{ icbName: string; total: number; over18: number }
 	> = {};
-
-	const rows = data as Record<string, string>[];
-	if (rows.length === 0) return {};
-
-	// Identify over-18-week band columns from first row's keys
-	const over18Cols = Object.keys(rows[0]).filter(isOver18WeeksBand);
-
-	for (const row of rows) {
-		if (row["RTT Part Description"] !== "Incomplete Pathways") continue;
+	let over18Cols: string[] | undefined;
+	await readRows("health/nhs-waiting-times/rtt-mar-2026.zip", (row) => {
+		// Identify over-18-week band columns from the first parsed row.
+		over18Cols ??= Object.keys(row).filter(isOver18WeeksBand);
+		if (row["RTT Part Description"] !== "Incomplete Pathways") return;
 
 		const icbCode = (row["Provider Parent Org Code"] ?? "").trim();
 		const icbName = (row["Provider Parent Name"] ?? "").trim();
-		if (!icbCode || !icbName) continue;
+		if (!icbCode || !icbName) return;
 
 		const total = parseNumOrZero(row["Total All"]);
 		const over18 = over18Cols.reduce(
@@ -47,7 +40,9 @@ export async function loadNHSWaiting(
 			icbTotals[icbCode] = { icbName, total: 0, over18: 0 };
 		icbTotals[icbCode].total += total;
 		icbTotals[icbCode].over18 += over18;
-	}
+	});
+
+	if (!over18Cols) return {};
 
 	const icbData: Record<string, NHSWaitingICBData> = {};
 	for (const [code, { icbName, total, over18 }] of Object.entries(
