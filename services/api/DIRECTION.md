@@ -1,9 +1,9 @@
 # API direction
 
 This is the authoritative statement of what the API is for and what to build
-next. It supersedes the commercial roadmap, the three golden paths and the
-phased delivery plan in [README.md](README.md), which remain there as backlog
-and design history. Where the two disagree on priority, this document wins.
+next. It replaced the commercial roadmap, the three golden paths and the
+phased delivery plan that were in [README.md](README.md); they are in the git
+history. Where the two disagree on priority, this document wins.
 `openapi.yaml` stays the binding description of what is implemented.
 
 Written 2026-09-29, after putting a set of everyday questions to a local build
@@ -102,8 +102,7 @@ fix what's broken, convert it to where you need it, and put it on a map.
 
 - Matching: "here are 100 area codes, what boundary set are they?" This works
   today through `/areas:validate`. Add name matching with parent hints, a
-  whole-column diagnosis, and a downloadable match report. That work is
-  already ranked in `docs/geography-resolver-work.md`.
+  whole-column diagnosis, and a downloadable match report.
 - Converting: send your values and a target geography, get them back
   converted through a stated crosswalk. This stays stateless and read-only,
   since the request carries the data and nothing is stored.
@@ -138,7 +137,10 @@ updated against a local build on 2026-09-30.
 1. **Nothing is deployed, so nothing is frozen yet.** The README currently
    says to keep v1 paths and parameter names stable. There are no v1 clients,
    so this is the only cheap moment to rename, merge and delete. Freeze at
-   launch, not before.
+   launch, not before. What freezes is the routes, their parameters and what
+   they return. How the build lays its output out on disk is the API's own
+   business and can change in any release, since every file is served
+   through a route.
 2. **One question, one request.** If a common question needs three calls and
    an id looked up from a fourth, add a front-door route, a default or an
    alias rather than documenting the dance.
@@ -229,28 +231,29 @@ already supports.
 
 ### Now: close the gaps that block the mission
 
-1. **Whole-release boundary downloads and tiles for every release.** Done
-   for 98 of 99: 94 with tiles and every tier, four that are not coverages
-   (ward 2017, data zones 2021 and 2022, LSOA 2001) as full-detail downloads
-   without tiles. `dataZone/2011-12-sc-nc` has no readable geometry, and the
-   2022 and 2021 data zone ids carry no month, so `latest` cannot place them.
-2. **Simplify the surface.** Apply the merges, the one vocabulary and the
+1. **Simplify the surface.** Apply the merges, the one vocabulary and the
    `include=` folding above while it costs nothing. Update `openapi.yaml`, the
    docs page and the contract tests in the same passes. Under way: see
    [Merge](#merge); `latest` is accepted wherever a path names a release, and
    `/areas:contains` takes a postcode. `pnpm contract:surface
 --before-launch` locks a deliberate break until launch.
-3. **Measure discovery.** Done: `GET /measures?q=` with aliases, and an alias
-   is accepted wherever a measure id is.
-4. **Your own data, stateless.** Done: a `POST` body for `areas:validate`, a
-   match report, and a `:join` for your values. Next, the matcher work
-   ranked in `docs/geography-resolver-work.md`.
-5. **Places with history.** Ceremonial counties (the source is in
+2. **Places with history.** Ceremonial counties (the source is in
    `data/geography/ceremonial-counties` and, since `data-2026-09-29`, in the
    published data release, but not yet compiled into the API), then historic
    counties, then reorganisation events as
    first-class lineage, so a county, a district and its successors can be told
    as one story.
+3. **Matching your own data by name.** Name matching with parent hints, and a
+   whole-column diagnosis that says which geography and release a column is
+   and what in it is broken.
+4. **The last boundary download gaps.** `dataZone/2011-12-sc-nc` has no
+   readable geometry, and the 2022 and 2021 data zone ids carry no month, so
+   `latest` cannot place them.
+
+Done since this was written, and recorded in the [question
+bank](#question-bank): whole-release downloads and tiles for 98 of 99
+releases, measure discovery by name and alias, and a `POST` body, match
+report and `:join` for your own data.
 
 ### Next: depth
 
