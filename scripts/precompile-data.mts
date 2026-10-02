@@ -279,6 +279,62 @@ const visitZipCsvRows = async (
 	});
 };
 
+const visitCsvRows = async (
+	path: string,
+	{ skipLines = 0 }: { skipLines?: number },
+	visit: (row: Readonly<Record<string, string>>) => void,
+): Promise<{ bytes: number; sha256: string }> => {
+	const fullPath = join(SOURCE_DATA, path);
+	await stat(fullPath);
+	return new Promise((resolve, reject) => {
+		const input = createReadStream(fullPath);
+		const hash = createHash("sha256");
+		let bytes = 0;
+		let finished = false;
+		const fail = (error: unknown) => {
+			if (finished) return;
+			finished = true;
+			input.destroy();
+			reject(error);
+		};
+		const parser = Papa.parse<Record<string, string>>(
+			Papa.NODE_STREAM_INPUT,
+			{
+				header: true,
+				skipEmptyLines: true,
+				beforeFirstChunk: (chunk) => {
+					let start = 0;
+					for (let line = 0; line < skipLines; line++) {
+						const end = chunk.indexOf("\n", start);
+						if (end === -1) return "";
+						start = end + 1;
+					}
+					return chunk.slice(start);
+				},
+			},
+		);
+		input.on("data", (chunk: Buffer) => {
+			hash.update(chunk);
+			bytes += chunk.byteLength;
+		});
+		input.on("error", fail);
+		parser.on("data", (row: Record<string, string>) => {
+			try {
+				visit(row);
+			} catch (error) {
+				fail(error);
+			}
+		});
+		parser.on("error", fail);
+		parser.on("end", () => {
+			if (finished) return;
+			finished = true;
+			resolve({ bytes, sha256: hash.digest("hex") });
+		});
+		input.pipe(parser);
+	});
+};
+
 // Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
 // workbook can stay in data/ exactly as published and no extracted copy has to
 // be committed alongside it.
@@ -722,6 +778,19 @@ const createTrackedReader = () => {
 			input: await fileStamp(join(SOURCE_DATA, path)),
 		});
 	};
+	const trackCsvRows = async (
+		path: string,
+		options: { skipLines?: number },
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => {
+		const content = await visitCsvRows(path, options, visit);
+		artifacts.set(`csvRows:${path}`, {
+			kind: "csvRows",
+			path,
+			...content,
+			input: await fileStamp(join(SOURCE_DATA, path)),
+		});
+	};
 	const trackOdsTableRows = async (
 		path: string,
 		options: OdsTableOptions,
@@ -739,6 +808,7 @@ const createTrackedReader = () => {
 	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
+		csvRows: (path, options, visit) => trackCsvRows(path, options, visit),
 		xlsxSheet: (path, sheet) =>
 			track("xlsxSheet", `${path}#${sheet}`, () =>
 				readXlsxSheet(path, sheet),
