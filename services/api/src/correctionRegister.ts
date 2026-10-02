@@ -2,4 +2,4 @@ export {
 	correctionRecords,
 	correctionsForMeasure,
 	type CorrectionRecord,
-} from "../../../lib/corrections";
+} from "@uk-data-atlas/catalogue";

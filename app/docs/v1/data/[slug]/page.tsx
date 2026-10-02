@@ -12,7 +12,7 @@ import {
 import { Request } from "@/components/docs/Example";
 import Facts from "@/components/docs/Facts";
 import { TextLink } from "@/components/docs/Prose";
-import { correctionsForMeasures } from "@/lib/corrections";
+import { correctionsForMeasures } from "@uk-data-atlas/catalogue";
 import {
 	exportsFromDatasets,
 	loadCatalogue,

@@ -2,7 +2,7 @@ import {
 	correctionRecords,
 	correctionsForMeasure,
 	correctionsForMeasures,
-} from "@/lib/corrections";
+} from "@uk-data-atlas/catalogue";
 
 describe("correction register", () => {
 	it("keeps source artifacts immutable for every documented change", () => {
