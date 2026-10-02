@@ -157,11 +157,31 @@ const readBoundaryAsset = async (path: string) => {
 const readXlsWorkbook = async (path: string): Promise<Uint8Array> => {
 	const fullPath = join(SOURCE_DATA, path);
 	await stat(fullPath);
-	return path.endsWith(".zip")
-		? execSync(`unzip -p "${fullPath}" "*.xls"`, {
-				maxBuffer: 512 * 1024 * 1024,
-			})
-		: await readFile(fullPath);
+	if (!path.endsWith(".zip")) return readFile(fullPath);
+	return new Promise<Uint8Array>((resolve, reject) => {
+		const unzip = spawn("unzip", ["-p", fullPath, "*.xls"]);
+		if (!unzip.stdout) {
+			reject(new Error(`Could not extract ${path}.`));
+			return;
+		}
+		const chunks: Buffer[] = [];
+		let stderr = "";
+		unzip.stdout.on("data", (chunk: Buffer) => chunks.push(chunk));
+		unzip.stderr?.setEncoding("utf8");
+		unzip.stderr?.on("data", (chunk: string) => {
+			stderr += chunk;
+		});
+		unzip.on("error", reject);
+		unzip.on("close", (code) => {
+			if (code !== 0) {
+				reject(
+					new Error(`Could not extract ${path}: ${stderr.trim()}`),
+				);
+				return;
+			}
+			resolve(Buffer.concat(chunks));
+		});
+	});
 };
 
 const readXlsSheet = async (

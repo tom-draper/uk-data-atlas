@@ -44,6 +44,10 @@ type XlsSheetRowReader = (
 
 type PriceColumn = { index: number; year: number };
 
+type PriceRow = Omit<HousePriceWardData, "prices" | "meanPrices"> & {
+	prices: Record<number, number>;
+};
+
 const cell = (
 	row: ReadonlyMap<number, string>,
 	headers: ReadonlyMap<string, number>,
@@ -70,6 +74,24 @@ function pricesForRow(
 		prices[year] = price;
 	}
 	return prices;
+}
+
+function priceRow(
+	row: ReadonlyMap<number, string>,
+	headers: ReadonlyMap<string, number>,
+	priceColumns: readonly PriceColumn[],
+): PriceRow | undefined {
+	const rawCode = cell(row, headers, "Ward code");
+	if (!rawCode) return;
+	const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
+	return {
+		ladCode: cell(row, headers, "Local authority code"),
+		ladName: cell(row, headers, "Local authority name"),
+		wardCode,
+		wardName: cell(row, headers, "Ward name"),
+		...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
+		prices: pricesForRow(row, priceColumns),
+	};
 }
 
 const readPriceRows = async (
@@ -112,53 +134,42 @@ const readPriceRows = async (
 export async function loadHousePrice(
 	readRows: XlsSheetRowReader,
 ): Promise<Record<string, HousePriceDataset>> {
+	const medianByWard: Record<string, PriceRow> = {};
+	const meanByWard: Record<string, PriceRow> = {};
+	await Promise.all([
+		readPriceRows(
+			readRows,
+			MEDIAN_PRICE_PATH,
+			(row, headers, priceColumns) => {
+				const price = priceRow(row, headers, priceColumns);
+				if (price) medianByWard[price.wardCode] = price;
+			},
+		),
+		readPriceRows(
+			readRows,
+			MEAN_PRICE_PATH,
+			(row, headers, priceColumns) => {
+				const price = priceRow(row, headers, priceColumns);
+				if (price) meanByWard[price.wardCode] = price;
+			},
+		),
+	]);
+
 	const wardData: Record<string, HousePriceWardData> = {};
-
-	await readPriceRows(
-		readRows,
-		MEDIAN_PRICE_PATH,
-		(row, headers, priceColumns) => {
-			const rawCode = cell(row, headers, "Ward code");
-			if (!rawCode) return;
-			const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
-
-			wardData[wardCode] = {
-				ladCode: cell(row, headers, "Local authority code"),
-				ladName: cell(row, headers, "Local authority name"),
-				wardCode,
-				wardName: cell(row, headers, "Ward name"),
-				...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
-				prices: pricesForRow(row, priceColumns),
-				meanPrices: {},
-			};
-		},
-	);
-
-	await readPriceRows(
-		readRows,
-		MEAN_PRICE_PATH,
-		(row, headers, priceColumns) => {
-			const rawCode = cell(row, headers, "Ward code");
-			if (!rawCode) return;
-			const wardCode = SALFORD_WARD_CODE_REMAP[rawCode] ?? rawCode;
-			const meanPrices = pricesForRow(row, priceColumns);
-			const existing = wardData[wardCode];
-			if (existing) {
-				existing.meanPrices = meanPrices;
-				return;
-			}
-
-			wardData[wardCode] = {
-				ladCode: cell(row, headers, "Local authority code"),
-				ladName: cell(row, headers, "Local authority name"),
-				wardCode,
-				wardName: cell(row, headers, "Ward name"),
-				...(wardCode !== rawCode ? { sourceWardCode: rawCode } : {}),
-				prices: {},
-				meanPrices,
-			};
-		},
-	);
+	for (const [wardCode, median] of Object.entries(medianByWard)) {
+		wardData[wardCode] = {
+			...median,
+			meanPrices: meanByWard[wardCode]?.prices ?? {},
+		};
+	}
+	for (const [wardCode, mean] of Object.entries(meanByWard)) {
+		if (wardData[wardCode]) continue;
+		wardData[wardCode] = {
+			...mean,
+			prices: {},
+			meanPrices: mean.prices,
+		};
+	}
 
 	return {
 		2023: {
