@@ -23,5 +23,5 @@ export const nhsWaitingDatasetDefinition: DatasetDefinition<NHSWaitingDataset> =
 			description:
 				"Referral to treatment waiting times by Integrated Care Board for England.",
 		},
-		precompile: ({ zipCsv }) => loadNHSWaiting(zipCsv),
+		precompile: ({ zipCsvRows }) => loadNHSWaiting(zipCsvRows),
 	};

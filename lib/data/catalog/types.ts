@@ -58,6 +58,11 @@ export interface DatasetReader {
 	) => Promise<void>;
 	odsContent: (path: string) => Promise<string>;
 	zipCsv: (path: string) => Promise<string>;
+	/** Streams parsed records from a CSV contained in a zip archive. */
+	zipCsvRows: (
+		path: string,
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => Promise<void>;
 }
 
 export interface DatasetIngestionContract {

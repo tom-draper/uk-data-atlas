@@ -23,6 +23,7 @@ import { join, dirname, relative } from "path";
 import { fileURLToPath } from "url";
 import { execSync, spawn } from "child_process";
 import { createHash } from "crypto";
+import Papa from "papaparse";
 
 import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
 import {
@@ -214,6 +215,67 @@ const readZip = (path: string): Promise<string> => {
 			maxBuffer: 100 * 1024 * 1024,
 		}).toString("utf8"),
 	);
+};
+
+const visitZipCsvRows = async (
+	path: string,
+	visit: (row: Readonly<Record<string, string>>) => void,
+): Promise<{ bytes: number; sha256: string }> => {
+	const fullPath = join(SOURCE_DATA, path);
+	await stat(fullPath);
+	return new Promise((resolve, reject) => {
+		const unzip = spawn("unzip", ["-p", fullPath, "*.csv"]);
+		if (!unzip.stdout) {
+			reject(new Error(`Could not stream ${path}.`));
+			return;
+		}
+		const hash = createHash("sha256");
+		let bytes = 0;
+		let finished = false;
+		let parsed = false;
+		let exitCode: number | null | undefined;
+		const fail = (error: unknown) => {
+			if (finished) return;
+			finished = true;
+			unzip.kill();
+			reject(error);
+		};
+		const complete = () => {
+			if (!parsed || exitCode === undefined || finished) return;
+			if (exitCode !== 0) {
+				fail(new Error(`Could not stream ${path}.`));
+				return;
+			}
+			finished = true;
+			resolve({ bytes, sha256: hash.digest("hex") });
+		};
+		const parser = Papa.parse<Record<string, string>>(
+			Papa.NODE_STREAM_INPUT,
+			{ header: true, skipEmptyLines: true },
+		);
+		unzip.stdout.on("data", (chunk: Buffer) => {
+			hash.update(chunk);
+			bytes += chunk.byteLength;
+		});
+		parser.on("data", (row: Record<string, string>) => {
+			try {
+				visit(row);
+			} catch (error) {
+				fail(error);
+			}
+		});
+		parser.on("error", fail);
+		parser.on("end", () => {
+			parsed = true;
+			complete();
+		});
+		unzip.on("error", fail);
+		unzip.on("close", (code) => {
+			exitCode = code;
+			complete();
+		});
+		unzip.stdout.pipe(parser);
+	});
 };
 
 // Pulls one named worksheet out of an .xlsx and renders it as CSV, so the
@@ -490,6 +552,18 @@ const createTrackedReader = () => {
 			},
 		);
 	};
+	const trackZipCsvRows = async (
+		path: string,
+		visit: (row: Readonly<Record<string, string>>) => void,
+	) => {
+		const content = await visitZipCsvRows(path, visit);
+		artifacts.set(`zipCsvRows:${path}`, {
+			kind: "zipCsvRows",
+			path,
+			...content,
+			input: await fileStamp(join(SOURCE_DATA, path)),
+		});
+	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
 		xlsxSheet: (path, sheet) =>
@@ -508,6 +582,7 @@ const createTrackedReader = () => {
 		odsContent: (path) =>
 			track("odsContent", path, () => readOdsContent(path)),
 		zipCsv: (path) => track("zipCsv", path, () => readZip(path)),
+		zipCsvRows: (path, visit) => trackZipCsvRows(path, visit),
 	};
 	return { reader, artifacts };
 };
