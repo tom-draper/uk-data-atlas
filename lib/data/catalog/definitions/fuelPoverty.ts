@@ -19,10 +19,5 @@ export const fuelPovertyDatasetDefinition: DatasetDefinition<FuelPovertyDataset>
 			description:
 				"Fuel poverty estimates by Lower-layer Super Output Area in England.",
 		},
-		precompile: async (reader) =>
-			loadFuelPoverty(
-				await reader.odsContent(
-					"economics/fuel-poverty/fuel-poverty-2024.ods",
-				),
-			),
+		precompile: ({ odsTableRows }) => loadFuelPoverty(odsTableRows),
 	};
