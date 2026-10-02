@@ -4,6 +4,9 @@
 	"license": "AGPL-3.0-only",
 	"version": "0.0.0",
 	"type": "module",
+	"exports": {
+		"./catalogues": "./src/catalogueLoader.ts"
+	},
 	"engines": {
 		"node": ">=24 <27"
 	},
@@ -50,6 +53,7 @@
 		"build:validation-report": "tsx scripts/build-validation-report.ts"
 	},
 	"dependencies": {
+		"@uk-data-atlas/catalogue": "workspace:*",
 		"@uk-data-atlas/geography": "workspace:*"
 	},
 	"devDependencies": {
