@@ -3,6 +3,10 @@
 Thanks for helping improve the UK Data Atlas. Issues and pull requests are
 welcome.
 
+[ARCHITECTURE.md](./ARCHITECTURE.md) explains how the repository is laid out,
+where its data lives and which way its code may depend. Read it before moving
+code between the atlas, the API and the shared packages.
+
 ## Licensing of contributions
 
 The UK Data Atlas source code is released under the
