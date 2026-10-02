@@ -25,6 +25,32 @@ const read = async (
 };
 
 describe("loadHousePrice", () => {
+	it("starts median and mean workbooks before either finishes", async () => {
+		const started: string[] = [];
+		let release: () => void;
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		const slowRead = async (
+			path: string,
+			_sheet: string,
+			visit: (row: ReadonlyMap<number, string>) => void,
+		) => {
+			started.push(path);
+			await gate;
+			for (const values of rows)
+				visit(new Map(values.map((value, index) => [index, value])));
+		};
+
+		const loading = loadHousePrice(slowRead);
+		try {
+			expect(started).toHaveLength(2);
+		} finally {
+			release!();
+		}
+		await loading;
+	});
+
 	it("keeps the publisher's code on a ward it moves for the map", async () => {
 		const data = (await loadHousePrice(read))[2023].data;
 
