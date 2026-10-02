@@ -35,6 +35,8 @@ interface ChartPanelProps {
 	codeMapper?: CodeMapper;
 	mapManager: MapManager | null;
 	location: string;
+	/** Leaves out the panel's header and footer, as in the mobile layout. */
+	cardsOnly?: boolean;
 }
 
 function ChartPanelContent({
@@ -52,18 +54,19 @@ function ChartPanelContent({
 	codeMapper,
 	mapManager,
 	location,
+	cardsOnly,
 }: ChartPanelProps) {
 	const deferredArea = useDeferredValue(selectedArea);
 	const hasTransportLayers =
 		roadSafetyDatasets.length > 0 || networkDatasets.length > 0;
 
 	return (
-		<ChartPanelShell>
+		<ChartPanelShell cardsOnly={cardsOnly}>
 			{(settingsOpen) =>
 				settingsOpen ? (
 					<ChartSettings />
 				) : (
-					<div className="space-y-2.5 flex-1 px-2.5 overflow-y-auto scroll-container [&>*:first-child]:border-t-0">
+					<div className="space-y-2.5 flex-1 px-2.5 max-md:py-0.5 overflow-y-auto scroll-container [&>*:first-child]:border-t-0">
 						<ChartLoadingProvider loading={chartsLoading}>
 							<ChartSections
 								activeDataset={activeDataset}

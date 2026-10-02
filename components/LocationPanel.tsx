@@ -181,7 +181,7 @@ export default function LocationPanel({
 								type="button"
 								key={name}
 								onClick={() => onLocationClick(name, bounds)}
-								className={`w-full text-left px-2 py-1 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
+								className={`w-full text-left px-2 py-1 max-md:py-1.5 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
 									selectedLocation === name
 										? isDark
 											? "bg-white/15 text-gray-100"

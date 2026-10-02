@@ -2,6 +2,8 @@ import { useMemo, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import ControlPanel from "@components/ControlPanel";
 import LegendPanel from "@components/LegendPanel";
+import LocationPanel from "@components/LocationPanel";
+import MapOptionsPane from "@components/MapOptions";
 import { ChartPanelShell } from "@components/ChartPanelShell";
 import type {
 	ActiveViz,
@@ -43,6 +45,12 @@ function ChartPanelLoading() {
 const ChartPanel = dynamic(() => import("@components/ChartPanel"), {
 	ssr: false,
 	loading: ChartPanelLoading,
+});
+
+// Loaded apart from the chart panel, so each layout fetches only the charts
+// it shows.
+const ActiveChartCard = dynamic(() => import("./ui-overlay/ActiveChartCard"), {
+	ssr: false,
 });
 
 function subscribeToDesktopLayout(onStoreChange: () => void) {
@@ -130,74 +138,101 @@ export default function UIOverlay({
 		],
 	);
 
-	const controlPanel = (onLocationSelected: (location: string) => void) => (
-		<ControlPanel
-			populationDataset={datasets.population[2022]}
-			selectedLocation={selectedLocation}
-			onLocationClick={onLocationSelected}
-			onZoomIn={onZoomIn}
-			onZoomOut={onZoomOut}
-			handleMapOptionsChange={onMapOptionsChange}
-			onExport={onExport}
-		/>
-	);
+	const chartProps = {
+		datasets,
+		customDatasets,
+		addCustomDataset,
+		roadSafetyDatasets,
+		networkDatasets,
+		activeViz,
+		setActiveViz,
+		activeDataset,
+		chartsLoading,
+		selectedArea,
+		boundaryData,
+		codeMapper,
+		mapManager,
+		location: selectedLocation,
+	};
 
-	const chartPanel = (
-		<ExcludedCategoriesContext.Provider value={excludedCategories}>
-			<ChartPanel
-				datasets={datasets}
-				customDatasets={customDatasets}
-				addCustomDataset={addCustomDataset}
-				roadSafetyDatasets={roadSafetyDatasets}
-				networkDatasets={networkDatasets}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-				activeDataset={activeDataset}
-				chartsLoading={chartsLoading}
-				selectedArea={selectedArea}
-				boundaryData={boundaryData}
-				codeMapper={codeMapper}
-				mapManager={mapManager}
-				location={selectedLocation}
-			/>
-		</ExcludedCategoriesContext.Provider>
+	const legendPanel = (
+		<LegendPanel
+			activeDataset={activeDataset}
+			activeViz={activeViz}
+			mapOptions={mapOptions}
+			onMapOptionsChange={onMapOptionsChange}
+			mapManager={mapManager}
+			boundaryData={boundaryData}
+			location={selectedLocation}
+			datasets={datasets}
+		/>
 	);
 
 	return (
 		<PanelContext.Provider value={panelContextValue}>
-			<div className="fixed inset-0 z-50 size-full pointer-events-none">
-				{isDesktopLayout ? (
-					<>
-						<div className="absolute left-0 flex h-full">
-							{controlPanel(onLocationClick)}
-						</div>
-						<div className="absolute right-0 flex h-full">
-							<LegendPanel
-								activeDataset={activeDataset}
-								activeViz={activeViz}
-								mapOptions={mapOptions}
-								onMapOptionsChange={onMapOptionsChange}
-								mapManager={mapManager}
-								boundaryData={boundaryData}
-								location={selectedLocation}
-								datasets={datasets}
-							/>
-							{chartPanel}
-						</div>
-					</>
-				) : (
-					<MobilePanels
-						isDark={mapOptions.baseStyle.id === "darkMatter"}
-						renderControlPanel={(closePanel) =>
-							controlPanel((location) => {
-								onLocationClick(location);
-								closePanel();
-							})
-						}
-						chartPanel={chartPanel}
-					/>
-				)}
-			</div>
+			<ExcludedCategoriesContext.Provider value={excludedCategories}>
+				<div className="fixed inset-0 z-50 size-full pointer-events-none">
+					{isDesktopLayout ? (
+						<>
+							<div className="absolute left-0 flex h-full">
+								<ControlPanel
+									populationDataset={
+										datasets.population[2022]
+									}
+									selectedLocation={selectedLocation}
+									onLocationClick={onLocationClick}
+									onZoomIn={onZoomIn}
+									onZoomOut={onZoomOut}
+									handleMapOptionsChange={onMapOptionsChange}
+									onExport={onExport}
+								/>
+							</div>
+							<div className="absolute right-0 flex h-full">
+								{legendPanel}
+								<ChartPanel {...chartProps} />
+							</div>
+						</>
+					) : (
+						<MobilePanels
+							isDark={mapOptions.baseStyle.id === "darkMatter"}
+							activeChartCard={
+								<ActiveChartCard {...chartProps} />
+							}
+							renderChartPanel={(closePanel) => (
+								<ChartPanel
+									{...chartProps}
+									setActiveViz={(viz) => {
+										setActiveViz(viz);
+										closePanel();
+									}}
+									cardsOnly
+								/>
+							)}
+							renderLocationPanel={(closePanel) => (
+								<LocationPanel
+									populationDataset={
+										datasets.population[2022]
+									}
+									selectedLocation={selectedLocation}
+									onLocationClick={(location) => {
+										onLocationClick(location);
+										closePanel();
+									}}
+								/>
+							)}
+							mapOptions={
+								<MapOptionsPane
+									onZoomIn={onZoomIn}
+									onZoomOut={onZoomOut}
+									handleMapOptionsChange={onMapOptionsChange}
+									onExport={onExport}
+								/>
+							}
+							legend={legendPanel}
+						/>
+					)}
+				</div>
+			</ExcludedCategoriesContext.Provider>
 		</PanelContext.Provider>
 	);
 }

@@ -137,6 +137,7 @@ export function ChartCard({
 					: {}),
 			}}
 			className={cardClass(isActive, isDark, minHeightClassName)}
+			data-active={isActive}
 			title={title}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

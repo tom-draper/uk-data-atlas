@@ -1,11 +1,17 @@
 "use client";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import packageJson from "../package.json";
 
-export default function TitlePane() {
+export default function TitlePane({
+	end,
+}: {
+	/** Drawn at the right of the title, such as the mobile menu toggle. */
+	end?: ReactNode;
+}) {
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
 
@@ -50,6 +56,7 @@ export default function TitlePane() {
 						v{packageJson.version}
 					</span>
 				</h1>
+				{end && <div className="ml-auto">{end}</div>}
 			</div>
 		</div>
 	);
