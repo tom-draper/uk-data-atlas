@@ -1,4 +1,4 @@
-import { loadLifeExpectancySeries } from "../../life-expectancy/seriesLoader";
+import { loadLifeExpectancySeriesRows } from "../../life-expectancy/seriesLoader";
 import type { LifeExpectancySeriesDataset } from "@/lib/types/lifeExpectancySeries";
 import type { DatasetDefinition } from "../types";
 
@@ -29,9 +29,6 @@ export const lifeExpectancySeriesDatasetDefinition: DatasetDefinition<LifeExpect
 			expectedBoundaryYears: [2025],
 			requiredDataFields: ["male", "female"],
 		},
-		precompile: ({ xlsxSheet }) =>
-			xlsxSheet(
-				"health/life-expectancy/lifeexpectancylocalareas.xlsx",
-				"1",
-			).then(loadLifeExpectancySeries),
+		precompile: ({ xlsxSheetSelectedRows }) =>
+			loadLifeExpectancySeriesRows(xlsxSheetSelectedRows),
 	};
