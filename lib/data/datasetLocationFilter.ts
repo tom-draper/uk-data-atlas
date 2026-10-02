@@ -6,7 +6,7 @@ import { getProp } from "./boundaries/properties";
 import { withCDN } from "../helpers/cdn";
 import { codeKeyedFieldsFor, type DatasetPayloadLayout } from "./catalog/types";
 import { fetchLsoaToLad } from "./boundaries/lsoaLadMappings";
-import { parseBoundaryWardToLad } from "./boundaries/mappings";
+import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 
 export type DatasetLocationFilter = {
 	location: string;

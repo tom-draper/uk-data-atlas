@@ -32,14 +32,12 @@ import { decodeBoundaryData } from "../lib/data/boundaries/decode";
 import {
 	applyGridOffset,
 	parseGridOffset,
-	type GridOffset,
-} from "../lib/data/boundaries/gridOffset";
-import {
 	reversedOffsetsFor,
 	substituteFeatures,
 	substitutionsFor,
 	type GeometrySubstitution,
-} from "../lib/data/boundaries/geometrySubstitutions";
+	type GridOffset,
+} from "@uk-data-atlas/geography";
 import { applyReversedGridOffset } from "./reverse-grid-offset.mts";
 import { parseDatasetMeta } from "../lib/data/catalog/meta";
 import { polygonAreaSqKm } from "../lib/helpers/population";
@@ -180,9 +178,9 @@ const reversedOffsetSources = (type: string, releaseId: string) =>
 // A change to the substitution definitions recompiles the releases they name.
 const SUBSTITUTIONS_MODULE = join(
 	ROOT,
-	"lib",
-	"data",
-	"boundaries",
+	"packages",
+	"geography",
+	"src",
 	"geometrySubstitutions.ts",
 );
 

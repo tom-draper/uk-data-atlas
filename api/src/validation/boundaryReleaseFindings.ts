@@ -3,7 +3,7 @@ import { canServeAsWgs84, geometryProvenance } from "../reprojection";
 import { type Finding, listed, check } from "./findings";
 import type { ValidationInputs } from "./inputs";
 import { releaseKey } from "../geographyKeys";
-import { knownDisplacementsFor } from "../../../lib/data/boundaries/geometrySubstitutions";
+import { knownDisplacementsFor } from "@uk-data-atlas/geography";
 
 export const boundaryReleaseFindings = (
 	inputs: ValidationInputs,

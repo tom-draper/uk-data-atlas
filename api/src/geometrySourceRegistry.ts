@@ -8,10 +8,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import type { AreaReleaseArtifact } from "./areaInventory";
-import {
-	reversedOffsetsFor,
-	substitutionsFor,
-} from "../../lib/data/boundaries/geometrySubstitutions";
+import { reversedOffsetsFor, substitutionsFor } from "@uk-data-atlas/geography";
 
 type BoundaryMetadata = { files?: unknown };
 export type GeometrySourceRegistry = {
@@ -97,7 +94,7 @@ export const createGeometrySourceRegistry = (
 			};
 		const corrections = declaredCorrections(dir);
 		// Declared in code rather than meta.json, so a repair needs no new
-		// data release; see lib/data/boundaries/geometrySubstitutions.ts.
+		// data release; see packages/geography/src/geometrySubstitutions.ts.
 		const substitutions = substitutionsFor(
 			a.geography,
 			a.boundaryRelease,

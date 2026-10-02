@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
-import type { AreaLineage } from "@/lib/data/boundaries/areaLineage";
+import type {
+	AreaLineage,
+	PrecompiledBoundaryMappings,
+} from "@uk-data-atlas/geography";
 import {
 	applyAreaLineage,
 	applyBoundaryMappings,
 	type BoundaryMappingTarget,
 } from "@/lib/data/boundaries/mappingSeeder";
-import type { PrecompiledBoundaryMappings } from "@/lib/data/boundaries/mappings";
 
 describe("precompiled boundary mapping seeding", () => {
 	it("applies every mapping family to its destination", () => {

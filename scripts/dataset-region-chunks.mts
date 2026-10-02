@@ -2,7 +2,7 @@ import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import { dirname, join } from "path";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../lib/data/gazetteer/types";
-import type { PrecompiledBoundaryMappings } from "../lib/data/boundaries/mappings";
+import type { PrecompiledBoundaryMappings } from "@uk-data-atlas/geography";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import { getProp } from "../lib/data/boundaries/properties";
 import {

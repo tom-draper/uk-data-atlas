@@ -2332,7 +2332,7 @@ codes that do not carry on unchanged between neighbouring releases, and
 overrides for the few pairs further apart whose direct answer is not what
 those steps compose to: a lookup joining two releases directly, as the 2010 to
 2024 constituency lookup does, can say an area held where a derived step in
-between cannot. `followLineage` in `lib/data/boundaries/areaLineage.ts` reads it, in
+between cannot. `followLineage` in `packages/geography/src/areaLineage.ts` reads it, in
 the website and the API alike, and a built test checks a sample of its answers
 against the resolver, so the map shows what the API would say.
 
@@ -4382,7 +4382,7 @@ areas have no accurate release to borrow from, so their Northern Ireland
 areas are taken into British National Grid, moved back by the offset's exact
 inverse and reprojected, which brings 63% of their vertices within 10 m of
 the local authority boundaries, against 5% as published. Both repairs are
-declared in `lib/data/boundaries/geometrySubstitutions.ts`, shared with the
+declared in `packages/geography/src/geometrySubstitutions.ts`, shared with the
 website's boundary compiler, and a repaired area's
 `properties.geometrySource.corrections` names the repair, with the donor
 file and its hash for a substitution. Each response's

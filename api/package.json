@@ -49,6 +49,9 @@
 		"build:map-resource": "tsx scripts/build-map-resource.ts",
 		"build:validation-report": "tsx scripts/build-validation-report.ts"
 	},
+	"dependencies": {
+		"@uk-data-atlas/geography": "workspace:*"
+	},
 	"devDependencies": {
 		"@types/node": "^26.6.2",
 		"polygon-clipping": "0.15.7",

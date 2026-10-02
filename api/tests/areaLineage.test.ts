@@ -16,7 +16,7 @@ import {
 	isRealigned,
 	listedReleases,
 	type AreaLineage,
-} from "../../lib/data/boundaries/areaLineage";
+} from "@uk-data-atlas/geography";
 
 const artifact = (
 	id: string,

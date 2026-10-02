@@ -6,7 +6,7 @@ import {
 	type BoundaryType,
 } from "../data/boundaries/catalog";
 import type { Crosswalk } from "../data/gazetteer/types";
-import { parseBoundaryWardToLad } from "../data/boundaries/mappings";
+import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import {
 	fetchLsoaToLad,
 	lsoaYearForBoundaryAsset,

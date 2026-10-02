@@ -8,7 +8,7 @@ import {
 	parseParishLadMappings,
 	parsePrecompiledBoundaryMappings,
 	type PrecompiledBoundaryMappings,
-} from "@/lib/data/boundaries/mappings";
+} from "@uk-data-atlas/geography";
 
 describe("shipped boundary mappings", () => {
 	const mappings: PrecompiledBoundaryMappings = {

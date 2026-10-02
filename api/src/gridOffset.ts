@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { reverseOffsetPosition } from "../../lib/data/boundaries/gridOffset";
+import { reverseOffsetPosition } from "@uk-data-atlas/geography";
 
 type Position = [number, number];
 

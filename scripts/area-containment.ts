@@ -5,7 +5,7 @@
  * to the lookups it reads (`boundary-mappings.json`), in place of deriving
  * them again from boundary files, so the map places a ward where the API does.
  */
-import type { PrecompiledBoundaryMappings } from "../lib/data/boundaries/mappings";
+import type { PrecompiledBoundaryMappings } from "@uk-data-atlas/geography";
 
 /** The parts of a resolver crosswalk the atlas's containment reads. */
 export type ContainmentCrosswalk = {

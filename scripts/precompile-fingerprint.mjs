@@ -18,6 +18,7 @@ const inputs = [
 	"lib/data",
 	"lib/helpers",
 	"lib/types",
+	"packages/geography",
 	"public/data/datasets/boundary-mappings.json",
 	"public/data/datasets/parish-lad-mappings.json",
 ];

@@ -36,7 +36,7 @@ const COMPILER_SOURCES = [
 	"src/packedGeometry.ts",
 	"src/reprojection.ts",
 	"src/shapefile.ts",
-	"../lib/data/boundaries/geometrySubstitutions.ts",
+	"../packages/geography/src/geometrySubstitutions.ts",
 ];
 
 const sha256 = (content: string | Buffer) =>

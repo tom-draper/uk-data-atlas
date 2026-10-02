@@ -6,7 +6,7 @@ import {
 	REVERSED_GRID_OFFSETS,
 	type GeometrySubstitution,
 	type ReversedGridOffset,
-} from "../../lib/data/boundaries/geometrySubstitutions";
+} from "@uk-data-atlas/geography";
 import type { GeoJsonGeometry, GeometrySourceLookup } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
 import {

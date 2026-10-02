@@ -1,0 +1,18 @@
+{
+	"name": "@uk-data-atlas/geography",
+	"private": true,
+	"license": "AGPL-3.0-only",
+	"version": "0.0.0",
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"devDependencies": {
+		"@types/geojson": "^7946.0.16",
+		"typescript": "^7.0.2"
+	}
+}

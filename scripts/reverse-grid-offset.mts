@@ -9,7 +9,7 @@ import proj4 from "proj4";
 import {
 	reverseOffsetPosition,
 	type GridOffset,
-} from "../lib/data/boundaries/gridOffset";
+} from "@uk-data-atlas/geography";
 
 const BNG =
 	"+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 " +

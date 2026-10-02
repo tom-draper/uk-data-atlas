@@ -19,7 +19,7 @@ import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import {
 	encodeBoundaryMappings,
 	encodeParishLadMappings,
-} from "../lib/data/boundaries/mappings";
+} from "@uk-data-atlas/geography";
 import type { LsoaLadMapping } from "../lib/data/boundaries/lsoaLadMappings";
 import {
 	compileAreaContainment,

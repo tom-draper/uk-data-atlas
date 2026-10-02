@@ -1,11 +1,10 @@
-import type { AreaLineage } from "./areaLineage";
-import { withCDN } from "../../helpers/cdn";
-import { LINEAGE_TYPES, type LineageType } from "./codeMapper";
 import {
 	parsePrecompiledBoundaryMappings,
+	type AreaLineage,
 	type PrecompiledBoundaryMappings,
-	type YearCode,
-} from "./mappings";
+} from "@uk-data-atlas/geography";
+import { withCDN } from "../../helpers/cdn";
+import { LINEAGE_TYPES, type LineageType, type YearCode } from "./codeMapper";
 
 const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
 const AREA_LINEAGE_URL = withCDN("/data/datasets/area-lineage.json");
