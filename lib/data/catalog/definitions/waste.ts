@@ -26,5 +26,5 @@ export const wasteDatasetDefinition: DatasetDefinition<
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	precompile: ({ odsContent }) => loadWaste(odsContent),
+	precompile: ({ odsTableRows }) => loadWaste(odsTableRows),
 };
