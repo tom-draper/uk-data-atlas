@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { AreaLineage } from "@/lib/data/boundaries/areaLineage";
+import type { AreaLineage } from "@uk-data-atlas/geography";
 import { CodeMapperStore } from "@/lib/data/boundaries/codeMapper";
 
 // Releases named by their year. W-2021 is renumbered W-2024 with its extent

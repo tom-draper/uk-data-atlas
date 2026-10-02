@@ -6,7 +6,7 @@ import {
 	followLineage,
 	isRealigned,
 	type AreaLineage,
-} from "../../../lib/data/boundaries/areaLineage";
+} from "@uk-data-atlas/geography";
 
 const apiRoot = new URL("../..", import.meta.url).pathname;
 const lineagePath = new URL(

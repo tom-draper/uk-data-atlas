@@ -55,7 +55,7 @@ import { loadMatchIndex } from "../lib/data/gazetteer/matchIndex";
 import {
 	parseBoundaryWardToLad,
 	parseParishLadMappings,
-} from "../lib/data/boundaries/mappings";
+} from "@uk-data-atlas/geography";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {

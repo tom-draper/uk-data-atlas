@@ -1,8 +1,3 @@
-import type { BoundaryType } from "./boundaries";
-
-export type CodeType = BoundaryType;
-export type YearCode = number;
-
 export interface PrecompiledBoundaryMappings {
 	wardToLad: Record<string, string>;
 	ladToWards: Record<number, Record<string, string[]>>;

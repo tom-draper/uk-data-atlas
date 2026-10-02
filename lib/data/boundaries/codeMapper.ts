@@ -4,9 +4,11 @@ import {
 	isRealigned,
 	listedReleases,
 	type AreaLineage,
-} from "./areaLineage";
-import { BOUNDARY_CATALOG } from "./catalog";
-import type { CodeType, YearCode } from "./mappings";
+} from "@uk-data-atlas/geography";
+import { BOUNDARY_CATALOG, type BoundaryType } from "./catalog";
+
+export type CodeType = BoundaryType;
+export type YearCode = number;
 
 /** The geographies whose areas are carried across years by a lineage. */
 export const LINEAGE_TYPES = [

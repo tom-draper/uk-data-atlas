@@ -6,7 +6,7 @@ import {
 	KNOWN_GEOMETRY_DISPLACEMENTS,
 	REVERSED_GRID_OFFSETS,
 	substituteFeatures,
-} from "@/lib/data/boundaries/geometrySubstitutions";
+} from "@uk-data-atlas/geography";
 
 const point = (code: string, key: string, x: number): FeatureCollection => ({
 	type: "FeatureCollection",

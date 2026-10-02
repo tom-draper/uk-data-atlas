@@ -7,7 +7,7 @@ import {
 	offsetPosition,
 	reverseOffsetPosition,
 	parseGridOffset,
-} from "@/lib/data/boundaries/gridOffset";
+} from "@uk-data-atlas/geography";
 
 const OFFSET = parseGridOffset(
 	JSON.parse(

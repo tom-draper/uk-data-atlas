@@ -55,7 +55,7 @@ export type GeometrySource = {
 	corrections?: string[];
 	/**
 	 * Geometry substitutions that replace some of the release's areas with
-	 * another release's, by definition id (lib/data/boundaries).
+	 * another release's, by definition id (packages/geography).
 	 */
 	substitutions?: string[];
 	/** Grid offsets a WGS84 release carries backwards, undone on load. */

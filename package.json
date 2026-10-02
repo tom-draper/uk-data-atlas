@@ -28,7 +28,7 @@
 		"test": "vitest",
 		"test:run": "vitest run",
 		"test:e2e": "playwright test",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "tsc --noEmit && pnpm --dir packages/geography typecheck",
 		"check": "pnpm typecheck && pnpm format:check && vitest run --project unit --project data && pnpm --dir api typecheck && pnpm --dir api test:unbuilt",
 		"check:full": "pnpm precompile && pnpm boundaries:compile && pnpm --dir api build && pnpm lineage:build && pnpm containment:build --check && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir api typecheck && pnpm --dir api test",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
@@ -36,6 +36,7 @@
 		"doctor": "npx react-doctor@latest"
 	},
 	"dependencies": {
+		"@uk-data-atlas/geography": "workspace:*",
 		"lucide-react": "^1.48.0",
 		"maplibre-gl": "^5.24.0",
 		"next": "^16.3.6",
