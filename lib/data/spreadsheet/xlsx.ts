@@ -188,6 +188,49 @@ export function forEachSheetRow(
 }
 
 /**
+ * Reads a single worksheet row while decoding only requested columns. This is
+ * useful for streaming large workbooks whose loaders need a small projection.
+ */
+export function selectedSheetRow(
+	rowXml: string,
+	sharedStrings: string[],
+	columns: ReadonlySet<number>,
+	percentageStyleIds: ReadonlySet<number> = new Set(),
+): ReadonlyMap<number, string> {
+	const row = new Map<number, string>();
+	let nextColumn = 0;
+	for (const cellMatch of rowXml.matchAll(
+		/<c\b([^>]*)\/\>|<c\b([^>]*)>([\s\S]*?)<\/c>/g,
+	)) {
+		const attrs = cellMatch[1] ?? cellMatch[2] ?? "";
+		const body = cellMatch[3] ?? "";
+		const reference = /\br="([^"]*)"/.exec(attrs)?.[1];
+		const column = reference ? columnIndex(reference) : nextColumn;
+		nextColumn = Math.max(nextColumn, column + 1);
+		if (!columns.has(column)) continue;
+
+		const type = /\bt="([^"]*)"/.exec(attrs)?.[1];
+		let value = "";
+		if (type === "s") {
+			const index = Number(/<v>([\s\S]*?)<\/v>/.exec(body)?.[1] ?? "-1");
+			value = sharedStrings[index] ?? "";
+		} else if (type === "inlineStr") {
+			for (const run of body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g))
+				value += run[1];
+			value = decodeXml(value);
+		} else {
+			const raw = decodeXml(/<v>([\s\S]*?)<\/v>/.exec(body)?.[1] ?? "");
+			const style = Number(/\bs="(\d+)"/.exec(attrs)?.[1] ?? "-1");
+			value = percentageStyleIds.has(style)
+				? tidyNumber(String(Number(raw) * 100))
+				: tidyNumber(raw);
+		}
+		row.set(column, value);
+	}
+	return row;
+}
+
+/**
  * The sheet as rows of cell text. Cells are placed by their own reference, so
  * skipped columns become empty strings rather than shifting a row left.
  */

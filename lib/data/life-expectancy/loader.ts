@@ -1,27 +1,57 @@
-import { LifeExpectancyDataset, LifeExpectancyLADData } from "@/lib/types";
-import { parseCsv } from "@/lib/helpers/parseCsv";
+import type { LifeExpectancyDataset, LifeExpectancyLADData } from "@/lib/types";
 import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
+import type { DatasetReader } from "../catalog/types";
 
-function parsePairedRows(
-	rows: Record<string, string>[],
-	codeCol: string,
-	nameCol: string,
-	sexCol: string,
-	valueCol: string,
-): Record<string, LifeExpectancyLADData> {
+const COMMON_COLUMNS = [
+	[0, "Period"],
+	[2, "Area type"],
+	[3, "Area code"],
+	[4, "Area name"],
+	[5, "Sex"],
+	[7, "Age group"],
+] as const;
+
+async function readLifeExpectancyRows(
+	readRows: DatasetReader["xlsxSheetSelectedRows"],
+	path: string,
+	valueColumn: number,
+	valueName: string,
+): Promise<Record<string, LifeExpectancyLADData>> {
+	const headers = new Map([...COMMON_COLUMNS, [valueColumn, valueName]]);
+	let foundHeaders = false;
 	const male: Record<string, { name: string; value: number }> = {};
 	const female: Record<string, { name: string; value: number }> = {};
 
-	for (const row of rows) {
-		const ladCode = row[codeCol]?.trim();
-		if (!ladCode) continue;
-		const value = parseFloat(row[valueCol]);
-		if (isNaN(value)) continue;
-		const name = row[nameCol]?.trim() || "";
-		const sex = row[sexCol]?.trim();
+	await readRows(path, "1", [...headers.keys()], (row) => {
+		if (!foundHeaders) {
+			if (row.get(0)?.trim() !== "Period") return;
+			const missing = [...headers].find(
+				([column, header]) => row.get(column)?.trim() !== header,
+			);
+			if (missing)
+				throw new Error(
+					`${path}: expected ${missing[1]} in column ${missing[0] + 1}.`,
+				);
+			foundHeaders = true;
+			return;
+		}
+		if (
+			row.get(0)?.trim() !== "2022 to 2024" ||
+			row.get(2)?.trim() !== "Local Areas" ||
+			row.get(7)?.trim() !== "<1"
+		)
+			return;
+		const ladCode = row.get(3)?.trim();
+		if (!ladCode) return;
+		const value = Number.parseFloat(row.get(valueColumn) ?? "");
+		if (Number.isNaN(value)) return;
+		const name = row.get(4)?.trim() || "";
+		const sex = row.get(5)?.trim();
 		if (sex === "Male") male[ladCode] = { name, value };
 		else if (sex === "Female") female[ladCode] = { name, value };
-	}
+	});
+	if (!foundHeaders)
+		throw new Error(`${path}: could not find the header row.`);
 
 	const records: Record<string, LifeExpectancyLADData> = {};
 	for (const ladCode of Object.keys(male)) {
@@ -69,32 +99,22 @@ export function addMergedLifeExpectancyAuthorities(
 }
 
 export async function loadLE(
-	read: (path: string) => Promise<string>,
+	readRows: DatasetReader["xlsxSheetSelectedRows"],
 ): Promise<Record<string, LifeExpectancyDataset>> {
-	const [leText, hleText] = await Promise.all([
-		read("health/life-expectancy/lifeexpectancylocalareas.xlsx"),
-		read("health/life-expectancy/healthylifeexpectancyuk.xlsx"),
+	const [leRecords, hleRecords] = await Promise.all([
+		readLifeExpectancyRows(
+			readRows,
+			"health/life-expectancy/lifeexpectancylocalareas.xlsx",
+			9,
+			"Life expectancy",
+		),
+		readLifeExpectancyRows(
+			readRows,
+			"health/life-expectancy/healthylifeexpectancyuk.xlsx",
+			9,
+			"HLE",
+		),
 	]);
-
-	// Sheet 1 carries every period, area type and age band; the atlas charts
-	// life expectancy at birth for local areas in the latest period.
-	const { data: leDataAll } = await parseCsv(leText, {
-		header: true,
-		skipLines: 5,
-	});
-	const leData = (leDataAll as Record<string, string>[]).filter(
-		(row) =>
-			row["Period"]?.trim() === "2022 to 2024" &&
-			row["Age group"]?.trim() === "<1" &&
-			row["Area type"]?.trim() === "Local Areas",
-	);
-	const leRecords = parsePairedRows(
-		leData,
-		"Area code",
-		"Area name",
-		"Sex",
-		"Life expectancy",
-	);
 	addMergedLifeExpectancyAuthorities(leRecords);
 
 	const result: Record<string, LifeExpectancyDataset> = {
@@ -115,43 +135,22 @@ export async function loadLE(
 		},
 	};
 
-	if (hleText) {
-		const { data: hleDataAll } = await parseCsv(hleText, {
-			header: true,
-			skipLines: 6,
-		});
-		const hleData = (hleDataAll as Record<string, string>[]).filter(
-			(r) =>
-				r["Period"]?.trim() === "2022 to 2024" &&
-				r["Age group"]?.trim() === "<1" &&
-				r["Area type"]?.trim() === "Local Areas",
-		);
-		const hleRecords = parsePairedRows(
-			hleData,
-			"Area code",
-			"Area name",
-			"Sex",
-			"HLE",
-		);
-		addMergedLifeExpectancyAuthorities(hleRecords);
-		result.hle = {
-			id: "hle",
-			year: 2024,
-			type: "lifeExpectancy",
-			boundaryType: "localAuthority",
-			boundaryYear: 2023,
-			dataPeriod: "2022–2024",
-			label: "Healthy Life Expectancy",
-			coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
-			data: hleRecords,
-			metadata: {
-				source: "Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
-				notes: [
-					"Healthy life expectancy at birth. UK local authorities.",
-				],
-			},
-		};
-	}
+	addMergedLifeExpectancyAuthorities(hleRecords);
+	result.hle = {
+		id: "hle",
+		year: 2024,
+		type: "lifeExpectancy",
+		boundaryType: "localAuthority",
+		boundaryYear: 2023,
+		dataPeriod: "2022–2024",
+		label: "Healthy Life Expectancy",
+		coverageCountries: ["GB-ENG", "GB-SCT", "GB-WLS", "GB-NIR"],
+		data: hleRecords,
+		metadata: {
+			source: "Office for National Statistics. Healthy life expectancy, UK: 2022 to 2024.",
+			notes: ["Healthy life expectancy at birth. UK local authorities."],
+		},
+	};
 
 	return result;
 }

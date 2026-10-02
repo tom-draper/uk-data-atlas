@@ -5,6 +5,7 @@ import {
 	parseSharedStrings,
 	percentageStyles,
 	rowsToCsv,
+	selectedSheetRow,
 	sheetRows,
 } from "@/lib/data/spreadsheet/xlsx";
 
@@ -125,6 +126,17 @@ describe("sheetRows", () => {
 				[],
 			),
 		).toEqual([["39.2"]]);
+	});
+});
+
+describe("selectedSheetRow", () => {
+	it("decodes only the requested sparse columns", () => {
+		const row = selectedSheetRow(
+			`<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1"><v>2371</v></c><c r="D1"><v>999</v></c></row>`,
+			["Ward"],
+			new Set([1]),
+		);
+		expect([...row]).toEqual([[1, "2371"]]);
 	});
 });
 

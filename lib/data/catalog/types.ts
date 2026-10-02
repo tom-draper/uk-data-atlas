@@ -33,6 +33,16 @@ export interface DatasetReader {
 		visit: (row: ReadonlyMap<number, string>) => void,
 	) => Promise<void>;
 	/**
+	 * Streams only named columns from a large .xlsx worksheet. Use this when a
+	 * loader needs a small projection rather than every cell in every row.
+	 */
+	xlsxSheetSelectedRows: (
+		path: string,
+		sheet: string,
+		columns: readonly number[],
+		visit: (row: ReadonlyMap<number, string>) => void,
+	) => Promise<void>;
+	/**
 	 * The same for a legacy .xls workbook, which may be given directly or as
 	 * the single entry of a .zip, the form some publishers ship it in.
 	 */
