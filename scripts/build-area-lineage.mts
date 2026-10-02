@@ -9,11 +9,12 @@
  * committed with the rest of public/data.
  */
 import { writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "../services/api/src/catalogueLoader";
+import { readApiCatalogues } from "@uk-data-atlas/api/catalogues";
 import { compileAreaLineage, type AreaLineage } from "@uk-data-atlas/geography";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
+import { recordResolverProjections } from "./resolver-projections";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const OUTPUT = join(ROOT, "public", "data", "datasets", "area-lineage.json");
@@ -28,7 +29,9 @@ export const LINEAGE_GEOGRAPHIES = [
 /** A served asset's release id: `boundaries/ward/2024-12-uk-bgc/...`. */
 const releaseOf = (asset: string) => asset.split("/").at(-2)!;
 
-const { geographyResolver } = readApiCatalogues(join(ROOT, "services", "api"));
+const { geographyResolver, atlasRelease } = readApiCatalogues(
+	join(ROOT, "services", "api"),
+);
 
 const lineage: Record<string, AreaLineage> = {};
 for (const geography of LINEAGE_GEOGRAPHIES) {
@@ -63,5 +66,12 @@ for (const geography of LINEAGE_GEOGRAPHIES) {
 		`${geography}: ${releases.length} releases, ${exceptions} codes that do not carry on unchanged`,
 	);
 }
-writeFileSync(OUTPUT, JSON.stringify(lineage));
+const json = JSON.stringify(lineage);
+writeFileSync(OUTPUT, json);
+recordResolverProjections(
+	dirname(OUTPUT),
+	atlasRelease.releaseId,
+	"pnpm lineage:build",
+	new Map([[basename(OUTPUT), json]]),
+);
 console.log(`Wrote ${OUTPUT}`);
