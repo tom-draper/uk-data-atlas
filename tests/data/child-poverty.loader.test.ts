@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadChildPoverty } from "@/lib/data/child-poverty/loader";
+import { odsTableRows } from "@/lib/data/spreadsheet/ods";
 
 const worksheet = `
 <table:table table:name="7_BHC_Relative_LA">
@@ -19,8 +20,12 @@ const worksheet = `
 </table:table>`;
 
 describe("loadChildPoverty", () => {
-	it("extracts annual local-authority counts and rates from the official ODS worksheet", () => {
-		const datasets = loadChildPoverty(worksheet);
+	it("extracts annual local-authority counts and rates from the official ODS worksheet", async () => {
+		const datasets = await loadChildPoverty(
+			async (_path, options, visit) => {
+				for (const row of odsTableRows(worksheet, options)) visit(row);
+			},
+		);
 
 		expect(datasets[2022].data.E06000001.childCount).toBe(4538);
 		expect(datasets[2025].data.E06000001.childPovertyRate).toBeCloseTo(
