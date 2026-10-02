@@ -20,8 +20,6 @@ export const lifeExpectancyDatasetDefinition: DatasetDefinition<LifeExpectancyDa
 				"Life expectancy and healthy life expectancy estimates by local area across the UK.",
 		},
 		// Both source workbooks carry their local-area data on sheet 1.
-		precompile: async ({ text, xlsxSheet }) =>
-			loadLE((path) =>
-				path.endsWith(".xlsx") ? xlsxSheet(path, "1") : text(path),
-			),
+		precompile: async ({ xlsxSheetSelectedRows }) =>
+			loadLE(xlsxSheetSelectedRows),
 	};

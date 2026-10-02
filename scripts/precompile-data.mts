@@ -21,7 +21,7 @@ import {
 import { createReadStream } from "fs";
 import { join, dirname, relative } from "path";
 import { fileURLToPath } from "url";
-import { execSync } from "child_process";
+import { execSync, spawn } from "child_process";
 import { createHash } from "crypto";
 
 import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
@@ -43,6 +43,7 @@ import {
 	parseSharedStrings,
 	percentageStyles,
 	rowsToCsv,
+	selectedSheetRow,
 	sheetRows,
 } from "../lib/data/spreadsheet/xlsx";
 import { loadRoadSafety } from "../lib/data/road-safety/loader";
@@ -245,6 +246,85 @@ const readXlsxSheetFile = async (
 	return rowsToCsv(sheetRows(sheetXml, sharedStrings, percentStyleIds));
 };
 
+const visitXlsxSheetSelectedRows = async (
+	path: string,
+	sheetName: string,
+	columns: readonly number[],
+	visit: (row: ReadonlyMap<number, string>) => void,
+) => {
+	const fullPath = join(SOURCE_DATA, path);
+	await stat(fullPath);
+	const entry = (name: string) =>
+		execSync(`unzip -p "${fullPath}" "${name}"`, {
+			maxBuffer: 64 * 1024 * 1024,
+		}).toString("utf8");
+	const sheetPath = findSheetPath(
+		entry("xl/workbook.xml"),
+		entry("xl/_rels/workbook.xml.rels"),
+		sheetName,
+	);
+	let sharedStrings: string[] = [];
+	try {
+		sharedStrings = parseSharedStrings(entry("xl/sharedStrings.xml"));
+	} catch {
+		sharedStrings = [];
+	}
+
+	const selectedColumns = new Set(columns);
+	await new Promise<void>((resolve, reject) => {
+		const unzip = spawn("unzip", ["-p", fullPath, sheetPath]);
+		if (!unzip.stdout) {
+			reject(new Error(`Could not stream ${path}#${sheetName}.`));
+			return;
+		}
+		unzip.stdout.setEncoding("utf8");
+		let pending = "";
+		let failed = false;
+		const fail = (error: unknown) => {
+			if (failed) return;
+			failed = true;
+			unzip.kill();
+			reject(error);
+		};
+		const consume = () => {
+			while (true) {
+				const start = pending.search(/<row\b/);
+				if (start === -1) {
+					pending = pending.slice(-4);
+					return;
+				}
+				if (start > 0) pending = pending.slice(start);
+				const closing = pending.indexOf("</row>");
+				const selfClosing = /^<row\b[^>]*\/>/.exec(pending)?.[0];
+				if (closing === -1 && !selfClosing) return;
+				const rowXml = selfClosing ?? pending.slice(0, closing + 6);
+				pending = pending.slice(rowXml.length);
+				visit(selectedSheetRow(rowXml, sharedStrings, selectedColumns));
+			}
+		};
+		unzip.stdout.on("data", (chunk: string) => {
+			try {
+				pending += chunk;
+				consume();
+			} catch (error) {
+				fail(error);
+			}
+		});
+		unzip.on("error", fail);
+		unzip.on("close", (code) => {
+			if (failed) return;
+			try {
+				consume();
+				if (code !== 0)
+					throw new Error(`Could not stream ${path}#${sheetName}.`);
+				resolve();
+			} catch (error) {
+				fail(error);
+			}
+		});
+	});
+};
+
 const readXlsxSheet = (path: string, sheetName: string) =>
 	readXlsxSheetFile(join(SOURCE_DATA, path), sheetName);
 
@@ -279,6 +359,9 @@ const xlsxRowsArtifact = ({
 			(left, right) => left - right,
 		),
 	});
+
+const xlsxSelectedRowsArtifact = (sheet: string, columns: readonly number[]) =>
+	JSON.stringify({ version: 1, sheet, columns });
 
 // ODS source files are never exposed by the application. The child-poverty
 // loader only needs its worksheet XML, which is then reduced to compact JSON.
@@ -368,6 +451,25 @@ const createTrackedReader = () => {
 			input: await fileStamp(join(SOURCE_DATA, path)),
 		});
 	};
+	const trackXlsxSelectedRows = async (
+		path: string,
+		sheet: string,
+		columns: readonly number[],
+		visit: (row: ReadonlyMap<number, string>) => void,
+	) => {
+		await visitXlsxSheetSelectedRows(path, sheet, columns, visit);
+		const content = xlsxSelectedRowsArtifact(sheet, columns);
+		artifacts.set(
+			`xlsxSheetSelectedRows:${path}#${sheet}:${columns.join(",")}`,
+			{
+				kind: "xlsxSheetSelectedRows",
+				path: `${path}#${sheet}:${columns.join(",")}`,
+				bytes: Buffer.byteLength(content, "utf8"),
+				sha256: createHash("sha256").update(content).digest("hex"),
+				input: await fileStamp(join(SOURCE_DATA, path)),
+			},
+		);
+	};
 	const reader: DatasetReader = {
 		text: (path) => track("text", path, () => read(path)),
 		xlsxSheet: (path, sheet) =>
@@ -376,6 +478,8 @@ const createTrackedReader = () => {
 			),
 		xlsxSheetRows: (path, sheet, visit) =>
 			trackXlsxRows(path, sheet, visit),
+		xlsxSheetSelectedRows: (path, sheet, columns, visit) =>
+			trackXlsxSelectedRows(path, sheet, columns, visit),
 		xlsSheet: (path, sheet) =>
 			track("xlsSheet", `${path}#${sheet}`, () =>
 				readXlsSheet(path, sheet),
@@ -400,6 +504,7 @@ const sourceInputPath = (kind: SourceArtifact["kind"], path: string) =>
 		SOURCE_DATA,
 		kind === "xlsxSheet" ||
 			kind === "xlsxSheetRows" ||
+			kind === "xlsxSheetSelectedRows" ||
 			kind === "xlsSheet" ||
 			kind === "xlsSheetRows"
 			? splitSheetArtifactPath(path)[0]
