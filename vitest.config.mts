@@ -36,7 +36,10 @@ export default defineConfig({
 				extends: true,
 				test: {
 					name: "unit",
-					include: ["tests/**/*.test.ts"],
+					include: [
+						"tests/**/*.test.ts",
+						"packages/*/tests/**/*.test.ts",
+					],
 					exclude: [
 						...configDefaults.exclude,
 						...HEAVY_DATA_TESTS,
