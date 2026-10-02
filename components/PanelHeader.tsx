@@ -140,11 +140,12 @@ export function panelHeaderDetails(
 }
 
 export default function PanelHeader({
-	settingsOpen,
+	settingsOpen = false,
 	onToggleSettings,
 }: {
-	settingsOpen: boolean;
-	onToggleSettings: () => void;
+	settingsOpen?: boolean;
+	/** Draws the chart settings cog. */
+	onToggleSettings?: () => void;
 }) {
 	const { selectedArea, selectedLocation } = usePanelContext();
 	const isDark = useIsDark();
@@ -162,14 +163,16 @@ export default function PanelHeader({
 				>
 					{title}
 				</h2>
-				<button
-					type="button"
-					onClick={onToggleSettings}
-					className={`p-0.5 rounded transition-colors cursor-pointer ${settingsOpen ? "text-indigo-400" : `${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}`}
-					title="Chart settings"
-				>
-					<CogIcon className="size-3.5" />
-				</button>
+				{onToggleSettings && (
+					<button
+						type="button"
+						onClick={onToggleSettings}
+						className={`p-0.5 rounded transition-colors cursor-pointer ${settingsOpen ? "text-indigo-400" : `${t.textMuted} hover:${isDark ? "text-gray-200" : "text-gray-600"}`}`}
+						title="Chart settings"
+					>
+						<CogIcon className="size-3.5" />
+					</button>
+				)}
 			</div>
 			<div className={`${t.textMuted} text-xs`}>
 				{code ? (
