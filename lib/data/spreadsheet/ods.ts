@@ -20,6 +20,28 @@ const ROW = /<table:table-row\b[^>]*>([\s\S]*?)<\/table:table-row>/g;
 const CELL =
 	/<table:table-cell\b([^>]*)>([\s\S]*?)<\/table:table-cell>|<table:table-cell\b([^>]*)\/>/g;
 
+export type OdsTableOptions = {
+	table: string;
+	label: string;
+	maxColumns: number;
+};
+
+export function odsTableRow(rowXml: string, maxColumns: number): string[] {
+	const cells: string[] = [];
+	for (const cellMatch of rowXml.matchAll(CELL)) {
+		const attrs = cellMatch[1] ?? cellMatch[3] ?? "";
+		const value =
+			/office:value="([^"]*)"/.exec(attrs)?.[1] ??
+			decodeXml(cellMatch[2] ?? "");
+		const repeats = Number(
+			/table:number-columns-repeated="(\d+)"/.exec(attrs)?.[1] ?? 1,
+		);
+		for (let i = 0; i < repeats && cells.length < maxColumns; i++)
+			cells.push(value);
+	}
+	return cells;
+}
+
 /**
  * The cells of one named sheet, row by row.
  *
@@ -34,11 +56,7 @@ const CELL =
  */
 export function odsTableRows(
 	contentXml: string,
-	{
-		table,
-		label,
-		maxColumns,
-	}: { table: string; label: string; maxColumns: number },
+	{ table, label, maxColumns }: OdsTableOptions,
 ): string[][] {
 	const start = contentXml.indexOf(`<table:table table:name="${table}"`);
 	if (start === -1)
@@ -48,20 +66,7 @@ export function odsTableRows(
 		throw new Error(`Could not read ${table} in ${label} source`);
 
 	const rows: string[][] = [];
-	for (const rowMatch of contentXml.slice(start, end).matchAll(ROW)) {
-		const cells: string[] = [];
-		for (const cellMatch of rowMatch[1].matchAll(CELL)) {
-			const attrs = cellMatch[1] ?? cellMatch[3] ?? "";
-			const value =
-				/office:value="([^"]*)"/.exec(attrs)?.[1] ??
-				decodeXml(cellMatch[2] ?? "");
-			const repeats = Number(
-				/table:number-columns-repeated="(\d+)"/.exec(attrs)?.[1] ?? 1,
-			);
-			for (let i = 0; i < repeats && cells.length < maxColumns; i++)
-				cells.push(value);
-		}
-		rows.push(cells);
-	}
+	for (const rowMatch of contentXml.slice(start, end).matchAll(ROW))
+		rows.push(odsTableRow(rowMatch[1], maxColumns));
 	return rows;
 }

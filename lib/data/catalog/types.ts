@@ -57,6 +57,12 @@ export interface DatasetReader {
 		visit: (row: ReadonlyMap<number, string>) => void,
 	) => Promise<void>;
 	odsContent: (path: string) => Promise<string>;
+	/** Streams rows from one named table in an ODS workbook. */
+	odsTableRows: (
+		path: string,
+		options: { table: string; label: string; maxColumns: number },
+		visit: (row: readonly string[]) => void,
+	) => Promise<void>;
 	zipCsv: (path: string) => Promise<string>;
 	/** Streams parsed records from a CSV contained in a zip archive. */
 	zipCsvRows: (

@@ -2,47 +2,55 @@ import {
 	ChildPovertyDataset,
 	ChildPovertyLADData,
 } from "@/lib/types/childPoverty";
-import { odsTableRows } from "@/lib/data/spreadsheet/ods";
+import type { OdsTableOptions } from "@/lib/data/spreadsheet/ods";
 
 const TABLE_NAME = "7_BHC_Relative_LA";
 const YEARS = [2022, 2023, 2024, 2025] as const;
 
-const tableRows = (contentXml: string) =>
-	odsTableRows(contentXml, {
-		table: TABLE_NAME,
-		label: "child-poverty",
-		maxColumns: 10,
-	});
+const TABLE_OPTIONS: OdsTableOptions = {
+	table: TABLE_NAME,
+	label: "child-poverty",
+	maxColumns: 10,
+};
 
-export function loadChildPoverty(
-	contentXml: string,
-): Record<string, ChildPovertyDataset> {
+export async function loadChildPoverty(
+	readRows: (
+		path: string,
+		options: OdsTableOptions,
+		visit: (row: readonly string[]) => void,
+	) => Promise<void>,
+): Promise<Record<string, ChildPovertyDataset>> {
 	const recordsByYear = new Map<number, Record<string, ChildPovertyLADData>>(
 		YEARS.map((year) => [year, {}]),
 	);
 
-	for (const row of tableRows(contentXml)) {
-		const [ladName, ladCode, ...values] = row;
-		if (!ladName || !ladCode || !/^[EWSN]\d{8}$/.test(ladCode)) continue;
+	await readRows(
+		"economics/child-poverty/children-in-low-income-families-2022-2025.ods",
+		TABLE_OPTIONS,
+		(row) => {
+			const [ladName, ladCode, ...values] = row;
+			if (!ladName || !ladCode || !/^[EWSN]\d{8}$/.test(ladCode)) return;
 
-		for (const [index, year] of YEARS.entries()) {
-			const childCount = Number(values[index]);
-			const childPovertyRate = Number(values[index + YEARS.length]) * 100;
-			if (
-				!Number.isFinite(childCount) ||
-				!Number.isFinite(childPovertyRate) ||
-				childPovertyRate <= 0
-			)
-				continue;
-			recordsByYear.get(year)![ladCode] = {
-				ladCode,
-				ladName,
-				childCount,
-				childrenPopulation: childCount / (childPovertyRate / 100),
-				childPovertyRate,
-			};
-		}
-	}
+			for (const [index, year] of YEARS.entries()) {
+				const childCount = Number(values[index]);
+				const childPovertyRate =
+					Number(values[index + YEARS.length]) * 100;
+				if (
+					!Number.isFinite(childCount) ||
+					!Number.isFinite(childPovertyRate) ||
+					childPovertyRate <= 0
+				)
+					continue;
+				recordsByYear.get(year)![ladCode] = {
+					ladCode,
+					ladName,
+					childCount,
+					childrenPopulation: childCount / (childPovertyRate / 100),
+					childPovertyRate,
+				};
+			}
+		},
+	);
 
 	return Object.fromEntries(
 		YEARS.map((year) => [

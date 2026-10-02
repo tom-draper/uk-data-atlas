@@ -19,10 +19,5 @@ export const childPovertyDatasetDefinition: DatasetDefinition<ChildPovertyDatase
 			description:
 				"Children aged under 16 living in relative low-income families, before housing costs, by local authority across the United Kingdom.",
 		},
-		precompile: async (reader) =>
-			loadChildPoverty(
-				await reader.odsContent(
-					"economics/child-poverty/children-in-low-income-families-2022-2025.ods",
-				),
-			),
+		precompile: ({ odsTableRows }) => loadChildPoverty(odsTableRows),
 	};
