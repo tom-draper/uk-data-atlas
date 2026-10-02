@@ -6,7 +6,7 @@
  * these files in place of deriving containment from boundary files, so what
  * the map shows is what the API would say.
  *
- * Needs the API's build output (pnpm --dir api build); the files it writes
+ * Needs the API's build output (pnpm --dir services/api build); the files it writes
  * are committed with the rest of public/data, and the precompile reads the
  * ward and parish ones. `--check` fails instead of writing when a committed
  * file is out of date.
@@ -14,7 +14,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "../api/src/catalogueLoader";
+import { readApiCatalogues } from "../services/api/src/catalogueLoader";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 import {
 	encodeBoundaryMappings,
@@ -36,7 +36,7 @@ const DATASETS = join(ROOT, "public", "data", "datasets");
 /** A served asset's release id: `boundaries/ward/2024-12-uk-bgc/...`. */
 const releaseOf = (asset: string) => asset.split("/").at(-2)!;
 
-const { geographyResolver } = readApiCatalogues(join(ROOT, "api"));
+const { geographyResolver } = readApiCatalogues(join(ROOT, "services", "api"));
 
 const wardReleases = Object.entries(BOUNDARY_CATALOG.ward.vintages).map(
 	([year, asset]) => ({ year: Number(year), release: releaseOf(asset) }),

@@ -1,7 +1,7 @@
 /**
  * The friendly face of each endpoint: a short title for navigation, a plain
  * introduction, and the things worth knowing before you call it. The precise
- * contract stays in `api/openapi.yaml` and is shown beneath this on every
+ * contract stays in `services/api/openapi.yaml` and is shown beneath this on every
  * page. Keyed by `operationId`; the docs tests fail if an endpoint is added
  * to the spec without an entry here, or an entry outlives its endpoint.
  *

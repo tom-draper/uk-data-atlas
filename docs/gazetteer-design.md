@@ -11,12 +11,12 @@ original design got right, and what is still worth doing (section 9).
 The gazetteer is a **browser-side projection** of UK geography, shaped around
 the boundary releases, code mappings and crosswalks the map needs. It is not
 the canonical geography source. That role belongs to the API's own geography
-compiler (`api/README.md`, "API-owned geography compiler and completeness",
-served by `GeographyResolver` in `api/src/geographyResolver.ts`), which compiles
+compiler (`services/api/README.md`, "API-owned geography compiler and completeness",
+served by `GeographyResolver` in `services/api/src/geographyResolver.ts`), which compiles
 complete, release-aware areas, relationships, crosswalks, place definitions,
 spatial indexes, change events and coverage reports from the raw releases.
 
-The two meet in one place today: `api/scripts/build-named-locations.ts` reads
+The two meet in one place today: `services/api/scripts/build-named-locations.ts` reads
 the curated named locations from this project's `gazetteer.core.json`. Section
 9.5 argues that dependency should eventually point the other way.
 
@@ -380,13 +380,13 @@ Dagenham and Rainham, where Havering's share falls from 66% to 39%.
 - **Nations and a county tier as gazetteer regions**, unless a feature needs
   them. Nations are already named locations and are filtered by code prefix.
 - **Postcodes in the browser.** The API serves postcode lookup
-  (`api/src/postcodeAreas.ts`).
+  (`services/api/src/postcodeAreas.ts`).
 
 ### 9.8 Extensive and intensive values (already owned by the API)
 
 Nothing to add here. The API's data catalogue already declares how every
 measure it serves may be combined (`aggregation.kind` in
-`api/src/dataCatalog.ts`): of 228 measures, 180 extensive, 31 intensive with
+`services/api/src/dataCatalog.ts`): of 228 measures, 180 extensive, 31 intensive with
 their weighting denominator, 15 non-aggregatable (medians, ranks, deciles) and
 2 categorical, and its conversion routes refuse anything but extensive. A second
 classification on the website's `DatasetDefinition` would be a second source

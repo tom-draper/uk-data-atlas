@@ -58,7 +58,7 @@ next-env.d.ts
 
 # Immutable release snapshots are retained by the deployment volume or object
 # store. Their contents are intentionally not duplicated in source control.
-/api/public/atlas-releases/
+/services/api/public/atlas-releases/
 
 # OS Open Roads is a locally downloaded national MBTiles source archive.
 /data/oproad_mbtiles_gb.zip
@@ -76,4 +76,4 @@ CLAUDE.md
 # API build output is built where it is served, not committed: its history
 # grew the repository with every rebuild. The website reads its committed
 # docs catalogue projection from public/data/datasets instead.
-/api/public/*
+/services/api/public/*

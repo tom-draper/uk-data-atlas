@@ -5,13 +5,13 @@
  * across a small redrawing. The atlas reads this file in place of
  * matching areas by name, so what the map shows is what the API would say.
  *
- * Needs the API's build output (pnpm --dir api build); the file it writes is
+ * Needs the API's build output (pnpm --dir services/api build); the file it writes is
  * committed with the rest of public/data.
  */
 import { writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readApiCatalogues } from "../api/src/catalogueLoader";
+import { readApiCatalogues } from "../services/api/src/catalogueLoader";
 import { compileAreaLineage, type AreaLineage } from "@uk-data-atlas/geography";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
 
@@ -28,7 +28,7 @@ export const LINEAGE_GEOGRAPHIES = [
 /** A served asset's release id: `boundaries/ward/2024-12-uk-bgc/...`. */
 const releaseOf = (asset: string) => asset.split("/").at(-2)!;
 
-const { geographyResolver } = readApiCatalogues(join(ROOT, "api"));
+const { geographyResolver } = readApiCatalogues(join(ROOT, "services", "api"));
 
 const lineage: Record<string, AreaLineage> = {};
 for (const geography of LINEAGE_GEOGRAPHIES) {

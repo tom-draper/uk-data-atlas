@@ -263,11 +263,20 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@26.6.2)(vite@8.3.0(@types/node@26.6.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
-  api:
+  packages/geography:
+    devDependencies:
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  services/api:
     dependencies:
       '@uk-data-atlas/geography':
         specifier: workspace:*
-        version: link:../packages/geography
+        version: link:../../packages/geography
     devDependencies:
       '@types/node':
         specifier: ^26.6.2
@@ -287,15 +296,6 @@ importers:
       yaml:
         specifier: ^2.9.1
         version: 2.9.1
-
-  packages/geography:
-    devDependencies:
-      '@types/geojson':
-        specifier: ^7946.0.16
-        version: 7946.0.16
-      typescript:
-        specifier: ^7.0.2
-        version: 7.0.2
 
 packages:
 
