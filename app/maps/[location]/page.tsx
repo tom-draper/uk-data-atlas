@@ -9,7 +9,7 @@ import {
 	atlasMapsFor,
 	atlasMapTitle,
 	findAtlasLocation,
-	SITE_NAME,
+	pageTitle,
 } from "@/lib/helpers/atlasPages";
 import { atlasMapSections } from "@/lib/helpers/atlasMapSections";
 
@@ -37,7 +37,7 @@ export async function generateMetadata({
 	params: Params;
 }): Promise<Metadata> {
 	const location = await resolveLocation(params);
-	const title = `Maps of ${placeName(location)} - ${SITE_NAME}`;
+	const title = pageTitle(`Maps of ${placeName(location)}`);
 	const description = `Interactive maps of ${placeName(location)}: election results, population, house prices, crime, deprivation, health and more, from official sources.`;
 	const path = `/maps/${location.slug}`;
 	return {
