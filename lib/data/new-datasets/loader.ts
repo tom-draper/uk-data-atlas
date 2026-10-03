@@ -63,15 +63,16 @@ export async function loadBusinessActivity(
 		),
 		{ header: false },
 	);
+	// Each row lists its broad industries and then their total. Read the
+	// total, as adding up the row would count every business twice.
+	const total = rows.find((row) => row.includes("Total"))?.indexOf("Total");
+	if (total === undefined)
+		throw new Error("Business activity Table 1 has no Total column.");
 	const records: Record<string, IndicatorRecord> = {};
 	for (const row of rows) {
-		const [label, ...values] = row;
-		const match = /^([EWSN]\d+)\s*:\s*(.+)$/.exec(label ?? "");
-		if (!match || !mapAuthorityCode(match[1]!)) continue;
-		const value = values.reduce(
-			(sum, item) => sum + (numeric(item) ?? 0),
-			0,
-		);
+		const match = /^([EWSN]\d+)\s*:\s*(.+)$/.exec(row[0] ?? "");
+		const value = numeric(row[total]);
+		if (!match || !mapAuthorityCode(match[1]!) || value === null) continue;
 		records[match[1]!] = { code: match[1]!, name: match[2]!.trim(), value };
 	}
 	return dataset("businessActivity", 2025, "localAuthority", 2025, records);
