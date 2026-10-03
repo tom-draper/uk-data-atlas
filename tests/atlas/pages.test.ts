@@ -15,6 +15,9 @@ import {
 	legacyAtlasHref,
 	MAP_NAMES,
 } from "@/lib/atlas/pages";
+import gazetteerCore from "@/public/data/datasets/gazetteer.core.json";
+import { gazetteer } from "@/lib/data/gazetteer/static";
+import type { GazetteerCore } from "@/lib/data/gazetteer/types";
 
 const location = (slug: string) => findAtlasLocation(slug)!;
 const map = (slug: string) => findAtlasMap(slug)!;
@@ -55,6 +58,29 @@ describe("atlas pages", () => {
 				atlasMapsFor(atlasLocation),
 				atlasLocation.slug,
 			).not.toHaveLength(0);
+	});
+
+	it("gives every current local authority a place", () => {
+		const entries = Object.values(
+			(gazetteerCore as unknown as GazetteerCore).byCode,
+		).filter((entry) => entry.level === "localAuthority");
+		const current = Math.max(...entries.map((entry) => entry.vintage));
+		const names = new Set(ATLAS_LOCATIONS.map((place) => place.name));
+		const single = new Set(
+			ATLAS_LOCATIONS.filter((place) => place.members.length === 1).map(
+				(place) => place.members[0],
+			),
+		);
+		const missing = entries.filter(
+			(entry) =>
+				entry.vintage === current &&
+				!single.has(entry.code) &&
+				!names.has(entry.name.replace(/, (City|County) of$/, "")),
+		);
+		expect(missing.map((entry) => entry.name)).toEqual([]);
+		// A council opens the atlas like any other place.
+		expect(gazetteer.boundsOf("Rutland")).toBeDefined();
+		expect(gazetteer.membersOf("Rutland")).toHaveLength(1);
 	});
 
 	it("keeps maps to the nations their data covers", () => {

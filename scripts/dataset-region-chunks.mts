@@ -118,9 +118,15 @@ const populationTotal = (record: unknown) => {
 	);
 };
 
+/**
+ * Each place's population, for ordering the atlas's Locations list. Council
+ * estimates cover the whole UK, where the ward data covers England and Wales,
+ * so a council missing from them falls back to its wards' sum.
+ */
 const populationLocationSummary = (
 	gazetteer: Gazetteer,
 	payload: DatasetPayload,
+	councilPopulations: ReadonlyMap<string, number>,
 ) => {
 	const byLad = new Map<string, number>();
 	const countries: Record<string, number> = {
@@ -150,15 +156,61 @@ const populationLocationSummary = (
 		}
 	}
 
+	if (councilPopulations.size > 0) {
+		for (const country of Object.keys(countries)) countries[country] = 0;
+		for (const [ladCode, population] of councilPopulations) {
+			countries["United Kingdom"] += population;
+			const country = COUNTRY_BY_PREFIX[ladCode[0]!];
+			if (country) countries[country] += population;
+		}
+	}
+
 	return Object.fromEntries(
-		gazetteer.namedLocations().map((location) => {
+		gazetteer.places().map((location) => {
 			if (location in countries) return [location, countries[location]!];
 			const total = (
 				gazetteer.namedLocation(location)?.memberCodes ?? []
-			).reduce((sum, ladCode) => sum + (byLad.get(ladCode) ?? 0), 0);
+			).reduce(
+				(sum, ladCode) =>
+					sum +
+					(councilPopulations.get(ladCode) ??
+						byLad.get(ladCode) ??
+						0),
+				0,
+			);
 			return [location, total];
 		}),
 	);
+};
+
+const COUNTRY_BY_PREFIX: Readonly<Record<string, string>> = {
+	E: "England",
+	S: "Scotland",
+	W: "Wales",
+	N: "Northern Ireland",
+};
+
+/** Council populations from the latest UK-wide estimates, by council code. */
+const readCouncilPopulations = async (root: string) => {
+	const editions = JSON.parse(
+		await readFile(
+			join(root, "public", "data", "datasets", "population-uk.json"),
+			"utf8",
+		),
+	) as Record<
+		string,
+		{ data: Record<string, { total: Record<string, number> }> }
+	>;
+	const latest = Object.keys(editions).sort().at(-1);
+	const populations = new Map<string, number>();
+	for (const [code, record] of Object.entries(
+		latest ? editions[latest]!.data : {},
+	))
+		populations.set(
+			code,
+			Object.values(record.total).reduce((sum, value) => sum + value, 0),
+		);
+	return populations;
 };
 
 const populationPropertiesPath = (root: string, boundaryYear: number) => {
@@ -176,7 +228,7 @@ const populationLocationSummaries = async (
 	payload: DatasetPayload,
 	wardToLad: Record<string, string>,
 ) => {
-	const locations = gazetteer.namedLocations();
+	const locations = gazetteer.places();
 	const locationsByLad = new Map<string, Set<string>>();
 	for (const location of locations) {
 		if (location === "United Kingdom" || location in COUNTRY_PREFIXES)
@@ -324,7 +376,7 @@ const localElectionLocationSummaries = (
 	payload: DatasetPayload,
 	wardToLad: Record<string, string>,
 ) => {
-	const locations = gazetteer.namedLocations();
+	const locations = gazetteer.places();
 	const locationsByLad = new Map<string, Set<string>>();
 	for (const location of locations) {
 		if (location === "United Kingdom" || location in COUNTRY_PREFIXES)
@@ -400,7 +452,11 @@ export async function writeDatasetRegionChunks({
 		if (!chunkLayout || chunkLayout.kind !== "regional") continue;
 		const value = compiled.data as DatasetPayload;
 		const locationPopulations = chunkLayout.populationSummary
-			? populationLocationSummary(gazetteer, value)
+			? populationLocationSummary(
+					gazetteer,
+					value,
+					await readCouncilPopulations(root),
+				)
 			: undefined;
 		const locationAggregates =
 			chunkLayout.locationAggregate === "population"
