@@ -9,7 +9,7 @@ import {
 	atlasPageHeading,
 	findAtlasLocation,
 	findAtlasMap,
-	SITE_NAME,
+	pageTitle,
 } from "@/lib/helpers/atlasPages";
 
 type Params = Promise<{ location: string; map: string }>;
@@ -33,7 +33,7 @@ export async function generateMetadata({
 	params: Params;
 }): Promise<Metadata> {
 	const { location, map } = await resolvePage(params);
-	const title = `${atlasPageHeading(location, map)} - ${SITE_NAME}`;
+	const title = pageTitle(atlasPageHeading(location, map));
 	const description = atlasPageDescription(location, map);
 	const path = `/atlas/${location.slug}/${map.slug}`;
 	return {

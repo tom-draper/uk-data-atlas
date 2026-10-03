@@ -7,7 +7,7 @@ import {
 	atlasHeading,
 	atlasHref,
 	atlasInitialState,
-	SITE_NAME,
+	pageTitle,
 } from "@/lib/helpers/atlasPages";
 
 export type AtlasUrlState = {
@@ -59,7 +59,7 @@ export function useAtlasUrlState(page: AtlasPage): AtlasUrlState {
 	}, []);
 
 	useEffect(() => {
-		document.title = `${atlasHeading(selectedLocation, activeViz)} - ${SITE_NAME}`;
+		document.title = pageTitle(atlasHeading(selectedLocation, activeViz));
 	}, [selectedLocation, activeViz]);
 
 	return {
