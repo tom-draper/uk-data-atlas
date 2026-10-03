@@ -24,6 +24,29 @@ describe("map page figures", () => {
 		);
 	});
 
+	it("builds rates for a whole place from its totals", () => {
+		expect(sentence("london", "child-poverty")).toMatch(
+			/^\d+\.\d% of children in London live in relative low-income families/,
+		);
+		expect(sentence("london", "broadband")).toMatch(
+			/^\d+\.\d% of premises in London can get full fibre broadband \(2025\)\.$/,
+		);
+		expect(sentence("london", "homelessness")).toMatch(
+			/^London had [\d,]+ households in temporary accommodation in .+, \d+\.\d per 1,000 households\.$/,
+		);
+		expect(sentence("united-kingdom", "ghg-emissions")).toMatch(
+			/^The United Kingdom emitted [\d.]+ million tonnes CO2e of greenhouse gases in 2024, \d\.\d tonnes per person\.$/,
+		);
+	});
+
+	it("counts each business once", () => {
+		// ONS counts about 2.7 million VAT or PAYE businesses in the UK. The
+		// table's own Total column, added to its industries, once doubled it.
+		const uk = committed["business-activity"]["united-kingdom"];
+		expect(uk.kind === "count" && uk.count).toBeGreaterThan(2_500_000);
+		expect(uk.kind === "count" && uk.count).toBeLessThan(3_000_000);
+	});
+
 	it("gives no figure for data that does not reach the whole place", () => {
 		// Crime covers England and Wales, so a UK total would leave out two nations.
 		expect(sentence("united-kingdom", "crime")).toBeNull();

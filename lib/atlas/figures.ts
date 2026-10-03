@@ -31,7 +31,10 @@ export type MapFigure =
 	| { kind: "crime"; crimes: number; population: number; period: string }
 	| { kind: "value"; value: number }
 	| { kind: "sexes"; male: number; female: number }
-	| { kind: "range"; low: Extreme; high: Extreme };
+	| { kind: "range"; low: Extreme; high: Extreme }
+	| { kind: "percent"; percent: number }
+	/** A total, with a rate where the data gives its denominator. */
+	| { kind: "count"; count: number; rate?: number; period?: string };
 
 /** Figures by map slug, then location slug. */
 export type MapFigures = Record<string, Record<string, MapFigure>>;
@@ -43,7 +46,41 @@ export type FigureInputs = {
 	crime: Record<string, CrimeDataset>;
 	lifeExpectancy: Record<string, LifeExpectancyDataset>;
 	income: Record<string, IncomeDataset>;
+	childPoverty: Editions<{
+		ladName: string;
+		childCount: number;
+		childrenPopulation: number;
+	}>;
+	broadband: Editions<{ pctFullFibre: number; premisesCount: number }>;
+	mobileCoverage: Editions<{
+		pct5GOutdoorAll: number;
+		premisesCount: number;
+	}>;
+	businessActivity: Editions<{ value: number }>;
+	electricVehicleChargers: Editions<{ value: number }>;
+	councilTax: Editions<{ name: string; value: number }>;
+	claimantCount: Editions<
+		{ totalCount: number; totalRate: number },
+		{ month: string }
+	>;
+	homelessness: Editions<
+		{
+			householdsInTemporaryAccommodation: number;
+			householdsPerThousand: number;
+		},
+		{ quarter: string }
+	>;
+	ghgEmissions: Editions<{
+		totalKtCO2e: number;
+		populationThousands: number;
+	}>;
 };
+
+/** A compiled dataset's editions, keyed by year, as far as the figures read them. */
+type Editions<Row, Extra = object> = Record<
+	string,
+	Extra & { data: Record<string, Row | undefined> }
+>;
 
 /** Prefixes of local authority district codes, by nation. */
 const DISTRICT_PREFIXES: Readonly<Record<string, readonly string[]>> = {
@@ -270,11 +307,236 @@ const RULES: Readonly<Record<string, FigureRule>> = {
 			if (figure.kind === "value")
 				return `Median annual pay for employees living in ${place} is ${pounds(figure.value)} (${period}).`;
 			if (figure.kind === "range")
-				return `Median annual pay for employees ranges from ${pounds(figure.low.value)} in ${figure.low.name} to ${pounds(figure.high.value)} in ${figure.high.name} (${period}).`;
+				return `Median annual pay for employees in ${place} ranges from ${pounds(figure.low.value)} in ${figure.low.name} to ${pounds(figure.high.value)} in ${figure.high.name} (${period}).`;
 			return null;
 		},
 	},
+	"child-poverty": {
+		compute({ childPoverty }, location, period) {
+			const { data } = childPoverty[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			const children = sum(rows.map((row) => row.childrenPopulation));
+			const poor = sum(rows.map((row) => row.childCount));
+			return { kind: "percent", percent: (poor / children) * 100 };
+		},
+		sentence(figure, place, period) {
+			if (figure.kind !== "percent") return null;
+			return `${percent(figure.percent)} of children in ${place} live in relative low-income families, before housing costs (${period}).`;
+		},
+	},
+	broadband: {
+		compute({ broadband }, location, period) {
+			const { data } = broadband[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			return {
+				kind: "percent",
+				percent: premisesWeighted(
+					rows.map((row) => [row.pctFullFibre, row.premisesCount]),
+				),
+			};
+		},
+		sentence(figure, place, period) {
+			if (figure.kind !== "percent") return null;
+			return `${percent(figure.percent)} of premises in ${place} can get full fibre broadband (${period}).`;
+		},
+	},
+	"mobile-coverage": {
+		compute({ mobileCoverage }, location, period) {
+			const { data } = mobileCoverage[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			return {
+				kind: "percent",
+				percent: premisesWeighted(
+					rows.map((row) => [row.pct5GOutdoorAll, row.premisesCount]),
+				),
+			};
+		},
+		sentence(figure, place, period) {
+			if (figure.kind !== "percent") return null;
+			return `${percent(figure.percent)} of premises in ${place} have outdoor 5G from all four mobile operators (${period}).`;
+		},
+	},
+	"business-activity": {
+		compute({ businessActivity }, location, period) {
+			const { data } = businessActivity[String(period)];
+			const counts = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code]?.value,
+			);
+			return counts && { kind: "count", count: sum(counts) };
+		},
+		sentence(figure, place, period) {
+			if (figure.kind !== "count") return null;
+			return `${place} has ${rounded(figure.count)} VAT or PAYE registered businesses (${period}).`;
+		},
+	},
+	"electric-vehicle-chargers": {
+		compute({ electricVehicleChargers, populationUk }, location, period) {
+			const { data } = electricVehicleChargers[String(period)];
+			const districts = districtsOf(location, Object.keys(data));
+			const counts = everyValue(districts, (code) => data[code]?.value);
+			const residents = populationOf(
+				editionFor(populationUk, period),
+				districts,
+			);
+			if (counts === null || residents === null) return null;
+			const count = sum(counts);
+			return {
+				kind: "count",
+				count,
+				rate: (count / residents) * 100_000,
+			};
+		},
+		sentence(figure, place, period) {
+			if (figure.kind !== "count" || figure.rate === undefined)
+				return null;
+			return `${place} has ${whole(figure.count)} public electric vehicle chargers, about ${whole(figure.rate)} per 100,000 residents (${period}).`;
+		},
+	},
+	"council-tax": {
+		compute({ councilTax }, location, period) {
+			const { data } = councilTax[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			// Averaging councils' Band D would need their dwelling counts.
+			if (rows.length === 1)
+				return { kind: "value", value: rows[0].value };
+			return rangeOf(
+				rows.map((row) => ({ name: row.name, value: row.value })),
+			);
+		},
+		sentence(figure, place, period) {
+			const year = `${period}-${String(period + 1).slice(2)}`;
+			if (figure.kind === "value")
+				return `Average Band D council tax in ${place} is ${pounds(figure.value)} for ${year}.`;
+			if (figure.kind === "range")
+				return `Average Band D council tax in ${place} ranges from ${pounds(figure.low.value)} in ${figure.low.name} to ${pounds(figure.high.value)} in ${figure.high.name} for ${year}.`;
+			return null;
+		},
+	},
+	"claimant-count": {
+		compute({ claimantCount }, location, period) {
+			const { data, month } = claimantCount[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			// The published rate is rounded, so a place of several authorities
+			// gets the exact total rather than a rate rebuilt from it.
+			if (rows.length === 1)
+				return {
+					kind: "count",
+					count: rows[0].totalCount,
+					rate: rows[0].totalRate,
+					period: month,
+				};
+			return {
+				kind: "count",
+				count: sum(rows.map((row) => row.totalCount)),
+				period: month,
+			};
+		},
+		sentence(figure, place) {
+			if (figure.kind !== "count") return null;
+			if (figure.rate !== undefined)
+				return `${place} had ${whole(figure.count)} people claiming out-of-work benefits in ${figure.period}, ${figure.rate.toFixed(1)}% of residents aged 16 to 64.`;
+			return `${place} had ${whole(figure.count)} people claiming out-of-work benefits in ${figure.period}.`;
+		},
+	},
+	homelessness: {
+		compute({ homelessness }, location, period) {
+			const { data, quarter } = homelessness[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			const count = sum(
+				rows.map((row) => row.householdsInTemporaryAccommodation),
+			);
+			// Each authority's households, from its count and its exact rate.
+			const households = rows.every(
+				(row) => row.householdsPerThousand > 0,
+			)
+				? sum(
+						rows.map(
+							(row) =>
+								(row.householdsInTemporaryAccommodation /
+									row.householdsPerThousand) *
+								1000,
+						),
+					)
+				: null;
+			return {
+				kind: "count",
+				count,
+				...(households ? { rate: (count / households) * 1000 } : {}),
+				period: quarter,
+			};
+		},
+		sentence(figure, place) {
+			if (figure.kind !== "count") return null;
+			const rate =
+				figure.rate === undefined
+					? ""
+					: `, ${figure.rate.toFixed(1)} per 1,000 households`;
+			return `${place} had ${whole(figure.count)} households in temporary accommodation in ${figure.period}${rate}.`;
+		},
+	},
+	"ghg-emissions": {
+		compute({ ghgEmissions }, location, period) {
+			const { data } = ghgEmissions[String(period)];
+			const rows = everyValue(
+				districtsOf(location, Object.keys(data)),
+				(code) => data[code],
+			);
+			if (rows === null) return null;
+			const kilotonnes = sum(rows.map((row) => row.totalKtCO2e));
+			const thousands = sum(rows.map((row) => row.populationThousands));
+			// Kilotonnes per thousand people is tonnes per person.
+			return {
+				kind: "count",
+				count: kilotonnes * 1000,
+				rate: kilotonnes / thousands,
+			};
+		},
+		sentence(figure, place, period) {
+			if (figure.kind !== "count" || figure.rate === undefined)
+				return null;
+			return `${place} emitted ${tonnes(figure.count)} of greenhouse gases in ${period}, ${figure.rate.toFixed(1)} tonnes per person.`;
+		},
+	},
 };
+
+/** A share of premises across areas, weighted by each area's premises. */
+function premisesWeighted(rows: readonly (readonly [number, number])[]) {
+	const premises = sum(rows.map(([, count]) => count));
+	return sum(rows.map(([share, count]) => share * count)) / premises;
+}
+
+const percent = (value: number) => `${value.toFixed(1)}%`;
+
+/** "25.1 million tonnes", "588,000 tonnes" of CO2 equivalent. */
+function tonnes(value: number) {
+	if (value >= 1e6) return `${(value / 1e6).toFixed(1)} million tonnes CO2e`;
+	return `${rounded(value)} tonnes CO2e`;
+}
 
 const whole = (value: number) => Math.round(value).toLocaleString("en-GB");
 
