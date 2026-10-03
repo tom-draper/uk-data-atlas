@@ -2,8 +2,7 @@ import type { MetadataRoute } from "next";
 import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/helpers/atlasPages";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";
+import { SITE_URL } from "@/lib/helpers/structuredData";
 
 /** Every page of the API docs. */
 function docsEntries(): MetadataRoute.Sitemap {
@@ -59,7 +58,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 0.5,
 		},
 		{
-			url: `${SITE_URL}/sources`,
+			url: `${SITE_URL}/datasets`,
 			lastModified: new Date(),
 			changeFrequency: "monthly",
 			priority: 0.6,

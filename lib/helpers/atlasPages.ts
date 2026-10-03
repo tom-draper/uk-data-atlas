@@ -19,9 +19,9 @@ import type { DatasetCountry } from "@/lib/types/coverage";
 
 export const SITE_NAME = "UK Data Atlas";
 
-/** "UK Data Atlas - Population Density in London". */
+/** "Population Density in London - UK Data Atlas". */
 export function pageTitle(subject: string) {
-	return `${SITE_NAME} - ${subject}`;
+	return `${subject} - ${SITE_NAME}`;
 }
 
 const ALL_COUNTRIES: readonly DatasetCountry[] = [
