@@ -3846,5 +3846,5396 @@
 				"value": 35452
 			}
 		}
+	},
+	"child-poverty": {
+		"england": {
+			"kind": "percent",
+			"percent": 19.78631064217689
+		},
+		"scotland": {
+			"kind": "percent",
+			"percent": 12.258358022062078
+		},
+		"wales": {
+			"kind": "percent",
+			"percent": 21.19258146170755
+		},
+		"northern-ireland": {
+			"kind": "percent",
+			"percent": 18.941099401583646
+		},
+		"united-kingdom": {
+			"kind": "percent",
+			"percent": 19.285511955900084
+		},
+		"greater-manchester": {
+			"kind": "percent",
+			"percent": 27.65117190975323
+		},
+		"london": {
+			"kind": "percent",
+			"percent": 15.60530480739338
+		},
+		"birmingham": {
+			"kind": "percent",
+			"percent": 39.548216593684295
+		},
+		"coventry": {
+			"kind": "percent",
+			"percent": 25.503527040644947
+		},
+		"wolverhampton": {
+			"kind": "percent",
+			"percent": 32.88511986273119
+		},
+		"solihull": {
+			"kind": "percent",
+			"percent": 15.231102108461467
+		},
+		"walsall": {
+			"kind": "percent",
+			"percent": 32.816180396344336
+		},
+		"dudley": {
+			"kind": "percent",
+			"percent": 27.99544455165214
+		},
+		"sandwell": {
+			"kind": "percent",
+			"percent": 35.522740546992054
+		},
+		"stoke-on-trent": {
+			"kind": "percent",
+			"percent": 35.00486504018163
+		},
+		"worcester": {
+			"kind": "percent",
+			"percent": 20.746617399337065
+		},
+		"hereford": {
+			"kind": "percent",
+			"percent": 19.76134752941952
+		},
+		"shrewsbury": {
+			"kind": "percent",
+			"percent": 18.820718654434252
+		},
+		"leeds": {
+			"kind": "percent",
+			"percent": 24.975495500082747
+		},
+		"bradford": {
+			"kind": "percent",
+			"percent": 39.25012317815535
+		},
+		"york": {
+			"kind": "percent",
+			"percent": 13.858588513602314
+		},
+		"hull": {
+			"kind": "percent",
+			"percent": 33.22081016679905
+		},
+		"doncaster": {
+			"kind": "percent",
+			"percent": 31.00752177355503
+		},
+		"wakefield": {
+			"kind": "percent",
+			"percent": 23.00882382869852
+		},
+		"rotherham": {
+			"kind": "percent",
+			"percent": 27.311387022060217
+		},
+		"halifax": {
+			"kind": "percent",
+			"percent": 27.138472375968604
+		},
+		"huddersfield": {
+			"kind": "percent",
+			"percent": 30.29130839213195
+		},
+		"merseyside": {
+			"kind": "percent",
+			"percent": 23.93547516719024
+		},
+		"liverpool": {
+			"kind": "percent",
+			"percent": 29.613463477224823
+		},
+		"warrington": {
+			"kind": "percent",
+			"percent": 15.12679553112254
+		},
+		"chester": {
+			"kind": "percent",
+			"percent": 15.088241817432907
+		},
+		"manchester": {
+			"kind": "percent",
+			"percent": 35.493172250932616
+		},
+		"salford": {
+			"kind": "percent",
+			"percent": 25.35818880101012
+		},
+		"bolton": {
+			"kind": "percent",
+			"percent": 33.244906779534716
+		},
+		"stockport": {
+			"kind": "percent",
+			"percent": 15.45205194083744
+		},
+		"oldham": {
+			"kind": "percent",
+			"percent": 38.2092871388482
+		},
+		"rochdale": {
+			"kind": "percent",
+			"percent": 32.040871828742375
+		},
+		"wigan": {
+			"kind": "percent",
+			"percent": 21.43025503229152
+		},
+		"blackburn": {
+			"kind": "percent",
+			"percent": 36.18128591564567
+		},
+		"blackpool": {
+			"kind": "percent",
+			"percent": 30.513701303770784
+		},
+		"preston": {
+			"kind": "percent",
+			"percent": 26.95958690207477
+		},
+		"lancaster": {
+			"kind": "percent",
+			"percent": 21.666595554038487
+		},
+		"newcastle-upon-tyne": {
+			"kind": "percent",
+			"percent": 26.65604453967731
+		},
+		"sunderland": {
+			"kind": "percent",
+			"percent": 25.692301526870516
+		},
+		"durham": {
+			"kind": "percent",
+			"percent": 26.031217057163257
+		},
+		"middlesbrough": {
+			"kind": "percent",
+			"percent": 34.35237075750897
+		},
+		"south-shields": {
+			"kind": "percent",
+			"percent": 26.475491830610203
+		},
+		"darlington": {
+			"kind": "percent",
+			"percent": 24.790419161676645
+		},
+		"hartlepool": {
+			"kind": "percent",
+			"percent": 27.18399482312338
+		},
+		"stockton-on-tees": {
+			"kind": "percent",
+			"percent": 22.255290171252742
+		},
+		"bristol": {
+			"kind": "percent",
+			"percent": 19.71579522681727
+		},
+		"plymouth": {
+			"kind": "percent",
+			"percent": 20.654654524114846
+		},
+		"exeter": {
+			"kind": "percent",
+			"percent": 15.866679972058675
+		},
+		"bath": {
+			"kind": "percent",
+			"percent": 10.163617061137826
+		},
+		"cheltenham": {
+			"kind": "percent",
+			"percent": 14.376271346799754
+		},
+		"gloucester": {
+			"kind": "percent",
+			"percent": 19.021882913186438
+		},
+		"swindon": {
+			"kind": "percent",
+			"percent": 16.027397260273972
+		},
+		"bournemouth": {
+			"kind": "percent",
+			"percent": 14.484933001879586
+		},
+		"torquay": {
+			"kind": "percent",
+			"percent": 20.95361062436595
+		},
+		"cornwall": {
+			"kind": "percent",
+			"percent": 21.397121357289727
+		},
+		"brighton-and-hove": {
+			"kind": "percent",
+			"percent": 13.823354480570977
+		},
+		"southampton": {
+			"kind": "percent",
+			"percent": 21.80522460506575
+		},
+		"portsmouth": {
+			"kind": "percent",
+			"percent": 20.658588812868857
+		},
+		"reading": {
+			"kind": "percent",
+			"percent": 14.852028295077236
+		},
+		"oxford": {
+			"kind": "percent",
+			"percent": 14.161973198679355
+		},
+		"cambridge": {
+			"kind": "percent",
+			"percent": 11.630036630036628
+		},
+		"canterbury": {
+			"kind": "percent",
+			"percent": 15.408444240477284
+		},
+		"maidstone": {
+			"kind": "percent",
+			"percent": 14.353732347007398
+		},
+		"guildford": {
+			"kind": "percent",
+			"percent": 8.138903960933261
+		},
+		"crawley": {
+			"kind": "percent",
+			"percent": 18.79702105023178
+		},
+		"basingstoke": {
+			"kind": "percent",
+			"percent": 10.094050743657043
+		},
+		"winchester": {
+			"kind": "percent",
+			"percent": 8.891979222054072
+		},
+		"slough": {
+			"kind": "percent",
+			"percent": 19.269503204356
+		},
+		"milton-keynes": {
+			"kind": "percent",
+			"percent": 15.27238676352872
+		},
+		"luton": {
+			"kind": "percent",
+			"percent": 31.65570076611086
+		},
+		"ipswich": {
+			"kind": "percent",
+			"percent": 25.390748480910403
+		},
+		"norwich": {
+			"kind": "percent",
+			"percent": 25.917815277598866
+		},
+		"colchester": {
+			"kind": "percent",
+			"percent": 14.315888289134007
+		},
+		"southend-on-sea": {
+			"kind": "percent",
+			"percent": 17.678820085822274
+		},
+		"peterborough": {
+			"kind": "percent",
+			"percent": 27.639800062480475
+		},
+		"nottingham": {
+			"kind": "percent",
+			"percent": 33.74799226407054
+		},
+		"leicester": {
+			"kind": "percent",
+			"percent": 34.48966890714463
+		},
+		"derby": {
+			"kind": "percent",
+			"percent": 27.858650556809085
+		},
+		"northampton": {
+			"kind": "percent",
+			"percent": 16.77473062176834
+		},
+		"lincoln": {
+			"kind": "percent",
+			"percent": 26.826396656266553
+		},
+		"mansfield": {
+			"kind": "percent",
+			"percent": 24.31045843923562
+		},
+		"chesterfield": {
+			"kind": "percent",
+			"percent": 22.296069075210177
+		},
+		"edinburgh": {
+			"kind": "percent",
+			"percent": 8.720503408495018
+		},
+		"aberdeen": {
+			"kind": "percent",
+			"percent": 9.0048524381513
+		},
+		"dundee": {
+			"kind": "percent",
+			"percent": 13.551266685952804
+		},
+		"inverness": {
+			"kind": "percent",
+			"percent": 12.014153511159499
+		},
+		"stirling": {
+			"kind": "percent",
+			"percent": 9.750289174661496
+		},
+		"paisley": {
+			"kind": "percent",
+			"percent": 10.761513907888737
+		},
+		"cardiff": {
+			"kind": "percent",
+			"percent": 19.574334711422217
+		},
+		"swansea": {
+			"kind": "percent",
+			"percent": 19.61335174515499
+		},
+		"newport": {
+			"kind": "percent",
+			"percent": 23.009005827300015
+		},
+		"wrexham": {
+			"kind": "percent",
+			"percent": 20.41130896848254
+		},
+		"bangor": {
+			"kind": "percent",
+			"percent": 24.139445029855988
+		},
+		"aberystwyth": {
+			"kind": "percent",
+			"percent": 23.823734208693917
+		},
+		"belfast": {
+			"kind": "percent",
+			"percent": 20.659046692607003
+		},
+		"londonderry": {
+			"kind": "percent",
+			"percent": 20.69129087344254
+		},
+		"lisburn": {
+			"kind": "percent",
+			"percent": 12.928096356837958
+		},
+		"newry": {
+			"kind": "percent",
+			"percent": 20.53173544147637
+		},
+		"west-midlands": {
+			"kind": "percent",
+			"percent": 27.140979596412368
+		},
+		"devon": {
+			"kind": "percent",
+			"percent": 18.150165750323417
+		},
+		"hampshire": {
+			"kind": "percent",
+			"percent": 13.775162387966322
+		},
+		"kent": {
+			"kind": "percent",
+			"percent": 15.66459574377391
+		},
+		"sussex": {
+			"kind": "percent",
+			"percent": 14.160315266621968
+		},
+		"essex": {
+			"kind": "percent",
+			"percent": 15.124843945068664
+		},
+		"oxfordshire": {
+			"kind": "percent",
+			"percent": 10.368829506360509
+		},
+		"gloucestershire": {
+			"kind": "percent",
+			"percent": 15.08984388344208
+		},
+		"lancashire": {
+			"kind": "percent",
+			"percent": 26.78312443053655
+		},
+		"cheshire": {
+			"kind": "percent",
+			"percent": 15.301953154231834
+		},
+		"lincolnshire": {
+			"kind": "percent",
+			"percent": 23.940514595955623
+		},
+		"norfolk": {
+			"kind": "percent",
+			"percent": 19.82830295751785
+		},
+		"staffordshire": {
+			"kind": "percent",
+			"percent": 23.31045846568532
+		},
+		"derbyshire": {
+			"kind": "percent",
+			"percent": 21.206274248744005
+		},
+		"the-highlands": {
+			"kind": "percent",
+			"percent": 11.623295651996157
+		},
+		"grampian": {
+			"kind": "percent",
+			"percent": 8.95832298445184
+		},
+		"scottish-borders": {
+			"kind": "percent",
+			"percent": 10.757601398995883
+		},
+		"the-hebrides": {
+			"kind": "percent",
+			"percent": 11.92708076372786
+		},
+		"lowlands": {
+			"kind": "percent",
+			"percent": 14.41958165100688
+		},
+		"north-east-scotland": {
+			"kind": "percent",
+			"percent": 8.95832298445184
+		},
+		"scottish-islands": {
+			"kind": "percent",
+			"percent": 9.855149737847684
+		},
+		"north-wales": {
+			"kind": "percent",
+			"percent": 21.662712314452374
+		},
+		"mid-wales": {
+			"kind": "percent",
+			"percent": 22.161422708618332
+		},
+		"south-wales": {
+			"kind": "percent",
+			"percent": 20.90455161468183
+		},
+		"west-wales": {
+			"kind": "percent",
+			"percent": 20.77846238186607
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "percent",
+			"percent": 21.50672882800359
+		},
+		"south-east-wales": {
+			"kind": "percent",
+			"percent": 20.426967818097292
+		},
+		"the-valleys": {
+			"kind": "percent",
+			"percent": 22.05687459287046
+		},
+		"pembrokeshire-coast": {
+			"kind": "percent",
+			"percent": 23.2898146789888
+		},
+		"belfast-metropolitan-area": {
+			"kind": "percent",
+			"percent": 17.3039929291879
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "percent",
+			"percent": 19.56757786455853
+		},
+		"west-of-northern-ireland": {
+			"kind": "percent",
+			"percent": 20.03609115216602
+		},
+		"armagh-down-and-newry": {
+			"kind": "percent",
+			"percent": 20.307889379417617
+		}
+	},
+	"broadband": {
+		"england": {
+			"kind": "percent",
+			"percent": 77.89134864463577
+		},
+		"scotland": {
+			"kind": "percent",
+			"percent": 69.99347568950888
+		},
+		"wales": {
+			"kind": "percent",
+			"percent": 76.1615707476838
+		},
+		"northern-ireland": {
+			"kind": "percent",
+			"percent": 93.33189515266788
+		},
+		"united-kingdom": {
+			"kind": "percent",
+			"percent": 77.5176015827573
+		},
+		"greater-manchester": {
+			"kind": "percent",
+			"percent": 86.34018143816883
+		},
+		"london": {
+			"kind": "percent",
+			"percent": 75.95512251866751
+		},
+		"birmingham": {
+			"kind": "percent",
+			"percent": 84
+		},
+		"coventry": {
+			"kind": "percent",
+			"percent": 96.3
+		},
+		"wolverhampton": {
+			"kind": "percent",
+			"percent": 95.6
+		},
+		"solihull": {
+			"kind": "percent",
+			"percent": 79.4
+		},
+		"walsall": {
+			"kind": "percent",
+			"percent": 84.5
+		},
+		"dudley": {
+			"kind": "percent",
+			"percent": 88
+		},
+		"sandwell": {
+			"kind": "percent",
+			"percent": 89.1
+		},
+		"stoke-on-trent": {
+			"kind": "percent",
+			"percent": 86.8
+		},
+		"worcester": {
+			"kind": "percent",
+			"percent": 92.79999999999998
+		},
+		"hereford": {
+			"kind": "percent",
+			"percent": 83.2
+		},
+		"shrewsbury": {
+			"kind": "percent",
+			"percent": 71.7
+		},
+		"leeds": {
+			"kind": "percent",
+			"percent": 92.3
+		},
+		"bradford": {
+			"kind": "percent",
+			"percent": 86.9
+		},
+		"york": {
+			"kind": "percent",
+			"percent": 84.9
+		},
+		"hull": {
+			"kind": "percent",
+			"percent": 99.6
+		},
+		"doncaster": {
+			"kind": "percent",
+			"percent": 93.6
+		},
+		"wakefield": {
+			"kind": "percent",
+			"percent": 92.9
+		},
+		"rotherham": {
+			"kind": "percent",
+			"percent": 92.3
+		},
+		"halifax": {
+			"kind": "percent",
+			"percent": 74.4
+		},
+		"huddersfield": {
+			"kind": "percent",
+			"percent": 91.1
+		},
+		"merseyside": {
+			"kind": "percent",
+			"percent": 85.83325160668242
+		},
+		"liverpool": {
+			"kind": "percent",
+			"percent": 84.8
+		},
+		"warrington": {
+			"kind": "percent",
+			"percent": 91.8
+		},
+		"chester": {
+			"kind": "percent",
+			"percent": 86
+		},
+		"manchester": {
+			"kind": "percent",
+			"percent": 84.7
+		},
+		"salford": {
+			"kind": "percent",
+			"percent": 87.3
+		},
+		"bolton": {
+			"kind": "percent",
+			"percent": 86.1
+		},
+		"stockport": {
+			"kind": "percent",
+			"percent": 84.7
+		},
+		"oldham": {
+			"kind": "percent",
+			"percent": 93.3
+		},
+		"rochdale": {
+			"kind": "percent",
+			"percent": 73.1
+		},
+		"wigan": {
+			"kind": "percent",
+			"percent": 84.8
+		},
+		"blackburn": {
+			"kind": "percent",
+			"percent": 86.5
+		},
+		"blackpool": {
+			"kind": "percent",
+			"percent": 63.29999999999999
+		},
+		"preston": {
+			"kind": "percent",
+			"percent": 71.2
+		},
+		"lancaster": {
+			"kind": "percent",
+			"percent": 85.9
+		},
+		"newcastle-upon-tyne": {
+			"kind": "percent",
+			"percent": 88.1
+		},
+		"sunderland": {
+			"kind": "percent",
+			"percent": 70.5
+		},
+		"durham": {
+			"kind": "percent",
+			"percent": 80.6
+		},
+		"middlesbrough": {
+			"kind": "percent",
+			"percent": 60.6
+		},
+		"south-shields": {
+			"kind": "percent",
+			"percent": 32.4
+		},
+		"darlington": {
+			"kind": "percent",
+			"percent": 77
+		},
+		"hartlepool": {
+			"kind": "percent",
+			"percent": 94.2
+		},
+		"stockton-on-tees": {
+			"kind": "percent",
+			"percent": 57.5
+		},
+		"bristol": {
+			"kind": "percent",
+			"percent": 81.70000000000002
+		},
+		"plymouth": {
+			"kind": "percent",
+			"percent": 76.6
+		},
+		"exeter": {
+			"kind": "percent",
+			"percent": 78.8
+		},
+		"bath": {
+			"kind": "percent",
+			"percent": 70.5
+		},
+		"cheltenham": {
+			"kind": "percent",
+			"percent": 84
+		},
+		"gloucester": {
+			"kind": "percent",
+			"percent": 56.2
+		},
+		"swindon": {
+			"kind": "percent",
+			"percent": 91
+		},
+		"bournemouth": {
+			"kind": "percent",
+			"percent": 78.4
+		},
+		"torquay": {
+			"kind": "percent",
+			"percent": 82.3
+		},
+		"cornwall": {
+			"kind": "percent",
+			"percent": 61.1
+		},
+		"brighton-and-hove": {
+			"kind": "percent",
+			"percent": 61.1
+		},
+		"southampton": {
+			"kind": "percent",
+			"percent": 92.8
+		},
+		"portsmouth": {
+			"kind": "percent",
+			"percent": 82.4
+		},
+		"reading": {
+			"kind": "percent",
+			"percent": 94.8
+		},
+		"oxford": {
+			"kind": "percent",
+			"percent": 38.2
+		},
+		"cambridge": {
+			"kind": "percent",
+			"percent": 88.3
+		},
+		"canterbury": {
+			"kind": "percent",
+			"percent": 72.5
+		},
+		"maidstone": {
+			"kind": "percent",
+			"percent": 69.7
+		},
+		"guildford": {
+			"kind": "percent",
+			"percent": 63.1
+		},
+		"crawley": {
+			"kind": "percent",
+			"percent": 65.1
+		},
+		"basingstoke": {
+			"kind": "percent",
+			"percent": 67.8
+		},
+		"winchester": {
+			"kind": "percent",
+			"percent": 44.8
+		},
+		"slough": {
+			"kind": "percent",
+			"percent": 90.9
+		},
+		"milton-keynes": {
+			"kind": "percent",
+			"percent": 95.7
+		},
+		"luton": {
+			"kind": "percent",
+			"percent": 91.2
+		},
+		"ipswich": {
+			"kind": "percent",
+			"percent": 94.8
+		},
+		"norwich": {
+			"kind": "percent",
+			"percent": 74.5
+		},
+		"colchester": {
+			"kind": "percent",
+			"percent": 61.5
+		},
+		"southend-on-sea": {
+			"kind": "percent",
+			"percent": 97.6
+		},
+		"peterborough": {
+			"kind": "percent",
+			"percent": 94.20000000000002
+		},
+		"nottingham": {
+			"kind": "percent",
+			"percent": 85.7
+		},
+		"leicester": {
+			"kind": "percent",
+			"percent": 94
+		},
+		"derby": {
+			"kind": "percent",
+			"percent": 87.7
+		},
+		"northampton": {
+			"kind": "percent",
+			"percent": 93.1
+		},
+		"lincoln": {
+			"kind": "percent",
+			"percent": 86
+		},
+		"mansfield": {
+			"kind": "percent",
+			"percent": 85.3
+		},
+		"chesterfield": {
+			"kind": "percent",
+			"percent": 86.9
+		},
+		"edinburgh": {
+			"kind": "percent",
+			"percent": 83
+		},
+		"aberdeen": {
+			"kind": "percent",
+			"percent": 91.8
+		},
+		"dundee": {
+			"kind": "percent",
+			"percent": 84.4
+		},
+		"inverness": {
+			"kind": "percent",
+			"percent": 60.2
+		},
+		"stirling": {
+			"kind": "percent",
+			"percent": 74.4
+		},
+		"paisley": {
+			"kind": "percent",
+			"percent": 90.7
+		},
+		"cardiff": {
+			"kind": "percent",
+			"percent": 83.5
+		},
+		"swansea": {
+			"kind": "percent",
+			"percent": 80.7
+		},
+		"newport": {
+			"kind": "percent",
+			"percent": 85.5
+		},
+		"wrexham": {
+			"kind": "percent",
+			"percent": 76.4
+		},
+		"bangor": {
+			"kind": "percent",
+			"percent": 55.3
+		},
+		"aberystwyth": {
+			"kind": "percent",
+			"percent": 50
+		},
+		"belfast": {
+			"kind": "percent",
+			"percent": 91.8
+		},
+		"londonderry": {
+			"kind": "percent",
+			"percent": 92.7
+		},
+		"lisburn": {
+			"kind": "percent",
+			"percent": 95.2
+		},
+		"newry": {
+			"kind": "percent",
+			"percent": 94.2
+		},
+		"west-midlands": {
+			"kind": "percent",
+			"percent": 79.71867376138282
+		},
+		"devon": {
+			"kind": "percent",
+			"percent": 71.63133426395208
+		},
+		"hampshire": {
+			"kind": "percent",
+			"percent": 72.59250787885996
+		},
+		"kent": {
+			"kind": "percent",
+			"percent": 72.65791261303488
+		},
+		"sussex": {
+			"kind": "percent",
+			"percent": 72.38003613316098
+		},
+		"essex": {
+			"kind": "percent",
+			"percent": 75.57323990191989
+		},
+		"oxfordshire": {
+			"kind": "percent",
+			"percent": 65.55181791126577
+		},
+		"gloucestershire": {
+			"kind": "percent",
+			"percent": 71.04841830901066
+		},
+		"lancashire": {
+			"kind": "percent",
+			"percent": 82.39249692902219
+		},
+		"cheshire": {
+			"kind": "percent",
+			"percent": 83.88403821531311
+		},
+		"lincolnshire": {
+			"kind": "percent",
+			"percent": 73.37199048470153
+		},
+		"norfolk": {
+			"kind": "percent",
+			"percent": 65.7432734430532
+		},
+		"staffordshire": {
+			"kind": "percent",
+			"percent": 77.49481649846297
+		},
+		"derbyshire": {
+			"kind": "percent",
+			"percent": 84.92466014570049
+		},
+		"the-highlands": {
+			"kind": "percent",
+			"percent": 48.54056818181819
+		},
+		"grampian": {
+			"kind": "percent",
+			"percent": 66.40510708087193
+		},
+		"scottish-borders": {
+			"kind": "percent",
+			"percent": 68.3
+		},
+		"the-hebrides": {
+			"kind": "percent",
+			"percent": 54.465394367384526
+		},
+		"lowlands": {
+			"kind": "percent",
+			"percent": 65.8808728182209
+		},
+		"north-east-scotland": {
+			"kind": "percent",
+			"percent": 66.40510708087193
+		},
+		"scottish-islands": {
+			"kind": "percent",
+			"percent": 16.75373642222923
+		},
+		"north-wales": {
+			"kind": "percent",
+			"percent": 76.09272809732005
+		},
+		"mid-wales": {
+			"kind": "percent",
+			"percent": 62.588327578291846
+		},
+		"south-wales": {
+			"kind": "percent",
+			"percent": 78.42443700040631
+		},
+		"west-wales": {
+			"kind": "percent",
+			"percent": 71.64897524641621
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "percent",
+			"percent": 79.774552807831
+		},
+		"south-east-wales": {
+			"kind": "percent",
+			"percent": 82.421272969624
+		},
+		"the-valleys": {
+			"kind": "percent",
+			"percent": 77.53311354119388
+		},
+		"pembrokeshire-coast": {
+			"kind": "percent",
+			"percent": 64.9
+		},
+		"belfast-metropolitan-area": {
+			"kind": "percent",
+			"percent": 93.90114703137968
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "percent",
+			"percent": 93.66348765140904
+		},
+		"west-of-northern-ireland": {
+			"kind": "percent",
+			"percent": 92.1785989469629
+		},
+		"armagh-down-and-newry": {
+			"kind": "percent",
+			"percent": 93.04195855481964
+		}
+	},
+	"mobile-coverage": {
+		"england": {
+			"kind": "percent",
+			"percent": 49.85397701470647
+		},
+		"scotland": {
+			"kind": "percent",
+			"percent": 40.112413389736076
+		},
+		"wales": {
+			"kind": "percent",
+			"percent": 19.14521435239913
+		},
+		"northern-ireland": {
+			"kind": "percent",
+			"percent": 25.35535963841309
+		},
+		"united-kingdom": {
+			"kind": "percent",
+			"percent": 46.81369219031037
+		},
+		"greater-manchester": {
+			"kind": "percent",
+			"percent": 76.84479472509071
+		},
+		"london": {
+			"kind": "percent",
+			"percent": 94.75810483890909
+		},
+		"birmingham": {
+			"kind": "percent",
+			"percent": 96.12
+		},
+		"coventry": {
+			"kind": "percent",
+			"percent": 80.15
+		},
+		"wolverhampton": {
+			"kind": "percent",
+			"percent": 96.29
+		},
+		"solihull": {
+			"kind": "percent",
+			"percent": 89.47
+		},
+		"walsall": {
+			"kind": "percent",
+			"percent": 87.27
+		},
+		"dudley": {
+			"kind": "percent",
+			"percent": 94.87
+		},
+		"sandwell": {
+			"kind": "percent",
+			"percent": 99.17
+		},
+		"stoke-on-trent": {
+			"kind": "percent",
+			"percent": 53.27
+		},
+		"worcester": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"hereford": {
+			"kind": "percent",
+			"percent": 3.46
+		},
+		"shrewsbury": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"leeds": {
+			"kind": "percent",
+			"percent": 78.33
+		},
+		"bradford": {
+			"kind": "percent",
+			"percent": 79.75
+		},
+		"york": {
+			"kind": "percent",
+			"percent": 82.23
+		},
+		"hull": {
+			"kind": "percent",
+			"percent": 91.64
+		},
+		"doncaster": {
+			"kind": "percent",
+			"percent": 46.51
+		},
+		"wakefield": {
+			"kind": "percent",
+			"percent": 50.99
+		},
+		"rotherham": {
+			"kind": "percent",
+			"percent": 73.16
+		},
+		"halifax": {
+			"kind": "percent",
+			"percent": 37.16
+		},
+		"huddersfield": {
+			"kind": "percent",
+			"percent": 55.22
+		},
+		"merseyside": {
+			"kind": "percent",
+			"percent": 69.60159377457806
+		},
+		"liverpool": {
+			"kind": "percent",
+			"percent": 99.06999999999998
+		},
+		"warrington": {
+			"kind": "percent",
+			"percent": 44.01
+		},
+		"chester": {
+			"kind": "percent",
+			"percent": 5.41
+		},
+		"manchester": {
+			"kind": "percent",
+			"percent": 96.68
+		},
+		"salford": {
+			"kind": "percent",
+			"percent": 87.34
+		},
+		"bolton": {
+			"kind": "percent",
+			"percent": 45.32
+		},
+		"stockport": {
+			"kind": "percent",
+			"percent": 68.09
+		},
+		"oldham": {
+			"kind": "percent",
+			"percent": 90.79
+		},
+		"rochdale": {
+			"kind": "percent",
+			"percent": 69.51
+		},
+		"wigan": {
+			"kind": "percent",
+			"percent": 57.29
+		},
+		"blackburn": {
+			"kind": "percent",
+			"percent": 32.68
+		},
+		"blackpool": {
+			"kind": "percent",
+			"percent": 44.59
+		},
+		"preston": {
+			"kind": "percent",
+			"percent": 34.94
+		},
+		"lancaster": {
+			"kind": "percent",
+			"percent": 50.57
+		},
+		"newcastle-upon-tyne": {
+			"kind": "percent",
+			"percent": 84.15
+		},
+		"sunderland": {
+			"kind": "percent",
+			"percent": 61.49000000000001
+		},
+		"durham": {
+			"kind": "percent",
+			"percent": 13.4
+		},
+		"middlesbrough": {
+			"kind": "percent",
+			"percent": 97.49
+		},
+		"south-shields": {
+			"kind": "percent",
+			"percent": 86.3
+		},
+		"darlington": {
+			"kind": "percent",
+			"percent": 12.23
+		},
+		"hartlepool": {
+			"kind": "percent",
+			"percent": 3.81
+		},
+		"stockton-on-tees": {
+			"kind": "percent",
+			"percent": 71.25
+		},
+		"bristol": {
+			"kind": "percent",
+			"percent": 69.24
+		},
+		"plymouth": {
+			"kind": "percent",
+			"percent": 20.97
+		},
+		"exeter": {
+			"kind": "percent",
+			"percent": 0.19
+		},
+		"bath": {
+			"kind": "percent",
+			"percent": 4.7
+		},
+		"cheltenham": {
+			"kind": "percent",
+			"percent": 32.95
+		},
+		"gloucester": {
+			"kind": "percent",
+			"percent": 50
+		},
+		"swindon": {
+			"kind": "percent",
+			"percent": 43.51
+		},
+		"bournemouth": {
+			"kind": "percent",
+			"percent": 41.89000000000001
+		},
+		"torquay": {
+			"kind": "percent",
+			"percent": 10.87
+		},
+		"cornwall": {
+			"kind": "percent",
+			"percent": 0.61
+		},
+		"brighton-and-hove": {
+			"kind": "percent",
+			"percent": 72.18
+		},
+		"southampton": {
+			"kind": "percent",
+			"percent": 63.69
+		},
+		"portsmouth": {
+			"kind": "percent",
+			"percent": 68.57
+		},
+		"reading": {
+			"kind": "percent",
+			"percent": 65.49
+		},
+		"oxford": {
+			"kind": "percent",
+			"percent": 74.08
+		},
+		"cambridge": {
+			"kind": "percent",
+			"percent": 49.16
+		},
+		"canterbury": {
+			"kind": "percent",
+			"percent": 15.669999999999998
+		},
+		"maidstone": {
+			"kind": "percent",
+			"percent": 39.97
+		},
+		"guildford": {
+			"kind": "percent",
+			"percent": 26.08
+		},
+		"crawley": {
+			"kind": "percent",
+			"percent": 48.02000000000001
+		},
+		"basingstoke": {
+			"kind": "percent",
+			"percent": 35.42
+		},
+		"winchester": {
+			"kind": "percent",
+			"percent": 18.8
+		},
+		"slough": {
+			"kind": "percent",
+			"percent": 100
+		},
+		"milton-keynes": {
+			"kind": "percent",
+			"percent": 71.3
+		},
+		"luton": {
+			"kind": "percent",
+			"percent": 90.5
+		},
+		"ipswich": {
+			"kind": "percent",
+			"percent": 64.39
+		},
+		"norwich": {
+			"kind": "percent",
+			"percent": 49.83
+		},
+		"colchester": {
+			"kind": "percent",
+			"percent": 19.42
+		},
+		"southend-on-sea": {
+			"kind": "percent",
+			"percent": 9.2
+		},
+		"peterborough": {
+			"kind": "percent",
+			"percent": 4.82
+		},
+		"nottingham": {
+			"kind": "percent",
+			"percent": 97.28
+		},
+		"leicester": {
+			"kind": "percent",
+			"percent": 97.84
+		},
+		"derby": {
+			"kind": "percent",
+			"percent": 95.15
+		},
+		"northampton": {
+			"kind": "percent",
+			"percent": 55.89
+		},
+		"lincoln": {
+			"kind": "percent",
+			"percent": 64.4
+		},
+		"mansfield": {
+			"kind": "percent",
+			"percent": 44.88
+		},
+		"chesterfield": {
+			"kind": "percent",
+			"percent": 50.11999999999999
+		},
+		"edinburgh": {
+			"kind": "percent",
+			"percent": 91.43
+		},
+		"aberdeen": {
+			"kind": "percent",
+			"percent": 80.29
+		},
+		"dundee": {
+			"kind": "percent",
+			"percent": 74.99
+		},
+		"inverness": {
+			"kind": "percent",
+			"percent": 18.51
+		},
+		"stirling": {
+			"kind": "percent",
+			"percent": 18.5
+		},
+		"paisley": {
+			"kind": "percent",
+			"percent": 50.14000000000001
+		},
+		"cardiff": {
+			"kind": "percent",
+			"percent": 95.86
+		},
+		"swansea": {
+			"kind": "percent",
+			"percent": 19.12
+		},
+		"newport": {
+			"kind": "percent",
+			"percent": 69.79
+		},
+		"wrexham": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"bangor": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"aberystwyth": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"belfast": {
+			"kind": "percent",
+			"percent": 84.32
+		},
+		"londonderry": {
+			"kind": "percent",
+			"percent": 17.31
+		},
+		"lisburn": {
+			"kind": "percent",
+			"percent": 41.16
+		},
+		"newry": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"west-midlands": {
+			"kind": "percent",
+			"percent": 56.473045878393854
+		},
+		"devon": {
+			"kind": "percent",
+			"percent": 6.758154027692387
+		},
+		"hampshire": {
+			"kind": "percent",
+			"percent": 35.55033611869363
+		},
+		"kent": {
+			"kind": "percent",
+			"percent": 30.417487023138214
+		},
+		"sussex": {
+			"kind": "percent",
+			"percent": 31.543738402380225
+		},
+		"essex": {
+			"kind": "percent",
+			"percent": 29.680202753673544
+		},
+		"oxfordshire": {
+			"kind": "percent",
+			"percent": 29.01807744535201
+		},
+		"gloucestershire": {
+			"kind": "percent",
+			"percent": 21.552987687181883
+		},
+		"lancashire": {
+			"kind": "percent",
+			"percent": 34.55682113332648
+		},
+		"cheshire": {
+			"kind": "percent",
+			"percent": 18.49505204377849
+		},
+		"lincolnshire": {
+			"kind": "percent",
+			"percent": 24.00053104608091
+		},
+		"norfolk": {
+			"kind": "percent",
+			"percent": 12.890192841924742
+		},
+		"staffordshire": {
+			"kind": "percent",
+			"percent": 45.07676147088125
+		},
+		"derbyshire": {
+			"kind": "percent",
+			"percent": 40.309587689898315
+		},
+		"the-highlands": {
+			"kind": "percent",
+			"percent": 13.1573545491048
+		},
+		"grampian": {
+			"kind": "percent",
+			"percent": 33.76519466619097
+		},
+		"scottish-borders": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"the-hebrides": {
+			"kind": "percent",
+			"percent": 16.386080902115065
+		},
+		"lowlands": {
+			"kind": "percent",
+			"percent": 7.895953846591273
+		},
+		"north-east-scotland": {
+			"kind": "percent",
+			"percent": 33.76519466619097
+		},
+		"scottish-islands": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"north-wales": {
+			"kind": "percent",
+			"percent": 0.017529340840458832
+		},
+		"mid-wales": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"south-wales": {
+			"kind": "percent",
+			"percent": 28.124596173725447
+		},
+		"west-wales": {
+			"kind": "percent",
+			"percent": 9.016954347031712
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "percent",
+			"percent": 42.37585949200984
+		},
+		"south-east-wales": {
+			"kind": "percent",
+			"percent": 38.582132737914925
+		},
+		"the-valleys": {
+			"kind": "percent",
+			"percent": 34.27172068853246
+		},
+		"pembrokeshire-coast": {
+			"kind": "percent",
+			"percent": 0
+		},
+		"belfast-metropolitan-area": {
+			"kind": "percent",
+			"percent": 54.31317533698806
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "percent",
+			"percent": 1.9556525844786006
+		},
+		"west-of-northern-ireland": {
+			"kind": "percent",
+			"percent": 6.356812805719973
+		},
+		"armagh-down-and-newry": {
+			"kind": "percent",
+			"percent": 0.011039114029945878
+		}
+	},
+	"business-activity": {
+		"england": {
+			"kind": "count",
+			"count": 2353140
+		},
+		"scotland": {
+			"kind": "count",
+			"count": 173100
+		},
+		"wales": {
+			"kind": "count",
+			"count": 104820
+		},
+		"northern-ireland": {
+			"kind": "count",
+			"count": 80080
+		},
+		"united-kingdom": {
+			"kind": "count",
+			"count": 2711140
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 105760
+		},
+		"london": {
+			"kind": "count",
+			"count": 538315
+		},
+		"birmingham": {
+			"kind": "count",
+			"count": 37810
+		},
+		"coventry": {
+			"kind": "count",
+			"count": 9825
+		},
+		"wolverhampton": {
+			"kind": "count",
+			"count": 8130
+		},
+		"solihull": {
+			"kind": "count",
+			"count": 8270
+		},
+		"walsall": {
+			"kind": "count",
+			"count": 8385
+		},
+		"dudley": {
+			"kind": "count",
+			"count": 10000
+		},
+		"sandwell": {
+			"kind": "count",
+			"count": 10140
+		},
+		"stoke-on-trent": {
+			"kind": "count",
+			"count": 6700
+		},
+		"worcester": {
+			"kind": "count",
+			"count": 3245
+		},
+		"hereford": {
+			"kind": "count",
+			"count": 10740
+		},
+		"shrewsbury": {
+			"kind": "count",
+			"count": 15765
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 29340
+		},
+		"bradford": {
+			"kind": "count",
+			"count": 16800
+		},
+		"york": {
+			"kind": "count",
+			"count": 7120
+		},
+		"hull": {
+			"kind": "count",
+			"count": 6495
+		},
+		"doncaster": {
+			"kind": "count",
+			"count": 9965
+		},
+		"wakefield": {
+			"kind": "count",
+			"count": 10060
+		},
+		"rotherham": {
+			"kind": "count",
+			"count": 7525
+		},
+		"halifax": {
+			"kind": "count",
+			"count": 8095
+		},
+		"huddersfield": {
+			"kind": "count",
+			"count": 15450
+		},
+		"merseyside": {
+			"kind": "count",
+			"count": 38730
+		},
+		"liverpool": {
+			"kind": "count",
+			"count": 14475
+		},
+		"warrington": {
+			"kind": "count",
+			"count": 8445
+		},
+		"chester": {
+			"kind": "count",
+			"count": 13575
+		},
+		"manchester": {
+			"kind": "count",
+			"count": 23715
+		},
+		"salford": {
+			"kind": "count",
+			"count": 10015
+		},
+		"bolton": {
+			"kind": "count",
+			"count": 10560
+		},
+		"stockport": {
+			"kind": "count",
+			"count": 12100
+		},
+		"oldham": {
+			"kind": "count",
+			"count": 7515
+		},
+		"rochdale": {
+			"kind": "count",
+			"count": 7055
+		},
+		"wigan": {
+			"kind": "count",
+			"count": 9155
+		},
+		"blackburn": {
+			"kind": "count",
+			"count": 5555
+		},
+		"blackpool": {
+			"kind": "count",
+			"count": 3655
+		},
+		"preston": {
+			"kind": "count",
+			"count": 5830
+		},
+		"lancaster": {
+			"kind": "count",
+			"count": 4585
+		},
+		"newcastle-upon-tyne": {
+			"kind": "count",
+			"count": 8885
+		},
+		"sunderland": {
+			"kind": "count",
+			"count": 5975
+		},
+		"durham": {
+			"kind": "count",
+			"count": 14560
+		},
+		"middlesbrough": {
+			"kind": "count",
+			"count": 3485
+		},
+		"south-shields": {
+			"kind": "count",
+			"count": 3270
+		},
+		"darlington": {
+			"kind": "count",
+			"count": 3390
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 2180
+		},
+		"stockton-on-tees": {
+			"kind": "count",
+			"count": 5600
+		},
+		"bristol": {
+			"kind": "count",
+			"count": 18005
+		},
+		"plymouth": {
+			"kind": "count",
+			"count": 6190
+		},
+		"exeter": {
+			"kind": "count",
+			"count": 4425
+		},
+		"bath": {
+			"kind": "count",
+			"count": 8345
+		},
+		"cheltenham": {
+			"kind": "count",
+			"count": 5235
+		},
+		"gloucester": {
+			"kind": "count",
+			"count": 3710
+		},
+		"swindon": {
+			"kind": "count",
+			"count": 7075
+		},
+		"bournemouth": {
+			"kind": "count",
+			"count": 15600
+		},
+		"torquay": {
+			"kind": "count",
+			"count": 4035
+		},
+		"cornwall": {
+			"kind": "count",
+			"count": 25345
+		},
+		"brighton-and-hove": {
+			"kind": "count",
+			"count": 13785
+		},
+		"southampton": {
+			"kind": "count",
+			"count": 7235
+		},
+		"portsmouth": {
+			"kind": "count",
+			"count": 6020
+		},
+		"reading": {
+			"kind": "count",
+			"count": 6660
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 4865
+		},
+		"cambridge": {
+			"kind": "count",
+			"count": 5065
+		},
+		"canterbury": {
+			"kind": "count",
+			"count": 5725
+		},
+		"maidstone": {
+			"kind": "count",
+			"count": 8040
+		},
+		"guildford": {
+			"kind": "count",
+			"count": 7250
+		},
+		"crawley": {
+			"kind": "count",
+			"count": 3475
+		},
+		"basingstoke": {
+			"kind": "count",
+			"count": 6920
+		},
+		"winchester": {
+			"kind": "count",
+			"count": 8135
+		},
+		"slough": {
+			"kind": "count",
+			"count": 6560
+		},
+		"milton-keynes": {
+			"kind": "count",
+			"count": 12535
+		},
+		"luton": {
+			"kind": "count",
+			"count": 7955
+		},
+		"ipswich": {
+			"kind": "count",
+			"count": 4645
+		},
+		"norwich": {
+			"kind": "count",
+			"count": 5015
+		},
+		"colchester": {
+			"kind": "count",
+			"count": 7400
+		},
+		"southend-on-sea": {
+			"kind": "count",
+			"count": 6975
+		},
+		"peterborough": {
+			"kind": "count",
+			"count": 7975
+		},
+		"nottingham": {
+			"kind": "count",
+			"count": 9575
+		},
+		"leicester": {
+			"kind": "count",
+			"count": 13315
+		},
+		"derby": {
+			"kind": "count",
+			"count": 7375
+		},
+		"northampton": {
+			"kind": "count",
+			"count": 19020
+		},
+		"lincoln": {
+			"kind": "count",
+			"count": 2695
+		},
+		"mansfield": {
+			"kind": "count",
+			"count": 3055
+		},
+		"chesterfield": {
+			"kind": "count",
+			"count": 3335
+		},
+		"edinburgh": {
+			"kind": "count",
+			"count": 18390
+		},
+		"aberdeen": {
+			"kind": "count",
+			"count": 7710
+		},
+		"dundee": {
+			"kind": "count",
+			"count": 3550
+		},
+		"inverness": {
+			"kind": "count",
+			"count": 10960
+		},
+		"stirling": {
+			"kind": "count",
+			"count": 3835
+		},
+		"paisley": {
+			"kind": "count",
+			"count": 4660
+		},
+		"cardiff": {
+			"kind": "count",
+			"count": 11825
+		},
+		"swansea": {
+			"kind": "count",
+			"count": 6710
+		},
+		"newport": {
+			"kind": "count",
+			"count": 4160
+		},
+		"wrexham": {
+			"kind": "count",
+			"count": 4075
+		},
+		"bangor": {
+			"kind": "count",
+			"count": 2720
+		},
+		"aberystwyth": {
+			"kind": "count",
+			"count": 4050
+		},
+		"belfast": {
+			"kind": "count",
+			"count": 11200
+		},
+		"londonderry": {
+			"kind": "count",
+			"count": 5730
+		},
+		"lisburn": {
+			"kind": "count",
+			"count": 5155
+		},
+		"newry": {
+			"kind": "count",
+			"count": 9505
+		},
+		"west-midlands": {
+			"kind": "count",
+			"count": 216145
+		},
+		"devon": {
+			"kind": "count",
+			"count": 49080
+		},
+		"hampshire": {
+			"kind": "count",
+			"count": 71905
+		},
+		"kent": {
+			"kind": "count",
+			"count": 74430
+		},
+		"sussex": {
+			"kind": "count",
+			"count": 73740
+		},
+		"essex": {
+			"kind": "count",
+			"count": 81080
+		},
+		"oxfordshire": {
+			"kind": "count",
+			"count": 31925
+		},
+		"gloucestershire": {
+			"kind": "count",
+			"count": 28935
+		},
+		"lancashire": {
+			"kind": "count",
+			"count": 54320
+		},
+		"cheshire": {
+			"kind": "count",
+			"count": 44980
+		},
+		"lincolnshire": {
+			"kind": "count",
+			"count": 38665
+		},
+		"norfolk": {
+			"kind": "count",
+			"count": 33665
+		},
+		"staffordshire": {
+			"kind": "count",
+			"count": 39125
+		},
+		"derbyshire": {
+			"kind": "count",
+			"count": 36785
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 14830
+		},
+		"grampian": {
+			"kind": "count",
+			"count": 23185
+		},
+		"scottish-borders": {
+			"kind": "count",
+			"count": 4965
+		},
+		"the-hebrides": {
+			"kind": "count",
+			"count": 12170
+		},
+		"lowlands": {
+			"kind": "count",
+			"count": 15975
+		},
+		"north-east-scotland": {
+			"kind": "count",
+			"count": 23185
+		},
+		"scottish-islands": {
+			"kind": "count",
+			"count": 4275
+		},
+		"north-wales": {
+			"kind": "count",
+			"count": 25580
+		},
+		"mid-wales": {
+			"kind": "count",
+			"count": 9985
+		},
+		"south-wales": {
+			"kind": "count",
+			"count": 65205
+		},
+		"west-wales": {
+			"kind": "count",
+			"count": 18615
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 33615
+		},
+		"south-east-wales": {
+			"kind": "count",
+			"count": 29600
+		},
+		"the-valleys": {
+			"kind": "count",
+			"count": 13465
+		},
+		"pembrokeshire-coast": {
+			"kind": "count",
+			"count": 5760
+		},
+		"belfast-metropolitan-area": {
+			"kind": "count",
+			"count": 25440
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "count",
+			"count": 11455
+		},
+		"west-of-northern-ireland": {
+			"kind": "count",
+			"count": 24340
+		},
+		"armagh-down-and-newry": {
+			"kind": "count",
+			"count": 18845
+		}
+	},
+	"electric-vehicle-chargers": {
+		"scotland": {
+			"kind": "count",
+			"count": 12847,
+			"rate": 231.60684346211394
+		},
+		"wales": {
+			"kind": "count",
+			"count": 5910,
+			"rate": 185.46523687927595
+		},
+		"northern-ireland": {
+			"kind": "count",
+			"count": 1156,
+			"rate": 59.96301589071793
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 2873,
+			"rate": 95.45916088972058
+		},
+		"london": {
+			"kind": "count",
+			"count": 31371,
+			"rate": 345.1255349990363
+		},
+		"birmingham": {
+			"kind": "count",
+			"count": 1600,
+			"rate": 135.17874854894063
+		},
+		"coventry": {
+			"kind": "count",
+			"count": 2644,
+			"rate": 716.4806815779917
+		},
+		"wolverhampton": {
+			"kind": "count",
+			"count": 193,
+			"rate": 68.62197823296628
+		},
+		"solihull": {
+			"kind": "count",
+			"count": 614,
+			"rate": 277.5241590656385
+		},
+		"walsall": {
+			"kind": "count",
+			"count": 196,
+			"rate": 66.28832716671513
+		},
+		"dudley": {
+			"kind": "count",
+			"count": 345,
+			"rate": 103.93757720001204
+		},
+		"sandwell": {
+			"kind": "count",
+			"count": 310,
+			"rate": 87.6052676199627
+		},
+		"stoke-on-trent": {
+			"kind": "count",
+			"count": 289,
+			"rate": 106.86881760192291
+		},
+		"worcester": {
+			"kind": "count",
+			"count": 219,
+			"rate": 205.30415951851955
+		},
+		"hereford": {
+			"kind": "count",
+			"count": 185,
+			"rate": 96.83481028228657
+		},
+		"shrewsbury": {
+			"kind": "count",
+			"count": 515,
+			"rate": 154.90818306236935
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 1169,
+			"rate": 138.31225915150338
+		},
+		"bradford": {
+			"kind": "count",
+			"count": 555,
+			"rate": 98.47322149377666
+		},
+		"york": {
+			"kind": "count",
+			"count": 242,
+			"rate": 115.62295450093406
+		},
+		"hull": {
+			"kind": "count",
+			"count": 246,
+			"rate": 89.32429439254034
+		},
+		"doncaster": {
+			"kind": "count",
+			"count": 311,
+			"rate": 97.25892452269636
+		},
+		"wakefield": {
+			"kind": "count",
+			"count": 361,
+			"rate": 98.18694140877862
+		},
+		"rotherham": {
+			"kind": "count",
+			"count": 364,
+			"rate": 131.60035430864622
+		},
+		"halifax": {
+			"kind": "count",
+			"count": 212,
+			"rate": 100.50775379393066
+		},
+		"huddersfield": {
+			"kind": "count",
+			"count": 274,
+			"rate": 61.18160889768158
+		},
+		"merseyside": {
+			"kind": "count",
+			"count": 1632,
+			"rate": 110.6035006821227
+		},
+		"liverpool": {
+			"kind": "count",
+			"count": 996,
+			"rate": 195.69279375040526
+		},
+		"warrington": {
+			"kind": "count",
+			"count": 344,
+			"rate": 159.70955146686723
+		},
+		"chester": {
+			"kind": "count",
+			"count": 412,
+			"rate": 110.85639253925716
+		},
+		"manchester": {
+			"kind": "count",
+			"count": 756,
+			"rate": 128.20730238947206
+		},
+		"salford": {
+			"kind": "count",
+			"count": 283,
+			"rate": 96.14469947137403
+		},
+		"bolton": {
+			"kind": "count",
+			"count": 170,
+			"rate": 54.82367737878323
+		},
+		"stockport": {
+			"kind": "count",
+			"count": 350,
+			"rate": 115.15847451213934
+		},
+		"oldham": {
+			"kind": "count",
+			"count": 178,
+			"rate": 70.75846716489107
+		},
+		"rochdale": {
+			"kind": "count",
+			"count": 169,
+			"rate": 71.74362479357788
+		},
+		"wigan": {
+			"kind": "count",
+			"count": 261,
+			"rate": 75.66928175065667
+		},
+		"blackburn": {
+			"kind": "count",
+			"count": 129,
+			"rate": 79.36507936507937
+		},
+		"blackpool": {
+			"kind": "count",
+			"count": 160,
+			"rate": 110.96392978757342
+		},
+		"preston": {
+			"kind": "count",
+			"count": 129,
+			"rate": 79.20719127615679
+		},
+		"lancaster": {
+			"kind": "count",
+			"count": 196,
+			"rate": 135.16682068328208
+		},
+		"newcastle-upon-tyne": {
+			"kind": "count",
+			"count": 392,
+			"rate": 122.26883548291511
+		},
+		"sunderland": {
+			"kind": "count",
+			"count": 554,
+			"rate": 191.9572011669889
+		},
+		"durham": {
+			"kind": "count",
+			"count": 802,
+			"rate": 149.06758412002728
+		},
+		"middlesbrough": {
+			"kind": "count",
+			"count": 142,
+			"rate": 90.93179475028977
+		},
+		"south-shields": {
+			"kind": "count",
+			"count": 265,
+			"rate": 175.0411181494521
+		},
+		"darlington": {
+			"kind": "count",
+			"count": 161,
+			"rate": 143.12510556587753
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 89,
+			"rate": 90.64982684864535
+		},
+		"stockton-on-tees": {
+			"kind": "count",
+			"count": 275,
+			"rate": 132.9787234042553
+		},
+		"bristol": {
+			"kind": "count",
+			"count": 488,
+			"rate": 98.70570126557698
+		},
+		"plymouth": {
+			"kind": "count",
+			"count": 440,
+			"rate": 161.72486924176766
+		},
+		"exeter": {
+			"kind": "count",
+			"count": 359,
+			"rate": 259.39493782469526
+		},
+		"bath": {
+			"kind": "count",
+			"count": 179,
+			"rate": 89.48747175395444
+		},
+		"cheltenham": {
+			"kind": "count",
+			"count": 331,
+			"rate": 271.8931484569448
+		},
+		"gloucester": {
+			"kind": "count",
+			"count": 207,
+			"rate": 149.35280451377363
+		},
+		"swindon": {
+			"kind": "count",
+			"count": 336,
+			"rate": 137.77549974372118
+		},
+		"bournemouth": {
+			"kind": "count",
+			"count": 458,
+			"rate": 111.98947592348527
+		},
+		"torquay": {
+			"kind": "count",
+			"count": 136,
+			"rate": 97.05550718638939
+		},
+		"cornwall": {
+			"kind": "count",
+			"count": 1372,
+			"rate": 235.21787655861846
+		},
+		"brighton-and-hove": {
+			"kind": "count",
+			"count": 804,
+			"rate": 283.22823827808503
+		},
+		"southampton": {
+			"kind": "count",
+			"count": 181,
+			"rate": 69.76995189342544
+		},
+		"portsmouth": {
+			"kind": "count",
+			"count": 434,
+			"rate": 202.49998833525413
+		},
+		"reading": {
+			"kind": "count",
+			"count": 346,
+			"rate": 189.16717238815355
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 278,
+			"rate": 167.43558548249155
+		},
+		"cambridge": {
+			"kind": "count",
+			"count": 467,
+			"rate": 312.68412876961804
+		},
+		"canterbury": {
+			"kind": "count",
+			"count": 263,
+			"rate": 162.24552745219
+		},
+		"maidstone": {
+			"kind": "count",
+			"count": 156,
+			"rate": 83.08169167106041
+		},
+		"guildford": {
+			"kind": "count",
+			"count": 276,
+			"rate": 182.34792777436425
+		},
+		"crawley": {
+			"kind": "count",
+			"count": 277,
+			"rate": 223.37268563318497
+		},
+		"basingstoke": {
+			"kind": "count",
+			"count": 273,
+			"rate": 141.3702035109523
+		},
+		"winchester": {
+			"kind": "count",
+			"count": 289,
+			"rate": 213.07656010381032
+		},
+		"slough": {
+			"kind": "count",
+			"count": 168,
+			"rate": 100.38300898069419
+		},
+		"milton-keynes": {
+			"kind": "count",
+			"count": 987,
+			"rate": 322.6713394620183
+		},
+		"luton": {
+			"kind": "count",
+			"count": 155,
+			"rate": 64.8291438370488
+		},
+		"ipswich": {
+			"kind": "count",
+			"count": 413,
+			"rate": 294.42377062035735
+		},
+		"norwich": {
+			"kind": "count",
+			"count": 289,
+			"rate": 196.3555326058893
+		},
+		"colchester": {
+			"kind": "count",
+			"count": 181,
+			"rate": 90.39965638141662
+		},
+		"southend-on-sea": {
+			"kind": "count",
+			"count": 95,
+			"rate": 51.28039037871918
+		},
+		"peterborough": {
+			"kind": "count",
+			"count": 288,
+			"rate": 128.7697569917954
+		},
+		"nottingham": {
+			"kind": "count",
+			"count": 511,
+			"rate": 154.34475967826214
+		},
+		"leicester": {
+			"kind": "count",
+			"count": 342,
+			"rate": 88.06534345483948
+		},
+		"derby": {
+			"kind": "count",
+			"count": 329,
+			"rate": 120.00773302109438
+		},
+		"northampton": {
+			"kind": "count",
+			"count": 634,
+			"rate": 144.15282928348768
+		},
+		"lincoln": {
+			"kind": "count",
+			"count": 185,
+			"rate": 175.99939113724147
+		},
+		"mansfield": {
+			"kind": "count",
+			"count": 96,
+			"rate": 84.85212749032155
+		},
+		"chesterfield": {
+			"kind": "count",
+			"count": 274,
+			"rate": 258.38087604318923
+		},
+		"edinburgh": {
+			"kind": "count",
+			"count": 1020,
+			"rate": 192.20622597422175
+		},
+		"aberdeen": {
+			"kind": "count",
+			"count": 445,
+			"rate": 191.99240659245837
+		},
+		"dundee": {
+			"kind": "count",
+			"count": 707,
+			"rate": 471.7107018948492
+		},
+		"inverness": {
+			"kind": "count",
+			"count": 918,
+			"rate": 386.86838889123015
+		},
+		"stirling": {
+			"kind": "count",
+			"count": 481,
+			"rate": 510.5615115168241
+		},
+		"paisley": {
+			"kind": "count",
+			"count": 459,
+			"rate": 242.63889623090344
+		},
+		"cardiff": {
+			"kind": "count",
+			"count": 454,
+			"rate": 118.2541108931832
+		},
+		"swansea": {
+			"kind": "count",
+			"count": 387,
+			"rate": 153.99675293668227
+		},
+		"newport": {
+			"kind": "count",
+			"count": 509,
+			"rate": 303.1584464469711
+		},
+		"wrexham": {
+			"kind": "count",
+			"count": 282,
+			"rate": 203.9856776013599
+		},
+		"bangor": {
+			"kind": "count",
+			"count": 169,
+			"rate": 244.5837011737123
+		},
+		"aberystwyth": {
+			"kind": "count",
+			"count": 222,
+			"rate": 305.7893359412664
+		},
+		"belfast": {
+			"kind": "count",
+			"count": 273,
+			"rate": 77.47098385311729
+		},
+		"londonderry": {
+			"kind": "count",
+			"count": 67,
+			"rate": 43.96815917786105
+		},
+		"lisburn": {
+			"kind": "count",
+			"count": 101,
+			"rate": 66.59238209522051
+		},
+		"newry": {
+			"kind": "count",
+			"count": 102,
+			"rate": 55.70270048876389
+		},
+		"west-midlands": {
+			"kind": "count",
+			"count": 10143,
+			"rate": 163.93511511823434
+		},
+		"devon": {
+			"kind": "count",
+			"count": 2056,
+			"rate": 163.88921216797686
+		},
+		"hampshire": {
+			"kind": "count",
+			"count": 2552,
+			"rate": 132.85031070418475
+		},
+		"kent": {
+			"kind": "count",
+			"count": 2321,
+			"rate": 120.15422812426877
+		},
+		"sussex": {
+			"kind": "count",
+			"count": 3133,
+			"rate": 178.0327073302538
+		},
+		"essex": {
+			"kind": "count",
+			"count": 1707,
+			"rate": 88.46347189328414
+		},
+		"oxfordshire": {
+			"kind": "count",
+			"count": 1339,
+			"rate": 175.44135489466967
+		},
+		"gloucestershire": {
+			"kind": "count",
+			"count": 1406,
+			"rate": 210.04511637634826
+		},
+		"lancashire": {
+			"kind": "count",
+			"count": 1758,
+			"rate": 109.76215078872035
+		},
+		"cheshire": {
+			"kind": "count",
+			"count": 1364,
+			"rate": 119.66129886900772
+		},
+		"lincolnshire": {
+			"kind": "count",
+			"count": 1207,
+			"rate": 107.69583555283118
+		},
+		"norfolk": {
+			"kind": "count",
+			"count": 1524,
+			"rate": 162.06576424535737
+		},
+		"staffordshire": {
+			"kind": "count",
+			"count": 1433,
+			"rate": 121.6904527768012
+		},
+		"derbyshire": {
+			"kind": "count",
+			"count": 1309,
+			"rate": 119.37701431612201
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 1265,
+			"rate": 389.25472336759185
+		},
+		"grampian": {
+			"kind": "count",
+			"count": 1018,
+			"rate": 171.99722912125975
+		},
+		"scottish-borders": {
+			"kind": "count",
+			"count": 262,
+			"rate": 223.96990938621988
+		},
+		"the-hebrides": {
+			"kind": "count",
+			"count": 1052,
+			"rate": 399.52907219627053
+		},
+		"lowlands": {
+			"kind": "count",
+			"count": 1574,
+			"rate": 306.4582075894161
+		},
+		"north-east-scotland": {
+			"kind": "count",
+			"count": 1018,
+			"rate": 171.99722912125975
+		},
+		"scottish-islands": {
+			"kind": "count",
+			"count": 294,
+			"rate": 412.74743787729886
+		},
+		"north-wales": {
+			"kind": "count",
+			"count": 1457,
+			"rate": 209.0042532437259
+		},
+		"mid-wales": {
+			"kind": "count",
+			"count": 447,
+			"rate": 230.3755585447686
+		},
+		"south-wales": {
+			"kind": "count",
+			"count": 3784,
+			"rate": 170.23298165046813
+		},
+		"west-wales": {
+			"kind": "count",
+			"count": 1021,
+			"rate": 198.36682513993506
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 2018,
+			"rate": 164.27218386762496
+		},
+		"south-east-wales": {
+			"kind": "count",
+			"count": 1342,
+			"rate": 123.47030686327457
+		},
+		"the-valleys": {
+			"kind": "count",
+			"count": 1161,
+			"rate": 239.97866856279444
+		},
+		"pembrokeshire-coast": {
+			"kind": "count",
+			"count": 459,
+			"rate": 364.97801385167105
+		},
+		"belfast-metropolitan-area": {
+			"kind": "count",
+			"count": 552,
+			"rate": 67.51682416515203
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "count",
+			"count": 168,
+			"rate": 59.602578521075536
+		},
+		"west-of-northern-ireland": {
+			"kind": "count",
+			"count": 231,
+			"rate": 54.637312317284305
+		},
+		"armagh-down-and-newry": {
+			"kind": "count",
+			"count": 205,
+			"rate": 50.53916662146904
+		}
+	},
+	"council-tax": {
+		"england": {
+			"kind": "range",
+			"low": {
+				"name": "Wandsworth",
+				"value": 1028.21
+			},
+			"high": {
+				"name": "Dorset",
+				"value": 2765.02
+			}
+		},
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Wigan",
+				"value": 2152.68
+			},
+			"high": {
+				"name": "Stockport",
+				"value": 2618.9
+			}
+		},
+		"london": {
+			"kind": "range",
+			"low": {
+				"name": "Wandsworth",
+				"value": 1028.21
+			},
+			"high": {
+				"name": "Kingston upon Thames",
+				"value": 2609.2
+			}
+		},
+		"birmingham": {
+			"kind": "value",
+			"value": 2362.9
+		},
+		"coventry": {
+			"kind": "value",
+			"value": 2516.72
+		},
+		"wolverhampton": {
+			"kind": "value",
+			"value": 2538.99
+		},
+		"solihull": {
+			"kind": "value",
+			"value": 2197.26
+		},
+		"walsall": {
+			"kind": "value",
+			"value": 2627.48
+		},
+		"dudley": {
+			"kind": "value",
+			"value": 2144.84
+		},
+		"sandwell": {
+			"kind": "value",
+			"value": 2244.46
+		},
+		"stoke-on-trent": {
+			"kind": "value",
+			"value": 2183.12
+		},
+		"worcester": {
+			"kind": "value",
+			"value": 2405.81
+		},
+		"hereford": {
+			"kind": "value",
+			"value": 2574.37
+		},
+		"shrewsbury": {
+			"kind": "value",
+			"value": 2528.18
+		},
+		"leeds": {
+			"kind": "value",
+			"value": 2283.73
+		},
+		"bradford": {
+			"kind": "value",
+			"value": 2360.73
+		},
+		"york": {
+			"kind": "value",
+			"value": 2287.15
+		},
+		"hull": {
+			"kind": "value",
+			"value": 2295.04
+		},
+		"doncaster": {
+			"kind": "value",
+			"value": 2167.75
+		},
+		"wakefield": {
+			"kind": "value",
+			"value": 2296.89
+		},
+		"rotherham": {
+			"kind": "value",
+			"value": 2381.53
+		},
+		"halifax": {
+			"kind": "value",
+			"value": 2420.15
+		},
+		"huddersfield": {
+			"kind": "value",
+			"value": 2441.07
+		},
+		"merseyside": {
+			"kind": "range",
+			"low": {
+				"name": "St Helens",
+				"value": 2403.38
+			},
+			"high": {
+				"name": "Liverpool",
+				"value": 2673.59
+			}
+		},
+		"liverpool": {
+			"kind": "value",
+			"value": 2673.59
+		},
+		"warrington": {
+			"kind": "value",
+			"value": 2447.61
+		},
+		"chester": {
+			"kind": "value",
+			"value": 2517.33
+		},
+		"manchester": {
+			"kind": "value",
+			"value": 2312.04
+		},
+		"salford": {
+			"kind": "value",
+			"value": 2594.45
+		},
+		"bolton": {
+			"kind": "value",
+			"value": 2399.74
+		},
+		"stockport": {
+			"kind": "value",
+			"value": 2618.9
+		},
+		"oldham": {
+			"kind": "value",
+			"value": 2602.23
+		},
+		"rochdale": {
+			"kind": "value",
+			"value": 2600.83
+		},
+		"wigan": {
+			"kind": "value",
+			"value": 2152.68
+		},
+		"blackburn": {
+			"kind": "value",
+			"value": 2455.27
+		},
+		"blackpool": {
+			"kind": "value",
+			"value": 2513.22
+		},
+		"preston": {
+			"kind": "value",
+			"value": 2575.74
+		},
+		"lancaster": {
+			"kind": "value",
+			"value": 2503.19
+		},
+		"newcastle-upon-tyne": {
+			"kind": "value",
+			"value": 2542.19
+		},
+		"sunderland": {
+			"kind": "value",
+			"value": 2197.14
+		},
+		"durham": {
+			"kind": "value",
+			"value": 2622.15
+		},
+		"middlesbrough": {
+			"kind": "value",
+			"value": 2549.16
+		},
+		"south-shields": {
+			"kind": "value",
+			"value": 2434.43
+		},
+		"darlington": {
+			"kind": "value",
+			"value": 2493.83
+		},
+		"hartlepool": {
+			"kind": "value",
+			"value": 2560.2
+		},
+		"stockton-on-tees": {
+			"kind": "value",
+			"value": 2589.83
+		},
+		"bristol": {
+			"kind": "value",
+			"value": 2713.68
+		},
+		"plymouth": {
+			"kind": "value",
+			"value": 2441.85
+		},
+		"exeter": {
+			"kind": "value",
+			"value": 2495.36
+		},
+		"bath": {
+			"kind": "value",
+			"value": 2383.42
+		},
+		"cheltenham": {
+			"kind": "value",
+			"value": 2369.52
+		},
+		"gloucester": {
+			"kind": "value",
+			"value": 2355.84
+		},
+		"swindon": {
+			"kind": "value",
+			"value": 2438.1
+		},
+		"bournemouth": {
+			"kind": "value",
+			"value": 2435.58
+		},
+		"torquay": {
+			"kind": "value",
+			"value": 2470.25
+		},
+		"cornwall": {
+			"kind": "value",
+			"value": 2590.93
+		},
+		"brighton-and-hove": {
+			"kind": "value",
+			"value": 2580.54
+		},
+		"southampton": {
+			"kind": "value",
+			"value": 2381.48
+		},
+		"portsmouth": {
+			"kind": "value",
+			"value": 2291.71
+		},
+		"reading": {
+			"kind": "value",
+			"value": 2612.77
+		},
+		"oxford": {
+			"kind": "value",
+			"value": 2678.4
+		},
+		"cambridge": {
+			"kind": "value",
+			"value": 2467.02
+		},
+		"canterbury": {
+			"kind": "value",
+			"value": 2419.33
+		},
+		"maidstone": {
+			"kind": "value",
+			"value": 2502.59
+		},
+		"guildford": {
+			"kind": "value",
+			"value": 2547.3
+		},
+		"crawley": {
+			"kind": "value",
+			"value": 2418.46
+		},
+		"basingstoke": {
+			"kind": "value",
+			"value": 2255.21
+		},
+		"winchester": {
+			"kind": "value",
+			"value": 2359.76
+		},
+		"slough": {
+			"kind": "value",
+			"value": 2414.44
+		},
+		"milton-keynes": {
+			"kind": "value",
+			"value": 2372.21
+		},
+		"luton": {
+			"kind": "value",
+			"value": 2439.93
+		},
+		"ipswich": {
+			"kind": "value",
+			"value": 2468.25
+		},
+		"norwich": {
+			"kind": "value",
+			"value": 2503.44
+		},
+		"colchester": {
+			"kind": "value",
+			"value": 2282.85
+		},
+		"southend-on-sea": {
+			"kind": "value",
+			"value": 2265.17
+		},
+		"peterborough": {
+			"kind": "value",
+			"value": 2293.47
+		},
+		"nottingham": {
+			"kind": "value",
+			"value": 2755.39
+		},
+		"leicester": {
+			"kind": "value",
+			"value": 2528.75
+		},
+		"derby": {
+			"kind": "value",
+			"value": 2306
+		},
+		"northampton": {
+			"kind": "value",
+			"value": 2486.66
+		},
+		"lincoln": {
+			"kind": "value",
+			"value": 2323.08
+		},
+		"mansfield": {
+			"kind": "value",
+			"value": 2600.38
+		},
+		"chesterfield": {
+			"kind": "value",
+			"value": 2339.49
+		},
+		"west-midlands": {
+			"kind": "range",
+			"low": {
+				"name": "Dudley",
+				"value": 2144.84
+			},
+			"high": {
+				"name": "Walsall",
+				"value": 2627.48
+			}
+		},
+		"devon": {
+			"kind": "range",
+			"low": {
+				"name": "Plymouth",
+				"value": 2441.85
+			},
+			"high": {
+				"name": "West Devon",
+				"value": 2705.33
+			}
+		},
+		"hampshire": {
+			"kind": "range",
+			"low": {
+				"name": "Basingstoke and Deane",
+				"value": 2255.21
+			},
+			"high": {
+				"name": "New Forest",
+				"value": 2419.76
+			}
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Medway",
+				"value": 2328.55
+			},
+			"high": {
+				"name": "Folkestone and Hythe",
+				"value": 2538.75
+			}
+		},
+		"sussex": {
+			"kind": "range",
+			"low": {
+				"name": "Crawley",
+				"value": 2418.46
+			},
+			"high": {
+				"name": "Lewes",
+				"value": 2756.17
+			}
+		},
+		"essex": {
+			"kind": "range",
+			"low": {
+				"name": "Thurrock",
+				"value": 2254.68
+			},
+			"high": {
+				"name": "Rochford",
+				"value": 2363.48
+			}
+		},
+		"oxfordshire": {
+			"kind": "range",
+			"low": {
+				"name": "West Oxfordshire",
+				"value": 2566.95
+			},
+			"high": {
+				"name": "Oxford",
+				"value": 2678.4
+			}
+		},
+		"gloucestershire": {
+			"kind": "range",
+			"low": {
+				"name": "Tewkesbury",
+				"value": 2340.53
+			},
+			"high": {
+				"name": "Stroud",
+				"value": 2491.36
+			}
+		},
+		"lancashire": {
+			"kind": "range",
+			"low": {
+				"name": "Ribble Valley",
+				"value": 2386.5
+			},
+			"high": {
+				"name": "Pendle",
+				"value": 2640.18
+			}
+		},
+		"cheshire": {
+			"kind": "range",
+			"low": {
+				"name": "Halton",
+				"value": 2366.61
+			},
+			"high": {
+				"name": "Cheshire West and Chester",
+				"value": 2517.33
+			}
+		},
+		"lincolnshire": {
+			"kind": "range",
+			"low": {
+				"name": "South Kesteven",
+				"value": 2260
+			},
+			"high": {
+				"name": "North East Lincolnshire",
+				"value": 2483.85
+			}
+		},
+		"norfolk": {
+			"kind": "range",
+			"low": {
+				"name": "Great Yarmouth",
+				"value": 2414.41
+			},
+			"high": {
+				"name": "Norwich",
+				"value": 2503.44
+			}
+		},
+		"staffordshire": {
+			"kind": "range",
+			"low": {
+				"name": "Stoke-on-Trent",
+				"value": 2183.12
+			},
+			"high": {
+				"name": "Cannock Chase",
+				"value": 2375.83
+			}
+		},
+		"derbyshire": {
+			"kind": "range",
+			"low": {
+				"name": "Derby",
+				"value": 2306
+			},
+			"high": {
+				"name": "Bolsover",
+				"value": 2559.41
+			}
+		}
+	},
+	"claimant-count": {
+		"england": {
+			"kind": "count",
+			"count": 1521585,
+			"period": "Apr 2026"
+		},
+		"scotland": {
+			"kind": "count",
+			"count": 110455,
+			"period": "Apr 2026"
+		},
+		"wales": {
+			"kind": "count",
+			"count": 65695,
+			"period": "Apr 2026"
+		},
+		"northern-ireland": {
+			"kind": "count",
+			"count": 35355,
+			"period": "Apr 2026"
+		},
+		"united-kingdom": {
+			"kind": "count",
+			"count": 1733090,
+			"period": "Apr 2026"
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 95290,
+			"period": "Apr 2026"
+		},
+		"london": {
+			"kind": "count",
+			"count": 348980,
+			"period": "Apr 2026"
+		},
+		"birmingham": {
+			"kind": "count",
+			"count": 77325,
+			"rate": 10,
+			"period": "Apr 2026"
+		},
+		"coventry": {
+			"kind": "count",
+			"count": 14020,
+			"rate": 5.8,
+			"period": "Apr 2026"
+		},
+		"wolverhampton": {
+			"kind": "count",
+			"count": 11855,
+			"rate": 6.8,
+			"period": "Apr 2026"
+		},
+		"solihull": {
+			"kind": "count",
+			"count": 4750,
+			"rate": 3.6,
+			"period": "Apr 2026"
+		},
+		"walsall": {
+			"kind": "count",
+			"count": 10690,
+			"rate": 5.9,
+			"period": "Apr 2026"
+		},
+		"dudley": {
+			"kind": "count",
+			"count": 9415,
+			"rate": 4.7,
+			"period": "Apr 2026"
+		},
+		"sandwell": {
+			"kind": "count",
+			"count": 15025,
+			"rate": 6.7,
+			"period": "Apr 2026"
+		},
+		"stoke-on-trent": {
+			"kind": "count",
+			"count": 9255,
+			"rate": 5.5,
+			"period": "Apr 2026"
+		},
+		"worcester": {
+			"kind": "count",
+			"count": 2360,
+			"rate": 3.4,
+			"period": "Apr 2026"
+		},
+		"hereford": {
+			"kind": "count",
+			"count": 2870,
+			"rate": 2.6,
+			"period": "Apr 2026"
+		},
+		"shrewsbury": {
+			"kind": "count",
+			"count": 4685,
+			"rate": 2.4,
+			"period": "Apr 2026"
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 25795,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"bradford": {
+			"kind": "count",
+			"count": 24290,
+			"rate": 6.9,
+			"period": "Apr 2026"
+		},
+		"york": {
+			"kind": "count",
+			"count": 2575,
+			"rate": 1.9,
+			"period": "Apr 2026"
+		},
+		"hull": {
+			"kind": "count",
+			"count": 9545,
+			"rate": 5.4,
+			"period": "Apr 2026"
+		},
+		"doncaster": {
+			"kind": "count",
+			"count": 8570,
+			"rate": 4.4,
+			"period": "Apr 2026"
+		},
+		"wakefield": {
+			"kind": "count",
+			"count": 8750,
+			"rate": 3.8,
+			"period": "Apr 2026"
+		},
+		"rotherham": {
+			"kind": "count",
+			"count": 6375,
+			"rate": 3.8,
+			"period": "Apr 2026"
+		},
+		"halifax": {
+			"kind": "count",
+			"count": 5535,
+			"rate": 4.3,
+			"period": "Apr 2026"
+		},
+		"huddersfield": {
+			"kind": "count",
+			"count": 13100,
+			"rate": 4.7,
+			"period": "Apr 2026"
+		},
+		"harrogate": {
+			"kind": "count",
+			"count": 1850,
+			"rate": 0,
+			"period": "Apr 2026"
+		},
+		"scarborough": {
+			"kind": "count",
+			"count": 1945,
+			"rate": 0,
+			"period": "Apr 2026"
+		},
+		"merseyside": {
+			"kind": "count",
+			"count": 41705,
+			"period": "Apr 2026"
+		},
+		"liverpool": {
+			"kind": "count",
+			"count": 19475,
+			"rate": 5.7,
+			"period": "Apr 2026"
+		},
+		"warrington": {
+			"kind": "count",
+			"count": 3595,
+			"rate": 2.7,
+			"period": "Apr 2026"
+		},
+		"chester": {
+			"kind": "count",
+			"count": 6015,
+			"rate": 2.6,
+			"period": "Apr 2026"
+		},
+		"manchester": {
+			"kind": "count",
+			"count": 25420,
+			"rate": 6.1,
+			"period": "Apr 2026"
+		},
+		"salford": {
+			"kind": "count",
+			"count": 10040,
+			"rate": 5,
+			"period": "Apr 2026"
+		},
+		"bolton": {
+			"kind": "count",
+			"count": 10175,
+			"rate": 5.3,
+			"period": "Apr 2026"
+		},
+		"stockport": {
+			"kind": "count",
+			"count": 5595,
+			"rate": 3,
+			"period": "Apr 2026"
+		},
+		"oldham": {
+			"kind": "count",
+			"count": 10285,
+			"rate": 6.6,
+			"period": "Apr 2026"
+		},
+		"rochdale": {
+			"kind": "count",
+			"count": 8750,
+			"rate": 6,
+			"period": "Apr 2026"
+		},
+		"wigan": {
+			"kind": "count",
+			"count": 7900,
+			"rate": 3.7,
+			"period": "Apr 2026"
+		},
+		"blackburn": {
+			"kind": "count",
+			"count": 5585,
+			"rate": 5.4,
+			"period": "Apr 2026"
+		},
+		"blackpool": {
+			"kind": "count",
+			"count": 5495,
+			"rate": 6.2,
+			"period": "Apr 2026"
+		},
+		"preston": {
+			"kind": "count",
+			"count": 4905,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"lancaster": {
+			"kind": "count",
+			"count": 2685,
+			"rate": 2.9,
+			"period": "Apr 2026"
+		},
+		"carlisle": {
+			"kind": "count",
+			"count": 1740,
+			"rate": 0,
+			"period": "Apr 2026"
+		},
+		"newcastle-upon-tyne": {
+			"kind": "count",
+			"count": 8815,
+			"rate": 4,
+			"period": "Apr 2026"
+		},
+		"sunderland": {
+			"kind": "count",
+			"count": 6825,
+			"rate": 3.8,
+			"period": "Apr 2026"
+		},
+		"durham": {
+			"kind": "count",
+			"count": 10420,
+			"rate": 3.1,
+			"period": "Apr 2026"
+		},
+		"middlesbrough": {
+			"kind": "count",
+			"count": 5130,
+			"rate": 5.2,
+			"period": "Apr 2026"
+		},
+		"south-shields": {
+			"kind": "count",
+			"count": 4515,
+			"rate": 4.9,
+			"period": "Apr 2026"
+		},
+		"darlington": {
+			"kind": "count",
+			"count": 2550,
+			"rate": 3.7,
+			"period": "Apr 2026"
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 2790,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"stockton-on-tees": {
+			"kind": "count",
+			"count": 4860,
+			"rate": 3.8,
+			"period": "Apr 2026"
+		},
+		"bristol": {
+			"kind": "count",
+			"count": 12760,
+			"rate": 3.6,
+			"period": "Apr 2026"
+		},
+		"plymouth": {
+			"kind": "count",
+			"count": 6185,
+			"rate": 3.5,
+			"period": "Apr 2026"
+		},
+		"exeter": {
+			"kind": "count",
+			"count": 2160,
+			"rate": 2.3,
+			"period": "Apr 2026"
+		},
+		"bath": {
+			"kind": "count",
+			"count": 2480,
+			"rate": 1.9,
+			"period": "Apr 2026"
+		},
+		"cheltenham": {
+			"kind": "count",
+			"count": 2105,
+			"rate": 2.8,
+			"period": "Apr 2026"
+		},
+		"gloucester": {
+			"kind": "count",
+			"count": 3185,
+			"rate": 3.6,
+			"period": "Apr 2026"
+		},
+		"swindon": {
+			"kind": "count",
+			"count": 5270,
+			"rate": 3.4,
+			"period": "Apr 2026"
+		},
+		"bournemouth": {
+			"kind": "count",
+			"count": 8930,
+			"rate": 3.5,
+			"period": "Apr 2026"
+		},
+		"torquay": {
+			"kind": "count",
+			"count": 2875,
+			"rate": 3.6,
+			"period": "Apr 2026"
+		},
+		"cornwall": {
+			"kind": "count",
+			"count": 11075,
+			"rate": 3.3,
+			"period": "Apr 2026"
+		},
+		"brighton-and-hove": {
+			"kind": "count",
+			"count": 8955,
+			"rate": 4.4,
+			"period": "Apr 2026"
+		},
+		"southampton": {
+			"kind": "count",
+			"count": 7615,
+			"rate": 4.3,
+			"period": "Apr 2026"
+		},
+		"portsmouth": {
+			"kind": "count",
+			"count": 6705,
+			"rate": 4.7,
+			"period": "Apr 2026"
+		},
+		"reading": {
+			"kind": "count",
+			"count": 5550,
+			"rate": 4.4,
+			"period": "Apr 2026"
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 3085,
+			"rate": 2.6,
+			"period": "Apr 2026"
+		},
+		"cambridge": {
+			"kind": "count",
+			"count": 2255,
+			"rate": 2,
+			"period": "Apr 2026"
+		},
+		"canterbury": {
+			"kind": "count",
+			"count": 3330,
+			"rate": 3.3,
+			"period": "Apr 2026"
+		},
+		"maidstone": {
+			"kind": "count",
+			"count": 3960,
+			"rate": 3.4,
+			"period": "Apr 2026"
+		},
+		"guildford": {
+			"kind": "count",
+			"count": 1955,
+			"rate": 2,
+			"period": "Apr 2026"
+		},
+		"crawley": {
+			"kind": "count",
+			"count": 3710,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"basingstoke": {
+			"kind": "count",
+			"count": 3260,
+			"rate": 2.7,
+			"period": "Apr 2026"
+		},
+		"winchester": {
+			"kind": "count",
+			"count": 1665,
+			"rate": 2,
+			"period": "Apr 2026"
+		},
+		"slough": {
+			"kind": "count",
+			"count": 6585,
+			"rate": 6,
+			"period": "Apr 2026"
+		},
+		"milton-keynes": {
+			"kind": "count",
+			"count": 8125,
+			"rate": 4.1,
+			"period": "Apr 2026"
+		},
+		"luton": {
+			"kind": "count",
+			"count": 10290,
+			"rate": 6.6,
+			"period": "Apr 2026"
+		},
+		"ipswich": {
+			"kind": "count",
+			"count": 3930,
+			"rate": 4.5,
+			"period": "Apr 2026"
+		},
+		"norwich": {
+			"kind": "count",
+			"count": 4320,
+			"rate": 4.2,
+			"period": "Apr 2026"
+		},
+		"colchester": {
+			"kind": "count",
+			"count": 3950,
+			"rate": 3.1,
+			"period": "Apr 2026"
+		},
+		"southend-on-sea": {
+			"kind": "count",
+			"count": 4990,
+			"rate": 4.4,
+			"period": "Apr 2026"
+		},
+		"peterborough": {
+			"kind": "count",
+			"count": 7605,
+			"rate": 5.4,
+			"period": "Apr 2026"
+		},
+		"nottingham": {
+			"kind": "count",
+			"count": 13935,
+			"rate": 6,
+			"period": "Apr 2026"
+		},
+		"leicester": {
+			"kind": "count",
+			"count": 14380,
+			"rate": 5.5,
+			"period": "Apr 2026"
+		},
+		"derby": {
+			"kind": "count",
+			"count": 8870,
+			"rate": 5.1,
+			"period": "Apr 2026"
+		},
+		"northampton": {
+			"kind": "count",
+			"count": 9670,
+			"rate": 3.5,
+			"period": "Apr 2026"
+		},
+		"lincoln": {
+			"kind": "count",
+			"count": 2875,
+			"rate": 4,
+			"period": "Apr 2026"
+		},
+		"mansfield": {
+			"kind": "count",
+			"count": 2770,
+			"rate": 4,
+			"period": "Apr 2026"
+		},
+		"chesterfield": {
+			"kind": "count",
+			"count": 2160,
+			"rate": 3.3,
+			"period": "Apr 2026"
+		},
+		"edinburgh": {
+			"kind": "count",
+			"count": 10315,
+			"rate": 2.8,
+			"period": "Apr 2026"
+		},
+		"aberdeen": {
+			"kind": "count",
+			"count": 5680,
+			"rate": 3.7,
+			"period": "Apr 2026"
+		},
+		"dundee": {
+			"kind": "count",
+			"count": 3940,
+			"rate": 4,
+			"period": "Apr 2026"
+		},
+		"inverness": {
+			"kind": "count",
+			"count": 3375,
+			"rate": 2.4,
+			"period": "Apr 2026"
+		},
+		"stirling": {
+			"kind": "count",
+			"count": 1390,
+			"rate": 2.3,
+			"period": "Apr 2026"
+		},
+		"paisley": {
+			"kind": "count",
+			"count": 3550,
+			"rate": 2.9,
+			"period": "Apr 2026"
+		},
+		"cardiff": {
+			"kind": "count",
+			"count": 10060,
+			"rate": 3.9,
+			"period": "Apr 2026"
+		},
+		"swansea": {
+			"kind": "count",
+			"count": 5280,
+			"rate": 3.3,
+			"period": "Apr 2026"
+		},
+		"newport": {
+			"kind": "count",
+			"count": 4840,
+			"rate": 4.6,
+			"period": "Apr 2026"
+		},
+		"wrexham": {
+			"kind": "count",
+			"count": 2525,
+			"rate": 3,
+			"period": "Apr 2026"
+		},
+		"bangor": {
+			"kind": "count",
+			"count": 1425,
+			"rate": 3.7,
+			"period": "Apr 2026"
+		},
+		"aberystwyth": {
+			"kind": "count",
+			"count": 1200,
+			"rate": 2.8,
+			"period": "Apr 2026"
+		},
+		"belfast": {
+			"kind": "count",
+			"count": 9235,
+			"rate": 4,
+			"period": "Apr 2026"
+		},
+		"londonderry": {
+			"kind": "count",
+			"count": 4040,
+			"rate": 4.3,
+			"period": "Apr 2026"
+		},
+		"lisburn": {
+			"kind": "count",
+			"count": 1810,
+			"rate": 1.9,
+			"period": "Apr 2026"
+		},
+		"newry": {
+			"kind": "count",
+			"count": 3045,
+			"rate": 2.8,
+			"period": "Apr 2026"
+		},
+		"north-west": {
+			"kind": "count",
+			"count": 209730,
+			"period": "Apr 2026"
+		},
+		"west-midlands": {
+			"kind": "count",
+			"count": 202225,
+			"period": "Apr 2026"
+		},
+		"devon": {
+			"kind": "count",
+			"count": 20650,
+			"period": "Apr 2026"
+		},
+		"hampshire": {
+			"kind": "count",
+			"count": 35770,
+			"period": "Apr 2026"
+		},
+		"kent": {
+			"kind": "count",
+			"count": 41720,
+			"period": "Apr 2026"
+		},
+		"sussex": {
+			"kind": "count",
+			"count": 37895,
+			"period": "Apr 2026"
+		},
+		"essex": {
+			"kind": "count",
+			"count": 39510,
+			"period": "Apr 2026"
+		},
+		"oxfordshire": {
+			"kind": "count",
+			"count": 10800,
+			"period": "Apr 2026"
+		},
+		"gloucestershire": {
+			"kind": "count",
+			"count": 10740,
+			"period": "Apr 2026"
+		},
+		"lancashire": {
+			"kind": "count",
+			"count": 40190,
+			"period": "Apr 2026"
+		},
+		"cheshire": {
+			"kind": "count",
+			"count": 19115,
+			"period": "Apr 2026"
+		},
+		"north-yorkshire": {
+			"kind": "count",
+			"count": 15480,
+			"period": "Apr 2026"
+		},
+		"lincolnshire": {
+			"kind": "count",
+			"count": 23150,
+			"period": "Apr 2026"
+		},
+		"norfolk": {
+			"kind": "count",
+			"count": 17560,
+			"period": "Apr 2026"
+		},
+		"staffordshire": {
+			"kind": "count",
+			"count": 24505,
+			"period": "Apr 2026"
+		},
+		"derbyshire": {
+			"kind": "count",
+			"count": 22385,
+			"period": "Apr 2026"
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 4735,
+			"period": "Apr 2026"
+		},
+		"grampian": {
+			"kind": "count",
+			"count": 10530,
+			"period": "Apr 2026"
+		},
+		"scottish-borders": {
+			"kind": "count",
+			"count": 1970,
+			"rate": 2.9,
+			"period": "Apr 2026"
+		},
+		"the-hebrides": {
+			"kind": "count",
+			"count": 3715,
+			"period": "Apr 2026"
+		},
+		"lowlands": {
+			"kind": "count",
+			"count": 10600,
+			"period": "Apr 2026"
+		},
+		"north-east-scotland": {
+			"kind": "count",
+			"count": 10530,
+			"period": "Apr 2026"
+		},
+		"scottish-islands": {
+			"kind": "count",
+			"count": 755,
+			"period": "Apr 2026"
+		},
+		"north-wales": {
+			"kind": "count",
+			"count": 13590,
+			"period": "Apr 2026"
+		},
+		"mid-wales": {
+			"kind": "count",
+			"count": 3260,
+			"period": "Apr 2026"
+		},
+		"south-wales": {
+			"kind": "count",
+			"count": 47645,
+			"period": "Apr 2026"
+		},
+		"west-wales": {
+			"kind": "count",
+			"count": 9660,
+			"period": "Apr 2026"
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 28490,
+			"period": "Apr 2026"
+		},
+		"south-east-wales": {
+			"kind": "count",
+			"count": 23945,
+			"period": "Apr 2026"
+		},
+		"the-valleys": {
+			"kind": "count",
+			"count": 11115,
+			"period": "Apr 2026"
+		},
+		"pembrokeshire-coast": {
+			"kind": "count",
+			"count": 2595,
+			"rate": 3.6,
+			"period": "Apr 2026"
+		},
+		"belfast-metropolitan-area": {
+			"kind": "count",
+			"count": 15720,
+			"period": "Apr 2026"
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "count",
+			"count": 5090,
+			"period": "Apr 2026"
+		},
+		"west-of-northern-ireland": {
+			"kind": "count",
+			"count": 7700,
+			"period": "Apr 2026"
+		},
+		"armagh-down-and-newry": {
+			"kind": "count",
+			"count": 6845,
+			"period": "Apr 2026"
+		}
+	},
+	"homelessness": {
+		"england": {
+			"kind": "count",
+			"count": 130775,
+			"rate": 5.4848373971669,
+			"period": "Jan-Mar 2026"
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 5980,
+			"rate": 4.8331980899976985,
+			"period": "Jan-Mar 2026"
+		},
+		"london": {
+			"kind": "count",
+			"count": 76017,
+			"rate": 21.12735948167277,
+			"period": "Jan-Mar 2026"
+		},
+		"birmingham": {
+			"kind": "count",
+			"count": 5229,
+			"rate": 11.9335337089806,
+			"period": "Jan-Mar 2026"
+		},
+		"coventry": {
+			"kind": "count",
+			"count": 1064,
+			"rate": 7.229439582540628,
+			"period": "Jan-Mar 2026"
+		},
+		"wolverhampton": {
+			"kind": "count",
+			"count": 245,
+			"rate": 2.22500726532985,
+			"period": "Jan-Mar 2026"
+		},
+		"solihull": {
+			"kind": "count",
+			"count": 200,
+			"rate": 2.1848372296263903,
+			"period": "Jan-Mar 2026"
+		},
+		"walsall": {
+			"kind": "count",
+			"count": 121,
+			"rate": 1.04658605359213,
+			"period": "Jan-Mar 2026"
+		},
+		"dudley": {
+			"kind": "count",
+			"count": 32,
+			"rate": 0.22803717005872004,
+			"period": "Jan-Mar 2026"
+		},
+		"sandwell": {
+			"kind": "count",
+			"count": 222,
+			"rate": 1.65802799229241,
+			"period": "Jan-Mar 2026"
+		},
+		"stoke-on-trent": {
+			"kind": "count",
+			"count": 82,
+			"rate": 0.726840812998041,
+			"period": "Jan-Mar 2026"
+		},
+		"worcester": {
+			"kind": "count",
+			"count": 46,
+			"rate": 1.00625628910181,
+			"period": "Jan-Mar 2026"
+		},
+		"hereford": {
+			"kind": "count",
+			"count": 196,
+			"rate": 2.24809313528703,
+			"period": "Jan-Mar 2026"
+		},
+		"shrewsbury": {
+			"kind": "count",
+			"count": 257,
+			"rate": 1.71953512334486,
+			"period": "Jan-Mar 2026"
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 738,
+			"rate": 2.06683320824045,
+			"period": "Jan-Mar 2026"
+		},
+		"bradford": {
+			"kind": "count",
+			"count": 578,
+			"rate": 2.61948571066013,
+			"period": "Jan-Mar 2026"
+		},
+		"york": {
+			"kind": "count",
+			"count": 62,
+			"rate": 0.703881566250014,
+			"period": "Jan-Mar 2026"
+		},
+		"hull": {
+			"kind": "count",
+			"count": 229,
+			"rate": 1.94105630758538,
+			"period": "Jan-Mar 2026"
+		},
+		"doncaster": {
+			"kind": "count",
+			"count": 123,
+			"rate": 0.8880994671403198,
+			"period": "Jan-Mar 2026"
+		},
+		"wakefield": {
+			"kind": "count",
+			"count": 245,
+			"rate": 1.51275655116204,
+			"period": "Jan-Mar 2026"
+		},
+		"rotherham": {
+			"kind": "count",
+			"count": 175,
+			"rate": 1.49415571663977,
+			"period": "Jan-Mar 2026"
+		},
+		"halifax": {
+			"kind": "count",
+			"count": 114,
+			"rate": 1.22802481902792,
+			"period": "Jan-Mar 2026"
+		},
+		"huddersfield": {
+			"kind": "count",
+			"count": 357,
+			"rate": 1.91954060070329,
+			"period": "Jan-Mar 2026"
+		},
+		"merseyside": {
+			"kind": "count",
+			"count": 2384,
+			"rate": 3.6880332294269187,
+			"period": "Jan-Mar 2026"
+		},
+		"liverpool": {
+			"kind": "count",
+			"count": 1847,
+			"rate": 8.41925808421993,
+			"period": "Jan-Mar 2026"
+		},
+		"warrington": {
+			"kind": "count",
+			"count": 195,
+			"rate": 2.10317417517823,
+			"period": "Jan-Mar 2026"
+		},
+		"chester": {
+			"kind": "count",
+			"count": 99,
+			"rate": 0.6004803843074459,
+			"period": "Jan-Mar 2026"
+		},
+		"manchester": {
+			"kind": "count",
+			"count": 2788,
+			"rate": 11.943776855290901,
+			"period": "Jan-Mar 2026"
+		},
+		"salford": {
+			"kind": "count",
+			"count": 842,
+			"rate": 6.70094067837076,
+			"period": "Jan-Mar 2026"
+		},
+		"bolton": {
+			"kind": "count",
+			"count": 208,
+			"rate": 1.69615917801517,
+			"period": "Jan-Mar 2026"
+		},
+		"stockport": {
+			"kind": "count",
+			"count": 207,
+			"rate": 1.57965827489106,
+			"period": "Jan-Mar 2026"
+		},
+		"oldham": {
+			"kind": "count",
+			"count": 480,
+			"rate": 5.00302265952346,
+			"period": "Jan-Mar 2026"
+		},
+		"rochdale": {
+			"kind": "count",
+			"count": 307,
+			"rate": 3.2589887580811205,
+			"period": "Jan-Mar 2026"
+		},
+		"wigan": {
+			"kind": "count",
+			"count": 252,
+			"rate": 1.67548735405973,
+			"period": "Jan-Mar 2026"
+		},
+		"blackburn": {
+			"kind": "count",
+			"count": 38,
+			"rate": 0.631313131313131,
+			"period": "Jan-Mar 2026"
+		},
+		"blackpool": {
+			"kind": "count",
+			"count": 129,
+			"rate": 1.98050203423659,
+			"period": "Jan-Mar 2026"
+		},
+		"preston": {
+			"kind": "count",
+			"count": 33,
+			"rate": 0.504811001820379,
+			"period": "Jan-Mar 2026"
+		},
+		"lancaster": {
+			"kind": "count",
+			"count": 10,
+			"rate": 0.15882595851466,
+			"period": "Jan-Mar 2026"
+		},
+		"newcastle-upon-tyne": {
+			"kind": "count",
+			"count": 209,
+			"rate": 1.5871207806508003,
+			"period": "Jan-Mar 2026"
+		},
+		"sunderland": {
+			"kind": "count",
+			"count": 163,
+			"rate": 1.29312738494736,
+			"period": "Jan-Mar 2026"
+		},
+		"durham": {
+			"kind": "count",
+			"count": 118,
+			"rate": 0.480675226487649,
+			"period": "Jan-Mar 2026"
+		},
+		"middlesbrough": {
+			"kind": "count",
+			"count": 100,
+			"rate": 1.5325200760129998,
+			"period": "Jan-Mar 2026"
+		},
+		"south-shields": {
+			"kind": "count",
+			"count": 40,
+			"rate": 0.5730741128096392,
+			"period": "Jan-Mar 2026"
+		},
+		"darlington": {
+			"kind": "count",
+			"count": 76,
+			"rate": 1.47283967364974,
+			"period": "Jan-Mar 2026"
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 18,
+			"rate": 0.42423813900869706,
+			"period": "Jan-Mar 2026"
+		},
+		"stockton-on-tees": {
+			"kind": "count",
+			"count": 50,
+			"rate": 0.5693074943638559,
+			"period": "Jan-Mar 2026"
+		},
+		"plymouth": {
+			"kind": "count",
+			"count": 341,
+			"rate": 2.8795325192954,
+			"period": "Jan-Mar 2026"
+		},
+		"exeter": {
+			"kind": "count",
+			"count": 108,
+			"rate": 1.8988009423678798,
+			"period": "Jan-Mar 2026"
+		},
+		"bath": {
+			"kind": "count",
+			"count": 84,
+			"rate": 1.00407607071564,
+			"period": "Jan-Mar 2026"
+		},
+		"cheltenham": {
+			"kind": "count",
+			"count": 22,
+			"rate": 0.4023556092029699,
+			"period": "Jan-Mar 2026"
+		},
+		"gloucester": {
+			"kind": "count",
+			"count": 234,
+			"rate": 4.06553503483503,
+			"period": "Jan-Mar 2026"
+		},
+		"swindon": {
+			"kind": "count",
+			"count": 353,
+			"rate": 3.51044681126127,
+			"period": "Jan-Mar 2026"
+		},
+		"bournemouth": {
+			"kind": "count",
+			"count": 493,
+			"rate": 2.7469925168134903,
+			"period": "Jan-Mar 2026"
+		},
+		"torquay": {
+			"kind": "count",
+			"count": 171,
+			"rate": 2.61944516781299,
+			"period": "Jan-Mar 2026"
+		},
+		"cornwall": {
+			"kind": "count",
+			"count": 867,
+			"rate": 3.2515629629351803,
+			"period": "Jan-Mar 2026"
+		},
+		"brighton-and-hove": {
+			"kind": "count",
+			"count": 2027,
+			"rate": 16.212109093817503,
+			"period": "Jan-Mar 2026"
+		},
+		"southampton": {
+			"kind": "count",
+			"count": 414,
+			"rate": 3.82049223443426,
+			"period": "Jan-Mar 2026"
+		},
+		"portsmouth": {
+			"kind": "count",
+			"count": 608,
+			"rate": 6.8504726600791,
+			"period": "Jan-Mar 2026"
+		},
+		"reading": {
+			"kind": "count",
+			"count": 433,
+			"rate": 6.1763615097138596,
+			"period": "Jan-Mar 2026"
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 312,
+			"rate": 5.36414276872292,
+			"period": "Jan-Mar 2026"
+		},
+		"cambridge": {
+			"kind": "count",
+			"count": 157,
+			"rate": 2.75067014734481,
+			"period": "Jan-Mar 2026"
+		},
+		"canterbury": {
+			"kind": "count",
+			"count": 161,
+			"rate": 2.37698020167422,
+			"period": "Jan-Mar 2026"
+		},
+		"maidstone": {
+			"kind": "count",
+			"count": 260,
+			"rate": 3.3535405649425996,
+			"period": "Jan-Mar 2026"
+		},
+		"guildford": {
+			"kind": "count",
+			"count": 122,
+			"rate": 2.0723980363179306,
+			"period": "Jan-Mar 2026"
+		},
+		"crawley": {
+			"kind": "count",
+			"count": 618,
+			"rate": 13.065262890847999,
+			"period": "Jan-Mar 2026"
+		},
+		"basingstoke": {
+			"kind": "count",
+			"count": 37,
+			"rate": 0.45442821876420103,
+			"period": "Jan-Mar 2026"
+		},
+		"winchester": {
+			"kind": "count",
+			"count": 99,
+			"rate": 1.7717803708211,
+			"period": "Jan-Mar 2026"
+		},
+		"milton-keynes": {
+			"kind": "count",
+			"count": 1029,
+			"rate": 8.42110431857799,
+			"period": "Jan-Mar 2026"
+		},
+		"luton": {
+			"kind": "count",
+			"count": 912,
+			"rate": 11.008642750229297,
+			"period": "Jan-Mar 2026"
+		},
+		"ipswich": {
+			"kind": "count",
+			"count": 80,
+			"rate": 1.33841932677508,
+			"period": "Jan-Mar 2026"
+		},
+		"norwich": {
+			"kind": "count",
+			"count": 60,
+			"rate": 0.9002655783456122,
+			"period": "Jan-Mar 2026"
+		},
+		"colchester": {
+			"kind": "count",
+			"count": 517,
+			"rate": 6.057055825669261,
+			"period": "Jan-Mar 2026"
+		},
+		"southend-on-sea": {
+			"kind": "count",
+			"count": 429,
+			"rate": 5.34746026799626,
+			"period": "Jan-Mar 2026"
+		},
+		"peterborough": {
+			"kind": "count",
+			"count": 331,
+			"rate": 3.74349694639222,
+			"period": "Jan-Mar 2026"
+		},
+		"nottingham": {
+			"kind": "count",
+			"count": 690,
+			"rate": 5.30724323326488,
+			"period": "Jan-Mar 2026"
+		},
+		"leicester": {
+			"kind": "count",
+			"count": 1158,
+			"rate": 8.55603910065537,
+			"period": "Jan-Mar 2026"
+		},
+		"derby": {
+			"kind": "count",
+			"count": 533,
+			"rate": 4.88184649203151,
+			"period": "Jan-Mar 2026"
+		},
+		"northampton": {
+			"kind": "count",
+			"count": 672,
+			"rate": 3.6933020428576895,
+			"period": "Jan-Mar 2026"
+		},
+		"lincoln": {
+			"kind": "count",
+			"count": 60,
+			"rate": 1.38924263122554,
+			"period": "Jan-Mar 2026"
+		},
+		"mansfield": {
+			"kind": "count",
+			"count": 23,
+			"rate": 0.46448694387786,
+			"period": "Jan-Mar 2026"
+		},
+		"chesterfield": {
+			"kind": "count",
+			"count": 16,
+			"rate": 0.324267358437031,
+			"period": "Jan-Mar 2026"
+		},
+		"devon": {
+			"kind": "count",
+			"count": 966,
+			"rate": 1.7134859861324696,
+			"period": "Jan-Mar 2026"
+		},
+		"hampshire": {
+			"kind": "count",
+			"count": 2182,
+			"rate": 2.673256288339237,
+			"period": "Jan-Mar 2026"
+		},
+		"sussex": {
+			"kind": "count",
+			"count": 5257,
+			"rate": 6.787193030248649,
+			"period": "Jan-Mar 2026"
+		},
+		"oxfordshire": {
+			"kind": "count",
+			"count": 560,
+			"rate": 1.7919025205028853,
+			"period": "Jan-Mar 2026"
+		},
+		"cheshire": {
+			"kind": "count",
+			"count": 473,
+			"rate": 0.939575184885751,
+			"period": "Jan-Mar 2026"
+		},
+		"norfolk": {
+			"kind": "count",
+			"count": 475,
+			"rate": 1.109776783002425,
+			"period": "Jan-Mar 2026"
+		},
+		"derbyshire": {
+			"kind": "count",
+			"count": 642,
+			"rate": 1.3314502230490213,
+			"period": "Jan-Mar 2026"
+		}
+	},
+	"ghg-emissions": {
+		"england": {
+			"kind": "count",
+			"count": 273672295.9999998,
+			"rate": 4.6685742830774
+		},
+		"scotland": {
+			"kind": "count",
+			"count": 36583068.99999999,
+			"rate": 6.595227784888856
+		},
+		"wales": {
+			"kind": "count",
+			"count": 23533453,
+			"rate": 7.3851733252661695
+		},
+		"northern-ireland": {
+			"kind": "count",
+			"count": 17879087,
+			"rate": 9.274082853741593
+		},
+		"united-kingdom": {
+			"kind": "count",
+			"count": 351667904.9999999,
+			"rate": 5.075932605150784
+		},
+		"greater-manchester": {
+			"kind": "count",
+			"count": 11202418,
+			"rate": 3.7221490505252417
+		},
+		"london": {
+			"kind": "count",
+			"count": 27382566,
+			"rate": 3.012470989256454
+		},
+		"birmingham": {
+			"kind": "count",
+			"count": 3991411,
+			"rate": 3.372212149527973
+		},
+		"coventry": {
+			"kind": "count",
+			"count": 1208456.0000000002,
+			"rate": 3.274717770563592
+		},
+		"wolverhampton": {
+			"kind": "count",
+			"count": 911640.0000000001,
+			"rate": 3.2413751417772745
+		},
+		"solihull": {
+			"kind": "count",
+			"count": 1092351,
+			"rate": 4.937358186962692
+		},
+		"walsall": {
+			"kind": "count",
+			"count": 968231,
+			"rate": 3.2746129235181516
+		},
+		"dudley": {
+			"kind": "count",
+			"count": 1009295.9999999998,
+			"rate": 3.0406893019612564
+		},
+		"sandwell": {
+			"kind": "count",
+			"count": 1210825.9999999998,
+			"rate": 3.421765670038998
+		},
+		"stoke-on-trent": {
+			"kind": "count",
+			"count": 1057347,
+			"rate": 3.90994545622631
+		},
+		"worcester": {
+			"kind": "count",
+			"count": 344066,
+			"rate": 3.2254877145615954
+		},
+		"hereford": {
+			"kind": "count",
+			"count": 1281793.0000000002,
+			"rate": 6.709307133846646
+		},
+		"shrewsbury": {
+			"kind": "count",
+			"count": 2541406.9999999995,
+			"rate": 7.644363898873531
+		},
+		"leeds": {
+			"kind": "count",
+			"count": 3479578.0000000005,
+			"rate": 4.116922960426604
+		},
+		"bradford": {
+			"kind": "count",
+			"count": 1821014.9999999998,
+			"rate": 3.2310128547475623
+		},
+		"york": {
+			"kind": "count",
+			"count": 773009.9999999999,
+			"rate": 3.6932933908581416
+		},
+		"hull": {
+			"kind": "count",
+			"count": 962119.0000000001,
+			"rate": 3.4935203575876637
+		},
+		"doncaster": {
+			"kind": "count",
+			"count": 1847073,
+			"rate": 5.776345128453709
+		},
+		"wakefield": {
+			"kind": "count",
+			"count": 1757383,
+			"rate": 4.779835502874892
+		},
+		"rotherham": {
+			"kind": "count",
+			"count": 1290290,
+			"rate": 4.664907174750085
+		},
+		"halifax": {
+			"kind": "count",
+			"count": 919582.0000000001,
+			"rate": 4.35967553062879
+		},
+		"huddersfield": {
+			"kind": "count",
+			"count": 1687806,
+			"rate": 3.768711189312422
+		},
+		"merseyside": {
+			"kind": "count",
+			"count": 5656822,
+			"rate": 3.833727426076266
+		},
+		"liverpool": {
+			"kind": "count",
+			"count": 1663495,
+			"rate": 3.2684134933717903
+		},
+		"warrington": {
+			"kind": "count",
+			"count": 1258686,
+			"rate": 5.843726060977478
+		},
+		"chester": {
+			"kind": "count",
+			"count": 3065686,
+			"rate": 8.24880802471129
+		},
+		"manchester": {
+			"kind": "count",
+			"count": 1993594.0000000002,
+			"rate": 3.38086387301372
+		},
+		"salford": {
+			"kind": "count",
+			"count": 1335330.0000000002,
+			"rate": 4.536568959191162
+		},
+		"bolton": {
+			"kind": "count",
+			"count": 1144197.9999999998,
+			"rate": 3.6899495299675893
+		},
+		"stockport": {
+			"kind": "count",
+			"count": 1041540.9999999999,
+			"rate": 3.4269220771956608
+		},
+		"oldham": {
+			"kind": "count",
+			"count": 719246,
+			"rate": 2.859142948004452
+		},
+		"rochdale": {
+			"kind": "count",
+			"count": 852954.9999999998,
+			"rate": 3.620951685550663
+		},
+		"wigan": {
+			"kind": "count",
+			"count": 1147259,
+			"rate": 3.3261404027577246
+		},
+		"blackburn": {
+			"kind": "count",
+			"count": 511012,
+			"rate": 3.143915343915344
+		},
+		"blackpool": {
+			"kind": "count",
+			"count": 408972,
+			"rate": 2.8363212683177172
+		},
+		"preston": {
+			"kind": "count",
+			"count": 790394.0000000001,
+			"rate": 4.853092150505944
+		},
+		"lancaster": {
+			"kind": "count",
+			"count": 954502.0000000002,
+			"rate": 6.582500034481333
+		},
+		"newcastle-upon-tyne": {
+			"kind": "count",
+			"count": 1137240,
+			"rate": 3.547168634300775
+		},
+		"sunderland": {
+			"kind": "count",
+			"count": 1006994,
+			"rate": 3.4891651594214954
+		},
+		"durham": {
+			"kind": "count",
+			"count": 2514237.0000000005,
+			"rate": 4.673207425126996
+		},
+		"middlesbrough": {
+			"kind": "count",
+			"count": 708476.0000000001,
+			"rate": 4.536830578697627
+		},
+		"south-shields": {
+			"kind": "count",
+			"count": 475683.99999999994,
+			"rate": 3.1420475187095835
+		},
+		"darlington": {
+			"kind": "count",
+			"count": 561550.9999999999,
+			"rate": 4.992052556249944
+		},
+		"hartlepool": {
+			"kind": "count",
+			"count": 588351,
+			"rate": 5.992574862497453
+		},
+		"stockton-on-tees": {
+			"kind": "count",
+			"count": 1148185,
+			"rate": 5.552151837524177
+		},
+		"bristol": {
+			"kind": "count",
+			"count": 1490503.0000000005,
+			"rate": 3.014777537980458
+		},
+		"plymouth": {
+			"kind": "count",
+			"count": 796094.9999999999,
+			"rate": 2.926099085886932
+		},
+		"exeter": {
+			"kind": "count",
+			"count": 431496.99999999994,
+			"rate": 3.117775417452438
+		},
+		"bath": {
+			"kind": "count",
+			"count": 689580.9999999999,
+			"rate": 3.447422360869478
+		},
+		"cheltenham": {
+			"kind": "count",
+			"count": 345790,
+			"rate": 2.840420900450965
+		},
+		"gloucester": {
+			"kind": "count",
+			"count": 443674,
+			"rate": 3.201157303857198
+		},
+		"swindon": {
+			"kind": "count",
+			"count": 927786,
+			"rate": 3.8043505894413125
+		},
+		"bournemouth": {
+			"kind": "count",
+			"count": 1170874,
+			"rate": 2.8630036164287094
+		},
+		"torquay": {
+			"kind": "count",
+			"count": 389240,
+			"rate": 2.7777857071492797
+		},
+		"cornwall": {
+			"kind": "count",
+			"count": 2965549,
+			"rate": 5.084184683750251
+		},
+		"brighton-and-hove": {
+			"kind": "count",
+			"count": 726208.0000000001,
+			"rate": 2.558241448550393
+		},
+		"southampton": {
+			"kind": "count",
+			"count": 674585,
+			"rate": 2.6003183976810167
+		},
+		"portsmouth": {
+			"kind": "count",
+			"count": 652949.0000000001,
+			"rate": 3.0465936609105038
+		},
+		"reading": {
+			"kind": "count",
+			"count": 600297,
+			"rate": 3.2819793665633354
+		},
+		"oxford": {
+			"kind": "count",
+			"count": 557699,
+			"rate": 3.3589445535251814
+		},
+		"cambridge": {
+			"kind": "count",
+			"count": 532839.9999999999,
+			"rate": 3.5676790401199843
+		},
+		"canterbury": {
+			"kind": "count",
+			"count": 592257,
+			"rate": 3.6536520666255394
+		},
+		"maidstone": {
+			"kind": "count",
+			"count": 750518,
+			"rate": 3.9970708377936486
+		},
+		"guildford": {
+			"kind": "count",
+			"count": 696569,
+			"rate": 4.6020983225312
+		},
+		"crawley": {
+			"kind": "count",
+			"count": 476546.99999999994,
+			"rate": 3.8428730404490032
+		},
+		"basingstoke": {
+			"kind": "count",
+			"count": 890087,
+			"rate": 4.609222722800476
+		},
+		"winchester": {
+			"kind": "count",
+			"count": 781144,
+			"rate": 5.759289843104872
+		},
+		"slough": {
+			"kind": "count",
+			"count": 777040.0000000001,
+			"rate": 4.642953172521347
+		},
+		"milton-keynes": {
+			"kind": "count",
+			"count": 1176469,
+			"rate": 3.8461279439264557
+		},
+		"luton": {
+			"kind": "count",
+			"count": 684893.9999999999,
+			"rate": 2.8645865573633356
+		},
+		"ipswich": {
+			"kind": "count",
+			"count": 410721,
+			"rate": 2.9279909320330213
+		},
+		"norwich": {
+			"kind": "count",
+			"count": 447217.99999999994,
+			"rate": 3.0385373211398132
+		},
+		"colchester": {
+			"kind": "count",
+			"count": 784348,
+			"rate": 3.917391695218307
+		},
+		"southend-on-sea": {
+			"kind": "count",
+			"count": 488730.00000000006,
+			"rate": 2.6381331778727817
+		},
+		"peterborough": {
+			"kind": "count",
+			"count": 1076875,
+			"rate": 4.814893474324294
+		},
+		"nottingham": {
+			"kind": "count",
+			"count": 1099727,
+			"rate": 3.32166535277292
+		},
+		"leicester": {
+			"kind": "count",
+			"count": 1171606,
+			"rate": 3.016897215899142
+		},
+		"derby": {
+			"kind": "count",
+			"count": 1145981,
+			"rate": 4.180139267332728
+		},
+		"northampton": {
+			"kind": "count",
+			"count": 2550840.0000000005,
+			"rate": 5.799854937689146
+		},
+		"lincoln": {
+			"kind": "count",
+			"count": 312715.00000000006,
+			"rate": 2.975008086458512
+		},
+		"mansfield": {
+			"kind": "count",
+			"count": 361033,
+			"rate": 3.191085223355548
+		},
+		"chesterfield": {
+			"kind": "count",
+			"count": 445650.99999999994,
+			"rate": 4.2024706492526755
+		},
+		"edinburgh": {
+			"kind": "count",
+			"count": 2100071.9999999995,
+			"rate": 3.9573226803346646
+		},
+		"aberdeen": {
+			"kind": "count",
+			"count": 1030535.9999999999,
+			"rate": 4.4461817240486665
+		},
+		"dundee": {
+			"kind": "count",
+			"count": 581094.9999999999,
+			"rate": 3.8770683213237254
+		},
+		"inverness": {
+			"kind": "count",
+			"count": 2278609,
+			"rate": 9.602633907876438
+		},
+		"stirling": {
+			"kind": "count",
+			"count": 602752.9999999999,
+			"rate": 6.397972614372147
+		},
+		"paisley": {
+			"kind": "count",
+			"count": 882742,
+			"rate": 4.66639530580959
+		},
+		"cardiff": {
+			"kind": "count",
+			"count": 1620991.0000000002,
+			"rate": 4.222221353983524
+		},
+		"swansea": {
+			"kind": "count",
+			"count": 1014636.0000000001,
+			"rate": 4.037484480947379
+		},
+		"newport": {
+			"kind": "count",
+			"count": 1049304,
+			"rate": 6.2496143514851195
+		},
+		"wrexham": {
+			"kind": "count",
+			"count": 1032471,
+			"rate": 7.468414770877789
+		},
+		"bangor": {
+			"kind": "count",
+			"count": 481486,
+			"rate": 6.968262008480831
+		},
+		"aberystwyth": {
+			"kind": "count",
+			"count": 732544,
+			"rate": 10.090276725574732
+		},
+		"belfast": {
+			"kind": "count",
+			"count": 1432161.0000000002,
+			"rate": 4.0641363262294625
+		},
+		"londonderry": {
+			"kind": "count",
+			"count": 1617111.9999999998,
+			"rate": 10.61215489916854
+		},
+		"lisburn": {
+			"kind": "count",
+			"count": 1178188,
+			"rate": 7.768153017426106
+		},
+		"newry": {
+			"kind": "count",
+			"count": 1706300,
+			"rate": 9.318188023919394
+		},
+		"west-midlands": {
+			"kind": "count",
+			"count": 30133276.999999996,
+			"rate": 4.870257550906677
+		},
+		"devon": {
+			"kind": "count",
+			"count": 6226809,
+			"rate": 4.963554578455583
+		},
+		"hampshire": {
+			"kind": "count",
+			"count": 7226229.000000002,
+			"rate": 3.761782005758583
+		},
+		"kent": {
+			"kind": "count",
+			"count": 8195582,
+			"rate": 4.242713611543088
+		},
+		"sussex": {
+			"kind": "count",
+			"count": 5780430,
+			"rate": 3.2847290214906453
+		},
+		"essex": {
+			"kind": "count",
+			"count": 8805204.000000002,
+			"rate": 4.563203963495215
+		},
+		"oxfordshire": {
+			"kind": "count",
+			"count": 3876371,
+			"rate": 5.078982675985106
+		},
+		"gloucestershire": {
+			"kind": "count",
+			"count": 3338266,
+			"rate": 4.987101496907586
+		},
+		"lancashire": {
+			"kind": "count",
+			"count": 8866924,
+			"rate": 5.536135660524023
+		},
+		"cheshire": {
+			"kind": "count",
+			"count": 7691065,
+			"rate": 6.7472348063487155
+		},
+		"lincolnshire": {
+			"kind": "count",
+			"count": 11003999,
+			"rate": 9.818433030054008
+		},
+		"norfolk": {
+			"kind": "count",
+			"count": 6023909,
+			"rate": 6.40596729546907
+		},
+		"staffordshire": {
+			"kind": "count",
+			"count": 6812948,
+			"rate": 5.785559852510832
+		},
+		"derbyshire": {
+			"kind": "count",
+			"count": 8619690,
+			"rate": 7.860907994885668
+		},
+		"the-highlands": {
+			"kind": "count",
+			"count": 2581672,
+			"rate": 7.944095021232076
+		},
+		"grampian": {
+			"kind": "count",
+			"count": 4407964,
+			"rate": 7.447520570395526
+		},
+		"scottish-borders": {
+			"kind": "count",
+			"count": 1161864,
+			"rate": 9.932159343477517
+		},
+		"the-hebrides": {
+			"kind": "count",
+			"count": 3132057,
+			"rate": 11.894941323914777
+		},
+		"lowlands": {
+			"kind": "count",
+			"count": 4545161,
+			"rate": 8.849440236755514
+		},
+		"north-east-scotland": {
+			"kind": "count",
+			"count": 4407964,
+			"rate": 7.447520570395526
+		},
+		"scottish-islands": {
+			"kind": "count",
+			"count": 1735724,
+			"rate": 24.367878702793764
+		},
+		"north-wales": {
+			"kind": "count",
+			"count": 5211593.999999999,
+			"rate": 7.4759458625908195
+		},
+		"mid-wales": {
+			"kind": "count",
+			"count": 1797860.9999999998,
+			"rate": 9.265844117692533
+		},
+		"south-wales": {
+			"kind": "count",
+			"count": 15791454,
+			"rate": 7.104192122135867
+		},
+		"west-wales": {
+			"kind": "count",
+			"count": 3245220.0000000005,
+			"rate": 6.305034165334184
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "count",
+			"count": 5792069,
+			"rate": 4.714944617155454
+		},
+		"south-east-wales": {
+			"kind": "count",
+			"count": 5301320,
+			"rate": 4.877463540837665
+		},
+		"the-valleys": {
+			"kind": "count",
+			"count": 2704790,
+			"rate": 5.590800197605174
+		},
+		"pembrokeshire-coast": {
+			"kind": "count",
+			"count": 1360633,
+			"rate": 10.8191967303059
+		},
+		"belfast-metropolitan-area": {
+			"kind": "count",
+			"count": 4811383,
+			"rate": 5.884951086996407
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "count",
+			"count": 3154203.9999999995,
+			"rate": 11.190398308422056
+		},
+		"west-of-northern-ireland": {
+			"kind": "count",
+			"count": 6019612.999999999,
+			"rate": 14.237899372735269
+		},
+		"armagh-down-and-newry": {
+			"kind": "count",
+			"count": 3893886.9999999995,
+			"rate": 9.599697751130352
+		}
 	}
 }
