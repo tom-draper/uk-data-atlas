@@ -4,10 +4,11 @@ import GlassOverlays from "./GlassOverlays";
 import { gazetteer } from "@lib/data/gazetteer/static";
 import { LocationBounds, PopulationDataset } from "@lib/types";
 
-// Named locations sourced from the gazetteer (built once). Shaped as the old
-// LocationBounds record so downstream list/handlers are unchanged.
+// Every place from the gazetteer, curated places and councils (built once).
+// Shaped as the old LocationBounds record so downstream list/handlers are
+// unchanged.
 const NAMED_LOCATIONS: Record<string, LocationBounds> = Object.fromEntries(
-	gazetteer.namedLocations().map((name) => {
+	gazetteer.places().map((name) => {
 		const nl = gazetteer.namedLocation(name)!;
 		return [name, { lad_codes: nl.memberCodes, bounds: nl.bbox }];
 	}),
