@@ -3059,7 +3059,7 @@ catalogues by the contract tests:
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/history`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/parents`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children`
-- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children/geometry`
+- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children/geometry?childGeography=ward`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/neighbours`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/geometry/metadata`
 - `GET /v1/crosswalks`
