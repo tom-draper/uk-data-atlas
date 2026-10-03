@@ -1,10 +1,10 @@
 import {
 	type AtlasLocation,
 	type AtlasMap,
-	atlasPageDescription,
 	atlasPageHeading,
 	SITE_NAME,
 } from "@/lib/atlas/pages";
+import { atlasMapSnippet } from "@/lib/atlas/snippets";
 import type { DatasetCountry } from "@/lib/types/coverage";
 
 export const SITE_URL =
@@ -98,7 +98,7 @@ export function atlasMapJsonLd(location: AtlasLocation, map: AtlasMap) {
 				"@id": `${SITE_URL}${path}`,
 				url: `${SITE_URL}${path}`,
 				name: atlasPageHeading(location, map),
-				description: atlasPageDescription(location, map),
+				description: atlasMapSnippet(location, map),
 				isPartOf: { "@id": WEBSITE["@id"] },
 				about: { "@id": datasetId(map) },
 				spatialCoverage: { "@type": "Place", name: location.name },
