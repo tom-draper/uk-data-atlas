@@ -149,3 +149,35 @@ export function locationMapsJsonLd(
 		],
 	};
 }
+
+/** A ranking page: its breadcrumb trail and the map's dataset. */
+export function rankingJsonLd(
+	location: AtlasLocation,
+	map: AtlasMap,
+	name: string,
+	areas: number,
+) {
+	const path = `/maps/${location.slug}/${map.slug}`;
+	return {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "WebPage",
+				"@id": `${SITE_URL}${path}`,
+				url: `${SITE_URL}${path}`,
+				name,
+				description: `${areas} areas ranked.`,
+				isPartOf: { "@id": WEBSITE["@id"] },
+				about: { "@id": datasetId(map) },
+				spatialCoverage: { "@type": "Place", name: location.name },
+				breadcrumb: breadcrumbList([
+					{ name: "Maps", path: "/maps" },
+					{ name: location.name, path: `/maps/${location.slug}` },
+					{ name, path },
+				]),
+			},
+			WEBSITE,
+			dataset(map),
+		],
+	};
+}
