@@ -15,7 +15,13 @@
  */
 
 export type PlaceKind =
-	"country" | "region" | "combined-authority" | "county" | "editorial";
+	| "country"
+	| "region"
+	| "combined-authority"
+	| "county"
+	| "editorial"
+	/** A current local authority, made a place of its own by the gazetteer. */
+	| "local-authority";
 
 /**
  * The definition revision of a place sourced from an ONS lookup. Editorial

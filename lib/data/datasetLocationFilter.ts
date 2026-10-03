@@ -96,7 +96,7 @@ const locationPopulationSummary = (data: Record<string, unknown>) => {
 	}
 
 	return Object.fromEntries(
-		gazetteer.namedLocations().map((location) => {
+		gazetteer.places().map((location) => {
 			if (location in countries) return [location, countries[location]!];
 			const total = (
 				gazetteer.namedLocation(location)?.memberCodes ?? []
