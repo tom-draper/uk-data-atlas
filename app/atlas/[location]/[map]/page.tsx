@@ -11,6 +11,7 @@ import {
 	findAtlasMap,
 	pageTitle,
 } from "@/lib/helpers/atlasPages";
+import { atlasMapJsonLd, JsonLd } from "@/lib/helpers/structuredData";
 
 type Params = Promise<{ location: string; map: string }>;
 
@@ -53,8 +54,13 @@ export async function generateMetadata({
 export default async function AtlasMapPage({ params }: { params: Params }) {
 	const { location, map } = await resolvePage(params);
 	return (
-		<Suspense fallback={<LoadingDisplay />}>
-			<AtlasClient page={{ location: location.slug, map: map.slug }} />
-		</Suspense>
+		<>
+			<JsonLd data={atlasMapJsonLd(location, map)} />
+			<Suspense fallback={<LoadingDisplay />}>
+				<AtlasClient
+					page={{ location: location.slug, map: map.slug }}
+				/>
+			</Suspense>
+		</>
 	);
 }

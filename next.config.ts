@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
 	env: {
 		NEXT_PUBLIC_DATA_VERSION: dataVersion,
 	},
+	async redirects() {
+		// The datasets page used to live at /sources.
+		return [
+			{ source: "/sources", destination: "/datasets", permanent: true },
+		];
+	},
 	async headers() {
 		// Immutable caching is safe only because every data URL carries a
 		// version query in production (see lib/helpers/cdn.ts). In development

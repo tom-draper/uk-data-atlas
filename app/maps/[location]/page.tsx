@@ -12,6 +12,7 @@ import {
 	pageTitle,
 } from "@/lib/helpers/atlasPages";
 import { atlasMapSections } from "@/lib/helpers/atlasMapSections";
+import { JsonLd, locationMapsJsonLd } from "@/lib/helpers/structuredData";
 
 type Params = Promise<{ location: string }>;
 
@@ -65,6 +66,13 @@ export default async function LocationMapsPage({ params }: { params: Params }) {
 
 	return (
 		<div className="min-h-screen bg-[#f3f3f1] text-slate-700">
+			<JsonLd
+				data={locationMapsJsonLd(
+					location,
+					maps,
+					`Maps of ${placeName(location)}`,
+				)}
+			/>
 			<Navigation />
 			<main className="mx-auto max-w-[1480px] px-3 sm:px-4">
 				<Sheet>
