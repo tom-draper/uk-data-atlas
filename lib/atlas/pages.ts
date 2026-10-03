@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import type { PlaceKind } from "@/lib/data/gazetteer/places";
 import type { DatasetSource } from "@/lib/data/catalog/types";
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
 import type { ChartDatasetType } from "@/lib/datasets";
@@ -152,6 +153,8 @@ export type AtlasLocation = {
 	countries: readonly DatasetCountry[];
 	/** Its local authorities; empty for a nation or the UK. */
 	members: readonly string[];
+	/** A council is a place of its own, alongside the atlas's curated places. */
+	kind: PlaceKind;
 };
 
 export function slugify(text: string): string {
@@ -218,12 +221,23 @@ const COUNTRY_BY_CODE_PREFIX: Readonly<Record<string, DatasetCountry>> = {
 };
 
 function buildLocations(): AtlasLocation[] {
-	return gazetteer.namedLocations().map((name) => {
-		const members = gazetteer.namedLocation(name)?.memberCodes ?? [];
+	const names = [
+		...gazetteer.namedLocations(),
+		...gazetteer.councilLocations(),
+	];
+	return names.map((name) => {
+		const place = gazetteer.namedLocation(name)!;
+		const members = place.memberCodes;
 		const countries = NATION_COUNTRIES[name] ?? [
 			...new Set(members.map((code) => COUNTRY_BY_CODE_PREFIX[code[0]])),
 		];
-		return { name, slug: slugify(name), countries, members };
+		return {
+			name,
+			slug: slugify(name),
+			countries,
+			members,
+			kind: place.kind,
+		};
 	});
 }
 

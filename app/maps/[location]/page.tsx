@@ -51,9 +51,11 @@ const linkClass =
 export default async function LocationMapsPage({ params }: { params: Params }) {
 	const location = await resolveLocation(params);
 	const maps = atlasMapsFor(location);
+	// The curated places in the same nations; /maps lists every council.
 	const neighbours = ATLAS_LOCATIONS.filter(
 		(other) =>
 			other.slug !== location.slug &&
+			other.kind !== "local-authority" &&
 			other.countries.some((country) =>
 				location.countries.includes(country),
 			),

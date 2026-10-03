@@ -1,15 +1,56 @@
 // Runtime gazetteer API (design doc 7). Pure and synchronous over already-loaded
 // artifacts, which are passed in whole at construction. Supersedes
 // LOCATIONS / areaBank / codeMapper as consumers migrate (Phase 3+).
-import type { Crosswalk, GazetteerCore, GazetteerEntry, Level } from "./types";
+import type {
+	Crosswalk,
+	GazetteerCore,
+	GazetteerEntry,
+	Level,
+	NamedLocation,
+} from "./types";
 
 const key = (from: Level, to: Level) => `${from}->${to}`;
+
+/**
+ * Each current local authority as a place of its own, so the atlas can open
+ * on any council. One a named location already stands for, by name or by
+ * being that single authority, is left to it.
+ */
+function councilPlaces(core: GazetteerCore): Record<string, NamedLocation> {
+	const named = Object.entries(core.namedLocations);
+	const namedNames = new Set(named.map(([name]) => name));
+	const namedCouncils = new Set(
+		named
+			.filter(([, place]) => place.memberCodes.length === 1)
+			.map(([, place]) => place.memberCodes[0]),
+	);
+	const councils = Object.values(core.byCode).filter(
+		(entry) => entry.level === "localAuthority",
+	);
+	const current = Math.max(...councils.map((entry) => entry.vintage));
+	const places: Record<string, NamedLocation> = {};
+	for (const council of councils) {
+		if (council.vintage !== current || namedCouncils.has(council.code))
+			continue;
+		// "Bristol, City of" reads as "Bristol".
+		const name = council.name.replace(/, (City|County) of$/, "");
+		if (namedNames.has(name) || namedNames.has(council.name)) continue;
+		places[name] = {
+			memberCodes: [council.code],
+			bbox: council.bbox,
+			kind: "local-authority",
+		};
+	}
+	return places;
+}
 
 export class Gazetteer {
 	readonly version: number;
 	private core: GazetteerCore;
 	private crosswalks: Record<string, Crosswalk>;
 	private childrenByParent: Record<string, string[]> = {};
+	/** Named locations, then the councils none of them stands for. */
+	private placesByName: Record<string, NamedLocation>;
 
 	constructor(
 		core: GazetteerCore,
@@ -18,6 +59,7 @@ export class Gazetteer {
 		this.core = core;
 		this.crosswalks = crosswalks;
 		this.version = core.version;
+		this.placesByName = { ...councilPlaces(core), ...core.namedLocations };
 		// Invert parents once so descendants() is cheap.
 		for (const e of Object.values(core.byCode))
 			for (const p of e.parents)
@@ -45,18 +87,30 @@ export class Gazetteer {
 	}
 
 	// --- named composite locations (replaces LOCATIONS) ---
+	// A council place resolves here too, so the atlas can open on it.
 	membersOf(named: string): string[] {
-		return this.core.namedLocations[named]?.memberCodes ?? [];
+		return this.placesByName[named]?.memberCodes ?? [];
 	}
 	boundsOf(named: string): [number, number, number, number] | undefined {
-		return this.core.namedLocations[named]?.bbox;
+		return this.placesByName[named]?.bbox;
 	}
+	/** The curated places: regions, counties, cities and groupings. */
 	namedLocations(): string[] {
 		return Object.keys(this.core.namedLocations);
 	}
+	/** Every place: the curated ones, then the councils. */
+	places(): string[] {
+		return [...this.namedLocations(), ...this.councilLocations()];
+	}
+	/** Current local authorities that are places of their own. */
+	councilLocations(): string[] {
+		return Object.keys(this.placesByName).filter(
+			(name) => !(name in this.core.namedLocations),
+		);
+	}
 	// Whole record for a named location (mirrors the old LOCATIONS[name]).
 	namedLocation(named: string) {
-		return this.core.namedLocations[named];
+		return this.placesByName[named];
 	}
 
 	// --- clean-nesting hierarchy (empty until parents are populated) ---

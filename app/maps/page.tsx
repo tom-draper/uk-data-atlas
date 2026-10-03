@@ -11,6 +11,7 @@ import {
 	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
+import type { DatasetCountry } from "@/lib/types/coverage";
 
 export const metadata: Metadata = pageMetadata({
 	subject: "Maps of the UK",
@@ -28,6 +29,25 @@ const NATIONS = [
 
 const linkClass =
 	"underline decoration-slate-300 underline-offset-[3px] hover:decoration-slate-700";
+
+const inCountry = (location: AtlasLocation, country: DatasetCountry) =>
+	location.countries.length === 1 && location.countries[0] === country;
+
+/** The atlas's curated places within a nation, other than the nation. */
+const placesIn = (country: DatasetCountry) =>
+	ATLAS_LOCATIONS.filter(
+		(location) =>
+			location.kind !== "local-authority" &&
+			location.kind !== "country" &&
+			inCountry(location, country),
+	);
+
+/** Every place that is one local authority, curated or not, by name. */
+const councilsIn = (country: DatasetCountry) =>
+	ATLAS_LOCATIONS.filter(
+		(location) =>
+			location.members.length === 1 && inCountry(location, country),
+	).sort((a, b) => a.name.localeCompare(b.name));
 
 const WIDEST_FIRST = [
 	"united-kingdom",
@@ -56,8 +76,8 @@ export default function MapsIndexPage() {
 						<p className="mt-4 text-[17px] leading-[1.7] text-slate-600">
 							{ATLAS_MAPS.length} interactive maps of official
 							data, from election results to house prices, for
-							every nation, region and city in the atlas. Choose a
-							place to see every map of it.
+							every nation, region, city and local authority in
+							the atlas. Choose a place to see every map of it.
 						</p>
 					</div>
 
@@ -77,15 +97,40 @@ export default function MapsIndexPage() {
 										</Link>
 									</h3>
 									<ul className="mt-3 space-y-1 text-[14px] text-slate-600">
-										{ATLAS_LOCATIONS.filter(
-											(location) =>
-												location.name !== nation.name &&
-												location.countries.length ===
-													1 &&
-												location.countries[0] ===
-													nation.country,
-										).map((location) => (
-											<li key={location.slug}>
+										{placesIn(nation.country).map(
+											(location) => (
+												<li key={location.slug}>
+													<Link
+														href={`/maps/${location.slug}`}
+														className={linkClass}
+													>
+														{location.name}
+													</Link>
+												</li>
+											),
+										)}
+									</ul>
+								</Card>
+							))}
+						</div>
+					</section>
+
+					<section className="mt-12">
+						<h2 className="text-[24px] font-semibold tracking-tight text-slate-900">
+							Local authorities
+						</h2>
+						{NATIONS.map((nation) => (
+							<div key={nation.name} className="mt-6">
+								<h3 className="text-[16px] font-semibold text-slate-900">
+									{nation.name}
+								</h3>
+								<ul className="mt-3 columns-2 gap-6 text-[14px] text-slate-600 sm:columns-3 lg:columns-4 xl:columns-5">
+									{councilsIn(nation.country).map(
+										(location) => (
+											<li
+												key={location.slug}
+												className="break-inside-avoid py-0.5"
+											>
 												<Link
 													href={`/maps/${location.slug}`}
 													className={linkClass}
@@ -93,11 +138,11 @@ export default function MapsIndexPage() {
 													{location.name}
 												</Link>
 											</li>
-										))}
-									</ul>
-								</Card>
-							))}
-						</div>
+										),
+									)}
+								</ul>
+							</div>
+						))}
 					</section>
 
 					<section className="mt-12">
