@@ -10,7 +10,7 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
 import { type AtlasPage, useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
 import { AtlasHeadingProvider } from "@/lib/context/AtlasHeadingContext";
-import { atlasHeading } from "@/lib/atlas/pages";
+import { atlasHeading, atlasMapsHref } from "@/lib/atlas/pages";
 
 function ErrorBanner({
 	errors,
@@ -92,7 +92,10 @@ export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
 	return (
 		<ErrorBoundary>
 			<AtlasHeadingProvider
-				value={atlasHeading(selectedLocation, activeViz)}
+				value={{
+					text: atlasHeading(selectedLocation, activeViz),
+					mapsHref: atlasMapsHref(selectedLocation),
+				}}
 			>
 				{!errorsDismissed && (
 					<ErrorBanner
