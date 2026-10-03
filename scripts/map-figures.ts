@@ -12,6 +12,15 @@ const FILES: Record<keyof FigureInputs, string> = {
 	crime: "crime.json",
 	lifeExpectancy: "life-expectancy.json",
 	income: "income.json",
+	childPoverty: "child-poverty.json",
+	broadband: "broadband.json",
+	mobileCoverage: "mobile-coverage.json",
+	businessActivity: "business-activity.json",
+	electricVehicleChargers: "electric-vehicle-chargers.json",
+	councilTax: "council-tax.json",
+	claimantCount: "claimant-count.json",
+	homelessness: "homelessness.json",
+	ghgEmissions: "ghg-emissions.json",
 };
 
 export async function readFigureInputs(): Promise<FigureInputs> {
