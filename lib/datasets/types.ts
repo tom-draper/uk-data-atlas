@@ -1,6 +1,6 @@
 import type { DatasetAggregator } from "@/lib/helpers/datasetAggregation";
 import type { MapRenderContext } from "@/lib/helpers/mapRendering";
-import type { ActiveViz } from "@/lib/types/datasets";
+import type { ActiveViz, VizView } from "@/lib/types/datasets";
 import type { BoundaryGeojson } from "@/lib/types/geometry";
 import type { MapOptions } from "@/lib/types/mapOptions";
 import type { ComponentType } from "react";
@@ -79,6 +79,8 @@ export interface ChartDefinition<
 		dataset?: T,
 	): unknown | null;
 	year: number;
+	/** The map view this chart selects, when one dataset backs several charts. */
+	view?: VizView;
 	// Set when a dataset's records are keyed by an id (e.g. "le" / "hle")
 	// rather than by year, such as one dataset backing several fixed charts.
 	datasetId?: string;
