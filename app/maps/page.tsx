@@ -8,21 +8,16 @@ import {
 	type AtlasLocation,
 	type AtlasMap,
 	atlasLocationsFor,
-	pageTitle,
+	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 
-const title = pageTitle("Maps of the UK");
-const description =
-	"Interactive maps of elections, population, house prices, crime, deprivation, health and more for every UK nation, region and city.";
-
-export const metadata: Metadata = {
-	title,
-	description,
-	alternates: { canonical: "/maps" },
-	openGraph: { title, description, url: "/maps" },
-	twitter: { title, description },
-};
+export const metadata: Metadata = pageMetadata({
+	subject: "Maps of the UK",
+	description:
+		"Interactive maps of elections, population, house prices, crime, deprivation, health and more for every UK nation, region and city.",
+	path: "/maps",
+});
 
 const NATIONS = [
 	{ name: "England", slug: "england", country: "GB-ENG" },

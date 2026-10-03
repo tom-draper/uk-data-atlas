@@ -21,16 +21,6 @@ export const metadata: Metadata = {
 	},
 	description:
 		"A powerful platform for visualizing data that shapes the UK. Explore interactive maps, demographics, and public sector insights across the United Kingdom.",
-	keywords: [
-		"UK Data Map",
-		"UK Demographics Map",
-		"UK Population Density",
-		"Population Density",
-		"House Price Map",
-		"UK Crime Map",
-		"Population Heat Map",
-		"UK Census Data Map",
-	],
 	authors: [{ name: "Tom Draper", url: SITE_URL }],
 	creator: "Tom Draper",
 	publisher: "Tom Draper",
@@ -55,14 +45,6 @@ export const metadata: Metadata = {
 		siteName: "UK Data Atlas",
 		locale: "en_GB",
 		type: "website",
-		images: [
-			{
-				url: "/og-image.png",
-				width: 1200,
-				height: 630,
-				alt: "UK Data Atlas Preview",
-			},
-		],
 	},
 
 	twitter: {
@@ -70,15 +52,9 @@ export const metadata: Metadata = {
 		title: "UK Data Atlas",
 		description:
 			"A powerful platform for visualizing data that shapes the UK.",
-		images: ["/og-image.png"],
 	},
 	alternates: {
 		canonical: "./",
-	},
-	icons: {
-		icon: "/favicon.ico",
-		shortcut: "/favicon-16x16.png",
-		apple: "/apple-touch-icon.png",
 	},
 };
 
