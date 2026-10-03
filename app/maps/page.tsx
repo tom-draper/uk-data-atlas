@@ -8,12 +8,14 @@ import {
 	type AtlasLocation,
 	type AtlasMap,
 	atlasLocationsFor,
-	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import type { DatasetCountry } from "@/lib/types/coverage";
+import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
+	// This segment has its own opengraph-image.
+	image: null,
 	subject: "Maps of the UK",
 	description:
 		"Interactive maps of elections, population, house prices, crime, deprivation, health and more for every UK nation, region and city.",

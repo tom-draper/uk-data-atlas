@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { SITE_NAME } from "@/lib/atlas/pages";
+import { SITE_NAME } from "@/lib/site";
 
 export const SHARE_CARD_SIZE = { width: 1200, height: 630 };
 

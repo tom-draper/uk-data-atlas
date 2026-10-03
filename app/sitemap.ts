@@ -3,7 +3,7 @@ import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/atlas/pages";
 import { RANKING_PAGES } from "@/lib/atlas/rankingPages";
-import { SITE_URL } from "@/lib/atlas/structuredData";
+import { SITE_URL } from "@/lib/site";
 
 /** Every page of the API docs. */
 function docsEntries(): MetadataRoute.Sitemap {
@@ -56,12 +56,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			lastModified: new Date(),
 			changeFrequency: "monthly",
 			priority: 0.9,
-		},
-		{
-			url: `${SITE_URL}/about`,
-			lastModified: new Date(),
-			changeFrequency: "yearly",
-			priority: 0.5,
 		},
 		{
 			url: `${SITE_URL}/datasets`,
