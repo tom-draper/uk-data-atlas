@@ -12,6 +12,7 @@ import {
 	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
+import { hasRankingFor } from "@/lib/atlas/rankingPages";
 import { JsonLd, locationMapsJsonLd } from "@/lib/atlas/structuredData";
 
 type Params = Promise<{ location: string }>;
@@ -116,6 +117,17 @@ export default async function LocationMapsPage({ params }: { params: Params }) {
 										<p className="mt-3 text-[14px] leading-relaxed text-slate-600">
 											{map.source.description}
 										</p>
+										{hasRankingFor(
+											location.slug,
+											map.slug,
+										) && (
+											<Link
+												href={`/maps/${location.slug}/${map.slug}`}
+												className={`mt-3 inline-block text-[13px] text-slate-600 ${linkClass}`}
+											>
+												Every {map.areaNoun} ranked
+											</Link>
+										)}
 									</Card>
 								))}
 							</div>

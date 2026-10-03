@@ -8,7 +8,7 @@ import { configDefaults, defineConfig } from "vitest/config";
  */
 const HEAVY_DATA_TESTS = [
 	"tests/data/compiledBoundaryAssets.test.ts",
-	"tests/data/mapFigures.test.ts",
+	"tests/data/seoData.test.ts",
 	"tests/data/datasetBoundaryYears.test.ts",
 	"tests/data/datasetRegionChunks.test.ts",
 	"tests/data/datasetRegistry.test.ts",
