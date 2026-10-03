@@ -19,7 +19,7 @@ export default function PanelFooter() {
 			>
 				UK Data Atlas v{version}
 			</a>
-			<Link className="hover:underline cursor-pointer" href="/sources">
+			<Link className="hover:underline cursor-pointer" href="/datasets">
 				View Sources
 			</Link>
 		</div>
