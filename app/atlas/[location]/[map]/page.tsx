@@ -8,7 +8,7 @@ import {
 	atlasPageHeading,
 	findAtlasLocation,
 	findAtlasMap,
-	pageTitle,
+	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSnippet } from "@/lib/atlas/snippets";
 import { atlasMapJsonLd, JsonLd } from "@/lib/atlas/structuredData";
@@ -34,21 +34,16 @@ export async function generateMetadata({
 	params: Params;
 }): Promise<Metadata> {
 	const { location, map } = await resolvePage(params);
-	const title = pageTitle(atlasPageHeading(location, map));
-	const description = atlasMapSnippet(location, map);
-	const path = `/atlas/${location.slug}/${map.slug}`;
-	return {
-		title,
-		description,
-		alternates: { canonical: path },
-		openGraph: { title, description, url: path },
-		twitter: { title, description },
+	return pageMetadata({
+		subject: atlasPageHeading(location, map),
+		description: atlasMapSnippet(location, map),
+		path: `/atlas/${location.slug}/${map.slug}`,
 		// The map renders anywhere, but only where its data reaches is it worth
 		// a search result.
-		...(atlasMapCovers(map, location)
-			? {}
-			: { robots: { index: false, follow: true } }),
-	};
+		robots: atlasMapCovers(map, location)
+			? undefined
+			: { index: false, follow: true },
+	});
 }
 
 export default async function AtlasMapPage({ params }: { params: Params }) {

@@ -9,7 +9,7 @@ import {
 	atlasMapsFor,
 	atlasMapTitle,
 	findAtlasLocation,
-	pageTitle,
+	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import { JsonLd, locationMapsJsonLd } from "@/lib/atlas/structuredData";
@@ -38,16 +38,11 @@ export async function generateMetadata({
 	params: Params;
 }): Promise<Metadata> {
 	const location = await resolveLocation(params);
-	const title = pageTitle(`Maps of ${placeName(location)}`);
-	const description = `Interactive maps of ${placeName(location)}: election results, population, house prices, crime, deprivation, health and more, from official sources.`;
-	const path = `/maps/${location.slug}`;
-	return {
-		title,
-		description,
-		alternates: { canonical: path },
-		openGraph: { title, description, url: path },
-		twitter: { title, description },
-	};
+	return pageMetadata({
+		subject: `Maps of ${placeName(location)}`,
+		description: `Interactive maps of ${placeName(location)}: election results, population, house prices, crime, deprivation, health and more, from official sources.`,
+		path: `/maps/${location.slug}`,
+	});
 }
 
 const linkClass =
