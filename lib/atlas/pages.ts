@@ -116,6 +116,8 @@ export type AtlasLocation = {
 	name: string;
 	slug: string;
 	countries: readonly DatasetCountry[];
+	/** Its local authorities; empty for a nation or the UK. */
+	members: readonly string[];
 };
 
 export function slugify(text: string): string {
@@ -187,7 +189,7 @@ function buildLocations(): AtlasLocation[] {
 		const countries = NATION_COUNTRIES[name] ?? [
 			...new Set(members.map((code) => COUNTRY_BY_CODE_PREFIX[code[0]])),
 		];
-		return { name, slug: slugify(name), countries };
+		return { name, slug: slugify(name), countries, members };
 	});
 }
 
@@ -260,7 +262,7 @@ export function atlasHref(locationName: string, viz: ActiveViz): string {
 		: `${path}?period=${reference.period}`;
 }
 
-function locationLabel(location: AtlasLocation) {
+export function locationLabel(location: AtlasLocation) {
 	return location.name === "United Kingdom"
 		? "the United Kingdom"
 		: location.name;
@@ -279,7 +281,17 @@ export function atlasPageHeading(
 	return `${atlasMapTitle(map, period)} in ${locationLabel(location)}`;
 }
 
-export function atlasPageDescription(location: AtlasLocation, map: AtlasMap) {
+/**
+ * The search snippet. A headline figure for the place, when there is one,
+ * leads, since a snippet shows only its first 150 or so characters.
+ */
+export function atlasPageDescription(
+	location: AtlasLocation,
+	map: AtlasMap,
+	figure?: string | null,
+) {
+	if (figure)
+		return `${figure} Explore the interactive ${map.areaNoun} map of ${atlasMapTitle(map)} with ${map.source.source} data.`;
 	return `Interactive map of ${atlasMapTitle(map)} across ${locationLabel(location)}, by ${map.areaNoun}. Explore and compare areas with ${map.source.source} data (${map.source.year}).`;
 }
 

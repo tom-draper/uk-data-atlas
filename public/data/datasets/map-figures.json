@@ -1,0 +1,3850 @@
+{
+	"population-density": {
+		"england": {
+			"kind": "density",
+			"population": 57144395,
+			"areaKm2": 130312.55320000001
+		},
+		"wales": {
+			"kind": "density",
+			"population": 3134196,
+			"areaKm2": 20736.744800000004
+		},
+		"greater-manchester": {
+			"kind": "density",
+			"population": 2919285,
+			"areaKm2": 1275.9660000000001
+		},
+		"london": {
+			"kind": "density",
+			"population": 8871368,
+			"areaKm2": 1571.9583999999998
+		},
+		"birmingham": {
+			"kind": "density",
+			"population": 1153593,
+			"areaKm2": 267.7793
+		},
+		"coventry": {
+			"kind": "density",
+			"population": 351434,
+			"areaKm2": 98.6494
+		},
+		"wolverhampton": {
+			"kind": "density",
+			"population": 269036,
+			"areaKm2": 69.4425
+		},
+		"solihull": {
+			"kind": "density",
+			"population": 217957,
+			"areaKm2": 178.2965
+		},
+		"walsall": {
+			"kind": "density",
+			"population": 286804,
+			"areaKm2": 104.0036
+		},
+		"dudley": {
+			"kind": "density",
+			"population": 325464,
+			"areaKm2": 97.97370000000001
+		},
+		"sandwell": {
+			"kind": "density",
+			"population": 345697,
+			"areaKm2": 85.56729999999999
+		},
+		"stoke-on-trent": {
+			"kind": "density",
+			"population": 260624,
+			"areaKm2": 93.43809999999999
+		},
+		"worcester": {
+			"kind": "density",
+			"population": 104178,
+			"areaKm2": 33.346599999999995
+		},
+		"hereford": {
+			"kind": "density",
+			"population": 188518,
+			"areaKm2": 2179.6882
+		},
+		"shrewsbury": {
+			"kind": "density",
+			"population": 327352,
+			"areaKm2": 3197.3399
+		},
+		"leeds": {
+			"kind": "density",
+			"population": 820294,
+			"areaKm2": 551.6983
+		},
+		"bradford": {
+			"kind": "density",
+			"population": 551522,
+			"areaKm2": 366.38849999999996
+		},
+		"york": {
+			"kind": "density",
+			"population": 204748,
+			"areaKm2": 271.9407
+		},
+		"hull": {
+			"kind": "density",
+			"population": 268768,
+			"areaKm2": 71.5788
+		},
+		"doncaster": {
+			"kind": "density",
+			"population": 311395,
+			"areaKm2": 567.9934
+		},
+		"wakefield": {
+			"kind": "density",
+			"population": 357926,
+			"areaKm2": 338.6086
+		},
+		"rotherham": {
+			"kind": "density",
+			"population": 268707,
+			"areaKm2": 286.5345
+		},
+		"halifax": {
+			"kind": "density",
+			"population": 207896,
+			"areaKm2": 363.9619
+		},
+		"huddersfield": {
+			"kind": "density",
+			"population": 438486,
+			"areaKm2": 408.5517
+		},
+		"merseyside": {
+			"kind": "density",
+			"population": 1439842,
+			"areaKm2": 652.2139999999999
+		},
+		"liverpool": {
+			"kind": "density",
+			"population": 493693,
+			"areaKm2": 111.84200000000001
+		},
+		"warrington": {
+			"kind": "density",
+			"population": 211756,
+			"areaKm2": 180.62830000000002
+		},
+		"chester": {
+			"kind": "density",
+			"population": 362076,
+			"areaKm2": 920.0138000000001
+		},
+		"manchester": {
+			"kind": "density",
+			"population": 569103,
+			"areaKm2": 115.6533
+		},
+		"salford": {
+			"kind": "density",
+			"population": 280044,
+			"areaKm2": 97.1974
+		},
+		"bolton": {
+			"kind": "density",
+			"population": 299957,
+			"areaKm2": 139.783
+		},
+		"stockport": {
+			"kind": "density",
+			"population": 297386,
+			"areaKm2": 126.0525
+		},
+		"oldham": {
+			"kind": "density",
+			"population": 244885,
+			"areaKm2": 142.345
+		},
+		"rochdale": {
+			"kind": "density",
+			"population": 227715,
+			"areaKm2": 158.1236
+		},
+		"wigan": {
+			"kind": "density",
+			"population": 334675,
+			"areaKm2": 188.1584
+		},
+		"blackburn": {
+			"kind": "density",
+			"population": 156268,
+			"areaKm2": 137.01760000000002
+		},
+		"blackpool": {
+			"kind": "density",
+			"population": 141680,
+			"areaKm2": 34.894
+		},
+		"preston": {
+			"kind": "density",
+			"population": 152550,
+			"areaKm2": 142.2885
+		},
+		"lancaster": {
+			"kind": "density",
+			"population": 144366,
+			"areaKm2": 567.0224
+		},
+		"newcastle-upon-tyne": {
+			"kind": "density",
+			"population": 304886,
+			"areaKm2": 113.4504
+		},
+		"sunderland": {
+			"kind": "density",
+			"population": 278013,
+			"areaKm2": 137.3733
+		},
+		"durham": {
+			"kind": "density",
+			"population": 527755,
+			"areaKm2": 2225.2686
+		},
+		"middlesbrough": {
+			"kind": "density",
+			"population": 149339,
+			"areaKm2": 53.881499999999996
+		},
+		"south-shields": {
+			"kind": "density",
+			"population": 148987,
+			"areaKm2": 64.4325
+		},
+		"darlington": {
+			"kind": "density",
+			"population": 109461,
+			"areaKm2": 197.48950000000002
+		},
+		"hartlepool": {
+			"kind": "density",
+			"population": 94161,
+			"areaKm2": 93.887
+		},
+		"stockton-on-tees": {
+			"kind": "density",
+			"population": 200753,
+			"areaKm2": 204.94330000000002
+		},
+		"bristol": {
+			"kind": "density",
+			"population": 479639,
+			"areaKm2": 109.6574
+		},
+		"plymouth": {
+			"kind": "density",
+			"population": 267507,
+			"areaKm2": 79.8504
+		},
+		"exeter": {
+			"kind": "density",
+			"population": 134458,
+			"areaKm2": 47.0357
+		},
+		"bath": {
+			"kind": "density",
+			"population": 195467,
+			"areaKm2": 345.9094
+		},
+		"cheltenham": {
+			"kind": "density",
+			"population": 119617,
+			"areaKm2": 46.5955
+		},
+		"gloucester": {
+			"kind": "density",
+			"population": 133690,
+			"areaKm2": 40.553000000000004
+		},
+		"swindon": {
+			"kind": "density",
+			"population": 236046,
+			"areaKm2": 230.0634
+		},
+		"bournemouth": {
+			"kind": "density",
+			"population": 402784,
+			"areaKm2": 162.0841
+		},
+		"torquay": {
+			"kind": "density",
+			"population": 139435,
+			"areaKm2": 62.87479999999999
+		},
+		"cornwall": {
+			"kind": "density",
+			"population": 575591,
+			"areaKm2": 3545.7721
+		},
+		"brighton-and-hove": {
+			"kind": "density",
+			"population": 278000,
+			"areaKm2": 82.82209999999999
+		},
+		"southampton": {
+			"kind": "density",
+			"population": 252178,
+			"areaKm2": 49.8784
+		},
+		"portsmouth": {
+			"kind": "density",
+			"population": 209599,
+			"areaKm2": 40.3865
+		},
+		"reading": {
+			"kind": "density",
+			"population": 176178,
+			"areaKm2": 40.3939
+		},
+		"oxford": {
+			"kind": "density",
+			"population": 163100,
+			"areaKm2": 45.603
+		},
+		"cambridge": {
+			"kind": "density",
+			"population": 147928,
+			"areaKm2": 40.700500000000005
+		},
+		"canterbury": {
+			"kind": "density",
+			"population": 158723,
+			"areaKm2": 308.73740000000004
+		},
+		"maidstone": {
+			"kind": "density",
+			"population": 180144,
+			"areaKm2": 393.3439
+		},
+		"guildford": {
+			"kind": "density",
+			"population": 146232,
+			"areaKm2": 270.9446
+		},
+		"crawley": {
+			"kind": "density",
+			"population": 119959,
+			"areaKm2": 44.94520000000001
+		},
+		"basingstoke": {
+			"kind": "density",
+			"population": 188047,
+			"areaKm2": 633.811
+		},
+		"winchester": {
+			"kind": "density",
+			"population": 130607,
+			"areaKm2": 660.9728
+		},
+		"slough": {
+			"kind": "density",
+			"population": 159732,
+			"areaKm2": 32.5421
+		},
+		"milton-keynes": {
+			"kind": "density",
+			"population": 292584,
+			"areaKm2": 308.645
+		},
+		"luton": {
+			"kind": "density",
+			"population": 227546,
+			"areaKm2": 43.3522
+		},
+		"ipswich": {
+			"kind": "density",
+			"population": 139331,
+			"areaKm2": 39.5007
+		},
+		"norwich": {
+			"kind": "density",
+			"population": 144956,
+			"areaKm2": 38.997800000000005
+		},
+		"colchester": {
+			"kind": "density",
+			"population": 194475,
+			"areaKm2": 328.2238
+		},
+		"southend-on-sea": {
+			"kind": "density",
+			"population": 180810,
+			"areaKm2": 41.673500000000004
+		},
+		"peterborough": {
+			"kind": "density",
+			"population": 218017,
+			"areaKm2": 343.40160000000003
+		},
+		"nottingham": {
+			"kind": "density",
+			"population": 326572,
+			"areaKm2": 74.6438
+		},
+		"leicester": {
+			"kind": "density",
+			"population": 373086,
+			"areaKm2": 73.3371
+		},
+		"derby": {
+			"kind": "density",
+			"population": 264321,
+			"areaKm2": 78.0176
+		},
+		"northampton": {
+			"kind": "density",
+			"population": 429682,
+			"areaKm2": 1377.381
+		},
+		"lincoln": {
+			"kind": "density",
+			"population": 103026,
+			"areaKm2": 35.6902
+		},
+		"mansfield": {
+			"kind": "density",
+			"population": 111084,
+			"areaKm2": 76.7054
+		},
+		"chesterfield": {
+			"kind": "density",
+			"population": 104175,
+			"areaKm2": 66.0411
+		},
+		"cardiff": {
+			"kind": "density",
+			"population": 369851,
+			"areaKm2": 140.91479999999999
+		},
+		"swansea": {
+			"kind": "density",
+			"population": 242812,
+			"areaKm2": 377.6436
+		},
+		"newport": {
+			"kind": "density",
+			"population": 162042,
+			"areaKm2": 190.4379
+		},
+		"wrexham": {
+			"kind": "density",
+			"population": 135684,
+			"areaKm2": 503.7709
+		},
+		"bangor": {
+			"kind": "density",
+			"population": 69107,
+			"areaKm2": 712.052
+		},
+		"aberystwyth": {
+			"kind": "density",
+			"population": 71956,
+			"areaKm2": 1784.974
+		},
+		"west-midlands": {
+			"kind": "density",
+			"population": 6020253,
+			"areaKm2": 12998.367999999999
+		},
+		"devon": {
+			"kind": "density",
+			"population": 1232751,
+			"areaKm2": 6706.5569000000005
+		},
+		"hampshire": {
+			"kind": "density",
+			"population": 1879730,
+			"areaKm2": 3768.5703000000003
+		},
+		"kent": {
+			"kind": "density",
+			"population": 1877610,
+			"areaKm2": 3738.0939
+		},
+		"sussex": {
+			"kind": "density",
+			"population": 1722343,
+			"areaKm2": 3782.4740999999995
+		},
+		"essex": {
+			"kind": "density",
+			"population": 1877490,
+			"areaKm2": 3663.8929999999996
+		},
+		"oxfordshire": {
+			"kind": "density",
+			"population": 738911,
+			"areaKm2": 2604.9188000000004
+		},
+		"gloucestershire": {
+			"kind": "density",
+			"population": 652938,
+			"areaKm2": 2652.4707
+		},
+		"lancashire": {
+			"kind": "density",
+			"population": 1553617,
+			"areaKm2": 3066.1526000000003
+		},
+		"cheshire": {
+			"kind": "density",
+			"population": 1110364,
+			"areaKm2": 2346.0341
+		},
+		"lincolnshire": {
+			"kind": "density",
+			"population": 1104005,
+			"areaKm2": 6976.4688
+		},
+		"norfolk": {
+			"kind": "density",
+			"population": 925499,
+			"areaKm2": 5383.5275
+		},
+		"staffordshire": {
+			"kind": "density",
+			"population": 1147132,
+			"areaKm2": 2713.6442999999995
+		},
+		"derbyshire": {
+			"kind": "density",
+			"population": 1067999,
+			"areaKm2": 2624.8043000000002
+		},
+		"north-wales": {
+			"kind": "density",
+			"population": 689344,
+			"areaKm2": 6153.817000000001
+		},
+		"mid-wales": {
+			"kind": "density",
+			"population": 192870,
+			"areaKm2": 5292.1249
+		},
+		"south-wales": {
+			"kind": "density",
+			"population": 2180026,
+			"areaKm2": 7505.8288999999995
+		},
+		"west-wales": {
+			"kind": "density",
+			"population": 503962,
+			"areaKm2": 4532.8946000000005
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "density",
+			"population": 1201436,
+			"areaKm2": 2116.4486
+		},
+		"south-east-wales": {
+			"kind": "density",
+			"population": 1065369,
+			"areaKm2": 1424.3872000000001
+		},
+		"the-valleys": {
+			"kind": "density",
+			"population": 474816,
+			"areaKm2": 1385.4429
+		},
+		"pembrokeshire-coast": {
+			"kind": "density",
+			"population": 124425,
+			"areaKm2": 1618.28
+		}
+	},
+	"house-price": {
+		"england": {
+			"kind": "range",
+			"low": {
+				"name": "North Ormesby, Middlesbrough",
+				"value": 55000
+			},
+			"high": {
+				"name": "Knightsbridge and Belgravia, Westminster",
+				"value": 3750000
+			}
+		},
+		"wales": {
+			"kind": "range",
+			"low": {
+				"name": "Menai (Bangor), Gwynedd",
+				"value": 76475
+			},
+			"high": {
+				"name": "Llantilio Crossenny, Monmouthshire",
+				"value": 651000
+			}
+		},
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Halliwell, Bolton",
+				"value": 105000
+			},
+			"high": {
+				"name": "Hale Barns, Trafford",
+				"value": 730500
+			}
+		},
+		"london": {
+			"kind": "range",
+			"low": {
+				"name": "Abbey, Barking and Dagenham",
+				"value": 207500
+			},
+			"high": {
+				"name": "Knightsbridge and Belgravia, Westminster",
+				"value": 3750000
+			}
+		},
+		"birmingham": {
+			"kind": "range",
+			"low": {
+				"name": "Aston",
+				"value": 153000
+			},
+			"high": {
+				"name": "Sutton Four Oaks",
+				"value": 430000
+			}
+		},
+		"coventry": {
+			"kind": "range",
+			"low": {
+				"name": "Foleshill",
+				"value": 149975
+			},
+			"high": {
+				"name": "Wainbody",
+				"value": 360250
+			}
+		},
+		"wolverhampton": {
+			"kind": "range",
+			"low": {
+				"name": "St Peter's",
+				"value": 135000
+			},
+			"high": {
+				"name": "Penn",
+				"value": 265000
+			}
+		},
+		"solihull": {
+			"kind": "range",
+			"low": {
+				"name": "Chelmsley Wood",
+				"value": 179750
+			},
+			"high": {
+				"name": "St Alphege",
+				"value": 600000
+			}
+		},
+		"walsall": {
+			"kind": "range",
+			"low": {
+				"name": "Bentley and Darlaston North",
+				"value": 158000
+			},
+			"high": {
+				"name": "Streetly",
+				"value": 343750
+			}
+		},
+		"dudley": {
+			"kind": "range",
+			"low": {
+				"name": "Netherton, Woodside and St Andrews",
+				"value": 170000
+			},
+			"high": {
+				"name": "Norton",
+				"value": 342500
+			}
+		},
+		"sandwell": {
+			"kind": "range",
+			"low": {
+				"name": "Soho and Victoria",
+				"value": 160000
+			},
+			"high": {
+				"name": "Charlemont with Grove Vale",
+				"value": 250000
+			}
+		},
+		"stoke-on-trent": {
+			"kind": "range",
+			"low": {
+				"name": "Etruria and Hanley",
+				"value": 86000
+			},
+			"high": {
+				"name": "Hanford and Trentham",
+				"value": 233500
+			}
+		},
+		"worcester": {
+			"kind": "range",
+			"low": {
+				"name": "Warndon",
+				"value": 200000
+			},
+			"high": {
+				"name": "Claines",
+				"value": 311000
+			}
+		},
+		"hereford": {
+			"kind": "range",
+			"low": {
+				"name": "Leominster East",
+				"value": 191155
+			},
+			"high": {
+				"name": "Penyard",
+				"value": 600000
+			}
+		},
+		"shrewsbury": {
+			"kind": "range",
+			"low": {
+				"name": "Oswestry West",
+				"value": 149500
+			},
+			"high": {
+				"name": "Worfield",
+				"value": 504500
+			}
+		},
+		"leeds": {
+			"kind": "range",
+			"low": {
+				"name": "Gipton & Harehills",
+				"value": 117000
+			},
+			"high": {
+				"name": "Harewood",
+				"value": 488000
+			}
+		},
+		"bradford": {
+			"kind": "range",
+			"low": {
+				"name": "City",
+				"value": 79000
+			},
+			"high": {
+				"name": "Ilkley",
+				"value": 400250
+			}
+		},
+		"york": {
+			"kind": "range",
+			"low": {
+				"name": "Westfield",
+				"value": 230500
+			},
+			"high": {
+				"name": "Rural West York",
+				"value": 400000
+			}
+		},
+		"hull": {
+			"kind": "range",
+			"low": {
+				"name": "St Andrew's & Docklands",
+				"value": 85000
+			},
+			"high": {
+				"name": "Kingswood",
+				"value": 190000
+			}
+		},
+		"doncaster": {
+			"kind": "range",
+			"low": {
+				"name": "Hexthorpe & Balby North",
+				"value": 97500
+			},
+			"high": {
+				"name": "Finningley",
+				"value": 265000
+			}
+		},
+		"wakefield": {
+			"kind": "range",
+			"low": {
+				"name": "Featherstone",
+				"value": 148000
+			},
+			"high": {
+				"name": "Wakefield South",
+				"value": 237995
+			}
+		},
+		"rotherham": {
+			"kind": "range",
+			"low": {
+				"name": "Rotherham East",
+				"value": 110000
+			},
+			"high": {
+				"name": "Sitwell",
+				"value": 231500
+			}
+		},
+		"halifax": {
+			"kind": "range",
+			"low": {
+				"name": "Park",
+				"value": 80000
+			},
+			"high": {
+				"name": "Calder",
+				"value": 225000
+			}
+		},
+		"huddersfield": {
+			"kind": "range",
+			"low": {
+				"name": "Dewsbury West",
+				"value": 135000
+			},
+			"high": {
+				"name": "Kirkburton",
+				"value": 290000
+			}
+		},
+		"harrogate": {
+			"kind": "range",
+			"low": {
+				"name": "Ripon Minster",
+				"value": 203000
+			},
+			"high": {
+				"name": "Harrogate Duchy",
+				"value": 586500
+			}
+		},
+		"scarborough": {
+			"kind": "range",
+			"low": {
+				"name": "Castle",
+				"value": 135000
+			},
+			"high": {
+				"name": "Scalby",
+				"value": 349000
+			}
+		},
+		"merseyside": {
+			"kind": "range",
+			"low": {
+				"name": "County, Liverpool",
+				"value": 90000
+			},
+			"high": {
+				"name": "Heswall, Wirral",
+				"value": 435000
+			}
+		},
+		"liverpool": {
+			"kind": "range",
+			"low": {
+				"name": "County",
+				"value": 90000
+			},
+			"high": {
+				"name": "Woolton",
+				"value": 311000
+			}
+		},
+		"warrington": {
+			"kind": "range",
+			"low": {
+				"name": "Fairfield and Howley",
+				"value": 138000
+			},
+			"high": {
+				"name": "Appleton",
+				"value": 470500
+			}
+		},
+		"chester": {
+			"kind": "range",
+			"low": {
+				"name": "Westminster",
+				"value": 115000
+			},
+			"high": {
+				"name": "Tattenhall",
+				"value": 487500
+			}
+		},
+		"manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Harpurhey",
+				"value": 151500
+			},
+			"high": {
+				"name": "Chorlton",
+				"value": 385350
+			}
+		},
+		"salford": {
+			"kind": "range",
+			"low": {
+				"name": "Little Hulton",
+				"value": 170000
+			},
+			"high": {
+				"name": "Worsley",
+				"value": 362500
+			}
+		},
+		"bolton": {
+			"kind": "range",
+			"low": {
+				"name": "Halliwell",
+				"value": 105000
+			},
+			"high": {
+				"name": "Heaton and Lostock",
+				"value": 272000
+			}
+		},
+		"stockport": {
+			"kind": "range",
+			"low": {
+				"name": "Brinnington and Central",
+				"value": 180000
+			},
+			"high": {
+				"name": "Bramhall South and Woodford",
+				"value": 500000
+			}
+		},
+		"oldham": {
+			"kind": "range",
+			"low": {
+				"name": "St Mary's",
+				"value": 120000
+			},
+			"high": {
+				"name": "Saddleworth North",
+				"value": 280000
+			}
+		},
+		"rochdale": {
+			"kind": "range",
+			"low": {
+				"name": "Central Rochdale",
+				"value": 105000
+			},
+			"high": {
+				"name": "Bamford",
+				"value": 281500
+			}
+		},
+		"wigan": {
+			"kind": "range",
+			"low": {
+				"name": "Leigh West",
+				"value": 135000
+			},
+			"high": {
+				"name": "Astley Mosley Common",
+				"value": 260000
+			}
+		},
+		"blackburn": {
+			"kind": "range",
+			"low": {
+				"name": "Blackburn Central",
+				"value": 80000
+			},
+			"high": {
+				"name": "West Pennine",
+				"value": 235000
+			}
+		},
+		"blackpool": {
+			"kind": "range",
+			"low": {
+				"name": "Bloomfield",
+				"value": 86000
+			},
+			"high": {
+				"name": "Norbreck",
+				"value": 180000
+			}
+		},
+		"preston": {
+			"kind": "range",
+			"low": {
+				"name": "St Matthew's",
+				"value": 90000
+			},
+			"high": {
+				"name": "Preston Rural East",
+				"value": 275000
+			}
+		},
+		"lancaster": {
+			"kind": "range",
+			"low": {
+				"name": "Poulton",
+				"value": 119975
+			},
+			"high": {
+				"name": "University & Scotforth Rural",
+				"value": 510000
+			}
+		},
+		"carlisle": {
+			"kind": "range",
+			"low": {
+				"name": "Cathedral & Castle",
+				"value": 110000
+			},
+			"high": {
+				"name": "Dalston & Burgh",
+				"value": 288750
+			}
+		},
+		"newcastle-upon-tyne": {
+			"kind": "range",
+			"low": {
+				"name": "Elswick",
+				"value": 105000
+			},
+			"high": {
+				"name": "Gosforth",
+				"value": 362157
+			}
+		},
+		"sunderland": {
+			"kind": "range",
+			"low": {
+				"name": "Hendon",
+				"value": 85250
+			},
+			"high": {
+				"name": "Fulwell",
+				"value": 211500
+			}
+		},
+		"durham": {
+			"kind": "range",
+			"low": {
+				"name": "Horden",
+				"value": 61875
+			},
+			"high": {
+				"name": "Neville's Cross",
+				"value": 335000
+			}
+		},
+		"middlesbrough": {
+			"kind": "range",
+			"low": {
+				"name": "North Ormesby",
+				"value": 55000
+			},
+			"high": {
+				"name": "Nunthorpe",
+				"value": 280000
+			}
+		},
+		"south-shields": {
+			"kind": "range",
+			"low": {
+				"name": "West Park",
+				"value": 97250
+			},
+			"high": {
+				"name": "Cleadon and East Boldon",
+				"value": 289500
+			}
+		},
+		"darlington": {
+			"kind": "range",
+			"low": {
+				"name": "Northgate",
+				"value": 75500
+			},
+			"high": {
+				"name": "Park West",
+				"value": 295000
+			}
+		},
+		"hartlepool": {
+			"kind": "range",
+			"low": {
+				"name": "Victoria",
+				"value": 70000
+			},
+			"high": {
+				"name": "Rural West",
+				"value": 312000
+			}
+		},
+		"stockton-on-tees": {
+			"kind": "range",
+			"low": {
+				"name": "Stockton Town Centre",
+				"value": 85000
+			},
+			"high": {
+				"name": "Northern Parishes",
+				"value": 349950
+			}
+		},
+		"bristol": {
+			"kind": "range",
+			"low": {
+				"name": "Hartcliffe and Withywood",
+				"value": 260000
+			},
+			"high": {
+				"name": "Westbury-on-Trym and Henleaze",
+				"value": 683000
+			}
+		},
+		"plymouth": {
+			"kind": "range",
+			"low": {
+				"name": "Drake",
+				"value": 150000
+			},
+			"high": {
+				"name": "Plymstock Radford",
+				"value": 291000
+			}
+		},
+		"exeter": {
+			"kind": "range",
+			"low": {
+				"name": "St David's",
+				"value": 230000
+			},
+			"high": {
+				"name": "Topsham",
+				"value": 412000
+			}
+		},
+		"bath": {
+			"kind": "range",
+			"low": {
+				"name": "Radstock",
+				"value": 260500
+			},
+			"high": {
+				"name": "Bathavon South",
+				"value": 720500
+			}
+		},
+		"cheltenham": {
+			"kind": "range",
+			"low": {
+				"name": "Hesters Way",
+				"value": 230000
+			},
+			"high": {
+				"name": "Charlton Park",
+				"value": 559500
+			}
+		},
+		"gloucester": {
+			"kind": "range",
+			"low": {
+				"name": "Westgate",
+				"value": 167750
+			},
+			"high": {
+				"name": "Barnwood",
+				"value": 311000
+			}
+		},
+		"swindon": {
+			"kind": "range",
+			"low": {
+				"name": "Mannington and Western",
+				"value": 211000
+			},
+			"high": {
+				"name": "Ridgeway",
+				"value": 462500
+			}
+		},
+		"bournemouth": {
+			"kind": "range",
+			"low": {
+				"name": "Boscombe West",
+				"value": 188000
+			},
+			"high": {
+				"name": "Canford Cliffs",
+				"value": 650000
+			}
+		},
+		"torquay": {
+			"kind": "range",
+			"low": {
+				"name": "Tormohun",
+				"value": 173000
+			},
+			"high": {
+				"name": "Churston with Galmpton",
+				"value": 390000
+			}
+		},
+		"cornwall": {
+			"kind": "range",
+			"low": {
+				"name": "Launceston Central",
+				"value": 177475
+			},
+			"high": {
+				"name": "St Minver and St Endellion",
+				"value": 710000
+			}
+		},
+		"brighton-and-hove": {
+			"kind": "range",
+			"low": {
+				"name": "Queen's Park",
+				"value": 335000
+			},
+			"high": {
+				"name": "Hove Park",
+				"value": 850000
+			}
+		},
+		"southampton": {
+			"kind": "range",
+			"low": {
+				"name": "Bargate",
+				"value": 205000
+			},
+			"high": {
+				"name": "Bitterne Park",
+				"value": 300000
+			}
+		},
+		"portsmouth": {
+			"kind": "range",
+			"low": {
+				"name": "Charles Dickens",
+				"value": 195000
+			},
+			"high": {
+				"name": "Drayton and Farlington",
+				"value": 395000
+			}
+		},
+		"reading": {
+			"kind": "range",
+			"low": {
+				"name": "Minster",
+				"value": 290000
+			},
+			"high": {
+				"name": "Mapledurham",
+				"value": 652500
+			}
+		},
+		"oxford": {
+			"kind": "range",
+			"low": {
+				"name": "Northfield Brook",
+				"value": 315000
+			},
+			"high": {
+				"name": "North",
+				"value": 985000
+			}
+		},
+		"cambridge": {
+			"kind": "range",
+			"low": {
+				"name": "King's Hedges",
+				"value": 372000
+			},
+			"high": {
+				"name": "Newnham",
+				"value": 1105100
+			}
+		},
+		"canterbury": {
+			"kind": "range",
+			"low": {
+				"name": "Northgate",
+				"value": 265000
+			},
+			"high": {
+				"name": "Tankerton",
+				"value": 504950
+			}
+		},
+		"maidstone": {
+			"kind": "range",
+			"low": {
+				"name": "High Street",
+				"value": 250000
+			},
+			"high": {
+				"name": "North Downs",
+				"value": 850000
+			}
+		},
+		"guildford": {
+			"kind": "range",
+			"low": {
+				"name": "Burpham",
+				"value": 375000
+			},
+			"high": {
+				"name": "Pilgrims",
+				"value": 1045440
+			}
+		},
+		"crawley": {
+			"kind": "range",
+			"low": {
+				"name": "Broadfield",
+				"value": 300000
+			},
+			"high": {
+				"name": "Pound Hill South & Worth",
+				"value": 417500
+			}
+		},
+		"basingstoke": {
+			"kind": "range",
+			"low": {
+				"name": "Eastrop",
+				"value": 243250
+			},
+			"high": {
+				"name": "Upton Grey and The Candovers",
+				"value": 873500
+			}
+		},
+		"winchester": {
+			"kind": "range",
+			"low": {
+				"name": "Southwick and Wickham",
+				"value": 315000
+			},
+			"high": {
+				"name": "Upper Meon Valley",
+				"value": 765000
+			}
+		},
+		"slough": {
+			"kind": "range",
+			"low": {
+				"name": "Chalvey",
+				"value": 247500
+			},
+			"high": {
+				"name": "Upton",
+				"value": 595000
+			}
+		},
+		"milton-keynes": {
+			"kind": "range",
+			"low": {
+				"name": "Woughton & Fishermead",
+				"value": 225000
+			},
+			"high": {
+				"name": "Olney",
+				"value": 477500
+			}
+		},
+		"luton": {
+			"kind": "range",
+			"low": {
+				"name": "South",
+				"value": 195000
+			},
+			"high": {
+				"name": "Barnfield",
+				"value": 449000
+			}
+		},
+		"ipswich": {
+			"kind": "range",
+			"low": {
+				"name": "Gipping",
+				"value": 162500
+			},
+			"high": {
+				"name": "Bixley",
+				"value": 338000
+			}
+		},
+		"norwich": {
+			"kind": "range",
+			"low": {
+				"name": "Mancroft",
+				"value": 195000
+			},
+			"high": {
+				"name": "Eaton",
+				"value": 382500
+			}
+		},
+		"colchester": {
+			"kind": "range",
+			"low": {
+				"name": "Castle",
+				"value": 250000
+			},
+			"high": {
+				"name": "Rural North",
+				"value": 500000
+			}
+		},
+		"southend-on-sea": {
+			"kind": "range",
+			"low": {
+				"name": "Victoria",
+				"value": 225000
+			},
+			"high": {
+				"name": "West Leigh",
+				"value": 617500
+			}
+		},
+		"peterborough": {
+			"kind": "range",
+			"low": {
+				"name": "Central",
+				"value": 177000
+			},
+			"high": {
+				"name": "Barnack",
+				"value": 525000
+			}
+		},
+		"nottingham": {
+			"kind": "range",
+			"low": {
+				"name": "Radford",
+				"value": 144500
+			},
+			"high": {
+				"name": "Wollaton West",
+				"value": 329100
+			}
+		},
+		"leicester": {
+			"kind": "range",
+			"low": {
+				"name": "Westcotes",
+				"value": 181000
+			},
+			"high": {
+				"name": "Knighton",
+				"value": 350000
+			}
+		},
+		"derby": {
+			"kind": "range",
+			"low": {
+				"name": "Normanton",
+				"value": 130000
+			},
+			"high": {
+				"name": "Allestree",
+				"value": 302500
+			}
+		},
+		"lincoln": {
+			"kind": "range",
+			"low": {
+				"name": "Park",
+				"value": 128000
+			},
+			"high": {
+				"name": "Carholme",
+				"value": 220000
+			}
+		},
+		"mansfield": {
+			"kind": "range",
+			"low": {
+				"name": "Portland",
+				"value": 110000
+			},
+			"high": {
+				"name": "Lindhurst",
+				"value": 274500
+			}
+		},
+		"chesterfield": {
+			"kind": "range",
+			"low": {
+				"name": "Moor",
+				"value": 147000
+			},
+			"high": {
+				"name": "Linacre",
+				"value": 335000
+			}
+		},
+		"cardiff": {
+			"kind": "range",
+			"low": {
+				"name": "Cathays",
+				"value": 152863
+			},
+			"high": {
+				"name": "Lisvane",
+				"value": 517995
+			}
+		},
+		"swansea": {
+			"kind": "range",
+			"low": {
+				"name": "Townhill",
+				"value": 110000
+			},
+			"high": {
+				"name": "Gower",
+				"value": 485000
+			}
+		},
+		"newport": {
+			"kind": "range",
+			"low": {
+				"name": "Shaftesbury",
+				"value": 152950
+			},
+			"high": {
+				"name": "Langstone",
+				"value": 440000
+			}
+		},
+		"wrexham": {
+			"kind": "range",
+			"low": {
+				"name": "Smithfield",
+				"value": 108000
+			},
+			"high": {
+				"name": "Marford and Hoseley",
+				"value": 442000
+			}
+		},
+		"bangor": {
+			"kind": "range",
+			"low": {
+				"name": "Caergybi",
+				"value": 133750
+			},
+			"high": {
+				"name": "Seiriol",
+				"value": 330000
+			}
+		},
+		"aberystwyth": {
+			"kind": "range",
+			"low": {
+				"name": "Llandysul Town",
+				"value": 142000
+			},
+			"high": {
+				"name": "Penbryn",
+				"value": 388000
+			}
+		},
+		"west-midlands": {
+			"kind": "range",
+			"low": {
+				"name": "Etruria and Hanley, Stoke-on-Trent",
+				"value": 86000
+			},
+			"high": {
+				"name": "Lickey Hills, Bromsgrove",
+				"value": 750000
+			}
+		},
+		"devon": {
+			"kind": "range",
+			"low": {
+				"name": "Drake, Plymouth",
+				"value": 150000
+			},
+			"high": {
+				"name": "West Hill & Aylesbeare, East Devon",
+				"value": 775000
+			}
+		},
+		"hampshire": {
+			"kind": "range",
+			"low": {
+				"name": "Grange, Gosport",
+				"value": 170000
+			},
+			"high": {
+				"name": "Brockenhurst and Forest South East, New Forest",
+				"value": 1100000
+			}
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Town & Castle, Dover",
+				"value": 196000
+			},
+			"high": {
+				"name": "Sevenoaks Kippington, Sevenoaks",
+				"value": 1325000
+			}
+		},
+		"sussex": {
+			"kind": "range",
+			"low": {
+				"name": "Hotham, Arun",
+				"value": 185750
+			},
+			"high": {
+				"name": "Easebourne, Chichester",
+				"value": 952500
+			}
+		},
+		"essex": {
+			"kind": "range",
+			"low": {
+				"name": "Harwich & Kingsway, Tendring",
+				"value": 160000
+			},
+			"high": {
+				"name": "Moreton and Fyfield, Epping Forest",
+				"value": 1195000
+			}
+		},
+		"oxfordshire": {
+			"kind": "range",
+			"low": {
+				"name": "Banbury Grimsbury and Hightown, Cherwell",
+				"value": 240000
+			},
+			"high": {
+				"name": "North, Oxford",
+				"value": 985000
+			}
+		},
+		"gloucestershire": {
+			"kind": "range",
+			"low": {
+				"name": "Westgate, Gloucester",
+				"value": 167750
+			},
+			"high": {
+				"name": "Coln Valley, Cotswold",
+				"value": 900000
+			}
+		},
+		"lancashire": {
+			"kind": "range",
+			"low": {
+				"name": "Daneshouse with Stoneyholme, Burnley",
+				"value": 59000
+			},
+			"high": {
+				"name": "University & Scotforth Rural, Lancaster",
+				"value": 510000
+			}
+		},
+		"cheshire": {
+			"kind": "range",
+			"low": {
+				"name": "Crewe Central, Cheshire East",
+				"value": 103500
+			},
+			"high": {
+				"name": "Prestbury, Cheshire East",
+				"value": 825000
+			}
+		},
+		"lincolnshire": {
+			"kind": "range",
+			"low": {
+				"name": "East Marsh, North East Lincolnshire",
+				"value": 72000
+			},
+			"high": {
+				"name": "Loveden Heath, South Kesteven",
+				"value": 427500
+			}
+		},
+		"norfolk": {
+			"kind": "range",
+			"low": {
+				"name": "Nelson, Great Yarmouth",
+				"value": 119500
+			},
+			"high": {
+				"name": "Burnham Market & Docking, King's Lynn and West Norfolk",
+				"value": 655000
+			}
+		},
+		"staffordshire": {
+			"kind": "range",
+			"low": {
+				"name": "Etruria and Hanley, Stoke-on-Trent",
+				"value": 86000
+			},
+			"high": {
+				"name": "Shenstone, Lichfield",
+				"value": 575000
+			}
+		},
+		"derbyshire": {
+			"kind": "range",
+			"low": {
+				"name": "Gamesley, High Peak",
+				"value": 128000
+			},
+			"high": {
+				"name": "Chatsworth, Derbyshire Dales",
+				"value": 677500
+			}
+		},
+		"north-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Menai (Bangor), Gwynedd",
+				"value": 76475
+			},
+			"high": {
+				"name": "Aberdaron, Gwynedd",
+				"value": 547500
+			}
+		},
+		"mid-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Llandrindod East/Llandrindod West, Powys",
+				"value": 90000
+			},
+			"high": {
+				"name": "Llangattock, Powys",
+				"value": 512000
+			}
+		},
+		"south-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Gwynfi, Neath Port Talbot",
+				"value": 85000
+			},
+			"high": {
+				"name": "Llantilio Crossenny, Monmouthshire",
+				"value": 651000
+			}
+		},
+		"west-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Tyisha, Carmarthenshire",
+				"value": 110000
+			},
+			"high": {
+				"name": "Gower, Swansea",
+				"value": 485000
+			}
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "range",
+			"low": {
+				"name": "Maerdy, Rhondda Cynon Taf",
+				"value": 85000
+			},
+			"high": {
+				"name": "Llantilio Crossenny, Monmouthshire",
+				"value": 651000
+			}
+		},
+		"south-east-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Maerdy, Rhondda Cynon Taf",
+				"value": 85000
+			},
+			"high": {
+				"name": "Peterston-super-Ely, Vale of Glamorgan",
+				"value": 605222
+			}
+		},
+		"the-valleys": {
+			"kind": "range",
+			"low": {
+				"name": "Gurnos, Merthyr Tydfil",
+				"value": 93500
+			},
+			"high": {
+				"name": "Llantilio Crossenny, Monmouthshire",
+				"value": 651000
+			}
+		},
+		"pembrokeshire-coast": {
+			"kind": "range",
+			"low": {
+				"name": "Haverfordwest: Garth",
+				"value": 118000
+			},
+			"high": {
+				"name": "Newport",
+				"value": 525000
+			}
+		}
+	},
+	"crime": {
+		"wales": {
+			"kind": "crime",
+			"crimes": 225413,
+			"population": 2884765,
+			"period": "year ending March 2026"
+		},
+		"greater-manchester": {
+			"kind": "crime",
+			"crimes": 310685,
+			"population": 3009664,
+			"period": "year ending March 2026"
+		},
+		"london": {
+			"kind": "crime",
+			"crimes": 875325,
+			"population": 9089736,
+			"period": "year ending March 2026"
+		},
+		"birmingham": {
+			"kind": "crime",
+			"crimes": 135120,
+			"population": 1183618,
+			"period": "year ending March 2026"
+		},
+		"coventry": {
+			"kind": "crime",
+			"crimes": 32606,
+			"population": 369026,
+			"period": "year ending March 2026"
+		},
+		"wolverhampton": {
+			"kind": "crime",
+			"crimes": 25869,
+			"population": 281251,
+			"period": "year ending March 2026"
+		},
+		"solihull": {
+			"kind": "crime",
+			"crimes": 17594,
+			"population": 221242,
+			"period": "year ending March 2026"
+		},
+		"walsall": {
+			"kind": "crime",
+			"crimes": 27482,
+			"population": 295678,
+			"period": "year ending March 2026"
+		},
+		"dudley": {
+			"kind": "crime",
+			"crimes": 24742,
+			"population": 331930,
+			"period": "year ending March 2026"
+		},
+		"sandwell": {
+			"kind": "crime",
+			"crimes": 33927,
+			"population": 353860,
+			"period": "year ending March 2026"
+		},
+		"stoke-on-trent": {
+			"kind": "crime",
+			"crimes": 30023,
+			"population": 270425,
+			"period": "year ending March 2026"
+		},
+		"hereford": {
+			"kind": "crime",
+			"crimes": 9620,
+			"population": 191047,
+			"period": "year ending March 2026"
+		},
+		"shrewsbury": {
+			"kind": "crime",
+			"crimes": 15813,
+			"population": 332455,
+			"period": "year ending March 2026"
+		},
+		"leeds": {
+			"kind": "crime",
+			"crimes": 96875,
+			"population": 845189,
+			"period": "year ending March 2026"
+		},
+		"bradford": {
+			"kind": "crime",
+			"crimes": 65941,
+			"population": 563605,
+			"period": "year ending March 2026"
+		},
+		"york": {
+			"kind": "crime",
+			"crimes": 13752,
+			"population": 209301,
+			"period": "year ending March 2026"
+		},
+		"hull": {
+			"kind": "crime",
+			"crimes": 33453,
+			"population": 275401,
+			"period": "year ending March 2026"
+		},
+		"doncaster": {
+			"kind": "crime",
+			"crimes": 37494,
+			"population": 319765,
+			"period": "year ending March 2026"
+		},
+		"wakefield": {
+			"kind": "crime",
+			"crimes": 38883,
+			"population": 367666,
+			"period": "year ending March 2026"
+		},
+		"rotherham": {
+			"kind": "crime",
+			"crimes": 25747,
+			"population": 276595,
+			"period": "year ending March 2026"
+		},
+		"halifax": {
+			"kind": "crime",
+			"crimes": 21812,
+			"population": 210929,
+			"period": "year ending March 2026"
+		},
+		"huddersfield": {
+			"kind": "crime",
+			"crimes": 39219,
+			"population": 447847,
+			"period": "year ending March 2026"
+		},
+		"merseyside": {
+			"kind": "crime",
+			"crimes": 137769,
+			"population": 1475541,
+			"period": "year ending March 2026"
+		},
+		"liverpool": {
+			"kind": "crime",
+			"crimes": 63156,
+			"population": 508961,
+			"period": "year ending March 2026"
+		},
+		"warrington": {
+			"kind": "crime",
+			"crimes": 15156,
+			"population": 215391,
+			"period": "year ending March 2026"
+		},
+		"chester": {
+			"kind": "crime",
+			"crimes": 24822,
+			"population": 371652,
+			"period": "year ending March 2026"
+		},
+		"manchester": {
+			"kind": "crime",
+			"crimes": 84130,
+			"population": 589670,
+			"period": "year ending March 2026"
+		},
+		"salford": {
+			"kind": "crime",
+			"crimes": 31140,
+			"population": 294348,
+			"period": "year ending March 2026"
+		},
+		"bolton": {
+			"kind": "crime",
+			"crimes": 30380,
+			"population": 310085,
+			"period": "year ending March 2026"
+		},
+		"stockport": {
+			"kind": "crime",
+			"crimes": 22723,
+			"population": 303929,
+			"period": "year ending March 2026"
+		},
+		"oldham": {
+			"kind": "crime",
+			"crimes": 26827,
+			"population": 251560,
+			"period": "year ending March 2026"
+		},
+		"rochdale": {
+			"kind": "crime",
+			"crimes": 24639,
+			"population": 235561,
+			"period": "year ending March 2026"
+		},
+		"wigan": {
+			"kind": "crime",
+			"crimes": 31376,
+			"population": 344922,
+			"period": "year ending March 2026"
+		},
+		"blackburn": {
+			"kind": "crime",
+			"crimes": 13682,
+			"population": 162540,
+			"period": "year ending March 2026"
+		},
+		"blackpool": {
+			"kind": "crime",
+			"crimes": 21027,
+			"population": 144191,
+			"period": "year ending March 2026"
+		},
+		"preston": {
+			"kind": "crime",
+			"crimes": 16068,
+			"population": 162864,
+			"period": "year ending March 2026"
+		},
+		"lancaster": {
+			"kind": "crime",
+			"crimes": 10564,
+			"population": 145006,
+			"period": "year ending March 2026"
+		},
+		"newcastle-upon-tyne": {
+			"kind": "crime",
+			"crimes": 34427,
+			"population": 320605,
+			"period": "year ending March 2026"
+		},
+		"sunderland": {
+			"kind": "crime",
+			"crimes": 27007,
+			"population": 288606,
+			"period": "year ending March 2026"
+		},
+		"durham": {
+			"kind": "crime",
+			"crimes": 48961,
+			"population": 538011,
+			"period": "year ending March 2026"
+		},
+		"middlesbrough": {
+			"kind": "crime",
+			"crimes": 23419,
+			"population": 156161,
+			"period": "year ending March 2026"
+		},
+		"south-shields": {
+			"kind": "crime",
+			"crimes": 14631,
+			"population": 151393,
+			"period": "year ending March 2026"
+		},
+		"darlington": {
+			"kind": "crime",
+			"crimes": 10240,
+			"population": 112489,
+			"period": "year ending March 2026"
+		},
+		"hartlepool": {
+			"kind": "crime",
+			"crimes": 13174,
+			"population": 98180,
+			"period": "year ending March 2026"
+		},
+		"stockton-on-tees": {
+			"kind": "crime",
+			"crimes": 22317,
+			"population": 206800,
+			"period": "year ending March 2026"
+		},
+		"bristol": {
+			"kind": "crime",
+			"crimes": 64759,
+			"population": 494399,
+			"period": "year ending March 2026"
+		},
+		"plymouth": {
+			"kind": "crime",
+			"crimes": 25339,
+			"population": 272067,
+			"period": "year ending March 2026"
+		},
+		"exeter": {
+			"kind": "crime",
+			"crimes": 13296,
+			"population": 138399,
+			"period": "year ending March 2026"
+		},
+		"bath": {
+			"kind": "crime",
+			"crimes": 15811,
+			"population": 200028,
+			"period": "year ending March 2026"
+		},
+		"cheltenham": {
+			"kind": "crime",
+			"crimes": 9702,
+			"population": 121739,
+			"period": "year ending March 2026"
+		},
+		"gloucester": {
+			"kind": "crime",
+			"crimes": 14873,
+			"population": 138598,
+			"period": "year ending March 2026"
+		},
+		"swindon": {
+			"kind": "crime",
+			"crimes": 16965,
+			"population": 243875,
+			"period": "year ending March 2026"
+		},
+		"bournemouth": {
+			"kind": "crime",
+			"crimes": 27066,
+			"population": 408967,
+			"period": "year ending March 2026"
+		},
+		"torquay": {
+			"kind": "crime",
+			"crimes": 13086,
+			"population": 140126,
+			"period": "year ending March 2026"
+		},
+		"cornwall": {
+			"kind": "crime",
+			"crimes": 36590,
+			"population": 583289,
+			"period": "year ending March 2026"
+		},
+		"brighton-and-hove": {
+			"kind": "crime",
+			"crimes": 28335,
+			"population": 283870,
+			"period": "year ending March 2026"
+		},
+		"southampton": {
+			"kind": "crime",
+			"crimes": 31147,
+			"population": 259424,
+			"period": "year ending March 2026"
+		},
+		"portsmouth": {
+			"kind": "crime",
+			"crimes": 24163,
+			"population": 214321,
+			"period": "year ending March 2026"
+		},
+		"reading": {
+			"kind": "crime",
+			"crimes": 17915,
+			"population": 182907,
+			"period": "year ending March 2026"
+		},
+		"oxford": {
+			"kind": "crime",
+			"crimes": 15987,
+			"population": 166034,
+			"period": "year ending March 2026"
+		},
+		"cambridge": {
+			"kind": "crime",
+			"crimes": 13699,
+			"population": 149352,
+			"period": "year ending March 2026"
+		},
+		"canterbury": {
+			"kind": "crime",
+			"crimes": 12915,
+			"population": 162100,
+			"period": "year ending March 2026"
+		},
+		"maidstone": {
+			"kind": "crime",
+			"crimes": 33,
+			"population": 187767,
+			"period": "year ending March 2026"
+		},
+		"guildford": {
+			"kind": "crime",
+			"crimes": 10913,
+			"population": 151359,
+			"period": "year ending March 2026"
+		},
+		"crawley": {
+			"kind": "crime",
+			"crimes": 13538,
+			"population": 124008,
+			"period": "year ending March 2026"
+		},
+		"winchester": {
+			"kind": "crime",
+			"crimes": 7570,
+			"population": 135632,
+			"period": "year ending March 2026"
+		},
+		"slough": {
+			"kind": "crime",
+			"crimes": 14784,
+			"population": 167359,
+			"period": "year ending March 2026"
+		},
+		"milton-keynes": {
+			"kind": "crime",
+			"crimes": 26843,
+			"population": 305884,
+			"period": "year ending March 2026"
+		},
+		"luton": {
+			"kind": "crime",
+			"crimes": 19654,
+			"population": 239090,
+			"period": "year ending March 2026"
+		},
+		"ipswich": {
+			"kind": "crime",
+			"crimes": 12692,
+			"population": 140274,
+			"period": "year ending March 2026"
+		},
+		"norwich": {
+			"kind": "crime",
+			"crimes": 16023,
+			"population": 147182,
+			"period": "year ending March 2026"
+		},
+		"colchester": {
+			"kind": "crime",
+			"crimes": 16534,
+			"population": 200222,
+			"period": "year ending March 2026"
+		},
+		"southend-on-sea": {
+			"kind": "crime",
+			"crimes": 17869,
+			"population": 185256,
+			"period": "year ending March 2026"
+		},
+		"peterborough": {
+			"kind": "crime",
+			"crimes": 23770,
+			"population": 223655,
+			"period": "year ending March 2026"
+		},
+		"nottingham": {
+			"kind": "crime",
+			"crimes": 41359,
+			"population": 331077,
+			"period": "year ending March 2026"
+		},
+		"leicester": {
+			"kind": "crime",
+			"crimes": 42724,
+			"population": 388348,
+			"period": "year ending March 2026"
+		},
+		"derby": {
+			"kind": "crime",
+			"crimes": 30570,
+			"population": 274149,
+			"period": "year ending March 2026"
+		},
+		"northampton": {
+			"kind": "crime",
+			"crimes": 31211,
+			"population": 439811,
+			"period": "year ending March 2026"
+		},
+		"lincoln": {
+			"kind": "crime",
+			"crimes": 12257,
+			"population": 105114,
+			"period": "year ending March 2026"
+		},
+		"mansfield": {
+			"kind": "crime",
+			"crimes": 10456,
+			"population": 113138,
+			"period": "year ending March 2026"
+		},
+		"chesterfield": {
+			"kind": "crime",
+			"crimes": 10682,
+			"population": 106045,
+			"period": "year ending March 2026"
+		},
+		"cardiff": {
+			"kind": "crime",
+			"crimes": 36006,
+			"population": 383919,
+			"period": "year ending March 2026"
+		},
+		"swansea": {
+			"kind": "crime",
+			"crimes": 18647,
+			"population": 251304,
+			"period": "year ending March 2026"
+		},
+		"newport": {
+			"kind": "crime",
+			"crimes": 18370,
+			"population": 167899,
+			"period": "year ending March 2026"
+		},
+		"wrexham": {
+			"kind": "crime",
+			"crimes": 11482,
+			"population": 138245,
+			"period": "year ending March 2026"
+		},
+		"bangor": {
+			"kind": "crime",
+			"crimes": 3907,
+			"population": 69097,
+			"period": "year ending March 2026"
+		},
+		"aberystwyth": {
+			"kind": "crime",
+			"crimes": 4003,
+			"population": 72599,
+			"period": "year ending March 2026"
+		},
+		"sussex": {
+			"kind": "crime",
+			"crimes": 127970,
+			"population": 1759789,
+			"period": "year ending March 2026"
+		},
+		"essex": {
+			"kind": "crime",
+			"crimes": 140308,
+			"population": 1929610,
+			"period": "year ending March 2026"
+		},
+		"oxfordshire": {
+			"kind": "crime",
+			"crimes": 45298,
+			"population": 763218,
+			"period": "year ending March 2026"
+		},
+		"gloucestershire": {
+			"kind": "crime",
+			"crimes": 43680,
+			"population": 669380,
+			"period": "year ending March 2026"
+		},
+		"lancashire": {
+			"kind": "crime",
+			"crimes": 125892,
+			"population": 1601645,
+			"period": "year ending March 2026"
+		},
+		"cheshire": {
+			"kind": "crime",
+			"crimes": 76812,
+			"population": 1139884,
+			"period": "year ending March 2026"
+		},
+		"lincolnshire": {
+			"kind": "crime",
+			"crimes": 85425,
+			"population": 1120749,
+			"period": "year ending March 2026"
+		},
+		"norfolk": {
+			"kind": "crime",
+			"crimes": 57177,
+			"population": 940359,
+			"period": "year ending March 2026"
+		},
+		"staffordshire": {
+			"kind": "crime",
+			"crimes": 86892,
+			"population": 1177578,
+			"period": "year ending March 2026"
+		},
+		"derbyshire": {
+			"kind": "crime",
+			"crimes": 85070,
+			"population": 1096526,
+			"period": "year ending March 2026"
+		},
+		"north-wales": {
+			"kind": "crime",
+			"crimes": 52414,
+			"population": 697115,
+			"period": "year ending March 2026"
+		},
+		"west-wales": {
+			"kind": "crime",
+			"crimes": 35239,
+			"population": 514703,
+			"period": "year ending March 2026"
+		},
+		"pembrokeshire-coast": {
+			"kind": "crime",
+			"crimes": 9094,
+			"population": 125761,
+			"period": "year ending March 2026"
+		}
+	},
+	"life-expectancy": {
+		"england": {
+			"kind": "range",
+			"low": {
+				"name": "Blackpool",
+				"value": 76.4
+			},
+			"high": {
+				"name": "Hart",
+				"value": 84.95
+			}
+		},
+		"scotland": {
+			"kind": "range",
+			"low": {
+				"name": "Glasgow City",
+				"value": 76.5
+			},
+			"high": {
+				"name": "East Renfrewshire",
+				"value": 83.2
+			}
+		},
+		"wales": {
+			"kind": "range",
+			"low": {
+				"name": "Merthyr Tydfil",
+				"value": 77.35
+			},
+			"high": {
+				"name": "Monmouthshire",
+				"value": 82.44999999999999
+			}
+		},
+		"northern-ireland": {
+			"kind": "range",
+			"low": {
+				"name": "Belfast",
+				"value": 78.5
+			},
+			"high": {
+				"name": "Lisburn and Castlereagh",
+				"value": 82.15
+			}
+		},
+		"united-kingdom": {
+			"kind": "range",
+			"low": {
+				"name": "Blackpool",
+				"value": 76.4
+			},
+			"high": {
+				"name": "Hart",
+				"value": 84.95
+			}
+		},
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Manchester",
+				"value": 77.85
+			},
+			"high": {
+				"name": "Trafford",
+				"value": 81.75
+			}
+		},
+		"birmingham": {
+			"kind": "sexes",
+			"male": 77.1,
+			"female": 81.8
+		},
+		"coventry": {
+			"kind": "sexes",
+			"male": 77.4,
+			"female": 81.8
+		},
+		"wolverhampton": {
+			"kind": "sexes",
+			"male": 77.1,
+			"female": 81.2
+		},
+		"solihull": {
+			"kind": "sexes",
+			"male": 80.2,
+			"female": 84.3
+		},
+		"walsall": {
+			"kind": "sexes",
+			"male": 77.6,
+			"female": 81.8
+		},
+		"dudley": {
+			"kind": "sexes",
+			"male": 78.9,
+			"female": 83
+		},
+		"sandwell": {
+			"kind": "sexes",
+			"male": 76.7,
+			"female": 81.2
+		},
+		"stoke-on-trent": {
+			"kind": "sexes",
+			"male": 77.1,
+			"female": 80.7
+		},
+		"worcester": {
+			"kind": "sexes",
+			"male": 78.5,
+			"female": 83.2
+		},
+		"hereford": {
+			"kind": "sexes",
+			"male": 80.2,
+			"female": 83.6
+		},
+		"shrewsbury": {
+			"kind": "sexes",
+			"male": 80.4,
+			"female": 84
+		},
+		"leeds": {
+			"kind": "sexes",
+			"male": 78.8,
+			"female": 82.6
+		},
+		"bradford": {
+			"kind": "sexes",
+			"male": 77,
+			"female": 81.7
+		},
+		"york": {
+			"kind": "sexes",
+			"male": 79.7,
+			"female": 83.7
+		},
+		"hull": {
+			"kind": "sexes",
+			"male": 75.5,
+			"female": 80.4
+		},
+		"doncaster": {
+			"kind": "sexes",
+			"male": 76.9,
+			"female": 81.3
+		},
+		"wakefield": {
+			"kind": "sexes",
+			"male": 77.7,
+			"female": 81.4
+		},
+		"rotherham": {
+			"kind": "sexes",
+			"male": 78.2,
+			"female": 81.2
+		},
+		"halifax": {
+			"kind": "sexes",
+			"male": 78.2,
+			"female": 82.5
+		},
+		"huddersfield": {
+			"kind": "sexes",
+			"male": 78,
+			"female": 82
+		},
+		"merseyside": {
+			"kind": "range",
+			"low": {
+				"name": "Liverpool",
+				"value": 78.19999999999999
+			},
+			"high": {
+				"name": "Sefton",
+				"value": 80.35
+			}
+		},
+		"liverpool": {
+			"kind": "sexes",
+			"male": 76.1,
+			"female": 80.3
+		},
+		"warrington": {
+			"kind": "sexes",
+			"male": 78.7,
+			"female": 82.1
+		},
+		"chester": {
+			"kind": "sexes",
+			"male": 79.6,
+			"female": 83.7
+		},
+		"manchester": {
+			"kind": "sexes",
+			"male": 75.6,
+			"female": 80.1
+		},
+		"salford": {
+			"kind": "sexes",
+			"male": 76.7,
+			"female": 80.9
+		},
+		"bolton": {
+			"kind": "sexes",
+			"male": 76.9,
+			"female": 81.4
+		},
+		"stockport": {
+			"kind": "sexes",
+			"male": 79.5,
+			"female": 83.4
+		},
+		"oldham": {
+			"kind": "sexes",
+			"male": 77.3,
+			"female": 81.3
+		},
+		"rochdale": {
+			"kind": "sexes",
+			"male": 77.3,
+			"female": 81.3
+		},
+		"wigan": {
+			"kind": "sexes",
+			"male": 77.4,
+			"female": 81.3
+		},
+		"blackburn": {
+			"kind": "sexes",
+			"male": 76.5,
+			"female": 80.4
+		},
+		"blackpool": {
+			"kind": "sexes",
+			"male": 73.7,
+			"female": 79.1
+		},
+		"preston": {
+			"kind": "sexes",
+			"male": 76.9,
+			"female": 81.6
+		},
+		"lancaster": {
+			"kind": "sexes",
+			"male": 77.7,
+			"female": 81.8
+		},
+		"newcastle-upon-tyne": {
+			"kind": "sexes",
+			"male": 77.5,
+			"female": 81.9
+		},
+		"sunderland": {
+			"kind": "sexes",
+			"male": 77.1,
+			"female": 81.2
+		},
+		"durham": {
+			"kind": "sexes",
+			"male": 77.8,
+			"female": 81.3
+		},
+		"middlesbrough": {
+			"kind": "sexes",
+			"male": 75.5,
+			"female": 80.5
+		},
+		"south-shields": {
+			"kind": "sexes",
+			"male": 76.8,
+			"female": 81
+		},
+		"darlington": {
+			"kind": "sexes",
+			"male": 77.7,
+			"female": 81.5
+		},
+		"hartlepool": {
+			"kind": "sexes",
+			"male": 77.3,
+			"female": 80.3
+		},
+		"stockton-on-tees": {
+			"kind": "sexes",
+			"male": 78.7,
+			"female": 81.8
+		},
+		"bristol": {
+			"kind": "sexes",
+			"male": 78.5,
+			"female": 83
+		},
+		"plymouth": {
+			"kind": "sexes",
+			"male": 78.6,
+			"female": 82.6
+		},
+		"exeter": {
+			"kind": "sexes",
+			"male": 79.1,
+			"female": 83.1
+		},
+		"bath": {
+			"kind": "sexes",
+			"male": 81.4,
+			"female": 84.9
+		},
+		"cheltenham": {
+			"kind": "sexes",
+			"male": 80,
+			"female": 84
+		},
+		"gloucester": {
+			"kind": "sexes",
+			"male": 78.3,
+			"female": 82.1
+		},
+		"swindon": {
+			"kind": "sexes",
+			"male": 79.9,
+			"female": 83.7
+		},
+		"bournemouth": {
+			"kind": "sexes",
+			"male": 79.7,
+			"female": 83.9
+		},
+		"torquay": {
+			"kind": "sexes",
+			"male": 78.6,
+			"female": 83.2
+		},
+		"cornwall": {
+			"kind": "sexes",
+			"male": 79.5,
+			"female": 83.6
+		},
+		"brighton-and-hove": {
+			"kind": "sexes",
+			"male": 79.4,
+			"female": 83.6
+		},
+		"southampton": {
+			"kind": "sexes",
+			"male": 78,
+			"female": 82.6
+		},
+		"portsmouth": {
+			"kind": "sexes",
+			"male": 78.1,
+			"female": 82.6
+		},
+		"reading": {
+			"kind": "sexes",
+			"male": 79.4,
+			"female": 83.3
+		},
+		"oxford": {
+			"kind": "sexes",
+			"male": 80.7,
+			"female": 84.1
+		},
+		"cambridge": {
+			"kind": "sexes",
+			"male": 80.6,
+			"female": 84
+		},
+		"canterbury": {
+			"kind": "sexes",
+			"male": 79.9,
+			"female": 83.7
+		},
+		"maidstone": {
+			"kind": "sexes",
+			"male": 80.3,
+			"female": 83.9
+		},
+		"guildford": {
+			"kind": "sexes",
+			"male": 81.6,
+			"female": 85.4
+		},
+		"crawley": {
+			"kind": "sexes",
+			"male": 80.2,
+			"female": 84.1
+		},
+		"basingstoke": {
+			"kind": "sexes",
+			"male": 81.5,
+			"female": 84.3
+		},
+		"winchester": {
+			"kind": "sexes",
+			"male": 82.4,
+			"female": 86.3
+		},
+		"slough": {
+			"kind": "sexes",
+			"male": 77.9,
+			"female": 82.6
+		},
+		"milton-keynes": {
+			"kind": "sexes",
+			"male": 80.2,
+			"female": 83
+		},
+		"luton": {
+			"kind": "sexes",
+			"male": 78.6,
+			"female": 82.6
+		},
+		"ipswich": {
+			"kind": "sexes",
+			"male": 79.2,
+			"female": 83
+		},
+		"norwich": {
+			"kind": "sexes",
+			"male": 78.1,
+			"female": 82.6
+		},
+		"colchester": {
+			"kind": "sexes",
+			"male": 80.1,
+			"female": 83.9
+		},
+		"southend-on-sea": {
+			"kind": "sexes",
+			"male": 78.7,
+			"female": 82.9
+		},
+		"peterborough": {
+			"kind": "sexes",
+			"male": 78.1,
+			"female": 81.9
+		},
+		"nottingham": {
+			"kind": "sexes",
+			"male": 76.4,
+			"female": 80.8
+		},
+		"leicester": {
+			"kind": "sexes",
+			"male": 77,
+			"female": 81.3
+		},
+		"derby": {
+			"kind": "sexes",
+			"male": 78.3,
+			"female": 81.8
+		},
+		"northampton": {
+			"kind": "sexes",
+			"male": 79.6,
+			"female": 83.6
+		},
+		"lincoln": {
+			"kind": "sexes",
+			"male": 75.9,
+			"female": 81
+		},
+		"mansfield": {
+			"kind": "sexes",
+			"male": 77.4,
+			"female": 81.6
+		},
+		"chesterfield": {
+			"kind": "sexes",
+			"male": 77.6,
+			"female": 81.6
+		},
+		"edinburgh": {
+			"kind": "sexes",
+			"male": 78.3,
+			"female": 82.2
+		},
+		"aberdeen": {
+			"kind": "sexes",
+			"male": 77.3,
+			"female": 81.3
+		},
+		"dundee": {
+			"kind": "sexes",
+			"male": 75.3,
+			"female": 79.6
+		},
+		"inverness": {
+			"kind": "sexes",
+			"male": 77.7,
+			"female": 82
+		},
+		"stirling": {
+			"kind": "sexes",
+			"male": 78.5,
+			"female": 82.2
+		},
+		"paisley": {
+			"kind": "sexes",
+			"male": 76.5,
+			"female": 80.9
+		},
+		"cardiff": {
+			"kind": "sexes",
+			"male": 78.5,
+			"female": 82.2
+		},
+		"swansea": {
+			"kind": "sexes",
+			"male": 77.5,
+			"female": 82.2
+		},
+		"newport": {
+			"kind": "sexes",
+			"male": 77.9,
+			"female": 82.1
+		},
+		"wrexham": {
+			"kind": "sexes",
+			"male": 77.5,
+			"female": 82.1
+		},
+		"bangor": {
+			"kind": "sexes",
+			"male": 78.7,
+			"female": 82.7
+		},
+		"aberystwyth": {
+			"kind": "sexes",
+			"male": 79.7,
+			"female": 83.3
+		},
+		"belfast": {
+			"kind": "sexes",
+			"male": 76.5,
+			"female": 80.5
+		},
+		"londonderry": {
+			"kind": "sexes",
+			"male": 77.6,
+			"female": 81.2
+		},
+		"lisburn": {
+			"kind": "sexes",
+			"male": 80.5,
+			"female": 83.8
+		},
+		"newry": {
+			"kind": "sexes",
+			"male": 79.4,
+			"female": 83.2
+		},
+		"west-midlands": {
+			"kind": "range",
+			"low": {
+				"name": "Stoke-on-Trent",
+				"value": 78.9
+			},
+			"high": {
+				"name": "Stratford-on-Avon",
+				"value": 83.35
+			}
+		},
+		"devon": {
+			"kind": "range",
+			"low": {
+				"name": "Plymouth",
+				"value": 80.6
+			},
+			"high": {
+				"name": "South Hams",
+				"value": 83.55
+			}
+		},
+		"hampshire": {
+			"kind": "range",
+			"low": {
+				"name": "Southampton",
+				"value": 80.3
+			},
+			"high": {
+				"name": "Hart",
+				"value": 84.95
+			}
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Thanet",
+				"value": 79.6
+			},
+			"high": {
+				"name": "Sevenoaks",
+				"value": 83.75
+			}
+		},
+		"sussex": {
+			"kind": "range",
+			"low": {
+				"name": "Hastings",
+				"value": 79.1
+			},
+			"high": {
+				"name": "Horsham",
+				"value": 83.85
+			}
+		},
+		"essex": {
+			"kind": "range",
+			"low": {
+				"name": "Tendring",
+				"value": 80.15
+			},
+			"high": {
+				"name": "Uttlesford",
+				"value": 84.6
+			}
+		},
+		"oxfordshire": {
+			"kind": "range",
+			"low": {
+				"name": "Oxford",
+				"value": 82.4
+			},
+			"high": {
+				"name": "South Oxfordshire",
+				"value": 84.1
+			}
+		},
+		"gloucestershire": {
+			"kind": "range",
+			"low": {
+				"name": "Gloucester",
+				"value": 80.19999999999999
+			},
+			"high": {
+				"name": "Cotswold",
+				"value": 83.3
+			}
+		},
+		"lancashire": {
+			"kind": "range",
+			"low": {
+				"name": "Blackpool",
+				"value": 76.4
+			},
+			"high": {
+				"name": "Ribble Valley",
+				"value": 83.1
+			}
+		},
+		"cheshire": {
+			"kind": "range",
+			"low": {
+				"name": "Halton",
+				"value": 79.05
+			},
+			"high": {
+				"name": "Cheshire East",
+				"value": 82
+			}
+		},
+		"lincolnshire": {
+			"kind": "range",
+			"low": {
+				"name": "Lincoln",
+				"value": 78.45
+			},
+			"high": {
+				"name": "North Kesteven",
+				"value": 81.9
+			}
+		},
+		"norfolk": {
+			"kind": "range",
+			"low": {
+				"name": "Great Yarmouth",
+				"value": 79.55
+			},
+			"high": {
+				"name": "South Norfolk",
+				"value": 82.85
+			}
+		},
+		"staffordshire": {
+			"kind": "range",
+			"low": {
+				"name": "Stoke-on-Trent",
+				"value": 78.9
+			},
+			"high": {
+				"name": "Lichfield",
+				"value": 82.7
+			}
+		},
+		"derbyshire": {
+			"kind": "range",
+			"low": {
+				"name": "Bolsover",
+				"value": 79.25
+			},
+			"high": {
+				"name": "Derbyshire Dales",
+				"value": 83.05000000000001
+			}
+		},
+		"the-highlands": {
+			"kind": "range",
+			"low": {
+				"name": "Highland",
+				"value": 79.85
+			},
+			"high": {
+				"name": "Argyll and Bute",
+				"value": 80
+			}
+		},
+		"grampian": {
+			"kind": "range",
+			"low": {
+				"name": "Aberdeen City",
+				"value": 79.3
+			},
+			"high": {
+				"name": "Aberdeenshire",
+				"value": 81.2
+			}
+		},
+		"scottish-borders": {
+			"kind": "sexes",
+			"male": 79,
+			"female": 82.7
+		},
+		"the-hebrides": {
+			"kind": "range",
+			"low": {
+				"name": "Na h-Eileanan Siar",
+				"value": 78.8
+			},
+			"high": {
+				"name": "Highland",
+				"value": 79.85
+			}
+		},
+		"lowlands": {
+			"kind": "range",
+			"low": {
+				"name": "East Ayrshire",
+				"value": 77.30000000000001
+			},
+			"high": {
+				"name": "Dumfries and Galloway",
+				"value": 79.2
+			}
+		},
+		"north-east-scotland": {
+			"kind": "range",
+			"low": {
+				"name": "Aberdeen City",
+				"value": 79.3
+			},
+			"high": {
+				"name": "Aberdeenshire",
+				"value": 81.2
+			}
+		},
+		"scottish-islands": {
+			"kind": "range",
+			"low": {
+				"name": "Na h-Eileanan Siar",
+				"value": 78.8
+			},
+			"high": {
+				"name": "Shetland Islands",
+				"value": 81.7
+			}
+		},
+		"north-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Denbighshire",
+				"value": 79.45
+			},
+			"high": {
+				"name": "Gwynedd",
+				"value": 81.05
+			}
+		},
+		"mid-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Merthyr Tydfil",
+				"value": 77.35
+			},
+			"high": {
+				"name": "Powys",
+				"value": 81.94999999999999
+			}
+		},
+		"south-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Blaenau Gwent",
+				"value": 77.5
+			},
+			"high": {
+				"name": "Monmouthshire",
+				"value": 82.44999999999999
+			}
+		},
+		"west-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Swansea",
+				"value": 79.85
+			},
+			"high": {
+				"name": "Ceredigion",
+				"value": 81.5
+			}
+		},
+		"cardiff-and-the-valleys": {
+			"kind": "range",
+			"low": {
+				"name": "Blaenau Gwent",
+				"value": 77.5
+			},
+			"high": {
+				"name": "Monmouthshire",
+				"value": 82.44999999999999
+			}
+		},
+		"south-east-wales": {
+			"kind": "range",
+			"low": {
+				"name": "Caerphilly",
+				"value": 78.9
+			},
+			"high": {
+				"name": "Vale of Glamorgan",
+				"value": 82.1
+			}
+		},
+		"the-valleys": {
+			"kind": "range",
+			"low": {
+				"name": "Merthyr Tydfil",
+				"value": 77.35
+			},
+			"high": {
+				"name": "Monmouthshire",
+				"value": 82.44999999999999
+			}
+		},
+		"pembrokeshire-coast": {
+			"kind": "sexes",
+			"male": 78.8,
+			"female": 83.1
+		},
+		"belfast-metropolitan-area": {
+			"kind": "range",
+			"low": {
+				"name": "Belfast",
+				"value": 78.5
+			},
+			"high": {
+				"name": "Lisburn and Castlereagh",
+				"value": 82.15
+			}
+		},
+		"causeway-coast-and-antrim": {
+			"kind": "range",
+			"low": {
+				"name": "Mid and East Antrim",
+				"value": 80.94999999999999
+			},
+			"high": {
+				"name": "Causeway Coast and Glens",
+				"value": 81.15
+			}
+		},
+		"west-of-northern-ireland": {
+			"kind": "range",
+			"low": {
+				"name": "Derry City and Strabane",
+				"value": 79.4
+			},
+			"high": {
+				"name": "Fermanagh and Omagh",
+				"value": 81.8
+			}
+		},
+		"armagh-down-and-newry": {
+			"kind": "range",
+			"low": {
+				"name": "Armagh City, Banbridge and Craigavon",
+				"value": 81.1
+			},
+			"high": {
+				"name": "Newry, Mourne and Down",
+				"value": 81.30000000000001
+			}
+		}
+	},
+	"income": {
+		"england": {
+			"kind": "value",
+			"value": 33080
+		},
+		"greater-manchester": {
+			"kind": "range",
+			"low": {
+				"name": "Oldham",
+				"value": 29124
+			},
+			"high": {
+				"name": "Trafford",
+				"value": 35593
+			}
+		},
+		"london": {
+			"kind": "value",
+			"value": 39778
+		},
+		"birmingham": {
+			"kind": "value",
+			"value": 30180
+		},
+		"coventry": {
+			"kind": "value",
+			"value": 33063
+		},
+		"wolverhampton": {
+			"kind": "value",
+			"value": 31308
+		},
+		"solihull": {
+			"kind": "value",
+			"value": 36672
+		},
+		"walsall": {
+			"kind": "value",
+			"value": 29112
+		},
+		"dudley": {
+			"kind": "value",
+			"value": 30822
+		},
+		"sandwell": {
+			"kind": "value",
+			"value": 27652
+		},
+		"stoke-on-trent": {
+			"kind": "value",
+			"value": 29041
+		},
+		"worcester": {
+			"kind": "value",
+			"value": 32997
+		},
+		"hereford": {
+			"kind": "value",
+			"value": 29361
+		},
+		"shrewsbury": {
+			"kind": "value",
+			"value": 29603
+		},
+		"leeds": {
+			"kind": "value",
+			"value": 31679
+		},
+		"bradford": {
+			"kind": "value",
+			"value": 28424
+		},
+		"york": {
+			"kind": "value",
+			"value": 32961
+		},
+		"hull": {
+			"kind": "value",
+			"value": 27309
+		},
+		"doncaster": {
+			"kind": "value",
+			"value": 31119
+		},
+		"wakefield": {
+			"kind": "value",
+			"value": 29954
+		},
+		"rotherham": {
+			"kind": "value",
+			"value": 29664
+		},
+		"halifax": {
+			"kind": "value",
+			"value": 31708
+		},
+		"huddersfield": {
+			"kind": "value",
+			"value": 30238
+		},
+		"merseyside": {
+			"kind": "range",
+			"low": {
+				"name": "Sefton",
+				"value": 29335
+			},
+			"high": {
+				"name": "Wirral",
+				"value": 32959
+			}
+		},
+		"liverpool": {
+			"kind": "value",
+			"value": 30947
+		},
+		"warrington": {
+			"kind": "value",
+			"value": 34144
+		},
+		"chester": {
+			"kind": "value",
+			"value": 32391
+		},
+		"manchester": {
+			"kind": "value",
+			"value": 30067
+		},
+		"salford": {
+			"kind": "value",
+			"value": 30495
+		},
+		"bolton": {
+			"kind": "value",
+			"value": 29409
+		},
+		"stockport": {
+			"kind": "value",
+			"value": 33565
+		},
+		"oldham": {
+			"kind": "value",
+			"value": 29124
+		},
+		"rochdale": {
+			"kind": "value",
+			"value": 29535
+		},
+		"wigan": {
+			"kind": "value",
+			"value": 31615
+		},
+		"blackburn": {
+			"kind": "value",
+			"value": 27502
+		},
+		"blackpool": {
+			"kind": "value",
+			"value": 27979
+		},
+		"preston": {
+			"kind": "value",
+			"value": 30038
+		},
+		"lancaster": {
+			"kind": "value",
+			"value": 29651
+		},
+		"newcastle-upon-tyne": {
+			"kind": "value",
+			"value": 30144
+		},
+		"sunderland": {
+			"kind": "value",
+			"value": 27989
+		},
+		"durham": {
+			"kind": "value",
+			"value": 29718
+		},
+		"middlesbrough": {
+			"kind": "value",
+			"value": 30253
+		},
+		"south-shields": {
+			"kind": "value",
+			"value": 28784
+		},
+		"darlington": {
+			"kind": "value",
+			"value": 30100
+		},
+		"hartlepool": {
+			"kind": "value",
+			"value": 28830
+		},
+		"stockton-on-tees": {
+			"kind": "value",
+			"value": 29877
+		},
+		"bristol": {
+			"kind": "value",
+			"value": 34051
+		},
+		"plymouth": {
+			"kind": "value",
+			"value": 28992
+		},
+		"exeter": {
+			"kind": "value",
+			"value": 29531
+		},
+		"bath": {
+			"kind": "value",
+			"value": 32481
+		},
+		"cheltenham": {
+			"kind": "value",
+			"value": 36014
+		},
+		"gloucester": {
+			"kind": "value",
+			"value": 30455
+		},
+		"swindon": {
+			"kind": "value",
+			"value": 33135
+		},
+		"bournemouth": {
+			"kind": "value",
+			"value": 31848
+		},
+		"torquay": {
+			"kind": "value",
+			"value": 28963
+		},
+		"cornwall": {
+			"kind": "value",
+			"value": 28210
+		},
+		"brighton-and-hove": {
+			"kind": "value",
+			"value": 33506
+		},
+		"southampton": {
+			"kind": "value",
+			"value": 32907
+		},
+		"portsmouth": {
+			"kind": "value",
+			"value": 30962
+		},
+		"reading": {
+			"kind": "value",
+			"value": 35454
+		},
+		"oxford": {
+			"kind": "value",
+			"value": 36517
+		},
+		"cambridge": {
+			"kind": "value",
+			"value": 38711
+		},
+		"canterbury": {
+			"kind": "value",
+			"value": 30188
+		},
+		"maidstone": {
+			"kind": "value",
+			"value": 34151
+		},
+		"guildford": {
+			"kind": "value",
+			"value": 39985
+		},
+		"crawley": {
+			"kind": "value",
+			"value": 34225
+		},
+		"basingstoke": {
+			"kind": "value",
+			"value": 39279
+		},
+		"winchester": {
+			"kind": "value",
+			"value": 38352
+		},
+		"slough": {
+			"kind": "value",
+			"value": 35521
+		},
+		"milton-keynes": {
+			"kind": "value",
+			"value": 36061
+		},
+		"luton": {
+			"kind": "value",
+			"value": 28741
+		},
+		"ipswich": {
+			"kind": "value",
+			"value": 30928
+		},
+		"norwich": {
+			"kind": "value",
+			"value": 30421
+		},
+		"colchester": {
+			"kind": "value",
+			"value": 31589
+		},
+		"southend-on-sea": {
+			"kind": "value",
+			"value": 33594
+		},
+		"peterborough": {
+			"kind": "value",
+			"value": 29828
+		},
+		"nottingham": {
+			"kind": "value",
+			"value": 26512
+		},
+		"leicester": {
+			"kind": "value",
+			"value": 27858
+		},
+		"derby": {
+			"kind": "value",
+			"value": 30467
+		},
+		"northampton": {
+			"kind": "value",
+			"value": 33059
+		},
+		"lincoln": {
+			"kind": "value",
+			"value": 29824
+		},
+		"mansfield": {
+			"kind": "value",
+			"value": 28170
+		},
+		"chesterfield": {
+			"kind": "value",
+			"value": 30621
+		},
+		"north-west": {
+			"kind": "value",
+			"value": 31330
+		},
+		"north-east": {
+			"kind": "value",
+			"value": 29584
+		},
+		"west-midlands": {
+			"kind": "value",
+			"value": 31345
+		},
+		"south-west": {
+			"kind": "value",
+			"value": 31432
+		},
+		"south-east": {
+			"kind": "value",
+			"value": 35215
+		},
+		"east-of-england": {
+			"kind": "value",
+			"value": 34104
+		},
+		"east-midlands": {
+			"kind": "value",
+			"value": 30690
+		},
+		"devon": {
+			"kind": "range",
+			"low": {
+				"name": "West Devon",
+				"value": 26556
+			},
+			"high": {
+				"name": "East Devon",
+				"value": 32154
+			}
+		},
+		"hampshire": {
+			"kind": "range",
+			"low": {
+				"name": "Havant",
+				"value": 30819
+			},
+			"high": {
+				"name": "East Hampshire",
+				"value": 39682
+			}
+		},
+		"kent": {
+			"kind": "range",
+			"low": {
+				"name": "Thanet",
+				"value": 28323
+			},
+			"high": {
+				"name": "Dartford",
+				"value": 36210
+			}
+		},
+		"sussex": {
+			"kind": "range",
+			"low": {
+				"name": "Chichester",
+				"value": 28585
+			},
+			"high": {
+				"name": "Mid Sussex",
+				"value": 37705
+			}
+		},
+		"essex": {
+			"kind": "range",
+			"low": {
+				"name": "Tendring",
+				"value": 29545
+			},
+			"high": {
+				"name": "Uttlesford",
+				"value": 41006
+			}
+		},
+		"oxfordshire": {
+			"kind": "range",
+			"low": {
+				"name": "West Oxfordshire",
+				"value": 35388
+			},
+			"high": {
+				"name": "South Oxfordshire",
+				"value": 43026
+			}
+		},
+		"gloucestershire": {
+			"kind": "range",
+			"low": {
+				"name": "Gloucester",
+				"value": 30455
+			},
+			"high": {
+				"name": "Forest of Dean",
+				"value": 36589
+			}
+		},
+		"lancashire": {
+			"kind": "range",
+			"low": {
+				"name": "Pendle",
+				"value": 26742
+			},
+			"high": {
+				"name": "Fylde",
+				"value": 36020
+			}
+		},
+		"cheshire": {
+			"kind": "range",
+			"low": {
+				"name": "Halton UA",
+				"value": 29819
+			},
+			"high": {
+				"name": "Warrington UA",
+				"value": 34144
+			}
+		},
+		"yorkshire": {
+			"kind": "value",
+			"value": 30682
+		},
+		"lincolnshire": {
+			"kind": "range",
+			"low": {
+				"name": "East Lindsey",
+				"value": 26705
+			},
+			"high": {
+				"name": "West Lindsey",
+				"value": 30741
+			}
+		},
+		"norfolk": {
+			"kind": "range",
+			"low": {
+				"name": "North Norfolk",
+				"value": 28421
+			},
+			"high": {
+				"name": "South Norfolk",
+				"value": 32934
+			}
+		},
+		"staffordshire": {
+			"kind": "range",
+			"low": {
+				"name": "Stoke-on-Trent UA",
+				"value": 29041
+			},
+			"high": {
+				"name": "Stafford",
+				"value": 33872
+			}
+		},
+		"derbyshire": {
+			"kind": "range",
+			"low": {
+				"name": "Bolsover",
+				"value": 29674
+			},
+			"high": {
+				"name": "South Derbyshire",
+				"value": 35452
+			}
+		}
+	}
+}

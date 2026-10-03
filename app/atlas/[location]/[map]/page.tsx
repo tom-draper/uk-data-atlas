@@ -5,12 +5,12 @@ import AtlasClient from "@/components/AtlasClient";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import {
 	atlasMapCovers,
-	atlasPageDescription,
 	atlasPageHeading,
 	findAtlasLocation,
 	findAtlasMap,
 	pageTitle,
 } from "@/lib/atlas/pages";
+import { atlasMapSnippet } from "@/lib/atlas/snippets";
 import { atlasMapJsonLd, JsonLd } from "@/lib/atlas/structuredData";
 
 type Params = Promise<{ location: string; map: string }>;
@@ -35,7 +35,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const { location, map } = await resolvePage(params);
 	const title = pageTitle(atlasPageHeading(location, map));
-	const description = atlasPageDescription(location, map);
+	const description = atlasMapSnippet(location, map);
 	const path = `/atlas/${location.slug}/${map.slug}`;
 	return {
 		title,

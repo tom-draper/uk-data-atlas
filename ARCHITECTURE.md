@@ -62,6 +62,12 @@ than compiled datasets, written by scripts that read the API's build:
 | `area-lineage.json`                                                                                                | `pnpm lineage:build`                                        |
 | `boundary-mappings.json`, `parish-lad-mappings.json`, `lsoa-lad-mappings-*.json`, `constituency-lad-overlaps.json` | `pnpm containment:build`                                    |
 | `docs-catalogue.json`                                                                                              | `pnpm docs:catalogue`, the last step of the API's own build |
+| `map-figures.json`                                                                                                 | `pnpm figures:build`, from the compiled datasets            |
+
+`map-figures.json` is not the resolver's: it holds the headline figure each
+map page's search snippet leads with, compiled from the datasets because they
+are too large to load while a page renders. A data test fails while it is
+stale.
 
 Because the API's build is not committed, the lineage and containment files
 are recorded in `public/data/datasets/resolver-projections.json` with the API
@@ -106,7 +112,7 @@ there is no build step.
 
 | You changed                            | Run                                                                                                             |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| The atlas's datasets or their loaders  | `pnpm precompile`                                                                                               |
+| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm figures:build`                                                                    |
 | How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm lineage:build` and `pnpm containment:build`, then `pnpm precompile` |
 | Anything, before a release             | `pnpm check:full`                                                                                               |
 
