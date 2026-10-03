@@ -2,13 +2,10 @@ import {
 	type AtlasLocation,
 	type AtlasMap,
 	atlasPageHeading,
-	SITE_NAME,
 } from "@/lib/atlas/pages";
 import { atlasMapSnippet } from "@/lib/atlas/snippets";
 import type { DatasetCountry } from "@/lib/types/coverage";
-
-export const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 /** Schema.org data for search engines, rendered as JSON-LD. */
 export function JsonLd({ data }: { data: object }) {
@@ -179,5 +176,16 @@ export function rankingJsonLd(
 			WEBSITE,
 			dataset(map),
 		],
+	};
+}
+
+/** The site itself, so search results can show its name. */
+export function websiteJsonLd() {
+	return {
+		"@context": "https://schema.org",
+		...WEBSITE,
+		description: "Interactive maps and an API for official UK statistics.",
+		inLanguage: "en-GB",
+		publisher: { "@type": "Person", name: "Tom Draper" },
 	};
 }

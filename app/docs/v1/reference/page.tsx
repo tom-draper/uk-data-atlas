@@ -16,17 +16,17 @@ import {
 	operationHref,
 	resourceGroups,
 } from "@/lib/docs/openapi";
+import { docsPageMetadata } from "@/lib/docs/metadata";
 
 const TITLE = "API Reference - UK Data Atlas";
 const DESCRIPTION =
 	"Every endpoint in the UK Data Atlas API, grouped by what it's for: places, observations, maps, analysis, bulk downloads, boundaries and citation.";
 
-export const metadata: Metadata = {
-	title: { absolute: TITLE },
-	description: DESCRIPTION,
-	alternates: { canonical: "/docs/v1/reference" },
-	openGraph: { title: TITLE, description: DESCRIPTION },
-};
+export const metadata: Metadata = docsPageMetadata(
+	TITLE,
+	DESCRIPTION,
+	"/docs/v1/reference",
+);
 
 export default function ReferencePage() {
 	const contract = loadApiContract();

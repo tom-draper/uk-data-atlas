@@ -17,6 +17,7 @@ import {
 	operationHref,
 } from "@/lib/docs/openapi";
 import { titleCase } from "@/lib/docs/metadata";
+import { docsPageMetadata } from "@/lib/docs/metadata";
 
 type Params = Promise<{ section: string }>;
 
@@ -37,12 +38,7 @@ export async function generateMetadata({
 	if (!section) return {};
 	const content = sectionContent(section);
 	const title = `${titleCase(content.title)} - UK Data Atlas API Reference`;
-	return {
-		title: { absolute: title },
-		description: content.intro,
-		alternates: { canonical: sectionHref(section) },
-		openGraph: { title, description: content.intro },
-	};
+	return docsPageMetadata(title, content.intro, sectionHref(section));
 }
 
 export default async function SectionPage({ params }: { params: Params }) {

@@ -7,12 +7,14 @@ import { datasetSlug } from "@/lib/datasets";
 import { loadCatalogue, releasesForGeography } from "@/lib/docs/catalogue";
 import { GEOGRAPHIES } from "@/lib/docs/content/geographies";
 import { geographyHref } from "@/lib/docs/navigation";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-	title: "Datasets and boundaries - UK Data Atlas",
+export const metadata: Metadata = pageMetadata({
+	subject: "Datasets and boundaries",
 	description:
-		"Datasets and boundary releases used by the UK Data Atlas, with their sources, coverage and licences.",
-};
+		"Every dataset and boundary release used by the UK Data Atlas, with its publisher, years covered and licence, and each boundary's release history.",
+	path: "/datasets",
+});
 
 // Each row's id lets a map page's structured data name its dataset.
 const datasets = CATALOGUE_DATASET_DEFINITIONS.map((definition) => ({

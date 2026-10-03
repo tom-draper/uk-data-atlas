@@ -8,10 +8,10 @@ import {
 	atlasPageHeading,
 	findAtlasLocation,
 	findAtlasMap,
-	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSnippet } from "@/lib/atlas/snippets";
 import { atlasMapJsonLd, JsonLd } from "@/lib/atlas/structuredData";
+import { pageMetadata } from "@/lib/site";
 
 type Params = Promise<{ location: string; map: string }>;
 
@@ -35,6 +35,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const { location, map } = await resolvePage(params);
 	return pageMetadata({
+		// This segment has its own opengraph-image.
+		image: null,
 		subject: atlasPageHeading(location, map),
 		description: atlasMapSnippet(location, map),
 		path: `/atlas/${location.slug}/${map.slug}`,

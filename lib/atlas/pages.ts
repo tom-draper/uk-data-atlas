@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { PlaceKind } from "@/lib/data/gazetteer/places";
 import type { DatasetSource } from "@/lib/data/catalog/types";
@@ -18,46 +17,6 @@ import type { DatasetCountry } from "@/lib/types/coverage";
  * engines can list each one under its own title. The path names what and
  * where; `?period=` names when, and is left off for the newest period.
  */
-
-export const SITE_NAME = "UK Data Atlas";
-
-/**
- * Metadata for an atlas or browse page. A page's openGraph replaces the
- * layout's whole, so the site-wide fields are repeated here.
- */
-export function pageMetadata({
-	subject,
-	description,
-	path,
-	robots,
-}: {
-	subject: string;
-	description: string;
-	path: string;
-	robots?: Metadata["robots"];
-}): Metadata {
-	const title = pageTitle(subject);
-	return {
-		title,
-		description,
-		alternates: { canonical: path },
-		openGraph: {
-			title,
-			description,
-			url: path,
-			siteName: SITE_NAME,
-			locale: "en_GB",
-			type: "website",
-		},
-		twitter: { card: "summary_large_image", title, description },
-		...(robots ? { robots } : {}),
-	};
-}
-
-/** "Population Density in London - UK Data Atlas". */
-export function pageTitle(subject: string) {
-	return `${subject} - ${SITE_NAME}`;
-}
 
 const ALL_COUNTRIES: readonly DatasetCountry[] = [
 	"GB-ENG",
