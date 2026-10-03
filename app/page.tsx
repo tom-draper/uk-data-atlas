@@ -6,6 +6,8 @@ import {
 	findAtlasLocation,
 	findAtlasMap,
 } from "@/lib/atlas/pages";
+import { JsonLd, websiteJsonLd } from "@/lib/atlas/structuredData";
+import { SITE_NAME, siteMetadata } from "@/lib/site";
 
 /** Maps people search for, linked from the page search engines know best. */
 const POPULAR_MAPS = [
@@ -24,11 +26,12 @@ const POPULAR_MAPS = [
 	};
 });
 
-export const metadata: Metadata = {
-	title: "UK Data Atlas",
+export const metadata: Metadata = siteMetadata({
+	title: SITE_NAME,
 	description:
-		"A powerful mapping platform for visualizing data that shapes the United Kingdom.",
-};
+		"Interactive maps of the official data that shapes the United Kingdom: elections, population, house prices, crime, deprivation, health and more, for every council.",
+	path: "/",
+});
 
 export default function Home() {
 	return (
@@ -39,6 +42,7 @@ export default function Home() {
 				minHeight: "100vh",
 			}}
 		>
+			<JsonLd data={websiteJsonLd()} />
 			<div className="relative z-10">
 				<Navigation />
 				<div className="pt-[20vh] px-[16%]">

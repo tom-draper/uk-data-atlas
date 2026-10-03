@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-	title: "About - UK Data Atlas",
-	description: "About the UK Data Atlas project.",
-};
+// Kept out of search until the page has content.
+export const metadata: Metadata = pageMetadata({
+	subject: "About",
+	description:
+		"About the UK Data Atlas: interactive maps and an API for official UK statistics, from elections to house prices.",
+	path: "/about",
+	robots: { index: false, follow: true },
+});
 
 export default function AboutPage() {
 	return (

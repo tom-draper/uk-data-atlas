@@ -4,17 +4,14 @@ import { permanentRedirect } from "next/navigation";
 import AtlasClient from "@/components/AtlasClient";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
 import { legacyAtlasHref } from "@/lib/atlas/pages";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-	title: "Explore - UK Data Atlas",
+export const metadata: Metadata = pageMetadata({
+	subject: "Explore",
 	description:
-		"Explore interactive maps of UK elections, demographics, house prices, crime, income, ethnicity and more. Filter by region, ward or constituency.",
-	openGraph: {
-		title: "Explore - UK Data Atlas",
-		description:
-			"Interactive maps of UK elections, demographics, house prices, crime, income, ethnicity and more.",
-	},
-};
+		"Explore interactive maps of UK elections, demographics, house prices, crime, income, ethnicity and more. Filter by region, council, ward or constituency.",
+	path: "/atlas",
+});
 
 export default async function MapsPage({
 	searchParams,
