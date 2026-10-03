@@ -23,18 +23,18 @@ import {
 import { Eyebrow, Sheet } from "@/components/docs/Page";
 import { findOperationById, loadApiContract } from "@/lib/docs/openapi";
 import { operationExample } from "@/lib/docs/samples";
+import { docsPageMetadata } from "@/lib/docs/metadata";
 
 const TITLE =
 	"UK Data Atlas API - Official Statistics for Every Corner of the UK";
 const DESCRIPTION =
 	"A friendly API for official UK statistics: population, pay, house prices, deprivation, broadband, crime and more, for every ward, council and constituency, with boundaries to map them.";
 
-export const metadata: Metadata = {
-	title: { absolute: TITLE },
-	description: DESCRIPTION,
-	alternates: { canonical: "/docs/v1" },
-	openGraph: { title: TITLE, description: DESCRIPTION },
-};
+export const metadata: Metadata = docsPageMetadata(
+	TITLE,
+	DESCRIPTION,
+	"/docs/v1",
+);
 
 export default function IntroductionPage() {
 	const contract = loadApiContract();

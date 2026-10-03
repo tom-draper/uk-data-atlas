@@ -3,12 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ActiveViz } from "@/lib/types";
-import {
-	atlasHeading,
-	atlasHref,
-	atlasInitialState,
-	pageTitle,
-} from "@/lib/atlas/pages";
+import { atlasHeading, atlasHref, atlasInitialState } from "@/lib/atlas/pages";
+import { pageTitle } from "@/lib/site";
 
 export type AtlasUrlState = {
 	activeViz: ActiveViz;

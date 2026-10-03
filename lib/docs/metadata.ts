@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteMetadata } from "@/lib/site";
 
 const LOWERCASE_TITLE_WORDS = new Set([
 	"a",
@@ -42,11 +43,21 @@ export function docsMetadata(
 	description: string,
 	path: string,
 ): Metadata {
-	const fullTitle = `${titleCase(title)} - UK Data Atlas API`;
-	return {
-		title: { absolute: fullTitle },
+	return docsPageMetadata(
+		`${titleCase(title)} - UK Data Atlas API`,
 		description,
-		alternates: { canonical: path },
-		openGraph: { title: fullTitle, description },
-	};
+		path,
+	);
+}
+
+/** The API docs' share card, app/docs/opengraph-image.tsx. */
+const DOCS_IMAGE = "/docs/opengraph-image";
+
+/** A docs page's metadata, under its full title, with the docs' share card. */
+export function docsPageMetadata(
+	title: string,
+	description: string,
+	path: string,
+): Metadata {
+	return siteMetadata({ title, description, path, image: DOCS_IMAGE });
 }

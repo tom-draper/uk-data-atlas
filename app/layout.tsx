@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
-import { SITE_URL } from "@/lib/atlas/structuredData";
+import { SITE_URL } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -41,7 +41,6 @@ export const metadata: Metadata = {
 		title: "UK Data Atlas",
 		description:
 			"A powerful platform for visualizing data that shapes the UK. Explore interactive maps and insights.",
-		url: SITE_URL,
 		siteName: "UK Data Atlas",
 		locale: "en_GB",
 		type: "website",
@@ -64,7 +63,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" className={inter.variable}>
+		<html lang="en-GB" className={inter.variable}>
 			<body className="antialiased">{children}</body>
 		</html>
 	);

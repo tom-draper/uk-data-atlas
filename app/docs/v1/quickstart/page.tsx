@@ -9,17 +9,17 @@ import {
 	Steps,
 } from "@/components/docs/Content";
 import { SpecExample } from "@/components/docs/Example";
+import { docsPageMetadata } from "@/lib/docs/metadata";
 
 const TITLE = "Quickstart - UK Data Atlas API";
 const DESCRIPTION =
 	"Make your first requests to the UK Data Atlas API in five minutes: search for a place, get a population figure, and fetch a time series.";
 
-export const metadata: Metadata = {
-	title: { absolute: TITLE },
-	description: DESCRIPTION,
-	alternates: { canonical: "/docs/v1/quickstart" },
-	openGraph: { title: TITLE, description: DESCRIPTION },
-};
+export const metadata: Metadata = docsPageMetadata(
+	TITLE,
+	DESCRIPTION,
+	"/docs/v1/quickstart",
+);
 
 export default function QuickstartPage() {
 	return (

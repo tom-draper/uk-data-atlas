@@ -29,6 +29,7 @@ import {
 	operationHref,
 } from "@/lib/docs/openapi";
 import { operationExample } from "@/lib/docs/samples";
+import { docsPageMetadata } from "@/lib/docs/metadata";
 
 type Params = Promise<{ section: string; operation: string }>;
 
@@ -52,12 +53,7 @@ export async function generateMetadata({
 	const content = endpointContent(op);
 	const title = `${titleCase(content.title)} - UK Data Atlas API Reference`;
 	const description = content.intro.replace(/[`*]|\[|\]\([^)]*\)/g, "");
-	return {
-		title: { absolute: title },
-		description,
-		alternates: { canonical: operationHref(op) },
-		openGraph: { title, description },
-	};
+	return docsPageMetadata(title, description, operationHref(op));
 }
 
 export default async function OperationPage({ params }: { params: Params }) {

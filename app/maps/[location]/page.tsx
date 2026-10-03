@@ -9,11 +9,11 @@ import {
 	atlasMapsFor,
 	atlasMapTitle,
 	findAtlasLocation,
-	pageMetadata,
 } from "@/lib/atlas/pages";
 import { atlasMapSections } from "@/lib/atlas/mapSections";
 import { hasRankingFor } from "@/lib/atlas/rankingPages";
 import { JsonLd, locationMapsJsonLd } from "@/lib/atlas/structuredData";
+import { pageMetadata } from "@/lib/site";
 
 type Params = Promise<{ location: string }>;
 
@@ -40,6 +40,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const location = await resolveLocation(params);
 	return pageMetadata({
+		// This segment has its own opengraph-image.
+		image: null,
 		subject: `Maps of ${placeName(location)}`,
 		description: `Interactive maps of ${placeName(location)}: election results, population, house prices, crime, deprivation, health and more, from official sources.`,
 		path: `/maps/${location.slug}`,

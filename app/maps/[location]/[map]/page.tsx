@@ -8,7 +8,6 @@ import {
 	findAtlasLocation,
 	findAtlasMap,
 	locationLabel,
-	pageMetadata,
 } from "@/lib/atlas/pages";
 import { hasRankingFor, loadRanking } from "@/lib/atlas/rankingPages";
 import {
@@ -20,6 +19,7 @@ import {
 import { atlasMapFigure } from "@/lib/atlas/snippets";
 import { JsonLd, rankingJsonLd } from "@/lib/atlas/structuredData";
 import { gazetteer } from "@/lib/data/gazetteer/static";
+import { pageMetadata } from "@/lib/site";
 
 type Params = Promise<{ location: string; map: string }>;
 
@@ -57,6 +57,8 @@ export async function generateMetadata({
 	const figure = atlasMapFigure(location, map);
 	const lead = `All ${areas.length} ${plural} in ${locationLabel(location)} ranked by ${rankedValueLabel(map).toLowerCase()}, from ${areas[0].name} to ${areas.at(-1)!.name}.`;
 	return pageMetadata({
+		// This segment has its own opengraph-image.
+		image: null,
 		subject,
 		description: figure ? `${figure} ${lead}` : lead,
 		path: `/maps/${location.slug}/${map.slug}`,
