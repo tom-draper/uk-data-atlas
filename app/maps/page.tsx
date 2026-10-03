@@ -8,10 +8,11 @@ import {
 	type AtlasLocation,
 	type AtlasMap,
 	atlasLocationsFor,
+	pageTitle,
 } from "@/lib/helpers/atlasPages";
 import { atlasMapSections } from "@/lib/helpers/atlasMapSections";
 
-const title = "Maps of the UK - UK Data Atlas";
+const title = pageTitle("Maps of the UK");
 const description =
 	"Interactive maps of elections, population, house prices, crime, deprivation, health and more for every UK nation, region and city.";
 
