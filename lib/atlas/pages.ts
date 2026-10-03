@@ -104,7 +104,7 @@ export const MAP_NAMES: Readonly<Record<string, string>> = {
 	"life-expectancy": "Life Expectancy",
 	"healthy-life-expectancy": "Healthy Life Expectancy",
 	"local-election": "Local Election Results",
-	"local-government-finance": "Council Spending",
+	"local-government-finance": "Council Education Spending",
 	"mobile-coverage": "Mobile Coverage",
 	"net-additional-dwellings": "New Homes",
 	"nhs-waiting": "NHS Waiting Times",

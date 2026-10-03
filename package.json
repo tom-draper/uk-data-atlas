@@ -19,7 +19,7 @@
 		"boundaries:compile": "npx tsx scripts/compile-boundaries.mts",
 		"lineage:build": "npx tsx --max-old-space-size=6144 scripts/build-area-lineage.mts",
 		"containment:build": "npx tsx --max-old-space-size=6144 scripts/build-area-containment.mts",
-		"figures:build": "npx tsx scripts/build-map-figures.mts",
+		"seo:build": "npx tsx scripts/build-seo-data.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
 		"build": "pnpm precompile:verify && next build --turbopack",
 		"hooks:install": "git config core.hooksPath .githooks",

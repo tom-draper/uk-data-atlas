@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/atlas/pages";
+import { RANKING_PAGES } from "@/lib/atlas/rankingPages";
 import { SITE_URL } from "@/lib/atlas/structuredData";
 
 /** Every page of the API docs. */
@@ -34,6 +35,11 @@ function mapEntries(): MetadataRoute.Sitemap {
 				priority: 0.6,
 			})),
 		]),
+		...RANKING_PAGES.map(({ location, map }) => ({
+			url: `${SITE_URL}/maps/${location}/${map}`,
+			changeFrequency: "monthly" as const,
+			priority: 0.6,
+		})),
 	];
 }
 
