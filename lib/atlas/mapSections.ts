@@ -1,5 +1,5 @@
 import { CHART_GROUPS } from "@/lib/datasets/chartGroups";
-import type { AtlasMap } from "@/lib/helpers/atlasPages";
+import type { AtlasMap } from "@/lib/atlas/pages";
 
 const ELECTION_GROUPS = new Set([
 	"General Election",

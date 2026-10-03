@@ -10,7 +10,7 @@ import type { CustomDataset } from "@/lib/types/custom";
 import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
 import { type AtlasPage, useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
 import { AtlasHeadingProvider } from "@/lib/context/AtlasHeadingContext";
-import { atlasHeading } from "@/lib/helpers/atlasPages";
+import { atlasHeading } from "@/lib/atlas/pages";
 
 function ErrorBanner({
 	errors,

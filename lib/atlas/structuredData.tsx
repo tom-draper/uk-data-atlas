@@ -4,7 +4,7 @@ import {
 	atlasPageDescription,
 	atlasPageHeading,
 	SITE_NAME,
-} from "@/lib/helpers/atlasPages";
+} from "@/lib/atlas/pages";
 import type { DatasetCountry } from "@/lib/types/coverage";
 
 export const SITE_URL =
