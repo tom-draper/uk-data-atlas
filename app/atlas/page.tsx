@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { permanentRedirect } from "next/navigation";
 import AtlasClient from "@/components/AtlasClient";
 import LoadingDisplay from "@/components/displays/LoadingDisplay";
-import { legacyAtlasHref } from "@/lib/helpers/atlasPages";
+import { legacyAtlasHref } from "@/lib/atlas/pages";
 
 export const metadata: Metadata = {
 	title: "Explore - UK Data Atlas",

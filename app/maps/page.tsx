@@ -9,8 +9,8 @@ import {
 	type AtlasMap,
 	atlasLocationsFor,
 	pageTitle,
-} from "@/lib/helpers/atlasPages";
-import { atlasMapSections } from "@/lib/helpers/atlasMapSections";
+} from "@/lib/atlas/pages";
+import { atlasMapSections } from "@/lib/atlas/mapSections";
 
 const title = pageTitle("Maps of the UK");
 const description =

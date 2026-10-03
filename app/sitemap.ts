@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
-import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/helpers/atlasPages";
-import { SITE_URL } from "@/lib/helpers/structuredData";
+import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/atlas/pages";
+import { SITE_URL } from "@/lib/atlas/structuredData";
 
 /** Every page of the API docs. */
 function docsEntries(): MetadataRoute.Sitemap {

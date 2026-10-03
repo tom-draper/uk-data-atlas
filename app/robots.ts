@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/helpers/structuredData";
+import { SITE_URL } from "@/lib/atlas/structuredData";
 
 export default function robots(): MetadataRoute.Robots {
 	return {
