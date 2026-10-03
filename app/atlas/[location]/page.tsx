@@ -4,7 +4,7 @@ import {
 	atlasHref,
 	DEFAULT_ACTIVE_VIZ,
 	findAtlasLocation,
-} from "@/lib/helpers/atlasPages";
+} from "@/lib/atlas/pages";
 
 export const dynamicParams = false;
 

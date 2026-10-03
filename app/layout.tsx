@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
-import { SITE_URL } from "@/lib/helpers/structuredData";
+import { SITE_URL } from "@/lib/atlas/structuredData";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 

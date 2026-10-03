@@ -3,8 +3,8 @@ import {
 	ATLAS_LOCATIONS,
 	atlasMapsFor,
 	findAtlasLocation,
-} from "@/lib/helpers/atlasPages";
-import { atlasMapJsonLd } from "@/lib/helpers/structuredData";
+} from "@/lib/atlas/pages";
+import { atlasMapJsonLd } from "@/lib/atlas/structuredData";
 
 type Node = { "@type": string; [key: string]: unknown };
 

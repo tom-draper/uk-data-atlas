@@ -10,9 +10,9 @@ import {
 	atlasMapTitle,
 	findAtlasLocation,
 	pageTitle,
-} from "@/lib/helpers/atlasPages";
-import { atlasMapSections } from "@/lib/helpers/atlasMapSections";
-import { JsonLd, locationMapsJsonLd } from "@/lib/helpers/structuredData";
+} from "@/lib/atlas/pages";
+import { atlasMapSections } from "@/lib/atlas/mapSections";
+import { JsonLd, locationMapsJsonLd } from "@/lib/atlas/structuredData";
 
 type Params = Promise<{ location: string }>;
 
