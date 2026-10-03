@@ -8,7 +8,9 @@ import { useDatasets } from "@/lib/hooks/useDatasets";
 import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
 import type { CustomDataset } from "@/lib/types/custom";
 import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
-import { useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
+import { type AtlasPage, useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
+import { AtlasHeadingProvider } from "@/lib/context/AtlasHeadingContext";
+import { atlasHeading } from "@/lib/helpers/atlasPages";
 
 function ErrorBanner({
 	errors,
@@ -43,9 +45,9 @@ function ErrorBanner({
 	);
 }
 
-export default function AtlasClient() {
+export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
 	const { activeViz, selectedLocation, setActiveViz, setSelectedLocation } =
-		useAtlasUrlState();
+		useAtlasUrlState(page);
 	const [customDatasets, setCustomDatasets] = useState<CustomDataset[]>([]);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
@@ -89,27 +91,31 @@ export default function AtlasClient() {
 
 	return (
 		<ErrorBoundary>
-			{!errorsDismissed && (
-				<ErrorBanner
-					errors={allErrors}
-					onDismiss={() => setErrorsDismissed(true)}
+			<AtlasHeadingProvider
+				value={atlasHeading(selectedLocation, activeViz)}
+			>
+				{!errorsDismissed && (
+					<ErrorBanner
+						errors={allErrors}
+						onDismiss={() => setErrorsDismissed(true)}
+					/>
+				)}
+				<MapInterface
+					datasets={datasets}
+					datasetsLoading={datasetsLoading}
+					selectedLocation={selectedLocation}
+					setSelectedLocation={setSelectedLocation}
+					activeViz={activeViz}
+					setActiveViz={setActiveViz}
+					customDatasets={customDatasets}
+					addCustomDataset={(dataset) =>
+						setCustomDatasets((prev) => [...prev, dataset])
+					}
+					roadSafetyDatasets={roadSafetyDatasets}
+					networkDatasets={networkDatasets}
+					onError={handleBoundaryError}
 				/>
-			)}
-			<MapInterface
-				datasets={datasets}
-				datasetsLoading={datasetsLoading}
-				selectedLocation={selectedLocation}
-				setSelectedLocation={setSelectedLocation}
-				activeViz={activeViz}
-				setActiveViz={setActiveViz}
-				customDatasets={customDatasets}
-				addCustomDataset={(dataset) =>
-					setCustomDatasets((prev) => [...prev, dataset])
-				}
-				roadSafetyDatasets={roadSafetyDatasets}
-				networkDatasets={networkDatasets}
-				onError={handleBoundaryError}
-			/>
+			</AtlasHeadingProvider>
 		</ErrorBoundary>
 	);
 }

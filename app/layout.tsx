@@ -16,7 +16,8 @@ export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
 	title: {
 		default: "UK Data Atlas",
-		template: "UK Data Atlas",
+		// Pages write their own full titles.
+		template: "%s",
 	},
 	description:
 		"A powerful platform for visualizing data that shapes the UK. Explore interactive maps, demographics, and public sector insights across the United Kingdom.",

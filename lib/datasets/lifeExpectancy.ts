@@ -31,6 +31,7 @@ const hle: ChartDefinition<LifeExpectancyDataset> = {
 	defaultVisible: false,
 	componentPath: "@/components/health/LifeExpectancyChart",
 	datasetId: "hle",
+	view: "healthy-life-expectancy",
 	keyBy: "id",
 	calculateStats,
 	year: 2024,

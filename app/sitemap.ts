@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
+import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/helpers/atlasPages";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ukdataatlas.com";
 
@@ -12,6 +13,29 @@ function docsEntries(): MetadataRoute.Sitemap {
 		// Endpoint pages are many and narrow; the written pages lead.
 		priority: link.method ? 0.5 : 0.7,
 	}));
+}
+
+/** The browse pages, and each map's page where its data reaches. */
+function mapEntries(): MetadataRoute.Sitemap {
+	return [
+		{
+			url: `${SITE_URL}/maps`,
+			changeFrequency: "monthly" as const,
+			priority: 0.8,
+		},
+		...ATLAS_LOCATIONS.flatMap((location) => [
+			{
+				url: `${SITE_URL}/maps/${location.slug}`,
+				changeFrequency: "monthly" as const,
+				priority: 0.7,
+			},
+			...atlasMapsFor(location).map((map) => ({
+				url: `${SITE_URL}/atlas/${location.slug}/${map.slug}`,
+				changeFrequency: "monthly" as const,
+				priority: 0.6,
+			})),
+		]),
+	];
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -40,6 +64,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			changeFrequency: "monthly",
 			priority: 0.6,
 		},
+		...mapEntries(),
 		...docsEntries(),
 	];
 }
