@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { gazetteer } from "@/lib/data/gazetteer/static";
 import type { DatasetSource } from "@/lib/data/catalog/types";
 import { CHART_DATASET_DEFINITIONS, datasetSlug } from "@/lib/datasets";
@@ -18,6 +19,39 @@ import type { DatasetCountry } from "@/lib/types/coverage";
  */
 
 export const SITE_NAME = "UK Data Atlas";
+
+/**
+ * Metadata for an atlas or browse page. A page's openGraph replaces the
+ * layout's whole, so the site-wide fields are repeated here.
+ */
+export function pageMetadata({
+	subject,
+	description,
+	path,
+	robots,
+}: {
+	subject: string;
+	description: string;
+	path: string;
+	robots?: Metadata["robots"];
+}): Metadata {
+	const title = pageTitle(subject);
+	return {
+		title,
+		description,
+		alternates: { canonical: path },
+		openGraph: {
+			title,
+			description,
+			url: path,
+			siteName: SITE_NAME,
+			locale: "en_GB",
+			type: "website",
+		},
+		twitter: { card: "summary_large_image", title, description },
+		...(robots ? { robots } : {}),
+	};
+}
 
 /** "Population Density in London - UK Data Atlas". */
 export function pageTitle(subject: string) {
@@ -303,6 +337,12 @@ export function atlasHeading(locationName: string, viz: ActiveViz) {
 	if (!location) return locationName;
 	if (!reference || !map) return location.name;
 	return atlasPageHeading(location, map, reference.period);
+}
+
+/** The browse page for a place's maps, when it has one. */
+export function atlasMapsHref(locationName: string) {
+	const location = atlasLocationNamed(locationName);
+	return location ? `/maps/${location.slug}` : null;
 }
 
 export const DEFAULT_ACTIVE_VIZ: ActiveViz = {

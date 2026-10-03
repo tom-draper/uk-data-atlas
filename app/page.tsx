@@ -1,6 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navigation from "../components/Navigation";
+import {
+	atlasPageHeading,
+	findAtlasLocation,
+	findAtlasMap,
+} from "@/lib/atlas/pages";
+
+/** Maps people search for, linked from the page search engines know best. */
+const POPULAR_MAPS = [
+	["united-kingdom", "general-election"],
+	["london", "house-price"],
+	["london", "population-density"],
+	["manchester", "crime"],
+	["england", "imd"],
+	["united-kingdom", "life-expectancy"],
+].map(([locationSlug, mapSlug]) => {
+	const location = findAtlasLocation(locationSlug)!;
+	const map = findAtlasMap(mapSlug)!;
+	return {
+		href: `/atlas/${location.slug}/${map.slug}`,
+		label: atlasPageHeading(location, map),
+	};
+});
 
 export const metadata: Metadata = {
 	title: "UK Data Atlas",
@@ -50,6 +72,35 @@ export default function Home() {
 							Or try the demo
 						</a> */}
 						</div>
+
+						<nav
+							aria-label="Popular maps"
+							className="mt-10 max-w-[720px] text-[14px] text-slate-600"
+						>
+							<p className="font-medium text-slate-800">
+								Popular maps
+							</p>
+							<ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">
+								{POPULAR_MAPS.map((map) => (
+									<li key={map.href}>
+										<Link
+											href={map.href}
+											className="underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+										>
+											{map.label}
+										</Link>
+									</li>
+								))}
+								<li>
+									<Link
+										href="/maps"
+										className="font-medium text-slate-800 underline decoration-slate-400 underline-offset-[3px] hover:decoration-slate-700"
+									>
+										Browse all maps
+									</Link>
+								</li>
+							</ul>
+						</nav>
 					</div>
 				</div>
 			</div>

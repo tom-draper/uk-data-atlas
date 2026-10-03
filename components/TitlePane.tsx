@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import { useAtlasHeading } from "@/lib/context/AtlasHeadingContext";
@@ -54,12 +55,22 @@ export default function TitlePane() {
 				</div>
 			</div>
 			{heading && (
-				<h1
-					className={`relative px-3 py-1.5 text-xs font-medium truncate ${t.text}`}
+				<div
+					className="relative flex items-baseline gap-3 px-3 py-1.5 text-xs"
 					style={{ zIndex: 1 }}
 				>
-					{heading}
-				</h1>
+					<h1 className={`min-w-0 truncate font-medium ${t.text}`}>
+						{heading.text}
+					</h1>
+					{heading.mapsHref && (
+						<Link
+							href={heading.mapsHref}
+							className={`ml-auto shrink-0 hover:underline ${t.textMuted}`}
+						>
+							All maps
+						</Link>
+					)}
+				</div>
 			)}
 		</div>
 	);
