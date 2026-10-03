@@ -2,12 +2,14 @@
 import Image from "next/image";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
+import { useAtlasHeading } from "@/lib/context/AtlasHeadingContext";
 import GlassOverlays from "./GlassOverlays";
 import packageJson from "../package.json";
 
 export default function TitlePane() {
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
+	const heading = useAtlasHeading();
 
 	return (
 		<div
@@ -36,7 +38,7 @@ export default function TitlePane() {
 						}}
 					/>
 				</a>
-				<h1
+				<div
 					className={`flex items-center text-[15px] font-semibold tracking-tight ${t.heading}`}
 				>
 					UK Data Atlas
@@ -49,8 +51,16 @@ export default function TitlePane() {
 					>
 						v{packageJson.version}
 					</span>
-				</h1>
+				</div>
 			</div>
+			{heading && (
+				<h1
+					className={`relative px-3 py-1.5 text-xs font-medium truncate ${t.text}`}
+					style={{ zIndex: 1 }}
+				>
+					{heading}
+				</h1>
+			)}
 		</div>
 	);
 }

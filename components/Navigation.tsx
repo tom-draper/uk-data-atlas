@@ -13,6 +13,9 @@ export default function Navigation() {
 						<Link href="/atlas" className={linkClass}>
 							Atlas
 						</Link>
+						<Link href="/maps" className={linkClass}>
+							Maps
+						</Link>
 						<Link href="/datasets" className={linkClass}>
 							Datasets
 						</Link>
