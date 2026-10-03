@@ -3,11 +3,13 @@ import packageJson from "../package.json";
 import Link from "next/link";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme } from "@/lib/helpers/panelTheme";
+import { usePlaceMapsHref } from "@/lib/context/AtlasPlaceContext";
 
 export default function PanelFooter() {
 	const version = packageJson.version;
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
+	const mapsHref = usePlaceMapsHref();
 
 	return (
 		<div
@@ -19,6 +21,14 @@ export default function PanelFooter() {
 			>
 				UK Data Atlas v{version}
 			</a>
+			{mapsHref && (
+				<Link
+					className="hover:underline cursor-pointer mr-3"
+					href={mapsHref}
+				>
+					All maps
+				</Link>
+			)}
 			<Link className="hover:underline cursor-pointer" href="/datasets">
 				View Sources
 			</Link>

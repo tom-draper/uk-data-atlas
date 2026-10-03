@@ -1,16 +1,13 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
-import { useAtlasHeading } from "@/lib/context/AtlasHeadingContext";
 import GlassOverlays from "./GlassOverlays";
 import packageJson from "../package.json";
 
 export default function TitlePane() {
 	const isDark = useIsDark();
 	const t = panelTheme(isDark);
-	const heading = useAtlasHeading();
 
 	return (
 		<div
@@ -39,7 +36,7 @@ export default function TitlePane() {
 						}}
 					/>
 				</a>
-				<div
+				<h1
 					className={`flex items-center text-[15px] font-semibold tracking-tight ${t.heading}`}
 				>
 					UK Data Atlas
@@ -52,26 +49,8 @@ export default function TitlePane() {
 					>
 						v{packageJson.version}
 					</span>
-				</div>
+				</h1>
 			</div>
-			{heading && (
-				<div
-					className="relative flex items-baseline gap-3 px-3 py-1.5 text-xs"
-					style={{ zIndex: 1 }}
-				>
-					<h1 className={`min-w-0 truncate font-medium ${t.text}`}>
-						{heading.text}
-					</h1>
-					{heading.mapsHref && (
-						<Link
-							href={heading.mapsHref}
-							className={`ml-auto shrink-0 hover:underline ${t.textMuted}`}
-						>
-							All maps
-						</Link>
-					)}
-				</div>
-			)}
 		</div>
 	);
 }

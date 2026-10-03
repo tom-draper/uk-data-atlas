@@ -9,8 +9,8 @@ import { useRoadSafetyData } from "@/lib/hooks/useRoadSafetyData";
 import type { CustomDataset } from "@/lib/types/custom";
 import { NETWORK_DATASETS } from "@/lib/data/networks/catalog";
 import { type AtlasPage, useAtlasUrlState } from "@/lib/hooks/useAtlasUrlState";
-import { AtlasHeadingProvider } from "@/lib/context/AtlasHeadingContext";
-import { atlasHeading, atlasMapsHref } from "@/lib/atlas/pages";
+import { PlaceMapsHrefProvider } from "@/lib/context/AtlasPlaceContext";
+import { atlasMapsHref } from "@/lib/atlas/pages";
 
 function ErrorBanner({
 	errors,
@@ -91,12 +91,7 @@ export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
 
 	return (
 		<ErrorBoundary>
-			<AtlasHeadingProvider
-				value={{
-					text: atlasHeading(selectedLocation, activeViz),
-					mapsHref: atlasMapsHref(selectedLocation),
-				}}
-			>
+			<PlaceMapsHrefProvider value={atlasMapsHref(selectedLocation)}>
 				{!errorsDismissed && (
 					<ErrorBanner
 						errors={allErrors}
@@ -118,7 +113,7 @@ export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
 					networkDatasets={networkDatasets}
 					onError={handleBoundaryError}
 				/>
-			</AtlasHeadingProvider>
+			</PlaceMapsHrefProvider>
 		</ErrorBoundary>
 	);
 }
