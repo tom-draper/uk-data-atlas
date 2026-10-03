@@ -8,7 +8,7 @@ import {
 	atlasHref,
 	atlasInitialState,
 	pageTitle,
-} from "@/lib/helpers/atlasPages";
+} from "@/lib/atlas/pages";
 
 export type AtlasUrlState = {
 	activeViz: ActiveViz;

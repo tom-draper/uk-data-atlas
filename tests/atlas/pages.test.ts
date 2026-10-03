@@ -14,7 +14,7 @@ import {
 	findAtlasMap,
 	legacyAtlasHref,
 	MAP_NAMES,
-} from "@/lib/helpers/atlasPages";
+} from "@/lib/atlas/pages";
 
 const location = (slug: string) => findAtlasLocation(slug)!;
 const map = (slug: string) => findAtlasMap(slug)!;
