@@ -39,8 +39,7 @@ const inCountry = (location: AtlasLocation, country: DatasetCountry) =>
 const placesIn = (country: DatasetCountry) =>
 	ATLAS_LOCATIONS.filter(
 		(location) =>
-			location.kind !== "country" &&
-			inCountry(location, country),
+			location.kind !== "country" && inCountry(location, country),
 	).sort((a, b) => a.name.localeCompare(b.name));
 
 const WIDEST_FIRST = [
