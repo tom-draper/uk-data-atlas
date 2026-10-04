@@ -68,7 +68,7 @@ export default function DatasetsPage() {
 				})),
 			]}
 			eyebrow="Datasets"
-			title="UK datasets in the Atlas"
+			title="UK Data Atlas Datasets"
 			lede={
 				<>
 					The official statistics behind the UK Data Atlas, from
