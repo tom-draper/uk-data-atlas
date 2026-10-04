@@ -166,12 +166,10 @@ only **available** when its endpoint, contract and provenance are published.
       than as succession.
 - [ ] Add official ward historical change lookups. Do not promote name-based
       matching to a public equivalence claim, nor a shared code on its own.
-- [ ] Extend `population-overlap` weighting to Northern Ireland. Scotland's
-      57 2024 constituencies now use 2011 data zones with the 2017 small-area
-      population estimates published in SIMD 2020v2
-      (`data/deprivation/simd/SIMD+2020v2+-+indicators.csv`). Northern
-      Ireland's 18 constituencies still convert by area only until a
-      small-area population source is imported.
+- [x] Extend `population-overlap` weighting to Northern Ireland. Its 2021
+      Data Zones use Census 2021 usual-resident population from NISRA CT0102
+      (`data/demographics/population/census-2021-ni-data-zone/`), alongside
+      Scotland's 2011 data zones and SIMD 2020v2 small-area estimates.
 - [x] Publish the official Welsh local authority → local health board
       (December 2023) and English sub-ICB location → NHS England region
       (April 2026) membership lookups. NHS England region codes changed in
