@@ -104,7 +104,7 @@ function MenuList({
 					{legendShown ? "Hide Legend" : "Show Legend"}
 				</button>
 				<div className={`mx-2 my-1 border-t ${t.border}`} />
-				<Link href="/sources" className={item}>
+				<Link href="/datasets" className={item}>
 					Sources
 				</Link>
 				<a

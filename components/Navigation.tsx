@@ -19,6 +19,9 @@ export default function Navigation() {
 						<Link href="/datasets" className={linkClass}>
 							Datasets
 						</Link>
+						<Link href="/boundaries" className={linkClass}>
+							Boundaries
+						</Link>
 						<Link href="/docs/v1" className={linkClass}>
 							Documentation
 						</Link>
