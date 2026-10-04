@@ -2167,6 +2167,102 @@
 			"minimumCoverage": 0.99
 		},
 		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-population-overlap-northern-ireland",
+			"method": "population-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents",
+				"date": "2021-03-21",
+				"blocks": {
+					"geography": "dataZone",
+					"boundaryRelease": "2021-ni"
+				}
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2024-05-uk-bgc"
+			},
+			"pairs": "constituency-2024-07-uk-bgc-to-local-authority-2024-05-uk-bgc-area-overlap",
+			"sourceCodePattern": "^N05",
+			"population": {
+				"input": "demographics/population/census-2021-ni-data-zone/census2021-ct0102-data-zone.csv",
+				"codeColumn": "Data Zone code",
+				"valueColumn": "Usual resident population"
+			},
+			"minimumCoverage": 0.99
+		},
+		{
+			"id": "constituency-2022-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-population-overlap-northern-ireland",
+			"method": "population-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents",
+				"date": "2021-03-21",
+				"blocks": {
+					"geography": "dataZone",
+					"boundaryRelease": "2021-ni"
+				}
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2022-12-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"pairs": "constituency-2022-12-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-area-overlap",
+			"sourceCodePattern": "^N06",
+			"population": {
+				"input": "demographics/population/census-2021-ni-data-zone/census2021-ct0102-data-zone.csv",
+				"codeColumn": "Data Zone code",
+				"valueColumn": "Usual resident population"
+			},
+			"minimumCoverage": 0.99
+		},
+		{
+			"id": "constituency-2024-07-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-population-overlap-northern-ireland",
+			"method": "population-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "population",
+				"normalisation": "per-source",
+				"population": "Census 2021 usual residents",
+				"date": "2021-03-21",
+				"blocks": {
+					"geography": "dataZone",
+					"boundaryRelease": "2021-ni"
+				}
+			},
+			"from": {
+				"geography": "constituency",
+				"boundaryRelease": "2024-07-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2025-05-uk-bgc-v2"
+			},
+			"pairs": "constituency-2024-07-uk-bgc-to-local-authority-2025-05-uk-bgc-v2-area-overlap",
+			"sourceCodePattern": "^N05",
+			"population": {
+				"input": "demographics/population/census-2021-ni-data-zone/census2021-ct0102-data-zone.csv",
+				"codeColumn": "Data Zone code",
+				"valueColumn": "Usual resident population"
+			},
+			"minimumCoverage": 0.99
+		},
+		{
 			"id": "senedd-constituency-2022-12-w-bgc-to-itl1-2021-01-uk-bgc-geometric-containment",
 			"method": "geometric-containment",
 			"quality": "derived",
