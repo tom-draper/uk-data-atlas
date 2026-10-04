@@ -3,7 +3,7 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 
-/** Published predecessor/successor links and explicitly qualified same-code continuity. */
+/** Published lineage links and explicitly qualified same-code continuity. */
 export const handleAreaHistoryRoutes = ({
 	context,
 	releaseId,
@@ -51,7 +51,7 @@ export const handleAreaHistoryRoutes = ({
 			relationships: history.relationships,
 			lineage: history.lineage,
 			sameCodeReleases: history.sameCodeReleases,
-			note: "Lineage follows only published predecessor/successor edges and never infers a connection from a reused code. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.",
+			note: "Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity; same-code continuity only reports that the identifier appears in another release.",
 		}),
 	};
 };

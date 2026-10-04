@@ -2,6 +2,7 @@ import type { AreaRecord } from "../areaInventory";
 import type { CrosswalkLookup } from "./translation";
 import {
 	createAreaRelationshipIndex,
+	isLineageRelation,
 	type AreaRelation,
 	type AreaRelationship,
 	type AreaRelationshipIndex,
@@ -139,13 +140,11 @@ export class LineageResolver {
 		return {
 			area,
 			relationships: (this.index?.get(origin) ?? []).filter(
-				({ relation }) =>
-					relation === "successor" || relation === "predecessor",
+				({ relation }) => isLineageRelation(relation),
 			),
 			lineage: this.traverse(
 				identity,
-				(relation) =>
-					relation === "successor" || relation === "predecessor",
+				isLineageRelation,
 				maximumDepth,
 			),
 			sameCodeReleases: this.sameCode(identity),

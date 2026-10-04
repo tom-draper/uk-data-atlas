@@ -7,7 +7,14 @@ import type {
 import { areaKey } from "./geographyKeys";
 
 export type AreaRelation =
-	"within" | "contains" | "successor" | "predecessor" | "overlaps";
+	| "within"
+	| "contains"
+	| "successor"
+	| "predecessor"
+	| "split-from"
+	| "merged-from"
+	| "equivalent-to"
+	| "overlaps";
 
 export type AreaOverlap = {
 	areaM2: number;
@@ -44,6 +51,7 @@ const relationFor = (
 	{ method, relationshipPurpose }: CrosswalkArtifact,
 	target: CrosswalkArtifact["records"][number]["targets"][number],
 	direction: "from" | "to",
+	cardinality: { sourceTargetCount: number; targetSourceCount: number },
 ): AreaRelation => {
 	// A best fit claims containment only for a child it measured within its
 	// parent; one that straddles lies mostly there, which is an overlap.
@@ -64,8 +72,33 @@ const relationFor = (
 	}
 	if (method === "area-overlap" || method === "population-overlap")
 		return "overlaps";
-	return direction === "from" ? "successor" : "predecessor";
+	// Extent continuity is the only published evidence that two successive
+	// identities have the same extent, so it earns a stronger relation than a
+	// same code or a one-to-one official correspondence.
+	if (method === "extent-continuity") return "equivalent-to";
+	if (direction === "from") return "successor";
+	if (
+		cardinality.sourceTargetCount > 1 &&
+		cardinality.targetSourceCount === 1
+	)
+		return "split-from";
+	if (
+		cardinality.targetSourceCount > 1 &&
+		cardinality.sourceTargetCount === 1
+	)
+		return "merged-from";
+	return "predecessor";
 };
+
+/** Edges that describe an area across boundary releases rather than membership. */
+export const isLineageRelation = (relation: AreaRelation): boolean =>
+	[
+		"successor",
+		"predecessor",
+		"split-from",
+		"merged-from",
+		"equivalent-to",
+	].includes(relation);
 
 const overlapFor = (
 	crosswalk: CrosswalkArtifact,
@@ -102,6 +135,27 @@ export const createAreaRelationshipIndex = (
 ): AreaRelationshipIndex => {
 	const index: AreaRelationshipIndex = new Map();
 	for (const crosswalk of crosswalks) {
+		const sourceTargetCounts = new Map<string, number>();
+		const targetSourceCounts = new Map<string, number>();
+		for (const record of crosswalk.records) {
+			const sourceId = areaId(
+				crosswalk.from.geography,
+				crosswalk.from.boundaryRelease,
+				record.source.code,
+			);
+			sourceTargetCounts.set(sourceId, record.targets.length);
+			for (const target of record.targets) {
+				const targetId = areaId(
+					crosswalk.to.geography,
+					crosswalk.to.boundaryRelease,
+					target.code,
+				);
+				targetSourceCounts.set(
+					targetId,
+					(targetSourceCounts.get(targetId) ?? 0) + 1,
+				);
+			}
+		}
 		const crosswalkMetadata = {
 			id: crosswalk.id,
 			method: crosswalk.method,
@@ -120,8 +174,12 @@ export const createAreaRelationshipIndex = (
 					crosswalk.to.boundaryRelease,
 					target.code,
 				);
+				const cardinality = {
+					sourceTargetCount: sourceTargetCounts.get(sourceId) ?? 0,
+					targetSourceCount: targetSourceCounts.get(targetId) ?? 0,
+				};
 				addRelationship(index, sourceId, {
-					relation: relationFor(crosswalk, target, "from"),
+					relation: relationFor(crosswalk, target, "from", cardinality),
 					counterpart: {
 						id: targetId,
 						geography: crosswalk.to.geography,
@@ -133,7 +191,7 @@ export const createAreaRelationshipIndex = (
 					...overlapFor(crosswalk, target, "from"),
 				});
 				addRelationship(index, targetId, {
-					relation: relationFor(crosswalk, target, "to"),
+					relation: relationFor(crosswalk, target, "to", cardinality),
 					counterpart: {
 						id: sourceId,
 						geography: crosswalk.from.geography,
