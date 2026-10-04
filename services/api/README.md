@@ -142,8 +142,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Publish LSOA 2021 → MSOA 2021 from the ONS exact-fit lookup, as
       `clean-containment` checked against both releases' geometry: 35,672
       LSOAs, 33,755 in England and 1,917 in Wales.
-- [ ] Publish constituency → ward where a carefully qualified mapping exists.
-      ONS publishes ward → constituency only as a best fit.
+- [x] Publish constituency → ward membership through the qualified ONS
+      ward → constituency lookup. The source is best-fit, so the response
+      retains that method and does not present the relationship as containment
+      or an apportionment weight.
 - [x] Cross-check published clean-containment lookups against geometry by
       testing every child's vertices against its declared parent. This is a
       build-time validation gate, not a way to derive a relationship; missing
@@ -164,8 +166,9 @@ only **available** when its endpoint, contract and provenance are published.
       2011 LSOAs have more than one successor. An official lookup declared as
       membership, such as LAD → region, is related as within/contains rather
       than as succession.
-- [ ] Add official ward historical change lookups. Do not promote name-based
-      matching to a public equivalence claim, nor a shared code on its own.
+- [x] Add the official December 2024 → May 2025 ward historical change
+      lookup. Do not promote name-based matching to a public equivalence
+      claim, nor a shared code on its own.
 - [ ] Extend `population-overlap` weighting to Northern Ireland. Scotland's
       57 2024 constituencies now use 2011 data zones with the 2017 small-area
       population estimates published in SIMD 2020v2
