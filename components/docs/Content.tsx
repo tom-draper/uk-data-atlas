@@ -150,6 +150,25 @@ export function H2({ id, children }: { id: string; children: ReactNode }) {
 	);
 }
 
+export function H3({ id, children }: { id: string; children: ReactNode }) {
+	return (
+		<h3
+			id={id}
+			className="group mt-12 mb-3 scroll-mt-8 text-[18px] font-semibold tracking-tight text-slate-900"
+		>
+			<a href={`#${id}`} className="no-underline">
+				{children}
+				<span
+					aria-hidden
+					className="ml-2 text-slate-300 opacity-0 transition-opacity group-hover:opacity-100"
+				>
+					#
+				</span>
+			</a>
+		</h3>
+	);
+}
+
 /** A paragraph; a string may use `code`, **bold** and [links](/docs/...). */
 export function P({ children }: { children: ReactNode }) {
 	return (
