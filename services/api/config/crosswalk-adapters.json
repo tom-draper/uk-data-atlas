@@ -474,6 +474,69 @@
 			}
 		},
 		{
+			"id": "local-planning-authority-2019-04-uk-bgc-to-local-authority-2019-04-uk-bgc-area-overlap",
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"from": {
+				"geography": "localPlanningAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"sliverWidthM": 100,
+			"minimumCoverage": 0.99,
+			"minimumTargetCoverage": 0
+		},
+		{
+			"id": "major-town-and-city-2015-12-ew-bgc-to-local-authority-2019-04-uk-bgc-area-overlap",
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"from": {
+				"geography": "majorTownAndCity",
+				"boundaryRelease": "2015-12-ew-bgc"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"sliverWidthM": 100,
+			"minimumCoverage": 0.99,
+			"minimumTargetCoverage": 0
+		},
+		{
+			"id": "travel-to-work-area-2011-12-uk-gcb-to-local-authority-2019-04-uk-bgc-area-overlap",
+			"method": "area-overlap",
+			"quality": "derived",
+			"weighting": {
+				"status": "provided",
+				"basis": "area",
+				"normalisation": "per-source"
+			},
+			"from": {
+				"geography": "travelToWorkArea",
+				"boundaryRelease": "2011-12-uk-gcb"
+			},
+			"to": {
+				"geography": "localAuthority",
+				"boundaryRelease": "2019-04-uk-bgc"
+			},
+			"sliverWidthM": 100,
+			"minimumCoverage": 0.99,
+			"minimumTargetCoverage": 0
+		},
+		{
 			"id": "super-output-area-2011-ni-to-local-authority-2018-12-uk-bgc-official-lookup",
 			"input": "lookups/super-output-area-to-local-authority/2018-ni/SA11_LSOA11_LAD18_NI_LU_classificationv2_942e0f54c76a4998becb14986dc0b0ca.geojson",
 			"method": "official-lookup",
