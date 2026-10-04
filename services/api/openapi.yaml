@@ -5057,7 +5057,10 @@ paths:
         Returns only relationships from published crosswalks. A
         clean-containment mapping is represented as within from child to parent
         and contains in reverse. An official historical lookup is represented
-        as successor from source to target and predecessor in reverse. An
+        as successor from source to target and predecessor in reverse; a
+        one-to-many lookup is split-from on each new area and a many-to-one
+        lookup is merged-from on the new area. An extent-continuity crosswalk
+        is equivalent-to in both directions. An
         area-overlap mapping is represented as overlaps in both directions,
         with the shared area and its share of each side.
       parameters:
@@ -5407,7 +5410,7 @@ paths:
         when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
         x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/history"
       description: >
-        Returns a bounded traversal of published predecessor and successor
+        Returns a bounded traversal of published historical
         relationships plus every other release of the same geography that
         contains the same code.
         Each lineage entry names the area the walk stood on as `from` and the
@@ -5468,7 +5471,7 @@ paths:
                       code: E08000025
                       name: Birmingham
                       status: same-code-continuity
-                  note: Lineage follows only published predecessor/successor edges and never infers a connection from a reused code. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.
+                  note: Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity; same-code continuity only reports that the identifier appears in another release.
                 meta:
                   nextCursor: null
         "404":
@@ -6335,7 +6338,7 @@ paths:
           schema:
             {
               type: string,
-              enum: [within, contains, successor, predecessor, overlaps],
+              enum: [within, contains, successor, predecessor, split-from, merged-from, equivalent-to, overlaps],
             }
         - name: limit
           in: query
@@ -9956,7 +9959,7 @@ components:
       required: [relation, counterpart, crosswalk]
       properties:
         relation:
-          enum: [within, contains, successor, predecessor, overlaps]
+          enum: [within, contains, successor, predecessor, split-from, merged-from, equivalent-to, overlaps]
         overlap:
           description: >
             Present only for `overlaps` relationships. Each share is seen from

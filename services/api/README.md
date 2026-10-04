@@ -152,13 +152,11 @@ only **available** when its endpoint, contract and provenance are published.
       reverse a directional crosswalk themselves. Results state `forward` or
       `reverse`, preserve the original crosswalk provenance, and normalise
       reverse area-overlap weights against the queried target.
-- [ ] Publish a directional relationship graph: within, contains, overlaps,
+- [x] Publish a directional relationship graph: within, contains, overlaps,
       predecessor, successor, split-from, merged-from and equivalent-to, each with
-      method, quality and provenance. `within`, `contains`, `overlaps`,
-      `predecessor` and `successor` are served through
-      `/areas/{geography}/{release}/{code}/relationships` and `/history`;
-      `split-from`, `merged-from` and `equivalent-to` are not yet
-      distinguished.
+      method, quality and provenance. `split-from` and `merged-from` are
+      identified from an official lookup's one-to-many or many-to-one
+      cardinality; `equivalent-to` is reserved for extent continuity.
 - [x] Add official LAD historical change lookups, December 2022 → May 2023 and
       December 2024 → May 2025, and the 2011 → 2021 LSOA changes, where 865
       2011 LSOAs have more than one successor. An official lookup declared as
