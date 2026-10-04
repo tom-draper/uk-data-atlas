@@ -221,6 +221,52 @@ body {
 	scrollbar-color: rgba(0, 0, 0, 0.4) rgba(255, 255, 255, 0.1);
 }
 
+.docs-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+}
+
+.docs-sky {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	overflow: hidden;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			140% 110% at 50% 40%,
+			rgba(255, 255, 255, 0) 55%,
+			rgba(120, 128, 140, 0.1) 100%
+		),
+		linear-gradient(165deg, #f8f8f6 0%, #f3f3f1 55%, #eeeff0 100%);
+}
+
+.docs-weave {
+	position: absolute;
+	inset: 0;
+	opacity: 0.35;
+	mix-blend-mode: multiply;
+	background-image:
+		repeating-linear-gradient(
+			0deg,
+			rgba(90, 95, 105, 0.035) 0 1px,
+			transparent 1px 3px
+		),
+		repeating-linear-gradient(
+			90deg,
+			rgba(90, 95, 105, 0.03) 0 1px,
+			transparent 1px 3px
+		);
+}
+
+.docs-grain {
+	position: absolute;
+	inset: 0;
+	opacity: 0.05;
+	mix-blend-mode: multiply;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 @keyframes chart-placeholder-pulse {
 	0%,
 	100% {

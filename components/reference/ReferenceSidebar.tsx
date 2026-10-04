@@ -74,7 +74,7 @@ export default function ReferenceSidebar({
 
 			<div
 				ref={list}
-				className="-mr-2 min-h-0 flex-1 overflow-y-auto pr-2 pb-8"
+				className="docs-scroll -mr-2 min-h-0 flex-1 overflow-y-auto pr-2 pb-8"
 			>
 				{visible.map((group) => (
 					<div key={group.title} className="mt-6 first:mt-3">

@@ -232,11 +232,6 @@
 	color: #fcd9a0;
 }
 
-.docs-scroll {
-	scrollbar-width: thin;
-	scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
-}
-
 .docs-description > summary::-webkit-details-marker {
 	display: none;
 }

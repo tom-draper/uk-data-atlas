@@ -42,7 +42,7 @@ export default function BoundariesPage() {
 				})),
 			]}
 			eyebrow="Boundaries"
-			title="UK boundaries in the Atlas"
+			title="UK Data Atlas Boundaries"
 			lede="The kinds of area UK statistics are published for, from the four nations down to neighbourhoods of a few hundred people. Each one below explains what the areas are, who uses them, and which datasets in the Atlas are published on them."
 		>
 			<H2 id="about-boundaries">About boundaries</H2>
