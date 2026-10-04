@@ -64,6 +64,7 @@ import {
 	selectDefinitions,
 } from "./precompile-selection";
 import { precompileFingerprint } from "./precompile-fingerprint.mjs";
+import { elapsedSince } from "./timing.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -676,15 +677,12 @@ const writeAtomically = async (path: string, contents: string) => {
 	await rename(temporaryPath, path);
 };
 
-const elapsed = (startedAt: number) =>
-	`${((performance.now() - startedAt) / 1_000).toFixed(2)}s`;
-
 const timeStage = async <T,>(label: string, work: () => Promise<T>) => {
 	const startedAt = performance.now();
 	try {
 		return await work();
 	} finally {
-		console.log(`  timing: ${label} ${elapsed(startedAt)}`);
+		console.log(`  ${label}: complete (${elapsedSince(startedAt)})`);
 	}
 };
 
@@ -1111,6 +1109,7 @@ async function verifyDescribedFiles(
  * last wrote them rather than rebuilt, which is what makes this quick.
  */
 async function compileSelected(names: readonly string[]) {
+	const startedAt = performance.now();
 	const selected = selectDefinitions(CATALOGUE_DATASET_DEFINITIONS, names);
 	console.log(
 		`Pre-compiling ${selected.map((definition) => definition.type).join(", ")}...`,
@@ -1139,23 +1138,25 @@ async function compileSelected(names: readonly string[]) {
 		(definition) => definition.payload?.regionChunks?.kind === "regional",
 	);
 	if (needsRegionChunks)
-		await writeDatasetRegionChunks({
-			root: ROOT,
-			datasets: compiledDatasets,
-			core: JSON.parse(
-				await readFile(join(OUT_DIR, "gazetteer.core.json"), "utf8"),
-			),
-			boundaryMappings: {
-				wardToLad: parseBoundaryWardToLad(
-					JSON.parse(
-						await readFile(
-							join(OUT_DIR, "boundary-mappings.json"),
-							"utf8",
+		await timeStage("regional chunks", async () =>
+			writeDatasetRegionChunks({
+				root: ROOT,
+				datasets: compiledDatasets,
+				core: JSON.parse(
+					await readFile(join(OUT_DIR, "gazetteer.core.json"), "utf8"),
+				),
+				boundaryMappings: {
+					wardToLad: parseBoundaryWardToLad(
+						JSON.parse(
+							await readFile(
+								join(OUT_DIR, "boundary-mappings.json"),
+								"utf8",
+							),
 						),
 					),
-				),
-			},
-		});
+				},
+			}),
+		);
 
 	await out("dataset-manifest", {
 		...manifest,
@@ -1169,19 +1170,17 @@ async function compileSelected(names: readonly string[]) {
 	// everything is current. Only some datasets were rebuilt here, so keep the
 	// manifest's old timestamp and leave that judgement as a full run left it.
 	await utimes(manifestPath, manifestTimes.atime, manifestTimes.mtime);
-	console.log("Done.");
+	console.log(`Precompile complete (${elapsedSince(startedAt)}).`);
 }
 
 async function main() {
 	const only = parseOnlyArgument(process.argv.slice(2));
 	if (only) return compileSelected(only);
 
-	console.log("Pre-compiling datasets...");
 	const startedAt = performance.now();
+	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
-	const boundariesStartedAt = performance.now();
 	await compileBoundaryAssets();
-	console.log(`  timing: boundary assets ${elapsed(boundariesStartedAt)}`);
 
 	// Every folder in data/ carrying a meta.json is a dataset. Reading them all
 	// first means a malformed drop fails the build immediately, with the folder
@@ -1262,6 +1261,7 @@ async function main() {
 		cachedAtlasAssets?.inputs.every(
 			(snapshot) => typeof snapshot.sha256 === "string",
 		) ?? false;
+	const boundaryInputsStartedAt = performance.now();
 	const canReuseAtlasAssets =
 		canReuse &&
 		cachedAtlasAssets &&
@@ -1324,7 +1324,10 @@ async function main() {
 						),
 				),
 			);
-	if (canReuseAtlasAssets) console.log("  atlas assets: cached");
+	if (canReuseAtlasAssets)
+		console.log(
+			`  atlas assets: cached (${elapsedSince(boundaryInputsStartedAt)})`,
+		);
 	const recordedBoundaryInputs = canReuseAtlasAssets
 		? boundaryInputs.map((snapshot, index) => ({
 				...snapshot,
@@ -1405,6 +1408,7 @@ async function main() {
 		cachedRegionChunks?.outputs.every(
 			(snapshot) => typeof snapshot.sha256 === "string",
 		) ?? false;
+	const regionChunkCheckStartedAt = performance.now();
 	const canReuseRegionChunks =
 		canReuse &&
 		cachedRegionChunks &&
@@ -1421,7 +1425,9 @@ async function main() {
 		));
 	let recordedChunkOutputs: FileSnapshot[];
 	if (canReuseRegionChunks) {
-		console.log("  regional chunks: cached");
+		console.log(
+			`  regional chunks: cached (${elapsedSince(regionChunkCheckStartedAt)})`,
+		);
 		recordedChunkOutputs = chunkOutputs.map((snapshot, index) => ({
 			...snapshot,
 			sha256: cachedRegionChunks.outputs[index]!.sha256,
@@ -1463,7 +1469,7 @@ async function main() {
 			.map((result) => (result as PromiseFulfilledResult<unknown>).value),
 	});
 
-	console.log(`Done in ${elapsed(startedAt)}.`);
+	console.log(`Precompile complete (${elapsedSince(startedAt)}).`);
 }
 
 async function compileDataset(
@@ -1495,7 +1501,7 @@ async function compileDataset(
 			});
 		}
 		console.log(
-			`  dataset: ${definition.precompiledFile}.json (cached; ${Math.round(cached.bytes / 1024)} KB; ${elapsed(startedAt)})`,
+			`  dataset: ${definition.precompiledFile}.json (cached; ${Math.round(cached.bytes / 1024)} KB; ${elapsedSince(startedAt)})`,
 		);
 		return reused;
 	}
@@ -1557,13 +1563,13 @@ async function compileDataset(
 	const summary = validatePrecompiledDataset(definition, data);
 	if (preserved) {
 		console.log(
-			`  dataset: ${definition.precompiledFile}.json (preserved; raw source unavailable; ${elapsed(startedAt)})`,
+			`  dataset: ${definition.precompiledFile}.json (preserved; raw source unavailable; ${elapsedSince(startedAt)})`,
 		);
 		return preserved;
 	}
 	const output = await out(definition.precompiledFile, data, false);
 	console.log(
-		`  dataset: ${definition.precompiledFile}.json (${Math.round(output.bytes / 1024)} KB; ${elapsed(startedAt)})`,
+		`  dataset: ${definition.precompiledFile}.json (${Math.round(output.bytes / 1024)} KB; ${elapsedSince(startedAt)})`,
 	);
 	return {
 		type: definition.type,
