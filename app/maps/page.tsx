@@ -35,20 +35,12 @@ const linkClass =
 const inCountry = (location: AtlasLocation, country: DatasetCountry) =>
 	location.countries.length === 1 && location.countries[0] === country;
 
-/** The atlas's curated places within a nation, other than the nation. */
+/** Every place within a nation, other than the nation itself. */
 const placesIn = (country: DatasetCountry) =>
 	ATLAS_LOCATIONS.filter(
 		(location) =>
-			location.kind !== "local-authority" &&
 			location.kind !== "country" &&
 			inCountry(location, country),
-	);
-
-/** Every place that is one local authority, curated or not, by name. */
-const councilsIn = (country: DatasetCountry) =>
-	ATLAS_LOCATIONS.filter(
-		(location) =>
-			location.members.length === 1 && inCountry(location, country),
 	).sort((a, b) => a.name.localeCompare(b.name));
 
 const WIDEST_FIRST = [
@@ -87,47 +79,18 @@ export default function MapsIndexPage() {
 						<h2 className="text-[24px] font-semibold tracking-tight text-slate-900">
 							Places
 						</h2>
-						<div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-							{NATIONS.map((nation) => (
-								<Card key={nation.name} className="p-5">
-									<h3 className="text-[16px] font-semibold text-slate-900">
-										<Link
-											href={`/maps/${nation.slug}`}
-											className={linkClass}
-										>
-											{nation.name}
-										</Link>
-									</h3>
-									<ul className="mt-3 space-y-1 text-[14px] text-slate-600">
-										{placesIn(nation.country).map(
-											(location) => (
-												<li key={location.slug}>
-													<Link
-														href={`/maps/${location.slug}`}
-														className={linkClass}
-													>
-														{location.name}
-													</Link>
-												</li>
-											),
-										)}
-									</ul>
-								</Card>
-							))}
-						</div>
-					</section>
-
-					<section className="mt-12">
-						<h2 className="text-[24px] font-semibold tracking-tight text-slate-900">
-							Local authorities
-						</h2>
 						{NATIONS.map((nation) => (
 							<div key={nation.name} className="mt-6">
 								<h3 className="text-[16px] font-semibold text-slate-900">
-									{nation.name}
+									<Link
+										href={`/maps/${nation.slug}`}
+										className={linkClass}
+									>
+										{nation.name}
+									</Link>
 								</h3>
 								<ul className="mt-3 columns-2 gap-6 text-[14px] text-slate-600 sm:columns-3 lg:columns-4 xl:columns-5">
-									{councilsIn(nation.country).map(
+									{placesIn(nation.country).map(
 										(location) => (
 											<li
 												key={location.slug}
