@@ -344,3 +344,39 @@ export const withCeremonialCounties = (
 		left.label.localeCompare(right.label),
 	);
 };
+
+
+export const HISTORIC_COUNTY_SOURCE = {
+	publisher: "Ordnance Survey" as const,
+	dataset: "Boundary-Line historic counties",
+	edition: "circa 1888",
+	method: "Each local authority of every compiled release is assigned to the historic county holding most of its area, sampled on a grid.",
+};
+
+/** Add c.1888 historic counties without replacing contemporary definitions. */
+export const withHistoricCounties = (
+	locations: NamedLocation[],
+	memberships: CountyMembership[],
+	counties: CountyShape[],
+): NamedLocation[] => {
+	const shapes = new Map(counties.map((county) => [county.name, county]));
+	return [
+		...locations,
+		...memberships.map((membership) => {
+			const label = LABELS[membership.county] ?? membership.county;
+			const bounds = shapes.get(membership.county)!.bounds;
+			return {
+				id: idFor(`${label} historic county`),
+				label: `${label} (historic county)`,
+				kind: "historic-county" as const,
+				source: { ...HISTORIC_COUNTY_SOURCE, name: membership.county },
+				definitionRevision: 1,
+				memberGeography: "localAuthority",
+				memberAssertions: membership.members,
+				memberCodes: membership.members.map(({ code }) => code),
+				validity: { from: null, to: null },
+				bbox: [bounds[0], bounds[1], bounds[2], bounds[3]],
+			};
+		}),
+	].sort((left, right) => left.label.localeCompare(right.label));
+};
