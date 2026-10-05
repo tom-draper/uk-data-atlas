@@ -8,7 +8,12 @@ import {
 	geographyNoun,
 	namedKindName,
 } from "@/lib/places/labels";
-import { PLACE_INDEX, PLACE_REGIONS, placeRegions } from "@/lib/places/load";
+import {
+	loadAreaProfiles,
+	PLACE_INDEX,
+	PLACE_REGIONS,
+	placeRegions,
+} from "@/lib/places/load";
 import type { PlaceIndexEntry } from "@/lib/places/profile";
 import { pageMetadata } from "@/lib/site";
 
@@ -64,6 +69,28 @@ function Count({ count }: { count: number }) {
 
 export default async function PlacesPage() {
 	const regions = await placeRegions();
+	// Every current ward, by region and then by local authority.
+	const councils = await loadAreaProfiles(
+		PLACE_INDEX.areas
+			.filter(
+				([, , geography, , , lastYear]) =>
+					geography === "localAuthority" && lastYear === null,
+			)
+			.map(([code]) => code),
+	);
+	const wards = PLACE_REGIONS.map((region) => ({
+		region,
+		councils: [...councils.values()]
+			.filter((council) => regions.get(council.code) === region.id)
+			.sort((a, b) => a.name.localeCompare(b.name))
+			.map((council) => ({
+				council,
+				wards:
+					council.children.find((group) => group.geography === "ward")
+						?.areas ?? [],
+			}))
+			.filter(({ wards }) => wards.length > 0),
+	})).filter(({ councils }) => councils.length > 0);
 	const counts = PLACE_INDEX.areas.reduce<Record<string, number>>(
 		(totals, [, , geography]) => ({
 			...totals,
@@ -107,6 +134,13 @@ export default async function PlacesPage() {
 						title: region.label,
 					})),
 				})),
+				{
+					title: "Wards",
+					links: wards.map(({ region }) => ({
+						id: `wards-${region.id}`,
+						title: region.label,
+					})),
+				},
 			]}
 			eyebrow="Places"
 			title="Look up any place"
@@ -159,7 +193,7 @@ export default async function PlacesPage() {
 					</H2>
 					<P>
 						{geography === "localAuthority"
-							? "Each local authority's page lists its wards. Those no longer in use can be found by searching."
+							? "Those no longer in use can be found by searching."
 							: "The constituencies of the 2024 general election. Those no longer in use can be found by searching."}
 					</P>
 					{regions.map(({ region, entries }) => (
@@ -179,6 +213,52 @@ export default async function PlacesPage() {
 							</p>
 							<PlaceList entries={entries} />
 						</section>
+					))}
+				</section>
+			))}
+
+			<H2 id="wards">Current wards</H2>
+			<P>
+				Every ward in the latest boundaries, by local authority. Wards
+				no longer in use can be found by searching.
+			</P>
+			{wards.map(({ region, councils }) => (
+				<section key={region.id}>
+					<H3 id={`wards-${region.id}`}>
+						{region.label}
+						<Count
+							count={councils.reduce(
+								(total, { wards }) => total + wards.length,
+								0,
+							)}
+						/>
+					</H3>
+					{councils.map(({ council, wards }) => (
+						<div key={council.code} className="mb-5">
+							<h4 className="mb-1.5 text-[14.5px] font-semibold text-slate-800">
+								<Link
+									href={`/places/${council.code}`}
+									className={linkClass}
+								>
+									{council.name}
+								</Link>
+							</h4>
+							<ul className="columns-2 gap-x-6 text-[13.5px] sm:columns-3">
+								{wards.map((ward) => (
+									<li
+										key={ward.code}
+										className="break-inside-avoid py-px"
+									>
+										<Link
+											href={`/places/${ward.code}`}
+											className={linkClass}
+										>
+											{ward.name}
+										</Link>
+									</li>
+								))}
+							</ul>
+						</div>
 					))}
 				</section>
 			))}
