@@ -7,6 +7,7 @@ import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { buildTranslationSteps } from "./resolver/translation";
 import { observationsFor } from "./observationArtifacts";
 import { resolveObservations } from "./observationResolution/observationPlan";
+import { parseExactReleaseReference } from "./releaseForDate";
 import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,
@@ -14,13 +15,6 @@ import {
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
-
-const parseAnalysisGeography = (value: string) => {
-	const [geography, boundaryRelease, ...rest] = value.split("/");
-	return geography && boundaryRelease && rest.length === 0
-		? { geography, boundaryRelease }
-		: undefined;
-};
 
 /** One area's source-exact, or explicitly reviewed derived, values over time. */
 export const handleDataSeriesRoutes = ({
@@ -60,8 +54,7 @@ export const handleDataSeriesRoutes = ({
 			"No published measure serves a series at that path.",
 		);
 	}
-	const analysisGeographyValue =
-		parsedUrl.searchParams.get("analysisGeography");
+	const toParameter = parsedUrl.searchParams.get("to");
 	if (
 		parsedUrl.searchParams.has("release") ||
 		parsedUrl.searchParams.has("conversion") ||
@@ -140,15 +133,13 @@ export const handleDataSeriesRoutes = ({
 			"The measure source declares no observation periods.",
 		);
 	}
-	if (analysisGeographyValue !== null) {
-		const analysisGeography = parseAnalysisGeography(
-			analysisGeographyValue,
-		);
+	if (toParameter !== null) {
+		const analysisGeography = parseExactReleaseReference(toParameter);
 		if (!analysisGeography)
 			return problem(
 				400,
 				"Invalid Query",
-				"analysisGeography must be one geography/release pair.",
+				"to must be one geography/release pair.",
 			);
 		const inventory = context.analysisGeographyInventory;
 		if (!inventory)

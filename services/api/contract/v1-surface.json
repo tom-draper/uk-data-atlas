@@ -2283,13 +2283,13 @@
 				"query:period": {
 					"required": true
 				},
-				"query:analysisGeography": {
+				"query:to": {
 					"required": true
 				},
-				"query:sourceGeography": {
+				"query:geography": {
 					"required": true
 				},
-				"query:sourceBoundaryYear": {
+				"query:boundaryYear": {
 					"required": true
 				}
 			},
@@ -2347,13 +2347,13 @@
 				"path:measure-id": {
 					"required": true
 				},
-				"query:analysisGeography": {
+				"query:to": {
 					"required": true
 				},
-				"query:sourceGeography": {
+				"query:geography": {
 					"required": false
 				},
-				"query:sourceBoundaryYear": {
+				"query:boundaryYear": {
 					"required": false
 				}
 			},
@@ -2569,7 +2569,7 @@
 				"query:place": {
 					"required": true
 				},
-				"query:sourceRelease": {
+				"query:from": {
 					"required": false
 				},
 				"query:crosswalk": {
@@ -2836,7 +2836,7 @@
 				"query:boundaryYear": {
 					"required": true
 				},
-				"query:analysisGeography": {
+				"query:to": {
 					"required": false
 				},
 				"query:datasetId": {
@@ -6056,7 +6056,7 @@
 				"path:code": {
 					"required": true
 				},
-				"query:with": {
+				"query:place": {
 					"required": true
 				}
 			},
@@ -6464,16 +6464,10 @@
 		"GET /relationships": {
 			"operationId": "queryRelationships",
 			"parameters": {
-				"query:sourceGeography": {
+				"query:from": {
 					"required": false
 				},
-				"query:sourceRelease": {
-					"required": false
-				},
-				"query:targetGeography": {
-					"required": false
-				},
-				"query:targetRelease": {
+				"query:to": {
 					"required": false
 				},
 				"query:purpose": {
@@ -7618,19 +7612,13 @@
 		"GET /translations": {
 			"operationId": "translateAreaCode",
 			"parameters": {
-				"query:sourceGeography": {
-					"required": true
-				},
-				"query:sourceRelease": {
+				"query:from": {
 					"required": true
 				},
 				"query:code": {
 					"required": true
 				},
-				"query:targetGeography": {
-					"required": true
-				},
-				"query:targetRelease": {
+				"query:to": {
 					"required": true
 				},
 				"query:purpose": {

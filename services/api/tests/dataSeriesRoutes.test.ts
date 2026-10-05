@@ -118,7 +118,7 @@ test("returns a reviewed derived series on an explicit analysis geography", () =
 			analysisGeographyInventory: analysisInventory,
 		});
 	const response = route(
-		"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=localAuthority/2023-05-uk-bgc-v2",
+		"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&to=localAuthority/2023-05-uk-bgc-v2",
 	);
 	assert.equal(response.status, 200);
 	const data = "data" in response.body ? response.body.data : undefined;
@@ -136,12 +136,12 @@ test("returns a reviewed derived series on an explicit analysis geography", () =
 	]);
 	assert.equal(
 		route(
-			"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=ward/2023-05-uk-bgc",
+			"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&to=ward/2023-05-uk-bgc",
 		).status,
 		200,
 	);
 	const unavailable = route(
-		"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&analysisGeography=ward/2023-05-uk-bgc",
+		"/v1/data/small-area-fixture/series?place=E08000001&geography=lsoa&boundaryYear=2011&to=ward/2023-05-uk-bgc",
 	);
 	assert.deepEqual(
 		"data" in unavailable.body &&
@@ -193,7 +193,7 @@ test("returns a reviewed derived series through every step of a reviewed path", 
 		],
 	};
 	const response = routeWithCatalog(
-		"/v1/data/small-area-fixture/series?place=E12000002&geography=lsoa&boundaryYear=2011&analysisGeography=region/2023-05-en-rgn",
+		"/v1/data/small-area-fixture/series?place=E12000002&geography=lsoa&boundaryYear=2011&to=region/2023-05-en-rgn",
 		dataCatalog,
 		measureObservations,
 		{

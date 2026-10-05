@@ -119,7 +119,7 @@ test("lists only reviewed analysis conversions", () => {
 
 test("preflights an explicit source and retains not-comparable periods", () => {
 	const base =
-		"/v1/analysis:plan?measure=road-collisions&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa&sourceBoundaryYear=2021";
+		"/v1/analysis:plan?measure=road-collisions&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa&boundaryYear=2021";
 	const available = route(`${base}&period=2025`);
 	assert.equal(available.status, 200);
 	const availableData =
@@ -146,7 +146,7 @@ test("preflights an explicit source and retains not-comparable periods", () => {
 	);
 
 	const ambiguous = route(
-		"/v1/analysis:plan?measure=road-collisions&period=2025&analysisGeography=localAuthority/2023-05-uk-bgc-v2",
+		"/v1/analysis:plan?measure=road-collisions&period=2025&to=localAuthority/2023-05-uk-bgc-v2",
 	);
 	assert.equal(ambiguous.status, 400);
 });
@@ -209,7 +209,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 	};
 	const response = routeRequest(
 		"GET",
-		"/v1/analysis:plan?measure=population&period=2022&analysisGeography=localAuthority/2025-01-uk-lad&sourceGeography=ward&sourceBoundaryYear=2023",
+		"/v1/analysis:plan?measure=population&period=2022&to=localAuthority/2025-01-uk-lad&geography=ward&boundaryYear=2023",
 		testContext({
 			analysisGeographyInventory: planInventory,
 			areaLookup: planAreaLookup,
@@ -293,7 +293,7 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 
 test("reports unsupported frames without manufacturing a conversion", () => {
 	const response = route(
-		"/v1/measures/road-collisions/conversion-support?analysisGeography=ward/2023-05-uk-bgc",
+		"/v1/measures/road-collisions/conversion-support?to=ward/2023-05-uk-bgc",
 	);
 	assert.equal(response.status, 200);
 	assert.deepEqual(

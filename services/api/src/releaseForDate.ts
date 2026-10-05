@@ -91,6 +91,23 @@ export type ReleaseReference = {
 	href: string;
 };
 
+/** One exact geography/release identity carried in a query parameter. */
+export type ExactReleaseReference = {
+	geography: string;
+	boundaryRelease: string;
+};
+
+/** Parse the public `{geography}/{release}` notation without guessing either part. */
+export const parseExactReleaseReference = (
+	value: string | null,
+): ExactReleaseReference | undefined => {
+	if (value === null) return undefined;
+	const [geography, boundaryRelease, ...rest] = value.split("/");
+	return geography && boundaryRelease && rest.length === 0
+		? { geography, boundaryRelease }
+		: undefined;
+};
+
 export type ReleaseSelection =
 	| {
 			status: "selected";

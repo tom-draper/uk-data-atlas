@@ -9,6 +9,7 @@ import {
 	publishedSourcePartitionsFor,
 	type MeasureCompatibilityInventory,
 } from "./measureCompatibility";
+import { parseExactReleaseReference } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -156,30 +157,23 @@ export const handleRelationshipCapabilityRoutes = ({
 		segments[1] !== "relationships"
 	)
 		return undefined;
-	const from = {
-		geography: parsedUrl.searchParams.get("sourceGeography"),
-		boundaryRelease: parsedUrl.searchParams.get("sourceRelease"),
-	};
-	const to = {
-		geography: parsedUrl.searchParams.get("targetGeography"),
-		boundaryRelease: parsedUrl.searchParams.get("targetRelease"),
-	};
+	const fromParameter = parsedUrl.searchParams.get("from");
+	const toParameter = parsedUrl.searchParams.get("to");
+	const from = parseExactReleaseReference(fromParameter);
+	const to = parseExactReleaseReference(toParameter);
 	const purposeParameter = parsedUrl.searchParams.get("purpose");
 	const measureId = parsedUrl.searchParams.get("measure");
 	const operation = parsedUrl.searchParams.get("operation");
 	if (
-		!from.geography ||
-		!from.boundaryRelease ||
-		(to.geography === null) !== (to.boundaryRelease === null) ||
-		((to.geography !== null || to.boundaryRelease !== null) &&
+		!from ||
+		(fromParameter !== null && !from) ||
+		(toParameter !== null && !to) ||
+		(to !== undefined &&
 			!RELATIONSHIP_PURPOSES.includes(
 				purposeParameter as RelationshipPurpose,
 			)) ||
-		(to.geography === null &&
-			to.boundaryRelease === null &&
-			purposeParameter !== null) ||
-		((to.geography === null || to.boundaryRelease === null) &&
-			(measureId !== null || operation !== null)) ||
+		(to === undefined && purposeParameter !== null) ||
+		(to === undefined && (measureId !== null || operation !== null)) ||
 		(operation !== null &&
 			!RELATIONSHIP_OPERATIONS.includes(
 				operation as RelationshipOperation,
@@ -188,12 +182,12 @@ export const handleRelationshipCapabilityRoutes = ({
 		return problem(
 			400,
 			"Invalid Query",
-			"sourceGeography and sourceRelease are required. To diagnose one conversion, provide targetGeography, targetRelease and purpose (identity, membership or apportion) together; operation must be a supported relationship operation when supplied.",
+			"from is required as geography/release. To diagnose one conversion, provide to=geography/release and purpose (identity, membership or apportion) together; operation must be a supported relationship operation when supplied.",
 		);
 	}
 	const geographyResolver = context.geographyResolver;
-	if (to.geography === null || to.boundaryRelease === null) {
-		const source = from as { geography: string; boundaryRelease: string };
+	if (!to) {
+		const source = from;
 		if (
 			!geographyResolver.hasAreaRelease(
 				source.geography,
@@ -238,14 +232,14 @@ export const handleRelationshipCapabilityRoutes = ({
 	}
 	const purpose = purposeParameter as RelationshipPurpose;
 	const capability = geographyResolver.relationshipCapability(
-		from as { geography: string; boundaryRelease: string },
-		to as { geography: string; boundaryRelease: string },
+		from,
+		to,
 		purpose,
 	);
 	if (operation !== null) {
 		const plan = geographyResolver.conversionPlan(
-			from as { geography: string; boundaryRelease: string },
-			to as { geography: string; boundaryRelease: string },
+			from,
+			to,
 			purpose,
 			operation as RelationshipOperation,
 		);
@@ -282,10 +276,7 @@ export const handleRelationshipCapabilityRoutes = ({
 							context.measureCompatibilityInventory,
 							measureId,
 							purpose,
-							from as {
-								geography: string;
-								boundaryRelease: string;
-							},
+							from,
 						),
 					}
 				: {}),

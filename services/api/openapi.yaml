@@ -2166,7 +2166,7 @@ paths:
       x-likely-refusal:
         status: 400
         when: "The source partition is not explicit. The route does not choose between a measure's sources."
-        x-example-request: "/v1/analysis:plan?measure=road-collisions&period=2025&analysisGeography=localAuthority/2023-05-uk-bgc-v2&sourceGeography=lsoa"
+        x-example-request: "/v1/analysis:plan?measure=road-collisions&period=2025&to=localAuthority/2023-05-uk-bgc-v2&geography=lsoa"
       description: >
         Returns a plan only: the selected source partition, the published
         crosswalk and whether the requested period is comparable on the named
@@ -2179,20 +2179,15 @@ paths:
       parameters:
         - { name: measure, in: query, required: true, schema: { type: string } }
         - { name: period, in: query, required: true, schema: { type: string } }
+        - { name: to, in: query, required: true, schema: { type: string } }
         - {
-            name: analysisGeography,
+            name: geography,
             in: query,
             required: true,
             schema: { type: string },
           }
         - {
-            name: sourceGeography,
-            in: query,
-            required: true,
-            schema: { type: string },
-          }
-        - {
-            name: sourceBoundaryYear,
+            name: boundaryYear,
             in: query,
             required: true,
             schema: { type: integer },
@@ -2209,7 +2204,7 @@ paths:
       summary: Inspect reviewed conversion support for one measure and frame
       x-likely-refusal:
         status: 400
-        when: "`analysisGeography` is missing or is not an exact geography/release pair."
+        when: "`to` is missing or is not an exact geography/release pair."
         x-example-request: "/v1/measures/road-collisions/conversion-support"
       parameters:
         - {
@@ -2218,20 +2213,15 @@ paths:
             required: true,
             schema: { type: string },
           }
+        - { name: to, in: query, required: true, schema: { type: string } }
         - {
-            name: analysisGeography,
-            in: query,
-            required: true,
-            schema: { type: string },
-          }
-        - {
-            name: sourceGeography,
+            name: geography,
             in: query,
             required: false,
             schema: { type: string },
           }
         - {
-            name: sourceBoundaryYear,
+            name: boundaryYear,
             in: query,
             required: false,
             schema: { type: integer },
@@ -2600,7 +2590,7 @@ paths:
         `not-assessed` when no matching release is compiled.
 
         With any other area code, callers must also name a code-set-compatible
-        `sourceRelease` and a published `crosswalk`; the target's geography is
+        `from={geography}/{release}` and a published `crosswalk`; the target's geography is
         the crosswalk's, so a combined authority, county, integrated care
         board or any other published membership target is summed the same way
         a region is. The crosswalk must declare membership: a clean-containment
@@ -2653,14 +2643,15 @@ paths:
             `E47000006` for the Tees Valley combined authority. A reference
             such as `region/E12000001` also names the target's geography, and
             the crosswalk must map to it.
-        - name: sourceRelease
+        - name: from
           in: query
           required: false
           schema:
             type: string
           description: >
-            The source boundary release the membership crosswalk maps from. It
-            must be code-set compatible with the requested measure source.
+            The exact source release the membership crosswalk maps from, as
+            `{geography}/{release}`. Its geography must match the source
+            partition, and its codes must be compatible with that partition.
         - name: crosswalk
           in: query
           required: false
@@ -3010,9 +3001,9 @@ paths:
         x-example-request: "/v1/data/population/series?place=E05000932"
       description: >
         Returns all published observations for one area code within one source
-        geography and code vintage. Without `analysisGeography`, the result is
-        source-exact: it does not select a boundary release, convert values or
-        aggregate them. With `analysisGeography`, the result is available only
+        geography and code vintage. Without `to`, the result is source-exact:
+        it does not select a boundary release, convert values or aggregate
+        them. With `to`, the result is available only
         where the exact source partition has a reviewed conversion; every
         returned value is then labelled `derived` on that named frame. Supply
         `datasetId` when a measure has more than one source for the requested
@@ -3022,7 +3013,7 @@ paths:
         - $ref: "#/components/parameters/Place"
         - $ref: "#/components/parameters/PlaceSourceGeography"
         - $ref: "#/components/parameters/SourceBoundaryYear"
-        - name: analysisGeography
+        - name: to
           in: query
           required: false
           schema:
@@ -5874,10 +5865,10 @@ paths:
       summary: Measure how one area overlaps another
       x-likely-refusal:
         status: 400
-        when: "No `with` names the other area as `{geography}/{release}/{code}`."
+        when: "No `place` names the other area as `{geography}/{release}/{code}`."
         x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/overlap"
       description: >
-        Intersects this area with the area named in `with`, which may be of
+        Intersects this area with the area named in `place`, which may be of
         another geography or boundary release, and returns the shared area,
         each area's share of it, and a relation, so a constituency and a local
         authority can be compared without downloading either geometry.
@@ -5901,7 +5892,7 @@ paths:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
         - $ref: "#/components/parameters/AreaCode"
-        - name: with
+        - name: place
           in: query
           required: true
           schema: { type: string }
@@ -5916,7 +5907,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001063/overlap?with=localAuthority/2024-05-uk-bgc/E07000089"
+              x-example-request: "/v1/areas/constituency/2024-07-uk-bgc/E14001063/overlap?place=localAuthority/2024-05-uk-bgc/E07000089"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
@@ -6266,15 +6257,14 @@ paths:
       x-likely-refusal:
         status: 400
         when: "A conversion does not name both exact releases and a purpose, or a coverage question omits its geography or release."
-        x-example-request: "/v1/relationships?sourceGeography=ward"
+        x-example-request: "/v1/relationships?from=ward"
       description: >
         The front door for relationship evidence in the boundary archive.
-        Supply `sourceGeography` and `sourceRelease` to discover every
-        published conversion from a release. Add `targetGeography`,
-        `targetRelease` and `purpose` to assess the paths, their coverage,
-        trust and permitted operations. Add `operation` to select the best
-        published path for that intended operation, without translating any
-        codes or values.
+        Supply `from={geography}/{release}` to discover every published
+        conversion from one exact release. Add `to={geography}/{release}` and
+        `purpose` to assess the paths, their coverage, trust and permitted
+        operations. Add `operation` to select the best published path for that
+        intended operation, without translating any codes or values.
 
 
         Alternatively, supply `geography` and `release` to report how fully
@@ -6283,30 +6273,16 @@ paths:
         deliberately separate: conversion is directional between exact
         releases, whereas coverage is an audit of one release's evidence.
       parameters:
-        - {
-            name: sourceGeography,
-            in: query,
-            required: false,
-            schema: { type: string },
-          }
-        - {
-            name: sourceRelease,
-            in: query,
-            required: false,
-            schema: { type: string },
-          }
-        - {
-            name: targetGeography,
-            in: query,
-            required: false,
-            schema: { type: string },
-          }
-        - {
-            name: targetRelease,
-            in: query,
-            required: false,
-            schema: { type: string },
-          }
+        - name: from
+          in: query
+          required: false
+          schema: { type: string }
+          description: The release to discover or convert from, as `{geography}/{release}`.
+        - name: to
+          in: query
+          required: false
+          schema: { type: string }
+          description: The release to assess a conversion to, as `{geography}/{release}`.
         - name: purpose
           in: query
           required: false
@@ -6372,7 +6348,7 @@ paths:
               schema: { type: object }
               examples:
                 capability:
-                  x-example-request: "/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership"
+                  x-example-request: "/v1/relationships?from=ward/2023-05-uk-bgc&to=localAuthority/2023-05-uk-bgc-v2&purpose=membership"
                   value:
                     apiVersion: v1
                     atlasRelease: sha256:7349ddf2d37575a455b9dc82c0cac8007df0a74a49151e0a00516c621e8b3dc7
@@ -6410,7 +6386,7 @@ paths:
                     meta:
                       nextCursor: null
                 plan:
-                  x-example-request: "/v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership&operation=containment-aggregation"
+                  x-example-request: "/v1/relationships?from=ward/2023-05-uk-bgc&to=localAuthority/2023-05-uk-bgc-v2&purpose=membership&operation=containment-aggregation"
                   value:
                     apiVersion: v1
                     atlasRelease: sha256:7349ddf2d37575a455b9dc82c0cac8007df0a74a49151e0a00516c621e8b3dc7
@@ -7630,7 +7606,7 @@ paths:
       x-likely-refusal:
         status: 422
         when: "No crosswalk is published for this source, target and purpose. A shared code is never taken as proof of the same area."
-        x-example-request: "/v1/translations?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&code=E05000932&targetGeography=constituency&targetRelease=2024-07-uk-bgc"
+        x-example-request: "/v1/translations?from=ward/2023-05-uk-bgc&code=E05000932&to=constituency/2024-07-uk-bgc"
       description: >
         `identity` permits publisher-supplied historical lookups only,
         `membership` permits clean containment only, and `apportion` permits
@@ -7649,32 +7625,22 @@ paths:
         represent. The route does not
         treat a shared code across releases as proof of unchanged geography.
       parameters:
-        - name: sourceGeography
+        - name: from
           in: query
           required: true
           schema: { type: string }
-          description: The geography the code belongs to.
-        - name: sourceRelease
-          in: query
-          required: true
-          schema: { type: string }
-          description: The boundary release the code belongs to.
+          description: The code's exact source release, as `{geography}/{release}`.
         - name: code
           in: query
           required: true
           schema: { type: string }
           description: >
-            The area code to translate, as published in the source release.
-        - name: targetGeography
+            The area code to translate, as published in `from`.
+        - name: to
           in: query
           required: true
           schema: { type: string }
-          description: The geography to translate into.
-        - name: targetRelease
-          in: query
-          required: true
-          schema: { type: string }
-          description: The boundary release to translate into.
+          description: The exact target release, as `{geography}/{release}`.
         - name: purpose
           in: query
           schema:
@@ -7691,7 +7657,7 @@ paths:
           content:
             application/json:
               schema: { type: object }
-              x-example-request: "/v1/translations?sourceGeography=ward&sourceRelease=2024-12-uk-bgc&code=E05000932&targetGeography=localAuthority&targetRelease=2024-12-uk-bgc&purpose=membership"
+              x-example-request: "/v1/translations?from=ward/2024-12-uk-bgc&code=E05000932&to=localAuthority/2024-12-uk-bgc&purpose=membership"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
