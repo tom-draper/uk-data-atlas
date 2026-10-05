@@ -32,7 +32,6 @@ const NAMED_KINDS = [
 	"editorial-grouping",
 ];
 
-/** A section of links, folded away when it is long; still in the page's HTML. */
 function PlaceSection({
 	title,
 	entries,
@@ -40,31 +39,16 @@ function PlaceSection({
 	title: string;
 	entries: PlaceIndexEntry[];
 }) {
-	const heading = (
-		<h2 className="text-[20px] font-semibold tracking-tight text-slate-900">
-			{title}{" "}
-			<span className="text-[15px] font-normal text-slate-500">
-				{entries.length}
-			</span>
-		</h2>
-	);
-	if (entries.length <= 40)
-		return (
-			<section className="mt-10">
-				{heading}
-				<PlaceList entries={entries} />
-			</section>
-		);
 	return (
-		<details className="group mt-10">
-			<summary className="cursor-pointer list-none">
-				{heading}
-				<span className="text-[14px] text-slate-500 group-open:hidden">
-					Show all
+		<section className="mt-10">
+			<h2 className="text-[20px] font-semibold tracking-tight text-slate-900">
+				{title}{" "}
+				<span className="text-[15px] font-normal text-slate-500">
+					{entries.length}
 				</span>
-			</summary>
+			</h2>
 			<PlaceList entries={entries} />
-		</details>
+		</section>
 	);
 }
 
