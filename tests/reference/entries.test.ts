@@ -39,7 +39,9 @@ describe("dataset guides", () => {
 
 	it("gives every section on the page its own anchor", () => {
 		// Map pages' structured data points at /datasets#{slug}.
-		expect(duplicates([...slugs, ...topics, "all-datasets"])).toEqual([]);
+		expect(
+			duplicates([...slugs, ...topics, "about-datasets", "all-datasets"]),
+		).toEqual([]);
 	});
 
 	it("links each dataset to a geography on the geographies page", () => {
