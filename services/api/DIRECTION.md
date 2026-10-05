@@ -204,10 +204,14 @@ build internals as routes. Proposed shape:
 - Started: `dossier` is `include=dossier` on the area. `capabilities`,
   `citation` and `geometry/metadata` on an area, and `capabilities` on a
   location, still to become `include=` options.
-- Started: `/data/{measure}`, `/series`, `/change` and `/aggregate` take
-  `place`, as a code or a `/places` reference. Still to do: resolve a name in
-  `place` there as `value` does, with the partition defaulted, and bring
-  `/compare` and `/rankings` into line.
+- Done: `/series`, `/change`, `/rankings`, `/compare` and `/aggregate`
+  default the partition as `value` does: a geography the place or the
+  measure leaves no choice about, its newest boundary year and its latest
+  period, stated in `defaults`. `/series`, `/change` and `/compare` take an
+  area name as well as a code, and a name meaning several areas is a 409
+  with a request for each. Still to do: `/compare` names its two areas
+  `baselineAreaCode` and `comparisonAreaCode` rather than `place`, and
+  `/data/{measure}` itself still needs its partition named.
 - `/data/{measure}/aggregate` folds into `value`, which already dispatches to
   it.
 

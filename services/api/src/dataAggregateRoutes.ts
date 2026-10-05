@@ -1,5 +1,5 @@
 import type { RouteRequest } from "./routing";
-import { problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse, type Envelope } from "./routeResponse";
 import { readWeightedSource } from "./weightedSource";
 import { calculateWeightedAggregate } from "./weightedAggregation";
 import {
@@ -15,6 +15,7 @@ import {
 import { resolveAggregationMeasure } from "./aggregationMeasure";
 import { resolveAggregationPartition } from "./aggregationPartition";
 import { prepareAggregateTarget } from "./aggregatePreparation";
+import { statedDefaults } from "./dataDefaults";
 
 /** Observations summed over a country, region or named location, with the coverage the total rests on. */
 export const handleDataAggregateRoutes = ({
@@ -47,7 +48,12 @@ export const handleDataAggregateRoutes = ({
 		measure,
 		weightedAggregation,
 	} = resolvedMeasure;
-	const query = parseAggregateQuery({ parsedUrl, measureId });
+	const query = parseAggregateQuery({
+		parsedUrl,
+		measureId,
+		measure,
+		geographyResolver: context.geographyResolver,
+	});
 	if ("status" in query) return query;
 	const {
 		period,
@@ -60,6 +66,7 @@ export const handleDataAggregateRoutes = ({
 		crosswalkId,
 		pathId,
 		from,
+		defaulted,
 	} = query;
 	const resolvedLocation = resolveAggregationLocation({
 		locationId,
@@ -157,7 +164,7 @@ export const handleDataAggregateRoutes = ({
 			total: weightedAggregate.totalWeight,
 		};
 	}
-	return buildAggregateResponse({
+	const response = buildAggregateResponse({
 		releaseId,
 		measure,
 		measureId,
@@ -175,4 +182,11 @@ export const handleDataAggregateRoutes = ({
 		geographyResolver: context.geographyResolver,
 		areaCode,
 	});
+	if (response.status !== 200 || Object.keys(defaulted).length === 0)
+		return response;
+	const body = response.body as Envelope<Record<string, unknown>>;
+	return {
+		...response,
+		body: { ...body, data: { ...body.data, ...statedDefaults(defaulted) } },
+	};
 };

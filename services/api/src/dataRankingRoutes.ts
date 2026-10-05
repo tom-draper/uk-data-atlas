@@ -7,6 +7,11 @@ import {
 import { rankObservations, readRankingOrder } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import {
+	defaultSource,
+	publishedPartitions,
+	statedDefaults,
+} from "./dataDefaults";
+import {
 	cursorFor,
 	keyFromCursor,
 	MAX_PAGE_SIZE,
@@ -71,17 +76,22 @@ export const handleDataRankingRoutes = ({
 			"This source-exact ranking endpoint does not select geometry releases, convert observations or aggregate them.",
 		);
 	}
-	const period = parsedUrl.searchParams.get("period");
-	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	// The three are documented as required here, so a caller who leaves one out
-	// is answered the same way whatever the measure. Which partition they name
-	// is the resolver's to decide.
+	const requested = {
+		period: parsedUrl.searchParams.get("period"),
+		geography: parsedUrl.searchParams.get("geography"),
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		datasetId: parsedUrl.searchParams.get("datasetId"),
+	};
+	const defaults = defaultSource(measure, requested);
+	const period = requested.period ?? defaults?.period ?? null;
+	const geography = requested.geography ?? defaults?.geography ?? null;
+	const boundaryYear =
+		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
 	if (period === null || geography === null || boundaryYear === null)
 		return problem(
 			400,
 			"Invalid Query",
-			`${measureId} supports rankings only for a published source period, geography and boundary year.`,
+			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
@@ -156,6 +166,7 @@ export const handleDataRankingRoutes = ({
 				measure,
 				source,
 				period,
+				...statedDefaults(defaults?.defaulted),
 				sourceGeography: source.sourceGeography,
 				provenance: sourceExactProvenance({
 					atlasRelease: releaseId,
