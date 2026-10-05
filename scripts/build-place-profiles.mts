@@ -186,6 +186,55 @@ function readDatasetCoverage() {
 
 const datasetsFor = readDatasetCoverage();
 
+/** The datasets that count each geography's residents, one per geography. */
+const POPULATION_DATASETS = [
+	"population",
+	"population-uk",
+	"population-constituency",
+];
+
+// The latest population each dataset publishes for a code. A total is either
+// a count or a count for each single year of age.
+function readPopulations() {
+	const latest = new Map<
+		string,
+		{ value: number; year: number; dataset: string }
+	>();
+	const sum = (total: unknown): number | undefined =>
+		typeof total === "number"
+			? total
+			: total && typeof total === "object"
+				? Object.values(total).reduce<number>(
+						(count, value) =>
+							count + (typeof value === "number" ? value : 0),
+						0,
+					)
+				: undefined;
+	for (const dataset of POPULATION_DATASETS) {
+		const file = JSON.parse(
+			readFileSync(join(DATASETS, `${dataset}.json`), "utf8"),
+		) as Record<
+			string,
+			{ year: number; data: Record<string, { total?: unknown }> }
+		>;
+		for (const { year, data } of Object.values(file))
+			for (const [code, record] of Object.entries(data)) {
+				const value = sum(record.total);
+				if (value === undefined || value <= 0) continue;
+				const known = latest.get(code);
+				if (!known || year > known.year)
+					latest.set(code, {
+						value: Math.round(value),
+						year,
+						dataset,
+					});
+			}
+	}
+	return latest;
+}
+
+const populations = readPopulations();
+
 // The atlas's maps pages: one per council, and one per curated named place.
 const mapsSlugByCode = new Map<string, string>();
 const mapsSlugByName = new Map<string, string>();
@@ -560,6 +609,9 @@ function areaProfile(
 		current,
 		...(areas.get(last)?.get(code) !== undefined
 			? { areaKm2: areas.get(last)!.get(code)! }
+			: {}),
+		...(populations.has(code)
+			? { population: populations.get(code)! }
 			: {}),
 		bbox: polygons ? boundsOf([polygons]) : [0, 0, 0, 0],
 		...(polygons ? { outline: encodeOutline(polygons) } : {}),

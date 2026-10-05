@@ -38,7 +38,7 @@
 		},
 		"places/index.json": {
 			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
-			"sha256": "092539002ddbeffeabce5354319629c9d8a030794b43cdaae58ac4c59f2264c7",
+			"sha256": "4f7be11bbe535b4aebe47593f0f37980e54f881e5d692fd278e42858d3b3410d",
 			"writtenBy": "pnpm places:build"
 		}
 	}

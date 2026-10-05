@@ -102,6 +102,8 @@ export type AreaProfile = {
 	/** Whether the newest release still holds the code. */
 	current: boolean;
 	areaKm2?: number;
+	/** The latest population estimate published for the code itself. */
+	population?: { value: number; year: number; dataset: string };
 	bbox: BoundingBox;
 	/** The outline in the newest release holding the code, generalised. */
 	outline?: Outline;
