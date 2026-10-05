@@ -75,14 +75,46 @@ export default function PlacesPage() {
 
 			<H2 id="named-locations">Named locations</H2>
 			<P>
-				Some places people care about aren't official areas at all, like
-				"North Wales" or "Greater Manchester". Named locations fill that
-				gap: groupings of local authorities, curated by the Atlas.
+				Many places people care about aren't published as a geography,
+				like "Kent", "Yorkshire" or "North Wales". Named locations fill
+				that gap: each is a set of local authorities, and its `kind`
+				says where that set comes from.
+			</P>
+			<Table
+				head={["Kind", "Where its members come from", "Example"]}
+				rows={[
+					[
+						"`country`, `region`, `combined-authority`, `county`",
+						"An official Office for National Statistics lookup, named in its `source`.",
+						"Greater Manchester",
+					],
+					[
+						"`ceremonial-county`",
+						"Ordnance Survey's ceremonial county boundaries. Each council is counted in the county holding most of its area.",
+						"Kent, including Medway",
+					],
+					[
+						"`historic-county`",
+						"Ordnance Survey's historic counties of around 1888, matched to councils the same way.",
+						"Middlesex",
+					],
+					[
+						"`editorial-grouping`",
+						"A set curated by the Atlas, which claims no official status.",
+						"North Wales",
+					],
+				]}
+			/>
+			<P>
+				Ceremonial and historic counties have no official code, and
+				their edges follow council lines rather than the county&apos;s
+				own. Scotland&apos;s lieutenancy areas don&apos;t follow council
+				lines, so they aren&apos;t included. Members can change over
+				time as councils are reorganised.
 			</P>
 			<P>
-				They're a convenience, not an official geography, and the API
-				says so. You can add up data over them, and list the wards or
-				constituencies inside them through a
+				You can add up data over any named location, and list the wards
+				or constituencies inside it through a
 				[crosswalk](/docs/v1/concepts/crosswalks).
 			</P>
 
