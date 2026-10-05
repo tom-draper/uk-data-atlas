@@ -30,6 +30,7 @@ import {
 } from "@/lib/places/labels";
 import {
 	loadAreaProfile,
+	loadAreaProfiles,
 	loadNamedProfile,
 	PLACE_INDEX,
 	placeEntry,
@@ -579,8 +580,30 @@ async function AreaPage({ profile }: { profile: AreaProfile }) {
 	);
 }
 
-function NamedPage({ profile }: { profile: NamedProfile }) {
+/** Wards are listed on a named place's page up to this many. */
+const LISTED_WARDS = 2500;
+
+async function NamedPage({ profile }: { profile: NamedProfile }) {
 	const current = profile.members.filter((member) => member.current);
+	// Each member council's current wards, for places small enough to list
+	// them all: every region and county, but not England or the UK.
+	const councils = await loadAreaProfiles(
+		current.map((member) => member.code),
+	);
+	const wardsByCouncil = current
+		.map((member) => ({
+			council: member,
+			wards:
+				councils
+					.get(member.code)
+					?.children.find((group) => group.geography === "ward")
+					?.areas ?? [],
+		}))
+		.filter(({ wards }) => wards.length > 0);
+	const wardCount = wardsByCouncil.reduce(
+		(total, { wards }) => total + wards.length,
+		0,
+	);
 	const former = profile.members.filter((member) => !member.current);
 	const changes = profile.members
 		.flatMap((member) => [
@@ -675,6 +698,43 @@ function NamedPage({ profile }: { profile: NamedProfile }) {
 							</>
 						)}
 					</Section>
+
+					{wardCount > 0 && wardCount <= LISTED_WARDS && (
+						<Section id="wards" title="Wards">
+							<p>
+								{wardCount.toLocaleString("en-GB")} wards, by
+								local authority.
+							</p>
+							{wardsByCouncil.map(({ council, wards }) => (
+								<div key={council.code} className="mt-5">
+									<h3 className="text-[15px] font-semibold text-slate-900">
+										<PlaceLink
+											href={`/places/${council.code}`}
+										>
+											{council.name}
+										</PlaceLink>{" "}
+										<span className="text-[13px] font-normal text-slate-400">
+											{wards.length}
+										</span>
+									</h3>
+									<ul className="mt-1.5 columns-2 gap-x-6 text-[14px] sm:columns-3">
+										{wards.map((ward) => (
+											<li
+												key={ward.code}
+												className="break-inside-avoid py-0.5"
+											>
+												<PlaceLink
+													href={`/places/${ward.code}`}
+												>
+													{ward.name}
+												</PlaceLink>
+											</li>
+										))}
+									</ul>
+								</div>
+							))}
+						</Section>
+					)}
 
 					{(profile.within.length > 0 ||
 						profile.contains.length > 0) && (
