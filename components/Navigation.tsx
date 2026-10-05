@@ -23,7 +23,7 @@ export default function Navigation() {
 							Boundaries
 						</Link>
 						<Link href="/docs/v1" className={linkClass}>
-							Documentation
+							API Docs
 						</Link>
 						<a
 							href="https://github.com/tom-draper/uk-data-atlas"
