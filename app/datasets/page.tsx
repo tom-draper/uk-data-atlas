@@ -14,7 +14,7 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
 	subject: "UK Datasets",
 	description:
-		"Every official UK dataset in the UK Data Atlas, explained: what it measures, who publishes it, the years and nations covered, its licence and the boundaries it's published on.",
+		"Every official UK dataset in the UK Data Atlas, explained: what it measures, who publishes it, the years and nations covered, its licence and the geography it's published on.",
 	path: "/datasets",
 });
 
@@ -57,7 +57,10 @@ export default function DatasetsPage() {
 			groups={[
 				{
 					title: "Overview",
-					links: [{ id: "all-datasets", title: "All datasets" }],
+					links: [
+						{ id: "about-datasets", title: "About datasets" },
+						{ id: "all-datasets", title: "All datasets" },
+					],
 				},
 				...topics.map((topic) => ({
 					title: topic.title,
@@ -80,9 +83,32 @@ export default function DatasetsPage() {
 				</>
 			}
 		>
+			<H2 id="about-datasets">About datasets</H2>
+			<P>
+				Every dataset in the Atlas is official statistics, published by
+				a government department, a statistics office or a public body,
+				and almost all of it is free to reuse under the Open Government
+				Licence. The Atlas links each one back to its publisher, so you
+				can always check a figure against the original.
+			</P>
+			<P>
+				Health, education, housing and policing are run separately in
+				England, Wales, Scotland and Northern Ireland, and each nation
+				often publishes its own figures. Where a dataset covers only
+				some nations, its coverage below says so, and where the nations
+				count something in different ways, their figures shouldn&apos;t
+				be compared directly.
+			</P>
+			<P>
+				Each dataset is matched to the{" "}
+				<TextLink href="/geographies">geography</TextLink> and boundary
+				release its figures were published on, so an area&apos;s value
+				is always drawn on the lines it was counted for.
+			</P>
+
 			<H2 id="all-datasets">All datasets</H2>
 			<Table
-				head={["Dataset", "Published by", "Years", "Boundaries"]}
+				head={["Dataset", "Published by", "Years", "Geography"]}
 				rows={topics.flatMap((topic) =>
 					topic.datasets.map((dataset) => [
 						<TextLink key="name" href={`#${dataset.slug}`}>
@@ -132,7 +158,7 @@ export default function DatasetsPage() {
 											]
 										: []),
 									{
-										label: "Boundaries",
+										label: "Geography",
 										value: (
 											<TextLink
 												href={boundaryHref(
