@@ -75,7 +75,7 @@ export default function DatasetsPage() {
 					population and house prices to deprivation and election
 					results. Each dataset below explains what it measures, who
 					publishes it, the years and nations it covers, and the{" "}
-					<TextLink href="/boundaries">boundaries</TextLink> its
+					<TextLink href="/geographies">geographies</TextLink> its
 					figures are published on.
 				</>
 			}

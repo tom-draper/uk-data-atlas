@@ -19,16 +19,16 @@ import { BOUNDARY_DETAILS } from "./boundaries";
 import { DATASET_GUIDES, DATASET_TOPICS } from "./datasets";
 
 /**
- * What the /datasets and /boundaries pages show, gathered from the dataset
+ * What the /datasets and /geographies pages show, gathered from the dataset
  * registry, the boundary catalogue and the written guides.
  */
 
 export type DatasetEntry = ReturnType<typeof datasetEntries>[number];
 export type BoundaryEntry = ReturnType<typeof boundaryEntries>[number];
 
-/** The link to a geography's section on /boundaries. */
+/** The link to a geography's section on /geographies. */
 export const boundaryHref = (geography: string) =>
-	`/boundaries#${GEOGRAPHIES[geography]?.slug ?? geography}`;
+	`/geographies#${GEOGRAPHIES[geography]?.slug ?? geography}`;
 
 /** The link to a dataset's section on /datasets. */
 export const datasetHref = (slug: string) => `/datasets#${slug}`;

@@ -42,7 +42,7 @@ describe("dataset guides", () => {
 		expect(duplicates([...slugs, ...topics, "all-datasets"])).toEqual([]);
 	});
 
-	it("links each dataset to a boundary on the boundaries page", () => {
+	it("links each dataset to a geography on the geographies page", () => {
 		expect(
 			datasetEntries()
 				.filter((entry) => !GEOGRAPHIES[entry.geography])
@@ -51,7 +51,7 @@ describe("dataset guides", () => {
 	});
 });
 
-describe("boundary details", () => {
+describe("geography details", () => {
 	it("explains every geography and no other", () => {
 		expect(Object.keys(BOUNDARY_DETAILS).sort()).toEqual(
 			Object.keys(GEOGRAPHIES).sort(),
@@ -63,8 +63,8 @@ describe("boundary details", () => {
 			duplicates([
 				...Object.values(GEOGRAPHIES).map((g) => g.slug),
 				...GEOGRAPHY_GROUPS.map((g) => g.id),
-				"about-boundaries",
-				"all-boundaries",
+				"about-geographies",
+				"all-geographies",
 			]),
 		).toEqual([]);
 	});

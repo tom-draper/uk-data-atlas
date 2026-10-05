@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
 		// The datasets page used to live at /sources.
 		return [
 			{ source: "/sources", destination: "/datasets", permanent: true },
+			{
+				source: "/boundaries",
+				destination: "/geographies",
+				permanent: true,
+			},
 		];
 	},
 	async headers() {
