@@ -481,6 +481,10 @@ export const boundaryResolution = (releaseId: string): BoundaryResolution => {
 export type ReleaseSelectionPolicy =
 	| { policy: "pinned" }
 	| {
+			/** No date was supplied, so the newest unambiguous published release was used. */
+			policy: "latest-published";
+	  }
+	| {
 			policy: "latest-release-dated-on-or-before";
 			date: string;
 			sameMonth?: boolean;
@@ -509,19 +513,58 @@ export type LookupRequest = {
 	date?: { date: string; month: string };
 };
 
+/** The newest unambiguous compiled release for a geography, for routes with one release input. */
+export const latestPublishedBoundaryRelease = (
+	context: RouteContext,
+	geography: string,
+): { id: string; selection: "latest-published" } | ApiResponse => {
+	const selected = context.geographyResolver.selectReleaseForDate(
+		geography,
+		"9999-12",
+	);
+	if (!selected) {
+		return problem(
+			503,
+			"Catalogue Unavailable",
+			"Build the geography resolver and boundary registry before selecting the current release.",
+		);
+	}
+	if (selected.status === "none") return areaNotFound(context, geography);
+	if (selected.status === "ambiguous")
+		return problem(
+			409,
+			"Ambiguous Release",
+			`Several ${geography} boundary releases are equally current. Name one explicitly; each is listed in choices.`,
+			{ code: "ambiguous_release", choices: selected.choices },
+		);
+	if (
+		!context.geographyResolver.hasAreaRelease(
+			geography,
+			selected.selected.id,
+		)
+	)
+		return areaNotFound(context, geography, selected.selected.id);
+	return { id: selected.selected.id, selection: "latest-published" };
+};
+
 /**
  * The boundary release each requested geography is read from. A release is
- * either pinned as `release={geography}/{release}`, or chosen for `date` as
- * the latest one dated on or before it. Nothing is chosen silently: a
- * geography with neither is refused, and a date that fits no release, or fits
- * several equally, says so in that geography's result.
+ * either pinned as `release={geography}/{release}`, chosen for `date` as the
+ * latest one dated on or before it, or defaults to its newest published
+ * release. The release selection is always returned beside the result.
  */
 export const parseLookupRequest = (
 	context: RouteContext,
 	searchParams: URLSearchParams,
 ): LookupRequest | ApiResponse => {
 	const geographies = [
-		...new Set(searchParams.getAll("geography").filter(Boolean)),
+		...new Set(
+			searchParams
+				.getAll("geography")
+				.flatMap((value) => value.split(","))
+				.map((value) => value.trim())
+				.filter(Boolean),
+		),
 	];
 	const pinned = new Map<string, string>();
 	for (const value of searchParams.getAll("release")) {
@@ -568,20 +611,28 @@ export const parseLookupRequest = (
 			"Invalid Query",
 			"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 		);
-	const unselected = geographies.filter(
-		(geography) => !pinned.has(geography),
-	);
-	if (!date && unselected.length > 0)
-		return problem(
-			400,
-			"Invalid Query",
-			`No release is selected for ${unselected.join(", ")}. Pin one as release={geography}/{release}, or give a date to use the latest release dated on or before it.`,
-		);
 	const { geographyResolver } = context;
 	const releases: LookupRelease[] = [];
 	for (const geography of geographies) {
 		const pinnedRelease = pinned.get(geography);
-		if (pinnedRelease !== undefined || !date) {
+		if (pinnedRelease === "latest") {
+			const current = latestPublishedBoundaryRelease(context, geography);
+			if ("status" in current) return current;
+			const release = geographyResolver.boundaryRelease(
+				geography,
+				current.id,
+			);
+			if (!release) return areaNotFound(context, geography, current.id);
+			releases.push({
+				status: "selected",
+				geography,
+				boundaryRelease: release.id,
+				release,
+				selection: { policy: current.selection },
+			});
+			continue;
+		}
+		if (pinnedRelease !== undefined) {
 			const release = geographyResolver.boundaryRelease(
 				geography,
 				pinnedRelease!,
@@ -602,7 +653,7 @@ export const parseLookupRequest = (
 		}
 		const selected = geographyResolver?.selectReleaseForDate(
 			geography,
-			date.month,
+			date?.month ?? "9999-12",
 		);
 		if (!selected)
 			return problem(
@@ -610,10 +661,12 @@ export const parseLookupRequest = (
 				"Catalogue Unavailable",
 				"Build the geography resolver and boundary registry before selecting a release by date.",
 			);
-		const selection = {
-			policy: "latest-release-dated-on-or-before" as const,
-			date: date.date,
-		};
+		const selection: ReleaseSelectionPolicy = date
+			? {
+					policy: "latest-release-dated-on-or-before" as const,
+					date: date.date,
+				}
+			: { policy: "latest-published" as const };
 		if (selected.status === "none") {
 			if (selected.absence === "unknown-geography")
 				return areaNotFound(context, geography);
@@ -647,11 +700,14 @@ export const parseLookupRequest = (
 				geography,
 				boundaryRelease: release.id,
 				release,
-				selection: {
-					...selection,
-					sameMonth: selected.sameMonth,
-					next: selected.next,
-				},
+				selection: date
+					? {
+							policy: "latest-release-dated-on-or-before",
+							date: date.date,
+							sameMonth: selected.sameMonth,
+							next: selected.next,
+						}
+					: selection,
 			});
 		}
 	}

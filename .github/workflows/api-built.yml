@@ -1,0 +1,37 @@
+name: Built API verification
+
+on:
+  schedule:
+    - cron: "23 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: built-api-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  built-api:
+    name: Build and contract-test API
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # `services/api build` restores the pinned raw-data release and writes
+      # every catalogue the built tests exercise.
+      - name: Build API catalogues
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: pnpm --dir services/api build
+      - name: Run built API contract suite
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: pnpm --dir services/api test

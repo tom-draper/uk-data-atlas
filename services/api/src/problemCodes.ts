@@ -101,6 +101,14 @@ export const PROBLEM_CODES = {
 			"The cursor is not one this API issued, or does not belong to the query it was sent with.",
 		example: "/v1/areas?cursor=not-a-cursor",
 	},
+	unknown_query_parameter: {
+		statuses: [400],
+		members: ["parameter"],
+		alternatives: ["suggestion"],
+		meaning:
+			"The request names a query parameter that this operation does not declare. The optional suggestion is the closest declared parameter.",
+		example: "/v1/areas?geogaphy=ward",
+	},
 	no_release_for_date: {
 		statuses: [404],
 		members: ["absence"],

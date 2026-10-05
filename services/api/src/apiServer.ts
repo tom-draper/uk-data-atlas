@@ -22,6 +22,7 @@ import {
 	deprecationHeaders,
 	readOperationTemplates,
 	type MatchedOperation,
+	unexpectedQueryParameter,
 } from "./operationTemplates";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { isStoredFile, problem, type ApiResponse } from "./routeResponse";
@@ -220,8 +221,21 @@ export const createApiServer = (
 		let result = operations(request, pathname);
 		if (!result) {
 			matched = matchOperation(pathname);
+			const unexpected = unexpectedQueryParameter(
+				matched.operation,
+				method,
+				target,
+			);
+			const queryProblem = unexpected
+				? problem(
+						400,
+						"Unknown Query Parameter",
+						`This operation does not accept the query parameter ${unexpected.parameter}.`,
+						{ code: "unknown_query_parameter", ...unexpected },
+					)
+				: undefined;
 			const decision =
-				limiter && method !== "OPTIONS"
+				!queryProblem && limiter && method !== "OPTIONS"
 					? limiter.take(
 							clientKey(
 								clientAddress(
@@ -243,7 +257,9 @@ export const createApiServer = (
 				return httpResponse(request, () => answered!);
 			};
 			try {
-				if (target.length > maxUrlLength) {
+				if (queryProblem) {
+					result = answer(() => queryProblem);
+				} else if (target.length > maxUrlLength) {
 					result = answer(() =>
 						problem(
 							414,

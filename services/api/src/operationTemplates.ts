@@ -21,6 +21,8 @@ export type OperationTemplate = {
 	 * many areas' shapes or takes a batch is priced by the work it does.
 	 */
 	cost?: number;
+	/** Query parameters declared for each HTTP operation on this path. */
+	queryParameters: Partial<Record<"get" | "post", string[]>>;
 };
 
 export type MatchedOperation = {
@@ -36,26 +38,113 @@ const UNMATCHED = "unmatched";
  * `x-sunset` and `x-rate-limit-cost`, by line: path keys sit at a two-space indent under `paths:` and
  * operation fields at six. The server does not load a YAML parser at runtime.
  */
+const componentQueryParameters = (lines: string[]) => {
+	const parameters = new Map<string, string>();
+	let inParameters = false;
+	let id: string | undefined;
+	let name: string | undefined;
+	for (const line of lines) {
+		if (/^components:\s*$/.test(line)) {
+			inParameters = false;
+			id = undefined;
+			continue;
+		}
+		if (!line.startsWith("  ")) {
+			inParameters = false;
+			id = undefined;
+			continue;
+		}
+		if (/^  parameters:\s*$/.test(line)) {
+			inParameters = true;
+			continue;
+		}
+		if (!inParameters) continue;
+		const component = /^    ([A-Za-z][A-Za-z0-9]*):\s*$/.exec(line)?.[1];
+		if (component) {
+			id = component;
+			name = undefined;
+			continue;
+		}
+		if (!id) continue;
+		const parameterName = /^      name:\s*(\S+)\s*$/.exec(line)?.[1];
+		if (parameterName) {
+			name = parameterName;
+			continue;
+		}
+		if (/^      in:\s*query\s*$/.test(line) && name)
+			parameters.set(id, name);
+	}
+	return parameters;
+};
+
 export const readOperationTemplates = (
 	openapiDocument: string,
 ): OperationTemplate[] => {
 	const templates: OperationTemplate[] = [];
+	const lines = openapiDocument.split("\n");
+	const components = componentQueryParameters(lines);
 	let inPaths = false;
 	let current: OperationTemplate | undefined;
-	for (const line of openapiDocument.split("\n")) {
+	let method: "get" | "post" | undefined;
+	let inParameters = false;
+	let parameterName: string | undefined;
+	for (const line of lines) {
 		if (/^\S/.test(line)) {
 			inPaths = line.startsWith("paths:");
 			current = undefined;
+			method = undefined;
+			inParameters = false;
 			continue;
 		}
 		if (!inPaths) continue;
 		const path = /^ {2}(\/\S*):\s*$/.exec(line)?.[1];
 		if (path) {
-			current = { path };
+			current = { path, queryParameters: {} };
 			templates.push(current);
+			method = undefined;
+			inParameters = false;
 			continue;
 		}
 		if (!current) continue;
+		const operation = /^ {4}(get|post):\s*$/.exec(line)?.[1] as
+			"get" | "post" | undefined;
+		if (operation) {
+			method = operation;
+			current.queryParameters[method] = [];
+			inParameters = false;
+			continue;
+		}
+		if (/^ {6}parameters:\s*$/.test(line) && method) {
+			inParameters = true;
+			parameterName = undefined;
+			continue;
+		}
+		if (inParameters && /^ {6}\S/.test(line)) {
+			inParameters = false;
+			parameterName = undefined;
+		}
+		if (inParameters && method) {
+			const direct = /^ {8}- name:\s*(\S+)\s*$/.exec(line)?.[1];
+			if (direct) {
+				parameterName = direct;
+				continue;
+			}
+			const reference =
+				/^ {8}- \$ref: "#\/components\/parameters\/([^"/]+)"\s*$/.exec(
+					line,
+				)?.[1];
+			if (reference) {
+				const name = components.get(reference);
+				if (name) current.queryParameters[method]!.push(name);
+				parameterName = undefined;
+				continue;
+			}
+			if (/^ {10}in:\s*query\s*$/.test(line) && parameterName) {
+				current.queryParameters[method]!.push(parameterName);
+				parameterName = undefined;
+				continue;
+			}
+		}
 		if (/^ {6}deprecated:\s*true\s*$/.test(line))
 			current.deprecation = { ...current.deprecation };
 		const since = /^ {6}x-deprecated-since:\s*"?([^"\s]+)"?\s*$/.exec(
@@ -148,6 +237,64 @@ export const createOperationMatcher = (templates: OperationTemplate[]) => {
 };
 
 export type OperationMatcher = ReturnType<typeof createOperationMatcher>;
+
+const editDistance = (left: string, right: string) => {
+	const previous = Array.from(
+		{ length: right.length + 1 },
+		(_, index) => index,
+	);
+	for (let row = 1; row <= left.length; row += 1) {
+		let diagonal = previous[0]!;
+		previous[0] = row;
+		for (let column = 1; column <= right.length; column += 1) {
+			const above = previous[column]!;
+			previous[column] = Math.min(
+				previous[column]! + 1,
+				previous[column - 1]! + 1,
+				diagonal + (left[row - 1] === right[column - 1] ? 0 : 1),
+			);
+			diagonal = above;
+		}
+	}
+	return previous[right.length]!;
+};
+
+/** The first undeclared query parameter, with a useful spelling correction where possible. */
+export const unexpectedQueryParameter = (
+	operation: OperationTemplate | undefined,
+	method: string,
+	target: string,
+) => {
+	const declared =
+		operation?.queryParameters[
+			method === "HEAD" ? "get" : (method.toLowerCase() as "get" | "post")
+		];
+	if (!declared) return undefined;
+	const supplied = [
+		...new URL(target, "http://localhost").searchParams.keys(),
+	];
+	const parameter = supplied.find((name) => !declared.includes(name));
+	if (!parameter) return undefined;
+	const nearest = declared
+		.map((candidate) => ({
+			candidate,
+			distance: editDistance(
+				parameter.toLowerCase(),
+				candidate.toLowerCase(),
+			),
+		}))
+		.sort(
+			(left, right) =>
+				left.distance - right.distance ||
+				left.candidate.localeCompare(right.candidate),
+		)[0];
+	const suggestion =
+		nearest &&
+		nearest.distance <= Math.max(2, Math.floor(parameter.length / 3))
+			? nearest.candidate
+			: undefined;
+	return { parameter, ...(suggestion ? { suggestion } : {}) };
+};
 
 /**
  * RFC 9745 `Deprecation` and RFC 8594 `Sunset` for a deprecated operation, so

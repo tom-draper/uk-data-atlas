@@ -58,9 +58,21 @@ test("measures how two areas overlap beside any published relationship", () => {
 			"LAD25CD",
 			[["E08000001", square(-1, 54, 0, 55)]],
 		);
+		const boundaryRegistry = {
+			...registry,
+			releases: [
+				...registry.releases,
+				{
+					...registry.releases[0]!,
+					id: "2025-01-uk-lad",
+					geography: "localAuthority",
+					title: "Local authority boundaries",
+				},
+			],
+		};
 		const context = testContext(
 			{
-				boundaryRegistry: registry,
+				boundaryRegistry,
 				areaLookup,
 				crosswalkLookup,
 			},
@@ -119,6 +131,17 @@ test("measures how two areas overlap beside any published relationship", () => {
 		assert.equal(
 			(data.method as { sliverWidthM: number }).sliverWidthM,
 			100,
+		);
+		const latest = routeRequest(
+			"GET",
+			`${url}?with=localAuthority/latest/E08000001`,
+			context,
+		);
+		assert.equal(latest.status, 200);
+		assert.equal(
+			(latest.body as { data: { second: { releaseSelection: string } } })
+				.data.second.releaseSelection,
+			"latest-published",
 		);
 
 		assert.equal(routeRequest("GET", url, context).status, 400);

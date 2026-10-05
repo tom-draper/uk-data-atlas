@@ -2937,7 +2937,9 @@ second inventory to maintain:
 - `GET /v1/crosswalks/{crosswalk-id}/records` — List (optionally filtered) records for one crosswalk
 - `GET /v1/translations` — Translate one code through a published conversion path in either direction
 - `GET /v1/locations` — List the curated area collections
+- `GET /v1/locations/alternatives` — List competing named-location definitions for a real-world name
 - `GET /v1/locations/{location-id}` — Get one curated area collection's definition
+- `GET /v1/locations/{location-id}/comparison` — Compare a named location's direct membership between two dates
 - `GET /v1/locations/{location-id}/geometry` — Get a curated area's compiled GeoJSON geometry
 - `GET /v1/locations/{location-id}/capabilities` — Discover the direct and crosswalk views published for a named location
 - `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release

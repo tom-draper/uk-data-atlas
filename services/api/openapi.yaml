@@ -4165,7 +4165,7 @@ paths:
         x-example-request: "/v1/areas?cursor=not-a-cursor"
       description: >
         Lists compiled area identities, optionally within one geography or
-        boundary release, in a stable order with cursor pagination. To find
+        boundary release (or `latest` for the newest unambiguous release), in a stable order with cursor pagination. To find
         an area by name, code or postcode, use `/places?q=`.
       parameters:
         - name: geography
@@ -4219,8 +4219,8 @@ paths:
       summary: Find the areas meeting a bounding box in one release
       x-likely-refusal:
         status: 400
-        when: "No `release` is given. Geometry differs between releases, so the box is tested against one named release."
-        x-example-request: "/v1/areas:intersects?bbox=-2.3,53.4,-2.2,53.5&geography=ward"
+        when: "The box has fewer than four WGS 84 coordinates, is out of range or does not run west-to-east and south-to-north."
+        x-example-request: "/v1/areas:intersects?bbox=-2.3,53.4,-2.2&geography=ward&release=latest"
       description: >
         Returns every area of one geography and release that meets the given
         WGS 84 box: the query a map makes when it pans, and the one an analysis
@@ -4275,7 +4275,7 @@ paths:
             type: string
           description: >
             The boundary release to search, whose geometry the box is tested
-            against.
+            against, or `latest` for the newest unambiguous published release.
         - name: tier
           in: query
           required: false
@@ -4556,8 +4556,8 @@ paths:
       summary: Find the areas containing a point in one or more geographies
       x-likely-refusal:
         status: 400
-        when: "A geography is named without a release or a date. The point is looked up in one release, which is never chosen for the caller."
-        x-example-request: "/v1/areas:contains?lng=-2.24&lat=53.48&geography=ward"
+        when: "The coordinate is incomplete or out of range."
+        x-example-request: "/v1/areas:contains?lng=-2.24&geography=ward"
       description: >
         Tests a point against one boundary release of each requested geography,
         at most four in one request, and says for each what contains it or why
@@ -4577,9 +4577,9 @@ paths:
 
 
         Each geography's release is either pinned, as
-        `release={geography}/{release}`, or chosen for `date` as the latest one
-        dated on or before it, exactly as `/boundary-releases:resolve` chooses.
-        A geography with neither is refused. A date no release fits, or one
+        `release={geography}/{release}`, chosen for `date` as the latest one
+        dated on or before it, or defaults to the newest unambiguous published
+        release. Every result states its selection policy. A date no release fits, or one
         several releases of the same month fit equally, is reported in that
         geography's result as `no-release-for-date` or `ambiguous-release`
         rather than failing the whole lookup.
@@ -5546,9 +5546,17 @@ paths:
             Follow declared containment descendants up to this many hops. Each
             entry in `descendants` names the area the hop left as `from`, so a
             multi-hop chain can be read back in order.
+        - name: childGeography
+          in: query
+          required: false
+          schema: { type: string }
+          description: >
+            Restrict children to one geography, such as `ward`, or one exact
+            geography/release pair. Without it, the newest child release
+            contemporary with the parent is selected for each geography.
       responses:
         "200":
-          description: The area and its `contains` relationships.
+          description: The area and its contemporary `contains` relationships. `childSelection` records the filter or default policy used.
           content:
             application/json:
               schema:
@@ -5887,7 +5895,8 @@ paths:
         This measures the generalised boundaries as published and is not an
         official statement of how the areas relate. `publishedRelationships`
         lists any published crosswalk relationship between the two, with its
-        method and quality.
+        method and quality. The other release may be `latest`; the response
+        records that selection beside the second area.
       parameters:
         - $ref: "#/components/parameters/Geography"
         - $ref: "#/components/parameters/Release"
@@ -5898,7 +5907,8 @@ paths:
           schema: { type: string }
           description: >
             The other area as `{geography}/{release}/{code}`, such as
-            `localAuthority/2024-05-uk-bgc/E07000092`.
+            `localAuthority/2024-05-uk-bgc/E07000092`. Use `latest` as the
+            release for its newest unambiguous published boundary release.
       responses:
         "200":
           description: Both areas, the overlap, its relation and the method.
@@ -8427,8 +8437,9 @@ components:
       style: form
       explode: true
       description: >
-        A geography to look the point up in. Repeat for up to four. A geography
-        named only in a pinned `release` need not be repeated here.
+        A geography to look the point up in. Repeat it or give a comma-separated
+        list, up to four in total. A geography named only in a pinned `release`
+        need not be repeated here.
     PointLookupRelease:
       name: release
       in: query
@@ -8440,7 +8451,8 @@ components:
       explode: true
       description: >
         A release to pin, as `{geography}/{release}`, such as
-        `ward/2025-12-uk-bgc`. A bare release id is accepted when exactly one
+        `ward/2025-12-uk-bgc`, or `ward/latest` for its newest unambiguous
+        published release. A bare release id is accepted when exactly one
         geography is requested. A pinned release is used whatever `date` says.
     PointLookupDate:
       name: date
@@ -8450,7 +8462,8 @@ components:
       description: >
         A calendar date as `YYYY-MM-DD`, or a month as `YYYY-MM`. Every
         geography without a pinned release uses the latest release dated on or
-        before it. The country boundaries used to place a point that matches
+        before it; without a date it uses the newest unambiguous published
+        release. The country boundaries used to place a point that matches
         nothing are chosen the same way.
     PointLookupAccuracy:
       name: accuracy
@@ -8735,6 +8748,7 @@ components:
             - incompatible_geometry
             - invalid_format
             - invalid_cursor
+            - unknown_query_parameter
             - no_release_for_date
             - ambiguous_release
           description: >
@@ -8754,9 +8768,10 @@ components:
             means several places the measure answers differently. From an
             observation request: `incompatible_geometry` when the chosen
             boundary release does not hold every source code. On a 400:
-            `invalid_format` for a `format` the route does not serve, and
+            `invalid_format` for a `format` the route does not serve,
             `invalid_cursor` for a cursor this API did not issue or that
-            belongs to another query. From a release resolution:
+            belongs to another query, and `unknown_query_parameter` when the
+            operation does not declare a supplied parameter. From a release resolution:
             `no_release_for_date` and `ambiguous_release`.
         absence:
           type: string
@@ -8785,6 +8800,12 @@ components:
             compiled release does. The classification uses code membership
             only: a superseded code may have been abolished, merged or recoded,
             and none of those is claimed.
+        parameter:
+          type: string
+          description: The query parameter the operation does not declare.
+        suggestion:
+          type: string
+          description: The closest declared query parameter, when one is unambiguous.
         presentIn:
           type: array
           description: >
@@ -9079,6 +9100,34 @@ components:
             "status": 400,
             "detail": "cursor is invalid.",
             "code": "invalid_cursor",
+          }
+
+    UnknownQueryParameterProblem:
+      description: >
+        The operation does not declare the supplied query parameter. Produced by
+        `GET /v1/areas?geogaphy=ward`.
+      allOf:
+        - $ref: "#/components/schemas/Problem"
+        - type: object
+          required: [code, parameter]
+          properties:
+            status:
+              enum: [400]
+            code:
+              const: unknown_query_parameter
+            parameter:
+              type: string
+            suggestion:
+              type: string
+      examples:
+        - {
+            "type": "https://api.ukdataatlas.com/problems/unknown-query-parameter",
+            "title": "Unknown Query Parameter",
+            "status": 400,
+            "detail": "This operation does not accept the query parameter geogaphy.",
+            "code": "unknown_query_parameter",
+            "parameter": "geogaphy",
+            "suggestion": "geography",
           }
 
     NoReleaseForDateProblem:
@@ -10079,6 +10128,23 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/AreaRelationship"
+            childSelection:
+              description: >
+                Present on the children route. `contemporary` selects the
+                child release current at the parent's release month; `release`
+                records an exact child geography/release filter.
+              oneOf:
+                - type: object
+                  required: [kind]
+                  properties:
+                    kind: { const: contemporary }
+                    geography: { type: string }
+                - type: object
+                  required: [kind, geography, release]
+                  properties:
+                    kind: { const: release }
+                    geography: { type: string }
+                    release: { type: string }
 
     GeoJsonGeometry:
       type: object
