@@ -10,7 +10,7 @@ import {
 import { registry, testContext } from "./routeFixtures";
 
 const conversion =
-	"sourceGeography=ward&sourceRelease=2025-01-en-ward&targetGeography=localAuthority&targetRelease=2025-01-uk-lad&purpose=membership";
+	"from=ward/2025-01-en-ward&to=localAuthority/2025-01-uk-lad&purpose=membership";
 
 const context = () =>
 	testContext({
@@ -26,7 +26,7 @@ const context = () =>
 test("uses one route for relationship discovery and conversion planning", () => {
 	const discovery = route(
 		"GET",
-		"/v1/relationships?sourceGeography=ward&sourceRelease=2025-01-en-ward",
+		"/v1/relationships?from=ward/2025-01-en-ward",
 		context(),
 	);
 	assert.equal(discovery.status, 200);
@@ -66,7 +66,7 @@ test("uses the same route for release relationship coverage", () => {
 test("refuses a mixed conversion and coverage query", () => {
 	const response = route(
 		"GET",
-		"/v1/relationships?sourceGeography=ward&sourceRelease=2025-01-en-ward&geography=ward&release=2025-01-en-ward",
+		"/v1/relationships?from=ward/2025-01-en-ward&geography=ward&release=2025-01-en-ward",
 		context(),
 	);
 	assert.equal(response.status, 400);

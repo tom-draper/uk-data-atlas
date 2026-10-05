@@ -183,7 +183,7 @@ test("aggregates a region through an explicit complete crosswalk", () => {
 		],
 	};
 	const response = routeWithCatalog(
-		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&place=region/E12000002&sourceRelease=2025-12-uk-lad&crosswalk=${crosswalkId}`,
+		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&place=region/E12000002&from=localAuthority/2025-12-uk-lad&crosswalk=${crosswalkId}`,
 		dataCatalog,
 		measureObservations,
 		{
@@ -777,7 +777,7 @@ const containmentCompatibility: MeasureCompatibilityInventory = {
 
 const aggregateOnto = (query: string, crosswalk: CrosswalkArtifact) =>
 	routeWithCatalog(
-		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&sourceRelease=2025-12-uk-lad&${query}`,
+		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&from=localAuthority/2025-12-uk-lad&${query}`,
 		dataCatalog,
 		measureObservations,
 		{
@@ -878,7 +878,7 @@ const aggregateThrough = (
 	steps: Array<[CrosswalkArtifact, "forward" | "reverse"]>,
 ) =>
 	routeWithCatalog(
-		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&sourceRelease=2025-12-uk-lad&${query}`,
+		`/v1/data/ghg-emissions/aggregate?period=2024&geography=localAuthority&boundaryYear=2025&from=localAuthority/2025-12-uk-lad&${query}`,
 		dataCatalog,
 		measureObservations,
 		{

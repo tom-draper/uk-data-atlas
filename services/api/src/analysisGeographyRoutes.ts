@@ -2,16 +2,9 @@ import { analysisConversion } from "./analysisGeographies";
 import { unsupported } from "./capability";
 import { coveragePlan } from "./coveragePlan";
 import { relationshipPurposeFor } from "./relationshipPaths";
+import { parseExactReleaseReference } from "./releaseForDate";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-
-const parseAnalysisGeography = (value: string | null) => {
-	if (!value) return undefined;
-	const [geography, boundaryRelease, ...rest] = value.split("/");
-	return geography && boundaryRelease && rest.length === 0
-		? { geography, boundaryRelease }
-		: undefined;
-};
 
 const supportFor = (
 	inventory: NonNullable<
@@ -210,41 +203,37 @@ export const handleAnalysisGeographyRoutes = ({
 	const requestedMeasure = isPlan
 		? parsedUrl.searchParams.get("measure")
 		: measureId;
-	const analysisGeography = parseAnalysisGeography(
-		parsedUrl.searchParams.get("analysisGeography"),
-	);
-	if (!requestedMeasure || !analysisGeography)
+	const to = parseExactReleaseReference(parsedUrl.searchParams.get("to"));
+	if (!requestedMeasure || !to)
 		return problem(
 			400,
 			"Invalid Query",
-			"measure and analysisGeography=geography/release are required.",
+			"measure and to=geography/release are required.",
 		);
-	const sourceGeography = parsedUrl.searchParams.get("sourceGeography");
-	const sourceBoundaryYear = parsedUrl.searchParams.get("sourceBoundaryYear");
-	if (isPlan && (!sourceGeography || !sourceBoundaryYear))
+	const geography = parsedUrl.searchParams.get("geography");
+	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+	if (isPlan && (!geography || !boundaryYear))
 		return problem(
 			400,
 			"Invalid Query",
-			"sourceGeography and sourceBoundaryYear are required when planning an analysis, so the API never chooses between source partitions.",
+			"geography and boundaryYear are required when planning an analysis, so the API never chooses between source partitions.",
 		);
 	const supports = supportFor(
 		inventory,
 		requestedMeasure,
-		analysisGeography,
-		sourceGeography
-			? { geography: sourceGeography, boundaryYear: sourceBoundaryYear }
-			: undefined,
+		to,
+		geography ? { geography, boundaryYear } : undefined,
 	);
 	if (!isPlan)
 		return {
 			status: 200,
 			body: envelope(releaseId, {
 				measureId: requestedMeasure,
-				analysisGeography,
+				analysisGeography: to,
 				...(supports.length > 0
 					? { status: "available" as const, supports }
 					: unsupported(
-							`No reviewed conversion is published for ${requestedMeasure} on ${analysisGeography.geography}/${analysisGeography.boundaryRelease}.`,
+							`No reviewed conversion is published for ${requestedMeasure} on ${to.geography}/${to.boundaryRelease}.`,
 						)),
 			}),
 		};
@@ -263,7 +252,7 @@ export const handleAnalysisGeographyRoutes = ({
 				context,
 				requestedMeasure,
 				period,
-				analysisGeography,
+				to,
 				supports[0],
 				validation,
 			)
@@ -274,12 +263,12 @@ export const handleAnalysisGeographyRoutes = ({
 			body: envelope(releaseId, {
 				measureId: requestedMeasure,
 				period,
-				analysisGeography,
+				analysisGeography: to,
 				status: "not-comparable" as const,
 				reason:
 					supports.length > 0
 						? `${period} is not published by the requested source partition; supported periods are ${supports.flatMap((candidate) => candidate.source.periods).join(", ")}.`
-						: `No reviewed conversion is published from ${sourceGeography}/${sourceBoundaryYear} to ${analysisGeography.geography}/${analysisGeography.boundaryRelease} for ${requestedMeasure}.`,
+						: `No reviewed conversion is published from ${geography}/${boundaryYear} to ${to.geography}/${to.boundaryRelease} for ${requestedMeasure}.`,
 				...unavailableEvidence,
 			}),
 		};
@@ -287,7 +276,7 @@ export const handleAnalysisGeographyRoutes = ({
 		context,
 		requestedMeasure,
 		period,
-		analysisGeography,
+		to,
 		support,
 		validation,
 	);
@@ -296,7 +285,7 @@ export const handleAnalysisGeographyRoutes = ({
 		body: envelope(releaseId, {
 			measureId: requestedMeasure,
 			period,
-			analysisGeography,
+			analysisGeography: to,
 			status: "available" as const,
 			basis: "derived" as const,
 			source: support.source,

@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import { releaseMonth, selectReleaseForDate } from "../src/releaseForDate";
+import {
+	parseExactReleaseReference,
+	releaseMonth,
+	selectReleaseForDate,
+} from "../src/releaseForDate";
 
 const release = (geography: string, id: string, countries: string[]) => ({
 	id,
@@ -44,6 +48,15 @@ test("reads a release's month from its id, and none from a year alone", () => {
 	assert.equal(releaseMonth("2025-05-uk-bgc-v2"), "2025-05");
 	assert.equal(releaseMonth("2011-ni"), undefined);
 	assert.equal(releaseMonth("2011-13-uk"), undefined);
+});
+
+test("parses an exact release reference without guessing its parts", () => {
+	assert.deepEqual(parseExactReleaseReference("ward/2025-05-uk-bgc"), {
+		geography: "ward",
+		boundaryRelease: "2025-05-uk-bgc",
+	});
+	for (const value of [null, "ward", "/2025-05-uk-bgc", "ward/"])
+		assert.equal(parseExactReleaseReference(value), undefined);
 });
 
 test("selects the latest release dated on or before the month", () => {

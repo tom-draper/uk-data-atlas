@@ -23,7 +23,7 @@ test("parses a country aggregation query", () => {
 			targetGeography: null,
 			crosswalkId: null,
 			pathId: null,
-			sourceRelease: null,
+			from: null,
 		},
 	);
 });
@@ -31,7 +31,7 @@ test("parses a country aggregation query", () => {
 test("reads a place reference's geography as the target's", () => {
 	const result = parseAggregateQuery({
 		parsedUrl: url(
-			"period=2024&geography=localAuthority&boundaryYear=2024&place=region/R1&crosswalk=x&sourceRelease=release",
+			"period=2024&geography=localAuthority&boundaryYear=2024&place=region/R1&crosswalk=x&from=localAuthority/release",
 		),
 		measureId: "measure.example",
 	});
@@ -40,7 +40,10 @@ test("reads a place reference's geography as the target's", () => {
 	assert.equal(result.targetGeography, "region");
 	assert.equal(result.targetCode, "R1");
 	assert.equal(result.crosswalkId, "x");
-	assert.equal(result.sourceRelease, "release");
+	assert.deepEqual(result.from, {
+		geography: "localAuthority",
+		boundaryRelease: "release",
+	});
 });
 
 test("rejects unsupported selectors and malformed targets", () => {

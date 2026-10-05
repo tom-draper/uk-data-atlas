@@ -13,7 +13,7 @@ import {
 test("translates codes only through a crosswalk valid for the requested purpose", () => {
 	const response = route(
 		"GET",
-		"/v1/translations?sourceGeography=constituency&sourceRelease=2010&code=E14000001&targetGeography=constituency&targetRelease=2024-07-uk-bgc&purpose=identity",
+		"/v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=identity",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -66,7 +66,7 @@ test("translates codes only through a crosswalk valid for the requested purpose"
 
 	const unsupported = route(
 		"GET",
-		"/v1/translations?sourceGeography=constituency&sourceRelease=2010&code=E14000001&targetGeography=constituency&targetRelease=2024-07-uk-bgc&purpose=membership",
+		"/v1/translations?from=constituency/2010&code=E14000001&to=constituency/2024-07-uk-bgc&purpose=membership",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -79,7 +79,7 @@ test("translates codes only through a crosswalk valid for the requested purpose"
 test("reverses published identity and containment crosswalks", () => {
 	const identity = route(
 		"GET",
-		"/v1/translations?sourceGeography=constituency&sourceRelease=2024-07-uk-bgc&code=E14001001&targetGeography=constituency&targetRelease=2010&purpose=identity",
+		"/v1/translations?from=constituency/2024-07-uk-bgc&code=E14001001&to=constituency/2010&purpose=identity",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -111,7 +111,7 @@ test("reverses published identity and containment crosswalks", () => {
 
 	const membership = route(
 		"GET",
-		"/v1/translations?sourceGeography=localAuthority&sourceRelease=2025-01-uk-lad&code=E08000001&targetGeography=ward&targetRelease=2025-01-en-ward&purpose=membership",
+		"/v1/translations?from=localAuthority/2025-01-uk-lad&code=E08000001&to=ward/2025-01-en-ward&purpose=membership",
 		registry,
 		geographyInventory,
 		areaLookup,
@@ -220,7 +220,7 @@ test("normalises reverse area-overlap weights against the queried target", () =>
 	};
 	const response = route(
 		"GET",
-		"/v1/translations?sourceGeography=localAuthority&sourceRelease=2025&code=E08000001&targetGeography=constituency&targetRelease=2024&purpose=apportion",
+		"/v1/translations?from=localAuthority/2025&code=E08000001&to=constituency/2024&purpose=apportion",
 		registry,
 		geographyInventory,
 		areaLookup,

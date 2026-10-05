@@ -1,5 +1,9 @@
 import { isCountryCode } from "./aggregation";
 import { parsePlaceParameter } from "./placeParameter";
+import {
+	parseExactReleaseReference,
+	type ExactReleaseReference,
+} from "./releaseForDate";
 import { problem, type ApiResponse } from "./routeResponse";
 
 export type AggregateQuery = {
@@ -13,7 +17,7 @@ export type AggregateQuery = {
 	targetGeography: string | null;
 	crosswalkId: string | null;
 	pathId: string | null;
-	sourceRelease: string | null;
+	from: ExactReleaseReference | null;
 };
 
 /** Parse and validate the query vocabulary shared by data aggregation. */
@@ -49,6 +53,20 @@ export const parseAggregateQuery = ({
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
 	const pathId = parsedUrl.searchParams.get("path");
+	const fromParameter = parsedUrl.searchParams.get("from");
+	const from = parseExactReleaseReference(fromParameter);
+	if (fromParameter !== null && !from)
+		return problem(
+			400,
+			"Invalid Query",
+			"from must be an exact geography/release reference.",
+		);
+	if (from && geography && from.geography !== geography)
+		return problem(
+			400,
+			"Invalid Query",
+			"from must name the same geography as the source partition.",
+		);
 	const locationId = place.kind === "location" ? place.id : null;
 	// A country is summed from its members without a crosswalk; any other
 	// area is a target a named membership crosswalk groups members into.
@@ -88,6 +106,6 @@ export const parseAggregateQuery = ({
 		targetGeography,
 		crosswalkId,
 		pathId,
-		sourceRelease: parsedUrl.searchParams.get("sourceRelease"),
+		from: from ?? null,
 	};
 };
