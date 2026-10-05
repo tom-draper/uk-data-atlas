@@ -22,20 +22,19 @@ import { compileNamedLocationGeometry } from "../src/namedLocationGeometry";
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
  * file's Scottish lieutenancy areas are left out: see ceremonialCounties.ts.
  */
-const readCountyShapes = (repositoryRoot: string, directory: string, file: string, excludeScottishLieutenancy = false): CountyShape[] =>
+const readCountyShapes = (
+	repositoryRoot: string,
+	directory: string,
+	file: string,
+	excludeScottishLieutenancy = false,
+): CountyShape[] =>
 	readShapefileFeatures(
-		join(
-			repositoryRoot,
-			"data",
-			"geography",
-			directory,
-			"source",
-			file,
-		),
+		join(repositoryRoot, "data", "geography", directory, "source", file),
 	)
 		.filter(
 			({ properties }) =>
-				!excludeScottishLieutenancy || !SCOTTISH_LIEUTENANCY_AREAS.has(properties.NAME!),
+				!excludeScottishLieutenancy ||
+				!SCOTTISH_LIEUTENANCY_AREAS.has(properties.NAME!),
 		)
 		.map(({ properties, geometry }) => {
 			const wgs84 = toWgs84Geometry(geometry, "EPSG:27700");
@@ -46,12 +45,20 @@ const readCountyShapes = (repositoryRoot: string, directory: string, file: strin
 			};
 		});
 
-
 const readCeremonialCounties = (repositoryRoot: string) =>
-	readCountyShapes(repositoryRoot, "ceremonial-counties", "Boundary-line-ceremonial-counties_region.shp", true);
+	readCountyShapes(
+		repositoryRoot,
+		"ceremonial-counties",
+		"Boundary-line-ceremonial-counties_region.shp",
+		true,
+	);
 
 const readHistoricCounties = (repositoryRoot: string) =>
-	readCountyShapes(repositoryRoot, "historic-counties", "Boundary-line-historic-counties_region.shp");
+	readCountyShapes(
+		repositoryRoot,
+		"historic-counties",
+		"Boundary-line-historic-counties_region.shp",
+	);
 
 export const buildNamedLocations = (repositoryRoot: string) => {
 	const source = join(
@@ -112,7 +119,10 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 			countyMemberships(authorityReleases, counties),
 			counties,
 		),
-		countyMemberships(authorityReleases, readHistoricCounties(repositoryRoot)),
+		countyMemberships(
+			authorityReleases,
+			readHistoricCounties(repositoryRoot),
+		),
 		readHistoricCounties(repositoryRoot),
 	);
 	const locations = withCounties.map((location) => {
