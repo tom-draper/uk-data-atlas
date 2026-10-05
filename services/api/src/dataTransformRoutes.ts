@@ -8,6 +8,14 @@ import {
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { sourceExactProvenance } from "./sourceExactProvenance";
+import {
+	areaNamedBy,
+	defaultSource,
+	namedAreaRefusal,
+	publishedPartitions,
+	statedDefaults,
+	type NamedArea,
+} from "./dataDefaults";
 
 /** Operations that compare or transform source-exact observations. */
 export const handleDataTransformRoutes = ({
@@ -61,11 +69,83 @@ export const handleDataTransformRoutes = ({
 			"Operation Not Supported",
 			"This source-exact comparison endpoint does not select geometry releases, convert observations or aggregate them.",
 		);
-	const period = parsedUrl.searchParams.get("period");
-	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	const baselineAreaCode = parsedUrl.searchParams.get("baselineAreaCode");
-	const comparisonAreaCode = parsedUrl.searchParams.get("comparisonAreaCode");
+	const requestedGeography = parsedUrl.searchParams.get("geography");
+	const baselineAreaCodeParameter =
+		parsedUrl.searchParams.get("baselineAreaCode");
+	const comparisonAreaCodeParameter =
+		parsedUrl.searchParams.get("comparisonAreaCode");
+	const nameArea = (text: string | null, geography: string | null) =>
+		areaNamedBy({
+			geographyResolver: context.geographyResolver,
+			measure,
+			place: text,
+			geography,
+			boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		});
+	const baselineNamed = nameArea(
+		baselineAreaCodeParameter,
+		requestedGeography,
+	);
+	const comparisonNamed = nameArea(
+		comparisonAreaCodeParameter,
+		requestedGeography,
+	);
+	// A name that means several areas is read in the other area's geography
+	// when that one is clear, so "Newport" against "Cardiff" is the council.
+	const inGeographyOf = (
+		text: string | null,
+		named: NamedArea | undefined,
+		other: NamedArea | undefined,
+	) => {
+		if (named?.kind !== "ambiguous" || other?.kind !== "area") return named;
+		const narrowed = nameArea(text, other.geography);
+		return narrowed?.kind === "area" ? narrowed : named;
+	};
+	const baselinePlace = inGeographyOf(
+		baselineAreaCodeParameter,
+		baselineNamed,
+		comparisonNamed,
+	);
+	const comparisonPlace = inGeographyOf(
+		comparisonAreaCodeParameter,
+		comparisonNamed,
+		baselineNamed,
+	);
+	for (const [parameter, text, named] of [
+		["baselineAreaCode", baselineAreaCodeParameter, baselinePlace],
+		["comparisonAreaCode", comparisonAreaCodeParameter, comparisonPlace],
+	] as const) {
+		const refusal = namedAreaRefusal({
+			parsedUrl,
+			measure,
+			parameter,
+			text,
+			named,
+		});
+		if (refusal) return refusal;
+	}
+	const baselineArea =
+		baselinePlace?.kind === "area" ? baselinePlace : undefined;
+	const comparisonArea =
+		comparisonPlace?.kind === "area" ? comparisonPlace : undefined;
+	const inferredGeography =
+		baselineArea?.geography === comparisonArea?.geography
+			? (baselineArea?.geography ?? null)
+			: null;
+	const requested = {
+		period: parsedUrl.searchParams.get("period"),
+		geography: requestedGeography ?? inferredGeography,
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		datasetId: parsedUrl.searchParams.get("datasetId"),
+	};
+	const defaults = defaultSource(measure, requested);
+	const period = requested.period ?? defaults?.period ?? null;
+	const geography = requested.geography ?? defaults?.geography ?? null;
+	const boundaryYear =
+		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
+	const baselineAreaCode = baselineArea?.code ?? baselineAreaCodeParameter;
+	const comparisonAreaCode =
+		comparisonArea?.code ?? comparisonAreaCodeParameter;
 	if (!baselineAreaCode || !comparisonAreaCode)
 		return problem(
 			400,
@@ -78,14 +158,11 @@ export const handleDataTransformRoutes = ({
 			"Invalid Query",
 			"baselineAreaCode and comparisonAreaCode must differ.",
 		);
-	// The three are documented as required here, so a caller who leaves one out
-	// is answered the same way whatever the measure. Which partition they name
-	// is the resolver's to decide.
 	if (period === null || geography === null || boundaryYear === null)
 		return problem(
 			400,
 			"Invalid Query",
-			`${measureId} supports comparisons only for a published source period, geography and boundary year.`,
+			`${measureId} compares two areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	const resolved = resolveObservations(context, {
 		measureId,
@@ -131,6 +208,7 @@ export const handleDataTransformRoutes = ({
 			measure,
 			source,
 			period,
+			...statedDefaults(defaults?.defaulted),
 			sourceGeography: source.sourceGeography,
 			provenance: sourceExactProvenance({
 				atlasRelease: releaseId,

@@ -1,5 +1,8 @@
 import { isCountryCode } from "./aggregation";
-import { parsePlaceParameter } from "./placeParameter";
+import { defaultSource } from "./dataDefaults";
+import type { Measure } from "./dataCatalog";
+import type { GeographyResolver } from "./geographyResolver";
+import { parsePlaceParameter, type PlaceParameter } from "./placeParameter";
 import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,
@@ -18,15 +21,20 @@ export type AggregateQuery = {
 	crosswalkId: string | null;
 	pathId: string | null;
 	from: ExactReleaseReference | null;
+	defaulted: Record<string, string | number>;
 };
 
 /** Parse and validate the query vocabulary shared by data aggregation. */
 export const parseAggregateQuery = ({
 	parsedUrl,
 	measureId,
+	measure,
+	geographyResolver,
 }: {
 	parsedUrl: URL;
 	measureId: string;
+	measure: Measure;
+	geographyResolver: GeographyResolver;
 }): AggregateQuery | ApiResponse => {
 	if (
 		parsedUrl.searchParams.has("release") ||
@@ -38,19 +46,63 @@ export const parseAggregateQuery = ({
 			"This aggregation does not select a geometry release or convert observations.",
 		);
 	}
-	const place = parsePlaceParameter(parsedUrl.searchParams, measureId, false);
-	if (place && "status" in place) return place;
-	if (!place)
+	const parsedPlace = parsePlaceParameter(
+		parsedUrl.searchParams,
+		measureId,
+		false,
+	);
+	if (parsedPlace && "status" in parsedPlace) return parsedPlace;
+	if (!parsedPlace)
 		return problem(
 			400,
 			"Invalid Query",
 			"place is required: location/{id} for a curated named location, a country code such as E92000001, or an area code a membership crosswalk groups members into.",
 		);
-	const period = parsedUrl.searchParams.get("period");
+	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? "";
+	const nameCandidates = placeText.includes("/")
+		? []
+		: geographyResolver
+				.places(placeText, 12)
+				.filter(
+					(candidate) =>
+						candidate.match !== "prefix" &&
+						(candidate.kind === "named-location" ||
+							(candidate.geography === "country" &&
+								isCountryCode(candidate.code))) &&
+						measure.sources.some(
+							(source) =>
+								source.sourceGeography.type ===
+								(candidate.kind === "named-location"
+									? candidate.memberGeography
+									: "localAuthority"),
+						),
+				);
+	const named = nameCandidates.length === 1 ? nameCandidates[0] : undefined;
+	const place: PlaceParameter = named
+		? named.kind === "named-location"
+			? { kind: "location", id: named.code }
+			: { kind: "area", code: named.code, geography: named.geography }
+		: parsedPlace;
+	const impliedSourceGeography =
+		named?.kind === "named-location"
+			? (named.memberGeography ?? null)
+			: named && isCountryCode(named.code)
+				? "localAuthority"
+				: null;
+	const requested = {
+		period: parsedUrl.searchParams.get("period"),
+		geography:
+			parsedUrl.searchParams.get("geography") ?? impliedSourceGeography,
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		datasetId: parsedUrl.searchParams.get("datasetId"),
+	};
+	const defaults = defaultSource(measure, requested);
+	const period = requested.period ?? defaults?.period ?? null;
 	// The geography here is the members', which a place reference to the
 	// whole does not name, so it is only ever the one given.
-	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+	const geography = requested.geography ?? defaults?.geography ?? null;
+	const boundaryYear =
+		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
 	const pathId = parsedUrl.searchParams.get("path");
 	const fromParameter = parsedUrl.searchParams.get("from");
@@ -107,5 +159,6 @@ export const parseAggregateQuery = ({
 		crosswalkId,
 		pathId,
 		from: from ?? null,
+		defaulted: defaults?.defaulted ?? {},
 	};
 };

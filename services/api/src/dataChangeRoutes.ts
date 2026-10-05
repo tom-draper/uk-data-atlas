@@ -19,6 +19,14 @@ import {
 } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
+import {
+	areaNamedBy,
+	defaultChangePeriods,
+	defaultSource,
+	namedAreaRefusal,
+	publishedPartitions,
+	statedDefaults,
+} from "./dataDefaults";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** Change between two periods of a measure for areas published in both, ranked in stable pages. */
@@ -82,16 +90,47 @@ export const handleDataChangeRoutes = ({
 			"Invalid Query",
 			"Change is measured area by area within one partition, and a curated location is not one of its areas. Ask for each of its member areas, or for the location's value in each period.",
 		);
-	const geography = requestedGeography(parsedUrl.searchParams, place);
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	const startPeriod = parsedUrl.searchParams.get("startPeriod");
-	const endPeriod = parsedUrl.searchParams.get("endPeriod");
-	const partitions = measure.sources
-		.map(
-			(candidate) =>
-				`geography=${candidate.sourceGeography.type}&boundaryYear=${candidate.sourceGeography.boundaryYear} (${candidate.periods.length} period${candidate.periods.length === 1 ? "" : "s"})`,
-		)
-		.join("; ");
+	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
+	const named = areaNamedBy({
+		geographyResolver: context.geographyResolver,
+		measure,
+		place: placeText,
+		geography: requestedGeography(parsedUrl.searchParams, place),
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+	});
+	const namedRefusal = namedAreaRefusal({
+		parsedUrl,
+		measure,
+		parameter: "place",
+		text: placeText,
+		named,
+	});
+	if (namedRefusal) return namedRefusal;
+	const area = named?.kind === "area" ? named : undefined;
+	const requested = {
+		geography:
+			requestedGeography(parsedUrl.searchParams, place) ??
+			area?.geography ??
+			null,
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		datasetId: parsedUrl.searchParams.get("datasetId"),
+	};
+	const defaults = defaultSource(measure, requested, [], false);
+	const geography = requested.geography ?? defaults?.geography ?? null;
+	const boundaryYear =
+		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
+	const changePeriods = defaults
+		? defaultChangePeriods(
+				defaults.source,
+				parsedUrl.searchParams.get("startPeriod"),
+				parsedUrl.searchParams.get("endPeriod"),
+			)
+		: undefined;
+	const startPeriod =
+		changePeriods?.start ?? parsedUrl.searchParams.get("startPeriod");
+	const endPeriod =
+		changePeriods?.end ?? parsedUrl.searchParams.get("endPeriod");
+	const partitions = publishedPartitions(measure);
 	/*
 	 * Change is measured inside one partition, never across two. The
 	 * publisher restates every period of a partition on a single set of
@@ -103,7 +142,7 @@ export const handleDataChangeRoutes = ({
 		return problem(
 			400,
 			"Invalid Query",
-			`${measureId} measures change within one source partition: give geography, boundaryYear, startPeriod and endPeriod. Published partitions: ${partitions}.`,
+			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	}
 	// The partition is chosen by geography and boundary year alone. Which
@@ -119,7 +158,7 @@ export const handleDataChangeRoutes = ({
 		return problem(
 			400,
 			"Invalid Query",
-			`${measureId} measures change within one source partition: give geography, boundaryYear, startPeriod and endPeriod. Published partitions: ${partitions}.`,
+			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	const { source } = resolved.plan;
 	if (source.periods.length < 2) {
@@ -240,7 +279,7 @@ export const handleDataChangeRoutes = ({
 	});
 
 	// One area, with its place among all of them: "rose 12%, fifth fastest".
-	const areaCode = place?.code;
+	const areaCode = area?.code ?? place?.code;
 	let records = ranked;
 	let nextCursor: string | null = null;
 	if (areaCode) {
@@ -297,6 +336,10 @@ export const handleDataChangeRoutes = ({
 	const withIntervals = changeSet.changes.some(
 		(change) => change.intervalsOverlap !== undefined,
 	);
+	const changeDefaulted: Record<string, string | number> = {
+		...(defaults?.defaulted ?? {}),
+		...(changePeriods?.defaulted ?? {}),
+	};
 	return {
 		status: 200,
 		body: envelope(
@@ -307,6 +350,7 @@ export const handleDataChangeRoutes = ({
 				sourceGeography: source.sourceGeography,
 				startPeriod,
 				endPeriod,
+				...statedDefaults(changeDefaulted),
 				provenance: sourceSeriesProvenance({
 					atlasRelease: releaseId,
 					measure,

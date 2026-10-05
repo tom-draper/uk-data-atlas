@@ -9,6 +9,13 @@ import { observationsFor } from "./observationArtifacts";
 import { resolveObservations } from "./observationResolution/observationPlan";
 import { parseExactReleaseReference } from "./releaseForDate";
 import {
+	areaNamedBy,
+	defaultSource,
+	namedAreaRefusal,
+	publishedPartitions,
+	statedDefaults,
+} from "./dataDefaults";
+import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,
 } from "./sourceExactProvenance";
@@ -74,15 +81,44 @@ export const handleDataSeriesRoutes = ({
 			"Invalid Query",
 			`A series is one area's. A curated location is summed from its members by /v1/data/${measureId}/aggregate, or answered by /v1/data/${measureId}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
 		);
-	const areaCode = place?.code;
-	const geography = requestedGeography(parsedUrl.searchParams, place);
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
+	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
+	const named = areaNamedBy({
+		geographyResolver: context.geographyResolver,
+		measure,
+		place: placeText,
+		geography: requestedGeography(parsedUrl.searchParams, place),
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+	});
+	const namedRefusal = namedAreaRefusal({
+		parsedUrl,
+		measure,
+		parameter: "place",
+		text: placeText,
+		named,
+	});
+	if (namedRefusal) return namedRefusal;
+	const area = named?.kind === "area" ? named : undefined;
+	const areaCode = area?.code ?? place?.code;
+	const requested = {
+		geography:
+			requestedGeography(parsedUrl.searchParams, place) ??
+			area?.geography ??
+			null,
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		datasetId: parsedUrl.searchParams.get("datasetId"),
+	};
+	const defaults = defaultSource(measure, requested, [], false);
+	const geography = requested.geography ?? defaults?.geography ?? null;
+	const boundaryYear =
+		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
 	const datasetId = parsedUrl.searchParams.get("datasetId");
 	if (!areaCode || !geography || !boundaryYear) {
 		return problem(
 			400,
 			"Invalid Query",
-			"place, geography and boundaryYear are required for a source-exact series; a place reference such as localAuthority/E08000035 carries its geography.",
+			areaCode
+				? `${measureId} is published on more than one partition, so give geography and boundaryYear, or a place reference such as localAuthority/E08000035 that carries its geography. Published partitions: ${publishedPartitions(measure)}.`
+				: "place is required: an area name, an area code, or a place reference such as localAuthority/E08000035.",
 		);
 	}
 	// A series is the whole partition rather than a moment in it, so no period
@@ -233,6 +269,7 @@ export const handleDataSeriesRoutes = ({
 			body: envelope(releaseId, {
 				measure,
 				areaCode,
+				...statedDefaults(defaults?.defaulted),
 				analysisGeography,
 				status: "available" as const,
 				basis: "derived" as const,
@@ -281,6 +318,7 @@ export const handleDataSeriesRoutes = ({
 			measure,
 			source,
 			areaCode,
+			...statedDefaults(defaults?.defaulted),
 			sourceGeography: source.sourceGeography,
 			provenance: sourceSeriesProvenance({
 				atlasRelease: releaseId,

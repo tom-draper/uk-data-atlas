@@ -27,6 +27,13 @@ import {
 } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
+import {
+	areaNamedBy,
+	defaultSource,
+	namedAreaRefusal,
+	publishedPartitions,
+	statedDefaults,
+} from "./dataDefaults";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** A measure's source-exact observations for one period, as JSON or a tabular export. */
@@ -71,18 +78,44 @@ export const handleDataRoutes = ({
 			"Invalid Query",
 			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${measureId}/aggregate sums it from its members.`,
 		);
-	const period = parsedUrl.searchParams.get("period");
-	const geography = requestedGeography(parsedUrl.searchParams, place);
-	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
-	// This route documents all three as required, so a caller who leaves one
-	// out is answered the same way whatever the measure. Which partition those
-	// name, and whether it may be drawn on a release, is the resolver's to
-	// decide rather than this route's.
+	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
+	const named = areaNamedBy({
+		geographyResolver: context.geographyResolver,
+		measure,
+		place: placeText,
+		geography: requestedGeography(parsedUrl.searchParams, place),
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+	});
+	const namedRefusal = namedAreaRefusal({
+		parsedUrl,
+		measure,
+		parameter: "place",
+		text: placeText,
+		named,
+	});
+	if (namedRefusal) return namedRefusal;
+	const area = named?.kind === "area" ? named : undefined;
+	const requested = {
+		period: parsedUrl.searchParams.get("period"),
+		geography:
+			requestedGeography(parsedUrl.searchParams, place) ??
+			area?.geography ??
+			null,
+		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
+		datasetId: parsedUrl.searchParams.get("datasetId"),
+	};
+	const defaults = defaultSource(measure, requested);
+	const period = requested.period ?? defaults?.period ?? null;
+	const geography = requested.geography ?? defaults?.geography ?? null;
+	const boundaryYear =
+		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
+	// Which partition these name, and whether it may be drawn on a release,
+	// is the resolver's to decide rather than this route's.
 	if (period === null || geography === null || boundaryYear === null) {
 		return problem(
 			400,
 			"Invalid Query",
-			`${measureId} supports only a published source period, geography and boundary year; inspect /v1/measures/${measureId} for available sources.`,
+			`${measureId} lists the areas of one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	}
 	const requestedRelease = parsedUrl.searchParams.get("release");
@@ -119,7 +152,7 @@ export const handleDataRoutes = ({
 			"This source-exact endpoint does not yet convert observations or aggregate them.",
 		);
 	}
-	const areaCode = place?.code;
+	const areaCode = area?.code ?? place?.code;
 	const include = parsedUrl.searchParams.get("include");
 	const requestedFormat = parsedUrl.searchParams.get("format") ?? "json";
 	const unitMode = parsedUrl.searchParams.get("units") ?? "source";
@@ -304,6 +337,7 @@ export const handleDataRoutes = ({
 				{
 					format: requestedFormat,
 					rowCount: exportRecords.length,
+					...statedDefaults(defaults?.defaulted),
 				},
 				nextCursor,
 			),
@@ -329,6 +363,7 @@ export const handleDataRoutes = ({
 				measure,
 				source,
 				period,
+				...statedDefaults(defaults?.defaulted),
 				sourceGeography: source.sourceGeography,
 				...(geometry === undefined ? {} : { geometry }),
 				provenance,

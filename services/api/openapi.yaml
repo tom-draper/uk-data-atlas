@@ -2242,7 +2242,7 @@ paths:
       summary: Retrieve source-exact observations, or an opt-in canonical-unit representation
       x-likely-refusal:
         status: 400
-        when: "The source partition is not named. A measure may publish several for one period, so `geography` and `boundaryYear` are required rather than one being chosen."
+        when: "The measure is published on several geographies and neither `geography` nor `place` names one, so no partition is chosen for the caller."
         x-example-request: "/v1/data/population?period=2022"
       description: >
         Serves observed values for one published measure and source partition.
@@ -2358,7 +2358,10 @@ paths:
         response identifies that caller-selected code join.
         `GET /measures/{measure-id}` declares valid period/geography
         combinations, and `GET /measures/{measure-id}/compatibility` declares
-        eligible releases. Every response includes compact provenance linking
+        eligible releases. The geography may be left out when `place` names
+        an area, by name or code, or the measure is published on one; the
+        boundary year and period then default to the newest partition and its
+        latest period, stated in `defaults`. Every response includes compact provenance linking
         the immutable Atlas release, measure, source dataset and observation
         artifact, along with the selected geography match and an explicit
         statement that no transformation has been applied.
@@ -2372,21 +2375,9 @@ paths:
             A published measure id, for example `population`,
             `ghg-emissions` or `mobile-5g-coverage`. `GET /measures` lists
             them, each with the aggregation its values permit.
-        - name: period
-          in: query
-          required: true
-          schema:
-            type: string
-          description: A period listed by the measure's matching source partition.
-        - $ref: "#/components/parameters/SourceGeography"
-        - name: boundaryYear
-          in: query
-          required: true
-          schema:
-            const: "2023"
-          description: >
-            The code vintage the partition's areas are published on. This route
-            serves the 2023 vintage.
+        - $ref: "#/components/parameters/OptionalSourcePeriod"
+        - $ref: "#/components/parameters/OptionalSourceGeography"
+        - $ref: "#/components/parameters/OptionalSourceBoundaryYear"
         - name: release
           in: query
           required: false
@@ -2539,6 +2530,10 @@ paths:
                 type: string
         "400":
           $ref: "#/components/responses/InvalidQuery"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/AmbiguousArea"
         "422":
           description: The requested operation is not supported for this source-exact measure.
           content:
@@ -2624,13 +2619,20 @@ paths:
         `composed-membership-path`, and `aggregation.path` lists each step's
         crosswalk and membership claim.
 
+        `period`, `geography` and `boundaryYear` may be left out: a named
+        location's member geography or a country's local authorities name the
+        geography, and the newest partition and its latest period are used.
+        What was chosen is returned in `defaults`. `place` may also be the name
+        of a named location or a country, such as `place=north wales`.
+
+
         This route does not select a boundary release or perform a code or
         geometry conversion.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
-        - $ref: "#/components/parameters/SourcePeriod"
-        - $ref: "#/components/parameters/SourceGeography"
-        - $ref: "#/components/parameters/SourceBoundaryYear"
+        - $ref: "#/components/parameters/OptionalSourcePeriod"
+        - $ref: "#/components/parameters/OptionalSourceGeography"
+        - $ref: "#/components/parameters/OptionalSourceBoundaryYear"
         - name: place
           in: query
           required: true
@@ -2996,12 +2998,15 @@ paths:
       tags: ["Trend"]
       summary: Retrieve a source-exact or reviewed derived time series
       x-likely-refusal:
-        status: 400
-        when: "The source partition is not named. A series stays within one partition, so `geography` and `boundaryYear` are required."
-        x-example-request: "/v1/data/population/series?place=E05000932"
+        status: 409
+        code: ambiguous_place
+        when: "The name means more than one area the measure is published for. Each choice carries the request that asks about it alone."
+        x-example-request: "/v1/data/population/series?place=Newport"
       description: >
         Returns all published observations for one area code within one source
-        geography and code vintage. Without `to`, the result is source-exact:
+        geography and code vintage. `place` accepts an area name, code or
+        reference. With no source partition, the current published partition
+        for that place is selected and returned as `defaults`. Without `to`, the result is source-exact:
         it does not select a boundary release, convert values or aggregate
         them. With `to`, the result is available only
         where the exact source partition has a reviewed conversion; every
@@ -3012,7 +3017,7 @@ paths:
         - $ref: "#/components/parameters/MeasureId"
         - $ref: "#/components/parameters/Place"
         - $ref: "#/components/parameters/PlaceSourceGeography"
-        - $ref: "#/components/parameters/SourceBoundaryYear"
+        - $ref: "#/components/parameters/OptionalSourceBoundaryYear"
         - name: to
           in: query
           required: false
@@ -3020,8 +3025,8 @@ paths:
             type: string
           description: >
             One `geography/release` pair for a reviewed analysis frame. The
-            source geography and boundary year remain required, so the API
-            never chooses between source partitions.
+            source geography and boundary year select a particular partition;
+            omit them to use the current one for `place`.
         - name: datasetId
           in: query
           required: false
@@ -3124,6 +3129,8 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/AmbiguousArea"
         "422":
           description: The requested conversion, aggregation or geometry release is not supported.
           content:
@@ -3140,18 +3147,19 @@ paths:
       summary: Rank areas within one source-exact measure partition
       x-likely-refusal:
         status: 400
-        when: "The source partition is not named, so there is no one set of areas to rank."
-        x-example-request: "/v1/data/population/rankings?period=2022"
+        when: "The measure is published on several geographies and none is named, so there is no one set of areas to rank."
+        x-example-request: "/v1/data/population/rankings"
       description: >
         Ranks only the observations published for one period, geography and
-        code vintage. Uses competition ranking: tied values share a rank and
+        code vintage. Omitting any of those selects the current published
+        partition and latest period, recorded in `defaults`. Uses competition ranking: tied values share a rank and
         the following rank accounts for all preceding observations (1, 1, 3).
         It does not select a boundary release, convert values or aggregate them.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
-        - $ref: "#/components/parameters/SourcePeriod"
-        - $ref: "#/components/parameters/SourceGeography"
-        - $ref: "#/components/parameters/SourceBoundaryYear"
+        - $ref: "#/components/parameters/OptionalSourcePeriod"
+        - $ref: "#/components/parameters/OptionalSourceGeography"
+        - $ref: "#/components/parameters/OptionalSourceBoundaryYear"
         - name: order
           in: query
           required: false
@@ -3850,8 +3858,8 @@ paths:
       summary: Rank areas by change between two periods of one measure partition
       x-likely-refusal:
         status: 400
-        when: "A required part of the comparison is missing. Change is measured within one partition between two named periods."
-        x-example-request: "/v1/data/population/change?geography=localAuthority&startPeriod=2011"
+        when: "The partition cannot be chosen: the measure is published on several geographies and neither `geography` nor `place` picks one."
+        x-example-request: "/v1/data/population/change?startPeriod=2011"
       description: >
         Returns how each area changed between two periods, ranked: the question
         "where did population grow fastest between 2011 and 2022?" Pass
@@ -3863,8 +3871,16 @@ paths:
         publisher restates every period of a partition on a single set of
         codes, so an area code names the same ground at the start and the end.
         Pairing periods from partitions on different codes would pair areas
-        that are not the same place, so it is not offered. Naming no partition
-        returns a 400 listing the partitions and how many periods each has.
+        that are not the same place, so it is not offered. A partition that
+        cannot be chosen returns a 400 listing the partitions and how many
+        periods each has.
+
+
+        The geography may be left out when `place` names an area, by name or
+        code, or the measure is published on one geography. The boundary year
+        and periods may be left out too: the newest partition is used, ending
+        at its latest period and starting at the latest one before the end
+        that does not overlap it. What was chosen is returned in `defaults`.
 
 
         `by=absolute` ranks the end value less the start, in the measure's
@@ -3894,24 +3910,28 @@ paths:
         - $ref: "#/components/parameters/MeasureId"
         - name: geography
           in: query
-          required: true
+          required: false
           schema:
             type: string
           description: >
             The geography of the source partition the change is measured inside.
             Both periods come from that one partition.
-        - $ref: "#/components/parameters/SourceBoundaryYear"
+        - $ref: "#/components/parameters/OptionalSourceBoundaryYear"
         - name: startPeriod
           in: query
-          required: true
+          required: false
           schema:
             type: string
           example: "2011"
-          description: The period the change is measured from.
+          description: >
+            The period the change is measured from. Left out, the latest period
+            before `endPeriod` that does not overlap it.
         - name: endPeriod
           in: query
-          required: true
-          description: A published period of the partition after `startPeriod`.
+          required: false
+          description: >
+            A published period of the partition after `startPeriod`. Left out,
+            the partition's latest period.
           schema:
             type: string
           example: "2022"
@@ -3986,6 +4006,8 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/AmbiguousArea"
         "422":
           description: >
             The measure is a rank, decile or category; its partition publishes a
@@ -4005,19 +4027,22 @@ paths:
       summary: Compare two areas within one source-exact measure partition
       x-likely-refusal:
         status: 400
-        when: "The source partition is not named, so the two areas are not known to be on the same codes."
-        x-example-request: "/v1/data/population/compare?period=2022&baselineAreaCode=E05000932&comparisonAreaCode=W05001039"
+        when: "The two areas are of different geographies, so no one source partition holds both."
+        x-example-request: "/v1/data/population/compare?baselineAreaCode=E05000932&comparisonAreaCode=W06000022"
       description: >
         Returns the comparison observation minus the baseline observation for
-        one published period, geography and code vintage. The two named areas
+        one published period, geography and code vintage. Area codes may be
+        replaced by unambiguous place names. Omitting source selectors uses the
+        current published partition and latest period, recorded in `defaults`.
+        The two named areas
         must be in the same source partition. Ratios report a difference on
         their source scale rather than a misleading relative change. The route
         does not select a boundary release, convert values or aggregate them.
       parameters:
         - $ref: "#/components/parameters/MeasureId"
-        - $ref: "#/components/parameters/SourcePeriod"
-        - $ref: "#/components/parameters/SourceGeography"
-        - $ref: "#/components/parameters/SourceBoundaryYear"
+        - $ref: "#/components/parameters/OptionalSourcePeriod"
+        - $ref: "#/components/parameters/OptionalSourceGeography"
+        - $ref: "#/components/parameters/OptionalSourceBoundaryYear"
         - name: baselineAreaCode
           in: query
           required: true
@@ -4135,6 +4160,8 @@ paths:
           $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/AmbiguousArea"
         "422":
           description: The requested conversion, aggregation or geometry release is not supported.
           content:
@@ -8541,6 +8568,47 @@ components:
         it selects one source partition of the measure; it never converts
         values onto another geography. It may be left out when `place` is a
         reference such as `localAuthority/E08000035`, which names it.
+    OptionalSourceGeography:
+      name: geography
+      in: query
+      required: false
+      schema:
+        enum:
+          [
+            ward,
+            localAuthority,
+            constituency,
+            lsoa,
+            msoa,
+            dataZone,
+            superOutputArea,
+          ]
+      description: >
+        The geography the publisher observed the values on, selecting one
+        source partition with `boundaryYear`. It may be left out when an area
+        named in the request is published on one geography of the measure, or
+        when the measure is published on only one; geographies are never
+        chosen between, so a measure published on several otherwise needs it.
+        A selected geography is returned in `defaults`.
+    OptionalSourceBoundaryYear:
+      name: boundaryYear
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: >
+        The year of the boundaries the values are published on. Left out, the
+        geography's newest partition is used and returned in `defaults`,
+        unless two datasets share it, when `datasetId` must choose.
+    OptionalSourcePeriod:
+      name: period
+      in: query
+      required: false
+      schema:
+        type: string
+      description: >
+        The observation period as the partition publishes it. Left out, the
+        partition's latest period is used and returned in `defaults`.
     SourceBoundaryYear:
       name: boundaryYear
       in: query
@@ -8560,10 +8628,12 @@ components:
       schema:
         type: string
       description: >
-        The area, as its code in the source partition, such as `E08000035`,
-        or as a place reference from `/places`, such as
-        `localAuthority/E08000035`, which also names its geography. A
-        postcode or a place name is answered by `/data/{measure-id}/value`.
+        The area, as its name, its code in the source partition, such as
+        `E08000035`, or a place reference from `/places`, such as
+        `localAuthority/E08000035`, which also names its geography. A name
+        is read among the areas the measure is published for; one that means
+        several is a 409 listing each. A postcode, or a larger place the
+        measure is summed over, is answered by `/data/{measure-id}/value`.
     SourcePeriod:
       name: period
       in: query
@@ -8618,6 +8688,15 @@ components:
           schema:
             type: string
             example: bytes */684673
+    AmbiguousArea:
+      description: >
+        An area name means more than one area the measure is published for.
+        `choices` lists each, with `ask`, the same request with that area's
+        code and geography in place of the name.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/AmbiguousPlaceProblem"
     NotFound:
       description: No resource matches that identity.
       content:
