@@ -1143,7 +1143,10 @@ async function compileSelected(names: readonly string[]) {
 				root: ROOT,
 				datasets: compiledDatasets,
 				core: JSON.parse(
-					await readFile(join(OUT_DIR, "gazetteer.core.json"), "utf8"),
+					await readFile(
+						join(OUT_DIR, "gazetteer.core.json"),
+						"utf8",
+					),
 				),
 				boundaryMappings: {
 					wardToLad: parseBoundaryWardToLad(
