@@ -374,7 +374,7 @@ export const withHistoricCounties = (
 				memberAssertions: membership.members,
 				memberCodes: membership.members.map(({ code }) => code),
 				validity: { from: null, to: null },
-				bbox: [bounds[0], bounds[1], bounds[2], bounds[3]],
+				bbox: [bounds[0], bounds[1], bounds[2], bounds[3]] as GeometryBounds,
 			};
 		}),
 	].sort((left, right) => left.label.localeCompare(right.label));
