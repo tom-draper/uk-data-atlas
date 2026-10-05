@@ -74,7 +74,7 @@ export default async function GeographyPage({ params }: { params: Params }) {
 			lede={content.intro}
 			toc={[
 				{ id: "releases", title: "Boundary releases" },
-				{ id: "data", title: "Data on these areas" },
+				{ id: "data", title: "Datasets on these areas" },
 				{ id: "request", title: "Request it" },
 				{ id: "downloads", title: "Downloads" },
 			]}
@@ -132,10 +132,10 @@ export default async function GeographyPage({ params }: { params: Params }) {
 				</P>
 			)}
 
-			<H2 id="data">Data on these areas</H2>
+			<H2 id="data">Datasets on these areas</H2>
 			{data.length > 0 ? (
 				<Table
-					head={["Data", "Code year", "Periods", "Covers"]}
+					head={["Datasets", "Code year", "Periods", "Covers"]}
 					rows={data.flatMap(({ page, sources }) =>
 						sources.map((source, i) => [
 							i === 0 ? (

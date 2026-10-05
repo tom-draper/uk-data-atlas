@@ -50,7 +50,7 @@ export async function generateMetadata({
 	const page = findDataPage((await params).slug);
 	if (!page) return {};
 	return docsMetadata(
-		`${page.title} data by area`,
+		`${page.title} datasets by area`,
 		page.intro,
 		dataPageHref(page.slug),
 	);
@@ -88,13 +88,13 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 		<DocPage
 			href={dataPageHref(page.slug)}
 			trail={[
-				{ label: "Data", href: "/docs/v1/data" },
+				{ label: "Datasets", href: "/docs/v1/data" },
 				{
 					label: topic?.title ?? "",
 					href: `/docs/v1/data#${page.topic}`,
 				},
 			]}
-			title={`${page.title} data`}
+			title={`${page.title} datasets`}
 			lede={page.intro}
 			toc={[
 				{ id: "measures", title: "Measures" },

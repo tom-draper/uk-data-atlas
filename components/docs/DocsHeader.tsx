@@ -78,7 +78,7 @@ export default function DocsHeader() {
 							active={pathname.startsWith("/docs/v1/data")}
 							className="hidden lg:block"
 						>
-							Data
+							Datasets
 						</HeaderLink>
 						<HeaderLink
 							href="/docs/v1/geographies"
