@@ -341,6 +341,38 @@ function Header({
 	);
 }
 
+type Crumb = { label: string; href?: string };
+
+const UNITED_KINGDOM: NamedRef = {
+	id: "united-kingdom",
+	label: "United Kingdom",
+	kind: "country",
+};
+
+const NATIONS: Record<string, NamedRef> = {
+	E: { id: "england", label: "England", kind: "country" },
+	W: { id: "wales", label: "Wales", kind: "country" },
+	S: { id: "scotland", label: "Scotland", kind: "country" },
+	N: { id: "northern-ireland", label: "Northern Ireland", kind: "country" },
+};
+
+/**
+ * Where a place sits, broadest first: the UK, its nation, its English region,
+ * then its council for a ward. So a page says where it is before its map does.
+ */
+function placeTrail(nested: (NamedRef | undefined)[], ...areas: Crumb[]) {
+	return [
+		{ label: "Places", href: "/places" },
+		...[UNITED_KINGDOM, ...nested]
+			.filter((place): place is NamedRef => place !== undefined)
+			.map((place) => ({ label: place.label, href: namedHref(place) })),
+		...areas,
+	];
+}
+
+const regionIn = (places: NamedRef[] | undefined) =>
+	places?.find((place) => place.kind === "region");
+
 async function AreaPage({ profile }: { profile: AreaProfile }) {
 	const releases = PLACE_INDEX.releases[profile.geography];
 	const lastRelease = releases[profile.releases.at(-1)!]!;
@@ -351,6 +383,21 @@ async function AreaPage({ profile }: { profile: AreaProfile }) {
 	const councilProfile = council
 		? await loadAreaProfile(council.code)
 		: undefined;
+	// A constituency's region is that of a council it sits in or overlaps.
+	const regionCouncil =
+		profile.geography === "constituency"
+			? [
+					...profile.parents,
+					...profile.overlaps.flatMap((group) => group.areas ?? []),
+				].find((area) => area.geography === "localAuthority")
+			: undefined;
+	const region = regionIn(
+		profile.namedPlaces ??
+			councilProfile?.namedPlaces ??
+			(regionCouncil
+				? (await loadAreaProfile(regionCouncil.code))?.namedPlaces
+				: undefined),
+	);
 	const namedPlaces =
 		profile.namedPlaces ?? councilProfile?.namedPlaces ?? [];
 	const otherParents = profile.parents.filter(
@@ -363,13 +410,13 @@ async function AreaPage({ profile }: { profile: AreaProfile }) {
 	return (
 		<>
 			<Header
-				trail={[
-					{ label: "Places", href: "/places" },
+				trail={placeTrail(
+					[NATIONS[profile.code[0] ?? ""], region],
 					...(council
 						? [{ label: council.name, href: areaHref(council) }]
 						: []),
 					{ label: profile.name },
-				]}
+				)}
 				eyebrow={`${geographyName(profile.geography)} · ${profile.code}`}
 				title={profile.name}
 				lede={areaSummary(profile)}
@@ -646,17 +693,24 @@ async function NamedPage({ profile }: { profile: NamedProfile }) {
 	return (
 		<>
 			<Header
-				trail={[
-					{ label: "Places", href: "/places" },
-					...profile.within
-						.filter((place) => place.kind === "country")
-						.slice(0, 1)
-						.map((place) => ({
-							label: place.label,
-							href: namedHref(place),
-						})),
-					{ label: profile.label },
-				]}
+				trail={
+					profile.id === UNITED_KINGDOM.id
+						? [
+								{ label: "Places", href: "/places" },
+								{ label: profile.label },
+							]
+						: placeTrail(
+								[
+									profile.within.find(
+										(place) =>
+											place.kind === "country" &&
+											place.id !== UNITED_KINGDOM.id,
+									),
+									regionIn(profile.within),
+								],
+								{ label: profile.label },
+							)
+				}
 				eyebrow={namedKindName(profile.kind)}
 				title={profile.label}
 				lede={`${profile.label} is a ${kind} made up of ${current.length} local ${current.length === 1 ? "authority" : "authorities"}. ${profile.source}`}
