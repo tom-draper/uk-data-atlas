@@ -435,9 +435,23 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"They're curated by the Atlas for convenience. They aren't official administrative areas.",
 		],
 	},
+	getNamedLocationAlternatives: {
+		title: "Compare location definitions",
+		intro: "A real-world name can have several curated definitions. Give its exact name to see each one, its kind and the source that distinguishes it.",
+		tips: [
+			"Use an alternative's `id` with [Get a named location](/docs/v1/reference/geography/named-location) to inspect its members and bounds.",
+		],
+	},
 	getNamedLocation: {
 		title: "Get a named location",
 		intro: "Get one named location's description, the area codes it's made from and its bounds.",
+	},
+	compareNamedLocationMembership: {
+		title: "Compare location memberships",
+		intro: "See which member codes a named location kept, gained or lost between two dates.",
+		tips: [
+			"The comparison covers the location's direct members only; it does not convert them through a crosswalk.",
+		],
 	},
 	getNamedLocationGeometry: {
 		title: "Get a named location's shape",
