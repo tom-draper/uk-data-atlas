@@ -7,6 +7,7 @@ import {
 	countyMemberships,
 	SCOTTISH_LIEUTENANCY_AREAS,
 	withCeremonialCounties,
+	withHistoricCounties,
 	type CountyShape,
 } from "../src/ceremonialCounties";
 import { compileNamedLocations, membersAt } from "../src/namedLocations";
@@ -21,20 +22,20 @@ import { compileNamedLocationGeometry } from "../src/namedLocationGeometry";
  * Ordnance Survey's ceremonial counties of England and Wales, in WGS84. The
  * file's Scottish lieutenancy areas are left out: see ceremonialCounties.ts.
  */
-const readCeremonialCounties = (repositoryRoot: string): CountyShape[] =>
+const readCountyShapes = (repositoryRoot: string, directory: string, file: string, excludeScottishLieutenancy = false): CountyShape[] =>
 	readShapefileFeatures(
 		join(
 			repositoryRoot,
 			"data",
 			"geography",
-			"ceremonial-counties",
+			directory,
 			"source",
-			"Boundary-line-ceremonial-counties_region.shp",
+			file,
 		),
 	)
 		.filter(
 			({ properties }) =>
-				!SCOTTISH_LIEUTENANCY_AREAS.has(properties.NAME!),
+				!excludeScottishLieutenancy || !SCOTTISH_LIEUTENANCY_AREAS.has(properties.NAME!),
 		)
 		.map(({ properties, geometry }) => {
 			const wgs84 = toWgs84Geometry(geometry, "EPSG:27700");
@@ -44,6 +45,13 @@ const readCeremonialCounties = (repositoryRoot: string): CountyShape[] =>
 				bounds: geometryBounds(wgs84)!,
 			};
 		});
+
+
+const readCeremonialCounties = (repositoryRoot: string) =>
+	readCountyShapes(repositoryRoot, "ceremonial-counties", "Boundary-line-ceremonial-counties_region.shp", true);
+
+const readHistoricCounties = (repositoryRoot: string) =>
+	readCountyShapes(repositoryRoot, "historic-counties", "Boundary-line-historic-counties_region.shp");
 
 export const buildNamedLocations = (repositoryRoot: string) => {
 	const source = join(
@@ -98,10 +106,14 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 					return geometry ? [{ code, geometry }] : [];
 				}),
 		}));
-	const withCounties = withCeremonialCounties(
-		parsed.locations,
-		countyMemberships(authorityReleases, counties),
-		counties,
+	const withCounties = withHistoricCounties(
+		withCeremonialCounties(
+			parsed.locations,
+			countyMemberships(authorityReleases, counties),
+			counties,
+		),
+		countyMemberships(authorityReleases, readHistoricCounties(repositoryRoot)),
+		readHistoricCounties(repositoryRoot),
 	);
 	const locations = withCounties.map((location) => {
 		// The members current at the latest release, so a location whose
