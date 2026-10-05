@@ -88,10 +88,10 @@ export default async function DataTopicPage({ params }: { params: Params }) {
 		<DocPage
 			href={dataPageHref(page.slug)}
 			trail={[
-				{ label: "Datasets", href: "/docs/v1/data" },
+				{ label: "Datasets", href: "/docs/v1/datasets" },
 				{
 					label: topic?.title ?? "",
-					href: `/docs/v1/data#${page.topic}`,
+					href: `/docs/v1/datasets#${page.topic}`,
 				},
 			]}
 			title={`${page.title} datasets`}
