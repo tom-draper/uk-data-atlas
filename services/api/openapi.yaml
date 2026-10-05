@@ -7915,6 +7915,26 @@ paths:
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
+  /locations/alternatives:
+    get:
+      operationId: getNamedLocationAlternatives
+      tags: ["Geography"]
+      summary: List competing named-location definitions for a real-world name
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string }
+          description: Case-insensitive real-world name, for example Devon.
+      responses:
+        "200":
+          description: Definitions distinguished by kind and source.
+          content:
+            application/json:
+              schema: { type: object }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
+
   /locations/{location-id}:
     get:
       operationId: getNamedLocation
@@ -7957,6 +7977,32 @@ paths:
                     - -0.5
                 meta:
                   nextCursor: null
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /locations/{location-id}/comparison:
+    get:
+      operationId: compareNamedLocationMembership
+      tags: ["Geography"]
+      summary: Compare a named location's direct membership between two dates
+      parameters:
+        - $ref: "#/components/parameters/LocationId"
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Retained, added and removed direct member codes.
+          content:
+            application/json:
+              schema: { type: object }
+        "400":
+          $ref: "#/components/responses/InvalidQuery"
         "404":
           $ref: "#/components/responses/NotFound"
 
