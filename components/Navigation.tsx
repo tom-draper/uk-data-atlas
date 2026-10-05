@@ -19,8 +19,8 @@ export default function Navigation() {
 						<Link href="/datasets" className={linkClass}>
 							Datasets
 						</Link>
-						<Link href="/boundaries" className={linkClass}>
-							Boundaries
+						<Link href="/geographies" className={linkClass}>
+							Geographies
 						</Link>
 						<Link href="/docs/v1" className={linkClass}>
 							API Docs

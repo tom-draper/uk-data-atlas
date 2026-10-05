@@ -12,25 +12,25 @@ import {
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-	subject: "UK Boundaries",
+	subject: "Geographies & Boundaries",
 	description:
 		"Every kind of UK area in the UK Data Atlas, explained: local authorities, wards, constituencies, LSOAs, MSOAs, data zones, health boards and more, with the data published on each.",
-	path: "/boundaries",
+	path: "/geographies",
 });
 
-export default function BoundariesPage() {
+export default function GeographiesPage() {
 	const entries = boundaryEntries();
 	const groups = boundariesByGroup(entries);
 
 	return (
 		<ReferencePage
-			label="Boundaries"
+			label="Geographies"
 			groups={[
 				{
 					title: "Overview",
 					links: [
-						{ id: "about-boundaries", title: "About boundaries" },
-						{ id: "all-boundaries", title: "All boundaries" },
+						{ id: "about-geographies", title: "About geographies" },
+						{ id: "all-geographies", title: "All geographies" },
 					],
 				},
 				...groups.map((group) => ({
@@ -41,11 +41,11 @@ export default function BoundariesPage() {
 					})),
 				})),
 			]}
-			eyebrow="Boundaries"
-			title="UK Data Atlas Boundaries"
+			eyebrow="Geographies"
+			title="UK Data Atlas Geographies & Boundaries"
 			lede="The kinds of area UK statistics are published for, from the four nations down to neighbourhoods of a few hundred people. Each one below explains what the areas are, who uses them, and which datasets in the Atlas are published on them."
 		>
-			<H2 id="about-boundaries">About boundaries</H2>
+			<H2 id="about-geographies">About geographies</H2>
 			<P>
 				Official figures are always published for a set of areas: a
 				council&apos;s figures for each local authority, a census table
@@ -62,9 +62,9 @@ export default function BoundariesPage() {
 				boundaries its figures were published on.
 			</P>
 
-			<H2 id="all-boundaries">All boundaries</H2>
+			<H2 id="all-geographies">All geographies</H2>
 			<Table
-				head={["Boundary", "Areas", "Coverage", "Datasets"]}
+				head={["Geography", "Areas", "Coverage", "Datasets"]}
 				rows={groups.flatMap((group) =>
 					group.boundaries.map((boundary) => [
 						<TextLink key="name" href={`#${boundary.slug}`}>

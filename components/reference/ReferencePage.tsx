@@ -5,7 +5,7 @@ import { Eyebrow, Sheet } from "@/components/docs/Page";
 import ReferenceSidebar, { type ReferenceGroup } from "./ReferenceSidebar";
 
 /**
- * The layout of the /datasets and /boundaries pages: the docs' typography and
+ * The layout of the /datasets and /geographies pages: the docs' typography and
  * a list of the page's sections down the left, under the site's navigation.
  */
 export default function ReferencePage({
