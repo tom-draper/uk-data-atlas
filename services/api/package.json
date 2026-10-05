@@ -5,7 +5,8 @@
 	"version": "0.0.0",
 	"type": "module",
 	"exports": {
-		"./catalogues": "./src/catalogueLoader.ts"
+		"./catalogues": "./src/catalogueLoader.ts",
+		"./geometry": "./src/simplifyGeometry.ts"
 	},
 	"engines": {
 		"node": ">=24 <27"

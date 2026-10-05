@@ -90,7 +90,7 @@ export const resolverProjectionProblems = (datasets: string): string[] => {
 							`${names.join(", ")} from ${release}`,
 					)
 					.join("; ") +
-				". Run pnpm lineage:build and pnpm containment:build against one build.",
+				". Run pnpm lineage:build, pnpm containment:build and pnpm places:build against one build.",
 		);
 	return problems;
 };

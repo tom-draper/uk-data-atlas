@@ -62,6 +62,7 @@ than compiled datasets, written by scripts that read the API's build:
 | `area-lineage.json`                                                                                                | `pnpm lineage:build`                                        |
 | `boundary-mappings.json`, `parish-lad-mappings.json`, `lsoa-lad-mappings-*.json`, `constituency-lad-overlaps.json` | `pnpm containment:build`                                    |
 | `docs-catalogue.json`                                                                                              | `pnpm docs:catalogue`, the last step of the API's own build |
+| `places/`                                                                                                          | `pnpm places:build`                                         |
 | `map-figures.json`, `ranking-pages.json`, `rankings/*.json`                                                        | `pnpm seo:build`, from the compiled datasets                |
 
 `map-figures.json` and the rankings are not the resolver's: they hold the
@@ -70,8 +71,17 @@ areas ranked for the `/maps/{place}/{map}` pages. They are compiled from the
 datasets because those are too large to load while a page renders, and a data
 test fails while they are stale.
 
-Because the API's build is not committed, the lineage and containment files
-are recorded in `public/data/datasets/resolver-projections.json` with the API
+`places/` holds a profile of every ward, local authority and constituency the
+resolver holds, current or abolished, and of every named place, for the
+`/places/{code}` pages: each one's outline, history across boundary releases,
+what it sits within, contains and borders, and which datasets publish figures
+for it. Area profiles are sharded by code, and the pages read them from disk
+rather than importing them, so the 50 MB of profiles stays out of the bundle;
+`next.config.ts` traces the folder into the route. Councils, constituencies
+and named places are built ahead of time, and wards render on first visit.
+
+Because the API's build is not committed, the lineage, containment and place
+files are recorded in `public/data/datasets/resolver-projections.json` with the API
 release each came from and its hash. `pnpm precompile:verify`, which every
 website build runs, fails if one of them changed after it was written, or if
 they came from different API builds. The docs catalogue records the hashes of
@@ -111,11 +121,11 @@ there is no build step.
 
 ## Rebuilding after a change
 
-| You changed                            | Run                                                                                                             |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                                                        |
-| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm lineage:build` and `pnpm containment:build`, then `pnpm precompile` |
-| Anything, before a release             | `pnpm check:full`                                                                                               |
+| You changed                            | Run                                                                                                                                       |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| The atlas's datasets or their loaders  | `pnpm precompile`, then `pnpm seo:build`                                                                                                  |
+| How the API compiles geography or data | `pnpm --dir services/api build`, then `pnpm lineage:build` and `pnpm containment:build`, then `pnpm precompile`, then `pnpm places:build` |
+| Anything, before a release             | `pnpm check:full`                                                                                                                         |
 
 `pnpm check` is the quick set CI runs. `pnpm check:full` rebuilds everything
 from the raw data and needs `data/` restored.

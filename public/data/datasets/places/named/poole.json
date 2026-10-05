@@ -1,0 +1,1 @@
+{"type":"named","id":"poole","label":"Poole","kind":"editorial-grouping","source":"A grouping curated by the UK Data Atlas, with no official status.","memberGeography":"localAuthority","members":[{"code":"E06000029","name":"Poole","from":null,"to":null,"current":true}],"within":[],"contains":[],"bbox":[180,90,-180,-90],"outlines":{},"mapsSlug":"poole"}

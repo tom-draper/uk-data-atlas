@@ -1,0 +1,1 @@
+{"type":"named","id":"harrogate","label":"Harrogate","kind":"editorial-grouping","source":"A grouping curated by the UK Data Atlas, with no official status.","memberGeography":"localAuthority","members":[{"code":"E07000165","name":"Harrogate","from":null,"to":null,"current":true}],"within":[],"contains":[],"bbox":[180,90,-180,-90],"outlines":{},"mapsSlug":"harrogate"}

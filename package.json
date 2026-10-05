@@ -20,6 +20,7 @@
 		"lineage:build": "npx tsx --max-old-space-size=6144 scripts/build-area-lineage.mts",
 		"containment:build": "npx tsx --max-old-space-size=6144 scripts/build-area-containment.mts",
 		"seo:build": "npx tsx scripts/build-seo-data.mts",
+		"places:build": "npx tsx --max-old-space-size=6144 scripts/build-place-profiles.mts",
 		"dev": "pnpm precompile:if-needed && next dev --turbopack",
 		"build": "pnpm precompile:verify && next build --turbopack",
 		"hooks:install": "git config core.hooksPath .githooks",
@@ -31,7 +32,7 @@
 		"test:e2e": "playwright test",
 		"typecheck": "tsc --noEmit && pnpm --filter \"./packages/*\" typecheck",
 		"check": "pnpm typecheck && pnpm format:check && vitest run --project unit --project data && pnpm --dir services/api typecheck && pnpm --dir services/api test:unbuilt",
-		"check:full": "pnpm precompile && pnpm boundaries:compile && pnpm --dir services/api build && pnpm lineage:build && pnpm containment:build --check && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir services/api typecheck && pnpm --dir services/api test",
+		"check:full": "pnpm precompile && pnpm boundaries:compile && pnpm --dir services/api build && pnpm lineage:build && pnpm containment:build --check && pnpm places:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir services/api typecheck && pnpm --dir services/api test",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
 		"roads:serve": "node scripts/serve-os-open-roads.mjs",
 		"doctor": "npx react-doctor@latest"

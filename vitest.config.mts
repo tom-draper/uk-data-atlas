@@ -12,6 +12,7 @@ const HEAVY_DATA_TESTS = [
 	"tests/data/datasetBoundaryYears.test.ts",
 	"tests/data/datasetRegionChunks.test.ts",
 	"tests/data/datasetRegistry.test.ts",
+	"tests/data/placeProfiles.test.ts",
 ];
 
 /**
