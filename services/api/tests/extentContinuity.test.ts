@@ -288,7 +288,7 @@ test("compiles through the inventory as a derived identity path of history", () 
 					relation,
 					counterpart.id,
 				]),
-			[["successor", "ward/2/W1"]],
+			[["equivalent-to", "ward/2/W1"]],
 		);
 		assert.equal(index.get("ward/1/W2"), undefined);
 	});
@@ -529,10 +529,10 @@ test("translates a renumbered area through a chain of releases as one identity",
 					relation,
 					counterpart.id,
 				]),
-			[["successor", "ward/2/N1"]],
+			[["equivalent-to", "ward/2/N1"]],
 		);
-		// A successor carries an area's history on through a realignment,
-		// but not through an ambiguous extent or a merger.
+		// Equivalent extent continuity carries an area's history on, but an
+		// ambiguous extent or a merger does not.
 		const successor = (code: string, from: string, to: string) =>
 			resolver.successorArea(
 				{ geography: "ward", boundaryRelease: from, code },
