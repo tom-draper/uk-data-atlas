@@ -3,6 +3,7 @@ import { readingOrder } from "@/lib/docs/navigation";
 import { loadApiContract } from "@/lib/docs/openapi";
 import { ATLAS_LOCATIONS, atlasMapsFor } from "@/lib/atlas/pages";
 import { RANKING_PAGES } from "@/lib/atlas/rankingPages";
+import { PLACE_INDEX } from "@/lib/places/load";
 import { SITE_URL } from "@/lib/site";
 
 /** Every page of the API docs. */
@@ -43,6 +44,26 @@ function mapEntries(): MetadataRoute.Sitemap {
 	];
 }
 
+/** The places index, and a page for every place in it. */
+function placeEntries(): MetadataRoute.Sitemap {
+	return [
+		{
+			url: `${SITE_URL}/places`,
+			changeFrequency: "monthly" as const,
+			priority: 0.8,
+		},
+		...[...PLACE_INDEX.named, ...PLACE_INDEX.areas].map(
+			([id, , kind, , , lastYear]) => ({
+				url: `${SITE_URL}/places/${id}`,
+				changeFrequency: "monthly" as const,
+				// Current councils and named places lead; wards and areas no
+				// longer in use are many and narrow.
+				priority: lastYear !== null ? 0.3 : kind === "ward" ? 0.4 : 0.6,
+			}),
+		),
+	];
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
 	return [
 		{
@@ -70,6 +91,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 0.6,
 		},
 		...mapEntries(),
+		...placeEntries(),
 		...docsEntries(),
 	];
 }

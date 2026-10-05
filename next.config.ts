@@ -8,6 +8,10 @@ const dataVersion =
 
 const nextConfig: NextConfig = {
 	reactCompiler: true,
+	// Place pages read their profiles from disk while rendering on demand.
+	outputFileTracingIncludes: {
+		"/places/*": ["./public/data/datasets/places/**/*"],
+	},
 	env: {
 		NEXT_PUBLIC_DATA_VERSION: dataVersion,
 	},
