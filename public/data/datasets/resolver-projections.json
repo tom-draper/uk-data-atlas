@@ -35,6 +35,11 @@
 			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
 			"sha256": "dfff9aa3fc6f011fcdd53423009a8113dda70d995907a36f99bd12380e7b6bfb",
 			"writtenBy": "pnpm containment:build"
+		},
+		"places/index.json": {
+			"apiRelease": "sha256:9aedb272d8b9b5b447bac24a7aaf208021f33fba989e5bcb3f60eeb6f21b6b9a",
+			"sha256": "092539002ddbeffeabce5354319629c9d8a030794b43cdaae58ac4c59f2264c7",
+			"writtenBy": "pnpm places:build"
 		}
 	}
 }
