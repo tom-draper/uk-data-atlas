@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
 				destination: "/geographies",
 				permanent: true,
 			},
+			{
+				source: "/docs/v1/data/:path*",
+				destination: "/docs/v1/datasets/:path*",
+				permanent: true,
+			},
 		];
 	},
 	async headers() {

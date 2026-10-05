@@ -7,13 +7,13 @@ import { dataPageHref } from "@/lib/docs/navigation";
 export const metadata = docsMetadata(
 	"UK datasets by area",
 	"Browse the official UK statistics available through the UK Data Atlas API: population, pay, house prices, deprivation, elections, broadband, air quality, crime and more.",
-	"/docs/v1/data",
+	"/docs/v1/datasets",
 );
 
 export default function DataPage() {
 	return (
 		<DocPage
-			href="/docs/v1/data"
+			href="/docs/v1/datasets"
 			eyebrow="Datasets"
 			title="UK datasets by area"
 			lede="Every dataset you can get through the API, grouped by subject. Each page explains what the data covers, which areas and years it's published for, and how to request it."

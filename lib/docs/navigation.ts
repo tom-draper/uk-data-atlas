@@ -66,7 +66,7 @@ export const GUIDES: NavLink[] = [
 ];
 
 export function dataPageHref(slug: string): string {
-	return `/docs/v1/data/${slug}`;
+	return `/docs/v1/datasets/${slug}`;
 }
 
 export function geographyHref(geography: string): string {
@@ -75,7 +75,7 @@ export function geographyHref(geography: string): string {
 
 /** Dataset pages under their topics, each topic an anchor on the dataset overview. */
 export const DATA: NavLink[] = [
-	{ href: "/docs/v1/data", title: "All datasets" },
+	{ href: "/docs/v1/datasets", title: "All datasets" },
 	...DATA_TOPICS.map((topic): NavLink => {
 		const pages = DATA_PAGES.filter((page) => page.topic === topic.id);
 		// A topic of one page is just that page.
@@ -83,7 +83,7 @@ export const DATA: NavLink[] = [
 			return { href: dataPageHref(pages[0].slug), title: topic.title };
 		}
 		return {
-			href: `/docs/v1/data#${topic.id}`,
+			href: `/docs/v1/datasets#${topic.id}`,
 			title: topic.title,
 			children: pages.map((page) => ({
 				href: dataPageHref(page.slug),
