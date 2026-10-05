@@ -90,6 +90,22 @@ test("identifies every response by its release and a request id", async (t) => {
 	assert.ok(logged.every((entry) => typeof entry.durationMs === "number"));
 });
 
+test("refuses an undeclared query parameter and suggests the declared spelling", async (t) => {
+	const { get } = await serve(t);
+	const typo = await get("/v1/areas?geogaphy=ward");
+	assert.equal(typo.status, 400);
+	assert.deepEqual(await typo.json(), {
+		type: "https://api.ukdataatlas.com/problems/unknown-query-parameter",
+		title: "Unknown Query Parameter",
+		status: 400,
+		detail: "This operation does not accept the query parameter geogaphy.",
+		code: "unknown_query_parameter",
+		parameter: "geogaphy",
+		suggestion: "geography",
+	});
+	assert.equal((await get("/v1/areas?geography=ward")).status, 200);
+});
+
 test("answers a failing handler with a 500 that can be found in the logs", async (t) => {
 	let broken = false;
 	const context = testContext({ openapiDocument });

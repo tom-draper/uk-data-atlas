@@ -6,6 +6,8 @@ import {
 } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
+import { areaNotFound } from "./areaResources";
+import { latestPublishedBoundaryRelease } from "./pointLookup";
 
 /**
  * List compiled area identities with stable cursor pagination. Finding an
@@ -36,7 +38,32 @@ export const handleAreaSearchRoutes = ({
 	const unavailable = geographyResolver.requires("area-search");
 	if (unavailable) return unavailable;
 	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryRelease = parsedUrl.searchParams.get("release");
+	const requestedRelease = parsedUrl.searchParams.get("release");
+	if (
+		geography &&
+		!context.boundaryRegistry.releases.some(
+			(candidate) => candidate.geography === geography,
+		)
+	)
+		return areaNotFound(context, geography);
+	if (requestedRelease && !geography)
+		return problem(
+			400,
+			"Invalid Query",
+			"release filters an area listing only together with geography.",
+		);
+	const current =
+		geography && requestedRelease === "latest"
+			? latestPublishedBoundaryRelease(context, geography)
+			: undefined;
+	if (current && "status" in current) return current;
+	const boundaryRelease = current?.id ?? requestedRelease;
+	if (
+		geography &&
+		boundaryRelease &&
+		!geographyResolver.hasAreaRelease(geography, boundaryRelease)
+	)
+		return areaNotFound(context, geography, boundaryRelease);
 	const matches = geographyResolver.searchAreas({
 		geography,
 		boundaryRelease,
@@ -66,6 +93,16 @@ export const handleAreaSearchRoutes = ({
 	const last = areas.at(-1);
 	return {
 		status: 200,
+		...(current
+			? {
+					headers: {
+						"content-location": `/v1/areas?${new URLSearchParams({
+							...(geography ? { geography } : {}),
+							release: boundaryRelease ?? "",
+						}).toString()}`,
+					},
+				}
+			: {}),
 		body: envelope(
 			releaseId,
 			areas,

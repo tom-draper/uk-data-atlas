@@ -98,6 +98,10 @@ test("finds the areas meeting a box, and says how each meets it", () => {
 			data(enclosing).matches[0]!.boundingBox,
 			[-2, 54, -1, 55],
 		);
+		const latest = get("bbox=-3,53,0,56&geography=ward&release=latest");
+		assert.equal(latest.status, 200);
+		assert.equal(data(latest).boundaryRelease, "2025-01-en-ward");
+		assert.equal(data(latest).releaseSelection, "latest-published");
 
 		// A box that cuts across it.
 		const cutting = get(`bbox=-1.5,54.5,0,56&${where}`);

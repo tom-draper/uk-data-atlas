@@ -18,6 +18,10 @@ export type Problem = {
 	absence?: string;
 	areaCount?: number;
 	areaSample?: string[];
+	/** A query parameter this operation does not declare. */
+	parameter?: string;
+	/** The closest declared query parameter, when one is unambiguous. */
+	suggestion?: string;
 	presentIn?: unknown[];
 	availableReleases?: unknown[];
 	/**

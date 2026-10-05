@@ -59,6 +59,7 @@ test("announces a deprecated operation on every response it serves", () => {
 	);
 	assert.deepEqual(deprecated, {
 		path: "/old",
+		queryParameters: { get: [] },
 		deprecation: { since: "2026-01-01", sunset: "2027-01-01" },
 	});
 	assert.deepEqual(deprecationHeaders(deprecated), {

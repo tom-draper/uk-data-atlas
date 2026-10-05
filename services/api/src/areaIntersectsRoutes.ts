@@ -5,6 +5,7 @@ import {
 	simplifyGeometry,
 } from "./simplifyGeometry";
 import { cursorFor, keyFromCursor, nextPageHref } from "./pagination";
+import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -35,7 +36,7 @@ export const handleAreaIntersectsRoutes = ({
 	const parts = (raw ?? "").split(",").map((part) => Number(part.trim()));
 	const [west, south, east, north] = parts;
 	const geography = parsedUrl.searchParams.get("geography");
-	const boundaryRelease = parsedUrl.searchParams.get("release");
+	const requestedRelease = parsedUrl.searchParams.get("release");
 	if (
 		raw === null ||
 		parts.length !== 4 ||
@@ -47,7 +48,7 @@ export const handleAreaIntersectsRoutes = ({
 		west! >= east! ||
 		south! >= north! ||
 		!geography ||
-		!boundaryRelease
+		!requestedRelease
 	) {
 		return problem(
 			400,
@@ -83,6 +84,12 @@ export const handleAreaIntersectsRoutes = ({
 		return problem(400, "Invalid Query", "cursor is invalid.", {
 			code: "invalid_cursor",
 		});
+	const current =
+		requestedRelease === "latest"
+			? latestPublishedBoundaryRelease(context, geography)
+			: undefined;
+	if (current && "status" in current) return current;
+	const boundaryRelease = current?.id ?? requestedRelease;
 	if (!geographyResolver.hasAreaRelease(geography, boundaryRelease)) {
 		return problem(
 			404,
@@ -139,6 +146,7 @@ export const handleAreaIntersectsRoutes = ({
 					bbox: [west!, south!, east!, north!],
 					geography,
 					boundaryRelease,
+					...(current ? { releaseSelection: current.selection } : {}),
 					matched: found.matched,
 					returned: matches.length,
 					limit,

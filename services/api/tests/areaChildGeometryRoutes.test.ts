@@ -186,7 +186,7 @@ test("lists the children it could not draw rather than dropping them", () => {
 	}
 });
 
-test("refuses to draw children of several geographies as one collection", () => {
+test("draws contemporary children by default and accepts an exact child release", () => {
 	const lsoaCrosswalk = {
 		...containmentCrosswalk,
 		contentHash: "sha256:lsoa-containment",
@@ -218,11 +218,11 @@ test("refuses to draw children of several geographies as one collection", () => 
 		);
 
 	const mixed = children("");
-	assert.equal(mixed.status, 409);
-	assert.deepEqual("choices" in mixed.body && mixed.body.choices, [
-		"lsoa/2021-12-ew",
-		"ward/2025-01-en-ward",
-	]);
+	assert.equal(mixed.status, 200);
+	const mixedData = ("data" in mixed.body && mixed.body.data) as {
+		collection: { members: number };
+	};
+	assert.equal(mixedData.collection.members, 1);
 
 	const wards = children("?childGeography=ward");
 	assert.equal(wards.status, 200);

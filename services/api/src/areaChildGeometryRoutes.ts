@@ -8,6 +8,7 @@ import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import { areaKey, releaseKey } from "./geographyKeys";
+import { selectAreaChildren } from "./areaChildren";
 
 /** The geometry of every area a published relationship places inside one area, as a feature collection. */
 export const handleAreaChildGeometryRoutes = ({
@@ -69,28 +70,27 @@ export const handleAreaChildGeometryRoutes = ({
 			),
 		),
 	].sort();
-	const children = childGeography
-		? contained.filter(
-				({ counterpart }) =>
-					counterpart.geography === childGeography ||
-					releaseKey(
-						counterpart.geography,
-						counterpart.boundaryRelease,
-					) === childGeography,
-			)
-		: contained;
+	const selected = selectAreaChildren(
+		context,
+		boundaryRelease,
+		contained,
+		childGeography,
+	);
+	if ("error" in selected)
+		return problem(
+			selected.error === "invalid" ? 400 : 404,
+			selected.error === "invalid" ? "Invalid Query" : "Not Found",
+			selected.error === "invalid"
+				? "childGeography must be a geography or geography/release pair."
+				: `No published contemporary child release matches ${childGeography ?? "that area"}.`,
+			{ choices: selected.choices },
+		);
+	const children = selected.children;
 	const chosenLayers = new Set(
 		children.map(({ counterpart }) =>
 			releaseKey(counterpart.geography, counterpart.boundaryRelease),
 		),
 	);
-	if (childGeography && children.length === 0)
-		return problem(
-			404,
-			"Not Found",
-			`No published relationship names a ${childGeography} area as contained by that area. Its children are published as ${layers.join(", ")}.`,
-			{ choices: layers },
-		);
 	if (chosenLayers.size > 1)
 		return problem(
 			409,
