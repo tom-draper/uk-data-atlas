@@ -69,7 +69,7 @@ export const handleLocationRoutes = ({
 		if (unavailable) return unavailable;
 		const alternatives = context.geographyResolver
 			.namedLocations()
-			.filter((location) => location.label.toLocaleLowerCase() === query)
+			.filter((location) => location.label.toLocaleLowerCase().replace(/\s+\(.+$/, "") === query)
 			.map(({ id, label, kind, source }) => ({ id, label, kind, ...(source && { source }) }));
 		return { status: 200, body: envelope(releaseId, { query, alternatives }) };
 	}

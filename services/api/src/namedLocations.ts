@@ -34,7 +34,8 @@ export type NamedLocationKind =
 	| "region"
 	| "combined-authority"
 	| "county"
-	| "ceremonial-county";
+	| "ceremonial-county"
+	| "historic-county";
 
 export type NamedLocation = {
 	id: string;
