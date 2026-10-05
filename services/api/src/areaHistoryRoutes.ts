@@ -51,7 +51,7 @@ export const handleAreaHistoryRoutes = ({
 			relationships: history.relationships,
 			lineage: history.lineage,
 			sameCodeReleases: history.sameCodeReleases,
-			note: "Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity; same-code continuity only reports that the identifier appears in another release.",
+			note: "Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.",
 		}),
 	};
 };
