@@ -281,7 +281,7 @@ export const runSmoke = async (
 							}>;
 						}>
 					>
-				>("/v1/measures?limit=1");
+				>("/v1/measures");
 				const [measure] = body.data;
 				const source = measure?.sources[0];
 				const period = source?.periods.at(-1);

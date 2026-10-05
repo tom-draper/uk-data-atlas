@@ -23,6 +23,13 @@ export type OperationTemplate = {
 	cost?: number;
 	/** Query parameters declared for each HTTP operation on this path. */
 	queryParameters: Partial<Record<"get" | "post", string[]>>;
+	/**
+	 * Parameters an operation names in `x-refused-query-parameters`: ones a
+	 * caller may reasonably expect it to take, such as `release` on a series,
+	 * which its handler refuses with the reason rather than leaving to the
+	 * generic unknown-parameter refusal.
+	 */
+	refusedQueryParameters?: Partial<Record<"get" | "post", string[]>>;
 };
 
 export type MatchedOperation = {
@@ -139,7 +146,27 @@ export const readOperationTemplates = (
 				parameterName = undefined;
 				continue;
 			}
-			if (/^ {10}in:\s*query\s*$/.test(line) && parameterName) {
+			// A parameter may also be written in flow style, on one line as
+			// `- { name: period, in: query, … }` or over several as `- {`
+			// followed by `name: period,` and `in: query,`.
+			const flow =
+				/^ {8}- \{\s*name:\s*([^,\s}]+)\s*,\s*in:\s*(\w+)/.exec(line);
+			if (flow) {
+				if (flow[2] === "query")
+					current.queryParameters[method]!.push(flow[1]!);
+				parameterName = undefined;
+				continue;
+			}
+			if (/^ {8}- \{\s*$/.test(line)) {
+				parameterName = undefined;
+				continue;
+			}
+			const flowName = /^ {12}name:\s*([^,\s]+),?\s*$/.exec(line)?.[1];
+			if (flowName) {
+				parameterName = flowName;
+				continue;
+			}
+			if (/^ {10,12}in:\s*query,?\s*$/.test(line) && parameterName) {
 				current.queryParameters[method]!.push(parameterName);
 				parameterName = undefined;
 				continue;
@@ -153,6 +180,18 @@ export const readOperationTemplates = (
 		if (since) current.deprecation = { ...current.deprecation, since };
 		const sunset = /^ {6}x-sunset:\s*"?([^"\s]+)"?\s*$/.exec(line)?.[1];
 		if (sunset) current.deprecation = { ...current.deprecation, sunset };
+		const refused =
+			/^ {6}x-refused-query-parameters:\s*\[([^\]]*)\]\s*$/.exec(
+				line,
+			)?.[1];
+		if (refused !== undefined && method)
+			current.refusedQueryParameters = {
+				...current.refusedQueryParameters,
+				[method]: refused
+					.split(",")
+					.map((name) => name.trim())
+					.filter(Boolean),
+			};
 		// A path with two operations costs what its dearer one does.
 		const cost = /^ {6}x-rate-limit-cost:\s*(\d+)\s*$/.exec(line)?.[1];
 		if (cost) current.cost = Math.max(current.cost ?? 1, Number(cost));
@@ -265,15 +304,17 @@ export const unexpectedQueryParameter = (
 	method: string,
 	target: string,
 ) => {
-	const declared =
-		operation?.queryParameters[
-			method === "HEAD" ? "get" : (method.toLowerCase() as "get" | "post")
-		];
+	const key =
+		method === "HEAD" ? "get" : (method.toLowerCase() as "get" | "post");
+	const declared = operation?.queryParameters[key];
 	if (!declared) return undefined;
+	const refused = operation?.refusedQueryParameters?.[key] ?? [];
 	const supplied = [
 		...new URL(target, "http://localhost").searchParams.keys(),
 	];
-	const parameter = supplied.find((name) => !declared.includes(name));
+	const parameter = supplied.find(
+		(name) => !declared.includes(name) && !refused.includes(name),
+	);
 	if (!parameter) return undefined;
 	const nearest = declared
 		.map((candidate) => ({
