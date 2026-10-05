@@ -395,6 +395,7 @@ async function AreaPage({ profile }: { profile: AreaProfile }) {
 								]}
 								bbox={profile.bbox}
 								label={profile.name}
+								geography={profile.geography}
 							/>
 						</Card>
 					)}
@@ -679,6 +680,7 @@ async function NamedPage({ profile }: { profile: NamedProfile }) {
 									}))}
 								bbox={profile.bbox}
 								label={profile.label}
+								geography={profile.memberGeography}
 							/>
 						</Card>
 					)}

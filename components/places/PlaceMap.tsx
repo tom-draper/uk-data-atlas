@@ -18,8 +18,12 @@ export type PlaceShape = {
 	href?: string;
 };
 
-const INK = "#0f172a";
-const ACCENT = "#2563eb";
+/** Each kind of area's fill, so a page's map says what it shows. */
+export const GEOGRAPHY_COLOURS: Record<string, string> = {
+	localAuthority: "#2563eb",
+	constituency: "#dc2626",
+	ward: "#16a34a",
+};
 
 /**
  * A place drawn over the basemap: one outline for an area, or each member's
@@ -29,10 +33,13 @@ export default function PlaceMap({
 	shapes,
 	bbox,
 	label,
+	geography,
 }: {
 	shapes: PlaceShape[];
 	bbox: BoundingBox;
 	label: string;
+	/** The geography drawn, which picks its colour. */
+	geography: string;
 }) {
 	const container = useRef<HTMLDivElement>(null);
 	const router = useRouter();
@@ -65,6 +72,7 @@ export default function PlaceMap({
 				},
 			}));
 			const single = shapes.length === 1;
+			const colour = GEOGRAPHY_COLOURS[geography] ?? "#2563eb";
 			map.on("load", () => {
 				if (!map) return;
 				map.addSource("place", {
@@ -76,12 +84,12 @@ export default function PlaceMap({
 					type: "fill",
 					source: "place",
 					paint: {
-						"fill-color": ACCENT,
+						"fill-color": colour,
 						"fill-opacity": [
 							"case",
 							["boolean", ["feature-state", "hover"], false],
-							0.32,
-							single ? 0.16 : 0.12,
+							0.45,
+							0.25,
 						],
 					},
 				});
@@ -90,9 +98,10 @@ export default function PlaceMap({
 					type: "line",
 					source: "place",
 					paint: {
-						"line-color": single ? ACCENT : INK,
-						"line-width": single ? 2.5 : 1,
-						"line-opacity": single ? 0.9 : 0.55,
+						// The atlas's own borders: faint black lines.
+						"line-color": "#000",
+						"line-width": 1,
+						"line-opacity": 0.05,
 					},
 				});
 				if (single) return;
@@ -136,7 +145,7 @@ export default function PlaceMap({
 			cancelled = true;
 			map?.remove();
 		};
-	}, [shapes, bbox, router]);
+	}, [shapes, bbox, router, geography]);
 
 	return (
 		<div
