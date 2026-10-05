@@ -6338,7 +6338,17 @@ paths:
           schema:
             {
               type: string,
-              enum: [within, contains, successor, predecessor, split-from, merged-from, equivalent-to, overlaps],
+              enum:
+                [
+                  within,
+                  contains,
+                  successor,
+                  predecessor,
+                  split-from,
+                  merged-from,
+                  equivalent-to,
+                  overlaps,
+                ],
             }
         - name: limit
           in: query
@@ -9959,7 +9969,17 @@ components:
       required: [relation, counterpart, crosswalk]
       properties:
         relation:
-          enum: [within, contains, successor, predecessor, split-from, merged-from, equivalent-to, overlaps]
+          enum:
+            [
+              within,
+              contains,
+              successor,
+              predecessor,
+              split-from,
+              merged-from,
+              equivalent-to,
+              overlaps,
+            ]
         overlap:
           description: >
             Present only for `overlaps` relationships. Each share is seen from

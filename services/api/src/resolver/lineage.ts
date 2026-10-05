@@ -142,11 +142,7 @@ export class LineageResolver {
 			relationships: (this.index?.get(origin) ?? []).filter(
 				({ relation }) => isLineageRelation(relation),
 			),
-			lineage: this.traverse(
-				identity,
-				isLineageRelation,
-				maximumDepth,
-			),
+			lineage: this.traverse(identity, isLineageRelation, maximumDepth),
 			sameCodeReleases: this.sameCode(identity),
 		};
 	}
