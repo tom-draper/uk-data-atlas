@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { parse } from "yaml";
 import {
 	createOperationMatcher,
 	deprecationHeaders,
 	readOperationTemplates,
+	unexpectedQueryParameter,
 } from "../src/operationTemplates";
 
 const templates = readOperationTemplates(
@@ -88,4 +90,57 @@ test("prices an operation by its declared cost, the dearer of two on one path", 
 	);
 	assert.equal(cheap!.cost, undefined);
 	assert.equal(dear!.cost, 10);
+});
+
+test("reads every operation's query parameters as a YAML parser does", () => {
+	type Parameter = { $ref?: string; name?: string; in?: string };
+	type Operation = { parameters?: Parameter[] };
+	const document = parse(
+		readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
+	) as {
+		paths: Record<string, Partial<Record<"get" | "post", Operation>>>;
+		components: { parameters: Record<string, Parameter> };
+	};
+	const resolved = (parameter: Parameter) =>
+		parameter.$ref
+			? document.components.parameters[parameter.$ref.split("/").at(-1)!]!
+			: parameter;
+	for (const [path, item] of Object.entries(document.paths))
+		for (const method of ["get", "post"] as const) {
+			const operation = item[method];
+			if (!operation) continue;
+			const declared = (operation.parameters ?? [])
+				.map(resolved)
+				.filter((parameter) => parameter.in === "query")
+				.map((parameter) => parameter.name)
+				.sort();
+			assert.deepEqual(
+				[
+					...(templates.find((template) => template.path === path)
+						?.queryParameters[method] ?? []),
+				].sort(),
+				declared,
+				`${method} ${path}`,
+			);
+		}
+});
+
+test("leaves a parameter an operation refuses with its reason to the operation", () => {
+	const series = match("/v1/data/population/series").operation;
+	assert.equal(
+		unexpectedQueryParameter(
+			series,
+			"GET",
+			"/v1/data/population/series?place=E08000003&release=2023-05-uk-bgc",
+		),
+		undefined,
+	);
+	assert.equal(
+		unexpectedQueryParameter(
+			series,
+			"GET",
+			"/v1/data/population/series?place=E08000003&relase=2023-05-uk-bgc",
+		)?.parameter,
+		"relase",
+	);
 });

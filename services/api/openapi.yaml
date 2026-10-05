@@ -2238,6 +2238,7 @@ paths:
   /data/{measure-id}:
     get:
       operationId: getMeasureObservations
+      x-refused-query-parameters: [conversion, aggregate]
       tags: ["Map"]
       summary: Retrieve source-exact observations, or an opt-in canonical-unit representation
       x-likely-refusal:
@@ -2546,6 +2547,7 @@ paths:
   /data/{measure-id}/aggregate:
     get:
       operationId: aggregateSourceExactMeasure
+      x-refused-query-parameters: [release, conversion]
       tags: ["Trend"]
       summary: Aggregate an extensive or explicitly weighted measure
       x-likely-refusal:
@@ -2799,6 +2801,7 @@ paths:
   /data/{measure-id}/convert:
     get:
       operationId: convertSourceExactMeasure
+      x-refused-query-parameters: [release]
       tags: ["Trend"]
       summary: Regroup an extensive measure through a published crosswalk or relationship path
       x-likely-refusal:
@@ -2995,6 +2998,7 @@ paths:
   /data/{measure-id}/series:
     get:
       operationId: getSourceExactMeasureSeries
+      x-refused-query-parameters: [release, conversion, aggregate]
       tags: ["Trend"]
       summary: Retrieve a source-exact or reviewed derived time series
       x-likely-refusal:
@@ -3143,6 +3147,7 @@ paths:
   /data/{measure-id}/rankings:
     get:
       operationId: getSourceExactMeasureRankings
+      x-refused-query-parameters: [release, conversion, aggregate]
       tags: ["Trend"]
       summary: Rank areas within one source-exact measure partition
       x-likely-refusal:
@@ -3854,6 +3859,7 @@ paths:
   /data/{measure-id}/change:
     get:
       operationId: getSourceExactMeasureChange
+      x-refused-query-parameters: [release, conversion, aggregate]
       tags: ["Trend"]
       summary: Rank areas by change between two periods of one measure partition
       x-likely-refusal:
@@ -4023,6 +4029,7 @@ paths:
   /data/{measure-id}/compare:
     get:
       operationId: compareSourceExactMeasureAreas
+      x-refused-query-parameters: [release, conversion, aggregate]
       tags: ["Trend"]
       summary: Compare two areas within one source-exact measure partition
       x-likely-refusal:
@@ -5489,7 +5496,7 @@ paths:
                       code: E08000025
                       name: Birmingham
                       status: same-code-continuity
-                  note: Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity; same-code continuity only reports that the identifier appears in another release.
+                  note: Lineage follows only published historical edges and never infers a connection from a reused code. equivalent-to is published only for extent continuity. Same-code continuity only reports that the identifier appears in another release; it does not assert unchanged geometry or an exact historical equivalent.
                 meta:
                   nextCursor: null
         "404":
@@ -7923,6 +7930,10 @@ paths:
       operationId: getNamedLocationAlternatives
       tags: ["Geography"]
       summary: List competing named-location definitions for a real-world name
+      x-likely-refusal:
+        status: 400
+        when: "No name is given. The route lists the definitions of one name, so `q` is required."
+        x-example-request: "/v1/locations/alternatives"
       parameters:
         - name: q
           in: query
@@ -7988,6 +7999,10 @@ paths:
       operationId: compareNamedLocationMembership
       tags: ["Geography"]
       summary: Compare a named location's direct membership between two dates
+      x-likely-refusal:
+        status: 400
+        when: "A date is missing or is a year rather than a calendar date. `from` and `to` are both YYYY-MM-DD."
+        x-example-request: "/v1/locations/lancashire/comparison?from=1974&to=2026-01-01"
       parameters:
         - $ref: "#/components/parameters/LocationId"
         - name: from
