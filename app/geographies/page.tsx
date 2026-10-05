@@ -52,7 +52,7 @@ export default function GeographiesPage() {
 				},
 			]}
 			eyebrow="Geographies"
-			title="UK Data Atlas Geographies & Boundaries"
+			title="Geographies & boundaries"
 			lede="The kinds of area UK statistics are published for, from the four nations down to neighbourhoods of a few hundred people. Each one below explains what the areas are, who uses them, and which datasets in the Atlas are published on them."
 		>
 			<H2 id="about-geographies">About geographies</H2>
