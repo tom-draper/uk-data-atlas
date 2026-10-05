@@ -102,7 +102,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 
 		const response = routeRequest(
 			"GET",
-			`${url}?with=localAuthority/2025-01-uk-lad/E08000001`,
+			`${url}?place=localAuthority/2025-01-uk-lad/E08000001`,
 			context,
 		);
 		assert.equal(response.status, 200);
@@ -134,7 +134,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 		);
 		const latest = routeRequest(
 			"GET",
-			`${url}?with=localAuthority/latest/E08000001`,
+			`${url}?place=localAuthority/latest/E08000001`,
 			context,
 		);
 		assert.equal(latest.status, 200);
@@ -147,7 +147,7 @@ test("measures how two areas overlap beside any published relationship", () => {
 		assert.equal(routeRequest("GET", url, context).status, 400);
 		const missingOther = routeRequest(
 			"GET",
-			`${url}?with=ward/2025-01-en-ward/E05999999`,
+			`${url}?place=ward/2025-01-en-ward/E05999999`,
 			context,
 		);
 		assert.equal(missingOther.status, 404);

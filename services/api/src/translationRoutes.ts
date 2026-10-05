@@ -1,4 +1,5 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
+import { parseExactReleaseReference } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -22,39 +23,26 @@ export const handleTranslationRoutes = ({
 	)
 		return undefined;
 	const geographyResolver = context.geographyResolver;
-	const source = {
-		geography: parsedUrl.searchParams.get("sourceGeography"),
-		boundaryRelease: parsedUrl.searchParams.get("sourceRelease"),
-		code: parsedUrl.searchParams.get("code"),
-	};
-	const target = {
-		geography: parsedUrl.searchParams.get("targetGeography"),
-		boundaryRelease: parsedUrl.searchParams.get("targetRelease"),
-	};
+	const from = parseExactReleaseReference(parsedUrl.searchParams.get("from"));
+	const to = parseExactReleaseReference(parsedUrl.searchParams.get("to"));
+	const code = parsedUrl.searchParams.get("code");
 	const purpose = parsedUrl.searchParams.get("purpose") ?? "membership";
 	if (
-		!source.geography ||
-		!source.boundaryRelease ||
-		!source.code ||
-		!target.geography ||
-		!target.boundaryRelease ||
+		!from ||
+		!code ||
+		!to ||
 		!PURPOSES.includes(purpose as RelationshipPurpose)
 	) {
 		return problem(
 			400,
 			"Invalid Query",
-			"sourceGeography, sourceRelease, code, targetGeography and targetRelease are required; purpose must be identity, membership or apportion.",
+			"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion.",
 		);
 	}
-	const resolvedSource = source as {
-		geography: string;
-		boundaryRelease: string;
-		code: string;
-	};
-	const resolvedTarget = target as {
-		geography: string;
-		boundaryRelease: string;
-	};
+	const source = { ...from, code };
+	const target = to;
+	const resolvedSource = source;
+	const resolvedTarget = target;
 	const translations = geographyResolver.translateArea(
 		resolvedSource,
 		resolvedTarget,

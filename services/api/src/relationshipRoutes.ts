@@ -19,10 +19,8 @@ export const handleRelationshipRoutes = (
 	)
 		return undefined;
 	const conversionParameters = [
-		"sourceGeography",
-		"sourceRelease",
-		"targetGeography",
-		"targetRelease",
+		"from",
+		"to",
 		"purpose",
 		"operation",
 		"measure",
@@ -38,7 +36,7 @@ export const handleRelationshipRoutes = (
 		return problem(
 			400,
 			"Invalid Query",
-			"Supply either a conversion query (sourceGeography/sourceRelease) or a release-coverage query (geography/release), not both.",
+			"Supply either a conversion query (from/to) or a release-coverage query (geography/release), not both.",
 		);
 	return asksAboutConversion
 		? handleRelationshipCapabilityRoutes(request)

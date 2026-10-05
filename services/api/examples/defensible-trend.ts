@@ -46,7 +46,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		basis?: string;
 		conversion?: { id: string; method: string };
 	}>(
-		`/v1/analysis:plan?measure=${measureId}&period=${period}&analysisGeography=${analysisGeography}&sourceGeography=lsoa&sourceBoundaryYear=2021`,
+		`/v1/analysis:plan?measure=${measureId}&period=${period}&to=${analysisGeography}&geography=lsoa&boundaryYear=2021`,
 	);
 	if (plan.data.status !== "available" || plan.data.basis !== "derived")
 		throw new Error("the reviewed collision conversion is not available");
@@ -66,7 +66,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		};
 		series: Array<{ period: string; value: number; status: "derived" }>;
 	}>(
-		`/v1/data/${measureId}/series?place=${areaCode}&${source}&analysisGeography=${analysisGeography}`,
+		`/v1/data/${measureId}/series?place=${areaCode}&${source}&to=${analysisGeography}`,
 	);
 	const collisionCount = series.data.series.find(
 		(record) => record.period === period,
@@ -132,7 +132,7 @@ export const run = async (client: AtlasClient): Promise<Step[]> => {
 		status: "available" | "not-comparable";
 		reason?: string;
 	}>(
-		`/v1/analysis:plan?measure=${measureId}&period=2023&analysisGeography=${analysisGeography}&sourceGeography=lsoa&sourceBoundaryYear=2021`,
+		`/v1/analysis:plan?measure=${measureId}&period=2023&to=${analysisGeography}&geography=lsoa&boundaryYear=2021`,
 	);
 	if (unavailablePlan.data.status !== "not-comparable")
 		throw new Error("an unsupported period must be not-comparable");

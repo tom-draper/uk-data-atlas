@@ -464,7 +464,7 @@ only **available** when its endpoint, contract and provenance are published.
       published crosswalks between the releases are named with their code
       cardinality and split- or merge-shaped examples.
 - [x] Report the overlap between two specified areas through
-      `GET /v1/areas/{geography}/{release}/{code}/overlap?with=`, across geographies
+      `GET /v1/areas/{geography}/{release}/{code}/overlap?place=`, across geographies
       and releases: the shared area, each area's share, and a relation judged
       by the same sliver and coverage thresholds the area-overlap crosswalks
       are compiled with, so the two cannot disagree. Aldershot is 31.6% in
@@ -1813,7 +1813,7 @@ can obscure gaps and overlaps; its response must retain the member list.
 GET /v1/crosswalks
 GET /v1/crosswalks/{crosswalk-id}
 GET /v1/crosswalks/{crosswalk-id}/records?source=E05001234
-GET /v1/translations?sourceGeography=constituency&sourceRelease=2024-07-uk-bgc&code=E14001262&targetGeography=localAuthority&targetRelease=2025-05-uk-bgc-v2&purpose=membership
+GET /v1/translations?from=constituency/2024-07-uk-bgc&code=E14001262&to=localAuthority/2025-05-uk-bgc-v2&purpose=membership
 ```
 
 `GET /translations` is the read-only convenience route for one interactive
@@ -2622,8 +2622,8 @@ published fact per measure and frame, not a property of the crosswalk alone.
 
 ```text
 available: GET /v1/analysis-geographies
-available: GET /v1/measures/{measure-id}/conversion-support?analysisGeography={geography}/{release}
-available: GET /v1/analysis:plan?measure={measure-id}&period={period}&analysisGeography={geography}/{release}&sourceGeography={geography}&sourceBoundaryYear={year}
+available: GET /v1/measures/{measure-id}/conversion-support?to={geography}/{release}
+available: GET /v1/analysis:plan?measure={measure-id}&period={period}&to={geography}/{release}&geography={geography}&boundaryYear={year}
 ```
 
 The initial published pair is final annual 2024 and 2025 reported
@@ -3033,7 +3033,7 @@ catalogues by the contract tests:
 - `GET /v1/data/population?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/locations/north-yorkshire/members?release=2023-05-uk-bgc-v2`
 - `GET /v1/locations/greater-manchester/parents?geography=region&release=2025-12-en-bgc&via=local-authority-2025-12-uk-bgc-to-region-2025-12-en-bgc-area-overlap`
-- `GET /v1/relationships?sourceGeography=ward&sourceRelease=2023-05-uk-bgc&targetGeography=localAuthority&targetRelease=2023-05-uk-bgc-v2&purpose=membership`
+- `GET /v1/relationships?from=ward/2023-05-uk-bgc&to=localAuthority/2023-05-uk-bgc-v2&purpose=membership`
 - `GET /v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc`
 - `GET /v1/data/population-density?period=2024&geography=localAuthority&boundaryYear=2023`
 - `GET /v1/data/house-price-median/series?place=E05008945&geography=ward&boundaryYear=2020`
@@ -3063,7 +3063,7 @@ catalogues by the contract tests:
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/neighbours`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/geometry/metadata`
 - `GET /v1/crosswalks`
-- `GET /v1/translations?sourceGeography=ward&sourceRelease=2024-12-uk-bgc&code=E05000932&targetGeography=localAuthority&targetRelease=2024-12-uk-bgc&purpose=membership`
+- `GET /v1/translations?from=ward/2024-12-uk-bgc&code=E05000932&to=localAuthority/2024-12-uk-bgc&purpose=membership`
 - `GET /v1/relationship-candidates`
 - `GET /v1/validation`
 - `GET /v1/exports`

@@ -32,12 +32,12 @@ export const handleAreaOverlapRoutes = ({
 		string,
 		string,
 	];
-	const other = (parsedUrl.searchParams.get("with") ?? "").split("/");
+	const other = (parsedUrl.searchParams.get("place") ?? "").split("/");
 	if (other.length !== 3 || other.some((part) => part.length === 0)) {
 		return problem(
 			400,
 			"Invalid Query",
-			"with must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092.",
+			"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092.",
 		);
 	}
 	const [otherGeography, requestedOtherRelease, otherCode] = other as [
