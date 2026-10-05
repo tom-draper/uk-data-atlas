@@ -179,7 +179,12 @@ export const createAreaRelationshipIndex = (
 					targetSourceCount: targetSourceCounts.get(targetId) ?? 0,
 				};
 				addRelationship(index, sourceId, {
-					relation: relationFor(crosswalk, target, "from", cardinality),
+					relation: relationFor(
+						crosswalk,
+						target,
+						"from",
+						cardinality,
+					),
 					counterpart: {
 						id: targetId,
 						geography: crosswalk.to.geography,
