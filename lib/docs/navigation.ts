@@ -73,9 +73,9 @@ export function geographyHref(geography: string): string {
 	return `/docs/v1/geographies/${GEOGRAPHIES[geography].slug}`;
 }
 
-/** Data pages under their topics, each topic an anchor on the data overview. */
+/** Dataset pages under their topics, each topic an anchor on the dataset overview. */
 export const DATA: NavLink[] = [
-	{ href: "/docs/v1/data", title: "All data" },
+	{ href: "/docs/v1/data", title: "All datasets" },
 	...DATA_TOPICS.map((topic): NavLink => {
 		const pages = DATA_PAGES.filter((page) => page.topic === topic.id);
 		// A topic of one page is just that page.
@@ -140,7 +140,7 @@ export function docsNavigation(contract: ApiContract): NavGroup[] {
 		{ title: "Concepts", links: CONCEPTS },
 		{ title: "Using the API", links: USING_THE_API },
 		{ title: "Guides", links: GUIDES },
-		{ title: "Data", links: DATA },
+		{ title: "Datasets", links: DATA },
 		{ title: "Geographies", links: GEOGRAPHY_LINKS },
 		{
 			title: "API reference",
