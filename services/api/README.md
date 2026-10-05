@@ -285,14 +285,10 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Add sourced semantic classifications where an ONS lookup defines the
       area: regions, combined authorities and counties, whose current members
       now come from that lookup.
-- [ ] Ceremonial and historic counties. Most county names here mean the
-      ceremonial county (Kent with Medway), which no ONS lookup defines, so
-      they remain labelled `editorial-grouping`. Ordnance Survey's
-      Boundary-Line publishes ceremonial county boundaries under the Open
-      Government Licence, and could source them as the ONS lookups source
-      regions. The hand-kept lists had drifted: Kent, Devon, Derbyshire, Essex
-      and Hampshire held off-by-one code slips, and Lancashire held
-      Merseyside's Sefton, all corrected on 2026-09-27.
+- [x] Publish ceremonial and historic counties as distinct sourced definitions.
+      Ordnance Survey Boundary-Line supplies ceremonial counties and its
+      circa-1888 historic layer; each is related to local authorities by the
+      county holding most of the authority's area.
 - [x] Give each named-location member a half-open effective interval and let
       callers select it with `asOf=YYYY-MM-DD`. The North West switches from
       Cumbria's six former districts to Cumberland and Westmorland and Furness
@@ -339,9 +335,12 @@ only **available** when its endpoint, contract and provenance are published.
       location's members, compiled once for their fully resolved release, as a
       GeoJSON Feature carrying its bounding box and boundary release. It is
       unavailable rather than estimated where no union has been built.
-- [ ] Compare location definitions and membership across releases.
-- [ ] Return explicit alternatives for ambiguous real-world names, for example
-      ceremonial, historic and administrative definitions of Devon.
+- [x] Compare location membership across dates through
+      `GET /v1/locations/{id}/comparison?from=&to=`, which returns retained,
+      added and removed direct members.
+- [x] Return explicit alternatives for ambiguous real-world names through
+      `GET /v1/locations/alternatives?q=`, including ceremonial, historic and
+      administrative definitions of Devon.
 
 ### Boundaries and spatial queries — next
 
