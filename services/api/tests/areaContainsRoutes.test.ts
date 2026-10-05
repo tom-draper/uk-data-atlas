@@ -379,19 +379,44 @@ test("says when a selected release has no geometry to test", () => {
 	assert.match(data.results[0].detail, /No raw geometry source/);
 });
 
-test("refuses a lookup whose point or release selection is unclear", () => {
+test("refuses an unclear point or invalid release selection, and defaults a named geography", () => {
 	const point = `lng=${0.5 * U}&lat=${0.5 * U}`;
 	for (const query of [
 		"lng=181&lat=0&geography=ward&release=2024-12-uk-bgc",
 		"lng=5e-3&lat=0&geography=ward&release=2024-12-uk-bgc",
 		`${point}&geography=ward&geography=country&release=2024-12-uk-bgc`,
-		`${point}&geography=ward`,
 		`${point}&geography=ward&date=2025-02-30`,
 		`${point}&release=ward/2024-12-uk-bgc&release=ward/2025-05-uk-bgc`,
 		`${point}&geography=a&geography=b&geography=c&geography=d&geography=e&date=2025-01`,
 		`${point}&geography=ward&release=2024-12-uk-bgc&accuracy=-5`,
 	])
 		assert.equal(get(`/v1/areas:contains?${query}`).status, 400, query);
+
+	const defaulted = get(`/v1/areas:contains?${point}&geography=ward`);
+	assert.equal(defaulted.status, 200);
+	assert.equal(
+		defaulted.data.results[0]!.selection.policy,
+		"latest-published",
+	);
+	const commaSeparated = get(
+		`/v1/areas:contains?${point}&geography=ward,localHealthBoard`,
+	);
+	assert.deepEqual(
+		commaSeparated.data.results.map(({ geography, selection }: any) => [
+			geography,
+			selection.policy,
+		]),
+		[
+			["ward", "latest-published"],
+			["localHealthBoard", "latest-published"],
+		],
+	);
+	const nearestDefault = get(`/v1/areas:near?${point}&geography=ward`);
+	assert.equal(nearestDefault.status, 200);
+	assert.equal(
+		nearestDefault.data.results[0]!.selection.policy,
+		"latest-published",
+	);
 
 	const unknownRelease = get(
 		`/v1/areas:contains?${point}&release=ward/2019-12-uk-bgc`,

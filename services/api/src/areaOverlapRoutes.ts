@@ -1,5 +1,6 @@
 import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
 import { areaNotFound } from "./areaResources";
+import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -39,11 +40,17 @@ export const handleAreaOverlapRoutes = ({
 			"with must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092.",
 		);
 	}
-	const [otherGeography, otherRelease, otherCode] = other as [
+	const [otherGeography, requestedOtherRelease, otherCode] = other as [
 		string,
 		string,
 		string,
 	];
+	const current =
+		requestedOtherRelease === "latest"
+			? latestPublishedBoundaryRelease(context, otherGeography)
+			: undefined;
+	if (current && "status" in current) return current;
+	const otherRelease = current?.id ?? requestedOtherRelease;
 	const identity = { geography, boundaryRelease, code };
 	const area = geographyResolver.area(identity);
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
@@ -88,6 +95,7 @@ export const handleAreaOverlapRoutes = ({
 					id: otherId,
 					geography: otherGeography,
 					boundaryRelease: otherRelease,
+					...(current ? { releaseSelection: current.selection } : {}),
 					...otherArea,
 					areaM2: Math.round(measured.secondAreaM2),
 					geometry: otherResolved.geometrySource,

@@ -2,6 +2,7 @@ import { areaNotFound } from "./areaResources";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
+import { selectAreaChildren } from "./areaChildren";
 
 /** Published direct containment relationships in either direction. */
 export const handleAreaRelationshipRoutes = ({
@@ -36,7 +37,7 @@ export const handleAreaRelationshipRoutes = ({
 		boundaryRelease,
 		code,
 	});
-	const relationships =
+	let relationships =
 		segments[5] === "relationships"
 			? allRelationships
 			: allRelationships.filter(
@@ -44,6 +45,26 @@ export const handleAreaRelationshipRoutes = ({
 						candidate.relation ===
 						(segments[5] === "parents" ? "within" : "contains"),
 				);
+	let childSelection: unknown;
+	if (segments[5] === "children") {
+		const selected = selectAreaChildren(
+			context,
+			boundaryRelease,
+			relationships,
+			parsedUrl.searchParams.get("childGeography"),
+		);
+		if ("error" in selected)
+			return problem(
+				400,
+				"Invalid Query",
+				selected.error === "invalid"
+					? "childGeography must be a geography or geography/release pair."
+					: "No published contemporary child release matches childGeography.",
+				{ choices: selected.choices },
+			);
+		relationships = selected.children;
+		childSelection = selected.selection;
+	}
 	const depthParameter = parsedUrl.searchParams.get("depth");
 	const depth = depthParameter === null ? undefined : Number(depthParameter);
 	if (
@@ -63,6 +84,7 @@ export const handleAreaRelationshipRoutes = ({
 			boundaryRelease,
 			...area,
 			relationships,
+			...(childSelection ? { childSelection } : {}),
 			...(segments[5] === "parents" && depth !== undefined
 				? {
 						ancestors: geographyResolver.ancestorLineage(

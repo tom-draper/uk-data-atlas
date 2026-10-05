@@ -50,6 +50,38 @@ test("lists compiled area identities a page at a time", () => {
 	assert.equal("meta" in second.body && second.body.meta.nextCursor, null);
 });
 
+test("rejects unknown list filters and resolves latest to a concrete release", () => {
+	const latest = route(
+		"GET",
+		"/v1/areas?geography=ward&release=latest",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(latest.status, 200);
+	assert.equal(
+		latest.headers?.["content-location"],
+		"/v1/areas?geography=ward&release=2025-01-en-ward",
+	);
+
+	const unknownGeography = route(
+		"GET",
+		"/v1/areas?geography=wardd",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(unknownGeography.status, 404);
+	const unknownRelease = route(
+		"GET",
+		"/v1/areas?geography=ward&release=1999-01-en-ward",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(unknownRelease.status, 404);
+});
+
 test("sends a name search to places rather than listing every area", () => {
 	const response = route(
 		"GET",

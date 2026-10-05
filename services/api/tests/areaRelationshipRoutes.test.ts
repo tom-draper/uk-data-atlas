@@ -141,4 +141,8 @@ test("offers focused parent and child containment routes", () => {
 			.relationships[0]?.relation,
 		"contains",
 	);
+	assert.deepEqual(
+		(childData as { childSelection: unknown }).childSelection,
+		{ kind: "contemporary" },
+	);
 });
