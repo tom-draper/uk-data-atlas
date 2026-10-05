@@ -16,6 +16,9 @@ export default function Navigation() {
 						<Link href="/maps" className={linkClass}>
 							Maps
 						</Link>
+						<Link href="/places" className={linkClass}>
+							Places
+						</Link>
 						<Link href="/datasets" className={linkClass}>
 							Datasets
 						</Link>
