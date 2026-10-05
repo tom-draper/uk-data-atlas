@@ -345,7 +345,6 @@ export const withCeremonialCounties = (
 	);
 };
 
-
 export const HISTORIC_COUNTY_SOURCE = {
 	publisher: "Ordnance Survey" as const,
 	dataset: "Boundary-Line historic counties",

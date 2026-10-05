@@ -62,16 +62,37 @@ export const handleLocationRoutes = ({
 		segments[1] === "locations" &&
 		segments[2] === "alternatives"
 	) {
-		const query = parsedUrl.searchParams.get("q")?.trim().toLocaleLowerCase();
+		const query = parsedUrl.searchParams
+			.get("q")
+			?.trim()
+			.toLocaleLowerCase();
 		if (!query)
-			return problem(400, "Invalid Query", "q is required to find named-location alternatives.");
-		const unavailable = context.geographyResolver.requires("named-locations");
+			return problem(
+				400,
+				"Invalid Query",
+				"q is required to find named-location alternatives.",
+			);
+		const unavailable =
+			context.geographyResolver.requires("named-locations");
 		if (unavailable) return unavailable;
 		const alternatives = context.geographyResolver
 			.namedLocations()
-			.filter((location) => location.label.toLocaleLowerCase().replace(/\s+\(.+$/, "") === query)
-			.map(({ id, label, kind, source }) => ({ id, label, kind, ...(source && { source }) }));
-		return { status: 200, body: envelope(releaseId, { query, alternatives }) };
+			.filter(
+				(location) =>
+					location.label
+						.toLocaleLowerCase()
+						.replace(/\s+\(.+$/, "") === query,
+			)
+			.map(({ id, label, kind, source }) => ({
+				id,
+				label,
+				kind,
+				...(source && { source }),
+			}));
+		return {
+			status: 200,
+			body: envelope(releaseId, { query, alternatives }),
+		};
 	}
 	if (
 		segments.length === 4 &&
@@ -79,15 +100,50 @@ export const handleLocationRoutes = ({
 		segments[1] === "locations" &&
 		segments[3] === "comparison"
 	) {
-		const from = selectedAsOf(new URL(`?asOf=${parsedUrl.searchParams.get("from") ?? ""}`, parsedUrl));
-		const to = selectedAsOf(new URL(`?asOf=${parsedUrl.searchParams.get("to") ?? ""}`, parsedUrl));
+		const from = selectedAsOf(
+			new URL(
+				`?asOf=${parsedUrl.searchParams.get("from") ?? ""}`,
+				parsedUrl,
+			),
+		);
+		const to = selectedAsOf(
+			new URL(
+				`?asOf=${parsedUrl.searchParams.get("to") ?? ""}`,
+				parsedUrl,
+			),
+		);
 		if (typeof from !== "string" || typeof to !== "string")
-			return problem(400, "Invalid Query", "from and to must be calendar dates in YYYY-MM-DD form.");
+			return problem(
+				400,
+				"Invalid Query",
+				"from and to must be calendar dates in YYYY-MM-DD form.",
+			);
 		const location = context.geographyResolver.namedLocation(segments[2]!);
-		if (!location) return problem(404, "Not Found", "No named location matches that identity.");
-		const before = new Set(context.geographyResolver.namedLocation(location.id, from)?.memberCodes ?? []);
-		const after = new Set(context.geographyResolver.namedLocation(location.id, to)?.memberCodes ?? []);
-		return { status: 200, body: envelope(releaseId, { location: { id: location.id, label: location.label }, from, to, retained: [...before].filter((code) => after.has(code)), added: [...after].filter((code) => !before.has(code)), removed: [...before].filter((code) => !after.has(code)) }) };
+		if (!location)
+			return problem(
+				404,
+				"Not Found",
+				"No named location matches that identity.",
+			);
+		const before = new Set(
+			context.geographyResolver.namedLocation(location.id, from)
+				?.memberCodes ?? [],
+		);
+		const after = new Set(
+			context.geographyResolver.namedLocation(location.id, to)
+				?.memberCodes ?? [],
+		);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				location: { id: location.id, label: location.label },
+				from,
+				to,
+				retained: [...before].filter((code) => after.has(code)),
+				added: [...after].filter((code) => !before.has(code)),
+				removed: [...before].filter((code) => !after.has(code)),
+			}),
+		};
 	}
 	if (
 		segments.length === 3 &&
