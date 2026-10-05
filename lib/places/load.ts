@@ -6,6 +6,7 @@ import {
 	placeShard,
 	type AreaProfile,
 	type NamedProfile,
+	type NamedRef,
 	type PlaceIndex,
 	type PlaceIndexEntry,
 } from "@/lib/places/profile";
@@ -47,4 +48,96 @@ export async function loadNamedProfile(
 ): Promise<NamedProfile | undefined> {
 	if (!namedEntries.has(id)) return undefined;
 	return (await readProfiles(`named/${id}.json`)) as NamedProfile;
+}
+
+/** Several areas' profiles, reading each shard once. */
+export async function loadAreaProfiles(
+	codes: string[],
+): Promise<Map<string, AreaProfile>> {
+	const shards = new Map<string, Promise<Record<string, AreaProfile>>>();
+	const profiles = new Map<string, AreaProfile>();
+	await Promise.all(
+		codes
+			.filter((code) => areaEntries.has(code))
+			.map(async (code) => {
+				const shard = placeShard(code);
+				if (!shards.has(shard))
+					shards.set(
+						shard,
+						readProfiles(`areas/${shard}.json`) as Promise<
+							Record<string, AreaProfile>
+						>,
+					);
+				const profile = (await shards.get(shard)!)[code];
+				if (profile) profiles.set(code, profile);
+			}),
+	);
+	return profiles;
+}
+
+/** The English regions, then the nations without them, north to south. */
+export const PLACE_REGIONS: NamedRef[] = [
+	["north-east", "North East"],
+	["north-west", "North West"],
+	["yorkshire", "Yorkshire and the Humber"],
+	["east-midlands", "East Midlands"],
+	["west-midlands", "West Midlands"],
+	["east-of-england", "East of England"],
+	["london", "London"],
+	["south-east", "South East"],
+	["south-west", "South West"],
+	["wales", "Wales"],
+	["scotland", "Scotland"],
+	["northern-ireland", "Northern Ireland"],
+].map(([id, label]) => ({
+	id: id!,
+	label: label!,
+	kind: ["wales", "scotland", "northern-ireland"].includes(id!)
+		? "country"
+		: "region",
+}));
+
+const NATION_REGION: Record<string, string> = {
+	W: "wales",
+	S: "scotland",
+	N: "northern-ireland",
+};
+
+/**
+ * The region of each current local authority and constituency, or its nation
+ * outside England. A constituency takes the region of a council it sits in
+ * or overlaps; English regions don't cross council lines.
+ */
+export async function placeRegions(): Promise<Map<string, string>> {
+	const current = PLACE_INDEX.areas.filter(
+		([, , geography, , , lastYear]) =>
+			geography !== "ward" && lastYear === null,
+	);
+	const profiles = await loadAreaProfiles(current.map(([code]) => code));
+	const regions = new Map<string, string>();
+	const regionOf = (code: string) =>
+		NATION_REGION[code[0] ?? ""] ??
+		profiles
+			.get(code)
+			?.namedPlaces?.find((place) => place.kind === "region")?.id;
+	for (const [code, , geography] of current) {
+		if (geography !== "localAuthority") continue;
+		const region = regionOf(code);
+		if (region) regions.set(code, region);
+	}
+	for (const [code, , geography] of current) {
+		if (geography !== "constituency") continue;
+		const profile = profiles.get(code);
+		const councils = [
+			...(profile?.parents ?? []),
+			...(profile?.overlaps.flatMap((group) => group.areas ?? []) ?? []),
+		].filter((area) => area.geography === "localAuthority");
+		const region =
+			NATION_REGION[code[0] ?? ""] ??
+			councils
+				.map((council) => regions.get(council.code))
+				.find((found) => found !== undefined);
+		if (region) regions.set(code, region);
+	}
+	return regions;
 }
