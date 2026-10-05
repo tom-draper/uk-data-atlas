@@ -189,3 +189,60 @@ export function websiteJsonLd() {
 		publisher: { "@type": "Person", name: "Tom Draper" },
 	};
 }
+
+/**
+ * A place page: its breadcrumb trail from the UK down, and the place itself
+ * as an administrative area with its code and bounding box.
+ */
+export function placeJsonLd({
+	path,
+	title,
+	trail,
+	place,
+}: {
+	path: string;
+	title: string;
+	/** Every crumb but the last links to its page. */
+	trail: { label: string; href?: string }[];
+	place: {
+		name: string;
+		/** The area's GSS code, for an area. */
+		code?: string;
+		/** West, south, east, north. */
+		bbox?: [number, number, number, number];
+	};
+}) {
+	const [west, south, east, north] = place.bbox ?? [];
+	return {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "WebPage",
+				"@id": `${SITE_URL}${path}`,
+				url: `${SITE_URL}${path}`,
+				name: title,
+				isPartOf: { "@id": WEBSITE["@id"] },
+				breadcrumb: breadcrumbList(
+					trail.map((crumb) => ({
+						name: crumb.label,
+						path: crumb.href ?? path,
+					})),
+				),
+				about: {
+					"@type": "AdministrativeArea",
+					name: place.name,
+					...(place.code ? { identifier: place.code } : {}),
+					...(west !== undefined && north !== undefined
+						? {
+								geo: {
+									"@type": "GeoShape",
+									box: `${south} ${west} ${north} ${east}`,
+								},
+							}
+						: {}),
+				},
+			},
+			WEBSITE,
+		],
+	};
+}

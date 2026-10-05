@@ -44,6 +44,7 @@ import {
 	type NamedProfile,
 	type NamedRef,
 } from "@/lib/places/profile";
+import { JsonLd, placeJsonLd } from "@/lib/atlas/structuredData";
 import { pageMetadata } from "@/lib/site";
 
 type Params = Promise<{ place: string }>;
@@ -312,12 +313,16 @@ function ApiRequests({ requests }: { requests: PlaceRequest[] }) {
 }
 
 function Header({
+	path,
+	place,
 	trail,
 	eyebrow,
 	title,
 	lede,
 	pill,
 }: {
+	path: string;
+	place: Parameters<typeof placeJsonLd>[0]["place"];
 	trail: { label: string; href?: string }[];
 	eyebrow: string;
 	title: string;
@@ -326,6 +331,7 @@ function Header({
 }) {
 	return (
 		<>
+			<JsonLd data={placeJsonLd({ path, title, trail, place })} />
 			<Breadcrumbs trail={trail} />
 			<Eyebrow>{eyebrow}</Eyebrow>
 			<div className="flex flex-wrap items-center gap-3">
@@ -410,6 +416,12 @@ async function AreaPage({ profile }: { profile: AreaProfile }) {
 	return (
 		<>
 			<Header
+				path={`/places/${profile.code}`}
+				place={{
+					name: profile.name,
+					code: profile.code,
+					...(profile.outline ? { bbox: profile.bbox } : {}),
+				}}
 				trail={placeTrail(
 					[NATIONS[profile.code[0] ?? ""], region],
 					...(council
@@ -693,6 +705,13 @@ async function NamedPage({ profile }: { profile: NamedProfile }) {
 	return (
 		<>
 			<Header
+				path={`/places/${profile.id}`}
+				place={{
+					name: profile.label,
+					...(Object.keys(profile.outlines).length > 0
+						? { bbox: profile.bbox }
+						: {}),
+				}}
 				trail={
 					profile.id === UNITED_KINGDOM.id
 						? [
