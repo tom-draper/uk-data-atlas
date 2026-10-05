@@ -142,7 +142,9 @@ function Section({
 
 function Facts({ items }: { items: { label: string; value: ReactNode }[] }) {
 	return (
-		<dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+		<dl
+			className={`mt-6 grid grid-cols-2 gap-x-6 gap-y-4 ${items.length > 4 ? "sm:grid-cols-3 xl:grid-cols-5" : "sm:grid-cols-4"}`}
+		>
 			{items.map((item) => (
 				<div key={item.label} className="min-w-0">
 					<dt className="text-[13px] text-slate-500">{item.label}</dt>
@@ -414,6 +416,31 @@ async function AreaPage({ profile }: { profile: AreaProfile }) {
 										? `${profile.areaKm2.toLocaleString("en-GB", { maximumFractionDigits: profile.areaKm2 < 10 ? 2 : 0 })} km²`
 										: "Not published",
 							},
+							...(profile.population
+								? [
+										{
+											label: "Population",
+											value: (
+												<>
+													{profile.population.value.toLocaleString(
+														"en-GB",
+													)}
+													<Link
+														href={`/datasets#${profile.population.dataset}`}
+														className="block text-[12.5px] font-normal text-slate-500 hover:text-slate-800"
+													>
+														Mid-
+														{
+															profile.population
+																.year
+														}{" "}
+														estimate
+													</Link>
+												</>
+											),
+										},
+									]
+								: []),
 							{
 								label: "In use",
 								value: profile.current
