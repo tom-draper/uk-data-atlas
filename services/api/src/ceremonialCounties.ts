@@ -1,6 +1,6 @@
 import {
 	boundsIntersect,
-	containPoint,
+	pointContainment,
 	geometryBounds,
 	pointInBounds,
 	type Coordinate,
@@ -96,10 +96,29 @@ export const SCOTTISH_LIEUTENANCY_AREAS = new Set([
 	"Wigtown",
 ]);
 
+// Each county is tested against every authority near it, so it is prepared
+// once for as long as its shape is in use.
+const COUNTY_BAND_DEGREES = 0.0025;
+const preparedCounties = new WeakMap<
+	CountyShape,
+	ReturnType<typeof pointContainment>
+>();
+const countyContainment = (county: CountyShape) => {
+	let contains = preparedCounties.get(county);
+	if (!contains) {
+		// Boundary-Line outlines are full resolution, so a narrow band keeps
+		// each test to a few hundred metres of a county's edge.
+		contains = pointContainment(county.geometry, COUNTY_BAND_DEGREES);
+		preparedCounties.set(county, contains);
+	}
+	return contains;
+};
+
 const samplePoints = (geometry: GeoJsonGeometry): Coordinate[] => {
 	const bounds = geometryBounds(geometry);
 	if (!bounds) return [];
 	const [west, south, east, north] = bounds;
+	const contains = pointContainment(geometry);
 	const points: Coordinate[] = [];
 	for (let x = 0; x < GRID; x += 1)
 		for (let y = 0; y < GRID; y += 1) {
@@ -107,7 +126,7 @@ const samplePoints = (geometry: GeoJsonGeometry): Coordinate[] => {
 				west + ((x + 0.5) / GRID) * (east - west),
 				south + ((y + 0.5) / GRID) * (north - south),
 			];
-			if (containPoint(point, geometry) !== "outside") points.push(point);
+			if (contains(point) !== "outside") points.push(point);
 		}
 	return points;
 };
@@ -131,7 +150,7 @@ export const assignAuthority = (
 		const county = candidates.find(
 			(candidate) =>
 				pointInBounds(point, candidate.bounds) &&
-				containPoint(point, candidate.geometry) !== "outside",
+				countyContainment(candidate)(point) !== "outside",
 		);
 		if (county) counts.set(county.name, (counts.get(county.name) ?? 0) + 1);
 	}

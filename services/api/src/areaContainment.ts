@@ -84,6 +84,7 @@ type PreparedRing = {
 	coordinates: Coordinate[];
 	bounds: GeometryBounds;
 	latitudeBuckets: Map<number, number[]>;
+	bucketDegrees: number;
 };
 type PreparedPolygon = { rings: PreparedRing[] };
 type PreparedGeometry =
@@ -97,7 +98,10 @@ const preparedGeometries = new Map<GeoJsonGeometry, PreparedGeometry>();
 const MAX_PREPARED_GEOMETRIES = 96;
 const RING_LATITUDE_BUCKET_DEGREES = 0.025;
 
-const prepareRing = (value: unknown): PreparedRing | undefined => {
+const prepareRing = (
+	value: unknown,
+	bucketDegrees: number,
+): PreparedRing | undefined => {
 	if (!Array.isArray(value)) return undefined;
 	const coordinates = value.filter(isCoordinate);
 	if (coordinates.length < 3) return undefined;
@@ -119,11 +123,11 @@ const prepareRing = (value: unknown): PreparedRing | undefined => {
 	) {
 		const minBucket = Math.floor(
 			Math.min(coordinates[previous]![1], coordinates[index]![1]) /
-				RING_LATITUDE_BUCKET_DEGREES,
+				bucketDegrees,
 		);
 		const maxBucket = Math.floor(
 			Math.max(coordinates[previous]![1], coordinates[index]![1]) /
-				RING_LATITUDE_BUCKET_DEGREES,
+				bucketDegrees,
 		);
 		for (let bucket = minBucket; bucket <= maxBucket; bucket++) {
 			const indices = latitudeBuckets.get(bucket) ?? [];
@@ -135,16 +139,47 @@ const prepareRing = (value: unknown): PreparedRing | undefined => {
 		coordinates,
 		bounds: [west, south, east, north],
 		latitudeBuckets,
+		bucketDegrees,
 	};
 };
 
-const preparePolygon = (value: unknown): PreparedPolygon | undefined => {
+const preparePolygon = (
+	value: unknown,
+	bucketDegrees: number,
+): PreparedPolygon | undefined => {
 	if (!Array.isArray(value)) return undefined;
 	const rings = value.flatMap((ring) => {
-		const prepared = prepareRing(ring);
+		const prepared = prepareRing(ring, bucketDegrees);
 		return prepared ? [prepared] : [];
 	});
 	return rings.length ? { rings } : undefined;
+};
+
+const prepareUncached = (
+	geometry: GeoJsonGeometry,
+	bucketDegrees = RING_LATITUDE_BUCKET_DEGREES,
+): PreparedGeometry => {
+	if (geometry.type === "Polygon") {
+		const polygon = preparePolygon(geometry.coordinates, bucketDegrees);
+		return { type: "Polygon", polygons: polygon ? [polygon] : [] };
+	}
+	if (geometry.type === "MultiPolygon") {
+		const polygons = Array.isArray(geometry.coordinates)
+			? geometry.coordinates.flatMap((polygon) => {
+					const result = preparePolygon(polygon, bucketDegrees);
+					return result ? [result] : [];
+				})
+			: [];
+		return { type: "MultiPolygon", polygons };
+	}
+	if (geometry.type === "GeometryCollection")
+		return {
+			type: "GeometryCollection",
+			geometries: (geometry.geometries ?? []).map((part) =>
+				prepareUncached(part, bucketDegrees),
+			),
+		};
+	return { type: "Other" };
 };
 
 const prepareGeometry = (geometry: GeoJsonGeometry): PreparedGeometry => {
@@ -154,26 +189,7 @@ const prepareGeometry = (geometry: GeoJsonGeometry): PreparedGeometry => {
 		preparedGeometries.set(geometry, cached);
 		return cached;
 	}
-	let prepared: PreparedGeometry;
-	if (geometry.type === "Polygon") {
-		const polygon = preparePolygon(geometry.coordinates);
-		prepared = { type: "Polygon", polygons: polygon ? [polygon] : [] };
-	} else if (geometry.type === "MultiPolygon") {
-		const polygons = Array.isArray(geometry.coordinates)
-			? geometry.coordinates.flatMap((polygon) => {
-					const result = preparePolygon(polygon);
-					return result ? [result] : [];
-				})
-			: [];
-		prepared = { type: "MultiPolygon", polygons };
-	} else if (geometry.type === "GeometryCollection") {
-		prepared = {
-			type: "GeometryCollection",
-			geometries: (geometry.geometries ?? []).map(prepareGeometry),
-		};
-	} else {
-		prepared = { type: "Other" };
-	}
+	const prepared = prepareUncached(geometry);
 	preparedGeometries.set(geometry, prepared);
 	if (preparedGeometries.size > MAX_PREPARED_GEOMETRIES)
 		preparedGeometries.delete(preparedGeometries.keys().next().value!);
@@ -187,9 +203,8 @@ const pointInRing = (
 	if (!pointInBounds(point, ring.bounds)) return "outside";
 	const coordinates = ring.coordinates;
 	const candidates =
-		ring.latitudeBuckets.get(
-			Math.floor(point[1] / RING_LATITUDE_BUCKET_DEGREES),
-		) ?? [];
+		ring.latitudeBuckets.get(Math.floor(point[1] / ring.bucketDegrees)) ??
+		[];
 	let inside = false;
 	for (const index of candidates) {
 		const previous = index === 0 ? coordinates.length - 1 : index - 1;
@@ -263,6 +278,22 @@ export const containPoint = (
 	point: Coordinate,
 	geometry: GeoJsonGeometry,
 ): PointContainment => containPreparedPoint(point, prepareGeometry(geometry));
+
+/**
+ * `containPoint` for one geometry tested again and again, prepared once and
+ * held by the caller rather than in the shared, bounded working set, where a
+ * stream of other geometries would push it out between tests. Finer latitude
+ * bands suit a detailed outline tested at many points: each test then walks
+ * the edges near its point rather than all those across a wide band.
+ */
+export const pointContainment = (
+	geometry: GeoJsonGeometry,
+	bucketDegrees = RING_LATITUDE_BUCKET_DEGREES,
+) => {
+	const prepared = prepareUncached(geometry, bucketDegrees);
+	return (point: Coordinate): PointContainment =>
+		containPreparedPoint(point, prepared);
+};
 
 export const boundsIntersect = (left: GeometryBounds, right: GeometryBounds) =>
 	left[0] <= right[2] + EPSILON &&
