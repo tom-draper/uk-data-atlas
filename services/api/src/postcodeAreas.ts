@@ -259,38 +259,79 @@ const columnFor = (
 	};
 };
 
-/** A release's placements read back from the shards of an earlier build. */
+/**
+ * Releases' placements read back from the shards of an earlier build. The
+ * shards are read once, in order, and none is kept: each fills every release
+ * with its shard's own code numbers, which become the release's sorted ones
+ * once all its codes are known.
+ */
 export const placementsFromShards = (
-	key: string,
-	shards: Array<{ offset: number; shard: PostcodeAreasShard }>,
+	keys: string[],
+	shards: Iterable<{ offset: number; shard: PostcodeAreasShard }>,
 	count: number,
-): ReleasePlacements => {
-	const codeSet = new Set<string>();
-	for (const { shard } of shards)
-		for (const code of shard.releases[key]!.codes) codeSet.add(code);
-	const codes = [...codeSet].sort(compareCodeUnits);
-	const global = new Map(codes.map((code, index) => [code, index]));
-	const area = new Int32Array(count).fill(NONE);
-	const distanceCm = new Int32Array(count);
-	const several: ReleasePlacements["several"] = new Map();
-	for (const { offset, shard } of shards) {
-		const column = shard.releases[key]!;
-		column.area.forEach((local, at) => {
-			area[offset + at] =
-				local >= 0 ? global.get(column.codes[local]!)! : local;
-			distanceCm[offset + at] = column.distanceCm[at]!;
-		});
-		for (const [at, entries] of Object.entries(column.several ?? {}))
-			several.set(
-				offset + Number(at),
-				entries.map(([local, containment, distance]) => [
-					global.get(column.codes[local]!)!,
-					containment,
-					distance,
-				]),
-			);
-	}
-	return { codes, area, distanceCm, several };
+): Map<string, ReleasePlacements> => {
+	const releases = keys.map((key) => ({
+		key,
+		codes: new Set<string>(),
+		ranges: [] as Array<{
+			offset: number;
+			length: number;
+			codes: string[];
+		}>,
+		area: new Int32Array(count).fill(NONE),
+		distanceCm: new Int32Array(count),
+		several: new Map<
+			number,
+			Array<[string, Exclude<PointContainment, "outside">, number]>
+		>(),
+	}));
+	for (const { offset, shard } of shards)
+		for (const release of releases) {
+			const column = shard.releases[release.key]!;
+			for (const code of column.codes) release.codes.add(code);
+			release.ranges.push({
+				offset,
+				length: column.area.length,
+				codes: column.codes,
+			});
+			release.area.set(column.area, offset);
+			release.distanceCm.set(column.distanceCm, offset);
+			for (const [at, entries] of Object.entries(column.several ?? {}))
+				release.several.set(
+					offset + Number(at),
+					entries.map(([local, containment, distance]) => [
+						column.codes[local]!,
+						containment,
+						distance,
+					]),
+				);
+		}
+	return new Map(
+		releases.map((release): [string, ReleasePlacements] => {
+			const codes = [...release.codes].sort(compareCodeUnits);
+			const global = new Map(codes.map((code, index) => [code, index]));
+			const { area } = release;
+			for (const { offset, length, codes: local } of release.ranges) {
+				const numbers = local.map((code) => global.get(code)!);
+				for (let at = offset; at < offset + length; at += 1)
+					if (area[at]! >= 0) area[at] = numbers[area[at]!]!;
+			}
+			const several: ReleasePlacements["several"] = new Map();
+			for (const [at, entries] of release.several)
+				several.set(
+					at,
+					entries.map(([code, containment, distance]) => [
+						global.get(code)!,
+						containment,
+						distance,
+					]),
+				);
+			return [
+				release.key,
+				{ codes, area, distanceCm: release.distanceCm, several },
+			];
+		}),
+	);
 };
 
 export const releaseCounts = (

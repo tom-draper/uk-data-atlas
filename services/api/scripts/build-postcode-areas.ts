@@ -270,18 +270,27 @@ export const buildPostcodeAreas = async (
 		reusable.has(releaseKey(release.geography, release.boundaryRelease)),
 	);
 	if (previous && toReuse.length > 0) {
-		let offset = 0;
-		const shards = previous.shards.map((entry, index) => {
-			const shard = JSON.parse(
-				readFileSync(join(publicRoot, entry.path), "utf8"),
-			) as PostcodeAreasShard;
-			const located = { offset, shard };
-			offset += postcodeIndex.artifact.shards[index]!.postcodes;
-			return located;
-		});
-		for (const release of toReuse) {
-			const key = releaseKey(release.geography, release.boundaryRelease);
-			placed.set(key, placementsFromShards(key, shards, count));
+		// Read one at a time: the earlier build's shards are hundreds of
+		// megabytes of JSON, too much to hold parsed at once.
+		const shards = function* () {
+			let offset = 0;
+			for (const [index, entry] of previous.shards.entries()) {
+				const shard = JSON.parse(
+					readFileSync(join(publicRoot, entry.path), "utf8"),
+				) as PostcodeAreasShard;
+				yield { offset, shard };
+				offset += postcodeIndex.artifact.shards[index]!.postcodes;
+			}
+		};
+		const reused = placementsFromShards(
+			toReuse.map((release) =>
+				releaseKey(release.geography, release.boundaryRelease),
+			),
+			shards(),
+			count,
+		);
+		for (const [key, placements] of reused) {
+			placed.set(key, placements);
 			console.log(`Reused ${key}`);
 		}
 	}
