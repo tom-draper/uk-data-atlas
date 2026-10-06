@@ -16,6 +16,7 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import {
 	selectedAreaLadCode,
 	type LadResolver,
@@ -33,6 +34,27 @@ interface GHGEmissionsChartProps {
 }
 
 const ACCENT = "#0ea5e9";
+
+const MEASURES = {
+	perPerson: {
+		key: "perPersonTCO2e",
+		label: "per person",
+		format: (value: number) => value.toFixed(1),
+		unit: "t CO₂e per person",
+	},
+	total: {
+		key: "totalKtCO2e",
+		label: "total",
+		format: (value: number) => (value / 1000).toFixed(1),
+		unit: "Mt CO₂e total",
+	},
+	excludingLandUse: {
+		key: "excludingLandUseKtCO2e",
+		label: "excluding land use",
+		format: (value: number) => (value / 1000).toFixed(1),
+		unit: "Mt CO₂e excl. land use",
+	},
+} as const;
 
 // The UK average is a little over 5 tonnes a head, so the bands sit either
 // side of it rather than at round numbers.
@@ -113,6 +135,8 @@ export default function GHGEmissionsChart({
 }: GHGEmissionsChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const measure = useCurrentMapOptions().ghgEmissions.measure;
+	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
@@ -125,13 +149,18 @@ export default function GHGEmissionsChart({
 
 	if (!dataset) return null;
 
-	const perPerson = stats?.perPersonTCO2e ?? null;
-	const color = perPerson != null ? perPersonColor(perPerson) : null;
+	const value = stats?.[measureInfo.key] ?? null;
+	const color =
+		value != null && measure === "perPerson"
+			? perPersonColor(value)
+			: value != null
+				? ACCENT
+				: null;
 	const sectorTotal = stats?.excludingLandUseKtCO2e ?? 0;
 
 	return (
 		<ChartCard
-			heading={`Greenhouse Gas Emissions [${dataset.year}]`}
+			heading={`Greenhouse Gas Emissions, ${measureInfo.label} [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, stats !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
@@ -168,18 +197,22 @@ export default function GHGEmissionsChart({
 								className="text-2xl font-bold leading-none"
 								style={{ color: color ?? undefined }}
 							>
-								{perPerson != null ? perPerson.toFixed(1) : "—"}
+								{value != null
+									? measureInfo.format(value)
+									: "—"}
 							</span>
 							<span
 								className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
 							>
-								t CO₂e per person
+								{measureInfo.unit}
 							</span>
 						</div>
 						<span
 							className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							{(stats.totalKtCO2e / 1000).toFixed(1)} Mt total
+							{measure === "perPerson"
+								? `${(stats.totalKtCO2e / 1000).toFixed(1)} Mt total`
+								: `${stats.perPersonTCO2e.toFixed(1)} t per person`}
 						</span>
 					</div>
 					<div className="flex gap-1 shrink-0">

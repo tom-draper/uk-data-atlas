@@ -208,6 +208,28 @@ export function BroadbandMeasurePanel({
 	);
 }
 
+const GHG_EMISSIONS_MEASURES = [
+	["perPerson", "Per person"],
+	["total", "Total"],
+	["excludingLandUse", "No land use"],
+] as const;
+
+export function GhgEmissionsMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "perPerson" | "total" | "excludingLandUse";
+	onChange: (measure: "perPerson" | "total" | "excludingLandUse") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={GHG_EMISSIONS_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
 const COUNT_METRICS = [
 	["total", "Total"],
 	["perPopulation", "Per pop."],

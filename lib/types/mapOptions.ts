@@ -29,6 +29,10 @@ export interface AirQualityOptions extends ColorRangeOption {
 	measure: "no2" | "pm25" | "pm10";
 }
 
+export interface GhgEmissionsOptions extends ColorRangeOption {
+	measure: "perPerson" | "total" | "excludingLandUse";
+}
+
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -62,6 +66,7 @@ export type ChartMapOptions = Omit<
 	| "electricVehicleChargers"
 	| "broadband"
 	| "airQuality"
+	| "ghgEmissions"
 > & {
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
@@ -69,6 +74,7 @@ export type ChartMapOptions = Omit<
 	electricVehicleChargers: CountMetricOptions;
 	broadband: BroadbandOptions;
 	airQuality: AirQualityOptions;
+	ghgEmissions: GhgEmissionsOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 };
 
