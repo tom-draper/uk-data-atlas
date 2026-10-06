@@ -136,20 +136,21 @@ const citation = (url: string, context: RouteContext = citationContext) => {
 
 test("cites an area with its release, identity hash, validation and attribution", () => {
 	const { status, data } = citation(
-		"/v1/areas/ward/2025-01-en-ward/E05000001/citation?crosswalk=ward-to-local-authority-2025",
+		"/v1/areas/ward/2025-01-en-ward/E05000001?include=citation&crosswalk=ward-to-local-authority-2025",
 	);
 	assert.equal(status, 200);
 	assert.ok(data);
-	assert.deepEqual(data.atlasRelease, {
+	const cited = data.citation as Record<string, unknown>;
+	assert.deepEqual(cited.atlasRelease, {
 		id: "sha256:atlas-release",
 		href: "/v1/atlas-release",
 	});
-	assert.deepEqual(data.identity, {
+	assert.deepEqual(cited.identity, {
 		status: "available",
 		artifact: "areas/ward/2025-01-en-ward.json",
 		contentHash: "sha256:areas",
 	});
-	assert.deepEqual(data.boundary, {
+	assert.deepEqual(cited.boundary, {
 		id: "ward/2025-01-en-ward",
 		title: "Ward boundaries",
 		publisher: "ONS",
@@ -159,10 +160,10 @@ test("cites an area with its release, identity hash, validation and attribution"
 		href: "/v1/boundary-releases/ward/2025-01-en-ward",
 	});
 	assert.equal(
-		(data.geometry as { hash: { status: string } }).hash.status,
+		(cited.geometry as { hash: { status: string } }).hash.status,
 		"not-published",
 	);
-	assert.deepEqual(data.crosswalks, [
+	assert.deepEqual(cited.crosswalks, [
 		{
 			id: "ward-to-local-authority-2025",
 			method: "clean-containment",
@@ -177,7 +178,7 @@ test("cites an area with its release, identity hash, validation and attribution"
 			href: "/v1/crosswalks/ward-to-local-authority-2025",
 		},
 	]);
-	assert.deepEqual(data.validation, {
+	assert.deepEqual(cited.validation, {
 		status: "available",
 		reportHash: "sha256:validation",
 		resources: [
@@ -193,7 +194,7 @@ test("cites an area with its release, identity hash, validation and attribution"
 		],
 	});
 	assert.deepEqual(
-		(data.resources as Array<{ id: string }>).map(
+		(cited.resources as Array<{ id: string }>).map(
 			(resource) => resource.id,
 		),
 		[
@@ -203,19 +204,20 @@ test("cites an area with its release, identity hash, validation and attribution"
 		],
 	);
 	assert.match(
-		data.text as string,
+		cited.text as string,
 		/Compiled by the UK Data Atlas, release sha256:atlas-release\.$/,
 	);
 });
 
 test("cites a measure through the observations holding the area's value", () => {
 	const { status, data } = citation(
-		"/v1/areas/ward/2023-05-uk-bgc/E05000001/citation?measure=population",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=citation&measure=population",
 	);
 	assert.equal(status, 200);
 	assert.ok(data);
-	assert.deepEqual(data.identity, { status: "not-published" });
-	assert.deepEqual(data.measures, [
+	const cited = data.citation as Record<string, unknown>;
+	assert.deepEqual(cited.identity, { status: "not-published" });
+	assert.deepEqual(cited.measures, [
 		{
 			id: "population",
 			label: "Population estimate",
@@ -246,7 +248,7 @@ test("cites a measure through the observations holding the area's value", () => 
 	// The measure's local-authority partition holds nothing for a ward, so
 	// its dataset is not credited.
 	assert.deepEqual(
-		(data.resources as Array<{ id: string }>).map(
+		(cited.resources as Array<{ id: string }>).map(
 			(resource) => resource.id,
 		),
 		["population", "ward/2023-05-uk-bgc"],
@@ -255,7 +257,7 @@ test("cites a measure through the observations holding the area's value", () => 
 
 test("refuses to cite a resource that supplies nothing for the area", () => {
 	const unrelatedCrosswalk = citation(
-		"/v1/areas/ward/2025-01-en-ward/E05000001/citation?crosswalk=constituency-2010-to-2024",
+		"/v1/areas/ward/2025-01-en-ward/E05000001?include=citation&crosswalk=constituency-2010-to-2024",
 	);
 	assert.equal(unrelatedCrosswalk.status, 422);
 	assert.equal(
@@ -263,7 +265,7 @@ test("refuses to cite a resource that supplies nothing for the area", () => {
 		"crosswalk=constituency-2010-to-2024 publishes no relationship for ward/2025-01-en-ward/E05000001.",
 	);
 	const unassessedMeasure = citation(
-		"/v1/areas/ward/2025-01-en-ward/E05000001/citation?measure=population",
+		"/v1/areas/ward/2025-01-en-ward/E05000001?include=citation&measure=population",
 	);
 	assert.equal(unassessedMeasure.status, 422);
 	assert.equal(
@@ -272,16 +274,16 @@ test("refuses to cite a resource that supplies nothing for the area", () => {
 	);
 	assert.equal(
 		citation(
-			"/v1/areas/ward/2025-01-en-ward/E05000001/citation?measure=unknown",
+			"/v1/areas/ward/2025-01-en-ward/E05000001?include=citation&measure=unknown",
 		).status,
 		404,
 	);
 	assert.equal(
-		citation("/v1/areas/ward/2025-01-en-ward/E05999999/citation").status,
+		citation("/v1/areas/ward/2025-01-en-ward/E05999999?include=citation").status,
 		404,
 	);
 	assert.equal(
-		citation("/v1/areas/ward/2025-01-en-ward/E05000001/citation", {
+		citation("/v1/areas/ward/2025-01-en-ward/E05000001?include=citation", {
 			...citationContext,
 			dataCatalog: undefined,
 		}).status,

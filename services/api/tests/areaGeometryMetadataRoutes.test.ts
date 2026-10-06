@@ -64,7 +64,7 @@ test("measures an area's geometry without returning its coordinates", () => {
 
 		const response = route(
 			"GET",
-			"/v1/areas/ward/2025-01-en-ward/E05000001/geometry/metadata",
+			"/v1/areas/ward/2025-01-en-ward/E05000001?include=metrics",
 			registry,
 			geographyInventory,
 			areaLookup,
@@ -76,22 +76,23 @@ test("measures an area's geometry without returning its coordinates", () => {
 		assert.equal(response.status, 200);
 		const data = ("data" in response.body && response.body.data) as Record<
 			string,
-			never
+			unknown
 		>;
+		const metrics = data.metrics as Record<string, unknown>;
 		// The point of the endpoint: measurements, and no coordinates beyond
 		// the three single points that are themselves the answer.
 		assert.equal("geometry" in data, false);
-		assert.deepEqual(data.boundingBox, [-2, 54, -1, 55]);
-		assert.equal(data.labelPointMethod, "centroid");
-		assert.deepEqual(data.labelPoint, data.centroid);
-		assert.deepEqual(data.geometryExtent, {
+		assert.deepEqual(metrics.boundingBox, [-2, 54, -1, 55]);
+		assert.equal(metrics.labelPointMethod, "centroid");
+		assert.deepEqual(metrics.labelPoint, metrics.centroid);
+		assert.deepEqual(metrics.geometryExtent, {
 			parts: 1,
 			rings: 1,
 			vertices: 5,
 		});
 
-		const area = data.area as unknown as Record<string, number>;
-		const perimeter = data.perimeter as unknown as Record<string, number>;
+		const area = metrics.area as Record<string, number>;
+		const perimeter = metrics.perimeter as Record<string, number>;
 		// A degree of longitude at 54°N is about 65 km, a degree of latitude
 		// about 111 km, so the cell is roughly 7,300 km².
 		assert.ok(area.km2! > 7_200 && area.km2! < 7_400, `${area.km2} km2`);
@@ -99,13 +100,13 @@ test("measures an area's geometry without returning its coordinates", () => {
 		assert.equal(area.km2, area.m2! / 1_000_000);
 		assert.equal(perimeter.km, perimeter.m! / 1000);
 		assert.match(
-			(data.method as unknown as Record<string, string>).caveat!,
+			(metrics.method as Record<string, string>).caveat!,
 			/not a published land-area statistic/,
 		);
 
 		const unknownArea = route(
 			"GET",
-			"/v1/areas/ward/2025-01-en-ward/E05099999/geometry/metadata",
+			"/v1/areas/ward/2025-01-en-ward/E05099999?include=metrics",
 			registry,
 			geographyInventory,
 			areaLookup,
@@ -158,7 +159,7 @@ test("refuses to measure geometry that carries no polygon", () => {
 		]);
 		const response = route(
 			"GET",
-			"/v1/areas/ward/2025-01-en-ward/E05000001/geometry/metadata",
+			"/v1/areas/ward/2025-01-en-ward/E05000001?include=metrics",
 			registry,
 			geographyInventory,
 			areaLookup,

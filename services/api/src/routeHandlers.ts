@@ -41,10 +41,7 @@ import { handleAreaRelationshipRoutes } from "./areaRelationshipRoutes";
 import { handleAreaChildGeometryRoutes } from "./areaChildGeometryRoutes";
 import { handleAreaNeighbourRoutes } from "./areaNeighbourRoutes";
 import { handleAreaOverlapRoutes } from "./areaOverlapRoutes";
-import { handleAreaCapabilityRoutes } from "./areaCapabilityRoutes";
-import { handleAreaCitationRoutes } from "./areaCitationRoutes";
 import { handleAreaGeometryRoutes } from "./areaGeometryRoutes";
-import { handleAreaGeometryMetadataRoutes } from "./areaGeometryMetadataRoutes";
 import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
 import { handleRelationshipRepairRoutes } from "./relationshipRepairRoutes";
@@ -369,24 +366,6 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleAreaOverlapRoutes,
 	},
 	{
-		name: "area-capabilities",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "capabilities",
-		handle: handleAreaCapabilityRoutes,
-	},
-	{
-		name: "area-citation",
-		owns: (segments) =>
-			segments.length === 6 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "citation",
-		handle: handleAreaCitationRoutes,
-	},
-	{
 		name: "area-geometry",
 		owns: (segments) =>
 			segments.length === 6 &&
@@ -394,16 +373,6 @@ const routeFamilies: RouteFamily[] = [
 			segments[1] === "areas" &&
 			segments[5] === "geometry",
 		handle: handleAreaGeometryRoutes,
-	},
-	{
-		name: "area-geometry-metadata",
-		owns: (segments) =>
-			segments.length === 7 &&
-			segments[0] === "v1" &&
-			segments[1] === "areas" &&
-			segments[5] === "geometry" &&
-			segments[6] === "metadata",
-		handle: handleAreaGeometryMetadataRoutes,
 	},
 	{
 		name: "translations",

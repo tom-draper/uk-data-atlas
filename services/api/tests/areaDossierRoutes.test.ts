@@ -75,7 +75,7 @@ test("expands an exact area with an evidence-led dossier", () => {
 	assert.deepEqual(data.extent, {
 		status: "not-built",
 		reason: "Build the geometry source registry before serving geometry.",
-		href: "/v1/areas/ward/2023-05-uk-bgc/E05000001/geometry/metadata",
+		href: "/v1/areas/ward/2023-05-uk-bgc/E05000001?include=metrics",
 	});
 	assert.deepEqual(data.availability.relationships, {
 		status: "not-built",
@@ -84,7 +84,7 @@ test("expands an exact area with an evidence-led dossier", () => {
 	});
 	assert.equal(
 		data.availability.data.href,
-		"/v1/areas/ward/2023-05-uk-bgc/E05000001/capabilities",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=capabilities",
 	);
 	assert.equal(
 		data.availability.history.href,
@@ -249,7 +249,7 @@ test("states the releases holding a code and its release-pinned extent", () => {
 			status: "available",
 			boundingBox: [-2, 54, -1, 55],
 			crs: "OGC:CRS84",
-			href: "/v1/areas/ward/2023-05-en-ward/E05000001/geometry/metadata",
+			href: "/v1/areas/ward/2023-05-en-ward/E05000001?include=metrics",
 		});
 	} finally {
 		rmSync(root, { recursive: true, force: true });

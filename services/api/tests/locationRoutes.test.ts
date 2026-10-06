@@ -203,7 +203,7 @@ test("paginates location summaries without their geometry", () => {
 
 test("discovers a named location's direct and compiled-view capabilities", () => {
 	const response = routeWithNamedLocations(
-		"/v1/locations/greater-manchester/capabilities",
+		"/v1/locations/greater-manchester?include=capabilities",
 	);
 	assert.equal(response.status, 200);
 	const data = ("data" in response.body && response.body.data) as {
@@ -416,7 +416,7 @@ test("resolves a named location into another geography through a crosswalk", () 
 
 	const capabilities = routeRequest(
 		"GET",
-		"/v1/locations/greater-manchester/capabilities",
+		"/v1/locations/greater-manchester?include=capabilities",
 		context,
 	);
 	assert.equal(capabilities.status, 200);
@@ -558,7 +558,7 @@ test("says which parents a named location covers or meets", () => {
 	};
 	const capabilities = routeRequest(
 		"GET",
-		"/v1/locations/greater-manchester/capabilities",
+		"/v1/locations/greater-manchester?include=capabilities",
 		context,
 	);
 	assert.equal(capabilities.status, 200);

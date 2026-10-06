@@ -999,12 +999,12 @@ const capabilityAnswers = (url: string) => {
 };
 
 const CAPABILITY_REQUESTS = [
-	"/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000035/capabilities",
-	"/v1/areas/localAuthority/2025-12-uk-bgc/S12000049/capabilities",
-	"/v1/areas/localAuthority/2025-12-uk-bgc/N09000003/capabilities",
-	"/v1/areas/ward/2024-12-uk-bgc/E05011403/capabilities",
-	"/v1/areas/lsoa/2021-12-ew-bgc-v5/E01011264/capabilities",
-	"/v1/areas/region/2025-12-en-bgc/E12000003/capabilities",
+	"/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000035?include=capabilities",
+	"/v1/areas/localAuthority/2025-12-uk-bgc/S12000049?include=capabilities",
+	"/v1/areas/localAuthority/2025-12-uk-bgc/N09000003?include=capabilities",
+	"/v1/areas/ward/2024-12-uk-bgc/E05011403?include=capabilities",
+	"/v1/areas/lsoa/2021-12-ew-bgc-v5/E01011264?include=capabilities",
+	"/v1/areas/region/2025-12-en-bgc/E12000003?include=capabilities",
 	"/v1/measures/population/coverage?geography=ward&release=2023-05-uk-bgc",
 	"/v1/measures/population/coverage?geography=localAuthority&release=2025-12-uk-bgc",
 	"/v1/measures/road-collisions/coverage?geography=localAuthority&release=2023-05-uk-bgc-v2",
@@ -1068,7 +1068,7 @@ test("answers every capability question in the vocabulary, with a reason", () =>
 
 test("offers only conversions that the convert route serves for the area", () => {
 	const url =
-		"/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000035/capabilities";
+		"/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000035?include=capabilities";
 	const conversions = capabilityAnswers(url).flatMap(
 		(answer) => answer.conversions ?? [],
 	);
@@ -1082,7 +1082,7 @@ test("offers only conversions that the convert route serves for the area", () =>
 test("lists an area's measures only from sources on its own geography", () => {
 	// Ward and local authority releases share ids such as 2024-12-uk-bgc.
 	const measures = capabilityAnswers(
-		"/v1/areas/ward/2024-12-uk-bgc/E05011403/capabilities",
+		"/v1/areas/ward/2024-12-uk-bgc/E05011403?include=capabilities",
 	).at(3).measures as Array<{
 		sources?: Array<{ sourceGeography: { type: string } }>;
 	}>;

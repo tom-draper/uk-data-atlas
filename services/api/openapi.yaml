@@ -127,7 +127,7 @@ x-endpoint-chooser:
       [
         "/areas/{geography}/{release}/{code}/geometry",
         "/areas/{geography}/{release}/{code}/relationships",
-        "/areas/{geography}/{release}/{code}/citation",
+        "/areas/{geography}/{release}/{code}",
       ]
   - need: draw a whole release as a map, or load its features into a warehouse
     start:
@@ -158,7 +158,7 @@ x-endpoint-chooser:
   - need: cite, attribute or inspect the published release
     start:
       [
-        "/areas/{geography}/{release}/{code}/citation",
+        "/areas/{geography}/{release}/{code}",
         "/attribution",
         "/atlas-release",
         "/validation",
@@ -297,8 +297,6 @@ paths:
                     - /v1/areas
                     - /v1/areas/{geography}/{release}/{code}
                     - /v1/areas/{geography}/{release}/{code}/relationships
-                    - /v1/areas/{geography}/{release}/{code}/capabilities
-                    - /v1/areas/{geography}/{release}/{code}/citation
                     - /v1/areas/{geography}/{release}/{code}/geometry
                     - /v1/crosswalks
                     - /v1/crosswalks/{crosswalk-id}
@@ -5056,6 +5054,80 @@ paths:
         Where precompiled postcode placements cover this boundary release, the
         area also includes live and terminated unit-postcode counts from the
         ONS Postcode Directory edition shown in `postcodes.edition`.
+
+
+        `include` expands the area with any of four reports, each under its
+        own key:
+
+
+        `capabilities` reports geometry, published relationship and crosswalk
+        edges, direct-code named-location membership, and every measure's
+        capability for this exact area, each in the capability vocabulary
+        described by `CapabilityStatus`: `available`, `partial`,
+        `requires-conversion`, `unsupported` or `not-built`, with a `reason`
+        on every status but `available`. A measure is `available` when a
+        source partition published on this release has a value for the area
+        in every period, and `partial` when it has one in only some periods
+        or its codes only partly join the release. It `requires-conversion`
+        when no partition is published on the release but a published
+        crosswalk converts one onto it: each entry in `conversions` names the
+        crosswalk, the source partition and period, and a ready `href` to the
+        convert route. A conversion is only offered after that exact
+        conversion has been run on the source's latest period and accepted,
+        and only if it reaches this area. A measure whose values do not add
+        over areas is never offered a conversion. `capabilities.data.measures`
+        lists the available, partial and convertible measures;
+        `capabilities.data.counts` counts every measure by status, the
+        unsupported ones included. Compatibility is based on area-code
+        membership only and does not assert equal geometry.
+
+
+        `citation` returns what a caller needs to cite the area as served by
+        this Atlas release: the immutable Atlas release, the content hash of
+        the area identity artifact, the boundary release's publisher, licence
+        and metadata hash, geometry provenance, the validation results for
+        the release and any cited crosswalk, and an attribution block. Name a
+        `measure` to cite the observation artifacts, with their content
+        hashes, that hold a value for this area in a source partition assessed
+        against this exact boundary release. Only those partitions' datasets
+        are attributed, together with any dataset a derived measure is
+        calculated from. Name a `crosswalk` to cite one that publishes a
+        relationship for this area. A resource that supplies nothing for the
+        area is refused with `422` rather than cited. Per-area geometry hashes
+        are not compiled yet and are reported as `not-published`; the boundary
+        release's `metadataHash` pins its metadata, which names the source
+        file but does not hash its contents. The envelope's top-level
+        `atlasRelease` is the release of the API response itself: use
+        `citation.identity.contentHash` for the compiled area identity,
+        `citation.boundary.metadataHash` for the boundary metadata, and the
+        hashes under `citation.measures`, `citation.crosswalks` and
+        `citation.geometry` for the other artifacts that support a cited
+        result.
+
+
+        `metrics` measures the area's geometry without transferring its
+        coordinates: its bounding box, centroid, label point, area and
+        perimeter. The same source, reprojection and declared grid corrections
+        apply as for the geometry itself, and `metrics.geometrySource` records
+        them. Area is ellipsoidal, taken through EPSG:6933 (WGS 84 / NSIDC
+        EASE-Grid 2.0 Global), a Lambert cylindrical equal-area projection on
+        the WGS 84 ellipsoid, so projected area is area on the ellipsoid and
+        no correction is applied; holes are subtracted. Perimeter sums every
+        ring, holes included, each edge's ground length coming from the
+        ellipsoid's radii of curvature at its mid-latitude. The centroid is
+        the centre of area in that same projection, inverted back to WGS 84.
+        `labelPoint` is guaranteed to lie inside the geometry: the centroid
+        where that falls within the area, otherwise the midpoint of the widest
+        run of interior found on latitudes sampled across the bounding box;
+        `labelPointMethod` says which was used. These figures describe the
+        boundary as that release publishes it, at its own generalisation.
+        They are not a published land-area statistic: a coastline-clipped
+        boundary still encloses inland water, so they differ from the ONS
+        Standard Area Measurement that `population-density` uses as its
+        denominator. The `method` block repeats this with every response. An
+        area whose geometry carries no polygon to measure, such as a release
+        held only as points, is refused with `422` rather than measured as
+        zero.
       x-likely-refusal:
         status: 404
         code: area_not_in_release
@@ -5077,12 +5149,31 @@ paths:
             type: array
             items:
               type: string
-              enum: [dossier]
+              enum: [dossier, capabilities, citation, metrics]
           style: form
           explode: false
           description: >
             Optional comma-separated expansions. `dossier` adds boundary evidence,
-            availability and verified-resource links without repeating the area identity.
+            availability and verified-resource links without repeating the area
+            identity; `capabilities`, `citation` and `metrics` are described above.
+        - name: measure
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: >
+            With `include=citation`, a measure id from `GET /measures`, or one
+            of its aliases, to cite. Repeatable.
+        - name: crosswalk
+          in: query
+          required: false
+          schema:
+            type: array
+            items: { type: string }
+          description: >
+            With `include=citation`, a crosswalk id from `GET /crosswalks` to
+            cite. Repeatable.
       responses:
         "200":
           description: The matching compiled area.
@@ -5109,6 +5200,26 @@ paths:
                   nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
+        "422":
+          description: >
+            With `include=citation`, a named measure holds no observation for
+            this area in a source assessed against this boundary release, or a
+            named crosswalk publishes no relationship for it. With
+            `include=metrics`, the area's geometry carries no polygon to
+            measure.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "503":
+          description: >
+            An `include` needs an artifact this deployment has not built: the
+            data catalogue and crosswalk inventory for `citation`, or geometry
+            for `metrics`.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 
   /areas/{geography}/{release}/{code}/relationships:
     get:
@@ -5175,294 +5286,6 @@ paths:
                   nextCursor: null
         "404":
           $ref: "#/components/responses/NotFound"
-        "503":
-          $ref: "#/components/responses/CatalogueUnavailable"
-
-  /areas/{geography}/{release}/{code}/capabilities:
-    get:
-      operationId: getAreaCapabilities
-      tags: ["Start here"]
-      summary: Report what the Atlas can serve for one exact area identity
-      x-likely-refusal:
-        status: 404
-        code: area_not_in_release
-        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/capabilities"
-      description: >
-        Reports geometry, published relationship and crosswalk edges,
-        direct-code named-location membership, and every measure's capability
-        for this exact area, each in the capability vocabulary described by
-        `CapabilityStatus`: `available`, `partial`, `requires-conversion`,
-        `unsupported` or `not-built`, with a `reason` on every status but
-        `available`.
-
-
-        A measure is `available` when a source partition published on this
-        release has a value for the area in every period, and `partial` when
-        it has one in only some periods or its codes only partly join the
-        release. It `requires-conversion` when no partition is published on
-        the release but a published crosswalk converts one onto it: each entry
-        in `conversions` names the crosswalk, the source partition and period,
-        and a ready `href` to the convert route. A conversion is only offered
-        after that exact conversion has been run on the source's latest period
-        and accepted, and only if it reaches this area. A measure whose values
-        do not add over areas is never offered a conversion.
-
-
-        `data.measures` lists the available, partial and convertible measures;
-        `data.counts` counts every measure by status, the unsupported ones
-        included. Compatibility is based on area-code membership only and does
-        not assert equal geometry.
-      parameters:
-        - $ref: "#/components/parameters/Geography"
-        - $ref: "#/components/parameters/Release"
-        - $ref: "#/components/parameters/AreaCode"
-      responses:
-        "200":
-          description: The area identity and its availability matrix.
-          content:
-            application/json:
-              schema: { type: object }
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/capabilities"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
-                  geography: localAuthority
-                  boundaryRelease: 2023-05-uk-bgc-v2
-                  code: E08000025
-                  name: Birmingham
-                  capabilities:
-                    geometry:
-                      status: available
-                      href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/geometry
-                      provenance:
-                        input: boundaries/local-authority/2023-05-uk-bgc-v2/Local_Authority_Districts_May_2023_UK_BGC_V2_606764927733448598.geojson
-                        inputHash: sha256:e351e4817d9d27ba520c771e6e1ac40a40021171d61df049c4cc82dc38a4b611
-                        sourceCrs: EPSG:4326
-                    relationships:
-                      status: available
-                      href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/relationships
-                      count: 69
-                      byRelation:
-                        contains: 69
-                      parents:
-                        count: 0
-                        href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/parents
-                      children:
-                        count: 69
-                        href: /v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/children
-                      crosswalks:
-                        - id: ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
-                          method: clean-containment
-                          quality: publisher-supplied
-                          weighting:
-                            status: not-applicable
-                          href: /v1/crosswalks/ward-2023-05-uk-bgc-to-local-authority-2023-05-uk-bgc-v2-clean-containment
-                    namedLocations:
-                      status: available
-                      membership: direct-code-match
-                      locations:
-                        - id: birmingham
-                          label: Birmingham
-                          href: /v1/locations/birmingham/members?geography=localAuthority&release=2023-05-uk-bgc-v2
-                      note: Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.
-                    data:
-                      status: available
-                      counts:
-                        available: 44
-                        partial: 0
-                        requires-conversion: 5
-                        unsupported: 99
-                        not-built: 0
-                      measures:
-                        - id: road-collisions
-                          status: requires-conversion
-                          reason: No source partition is published on localAuthority/2023-05-uk-bgc-v2; a published crosswalk converts one onto it.
-                          conversions:
-                            - crosswalk:
-                                id: lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
-                                method: clean-containment
-                                quality: publisher-supplied
-                              source:
-                                datasetId: road-collisions
-                                geography: lsoa
-                                boundaryYear: 2021
-                                period: "2025"
-                              method: exact
-                              href: /v1/data/road-collisions/convert?period=2025&geography=lsoa&boundaryYear=2021&crosswalk=lsoa-2021-12-ew-bgc-v5-to-local-authority-2023-05-uk-bgc-v2-official-lookup
-                        - id: population
-                          valueKind: count
-                          unit: people
-                          availability:
-                            sourceExact: true
-                            conversion: false
-                            aggregation: true
-                          href: /v1/measures/population
-                          status: available
-                          sources:
-                            - dataset:
-                                id: population-uk
-                                href: /v1/datasets/population-uk
-                              sourceGeography:
-                                type: localAuthority
-                                boundaryYear: 2023
-                              codeSetCompatibility:
-                                boundaryRelease: 2023-05-uk-bgc-v2
-                                title: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
-                                coverageCountries:
-                                  - GB-ENG
-                              periods:
-                                - period: "2011"
-                                  artifact: population-local-authority-observations
-                                  contentHash: sha256:1bf9e38cc9c37b37492b4a3cdc6b28c28ddeb5c2adc81e838ef947d78a0c0a9b
-                                  availability: present
-                                  status: observed
-                      note: Measures are listed when they are available, partial or require a conversion; counts include the unsupported ones. Compatibility compares area-code membership only and does not assert equal geometry between a source and this boundary release. A conversion is offered only after the conversion it names has been tried and accepted on the source's latest period.
-                meta:
-                  nextCursor: null
-        "404":
-          $ref: "#/components/responses/NotFound"
-
-  /areas/{geography}/{release}/{code}/citation:
-    get:
-      operationId: getAreaCitation
-      tags: ["Governance"]
-      summary: Assemble a citation bundle for one exact area identity
-      x-likely-refusal:
-        status: 422
-        when: "The named measure supplies nothing for this area on this release, so there is nothing of it to cite."
-        x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000001/citation?measure=imd-rank"
-      description: >
-        Returns what a caller needs to cite an area as served by this Atlas
-        release: the immutable Atlas release, the content hash of the area
-        identity artifact, the boundary release's publisher, licence and
-        metadata hash, geometry provenance, the validation results for the
-        release and any cited crosswalk, and an attribution block.
-
-        Name a `measure` to cite the observation artifacts, with their content
-        hashes, that hold a value for this area in a source partition assessed
-        against this exact boundary release. Only those partitions' datasets
-        are attributed, together with any dataset a derived measure is
-        calculated from. Name a `crosswalk` to cite one that publishes a
-        relationship for this area. A resource that supplies nothing for the
-        area is refused rather than cited.
-
-        Per-area geometry hashes are not compiled yet and are reported as
-        `not-published`. The boundary release's `metadataHash` pins its
-        metadata, which names the source file but does not hash its contents.
-
-
-        The envelope's top-level `atlasRelease` is the release of the API
-        response itself. It is not a replacement for the boundary identity in
-        the path: use `data.identity.contentHash` for the compiled area
-        identity, `data.boundary.metadataHash` for the boundary metadata, and
-        the hashes under `data.measures`, `data.crosswalks` and `data.geometry`
-        for the other artifacts that support the cited result.
-      parameters:
-        - $ref: "#/components/parameters/Geography"
-        - $ref: "#/components/parameters/Release"
-        - $ref: "#/components/parameters/AreaCode"
-        - name: measure
-          in: query
-          required: false
-          schema:
-            type: array
-            items: { type: string }
-          description: A measure id from `GET /measures`, or one of its aliases. Repeatable.
-        - name: crosswalk
-          in: query
-          required: false
-          schema:
-            type: array
-            items: { type: string }
-          description: A crosswalk id from `GET /crosswalks`. Repeatable.
-      responses:
-        "200":
-          description: The area's citation bundle.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Envelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E08000025/citation?measure=population"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  id: localAuthority/2023-05-uk-bgc-v2/E08000025
-                  geography: localAuthority
-                  boundaryRelease: 2023-05-uk-bgc-v2
-                  atlasRelease:
-                    id: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef6a1c6
-                    href: /v1/atlas-release
-                  identity:
-                    status: available
-                    artifact: areas/localAuthority/2023-05-uk-bgc-v2.json
-                    contentHash: sha256:areas-local-authority-2023
-                  boundary:
-                    id: localAuthority/2023-05-uk-bgc-v2
-                    title: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
-                    publisher: Office for National Statistics
-                    sourceUrl: https://geoportal.statistics.gov.uk/
-                    licence:
-                      name: Open Government Licence v3.0
-                    metadataHash: sha256:local-authority-2023-metadata
-                    href: /v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2
-                  geometry:
-                    status: available
-                  measures:
-                    - id: population
-                      label: Population estimate
-                      href: /v1/measures/population
-                      sources:
-                        - dataset:
-                            id: population-uk
-                            href: /v1/datasets/population-uk
-                          sourceGeography:
-                            type: localAuthority
-                            boundaryYear: 2023
-                          codeSetCompatibility:
-                            status: exact-code-set
-                            eligibleForCodeJoin: true
-                          periods:
-                            - period: "2022"
-                              artifact: population-local-authority-observations
-                              contentHash: sha256:population-observations-2022
-                              status: observed
-                  crosswalks: []
-                  validation:
-                    status: available
-                  resources:
-                    - kind: boundaryRelease
-                      id: localAuthority/2023-05-uk-bgc-v2
-                      label: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2)
-                      href: /v1/boundary-releases/localAuthority/2023-05-uk-bgc-v2
-                      publisher: Office for National Statistics
-                      sourceUrl: https://geoportal.statistics.gov.uk/
-                      licence:
-                        name: Open Government Licence v3.0
-                  licences:
-                    - name: Open Government Licence v3.0
-                  text: |-
-                    Data: Population (Local Authority) — Office for National Statistics.
-                    Boundaries: Local authority districts, May 2023 (United Kingdom, generalised, clipped, v2) — Office for National Statistics.
-                    Licence: Open Government Licence v3.0.
-                    Compiled by the UK Data Atlas, release sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8.
-                  note: Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.
-                meta:
-                  nextCursor: null
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "422":
-          description: >
-            A named measure holds no observation for this area in a source
-            assessed against this boundary release, or a named crosswalk
-            publishes no relationship for it.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -6156,109 +5979,6 @@ paths:
             Either no compiled area matches that identity, the area exists but
             no feature for its code was found in the raw geometry source, or
             every part of it is smaller than the requested tier keeps.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "503":
-          $ref: "#/components/responses/GeometryUnavailable"
-
-  /areas/{geography}/{release}/{code}/geometry/metadata:
-    get:
-      operationId: getAreaGeometryMetadata
-      tags: ["Map"]
-      summary: Measure one area's geometry without transferring its coordinates
-      x-likely-refusal:
-        status: 404
-        code: area_not_in_release
-        when: "The code is real but not in this release. `presentIn` lists the releases that hold it."
-        x-example-request: "/v1/areas/ward/2016-12-gb-bgc/E05013830/geometry/metadata"
-      description: >
-        Returns the bounding box, centroid, label point, area and perimeter of
-        an area's geometry, so a caller can size, place or label an area
-        without downloading its rings. The same source, reprojection and
-        declared grid corrections apply as for the geometry itself, and
-        `geometrySource` records them.
-
-
-        Area is ellipsoidal, taken through EPSG:6933 (WGS 84 / NSIDC EASE-Grid
-        2.0 Global), a Lambert cylindrical equal-area projection on the WGS 84
-        ellipsoid, so projected area is area on the ellipsoid and no correction
-        is applied; holes are subtracted. Perimeter sums every ring, holes
-        included, each edge's ground length coming from the ellipsoid's radii
-        of curvature at its mid-latitude. The centroid is the centre of area in
-        that same projection, inverted back to WGS 84.
-
-
-        `labelPoint` is guaranteed to lie inside the geometry: the centroid
-        where that falls within the area, otherwise the midpoint of the widest
-        run of interior found on latitudes sampled across the bounding box.
-        `labelPointMethod` says which was used, so a caller can tell a centre of
-        mass from a point merely known to be inside.
-
-
-        These figures describe the boundary as that release publishes it, at its
-        own generalisation. They are not a published land-area statistic: a
-        coastline-clipped boundary still encloses inland water, so they differ
-        from the ONS Standard Area Measurement that `population-density` uses as
-        its denominator. The `method` block repeats this with every response.
-      parameters:
-        - $ref: "#/components/parameters/Geography"
-        - $ref: "#/components/parameters/Release"
-        - name: code
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The official source code for this area on this boundary release.
-      responses:
-        "200":
-          description: The area's measurements, with the method that produced them.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AreaGeometryMetadataEnvelope"
-              x-example-request: "/v1/areas/localAuthority/2023-05-uk-bgc-v2/E06000046/geometry/metadata"
-              example:
-                apiVersion: v1
-                atlasRelease: "sha256:24a500c55416bd7d58c28b1fc8cc4931d4a2fd831addafa3116556a91f2c4857"
-                data:
-                  id: localAuthority/2023-05-uk-bgc-v2/E06000046
-                  geography: localAuthority
-                  boundaryRelease: 2023-05-uk-bgc-v2
-                  code: E06000046
-                  name: Isle of Wight
-                  boundingBox: [-1.5874, 50.5753, -1.0703, 50.7671]
-                  centroid: [-1.2977, 50.6746]
-                  labelPoint: [-1.2977, 50.6746]
-                  labelPointMethod: centroid
-                  area:
-                    m2: 379890000
-                    hectares: 37989
-                    km2: 379.89
-                  perimeter:
-                    m: 188700
-                    km: 188.7
-                  geometryExtent:
-                    parts: 2
-                    rings: 2
-                    vertices: 1589
-                  geometrySource: { sourceCrs: "EPSG:4326" }
-                meta:
-                  nextCursor: null
-        "404":
-          description: >
-            Either no compiled area matches that identity, or the area exists
-            but no feature for its code was found in the raw geometry source.
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
-        "422":
-          description: >
-            The area's geometry carries no polygon to measure, such as a
-            release held only as points. It can still be served by the geometry
-            endpoint; it is reported rather than measured as zero.
           content:
             application/problem+json:
               schema:
@@ -8016,6 +7736,26 @@ paths:
           in: query
           schema: { type: string, format: date }
           description: Select the member codes effective on this date. Omit it to return the complete dated definition.
+        - name: include
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [capabilities]
+          style: form
+          explode: false
+          description: >
+            `capabilities` lists, under `capabilities`, the compiled releases
+            where the location's member codes can be read directly (`direct`),
+            plus each materialised crosswalk view into those members
+            (`members`) and out to its parents (`parents`). A view is a link
+            with the exact geography, release and crosswalk to request; the API
+            never chooses a crosswalk silently. A `partial` direct view
+            contains some, but not all, listed member codes. A `not-built`
+            result identifies a deployment that has not loaded the projection
+            inventory.
       responses:
         "200":
           description: The location's definition, source codes and bounds.
@@ -8129,46 +7869,6 @@ paths:
           $ref: "#/components/responses/NotFound"
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
-
-  /locations/{location-id}/capabilities:
-    get:
-      operationId: getNamedLocationCapabilities
-      tags: ["Geography"]
-      summary: Discover the direct and crosswalk views published for a named location
-      x-likely-refusal:
-        status: 404
-        when: "The location id is not listed by `/v1/locations`."
-        x-example-request: "/v1/locations/wessex/capabilities"
-      description: >
-        Lists the compiled releases where a location's declared member codes
-        can be read directly, plus each materialised crosswalk view into those
-        members and out to its parents. A view is a link with the exact
-        geography, release and crosswalk to request; the API never chooses a
-        crosswalk silently. `partial` direct views contain some, but not all,
-        listed member codes. A `not-built` result identifies a deployment that
-        has not loaded the projection inventory.
-      parameters:
-        - $ref: "#/components/parameters/LocationId"
-      responses:
-        "200":
-          description: The published direct, member and parent views for the location.
-          content:
-            application/json:
-              schema: { type: object }
-              x-example-request: "/v1/locations/london/capabilities"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  location:
-                    id: london
-                  capabilities:
-                    direct:
-                      status: available
-                meta:
-                  nextCursor: null
-        "404":
-          $ref: "#/components/responses/NotFound"
 
   /locations/{location-id}/members:
     get:
@@ -10358,6 +10058,20 @@ components:
               description: >
                 Present only with `include=dossier`; boundary evidence,
                 availability and links for this exact area identity.
+            capabilities:
+              type: object
+              description: >
+                Present only with `include=capabilities`; what the API can
+                serve for this exact area: `geometry`, `relationships`,
+                `namedLocations` and `data`.
+            citation:
+              type: object
+              description: >
+                Present only with `include=citation`; the artifacts that serve
+                this area, pinned by content hash, with their attribution and
+                licences.
+            metrics:
+              $ref: "#/components/schemas/AreaMetrics"
 
     AreaPostcodeCounts:
       type: object
@@ -11638,105 +11352,92 @@ components:
             data:
               $ref: "#/components/schemas/AreaGeometry"
 
-    AreaGeometryMetadata:
-      allOf:
-        - $ref: "#/components/schemas/Area"
-        - type: object
-          required:
-            [
-              geography,
-              boundaryRelease,
-              boundingBox,
-              centroid,
-              labelPoint,
-              labelPointMethod,
-              area,
-              perimeter,
-              geometryExtent,
-              method,
-              geometrySource,
-            ]
+    AreaMetrics:
+      type: object
+      description: >
+        Present only with `include=metrics`; measurements of the area's
+        published boundary, with the method that produced them.
+      required:
+        [
+          boundingBox,
+          centroid,
+          labelPoint,
+          labelPointMethod,
+          area,
+          perimeter,
+          geometryExtent,
+          method,
+          geometrySource,
+        ]
+      properties:
+        boundingBox:
+          type: array
+          description: >
+            [minLongitude, minLatitude, maxLongitude, maxLatitude] in WGS 84.
+          items:
+            type: number
+          minItems: 4
+          maxItems: 4
+        centroid:
+          type: array
+          description: "[longitude, latitude] in WGS 84."
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+        labelPoint:
+          type: array
+          description: "[longitude, latitude] in WGS 84, always inside the geometry."
+          items:
+            type: number
+          minItems: 2
+          maxItems: 2
+        labelPointMethod:
+          type: string
+          enum: [centroid, interior-span]
+          description: >
+            `centroid` when the centre of area lies inside the geometry,
+            `interior-span` when it does not and a point inside was chosen
+            instead.
+        area:
+          type: object
+          description: One measurement, in three units.
+          required: [m2, hectares, km2]
           properties:
-            geography:
-              type: string
-            boundaryRelease:
-              type: string
-            boundingBox:
-              type: array
-              description: >
-                [minLongitude, minLatitude, maxLongitude, maxLatitude] in WGS 84.
-              items:
-                type: number
-              minItems: 4
-              maxItems: 4
-            centroid:
-              type: array
-              description: "[longitude, latitude] in WGS 84."
-              items:
-                type: number
-              minItems: 2
-              maxItems: 2
-            labelPoint:
-              type: array
-              description: "[longitude, latitude] in WGS 84, always inside the geometry."
-              items:
-                type: number
-              minItems: 2
-              maxItems: 2
-            labelPointMethod:
-              type: string
-              enum: [centroid, interior-span]
-              description: >
-                `centroid` when the centre of area lies inside the geometry,
-                `interior-span` when it does not and a point inside was chosen
-                instead.
-            area:
-              type: object
-              description: One measurement, in three units.
-              required: [m2, hectares, km2]
-              properties:
-                m2: { type: number }
-                hectares: { type: number }
-                km2: { type: number }
-            perimeter:
-              type: object
-              required: [m, km]
-              properties:
-                m: { type: number }
-                km: { type: number }
-            geometryExtent:
-              type: object
-              description: >
-                How much geometry stands behind the measurements: a mainland
-                and its islands are many parts, and a ring of land has more
-                rings than parts.
-              required: [parts, rings, vertices]
-              properties:
-                parts: { type: integer }
-                rings: { type: integer }
-                vertices: { type: integer }
-            method:
-              type: object
-              description: >
-                The projection and rule behind each figure, carried with the
-                response so a measurement can be read on its own.
-              required: [area, perimeter, centroid, labelPoint, caveat]
-              properties:
-                area: { type: string }
-                perimeter: { type: string }
-                centroid: { type: string }
-                labelPoint: { type: string }
-                caveat: { type: string }
-            geometrySource:
-              $ref: "#/components/schemas/GeometrySource"
-
-    AreaGeometryMetadataEnvelope:
-      allOf:
-        - $ref: "#/components/schemas/Envelope"
-        - type: object
+            m2: { type: number }
+            hectares: { type: number }
+            km2: { type: number }
+        perimeter:
+          type: object
+          required: [m, km]
           properties:
-            data:
-              $ref: "#/components/schemas/AreaGeometryMetadata"
+            m: { type: number }
+            km: { type: number }
+        geometryExtent:
+          type: object
+          description: >
+            How much geometry stands behind the measurements: a mainland
+            and its islands are many parts, and a ring of land has more
+            rings than parts.
+          required: [parts, rings, vertices]
+          properties:
+            parts: { type: integer }
+            rings: { type: integer }
+            vertices: { type: integer }
+        method:
+          type: object
+          description: >
+            The projection and rule behind each figure, carried with the
+            response so a measurement can be read on its own.
+          required: [area, perimeter, centroid, labelPoint, caveat]
+          properties:
+            area: { type: string }
+            perimeter: { type: string }
+            centroid: { type: string }
+            labelPoint: { type: string }
+            caveat: { type: string }
+        geometrySource:
+          $ref: "#/components/schemas/GeometrySource"
 
     AreaRelationshipsEnvelope:
       allOf:
