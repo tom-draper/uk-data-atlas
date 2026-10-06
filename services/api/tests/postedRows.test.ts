@@ -71,6 +71,50 @@ test("reads a column of rows from JSON or CSV, and says why it cannot", () => {
 	);
 });
 
+test("keeps a quoted line break in its field, and reads only decimals as numbers", () => {
+	assert.deepEqual(
+		readPostedRows(
+			csv(
+				'area,value\r\n"Ward\nwith a break",0x1A\r\nE05000001,1e3\nE05000002," -2.5 "\n"E05000003",1_000\n',
+			),
+			{ withValues: true },
+		),
+		{
+			areas: [
+				"Ward\nwith a break",
+				"E05000001",
+				"E05000002",
+				"E05000003",
+			],
+			values: ["0x1A", 1000, -2.5, "1_000"],
+		},
+	);
+});
+
+test("reads a body curl sends as form-urlencoded by its first character", () => {
+	const form = (text: string): RequestBody => ({
+		contentType: "application/x-www-form-urlencoded",
+		text,
+	});
+	assert.deepEqual(
+		readPostedRows(form("area,value\nE05000001,2\n"), { withValues: true }),
+		{ areas: ["E05000001"], values: [2] },
+	);
+	assert.deepEqual(
+		readPostedRows(form('  {"values": ["E05000001"]}'), {
+			withValues: false,
+		}),
+		{ areas: ["E05000001"] },
+	);
+	assert.deepEqual(
+		readPostedRows(
+			{ contentType: "", text: "area\nE05000001\n" },
+			{ withValues: false },
+		),
+		{ areas: ["E05000001"] },
+	);
+});
+
 test("validates a POSTed column exactly as the same values in a GET", () => {
 	const values = ["E05000001", "enghraifft ward", "E05999999"];
 	const got = route(
