@@ -25,7 +25,10 @@ export const readBatchInput = (
 		typeof parsed === "object" && parsed !== null
 			? (parsed as Record<string, unknown>)[field]
 			: undefined;
-	if (!Array.isArray(values) || !values.every((value) => typeof value === "string"))
+	if (
+		!Array.isArray(values) ||
+		!values.every((value) => typeof value === "string")
+	)
 		return problem(
 			400,
 			"Invalid Body",

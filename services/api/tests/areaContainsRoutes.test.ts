@@ -165,11 +165,7 @@ const get = (url: string, routeContext = lookupContext) => {
 	};
 };
 
-const post = (
-	url: string,
-	points: string[],
-	routeContext = lookupContext,
-) => {
+const post = (url: string, points: string[], routeContext = lookupContext) => {
 	const response = route("POST", url, routeContext, {
 		contentType: "application/json",
 		text: JSON.stringify({ points }),
