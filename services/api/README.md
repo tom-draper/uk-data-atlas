@@ -230,7 +230,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Consolidate relationship discovery, capability, planning and coverage under `GET /v1/relationships`
       document. It was served but undiscoverable.
 - [x] Return an area-specific citation bundle through
-      `GET /v1/areas/{geography}/{release}/{code}/citation`: the immutable Atlas
+      `GET /v1/areas/{geography}/{release}/{code}?include=citation`: the immutable Atlas
       release, the area identity artifact's hash, the boundary release's
       publisher, licence and metadata hash, geometry provenance, validation
       results and an attribution block. A named `measure` is cited through
@@ -372,7 +372,7 @@ only **available** when its endpoint, contract and provenance are published.
       complete one. An area with no published containment relationship is a
       404, not an empty collection.
 - [x] Return a bounding box, centroid, label point, area and perimeter for one
-      area through `GET /v1/areas/{geography}/{release}/{code}/geometry/metadata`,
+      area through `GET /v1/areas/{geography}/{release}/{code}?include=metrics`,
       without transferring its coordinates. Area is ellipsoidal, through the
       EPSG:6933 equal-area projection, in m², hectares and km²; perimeter
       follows the ellipsoid's radii of curvature, in m and km. The centroid is
@@ -2883,7 +2883,6 @@ second inventory to maintain:
 - `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
 - `POST /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
-- `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity
 
 **Map**
 
@@ -2897,7 +2896,6 @@ second inventory to maintain:
 - `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
 - `GET /v1/areas/{geography}/{release}/{code}/overlap` — Measure how one area overlaps another
 - `GET /v1/areas/{geography}/{release}/{code}/geometry` — Get one compiled area's raw geometry as a GeoJSON Feature
-- `GET /v1/areas/{geography}/{release}/{code}/geometry/metadata` — Measure one area's geometry without transferring its coordinates
 
 **Trend**
 
@@ -2953,7 +2951,6 @@ second inventory to maintain:
 - `GET /v1/locations/{location-id}` — Get one curated area collection's definition
 - `GET /v1/locations/{location-id}/comparison` — Compare a named location's direct membership between two dates
 - `GET /v1/locations/{location-id}/geometry` — Get a curated area's compiled GeoJSON geometry
-- `GET /v1/locations/{location-id}/capabilities` — Discover the direct and crosswalk views published for a named location
 - `GET /v1/locations/{location-id}/members` — Resolve a named location's members in one geography and release
 - `GET /v1/locations/{location-id}/parents` — Find the areas of a coarser geography a named location covers or meets
 
@@ -2977,7 +2974,6 @@ second inventory to maintain:
 
 **Governance**
 
-- `GET /v1/areas/{geography}/{release}/{code}/citation` — Assemble a citation bundle for one exact area identity
 - `GET /v1/relationship-candidates` — List discovered relationship candidates and their coverage gaps
 - `GET /v1/relationship-repairs` — List the governed queue of relationship repairs
 - `GET /v1/corrections` — List reviewed corrections and transformations applied by the API
@@ -3073,7 +3069,7 @@ catalogues by the contract tests:
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/children/geometry?childGeography=ward`
 - `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/neighbours`
-- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014/geometry/metadata`
+- `GET /v1/areas/localAuthority/2024-12-uk-bgc/E08000014?include=metrics`
 - `GET /v1/crosswalks`
 - `GET /v1/translations?from=ward/2024-12-uk-bgc&code=E05000932&to=localAuthority/2024-12-uk-bgc&purpose=membership`
 - `GET /v1/relationship-candidates`
