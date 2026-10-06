@@ -11,7 +11,9 @@ import {
 	electionWinnerPaint,
 	featureColorPaint,
 	partyPercentagePaint,
+	valuePaint,
 } from "./fillPaint";
+import { getSequentialColorExpression } from "../colorScale/datasetColors";
 
 function renderElection(
 	ctx: MapRenderContext,
@@ -32,6 +34,7 @@ function renderElection(
 	);
 
 	const mode = options.mode || "majority";
+	const showingTurnout = options.metric === "turnout";
 	const dataMap = isLocal
 		? (dataset as LocalElectionDataset).data
 		: (dataset as GeneralElectionDataset).data;
@@ -57,8 +60,9 @@ function renderElection(
 				}
 			: (code: string) => resultsMap[code] || "NONE";
 
-	const sourceMode =
-		mode === "percentage" && options.selected
+	const sourceMode = showingTurnout
+		? `${type}:turnout`
+		: mode === "percentage" && options.selected
 			? `${type}:percentage:${options.selected}`
 			: `${type}:majority:${[...excluded].sort().join(",")}`;
 	const transformedGeojson = ctx.transformed(
@@ -66,8 +70,13 @@ function renderElection(
 		dataset,
 		sourceMode,
 		() => {
-			const features =
-				mode === "percentage" && options.selected
+			const features = showingTurnout
+				? ctx.featureBuilder.buildValueFeatures(
+						geojson.features,
+						codeProp,
+						(code) => dataMap[code]?.turnoutPercent ?? null,
+					)
+				: mode === "percentage" && options.selected
 					? ctx.featureBuilder.buildElectionPercentageFeatures(
 							geojson.features,
 							dataMap,
@@ -83,8 +92,14 @@ function renderElection(
 		},
 	);
 
-	const paint =
-		mode === "percentage"
+	const paint = showingTurnout
+		? valuePaint(
+				getSequentialColorExpression(
+					options.turnoutRange ?? { min: 0, max: 100 },
+					mapOptions.theme.id,
+				),
+			)
+		: mode === "percentage"
 			? partyPercentagePaint(options, isDark)
 			: electionWinnerPaint(dataset.partyInfo);
 	if (paint) {

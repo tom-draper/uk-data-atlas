@@ -22,6 +22,7 @@ import {
 	useLegendAggregates,
 } from "./legend/legendData";
 import {
+	ElectionMetricPanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
@@ -74,6 +75,12 @@ export default function LegendPanel({
 	const ethnicities = ethnicityLegendItems(activeDataset, aggregates);
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
+	const electionSupportsTurnout =
+		(activeDataset?.type === "generalElection" ||
+			activeDataset?.type === "localElection") &&
+		Object.values(activeDataset.data).some(
+			({ turnoutPercent }) => turnoutPercent > 0,
+		);
 
 	return (
 		<div className="pointer-events-none md:p-2.5 md:pr-0 flex flex-col h-full gap-2.5">
@@ -148,15 +155,44 @@ export default function LegendPanel({
 				/>
 			)}
 
-			{controls.showElectionPct &&
+			{electionSupportsTurnout &&
+				controls.electionType &&
+				controls.electionOptions && (
+					<ElectionMetricPanel
+						metric={controls.electionOptions.metric ?? "votes"}
+						onChange={(metric) =>
+							onMapOptionsChange(controls.electionType!, {
+								metric,
+							})
+						}
+					/>
+				)}
+
+			{(controls.showElectionPct || controls.showElectionTurnout) &&
 				controls.electionType &&
 				controls.electionOptions && (
 					<PercentageRangePanel
-						range={controls.electionRange}
-						gradient={`linear-gradient(to bottom, ${PARTIES[controls.electionOptions.selected as PartyCode]?.color || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`}
+						range={
+							controls.showElectionTurnout
+								? controls.electionTurnoutRange
+								: controls.electionRange
+						}
+						gradient={
+							controls.showElectionTurnout
+								? verticalThemeGradient
+								: `linear-gradient(to bottom, ${PARTIES[controls.electionOptions.selected as PartyCode]?.color || "#999"}, ${isDark ? "#1f2937" : "#f5f5f5"})`
+						}
 						opacity={overlayOpacity}
-						onRangeInput={controls.handleElectionRangeInput}
-						onRangeChangeEnd={controls.handleElectionRangeChangeEnd}
+						onRangeInput={
+							controls.showElectionTurnout
+								? controls.handleElectionTurnoutRangeInput
+								: controls.handleElectionRangeInput
+						}
+						onRangeChangeEnd={
+							controls.showElectionTurnout
+								? controls.handleElectionTurnoutRangeChangeEnd
+								: controls.handleElectionRangeChangeEnd
+						}
 					/>
 				)}
 

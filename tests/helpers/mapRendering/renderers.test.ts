@@ -64,7 +64,9 @@ const geojson = { type: "FeatureCollection", features: [] } as never;
 
 describe("renderLocalElection", () => {
 	const dataset = {
-		data: { E05000001: { partyVotes: { LAB: 10, CON: 4 } } },
+		data: {
+			E05000001: { partyVotes: { LAB: 10, CON: 4 }, turnoutPercent: 65 },
+		},
 		results: { E05000001: "LAB" },
 		partyInfo: [{ key: "LAB" }, { key: "CON" }],
 	} as never;
@@ -102,6 +104,33 @@ describe("renderLocalElection", () => {
 			featureBuilder.buildElectionPercentageFeatures,
 		).toHaveBeenCalledOnce();
 		expect(layerManager.paintBoundaries).toHaveBeenCalledOnce();
+	});
+
+	it("renders turnout with the selected heatmap theme", () => {
+		const { ctx, layerManager, featureBuilder } = fakeContext("WD25CD");
+
+		renderLocalElection(ctx, geojson, dataset, {
+			...DEFAULT_MAP_OPTIONS,
+			theme: { id: "plasma" },
+			localElection: {
+				...DEFAULT_MAP_OPTIONS.localElection,
+				metric: "turnout",
+				turnoutRange: { min: 20, max: 80 },
+			},
+		} as never);
+
+		expect(featureBuilder.buildValueFeatures).toHaveBeenCalledOnce();
+		const turnoutFor = featureBuilder.buildValueFeatures.mock.calls[0][2];
+		expect(turnoutFor("E05000001", {})).toBe(65);
+		expect(layerManager.paintBoundaries.mock.calls[0][1].color).toEqual(
+			getSequentialColorExpression({ min: 20, max: 80 }, "plasma"),
+		);
+		expect(ctx.transformed).toHaveBeenCalledWith(
+			geojson,
+			dataset,
+			"localElection:turnout",
+			expect.any(Function),
+		);
 	});
 
 	it("keys the transform cache on the excluded parties", () => {

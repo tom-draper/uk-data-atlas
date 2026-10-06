@@ -100,6 +100,29 @@ export function useLegendControls(
 			});
 		setLiveOptions(null);
 	};
+	const handleElectionTurnoutRangeInput = (min: number, max: number) => {
+		if (!electionType) return;
+		setLiveOptions((previous) => {
+			const base = previous || mapOptions;
+			return {
+				...base,
+				[electionType]: {
+					...base[electionType],
+					turnoutRange: { min, max },
+				},
+			};
+		});
+	};
+	const handleElectionTurnoutRangeChangeEnd = () => {
+		if (liveOptions && electionType)
+			onMapOptionsChange(electionType, {
+				turnoutRange: liveOptions[electionType].turnoutRange ?? {
+					min: 0,
+					max: 100,
+				},
+			});
+		setLiveOptions(null);
+	};
 	const handleEthnicityRangeInput = (min: number, max: number) => {
 		setLiveOptions((previous) => {
 			const base = previous || mapOptions;
@@ -122,6 +145,7 @@ export function useLegendControls(
 		electionType,
 		electionOptions,
 		showElectionPct: electionOptions?.mode === "percentage",
+		showElectionTurnout: electionOptions?.metric === "turnout",
 		showEthnicityPct:
 			activeDataset?.type === "ethnicity" &&
 			ethnicityOptions.mode === "percentage",
@@ -130,6 +154,10 @@ export function useLegendControls(
 			max:
 				(electionOptions as CategoryOptions | null)?.percentageRange
 					?.max ?? 50,
+		},
+		electionTurnoutRange: electionOptions?.turnoutRange ?? {
+			min: 0,
+			max: 100,
 		},
 		ethnicityRange: {
 			min: ethnicityOptions.percentageRange?.min ?? 0,
@@ -211,6 +239,8 @@ export function useLegendControls(
 		},
 		handleElectionRangeInput,
 		handleElectionRangeChangeEnd,
+		handleElectionTurnoutRangeInput,
+		handleElectionTurnoutRangeChangeEnd,
 		handleEthnicityRangeInput,
 		handleEthnicityRangeChangeEnd,
 	};

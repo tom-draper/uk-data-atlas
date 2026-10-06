@@ -19,12 +19,16 @@ export const DEFAULT_MAP_OPTIONS: MapOptions = {
 	...chartMapOptions,
 	generalElection: {
 		mode: "majority",
+		metric: "votes",
 		percentageRange: { min: 0, max: 50 },
+		turnoutRange: { min: 0, max: 100 },
 		colorRange: { min: 0, max: 1 },
 	},
 	localElection: {
 		mode: "majority",
+		metric: "votes",
 		percentageRange: { min: 0, max: 50 },
+		turnoutRange: { min: 0, max: 100 },
 		colorRange: { min: 0, max: 1 },
 	},
 	ageDistribution: {

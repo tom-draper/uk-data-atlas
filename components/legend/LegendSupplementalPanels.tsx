@@ -119,6 +119,27 @@ export function HousePriceMeasurePanel({
 	);
 }
 
+const ELECTION_METRICS = [
+	["votes", "Votes"],
+	["turnout", "Turnout"],
+] as const;
+
+export function ElectionMetricPanel({
+	metric,
+	onChange,
+}: {
+	metric: "votes" | "turnout";
+	onChange: (metric: "votes" | "turnout") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={metric}
+			measures={ELECTION_METRICS}
+			onChange={onChange}
+		/>
+	);
+}
+
 const INCOME_MEASURES = [
 	["median", "Median"],
 	["mean", "Mean"],
