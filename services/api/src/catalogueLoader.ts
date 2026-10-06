@@ -46,9 +46,7 @@ import { readMapAssets, readMapResources } from "./mapResourceLoader";
 import { createAreaGeometryCache, readGeometrySources } from "./geometryLoader";
 import { createTerrainAsyncProvider } from "./terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
-import {
-	createOperationMatcher,
-} from "./operationTemplates";
+import { createOperationMatcher } from "./operationTemplates";
 
 export type ApiCatalogues = Omit<
 	Required<RouteContext>,
@@ -226,7 +224,9 @@ export const readApiCatalogues = (
 		readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 	);
 	const operationMatcher = stage("openapi-operation-matcher", () =>
-		createOperationMatcher(readOperations(apiRoot, openapiDocument).operations),
+		createOperationMatcher(
+			readOperations(apiRoot, openapiDocument).operations,
+		),
 	);
 	const validationReport = stage("validation-report", () =>
 		readValidationReport(apiRoot),
