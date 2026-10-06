@@ -577,7 +577,7 @@ export class AreaGeometryCache {
 	/** Load releases and their precomputed indexes before accepting traffic. */
 	warm(releases: Iterable<readonly [string, string]>): void {
 		for (const [geography, boundaryRelease] of releases)
-			this.get(geography, boundaryRelease, "");
+			this.spatialIndexFor(geography, boundaryRelease);
 	}
 	/**
 	 * Every area code the release publishes, in the order its source lists
