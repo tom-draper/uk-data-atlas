@@ -59,8 +59,8 @@ export default function NamedPlaceGuidePage() {
 						operationId="getNamedLocation"
 					/>
 					<Request
-						url={`${API}/locations/north-wales/capabilities`}
-						operationId="getNamedLocationCapabilities"
+						url={`${API}/locations/north-wales?include=capabilities`}
+						operationId="getNamedLocation"
 					/>
 				</Step>
 
