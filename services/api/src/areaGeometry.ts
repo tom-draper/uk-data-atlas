@@ -5,6 +5,7 @@ import {
 	geometryProvenance,
 	isWgs84,
 	toWgs84Geometry,
+	toWgs84Packed,
 	type GeometryProvenance,
 } from "./reprojection";
 import {
@@ -248,16 +249,23 @@ export class AreaGeometryCache {
 		if (!packed || isWgs84(release.crs)) return packed;
 		const cached = release.wgs84.get(code);
 		if (cached) return cached;
-		const corrected = this.correctionsFor(
+		const corrections = this.correctionsFor(
 			this.source(geography, boundaryRelease),
 			code,
-		).reduce(
-			(moved, offset) => offsetGeometry(offset, moved),
-			unpackGeometry(packed),
 		);
-		const reprojected = packGeometry(
-			toWgs84Geometry(corrected, release.crs),
-		);
+		const reprojected =
+			corrections.length === 0
+				? toWgs84Packed(packed, release.crs)
+				: packGeometry(
+						toWgs84Geometry(
+							corrections.reduce(
+								(moved, offset) =>
+									offsetGeometry(offset, moved),
+								unpackGeometry(packed),
+							),
+							release.crs,
+						),
+					);
 		if (keep) release.wgs84.set(code, reprojected);
 		return reprojected;
 	}

@@ -1,4 +1,9 @@
 import proj4 from "proj4";
+import {
+	packGeometry,
+	unpackGeometry,
+	type PackedGeometry,
+} from "./packedGeometry";
 
 type Position = [number, number];
 
@@ -179,6 +184,50 @@ export const toWgs84Geometry = <T extends Geometry>(
 					),
 				};
 	return reproject(geometry) as T;
+};
+
+/**
+ * A packed geometry in WGS84, the same as packing `toWgs84Geometry` of it
+ * unpacked, but reprojected straight from its numbers: a whole release
+ * passes through without building an array for every position.
+ */
+export const toWgs84Packed = (
+	packed: PackedGeometry,
+	crs: string,
+): PackedGeometry => {
+	if (isWgs84(crs)) return packed;
+	const reprojection = REPROJECTIONS[crs];
+	if (!reprojection)
+		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
+	const reproject = (value: PackedGeometry): PackedGeometry => {
+		if (value.kind === "collection")
+			return {
+				kind: "collection",
+				geometries: value.geometries.map(reproject),
+			};
+		if (value.kind === "raw" || value.stride < 2)
+			return packGeometry(toWgs84Geometry(unpackGeometry(value), crs));
+		const { positions, stride } = value;
+		const count = positions.length / stride;
+		// Only longitude and latitude are kept, as toWgs84Geometry keeps them.
+		const reprojected = new Float64Array(count * 2);
+		for (let at = 0; at < count; at += 1) {
+			const [longitude, latitude] = reprojection.toWgs84([
+				positions[at * stride]!,
+				positions[at * stride + 1]!,
+			]);
+			reprojected[at * 2] = longitude;
+			reprojected[at * 2 + 1] = latitude;
+		}
+		return {
+			kind: "packed",
+			type: value.type,
+			stride: 2,
+			positions: reprojected,
+			counts: value.counts,
+		};
+	};
+	return reproject(packed);
 };
 
 /** Returns a WGS84 geometry in a supported national grid. */
