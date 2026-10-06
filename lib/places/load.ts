@@ -17,8 +17,17 @@ export const PLACE_INDEX = placeIndex as unknown as PlaceIndex;
 // every build. next.config.ts traces the folder into the /places function.
 const PROFILES = join(process.cwd(), "public", "data", "datasets", "places");
 
-const readProfiles = async (path: string) =>
-	JSON.parse(await readFile(join(PROFILES, path), "utf8")) as unknown;
+/** Profile shards already read by this server instance. */
+const profileReads = new Map<string, Promise<unknown>>();
+
+const readProfiles = (path: string) => {
+	let read = profileReads.get(path);
+	if (!read) {
+		read = readFile(join(PROFILES, path), "utf8").then(JSON.parse);
+		profileReads.set(path, read);
+	}
+	return read;
+};
 
 const areaEntries = new Map(
 	PLACE_INDEX.areas.map((entry) => [entry[0], entry]),
@@ -108,11 +117,14 @@ const NATION_REGION: Record<string, string> = {
  * outside England. A constituency takes the region of a council it sits in
  * or overlaps; English regions don't cross council lines.
  */
-export async function placeRegions(): Promise<Map<string, string>> {
-	const current = PLACE_INDEX.areas.filter(
+const currentAreas = () =>
+	PLACE_INDEX.areas.filter(
 		([, , geography, , , lastYear]) =>
 			geography !== "ward" && lastYear === null,
 	);
+
+const resolvePlaceRegions = async (): Promise<Map<string, string>> => {
+	const current = currentAreas();
 	const profiles = await loadAreaProfiles(current.map(([code]) => code));
 	const regions = new Map<string, string>();
 	const regionOf = (code: string) =>
@@ -140,4 +152,26 @@ export async function placeRegions(): Promise<Map<string, string>> {
 		if (region) regions.set(code, region);
 	}
 	return regions;
-}
+};
+
+let regions: Promise<Map<string, string>> | undefined;
+
+/** The region lookup shared by the places index and all place pages. */
+export const placeRegions = () => (regions ??= resolvePlaceRegions());
+
+/**
+ * Read the place-index shards the directory uses before the server accepts
+ * traffic. The reads stay cached for the instance, so `/places` does not pay
+ * the first-request disk and JSON cost.
+ */
+export const warmPlacesDirectory = async () => {
+	const current = currentAreas();
+	await Promise.all([
+		placeRegions(),
+		loadAreaProfiles(
+			current
+				.filter(([, , geography]) => geography === "localAuthority")
+				.map(([code]) => code),
+		),
+	]);
+};
