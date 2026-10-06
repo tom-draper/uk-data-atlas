@@ -24,9 +24,19 @@ export const ghgEmissionsDefinition: ChartDatasetDefinition<GhgEmissionsDataset>
 			year: 2024,
 		},
 		map: {
-			// Per person rather than the total, so the map reads as carbon
-			// intensity rather than as a population map with extra steps.
-			valueKey: "perPersonTCO2e",
+			valueFor: (dataset, code, mapOptions) => {
+				const area = dataset.data[code];
+				switch (mapOptions.ghgEmissions.measure) {
+					case "total":
+						return area?.totalKtCO2e ?? null;
+					case "excludingLandUse":
+						return area?.excludingLandUseKtCO2e ?? null;
+					default:
+						return area?.perPersonTCO2e ?? null;
+				}
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`ghgEmissions:${mapOptions.ghgEmissions.measure}`,
 			colorRange: { min: 3, max: 12 },
 			legend: {
 				min: 0,

@@ -100,6 +100,24 @@ export default function LegendContent({
 				: airQualityMeasure === "pm10"
 					? "PM10"
 					: "NO₂";
+		const ghgMeasure =
+			activeDataset.type === "ghgEmissions"
+				? displayOptions.ghgEmissions.measure
+				: null;
+		const ghgLegend = ghgMeasure
+			? {
+					min: 0,
+					max: ghgMeasure === "perPerson" ? 20 : 6000,
+					format: (value: number) =>
+						ghgMeasure === "perPerson"
+							? `${value.toFixed(0)} t CO₂e per person`
+							: `${(value / 1000).toFixed(1)} Mt CO₂e${
+									ghgMeasure === "excludingLandUse"
+										? " excluding land use"
+										: ""
+								}`,
+				}
+			: null;
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -124,7 +142,7 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: legend;
+					: ghgLegend ?? legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
@@ -148,7 +166,7 @@ export default function LegendContent({
 					min: dynamicRange?.min ?? colorRange.min,
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
-				formatLabel={measureLegend.format}
+				formatLabel={ghgLegend?.format ?? measureLegend.format}
 				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>
 		);

@@ -26,6 +26,7 @@ import {
 	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
+	GhgEmissionsMeasurePanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
@@ -166,6 +167,23 @@ export default function LegendPanel({
 									: measure === "pm10"
 										? { min: 8, max: 25 }
 										: { min: 2, max: 20 },
+						})
+					}
+				/>
+			)}
+
+			{activeDataset?.type === "ghgEmissions" && (
+				<GhgEmissionsMeasurePanel
+					measure={controls.displayOptions.ghgEmissions.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("ghgEmissions", {
+							measure,
+							colorRange:
+								measure === "total"
+									? { min: 300, max: 2500 }
+									: measure === "excludingLandUse"
+										? { min: 300, max: 2400 }
+										: { min: 3, max: 12 },
 						})
 					}
 				/>
