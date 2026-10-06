@@ -37,7 +37,9 @@ export type CountyShape = {
 export type AuthorityRelease = {
 	/** YYYY-MM, the release's month. */
 	month: string;
-	authorities: Array<{ code: string; geometry: GeoJsonGeometry }>;
+	codes: string[];
+	/** Read only for an authority's first release, the one it is placed by. */
+	geometry: (code: string) => GeoJsonGeometry | undefined;
 };
 
 export type CountyAssignment = {
@@ -182,13 +184,14 @@ export const countyMemberships = (
 		}
 	>();
 	ordered.forEach((release, index) => {
-		for (const { code, geometry } of release.authorities) {
+		for (const code of release.codes) {
 			const known = seen.get(code);
 			if (known) {
 				known.last = index;
 				continue;
 			}
-			const assignment = assignAuthority(geometry, counties);
+			const geometry = release.geometry(code);
+			const assignment = geometry && assignAuthority(geometry, counties);
 			if (assignment)
 				seen.set(code, {
 					county: assignment.county,

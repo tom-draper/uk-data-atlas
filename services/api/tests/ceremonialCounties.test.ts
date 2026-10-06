@@ -52,15 +52,18 @@ test("dates each member by the releases it appears in", () => {
 		[
 			{
 				month: "2019-12",
-				authorities: [{ code: "OLD", geometry: west }],
+				codes: ["OLD"],
+				geometry: () => west,
 			},
 			{
 				month: "2023-05",
-				authorities: [{ code: "NEW", geometry: west }],
+				codes: ["NEW"],
+				geometry: () => west,
 			},
 			{
 				month: "2021-12",
-				authorities: [{ code: "OLD", geometry: west }],
+				codes: ["OLD"],
+				geometry: () => west,
 			},
 		],
 		counties,

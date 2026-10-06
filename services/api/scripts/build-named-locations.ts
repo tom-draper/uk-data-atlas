@@ -102,28 +102,21 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 		)
 		.map((release) => ({
 			month: releaseMonth(release.id)!,
-			authorities: cache
-				.codes("localAuthority", release.id)
-				.flatMap((code) => {
-					const geometry = cache.get(
-						"localAuthority",
-						release.id,
-						code,
-					);
-					return geometry ? [{ code, geometry }] : [];
-				}),
+			codes: cache.codes("localAuthority", release.id),
+			// Read as each authority is placed, so no release's geometry is
+			// held beyond its turn.
+			geometry: (code: string) =>
+				cache.get("localAuthority", release.id, code),
 		}));
+	const historicCounties = readHistoricCounties(repositoryRoot);
 	const withCounties = withHistoricCounties(
 		withCeremonialCounties(
 			parsed.locations,
 			countyMemberships(authorityReleases, counties),
 			counties,
 		),
-		countyMemberships(
-			authorityReleases,
-			readHistoricCounties(repositoryRoot),
-		),
-		readHistoricCounties(repositoryRoot),
+		countyMemberships(authorityReleases, historicCounties),
+		historicCounties,
 	);
 	const locations = withCounties.map((location) => {
 		// The members current at the latest release, so a location whose
