@@ -28,9 +28,11 @@ export interface CustomOptions extends ColorRangeOption {
 
 export interface CategoryOptions {
 	mode: "majority" | "percentage";
+	metric?: "votes" | "turnout";
 	selected?: string;
 	excluded?: string[];
 	percentageRange: ColorRange;
+	turnoutRange?: ColorRange;
 }
 
 /** Click-to-isolate / right-click-to-exclude state for a map-native network layer's legend. */
