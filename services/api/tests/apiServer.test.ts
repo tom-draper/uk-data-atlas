@@ -193,6 +193,16 @@ test("charges an operation that reads many shapes what it declares", async (t) =
 	assert.equal((await get("/v1/geographies")).status, 429);
 });
 
+test("charges point lookups once for every requested geography", async (t) => {
+	const { get } = await serve(t, {
+		rateLimit: { capacity: 6, refillPerSecond: 0.01 },
+	});
+	const response = await get(
+		"/v1/areas:contains?lng=-2&lat=53&geography=ward&geography=localAuthority",
+	);
+	assert.equal(response.headers.get("ratelimit"), '"default";r=4;t=200');
+});
+
 test("keys clients behind a trusted proxy by the address the proxy saw", async (t) => {
 	const { get } = await serve(t, {
 		rateLimit: { capacity: 1, refillPerSecond: 0.01, trustedProxyHops: 1 },

@@ -42,6 +42,7 @@ export type ServerOptions = {
 };
 
 export const DEFAULT_MAX_URL_LENGTH = 4096;
+const DEFAULT_GEOMETRY_CACHE_RELEASES = 3;
 
 export type ServeConfiguration = {
 	port: number;
@@ -107,8 +108,8 @@ export const readServeConfiguration = (
 		geometryCacheReleases: integer(
 			env,
 			"ATLAS_GEOMETRY_CACHE_RELEASES",
-			3,
-			1,
+			DEFAULT_GEOMETRY_CACHE_RELEASES,
+			DEFAULT_GEOMETRY_CACHE_RELEASES,
 		),
 		shutdownGraceSeconds: integer(
 			env,

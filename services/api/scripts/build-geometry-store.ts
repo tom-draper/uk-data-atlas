@@ -31,6 +31,7 @@ import { encodeGeometryStore } from "../src/geometryStore";
 const COMPILER_SOURCES = [
 	"src/areaGeometry.ts",
 	"src/geometryStore.ts",
+	"src/geometrySpatialIndex.ts",
 	"src/geometrySubstitution.ts",
 	"src/gridOffset.ts",
 	"src/packedGeometry.ts",

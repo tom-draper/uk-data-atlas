@@ -27,6 +27,7 @@ import {
 	substitutionProvenance,
 } from "./geometrySubstitution";
 import { readGeometryStore } from "./geometryStore";
+import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
 import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
 import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
@@ -85,23 +86,23 @@ type CachedRelease = {
 	wgs84: Map<string, PackedGeometry>;
 	/** WGS84 bounds, built lazily with the geometry used for containment. */
 	bounds: Map<string, GeometryBounds | undefined>;
-	/** Compact candidate index: codes in quarter-degree cells, never copied rings. */
+	/** Compact candidate index: codes in fixed grid cells, never copied rings. */
 	spatialIndex?: SpatialIndex;
+	/** A compiled store reads individual records through this descriptor. */
+	close?(): void;
 };
 
 type SpatialIndex = {
-	cells: Map<string, string[]>;
-	/** Every code with a usable WGS84 envelope, for deliberately wide queries. */
 	codes: string[];
+	cellCount: number;
+	candidates(bounds: GeometryBounds): Iterable<string>;
 };
 
-const SPATIAL_CELL_DEGREES = 0.25;
 /**
  * Areas held as GeoJSON after a request read them. Every other area stays
  * packed; this only saves rebuilding the ones a burst of requests shares.
  */
 const MATERIALISED_AREAS = 256;
-const MAX_SPATIAL_QUERY_CELLS = 10_000;
 
 export type ContainingArea = {
 	code: string;
@@ -187,7 +188,7 @@ export class AreaGeometryCache {
 								{
 									release,
 									areas: cached.spatialIndex.codes.length,
-									cells: cached.spatialIndex.cells.size,
+									cells: cached.spatialIndex.cellCount,
 								},
 							]
 						: [],
@@ -305,37 +306,6 @@ export class AreaGeometryCache {
 		return bounds;
 	}
 
-	private cellRange(bounds: GeometryBounds) {
-		const west = Math.max(-180, bounds[0]);
-		const south = Math.max(-90, bounds[1]);
-		const east = Math.min(180, bounds[2]);
-		const north = Math.min(90, bounds[3]);
-		if (west > east || south > north) return undefined;
-		return {
-			west: Math.floor((west + 180) / SPATIAL_CELL_DEGREES),
-			south: Math.floor((south + 90) / SPATIAL_CELL_DEGREES),
-			east: Math.floor((east + 180) / SPATIAL_CELL_DEGREES),
-			north: Math.floor((north + 90) / SPATIAL_CELL_DEGREES),
-		};
-	}
-
-	private cellKeys(bounds: GeometryBounds): string[] | undefined {
-		const range = this.cellRange(bounds);
-		if (!range) return [];
-		const count =
-			(range.east - range.west + 1) * (range.north - range.south + 1);
-		if (count > MAX_SPATIAL_QUERY_CELLS) return undefined;
-		const keys: string[] = [];
-		for (let longitude = range.west; longitude <= range.east; longitude++)
-			for (
-				let latitude = range.south;
-				latitude <= range.north;
-				latitude++
-			)
-				keys.push(`${longitude}/${latitude}`);
-		return keys;
-	}
-
 	/** Build the release-local candidate index once, independently of exact reads. */
 	private spatialIndexFor(
 		geography: string,
@@ -360,13 +330,26 @@ export class AreaGeometryCache {
 			);
 			if (!bounds) continue;
 			codes.push(code);
-			for (const key of this.cellKeys(bounds) ?? []) {
+			for (const cell of spatialCells(bounds) ?? []) {
+				const key = spatialCellKey(cell);
 				const candidates = cells.get(key) ?? [];
 				candidates.push(code);
 				cells.set(key, candidates);
 			}
 		}
-		release.spatialIndex = { cells, codes };
+		release.spatialIndex = {
+			codes,
+			cellCount: cells.size,
+			candidates: (bounds) => {
+				const queryCells = spatialCells(bounds);
+				if (queryCells === undefined) return codes;
+				const candidates = new Set<string>();
+				for (const cell of queryCells)
+					for (const code of cells.get(spatialCellKey(cell)) ?? [])
+						candidates.add(code);
+				return candidates;
+			},
+		};
 		this.counts.spatialIndexBuilds += 1;
 		return { release, index: release.spatialIndex };
 	}
@@ -375,12 +358,7 @@ export class AreaGeometryCache {
 		index: SpatialIndex,
 		bounds: GeometryBounds,
 	): Iterable<string> {
-		const keys = this.cellKeys(bounds);
-		if (keys === undefined) return index.codes;
-		const candidates = new Set<string>();
-		for (const key of keys)
-			for (const code of index.cells.get(key) ?? []) candidates.add(code);
-		return candidates;
+		return index.candidates(bounds);
 	}
 	/**
 	 * The geometry's source CRS, how it was transformed to WGS84, and, given
@@ -444,6 +422,8 @@ export class AreaGeometryCache {
 			storedBounds: stored.bounds,
 			wgs84: new Map(),
 			bounds: new Map(),
+			spatialIndex: stored.spatialIndex,
+			close: stored.close,
 		};
 	}
 	/** A release read from its publisher's file, as it was registered. */
@@ -573,7 +553,9 @@ export class AreaGeometryCache {
 			this.counts.loadSeconds += (performance.now() - started) / 1000;
 			while (this.releases.size > this.maxReleases) {
 				const evicted = this.releases.keys().next().value as string;
+				const release = this.releases.get(evicted);
 				this.releases.delete(evicted);
+				release?.close?.();
 				for (const key of this.materialised.keys())
 					if (key.startsWith(`${evicted}\u0000`))
 						this.materialised.delete(key);
@@ -591,6 +573,11 @@ export class AreaGeometryCache {
 			code,
 			true,
 		);
+	}
+	/** Load releases and their precomputed indexes before accepting traffic. */
+	warm(releases: Iterable<readonly [string, string]>): void {
+		for (const [geography, boundaryRelease] of releases)
+			this.get(geography, boundaryRelease, "");
 	}
 	/**
 	 * Every area code the release publishes, in the order its source lists

@@ -24,6 +24,7 @@ import {
 	type MatchedOperation,
 	unexpectedQueryParameter,
 } from "./operationTemplates";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./postcodeRoutes";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
 import { isStoredFile, problem, type ApiResponse } from "./routeResponse";
 import { routeAsync } from "./routes";
@@ -140,6 +141,41 @@ const bearerMatches = (header: string | undefined, token: string) => {
 	);
 };
 
+/**
+ * Point lookups do one spatial search per requested geography. Their declared
+ * operation cost covers request shape (for example, a batch); multiply it by
+ * the distinct releases a caller asks to search so rotating wide requests
+ * cannot evade the cost of their geometry work.
+ */
+const pointLookupCost = (matched: MatchedOperation, target: string) => {
+	const route = matched.route;
+	if (
+		route !== "/v1/areas:contains" &&
+		route !== "/v1/areas:containsBatch" &&
+		route !== "/v1/postcodes/{postcode}" &&
+		route !== "/v1/postcodes:batch"
+	)
+		return matched.operation?.cost;
+	const query = new URL(target, "http://localhost").searchParams;
+	const geographies = new Set(
+		query
+			.getAll("geography")
+			.flatMap((value) => value.split(","))
+			.map((value) => value.trim())
+			.filter(Boolean),
+	);
+	for (const value of query.getAll("release")) {
+		const slash = value.indexOf("/");
+		if (slash > 0) geographies.add(value.slice(0, slash));
+	}
+	const count =
+		geographies.size ||
+		(route.startsWith("/v1/postcodes")
+			? DEFAULT_POSTCODE_GEOGRAPHIES.length
+			: 1);
+	return (matched.operation?.cost ?? 1) * count;
+};
+
 export const createApiServer = (
 	catalogues: RouteContext,
 	options: ServerOptions = {},
@@ -243,7 +279,7 @@ export const createApiServer = (
 									options.rateLimit?.trustedProxyHops,
 								),
 							),
-							matched.operation?.cost,
+							pointLookupCost(matched, target),
 						)
 					: undefined;
 			if (decision) limitHeaders = limiter!.headers(decision);
