@@ -15,7 +15,10 @@ export const claimantCountDefinition: ChartDatasetDefinition<ClaimantCountDatase
 			key: "economics-claimantCount",
 			label: "Claimant Count [2026]",
 			defaultVisible: true,
-			componentPath: "@/components/ValueCard",
+			componentPath:
+				"@/components/economics/claimant-count/ClaimantCountChart",
+			// Kept for the generic value-card stat resolver and API consumers. The
+			// chart component selects the headline measure at render time.
 			card: defineValueCard<
 				ClaimantCountDataset,
 				AggregatedClaimantCountData
@@ -33,7 +36,14 @@ export const claimantCountDefinition: ChartDatasetDefinition<ClaimantCountDatase
 			year: 2026,
 		},
 		map: {
-			valueKey: "totalRate",
+			valueFor: (dataset, code, mapOptions) => {
+				const area = dataset.data[code];
+				return mapOptions.claimantCount.measure === "count"
+					? (area?.totalCount ?? null)
+					: (area?.totalRate ?? null);
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`claimantCount:${mapOptions.claimantCount.measure}`,
 			colorRange: { min: 1, max: 8 },
 			legend: { min: 0, max: 20, format: (v) => `${v.toFixed(1)}%` },
 		},

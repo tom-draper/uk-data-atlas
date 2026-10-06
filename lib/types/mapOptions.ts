@@ -37,6 +37,10 @@ export interface UnemploymentOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
 
+export interface ClaimantCountOptions extends ColorRangeOption {
+	measure: "rate" | "count";
+}
+
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -72,6 +76,7 @@ export type ChartMapOptions = Omit<
 	| "airQuality"
 	| "ghgEmissions"
 	| "unemployment"
+	| "claimantCount"
 > & {
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
@@ -81,6 +86,7 @@ export type ChartMapOptions = Omit<
 	airQuality: AirQualityOptions;
 	ghgEmissions: GhgEmissionsOptions;
 	unemployment: UnemploymentOptions;
+	claimantCount: ClaimantCountOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 };
 
