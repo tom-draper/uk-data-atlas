@@ -271,11 +271,7 @@ export const handleAreaContainsBatchRoutes = ({
 		);
 	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));
 	if (!crs) return coordinateCrsProblem();
-	const points = parseBatchPoints(
-		posted,
-		crs,
-		accuracy,
-	);
+	const points = parseBatchPoints(posted, crs, accuracy);
 	if (!Array.isArray(points)) return points;
 	const geographyResolver = context.geographyResolver;
 	const unavailable = geographyResolver.requires("geometry");

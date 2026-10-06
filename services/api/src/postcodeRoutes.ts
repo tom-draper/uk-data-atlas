@@ -397,9 +397,7 @@ export const handlePostcodeBatchRoutes = ({
 	if (typeof view !== "string") return view;
 	const posted = readBatchInput(body, "postcodes");
 	if (!Array.isArray(posted)) return posted;
-	const inputs = posted
-		.map((value) => value.trim())
-		.filter(Boolean);
+	const inputs = posted.map((value) => value.trim()).filter(Boolean);
 	if (inputs.length === 0)
 		return problem(
 			400,
