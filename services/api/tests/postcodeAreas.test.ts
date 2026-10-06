@@ -250,7 +250,9 @@ test("reads an earlier build's placements back unchanged", () => {
 		return located;
 	});
 	assert.deepEqual(
-		placementsFromShards("ward/2026-05-uk-bgc", shards, offset),
+		placementsFromShards(["ward/2026-05-uk-bgc"], shards, offset).get(
+			"ward/2026-05-uk-bgc",
+		),
 		placements,
 	);
 });
