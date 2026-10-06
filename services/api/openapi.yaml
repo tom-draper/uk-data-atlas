@@ -3551,20 +3551,20 @@ paths:
           $ref: "#/components/responses/CatalogueUnavailable"
 
   /postcodes:batch:
-    get:
+    post:
       operationId: resolvePostcodes
       x-rate-limit-cost: 5
       tags: ["Start here"]
       summary: Find where each of a batch of postcodes is and the areas containing it
       x-likely-refusal:
         status: 400
-        when: "No postcode is given, or more than 100 are."
+        when: "The body gives no postcode, or more than 100."
         x-example-request: "/v1/postcodes:batch"
       description: >
         The `/postcodes/{postcode}` lookup for up to 100 postcodes at once.
-        Repeat `postcode`, or separate postcodes with commas. The releases are
-        chosen once for the whole batch, as for a single postcode: the default
-        geographies as at the directory's edition unless `geography`,
+        Send them in the JSON body's `postcodes` array. The releases are chosen
+        once for the whole batch, as for a single postcode: the default
+        geographies as at the directory's edition unless query `geography`,
         `release` or `date` say otherwise.
 
 
@@ -3584,22 +3584,25 @@ paths:
         outcome. `view=compact` keeps the entries and summary but gives each
         postcode only its record, point and areas, as for a single postcode.
       parameters:
-        - name: postcode
-          in: query
-          required: true
-          schema:
-            type: array
-            maxItems: 100
-            items: { type: string }
-          style: form
-          explode: true
-          description: >
-            A unit postcode, in any case and with or without its space. Repeat
-            for more, or give several separated by commas; at most 100 in all.
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
         - $ref: "#/components/parameters/PostcodeView"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [postcodes]
+              properties:
+                postcodes:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items: { type: string }
+            example:
+              postcodes: [SW1A1AA, M11AE, CF101EP, BT11AA]
       responses:
         "200":
           description: Each postcode's entry, and a summary of the batch.
@@ -3607,7 +3610,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostcodeBatchEnvelope"
-              x-example-request: "/v1/postcodes:batch?postcode=SW1A1AA,M11AE,CF101EP,BT11AA&geography=localAuthority"
+              x-example-request: "/v1/postcodes:batch?geography=localAuthority"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:9e5c1f2b00f6d7becc55f3e569310568fdcbd59cbdf754f70f5dfc8cb2d4a8e8
@@ -4772,18 +4775,19 @@ paths:
           $ref: "#/components/responses/CatalogueUnavailable"
 
   /areas:containsBatch:
-    get:
+    post:
       operationId: findContainingAreasForPoints
       x-rate-limit-cost: 10
       tags: ["Map"]
       summary: Find the areas containing each of a bounded batch of points
       x-likely-refusal:
         status: 400
-        when: "No `point` is given."
+        when: "The body gives no point."
         x-example-request: "/v1/areas:containsBatch"
       description: >
-        The `areas:contains` lookup for up to 100 points at once, each given as
-        `point={lng},{lat}` or `point={lng},{lat},{accuracy}` in the default
+        The `areas:contains` lookup for up to 100 points at once, each given in
+        the JSON body's `points` array as `{lng},{lat}` or
+        `{lng},{lat},{accuracy}` in the default
         WGS 84, as `point={easting},{northing}` with `crs=EPSG:27700` or
         `EPSG:29902`, or as one Ordnance Survey reference such as
         `point=TQ3000080000` with `crs=EPSG:27700`. Geographies, release
@@ -4804,26 +4808,33 @@ paths:
         dataset, not a bulk geocoder: for more points, page through them in
         batches.
       parameters:
-        - name: point
-          in: query
-          required: true
-          schema:
-            type: array
-            maxItems: 100
-            items: { type: string }
-          style: form
-          explode: true
-          description: >
-            `{lng},{lat}` in plain decimal WGS 84 degrees, optionally followed
-            by `,{accuracy}` in metres. With a grid `crs`, use
-            `{easting},{northing}` instead; British National Grid also accepts
-            one Ordnance Survey grid reference such as `TQ3000080000`.
-            Repeat for each point, up to 100.
         - $ref: "#/components/parameters/PointLookupCrs"
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
         - $ref: "#/components/parameters/PointLookupAccuracy"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [points]
+              properties:
+                points:
+                  type: array
+                  minItems: 1
+                  maxItems: 100
+                  items:
+                    type: string
+                    description: >
+                      `{lng},{lat}` in plain decimal WGS 84 degrees, optionally
+                      followed by `,{accuracy}` in metres. With a grid `crs`, use
+                      `{easting},{northing}` instead; British National Grid also
+                      accepts one Ordnance Survey grid reference such as
+                      `TQ3000080000`.
+            example:
+              points: ["-1.5491,53.8008", "1.0,54.5"]
       responses:
         "200":
           description: Each point's containing areas in every requested release.
@@ -4831,7 +4842,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PointContainmentBatchEnvelope"
-              x-example-request: "/v1/areas:containsBatch?point=-1.5491,53.8008&point=1.0,54.5&geography=localAuthority&date=2025-06-01"
+              x-example-request: "/v1/areas:containsBatch?geography=localAuthority&date=2025-06-01"
               example:
                 apiVersion: v1
                 atlasRelease: sha256:da4898229392e8fa52cd5098cf24c52f11abf454b0adcab178c6c82e30032c15

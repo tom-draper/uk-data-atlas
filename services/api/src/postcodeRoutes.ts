@@ -14,6 +14,7 @@ import {
 	type PostcodeSource,
 } from "./postcodes";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { readBatchInput } from "./batchInput";
 import type { RouteRequest } from "./routing";
 
 /** The areas a postcode is placed in when a caller names none. */
@@ -377,6 +378,8 @@ export const handlePostcodeBatchRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	method,
+	body,
 }: RouteRequest): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
@@ -384,18 +387,24 @@ export const handlePostcodeBatchRoutes = ({
 		segments[1] !== "postcodes:batch"
 	)
 		return undefined;
+	if (method !== "POST")
+		return problem(
+			405,
+			"Method Not Allowed",
+			"POST a JSON body with a postcodes array to this batch lookup.",
+		);
 	const view = postcodeView(parsedUrl.searchParams);
 	if (typeof view !== "string") return view;
-	const inputs = parsedUrl.searchParams
-		.getAll("postcode")
-		.flatMap((value) => value.split(","))
+	const posted = readBatchInput(body, "postcodes");
+	if (!Array.isArray(posted)) return posted;
+	const inputs = posted
 		.map((value) => value.trim())
 		.filter(Boolean);
 	if (inputs.length === 0)
 		return problem(
 			400,
 			"Invalid Query",
-			"Supply at least one postcode as postcode=SW1A1AA; repeat it, or separate postcodes with commas.",
+			"Supply at least one postcode in the postcodes array.",
 		);
 	if (inputs.length > MAX_BATCH_POSTCODES)
 		return problem(

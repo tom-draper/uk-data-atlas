@@ -243,6 +243,7 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			segments[1] === "postcodes:batch",
 		handle: handlePostcodeBatchRoutes,
+		acceptsPost: true,
 	},
 	{
 		name: "data-transforms",
@@ -290,6 +291,7 @@ const routeFamilies: RouteFamily[] = [
 		owns: (segments) =>
 			segments[0] === "v1" && segments[1] === "areas:containsBatch",
 		handle: handleAreaContainsBatchRoutes,
+		acceptsPost: true,
 	},
 	{
 		name: "area-near",
@@ -656,7 +658,7 @@ export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
 		return problem(
 			405,
 			"Method Not Allowed",
-			"This resource answers GET only. POST is accepted by /v1/areas:validate and a boundary release's :join, where a request carries more than a URL can.",
+			"This resource answers GET only. POST is accepted by the batch lookup routes, /v1/areas:validate and a boundary release's :join, where a request carries more than a URL can.",
 		);
 	const response = family?.handle(routed);
 	if (!canonical || !response) return response;

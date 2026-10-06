@@ -152,6 +152,22 @@ const get = (url: string, routeContext = postcodeContext) => {
 	};
 };
 
+const post = (
+	url: string,
+	postcodes: string[],
+	routeContext = postcodeContext,
+) => {
+	const response = route("POST", url, routeContext, {
+		contentType: "application/json",
+		text: JSON.stringify({ postcodes }),
+	});
+	return {
+		status: response.status,
+		body: response.body as Record<string, any>,
+		data: (response.body as { data?: any }).data,
+	};
+};
+
 const matched = (result: { matches: Array<{ id: string }> }) =>
 	result.matches.map((match) => match.id);
 
@@ -304,10 +320,15 @@ test("is unavailable until the postcode index is built", () => {
 	assert.match(response.body.detail, /postcode index/);
 });
 
-test("looks up a batch of postcodes, reporting each one that cannot be placed", () => {
-	const { status, data } = get(
-		"/v1/postcodes:batch?postcode=EC1A1AA,ec1a%201ab&postcode=GY11AA&postcode=BT11AA&postcode=EC1A9ZZ&postcode=EC1A&geography=ward",
-	);
+test("looks up a posted batch of postcodes, reporting each one that cannot be placed", () => {
+	const { status, data } = post("/v1/postcodes:batch?geography=ward", [
+		"EC1A1AA",
+		"ec1a 1ab",
+		"GY11AA",
+		"BT11AA",
+		"EC1A9ZZ",
+		"EC1A",
+	]);
 	assert.equal(status, 200);
 	assert.equal(data.date, "2026-08");
 	assert.equal(data.dateBasis, "directory-edition");
@@ -358,7 +379,7 @@ test("looks up a batch of postcodes, reporting each one that cannot be placed", 
 });
 
 test("places a batch in the default geographies, flagging undeclared accuracy per postcode", () => {
-	const { data } = get("/v1/postcodes:batch?postcode=EC1A1AD");
+	const { data } = post("/v1/postcodes:batch", ["EC1A1AD"]);
 	assert.deepEqual(
 		data.releases.map((release: any) => release.geography),
 		["localAuthority", "ward", "constituency"],
@@ -367,10 +388,10 @@ test("places a batch in the default geographies, flagging undeclared accuracy pe
 });
 
 test("gives a compact batch with the same entries and summary", () => {
-	const url =
-		"/v1/postcodes:batch?postcode=EC1A1AA,GY11AA,BT11AA&geography=ward";
-	const full = get(url).data;
-	const { status, data } = get(`${url}&view=compact`);
+	const url = "/v1/postcodes:batch?geography=ward";
+	const postcodes = ["EC1A1AA", "GY11AA", "BT11AA"];
+	const full = post(url, postcodes).data;
+	const { status, data } = post(`${url}&view=compact`, postcodes);
 	assert.equal(status, 200);
 	assert.deepEqual(data.summary, full.summary);
 	assert.deepEqual(data.releases, [
@@ -390,26 +411,27 @@ test("gives a compact batch with the same entries and summary", () => {
 	assert.equal(northernIreland.detail, NORTHERN_IRELAND_EXCLUSION);
 	assert.equal(data.note, undefined);
 	assert.ok(data.source.attribution.length > 0);
-	assert.equal(get(`${url}&view=everything`).status, 400);
+	assert.equal(post(`${url}&view=everything`, postcodes).status, 400);
 });
 
 test("refuses a batch it cannot look up", () => {
 	const many = Array.from({ length: 101 }, () => "EC1A1AA").join(",");
-	const cases: Array<[string, number, RegExp]> = [
-		["/v1/postcodes:batch", 400, /at least one postcode/],
-		["/v1/postcodes:batch?postcode=,%20", 400, /at least one postcode/],
-		[`/v1/postcodes:batch?postcode=${many}`, 400, /At most 100/],
-		["/v1/postcodes:batch?postcode=EC1A1AA&date=soon", 400, /date must be/],
+	const cases: Array<[string, string[], number, RegExp]> = [
+		["/v1/postcodes:batch", [], 400, /at least one postcode/],
+		["/v1/postcodes:batch", ["", " "], 400, /at least one postcode/],
+		["/v1/postcodes:batch", many.split(","), 400, /At most 100/],
+		["/v1/postcodes:batch?date=soon", ["EC1A1AA"], 400, /date must be/],
 	];
-	for (const [url, status, detail] of cases) {
-		const response = get(url);
+	for (const [url, values, status, detail] of cases) {
+		const response = post(url, values);
 		assert.equal(response.status, status, url);
 		assert.match(response.body.detail, detail, url);
 	}
 	assert.equal(
-		get("/v1/postcodes:batch?postcode=EC1A1AA", context(false)).status,
+		post("/v1/postcodes:batch", ["EC1A1AA"], context(false)).status,
 		503,
 	);
+	assert.equal(get("/v1/postcodes:batch?postcode=EC1A1AA").status, 405);
 });
 
 test("answers from the postcode area index as the geometry would, without reading it", () => {
@@ -439,9 +461,13 @@ test("answers from the postcode area index as the geometry would, without readin
 		"/v1/postcodes/EC1A1AA",
 		"/v1/postcodes/EC1A1AD",
 		"/v1/postcodes/EC1A1AE",
-		"/v1/postcodes:batch?postcode=EC1A1AA,EC1A1AB,EC1A1AE,GY11AA",
 	])
 		assert.deepEqual(get(url, compiled).body, get(url).body, url);
+	const batch = ["EC1A1AA", "EC1A1AB", "EC1A1AE", "GY11AA"];
+	assert.deepEqual(
+		post("/v1/postcodes:batch", batch, compiled).body,
+		post("/v1/postcodes:batch", batch).body,
+	);
 	assert.equal(
 		get("/v1/postcodes/EC1A1AE", compiled).data.results[0].reason,
 		"outside-uk-boundaries",

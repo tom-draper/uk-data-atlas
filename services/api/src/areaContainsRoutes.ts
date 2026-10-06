@@ -17,6 +17,7 @@ import {
 } from "./postcodeRoutes";
 import { compactPostcode, postcodeLookupPoint } from "./postcodes";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { readBatchInput } from "./batchInput";
 import type { RouteRequest } from "./routing";
 
 /** Points a batch lookup accepts; more belongs in a bulk export. */
@@ -215,6 +216,8 @@ export const handleAreaContainsBatchRoutes = ({
 	releaseId,
 	parsedUrl,
 	segments,
+	method,
+	body,
 }: RouteRequest): ApiResponse | undefined => {
 	if (
 		segments.length !== 2 ||
@@ -222,6 +225,14 @@ export const handleAreaContainsBatchRoutes = ({
 		segments[1] !== "areas:containsBatch"
 	)
 		return undefined;
+	if (method !== "POST")
+		return problem(
+			405,
+			"Method Not Allowed",
+			"POST a JSON body with a points array to this batch lookup.",
+		);
+	const posted = readBatchInput(body, "points");
+	if (!Array.isArray(posted)) return posted;
 	const postcodeText = parsedUrl.searchParams.get("postcode");
 	const accuracy = parseStatedAccuracy(
 		parsedUrl.searchParams.get("accuracy"),
@@ -235,7 +246,7 @@ export const handleAreaContainsBatchRoutes = ({
 	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));
 	if (!crs) return coordinateCrsProblem();
 	const points = parseBatchPoints(
-		parsedUrl.searchParams.getAll("point"),
+		posted,
 		crs,
 		accuracy,
 	);
