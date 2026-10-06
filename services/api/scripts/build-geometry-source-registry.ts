@@ -2,6 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
+import { createFileHashCache } from "../src/fileHashCache";
 import { createGeometrySourceRegistry } from "../src/geometrySourceRegistry";
 export const buildGeometrySourceRegistry = (root: string) => {
 	const out = join(root, "services", "api", "public");
@@ -21,7 +22,19 @@ export const buildGeometrySourceRegistry = (root: string) => {
 				]
 			: [],
 	);
-	const registry = createGeometrySourceRegistry(root, artifacts);
+	const hashes = createFileHashCache(
+		join(
+			root,
+			"node_modules",
+			".cache",
+			"uk-data-atlas",
+			"input-hashes.json",
+		),
+	);
+	const registry = createGeometrySourceRegistry(root, artifacts, (input) =>
+		hashes.hash(input),
+	);
+	hashes.save();
 	const path = join(out, "geometry-sources.json");
 	writeFileSync(path, JSON.stringify(registry, null, "\t") + "\n");
 	return { path, count: registry.releases.length };
