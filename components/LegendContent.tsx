@@ -78,6 +78,18 @@ export default function LegendContent({
 			(activeDataset.type === "businessActivity" ||
 				activeDataset.type === "electricVehicleChargers") &&
 			displayOptions[activeDataset.type].measure === "perPopulation";
+		const broadbandMeasure =
+			activeDataset.type === "broadband"
+				? displayOptions.broadband.measure
+				: null;
+		const broadbandLabel =
+			broadbandMeasure === "superfast"
+				? "superfast"
+				: broadbandMeasure === "ultrafast"
+					? "ultrafast"
+					: broadbandMeasure === "gigabit"
+						? "gigabit"
+						: "full fibre";
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -88,7 +100,14 @@ export default function LegendContent({
 					format: (value: number) =>
 						`${value.toFixed(0)} per 100k residents`,
 				}
-			: legend;
+			: broadbandMeasure
+				? {
+						min: 0,
+						max: 100,
+						format: (value: number) =>
+							`${value.toFixed(0)}% ${broadbandLabel}`,
+					}
+				: legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,

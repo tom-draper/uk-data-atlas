@@ -21,6 +21,10 @@ export interface CountMetricOptions extends ColorRangeOption {
 	measure: "total" | "perPopulation";
 }
 
+export interface BroadbandOptions extends ColorRangeOption {
+	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
+}
+
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -52,11 +56,13 @@ export type ChartMapOptions = Omit<
 	| "lifeExpectancy"
 	| "businessActivity"
 	| "electricVehicleChargers"
+	| "broadband"
 > & {
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
 	electricVehicleChargers: CountMetricOptions;
+	broadband: BroadbandOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 };
 

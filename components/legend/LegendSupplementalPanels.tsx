@@ -161,6 +161,31 @@ export function IncomeMeasurePanel({
 	);
 }
 
+const BROADBAND_MEASURES = [
+	["fullFibre", "Full"],
+	["superfast", "Super"],
+	["ultrafast", "Ultra"],
+	["gigabit", "Gig"],
+] as const;
+
+export function BroadbandMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
+	onChange: (
+		measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit",
+	) => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={BROADBAND_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
 const COUNT_METRICS = [
 	["total", "Total"],
 	["perPopulation", "Per pop."],
