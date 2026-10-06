@@ -41,6 +41,13 @@ test("normalises supported coordinate inputs to WGS84 without a boundary release
 			basis: "decimal-places",
 		},
 	});
+	for (const longitude of ["lon", "longitude"])
+		assert.deepEqual(
+			get(`/v1/coordinates:convert?${longitude}=-0.1284&lat=51.5040`).body
+				.data?.point,
+			wgs84.body.data?.point,
+			longitude,
+		);
 	const britishGrid = get(
 		"/v1/coordinates:convert?crs=EPSG:27700&gridref=TQ3000080000",
 	);

@@ -226,6 +226,8 @@ test("charges point lookups once for every requested geography", async (t) => {
 		"/v1/areas:contains?lng=-2&lat=53&geography=ward&geography=localAuthority",
 	);
 	assert.equal(response.headers.get("ratelimit"), '"default";r=4;t=200');
+	const defaulted = await get("/v1/areas:contains?lng=-2&lat=53");
+	assert.equal(defaulted.headers.get("ratelimit"), '"default";r=1;t=500');
 });
 
 test("keys clients behind a trusted proxy by the address the proxy saw", async (t) => {

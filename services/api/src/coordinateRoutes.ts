@@ -2,6 +2,7 @@ import {
 	MAX_STATED_ACCURACY_M,
 	formatBritishGridReference,
 	isProjectedLookupPointInBounds,
+	lookupLongitude,
 	parseLookupCoordinate,
 	parseLookupCrs,
 	parseStatedAccuracy,
@@ -70,7 +71,7 @@ export const handleCoordinateRoutes = ({
 	const point = parseLookupCoordinate(
 		crs,
 		{
-			lng: parsedUrl.searchParams.get("lng") ?? undefined,
+			lng: lookupLongitude(parsedUrl.searchParams),
 			lat: parsedUrl.searchParams.get("lat") ?? undefined,
 			easting: parsedUrl.searchParams.get("easting") ?? undefined,
 			northing: parsedUrl.searchParams.get("northing") ?? undefined,

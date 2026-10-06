@@ -2,6 +2,7 @@ import { DISTANCE_METHOD } from "./areaDistance";
 import {
 	MAX_STATED_ACCURACY_M,
 	describeLookupRelease,
+	lookupLongitude,
 	parseLookupCoordinate,
 	parseLookupCrs,
 	parseLookupRequest,
@@ -50,7 +51,7 @@ export const handleAreaNearRoutes = ({
 	const point = parseLookupCoordinate(
 		crs,
 		{
-			lng: searchParams.get("lng") ?? undefined,
+			lng: lookupLongitude(searchParams),
 			lat: searchParams.get("lat") ?? undefined,
 			easting: searchParams.get("easting") ?? undefined,
 			northing: searchParams.get("northing") ?? undefined,

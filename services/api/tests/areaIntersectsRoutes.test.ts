@@ -102,6 +102,10 @@ test("finds the areas meeting a box, and says how each meets it", () => {
 		assert.equal(latest.status, 200);
 		assert.equal(data(latest).boundaryRelease, "2025-01-en-ward");
 		assert.equal(data(latest).releaseSelection, "latest-published");
+		const implicitLatest = get("bbox=-3,53,0,56&geography=ward");
+		assert.equal(implicitLatest.status, 200);
+		assert.equal(data(implicitLatest).boundaryRelease, "2025-01-en-ward");
+		assert.equal(data(implicitLatest).releaseSelection, "latest-published");
 
 		// A box that cuts across it.
 		const cutting = get(`bbox=-1.5,54.5,0,56&${where}`);
@@ -204,7 +208,6 @@ test("bounds a box query by result count and rejects a malformed one", () => {
 			`bbox=0,54,-1,55&${where}`, // west east of east
 			`bbox=-2,55,-1,54&${where}`, // south north of north
 			`bbox=-200,54,-1,55&${where}`, // off the globe
-			`bbox=-2,54,-1,55&geography=ward`, // no release
 			`bbox=-2,54,-1,55&${where}&limit=0`,
 			`bbox=-2,54,-1,55&${where}&limit=1001`,
 			`bbox=-2,54,-1,55&${where}&limit=1.5`,
