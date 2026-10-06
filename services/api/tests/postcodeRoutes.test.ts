@@ -183,6 +183,12 @@ test("places a postcode in its local authority, ward and constituency as at the 
 		["constituency/2024-07-uk-bgc/E14000001"],
 	]);
 	assert.equal(data.results[1].matches[0].nearBoundary, false);
+	// Provenance is given once per release, not repeated per match.
+	assert.equal(data.results[1].matches[0].geometrySource, undefined);
+	assert.ok(data.results[1].geometrySource);
+	// A transformed coordinate keeps six decimal places, about 0.1 m.
+	for (const degrees of [data.point.lng, data.point.lat])
+		assert.equal(degrees, Math.round(degrees * 1e6) / 1e6);
 	assert.equal(data.source.edition, "2026-08");
 	assert.ok(data.source.attribution.length > 0);
 	assert.equal(data.caution, undefined);
@@ -241,6 +247,55 @@ test("says why a postcode cannot be answered", () => {
 		get("/v1/postcodes/BT11AA").body.detail,
 		NORTHERN_IRELAND_EXCLUSION,
 	);
+});
+
+test("gives only the areas, centroid and attribution in the compact view", () => {
+	const { status, data } = get("/v1/postcodes/ec1a1aa?view=compact");
+	assert.equal(status, 200);
+	assert.deepEqual(Object.keys(data), [
+		"postcode",
+		"status",
+		"country",
+		"point",
+		"date",
+		"results",
+		"source",
+	]);
+	assert.deepEqual(Object.keys(data.point), ["lng", "lat"]);
+	assert.deepEqual(data.results[0], {
+		geography: "localAuthority",
+		boundaryRelease: "2026-05-uk-bgc",
+		status: "matched",
+		matches: [
+			{
+				id: "localAuthority/2026-05-uk-bgc/E09000001",
+				code: "E09000001",
+				name: data.results[0].matches[0].name,
+				nearBoundary: false,
+			},
+		],
+	});
+	assert.deepEqual(Object.keys(data.source), [
+		"title",
+		"edition",
+		"attribution",
+	]);
+	const full = get("/v1/postcodes/ec1a1aa").body;
+	assert.ok(JSON.stringify(data).length < JSON.stringify(full).length / 3);
+
+	assert.match(
+		get("/v1/postcodes/EC1A1AD?geography=ward&view=compact").data.caution,
+		/understate/,
+	);
+	const unplaced = get("/v1/postcodes/GY11AA?view=compact").data;
+	assert.equal(unplaced.point, null);
+	assert.match(unplaced.detail, /no grid reference/);
+	const terminated = get("/v1/postcodes/EC1A1AB?view=compact").data;
+	assert.equal(terminated.terminated, "2019-05");
+
+	const invalid = get("/v1/postcodes/EC1A1AA?view=short");
+	assert.equal(invalid.status, 400);
+	assert.match(invalid.body.detail, /full or compact/);
 });
 
 test("is unavailable until the postcode index is built", () => {
@@ -309,6 +364,33 @@ test("places a batch in the default geographies, flagging undeclared accuracy pe
 		["localAuthority", "ward", "constituency"],
 	);
 	assert.match(data.postcodes[0].caution, /understate/);
+});
+
+test("gives a compact batch with the same entries and summary", () => {
+	const url =
+		"/v1/postcodes:batch?postcode=EC1A1AA,GY11AA,BT11AA&geography=ward";
+	const full = get(url).data;
+	const { status, data } = get(`${url}&view=compact`);
+	assert.equal(status, 200);
+	assert.deepEqual(data.summary, full.summary);
+	assert.deepEqual(data.releases, [
+		{ geography: "ward", boundaryRelease: "2026-05-uk-bgc" },
+	]);
+	const [placed, channel, northernIreland] = data.postcodes;
+	assert.deepEqual(placed.postcode, {
+		postcode: "EC1A 1AA",
+		status: "live",
+		country: "E92000001",
+	});
+	assert.deepEqual(Object.keys(placed.point), ["lng", "lat"]);
+	assert.deepEqual(placed.results.map(matched), [
+		["ward/2026-05-uk-bgc/E05000001"],
+	]);
+	assert.equal(channel.status, "not-placed");
+	assert.equal(northernIreland.detail, NORTHERN_IRELAND_EXCLUSION);
+	assert.equal(data.note, undefined);
+	assert.ok(data.source.attribution.length > 0);
+	assert.equal(get(`${url}&view=everything`).status, 400);
 });
 
 test("refuses a batch it cannot look up", () => {
