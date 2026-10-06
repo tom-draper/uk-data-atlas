@@ -28,6 +28,7 @@ import {
 	CountMetricPanel,
 	ElectionMetricPanel,
 	GhgEmissionsMeasurePanel,
+	HomelessnessMeasurePanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
@@ -216,6 +217,21 @@ export default function LegendPanel({
 								measure === "count"
 									? { min: 1000, max: 14000 }
 									: { min: 1, max: 8 },
+						})
+					}
+				/>
+			)}
+
+			{activeDataset?.type === "homelessness" && (
+				<HomelessnessMeasurePanel
+					measure={controls.displayOptions.homelessness.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("homelessness", {
+							measure,
+							colorRange:
+								measure === "count"
+									? { min: 10, max: 2500 }
+									: { min: 1, max: 12 },
 						})
 					}
 				/>

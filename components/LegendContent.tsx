@@ -146,6 +146,20 @@ export default function LegendContent({
 							: `${value.toFixed(1)}%`,
 				}
 			: null;
+		const homelessnessMeasure =
+			activeDataset.type === "homelessness"
+				? displayOptions.homelessness.measure
+				: null;
+		const homelessnessLegend = homelessnessMeasure
+			? {
+					min: 0,
+					max: homelessnessMeasure === "count" ? 8000 : 20,
+					format: (value: number) =>
+						homelessnessMeasure === "count"
+							? `${value.toLocaleString()} households in TA`
+							: `${value.toFixed(1)} per 1k households`,
+				}
+			: null;
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -170,7 +184,8 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: (claimantCountLegend ??
+					: (homelessnessLegend ??
+						claimantCountLegend ??
 						unemploymentLegend ??
 						ghgLegend ??
 						legend);
@@ -198,6 +213,7 @@ export default function LegendContent({
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
 				formatLabel={
+					homelessnessLegend?.format ??
 					claimantCountLegend?.format ??
 					unemploymentLegend?.format ??
 					ghgLegend?.format ??
