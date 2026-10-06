@@ -165,10 +165,11 @@ updated against a local build on 2026-09-30.
    Serve them as documents linked from the resources they describe, not as a
    parallel set of query routes.
 
-## Surface: 93 paths to a front door
+## Surface: 87 paths to a front door
 
 The API had 93 documented paths on 2026-09-29, and 89 after the first merges
-below. Many answer the same question in slightly different ways, or expose
+below. Four area and location report paths have since folded into canonical
+resources, leaving 87. Many answer the same question in slightly different ways, or expose
 build internals as routes. Proposed shape:
 
 ### Front door
@@ -201,9 +202,9 @@ build internals as routes. Proposed shape:
   `/relationships`, and `/translations` does the conversion.
 - Done: `/places`, `/areas?q=` and `/areas:resolve` were three name searches.
   `/places` is the only one; `/areas` is a plain paged listing.
-- Started: `dossier` is `include=dossier` on the area. `capabilities`,
-  `citation` and `geometry/metadata` on an area, and `capabilities` on a
-  location, still to become `include=` options.
+- Done: `dossier`, `capabilities`, `citation` and `metrics` are `include=`
+  options on an area; location capabilities are `include=capabilities` on the
+  location.
 - Done: `/series`, `/change`, `/rankings`, `/compare` and `/aggregate`
   default the partition as `value` does: a geography the place or the
   measure leaves no choice about, its newest boundary year and its latest
