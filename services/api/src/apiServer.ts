@@ -344,7 +344,6 @@ export const createApiServer = (
 				}
 			} catch (error) {
 				failure = error;
-				metrics.failures.inc({ route: matched.route });
 				result = httpResponse({ method, headers: {} }, () => {
 					answered = problem(
 						500,
@@ -357,69 +356,100 @@ export const createApiServer = (
 			}
 		}
 
-		const headers: Record<string, string> = {
-			...result.headers,
-			...limitHeaders,
-			...deprecationHeaders(matched.operation),
-			"x-request-id": requestId,
-			"atlas-release": releaseId,
-			...(draining ? { connection: "close" } : {}),
-		};
-		// Compressed on the libuv thread pool, so a large body does not hold up
-		// every other request while it is encoded.
-		if (
-			result.gzip &&
-			result.body !== undefined &&
-			!isStoredFile(result.body)
-		) {
-			const encoded = await gzipAsync(result.body);
-			result = { ...result, body: encoded };
-			headers["content-length"] = String(encoded.length);
-		}
-		response.writeHead(result.status, headers);
-		if (isStoredFile(result.body)) sendFile(result.body, response);
-		else response.end(result.body);
-
-		const durationSeconds = (performance.now() - startedAt) / 1000;
-		const bytes = result.body ? bodyBytes(result.body) : 0;
-		metrics.observe({
-			route: matched.route,
-			method,
-			status: result.status,
-			durationSeconds,
-			bytes,
-		});
-		const code =
-			answered && "code" in answered.body
-				? answered.body.code
-				: undefined;
-		const entry = {
-			requestId,
-			method,
-			route: matched.route,
-			path: pathname,
-			status: result.status,
-			durationMs: Math.round(durationSeconds * 1000 * 10) / 10,
-			bytes,
-			...(code ? { code } : {}),
-		};
-		if (failure !== undefined) {
-			log?.({
-				level: "error",
-				event: "request.failed",
-				...entry,
-				error: errorFields(failure),
-			});
-			options.onError?.(failure, {
+		const entryFor = (status: number, bytes: number) => {
+			const code =
+				answered && "code" in answered.body
+					? answered.body.code
+					: undefined;
+			return {
 				requestId,
 				method,
 				route: matched.route,
 				path: pathname,
+				status,
+				durationMs:
+					Math.round((performance.now() - startedAt) * 10) / 10,
+				bytes,
+				...(code ? { code } : {}),
+			};
+		};
+		const reportFailure = (
+			error: unknown,
+			entry: ReturnType<typeof entryFor>,
+		) => {
+			// Observability must not turn a recoverable request failure into a
+			// process-wide one. Each sink is best effort and independent.
+			try {
+				metrics.failures.inc({ route: matched.route });
+			} catch {}
+			try {
+				log?.({
+					level: "error",
+					event: "request.failed",
+					...entry,
+					error: errorFields(error),
+				});
+			} catch {}
+			try {
+				options.onError?.(error, {
+					requestId,
+					method,
+					route: matched.route,
+					path: pathname,
+				});
+			} catch {}
+		};
+		try {
+			const headers: Record<string, string> = {
+				...result.headers,
+				...limitHeaders,
+				...deprecationHeaders(matched.operation),
+				"x-request-id": requestId,
+				"atlas-release": releaseId,
+				...(draining ? { connection: "close" } : {}),
+			};
+			// Compressed on the libuv thread pool, so a large body does not hold up
+			// every other request while it is encoded.
+			if (
+				result.gzip &&
+				result.body !== undefined &&
+				!isStoredFile(result.body)
+			) {
+				const encoded = await gzipAsync(result.body);
+				result = { ...result, body: encoded };
+				headers["content-length"] = String(encoded.length);
+			}
+			response.writeHead(result.status, headers);
+			if (isStoredFile(result.body)) sendFile(result.body, response);
+			else response.end(result.body);
+
+			const durationSeconds = (performance.now() - startedAt) / 1000;
+			const bytes = result.body ? bodyBytes(result.body) : 0;
+			metrics.observe({
+				route: matched.route,
+				method,
+				status: result.status,
+				durationSeconds,
+				bytes,
 			});
-		} else if (result.status >= 500) {
-			log?.({ level: "warn", event: "request.unavailable", ...entry });
-		} else if (options.accessLog) {
-			log?.({ level: "info", event: "request", ...entry });
+			const entry = entryFor(result.status, bytes);
+			if (failure !== undefined) reportFailure(failure, entry);
+			else if (result.status >= 500)
+				log?.({
+					level: "warn",
+					event: "request.unavailable",
+					...entry,
+				});
+			else if (options.accessLog)
+				log?.({ level: "info", event: "request", ...entry });
+		} catch (error) {
+			// Headers may be invalid or a client may disappear while bytes are being
+			// written. A response can no longer be made trustworthy here, so close it
+			// and retain the failure without letting the async request escape.
+			try {
+				response.destroy();
+			} catch {}
+			reportFailure(error, entryFor(result.status, 0));
 		}
 	};
 

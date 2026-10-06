@@ -153,6 +153,31 @@ test("answers a failing handler with a 500 that can be found in the logs", async
 	assert.equal((await get("/v1/geographies")).status, 200);
 });
 
+test("contains a failure while finalising an otherwise successful response", async (t) => {
+	let failAccessLog = true;
+	const reported: unknown[] = [];
+	const { get, logged } = await serve(t, {
+		accessLog: true,
+		log: (entry) => {
+			if (failAccessLog && entry.event === "request")
+				throw new Error("log sink unavailable");
+			logged.push(entry);
+		},
+		onError: (error) => reported.push(error),
+	});
+	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal(reported.length, 1);
+	assert.match((reported[0] as Error).message, /log sink unavailable/);
+	assert.ok(
+		logged.some((entry) => entry.event === "request.failed"),
+		"the finalisation failure is recorded",
+	);
+
+	// A best-effort logging failure does not poison the server's request loop.
+	failAccessLog = false;
+	assert.equal((await get("/v1/geographies")).status, 200);
+});
+
 test("limits each client and tells it when to come back", async (t) => {
 	const { get, server } = await serve(t, {
 		rateLimit: { capacity: 2, refillPerSecond: 0.01 },
