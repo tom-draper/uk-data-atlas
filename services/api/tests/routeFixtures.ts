@@ -30,9 +30,10 @@ import { compileAreaSearchIndex } from "../src/areaSearch";
 import { compilePlaceIndex } from "../src/placeIndex";
 import { createRelationshipPathIndex } from "../src/relationshipPaths";
 import {
+	compileOperationTemplates,
 	createOperationMatcher,
-	readOperationTemplates,
 } from "../src/operationTemplates";
+import { parse } from "yaml";
 
 /**
  * What a test context is built from: route resources, plus the raw lookups
@@ -172,7 +173,7 @@ export const testContext = (
 			inputs.operationMatcher ??
 			(inputs.openapiDocument
 				? createOperationMatcher(
-						readOperationTemplates(inputs.openapiDocument),
+						compileOperationTemplates(parse(inputs.openapiDocument)),
 					)
 				: undefined),
 		geographyResolver:

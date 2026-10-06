@@ -4,7 +4,7 @@ import {
 	isGeometryTier,
 	simplifyGeometry,
 } from "./simplifyGeometry";
-import { cursorFor, keyFromCursor, nextPageHref } from "./pagination";
+import { cursorFor, nextPageHref, readCursor } from "./pagination";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
@@ -77,12 +77,9 @@ export const handleAreaIntersectsRoutes = ({
 			`limit must be a whole number from 1 to ${MAX_INTERSECTS_LIMIT}.`,
 		);
 	}
-	const cursor = parsedUrl.searchParams.get("cursor");
-	const after = cursor === null ? undefined : keyFromCursor(cursor);
-	if (cursor !== null && after === undefined)
-		return problem(400, "Invalid Query", "cursor is invalid.", {
-			code: "invalid_cursor",
-		});
+	const cursor = readCursor(parsedUrl);
+	if ("problem" in cursor) return cursor.problem;
+	const after = cursor.key;
 	const current =
 		requestedRelease === "latest"
 			? latestPublishedBoundaryRelease(context, geography)

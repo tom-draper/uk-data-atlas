@@ -5,6 +5,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { observationPartitionKey } from "../../src/measureCompatibility";
 import { isMeasureTable } from "../../src/observationTables";
+import { openapiDocumentHash } from "../../src/operationTemplates";
 import {
 	readMeasureTotals,
 	readValidationWaivers,
@@ -190,5 +191,15 @@ test("builds measure compatibility from the current observations and areas", () 
 		stale,
 		[],
 		"rebuild measure compatibility: pnpm build:measure-compatibility",
+	);
+});
+
+test("compiles the operations from the current OpenAPI document", () => {
+	assert.equal(
+		read("operations.json").inputs.openapiDocument,
+		openapiDocumentHash(
+			readFileSync(join(apiRoot, "openapi.yaml"), "utf8"),
+		),
+		"rebuild the operations: pnpm build:operations",
 	);
 });

@@ -39,6 +39,7 @@ import {
 	readExportManifest,
 	readLookupManifest,
 	readMeasureCompatibility,
+	readOperations,
 	readValidationReport,
 } from "./catalogueManifestLoader";
 import { readMapAssets, readMapResources } from "./mapResourceLoader";
@@ -47,7 +48,6 @@ import { createTerrainAsyncProvider } from "./terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import {
 	createOperationMatcher,
-	readOperationTemplates,
 } from "./operationTemplates";
 
 export type ApiCatalogues = Omit<
@@ -226,7 +226,7 @@ export const readApiCatalogues = (
 		readFileSync(resolve(apiRoot, "openapi.yaml"), "utf8"),
 	);
 	const operationMatcher = stage("openapi-operation-matcher", () =>
-		createOperationMatcher(readOperationTemplates(openapiDocument)),
+		createOperationMatcher(readOperations(apiRoot, openapiDocument).operations),
 	);
 	const validationReport = stage("validation-report", () =>
 		readValidationReport(apiRoot),

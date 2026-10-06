@@ -4,19 +4,14 @@ import {
 	refused,
 	resolveObservations,
 } from "./observationResolution/observationPlan";
-import { rankObservations, readRankingOrder } from "./ranking";
+import { rankingOf, readRankingOrder } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import {
 	defaultSource,
 	publishedPartitions,
 	statedDefaults,
 } from "./dataDefaults";
-import {
-	cursorFor,
-	keyFromCursor,
-	MAX_PAGE_SIZE,
-	readPageSize,
-} from "./pagination";
+import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -113,8 +108,8 @@ export const handleDataRankingRoutes = ({
 			`The observation artifact for ${measureId} is missing, or does not contain the catalogue's declared source period.`,
 		);
 	}
-	const numericRecords = observations.records.filter(isNumericObservation);
-	if (numericRecords.length !== observations.records.length) {
+	const numericRecords = observations.records;
+	if (!numericRecords.every(isNumericObservation)) {
 		return problem(
 			503,
 			"Catalogue Unavailable",
@@ -125,39 +120,11 @@ export const handleDataRankingRoutes = ({
 	if (!order) {
 		return problem(400, "Invalid Query", "order must be asc or desc.");
 	}
-	const ranked = rankObservations(numericRecords, order);
-	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
-	if (pageSize === undefined) {
-		return problem(
-			400,
-			"Invalid Query",
-			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
-		);
-	}
-	const cursor = parsedUrl.searchParams.get("cursor");
-	const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
-	if (cursor && !cursorCode) {
-		return problem(400, "Invalid Query", "cursor is invalid.", {
-			code: "invalid_cursor",
-		});
-	}
-	const offset = cursorCode
-		? ranked.findIndex((record) => record.areaCode === cursorCode) + 1
-		: 0;
-	if (cursorCode && offset === 0) {
-		return problem(
-			400,
-			"Invalid Query",
-			"cursor is not valid for this ranking query.",
-			{ code: "invalid_cursor" },
-		);
-	}
-	const records = ranked.slice(offset, offset + pageSize);
-	const lastRecord = records.at(-1);
-	const nextCursor =
-		offset + records.length < ranked.length && lastRecord
-			? cursorFor(lastRecord.areaCode)
-			: null;
+	const page = paginate(parsedUrl, rankingOf(numericRecords, order), {
+		keyOf: (record) => record.areaCode,
+		subject: `${measureId} ranking`,
+	});
+	if ("problem" in page) return page.problem;
 	return {
 		status: 200,
 		body: envelope(
@@ -180,9 +147,9 @@ export const handleDataRankingRoutes = ({
 					method: "competition",
 					note: "Equal values share a rank; the following rank accounts for every preceding observation (for example 1, 1, 3).",
 				},
-				records,
+				records: page.items,
 			},
-			nextCursor,
+			page.nextCursor,
 		),
 	};
 };

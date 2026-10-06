@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { rankObservations } from "../src/ranking";
+import { rankingOf, rankObservations } from "../src/ranking";
 
 test("uses competition ranking and orders ties by area code", () => {
 	const records = [
@@ -24,4 +24,20 @@ test("uses competition ranking and orders ties by area code", () => {
 			["B", 2],
 		],
 	);
+});
+
+test("ranks a partition once for every page read from it", () => {
+	const records = [
+		{ areaCode: "C", value: 2, status: "observed" as const },
+		{ areaCode: "B", value: 4, status: "observed" as const },
+		{ areaCode: "A", value: 4, status: "observed" as const },
+	];
+	const ranking = rankingOf(records, "desc");
+	assert.equal(rankingOf(records, "desc"), ranking);
+	assert.notEqual(rankingOf(records, "asc"), ranking);
+	assert.deepEqual(ranking.slice(0, 3), rankObservations(records, "desc"));
+	assert.equal(ranking.positionOf("C"), 2);
+	assert.equal(ranking.positionOf("Z"), -1);
+	// An equal but distinct partition is ranked afresh.
+	assert.notEqual(rankingOf([...records], "desc"), ranking);
 });

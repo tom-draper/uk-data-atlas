@@ -18,13 +18,7 @@ import {
 	sourceExactProvenance,
 	type CallerSelectedGeometry,
 } from "./sourceExactProvenance";
-import {
-	cursorFor,
-	keyFromCursor,
-	MAX_PAGE_SIZE,
-	nextPageHref,
-	readPageSize,
-} from "./pagination";
+import { nextPageHref, paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
@@ -243,33 +237,12 @@ export const handleDataRoutes = ({
 	const matches = areaCode
 		? sourceRecords.filter((record) => record.areaCode === areaCode)
 		: sourceRecords;
-	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
-	if (pageSize === undefined) {
-		return problem(
-			400,
-			"Invalid Query",
-			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
-		);
-	}
-	const cursor = parsedUrl.searchParams.get("cursor");
-	const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
-	if (cursor && !cursorCode) {
-		return problem(400, "Invalid Query", "cursor is invalid.", {
-			code: "invalid_cursor",
-		});
-	}
-	const offset = cursorCode
-		? matches.findIndex((record) => record.areaCode === cursorCode) + 1
-		: 0;
-	if (cursorCode && offset === 0) {
-		return problem(
-			400,
-			"Invalid Query",
-			"cursor is not valid for this population query.",
-			{ code: "invalid_cursor" },
-		);
-	}
-	const records = matches.slice(offset, offset + pageSize);
+	const page = paginate(parsedUrl, matches, {
+		keyOf: (record) => record.areaCode,
+		subject: `${measureId} query`,
+	});
+	if ("problem" in page) return page.problem;
+	const { items: records, nextCursor } = page;
 	const recordsWithAreas =
 		include === "area"
 			? records.map((record) => {
@@ -312,11 +285,6 @@ export const handleDataRoutes = ({
 	const exportRecords = resolvedRecords.filter(
 		(record): record is MeasureExportRecord => isNumericObservation(record),
 	);
-	const lastRecord = records.at(-1);
-	const nextCursor =
-		offset + records.length < matches.length && lastRecord
-			? cursorFor(lastRecord.areaCode)
-			: null;
 	if (requestedFormat !== "json") {
 		const exported = exportMeasureRecords(
 			requestedFormat as TabularFormat,

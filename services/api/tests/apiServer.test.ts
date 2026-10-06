@@ -6,7 +6,9 @@ import { join } from "node:path";
 import type { AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
+import { createOperationMatcher } from "../src/operationTemplates";
 import type { RouteContext } from "../src/routing";
+import { compileOperations } from "../scripts/build-operations";
 import type { LogEntry, ServerOptions } from "../src/serverOptions";
 import {
 	atlasRelease,
@@ -18,6 +20,9 @@ const openapiDocument = readFileSync(
 	new URL("../openapi.yaml", import.meta.url),
 	"utf8",
 );
+const operationMatcher = createOperationMatcher(
+	compileOperations(openapiDocument).operations,
+);
 
 const serve = async (
 	t: TestContext,
@@ -25,6 +30,7 @@ const serve = async (
 	context: RouteContext = testContext({
 		atlasRelease,
 		openapiDocument,
+		operationMatcher,
 		areaLookup: compatibleWardAreaLookup,
 	}),
 ) => {
@@ -108,7 +114,7 @@ test("refuses an undeclared query parameter and suggests the declared spelling",
 
 test("answers a failing handler with a 500 that can be found in the logs", async (t) => {
 	let broken = false;
-	const context = testContext({ openapiDocument });
+	const context = testContext({ openapiDocument, operationMatcher });
 	const failing = Object.defineProperty({ ...context }, "atlasRelease", {
 		get() {
 			if (broken) throw new Error("artifact went missing");

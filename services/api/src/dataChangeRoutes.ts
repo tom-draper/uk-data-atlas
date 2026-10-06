@@ -11,12 +11,7 @@ import {
 	type ChangeBasis,
 } from "./change";
 import { sourceSeriesProvenance } from "./sourceExactProvenance";
-import {
-	cursorFor,
-	keyFromCursor,
-	MAX_PAGE_SIZE,
-	readPageSize,
-} from "./pagination";
+import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
@@ -300,38 +295,13 @@ export const handleDataChangeRoutes = ({
 		}
 		records = [record];
 	} else {
-		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
-		if (pageSize === undefined) {
-			return problem(
-				400,
-				"Invalid Query",
-				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
-			);
-		}
-		const cursor = parsedUrl.searchParams.get("cursor");
-		const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
-		if (cursor && !cursorCode) {
-			return problem(400, "Invalid Query", "cursor is invalid.", {
-				code: "invalid_cursor",
-			});
-		}
-		const offset = cursorCode
-			? ranked.findIndex((entry) => entry.areaCode === cursorCode) + 1
-			: 0;
-		if (cursorCode && offset === 0) {
-			return problem(
-				400,
-				"Invalid Query",
-				"cursor is not valid for this change query.",
-				{ code: "invalid_cursor" },
-			);
-		}
-		records = ranked.slice(offset, offset + pageSize);
-		const last = records.at(-1);
-		nextCursor =
-			offset + records.length < ranked.length && last
-				? cursorFor(last.areaCode)
-				: null;
+		const page = paginate(parsedUrl, ranked, {
+			keyOf: (entry) => entry.areaCode,
+			subject: "change query",
+		});
+		if ("problem" in page) return page.problem;
+		records = page.items;
+		nextCursor = page.nextCursor;
 	}
 	const withIntervals = changeSet.changes.some(
 		(change) => change.intervalsOverlap !== undefined,

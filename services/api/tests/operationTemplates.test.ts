@@ -2,16 +2,22 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { parse } from "yaml";
+import { compileOperations } from "../scripts/build-operations";
 import {
+	compileOperationTemplates,
 	createOperationMatcher,
 	deprecationHeaders,
-	readOperationTemplates,
+	openapiDocumentHash,
 	unexpectedQueryParameter,
 } from "../src/operationTemplates";
 
-const templates = readOperationTemplates(
-	readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
+const openapiDocument = readFileSync(
+	new URL("../openapi.yaml", import.meta.url),
+	"utf8",
 );
+const templates = compileOperations(openapiDocument).operations;
+const readOperationTemplates = (yaml: string) =>
+	compileOperationTemplates(parse(yaml));
 const match = createOperationMatcher(templates);
 
 test("labels a request by the operation it reached", () => {
@@ -92,37 +98,53 @@ test("prices an operation by its declared cost, the dearer of two on one path", 
 	assert.equal(dear!.cost, 10);
 });
 
-test("reads every operation's query parameters as a YAML parser does", () => {
-	type Parameter = { $ref?: string; name?: string; in?: string };
-	type Operation = { parameters?: Parameter[] };
-	const document = parse(
-		readFileSync(new URL("../openapi.yaml", import.meta.url), "utf8"),
-	) as {
-		paths: Record<string, Partial<Record<"get" | "post", Operation>>>;
-		components: { parameters: Record<string, Parameter> };
-	};
-	const resolved = (parameter: Parameter) =>
-		parameter.$ref
-			? document.components.parameters[parameter.$ref.split("/").at(-1)!]!
-			: parameter;
-	for (const [path, item] of Object.entries(document.paths))
-		for (const method of ["get", "post"] as const) {
-			const operation = item[method];
-			if (!operation) continue;
-			const declared = (operation.parameters ?? [])
-				.map(resolved)
-				.filter((parameter) => parameter.in === "query")
-				.map((parameter) => parameter.name)
-				.sort();
-			assert.deepEqual(
-				[
-					...(templates.find((template) => template.path === path)
-						?.queryParameters[method] ?? []),
-				].sort(),
-				declared,
-				`${method} ${path}`,
-			);
-		}
+test("reads a query parameter however its YAML is written", () => {
+	const [operation] = readOperationTemplates(
+		[
+			"openapi: 3.1.0",
+			"paths:",
+			"    /styles:",
+			"        parameters:",
+			"            - name: shared",
+			"              in: query",
+			"        get:",
+			"            parameters:",
+			"            -   name: block",
+			"                in: query",
+			"            - { in: query, name: flowInFirst }",
+			"            - {",
+			"                name: flowOverLines,",
+			"                in: query",
+			"              }",
+			'            - $ref: "#/components/parameters/Referenced"',
+			"            - { name: segment, in: path, required: true }",
+			"            x-refused-query-parameters:",
+			"              - release",
+			"components:",
+			"    parameters:",
+			"        Referenced: { name: referenced, in: query }",
+		].join("\n"),
+	);
+	assert.deepEqual(operation, {
+		path: "/styles",
+		queryParameters: {
+			get: [
+				"shared",
+				"block",
+				"flowInFirst",
+				"flowOverLines",
+				"referenced",
+			],
+		},
+		refusedQueryParameters: { get: ["release"] },
+	});
+});
+
+test("records the document it compiled the operations from", () => {
+	assert.equal(
+		compileOperations(openapiDocument).inputs.openapiDocument,
+		openapiDocumentHash(openapiDocument),
+	);
 });
 
 test("leaves a parameter an operation refuses with its reason to the operation", () => {
