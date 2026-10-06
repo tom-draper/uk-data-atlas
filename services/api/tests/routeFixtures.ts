@@ -173,7 +173,9 @@ export const testContext = (
 			inputs.operationMatcher ??
 			(inputs.openapiDocument
 				? createOperationMatcher(
-						compileOperationTemplates(parse(inputs.openapiDocument)),
+						compileOperationTemplates(
+							parse(inputs.openapiDocument),
+						),
 					)
 				: undefined),
 		geographyResolver:
