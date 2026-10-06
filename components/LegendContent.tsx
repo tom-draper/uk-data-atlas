@@ -132,6 +132,20 @@ export default function LegendContent({
 							: `${value.toFixed(1)}%`,
 				}
 			: null;
+		const claimantCountMeasure =
+			activeDataset.type === "claimantCount"
+				? displayOptions.claimantCount.measure
+				: null;
+		const claimantCountLegend = claimantCountMeasure
+			? {
+					min: 0,
+					max: claimantCountMeasure === "count" ? 80000 : 20,
+					format: (value: number) =>
+						claimantCountMeasure === "count"
+							? `${value.toLocaleString()} claimants`
+							: `${value.toFixed(1)}%`,
+				}
+			: null;
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -156,7 +170,7 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: (unemploymentLegend ?? ghgLegend ?? legend);
+					: (claimantCountLegend ?? unemploymentLegend ?? ghgLegend ?? legend);
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
@@ -181,6 +195,7 @@ export default function LegendContent({
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
 				formatLabel={
+					claimantCountLegend?.format ??
 					unemploymentLegend?.format ??
 					ghgLegend?.format ??
 					measureLegend.format

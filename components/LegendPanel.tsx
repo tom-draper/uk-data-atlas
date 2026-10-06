@@ -23,6 +23,7 @@ import {
 } from "./legend/legendData";
 import {
 	AirQualityMeasurePanel,
+	ClaimantCountMeasurePanel,
 	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
@@ -200,6 +201,21 @@ export default function LegendPanel({
 								measure === "count"
 									? { min: 1000, max: 11000 }
 									: { min: 2.2, max: 6.8 },
+						})
+					}
+				/>
+			)}
+
+			{activeDataset?.type === "claimantCount" && (
+				<ClaimantCountMeasurePanel
+					measure={controls.displayOptions.claimantCount.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("claimantCount", {
+							measure,
+							colorRange:
+								measure === "count"
+									? { min: 1000, max: 14000 }
+									: { min: 1, max: 8 },
 						})
 					}
 				/>

@@ -251,6 +251,27 @@ export function UnemploymentMeasurePanel({
 	);
 }
 
+const CLAIMANT_COUNT_MEASURES = [
+	["rate", "Rate"],
+	["count", "Count"],
+] as const;
+
+export function ClaimantCountMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "rate" | "count";
+	onChange: (measure: "rate" | "count") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={CLAIMANT_COUNT_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
 const COUNT_METRICS = [
 	["total", "Total"],
 	["perPopulation", "Per pop."],
