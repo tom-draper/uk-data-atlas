@@ -59,6 +59,11 @@ export type ApiCatalogues = Omit<
 export type CatalogueOptions = {
 	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
 	geometryCacheReleases?: number;
+	/**
+	 * Told when a compiled geometry release no longer matches its source, so
+	 * the release is read from the source instead.
+	 */
+	onStaleCompiledGeometry?: (release: string, path: string) => void;
 	/** Enables the non-persistent EA remote preview provider when set. */
 	terrainRemoteEndpoint?: string;
 	terrainCoverageEndpoint?: string;
@@ -188,7 +193,11 @@ export const readApiCatalogues = (
 		readPostcodeCounts(apiRoot, postcodeIndex, postcodeAreaIndex),
 	);
 	const areaGeometryCache = stage("area-geometry-cache", () =>
-		createAreaGeometryCache(apiRoot, options.geometryCacheReleases),
+		createAreaGeometryCache(
+			apiRoot,
+			options.geometryCacheReleases,
+			options.onStaleCompiledGeometry,
+		),
 	);
 	const placeIndex = stage("place-index", () =>
 		readPlaceIndex(apiRoot, areaInventory, namedLocationInventory),

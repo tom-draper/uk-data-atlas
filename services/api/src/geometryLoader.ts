@@ -13,10 +13,12 @@ export const readGeometrySources = (apiRoot: string): GeometrySourceLookup =>
 export const createAreaGeometryCache = (
 	apiRoot: string,
 	maxReleases?: number,
+	onStaleCompiled?: (release: string, path: string) => void,
 ) =>
 	new AreaGeometryCache(
 		resolve(apiRoot, "../.."),
 		readGeometrySources(apiRoot),
 		maxReleases,
 		resolve(apiRoot, "public", "geometry-store"),
+		onStaleCompiled,
 	);
