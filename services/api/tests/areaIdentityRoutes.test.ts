@@ -25,3 +25,23 @@ test("gets a compiled area by its full identity", () => {
 		aliases: ["Enghraifft ward"],
 	});
 });
+
+test("accepts the common ward abbreviation and identifies its canonical URL", () => {
+	const response = route(
+		"GET",
+		"/v1/areas/wd/2025-01-en-ward/E05000001",
+		registry,
+		geographyInventory,
+		areaLookup,
+	);
+	assert.equal(response.status, 200);
+	assert.equal(
+		response.headers?.["content-location"],
+		"/v1/areas/ward/2025-01-en-ward/E05000001",
+	);
+	assert.equal(
+		"data" in response.body &&
+			(response.body.data as { geography: string }).geography,
+		"ward",
+	);
+});

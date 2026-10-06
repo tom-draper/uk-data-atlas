@@ -59,6 +59,17 @@ test("parses an exact release reference without guessing its parts", () => {
 		assert.equal(parseExactReleaseReference(value), undefined);
 });
 
+test("canonicalises common geography abbreviations in exact references", () => {
+	assert.deepEqual(parseExactReleaseReference("lad/2025-05-uk-bgc"), {
+		geography: "localAuthority",
+		boundaryRelease: "2025-05-uk-bgc",
+	});
+	assert.deepEqual(parseExactReleaseReference("pcon/2024-07-uk-bgc"), {
+		geography: "constituency",
+		boundaryRelease: "2024-07-uk-bgc",
+	});
+});
+
 test("selects the latest release dated on or before the month", () => {
 	const selection = select("ward", "2023-09");
 	assert.equal(selection.status, "selected");

@@ -1,6 +1,7 @@
 import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import { releaseKey } from "./geographyKeys";
+import { canonicalGeography } from "./geography";
 
 type BoundaryRelease = BoundaryRegistry["releases"][number];
 
@@ -104,7 +105,10 @@ export const parseExactReleaseReference = (
 	if (value === null) return undefined;
 	const [geography, boundaryRelease, ...rest] = value.split("/");
 	return geography && boundaryRelease && rest.length === 0
-		? { geography, boundaryRelease }
+		? {
+				geography: canonicalGeography(geography) ?? geography,
+				boundaryRelease,
+			}
 		: undefined;
 };
 
