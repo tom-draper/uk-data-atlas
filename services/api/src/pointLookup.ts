@@ -80,6 +80,12 @@ const coordinatePart = (
 
 const roundM = (metres: number) => Math.round(metres * 100) / 100;
 
+/**
+ * A transformed WGS 84 degree to six decimal places, about 0.1 m on the
+ * ground: finer than any grid input or transformation can support.
+ */
+const roundDegrees = (degrees: number) => Math.round(degrees * 1e6) / 1e6;
+
 /** The deliberately small CRS vocabulary the public point endpoints accept. */
 export const parseLookupCrs = (
 	text: string | null,
@@ -334,8 +340,8 @@ const projectedLookupPointFromParts = (
 					(gridReference.cellSizeM * Math.SQRT2) / 2,
 				);
 	return {
-		lng: position[0],
-		lat: position[1],
+		lng: roundDegrees(position[0]!),
+		lat: roundDegrees(position[1]!),
 		crs: "EPSG:4326",
 		input: {
 			crs,

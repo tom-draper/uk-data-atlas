@@ -3,6 +3,8 @@ import {
 	describeLookupRelease,
 	locatePoints,
 	parseLookupRequest,
+	type LookupPoint,
+	type PointResult,
 } from "./pointLookup";
 import {
 	compactPostcode,
@@ -137,6 +139,84 @@ const postcodeLookupRequest = (
 };
 
 /**
+ * How much of an answer a postcode route gives: everything that explains it,
+ * or `compact`, only what most callers read (each area, the centroid and the
+ * required attribution).
+ */
+type PostcodeView = "full" | "compact";
+
+const postcodeView = (query: URLSearchParams): PostcodeView | ApiResponse => {
+	const view = query.get("view");
+	if (view === null || view === "full") return "full";
+	if (view === "compact") return "compact";
+	return problem(
+		400,
+		"Invalid Query",
+		`view must be full or compact; ${JSON.stringify(view)} is neither.`,
+	);
+};
+
+/**
+ * A point's matches without the release-wide geometry provenance each
+ * repeats; the release states it once, and a match keeps only the corrections
+ * that moved that area.
+ */
+const matchesWithoutProvenance = (matches: PointResult["matches"]) =>
+	matches.map(({ geometrySource, ...match }) => ({
+		...match,
+		...(geometrySource.corrections
+			? { corrections: geometrySource.corrections }
+			: {}),
+	}));
+
+/**
+ * Whether a result's detail is about the point rather than its release. A
+ * batch explains a release that could not be read once, in releases.
+ */
+const isPointDetail = (status: PointResult["status"]) =>
+	status === "no-match" || status === "outside-coverage";
+
+/**
+ * A lookup result as the compact view gives it: each area and no more. A
+ * batch passes `pointDetailOnly`, as it states release problems once.
+ */
+const compactResult = (result: PointResult, pointDetailOnly = false) => ({
+	geography: result.geography,
+	...(result.boundaryRelease !== undefined
+		? { boundaryRelease: result.boundaryRelease }
+		: {}),
+	status: result.status,
+	...(result.detail !== undefined &&
+	(pointDetailOnly
+		? isPointDetail(result.status)
+		: result.status !== "matched")
+		? { detail: result.detail }
+		: {}),
+	matches: result.matches.map(({ id, code, name, nearBoundary }) => ({
+		id,
+		code,
+		name,
+		nearBoundary,
+	})),
+});
+
+const compactPoint = ({ lng, lat }: LookupPoint) => ({ lng, lat });
+
+const compactSource = ({
+	title,
+	edition,
+	attribution,
+}: PostcodeSourceSummary) => ({ title, edition, attribution });
+
+/** The directory's record, as the compact view gives it. */
+const compactRecord = (record: PostcodeRecord) => ({
+	postcode: record.postcode,
+	status: record.status,
+	...(record.terminated ? { terminated: record.terminated } : {}),
+	country: record.country,
+});
+
+/**
  * A unit postcode, where its centroid lies and the areas containing it: the
  * way most people name where they are, resolved through the same point lookup
  * as any coordinate.
@@ -153,6 +233,8 @@ export const handlePostcodeRoutes = ({
 		segments[1] !== "postcodes"
 	)
 		return undefined;
+	const view = postcodeView(parsedUrl.searchParams);
+	if (typeof view !== "string") return view;
 	const found = findPostcode(context, segments[2]!);
 	if ("status" in found) return found;
 	const { geographyResolver } = context;
@@ -168,10 +250,15 @@ export const handlePostcodeRoutes = ({
 		return {
 			status: 200,
 			body: envelope(releaseId, {
-				...record,
+				...(view === "compact"
+					? { ...compactRecord(record), point: null }
+					: record),
 				results: [],
 				detail: "The directory gives this postcode no grid reference, so it cannot be placed in any area.",
-				source: sourceSummary,
+				source:
+					view === "compact"
+						? compactSource(sourceSummary)
+						: sourceSummary,
 			}),
 		};
 	const point = postcodeLookupPoint(record.centroid);
@@ -181,6 +268,22 @@ export const handlePostcodeRoutes = ({
 		[point],
 		[compactPostcode(record.postcode)],
 	) as [ReturnType<typeof locatePoints>[number]];
+	const caution =
+		record.centroid.positionalQuality.accuracyM === null
+			? { caution: UNDECLARED_ACCURACY }
+			: {};
+	if (view === "compact")
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...compactRecord(record),
+				point: compactPoint(point),
+				date: request.date!.date,
+				results: results.map((result) => compactResult(result)),
+				...caution,
+				source: compactSource(sourceSummary),
+			}),
+		};
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -190,15 +293,17 @@ export const handlePostcodeRoutes = ({
 			dateBasis,
 			pointCountry: country,
 			boundaryRule: "included",
-			results: request.releases.map((lookupRelease, at) => ({
-				...describeLookupRelease(geographyResolver, lookupRelease),
-				...results[at]!,
-			})),
-			...(record.centroid.positionalQuality.accuracyM === null
-				? { caution: UNDECLARED_ACCURACY }
-				: {}),
+			results: request.releases.map((lookupRelease, at) => {
+				const result = results[at]!;
+				return {
+					...describeLookupRelease(geographyResolver, lookupRelease),
+					...result,
+					matches: matchesWithoutProvenance(result.matches),
+				};
+			}),
+			...caution,
 			source: sourceSummary,
-			note: `${POSTCODE_NOTE} ${CONTAINMENT_NOTE}`,
+			note: `${POSTCODE_NOTE} ${CONTAINMENT_NOTE} Geometry provenance is given once per result; a match lists corrections only where one moved that area.`,
 		}),
 	};
 };
@@ -279,6 +384,8 @@ export const handlePostcodeBatchRoutes = ({
 		segments[1] !== "postcodes:batch"
 	)
 		return undefined;
+	const view = postcodeView(parsedUrl.searchParams);
+	if (typeof view !== "string") return view;
 	const inputs = parsedUrl.searchParams
 		.getAll("postcode")
 		.flatMap((value) => value.split(","))
@@ -346,84 +453,110 @@ export const handlePostcodeBatchRoutes = ({
 			};
 		const { record } = outcome;
 		const at = locatedAt.get(index);
+		const postcode = view === "compact" ? compactRecord(record) : record;
 		if (!at || !record.centroid)
 			return {
 				index,
 				input: inputs[index]!,
 				status: "not-placed" as const,
-				postcode: record,
+				postcode,
 				detail: "The directory gives this postcode no grid reference, so it cannot be placed in any area.",
+			};
+		const caution =
+			record.centroid.positionalQuality.accuracyM === null
+				? { caution: UNDECLARED_ACCURACY }
+				: {};
+		if (view === "compact")
+			return {
+				index,
+				input: inputs[index]!,
+				status: "placed" as const,
+				postcode,
+				point: compactPoint(at.point),
+				results: at.results.map((result) =>
+					compactResult(result, true),
+				),
+				...caution,
 			};
 		return {
 			index,
 			input: inputs[index]!,
 			status: "placed" as const,
-			postcode: record,
+			postcode,
 			point: at.point,
 			pointCountry: at.country,
 			results: at.results.map(({ matches, detail, ...result }) => ({
 				...result,
 				// A release that could not be read explains itself once, in
 				// releases; only an answer about this point is repeated here.
-				...(detail !== undefined &&
-				(result.status === "no-match" ||
-					result.status === "outside-coverage")
+				...(detail !== undefined && isPointDetail(result.status)
 					? { detail }
 					: {}),
-				matches: matches.map(({ geometrySource, ...match }) => ({
-					...match,
-					...(geometrySource.corrections
-						? { corrections: geometrySource.corrections }
-						: {}),
-				})),
+				matches: matchesWithoutProvenance(matches),
 			})),
-			...(record.centroid.positionalQuality.accuracyM === null
-				? { caution: UNDECLARED_ACCURACY }
-				: {}),
+			...caution,
 		};
 	});
+	const releases = request.releases.map((lookupRelease) =>
+		describeLookupRelease(geographyResolver, lookupRelease),
+	);
+	const summary = {
+		postcodes: inputs.length,
+		placed: placed.length,
+		notPlaced: outcomes.filter(
+			(outcome) => outcome.status === "found" && !outcome.record.centroid,
+		).length,
+		invalid: count("invalid"),
+		notFound: count("not-found"),
+		notServed: count("not-served"),
+		lookups: statuses.length,
+		matched: statuses.filter((status) => status === "matched").length,
+		noMatch: statuses.filter((status) => status === "no-match").length,
+		outsideCoverage: statuses.filter(
+			(status) => status === "outside-coverage",
+		).length,
+		unresolved: statuses.filter(
+			(status) =>
+				status !== "matched" &&
+				status !== "no-match" &&
+				status !== "outside-coverage",
+		).length,
+		nearBoundary: located.reduce(
+			(total, { results }) =>
+				total +
+				results.filter((result) =>
+					result.matches.some((match) => match.nearBoundary),
+				).length,
+			0,
+		),
+	};
+	if (view === "compact")
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				date: request.date!.date,
+				releases: releases.map((release) => ({
+					geography: release.geography,
+					...("boundaryRelease" in release
+						? { boundaryRelease: release.boundaryRelease }
+						: {}),
+					...(release.status !== undefined
+						? { status: release.status, detail: release.detail }
+						: {}),
+				})),
+				summary,
+				postcodes: entries,
+				source: compactSource(source),
+			}),
+		};
 	return {
 		status: 200,
 		body: envelope(releaseId, {
 			date: request.date!.date,
 			dateBasis,
 			boundaryRule: "included",
-			releases: request.releases.map((lookupRelease) =>
-				describeLookupRelease(geographyResolver, lookupRelease),
-			),
-			summary: {
-				postcodes: inputs.length,
-				placed: placed.length,
-				notPlaced: outcomes.filter(
-					(outcome) =>
-						outcome.status === "found" && !outcome.record.centroid,
-				).length,
-				invalid: count("invalid"),
-				notFound: count("not-found"),
-				notServed: count("not-served"),
-				lookups: statuses.length,
-				matched: statuses.filter((status) => status === "matched")
-					.length,
-				noMatch: statuses.filter((status) => status === "no-match")
-					.length,
-				outsideCoverage: statuses.filter(
-					(status) => status === "outside-coverage",
-				).length,
-				unresolved: statuses.filter(
-					(status) =>
-						status !== "matched" &&
-						status !== "no-match" &&
-						status !== "outside-coverage",
-				).length,
-				nearBoundary: located.reduce(
-					(total, { results }) =>
-						total +
-						results.filter((result) =>
-							result.matches.some((match) => match.nearBoundary),
-						).length,
-					0,
-				),
-			},
+			releases,
+			summary,
 			postcodes: entries,
 			source,
 			note: `${POSTCODE_NOTE} ${CONTAINMENT_NOTE} Release-wide geometry provenance is given once in releases; a match lists corrections only where one moved that area.`,

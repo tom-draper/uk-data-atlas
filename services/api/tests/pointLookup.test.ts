@@ -23,8 +23,9 @@ test("normalises British National Grid input while retaining its transformation"
 			areaOfUse: "Great Britain onshore and the Isle of Man.",
 		},
 	});
-	assert.ok(Math.abs((point?.lng ?? 0) - -0.12835394) < 1e-7);
-	assert.ok(Math.abs((point?.lat ?? 0) - 51.503990828) < 1e-7);
+	// Six decimal places, about 0.1 m, is all a transformed point keeps.
+	assert.equal(point?.lng, -0.128354);
+	assert.equal(point?.lat, 51.503991);
 	assert.deepEqual(point?.precision, {
 		decimalPlaces: { easting: 1, northing: 2 },
 		uncertaintyM: 6,
@@ -37,8 +38,8 @@ test("reads Irish Grid precision conservatively and accepts no other input CRS",
 		easting: "333500",
 		northing: "373500",
 	});
-	assert.ok(Math.abs((point?.lng ?? 0) - -5.935443406) < 1e-7);
-	assert.ok(Math.abs((point?.lat ?? 0) - 54.592112534) < 1e-7);
+	assert.equal(point?.lng, -5.935443);
+	assert.equal(point?.lat, 54.592113);
 	assert.deepEqual(point?.precision, {
 		decimalPlaces: { easting: 0, northing: 0 },
 		uncertaintyM: 1.5,

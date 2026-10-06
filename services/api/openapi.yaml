@@ -3442,6 +3442,11 @@ paths:
         Northern Ireland postcodes are licensed by Land and Property Services
         for internal business use only and are refused with 451. The source's
         required attribution is returned with every answer.
+
+
+        `view=compact` returns only the postcode, its WGS 84 point, each
+        area it is placed in and the attribution, for callers that do not
+        need the provenance and tolerances; it is a fraction of the size.
       parameters:
         - name: postcode
           in: path
@@ -3451,6 +3456,7 @@ paths:
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
+        - $ref: "#/components/parameters/PostcodeView"
       responses:
         "200":
           description: The postcode, its centroid and the areas containing it.
@@ -3477,8 +3483,8 @@ paths:
                       description: Within the building of the matched address closest to the postcode mean.
                       accuracyM: 0.5
                   point:
-                    lng: -0.1415876
-                    lat: 51.5010089
+                    lng: -0.141588
+                    lat: 51.501009
                     crs: EPSG:4326
                     precision:
                       uncertaintyM: 2.5
@@ -3575,7 +3581,8 @@ paths:
         Placed centroids are tested together, so each release's geometry is
         read once for the batch, and release-wide provenance is given once in
         `releases`. `summary` counts each postcode status and each lookup
-        outcome.
+        outcome. `view=compact` keeps the entries and summary but gives each
+        postcode only its record, point and areas, as for a single postcode.
       parameters:
         - name: postcode
           in: query
@@ -3592,6 +3599,7 @@ paths:
         - $ref: "#/components/parameters/PointLookupGeography"
         - $ref: "#/components/parameters/PointLookupRelease"
         - $ref: "#/components/parameters/PointLookupDate"
+        - $ref: "#/components/parameters/PostcodeView"
       responses:
         "200":
           description: Each postcode's entry, and a summary of the batch.
@@ -8479,6 +8487,17 @@ components:
         before it; without a date it uses the newest unambiguous published
         release. The country boundaries used to place a point that matches
         nothing are chosen the same way.
+    PostcodeView:
+      name: view
+      in: query
+      required: false
+      schema: { enum: [full, compact], default: full }
+      description: >
+        `full` explains each answer: the centroid's positional quality, the
+        transformation, each release's selection, resolution and provenance,
+        and each match's distance to its boundary. `compact` gives only the
+        postcode, its WGS 84 point, each area's id, code, name and
+        `nearBoundary`, any `caution`, and the source's attribution.
     PointLookupAccuracy:
       name: accuracy
       in: query
@@ -10833,7 +10852,82 @@ components:
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/PostcodeLookup"
+              anyOf:
+                - $ref: "#/components/schemas/PostcodeLookup"
+                - $ref: "#/components/schemas/CompactPostcodeLookup"
+
+    CompactPostcodeRecord:
+      type: object
+      required: [postcode, status, country]
+      properties:
+        postcode: { type: string }
+        status: { enum: [live, terminated] }
+        terminated: { type: string, description: "YYYY-MM, when terminated." }
+        country: { type: string }
+
+    CompactPointLookupResult:
+      type: object
+      required: [geography, status, matches]
+      properties:
+        geography: { type: string }
+        boundaryRelease: { type: string }
+        status:
+          type: string
+          enum:
+            [
+              matched,
+              no-match,
+              outside-coverage,
+              ambiguous-release,
+              no-release-for-date,
+              geometry-unavailable,
+            ]
+        detail: { type: string }
+        matches:
+          type: array
+          items:
+            type: object
+            required: [id, code, name, nearBoundary]
+            properties:
+              id: { type: string }
+              code: { type: string }
+              name: { type: string }
+              nearBoundary: { type: boolean }
+
+    CompactPostcodeSource:
+      type: object
+      required: [title, edition, attribution]
+      properties:
+        title: { type: string }
+        edition: { type: string }
+        attribution:
+          type: array
+          items: { type: string }
+
+    CompactPostcodeLookup:
+      description: A postcode lookup with `view=compact`.
+      allOf:
+        - $ref: "#/components/schemas/CompactPostcodeRecord"
+        - type: object
+          required: [point, results, source]
+          properties:
+            point:
+              oneOf:
+                - type: "null"
+                - type: object
+                  required: [lng, lat]
+                  properties:
+                    lng: { type: number }
+                    lat: { type: number }
+            date: { type: string }
+            results:
+              type: array
+              items:
+                $ref: "#/components/schemas/CompactPointLookupResult"
+            caution: { type: string }
+            detail: { type: string }
+            source:
+              $ref: "#/components/schemas/CompactPostcodeSource"
 
     PostcodeBatch:
       type: object
@@ -10857,35 +10951,7 @@ components:
           items:
             $ref: "#/components/schemas/PointLookupRelease"
         summary:
-          type: object
-          required:
-            [
-              postcodes,
-              placed,
-              notPlaced,
-              invalid,
-              notFound,
-              notServed,
-              lookups,
-              matched,
-              noMatch,
-              outsideCoverage,
-              unresolved,
-              nearBoundary,
-            ]
-          properties:
-            postcodes: { type: integer }
-            placed: { type: integer }
-            notPlaced: { type: integer }
-            invalid: { type: integer }
-            notFound: { type: integer }
-            notServed: { type: integer }
-            lookups: { type: integer }
-            matched: { type: integer }
-            noMatch: { type: integer }
-            outsideCoverage: { type: integer }
-            unresolved: { type: integer }
-            nearBoundary: { type: integer }
+          $ref: "#/components/schemas/PostcodeBatchSummary"
         postcodes:
           type: array
           items:
@@ -10914,13 +10980,95 @@ components:
           type: object
         note: { type: string }
 
+    PostcodeBatchSummary:
+      type: object
+      required:
+        [
+          postcodes,
+          placed,
+          notPlaced,
+          invalid,
+          notFound,
+          notServed,
+          lookups,
+          matched,
+          noMatch,
+          outsideCoverage,
+          unresolved,
+          nearBoundary,
+        ]
+      properties:
+        postcodes: { type: integer }
+        placed: { type: integer }
+        notPlaced: { type: integer }
+        invalid: { type: integer }
+        notFound: { type: integer }
+        notServed: { type: integer }
+        lookups: { type: integer }
+        matched: { type: integer }
+        noMatch: { type: integer }
+        outsideCoverage: { type: integer }
+        unresolved: { type: integer }
+        nearBoundary: { type: integer }
+
+    CompactPostcodeBatch:
+      type: object
+      description: A postcode batch with `view=compact`.
+      required: [date, releases, summary, postcodes, source]
+      properties:
+        date: { type: string }
+        releases:
+          type: array
+          items:
+            type: object
+            required: [geography]
+            properties:
+              geography: { type: string }
+              boundaryRelease: { type: string }
+              status:
+                type: string
+                enum:
+                  [ambiguous-release, no-release-for-date, geometry-unavailable]
+              detail: { type: string }
+        summary:
+          $ref: "#/components/schemas/PostcodeBatchSummary"
+        postcodes:
+          type: array
+          items:
+            type: object
+            required: [index, input, status]
+            properties:
+              index: { type: integer }
+              input: { type: string }
+              status:
+                { enum: [placed, not-placed, invalid, not-found, not-served] }
+              detail: { type: string }
+              postcode:
+                $ref: "#/components/schemas/CompactPostcodeRecord"
+              point:
+                type: object
+                required: [lng, lat]
+                properties:
+                  lng: { type: number }
+                  lat: { type: number }
+              results:
+                type: array
+                description: One per entry in releases, in the same order.
+                items:
+                  $ref: "#/components/schemas/CompactPointLookupResult"
+              caution: { type: string }
+        source:
+          $ref: "#/components/schemas/CompactPostcodeSource"
+
     PostcodeBatchEnvelope:
       allOf:
         - $ref: "#/components/schemas/Envelope"
         - type: object
           properties:
             data:
-              $ref: "#/components/schemas/PostcodeBatch"
+              anyOf:
+                - $ref: "#/components/schemas/PostcodeBatch"
+                - $ref: "#/components/schemas/CompactPostcodeBatch"
 
     PointContainmentBatch:
       type: object

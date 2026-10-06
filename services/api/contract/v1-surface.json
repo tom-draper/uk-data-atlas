@@ -3244,6 +3244,13 @@
 				},
 				"query:date": {
 					"required": false
+				},
+				"query:view": {
+					"required": false,
+					"enum": [
+						"compact",
+						"full"
+					]
 				}
 			},
 			"responses": {
@@ -3495,6 +3502,13 @@
 				},
 				"query:date": {
 					"required": false
+				},
+				"query:view": {
+					"required": false,
+					"enum": [
+						"compact",
+						"full"
+					]
 				}
 			},
 			"responses": {
@@ -3546,6 +3560,10 @@
 					"data.postcodes[].pointCountry.detail",
 					"data.postcodes[].pointCountry.determinedBy",
 					"data.postcodes[].postcode",
+					"data.postcodes[].postcode.country",
+					"data.postcodes[].postcode.postcode",
+					"data.postcodes[].postcode.status",
+					"data.postcodes[].postcode.terminated",
 					"data.postcodes[].results",
 					"data.postcodes[].results[].boundaryRelease",
 					"data.postcodes[].results[].detail",
@@ -3626,6 +3644,9 @@
 					"data.releases[].source.publisher",
 					"data.releases[].status",
 					"data.source",
+					"data.source.attribution",
+					"data.source.edition",
+					"data.source.title",
 					"data.summary",
 					"data.summary.invalid",
 					"data.summary.lookups",
