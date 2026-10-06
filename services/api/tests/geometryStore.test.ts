@@ -145,6 +145,9 @@ test("serves a compiled release exactly as it serves the release's source", (t) 
 	compiled.warm([["ward", "2025-05-uk-bgc"]]);
 	assert.deepEqual(compiled.stats().loadedReleases, ["ward/2025-05-uk-bgc"]);
 	assert.equal(compiled.stats().spatialIndexBuilds, 0);
+	assert.deepEqual(compiled.stats().spatialIndexes, [
+		{ release: "ward/2025-05-uk-bgc", areas: 3, cells: 2 },
+	]);
 	const ask = (cache: AreaGeometryCache) => {
 		const point = cache.get("ward", "2025-05-uk-bgc", "E05000001")!
 			.coordinates as number[][][];
@@ -176,6 +179,17 @@ test("serves a compiled release exactly as it serves the release's source", (t) 
 	assert.equal(compiled.stats().compiledLoads, 1);
 	assert.equal(compiled.stats().spatialIndexBuilds, 0);
 	assert.equal(fromSource.stats().compiledLoads, 0);
+});
+
+test("warms a source release's spatial index before its first lookup", (t) => {
+	const { root, sources } = gridRelease(t);
+	const cache = new AreaGeometryCache(root, sources);
+	cache.warm([["ward", "2025-05-uk-bgc"]]);
+
+	assert.equal(cache.stats().spatialIndexBuilds, 1);
+	assert.deepEqual(cache.stats().spatialIndexes, [
+		{ release: "ward/2025-05-uk-bgc", areas: 3, cells: 2 },
+	]);
 });
 
 test("reads a release from its source when its compiled file is stale", (t) => {
