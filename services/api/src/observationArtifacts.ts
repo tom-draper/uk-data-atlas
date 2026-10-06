@@ -1,18 +1,13 @@
 import {
 	findMeasureObservations,
-	isLegacyPopulationSource,
 	observationArtifactName,
 	type AnyMeasureObservationArtifact,
 	type MeasureObservation,
 	type MeasureSource,
-	type PopulationLocalAuthorityObservationArtifact,
-	type PopulationObservationArtifact,
 } from "./dataCatalog";
 import type { ObservationArtifactReference } from "./sourceExactProvenance";
 
 export type ObservationArtifacts = {
-	populationObservations?: PopulationObservationArtifact;
-	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
 	measureObservations?: AnyMeasureObservationArtifact[];
 };
 
@@ -25,29 +20,6 @@ export const observationsFor = (
 ):
 	| (ObservationArtifactReference & { records: MeasureObservation[] })
 	| undefined => {
-	if (isLegacyPopulationSource(measureId, source)) {
-		if (source.sourceGeography.type === "ward") {
-			const artifact = artifacts.populationObservations;
-			return artifact && artifact.period === period
-				? {
-						artifact: "population-observations",
-						contentHash: artifact.contentHash,
-						records: artifact.records,
-					}
-				: undefined;
-		}
-		const artifact = artifacts.populationLocalAuthorityObservations;
-		const records = artifact?.periods.find(
-			(candidate) => candidate.period === period,
-		)?.records;
-		return artifact && records
-			? {
-					artifact: "population-local-authority-observations",
-					contentHash: artifact.contentHash,
-					records,
-				}
-			: undefined;
-	}
 	const artifact = findMeasureObservations(
 		artifacts.measureObservations ?? [],
 		measureId,

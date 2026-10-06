@@ -5,8 +5,6 @@ import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {
 	DataCatalog,
 	MeasureObservationArtifact,
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationObservationArtifact,
 } from "../src/dataCatalog";
 import { compileMeasureCompatibility } from "../src/measureCompatibility";
 
@@ -43,6 +41,8 @@ const dataCatalog: DataCatalog = {
 				},
 				{
 					datasetId: "population-uk",
+					observationArtifact:
+						"population-local-authority-observations",
 					periods: ["2024"],
 					sourceGeography: {
 						type: "localAuthority",
@@ -127,36 +127,39 @@ const artifacts: AreaReleaseArtifact[] = [
 	},
 ];
 
-const wardObservations: PopulationObservationArtifact = {
+const wardObservations: MeasureObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:ward-observations",
 	measureId: "population",
-	period: "2022",
 	sourceGeography: { type: "ward", boundaryYear: 2023 },
-	records: [
-		{ areaCode: "E05000001", value: 1, status: "observed" },
-		{ areaCode: "W05000001", value: 1, status: "observed" },
+	periods: [
+		{
+			period: "2022",
+			records: [
+				{ areaCode: "E05000001", value: 1, status: "observed" },
+				{ areaCode: "W05000001", value: 1, status: "observed" },
+			],
+		},
 	],
 };
 
-const localAuthorityObservations: PopulationLocalAuthorityObservationArtifact =
-	{
-		schemaVersion: 1,
-		contentHash: "sha256:local-authority-observations",
-		measureId: "population",
-		sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
-		periods: [
-			{
-				period: "2024",
-				records: [
-					{ areaCode: "E06000001", value: 1, status: "observed" },
-					{ areaCode: "N09000001", value: 1, status: "observed" },
-				],
-			},
-		],
-	};
+const localAuthorityObservations: MeasureObservationArtifact = {
+	schemaVersion: 1,
+	contentHash: "sha256:local-authority-observations",
+	measureId: "population",
+	sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+	periods: [
+		{
+			period: "2024",
+			records: [
+				{ areaCode: "E06000001", value: 1, status: "observed" },
+				{ areaCode: "N09000001", value: 1, status: "observed" },
+			],
+		},
+	],
+};
 
-/** This fixture publishes only the population measure, so it goes unread. */
+/** The catalogue publishes only the population measure, so this goes unread. */
 const emissionsObservations: MeasureObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:emissions-observations",
@@ -170,9 +173,7 @@ test("reports code compatibility without claiming geometry equivalence", () => {
 		dataCatalog,
 		boundaryRegistry,
 		artifacts,
-		wardObservations,
-		localAuthorityObservations,
-		[emissionsObservations],
+		[wardObservations, localAuthorityObservations, emissionsObservations],
 	);
 	const sources = inventory.measures[0]?.sources;
 	assert.equal(sources?.[0]?.candidates[0]?.status, "code-set-compatible");
@@ -199,21 +200,31 @@ test("assesses the codes of every period in a partition, not only the first", ()
 		catalogue,
 		boundaryRegistry,
 		artifacts,
-		wardObservations,
-		{
-			...localAuthorityObservations,
-			periods: [
-				...localAuthorityObservations.periods,
-				{
-					period: "2025",
-					records: [
-						{ areaCode: "E06000001", value: 1, status: "observed" },
-						{ areaCode: "E06000099", value: 1, status: "observed" },
-					],
-				},
-			],
-		},
-		[emissionsObservations],
+		[
+			wardObservations,
+			{
+				...localAuthorityObservations,
+				periods: [
+					...localAuthorityObservations.periods,
+					{
+						period: "2025",
+						records: [
+							{
+								areaCode: "E06000001",
+								value: 1,
+								status: "observed",
+							},
+							{
+								areaCode: "E06000099",
+								value: 1,
+								status: "observed",
+							},
+						],
+					},
+				],
+			},
+			emissionsObservations,
+		],
 	);
 	const candidate = inventory.measures[0]?.sources[1]?.candidates[0];
 	assert.equal(candidate?.status, "partial-code-overlap");
@@ -225,9 +236,11 @@ test("assesses the codes of every period in a partition, not only the first", ()
 				catalogue,
 				boundaryRegistry,
 				artifacts,
-				wardObservations,
-				localAuthorityObservations,
-				[emissionsObservations],
+				[
+					wardObservations,
+					localAuthorityObservations,
+					emissionsObservations,
+				],
 			),
 		/No population observations exist for localAuthority in 2025\./,
 	);

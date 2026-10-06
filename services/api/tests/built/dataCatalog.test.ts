@@ -1022,6 +1022,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 				datasetId: "population-uk",
 				periods: ["2023", "2024"],
 				sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+				observationArtifact: "population-local-authority-observations",
 				coverage: {
 					kind: "source-reported",
 					countries: ["GB-ENG", "GB-NIR", "GB-SCT", "GB-WLS"],
@@ -1033,6 +1034,7 @@ test("publishes source-exact ward and UK local-authority population partitions",
 				datasetId: "population-constituency",
 				periods: ["2021", "2022"],
 				sourceGeography: { type: "constituency", boundaryYear: 2024 },
+				observationArtifact: "population-constituency-observations",
 				coverage: {
 					kind: "partial",
 					countries: ["GB-ENG", "GB-WLS"],
@@ -1041,28 +1043,30 @@ test("publishes source-exact ward and UK local-authority population partitions",
 				},
 			},
 		]);
-		assert.deepEqual(
-			result.populationConstituencyObservations.periods[1]?.records,
-			[
-				{ areaCode: "E14001063", value: 119256, status: "observed" },
-				{ areaCode: "W07000081", value: 90000, status: "observed" },
-			],
-		);
-		assert.deepEqual(result.populationObservations.records, [
-			{ areaCode: "E05000001", value: 7, status: "observed" },
-			{ areaCode: "W05000001", value: 7, status: "observed" },
+		const [ward, localAuthority, constituency] =
+			result.populationObservations;
+		assert.deepEqual(constituency?.periods[1]?.records, [
+			{ areaCode: "E14001063", value: 119256, status: "observed" },
+			{ areaCode: "W07000081", value: 90000, status: "observed" },
 		]);
-		assert.equal(
-			result.populationLocalAuthorityObservations.periods.length,
-			2,
-		);
-		assert.deepEqual(
-			result.populationLocalAuthorityObservations.periods[1]?.records[1],
-			{ areaCode: "N09000001", value: 7, status: "observed" },
-		);
+		assert.deepEqual(ward?.periods, [
+			{
+				period: "2022",
+				records: [
+					{ areaCode: "E05000001", value: 7, status: "observed" },
+					{ areaCode: "W05000001", value: 7, status: "observed" },
+				],
+			},
+		]);
+		assert.equal(localAuthority?.periods.length, 2);
+		assert.deepEqual(localAuthority?.periods[1]?.records[1], {
+			areaCode: "N09000001",
+			value: 7,
+			status: "observed",
+		});
 		assert.match(result.catalog.contentHash, /^sha256:[a-f0-9]{64}$/);
 		assert.match(
-			result.populationLocalAuthorityObservations.contentHash,
+			localAuthority?.contentHash ?? "",
 			/^sha256:[a-f0-9]{64}$/,
 		);
 	} finally {

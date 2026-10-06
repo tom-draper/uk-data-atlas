@@ -38,12 +38,7 @@ export const handleDataChangeRoutes = ({
 		segments[3] !== "change"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-	} = context;
+	const { dataCatalog, measureObservations } = context;
 	if (!dataCatalog) {
 		return problem(
 			503,
@@ -206,8 +201,6 @@ export const handleDataChangeRoutes = ({
 		return problem(400, "Invalid Query", "order must be asc or desc.");
 	}
 	const artifacts = {
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 	};
 	const startObservations = observationsFor(

@@ -31,12 +31,7 @@ export const handleDataAggregateRoutes = ({
 		segments[3] !== "aggregate"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-	} = context;
+	const { dataCatalog, measureObservations } = context;
 	const measureId = segments[2] as string;
 	const resolvedMeasure = resolveAggregationMeasure({
 		dataCatalog,
@@ -101,8 +96,6 @@ export const handleDataAggregateRoutes = ({
 		source,
 		period: period as string,
 		artifacts: {
-			populationObservations,
-			populationLocalAuthorityObservations,
 			measureObservations,
 		},
 	});
@@ -139,8 +132,6 @@ export const handleDataAggregateRoutes = ({
 			period: period as string,
 			source,
 			artifacts: {
-				populationObservations,
-				populationLocalAuthorityObservations,
 				measureObservations,
 			},
 		});

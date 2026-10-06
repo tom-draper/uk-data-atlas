@@ -29,9 +29,11 @@ test("reports an area's exact-release capability and availability matrix", () =>
 			crosswalkLookup,
 			namedLocationInventory,
 			dataCatalog,
-			populationObservations,
-			populationLocalAuthorityObservations,
-			measureObservations,
+			measureObservations: [
+				populationObservations,
+				populationLocalAuthorityObservations,
+				...measureObservations,
+			],
 			measureCompatibilityInventory,
 		}),
 	);

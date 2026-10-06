@@ -37,12 +37,7 @@ export const handleDataSeriesRoutes = ({
 		segments[3] !== "series"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-	} = context;
+	const { dataCatalog, measureObservations } = context;
 	if (!dataCatalog) {
 		return problem(
 			503,
@@ -143,8 +138,6 @@ export const handleDataSeriesRoutes = ({
 	const observationsByPeriod = source.periods.map((period) => ({
 		period,
 		observations: observationsFor(measureId, source, period, {
-			populationObservations,
-			populationLocalAuthorityObservations,
 			measureObservations,
 		}),
 	}));

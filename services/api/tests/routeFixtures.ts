@@ -21,9 +21,7 @@ import {
 import type { ValidationReport } from "../src/validationReport";
 import type {
 	MeasureObservationArtifact,
-	PopulationLocalAuthorityObservationArtifact,
 	DataCatalog,
-	PopulationObservationArtifact,
 } from "../src/dataCatalog";
 import type { MeasureCompatibilityInventory } from "../src/measureCompatibility";
 import { compileAreaSearchIndex } from "../src/areaSearch";
@@ -98,8 +96,6 @@ export const route = (
 	namedLocationInventory?: RouteContext["namedLocationInventory"],
 	namedLocationLookup?: TestContextInputs["namedLocationLookup"],
 	dataCatalog?: RouteContext["dataCatalog"],
-	populationObservations?: RouteContext["populationObservations"],
-	populationLocalAuthorityObservations?: RouteContext["populationLocalAuthorityObservations"],
 	measureCompatibilityInventory?: RouteContext["measureCompatibilityInventory"],
 	measureObservations?: RouteContext["measureObservations"],
 	exportManifest?: RouteContext["exportManifest"],
@@ -122,8 +118,6 @@ export const route = (
 			namedLocationLookup,
 			relationshipPathInventory,
 			dataCatalog,
-			populationObservations,
-			populationLocalAuthorityObservations,
 			measureCompatibilityInventory,
 			measureObservations,
 			exportManifest,
@@ -421,6 +415,8 @@ export const dataCatalog: DataCatalog = {
 				},
 				{
 					datasetId: "population-uk",
+					observationArtifact:
+						"population-local-authority-observations",
 					periods: ["2022", "2023", "2024"],
 					sourceGeography: {
 						type: "localAuthority",
@@ -690,19 +686,23 @@ export const measureObservations: MeasureObservationArtifact[] = [
 	},
 ];
 
-export const populationObservations: PopulationObservationArtifact = {
+export const populationObservations: MeasureObservationArtifact = {
 	schemaVersion: 1,
 	contentHash: "sha256:population-observations",
 	measureId: "population",
-	period: "2022",
 	sourceGeography: { type: "ward", boundaryYear: 2023 },
-	records: [
-		{ areaCode: "E05000001", value: 100, status: "observed" },
-		{ areaCode: "W05000001", value: 200, status: "observed" },
+	periods: [
+		{
+			period: "2022",
+			records: [
+				{ areaCode: "E05000001", value: 100, status: "observed" },
+				{ areaCode: "W05000001", value: 200, status: "observed" },
+			],
+		},
 	],
 };
 
-export const populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact =
+export const populationLocalAuthorityObservations: MeasureObservationArtifact =
 	{
 		schemaVersion: 1,
 		contentHash: "sha256:population-local-authority-observations",
@@ -739,9 +739,6 @@ export const measureCompatibilityInventory: MeasureCompatibilityInventory = {
 	inputs: {
 		dataCatalog: "sha256:data-catalog",
 		boundaryRegistry: "sha256:registry",
-		populationObservations: "sha256:population-observations",
-		populationLocalAuthorityObservations:
-			"sha256:population-local-authority-observations",
 		areaArtifacts: { "ward/2023-05-uk-bgc": "sha256:areas" },
 	},
 	measures: [
@@ -800,13 +797,15 @@ export const routeWithCatalog = (
 			crosswalkInventory,
 			crosswalkLookup: overrides.crosswalkLookup ?? crosswalkLookup,
 			dataCatalog: catalog,
-			populationObservations,
-			populationLocalAuthorityObservations,
 			measureCompatibilityInventory:
 				overrides.measureCompatibilityInventory ??
 				measureCompatibilityInventory,
 			analysisGeographyInventory: overrides.analysisGeographyInventory,
-			measureObservations: observations,
+			measureObservations: [
+				populationObservations,
+				populationLocalAuthorityObservations,
+				...(observations ?? []),
+			],
 			exportManifest: overrides.exportManifest,
 			relationshipPathInventory: overrides.relationshipPathInventory,
 		}),

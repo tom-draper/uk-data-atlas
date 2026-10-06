@@ -31,9 +31,11 @@ test("answers a measure for a place named in words", () => {
 		boundaryRegistry: registry,
 		areaLookup: namedAreas,
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
+		measureObservations: [
+			populationObservations,
+			populationLocalAuthorityObservations,
+			...measureObservations,
+		],
 	});
 	const get = (url: string) => routeRequest("GET", url, context);
 
@@ -125,9 +127,11 @@ test("defaults an ambiguous place name and reports its other meanings", () => {
 		boundaryRegistry: registry,
 		areaLookup,
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
+		measureObservations: [
+			populationObservations,
+			populationLocalAuthorityObservations,
+			...measureObservations,
+		],
 	});
 	const response = routeRequest(
 		"GET",

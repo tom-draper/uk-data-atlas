@@ -101,7 +101,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 		),
 		conversion: null,
 		aggregation: null,
-		records: [populationObservations.records[0]],
+		records: [populationObservations.periods[0]!.records[0]],
 	});
 	const cursor = "meta" in first.body ? first.body.meta.nextCursor : null;
 	assert.equal(typeof cursor, "string");
@@ -121,7 +121,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 		),
 		conversion: null,
 		aggregation: null,
-		records: [populationObservations.records[1]],
+		records: [populationObservations.periods[0]!.records[1]],
 	});
 
 	const localAuthority = routeWithData(
@@ -178,7 +178,7 @@ test("publishes datasets, measures and source-exact population observations", ()
 		),
 		conversion: null,
 		aggregation: null,
-		records: [populationObservations.records[0]],
+		records: [populationObservations.periods[0]!.records[0]],
 	});
 
 	const withArea = routeRequest(
@@ -188,8 +188,10 @@ test("publishes datasets, measures and source-exact population observations", ()
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
 			dataCatalog,
-			populationObservations,
-			populationLocalAuthorityObservations,
+			measureObservations: [
+				populationObservations,
+				populationLocalAuthorityObservations,
+			],
 			measureCompatibilityInventory,
 		}),
 	);

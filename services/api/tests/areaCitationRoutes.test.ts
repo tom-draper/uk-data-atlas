@@ -116,9 +116,11 @@ const citationContext = testContext({
 			},
 		],
 	},
-	populationObservations,
-	populationLocalAuthorityObservations,
-	measureObservations,
+	measureObservations: [
+		populationObservations,
+		populationLocalAuthorityObservations,
+		...measureObservations,
+	],
 	measureCompatibilityInventory,
 });
 

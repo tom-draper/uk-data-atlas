@@ -236,9 +236,11 @@ test("plans aggregation, coverage, expected size and a safer source-exact altern
 			},
 			dataCatalog,
 			measureCompatibilityInventory,
-			populationObservations,
-			populationLocalAuthorityObservations,
-			measureObservations,
+			measureObservations: [
+				populationObservations,
+				populationLocalAuthorityObservations,
+				...measureObservations,
+			],
 			relationshipPathInventory: {
 				schemaVersion: 1,
 				contentHash: "sha256:paths",

@@ -22,11 +22,6 @@ const writeArtifacts = (directory: string, crosswalkContent = "[]") => {
 	writeFileSync(join(directory, "export-manifest.json"), "{}");
 	writeFileSync(join(directory, "lookup-manifest.json"), "{}");
 	writeFileSync(join(directory, "map-resources.json"), "{}");
-	writeFileSync(join(directory, "population-observations.json"), "{}");
-	writeFileSync(
-		join(directory, "population-local-authority-observations.json"),
-		"{}",
-	);
 	writeFileSync(join(directory, "geometry-sources.json"), "{}");
 	writeFileSync(
 		join(directory, "crosswalk-inventory.json"),
@@ -47,7 +42,7 @@ test("references every build-time artifact by content hash", () => {
 	try {
 		writeArtifacts(directory);
 		const release = createAtlasRelease(directory);
-		assert.equal(release.artifacts.length, 27);
+		assert.equal(release.artifacts.length, 25);
 		assert.ok(
 			release.artifacts.every((artifact) =>
 				/^sha256:[a-f0-9]{64}$/.test(artifact.contentHash),
@@ -75,7 +70,7 @@ test("is deterministic for unchanged artifacts and changes when content changes"
 	}
 });
 
-test("pins every non-legacy observation artifact declared by the catalogue", () => {
+test("pins every observation artifact declared by the catalogue", () => {
 	const directory = mkdtempSync(join(tmpdir(), "uk-data-atlas-api-"));
 	try {
 		writeArtifacts(directory);

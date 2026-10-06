@@ -1,10 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import {
-	readMeasureObservations,
-	readPopulationLocalAuthorityObservations,
-	readPopulationObservations,
-} from "./observationLoader";
+import { readMeasureObservations } from "./observationLoader";
 import { createGeographyResolver } from "./geographyResolver";
 import { createRelationshipPathIndex } from "./relationshipPaths";
 import type { RouteContext } from "./routing";
@@ -246,13 +242,6 @@ export const readApiCatalogues = (
 	const lookupManifest = stage("lookup-manifest", () =>
 		readLookupManifest(apiRoot),
 	);
-	const populationObservations = stage("population-observations", () =>
-		readPopulationObservations(apiRoot),
-	);
-	const populationLocalAuthorityObservations = stage(
-		"population-local-authority-observations",
-		() => readPopulationLocalAuthorityObservations(apiRoot),
-	);
 	const measureObservations = stage("measure-observations", () =>
 		readMeasureObservations(apiRoot, dataCatalog),
 	);
@@ -282,8 +271,6 @@ export const readApiCatalogues = (
 		lookupManifest,
 		mapResources,
 		...mapAssets,
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
 		analysisGeographyInventory,

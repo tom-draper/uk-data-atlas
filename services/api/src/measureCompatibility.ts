@@ -5,11 +5,8 @@ import { releaseKey } from "./geographyKeys";
 import {
 	type DataCatalog,
 	findMeasureObservations,
-	isLegacyPopulationSource,
 	AnyMeasureObservationArtifact,
 	MeasureSource,
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationObservationArtifact,
 } from "./dataCatalog";
 
 /**
@@ -55,8 +52,6 @@ export type MeasureCompatibilityInventory = {
 	inputs: {
 		dataCatalog: string;
 		boundaryRegistry: string;
-		populationObservations: string;
-		populationLocalAuthorityObservations: string;
 		areaArtifacts: Record<string, string>;
 	};
 	measures: Array<{
@@ -78,22 +73,13 @@ const sample = (codes: Set<string>) => [...codes].sort().slice(0, 20);
 const sourceCodes = (
 	measureId: string,
 	source: MeasureSource,
-	wardObservations: PopulationObservationArtifact,
-	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
 	measureObservations: AnyMeasureObservationArtifact[],
 ) => {
-	if (
-		isLegacyPopulationSource(measureId, source) &&
-		source.sourceGeography.type === "ward"
-	) {
-		return new Set(
-			wardObservations.records.map((record) => record.areaCode),
-		);
-	}
-	const periods = isLegacyPopulationSource(measureId, source)
-		? localAuthorityObservations.periods
-		: findMeasureObservations(measureObservations, measureId, source)
-				?.periods;
+	const periods = findMeasureObservations(
+		measureObservations,
+		measureId,
+		source,
+	)?.periods;
 	const codes = new Set<string>();
 	for (const period of source.periods) {
 		const records = periods?.find(
@@ -202,8 +188,6 @@ export const compileMeasureCompatibility = (
 	dataCatalog: DataCatalog,
 	boundaryRegistry: BoundaryRegistry,
 	areaArtifacts: AreaReleaseArtifact[],
-	wardObservations: PopulationObservationArtifact,
-	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact,
 	measureObservations: AnyMeasureObservationArtifact[],
 ): MeasureCompatibilityInventory => {
 	if (dataCatalog.measures.length === 0) {
@@ -217,13 +201,7 @@ export const compileMeasureCompatibility = (
 	);
 	const sourcesFor = (measure: (typeof dataCatalog.measures)[number]) =>
 		measure.sources.map((source) => {
-			const codes = sourceCodes(
-				measure.id,
-				source,
-				wardObservations,
-				localAuthorityObservations,
-				measureObservations,
-			);
+			const codes = sourceCodes(measure.id, source, measureObservations);
 			const candidates = boundaryRegistry.releases
 				.filter(
 					(release) =>
@@ -276,9 +254,6 @@ export const compileMeasureCompatibility = (
 	const inputs = {
 		dataCatalog: dataCatalog.contentHash,
 		boundaryRegistry: boundaryRegistry.contentHash,
-		populationObservations: wardObservations.contentHash,
-		populationLocalAuthorityObservations:
-			localAuthorityObservations.contentHash,
 		// Keyed by partition: a measure published at several source
 		// geographies has one artifact for each, and each must be recorded.
 		measureObservations: Object.fromEntries(

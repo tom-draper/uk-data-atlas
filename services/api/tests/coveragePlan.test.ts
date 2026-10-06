@@ -70,9 +70,11 @@ const context = testContext({
 	areaLookup,
 	dataCatalog,
 	measureCompatibilityInventory,
-	populationObservations,
-	populationLocalAuthorityObservations,
-	measureObservations,
+	measureObservations: [
+		populationObservations,
+		populationLocalAuthorityObservations,
+		...measureObservations,
+	],
 	crosswalkLookup: new Map([[crosswalk.id, crosswalk]]),
 	crosswalkInventory: {
 		schemaVersion: 1,

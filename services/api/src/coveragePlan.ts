@@ -102,9 +102,6 @@ export const coveragePlan = (
 		measure.id,
 	);
 	const artifacts = {
-		populationObservations: context.populationObservations,
-		populationLocalAuthorityObservations:
-			context.populationLocalAuthorityObservations,
 		measureObservations: context.measureObservations,
 	};
 

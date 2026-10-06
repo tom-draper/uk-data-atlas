@@ -31,12 +31,7 @@ export const handleDataTransformRoutes = ({
 		segments[3] !== "compare"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		measureObservations,
-		populationLocalAuthorityObservations,
-		populationObservations,
-	} = context;
+	const { dataCatalog, measureObservations } = context;
 	if (!dataCatalog)
 		return problem(
 			503,
@@ -173,8 +168,6 @@ export const handleDataTransformRoutes = ({
 	if (resolved.kind === "refusal") return refused(resolved.refusal);
 	const { source } = resolved.plan;
 	const observations = observationsFor(measureId, source, period!, {
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 	});
 	if (!observations)

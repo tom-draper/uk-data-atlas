@@ -15,9 +15,11 @@ test("ranks change between two periods of one source partition", () => {
 	const context = testContext({
 		boundaryRegistry: registry,
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
+		measureObservations: [
+			populationObservations,
+			populationLocalAuthorityObservations,
+			...measureObservations,
+		],
 	});
 	const ask = (measureId: string, query: string) =>
 		routeRequest("GET", `/v1/data/${measureId}/change?${query}`, context);

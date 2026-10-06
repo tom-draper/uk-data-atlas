@@ -3,9 +3,7 @@ import type { CatalogManifest } from "./manifest";
 import type {
 	Measure,
 	PopulationObservation,
-	PopulationObservationArtifact,
 	MeasureObservationArtifact,
-	PopulationLocalAuthorityObservationArtifact,
 } from "../dataCatalog";
 import { type PrecompiledFile, sha256, number, object } from "./values";
 import { countriesFor } from "./countries";
@@ -56,7 +54,7 @@ const populationRecords = (path: string): PopulationObservation[] => {
 
 const localAuthorityPopulationRecords = (
 	path: string,
-): PopulationLocalAuthorityObservationArtifact["periods"] => {
+): MeasureObservationArtifact["periods"] => {
 	const source = JSON.parse(readFileSync(path, "utf8")) as PrecompiledFile;
 	const periods = Object.entries(source)
 		.map(([period, value]) => {
@@ -113,8 +111,8 @@ export const compilePopulation = (
 	populationConstituencyPath: string,
 ): {
 	measure: Measure;
-	wardObservations: PopulationObservationArtifact;
-	localAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
+	wardObservations: MeasureObservationArtifact;
+	localAuthorityObservations: MeasureObservationArtifact;
 	constituencyObservations: MeasureObservationArtifact;
 } => {
 	const population = datasets.find((dataset) => dataset.id === "population");
@@ -260,6 +258,7 @@ export const compilePopulation = (
 				datasetId: "population-uk",
 				periods: localAuthorityPeriods.map((period) => period.period),
 				sourceGeography: { type: "localAuthority", boundaryYear: 2023 },
+				observationArtifact: "population-local-authority-observations",
 				coverage: {
 					kind: "source-reported",
 					countries: countriesFor(
@@ -273,6 +272,7 @@ export const compilePopulation = (
 				datasetId: "population-constituency",
 				periods: constituencyPeriods.map((period) => period.period),
 				sourceGeography: { type: "constituency", boundaryYear: 2024 },
+				observationArtifact: "population-constituency-observations",
 				coverage: {
 					kind: "partial",
 					countries: countriesFor(
@@ -290,12 +290,12 @@ export const compilePopulation = (
 		},
 		links: { data: "/v1/data/population" },
 	};
+	const wardPeriods = [{ period: "2022", records }];
 	const observationsContent = JSON.stringify({
 		schemaVersion: 1,
 		measureId: "population",
-		period: "2022",
 		sourceGeography: { type: "ward", boundaryYear: 2023 },
-		records,
+		periods: wardPeriods,
 	});
 	const localAuthorityObservationsContent = JSON.stringify({
 		schemaVersion: 1,
@@ -309,9 +309,8 @@ export const compilePopulation = (
 			schemaVersion: 1,
 			contentHash: sha256(observationsContent),
 			measureId: "population",
-			period: "2022",
 			sourceGeography: { type: "ward", boundaryYear: 2023 },
-			records,
+			periods: wardPeriods,
 		},
 		localAuthorityObservations: {
 			schemaVersion: 1,

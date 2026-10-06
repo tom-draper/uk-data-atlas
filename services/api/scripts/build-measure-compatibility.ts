@@ -7,13 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { AreaInventory, AreaReleaseArtifact } from "../src/areaInventory";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
-import {
-	type DataCatalog,
-	isLegacyPopulationSource,
-	observationArtifactName,
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationObservationArtifact,
-} from "../src/dataCatalog";
+import { type DataCatalog, observationArtifactName } from "../src/dataCatalog";
 import { compileMeasureCompatibility } from "../src/measureCompatibility";
 
 const read = <T>(path: string): T =>
@@ -25,8 +19,6 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		"data-catalog.json",
 		"boundary-releases.json",
 		"area-inventory.json",
-		"population-observations.json",
-		"population-local-authority-observations.json",
 	];
 	for (const file of required) {
 		if (!existsSync(join(publicDirectory, file))) {
@@ -51,28 +43,15 @@ export const buildMeasureCompatibility = (repositoryRoot: string) => {
 		dataCatalog,
 		read<BoundaryRegistry>(join(publicDirectory, "boundary-releases.json")),
 		artifacts,
-		read<PopulationObservationArtifact>(
-			join(publicDirectory, "population-observations.json"),
-		),
-		read<PopulationLocalAuthorityObservationArtifact>(
-			join(
-				publicDirectory,
-				"population-local-authority-observations.json",
-			),
-		),
 		dataCatalog.measures.flatMap((measure) =>
-			measure.sources
-				.filter(
-					(source) => !isLegacyPopulationSource(measure.id, source),
-				)
-				.map((source) =>
-					readSourceObservations(
-						publicDirectory,
-						observationArtifactName(measure.id, source),
-						measure.id,
-						tables,
-					),
+			measure.sources.map((source) =>
+				readSourceObservations(
+					publicDirectory,
+					observationArtifactName(measure.id, source),
+					measure.id,
+					tables,
 				),
+			),
 		),
 	);
 	const outputPath = join(publicDirectory, "measure-compatibility.json");

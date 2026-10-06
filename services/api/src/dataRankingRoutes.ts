@@ -29,12 +29,7 @@ export const handleDataRankingRoutes = ({
 		segments[3] !== "rankings"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-	} = context;
+	const { dataCatalog, measureObservations } = context;
 	if (!dataCatalog) {
 		return problem(
 			503,
@@ -97,8 +92,6 @@ export const handleDataRankingRoutes = ({
 	if (resolved.kind === "refusal") return refused(resolved.refusal);
 	const { source } = resolved.plan;
 	const observations = observationsFor(measureId, source, period as string, {
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 	});
 	if (!observations) {
