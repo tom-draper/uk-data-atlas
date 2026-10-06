@@ -1089,7 +1089,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "415":
-          description: The body is neither JSON nor CSV.
+          description: The body is declared as neither JSON nor CSV. A body sent as form-urlencoded, as curl does by default, or with no type is read as JSON when it opens with { or [, and as CSV otherwise.
           content:
             application/problem+json:
               schema:
@@ -4568,7 +4568,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "415":
-          description: The body is neither JSON nor CSV.
+          description: The body is declared as neither JSON nor CSV. A body sent as form-urlencoded, as curl does by default, or with no type is read as JSON when it opens with { or [, and as CSV otherwise.
           content:
             application/problem+json:
               schema:

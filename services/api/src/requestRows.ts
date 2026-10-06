@@ -1,4 +1,4 @@
-import { csvFields } from "./populationOverlap";
+import { csvRecords } from "./csv";
 import { problem, type ApiResponse } from "./routeResponse";
 import type { RequestBody } from "./routing";
 
@@ -31,12 +31,15 @@ const invalid = (detail: string): ApiResponse =>
 const mediaType = (contentType: string) =>
 	contentType.split(";", 1)[0]!.trim().toLowerCase();
 
+// A plain decimal, so 0x1A, 0b11 and 1_000 stay text as a spreadsheet keeps them.
+const DECIMAL = /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i;
+
 /** A CSV cell as a value: a number where it reads as one, empty as null. */
 const csvValue = (cell: string): RowValue => {
 	const trimmed = cell.trim();
 	if (trimmed === "") return null;
 	const number = Number(trimmed);
-	return Number.isFinite(number) ? number : cell;
+	return DECIMAL.test(trimmed) && Number.isFinite(number) ? number : cell;
 };
 
 const isRowValue = (value: unknown): value is RowValue =>
@@ -49,13 +52,8 @@ const readCsv = (
 	text: string,
 	withValues: boolean,
 ): PostedRows | ApiResponse => {
-	const lines = text
-		.replace(/^﻿/, "")
-		.split(/\r?\n/)
-		.filter((line) => line.trim().length > 0);
-	const header = csvFields(lines[0] ?? "").map((name) =>
-		name.trim().toLowerCase(),
-	);
+	const [first, ...rows] = csvRecords(text.replace(/^﻿/, ""));
+	const header = (first ?? []).map((name) => name.trim().toLowerCase());
 	const areaColumn = [...AREA_COLUMNS, ...(withValues ? [] : ["value"])]
 		.map((name) => header.indexOf(name))
 		.find((index) => index !== -1);
@@ -67,7 +65,6 @@ const readCsv = (
 	if (withValues && (valueColumn === -1 || valueColumn === areaColumn))
 		return invalid("The CSV header must name a value column.");
 	const parentColumn = header.indexOf("parent");
-	const rows = lines.slice(1).map(csvFields);
 	return {
 		areas: rows.map((row) => row[areaColumn] ?? ""),
 		...(parentColumn !== -1
@@ -149,17 +146,30 @@ const readJson = (
 	};
 };
 
+// curl --data-binary sends a file as form-urlencoded unless told otherwise,
+// so a body with that type, or none, is read by its first character: JSON
+// opens with { or [, and anything else is taken to be CSV.
+const UNDECLARED = new Set(["", "application/x-www-form-urlencoded"]);
+
+const bodyFormat = (type: string, text: string) => {
+	if (type === "application/json" || type.endsWith("+json")) return "json";
+	if (type === "text/csv") return "csv";
+	if (!UNDECLARED.has(type)) return undefined;
+	return /^\s*[[{]/.test(text) ? "json" : "csv";
+};
+
 /** The rows a body carries, or the reason it cannot be read. */
 export const readPostedRows = (
 	body: RequestBody | undefined,
 	options: { withValues: boolean },
 ): PostedRows | ApiResponse => {
-	const type = mediaType(body?.contentType ?? "");
+	const text = body?.text ?? "";
+	const format = bodyFormat(mediaType(body?.contentType ?? ""), text);
 	const read =
-		type === "application/json" || type.endsWith("+json")
-			? readJson(body!.text, options.withValues)
-			: type === "text/csv"
-				? readCsv(body!.text, options.withValues)
+		format === "json"
+			? readJson(text, options.withValues)
+			: format === "csv"
+				? readCsv(text, options.withValues)
 				: problem(
 						415,
 						"Unsupported Media Type",

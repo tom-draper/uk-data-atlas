@@ -8,7 +8,7 @@ import type {
 	SourceGeography,
 } from "../dataCatalog";
 import type { MeasureTableArtifact } from "../observationTables";
-import { csvFields } from "../populationOverlap";
+import { csvFields } from "../csv";
 import { countriesFor } from "./countries";
 import { sha256 } from "./values";
 

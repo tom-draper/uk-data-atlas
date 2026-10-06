@@ -14,6 +14,7 @@ import {
 	type AreaGeometry,
 } from "./areaOverlap";
 import { BoundedClipper, type ClipOperand } from "./boundedClipping";
+import { csvFields } from "./csv";
 import type { PopulationOverlapCrosswalkAdapter } from "./crosswalkAdapters";
 import type {
 	CrosswalkArtifact,
@@ -62,29 +63,6 @@ const boundsOf = (geometry: MultiPolygon): AreaGeometry["bounds"] => {
 			bounds[3] = Math.max(bounds[3], y);
 		}
 	return bounds;
-};
-
-/** Split one CSV line, honouring double-quoted fields. */
-export const csvFields = (line: string) => {
-	const fields: string[] = [];
-	let field = "";
-	let quoted = false;
-	for (let index = 0; index < line.length; index += 1) {
-		const character = line[index]!;
-		if (quoted) {
-			if (character === '"' && line[index + 1] === '"') {
-				field += '"';
-				index += 1;
-			} else if (character === '"') quoted = false;
-			else field += character;
-		} else if (character === '"') quoted = true;
-		else if (character === ",") {
-			fields.push(field);
-			field = "";
-		} else field += character;
-	}
-	fields.push(field);
-	return fields;
 };
 
 const readPopulation = (
