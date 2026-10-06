@@ -66,3 +66,23 @@ test("refuses malformed JSON rather than guess", () => {
 		SyntaxError,
 	);
 });
+
+test("decodes UTF-8 bytes, escapes and all, as JSON.parse would", () => {
+	const collection = {
+		type: "FeatureCollection",
+		features: [
+			{
+				type: "Feature",
+				properties: { name: "Ynys Môn", alias: 'Ynys \\ "Môn" 🏝' },
+				geometry: { type: "Point", coordinates: [-4.3, 53.3] },
+			},
+		],
+	};
+	const text = JSON.stringify(collection);
+	const expected = {
+		type: "FeatureCollection",
+		properties: [collection.features[0]!.properties],
+	};
+	assert.deepEqual(parseGeoJsonProperties(text), expected);
+	assert.deepEqual(parseGeoJsonProperties(Buffer.from(text)), expected);
+});
