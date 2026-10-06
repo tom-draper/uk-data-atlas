@@ -8,6 +8,7 @@ import {
 } from "node:fs";
 import { join } from "node:path";
 import type { AreaReleaseArtifact } from "./areaInventory";
+import { hashFile } from "./fileHashCache";
 import { reversedOffsetsFor, substitutionsFor } from "@uk-data-atlas/geography";
 
 type BoundaryMetadata = { files?: unknown };
@@ -77,6 +78,7 @@ const declaredCorrections = (directory: string): string[] => {
 export const createGeometrySourceRegistry = (
 	root: string,
 	artifacts: AreaReleaseArtifact[],
+	hashInput: (path: string) => string = hashFile,
 ): GeometrySourceRegistry => {
 	const releases = artifacts.map((a) => {
 		const source = a.derivedFrom?.source;
@@ -109,7 +111,7 @@ export const createGeometrySourceRegistry = (
 			input: join("boundaries", kebab(g), r, path.slice(dir.length + 1)),
 			// The whole file, so a caller can confirm the exact input that any
 			// area in the release was read from.
-			inputHash: sha(readFileSync(path)),
+			inputHash: hashInput(path),
 			crs: crs(path),
 			codeProperty: a.codeProperty,
 			...(corrections.length > 0 ? { corrections } : {}),
