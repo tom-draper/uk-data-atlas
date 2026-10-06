@@ -16,6 +16,7 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	selectedAreaLadCode,
@@ -60,24 +61,38 @@ function computeStats(
 			];
 		if (!r) return null;
 		const rates: Record<number, number> = {};
+		const levels: Record<number, number> = {};
 		for (const yr of dataset.years) {
 			const v = r.rates[yr];
+			const level = r.levels?.[yr];
 			if (v != null) rates[yr] = v;
+			if (level != null) levels[yr] = level;
 		}
-		return { years: dataset.years, latestYear: dataset.latestYear, rates };
+		return {
+			years: dataset.years,
+			latestYear: dataset.latestYear,
+			rates,
+			levels,
+		};
 	};
 
 	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
 	return ladCode ? fromRecord(ladCode) : null;
 }
 
-function buildSparkline(stats: AggregatedUnemploymentData): {
+function buildSparkline(
+	stats: AggregatedUnemploymentData,
+	measure: "rate" | "count",
+): {
 	linePath: string;
 	areaPath: string;
 	lastPt: { x: number; y: number };
 } | null {
 	const points = stats.years
-		.map((yr) => ({ yr, v: stats.rates[yr] }))
+		.map((yr) => ({
+			yr,
+			v: stats[measure === "rate" ? "rates" : "levels"][yr],
+		}))
 		.filter((p): p is { yr: number; v: number } => p.v != null);
 
 	if (points.length < 2) return null;
@@ -115,6 +130,7 @@ export default function UnemploymentChart({
 }: UnemploymentChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const measure = useCurrentMapOptions().unemployment.measure;
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
@@ -125,15 +141,16 @@ export default function UnemploymentChart({
 		activeDataset?.type === "unemployment" &&
 		activeDataset.id === dataset?.id;
 	const hasData = stats !== null;
-	const sparkline = stats ? buildSparkline(stats) : null;
+	const sparkline = stats ? buildSparkline(stats, measure) : null;
 
 	if (!dataset) return null;
 
-	const latestRate = stats?.rates[dataset.latestYear];
+	const latestValue =
+		stats?.[measure === "rate" ? "rates" : "levels"][dataset.latestYear];
 
 	return (
 		<ChartCard
-			heading={`Historic Unemployment Rate [1996-${dataset.latestYear}]`}
+			heading={`Historic Unemployment ${measure === "rate" ? "Rate" : "Count"} [1996-${dataset.latestYear}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
@@ -217,11 +234,16 @@ export default function UnemploymentChart({
 					<div
 						className={`text-2xl font-bold leading-none ${isDark ? "text-gray-100" : "text-gray-800"}`}
 					>
-						{latestRate != null ? latestRate.toFixed(1) : "—"}
+						{latestValue != null
+							? measure === "rate"
+								? latestValue.toFixed(1)
+								: latestValue.toLocaleString()
+							: "—"}
 						<span
 							className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							% ({dataset.latestYear})
+							{measure === "rate" ? "%" : " unemployed"} (
+							{dataset.latestYear})
 						</span>
 					</div>
 				</div>

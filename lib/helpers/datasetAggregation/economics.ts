@@ -58,7 +58,12 @@ export function aggregateUnemployment(
 	}
 
 	return hasAny
-		? { years: dataset.years, latestYear: dataset.latestYear, rates }
+		? {
+				years: dataset.years,
+				latestYear: dataset.latestYear,
+				rates,
+				levels: unemployed,
+			}
 		: null;
 }
 

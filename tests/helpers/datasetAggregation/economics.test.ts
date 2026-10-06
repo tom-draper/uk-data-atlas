@@ -38,6 +38,8 @@ describe("aggregateUnemployment", () => {
 		expect(result?.latestYear).toBe(2023);
 		expect(result?.rates[2022]).toBeCloseTo(5.6667, 4);
 		expect(result?.rates[2023]).toBeCloseTo(5, 10);
+		expect(result?.levels[2022]).toBe(3400);
+		expect(result?.levels[2023]).toBe(500);
 	});
 
 	it("omits a year no covered area reports", () => {

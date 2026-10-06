@@ -230,6 +230,27 @@ export function GhgEmissionsMeasurePanel({
 	);
 }
 
+const UNEMPLOYMENT_MEASURES = [
+	["rate", "Rate"],
+	["count", "Count"],
+] as const;
+
+export function UnemploymentMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "rate" | "count";
+	onChange: (measure: "rate" | "count") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={UNEMPLOYMENT_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
 const COUNT_METRICS = [
 	["total", "Total"],
 	["perPopulation", "Per pop."],

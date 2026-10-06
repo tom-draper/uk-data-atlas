@@ -33,8 +33,14 @@ export const unemploymentDefinition: ChartDatasetDefinition<UnemploymentDataset>
 			year: 2021,
 		},
 		map: {
-			valueFor: (dataset, code) =>
-				dataset.data[code]?.rates[dataset.latestYear] ?? null,
+			valueFor: (dataset, code, mapOptions) => {
+				const area = dataset.data[code];
+				return mapOptions.unemployment.measure === "count"
+					? (area?.levels?.[dataset.latestYear] ?? null)
+					: (area?.rates[dataset.latestYear] ?? null);
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`unemployment:${mapOptions.unemployment.measure}`,
 			colorRange: { min: 2.2, max: 6.8 },
 			legend: {
 				min: 2.2,
