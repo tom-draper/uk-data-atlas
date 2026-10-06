@@ -182,7 +182,10 @@ test("paginates location summaries without their geometry", () => {
 		data: Array<{ id: string; geometry?: unknown }>;
 		meta: { nextCursor: string | null };
 	};
-	assert.deepEqual(body.data.map(({ id }) => id), [first.id]);
+	assert.deepEqual(
+		body.data.map(({ id }) => id),
+		[first.id],
+	);
 	assert.equal(body.data[0]!.geometry, undefined);
 	assert.equal(body.meta.nextCursor, cursorFor(first.id));
 
@@ -193,7 +196,7 @@ test("paginates location summaries without their geometry", () => {
 	);
 	assert.equal(next.status, 200);
 	assert.deepEqual(
-		((next.body as { data: Array<{ id: string }> }).data).map(({ id }) => id),
+		(next.body as { data: Array<{ id: string }> }).data.map(({ id }) => id),
 		[second.id],
 	);
 });
