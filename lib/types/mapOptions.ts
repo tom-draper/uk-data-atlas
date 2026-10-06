@@ -17,6 +17,10 @@ export interface IncomeOptions extends ColorRangeOption {
 	measure: "median" | "mean";
 }
 
+export interface CountMetricOptions extends ColorRangeOption {
+	measure: "total" | "perPopulation";
+}
+
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -43,10 +47,16 @@ export interface NetworkOptions {
 
 export type ChartMapOptions = Omit<
 	Record<CatalogueDatasetType, ColorRangeOption>,
-	"housePrice" | "income" | "lifeExpectancy"
+	| "housePrice"
+	| "income"
+	| "lifeExpectancy"
+	| "businessActivity"
+	| "electricVehicleChargers"
 > & {
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
+	businessActivity: CountMetricOptions;
+	electricVehicleChargers: CountMetricOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 };
 

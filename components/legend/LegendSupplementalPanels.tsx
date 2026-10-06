@@ -161,6 +161,27 @@ export function IncomeMeasurePanel({
 	);
 }
 
+const COUNT_METRICS = [
+	["total", "Total"],
+	["perPopulation", "Per pop."],
+] as const;
+
+export function CountMetricPanel({
+	measure,
+	onChange,
+}: {
+	measure: "total" | "perPopulation";
+	onChange: (measure: "total" | "perPopulation") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={COUNT_METRICS}
+			onChange={onChange}
+		/>
+	);
+}
+
 const LIFE_EXPECTANCY_MEASURES = [
 	["average", "Average"],
 	["male", "Male"],

@@ -23,7 +23,15 @@ export const electricVehicleChargersDefinition: ChartDatasetDefinition<
 		year: 2026,
 	},
 	map: {
-		valueKey: "value",
+		valueFor: (dataset, code, mapOptions) => {
+			const record = dataset.data[code];
+			return mapOptions.electricVehicleChargers.measure ===
+				"perPopulation"
+				? (record?.metrics?.per100kPopulation ?? null)
+				: (record?.value ?? null);
+		},
+		sourceMode: (_dataset, mapOptions) =>
+			`electricVehicleChargers:${mapOptions.electricVehicleChargers.measure}`,
 		colorRange: { min: 0, max: 1_500 },
 		legend: {
 			min: 0,

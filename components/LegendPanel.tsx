@@ -22,6 +22,7 @@ import {
 	useLegendAggregates,
 } from "./legend/legendData";
 import {
+	CountMetricPanel,
 	ElectionMetricPanel,
 	HousePriceMeasurePanel,
 	IncomeMeasurePanel,
@@ -81,6 +82,11 @@ export default function LegendPanel({
 		Object.values(activeDataset.data).some(
 			({ turnoutPercent }) => turnoutPercent > 0,
 		);
+	const countMetricDataset =
+		activeDataset?.type === "businessActivity" ||
+		activeDataset?.type === "electricVehicleChargers"
+			? activeDataset.type
+			: null;
 
 	return (
 		<div className="pointer-events-none md:p-2.5 md:pr-0 flex flex-col h-full gap-2.5">
@@ -143,6 +149,28 @@ export default function LegendPanel({
 					onChange={(measure) =>
 						onMapOptionsChange("income", { measure })
 					}
+				/>
+			)}
+
+			{countMetricDataset && (
+				<CountMetricPanel
+					measure={
+						controls.displayOptions[countMetricDataset].measure
+					}
+					onChange={(measure) => {
+						const colorRange =
+							measure === "total"
+								? countMetricDataset === "businessActivity"
+									? { min: 0, max: 50_000 }
+									: { min: 0, max: 1_500 }
+								: countMetricDataset === "businessActivity"
+									? { min: 0, max: 12_000 }
+									: { min: 0, max: 500 };
+						onMapOptionsChange(countMetricDataset, {
+							measure,
+							colorRange,
+						});
+					}}
 				/>
 			)}
 
