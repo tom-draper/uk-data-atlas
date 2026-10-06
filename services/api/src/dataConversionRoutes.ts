@@ -10,12 +10,7 @@ import {
 import { statisticPhrase } from "./aggregation";
 import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { sourceExactProvenance } from "./sourceExactProvenance";
-import {
-	cursorFor,
-	keyFromCursor,
-	MAX_PAGE_SIZE,
-	readPageSize,
-} from "./pagination";
+import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
@@ -210,38 +205,11 @@ export const handleDataConversionRoutes = ({
 			areaSample: converted.areaSample,
 		});
 	}
-	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
-	if (pageSize === undefined) {
-		return problem(
-			400,
-			"Invalid Query",
-			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
-		);
-	}
-	const cursor = parsedUrl.searchParams.get("cursor");
-	const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
-	if (cursor && !cursorCode)
-		return problem(400, "Invalid Query", "cursor is invalid.", {
-			code: "invalid_cursor",
-		});
-	const offset = cursorCode
-		? converted.records.findIndex(
-				(record) => record.areaCode === cursorCode,
-			) + 1
-		: 0;
-	if (cursorCode && offset === 0)
-		return problem(
-			400,
-			"Invalid Query",
-			"cursor is not valid for this conversion.",
-			{ code: "invalid_cursor" },
-		);
-	const page = converted.records.slice(offset, offset + pageSize);
-	const lastRecord = page.at(-1);
-	const nextCursor =
-		offset + page.length < converted.records.length && lastRecord
-			? cursorFor(lastRecord.areaCode)
-			: null;
+	const page = paginate(parsedUrl, converted.records, {
+		keyOf: (record) => record.areaCode,
+		subject: "conversion",
+	});
+	if ("problem" in page) return page.problem;
 	return {
 		status: 200,
 		body: envelope(
@@ -303,9 +271,9 @@ export const handleDataConversionRoutes = ({
 								: "Sources split across targets were apportioned by overlapping area. This is an estimate: it assumes the measure is spread evenly across each source area.",
 				},
 				aggregation: null,
-				records: page,
+				records: page.items,
 			},
-			nextCursor,
+			page.nextCursor,
 		),
 	};
 };

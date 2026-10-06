@@ -2127,7 +2127,13 @@ Two things can change under a client, and each is pinned separately.
   has passed. A change that breaks anything else needs `/v2`. Until the
   first deployment there is no client to break, so a deliberate break is
   locked with `--before-launch`, which lists what it breaks; that flag goes
-  at launch.
+  at launch. What is served is held to the same document:
+  `tests/built/contract.test.ts` sends every example and refusal request it
+  names and checks each body against its operation's response schema. The
+  server reads each operation's query parameters from
+  `public/operations.json`, compiled from `openapi.yaml` by
+  `pnpm build:operations`, and refuses to start with one compiled from an
+  older document.
 - **The data** is identified by the current Atlas release. Every response
   carries an `Atlas-Release` header, and JSON responses name it in the envelope
   too. A correction or preprocessing change replaces the current release; the

@@ -139,6 +139,18 @@ test("allows additions, and a removal only after its sunset", () => {
 	});
 	assert.deepEqual(breakingChanges(base, grown, today), []);
 
+	// A status that declared no content gains a schema.
+	const untyped = changed((op) => {
+		op.responses["503"] = [];
+	});
+	const typed = changed((op) => {
+		op.responses["503 application/problem+json"] = ["code"];
+	});
+	assert.deepEqual(breakingChanges(untyped, typed, today), []);
+	assert.deepEqual(breakingChanges(untyped, base, today), [
+		"GET /things no longer answers 503.",
+	]);
+
 	const deprecated = changed((op) => {
 		op.deprecated = { since: "2026-01-01", sunset: "2027-01-01" };
 	});

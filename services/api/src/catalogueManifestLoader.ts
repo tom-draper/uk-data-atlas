@@ -8,6 +8,10 @@ import type { DataCatalog } from "./dataCatalog";
 import type { ExportManifest } from "./exportManifest";
 import type { LookupManifest } from "./lookupExports";
 import type { MeasureCompatibilityInventory } from "./measureCompatibility";
+import {
+	openapiDocumentHash,
+	type OperationsArtifact,
+} from "./operationTemplates";
 import type { ValidationReport } from "./validationReport";
 import { withUnitDefinitions } from "./unitRegistry";
 
@@ -21,6 +25,32 @@ export const readAtlasRelease = (apiRoot: string): AtlasRelease => {
 		throw new Error(`Invalid atlas release manifest at ${path}`);
 	}
 	return release;
+};
+
+/**
+ * The operations compiled from `openapiDocument`. One compiled from an older
+ * document is refused: it would answer a newly declared parameter with 400.
+ */
+export const readOperations = (
+	apiRoot: string,
+	openapiDocument: string,
+): OperationsArtifact => {
+	const path = publicPath(apiRoot, "operations.json");
+	const artifact = JSON.parse(
+		readFileSync(path, "utf8"),
+	) as OperationsArtifact;
+	if (artifact.schemaVersion !== 1 || !Array.isArray(artifact.operations)) {
+		throw new Error(`Invalid operations artifact at ${path}`);
+	}
+	if (
+		artifact.inputs?.openapiDocument !==
+		openapiDocumentHash(openapiDocument)
+	) {
+		throw new Error(
+			`${path} was compiled from another openapi.yaml; run pnpm build:operations.`,
+		);
+	}
+	return artifact;
 };
 
 export const readValidationReport = (apiRoot: string): ValidationReport => {

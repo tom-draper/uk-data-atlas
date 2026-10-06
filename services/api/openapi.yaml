@@ -2138,7 +2138,12 @@ paths:
           required: false
           schema: { type: string }
       responses:
-        "200": { description: Reviewed analysis geography support. }
+        "200":
+          description: Reviewed analysis geography support.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisGeographyListEnvelope"
         "503": { $ref: "#/components/responses/CatalogueUnavailable" }
 
   /analysis-geography-validation:
@@ -2157,7 +2162,11 @@ paths:
         in its `path`, and was proved exact through every step.
       responses:
         "200":
-          { description: The complete analysis geography validation receipt. }
+          description: The complete analysis geography validation receipt.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisGeographyValidationEnvelope"
         "503": { $ref: "#/components/responses/CatalogueUnavailable" }
 
   /analysis:plan:
@@ -6312,13 +6321,13 @@ paths:
       summary: Discover, assess and plan published geography relationships
       x-likely-refusal:
         status: 400
-        when: "A conversion does not name both exact releases and a purpose, or a coverage question omits its geography or release."
+        when: "A conversion names a release other than as geography/release, or a coverage question omits its geography or release."
         x-example-request: "/v1/relationships?from=ward"
       description: >
         The front door for relationship evidence in the boundary archive.
         Supply `from={geography}/{release}` to discover every published
-        conversion from one exact release. Add `to={geography}/{release}` and
-        `purpose` to assess the paths, their coverage, trust and permitted
+        conversion from one exact release. Add `to={geography}/{release}` to
+        assess the paths for a `purpose`, their coverage, trust and permitted
         operations. Add `operation` to select the best published path for that
         intended operation, without translating any codes or values.
 
@@ -6342,7 +6351,13 @@ paths:
         - name: purpose
           in: query
           required: false
-          schema: { type: string, enum: [identity, membership, apportion] }
+          schema:
+            type: string
+            enum: [identity, membership, apportion]
+            default: membership
+          description: >
+            What the conversion is for, as on `/translations`. Only applies
+            with `to`.
         - name: operation
           in: query
           required: false
@@ -8834,9 +8849,11 @@ components:
           type: array
           description: >
             On a 409 Ambiguous Place: each place the name could mean, with its
-            answer and the request that asks about it alone.
+            answer and the request that asks about it alone, as an object. On
+            a refusal from an area's children routes: each release the
+            children are published in, as a `{geography}/{release}` string.
           items:
-            type: object
+            type: [object, string]
         candidates:
           type: array
           description: >
@@ -9328,6 +9345,171 @@ components:
                 - type: string
                 - type: "null"
               description: Opaque cursor for the next page, or null at the end.
+
+    AnalysisSource:
+      type: object
+      required: [datasetId, geography, boundaryYear, periods]
+      properties:
+        datasetId: { type: string }
+        geography: { type: string }
+        boundaryYear: { type: integer }
+        periods:
+          type: array
+          items: { type: string }
+
+    AnalysisCrosswalk:
+      type: object
+      required: [id, method, quality]
+      properties:
+        id: { type: string }
+        method:
+          $ref: "#/components/schemas/CrosswalkMethod"
+        quality:
+          $ref: "#/components/schemas/CrosswalkQuality"
+
+    AnalysisGeographyListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [analysisGeographies]
+              properties:
+                analysisGeographies:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      [
+                        geography,
+                        boundaryRelease,
+                        measureId,
+                        source,
+                        basis,
+                        conversion,
+                        note,
+                      ]
+                    properties:
+                      geography: { type: string }
+                      boundaryRelease: { type: string }
+                      measureId: { type: string }
+                      source:
+                        $ref: "#/components/schemas/AnalysisSource"
+                      basis: { const: derived }
+                      conversion:
+                        description: >
+                          The reviewed crosswalk, or the published path whose
+                          steps the conversion runs through.
+                        oneOf:
+                          - $ref: "#/components/schemas/AnalysisCrosswalk"
+                          - type: object
+                            required: [id, method, quality, steps]
+                            properties:
+                              id: { type: string }
+                              method: { const: relationship-path }
+                              quality: { type: string }
+                              steps:
+                                type: array
+                                items:
+                                  type: object
+                                  required: [crosswalk, direction]
+                                  properties:
+                                    crosswalk:
+                                      $ref: "#/components/schemas/AnalysisCrosswalk"
+                                    direction:
+                                      enum: [forward, reverse]
+                      note: { type: string }
+
+    AnalysisGeographyValidationEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                [
+                  schemaVersion,
+                  contentHash,
+                  analysisGeographyInventoryHash,
+                  dataCatalogHash,
+                  crosswalkInventoryHash,
+                  supports,
+                ]
+              properties:
+                schemaVersion: { const: 1 }
+                contentHash: { type: string }
+                analysisGeographyInventoryHash: { type: string }
+                dataCatalogHash: { type: string }
+                crosswalkInventoryHash: { type: string }
+                supports:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      [
+                        measureId,
+                        analysisGeography,
+                        source,
+                        observations,
+                        periods,
+                      ]
+                    properties:
+                      measureId: { type: string }
+                      analysisGeography:
+                        $ref: "#/components/schemas/CrosswalkSide"
+                      source:
+                        $ref: "#/components/schemas/AnalysisSource"
+                      crosswalk:
+                        type: object
+                        description: The reviewed crosswalk, for a one-crosswalk support.
+                        required: [id, contentHash]
+                        properties:
+                          id: { type: string }
+                          contentHash: { type: string }
+                      path:
+                        type: object
+                        description: Every crosswalk of the reviewed path, for a path-backed support.
+                        required: [id, crosswalks]
+                        properties:
+                          id: { type: string }
+                          crosswalks:
+                            type: array
+                            items:
+                              type: object
+                              required: [id, contentHash, direction]
+                              properties:
+                                id: { type: string }
+                                contentHash: { type: string }
+                                direction:
+                                  enum: [forward, reverse]
+                      observations:
+                        type: object
+                        required: [artifact, contentHash]
+                        properties:
+                          artifact: { type: string }
+                          contentHash: { type: string }
+                      periods:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            [
+                              period,
+                              method,
+                              inputRecordCount,
+                              outputRecordCount,
+                              inputTotal,
+                              outputTotal,
+                            ]
+                          properties:
+                            period: { type: string }
+                            method: { const: exact }
+                            inputRecordCount: { type: integer }
+                            outputRecordCount: { type: integer }
+                            inputTotal: { type: number }
+                            outputTotal: { type: number }
 
     TerrainPointEnvelope:
       allOf:
@@ -9965,7 +10147,7 @@ components:
           required: [status, reason]
           properties:
             status:
-              const: not-compiled
+              const: unsupported
             reason:
               type: string
 
@@ -10007,7 +10189,7 @@ components:
           required: [status, reason]
           properties:
             status:
-              const: not-compiled
+              const: unsupported
             reason:
               type: string
 
@@ -10117,6 +10299,27 @@ components:
     Area:
       type: object
       required: [id, geography, boundaryRelease, code, name]
+      properties:
+        id:
+          type: string
+        geography:
+          type: string
+        boundaryRelease:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+    AreaInRelease:
+      type: object
+      description: >
+        An area listed under a response that already states its geography and
+        boundary release, which are not repeated for each area.
+      required: [id, code, name]
       properties:
         id:
           type: string
@@ -10347,7 +10550,7 @@ components:
               type: array
               items:
                 allOf:
-                  - $ref: "#/components/schemas/Area"
+                  - $ref: "#/components/schemas/AreaInRelease"
                   - type: object
                     required:
                       [
@@ -10438,7 +10641,7 @@ components:
           type: array
           items:
             allOf:
-              - $ref: "#/components/schemas/Area"
+              - $ref: "#/components/schemas/AreaInRelease"
               - type: object
                 required: [id, relation, boundingBox, geometrySource]
                 properties:
@@ -10669,7 +10872,10 @@ components:
                 url: { type: string }
         status:
           type: string
-          enum: [ambiguous-release, no-release-for-date, geometry-unavailable]
+          description: >
+            `ambiguous-release`, `no-release-for-date` or
+            `geometry-unavailable` when no release could be read. The schema
+            this is combined with lists every status a result may carry.
         detail: { type: string }
         choices:
           type: array
@@ -11561,8 +11767,24 @@ components:
         `official-lookup` and `clean-containment` read an explicit code pair
         from a published file. `area-overlap` intersects the two releases'
         boundary geometries and weights each source by the area it shares
-        with each target.
-      enum: [official-lookup, clean-containment, area-overlap]
+        with each target. `population-overlap` reweights an area-overlap
+        crosswalk's pairs by the residents of the building blocks in each.
+        `geometric-containment` derives a hierarchy from geometry where no
+        publisher lookup carries it. `best-fit` names, for each child, the
+        one parent holding most of its area where the two do not nest.
+        `extent-continuity` pairs the codes two releases of one geography
+        share, as identity only where their geometries differ by no more
+        than generalisation slivers.
+      enum:
+        [
+          official-lookup,
+          clean-containment,
+          area-overlap,
+          population-overlap,
+          geometric-containment,
+          best-fit,
+          extent-continuity,
+        ]
 
     CrosswalkQuality:
       description: >
@@ -11589,6 +11811,27 @@ components:
               const: area
             normalisation:
               const: per-source
+        - type: object
+          description: >
+            Each record's target weights are shares of the source's resident
+            population living in each published target, counted from fine
+            building blocks, and sum to 1 within rounding.
+          required: [status, basis, normalisation, population, date, blocks]
+          properties:
+            status:
+              const: provided
+            basis:
+              const: population
+            normalisation:
+              const: per-source
+            population:
+              type: string
+              description: What was counted, such as Census 2021 usual residents.
+            date:
+              type: string
+              description: The reference date of the count.
+            blocks:
+              $ref: "#/components/schemas/CrosswalkSide"
 
     CrosswalkSummary:
       type: object
@@ -12006,6 +12249,10 @@ components:
             - weights-sum-to-one
             - area-coverage
             - sliver-separation
+            - continuity-extent
+            - population-coverage
+            - containment-verified
+            - best-fit-verified
             - measure-definition
             - records-resolve
             - countries-declared

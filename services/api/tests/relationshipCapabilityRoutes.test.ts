@@ -395,3 +395,54 @@ test("makes an undeclared purpose an explicit relationship-path prerequisite", (
 		},
 	]);
 });
+
+test("names the one problem with a conversion query", () => {
+	const detail = (url: string) => {
+		const response = route("GET", url, contextFor());
+		assert.equal(response.status, 400, url);
+		return (response.body as { detail: string }).detail;
+	};
+	const source = "from=ward/2025-01-en-ward";
+	for (const [url, expected] of [
+		[
+			"/v1/relationships?to=localAuthority/2025-01-uk-lad",
+			/^from is required/,
+		],
+		[
+			"/v1/relationships?from=ward",
+			/^from must be one exact release.*ward is not/,
+		],
+		[
+			`/v1/relationships?${source}&to=localAuthority`,
+			/^to must be one exact release/,
+		],
+		[
+			`/v1/relationships?${source}&purpose=membership`,
+			/^purpose describes one conversion/,
+		],
+		[
+			`/v1/relationships?${source}&measure=population`,
+			/^measure describes one conversion/,
+		],
+		[
+			`/v1/relationships?${source}&operation=membership-join`,
+			/^operation describes one conversion/,
+		],
+		[
+			`${query.replace("purpose=membership", "purpose=overlap")}`,
+			/^purpose must be one of identity, membership, apportion/,
+		],
+		[`${query}&operation=sum`, /^operation must be one of identity-join/],
+	] as const)
+		assert.match(detail(url), expected, url);
+});
+
+test("assesses a conversion for membership when no purpose is given", () => {
+	const response = route(
+		"GET",
+		query.replace("&purpose=membership", ""),
+		contextFor(),
+	);
+	assert.equal(response.status, 200);
+	assert.deepEqual(response.body, route("GET", query, contextFor()).body);
+});

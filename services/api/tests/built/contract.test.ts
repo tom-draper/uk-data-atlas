@@ -17,6 +17,12 @@ import {
 	INDEX_START,
 	renderRouteIndex,
 } from "../../scripts/build-readme-index";
+import {
+	resolveRef,
+	schemaViolations,
+	type Schema,
+	type SchemaDocument,
+} from "../openapiSchema";
 
 /**
  * The API index, the OpenAPI paths and the README's endpoint list are three
@@ -467,6 +473,137 @@ test("pages every cursor route the same way", () => {
 			query,
 		);
 	}
+});
+
+/**
+ * Every request the document and README name, each sent and its body checked
+ * against the schema its operation declares for that status and media type.
+ * The examples above show what a response looks like; this checks that what
+ * is served is what a client generated from the schemas would accept.
+ */
+const sampleRequests = (() => {
+	const samples = new Set<string>([
+		...responseExamples.flatMap(({ request }) =>
+			request ? [request] : [],
+		),
+		...listed.filter((url) => !url.includes("{")),
+		...Object.values(PROBLEM_CODES).map(({ example }) => example),
+		...PAGINATED.map(
+			(path) => `${path}${path.includes("?") ? "&" : "?"}limit=2`,
+		),
+	]);
+	for (const [path, item] of Object.entries(openapi.paths)) {
+		// A path with no parameters in it is sampled as it stands.
+		if (item.get && !path.includes("{"))
+			samples.add(`/v1${path}`.replace(/\/$/, ""));
+		const refusal = (
+			item.get as { "x-likely-refusal"?: LikelyRefusal } | undefined
+		)?.["x-likely-refusal"];
+		if (refusal?.["x-example-request"])
+			samples.add(refusal["x-example-request"]);
+	}
+	return [...samples].map((url) =>
+		url.replaceAll(
+			"{current-atlas-release}",
+			catalogues.atlasRelease.releaseId,
+		),
+	);
+})();
+
+type OpenApiResponse = {
+	$ref?: string;
+	content?: Record<string, { schema?: Schema }>;
+};
+const schemaDocument = openapi as unknown as SchemaDocument & {
+	paths: Record<
+		string,
+		{ get?: { responses: Record<string, OpenApiResponse> } }
+	>;
+};
+const matchOperation = catalogues.operationMatcher;
+
+/** The JSON a client receives, and its media type, or undefined when not JSON. */
+const servedJson = (response: ReturnType<typeof route>) => {
+	if (response.status >= 400)
+		return { mediaType: "application/problem+json", body: response.body };
+	if (!response.representation)
+		return { mediaType: "application/json", body: response.body };
+	const mediaType = response.representation.contentType.split(";")[0]!.trim();
+	return /[/+]json$/.test(mediaType) &&
+		typeof response.representation.body === "string"
+		? { mediaType, body: JSON.parse(response.representation.body) }
+		: undefined;
+};
+
+test("serves a body its operation's response schema accepts, for every operation", () => {
+	const problems: string[] = [];
+	const checked = new Set<string>();
+	for (const url of sampleRequests) {
+		const { operation } = matchOperation(url.split("?")[0]!);
+		const responses = operation
+			? schemaDocument.paths[operation.path]?.get?.responses
+			: undefined;
+		if (!operation || !responses) {
+			problems.push(`${url}: matches no GET operation`);
+			continue;
+		}
+		const response = route("GET", url, catalogues);
+		const declared = responses[String(response.status)];
+		if (!declared) {
+			problems.push(
+				`${url}: ${response.status} is not a declared response of ${operation.path}`,
+			);
+			continue;
+		}
+		const served = servedJson(response);
+		if (!served) continue;
+		const content = (
+			declared.$ref
+				? (resolveRef(schemaDocument, declared.$ref) as OpenApiResponse)
+				: declared
+		).content;
+		const schema = content?.[served.mediaType]?.schema;
+		if (!schema) {
+			problems.push(
+				`${url}: ${response.status} ${served.mediaType} has no declared schema`,
+			);
+			continue;
+		}
+		checked.add(operation.path);
+		// One line for each distinct departure, not one for every item.
+		problems.push(
+			...new Set(
+				schemaViolations(schemaDocument, schema, served.body).map(
+					(violation) =>
+						`${url} ${response.status}: ${violation.replace(/\[\d+\]/g, "[]")}`,
+				),
+			),
+		);
+	}
+	// Every operation that succeeds with JSON is checked at least once.
+	const unchecked = Object.entries(schemaDocument.paths).flatMap(
+		([path, item]) =>
+			Object.entries(item.get?.responses ?? {}).some(
+				([status, declared]) =>
+					status.startsWith("2") &&
+					Object.keys(
+						(declared.$ref
+							? (resolveRef(
+									schemaDocument,
+									declared.$ref,
+								) as OpenApiResponse)
+							: declared
+						).content ?? {},
+					).some((mediaType) => /[/+]json$/.test(mediaType)),
+			) && !checked.has(path)
+				? [path]
+				: [],
+	);
+	assert.deepEqual(
+		unchecked,
+		[],
+		"operations with no sample request checked",
+	);
 });
 
 test("serves each representation the OpenAPI document declares", () => {

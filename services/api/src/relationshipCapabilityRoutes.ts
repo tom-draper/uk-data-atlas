@@ -164,27 +164,44 @@ export const handleRelationshipCapabilityRoutes = ({
 	const purposeParameter = parsedUrl.searchParams.get("purpose");
 	const measureId = parsedUrl.searchParams.get("measure");
 	const operation = parsedUrl.searchParams.get("operation");
-	if (
-		!from ||
-		(fromParameter !== null && !from) ||
-		(toParameter !== null && !to) ||
-		(to !== undefined &&
-			!RELATIONSHIP_PURPOSES.includes(
-				purposeParameter as RelationshipPurpose,
-			)) ||
-		(to === undefined && purposeParameter !== null) ||
-		(to === undefined && (measureId !== null || operation !== null)) ||
-		(operation !== null &&
-			!RELATIONSHIP_OPERATIONS.includes(
-				operation as RelationshipOperation,
-			))
-	) {
-		return problem(
-			400,
-			"Invalid Query",
-			"from is required as geography/release. To diagnose one conversion, provide to=geography/release and purpose (identity, membership or apportion) together; operation must be a supported relationship operation when supplied.",
+	const invalid = (detail: string) => problem(400, "Invalid Query", detail);
+	if (fromParameter === null)
+		return invalid(
+			"from is required, as geography/release, such as from=ward/2023-05-uk-bgc.",
 		);
-	}
+	if (!from)
+		return invalid(
+			`from must be one exact release, as geography/release; ${fromParameter} is not.`,
+		);
+	if (toParameter !== null && !to)
+		return invalid(
+			`to must be one exact release, as geography/release; ${toParameter} is not.`,
+		);
+	const conversionOnly = (
+		[
+			["purpose", purposeParameter],
+			["operation", operation],
+			["measure", measureId],
+		] as const
+	).find(([, value]) => value !== null)?.[0];
+	if (!to && conversionOnly)
+		return invalid(
+			`${conversionOnly} describes one conversion; add to=geography/release to name its target.`,
+		);
+	if (
+		purposeParameter !== null &&
+		!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)
+	)
+		return invalid(
+			`purpose must be one of ${RELATIONSHIP_PURPOSES.join(", ")}.`,
+		);
+	if (
+		operation !== null &&
+		!RELATIONSHIP_OPERATIONS.includes(operation as RelationshipOperation)
+	)
+		return invalid(
+			`operation must be one of ${RELATIONSHIP_OPERATIONS.join(", ")}.`,
+		);
 	const geographyResolver = context.geographyResolver;
 	if (!to) {
 		const source = from;
@@ -230,7 +247,7 @@ export const handleRelationshipCapabilityRoutes = ({
 			}),
 		};
 	}
-	const purpose = purposeParameter as RelationshipPurpose;
+	const purpose = (purposeParameter ?? "membership") as RelationshipPurpose;
 	const capability = geographyResolver.relationshipCapability(
 		from,
 		to,

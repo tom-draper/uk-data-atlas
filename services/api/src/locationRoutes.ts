@@ -3,12 +3,7 @@ import type { RouteRequest } from "./routing";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
 import { areaKey } from "./geographyKeys";
-import {
-	cursorFor,
-	keyFromCursor,
-	MAX_PAGE_SIZE,
-	readPageSize,
-} from "./pagination";
+import { paginate } from "./pagination";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body
@@ -60,39 +55,19 @@ export const handleLocationRoutes = ({
 				location.id.startsWith(query) ||
 				location.label.toLocaleLowerCase().startsWith(query),
 		);
-		const limit = readPageSize(parsedUrl.searchParams.get("limit"));
-		if (limit === undefined)
-			return problem(
-				400,
-				"Invalid Query",
-				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
-			);
-		const cursor = parsedUrl.searchParams.get("cursor");
-		const id = cursor ? keyFromCursor(cursor) : undefined;
-		if (cursor && !id)
-			return problem(400, "Invalid Query", "cursor is invalid.", {
-				code: "invalid_cursor",
-			});
-		const offset = id
-			? locations.findIndex((location) => location.id === id) + 1
-			: 0;
-		if (id && offset === 0)
-			return problem(
-				400,
-				"Invalid Query",
-				"cursor is not valid for this location query.",
-				{ code: "invalid_cursor" },
-			);
-		const page = locations.slice(offset, offset + limit);
-		const last = page.at(-1);
+		const page = paginate(parsedUrl, locations, {
+			keyOf: (location) => location.id,
+			subject: "location query",
+		});
+		if ("problem" in page) return page.problem;
 		return {
 			status: 200,
 			body: envelope(
 				releaseId,
-				page.map(({ geometry: _geometry, ...location }) => location),
-				offset + page.length < locations.length && last
-					? cursorFor(last.id)
-					: null,
+				page.items.map(
+					({ geometry: _geometry, ...location }) => location,
+				),
+				page.nextCursor,
 			),
 		};
 	}

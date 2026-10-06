@@ -254,6 +254,16 @@ export const breakingChanges = (
 				breaks.push(`${key} added the required parameter ${name}.`);
 		for (const [response, paths] of Object.entries(before.responses)) {
 			const now = after.responses[response];
+			// A status that declared no content promised no shape, so giving
+			// it a media type takes nothing a client could depend on.
+			if (
+				!now &&
+				!response.includes(" ") &&
+				Object.keys(after.responses).some((key) =>
+					key.startsWith(`${response} `),
+				)
+			)
+				continue;
 			if (!now) {
 				breaks.push(`${key} no longer answers ${response}.`);
 				continue;

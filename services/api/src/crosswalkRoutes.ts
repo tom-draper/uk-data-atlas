@@ -1,9 +1,4 @@
-import {
-	cursorFor,
-	keyFromCursor,
-	MAX_PAGE_SIZE,
-	readPageSize,
-} from "./pagination";
+import { paginate } from "./pagination";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
@@ -66,38 +61,15 @@ export const handleCrosswalkRoutes = ({
 					),
 				),
 			};
-		const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
-		if (pageSize === undefined)
-			return problem(
-				400,
-				"Invalid Query",
-				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
-			);
-		const cursor = parsedUrl.searchParams.get("cursor");
-		const cursorCode = cursor ? keyFromCursor(cursor) : undefined;
-		if (cursor && !cursorCode)
-			return problem(400, "Invalid Query", "cursor is invalid.", {
-				code: "invalid_cursor",
-			});
-		const offset = cursorCode
-			? crosswalk.records.findIndex(
-					(record) => record.source.code === cursorCode,
-				) + 1
-			: 0;
-		if (cursorCode && offset === 0)
-			return problem(
-				400,
-				"Invalid Query",
-				"cursor is not valid for this crosswalk.",
-				{ code: "invalid_cursor" },
-			);
-		const records = crosswalk.records.slice(offset, offset + pageSize);
-		const lastRecord = records.at(-1);
-		const nextCursor =
-			offset + records.length < crosswalk.records.length && lastRecord
-				? cursorFor(lastRecord.source.code)
-				: null;
-		return { status: 200, body: envelope(releaseId, records, nextCursor) };
+		const page = paginate(parsedUrl, crosswalk.records, {
+			keyOf: (record) => record.source.code,
+			subject: "crosswalk",
+		});
+		if ("problem" in page) return page.problem;
+		return {
+			status: 200,
+			body: envelope(releaseId, page.items, page.nextCursor),
+		};
 	}
 	return undefined;
 };

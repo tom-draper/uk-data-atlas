@@ -18,6 +18,7 @@ import {
 	type SentFile,
 } from "./httpResponse";
 import {
+	createOperationMatcher,
 	deprecationHeaders,
 	type MatchedOperation,
 	unexpectedQueryParameter,
