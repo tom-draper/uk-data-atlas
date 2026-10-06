@@ -56,6 +56,7 @@ import { handleBulkRoutes } from "./bulkRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 import { canonicalMeasureId } from "./measureTerms";
 import { handleReleaseJoinRoutes, joinRelease } from "./releaseJoinRoutes";
+import { canonicalGeography } from "./geography";
 
 export type RouteHandler = (request: RouteRequest) => ApiResponse | undefined;
 
@@ -519,6 +520,30 @@ const canonicalMeasureRequest = (
 /** The word that stands for a geography's newest release in a path. */
 export const LATEST_RELEASE = "latest";
 
+/** Replace a path geography abbreviation before any route resolves releases. */
+const canonicalGeographyRequest = (
+	request: RouteRequest,
+): RouteRequest | undefined => {
+	const { segments } = request;
+	if (
+		segments[0] !== "v1" ||
+		!["areas", "boundary-releases", "map-resources"].includes(
+			segments[1] ?? "",
+		)
+	)
+		return undefined;
+	const geography = segments[2];
+	const canonical = geography && canonicalGeography(geography);
+	if (!canonical || canonical === geography) return undefined;
+	const canonicalSegments = [...segments];
+	canonicalSegments[2] = canonical;
+	const parsedUrl = new URL(request.parsedUrl);
+	parsedUrl.pathname = `/${canonicalSegments
+		.map((segment) => encodeURIComponent(segment).replaceAll("%3A", ":"))
+		.join("/")}`;
+	return { ...request, parsedUrl, segments: canonicalSegments };
+};
+
 /**
  * Where a path names a boundary release as `latest`, and what the segment
  * carries after it: `:join` on a release, `.pmtiles` on a map resource.
@@ -620,10 +645,11 @@ const canonicalReleaseRequest = (
 };
 
 export const handleRoute = (request: RouteRequest): ApiResponse | undefined => {
-	const release = canonicalReleaseRequest(request);
+	const geography = canonicalGeographyRequest(request);
+	const release = canonicalReleaseRequest(geography ?? request);
 	if (release && "status" in release) return release;
-	const measure = canonicalMeasureRequest(release ?? request);
-	const canonical = measure ?? release;
+	const measure = canonicalMeasureRequest(release ?? geography ?? request);
+	const canonical = measure ?? release ?? geography;
 	const routed = canonical ?? request;
 	const family = routeFamilies.find(({ owns }) => owns(routed.segments));
 	if (family && routed.method === "POST" && !family.acceptsPost)

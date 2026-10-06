@@ -6,6 +6,7 @@ import {
 	registry,
 	geographyInventory,
 	areaLookup,
+	containmentCrosswalk,
 	crosswalkInventory,
 	crosswalkLookup,
 } from "./routeFixtures";
@@ -140,6 +141,45 @@ test("reverses published identity and containment crosswalks", () => {
 			},
 		],
 	);
+});
+
+test("accepts common geography abbreviations in translation references", () => {
+	const response = route(
+		"GET",
+		"/v1/translations?from=lad/2025-01-uk-lad&code=E08000001&to=wd/2025-01-en-ward&purpose=membership",
+		registry,
+		geographyInventory,
+		areaLookup,
+		{
+			...crosswalkInventory,
+			crosswalks: [
+				...crosswalkInventory.crosswalks,
+				{
+					id: containmentCrosswalk.id,
+					from: containmentCrosswalk.from,
+					to: containmentCrosswalk.to,
+					method: containmentCrosswalk.method,
+					quality: containmentCrosswalk.quality,
+					weighting: containmentCrosswalk.weighting,
+					recordCount: containmentCrosswalk.records.length,
+					artifact: `crosswalks/${containmentCrosswalk.id}.json`,
+					contentHash: containmentCrosswalk.contentHash,
+				},
+			],
+		},
+		crosswalkLookup,
+	);
+	assert.equal(response.status, 200);
+	const data = "data" in response.body ? response.body.data : undefined;
+	assert.deepEqual((data as { source: unknown }).source, {
+		geography: "localAuthority",
+		boundaryRelease: "2025-01-uk-lad",
+		code: "E08000001",
+	});
+	assert.deepEqual((data as { target: unknown }).target, {
+		geography: "ward",
+		boundaryRelease: "2025-01-en-ward",
+	});
 });
 
 test("normalises reverse area-overlap weights against the queried target", () => {
