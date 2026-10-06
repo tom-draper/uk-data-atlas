@@ -18,9 +18,7 @@ import {
 	type SentFile,
 } from "./httpResponse";
 import {
-	createOperationMatcher,
 	deprecationHeaders,
-	readOperationTemplates,
 	type MatchedOperation,
 	unexpectedQueryParameter,
 } from "./operationTemplates";
@@ -183,9 +181,8 @@ export const createApiServer = (
 	const releaseId =
 		catalogues.atlasRelease?.releaseId ??
 		catalogues.boundaryRegistry.contentHash;
-	const matchOperation = createOperationMatcher(
-		readOperationTemplates(catalogues.openapiDocument ?? ""),
-	);
+	const matchOperation =
+		catalogues.operationMatcher ?? (() => ({ route: "unmatched" }));
 	const metrics = new ApiMetrics(
 		releaseId,
 		() => catalogues.geographyResolver.geometryCacheStats(),

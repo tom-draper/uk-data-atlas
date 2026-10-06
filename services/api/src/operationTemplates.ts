@@ -1,3 +1,5 @@
+import { parse } from "yaml";
+
 /**
  * The OpenAPI path templates, used to name the operation a request reached.
  *
@@ -40,163 +42,70 @@ export type MatchedOperation = {
 
 const UNMATCHED = "unmatched";
 
-/**
- * Reads path keys, and each operation's `deprecated`, `x-deprecated-since`,
- * `x-sunset` and `x-rate-limit-cost`, by line: path keys sit at a two-space indent under `paths:` and
- * operation fields at six. The server does not load a YAML parser at runtime.
- */
-const componentQueryParameters = (lines: string[]) => {
-	const parameters = new Map<string, string>();
-	let inParameters = false;
-	let id: string | undefined;
-	let name: string | undefined;
-	for (const line of lines) {
-		if (/^components:\s*$/.test(line)) {
-			inParameters = false;
-			id = undefined;
-			continue;
-		}
-		if (!line.startsWith("  ")) {
-			inParameters = false;
-			id = undefined;
-			continue;
-		}
-		if (/^  parameters:\s*$/.test(line)) {
-			inParameters = true;
-			continue;
-		}
-		if (!inParameters) continue;
-		const component = /^    ([A-Za-z][A-Za-z0-9]*):\s*$/.exec(line)?.[1];
-		if (component) {
-			id = component;
-			name = undefined;
-			continue;
-		}
-		if (!id) continue;
-		const parameterName = /^      name:\s*(\S+)\s*$/.exec(line)?.[1];
-		if (parameterName) {
-			name = parameterName;
-			continue;
-		}
-		if (/^      in:\s*query\s*$/.test(line) && name)
-			parameters.set(id, name);
-	}
-	return parameters;
+type OpenApiParameter = {
+	$ref?: string;
+	in?: string;
+	name?: string;
 };
+
+type OpenApiOperation = {
+	deprecated?: boolean;
+	parameters?: OpenApiParameter[];
+	"x-deprecated-since"?: string;
+	"x-rate-limit-cost"?: number;
+	"x-refused-query-parameters"?: string[];
+	"x-sunset"?: string;
+};
+
+type OpenApiDocument = {
+	components?: { parameters?: Record<string, OpenApiParameter> };
+	paths?: Record<string, Partial<Record<"get" | "post", OpenApiOperation>>>;
+};
+
+const queryParameters = (
+	parameters: OpenApiParameter[] | undefined,
+	components: Record<string, OpenApiParameter> | undefined,
+) =>
+	(parameters ?? []).flatMap((parameter) => {
+		const reference = parameter.$ref?.split("/").at(-1);
+		const resolved = reference ? components?.[reference] : parameter;
+		return resolved?.in === "query" && resolved.name ? [resolved.name] : [];
+	});
 
 export const readOperationTemplates = (
 	openapiDocument: string,
 ): OperationTemplate[] => {
-	const templates: OperationTemplate[] = [];
-	const lines = openapiDocument.split("\n");
-	const components = componentQueryParameters(lines);
-	let inPaths = false;
-	let current: OperationTemplate | undefined;
-	let method: "get" | "post" | undefined;
-	let inParameters = false;
-	let parameterName: string | undefined;
-	for (const line of lines) {
-		if (/^\S/.test(line)) {
-			inPaths = line.startsWith("paths:");
-			current = undefined;
-			method = undefined;
-			inParameters = false;
-			continue;
+	const document = parse(openapiDocument) as OpenApiDocument;
+	return Object.entries(document.paths ?? {}).map(([path, item]) => {
+		const template: OperationTemplate = { path, queryParameters: {} };
+		for (const method of ["get", "post"] as const) {
+			const operation = item[method];
+			if (!operation) continue;
+			template.queryParameters[method] = queryParameters(
+				operation.parameters,
+				document.components?.parameters,
+			);
+			if (operation.deprecated)
+				template.deprecation = {
+					...template.deprecation,
+					...(operation["x-deprecated-since"]
+						? { since: String(operation["x-deprecated-since"]) }
+						: {}),
+					...(operation["x-sunset"]
+						? { sunset: String(operation["x-sunset"]) }
+						: {}),
+				};
+			if (operation["x-refused-query-parameters"])
+				template.refusedQueryParameters = {
+					...template.refusedQueryParameters,
+					[method]: operation["x-refused-query-parameters"],
+				};
+			const cost = operation["x-rate-limit-cost"];
+			if (typeof cost === "number")
+				template.cost = Math.max(template.cost ?? 1, cost);
 		}
-		if (!inPaths) continue;
-		const path = /^ {2}(\/\S*):\s*$/.exec(line)?.[1];
-		if (path) {
-			current = { path, queryParameters: {} };
-			templates.push(current);
-			method = undefined;
-			inParameters = false;
-			continue;
-		}
-		if (!current) continue;
-		const operation = /^ {4}(get|post):\s*$/.exec(line)?.[1] as
-			"get" | "post" | undefined;
-		if (operation) {
-			method = operation;
-			current.queryParameters[method] = [];
-			inParameters = false;
-			continue;
-		}
-		if (/^ {6}parameters:\s*$/.test(line) && method) {
-			inParameters = true;
-			parameterName = undefined;
-			continue;
-		}
-		if (inParameters && /^ {6}\S/.test(line)) {
-			inParameters = false;
-			parameterName = undefined;
-		}
-		if (inParameters && method) {
-			const direct = /^ {8}- name:\s*(\S+)\s*$/.exec(line)?.[1];
-			if (direct) {
-				parameterName = direct;
-				continue;
-			}
-			const reference =
-				/^ {8}- \$ref: "#\/components\/parameters\/([^"/]+)"\s*$/.exec(
-					line,
-				)?.[1];
-			if (reference) {
-				const name = components.get(reference);
-				if (name) current.queryParameters[method]!.push(name);
-				parameterName = undefined;
-				continue;
-			}
-			// A parameter may also be written in flow style, on one line as
-			// `- { name: period, in: query, … }` or over several as `- {`
-			// followed by `name: period,` and `in: query,`.
-			const flow =
-				/^ {8}- \{\s*name:\s*([^,\s}]+)\s*,\s*in:\s*(\w+)/.exec(line);
-			if (flow) {
-				if (flow[2] === "query")
-					current.queryParameters[method]!.push(flow[1]!);
-				parameterName = undefined;
-				continue;
-			}
-			if (/^ {8}- \{\s*$/.test(line)) {
-				parameterName = undefined;
-				continue;
-			}
-			const flowName = /^ {12}name:\s*([^,\s]+),?\s*$/.exec(line)?.[1];
-			if (flowName) {
-				parameterName = flowName;
-				continue;
-			}
-			if (/^ {10,12}in:\s*query,?\s*$/.test(line) && parameterName) {
-				current.queryParameters[method]!.push(parameterName);
-				parameterName = undefined;
-				continue;
-			}
-		}
-		if (/^ {6}deprecated:\s*true\s*$/.test(line))
-			current.deprecation = { ...current.deprecation };
-		const since = /^ {6}x-deprecated-since:\s*"?([^"\s]+)"?\s*$/.exec(
-			line,
-		)?.[1];
-		if (since) current.deprecation = { ...current.deprecation, since };
-		const sunset = /^ {6}x-sunset:\s*"?([^"\s]+)"?\s*$/.exec(line)?.[1];
-		if (sunset) current.deprecation = { ...current.deprecation, sunset };
-		const refused =
-			/^ {6}x-refused-query-parameters:\s*\[([^\]]*)\]\s*$/.exec(
-				line,
-			)?.[1];
-		if (refused !== undefined && method)
-			current.refusedQueryParameters = {
-				...current.refusedQueryParameters,
-				[method]: refused
-					.split(",")
-					.map((name) => name.trim())
-					.filter(Boolean),
-			};
-		// A path with two operations costs what its dearer one does.
-		const cost = /^ {6}x-rate-limit-cost:\s*(\d+)\s*$/.exec(line)?.[1];
-		if (cost) current.cost = Math.max(current.cost ?? 1, Number(cost));
-	}
-	return templates;
+		return template;
+	});
 };
 
 type CompiledTemplate = {

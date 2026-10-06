@@ -29,6 +29,10 @@ import type { MeasureCompatibilityInventory } from "../src/measureCompatibility"
 import { compileAreaSearchIndex } from "../src/areaSearch";
 import { compilePlaceIndex } from "../src/placeIndex";
 import { createRelationshipPathIndex } from "../src/relationshipPaths";
+import {
+	createOperationMatcher,
+	readOperationTemplates,
+} from "../src/operationTemplates";
 
 /**
  * What a test context is built from: route resources, plus the raw lookups
@@ -164,6 +168,13 @@ export const testContext = (
 	return {
 		...resources,
 		boundaryRegistry: withRegistry.boundaryRegistry,
+		operationMatcher:
+			inputs.operationMatcher ??
+			(inputs.openapiDocument
+				? createOperationMatcher(
+						readOperationTemplates(inputs.openapiDocument),
+					)
+				: undefined),
 		geographyResolver:
 			inputs.geographyResolver ??
 			resolverFor({

@@ -2,7 +2,7 @@ import { problem, type ApiResponse } from "./routeResponse";
 import { releaseMonth } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
-import { handleOpenapiRoutes } from "./openapiRoutes";
+import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
@@ -80,10 +80,7 @@ const routeFamilies: RouteFamily[] = [
 	},
 	{
 		name: "openapi",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			(segments[1] === "openapi.yaml" || segments[1] === "docs"),
+		owns: isOpenapiRoute,
 		handle: handleOpenapiRoutes,
 	},
 	{
