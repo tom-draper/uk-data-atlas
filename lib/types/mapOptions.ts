@@ -45,6 +45,10 @@ export interface HomelessnessOptions extends ColorRangeOption {
 	measure: "rate" | "count";
 }
 
+export interface SchoolPerformanceOptions extends ColorRangeOption {
+	measure: "grade4" | "grade5" | "attainment8" | "progress8";
+}
+
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -82,6 +86,7 @@ export type ChartMapOptions = Omit<
 	| "unemployment"
 	| "claimantCount"
 	| "homelessness"
+	| "schoolPerformance"
 > & {
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
@@ -93,6 +98,7 @@ export type ChartMapOptions = Omit<
 	unemployment: UnemploymentOptions;
 	claimantCount: ClaimantCountOptions;
 	homelessness: HomelessnessOptions;
+	schoolPerformance: SchoolPerformanceOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 };
 
