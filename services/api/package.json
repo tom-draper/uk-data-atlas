@@ -28,6 +28,7 @@
 		"build:geography-inventory": "tsx scripts/build-geography-inventory.ts",
 		"build:terrain-catalogue": "tsx scripts/build-terrain-catalogue.ts",
 		"start": "tsx scripts/serve.ts",
+		"profile:startup": "tsx --max-old-space-size=4096 scripts/profile-startup.ts",
 		"smoke": "tsx scripts/smoke.ts",
 		"contract:surface": "tsx scripts/build-api-surface.ts",
 		"test": "tsx --max-old-space-size=4096 --test --test-concurrency=2 tests/*.test.ts tests/built/*.test.ts",
