@@ -102,13 +102,13 @@ export default function CoordinateGuidePage() {
 						`atlasRelease`, boundary release and source partition.
 						The top-level hash pins the API response build; inside
 						`data`, the identity, boundary and measure hashes pin
-						the artifacts that support the result. The citation
-						route also gives you attribution text for a map or
-						report.
+						the artifacts that support the result. The area
+						resource's `citation` include also gives you attribution
+						text for a map or report.
 					</P>
 					<Request
-						url={`${API}/areas/localAuthority/2025-05-uk-bgc-v2/E08000035/citation?measure=population`}
-						operationId="getAreaCitation"
+						url={`${API}/areas/localAuthority/2025-05-uk-bgc-v2/E08000035?include=citation&measure=population`}
+						operationId="getArea"
 					/>
 				</Step>
 			</Steps>
