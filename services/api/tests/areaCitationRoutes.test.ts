@@ -279,7 +279,8 @@ test("refuses to cite a resource that supplies nothing for the area", () => {
 		404,
 	);
 	assert.equal(
-		citation("/v1/areas/ward/2025-01-en-ward/E05999999?include=citation").status,
+		citation("/v1/areas/ward/2025-01-en-ward/E05999999?include=citation")
+			.status,
 		404,
 	);
 	assert.equal(
