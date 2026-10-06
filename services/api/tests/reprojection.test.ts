@@ -5,7 +5,9 @@ import {
 	fromWgs84Point,
 	geometryProvenance,
 	toWgs84Geometry,
+	toWgs84Packed,
 } from "../src/reprojection";
+import { packGeometry } from "../src/packedGeometry";
 
 // Reference values from PROJ's cct running EPSG:1314 (OSGB36 to WGS 84 (6))
 // as an explicit pipeline: inverse British National Grid, then the Helmert
@@ -112,6 +114,42 @@ test("reprojects every coordinate of nested and collected geometries", () => {
 	const ring = collection.geometries[0].coordinates[0][0];
 	assert.equal(ring.length, 3);
 	assert.ok(ring.every(([lon, lat]) => lon > -0.2 && lon < 0 && lat > 51.5));
+});
+
+test("reprojects packed geometry exactly as it does GeoJSON", () => {
+	const geometry = {
+		type: "GeometryCollection",
+		geometries: [
+			{
+				type: "MultiPolygon",
+				coordinates: [
+					[
+						[
+							[530000.5, 180000.25, 12],
+							[530100, 180000, 14],
+							[530000.5, 180000.25, 12],
+						],
+					],
+					[],
+				],
+			},
+			{
+				type: "Polygon",
+				coordinates: [
+					[
+						[400000, 300000],
+						[400100, 300000, 5],
+					],
+				],
+			},
+			{ type: "Point", coordinates: [400000, 300000] },
+		],
+	};
+	for (const crs of ["EPSG:27700", "EPSG:29902"])
+		assert.deepEqual(
+			toWgs84Packed(packGeometry(geometry), crs),
+			packGeometry(toWgs84Geometry(geometry, crs)),
+		);
 });
 
 test("leaves WGS84 geometry alone and refuses an unknown CRS", () => {
