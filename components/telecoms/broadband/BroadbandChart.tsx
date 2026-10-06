@@ -16,6 +16,7 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import type { CodeYearResolver } from "@/lib/data/boundaries/codeMapper";
 import {
 	selectedAreaLadCode,
@@ -34,6 +35,13 @@ interface BroadbandChartProps {
 }
 
 const ACCENT = "#6366f1";
+
+const MEASURES = {
+	fullFibre: { key: "pctFullFibre", label: "full fibre" },
+	superfast: { key: "pctSuperfast", label: "superfast" },
+	ultrafast: { key: "pctUltrafast", label: "ultrafast" },
+	gigabit: { key: "pctGigabit", label: "gigabit" },
+} as const;
 
 function computeStats(
 	dataset: BroadbandDataset,
@@ -105,6 +113,8 @@ export default function BroadbandChart({
 }: BroadbandChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const measure = useCurrentMapOptions().broadband.measure;
+	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
@@ -120,7 +130,7 @@ export default function BroadbandChart({
 
 	return (
 		<ChartCard
-			heading={`Fixed Broadband Coverage [${dataset.year}]`}
+			heading={`${measureInfo.label[0].toUpperCase()}${measureInfo.label.slice(1)} Broadband [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
@@ -154,13 +164,13 @@ export default function BroadbandChart({
 					<div
 						className={`text-2xl font-bold leading-none ${isDark ? "text-gray-100" : "text-gray-800"}`}
 					>
-						{stats!.pctFullFibre != null
-							? `${Math.round(stats!.pctFullFibre)}`
+						{stats![measureInfo.key] != null
+							? `${Math.round(stats![measureInfo.key]!)}`
 							: "—"}
 						<span
 							className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							% full fibre
+							% {measureInfo.label}
 						</span>
 					</div>
 					<div className="flex gap-1 shrink-0">

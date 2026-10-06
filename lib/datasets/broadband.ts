@@ -16,7 +16,21 @@ export const broadbandDefinition: ChartDatasetDefinition<BroadbandDataset> = {
 		year: 2025,
 	},
 	map: {
-		valueKey: "pctFullFibre",
+		valueFor: (dataset, code, mapOptions) => {
+			const area = dataset.data[code];
+			switch (mapOptions.broadband.measure) {
+				case "superfast":
+					return area?.pctSuperfast ?? null;
+				case "ultrafast":
+					return area?.pctUltrafast ?? null;
+				case "gigabit":
+					return area?.pctGigabit ?? null;
+				default:
+					return area?.pctFullFibre ?? null;
+			}
+		},
+		sourceMode: (_dataset, mapOptions) =>
+			`broadband:${mapOptions.broadband.measure}`,
 		colorRange: { min: 50, max: 100 },
 		legend: {
 			min: 0,

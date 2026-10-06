@@ -22,6 +22,7 @@ import {
 	useLegendAggregates,
 } from "./legend/legendData";
 import {
+	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
 	HousePriceMeasurePanel,
@@ -171,6 +172,23 @@ export default function LegendPanel({
 							colorRange,
 						});
 					}}
+				/>
+			)}
+
+			{activeDataset?.type === "broadband" && (
+				<BroadbandMeasurePanel
+					measure={controls.displayOptions.broadband.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("broadband", {
+							measure,
+							colorRange:
+								measure === "superfast"
+									? { min: 70, max: 100 }
+									: measure === "ultrafast"
+										? { min: 30, max: 100 }
+										: { min: 50, max: 100 },
+						})
+					}
 				/>
 			)}
 
