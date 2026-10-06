@@ -67,6 +67,12 @@ export const ERROR_CODES: Record<string, ErrorCodeContent> = {
 			"The `cursor` wasn't issued by the API, or belongs to a different query.",
 		fix: "Start again from the first page, and only pass back the `nextCursor` you were given for the same query.",
 	},
+	unknown_query_parameter: {
+		status: 400,
+		meaning:
+			"This operation doesn't declare the query parameter you sent.",
+		fix: "Remove the parameter or replace it with the response's optional `suggestion`.",
+	},
 	no_release_for_date: {
 		status: 404,
 		meaning: "No boundary release covers that date (or that country).",
