@@ -1,5 +1,6 @@
 import { monitorEventLoopDelay } from "node:perf_hooks";
 import type { AreaGeometryCacheStats } from "./areaGeometry";
+import type { LocationProjectionCacheStats } from "./locationProjections";
 
 /**
  * Operational metrics in the Prometheus text exposition format.
@@ -148,6 +149,8 @@ export class ApiMetrics {
 		private readonly atlasRelease: string,
 		private readonly geometryCacheStats: () =>
 			AreaGeometryCacheStats | undefined = () => undefined,
+		private readonly locationProjectionCacheStats: () =>
+			LocationProjectionCacheStats | undefined = () => undefined,
 	) {
 		this.eventLoopDelay.enable();
 	}
@@ -171,6 +174,7 @@ export class ApiMetrics {
 	render(): string {
 		const memory = process.memoryUsage();
 		const cache = this.geometryCacheStats();
+		const projections = this.locationProjectionCacheStats();
 		const delay = (value: number) => value / 1e9;
 		return `${[
 			...sampled(
@@ -275,6 +279,38 @@ export class ApiMetrics {
 							"atlas_api_geometry_cache_load_seconds_total",
 							"Time spent reading geometry releases into the cache.",
 							[[{}, cache.loadSeconds]],
+						),
+					]
+				: []),
+			...(projections
+				? [
+						...sampled(
+							"gauge",
+							"atlas_api_location_projection_cache_shards",
+							"Location projection shards held in memory, and the most the cache may hold.",
+							[
+								[
+									{ kind: "loaded" },
+									projections.loadedShards.length,
+								],
+								[{ kind: "limit" }, projections.maxShards],
+							],
+						),
+						...sampled(
+							"counter",
+							"atlas_api_location_projection_cache_events_total",
+							"Location projection reads answered from a loaded shard, shard loads and evictions since the server started.",
+							[
+								[{ event: "read" }, projections.reads],
+								[{ event: "load" }, projections.loads],
+								[{ event: "eviction" }, projections.evictions],
+							],
+						),
+						...sampled(
+							"counter",
+							"atlas_api_location_projection_cache_load_seconds_total",
+							"Time spent reading location projection shards into the cache.",
+							[[{}, projections.loadSeconds]],
 						),
 					]
 				: []),

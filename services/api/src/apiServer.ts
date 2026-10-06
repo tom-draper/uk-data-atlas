@@ -186,8 +186,10 @@ export const createApiServer = (
 	const matchOperation = createOperationMatcher(
 		readOperationTemplates(catalogues.openapiDocument ?? ""),
 	);
-	const metrics = new ApiMetrics(releaseId, () =>
-		catalogues.geographyResolver.geometryCacheStats(),
+	const metrics = new ApiMetrics(
+		releaseId,
+		() => catalogues.geographyResolver.geometryCacheStats(),
+		() => catalogues.geographyResolver.locationProjectionCacheStats(),
 	);
 	const limiter = options.rateLimit
 		? new RateLimiter(options.rateLimit)

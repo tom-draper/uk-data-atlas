@@ -2148,8 +2148,9 @@ Metrics label a request by the OpenAPI template it reached, such as
 `/v1/areas/{geography}/{release}/{code}`. A path matching no template is
 `unmatched`, so a scan of made-up paths cannot grow the series. Besides
 request counts, durations and bytes, the server exports rate-limit refusals,
-unhandled errors, process memory, event loop delay and the geometry cache's
-area reads, release loads, evictions and load time. Handlers run synchronously, so event
+unhandled errors, process memory, event loop delay, the geometry cache's
+area reads, release loads, evictions and load time, and the same for the
+location projection cache. Handlers run synchronously, so event
 loop delay is the first sign of a slow request: typically a geometry release
 being read for the first time.
 
@@ -2191,6 +2192,11 @@ line up.
   blocks every other request while it does. The 256 most recently read
   areas are also held as GeoJSON. A rising eviction count means the cache
   is too small for the traffic.
+- **Location projection cache:** the 8 most recently read crosswalk shards
+  of `public/location-projections`. Most are under a megabyte, but the LSOA
+  shards are some 13 MB on disk and 20 MB of heap once read, so the cache
+  holds at most some 180 MB. Parent projection shards, a few megabytes in
+  all, are kept without a limit.
 - **Shutdown:** on `SIGTERM` the server reports not ready, stops accepting
   connections, finishes what it holds, and closes whatever is left after the
   grace period.

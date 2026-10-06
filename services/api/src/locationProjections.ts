@@ -390,11 +390,26 @@ export const createLocationProjectionLookup = (
 		]),
 	);
 
+/**
+ * How the member projection cache has behaved since the server started. A
+ * rising eviction count says it holds too few shards for the traffic.
+ */
+export type LocationProjectionCacheStats = {
+	maxShards: number;
+	loadedShards: string[];
+	/** Projection reads answered from a shard already in memory. */
+	reads: number;
+	loads: number;
+	evictions: number;
+	loadSeconds: number;
+};
+
 export class LocationProjectionStore {
 	private readonly shards = new Map<
 		string,
 		LocationProjectionInventory["shards"][number]
 	>();
+	/** Loaded member lookups by crosswalk, least recently used first. */
 	private readonly lookups = new Map<string, LocationProjectionLookup>();
 	private readonly parentShards = new Map<
 		string,
@@ -404,6 +419,12 @@ export class LocationProjectionStore {
 		string,
 		Map<string, LocationParentProjection>
 	>();
+	private readonly counts = {
+		reads: 0,
+		loads: 0,
+		evictions: 0,
+		loadSeconds: 0,
+	};
 
 	constructor(
 		inventory: LocationProjectionInventory,
@@ -413,11 +434,27 @@ export class LocationProjectionStore {
 		private readonly loadParents?: (
 			shard: LocationProjectionInventory["parentShards"][number],
 		) => LocationParentProjectionArtifact,
+		/**
+		 * How many member shards stay in memory. Most are well under a
+		 * megabyte, but the LSOA shards are some 13 MB on disk and 20 MB of
+		 * heap once read, so a handful of them is the most worth holding.
+		 * Parent shards are a few megabytes in all and are kept without a
+		 * limit.
+		 */
+		private readonly capacity = 8,
 	) {
 		for (const shard of inventory.shards)
 			this.shards.set(shard.crosswalkId, shard);
 		for (const shard of inventory.parentShards ?? [])
 			this.parentShards.set(shard.crosswalkId, shard);
+	}
+
+	stats(): LocationProjectionCacheStats {
+		return {
+			maxShards: this.capacity,
+			loadedShards: [...this.lookups.keys()],
+			...this.counts,
+		};
 	}
 
 	/** Crosswalks with parent projections into a geography and release. */
@@ -482,7 +519,12 @@ export class LocationProjectionStore {
 		)
 			return undefined;
 		let lookup = this.lookups.get(crosswalkId);
-		if (!lookup) {
+		if (lookup) {
+			this.counts.reads += 1;
+			this.lookups.delete(crosswalkId);
+			this.lookups.set(crosswalkId, lookup);
+		} else {
+			const started = performance.now();
 			const artifact = this.load(shard);
 			if (artifact.contentHash !== shard.contentHash) {
 				throw new Error(
@@ -491,6 +533,12 @@ export class LocationProjectionStore {
 			}
 			lookup = createLocationProjectionLookup(artifact);
 			this.lookups.set(crosswalkId, lookup);
+			this.counts.loads += 1;
+			this.counts.loadSeconds += (performance.now() - started) / 1000;
+			if (this.lookups.size > this.capacity) {
+				this.lookups.delete(this.lookups.keys().next().value!);
+				this.counts.evictions += 1;
+			}
 		}
 		return lookup.get(
 			locationProjectionKey(

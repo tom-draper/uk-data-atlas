@@ -64,3 +64,51 @@ test("materialises named-location membership through a published crosswalk", () 
 	);
 	assert.equal(loads, 1);
 });
+
+test("keeps only the most recently used member shards in memory", () => {
+	const compiled = compileLocationProjections(
+		namedLocationInventory,
+		crosswalkInventory,
+		[containmentCrosswalk],
+		areaLookup,
+	);
+	const [shard] = compiled.inventory.shards;
+	const [artifact] = compiled.artifacts;
+	assert.ok(shard && artifact);
+	const ids = ["first", "second", "third"];
+	const loaded: string[] = [];
+	const store = new LocationProjectionStore(
+		{
+			...compiled.inventory,
+			shards: ids.map((crosswalkId) => ({ ...shard, crosswalkId })),
+		},
+		(requested) => {
+			loaded.push(requested.crosswalkId);
+			return artifact;
+		},
+		undefined,
+		2,
+	);
+	const read = (crosswalkId: string) =>
+		store.get(
+			"greater-manchester",
+			shard.geography,
+			shard.boundaryRelease,
+			crosswalkId,
+		);
+	read("first");
+	read("second");
+	read("first");
+	read("third");
+	assert.deepEqual(loaded, ["first", "second", "third"]);
+	read("first");
+	assert.deepEqual(loaded, ["first", "second", "third"]);
+	read("second");
+	assert.deepEqual(loaded, ["first", "second", "third", "second"]);
+	const stats = store.stats();
+	assert.equal(stats.maxShards, 2);
+	assert.deepEqual(stats.loadedShards, ["first", "second"]);
+	assert.equal(stats.reads, 2);
+	assert.equal(stats.loads, 4);
+	assert.equal(stats.evictions, 2);
+});

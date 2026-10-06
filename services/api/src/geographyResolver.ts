@@ -542,6 +542,9 @@ export class GeographyResolver {
 	geometryCacheStats() {
 		return this.spatial.geometryCacheStats();
 	}
+	locationProjectionCacheStats() {
+		return this.locations.locationProjectionCacheStats();
+	}
 	warmGeometryReleases(releases: Iterable<readonly [string, string]>): void {
 		this.spatial.warmGeometryReleases(releases);
 	}

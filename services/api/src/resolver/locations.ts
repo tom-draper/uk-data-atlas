@@ -88,6 +88,10 @@ export class LocationsResolver {
 		);
 	}
 
+	locationProjectionCacheStats() {
+		return this.inputs.locationProjectionStore?.stats();
+	}
+
 	hasLocationProjectionStore() {
 		return this.inputs.locationProjectionStore !== undefined;
 	}
