@@ -25,6 +25,10 @@ export interface BroadbandOptions extends ColorRangeOption {
 	measure: "fullFibre" | "superfast" | "ultrafast" | "gigabit";
 }
 
+export interface AirQualityOptions extends ColorRangeOption {
+	measure: "no2" | "pm25" | "pm10";
+}
+
 export interface LifeExpectancyOptions extends ColorRangeOption {
 	measure: "average" | "male" | "female";
 }
@@ -57,12 +61,14 @@ export type ChartMapOptions = Omit<
 	| "businessActivity"
 	| "electricVehicleChargers"
 	| "broadband"
+	| "airQuality"
 > & {
 	housePrice: HousePriceOptions;
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
 	electricVehicleChargers: CountMetricOptions;
 	broadband: BroadbandOptions;
+	airQuality: AirQualityOptions;
 	lifeExpectancy: LifeExpectancyOptions;
 };
 

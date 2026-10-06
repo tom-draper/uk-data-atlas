@@ -161,6 +161,28 @@ export function IncomeMeasurePanel({
 	);
 }
 
+const AIR_QUALITY_MEASURES = [
+	["no2", "NO₂"],
+	["pm25", "PM2.5"],
+	["pm10", "PM10"],
+] as const;
+
+export function AirQualityMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "no2" | "pm25" | "pm10";
+	onChange: (measure: "no2" | "pm25" | "pm10") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={AIR_QUALITY_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
 const BROADBAND_MEASURES = [
 	["fullFibre", "Full"],
 	["superfast", "Super"],

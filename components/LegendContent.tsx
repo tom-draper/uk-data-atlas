@@ -90,6 +90,16 @@ export default function LegendContent({
 					: broadbandMeasure === "gigabit"
 						? "gigabit"
 						: "full fibre";
+		const airQualityMeasure =
+			activeDataset.type === "airQuality"
+				? displayOptions.airQuality.measure
+				: null;
+		const airQualityLabel =
+			airQualityMeasure === "pm25"
+				? "PM2.5"
+				: airQualityMeasure === "pm10"
+					? "PM10"
+					: "NO₂";
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -106,6 +116,13 @@ export default function LegendContent({
 						max: 100,
 						format: (value: number) =>
 							`${value.toFixed(0)}% ${broadbandLabel}`,
+					}
+			: airQualityMeasure
+				? {
+						min: 0,
+						max: airQualityMeasure === "pm25" ? 20 : 35,
+						format: (value: number) =>
+							`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 					}
 				: legend;
 		const dynamicRange = getColorRange?.(

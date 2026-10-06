@@ -15,6 +15,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "broadband"
 				? { measure: "fullFibre" }
 				: {}),
+			...(definition.type === "airQuality" ? { measure: "no2" } : {}),
 			...(definition.type === "lifeExpectancy"
 				? { measure: "average" }
 				: {}),
