@@ -157,6 +157,8 @@ const measureCompatibilityInventory = {
 				},
 				{
 					datasetId: "population-uk",
+					observationArtifact:
+						"population-local-authority-observations",
 					sourceGeography: {
 						type: "localAuthority",
 						boundaryYear: 2023,
@@ -187,9 +189,11 @@ const { index, texts } = postcodeIndexFor([
 const context = (overrides: Partial<RouteContext> = {}): RouteContext => ({
 	boundaryRegistry,
 	dataCatalog,
-	populationObservations,
-	populationLocalAuthorityObservations,
-	measureObservations,
+	measureObservations: [
+		populationObservations,
+		populationLocalAuthorityObservations,
+		...measureObservations,
+	],
 	measureCompatibilityInventory,
 	geographyResolver: createGeographyResolver({
 		boundaryRegistry,

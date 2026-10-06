@@ -70,9 +70,6 @@ export const conversionCoverageOnto = (
 		dryRuns.set(context, cache);
 	}
 	const artifacts = {
-		populationObservations: context.populationObservations,
-		populationLocalAuthorityObservations:
-			context.populationLocalAuthorityObservations,
 		measureObservations: context.measureObservations,
 	};
 	return measure.sources.flatMap((source) =>
@@ -194,9 +191,6 @@ export const measureCapability = (
 			target.boundaryRelease,
 			target.code,
 			{
-				populationObservations: context.populationObservations,
-				populationLocalAuthorityObservations:
-					context.populationLocalAuthorityObservations,
 				measureObservations: context.measureObservations,
 			},
 		);

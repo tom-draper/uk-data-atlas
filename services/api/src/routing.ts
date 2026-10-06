@@ -5,12 +5,7 @@ import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
-import type {
-	AnyMeasureObservationArtifact,
-	DataCatalog,
-	PopulationLocalAuthorityObservationArtifact,
-	PopulationObservationArtifact,
-} from "./dataCatalog";
+import type { AnyMeasureObservationArtifact, DataCatalog } from "./dataCatalog";
 import type { ExportManifest } from "./exportManifest";
 import type { GeographyInventory } from "./geographyInventory";
 import type { LookupManifest } from "./lookupExports";
@@ -58,9 +53,7 @@ export type RouteContext = {
 	terrainProvider?: TerrainProvider;
 	/** Optional network-backed preview provider; requests are awaited by the HTTP server. */
 	terrainAsyncProvider?: AsyncTerrainProvider;
-	populationObservations?: PopulationObservationArtifact;
-	populationLocalAuthorityObservations?: PopulationLocalAuthorityObservationArtifact;
-	/** Every measure's observations bar the two population artifacts. */
+	/** Every measure's observations, one artifact per source partition. */
 	measureObservations?: AnyMeasureObservationArtifact[];
 	measureCompatibilityInventory?: MeasureCompatibilityInventory;
 	/** Measure/frame conversions that have passed explicit review. */

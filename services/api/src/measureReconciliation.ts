@@ -277,9 +277,6 @@ export const reconcileMeasure = (
 			refusal: `${measure.id} is ${measure.aggregation.kind}; only a measure whose values add over areas can be reconciled by adding one geography up into another.`,
 		};
 	const artifacts = {
-		populationObservations: context.populationObservations,
-		populationLocalAuthorityObservations:
-			context.populationLocalAuthorityObservations,
 		measureObservations: context.measureObservations,
 	};
 	// Each side is paired with the partition published on the release its end

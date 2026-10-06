@@ -39,9 +39,6 @@ const ARTIFACTS: Record<string, string> = {
 	dataCatalog: "data-catalog.json",
 	exportManifest: "export-manifest.json",
 	namedLocationInventory: "named-locations.json",
-	populationObservations: "population-observations.json",
-	populationLocalAuthorityObservations:
-		"population-local-authority-observations.json",
 };
 
 /** The upstream artifacts each compiled artifact names by a `*Hash` field. */
@@ -171,12 +168,9 @@ test("builds measure compatibility from the current observations and areas", () 
 		),
 	);
 	const stale = [
-		...[
-			"dataCatalog",
-			"boundaryRegistry",
-			"populationObservations",
-			"populationLocalAuthorityObservations",
-		].filter((key) => inputs[key] !== hashOf(ARTIFACTS[key]!)),
+		...["dataCatalog", "boundaryRegistry"].filter(
+			(key) => inputs[key] !== hashOf(ARTIFACTS[key]!),
+		),
 		...Object.entries(inputs.measureObservations as Record<string, string>)
 			.filter(
 				([measureId, hash]) =>

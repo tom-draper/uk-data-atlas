@@ -16,13 +16,8 @@ export const handleMeasureQualityRoutes = ({
 		segments[3] !== "quality"
 	)
 		return undefined;
-	const {
-		dataCatalog,
-		measureCompatibilityInventory,
-		measureObservations,
-		populationLocalAuthorityObservations,
-		populationObservations,
-	} = context;
+	const { dataCatalog, measureCompatibilityInventory, measureObservations } =
+		context;
 	if (!dataCatalog || !measureCompatibilityInventory)
 		return problem(
 			503,
@@ -65,8 +60,6 @@ export const handleMeasureQualityRoutes = ({
 						source,
 						period,
 						{
-							populationObservations,
-							populationLocalAuthorityObservations,
 							measureObservations,
 						},
 					);

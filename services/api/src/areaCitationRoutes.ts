@@ -24,8 +24,6 @@ export const handleAreaCitationRoutes = ({
 		atlasRelease,
 		validationReport,
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 		measureCompatibilityInventory,
 	} = context;
@@ -115,8 +113,6 @@ export const handleAreaCitationRoutes = ({
 			boundaryRelease,
 			code,
 			{
-				populationObservations,
-				populationLocalAuthorityObservations,
 				measureObservations,
 			},
 		).flatMap((source) => {

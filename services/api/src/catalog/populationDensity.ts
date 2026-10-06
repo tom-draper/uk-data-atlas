@@ -1,7 +1,4 @@
-import type {
-	Measure,
-	PopulationLocalAuthorityObservationArtifact,
-} from "../dataCatalog";
+import type { Measure, MeasureObservationArtifact } from "../dataCatalog";
 import { countriesFor } from "./countries";
 import { localAuthorityFieldPeriods } from "./localAuthorityFields";
 import type { CatalogManifest, CompiledMeasure } from "./manifest";
@@ -18,7 +15,7 @@ import { sha256 } from "./values";
 export const compilePopulationDensity = (
 	{ manifestPath, datasets }: CatalogManifest,
 	landAreaPath: string,
-	localAuthorityPeriods: PopulationLocalAuthorityObservationArtifact["periods"],
+	localAuthorityPeriods: MeasureObservationArtifact["periods"],
 ): CompiledMeasure => {
 	const landArea = datasets.find((dataset) => dataset.id === "land-area");
 	if (!landArea) throw new Error(`${manifestPath} has no land-area dataset`);

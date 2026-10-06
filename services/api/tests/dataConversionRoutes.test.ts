@@ -121,7 +121,7 @@ const pathContext = (second: CrosswalkArtifact) =>
 		geographyInventory,
 		areaLookup,
 		dataCatalog,
-		populationObservations,
+		measureObservations: [populationObservations],
 		crosswalkLookup: new Map<string, CrosswalkArtifact>([
 			[wardToAuthority.id, wardToAuthority],
 			[second.id, second],

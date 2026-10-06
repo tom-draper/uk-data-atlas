@@ -386,9 +386,11 @@ test("aggregates an extensive measure only over a complete direct named-location
 		namedLocationInventory: aggregationNamedLocations,
 		namedLocationLookup: aggregationNamedLocationLookup,
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
+		measureObservations: [
+			populationObservations,
+			populationLocalAuthorityObservations,
+			...measureObservations,
+		],
 	};
 	const context = testContext(inputs);
 	const response = routeRequest(
@@ -552,9 +554,11 @@ test("sums a location whose members span several code vintages", () => {
 		namedLocationInventory: spanningLocations,
 		namedLocationLookup: locations,
 		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
+		measureObservations: [
+			populationObservations,
+			populationLocalAuthorityObservations,
+			...measureObservations,
+		],
 	});
 	const response = routeRequest(
 		"GET",

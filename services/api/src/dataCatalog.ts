@@ -203,20 +203,7 @@ export const isNumericObservation = (
 	record: MeasureObservation,
 ): record is PopulationObservation => "value" in record;
 
-export type PopulationObservationArtifact = {
-	schemaVersion: 1;
-	contentHash: string;
-	measureId: "population";
-	period: "2022";
-	sourceGeography: { type: "ward"; boundaryYear: 2023 };
-	records: PopulationObservation[];
-};
-
-/**
- * A measure's observations, one block per period. The ward population artifact
- * predates this shape and carries a single period at the top level; everything
- * published since uses this.
- */
+/** A measure's observations for one source partition, one block per period. */
 export type MeasureObservationArtifact<
 	T extends MeasureObservation = PopulationObservation,
 > = {
@@ -231,45 +218,17 @@ export type AnyMeasureObservationArtifact =
 	| MeasureObservationArtifact
 	| MeasureObservationArtifact<CategoricalObservation>;
 
-export type PopulationLocalAuthorityObservationArtifact = {
-	schemaVersion: 1;
-	contentHash: string;
-	measureId: "population";
-	sourceGeography: { type: "localAuthority"; boundaryYear: 2023 };
-	periods: Array<{ period: string; records: PopulationObservation[] }>;
-};
-
-/**
- * The population artifacts that predate the per-period convention, which
- * carry their own shapes and file names.
- */
-const LEGACY_POPULATION_DATASETS = new Set(["population", "population-uk"]);
-
-export const isLegacyPopulationSource = (
-	measureId: string,
-	source: MeasureSource,
-) =>
-	measureId === "population" &&
-	LEGACY_POPULATION_DATASETS.has(source.datasetId);
-
 /**
  * The published file, without its extension, holding one measure source's
- * observations. A single-source measure keeps `{measure-id}-observations`; each
- * further source of a multi-source measure is named for its dataset.
+ * observations: `{measure-id}-observations`, unless the source names its own
+ * because the measure has several.
  */
 export const observationArtifactName = (
 	measureId: string,
 	source: MeasureSource,
-) => {
-	if (source.observationArtifact) return source.observationArtifact;
-	if (measureId !== "population") return `${measureId}-observations`;
-	if (source.datasetId === "population") return "population-observations";
-	if (source.datasetId === "population-uk")
-		return "population-local-authority-observations";
-	return `${source.datasetId}-observations`;
-};
+) => source.observationArtifact ?? `${measureId}-observations`;
 
-/** The artifact holding a non-legacy measure source's observations. */
+/** The artifact holding a measure source's observations. */
 export const findMeasureObservations = (
 	artifacts: AnyMeasureObservationArtifact[],
 	measureId: string,

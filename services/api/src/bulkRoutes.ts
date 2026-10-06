@@ -6,10 +6,7 @@ import {
 	namedLocationMembersTable,
 	renderLookup,
 } from "./lookupExports";
-import {
-	findMeasureObservations,
-	isLegacyPopulationSource,
-} from "./dataCatalog";
+import { findMeasureObservations } from "./dataCatalog";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { observationTableOf } from "./observationTables";
@@ -21,14 +18,8 @@ export const handleBulkRoutes = ({
 	parsedUrl,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	const {
-		dataCatalog,
-		exportManifest,
-		lookupManifest,
-		measureObservations,
-		populationLocalAuthorityObservations,
-		populationObservations,
-	} = context;
+	const { dataCatalog, exportManifest, lookupManifest, measureObservations } =
+		context;
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
@@ -89,15 +80,11 @@ export const handleBulkRoutes = ({
 		);
 		const artifact =
 			measure && source
-				? isLegacyPopulationSource(measure.id, source)
-					? source.sourceGeography.type === "ward"
-						? populationObservations
-						: populationLocalAuthorityObservations
-					: findMeasureObservations(
-							measureObservations ?? [],
-							measure.id,
-							source,
-						)
+				? findMeasureObservations(
+						measureObservations ?? [],
+						measure.id,
+						source,
+					)
 				: undefined;
 		if (!artifact || artifact.contentHash !== listedExport.contentHash)
 			return problem(

@@ -2,11 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { releaseKey } from "./geographyKeys";
-import {
-	isLegacyPopulationSource,
-	observationArtifactName,
-	type DataCatalog,
-} from "./dataCatalog";
+import { observationArtifactName, type DataCatalog } from "./dataCatalog";
 
 export type AtlasReleaseArtifactRef = {
 	id: string;
@@ -66,11 +62,6 @@ const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "lookup-manifest", path: "lookup-manifest.json" },
 	// The descriptor holds the hash of every tile archive and GeoParquet file.
 	{ id: "map-resources", path: "map-resources.json" },
-	{ id: "population-observations", path: "population-observations.json" },
-	{
-		id: "population-local-authority-observations",
-		path: "population-local-authority-observations.json",
-	},
 	{ id: "geometry-sources", path: "geometry-sources.json" },
 	{ id: "crosswalk-inventory", path: "crosswalk-inventory.json" },
 	{ id: "analysis-geographies", path: "analysis-geographies.json" },
@@ -102,7 +93,6 @@ const cataloguedObservationArtifacts = (
 	const artifacts = new Map<string, { id: string; path: string }>();
 	for (const measure of catalog.measures) {
 		for (const source of measure.sources ?? []) {
-			if (isLegacyPopulationSource(measure.id, source)) continue;
 			const stem = observationArtifactName(measure.id, source);
 			artifacts.set(stem, {
 				id: `observations/${stem}`,

@@ -45,9 +45,11 @@ const context = testContext({
 	boundaryRegistry: registry,
 	dataCatalog,
 	measureCompatibilityInventory,
-	populationObservations,
-	populationLocalAuthorityObservations,
-	measureObservations,
+	measureObservations: [
+		populationObservations,
+		populationLocalAuthorityObservations,
+		...measureObservations,
+	],
 	crosswalkLookup: new Map([
 		[complete.id, complete],
 		[incomplete.id, incomplete],

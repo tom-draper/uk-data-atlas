@@ -39,13 +39,8 @@ export const handleDataRoutes = ({
 }: RouteRequest): ApiResponse | undefined => {
 	if (segments.length !== 3 || segments[0] !== "v1" || segments[1] !== "data")
 		return undefined;
-	const {
-		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-		measureCompatibilityInventory,
-	} = context;
+	const { dataCatalog, measureObservations, measureCompatibilityInventory } =
+		context;
 	if (!dataCatalog) {
 		return problem(
 			503,
@@ -202,8 +197,6 @@ export const handleDataRoutes = ({
 		if (unavailable) return unavailable;
 	}
 	const observations = observationsFor(measureId, source, period as string, {
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 	});
 	if (!observations) {

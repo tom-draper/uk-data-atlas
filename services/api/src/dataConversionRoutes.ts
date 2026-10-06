@@ -40,13 +40,7 @@ export const handleDataConversionRoutes = ({
 		segments[3] !== "convert"
 	)
 		return undefined;
-	const {
-		geographyResolver,
-		dataCatalog,
-		populationObservations,
-		populationLocalAuthorityObservations,
-		measureObservations,
-	} = context;
+	const { geographyResolver, dataCatalog, measureObservations } = context;
 	const unavailable = geographyResolver.requires("crosswalks");
 	if (!dataCatalog) {
 		return problem(
@@ -178,8 +172,6 @@ export const handleDataConversionRoutes = ({
 		);
 	}
 	const observations = observationsFor(measureId, source, period as string, {
-		populationObservations,
-		populationLocalAuthorityObservations,
 		measureObservations,
 	});
 	if (!observations)

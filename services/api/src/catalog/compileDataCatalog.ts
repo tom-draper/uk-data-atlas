@@ -1,10 +1,8 @@
 import { readFileSync } from "node:fs";
 import type {
 	DataCatalog,
-	PopulationObservationArtifact,
 	MeasureObservationArtifact,
 	AnyMeasureObservationArtifact,
-	PopulationLocalAuthorityObservationArtifact,
 } from "../dataCatalog";
 import { sha256 } from "./values";
 import {
@@ -151,8 +149,8 @@ export const compileDataCatalog = ({
 	censusSmallAreaRoot,
 }: DataCatalogInputs): {
 	catalog: DataCatalog;
-	populationObservations: PopulationObservationArtifact;
-	populationLocalAuthorityObservations: PopulationLocalAuthorityObservationArtifact;
+	/** Wards in 2022, local authorities and constituencies by mid-year. */
+	populationObservations: MeasureObservationArtifact[];
 	ghgEmissionsObservations: MeasureObservationArtifact;
 	regionalGdpObservations: MeasureObservationArtifact[];
 	energyConsumptionObservations: MeasureObservationArtifact[];
@@ -165,7 +163,6 @@ export const compileDataCatalog = ({
 	imdObservations: MeasureObservationArtifact[];
 	nimdmObservations: MeasureObservationArtifact;
 	lifeExpectancyObservations: MeasureObservationArtifact[];
-	populationConstituencyObservations: MeasureObservationArtifact;
 	electionObservations: AnyMeasureObservationArtifact[];
 	censusTables: MeasureTableArtifact[];
 } => {
@@ -358,10 +355,11 @@ export const compileDataCatalog = ({
 			measures,
 		},
 		censusTables: censusSmallArea?.tables ?? [],
-		populationConstituencyObservations: population.constituencyObservations,
-		populationObservations: population.wardObservations,
-		populationLocalAuthorityObservations:
+		populationObservations: [
+			population.wardObservations,
 			population.localAuthorityObservations,
+			population.constituencyObservations,
+		],
 		ghgEmissionsObservations: emissions.artifact,
 		regionalGdpObservations: regionalGdp.artifacts,
 		energyConsumptionObservations: energyConsumption.artifacts,

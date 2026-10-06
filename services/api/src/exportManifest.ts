@@ -4,7 +4,6 @@ import { join } from "node:path";
 import {
 	type DataCatalog,
 	type MeasureSource,
-	isLegacyPopulationSource,
 	observationArtifactName,
 } from "./dataCatalog";
 import { isMeasureTable, type MeasureTableArtifact } from "./observationTables";
@@ -196,11 +195,6 @@ const exportDataset = (dataCatalog: DataCatalog, id: string): ExportDataset => {
 	};
 };
 
-const legacyArtifactName = (measureId: string, datasetId: string) =>
-	measureId === "population" && datasetId === "population"
-		? "population-observations"
-		: "population-local-authority-observations";
-
 /**
  * Publish immutable, whole-artifact JSON downloads for every source partition.
  * The manifest does not manufacture a flattened export: consumers receive the
@@ -215,9 +209,7 @@ export const compileExportManifest = (
 	const exports = dataCatalog.measures
 		.flatMap((measure) =>
 			measure.sources.map((source): BulkExport => {
-				const artifact = isLegacyPopulationSource(measure.id, source)
-					? legacyArtifactName(measure.id, source.datasetId)
-					: observationArtifactName(measure.id, source);
+				const artifact = observationArtifactName(measure.id, source);
 				const path = join(publicDirectory, `${artifact}.json`);
 				if (!existsSync(path)) {
 					throw new Error(
