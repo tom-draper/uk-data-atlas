@@ -23,6 +23,7 @@ import {
 } from "./legend/legendData";
 import {
 	HousePriceMeasurePanel,
+	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	PercentageRangePanel,
 } from "./legend/LegendSupplementalPanels";
@@ -125,6 +126,15 @@ export default function LegendPanel({
 					measure={controls.displayOptions.housePrice.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("housePrice", { measure })
+					}
+				/>
+			)}
+
+			{activeDataset?.type === "income" && (
+				<IncomeMeasurePanel
+					measure={controls.displayOptions.income.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("income", { measure })
 					}
 				/>
 			)}

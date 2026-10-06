@@ -59,5 +59,6 @@ export interface WorkplaceIncomeDataset extends Omit<IncomeDataset, "type"> {
 }
 
 export interface AggregatedIncomeData {
-	averageIncome: number;
+	averageMedianIncome: number;
+	averageMeanIncome: number;
 }

@@ -17,6 +17,7 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { formatCount } from "@/lib/helpers/formatCount";
 import {
 	selectedAreaLadRecord,
@@ -101,7 +102,8 @@ export default function IncomeChart({
 	const dataset = availableDatasets?.[year];
 
 	// Get income data for selected area or aggregated data
-	let medianIncome: number | null = null;
+	const measure = useCurrentMapOptions().income.measure;
+	let income: number | null = null;
 
 	// We calculate data first so we can use it for the particle effects
 	if (dataset) {
@@ -110,36 +112,42 @@ export default function IncomeChart({
 			aggregatedData &&
 			aggregatedData[dataset.year]
 		) {
-			medianIncome = aggregatedData[dataset.year].averageIncome || null;
+			income =
+				measure === "mean"
+					? aggregatedData[dataset.year].averageMeanIncome || null
+					: aggregatedData[dataset.year].averageMedianIncome || null;
 		} else if (selectedArea) {
-			medianIncome =
-				selectedAreaLadRecord(
-					dataset.data,
-					selectedArea,
-					codeMapper,
-					year,
-				)?.annual?.median || null;
+			const annual = selectedAreaLadRecord(
+				dataset.data,
+				selectedArea,
+				codeMapper,
+				year,
+			)?.annual;
+			income =
+				measure === "mean"
+					? (annual?.mean ?? null)
+					: (annual?.median ?? null);
 		}
 	}
 
-	const particles = computeParticles(medianIncome);
+	const particles = computeParticles(income);
 
 	const isActive = !!(
 		dataset &&
 		activeDataset?.type === "income" &&
 		activeDataset.id === `income${dataset.year}`
 	);
-	const formattedMedian = medianIncome
-		? `£${formatCount(Math.round(medianIncome))}`
+	const formattedIncome = income
+		? `£${formatCount(Math.round(income))}`
 		: null;
 
 	if (!dataset) return null;
 
 	return (
 		<ChartCard
-			heading={`Median Income [${dataset.year}]`}
+			heading={`${measure === "mean" ? "Mean" : "Median"} Income [${dataset.year}]`}
 			estimateNote={
-				isLocalAuthorityEstimate(selectedArea, medianIncome !== null)
+				isLocalAuthorityEstimate(selectedArea, income !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
 					: undefined
 			}
@@ -179,12 +187,12 @@ export default function IncomeChart({
 				</div>
 			}
 		>
-			{formattedMedian ? (
+			{formattedIncome ? (
 				<div className="relative flex justify-center items-center flex-1 z-10">
 					<div
 						className={`text-xl font-bold bg-transparent px-2 rounded ${isDark ? "text-gray-100" : "text-gray-800"}`}
 					>
-						{formattedMedian}
+						{formattedIncome}
 					</div>
 				</div>
 			) : (

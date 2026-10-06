@@ -159,17 +159,29 @@ export function aggregateIncome(
 	data: IncomeDataset["data"],
 ): AggregatedIncomeData {
 	let totalMedianIncome = 0,
-		count = 0;
+		medianCount = 0,
+		totalMeanIncome = 0,
+		meanCount = 0;
 	for (const feature of features) {
-		const median =
-			data[getFeatureProp(feature.properties, codeProperty) ?? ""]?.annual
-				?.median;
+		const annual =
+			data[getFeatureProp(feature.properties, codeProperty) ?? ""]
+				?.annual;
+		const median = annual?.median;
 		if (median != null) {
 			totalMedianIncome += median;
-			count++;
+			medianCount++;
+		}
+		const mean = annual?.mean;
+		if (mean != null) {
+			totalMeanIncome += mean;
+			meanCount++;
 		}
 	}
-	return { averageIncome: count > 0 ? totalMedianIncome / count : 0 };
+	return {
+		averageMedianIncome:
+			medianCount > 0 ? totalMedianIncome / medianCount : 0,
+		averageMeanIncome: meanCount > 0 ? totalMeanIncome / meanCount : 0,
+	};
 }
 
 export function aggregateCustomDataset(
