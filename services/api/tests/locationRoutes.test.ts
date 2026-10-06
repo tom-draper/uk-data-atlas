@@ -6,6 +6,7 @@ import {
 	compileLocationProjections,
 	LocationProjectionStore,
 } from "../src/locationProjections";
+import { cursorFor } from "../src/pagination";
 import type { RouteContext } from "../src/routing";
 import type { CrosswalkInventory } from "../src/crosswalkInventory";
 import {
@@ -149,6 +150,52 @@ test("publishes curated named locations and reports unresolved legacy members", 
 			note: "Coverage compares member codes against compiled area releases only. An unresolved code is not a claim that the place is missing, and a resolved one is not a claim of equal geometry. `complete` means every listed code resolved, which a location spanning several vintages never does; `coversLocation` is the one to read, and means every code that did not resolve was either the wrong vintage for this release or a legacy alias naming no compiled area, rather than an unexplained absence. Codes of the second kind are listed separately in `legacy`.",
 		},
 	});
+});
+
+test("paginates location summaries without their geometry", () => {
+	const first = {
+		...namedLocationInventory.locations[0]!,
+		geometry: {
+			boundaryRelease: "2025-01-uk-lad",
+			bbox: [-2.5, 53.3, -2, 53.7] as [number, number, number, number],
+			geometry: { type: "MultiPolygon" as const, coordinates: [] },
+		},
+	};
+	const second = { ...first, id: "second", label: "Second" };
+	const context = testContext({
+		geographyInventory,
+		areaLookup: namedLocationAreaLookup,
+		crosswalkInventory,
+		crosswalkLookup,
+		namedLocationInventory: {
+			...namedLocationInventory,
+			locations: [first, second],
+		},
+		namedLocationLookup: new Map([
+			[first.id, first],
+			[second.id, second],
+		]),
+	});
+	const page = routeRequest("GET", "/v1/locations?limit=1", context);
+	assert.equal(page.status, 200);
+	const body = page.body as {
+		data: Array<{ id: string; geometry?: unknown }>;
+		meta: { nextCursor: string | null };
+	};
+	assert.deepEqual(body.data.map(({ id }) => id), [first.id]);
+	assert.equal(body.data[0]!.geometry, undefined);
+	assert.equal(body.meta.nextCursor, cursorFor(first.id));
+
+	const next = routeRequest(
+		"GET",
+		`/v1/locations?limit=1&cursor=${cursorFor(first.id)}`,
+		context,
+	);
+	assert.equal(next.status, 200);
+	assert.deepEqual(
+		((next.body as { data: Array<{ id: string }> }).data).map(({ id }) => id),
+		[second.id],
+	);
 });
 
 test("discovers a named location's direct and compiled-view capabilities", () => {

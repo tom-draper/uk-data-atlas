@@ -1,9 +1,4 @@
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
-import {
-	createOperationMatcher,
-	readOperationTemplates,
-	unexpectedQueryParameter,
-} from "./operationTemplates";
 import type { RequestBody, RouteContext } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 
@@ -59,27 +54,6 @@ const methodNotAllowed = () =>
 		"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join.",
 	);
 
-const validateQuery = (
-	method: string,
-	url: string | undefined,
-	context: RouteContext,
-) => {
-	if (!context.openapiDocument) return undefined;
-	const pathname = (url ?? "/").split("?", 1)[0]!;
-	const operation = createOperationMatcher(
-		readOperationTemplates(context.openapiDocument),
-	)(pathname).operation;
-	const unexpected = unexpectedQueryParameter(operation, method, url ?? "/");
-	return unexpected
-		? problem(
-				400,
-				"Unknown Query Parameter",
-				`This operation does not accept the query parameter ${unexpected.parameter}.`,
-				{ code: "unknown_query_parameter", ...unexpected },
-			)
-		: undefined;
-};
-
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
@@ -87,8 +61,6 @@ export const route = (
 	body?: RequestBody,
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
-	const queryProblem = validateQuery(method, url, context);
-	if (queryProblem) return queryProblem;
 	const parsed = parseRoute(url, context);
 	if ("status" in parsed) return parsed;
 	return (
@@ -111,8 +83,6 @@ export const routeAsync = async (
 	body?: RequestBody,
 ): Promise<ApiResponse> => {
 	if (method !== "GET") return route(method, url, context, body);
-	const queryProblem = validateQuery(method, url, context);
-	if (queryProblem) return queryProblem;
 	const parsed = parseRoute(url, context);
 	if ("status" in parsed) return parsed;
 	return (
