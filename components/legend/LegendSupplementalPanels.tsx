@@ -119,6 +119,27 @@ export function HousePriceMeasurePanel({
 	);
 }
 
+const INCOME_MEASURES = [
+	["median", "Median"],
+	["mean", "Mean"],
+] as const;
+
+export function IncomeMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "median" | "mean";
+	onChange: (measure: "median" | "mean") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={INCOME_MEASURES}
+			onChange={onChange}
+		/>
+	);
+}
+
 const LIFE_EXPECTANCY_MEASURES = [
 	["average", "Average"],
 	["male", "Male"],

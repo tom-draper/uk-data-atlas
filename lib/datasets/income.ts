@@ -16,7 +16,14 @@ export const incomeDefinition: ChartDatasetDefinition<IncomeDataset> = {
 		year: 2025,
 	},
 	map: {
-		valueFor: (dataset, code) => dataset.data[code]?.annual?.median ?? null,
+		valueFor: (dataset, code, mapOptions) => {
+			const annual = dataset.data[code]?.annual;
+			return mapOptions.income.measure === "mean"
+				? (annual?.mean ?? null)
+				: (annual?.median ?? null);
+		},
+		sourceMode: (_dataset, mapOptions) =>
+			`income:${mapOptions.income.measure}`,
 		colorRange: { min: 25000, max: 45000 },
 		legend: { min: 0, max: 80000, format: (v) => `£${v.toFixed(0)}` },
 	},
