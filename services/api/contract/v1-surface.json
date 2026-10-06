@@ -3564,13 +3564,9 @@
 				]
 			}
 		},
-		"GET /postcodes:batch": {
+		"POST /postcodes:batch": {
 			"operationId": "resolvePostcodes",
 			"parameters": {
-				"query:postcode": {
-					"required": true,
-					"maxItems": 100
-				},
 				"query:geography": {
 					"required": false,
 					"maxItems": 4
@@ -4946,13 +4942,9 @@
 				]
 			}
 		},
-		"GET /areas:containsBatch": {
+		"POST /areas:containsBatch": {
 			"operationId": "findContainingAreasForPoints",
 			"parameters": {
-				"query:point": {
-					"required": true,
-					"maxItems": 100
-				},
 				"query:crs": {
 					"required": false,
 					"enum": [

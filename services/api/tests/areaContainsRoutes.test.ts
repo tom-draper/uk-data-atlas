@@ -171,6 +171,22 @@ const get = (url: string, routeContext = lookupContext) => {
 	};
 };
 
+const post = (
+	url: string,
+	points: string[],
+	routeContext = lookupContext,
+) => {
+	const response = route("POST", url, routeContext, {
+		contentType: "application/json",
+		text: JSON.stringify({ points }),
+	});
+	return {
+		status: response.status,
+		body: response.body as Record<string, any>,
+		data: (response.body as { data?: any }).data,
+	};
+};
+
 test("looks a point up in several geographies, choosing each release by date", () => {
 	const { status, data } = get(
 		`/v1/areas:contains?lng=${0.5 * U}&lat=${0.5 * U}&geography=ward&geography=localHealthBoard&date=2025-06-15`,
@@ -306,8 +322,9 @@ test("accepts British National Grid and Irish Grid coordinates at point endpoint
 		"decimal-places-and-transformation",
 	);
 	assert.equal(
-		get(
-			"/v1/areas:containsBatch?crs=EPSG:29902&point=333500,373500,4&release=ward/2024-12-uk-bgc",
+		post(
+			"/v1/areas:containsBatch?crs=EPSG:29902&release=ward/2024-12-uk-bgc",
+			["333500,373500,4"],
 		).data.points[0].point.input.transformation.epsg,
 		"EPSG:1641",
 	);
@@ -324,8 +341,9 @@ test("accepts British National Grid and Irish Grid coordinates at point endpoint
 		"TQ 30000 80000",
 	);
 	assert.equal(
-		get(
-			"/v1/areas:containsBatch?crs=EPSG:27700&point=TQ3000080000,4&release=ward/2024-12-uk-bgc",
+		post(
+			"/v1/areas:containsBatch?crs=EPSG:27700&release=ward/2024-12-uk-bgc",
+			["TQ3000080000,4"],
 		).data.points[0].point.precision.basis,
 		"stated-accuracy-and-grid-reference-and-transformation",
 	);
@@ -514,9 +532,10 @@ test("ranks nearby areas by distance without claiming containment", () => {
 		);
 });
 
-test("looks up a bounded batch of points one release at a time", () => {
-	const { status, data } = get(
-		`/v1/areas:containsBatch?point=${0.5 * U},${0.5 * U}&point=${0.5 * U},${1.5 * U},30&point=0.5,0.5&geography=ward&geography=localHealthBoard&date=2025-01`,
+test("looks up a posted batch of points one release at a time", () => {
+	const { status, data } = post(
+		"/v1/areas:containsBatch?geography=ward&geography=localHealthBoard&date=2025-01",
+		[`${0.5 * U},${0.5 * U}`, `${0.5 * U},${1.5 * U},30`, "0.5,0.5"],
 	);
 	assert.equal(status, 200);
 	assert.deepEqual(
@@ -578,16 +597,20 @@ test("looks up a bounded batch of points one release at a time", () => {
 	assert.ok(!("geometrySource" in data.points[0].results[0].matches[0]));
 
 	const release = "geography=ward&release=2024-12-uk-bgc";
-	for (const query of [
-		release,
-		`point=1&${release}`,
-		`point=0,0,0&${release}`,
-		`point=0,0,1,2&${release}`,
-		`${Array.from({ length: 101 }, () => "point=0,0").join("&")}&${release}`,
+	for (const points of [
+		[],
+		["1"],
+		["0,0,0"],
+		["0,0,1,2"],
+		Array.from({ length: 101 }, () => "0,0"),
 	])
 		assert.equal(
-			get(`/v1/areas:containsBatch?${query}`).status,
+			post(`/v1/areas:containsBatch?${release}`, points).status,
 			400,
-			query.slice(0, 40),
+			points.join(",").slice(0, 40),
 		);
+	assert.equal(
+		get(`/v1/areas:containsBatch?point=0,0&${release}`).status,
+		405,
+	);
 });

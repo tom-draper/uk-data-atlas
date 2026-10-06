@@ -389,7 +389,7 @@ only **available** when its endpoint, contract and provenance are published.
 - [x] Expand point lookup beyond a single geography and release.
       `GET /v1/areas:contains` tests one point against up to four geographies,
       each on a pinned release or the one `date` selects, and
-      `GET /v1/areas:containsBatch` takes up to 100 points. Every result
+      `POST /v1/areas:containsBatch` takes up to 100 points in a JSON body. Every result
       states its positional tolerance and whether the point lies near a
       boundary, `outside-coverage` is kept apart from `no-match`, and each
       release is read once, on first use.
@@ -409,7 +409,7 @@ only **available** when its endpoint, contract and provenance are published.
       generalisation, the transformation's accuracy, their sum as
       `positionalToleranceM`, and a `nearBoundary` flag on any match whose edge
       lies within it, beside the geometry's source file, hash and CRS.
-      `GET /v1/areas:containsBatch` answers the same for up to 100 points,
+      `POST /v1/areas:containsBatch` answers the same for up to 100 posted points,
       reading each release once for the whole batch.
 - [x] Accept WGS 84, British National Grid and Irish Grid coordinates at the
       point endpoints, including ordinary Ordnance Survey grid references such
@@ -943,7 +943,7 @@ fetch the postcode directory from ONS.
       coarser one only where a finer does not cover the postcode's country or
       has no value there, each passed-over geography saying why.
 - [x] Look up to 100 postcodes in one request through
-      `GET /v1/postcodes:batch?postcode=`. Each postcode is reported in its own
+      `POST /v1/postcodes:batch`, with a JSON `postcodes` array. Each postcode is reported in its own
       entry, so one that is malformed, unknown, unserved or without a grid
       reference does not fail the batch, and the placed centroids are tested
       together, reading each boundary release once. District shards keep a
@@ -2881,7 +2881,7 @@ second inventory to maintain:
 - `GET /v1/docs` — The human documentation landing page
 - `GET /v1/places` — Find every place a name could mean
 - `GET /v1/postcodes/{postcode}` — Find where a postcode is and the areas containing it
-- `GET /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
+- `POST /v1/postcodes:batch` — Find where each of a batch of postcodes is and the areas containing it
 - `GET /v1/data/{measure-id}/value` — Answer a measure for a place by name (by-place dispatcher)
 - `GET /v1/areas/{geography}/{release}/{code}/capabilities` — Report what the Atlas can serve for one exact area identity
 
@@ -2891,7 +2891,7 @@ second inventory to maintain:
 - `GET /v1/data/{measure-id}` — Retrieve source-exact observations, or an opt-in canonical-unit representation
 - `GET /v1/areas:intersects` — Find the areas meeting a bounding box in one release
 - `GET /v1/areas:contains` — Find the areas containing a point in one or more geographies
-- `GET /v1/areas:containsBatch` — Find the areas containing each of a bounded batch of points
+- `POST /v1/areas:containsBatch` — Find the areas containing each of a bounded batch of points
 - `GET /v1/areas:near` — Rank the areas nearest a point by distance
 - `GET /v1/areas/{geography}/{release}/{code}/children/geometry` — Get every child of an area as one GeoJSON FeatureCollection
 - `GET /v1/areas/{geography}/{release}/{code}/neighbours` — List the areas whose boundary meets this one's
@@ -3057,7 +3057,7 @@ catalogues by the contract tests:
 - `GET /v1/attribution?measure=ghg-emissions&boundaryRelease=localAuthority/2025-05-uk-bgc-v2`
 - `GET /v1/places?q=Newport`
 - `GET /v1/postcodes/SW1A1AA`
-- `GET /v1/postcodes:batch?postcode=SW1A1AA,M11AE,CF101EP,BT11AA&geography=localAuthority`
+- `POST /v1/postcodes:batch?geography=localAuthority` with `{"postcodes":["SW1A1AA","M11AE","CF101EP","BT11AA"]}`
 - `GET /v1/data/imd-decile/value?postcode=M11AE`
 - `GET /v1/locations?q=york`
 - `GET /v1/locations/london`
@@ -3065,7 +3065,7 @@ catalogues by the contract tests:
 - `GET /v1/areas`
 - `GET /v1/areas:contains?lng=-1.5491&lat=53.8008&geography=localAuthority&release=2024-05-uk-bgc`
 - `GET /v1/areas:contains?lng=-3.1791&lat=51.4816&geography=ward&geography=localHealthBoard&date=2025-06-01`
-- `GET /v1/areas:containsBatch?point=-1.5491,53.8008&point=1.0,54.5&geography=localAuthority&date=2025-06-01`
+- `POST /v1/areas:containsBatch?geography=localAuthority&date=2025-06-01` with `{"points":["-1.5491,53.8008","1.0,54.5"]}`
 - `GET /v1/areas:near?lng=-0.5800&lat=54.5100&geography=ward&date=2025-06-01&limit=2&within=5000`
 - `GET /v1/areas:intersects?bbox=-1.6,53.7,-1.4,53.9&geography=ward&release=2024-12-uk-bgc`
 - `GET /v1/areas/ward/2024-12-uk-bgc/E05000932/history`
