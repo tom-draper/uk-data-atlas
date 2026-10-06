@@ -293,6 +293,9 @@ export function HomelessnessMeasurePanel({
 	);
 }
 
+const SCHOOL_PERFORMANCE_MEASURES = [["grade4", "Grade 4+"], ["grade5", "Grade 5+"], ["attainment8", "Attain. 8"], ["progress8", "Progress 8"]] as const;
+export function SchoolPerformanceMeasurePanel({ measure, onChange }: { measure: "grade4" | "grade5" | "attainment8" | "progress8"; onChange: (measure: "grade4" | "grade5" | "attainment8" | "progress8") => void }) { return <GlassSegmentedMeasurePanel measure={measure} measures={SCHOOL_PERFORMANCE_MEASURES} onChange={onChange} />; }
+
 const COUNT_METRICS = [
 	["total", "Total"],
 	["perPopulation", "Per pop."],

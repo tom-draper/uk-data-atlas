@@ -8,6 +8,9 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			colorRange: definition.map?.colorRange ?? { min: 0, max: 1 },
 			...(definition.type === "claimantCount" ? { measure: "rate" } : {}),
 			...(definition.type === "homelessness" ? { measure: "rate" } : {}),
+			...(definition.type === "schoolPerformance"
+				? { measure: "grade4" }
+				: {}),
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
 			...(definition.type === "income" ? { measure: "median" } : {}),
 			...(definition.type === "ghgEmissions"

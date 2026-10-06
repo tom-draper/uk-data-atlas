@@ -160,6 +160,8 @@ export default function LegendContent({
 							: `${value.toFixed(1)} per 1k households`,
 				}
 			: null;
+		const schoolPerformanceMeasure = activeDataset.type === "schoolPerformance" ? displayOptions.schoolPerformance.measure : null;
+		const schoolPerformanceLegend = schoolPerformanceMeasure ? { min: schoolPerformanceMeasure === "progress8" ? -1 : 0, max: schoolPerformanceMeasure === "attainment8" ? 70 : schoolPerformanceMeasure === "progress8" ? 1 : 100, format: (value: number) => schoolPerformanceMeasure === "attainment8" ? `${value.toFixed(0)} Attainment 8` : schoolPerformanceMeasure === "progress8" ? `${value.toFixed(1)} Progress 8` : `${value.toFixed(0)}% grade ${schoolPerformanceMeasure === "grade5" ? "5+" : "4+"}` } : null;
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -184,7 +186,7 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: (homelessnessLegend ??
+					: (schoolPerformanceLegend ?? homelessnessLegend ??
 						claimantCountLegend ??
 						unemploymentLegend ??
 						ghgLegend ??
@@ -214,6 +216,7 @@ export default function LegendContent({
 				}}
 				formatLabel={
 					homelessnessLegend?.format ??
+					schoolPerformanceLegend?.format ??
 					claimantCountLegend?.format ??
 					unemploymentLegend?.format ??
 					ghgLegend?.format ??

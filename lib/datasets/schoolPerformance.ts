@@ -15,7 +15,7 @@ export const schoolPerformanceDefinition: ChartDatasetDefinition<SchoolPerforman
 			key: "education-schoolPerformance",
 			label: "GCSE Performance [2024/25]",
 			defaultVisible: true,
-			componentPath: "@/components/ValueCard",
+			componentPath: "@/components/education/SchoolPerformanceChart",
 			card: defineValueCard<
 				SchoolPerformanceDataset,
 				AggregatedSchoolPerformanceData
@@ -38,7 +38,21 @@ export const schoolPerformanceDefinition: ChartDatasetDefinition<SchoolPerforman
 			year: 2025,
 		},
 		map: {
-			valueKey: "ptL2basics94",
+			valueFor: (dataset, code, mapOptions) => {
+				const area = dataset.data[code];
+				switch (mapOptions.schoolPerformance.measure) {
+					case "grade5":
+						return area?.ptL2basics95 ?? null;
+					case "attainment8":
+						return area?.avgAtt8 ?? null;
+					case "progress8":
+						return area?.avgP8score ?? null;
+					default:
+						return area?.ptL2basics94 ?? null;
+				}
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`schoolPerformance:${mapOptions.schoolPerformance.measure}`,
 			colorRange: { min: 50, max: 80 },
 			legend: {
 				min: 0,
