@@ -179,6 +179,7 @@ test("serves a compiled release exactly as it serves the release's source", (t) 
 	assert.equal(compiled.stats().compiledLoads, 1);
 	assert.equal(compiled.stats().spatialIndexBuilds, 0);
 	assert.equal(fromSource.stats().compiledLoads, 0);
+	assert.equal(compiled.stats().staleCompiledLoads, 0);
 });
 
 test("warms a source release's spatial index before its first lookup", (t) => {
@@ -206,8 +207,13 @@ test("reads a release from its source when its compiled file is stale", (t) => {
 			),
 		),
 	);
-	const cache = new AreaGeometryCache(root, sources, 2, store);
+	const stale: string[] = [];
+	const cache = new AreaGeometryCache(root, sources, 2, store, (release) =>
+		stale.push(release),
+	);
 	assert.ok(cache.get("ward", "2025-05-uk-bgc", "E05000001"));
 	assert.equal(cache.stats().compiledLoads, 0);
+	assert.equal(cache.stats().staleCompiledLoads, 1);
 	assert.equal(cache.stats().loads, 1);
+	assert.deepEqual(stale, ["ward/2025-05-uk-bgc"]);
 });

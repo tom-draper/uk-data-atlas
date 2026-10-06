@@ -135,6 +135,12 @@ export type AreaGeometryCacheStats = {
 	loads: number;
 	/** Of those loads, how many read a compiled release rather than its source. */
 	compiledLoads: number;
+	/**
+	 * Of those loads, how many found a compiled release built from a different
+	 * source and read the source instead, at many times the cost. Any at all
+	 * says the store needs rebuilding.
+	 */
+	staleCompiledLoads: number;
 	evictions: number;
 	loadSeconds: number;
 	/** Releases for which the compact point/box candidate index is ready. */
@@ -157,6 +163,7 @@ export class AreaGeometryCache {
 		reads: 0,
 		loads: 0,
 		compiledLoads: 0,
+		staleCompiledLoads: 0,
 		evictions: 0,
 		loadSeconds: 0,
 		spatialIndexBuilds: 0,
@@ -171,6 +178,11 @@ export class AreaGeometryCache {
 		 * is read from its source.
 		 */
 		private readonly storeDirectory?: string,
+		/** Told of each compiled release passed over because it is stale. */
+		private readonly onStaleCompiled?: (
+			release: string,
+			path: string,
+		) => void,
 	) {
 		if (!Number.isInteger(maxReleases) || maxReleases < 1)
 			throw new Error(
@@ -413,7 +425,11 @@ export class AreaGeometryCache {
 			path,
 			this.source(geography, boundaryRelease),
 		);
-		if (!stored) return undefined;
+		if (!stored) {
+			this.counts.staleCompiledLoads += 1;
+			this.onStaleCompiled?.(identity, path);
+			return undefined;
+		}
 		this.counts.compiledLoads += 1;
 		return {
 			identity,

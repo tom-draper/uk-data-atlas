@@ -35,6 +35,16 @@ process.on("unhandledRejection", (reason) => {
 const loading = performance.now();
 const catalogues = readApiCatalogues(apiRoot, {
 	geometryCacheReleases: configuration.geometryCacheReleases,
+	// A stale compiled release is still served, from its source, but at many
+	// times the cost (seconds for the largest), so it is reported each time.
+	onStaleCompiledGeometry: (release, path) =>
+		log({
+			level: "warn",
+			event: "geometry.store_stale",
+			release,
+			path,
+			fix: "pnpm build:geometry-store",
+		}),
 	terrainRemoteEndpoint: configuration.terrainRemoteEndpoint,
 	terrainCoverageEndpoint: configuration.terrainCoverageEndpoint,
 	terrainRemoteTimeoutMs: configuration.terrainRemoteTimeoutMs,

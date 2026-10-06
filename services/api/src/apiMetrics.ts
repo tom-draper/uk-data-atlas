@@ -238,13 +238,17 @@ export class ApiMetrics {
 						...sampled(
 							"counter",
 							"atlas_api_geometry_cache_events_total",
-							"Area reads answered from a loaded release, release loads (and of those, loads from the compiled store), compact spatial-index builds and evictions since the server started.",
+							"Area reads answered from a loaded release, release loads (and of those, loads from the compiled store, and loads that found a stale compiled release and read its source), compact spatial-index builds and evictions since the server started.",
 							[
 								[{ event: "read" }, cache.reads],
 								[{ event: "load" }, cache.loads],
 								[
 									{ event: "compiled_load" },
 									cache.compiledLoads,
+								],
+								[
+									{ event: "stale_compiled_load" },
+									cache.staleCompiledLoads,
 								],
 								[
 									{ event: "spatial_index_build" },
