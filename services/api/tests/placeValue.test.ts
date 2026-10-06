@@ -150,21 +150,28 @@ test("counts the same ground once, keeping the publisher's own reading", () => {
 	assert.equal(outcome.chosen.candidate.place, "localAuthority/E08000003");
 });
 
-test("hands back every distinct answer when a name means several places", () => {
+test("defaults a name with several answers to its highest-ranked geography", () => {
 	const outcome = valueForPlace(
 		measure,
-		[candidate("localAuthority/W06000022"), candidate("ward/E05000009")],
+		// Deliberately reverse search order: the value resolver must apply the
+		// same geography preference as place search.
+		[candidate("ward/E05000009"), candidate("localAuthority/W06000022")],
 		"2022",
 		dispatcher([
 			["place=W06000022", series([["2022", 160000]])],
 			["place=E05000009", series([["2022", 5000]])],
 		]),
 	);
-	assert.equal(outcome.outcome, "ambiguous");
-	if (outcome.outcome !== "ambiguous") return;
+	assert.equal(outcome.outcome, "answered");
+	if (outcome.outcome !== "answered") return;
+	assert.equal(outcome.placeDefaulted, true);
+	assert.equal(outcome.chosen.candidate.geography, "localAuthority");
+	assert.equal(outcome.chosen.answer.value, 160000);
 	assert.deepEqual(
-		outcome.choices.map((choice) => choice.answer.value),
-		[160000, 5000],
+		outcome.attempts
+			.filter((attempt) => attempt.served)
+			.map((attempt) => attempt.answer.value),
+		[5000, 160000],
 	);
 });
 

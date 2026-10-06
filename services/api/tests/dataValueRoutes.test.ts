@@ -99,3 +99,60 @@ test("answers a measure for a place named in words", () => {
 	);
 	assert.equal(get("/v1/places").status, 400);
 });
+
+test("defaults an ambiguous place name and reports its other meanings", () => {
+	const areaLookup = createAreaLookup([
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:local-authorities",
+			geography: "localAuthority",
+			boundaryRelease: "2023-05-uk-bgc-v2",
+			codeProperty: "LAD23CD",
+			nameProperty: "LAD23NM",
+			areas: [{ code: "E06000001", name: "Leeds" }],
+		},
+		{
+			schemaVersion: 1,
+			contentHash: "sha256:wards",
+			geography: "ward",
+			boundaryRelease: "2023-05-uk-bgc",
+			codeProperty: "WD23CD",
+			nameProperty: "WD23NM",
+			areas: [{ code: "E05000001", name: "Leeds" }],
+		},
+	]);
+	const context = testContext({
+		boundaryRegistry: registry,
+		areaLookup,
+		dataCatalog,
+		populationObservations,
+		populationLocalAuthorityObservations,
+		measureObservations,
+	});
+	const response = routeRequest(
+		"GET",
+		"/v1/data/population/value?place=Leeds&period=2022",
+		context,
+	);
+	assert.equal(response.status, 200, JSON.stringify(response.body));
+	const data = response.body as {
+		data: {
+			question: { placeDefaulted: boolean };
+			place: { place: string };
+			answer: { value: number };
+			otherMatches: Array<{ place: string; answer?: { value: number } }>;
+			note: string;
+		};
+	};
+	assert.equal(data.data.question.placeDefaulted, true);
+	assert.equal(data.data.place.place, "localAuthority/E06000001");
+	assert.equal(data.data.answer.value, 280);
+	assert.deepEqual(
+		data.data.otherMatches.map((match) => [
+			match.place,
+			match.answer?.value,
+		]),
+		[["ward/E05000001", 100]],
+	);
+	assert.match(data.data.note, /localAuthority was used as the most likely/);
+});

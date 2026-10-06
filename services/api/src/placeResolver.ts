@@ -105,6 +105,20 @@ const MATCH_RANK: Record<PlaceMatch, number> = {
 	prefix: 1,
 };
 
+/**
+ * The published preference order for a name which means several places.
+ * A data answer uses the same order as place search when it has to choose a
+ * useful default, and still reports every other match.
+ */
+export const comparePlaceCandidates = (
+	left: PlaceCandidate,
+	right: PlaceCandidate,
+) =>
+	MATCH_RANK[left.match] - MATCH_RANK[right.match] ||
+	geographyRank(left.geography) - geographyRank(right.geography) ||
+	left.name.localeCompare(right.name) ||
+	left.code.localeCompare(right.code);
+
 /** A release-independent place reference, split, or undefined if malformed. */
 export const parsePlaceReference = (
 	reference: string,
@@ -241,14 +255,5 @@ export const resolvePlaces = (
 		}
 	}
 
-	return [...found.values()]
-		.sort(
-			(left, right) =>
-				MATCH_RANK[left.match] - MATCH_RANK[right.match] ||
-				geographyRank(left.geography) -
-					geographyRank(right.geography) ||
-				left.name.localeCompare(right.name) ||
-				left.code.localeCompare(right.code),
-		)
-		.slice(0, limit);
+	return [...found.values()].sort(comparePlaceCandidates).slice(0, limit);
 };
