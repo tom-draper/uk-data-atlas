@@ -121,7 +121,7 @@ export default function CoordinateGuidePage() {
 			</P>
 			<EndpointRef id="findContainingAreas" />
 			<EndpointRef id="findNearestAreas" />
-			<EndpointRef id="getAreaCapabilities" />
+			<EndpointRef id="getArea" />
 		</DocPage>
 	);
 }
