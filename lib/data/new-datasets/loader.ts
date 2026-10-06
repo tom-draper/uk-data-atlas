@@ -1,6 +1,7 @@
 import { odsTableRows, type OdsTableOptions } from "../spreadsheet/ods";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableNum } from "@/lib/helpers/parseNumber";
+import { loadPopulationUk } from "../population/ukLoader";
 import type { IndicatorDataset, IndicatorRecord } from "@/lib/types/indicator";
 import type { BoundaryType } from "../boundaries/catalog";
 
@@ -47,12 +48,32 @@ const dataset = <T extends IndicatorType>(
 	},
 });
 
+async function addPopulationMetrics(
+	records: Record<string, IndicatorRecord>,
+	readSheet: (path: string, sheet: string) => Promise<string>,
+) {
+	const population = await loadPopulationUk(readSheet);
+	const latest = population["2024"]?.data ?? {};
+	for (const [code, record] of Object.entries(records)) {
+		const total = Object.values(latest[code]?.total ?? {}).reduce(
+			(sum, value) => sum + value,
+			0,
+		);
+		if (total > 0) {
+			record.metrics = {
+				per100kPopulation: (record.value / total) * 100_000,
+			};
+		}
+	}
+}
+
 const table = (content: string, name: string, maxColumns = 64) =>
 	odsTableRows(content, { table: name, label: name, maxColumns });
 
 /** ONS table 1 reports broad-industry counts; summing them gives all enterprises. */
 export async function loadBusinessActivity(
 	read: (path: string, sheet: string) => Promise<string>,
+	readPopulation: (path: string, sheet: string) => Promise<string> = read,
 ) {
 	const { data: rows } = await parseCsv<string[]>(
 		await read(
@@ -75,6 +96,7 @@ export async function loadBusinessActivity(
 		if (!match || !mapAuthorityCode(match[1]!) || value === null) continue;
 		records[match[1]!] = { code: match[1]!, name: match[2]!.trim(), value };
 	}
+	await addPopulationMetrics(records, readPopulation);
 	return dataset("businessActivity", 2025, "localAuthority", 2025, records);
 }
 
@@ -304,6 +326,7 @@ export async function loadPlanningApplications(
 
 export async function loadElectricVehicleChargers(
 	read: (path: string) => Promise<string>,
+	readPopulation: (path: string, sheet: string) => Promise<string>,
 ) {
 	const rows = table(
 		await read(
@@ -321,6 +344,7 @@ export async function loadElectricVehicleChargers(
 		if (!mapAuthorityCode(code) || value === null) continue;
 		records[code] = { code, name: row[1]?.trim() || code, value };
 	}
+	await addPopulationMetrics(records, readPopulation);
 	return dataset(
 		"electricVehicleChargers",
 		2026,

@@ -23,7 +23,14 @@ export const businessActivityDefinition: ChartDatasetDefinition<
 		year: 2025,
 	},
 	map: {
-		valueKey: "value",
+		valueFor: (dataset, code, mapOptions) => {
+			const record = dataset.data[code];
+			return mapOptions.businessActivity.measure === "perPopulation"
+				? (record?.metrics?.per100kPopulation ?? null)
+				: (record?.value ?? null);
+		},
+		sourceMode: (_dataset, mapOptions) =>
+			`businessActivity:${mapOptions.businessActivity.measure}`,
 		colorRange: { min: 0, max: 50_000 },
 		legend: {
 			min: 0,

@@ -74,6 +74,21 @@ export default function LegendContent({
 	const chartDefinition = getChartDatasetDefinition(activeDataset.type);
 	if (chartDefinition?.map) {
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
+		const populationMetric =
+			(activeDataset.type === "businessActivity" ||
+				activeDataset.type === "electricVehicleChargers") &&
+			displayOptions[activeDataset.type].measure === "perPopulation";
+		const measureLegend = populationMetric
+			? {
+					min: 0,
+					max:
+						activeDataset.type === "businessActivity"
+							? 20_000
+							: 1_000,
+					format: (value: number) =>
+						`${value.toFixed(0)} per 100k residents`,
+				}
+			: legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
@@ -90,14 +105,14 @@ export default function LegendContent({
 				{...rangeControls}
 				datasetKey={activeDataset.type as ColorRangeDatasetKey}
 				absoluteRange={{
-					min: dynamicRange?.min ?? legend.min,
-					max: dynamicRange?.max ?? legend.max,
+					min: dynamicRange?.min ?? measureLegend.min,
+					max: dynamicRange?.max ?? measureLegend.max,
 				}}
 				defaultRange={{
 					min: dynamicRange?.min ?? colorRange.min,
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
-				formatLabel={legend.format}
+				formatLabel={measureLegend.format}
 				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>
 		);

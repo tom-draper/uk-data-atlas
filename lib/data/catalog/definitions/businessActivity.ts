@@ -26,5 +26,5 @@ export const businessActivityDatasetDefinition: DatasetDefinition<
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	precompile: ({ xlsxSheet }) => loadBusinessActivity(xlsxSheet),
+	precompile: ({ xlsxSheet }) => loadBusinessActivity(xlsxSheet, xlsxSheet),
 };

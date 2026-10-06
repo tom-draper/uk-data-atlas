@@ -26,5 +26,6 @@ export const electricVehicleChargersDatasetDefinition: DatasetDefinition<
 		expectedBoundaryYears: [2026],
 		requiredDataFields: ["value"],
 	},
-	precompile: ({ odsContent }) => loadElectricVehicleChargers(odsContent),
+	precompile: ({ odsContent, xlsxSheet }) =>
+		loadElectricVehicleChargers(odsContent, xlsxSheet),
 };
