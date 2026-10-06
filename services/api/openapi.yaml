@@ -1345,6 +1345,8 @@ paths:
           required: false
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: Longitude in WGS 84 decimal degrees, -180 to 180.
+        - $ref: "#/components/parameters/PointLookupLongitudeAlias"
+        - $ref: "#/components/parameters/PointLookupLongitudeLongAlias"
         - name: lat
           in: query
           required: false
@@ -4305,12 +4307,14 @@ paths:
           description: The geography of the boundary release to search.
         - name: release
           in: query
-          required: true
+          required: false
           schema:
             type: string
+            default: latest
           description: >
             The boundary release to search, whose geometry the box is tested
-            against, or `latest` for the newest unambiguous published release.
+            against. Omit it, or use `latest`, for the newest unambiguous
+            published release.
         - name: tier
           in: query
           required: false
@@ -4599,7 +4603,8 @@ paths:
         nothing does.
 
 
-        Supply WGS 84 `lng` and `lat` (the default), or set `crs=EPSG:27700`
+        Supply WGS 84 `lng` (also accepted as `lon` or `longitude`) and `lat`
+        (the default), or set `crs=EPSG:27700`
         and supply British National Grid `easting` and `northing` or an
         Ordnance Survey `gridref` such as `TQ 30000 80000`. Set
         `crs=EPSG:29902` for Irish Grid metres. Or give a unit `postcode`
@@ -4614,7 +4619,9 @@ paths:
         Each geography's release is either pinned, as
         `release={geography}/{release}`, chosen for `date` as the latest one
         dated on or before it, or defaults to the newest unambiguous published
-        release. Every result states its selection policy. A date no release fits, or one
+        release. With neither `geography` nor `release`, the lookup covers
+        `localAuthority`, `ward` and `constituency`. Every result states its
+        selection policy. A date no release fits, or one
         several releases of the same month fit equally, is reported in that
         geography's result as `no-release-for-date` or `ambiguous-release`
         rather than failing the whole lookup.
@@ -4650,6 +4657,8 @@ paths:
           description: >
             Longitude in WGS 84 decimal degrees, -180 to 180. Written as a plain
             decimal: its decimal places are read as its precision.
+        - $ref: "#/components/parameters/PointLookupLongitudeAlias"
+        - $ref: "#/components/parameters/PointLookupLongitudeLongAlias"
         - name: lat
           in: query
           required: false
@@ -4745,8 +4754,8 @@ paths:
         "400":
           description: >
             The point is missing, malformed or out of range; a postcode is not
-            a unit postcode, or is given with a coordinate; no geography is
-            named; more than four are; a geography has neither a pinned release
+            a unit postcode, or is given with a coordinate; more than four
+            geographies are named; a geography has neither a pinned release
             nor a date; a bare release id is given with several geographies; or
             `date` or `accuracy` is malformed.
           content:
@@ -4918,7 +4927,8 @@ paths:
 
 
         The coordinate forms are the same as `areas:contains`: default WGS 84
-        `lng`/`lat`, British National Grid `easting`/`northing` or an Ordnance
+        `lng`/`lat` (`lon` and `longitude` are also accepted for longitude),
+        British National Grid `easting`/`northing` or an Ordnance
         Survey `gridref` with `crs=EPSG:27700`, or Irish Grid metres with
         `crs=EPSG:29902`.
 
@@ -4943,6 +4953,8 @@ paths:
           required: false
           schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
           description: Longitude in WGS 84 decimal degrees, -180 to 180.
+        - $ref: "#/components/parameters/PointLookupLongitudeAlias"
+        - $ref: "#/components/parameters/PointLookupLongitudeLongAlias"
         - name: lat
           in: query
           required: false
@@ -8448,6 +8460,18 @@ components:
         Use only with `crs=EPSG:27700`; do not combine it with `easting` or
         `northing`. A grid reference denotes a square, represented by its cell
         centre with the cell's half-diagonal included in uncertainty.
+    PointLookupLongitudeAlias:
+      name: lon
+      in: query
+      required: false
+      schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+      description: Alias for `lng`, the WGS 84 longitude in decimal degrees.
+    PointLookupLongitudeLongAlias:
+      name: longitude
+      in: query
+      required: false
+      schema: { type: string, pattern: "^[+-]?\\d+(\\.\\d+)?$" }
+      description: Alias for `lng`, the WGS 84 longitude in decimal degrees.
     PointLookupGeography:
       name: geography
       in: query

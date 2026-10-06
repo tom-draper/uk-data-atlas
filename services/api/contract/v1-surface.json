@@ -1495,6 +1495,12 @@
 				"query:lng": {
 					"required": false
 				},
+				"query:lon": {
+					"required": false
+				},
+				"query:longitude": {
+					"required": false
+				},
 				"query:lat": {
 					"required": false
 				},
@@ -4273,7 +4279,7 @@
 					"required": true
 				},
 				"query:release": {
-					"required": true
+					"required": false
 				},
 				"query:tier": {
 					"required": false,
@@ -4603,6 +4609,12 @@
 			"operationId": "findContainingAreas",
 			"parameters": {
 				"query:lng": {
+					"required": false
+				},
+				"query:lon": {
+					"required": false
+				},
+				"query:longitude": {
 					"required": false
 				},
 				"query:lat": {
@@ -5097,6 +5109,12 @@
 			"operationId": "findNearestAreas",
 			"parameters": {
 				"query:lng": {
+					"required": false
+				},
+				"query:lon": {
+					"required": false
+				},
+				"query:longitude": {
 					"required": false
 				},
 				"query:lat": {

@@ -2,6 +2,7 @@ import {
 	CONTAINMENT_NOTE,
 	describeLookupRelease,
 	locatePoints,
+	lookupLongitude,
 	parseLookupCoordinate,
 	parseLookupCrs,
 	parseLookupRequest,
@@ -11,6 +12,7 @@ import {
 	type LookupInputCrs,
 } from "./pointLookup";
 import {
+	DEFAULT_POSTCODE_GEOGRAPHIES,
 	findPostcode,
 	POSTCODE_NOTE,
 	UNDECLARED_POSTCODE_ACCURACY,
@@ -67,7 +69,10 @@ export const handleAreaContainsRoutes = ({
 	const geographyResolver = context.geographyResolver;
 	const unavailable = geographyResolver.requires("geometry");
 	if (unavailable) return unavailable;
-	const request = parseLookupRequest(context, parsedUrl.searchParams);
+	const request = parseLookupRequest(
+		context,
+		withDefaultGeographies(parsedUrl.searchParams),
+	);
 	if ("status" in request) return request;
 	const [{ country, results }] = locatePoints(geographyResolver, request, [
 		point,
@@ -91,7 +96,28 @@ export const handleAreaContainsRoutes = ({
 	};
 };
 
-const COORDINATE_PARAMETERS = ["lng", "lat", "easting", "northing", "gridref"];
+const COORDINATE_PARAMETERS = [
+	"lng",
+	"lon",
+	"longitude",
+	"lat",
+	"easting",
+	"northing",
+	"gridref",
+];
+
+/** The same useful starting scope as a postcode lookup, for an unscoped point. */
+const withDefaultGeographies = (searchParams: URLSearchParams) => {
+	if (
+		searchParams.getAll("geography").length > 0 ||
+		searchParams.has("release")
+	)
+		return searchParams;
+	const defaults = new URLSearchParams(searchParams);
+	for (const geography of DEFAULT_POSTCODE_GEOGRAPHIES)
+		defaults.append("geography", geography);
+	return defaults;
+};
 
 /** The point a request's coordinates name, in whichever grid they are given. */
 const coordinatePoint = (
@@ -103,7 +129,7 @@ const coordinatePoint = (
 	const point = parseLookupCoordinate(
 		crs,
 		{
-			lng: searchParams.get("lng") ?? undefined,
+			lng: lookupLongitude(searchParams),
 			lat: searchParams.get("lat") ?? undefined,
 			easting: searchParams.get("easting") ?? undefined,
 			northing: searchParams.get("northing") ?? undefined,

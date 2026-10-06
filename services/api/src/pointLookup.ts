@@ -112,6 +112,13 @@ export const parseStatedAccuracy = (
 		: null;
 };
 
+/** The accepted WGS 84 longitude spellings, preferring the canonical `lng`. */
+export const lookupLongitude = (searchParams: URLSearchParams) =>
+	searchParams.get("lng") ??
+	searchParams.get("lon") ??
+	searchParams.get("longitude") ??
+	undefined;
+
 /**
  * A WGS84 coordinate as written, with its uncertainty. Written decimals only
  * bound precision from below, since a client may drop trailing zeros, so a

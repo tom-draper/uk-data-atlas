@@ -47,6 +47,8 @@ const boundaryRegistry: BoundaryRegistry = {
 	releases: [
 		release("ward", "2024-12-uk-bgc", UK),
 		release("ward", "2025-05-uk-bgc", UK),
+		release("localAuthority", "2025-05-uk-bgc", UK),
+		release("constituency", "2024-07-uk-bgc", UK),
 		release("localHealthBoard", "2023-12-w-bgc", ["GB-WLS"]),
 		release("country", "2024-12-uk-bgc", UK),
 		release("parish", "2025-05-ew-bgc", ["GB-ENG", "GB-WLS"]),
@@ -120,6 +122,8 @@ const publish = (
 };
 publish("ward", "2024-12-uk-bgc", wards);
 publish("ward", "2025-05-uk-bgc", wards);
+publish("localAuthority", "2025-05-uk-bgc", wards);
+publish("constituency", "2024-07-uk-bgc", wards);
 publish("localHealthBoard", "2023-12-w-bgc", healthBoards);
 publish("country", "2024-12-uk-bgc", countries);
 
@@ -128,6 +132,8 @@ const named = (areas: Array<{ code: string; name: string }>) =>
 const areaLookup = createAreaLookup([
 	identities("ward", "2024-12-uk-bgc", named(wards)),
 	identities("ward", "2025-05-uk-bgc", named(wards)),
+	identities("localAuthority", "2025-05-uk-bgc", named(wards)),
+	identities("constituency", "2024-07-uk-bgc", named(wards)),
 	identities("localHealthBoard", "2023-12-w-bgc", named(healthBoards)),
 	identities("country", "2024-12-uk-bgc", named(countries)),
 	identities("parish", "2025-05-ew-bgc", []),
@@ -379,7 +385,7 @@ test("says when a selected release has no geometry to test", () => {
 	assert.match(data.results[0].detail, /No raw geometry source/);
 });
 
-test("refuses an unclear point or invalid release selection, and defaults a named geography", () => {
+test("refuses an unclear point or invalid release selection, and defaults its lookup scope", () => {
 	const point = `lng=${0.5 * U}&lat=${0.5 * U}`;
 	for (const query of [
 		"lng=181&lat=0&geography=ward&release=2024-12-uk-bgc",
@@ -398,6 +404,27 @@ test("refuses an unclear point or invalid release selection, and defaults a name
 		defaulted.data.results[0]!.selection.policy,
 		"latest-published",
 	);
+	const defaultScope = get(`/v1/areas:contains?${point}`);
+	assert.equal(defaultScope.status, 200);
+	assert.deepEqual(
+		defaultScope.data.results.map(({ geography, selection }: any) => [
+			geography,
+			selection.policy,
+		]),
+		[
+			["localAuthority", "latest-published"],
+			["ward", "latest-published"],
+			["constituency", "latest-published"],
+		],
+	);
+	for (const longitude of ["lon", "longitude"])
+		assert.equal(
+			get(
+				`/v1/areas:contains?${longitude}=${0.5 * U}&lat=${0.5 * U}&release=ward/2024-12-uk-bgc`,
+			).status,
+			200,
+			longitude,
+		);
 	const commaSeparated = get(
 		`/v1/areas:contains?${point}&geography=ward,localHealthBoard`,
 	);
@@ -417,6 +444,14 @@ test("refuses an unclear point or invalid release selection, and defaults a name
 		nearestDefault.data.results[0]!.selection.policy,
 		"latest-published",
 	);
+	for (const longitude of ["lon", "longitude"])
+		assert.equal(
+			get(
+				`/v1/areas:near?${longitude}=${0.5 * U}&lat=${0.5 * U}&release=ward/2024-12-uk-bgc`,
+			).status,
+			200,
+			longitude,
+		);
 
 	const unknownRelease = get(
 		`/v1/areas:contains?${point}&release=ward/2019-12-uk-bgc`,

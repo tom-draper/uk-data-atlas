@@ -168,7 +168,7 @@ const pointLookupCost = (matched: MatchedOperation, target: string) => {
 	}
 	const count =
 		geographies.size ||
-		(route.startsWith("/v1/postcodes")
+		(route.startsWith("/v1/postcodes") || route === "/v1/areas:contains"
 			? DEFAULT_POSTCODE_GEOGRAPHIES.length
 			: 1);
 	return (matched.operation?.cost ?? 1) * count;

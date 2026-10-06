@@ -36,7 +36,7 @@ export const handleAreaIntersectsRoutes = ({
 	const parts = (raw ?? "").split(",").map((part) => Number(part.trim()));
 	const [west, south, east, north] = parts;
 	const geography = parsedUrl.searchParams.get("geography");
-	const requestedRelease = parsedUrl.searchParams.get("release");
+	const requestedRelease = parsedUrl.searchParams.get("release") ?? "latest";
 	if (
 		raw === null ||
 		parts.length !== 4 ||
@@ -47,13 +47,12 @@ export const handleAreaIntersectsRoutes = ({
 		north! > 90 ||
 		west! >= east! ||
 		south! >= north! ||
-		!geography ||
-		!requestedRelease
+		!geography
 	) {
 		return problem(
 			400,
 			"Invalid Query",
-			"bbox (west,south,east,north in WGS 84, west < east and south < north), geography and release are required.",
+			"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required.",
 		);
 	}
 	const requestedTier = parsedUrl.searchParams.get("tier");
