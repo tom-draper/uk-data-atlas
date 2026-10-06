@@ -207,7 +207,7 @@ test("discovers a named location's direct and compiled-view capabilities", () =>
 	);
 	assert.equal(response.status, 200);
 	const data = ("data" in response.body && response.body.data) as {
-		location: { id: string };
+		id: string;
 		capabilities: {
 			direct: {
 				status: string;
@@ -221,7 +221,7 @@ test("discovers a named location's direct and compiled-view capabilities", () =>
 			parents: { status: string; reason: string };
 		};
 	};
-	assert.equal(data.location.id, "greater-manchester");
+	assert.equal(data.id, "greater-manchester");
 	assert.equal(data.capabilities.direct.status, "available");
 	assert.ok(
 		data.capabilities.direct.views.some(
