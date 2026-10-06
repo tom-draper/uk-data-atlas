@@ -55,7 +55,7 @@ test("reads every setting from the environment", () => {
 test("refuses a malformed setting rather than quietly using the default", () => {
 	for (const env of [
 		{ PORT: "70000" },
-		{ ATLAS_GEOMETRY_CACHE_RELEASES: "0" },
+		{ ATLAS_GEOMETRY_CACHE_RELEASES: "2" },
 		{ ATLAS_RATE_LIMIT_CAPACITY: "many" },
 		{ ATLAS_RATE_LIMIT_REFILL_PER_SECOND: "-1" },
 		{ ATLAS_ACCESS_LOG: "sometimes" },

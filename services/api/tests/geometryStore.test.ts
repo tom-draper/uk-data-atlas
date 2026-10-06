@@ -73,6 +73,7 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 		),
 	);
 	const stored = readGeometryStore(path, source)!;
+	t.after(() => stored.close());
 	assert.deepEqual(stored.codes, ["A", "B", "C", "D", "E"]);
 	for (const [code, geometry] of areas)
 		assert.deepEqual(unpackGeometry(stored.get(code)!), geometry, code);
@@ -80,6 +81,11 @@ test("reads back every kind of packed area exactly as it was written", (t) => {
 	assert.deepEqual(stored.bounds("B"), [0, 50, 2.5, 51]);
 	assert.deepEqual(stored.bounds("C"), [4, 50, 5, 51]);
 	assert.equal(stored.bounds("E"), undefined);
+	assert.deepEqual(
+		[...stored.spatialIndex.candidates([0.25, 50.25, 0.25, 50.25])],
+		["B"],
+	);
+	assert.ok(stored.spatialIndex.cellCount > 0);
 
 	// A file compiled from another source is never read in its place.
 	assert.equal(
@@ -136,6 +142,9 @@ test("serves a compiled release exactly as it serves the release's source", (t) 
 
 	const fromSource = new AreaGeometryCache(root, sources);
 	const compiled = new AreaGeometryCache(root, sources, 2, store);
+	compiled.warm([["ward", "2025-05-uk-bgc"]]);
+	assert.deepEqual(compiled.stats().loadedReleases, ["ward/2025-05-uk-bgc"]);
+	assert.equal(compiled.stats().spatialIndexBuilds, 0);
 	const ask = (cache: AreaGeometryCache) => {
 		const point = cache.get("ward", "2025-05-uk-bgc", "E05000001")!
 			.coordinates as number[][][];
@@ -165,6 +174,7 @@ test("serves a compiled release exactly as it serves the release's source", (t) 
 	assert.equal(expected.neighbours!.length, 1);
 	assert.deepEqual(ask(compiled), expected);
 	assert.equal(compiled.stats().compiledLoads, 1);
+	assert.equal(compiled.stats().spatialIndexBuilds, 0);
 	assert.equal(fromSource.stats().compiledLoads, 0);
 });
 

@@ -1,6 +1,7 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createApiServer, readApiCatalogues } from "../src/server";
+import { DEFAULT_POSTCODE_GEOGRAPHIES } from "../src/postcodeRoutes";
 import {
 	errorFields,
 	jsonLog,
@@ -39,6 +40,20 @@ const catalogues = readApiCatalogues(apiRoot, {
 	terrainRemoteTimeoutMs: configuration.terrainRemoteTimeoutMs,
 	terrainRemoteConcurrency: configuration.terrainRemoteConcurrency,
 });
+// A postcode lookup without an explicit geography reads these three releases.
+// Warm their compact store metadata and prebuilt spatial indexes before this
+// process starts listening, so readiness never advertises a cold first lookup.
+catalogues.geographyResolver.warmGeometryReleases(
+	DEFAULT_POSTCODE_GEOGRAPHIES.flatMap((geography) => {
+		const selected = catalogues.geographyResolver.selectReleaseForDate(
+			geography,
+			"9999-12",
+		);
+		return selected?.status === "selected"
+			? [[geography, selected.selected.id] as const]
+			: [];
+	}),
+);
 const server = createApiServer(catalogues, configuration.server);
 
 server.listen(configuration.port, configuration.host, () => {

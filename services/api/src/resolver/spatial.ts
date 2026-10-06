@@ -72,6 +72,9 @@ export class SpatialResolver {
 	geometryCacheStats(): AreaGeometryCacheStats | undefined {
 		return this.cache?.stats();
 	}
+	warmGeometryReleases(releases: Iterable<readonly [string, string]>): void {
+		this.cache?.warm(releases);
+	}
 
 	geometryFor(identity: AreaIdentity): ResolvedGeometry | undefined {
 		const geometry = this.cache?.get(
