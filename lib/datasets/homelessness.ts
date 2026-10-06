@@ -16,7 +16,8 @@ export const homelessnessDefinition: ChartDatasetDefinition<HomelessnessDataset>
 			key: "economics-homelessness",
 			label: "Homelessness [2026]",
 			defaultVisible: true,
-			componentPath: "@/components/ValueCard",
+			componentPath:
+				"@/components/economics/homelessness/HomelessnessChart",
 			card: defineValueCard<
 				HomelessnessDataset,
 				AggregatedHomelessnessData
@@ -43,7 +44,14 @@ export const homelessnessDefinition: ChartDatasetDefinition<HomelessnessDataset>
 			year: 2026,
 		},
 		map: {
-			valueKey: "householdsPerThousand",
+			valueFor: (dataset, code, mapOptions) => {
+				const area = dataset.data[code];
+				return mapOptions.homelessness.measure === "count"
+					? (area?.householdsInTemporaryAccommodation ?? null)
+					: (area?.householdsPerThousand ?? null);
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`homelessness:${mapOptions.homelessness.measure}`,
 			colorRange: { min: 1, max: 12 },
 			legend: {
 				min: 0,
