@@ -118,6 +118,20 @@ export default function LegendContent({
 								}`,
 				}
 			: null;
+		const unemploymentMeasure =
+			activeDataset.type === "unemployment"
+				? displayOptions.unemployment.measure
+				: null;
+		const unemploymentLegend = unemploymentMeasure
+			? {
+					min: unemploymentMeasure === "count" ? 0 : 2.2,
+					max: unemploymentMeasure === "count" ? 45000 : 6.8,
+					format: (value: number) =>
+						unemploymentMeasure === "count"
+							? `${value.toLocaleString()} unemployed`
+							: `${value.toFixed(1)}%`,
+				}
+			: null;
 		const measureLegend = populationMetric
 			? {
 					min: 0,
@@ -142,7 +156,7 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: (ghgLegend ?? legend);
+					: (unemploymentLegend ?? ghgLegend ?? legend);
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
@@ -166,7 +180,9 @@ export default function LegendContent({
 					min: dynamicRange?.min ?? colorRange.min,
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
-				formatLabel={ghgLegend?.format ?? measureLegend.format}
+				formatLabel={
+					unemploymentLegend?.format ?? ghgLegend?.format ?? measureLegend.format
+				}
 				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>
 		);

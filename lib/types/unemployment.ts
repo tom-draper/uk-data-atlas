@@ -36,4 +36,5 @@ export interface AggregatedUnemploymentData {
 	years: number[];
 	latestYear: number;
 	rates: Record<number, number>; // year -> avg rate across visible LADs
+	levels: Record<number, number>; // year -> summed unemployed residents
 }

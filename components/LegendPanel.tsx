@@ -31,6 +31,7 @@ import {
 	IncomeMeasurePanel,
 	LifeExpectancyMeasurePanel,
 	PercentageRangePanel,
+	UnemploymentMeasurePanel,
 } from "./legend/LegendSupplementalPanels";
 import type { MapOptionsChangeHandler } from "./legend/types";
 import { useLegendControls } from "./legend/useLegendControls";
@@ -184,6 +185,21 @@ export default function LegendPanel({
 									: measure === "excludingLandUse"
 										? { min: 300, max: 2400 }
 										: { min: 3, max: 12 },
+						})
+					}
+				/>
+			)}
+
+			{activeDataset?.type === "unemployment" && (
+				<UnemploymentMeasurePanel
+					measure={controls.displayOptions.unemployment.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("unemployment", {
+							measure,
+							colorRange:
+								measure === "count"
+									? { min: 1000, max: 11000 }
+									: { min: 2.2, max: 6.8 },
 						})
 					}
 				/>
