@@ -1,5 +1,5 @@
 import type { Measure } from "./dataCatalog";
-import type { PlaceCandidate } from "./placeResolver";
+import { comparePlaceCandidates, type PlaceCandidate } from "./placeResolver";
 
 /**
  * Answering "what is this measure for this place?" from a name.
@@ -217,11 +217,8 @@ export type PlaceValueOutcome =
 			outcome: "answered";
 			chosen: Attempt & { served: true };
 			attempts: Attempt[];
-	  }
-	| {
-			outcome: "ambiguous";
-			choices: (Attempt & { served: true })[];
-			attempts: Attempt[];
+			/** More than one distinct answer matched, so the place was defaulted. */
+			placeDefaulted: boolean;
 	  }
 	| { outcome: "unserved"; attempts: Attempt[] }
 	| { outcome: "unmatched" };
@@ -235,8 +232,8 @@ const tierOf = (candidate: PlaceCandidate) =>
  * Candidates matching the name exactly are tried first, and ones that merely
  * begin with it only when no exact candidate can be answered. Answers resting on
  * the same partition, period and area codes are the same ground and count once.
- * One distinct answer is returned; more than one is ambiguity, and every choice
- * is handed back with its value so the caller can pick by what it knows.
+ * Where several places answer differently, the usual geography tier wins and
+ * the response records that default alongside every other match.
  */
 export const valueForPlace = (
 	measure: Measure,
@@ -269,12 +266,24 @@ export const valueForPlace = (
 				byGround.set(attempt.ground, attempt);
 			}
 		}
-		const distinct = [...byGround.values()];
+		const distinct = [...byGround.values()].sort((left, right) =>
+			comparePlaceCandidates(left.candidate, right.candidate),
+		);
 		if (distinct.length === 1) {
-			return { outcome: "answered", chosen: distinct[0]!, attempts };
+			return {
+				outcome: "answered",
+				chosen: distinct[0]!,
+				attempts,
+				placeDefaulted: false,
+			};
 		}
 		if (distinct.length > 1) {
-			return { outcome: "ambiguous", choices: distinct, attempts };
+			return {
+				outcome: "answered",
+				chosen: distinct[0]!,
+				attempts,
+				placeDefaulted: true,
+			};
 		}
 	}
 	return { outcome: "unserved", attempts };

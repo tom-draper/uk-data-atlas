@@ -106,21 +106,7 @@ export const handleDataValueRoutes = ({
 			{ candidates: outcome.attempts.map(describeAttempt) },
 		);
 	}
-	if (outcome.outcome === "ambiguous") {
-		return problem(
-			409,
-			"Ambiguous Place",
-			`"${place}" names ${outcome.choices.length} places that ${measureId} answers differently. Each choice carries its answer; ask again with the place reference of the one meant.`,
-			{
-				code: "ambiguous_place",
-				choices: outcome.choices.map((choice) => ({
-					...describeAttempt(choice),
-					ask: `/v1/data/${measureId}/value?place=${encodeURIComponent(choice.candidate.place)}${period ? `&period=${encodeURIComponent(period)}` : ""}`,
-				})),
-			},
-		);
-	}
-	const { chosen, attempts } = outcome;
+	const { chosen, attempts, placeDefaulted } = outcome;
 	return {
 		status: 200,
 		body: envelope(releaseId, {
@@ -130,7 +116,11 @@ export const handleDataValueRoutes = ({
 				valueKind: measure.valueKind,
 				unit: measure.unit,
 			},
-			question: { place, period: period ?? null },
+			question: {
+				place,
+				period: period ?? null,
+				placeDefaulted,
+			},
 			answer: { ...chosen.answer, unit: measure.unit },
 			place: describeCandidate(chosen.candidate),
 			method: chosen.method,
@@ -147,6 +137,9 @@ export const handleDataValueRoutes = ({
 				chosen.method === "aggregate"
 					? "Summed from the local authorities the place is made of; the aggregate route's response, at via, lists any member codes of another vintage it passed over."
 					: "The value as published for this area.",
+				placeDefaulted
+					? `The name matched several places with different answers, so ${chosen.candidate.geography} was used as the most likely match; the others are listed in otherMatches.`
+					: undefined,
 				attempts.length > 1
 					? "The name matched other places, listed in otherMatches; any that cover the same ground as this one gave the same answer."
 					: undefined,
