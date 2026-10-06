@@ -22,6 +22,7 @@ import {
 	useLegendAggregates,
 } from "./legend/legendData";
 import {
+	AirQualityMeasurePanel,
 	BroadbandMeasurePanel,
 	CountMetricPanel,
 	ElectionMetricPanel,
@@ -149,6 +150,23 @@ export default function LegendPanel({
 					measure={controls.displayOptions.income.measure}
 					onChange={(measure) =>
 						onMapOptionsChange("income", { measure })
+					}
+				/>
+			)}
+
+			{activeDataset?.type === "airQuality" && (
+				<AirQualityMeasurePanel
+					measure={controls.displayOptions.airQuality.measure}
+					onChange={(measure) =>
+						onMapOptionsChange("airQuality", {
+							measure,
+							colorRange:
+								measure === "pm25"
+									? { min: 4, max: 12 }
+									: measure === "pm10"
+										? { min: 8, max: 25 }
+										: { min: 2, max: 20 },
+						})
 					}
 				/>
 			)}

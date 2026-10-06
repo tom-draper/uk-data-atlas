@@ -16,7 +16,19 @@ export const airQualityDefinition: ChartDatasetDefinition<AirQualityDataset> = {
 		year: 2024,
 	},
 	map: {
-		valueKey: "no2Mean",
+		valueFor: (dataset, code, mapOptions) => {
+			const area = dataset.data[code];
+			switch (mapOptions.airQuality.measure) {
+				case "pm25":
+					return area?.pm25Mean ?? null;
+				case "pm10":
+					return area?.pm10Mean ?? null;
+				default:
+					return area?.no2Mean ?? null;
+			}
+		},
+		sourceMode: (_dataset, mapOptions) =>
+			`airQuality:${mapOptions.airQuality.measure}`,
 		// Modelled background NO2 runs from under 1 µg/m³ in the Highlands to
 		// about 33 in the City of London; 95% of authorities are below 18.
 		colorRange: { min: 2, max: 20 },

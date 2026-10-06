@@ -16,6 +16,7 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
+import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import {
 	selectedAreaLadCode,
 	type LadResolver,
@@ -34,12 +35,11 @@ interface AirQualityChartProps {
 
 const ACCENT = "#22c55e";
 
-function no2Color(no2: number): string {
-	if (no2 < 10) return "#22c55e";
-	if (no2 < 20) return "#eab308";
-	if (no2 < 30) return "#f97316";
-	return "#ef4444";
-}
+const MEASURES = {
+	no2: { key: "no2Mean", label: "NO₂" },
+	pm25: { key: "pm25Mean", label: "PM2.5" },
+	pm10: { key: "pm10Mean", label: "PM10" },
+} as const;
 
 function StatPill({
 	label,
@@ -108,6 +108,8 @@ export default function AirQualityChart({
 }: AirQualityChartProps) {
 	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
+	const measure = useCurrentMapOptions().airQuality.measure;
+	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
@@ -120,12 +122,11 @@ export default function AirQualityChart({
 
 	if (!dataset) return null;
 
-	const no2 = stats?.no2Mean ?? null;
-	const color = no2 != null ? no2Color(no2) : null;
+	const value = stats?.[measureInfo.key] ?? null;
 
 	return (
 		<ChartCard
-			heading={`Air Quality, NO₂ [${dataset.year}]`}
+			heading={`Air Quality, ${measureInfo.label} [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, stats !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
@@ -159,9 +160,11 @@ export default function AirQualityChart({
 					<div className="flex items-baseline gap-1">
 						<span
 							className="text-2xl font-bold leading-none"
-							style={{ color: color ?? undefined }}
+							style={{
+								color: value != null ? ACCENT : undefined,
+							}}
 						>
-							{no2 != null ? no2.toFixed(1) : "—"}
+							{value != null ? value.toFixed(1) : "—"}
 						</span>
 						<span
 							className={`text-[10px] ${isDark ? "text-gray-400" : "text-gray-500"}`}
