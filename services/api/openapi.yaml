@@ -7887,7 +7887,9 @@ paths:
         `validity` gives its known bounds, with null bounds when the curator
         has not supplied dates. `memberAssertions` gives each member code's
         half-open effective interval; `asOf` selects the definition active on
-        one date.
+        one date. Geometry is deliberately omitted from this paginated listing;
+        fetch a selected location's geometry from
+        `/v1/locations/{location-id}/geometry`.
       parameters:
         - name: q
           in: query
@@ -7899,6 +7901,8 @@ paths:
           in: query
           schema: { type: string, format: date }
           description: Select the member codes effective on this date. Omit it to return the complete dated definition.
+        - $ref: "#/components/parameters/PageCursor"
+        - $ref: "#/components/parameters/PageLimit"
       responses:
         "200":
           description: Named location definitions.

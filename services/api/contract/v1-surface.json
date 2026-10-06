@@ -7887,6 +7887,14 @@
 				},
 				"query:asOf": {
 					"required": false
+				},
+				"query:cursor": {
+					"required": false
+				},
+				"query:limit": {
+					"required": false,
+					"minimum": 1,
+					"maximum": 500
 				}
 			},
 			"responses": {
