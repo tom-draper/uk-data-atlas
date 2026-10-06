@@ -2,6 +2,11 @@ import { docsPage } from "./docsPage";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
+export const isOpenapiRoute = (segments: string[]) =>
+	segments.length === 2 &&
+	segments[0] === "v1" &&
+	(segments[1] === "openapi.yaml" || segments[1] === "docs");
+
 /**
  * The OpenAPI description this server implements, served as the document
  * itself, and the human landing page rendered from it. The index links to
@@ -13,12 +18,7 @@ export const handleOpenapiRoutes = ({
 	releaseId,
 	segments,
 }: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 2 ||
-		segments[0] !== "v1" ||
-		(segments[1] !== "openapi.yaml" && segments[1] !== "docs")
-	)
-		return undefined;
+	if (!isOpenapiRoute(segments)) return undefined;
 	const { openapiDocument } = context;
 	if (!openapiDocument)
 		return problem(

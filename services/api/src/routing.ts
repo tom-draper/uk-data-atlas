@@ -31,6 +31,7 @@ import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
 import type { TerrainCatalogue } from "./terrainCatalogue";
 import type { AsyncTerrainProvider, TerrainProvider } from "./terrainProvider";
+import type { OperationMatcher } from "./operationTemplates";
 
 export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
 
@@ -69,6 +70,11 @@ export type RouteContext = {
 	exportManifest?: ExportManifest;
 	/** The OpenAPI description the server serves at `/v1/openapi.yaml`. */
 	openapiDocument?: string;
+	/**
+	 * The compiled OpenAPI operation lookup. Catalogue loading builds it once;
+	 * request handling and internal dispatch never need to parse the document.
+	 */
+	operationMatcher?: OperationMatcher;
 	lookupManifest?: LookupManifest;
 	/** The boundary releases published as map resources, and their tiles. */
 	mapResources?: MapResources;
