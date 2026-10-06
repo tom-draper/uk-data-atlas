@@ -61,10 +61,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Already know the area code? [Get observations](/docs/v1/reference/map/measure-observations) or [Get a time series](/docs/v1/reference/trend/source-exact-measure-series) give you more control.",
 		],
 	},
-	getAreaCapabilities: {
-		title: "See what's available for an area",
-		intro: "Give it one area and find out everything the Atlas can do with it: whether it has a shape, which relationships and named locations it belongs to, and which measures have data for it.",
-	},
 	convertCoordinate: {
 		title: "Convert a coordinate",
 		intro: "Convert between WGS 84 and the supported UK national grids while keeping the transformation and any precision caveat visible.",
@@ -156,13 +152,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "Download one area's boundary as a GeoJSON Feature, in ordinary longitude and latitude (WGS 84). You get full detail by default; add `tier` for a lighter version.",
 		tips: [
 			"An area made of several pieces, like one with islands, comes back as a single GeometryCollection.",
-		],
-	},
-	getAreaGeometryMetadata: {
-		title: "Get an area's size and centre",
-		intro: "Get an area's bounding box, centre, a good spot for its label, its area and its perimeter, without downloading the shape itself.",
-		tips: [
-			"`labelPoint` is always inside the area, even for shapes whose centre falls outside them.",
 		],
 	},
 
@@ -460,10 +449,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"The shape is built ahead of time from a boundary release in which every member area is known. When no such shape exists you get a 503, never an approximation.",
 		],
 	},
-	getNamedLocationCapabilities: {
-		title: "See named location options",
-		intro: "Discover which direct and crosswalk-based views are available for a named location before requesting its members or parents.",
-	},
 	getNamedLocationParents: {
 		title: "Find what a named location sits in",
 		intro: "The other way round from listing its areas: which regions, counties or combined authorities a named location falls in, and whether it covers each one whole or only part of it.",
@@ -512,11 +497,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "A pre-flight check before you request data: every source and period, how its records were produced, whether it can be aggregated and which boundaries it fits.",
 	},
 
-	// Trust & citation
-	getAreaCitation: {
-		title: "Cite an area",
-		intro: "Get the artifact hashes, boundary publisher and licence, validation links and ready-made attribution for one exact area identity. Add `measure` or `crosswalk` to include the data or relationship that supports what you publish; the top-level `atlasRelease` identifies the API response build, not the boundary itself.",
-	},
 	reconcileMeasure: {
 		title: "Check a measure against itself",
 		intro: "Where the same measure is published for both small areas and large ones, adding the small ones up should reproduce the large ones. This runs that check and shows the two figures side by side, so you can see where they disagree and by how much.",

@@ -13,7 +13,6 @@ export const PLACE_OPERATIONS = {
 	getAreaChildren: "/docs/v1/reference/geography/area-children",
 	getAreaNeighbours: "/docs/v1/reference/map/area-neighbours",
 	getAreaGeometry: "/docs/v1/reference/map/area-geometry",
-	getAreaCapabilities: "/docs/v1/reference/start-here/area-capabilities",
 	getNamedLocation: "/docs/v1/reference/geography/named-location",
 	getNamedLocationMembers:
 		"/docs/v1/reference/geography/named-location-members",
@@ -59,9 +58,9 @@ export function areaRequests(
 			path: `${base}/neighbours`,
 		},
 		{
-			operationId: "getAreaCapabilities",
+			operationId: "getArea",
 			label: "What you can ask about it",
-			path: `${base}/capabilities`,
+			path: `${base}?include=capabilities`,
 		},
 	];
 }
