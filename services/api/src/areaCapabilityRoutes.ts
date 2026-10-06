@@ -1,4 +1,3 @@
-import { areaNotFound } from "./areaResources";
 import {
 	CAPABILITY_STATUSES,
 	notBuilt,
@@ -6,39 +5,27 @@ import {
 	type CapabilityStatus,
 } from "./capability";
 import { measureCapability } from "./measureCapability";
+import type { AreaIdentity } from "./resolver/areas";
 import type { RouteRequest } from "./routing";
-import { areaKey } from "./geographyKeys";
 import { releaseMonth } from "./releaseForDate";
-import { envelope, type ApiResponse } from "./routeResponse";
+import type { ApiResponse } from "./routeResponse";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
 	response && "detail" in response.body
 		? response.body.detail
 		: "Catalogue data is unavailable.";
 
-/** What the API can answer for one area: its geometry, relationships, named locations and measure coverage. */
-export const handleAreaCapabilityRoutes = ({
-	context,
-	releaseId,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 6 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas" ||
-		segments[5] !== "capabilities"
-	)
-		return undefined;
+/**
+ * What the API can answer for one area, as `include=capabilities` expands it:
+ * its geometry, relationships, named locations and measure coverage.
+ */
+export const areaCapabilities = (
+	context: RouteRequest["context"],
+	identity: AreaIdentity,
+) => {
 	const { dataCatalog, measureCompatibilityInventory } = context;
 	const geographyResolver = context.geographyResolver;
-	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-		string,
-		string,
-		string,
-	];
-	const identity = { geography, boundaryRelease, code };
-	const area = geographyResolver.area(identity);
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
+	const { geography, boundaryRelease, code } = identity;
 	const geometryHref = `/v1/areas/${geography}/${boundaryRelease}/${code}/geometry`;
 	const geometry = (() => {
 		const unavailable = geographyResolver.requires("geometry");
@@ -134,61 +121,52 @@ export const handleAreaCapabilityRoutes = ({
 		};
 	})();
 	return {
-		status: 200,
-		body: envelope(releaseId, {
-			id: areaKey(geography, boundaryRelease, code),
-			geography,
-			boundaryRelease,
-			...area,
-			capabilities: {
-				geometry,
-				relationships: geographyResolver.requires("relationships")
-					? notBuilt(
-							requirementDetail(
-								geographyResolver.requires("relationships"),
-							),
-						)
-					: {
-							...(relationshipSummary.relationships.length > 0
-								? { status: "available" as const }
-								: unsupported(
-										"No published crosswalk names this area.",
-									)),
-							href: `/v1/areas/${geography}/${boundaryRelease}/${code}/relationships`,
-							count: relationshipSummary.relationships.length,
-							byRelation: relationshipSummary.byRelation,
-							parents: {
-								count: relationshipSummary.parentCount,
-								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/parents`,
-							},
-							children: {
-								count: relationshipSummary.childCount,
-								href: `/v1/areas/${geography}/${boundaryRelease}/${code}/children`,
-							},
-							crosswalks,
-						},
-				namedLocations: geographyResolver.requires("named-locations")
-					? notBuilt(
-							requirementDetail(
-								geographyResolver.requires("named-locations"),
-							),
-						)
-					: {
-							...(locations.length > 0
-								? { status: "available" as const }
-								: unsupported(
-										"No curated named location lists this area's code.",
-									)),
-							membership: "direct-code-match" as const,
-							locations: locations.map((location) => ({
-								id: location.id,
-								label: location.label,
-								href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
-							})),
-							note: "Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
-						},
-				data,
-			},
-		}),
+		geometry,
+		relationships: geographyResolver.requires("relationships")
+			? notBuilt(
+					requirementDetail(
+						geographyResolver.requires("relationships"),
+					),
+				)
+			: {
+					...(relationshipSummary.relationships.length > 0
+						? { status: "available" as const }
+						: unsupported(
+								"No published crosswalk names this area.",
+							)),
+					href: `/v1/areas/${geography}/${boundaryRelease}/${code}/relationships`,
+					count: relationshipSummary.relationships.length,
+					byRelation: relationshipSummary.byRelation,
+					parents: {
+						count: relationshipSummary.parentCount,
+						href: `/v1/areas/${geography}/${boundaryRelease}/${code}/parents`,
+					},
+					children: {
+						count: relationshipSummary.childCount,
+						href: `/v1/areas/${geography}/${boundaryRelease}/${code}/children`,
+					},
+					crosswalks,
+				},
+		namedLocations: geographyResolver.requires("named-locations")
+			? notBuilt(
+					requirementDetail(
+						geographyResolver.requires("named-locations"),
+					),
+				)
+			: {
+					...(locations.length > 0
+						? { status: "available" as const }
+						: unsupported(
+								"No curated named location lists this area's code.",
+							)),
+					membership: "direct-code-match" as const,
+					locations: locations.map((location) => ({
+						id: location.id,
+						label: location.label,
+						href: `/v1/locations/${location.id}/members?geography=${geography}&release=${boundaryRelease}`,
+					})),
+					note: "Membership is a direct code match against each named location's members active in this boundary release's snapshot month. A location's kind says whether it is an official area sourced from an ONS lookup or an editorial grouping; neither asserts equal geometry.",
+				},
+		data,
 	};
 };

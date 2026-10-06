@@ -1,7 +1,7 @@
 import { areaMetrics } from "./areaMetrics";
-import { areaNotFound } from "./areaResources";
+import type { AreaIdentity } from "./resolver/areas";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "./routeResponse";
 
 /**
  * Travels with every measurement, so a figure taken from one response can be
@@ -19,53 +19,38 @@ const AREA_METRIC_METHOD = {
 	caveat: "Measured from the boundary as that release publishes it, at its own generalisation. This is not a published land-area statistic: a coastline-clipped boundary still encloses inland water, so these figures differ from the ONS Standard Area Measurement used by population density.",
 } as const;
 
-/** Measurements of one area's published boundary: area, perimeter, centroid and a label point. */
-export const handleAreaGeometryMetadataRoutes = ({
-	context,
-	releaseId,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 7 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas" ||
-		segments[5] !== "geometry" ||
-		segments[6] !== "metadata"
-	)
-		return undefined;
+/**
+ * Measurements of one area's published boundary, as `include=metrics`
+ * expands it: area, perimeter, centroid and a label point.
+ */
+export const areaGeometryMetrics = (
+	context: RouteRequest["context"],
+	identity: AreaIdentity,
+): { metrics: Record<string, unknown> } | { response: ApiResponse } => {
 	const geographyResolver = context.geographyResolver;
-	const [geography, boundaryRelease, code] = segments.slice(2, 5);
-	const identity = {
-		geography: geography as string,
-		boundaryRelease: boundaryRelease as string,
-		code: code as string,
-	};
-	const area = geographyResolver.area(identity);
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const unavailable = geographyResolver.requires("geometry");
-	if (unavailable) return unavailable;
+	if (unavailable) return { response: unavailable };
 	try {
 		const resolved = geographyResolver.areaGeometry(identity);
 		if (!resolved)
-			return problem(
-				404,
-				"Not Found",
-				"No raw geometry matches that area identity.",
-			);
+			return {
+				response: problem(
+					404,
+					"Not Found",
+					"No raw geometry matches that area identity.",
+				),
+			};
 		const metrics = areaMetrics(resolved.geometry);
 		if (!metrics)
-			return problem(
-				422,
-				"Geometry Not Measurable",
-				"That area's geometry carries no polygon to measure.",
-			);
+			return {
+				response: problem(
+					422,
+					"Geometry Not Measurable",
+					"That area's geometry carries no polygon to measure.",
+				),
+			};
 		return {
-			status: 200,
-			body: envelope(releaseId, {
-				id: resolved.id,
-				geography,
-				boundaryRelease,
-				...area,
+			metrics: {
 				boundingBox: metrics.boundingBox,
 				centroid: metrics.centroid,
 				labelPoint: metrics.labelPoint,
@@ -86,15 +71,17 @@ export const handleAreaGeometryMetadataRoutes = ({
 				},
 				method: AREA_METRIC_METHOD,
 				geometrySource: resolved.geometrySource,
-			}),
+			},
 		};
 	} catch (error) {
-		return problem(
-			503,
-			"Geometry Unavailable",
-			error instanceof Error
-				? error.message
-				: "Geometry could not be loaded.",
-		);
+		return {
+			response: problem(
+				503,
+				"Geometry Unavailable",
+				error instanceof Error
+					? error.message
+					: "Geometry could not be loaded.",
+			),
+		};
 	}
 };

@@ -5419,8 +5419,17 @@
 				"query:include": {
 					"required": false,
 					"enum": [
-						"dossier"
+						"capabilities",
+						"citation",
+						"dossier",
+						"metrics"
 					]
+				},
+				"query:measure": {
+					"required": false
+				},
+				"query:crosswalk": {
+					"required": false
 				}
 			},
 			"responses": {
@@ -5430,10 +5439,44 @@
 					"data",
 					"data.aliases",
 					"data.boundaryRelease",
+					"data.capabilities",
+					"data.citation",
 					"data.code",
 					"data.dossier",
 					"data.geography",
 					"data.id",
+					"data.metrics",
+					"data.metrics.area",
+					"data.metrics.area.hectares",
+					"data.metrics.area.km2",
+					"data.metrics.area.m2",
+					"data.metrics.boundingBox",
+					"data.metrics.centroid",
+					"data.metrics.geometryExtent",
+					"data.metrics.geometryExtent.parts",
+					"data.metrics.geometryExtent.rings",
+					"data.metrics.geometryExtent.vertices",
+					"data.metrics.geometrySource",
+					"data.metrics.geometrySource.corrections",
+					"data.metrics.geometrySource.corrections[].description",
+					"data.metrics.geometrySource.corrections[].id",
+					"data.metrics.geometrySource.sourceCrs",
+					"data.metrics.geometrySource.transformation",
+					"data.metrics.geometrySource.transformation.accuracyM",
+					"data.metrics.geometrySource.transformation.areaOfUse",
+					"data.metrics.geometrySource.transformation.epsg",
+					"data.metrics.geometrySource.transformation.name",
+					"data.metrics.labelPoint",
+					"data.metrics.labelPointMethod",
+					"data.metrics.method",
+					"data.metrics.method.area",
+					"data.metrics.method.caveat",
+					"data.metrics.method.centroid",
+					"data.metrics.method.labelPoint",
+					"data.metrics.method.perimeter",
+					"data.metrics.perimeter",
+					"data.metrics.perimeter.km",
+					"data.metrics.perimeter.m",
 					"data.name",
 					"data.postcodes",
 					"data.postcodes.edition",
@@ -5444,6 +5487,50 @@
 					"meta.nextCursor"
 				],
 				"404 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"parameter",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"suggestion",
+					"title",
+					"type"
+				],
+				"422 application/problem+json": [
+					"absence",
+					"areaCount",
+					"areaSample",
+					"availableReleases",
+					"availableReleases[].href",
+					"availableReleases[].id",
+					"candidates",
+					"choices",
+					"code",
+					"detail",
+					"links",
+					"parameter",
+					"presentIn",
+					"presentIn[].boundaryRelease",
+					"presentIn[].href",
+					"presentIn[].name",
+					"status",
+					"suggestion",
+					"title",
+					"type"
+				],
+				"503 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",
@@ -5524,139 +5611,6 @@
 					"meta.nextCursor"
 				],
 				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				],
-				"503 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				]
-			}
-		},
-		"GET /areas/{geography}/{release}/{code}/capabilities": {
-			"operationId": "getAreaCapabilities",
-			"parameters": {
-				"path:geography": {
-					"required": true
-				},
-				"path:release": {
-					"required": true
-				},
-				"path:code": {
-					"required": true
-				}
-			},
-			"responses": {
-				"200 application/json": [],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				]
-			}
-		},
-		"GET /areas/{geography}/{release}/{code}/citation": {
-			"operationId": "getAreaCitation",
-			"parameters": {
-				"path:geography": {
-					"required": true
-				},
-				"path:release": {
-					"required": true
-				},
-				"path:code": {
-					"required": true
-				},
-				"query:measure": {
-					"required": false
-				},
-				"query:crosswalk": {
-					"required": false
-				}
-			},
-			"responses": {
-				"200 application/json": [
-					"apiVersion",
-					"atlasRelease",
-					"meta",
-					"meta.nextCursor"
-				],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				],
-				"422 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",
@@ -6452,132 +6406,6 @@
 					"type"
 				],
 				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				],
-				"503 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				]
-			}
-		},
-		"GET /areas/{geography}/{release}/{code}/geometry/metadata": {
-			"operationId": "getAreaGeometryMetadata",
-			"parameters": {
-				"path:geography": {
-					"required": true
-				},
-				"path:release": {
-					"required": true
-				},
-				"path:code": {
-					"required": true
-				}
-			},
-			"responses": {
-				"200 application/json": [
-					"apiVersion",
-					"atlasRelease",
-					"data",
-					"data.aliases",
-					"data.area",
-					"data.area.hectares",
-					"data.area.km2",
-					"data.area.m2",
-					"data.boundaryRelease",
-					"data.boundingBox",
-					"data.centroid",
-					"data.code",
-					"data.geography",
-					"data.geometryExtent",
-					"data.geometryExtent.parts",
-					"data.geometryExtent.rings",
-					"data.geometryExtent.vertices",
-					"data.geometrySource",
-					"data.geometrySource.corrections",
-					"data.geometrySource.corrections[].description",
-					"data.geometrySource.corrections[].id",
-					"data.geometrySource.sourceCrs",
-					"data.geometrySource.transformation",
-					"data.geometrySource.transformation.accuracyM",
-					"data.geometrySource.transformation.areaOfUse",
-					"data.geometrySource.transformation.epsg",
-					"data.geometrySource.transformation.name",
-					"data.id",
-					"data.labelPoint",
-					"data.labelPointMethod",
-					"data.method",
-					"data.method.area",
-					"data.method.caveat",
-					"data.method.centroid",
-					"data.method.labelPoint",
-					"data.method.perimeter",
-					"data.name",
-					"data.perimeter",
-					"data.perimeter.km",
-					"data.perimeter.m",
-					"meta",
-					"meta.nextCursor"
-				],
-				"404 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				],
-				"422 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",
@@ -8092,6 +7920,12 @@
 				},
 				"query:asOf": {
 					"required": false
+				},
+				"query:include": {
+					"required": false,
+					"enum": [
+						"capabilities"
+					]
 				}
 			},
 			"responses": {
@@ -8213,39 +8047,6 @@
 					"type"
 				],
 				"503 application/problem+json": [
-					"absence",
-					"areaCount",
-					"areaSample",
-					"availableReleases",
-					"availableReleases[].href",
-					"availableReleases[].id",
-					"candidates",
-					"choices",
-					"code",
-					"detail",
-					"links",
-					"parameter",
-					"presentIn",
-					"presentIn[].boundaryRelease",
-					"presentIn[].href",
-					"presentIn[].name",
-					"status",
-					"suggestion",
-					"title",
-					"type"
-				]
-			}
-		},
-		"GET /locations/{location-id}/capabilities": {
-			"operationId": "getNamedLocationCapabilities",
-			"parameters": {
-				"path:location-id": {
-					"required": true
-				}
-			},
-			"responses": {
-				"200 application/json": [],
-				"404 application/problem+json": [
 					"absence",
 					"areaCount",
 					"areaSample",

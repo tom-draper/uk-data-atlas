@@ -3,6 +3,7 @@ import type { RouteRequest } from "./routing";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
 import { areaKey } from "./geographyKeys";
+import type { NamedLocation } from "./namedLocations";
 import { paginate } from "./pagination";
 
 const requirementDetail = (response: ApiResponse | undefined) =>
@@ -167,17 +168,41 @@ export const handleLocationRoutes = ({
 	) {
 		const asOf = selectedAsOf(parsedUrl);
 		if (typeof asOf !== "string" && asOf !== undefined) return asOf;
+		const includes = parsedUrl.searchParams
+			.getAll("include")
+			.flatMap((value) => value.split(","))
+			.map((value) => value.trim())
+			.filter(Boolean);
+		if (includes.some((include) => include !== "capabilities"))
+			return problem(
+				400,
+				"Invalid Include",
+				"The location resource supports `include=capabilities`.",
+			);
 		const location = context.geographyResolver.namedLocation(
 			segments[2]!,
 			asOf,
 		);
-		return location
-			? { status: 200, body: envelope(releaseId, location) }
-			: problem(
-					404,
-					"Not Found",
-					"No named location matches that identity.",
-				);
+		if (!location)
+			return problem(
+				404,
+				"Not Found",
+				"No named location matches that identity.",
+			);
+		return {
+			status: 200,
+			body: envelope(releaseId, {
+				...location,
+				...(includes.length > 0
+					? {
+							capabilities: locationCapabilities(
+								context,
+								location,
+							),
+						}
+					: {}),
+			}),
+		};
 	}
 	if (
 		segments.length === 4 &&
@@ -214,13 +239,6 @@ export const handleLocationRoutes = ({
 					"No fully resolved member release with raw geometry is available for this location.",
 				);
 	}
-	if (
-		segments.length === 4 &&
-		segments[0] === "v1" &&
-		segments[1] === "locations" &&
-		segments[3] === "capabilities"
-	)
-		return locationCapabilities({ context, releaseId, segments });
 	if (
 		segments.length === 4 &&
 		segments[0] === "v1" &&
@@ -405,20 +423,15 @@ export const handleLocationRoutes = ({
 	return undefined;
 };
 
-/** Published direct and crosswalk views for a curated location definition. */
-const locationCapabilities = ({
-	context,
-	releaseId,
-	segments,
-}: Pick<RouteRequest, "context" | "releaseId" | "segments">): ApiResponse => {
+/**
+ * Published direct and crosswalk views for a curated location definition, as
+ * `include=capabilities` expands it.
+ */
+const locationCapabilities = (
+	context: RouteRequest["context"],
+	location: NamedLocation,
+) => {
 	const geographyResolver = context.geographyResolver;
-	const location = geographyResolver.namedLocation(segments[2]!);
-	if (!location)
-		return problem(
-			404,
-			"Not Found",
-			"No named location matches that identity.",
-		);
 	const areaAvailability = geographyResolver.requires("areas");
 	const direct = areaAvailability
 		? notBuilt(requirementDetail(areaAvailability))
@@ -500,13 +513,7 @@ const locationCapabilities = ({
 							`No published parent projection starts from this location's ${location.memberGeography} members.`,
 						);
 			})();
-	return {
-		status: 200,
-		body: envelope(releaseId, {
-			location,
-			capabilities: { direct, members, parents },
-		}),
-	};
+	return { direct, members, parents };
 };
 
 const RELATION_RULE = `A parent is covered when the location takes in all of it: for a containment lookup, every area the publisher places in the parent is a member; for an area-overlap crosswalk, the members cover at least ${COVERS_MINIMUM_SHARE} of its area. Otherwise the location only intersects it. locationWithin names the single parent holding every member, and is null when members fall in several parents or any is placed in none.`;

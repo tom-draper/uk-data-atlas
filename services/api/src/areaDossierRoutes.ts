@@ -76,12 +76,12 @@ export const areaDossier = (
 						status: "available" as const,
 						boundingBox: geometry.boundingBox,
 						crs: "OGC:CRS84",
-						href: `${baseHref}/geometry/metadata`,
+						href: `${baseHref}?include=metrics`,
 					}
 				: unsupported(
 						"The release's geometry has no coordinates from which to state an extent.",
 					)
-			: { ...geometry, href: `${baseHref}/geometry/metadata` };
+			: { ...geometry, href: `${baseHref}?include=metrics` };
 	const relationshipUnavailable = geographyResolver.requires("relationships");
 	const relationships = relationshipUnavailable
 		? notBuilt(requirementDetail(relationshipUnavailable))
@@ -144,7 +144,7 @@ export const areaDossier = (
 							},
 						},
 				data: {
-					href: `${baseHref}/capabilities`,
+					href: `${baseHref}?include=capabilities`,
 					note: "The capability report lists every published measure that is directly available, partial, or convertible for this exact area identity.",
 				},
 				history: {
@@ -159,13 +159,13 @@ export const areaDossier = (
 			links: {
 				self: baseHref,
 				geometry: `${baseHref}/geometry`,
-				geometryMetadata: `${baseHref}/geometry/metadata`,
+				metrics: `${baseHref}?include=metrics`,
 				relationships: `${baseHref}/relationships`,
 				parents: `${baseHref}/parents`,
 				children: `${baseHref}/children`,
 				history: `${baseHref}/history`,
-				capabilities: `${baseHref}/capabilities`,
-				citation: `${baseHref}/citation`,
+				capabilities: `${baseHref}?include=capabilities`,
+				citation: `${baseHref}?include=citation`,
 				neighbours: `${baseHref}/neighbours`,
 				overlap: `${baseHref}/overlap`,
 				boundaryRelease: `/v1/boundary-releases/${geography}/${boundaryRelease}`,

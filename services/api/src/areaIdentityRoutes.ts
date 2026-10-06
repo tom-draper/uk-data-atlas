@@ -3,6 +3,12 @@ import { envelope, problem, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 import { areaDossier } from "./areaDossierRoutes";
+import { areaCapabilities } from "./areaCapabilityRoutes";
+import { areaCitation } from "./areaCitationRoutes";
+import { areaGeometryMetrics } from "./areaGeometryMetadataRoutes";
+
+/** What the area resource expands to on request. */
+const AREA_INCLUDES = ["dossier", "capabilities", "citation", "metrics"];
 
 /** One compiled area identity in one explicit geography release. */
 export const handleAreaIdentityRoutes = ({
@@ -29,13 +35,24 @@ export const handleAreaIdentityRoutes = ({
 			.filter(Boolean),
 	);
 	const unsupportedIncludes = [...includes].filter(
-		(include) => include !== "dossier",
+		(include) => !AREA_INCLUDES.includes(include),
 	);
 	if (unsupportedIncludes.length > 0)
 		return problem(
 			400,
 			"Invalid Include",
-			"The area resource supports `include=dossier`.",
+			`The area resource supports ${AREA_INCLUDES.map((include) => `\`include=${include}\``).join(", ")}.`,
+		);
+	// Naming what to cite only means something to a citation.
+	if (
+		!includes.has("citation") &&
+		(parsedUrl.searchParams.has("measure") ||
+			parsedUrl.searchParams.has("crosswalk"))
+	)
+		return problem(
+			400,
+			"Invalid Parameter",
+			"`measure` and `crosswalk` name what to cite, so they need `include=citation`.",
 		);
 	const area = geographyResolver.area({
 		geography,
@@ -52,6 +69,15 @@ export const handleAreaIdentityRoutes = ({
 				)
 			: undefined;
 		if (dossier && "response" in dossier) return dossier.response;
+		const identity = { geography, boundaryRelease, code };
+		const citation = includes.has("citation")
+			? areaCitation(context, releaseId, identity, parsedUrl.searchParams)
+			: undefined;
+		if (citation && "response" in citation) return citation.response;
+		const metrics = includes.has("metrics")
+			? areaGeometryMetrics(context, identity)
+			: undefined;
+		if (metrics && "response" in metrics) return metrics.response;
 		const postcodes = geographyResolver.postcodeCounts({
 			geography,
 			boundaryRelease,
@@ -66,6 +92,11 @@ export const handleAreaIdentityRoutes = ({
 				...area,
 				...(postcodes ? { postcodes } : {}),
 				...(dossier ? { dossier: dossier.dossier } : {}),
+				...(includes.has("capabilities")
+					? { capabilities: areaCapabilities(context, identity) }
+					: {}),
+				...(citation ? { citation: citation.citation } : {}),
+				...(metrics ? { metrics: metrics.metrics } : {}),
 			}),
 		};
 	}

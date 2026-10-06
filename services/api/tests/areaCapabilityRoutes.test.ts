@@ -22,7 +22,7 @@ import {
 test("reports an area's exact-release capability and availability matrix", () => {
 	const response = routeRequest(
 		"GET",
-		"/v1/areas/ward/2023-05-uk-bgc/E05000001/capabilities",
+		"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=capabilities",
 		testContext({
 			boundaryRegistry: registry,
 			areaLookup: compatibleWardAreaLookup,
@@ -144,7 +144,7 @@ test("reports an area's exact-release capability and availability matrix", () =>
 test("uses the boundary release month for named-location membership", () => {
 	const response = routeRequest(
 		"GET",
-		"/v1/areas/localAuthority/2025-01-uk-lad/E08000001/capabilities",
+		"/v1/areas/localAuthority/2025-01-uk-lad/E08000001?include=capabilities",
 		testContext({
 			areaLookup: namedLocationAreaLookup,
 			namedLocationInventory: {
@@ -207,7 +207,7 @@ test("reports published geometry capability through the resolver", () => {
 		);
 		const response = routeRequest(
 			"GET",
-			"/v1/areas/ward/2023-05-uk-bgc/E05000001/capabilities",
+			"/v1/areas/ward/2023-05-uk-bgc/E05000001?include=capabilities",
 			testContext(
 				{
 					boundaryRegistry: registry,

@@ -1,25 +1,24 @@
 import type { DataCatalog } from "./dataCatalog";
 import { attributionFor, attributionText } from "./attribution";
 import { measureCoverage } from "./measureCoverage";
-import { areaMeasureSources, areaNotFound } from "./areaResources";
+import { areaMeasureSources } from "./areaResources";
+import type { AreaIdentity } from "./resolver/areas";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { problem, type ApiResponse } from "./routeResponse";
 import { releaseKey } from "./geographyKeys";
 
-/** A citation for one area: the artifacts that serve it, pinned by hash, with their attribution and licences. */
-export const handleAreaCitationRoutes = ({
-	context,
-	releaseId,
-	parsedUrl,
-	segments,
-}: RouteRequest): ApiResponse | undefined => {
-	if (
-		segments.length !== 6 ||
-		segments[0] !== "v1" ||
-		segments[1] !== "areas" ||
-		segments[5] !== "citation"
-	)
-		return undefined;
+/**
+ * A citation for one area, as `include=citation` expands it: the artifacts
+ * that serve it, pinned by hash, with their attribution and licences. The
+ * `measure` and `crosswalk` parameters name what else to cite.
+ */
+export const areaCitation = (
+	context: RouteRequest["context"],
+	releaseId: string,
+	identity: AreaIdentity,
+	searchParams: URLSearchParams,
+): { citation: Record<string, unknown> } | { response: ApiResponse } => {
+	const refuse = (response: ApiResponse) => ({ response });
 	const {
 		atlasRelease,
 		validationReport,
@@ -28,27 +27,20 @@ export const handleAreaCitationRoutes = ({
 		measureCompatibilityInventory,
 	} = context;
 	const geographyResolver = context.geographyResolver;
-	const [geography, boundaryRelease, code] = segments.slice(2, 5) as [
-		string,
-		string,
-		string,
-	];
-	const identity = { geography, boundaryRelease, code };
-	const area = geographyResolver.area(identity);
-	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
+	const { geography, boundaryRelease, code } = identity;
 	if (!dataCatalog) {
-		return problem(
-			503,
-			"Catalogue Unavailable",
-			"Build the data catalogue and crosswalk inventory before citing an area.",
+		return refuse(
+			problem(
+				503,
+				"Catalogue Unavailable",
+				"Build the data catalogue and crosswalk inventory before citing an area.",
+			),
 		);
 	}
 	const unavailable = geographyResolver.requires("crosswalks");
-	if (unavailable) return unavailable;
-	const measureIds = [...new Set(parsedUrl.searchParams.getAll("measure"))];
-	const crosswalkIds = [
-		...new Set(parsedUrl.searchParams.getAll("crosswalk")),
-	];
+	if (unavailable) return refuse(unavailable);
+	const measureIds = [...new Set(searchParams.getAll("measure"))];
+	const crosswalkIds = [...new Set(searchParams.getAll("crosswalk"))];
 	const releaseIdentity = releaseKey(geography, boundaryRelease);
 	// Resolved here only to refuse unknown resources; the bundle's own
 	// attribution is narrowed below to what this area actually draws on.
@@ -64,10 +56,12 @@ export const handleAreaCitationRoutes = ({
 		geographyResolver.crosswalkSummaries(),
 	);
 	if (requested.status === "unknown") {
-		return problem(
-			404,
-			"Not Found",
-			`No published resource matches ${requested.unknownResources.join(", ")}.`,
+		return refuse(
+			problem(
+				404,
+				"Not Found",
+				`No published resource matches ${requested.unknownResources.join(", ")}.`,
+			),
 		);
 	}
 
@@ -85,10 +79,12 @@ export const handleAreaCitationRoutes = ({
 			),
 	);
 	if (unrelatedCrosswalks.length > 0) {
-		return problem(
-			422,
-			"Not Applicable To Area",
-			`${unrelatedCrosswalks.map((id) => `crosswalk=${id}`).join(", ")} publishes no relationship for ${releaseIdentity}/${code}.`,
+		return refuse(
+			problem(
+				422,
+				"Not Applicable To Area",
+				`${unrelatedCrosswalks.map((id) => `crosswalk=${id}`).join(", ")} publishes no relationship for ${releaseIdentity}/${code}.`,
+			),
 		);
 	}
 
@@ -155,10 +151,12 @@ export const handleAreaCitationRoutes = ({
 		(measure) => measure.sources.length === 0,
 	);
 	if (uncitedMeasures.length > 0) {
-		return problem(
-			422,
-			"Not Applicable To Area",
-			`${uncitedMeasures.map((measure) => `measure=${measure.id}`).join(", ")} publishes no observation for ${releaseIdentity}/${code} in a source assessed against this boundary release.`,
+		return refuse(
+			problem(
+				422,
+				"Not Applicable To Area",
+				`${uncitedMeasures.map((measure) => `measure=${measure.id}`).join(", ")} publishes no observation for ${releaseIdentity}/${code} in a source assessed against this boundary release.`,
+			),
 		);
 	}
 
@@ -187,10 +185,12 @@ export const handleAreaCitationRoutes = ({
 		geographyResolver.crosswalkSummaries(),
 	);
 	if (attribution.status === "unknown") {
-		return problem(
-			404,
-			"Not Found",
-			`No published resource matches ${attribution.unknownResources.join(", ")}.`,
+		return refuse(
+			problem(
+				404,
+				"Not Found",
+				`No published resource matches ${attribution.unknownResources.join(", ")}.`,
+			),
 		);
 	}
 
@@ -289,12 +289,7 @@ export const handleAreaCitationRoutes = ({
 		: { status: "not-published" as const };
 
 	return {
-		status: 200,
-		body: envelope(releaseId, {
-			id: `${releaseIdentity}/${code}`,
-			geography,
-			boundaryRelease,
-			...area,
+		citation: {
 			atlasRelease: atlasRelease
 				? {
 						id: releaseId,
@@ -343,6 +338,6 @@ export const handleAreaCitationRoutes = ({
 				releaseId,
 			),
 			note: "Hashes pin the artifacts this Atlas release serves for the area. Licence names are reproduced as the publisher states them and are not interpreted here.",
-		}),
+		},
 	};
 };
