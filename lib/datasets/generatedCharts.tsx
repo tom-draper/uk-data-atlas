@@ -25,10 +25,11 @@ import Chart19 from "@/components/demographics/population-density-registry";
 import Chart20 from "@/components/demographics/population-age-registry";
 import Chart21 from "@/components/demographics/population-gender-registry";
 import Chart22 from "@/components/education/QualificationChart";
-import Chart23 from "@/components/deprivation/simd/SIMDChart";
-import Chart24 from "@/components/transport/travel-to-work/TravelToWorkChart";
-import Chart25 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart26 from "@/components/deprivation/wimd/WIMDChart";
+import Chart23 from "@/components/education/SchoolPerformanceChart";
+import Chart24 from "@/components/deprivation/simd/SIMDChart";
+import Chart25 from "@/components/transport/travel-to-work/TravelToWorkChart";
+import Chart26 from "@/components/economics/unemployment/UnemploymentChart";
+import Chart27 from "@/components/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -192,6 +193,12 @@ const Chart26Presentation = {
 	),
 } satisfies ChartPresentation;
 
+const Chart27Presentation = {
+	component: (props) => (
+		<Chart27 {...(props as ComponentProps<typeof Chart27>)} />
+	),
+} satisfies ChartPresentation;
+
 export const CHART_PRESENTATIONS = {
 	"health-adultSocialCareActivity": Chart0Presentation,
 	"health-adultSocialCareOutcomes": Chart0Presentation,
@@ -240,13 +247,13 @@ export const CHART_PRESENTATIONS = {
 	"demographics-age": Chart20Presentation,
 	"demographics-gender": Chart21Presentation,
 	"education-qualifications": Chart22Presentation,
-	"education-schoolPerformance": Chart0Presentation,
+	"education-schoolPerformance": Chart23Presentation,
 	"education-schoolPerformanceGap": Chart0Presentation,
-	"deprivation-simd": Chart23Presentation,
-	"transport-travelToWork": Chart24Presentation,
-	"economics-unemployment": Chart25Presentation,
+	"deprivation-simd": Chart24Presentation,
+	"transport-travelToWork": Chart25Presentation,
+	"economics-unemployment": Chart26Presentation,
 	"environment-waste": Chart0Presentation,
-	"deprivation-wimd": Chart26Presentation,
+	"deprivation-wimd": Chart27Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;
