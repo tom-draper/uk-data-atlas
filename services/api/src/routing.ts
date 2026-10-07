@@ -75,6 +75,8 @@ export type RouteContext = {
 	mapArchives?: Map<string, MapArchive>;
 	/** Each map resource tier's GeoParquet file, keyed by its artifact path. */
 	mapFeatures?: Map<string, StoredFile>;
+	/** Immutable build artifacts published as evidence documents. */
+	documents?: Map<string, StoredFile>;
 };
 
 /** A request body, as sent: its declared media type and its text. */

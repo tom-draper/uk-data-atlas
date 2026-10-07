@@ -3,6 +3,7 @@ import { releaseMonth } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
 import { handleIndexRoutes } from "./indexRoutes";
 import { handleOpenapiRoutes, isOpenapiRoute } from "./openapiRoutes";
+import { handleDocumentRoutes } from "./documentRoutes";
 import { handleMapResourceRoutes } from "./mapResourceRoutes";
 import { handleBoundaryRoutes } from "./boundaryRoutes";
 import { handleCatalogueRoutes } from "./catalogueRoutes";
@@ -46,10 +47,10 @@ import { handleTranslationRoutes } from "./translationRoutes";
 import { handleRelationshipRoutes } from "./relationshipRoutes";
 import { handleRelationshipRepairRoutes } from "./relationshipRepairRoutes";
 import { handleGeographyHealthRoutes } from "./geographyHealthRoutes";
-import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleLocationRoutes } from "./locationRoutes";
 import { handleCrosswalkRoutes } from "./crosswalkRoutes";
 import { handleBulkRoutes } from "./bulkRoutes";
+import { handleGovernanceRoutes } from "./governanceRoutes";
 import { handleSyncRoutes } from "./syncRoutes";
 import { canonicalMeasureId } from "./measureTerms";
 import { handleReleaseJoinRoutes, joinRelease } from "./releaseJoinRoutes";
@@ -82,6 +83,15 @@ const routeFamilies: RouteFamily[] = [
 		handle: handleOpenapiRoutes,
 	},
 	{
+		name: "documents",
+		owns: (segments) =>
+			segments.length === 3 &&
+			segments[0] === "v1" &&
+			segments[1] === "documents" &&
+			segments[2]?.endsWith(".json") === true,
+		handle: handleDocumentRoutes,
+	},
+	{
 		name: "map-resources",
 		owns: (segments) =>
 			segments[0] === "v1" && segments[1] === "map-resources",
@@ -94,7 +104,6 @@ const routeFamilies: RouteFamily[] = [
 			!joinRelease(segments) &&
 			[
 				"geographies",
-				"geography-inventory",
 				"boundary-releases",
 				"boundary-releases:resolve",
 				"boundary-releases:compare",
@@ -173,11 +182,18 @@ const routeFamilies: RouteFamily[] = [
 		owns: (segments) =>
 			segments[0] === "v1" &&
 			(segments[1] === "analysis-geographies" ||
-				segments[1] === "analysis-geography-validation" ||
 				segments[1] === "analysis:plan" ||
 				(segments[1] === "measures" &&
 					segments[3] === "conversion-support")),
 		handle: handleAnalysisGeographyRoutes,
+	},
+	{
+		name: "geography-health",
+		owns: (segments) =>
+			segments.length === 2 &&
+			segments[0] === "v1" &&
+			segments[1] === "geography-health",
+		handle: handleGeographyHealthRoutes,
 	},
 	{
 		name: "data",
@@ -381,14 +397,6 @@ const routeFamilies: RouteFamily[] = [
 			segments[0] === "v1" &&
 			segments[1] === "translations",
 		handle: handleTranslationRoutes,
-	},
-	{
-		name: "geography-health",
-		owns: (segments) =>
-			segments.length === 2 &&
-			segments[0] === "v1" &&
-			segments[1] === "geography-health",
-		handle: handleGeographyHealthRoutes,
 	},
 	{
 		name: "relationships",

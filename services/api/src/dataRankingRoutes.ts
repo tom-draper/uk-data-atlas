@@ -1,16 +1,13 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import {
-	refused,
-	resolveObservations,
-} from "./observationResolution/observationPlan";
+import { refused } from "./observationResolution/observationPlan";
 import { rankingOf, readRankingOrder } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import {
-	defaultSource,
 	publishedPartitions,
 	statedDefaults,
 } from "./dataDefaults";
+import { selectSourcePartition } from "./sourcePartition";
 import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
@@ -72,25 +69,27 @@ export const handleDataRankingRoutes = ({
 		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
-	const defaults = defaultSource(measure, requested);
-	const period = requested.period ?? defaults?.period ?? null;
-	const geography = requested.geography ?? defaults?.geography ?? null;
-	const boundaryYear =
-		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
-	if (period === null || geography === null || boundaryYear === null)
+	const partition = selectSourcePartition({
+		context,
+		measure,
+		query: requested,
+		periodsForResolution: (period) => (period ? [period] : []),
+	});
+	if (
+		partition.kind === "incomplete" ||
+		(partition.kind === "selected" && partition.period === null)
+	)
 		return problem(
 			400,
 			"Invalid Query",
 			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
-	const resolved = resolveObservations(context, {
-		measureId,
-		periods: [period],
-		geography,
-		boundaryYear,
-	});
-	if (resolved.kind === "refusal") return refused(resolved.refusal);
-	const { source } = resolved.plan;
+	if (partition.kind === "refusal") return refused(partition.resolution.refusal);
+	const {
+		defaults,
+		period,
+		plan: { source },
+	} = partition;
 	const observations = observationsFor(measureId, source, period as string, {
 		measureObservations,
 	});

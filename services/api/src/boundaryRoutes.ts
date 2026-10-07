@@ -40,21 +40,6 @@ export const handleBoundaryRoutes = ({
 	if (
 		segments.length === 2 &&
 		segments[0] === "v1" &&
-		segments[1] === "geography-inventory"
-	) {
-		const geographyInventory = geographyResolver.geographyInventory();
-		return geographyInventory
-			? { status: 200, body: envelope(releaseId, geographyInventory) }
-			: problem(
-					503,
-					"Catalogue Unavailable",
-					"Build the geography inventory before starting the API.",
-				);
-	}
-
-	if (
-		segments.length === 2 &&
-		segments[0] === "v1" &&
 		segments[1] === "boundary-releases:resolve"
 	) {
 		const geography = parsedUrl.searchParams.get("geography");

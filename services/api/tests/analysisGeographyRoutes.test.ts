@@ -86,7 +86,7 @@ const route = (url: string) =>
 		testContext({ analysisGeographyInventory: inventory }),
 	);
 
-test("serves the release-pinned validation receipt for reviewed conversions", () => {
+test("does not expose conversion validation as a query route", () => {
 	const response = routeRequest(
 		"GET",
 		"/v1/analysis-geography-validation",
@@ -95,8 +95,7 @@ test("serves the release-pinned validation receipt for reviewed conversions", ()
 			analysisGeographyValidationInventory: validation,
 		}),
 	);
-	assert.equal(response.status, 200);
-	assert.deepEqual("data" in response.body && response.body.data, validation);
+	assert.equal(response.status, 404);
 });
 
 test("lists only reviewed analysis conversions", () => {

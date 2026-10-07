@@ -186,18 +186,14 @@ test("links a boundary release to its whole-release downloads", () => {
 	);
 });
 
-test("publishes the geography compiler coverage", () => {
+test("does not expose geography compiler coverage as a query route", () => {
 	const response = route(
 		"GET",
 		"/v1/geography-inventory",
 		registry,
 		geographyInventory,
 	);
-	assert.equal(response.status, 200);
-	assert.equal(
-		"data" in response.body && response.body.data,
-		geographyInventory,
-	);
+	assert.equal(response.status, 404);
 });
 
 test("resolves the boundary release to use for a date", () => {

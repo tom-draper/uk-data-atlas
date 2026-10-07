@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
 import { createGeographyResolver } from "./geographyResolver";
@@ -43,6 +43,40 @@ import { createAreaGeometryCache, readGeometrySources } from "./geometryLoader";
 import { createTerrainAsyncProvider } from "./terrainLoader";
 import { readRelationshipCandidateInventory } from "./governanceLoader";
 import { createOperationMatcher } from "./operationTemplates";
+import type { StoredFile } from "./routeResponse";
+
+const EVIDENCE_DOCUMENTS = [
+	"analysis-geography-validation",
+	"geography-inventory",
+	"measure-compatibility",
+	"relationship-candidates",
+	"validation-report",
+] as const;
+
+const readEvidenceDocuments = (
+	apiRoot: string,
+	atlasRelease: RouteContext["atlasRelease"],
+) =>
+	new Map<string, StoredFile>(
+		EVIDENCE_DOCUMENTS.flatMap((id) => {
+			const path = `${id}.json`;
+			const artifact = atlasRelease?.artifacts.find(
+				(candidate) => candidate.path === path,
+			);
+			if (!artifact) return [];
+			const file = resolve(apiRoot, "public", path);
+			return [
+				[
+					id,
+					{
+						path: file,
+						bytes: statSync(file).size,
+						contentHash: artifact.contentHash,
+					},
+				],
+			];
+		}),
+	);
 
 export type ApiCatalogues = Omit<
 	Required<RouteContext>,
@@ -107,6 +141,9 @@ export const readApiCatalogues = (
 	);
 	const atlasRelease = stage("atlas-release", () =>
 		readAtlasRelease(apiRoot),
+	);
+	const documents = stage("evidence-documents", () =>
+		readEvidenceDocuments(apiRoot, atlasRelease),
 	);
 	const exportManifest = stage("export-manifest", () =>
 		readExportManifest(apiRoot),
@@ -258,6 +295,7 @@ export const readApiCatalogues = (
 		relationshipPathInventory,
 		crosswalkInventory,
 		atlasRelease,
+		documents,
 		relationshipCandidateInventory,
 		validationReport,
 		namedLocationInventory,

@@ -6,15 +6,14 @@ import { analysisConversion } from "./analysisGeographies";
 import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { buildTranslationSteps } from "./resolver/translation";
 import { observationsFor } from "./observationArtifacts";
-import { resolveObservations } from "./observationResolution/observationPlan";
 import { parseExactReleaseReference } from "./releaseForDate";
 import {
 	areaNamedBy,
-	defaultSource,
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
 } from "./dataDefaults";
+import { selectSourcePartition } from "./sourcePartition";
 import {
 	sourceSeriesProvenance,
 	type ObservationArtifactReference,
@@ -102,12 +101,24 @@ export const handleDataSeriesRoutes = ({
 		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
-	const defaults = defaultSource(measure, requested, [], false);
-	const geography = requested.geography ?? defaults?.geography ?? null;
+	const partition = selectSourcePartition({
+		context,
+		measure,
+		query: requested,
+		periods: [],
+		includePeriod: false,
+	});
+	const geography =
+		partition.kind === "refusal" ? null : partition.geography;
 	const boundaryYear =
-		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
+		partition.kind === "refusal" ? null : partition.boundaryYear;
 	const datasetId = parsedUrl.searchParams.get("datasetId");
-	if (!areaCode || !geography || !boundaryYear) {
+	if (
+		!areaCode ||
+		partition.kind === "incomplete" ||
+		!geography ||
+		!boundaryYear
+	) {
 		return problem(
 			400,
 			"Invalid Query",
@@ -119,22 +130,18 @@ export const handleDataSeriesRoutes = ({
 	// A series is the whole partition rather than a moment in it, so no period
 	// is asked for; the geography and, where a measure needs it, the dataset
 	// are what narrow it to one.
-	const resolved = resolveObservations(context, {
-		measureId,
-		periods: [],
-		geography,
-		boundaryYear,
-		datasetId,
-	});
-	if (resolved.kind === "refusal")
+	if (partition.kind === "refusal")
 		return problem(
 			400,
 			"Invalid Query",
-			resolved.refusal.title === "Ambiguous Source"
+			partition.resolution.refusal.title === "Ambiguous Source"
 				? "datasetId is required because more than one source matches that geography and boundary year."
 				: `${measureId} has no published source for that geography, boundary year and dataset.`,
 		);
-	const source = resolved.plan.source;
+	const {
+		defaults,
+		plan: { source },
+	} = partition;
 	const observationsByPeriod = source.periods.map((period) => ({
 		period,
 		observations: observationsFor(measureId, source, period, {
