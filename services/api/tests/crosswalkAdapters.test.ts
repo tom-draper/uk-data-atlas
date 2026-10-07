@@ -94,6 +94,19 @@ test("rejects area-overlap thresholds outside their range", () => {
 		{ ...areaOverlap, includedPairs: { S1: "T1" } },
 		{
 			...areaOverlap,
+			indeterminatePairs: { decision: "sliver", reason: "R" },
+		},
+		{
+			...areaOverlap,
+			indeterminatePairs: { decision: "overlap", reason: " " },
+		},
+		{
+			...areaOverlap,
+			includedPairs: { S1: { T1: "R" } },
+			indeterminatePairs: { decision: "overlap", reason: "R" },
+		},
+		{
+			...areaOverlap,
 			coverageExceptions: { S1: { minimumCoverage: 0.99, reason: "" } },
 		},
 		{

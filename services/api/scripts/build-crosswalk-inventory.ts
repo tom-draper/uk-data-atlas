@@ -121,6 +121,8 @@ const reusableGeometryCrosswalk = (
 					JSON.stringify(overlap.excludedPairs ?? {}) ||
 				JSON.stringify(artifact.provenance.includedPairs ?? {}) !==
 					JSON.stringify(overlap.includedPairs ?? {}) ||
+				JSON.stringify(artifact.provenance.indeterminatePairs ?? {}) !==
+					JSON.stringify(overlap.indeterminatePairs ?? {}) ||
 				JSON.stringify(artifact.provenance.coverageExceptions ?? {}) !==
 					JSON.stringify(overlap.coverageExceptions ?? {})
 			)

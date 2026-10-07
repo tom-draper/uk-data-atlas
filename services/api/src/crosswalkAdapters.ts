@@ -114,6 +114,13 @@ export type AreaOverlapCrosswalkAdapter = {
 	 */
 	includedPairs?: Record<string, Record<string, string>>;
 	/**
+	 * One decision for every pair inside the sliver rule's indeterminate
+	 * band, for geographies whose edges are not drawn to the targets' borders
+	 * and so cross them by any width. Pairs under half the sliver width stay
+	 * slivers. Carries its published reason.
+	 */
+	indeterminatePairs?: IndeterminatePairs;
+	/**
 	 * Individually reviewed sources held to a lower coverage than
 	 * `minimumCoverage`, such as an area whose outline takes in estuary the
 	 * targets' coastline leaves out. Each carries its published reason.
@@ -123,6 +130,8 @@ export type AreaOverlapCrosswalkAdapter = {
 };
 
 export type CoverageException = { minimumCoverage: number; reason: string };
+
+export type IndeterminatePairs = { decision: "overlap"; reason: string };
 
 // Extent continuity adapters pair the codes two releases of one geography
 // share, and publish a pair as identity only where its two geometries differ
@@ -292,6 +301,12 @@ const validAreaOverlapAdapter = (
 			adapter.minimumTargetCoverage <= 1)) &&
 	isReviewedPairs(adapter.excludedPairs) &&
 	isReviewedPairs(adapter.includedPairs) &&
+	(adapter.indeterminatePairs === undefined ||
+		(adapter.includedPairs === undefined &&
+			isRecord(adapter.indeterminatePairs) &&
+			adapter.indeterminatePairs.decision === "overlap" &&
+			typeof adapter.indeterminatePairs.reason === "string" &&
+			adapter.indeterminatePairs.reason.trim().length > 0)) &&
 	(adapter.coverageExceptions === undefined ||
 		(isRecord(adapter.coverageExceptions) &&
 			Object.values(adapter.coverageExceptions).every(
