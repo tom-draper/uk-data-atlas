@@ -128,9 +128,6 @@ export default function LegendContent({
 			) {
 				return null;
 			}
-			if (displayOptions[activeDataset.type].metric === "turnout") {
-				return <div className="px-2 py-1 text-xs">Voter turnout</div>;
-			}
 			return (
 				<PartyLegend
 					displayOptions={displayOptions}
