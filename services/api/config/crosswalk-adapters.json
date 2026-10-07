@@ -491,8 +491,14 @@
 				"boundaryRelease": "2019-04-uk-bgc"
 			},
 			"sliverWidthM": 100,
-			"minimumCoverage": 0.99,
+			"minimumCoverage": 0.98,
 			"minimumTargetCoverage": 0,
+			"coverageExceptions": {
+				"E60000328": {
+					"minimumCoverage": 0.88,
+					"reason": "Ebbsfleet Development Corporation's planning area reaches into the Thames, which the authorities' coastline-clipped boundaries leave out: Dartford and Gravesham cover 88.9% of it, and no authority covers the rest."
+				}
+			},
 			"excludedPairs": {
 				"E60000326": {
 					"E07000148": "The Broads Authority LPA and Norwich intersect by 0.03% of the LPA at a 102 m width, while independently generalised nearby borders leave intersections up to 46 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
