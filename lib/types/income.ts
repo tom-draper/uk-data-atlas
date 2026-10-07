@@ -1,24 +1,5 @@
-export interface AnnualIncomeData {
-	numberOfJobs: number | null;
-	median: number | null;
-	medianPercentageChange: number | null;
-	mean: number | null;
-	meanPercentageChange: number | null;
-	percentiles: {
-		p10: number | null;
-		p20: number | null;
-		p25: number | null;
-		p30: number | null;
-		p40: number | null;
-		p60: number | null;
-		p70: number | null;
-		p75: number | null;
-		p80: number | null;
-		p90: number | null;
-	};
-}
-
-export interface HourlyIncomeData {
+/** One pay table's figures for an area, annual or hourly alike. */
+export interface IncomePayData {
 	numberOfJobs: number | null;
 	median: number | null;
 	medianPercentageChange: number | null;
@@ -41,8 +22,8 @@ export interface HourlyIncomeData {
 export interface IncomeLADData {
 	ladCode: string;
 	ladName: string;
-	annual: AnnualIncomeData | null;
-	hourly: HourlyIncomeData | null;
+	annual: IncomePayData | null;
+	hourly: IncomePayData | null;
 }
 
 export interface IncomeDataset {

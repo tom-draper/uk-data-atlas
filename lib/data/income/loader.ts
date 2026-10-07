@@ -1,21 +1,20 @@
 import {
-	AnnualIncomeData,
-	HourlyIncomeData,
 	IncomeDataset,
 	IncomeLADData,
+	IncomePayData,
 	WorkplaceIncomeDataset,
 } from "@/lib/types/income";
 import { parseCsv, findHeaderLine } from "@/lib/helpers/parseCsv";
 import { parseNullableNum as parseNumber } from "@/lib/helpers/parseNumber";
 
-async function parseAnnualData(text: string): Promise<{
-	data: Record<string, AnnualIncomeData>;
+async function parsePayData(text: string): Promise<{
+	data: Record<string, IncomePayData>;
 	names: Record<string, string>;
 }> {
 	const skipLines = findHeaderLine(text, "Description");
 	const { data } = await parseCsv(text, { header: true, skipLines });
 
-	const annualData: Record<string, AnnualIncomeData> = {};
+	const payData: Record<string, IncomePayData> = {};
 	const names: Record<string, string> = {};
 	for (const row of data) {
 		const code = row["Code"]?.trim();
@@ -28,7 +27,7 @@ async function parseAnnualData(text: string): Promise<{
 		if (median === null && mean === null) continue;
 
 		names[code] = description;
-		annualData[code] = {
+		payData[code] = {
 			numberOfJobs: parseNumber(row["(thousand)"]),
 			median,
 			medianPercentageChange: parseNumber(row["change"]),
@@ -48,50 +47,7 @@ async function parseAnnualData(text: string): Promise<{
 			},
 		};
 	}
-	return { data: annualData, names };
-}
-
-async function parseHourlyData(text: string): Promise<{
-	data: Record<string, HourlyIncomeData>;
-	names: Record<string, string>;
-}> {
-	const skipLines = findHeaderLine(text, "Description");
-	const { data } = await parseCsv(text, { header: true, skipLines });
-
-	const hourlyData: Record<string, HourlyIncomeData> = {};
-	const names: Record<string, string> = {};
-	for (const row of data) {
-		const code = row["Code"]?.trim();
-		const description = row["Description"]?.trim();
-		if (!code || !description || code === "Code" || !code.startsWith("E"))
-			continue;
-
-		const median = parseNumber(row["Median"]);
-		const mean = parseNumber(row["Mean"]);
-		if (median === null && mean === null) continue;
-
-		names[code] = description;
-		hourlyData[code] = {
-			numberOfJobs: parseNumber(row["(thousand)"]),
-			median,
-			medianPercentageChange: parseNumber(row["change"]),
-			mean,
-			meanPercentageChange: parseNumber(row["change_1"]),
-			percentiles: {
-				p10: parseNumber(row["10"]),
-				p20: parseNumber(row["20"]),
-				p25: parseNumber(row["25"]),
-				p30: parseNumber(row["30"]),
-				p40: parseNumber(row["40"]),
-				p60: parseNumber(row["60"]),
-				p70: parseNumber(row["70"]),
-				p75: parseNumber(row["75"]),
-				p80: parseNumber(row["80"]),
-				p90: parseNumber(row["90"]),
-			},
-		};
-	}
-	return { data: hourlyData, names };
+	return { data: payData, names };
 }
 
 export async function loadIncome(
@@ -128,8 +84,8 @@ async function loadIncomeFromFiles<
 	},
 ): Promise<Record<string, T>> {
 	const [annualResult, hourlyResult] = await Promise.all([
-		parseAnnualData(await read(files.annual)),
-		parseHourlyData(await read(files.hourly)),
+		parsePayData(await read(files.annual)),
+		parsePayData(await read(files.hourly)),
 	]);
 
 	const { data: annualData, names: annualNames } = annualResult;

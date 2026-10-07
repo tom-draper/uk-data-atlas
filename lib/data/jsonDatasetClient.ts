@@ -1,10 +1,5 @@
 import type { DatasetLocationFilter } from "../data/datasetLocationFilter";
-
-interface WorkerRes {
-	id: number;
-	data?: unknown;
-	error?: string;
-}
+import { isWorkerResponse } from "@/lib/helpers/workerResponse";
 
 type PendingRequest = {
 	resolve: (value: unknown) => void;
@@ -61,18 +56,6 @@ const loadedDatasets = new Map<string, unknown>();
 // only while one of them uses it, so the cache never holds more than those
 // slices did, and holds a dataset they share once.
 const recentSlices: string[][] = [];
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
-
-const isWorkerResponse = (value: unknown): value is WorkerRes =>
-	isRecord(value) &&
-	typeof value.id === "number" &&
-	Number.isSafeInteger(value.id) &&
-	value.id >= 0 &&
-	(value.error === undefined
-		? "data" in value
-		: typeof value.error === "string" && !("data" in value));
 
 const abortError = () => new DOMException("Request cancelled", "AbortError");
 
