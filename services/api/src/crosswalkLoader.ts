@@ -1,25 +1,19 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import type {
 	CrosswalkArtifact,
 	CrosswalkInventory,
 } from "./crosswalkInventory";
 import type { RelationshipPathInventory } from "./relationshipPaths";
 import type { CrosswalkLookup } from "./routing";
+import { publicPath, readPublicManifest } from "./publicManifest";
 
-const publicPath = (apiRoot: string, filename: string) =>
-	join(apiRoot, "public", filename);
-
-export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory => {
-	const path = publicPath(apiRoot, "crosswalk-inventory.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as CrosswalkInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.crosswalks)) {
-		throw new Error(`Invalid crosswalk inventory at ${path}`);
-	}
-	return inventory;
-};
+export const readCrosswalkInventory = (apiRoot: string): CrosswalkInventory =>
+	readPublicManifest<CrosswalkInventory>(
+		apiRoot,
+		"crosswalk-inventory.json",
+		"crosswalks",
+		"crosswalk inventory",
+	);
 
 export const readCrosswalkLookup = (
 	apiRoot: string,

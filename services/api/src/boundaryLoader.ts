@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import {
 	createAreaLookup,
 	type AreaInventory,
@@ -31,49 +30,39 @@ import {
 } from "./postcodeCounts";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { TerrainCatalogue } from "./terrainCatalogue";
+import { publicPath, readPublicManifest } from "./publicManifest";
 
-const publicPath = (apiRoot: string, filename: string) =>
-	join(apiRoot, "public", filename);
+export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry =>
+	readPublicManifest<BoundaryRegistry>(
+		apiRoot,
+		"boundary-releases.json",
+		"releases",
+		"boundary registry",
+	);
 
-export const readBoundaryRegistry = (apiRoot: string): BoundaryRegistry => {
-	const path = publicPath(apiRoot, "boundary-releases.json");
-	const registry = JSON.parse(readFileSync(path, "utf8")) as BoundaryRegistry;
-	if (registry.schemaVersion !== 1 || !Array.isArray(registry.releases)) {
-		throw new Error(`Invalid boundary registry at ${path}`);
-	}
-	return registry;
-};
+export const readGeographyInventory = (apiRoot: string): GeographyInventory =>
+	readPublicManifest<GeographyInventory>(
+		apiRoot,
+		"geography-inventory.json",
+		"releases",
+		"geography inventory",
+	);
 
-export const readGeographyInventory = (apiRoot: string): GeographyInventory => {
-	const path = publicPath(apiRoot, "geography-inventory.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as GeographyInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
-		throw new Error(`Invalid geography inventory at ${path}`);
-	}
-	return inventory;
-};
+export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue =>
+	readPublicManifest<TerrainCatalogue>(
+		apiRoot,
+		"terrain-catalogue.json",
+		"products",
+		"terrain catalogue",
+	);
 
-export const readTerrainCatalogue = (apiRoot: string): TerrainCatalogue => {
-	const path = publicPath(apiRoot, "terrain-catalogue.json");
-	const catalogue = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as TerrainCatalogue;
-	if (catalogue.schemaVersion !== 1 || !Array.isArray(catalogue.products)) {
-		throw new Error(`Invalid terrain catalogue at ${path}`);
-	}
-	return catalogue;
-};
-
-export const readAreaInventory = (apiRoot: string): AreaInventory => {
-	const path = publicPath(apiRoot, "area-inventory.json");
-	const inventory = JSON.parse(readFileSync(path, "utf8")) as AreaInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.releases)) {
-		throw new Error(`Invalid area inventory at ${path}`);
-	}
-	return inventory;
-};
+export const readAreaInventory = (apiRoot: string): AreaInventory =>
+	readPublicManifest<AreaInventory>(
+		apiRoot,
+		"area-inventory.json",
+		"releases",
+		"area inventory",
+	);
 
 export const readAreaLookup = (
 	apiRoot: string,
