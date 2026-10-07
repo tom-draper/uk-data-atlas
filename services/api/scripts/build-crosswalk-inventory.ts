@@ -118,7 +118,9 @@ const reusableGeometryCrosswalk = (
 				return undefined;
 			if (
 				JSON.stringify(artifact.provenance.excludedPairs ?? {}) !==
-				JSON.stringify(overlap.excludedPairs ?? {})
+					JSON.stringify(overlap.excludedPairs ?? {}) ||
+				JSON.stringify(artifact.provenance.includedPairs ?? {}) !==
+					JSON.stringify(overlap.includedPairs ?? {})
 			)
 				return undefined;
 		} else if (artifact.method === "geometric-containment") {
