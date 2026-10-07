@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import type { CrosswalkInventory } from "./crosswalkInventory";
 import {
 	LocationProjectionStore,
@@ -11,22 +10,17 @@ import {
 	createNamedLocationLookup,
 	type NamedLocationInventory,
 } from "./namedLocations";
-
-const publicPath = (apiRoot: string, filename: string) =>
-	join(apiRoot, "public", filename);
+import { publicPath, readPublicManifest } from "./publicManifest";
 
 export const readNamedLocationInventory = (
 	apiRoot: string,
-): NamedLocationInventory => {
-	const path = publicPath(apiRoot, "named-locations.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as NamedLocationInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.locations)) {
-		throw new Error(`Invalid named location inventory at ${path}`);
-	}
-	return inventory;
-};
+): NamedLocationInventory =>
+	readPublicManifest<NamedLocationInventory>(
+		apiRoot,
+		"named-locations.json",
+		"locations",
+		"named location inventory",
+	);
 
 export const readLocationProjectionInventory = (
 	apiRoot: string,

@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import type { AnalysisGeographyInventory } from "./analysisGeographies";
 import type { AnalysisGeographyValidationInventory } from "./analysisGeographyValidation";
 import type { AtlasRelease } from "./atlasRelease";
@@ -14,18 +13,15 @@ import {
 } from "./operationTemplates";
 import type { ValidationReport } from "./validationReport";
 import { withUnitDefinitions } from "./unitRegistry";
+import { publicPath, readPublicManifest } from "./publicManifest";
 
-const publicPath = (apiRoot: string, filename: string) =>
-	join(apiRoot, "public", filename);
-
-export const readAtlasRelease = (apiRoot: string): AtlasRelease => {
-	const path = publicPath(apiRoot, "atlas-release.json");
-	const release = JSON.parse(readFileSync(path, "utf8")) as AtlasRelease;
-	if (release.schemaVersion !== 1 || !Array.isArray(release.artifacts)) {
-		throw new Error(`Invalid atlas release manifest at ${path}`);
-	}
-	return release;
-};
+export const readAtlasRelease = (apiRoot: string): AtlasRelease =>
+	readPublicManifest<AtlasRelease>(
+		apiRoot,
+		"atlas-release.json",
+		"artifacts",
+		"atlas release manifest",
+	);
 
 /**
  * The operations compiled from `openapiDocument`. One compiled from an older
@@ -35,32 +31,30 @@ export const readOperations = (
 	apiRoot: string,
 	openapiDocument: string,
 ): OperationsArtifact => {
-	const path = publicPath(apiRoot, "operations.json");
-	const artifact = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as OperationsArtifact;
-	if (artifact.schemaVersion !== 1 || !Array.isArray(artifact.operations)) {
-		throw new Error(`Invalid operations artifact at ${path}`);
-	}
+	const artifact = readPublicManifest<OperationsArtifact>(
+		apiRoot,
+		"operations.json",
+		"operations",
+		"operations artifact",
+	);
 	if (
 		artifact.inputs?.openapiDocument !==
 		openapiDocumentHash(openapiDocument)
 	) {
 		throw new Error(
-			`${path} was compiled from another openapi.yaml; run pnpm build:operations.`,
+			`${publicPath(apiRoot, "operations.json")} was compiled from another openapi.yaml; run pnpm build:operations.`,
 		);
 	}
 	return artifact;
 };
 
-export const readValidationReport = (apiRoot: string): ValidationReport => {
-	const path = publicPath(apiRoot, "validation-report.json");
-	const report = JSON.parse(readFileSync(path, "utf8")) as ValidationReport;
-	if (report.schemaVersion !== 1 || !Array.isArray(report.resources)) {
-		throw new Error(`Invalid validation report at ${path}`);
-	}
-	return report;
-};
+export const readValidationReport = (apiRoot: string): ValidationReport =>
+	readPublicManifest<ValidationReport>(
+		apiRoot,
+		"validation-report.json",
+		"resources",
+		"validation report",
+	);
 
 export const readDataCatalog = (apiRoot: string): DataCatalog => {
 	const path = publicPath(apiRoot, "data-catalog.json");
@@ -75,36 +69,31 @@ export const readDataCatalog = (apiRoot: string): DataCatalog => {
 	return withUnitDefinitions(catalog);
 };
 
-export const readExportManifest = (apiRoot: string): ExportManifest => {
-	const path = publicPath(apiRoot, "export-manifest.json");
-	const manifest = JSON.parse(readFileSync(path, "utf8")) as ExportManifest;
-	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.exports)) {
-		throw new Error(`Invalid export manifest at ${path}`);
-	}
-	return manifest;
-};
+export const readExportManifest = (apiRoot: string): ExportManifest =>
+	readPublicManifest<ExportManifest>(
+		apiRoot,
+		"export-manifest.json",
+		"exports",
+		"export manifest",
+	);
 
-export const readLookupManifest = (apiRoot: string): LookupManifest => {
-	const path = publicPath(apiRoot, "lookup-manifest.json");
-	const manifest = JSON.parse(readFileSync(path, "utf8")) as LookupManifest;
-	if (manifest.schemaVersion !== 1 || !Array.isArray(manifest.lookups)) {
-		throw new Error(`Invalid lookup manifest at ${path}`);
-	}
-	return manifest;
-};
+export const readLookupManifest = (apiRoot: string): LookupManifest =>
+	readPublicManifest<LookupManifest>(
+		apiRoot,
+		"lookup-manifest.json",
+		"lookups",
+		"lookup manifest",
+	);
 
 export const readMeasureCompatibility = (
 	apiRoot: string,
-): MeasureCompatibilityInventory => {
-	const path = publicPath(apiRoot, "measure-compatibility.json");
-	const inventory = JSON.parse(
-		readFileSync(path, "utf8"),
-	) as MeasureCompatibilityInventory;
-	if (inventory.schemaVersion !== 1 || !Array.isArray(inventory.measures)) {
-		throw new Error(`Invalid measure compatibility inventory at ${path}`);
-	}
-	return inventory;
-};
+): MeasureCompatibilityInventory =>
+	readPublicManifest<MeasureCompatibilityInventory>(
+		apiRoot,
+		"measure-compatibility.json",
+		"measures",
+		"measure compatibility inventory",
+	);
 
 export const readAnalysisGeographyInventory = (
 	apiRoot: string,
