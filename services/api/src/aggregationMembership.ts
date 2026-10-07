@@ -1,32 +1,4 @@
-import type { AreaLookup } from "./areaInventory";
 import type { CrosswalkArtifact } from "./crosswalkInventory";
-
-/**
- * The canonical identity of a country code, from the newest compiled country
- * release. Countries are stable across releases, so the newest is a safe
- * choice, and the release is reported alongside the name.
- */
-export const findCountryIdentity = (
-	areaLookup: AreaLookup | undefined,
-	code: string,
-) => {
-	const releases = [...(areaLookup?.keys() ?? [])]
-		.filter((key) => key.startsWith("country/"))
-		.sort()
-		.reverse();
-	for (const key of releases) {
-		const area = areaLookup?.get(key)?.get(code);
-		if (area) {
-			const boundaryRelease = key.slice("country/".length);
-			return {
-				id: `country/${boundaryRelease}/${code}`,
-				boundaryRelease,
-				...area,
-			};
-		}
-	}
-	return undefined;
-};
 
 /**
  * How a crosswalk establishes that a source area belongs wholly to one target,

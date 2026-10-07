@@ -4,6 +4,7 @@ import type { GeometrySourceLookup } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
 import type { AreaLookup } from "./areaInventory";
 import {
+	areaMultiPolygon,
 	boundsIntersect,
 	CLIPPING_VERSION,
 	labelsFor,
@@ -32,24 +33,6 @@ const RETRY_PRECISIONS = [1e8, 1e6];
 // A pair clips in well under a second; one that runs this long has hit
 // polygon-clipping's non-terminating case.
 const CLIP_TIMEOUT_MS = 30_000;
-
-const multiPolygon = (
-	geometry: AreaGeometry,
-	precision?: number,
-): MultiPolygon =>
-	geometry.pieces.map(({ geometry: polygon }) =>
-		precision === undefined
-			? polygon
-			: polygon.map((ring) =>
-					ring.map(
-						([x, y]) =>
-							[
-								Math.round(x * precision) / precision,
-								Math.round(y * precision) / precision,
-							] as [number, number],
-					),
-				),
-	);
 
 export type ContainedArea = {
 	code: string;
@@ -126,12 +109,12 @@ export const measureContainment = (
 		for (const code of [...parents.geometries.keys()].sort())
 			clipper.register(
 				`parent/${code}`,
-				multiPolygon(parents.geometries.get(code)!),
+				areaMultiPolygon(parents.geometries.get(code)!),
 			);
 		for (const [code, child] of [...children.geometries].sort(
 			([left], [right]) => left.localeCompare(right),
 		)) {
-			const geometry = multiPolygon(child);
+			const geometry = areaMultiPolygon(child);
 			const clip = (
 				operation: "intersection" | "difference",
 				parent: string,
@@ -145,7 +128,7 @@ export const measureContainment = (
 					if (result.status === "clipped") break;
 					result = clipper.clip(
 						operation,
-						multiPolygon(child, precision),
+						areaMultiPolygon(child, precision),
 						`parent/${parent}`,
 					);
 				}

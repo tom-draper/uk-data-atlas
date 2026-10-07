@@ -1,6 +1,7 @@
 import type { Pair, Polygon } from "polygon-clipping";
 import { polygonAreaM2, projectEqualArea } from "./areaOverlap";
 import type { GeoJsonGeometry } from "./areaGeometry";
+import { MinHeap } from "./minHeap";
 
 /**
  * Named generalisation tiers, each the side in metres of the smallest square
@@ -38,7 +39,7 @@ export type SimplifyResult = {
 	partsAfter: number;
 };
 
-const triangleAreaM2 = (a: Pair, b: Pair, c: Pair) =>
+export const triangleAreaM2 = (a: Pair, b: Pair, c: Pair) =>
 	Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
 
 /**
@@ -78,50 +79,13 @@ const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
 		);
 	for (let i = 0; i < count; i += 1) area[i] = areaAt(i);
 
-	// Binary min-heap of [area, vertex], smallest first.
-	const heap: [number, number][] = [];
-	const swim = (start: number) => {
-		let child = start;
-		while (child > 0) {
-			const parent = (child - 1) >> 1;
-			if (heap[parent]![0] <= heap[child]![0]) break;
-			[heap[parent], heap[child]] = [heap[child]!, heap[parent]!];
-			child = parent;
-		}
-	};
-	const sink = () => {
-		let parent = 0;
-		for (;;) {
-			const left = parent * 2 + 1;
-			if (left >= heap.length) break;
-			const right = left + 1;
-			const child =
-				right < heap.length && heap[right]![0] < heap[left]![0]
-					? right
-					: left;
-			if (heap[parent]![0] <= heap[child]![0]) break;
-			[heap[parent], heap[child]] = [heap[child]!, heap[parent]!];
-			parent = child;
-		}
-	};
-	const push = (entry: [number, number]) => {
-		heap.push(entry);
-		swim(heap.length - 1);
-	};
-	const pop = () => {
-		const top = heap[0]!;
-		const last = heap.pop()!;
-		if (heap.length > 0) {
-			heap[0] = last;
-			sink();
-		}
-		return top;
-	};
-	for (let i = 0; i < count; i += 1) push([area[i]!, i]);
+	// Entries are [area, vertex], smallest area first.
+	const heap = new MinHeap();
+	for (let i = 0; i < count; i += 1) heap.push([area[i]!, i]);
 
 	let remaining = count;
-	while (heap.length > 0 && remaining > 3) {
-		const [entryArea, vertex] = pop();
+	while (heap.size > 0 && remaining > 3) {
+		const [entryArea, vertex] = heap.pop();
 		// Stale: this vertex has gone, or its triangle has since been redrawn.
 		if (removed[vertex] || entryArea !== area[vertex]) continue;
 		if (entryArea >= thresholdM2) break;
@@ -134,7 +98,7 @@ const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
 		for (const neighbour of [before, after]) {
 			if (removed[neighbour]) continue;
 			area[neighbour] = areaAt(neighbour);
-			push([area[neighbour]!, neighbour]);
+			heap.push([area[neighbour]!, neighbour]);
 		}
 	}
 

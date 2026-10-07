@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { csvRecords } from "../src/csv";
 
 const SOURCE_URL =
 	"https://www.arcgis.com/sharing/rest/content/items/e0bc41722b1a4b76a6ecfff14f91cbb4/data";
@@ -25,42 +26,12 @@ const changesCsv = (archive: string) => {
 	}
 };
 
-/** RFC 4180 rows: names may contain commas and escaped double quotes. */
-const parseCsv = (text: string) => {
-	const rows: string[][] = [];
-	let row: string[] = [];
-	let field = "";
-	let quoted = false;
-	for (let at = 0; at < text.length; at += 1) {
-		const character = text[at]!;
-		if (quoted) {
-			if (character === '"' && text[at + 1] === '"') {
-				field += '"';
-				at += 1;
-			} else if (character === '"') quoted = false;
-			else field += character;
-		} else if (character === '"') quoted = true;
-		else if (character === ",") {
-			row.push(field);
-			field = "";
-		} else if (character === "\n" || character === "\r") {
-			if (character === "\r" && text[at + 1] === "\n") at += 1;
-			row.push(field);
-			rows.push(row);
-			row = [];
-			field = "";
-		} else field += character;
-	}
-	if (field.length > 0 || row.length > 0) rows.push([...row, field]);
-	return rows;
-};
-
 export const extractOnsWardHistory = (
 	repositoryRoot: string,
 	archive: string,
 	retrieved = new Date().toISOString().slice(0, 10),
 ) => {
-	const rows = parseCsv(changesCsv(archive));
+	const rows = csvRecords(changesCsv(archive));
 	const [header, ...values] = rows;
 	const columns = Object.fromEntries(
 		(header ?? []).map((name, index) => [name, index]),

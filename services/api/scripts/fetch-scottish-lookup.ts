@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { csvRecords } from "../src/csv";
 
 /**
  * Download a Scottish statistical geography's parents from the Scottish
@@ -79,36 +80,6 @@ SELECT ?code ?name ?parentCode ?parentName WHERE {
           rdfs:label ?parentName .
 }`;
 
-/** RFC 4180 rows: fields may be quoted, with doubled quotes inside. */
-const parseCsv = (text: string) => {
-	const rows: string[][] = [];
-	let row: string[] = [];
-	let field = "";
-	let quoted = false;
-	for (let at = 0; at < text.length; at += 1) {
-		const character = text[at]!;
-		if (quoted) {
-			if (character === '"' && text[at + 1] === '"') {
-				field += '"';
-				at += 1;
-			} else if (character === '"') quoted = false;
-			else field += character;
-		} else if (character === '"') quoted = true;
-		else if (character === ",") {
-			row.push(field);
-			field = "";
-		} else if (character === "\n" || character === "\r") {
-			if (character === "\r" && text[at + 1] === "\n") at += 1;
-			row.push(field);
-			rows.push(row);
-			row = [];
-			field = "";
-		} else field += character;
-	}
-	if (field.length > 0 || row.length > 0) rows.push([...row, field]);
-	return rows;
-};
-
 export const fetchScottishLookup = async (
 	repositoryRoot: string,
 	source: ScottishLookupSource,
@@ -121,7 +92,7 @@ export const fetchScottishLookup = async (
 		throw new Error(
 			`${response.status} ${response.statusText} for ${source.collection}`,
 		);
-	const [header, ...rows] = parseCsv(await response.text());
+	const [header, ...rows] = csvRecords(await response.text());
 	if (header?.join(",") !== "code,name,parentCode,parentName")
 		throw new Error(`${source.collection}: unexpected columns ${header}`);
 	rows.sort(([left], [right]) => left!.localeCompare(right!));
