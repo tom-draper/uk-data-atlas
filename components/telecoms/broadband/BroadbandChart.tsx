@@ -170,7 +170,7 @@ export default function BroadbandChart({
 						<span
 							className={`text-[10px] font-normal ml-0.5 ${isDark ? "text-gray-400" : "text-gray-500"}`}
 						>
-							% {measureInfo.label}
+							%
 						</span>
 					</div>
 					<div className="flex gap-1 shrink-0">
