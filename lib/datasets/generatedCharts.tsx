@@ -13,21 +13,22 @@ import Chart7 from "@/components/demographics/ethnicity-registry";
 import Chart8 from "@/components/economics/fuel-poverty/FuelPovertyChart";
 import Chart9 from "@/components/elections/general/GeneralElectionRegistryChart";
 import Chart10 from "@/components/environment/ghg-emissions/GHGEmissionsChart";
-import Chart11 from "@/components/economics/house-price/HousePriceChart";
-import Chart12 from "@/components/deprivation/imd/IMDChart";
-import Chart13 from "@/components/economics/income/IncomeChart";
-import Chart14 from "@/components/health/LifeExpectancyChart";
-import Chart15 from "@/components/elections/local/LocalElectionRegistryChart";
-import Chart16 from "@/components/telecoms/mobile/MobileCoverageChart";
-import Chart17 from "@/components/deprivation/nimdm/NIMDMChart";
-import Chart18 from "@/components/demographics/population-density-registry";
-import Chart19 from "@/components/demographics/population-age-registry";
-import Chart20 from "@/components/demographics/population-gender-registry";
-import Chart21 from "@/components/education/QualificationChart";
-import Chart22 from "@/components/deprivation/simd/SIMDChart";
-import Chart23 from "@/components/transport/travel-to-work/TravelToWorkChart";
-import Chart24 from "@/components/economics/unemployment/UnemploymentChart";
-import Chart25 from "@/components/deprivation/wimd/WIMDChart";
+import Chart11 from "@/components/economics/homelessness/HomelessnessChart";
+import Chart12 from "@/components/economics/house-price/HousePriceChart";
+import Chart13 from "@/components/deprivation/imd/IMDChart";
+import Chart14 from "@/components/economics/income/IncomeChart";
+import Chart15 from "@/components/health/LifeExpectancyChart";
+import Chart16 from "@/components/elections/local/LocalElectionRegistryChart";
+import Chart17 from "@/components/telecoms/mobile/MobileCoverageChart";
+import Chart18 from "@/components/deprivation/nimdm/NIMDMChart";
+import Chart19 from "@/components/demographics/population-density-registry";
+import Chart20 from "@/components/demographics/population-age-registry";
+import Chart21 from "@/components/demographics/population-gender-registry";
+import Chart22 from "@/components/education/QualificationChart";
+import Chart23 from "@/components/deprivation/simd/SIMDChart";
+import Chart24 from "@/components/transport/travel-to-work/TravelToWorkChart";
+import Chart25 from "@/components/economics/unemployment/UnemploymentChart";
+import Chart26 from "@/components/deprivation/wimd/WIMDChart";
 
 const Chart0Presentation = {
 	component: (props) => (
@@ -185,6 +186,12 @@ const Chart25Presentation = {
 	),
 } satisfies ChartPresentation;
 
+const Chart26Presentation = {
+	component: (props) => (
+		<Chart26 {...(props as ComponentProps<typeof Chart26>)} />
+	),
+} satisfies ChartPresentation;
+
 export const CHART_PRESENTATIONS = {
 	"health-adultSocialCareActivity": Chart0Presentation,
 	"health-adultSocialCareOutcomes": Chart0Presentation,
@@ -207,39 +214,39 @@ export const CHART_PRESENTATIONS = {
 	"generalElection-2015": Chart9Presentation,
 	"generalElection-2010": Chart9Presentation,
 	"environment-ghgEmissions": Chart10Presentation,
-	"economics-homelessness": Chart0Presentation,
-	"economics-housePrice": Chart11Presentation,
+	"economics-homelessness": Chart11Presentation,
+	"economics-housePrice": Chart12Presentation,
 	"economics-housingAffordability": Chart0Presentation,
-	"deprivation-imd": Chart12Presentation,
-	"economics-income": Chart13Presentation,
-	"health-lifeExpectancy": Chart14Presentation,
-	"health-healthyLifeExpectancy": Chart14Presentation,
-	"localElection-2025": Chart15Presentation,
-	"localElection-2024": Chart15Presentation,
-	"localElection-2023": Chart15Presentation,
-	"localElection-2022": Chart15Presentation,
-	"localElection-2021": Chart15Presentation,
-	"localElection-2019": Chart15Presentation,
-	"localElection-2018": Chart15Presentation,
-	"localElection-2017": Chart15Presentation,
-	"localElection-2016": Chart15Presentation,
+	"deprivation-imd": Chart13Presentation,
+	"economics-income": Chart14Presentation,
+	"health-lifeExpectancy": Chart15Presentation,
+	"health-healthyLifeExpectancy": Chart15Presentation,
+	"localElection-2025": Chart16Presentation,
+	"localElection-2024": Chart16Presentation,
+	"localElection-2023": Chart16Presentation,
+	"localElection-2022": Chart16Presentation,
+	"localElection-2021": Chart16Presentation,
+	"localElection-2019": Chart16Presentation,
+	"localElection-2018": Chart16Presentation,
+	"localElection-2017": Chart16Presentation,
+	"localElection-2016": Chart16Presentation,
 	"economics-localGovernmentFinance": Chart0Presentation,
-	"telecoms-mobileCoverage": Chart16Presentation,
+	"telecoms-mobileCoverage": Chart17Presentation,
 	"economics-netAdditionalDwellings": Chart0Presentation,
 	"health-nhsWaiting": Chart0Presentation,
-	"deprivation-nimdm": Chart17Presentation,
+	"deprivation-nimdm": Chart18Presentation,
 	"economics-planningApplications": Chart0Presentation,
-	"demographics-populationDensity": Chart18Presentation,
-	"demographics-age": Chart19Presentation,
-	"demographics-gender": Chart20Presentation,
-	"education-qualifications": Chart21Presentation,
+	"demographics-populationDensity": Chart19Presentation,
+	"demographics-age": Chart20Presentation,
+	"demographics-gender": Chart21Presentation,
+	"education-qualifications": Chart22Presentation,
 	"education-schoolPerformance": Chart0Presentation,
 	"education-schoolPerformanceGap": Chart0Presentation,
-	"deprivation-simd": Chart22Presentation,
-	"transport-travelToWork": Chart23Presentation,
-	"economics-unemployment": Chart24Presentation,
+	"deprivation-simd": Chart23Presentation,
+	"transport-travelToWork": Chart24Presentation,
+	"economics-unemployment": Chart25Presentation,
 	"environment-waste": Chart0Presentation,
-	"deprivation-wimd": Chart25Presentation,
+	"deprivation-wimd": Chart26Presentation,
 } satisfies ChartPresentationRegistry;
 
 export type ChartPresentationKey = keyof typeof CHART_PRESENTATIONS;
