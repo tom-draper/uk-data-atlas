@@ -272,10 +272,25 @@ export function ClaimantCountMeasurePanel({
 	);
 }
 
-const HOMELESSNESS_MEASURES = [["rate", "Rate"], ["count", "Count"]] as const;
+const HOMELESSNESS_MEASURES = [
+	["rate", "Rate"],
+	["count", "Count"],
+] as const;
 
-export function HomelessnessMeasurePanel({ measure, onChange }: { measure: "rate" | "count"; onChange: (measure: "rate" | "count") => void }) {
-	return <GlassSegmentedMeasurePanel measure={measure} measures={HOMELESSNESS_MEASURES} onChange={onChange} />;
+export function HomelessnessMeasurePanel({
+	measure,
+	onChange,
+}: {
+	measure: "rate" | "count";
+	onChange: (measure: "rate" | "count") => void;
+}) {
+	return (
+		<GlassSegmentedMeasurePanel
+			measure={measure}
+			measures={HOMELESSNESS_MEASURES}
+			onChange={onChange}
+		/>
+	);
 }
 
 const COUNT_METRICS = [
