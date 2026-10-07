@@ -3,10 +3,7 @@ import { observationsFor } from "./observationArtifacts";
 import { refused } from "./observationResolution/observationPlan";
 import { rankingOf, readRankingOrder } from "./ranking";
 import { sourceExactProvenance } from "./sourceExactProvenance";
-import {
-	publishedPartitions,
-	statedDefaults,
-} from "./dataDefaults";
+import { publishedPartitions, statedDefaults } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
 import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
@@ -84,7 +81,8 @@ export const handleDataRankingRoutes = ({
 			"Invalid Query",
 			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
-	if (partition.kind === "refusal") return refused(partition.resolution.refusal);
+	if (partition.kind === "refusal")
+		return refused(partition.resolution.refusal);
 	const {
 		defaults,
 		period,

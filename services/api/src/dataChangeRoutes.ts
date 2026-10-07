@@ -112,8 +112,7 @@ export const handleDataChangeRoutes = ({
 		includePeriod: false,
 	});
 	const defaults = partition.defaults;
-	const geography =
-		partition.kind === "refusal" ? null : partition.geography;
+	const geography = partition.kind === "refusal" ? null : partition.geography;
 	const boundaryYear =
 		partition.kind === "refusal" ? null : partition.boundaryYear;
 	const changePeriods = defaults

@@ -58,7 +58,13 @@ export const selectSourcePartition = ({
 	const geography = query.geography ?? defaults?.geography ?? null;
 	const boundaryYear = query.boundaryYear ?? defaults?.boundaryYear ?? null;
 	if (!geography || !boundaryYear)
-		return { kind: "incomplete", defaults, period, geography, boundaryYear };
+		return {
+			kind: "incomplete",
+			defaults,
+			period,
+			geography,
+			boundaryYear,
+		};
 	const resolution = resolveObservations(context, {
 		measureId: measure.id,
 		periods: periodsForResolution?.(period) ?? periods,

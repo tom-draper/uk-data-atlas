@@ -108,8 +108,7 @@ export const handleDataSeriesRoutes = ({
 		periods: [],
 		includePeriod: false,
 	});
-	const geography =
-		partition.kind === "refusal" ? null : partition.geography;
+	const geography = partition.kind === "refusal" ? null : partition.geography;
 	const boundaryYear =
 		partition.kind === "refusal" ? null : partition.boundaryYear;
 	const datasetId = parsedUrl.searchParams.get("datasetId");

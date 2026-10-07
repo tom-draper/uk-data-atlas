@@ -32,5 +32,9 @@ export const handleDocumentRoutes = ({
 					body: document,
 				},
 			}
-		: problem(404, "Not Found", "No published evidence document matches that id.");
+		: problem(
+				404,
+				"Not Found",
+				"No published evidence document matches that id.",
+			);
 };
