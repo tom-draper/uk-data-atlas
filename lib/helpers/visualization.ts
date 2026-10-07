@@ -81,14 +81,3 @@ export function visualizationRefFromActiveViz(
 		...(viz.view ? { view: viz.view } : {}),
 	};
 }
-
-export function writeVisualizationRef(params: URLSearchParams, viz: ActiveViz) {
-	params.delete("dataset");
-	params.delete("period");
-	params.delete("view");
-	const reference = visualizationRefFromActiveViz(viz);
-	if (!reference) return;
-	params.set("dataset", reference.dataset);
-	params.set("period", String(reference.period));
-	if (reference.view) params.set("view", reference.view);
-}

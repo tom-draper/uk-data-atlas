@@ -150,8 +150,6 @@ export type NamedProfile = {
 	mapsSlug?: string;
 };
 
-export type PlaceProfile = AreaProfile | NamedProfile;
-
 /**
  * One row of the index: code or id, name, geography or kind, the council it
  * sits in (wards only), and the first and last years it was published.
