@@ -659,6 +659,61 @@ test("holds overlap targets to the coverage the crosswalk requires of them", () 
 	);
 });
 
+test("holds a reviewed overlap source to its declared coverage", () => {
+	// W2 covers only 90% of itself, as an area reaching into an estuary
+	// its targets leave out does.
+	const estuary = (exception?: number) => {
+		const { contentHash: _, ...base } = overlap();
+		return hashed({
+			...base,
+			provenance: {
+				...base.provenance,
+				...(exception === undefined
+					? {}
+					: {
+							coverageExceptions: {
+								W2: {
+									minimumCoverage: exception,
+									reason: "Estuary.",
+								},
+							},
+						}),
+			},
+			records: base.records.map((record) =>
+				record.source.code === "W2"
+					? {
+							...record,
+							targets: record.targets.map((target) => ({
+								...target,
+								sourceShare: 0.9,
+							})),
+						}
+					: record,
+			),
+		});
+	};
+	for (const exception of [undefined, 0.95])
+		assert.throws(
+			() =>
+				compileValidationReport(
+					inputs({ crosswalks: [containment(), estuary(exception)] }),
+				),
+			/ward-to-lad-area-overlap fails area-coverage: Areas below 0\.99 coverage: W2 \(0\.9000\)\./,
+		);
+	const report = compileValidationReport(
+		inputs({ crosswalks: [containment(), estuary(0.85)] }),
+	);
+	assert.equal(
+		report.resources
+			.find(
+				(resource) =>
+					resource.id === "crosswalks/ward-to-lad-area-overlap",
+			)
+			?.checks.find((entry) => entry.id === "area-coverage")?.status,
+		"passed",
+	);
+});
+
 test("fails containment with more than one parent", () => {
 	const twoParents = containment([
 		{

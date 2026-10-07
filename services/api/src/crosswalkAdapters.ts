@@ -113,8 +113,16 @@ export type AreaOverlapCrosswalkAdapter = {
 	 * source-code/target-code pair carries its published reason.
 	 */
 	includedPairs?: Record<string, Record<string, string>>;
+	/**
+	 * Individually reviewed sources held to a lower coverage than
+	 * `minimumCoverage`, such as an area whose outline takes in estuary the
+	 * targets' coastline leaves out. Each carries its published reason.
+	 */
+	coverageExceptions?: Record<string, CoverageException>;
 	minimumCoverage: number;
 };
+
+export type CoverageException = { minimumCoverage: number; reason: string };
 
 // Extent continuity adapters pair the codes two releases of one geography
 // share, and publish a pair as identity only where its two geometries differ
@@ -284,6 +292,18 @@ const validAreaOverlapAdapter = (
 			adapter.minimumTargetCoverage <= 1)) &&
 	isReviewedPairs(adapter.excludedPairs) &&
 	isReviewedPairs(adapter.includedPairs) &&
+	(adapter.coverageExceptions === undefined ||
+		(isRecord(adapter.coverageExceptions) &&
+			Object.values(adapter.coverageExceptions).every(
+				(exception) =>
+					isRecord(exception) &&
+					typeof exception.minimumCoverage === "number" &&
+					exception.minimumCoverage > 0 &&
+					typeof adapter.minimumCoverage === "number" &&
+					exception.minimumCoverage < adapter.minimumCoverage &&
+					typeof exception.reason === "string" &&
+					exception.reason.trim().length > 0,
+			))) &&
 	typeof adapter.minimumCoverage === "number" &&
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;

@@ -708,11 +708,29 @@ export const compileAreaOverlapCrosswalk = (
 		left[1] - right[1];
 	sourceCoverage.sort(byCoverage);
 	targetCoverage.sort(byCoverage);
+	// A reviewed source is held to its own, declared lower bar, and only
+	// while it needs one.
+	const exceptions = adapter.coverageExceptions ?? {};
+	const coverageOf = new Map(sourceCoverage);
+	const staleExceptions = Object.keys(exceptions).filter((code) => {
+		const coverage = coverageOf.get(code);
+		return coverage === undefined || coverage >= adapter.minimumCoverage;
+	});
+	if (staleExceptions.length > 0)
+		throw new Error(
+			`${adapter.id}: coverage exceptions are for sources not below ${adapter.minimumCoverage} covered: ${staleExceptions.slice(0, 10).join(", ")}`,
+		);
 	for (const [side, coverage, minimumCoverage] of [
 		["source", sourceCoverage, adapter.minimumCoverage],
 		["target", targetCoverage, minimumTargetCoverage],
 	] as const) {
-		const below = coverage.filter(([, value]) => value < minimumCoverage);
+		const below = coverage.filter(
+			([code, value]) =>
+				value <
+				(side === "source"
+					? (exceptions[code]?.minimumCoverage ?? minimumCoverage)
+					: minimumCoverage),
+		);
 		if (below.length > 0) {
 			throw new Error(
 				`${adapter.id}: ${below.length} ${side} areas are less than ${minimumCoverage} covered: ${formatCodes(below)}`,
@@ -772,6 +790,9 @@ export const compileAreaOverlapCrosswalk = (
 			...(adapter.includedPairs === undefined
 				? {}
 				: { includedPairs: adapter.includedPairs }),
+			...(adapter.coverageExceptions === undefined
+				? {}
+				: { coverageExceptions: adapter.coverageExceptions }),
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
 		},
