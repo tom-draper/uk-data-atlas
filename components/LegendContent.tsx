@@ -181,7 +181,9 @@ export default function LegendContent({
 					max: dynamicRange?.max ?? colorRange.max,
 				}}
 				formatLabel={
-					unemploymentLegend?.format ?? ghgLegend?.format ?? measureLegend.format
+					unemploymentLegend?.format ??
+					ghgLegend?.format ??
+					measureLegend.format
 				}
 				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>
