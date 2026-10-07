@@ -6,21 +6,16 @@ import {
 	GhgEmissionsDataset,
 	SelectedArea,
 } from "@lib/types";
-import {
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { ChartDataPlaceholder } from "@/components/ChartDataPlaceholder";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
-import {
-	selectedAreaLadCode,
-	type LadResolver,
-} from "@/lib/helpers/selectedAreaLad";
+import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 
 interface GHGEmissionsChartProps {
 	activeDataset: Dataset | null;
@@ -99,31 +94,6 @@ function SectorBar({
 	);
 }
 
-function computeStats(
-	dataset: GhgEmissionsDataset,
-	aggregatedData: Record<number, AggregatedGhgEmissionsData> | null,
-	selectedArea: SelectedArea | null,
-	codeMapper: LadResolver | undefined,
-): AggregatedGhgEmissionsData | null {
-	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-
-	const fromRecord = (code: string) => {
-		const record = dataset.data[code];
-		if (!record) return null;
-		return {
-			totalKtCO2e: record.totalKtCO2e,
-			excludingLandUseKtCO2e: record.excludingLandUseKtCO2e,
-			perPersonTCO2e: record.perPersonTCO2e,
-			transport: record.transport,
-			domestic: record.domestic,
-			industry: record.industry,
-		};
-	};
-
-	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
-	return ladCode ? fromRecord(ladCode) : null;
-}
-
 export default function GHGEmissionsChart({
 	activeDataset,
 	availableDatasets,
@@ -133,14 +103,26 @@ export default function GHGEmissionsChart({
 	year,
 	setActiveViz,
 }: GHGEmissionsChartProps) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const measure = useCurrentMapOptions().ghgEmissions.measure;
 	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
-		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
+		? localAuthorityStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				(record) => ({
+					totalKtCO2e: record.totalKtCO2e,
+					excludingLandUseKtCO2e: record.excludingLandUseKtCO2e,
+					perPersonTCO2e: record.perPersonTCO2e,
+					transport: record.transport,
+					domestic: record.domestic,
+					industry: record.industry,
+				}),
+			)
 		: null;
 
 	const isActive =
@@ -178,17 +160,7 @@ export default function GHGEmissionsChart({
 			}
 		>
 			{!stats ? (
-				<div className="flex-1 mt-1">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div
-							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)}
-				</div>
+				<ChartDataPlaceholder />
 			) : (
 				<div className="flex items-end justify-between gap-1.5 flex-1">
 					<div className="flex flex-col gap-0.5">

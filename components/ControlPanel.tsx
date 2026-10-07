@@ -1,5 +1,5 @@
 "use client";
-import { LocationBounds, PopulationDataset } from "@lib/types";
+import { PopulationDataset } from "@lib/types";
 import TitlePane from "./TitlePane";
 import LocationPane from "./LocationPanel";
 import MapOptions from "./MapOptions";
@@ -8,7 +8,7 @@ import { MapOptions as MapOptionsType } from "@/lib/types/mapOptions";
 
 interface ControlPanelProps {
 	selectedLocation: string | null;
-	onLocationClick: (location: string, bounds: LocationBounds) => void;
+	onLocationClick: (location: string) => void;
 	populationDataset: PopulationDataset | undefined;
 	onZoomIn: () => void;
 	onZoomOut: () => void;

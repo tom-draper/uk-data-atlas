@@ -6,20 +6,16 @@ import {
 	MobileCoverageDataset,
 	SelectedArea,
 } from "@lib/types";
-import {
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { ChartDataPlaceholder } from "@/components/ChartDataPlaceholder";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
+import { MetricPill } from "@/components/MetricPill";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	selectedAreaLadCode,
-	type LadResolver,
-} from "@/lib/helpers/selectedAreaLad";
+import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 
 interface MobileCoverageChartProps {
 	activeDataset: Dataset | null;
@@ -43,61 +39,6 @@ function coverageColor(share: number): string {
 	return "#ef4444";
 }
 
-function StatPill({
-	label,
-	value,
-	isDark,
-}: {
-	label: string;
-	value: number | null;
-	isDark: boolean;
-}) {
-	return (
-		<div
-			className={`flex flex-col items-center px-2 py-1 rounded ${isDark ? "bg-white/5" : "bg-black/5"}`}
-		>
-			<span
-				className={`text-[9px] font-medium ${isDark ? "text-gray-400" : "text-gray-500"}`}
-			>
-				{label}
-			</span>
-			<span
-				className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}
-			>
-				{value != null ? `${value.toFixed(1)}` : "—"}
-				{value != null && (
-					<span className="text-[9px] font-normal ml-0.5">%</span>
-				)}
-			</span>
-		</div>
-	);
-}
-
-function computeStats(
-	dataset: MobileCoverageDataset,
-	aggregatedData: Record<number, AggregatedMobileCoverageData> | null,
-	selectedArea: SelectedArea | null,
-	codeMapper: LadResolver | undefined,
-): AggregatedMobileCoverageData | null {
-	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-
-	const fromRecord = (code: string) => {
-		const record = dataset.data[code];
-		if (!record) return null;
-		return {
-			pct4GIndoorAll: record.pct4GIndoorAll,
-			pct4GIndoorAny: record.pct4GIndoorAny,
-			pct5GOutdoorAll: record.pct5GOutdoorAll,
-			pct5GOutdoorAny: record.pct5GOutdoorAny,
-			pct4GGeoAll: record.pct4GGeoAll,
-			pct5GGeoAny: record.pct5GGeoAny,
-		};
-	};
-
-	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
-	return ladCode ? fromRecord(ladCode) : null;
-}
-
 export default function MobileCoverageChart({
 	activeDataset,
 	availableDatasets,
@@ -107,12 +48,24 @@ export default function MobileCoverageChart({
 	year,
 	setActiveViz,
 }: MobileCoverageChartProps) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
-		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
+		? localAuthorityStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				(record) => ({
+					pct4GIndoorAll: record.pct4GIndoorAll,
+					pct4GIndoorAny: record.pct4GIndoorAny,
+					pct5GOutdoorAll: record.pct5GOutdoorAll,
+					pct5GOutdoorAny: record.pct5GOutdoorAny,
+					pct4GGeoAll: record.pct4GGeoAll,
+					pct5GGeoAny: record.pct5GGeoAny,
+				}),
+			)
 		: null;
 
 	const isActive =
@@ -144,17 +97,7 @@ export default function MobileCoverageChart({
 			}
 		>
 			{!stats ? (
-				<div className="flex-1 mt-1">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div
-							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)}
-				</div>
+				<ChartDataPlaceholder />
 			) : (
 				<div className="flex items-end justify-between gap-1.5 flex-1">
 					<div className="flex flex-col gap-0.5">
@@ -180,15 +123,15 @@ export default function MobileCoverageChart({
 						</span>
 					</div>
 					<div className="flex gap-1 shrink-0">
-						<StatPill
+						<MetricPill
 							label="4G in"
 							value={stats.pct4GIndoorAll}
-							isDark={isDark}
+							unit="%"
 						/>
-						<StatPill
+						<MetricPill
 							label="4G land"
 							value={stats.pct4GGeoAll}
-							isDark={isDark}
+							unit="%"
 						/>
 					</div>
 				</div>

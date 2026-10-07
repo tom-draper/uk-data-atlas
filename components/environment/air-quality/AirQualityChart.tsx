@@ -6,21 +6,17 @@ import {
 	Dataset,
 	SelectedArea,
 } from "@lib/types";
-import {
-	ChartContentPlaceholder,
-	useChartsLoading,
-} from "@/components/ChartLoadingPlaceholder";
 import { ChartCard } from "@/components/ChartCard";
+import { ChartDataPlaceholder } from "@/components/ChartDataPlaceholder";
 import {
 	isLocalAuthorityEstimate,
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
+import { MetricPill } from "@/components/MetricPill";
 import { useIsDark } from "@/lib/context/ThemeContext";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
-import {
-	selectedAreaLadCode,
-	type LadResolver,
-} from "@/lib/helpers/selectedAreaLad";
+import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
+import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
 
 interface AirQualityChartProps {
 	activeDataset: Dataset | null;
@@ -41,62 +37,6 @@ const MEASURES = {
 	pm10: { key: "pm10Mean", label: "PM10" },
 } as const;
 
-function StatPill({
-	label,
-	value,
-	unit,
-	isDark,
-}: {
-	label: string;
-	value: number | null;
-	unit: string;
-	isDark: boolean;
-}) {
-	return (
-		<div
-			className={`flex flex-col items-center px-2 py-1 rounded ${isDark ? "bg-white/5" : "bg-black/5"}`}
-		>
-			<span
-				className={`text-[9px] font-medium ${isDark ? "text-gray-400" : "text-gray-500"}`}
-			>
-				{label}
-			</span>
-			<span
-				className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}
-			>
-				{value != null ? `${value.toFixed(1)}` : "—"}
-				{value != null && (
-					<span className="text-[9px] font-normal ml-0.5">
-						{unit}
-					</span>
-				)}
-			</span>
-		</div>
-	);
-}
-
-function computeStats(
-	dataset: AirQualityDataset,
-	aggregatedData: Record<number, AggregatedAirQualityData> | null,
-	selectedArea: SelectedArea | null,
-	codeMapper: LadResolver | undefined,
-): AggregatedAirQualityData | null {
-	if (selectedArea === null) return aggregatedData?.[dataset.year] ?? null;
-
-	const fromRecord = (code: string) => {
-		const r = dataset.data[code];
-		if (!r) return null;
-		return {
-			no2Mean: r.no2Mean,
-			pm25Mean: r.pm25Mean,
-			pm10Mean: r.pm10Mean,
-		};
-	};
-
-	const ladCode = selectedAreaLadCode(selectedArea, codeMapper);
-	return ladCode ? fromRecord(ladCode) : null;
-}
-
 export default function AirQualityChart({
 	activeDataset,
 	availableDatasets,
@@ -106,14 +46,23 @@ export default function AirQualityChart({
 	year,
 	setActiveViz,
 }: AirQualityChartProps) {
-	const chartsLoading = useChartsLoading();
 	const isDark = useIsDark();
 	const measure = useCurrentMapOptions().airQuality.measure;
 	const measureInfo = MEASURES[measure];
 	const dataset = availableDatasets?.[year];
 
 	const stats = dataset
-		? computeStats(dataset, aggregatedData, selectedArea, codeMapper)
+		? localAuthorityStats(
+				dataset,
+				aggregatedData,
+				selectedArea,
+				codeMapper,
+				(record) => ({
+					no2Mean: record.no2Mean,
+					pm25Mean: record.pm25Mean,
+					pm10Mean: record.pm10Mean,
+				}),
+			)
 		: null;
 
 	const isActive =
@@ -144,17 +93,7 @@ export default function AirQualityChart({
 			}
 		>
 			{!stats ? (
-				<div className="flex-1 mt-1">
-					{chartsLoading ? (
-						<ChartContentPlaceholder className="h-full" />
-					) : (
-						<div
-							className={`text-xs pt-0.5 text-center ${isDark ? "text-gray-400" : "text-gray-400/80"}`}
-						>
-							No data available
-						</div>
-					)}
-				</div>
+				<ChartDataPlaceholder />
 			) : (
 				<div className="flex items-end justify-between gap-1.5 flex-1">
 					<div className="flex items-baseline gap-1">
@@ -173,17 +112,15 @@ export default function AirQualityChart({
 						</span>
 					</div>
 					<div className="flex gap-1 shrink-0">
-						<StatPill
+						<MetricPill
 							label="PM2.5"
 							value={stats.pm25Mean}
 							unit="µg/m³"
-							isDark={isDark}
 						/>
-						<StatPill
+						<MetricPill
 							label="PM10"
 							value={stats.pm10Mean}
 							unit="µg/m³"
-							isDark={isDark}
 						/>
 					</div>
 				</div>
