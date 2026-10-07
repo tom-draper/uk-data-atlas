@@ -1,25 +1,8 @@
 import type { BoundaryGeojson } from "@lib/types";
 import { decodeBoundaryData } from "./decode";
+import { isWorkerResponse } from "@/lib/helpers/workerResponse";
 import type { BoundaryGeometryFilter } from "./boundaries";
 import type { BoundaryLocationRelations } from "./filter";
-
-interface WorkerResponse {
-	id: number;
-	data?: unknown;
-	error?: string;
-}
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-	typeof value === "object" && value !== null && !Array.isArray(value);
-
-const isWorkerResponse = (value: unknown): value is WorkerResponse =>
-	isRecord(value) &&
-	typeof value.id === "number" &&
-	Number.isSafeInteger(value.id) &&
-	value.id >= 0 &&
-	(value.error === undefined
-		? "data" in value
-		: typeof value.error === "string" && !("data" in value));
 
 type WorkerFilter = Omit<BoundaryGeometryFilter, "relations"> & {
 	relations?: Omit<BoundaryLocationRelations, "getLadForWard">;

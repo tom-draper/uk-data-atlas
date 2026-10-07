@@ -4,7 +4,7 @@ import type {
 } from "@/lib/types/carAvailability";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 import { parseNullableInt } from "@/lib/helpers/parseNumber";
-import { APRIL_2023_LAD_MERGERS } from "../localAuthority/reorganisations";
+import { addMergedCountAuthorities } from "../localAuthority/reorganisations";
 
 /**
  * Census category code to the field it contributes to. Code -8, "does not
@@ -35,34 +35,11 @@ function pick(row: Record<string, unknown>, ...keys: string[]): string {
 	return "";
 }
 
-/**
- * Add post-2023 authority records by summing their predecessors.
- *
- * The census reports on 2021 boundaries, so the four authorities created in
- * April 2023 have no row of their own and would otherwise be blank on a map
- * drawn with current boundaries.
- */
+/** Add post-2023 authority records by summing their predecessors. */
 export function addMergedCarAvailabilityAuthorities(
 	data: Record<string, CarAvailabilityBreakdown>,
 ): void {
-	for (const [target, { predecessors }] of Object.entries(
-		APRIL_2023_LAD_MERGERS,
-	)) {
-		if (data[target]) continue;
-		const merged = emptyBreakdown();
-		for (const predecessor of predecessors) {
-			const breakdown = data[predecessor];
-			if (!breakdown)
-				throw new Error(
-					`Missing car availability predecessor ${predecessor} for ${target}`,
-				);
-			for (const key of Object.keys(merged) as Array<
-				keyof CarAvailabilityBreakdown
-			>)
-				merged[key] += breakdown[key];
-		}
-		data[target] = merged;
-	}
+	addMergedCountAuthorities(data, emptyBreakdown, "car availability");
 }
 
 export async function loadCarAvailability(
