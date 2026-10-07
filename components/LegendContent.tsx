@@ -142,7 +142,7 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: ghgLegend ?? legend;
+					: (ghgLegend ?? legend);
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
