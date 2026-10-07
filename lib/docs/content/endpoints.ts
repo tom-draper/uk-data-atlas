@@ -210,14 +210,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Each entry names the source partition and the crosswalk, so you can inspect exactly what will be regrouped.",
 		],
 	},
-	getAnalysisGeographyValidation: {
-		title: "Inspect conversion validation",
-		intro: "Get the release-pinned receipt that proves each reviewed conversion was covered and conserved when the Atlas was built. It names the source and crosswalk artifacts, then shows input and output record counts and totals for every supported period.",
-		tips: [
-			"A receipt is evidence for a reviewed conversion, not permission to convert through any other crosswalk.",
-			"For a derived result, use the receipt's hashes together with the response's `source` and `conversion` fields to reproduce the check.",
-		],
-	},
 	planAnalysis: {
 		title: "Preflight an analysis conversion",
 		intro: "Check whether one published period can be compared on a named analysis boundary before retrieving data. The response is a plan: it selects no data and never silently chooses between source partitions.",
@@ -340,10 +332,6 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 			"Rows that cannot identify exactly one area are returned in `unjoined` with the reason, rather than being guessed or dropped.",
 			"Use `format=geojson` with a suitable `tier` when you need the matched shapes as well as the join table.",
 		],
-	},
-	getGeographyInventory: {
-		title: "Check geography coverage",
-		intro: "For every boundary release, see whether its areas have been compiled and which crosswalks connect it to others, or the reason they haven't yet.",
 	},
 	listAreas: {
 		title: "List areas",
@@ -540,6 +528,14 @@ export const ENDPOINTS: Record<string, EndpointContent> = {
 		intro: "See the reviewed API-owned corrections, derived calculations and normalisations that can affect a response, with their exact scope and evidence.",
 		tips: [
 			"The default data response remains source-exact; use the explicit request described by a correction to opt into a reviewed transformation.",
+		],
+	},
+	getEvidenceDocument: {
+		title: "Download a build evidence document",
+		intro: "Fetch one of the immutable JSON documents the build publishes as evidence: geography coverage, the validation receipt for reviewed conversions, measure compatibility, relationship candidates or the full validation report. Each is the exact artifact the release was built with, not a query.",
+		tips: [
+			"Name the document in the path, such as `/v1/documents/geography-inventory.json`. An unknown id returns 404.",
+			"Documents are pinned to the Atlas release, so a saved copy stays valid evidence for the results it was built alongside.",
 		],
 	},
 	getValidationReport: {
