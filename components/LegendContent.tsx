@@ -117,14 +117,14 @@ export default function LegendContent({
 						format: (value: number) =>
 							`${value.toFixed(0)}% ${broadbandLabel}`,
 					}
-			: airQualityMeasure
-				? {
-						min: 0,
-						max: airQualityMeasure === "pm25" ? 20 : 35,
-						format: (value: number) =>
-							`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
-					}
-				: legend;
+				: airQualityMeasure
+					? {
+							min: 0,
+							max: airQualityMeasure === "pm25" ? 20 : 35,
+							format: (value: number) =>
+								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
+						}
+					: legend;
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
