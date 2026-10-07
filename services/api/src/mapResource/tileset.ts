@@ -2,11 +2,12 @@ import type { Coordinate } from "../areaContainment";
 import type { GeoJsonGeometry } from "../areaGeometry";
 import type { GeometryTier } from "../simplifyGeometry";
 import {
-	clipRing,
-	toTileGrid,
+	clipWorldRing,
+	toWorldRing,
 	wind,
 	type TileAddress,
 	type TileBox,
+	type WorldRing,
 } from "./tileGrid";
 import { encodeTile, type TileFeature } from "./vectorTile";
 
@@ -95,6 +96,23 @@ const overlaps = (
 	otherSouth <= north;
 
 /**
+ * Each area's rings projected once, for every tile that draws them. A release
+ * is cut into thousands of tiles, and projecting every vertex again for each
+ * one was most of the cost of tiling a coastline.
+ */
+const projected = new WeakMap<GeoJsonGeometry, WorldRing[][]>();
+const projectedPolygons = (geometry: GeoJsonGeometry) => {
+	let polygons = projected.get(geometry);
+	if (!polygons) {
+		polygons = polygonsOf(geometry).map((polygon) =>
+			polygon.map(toWorldRing),
+		);
+		projected.set(geometry, polygons);
+	}
+	return polygons;
+};
+
+/**
  * What is left of each area inside one tile.
  *
  * A polygon whose outer ring falls outside the tile is not in the tile at all,
@@ -109,18 +127,14 @@ export const tileFeatures = (
 	features.flatMap((feature) => {
 		if (!overlaps(feature.bounds, tileBounds)) return [];
 		const rings: Array<Array<[number, number]>> = [];
-		for (const polygon of polygonsOf(feature.geometry)) {
+		for (const polygon of projectedPolygons(feature.geometry)) {
 			const [outer, ...holes] = polygon;
 			if (!outer) continue;
-			const clipped = clipRing(
-				outer.map((coordinate) => toTileGrid(coordinate, address)),
-			);
+			const clipped = clipWorldRing(outer, address);
 			if (clipped.length === 0) continue;
 			rings.push(wind(clipped, true));
 			for (const hole of holes) {
-				const cut = clipRing(
-					hole.map((coordinate) => toTileGrid(coordinate, address)),
-				);
+				const cut = clipWorldRing(hole, address);
 				if (cut.length > 0) rings.push(wind(cut, false));
 			}
 		}
