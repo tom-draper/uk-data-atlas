@@ -150,6 +150,7 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 			} & GeometryProvenance
 		>;
 		excludedPairs?: Record<string, Record<string, string>>;
+		includedPairs?: Record<string, Record<string, string>>;
 		areaProjection: "EPSG:6933";
 		clipping: string;
 	};

@@ -107,6 +107,12 @@ export type AreaOverlapCrosswalkAdapter = {
 	 * noise. Each source-code/target-code pair carries its published reason.
 	 */
 	excludedPairs?: Record<string, Record<string, string>>;
+	/**
+	 * Individually reviewed intersections inside the sliver rule's
+	 * indeterminate band that are real overlaps, published as such. Each
+	 * source-code/target-code pair carries its published reason.
+	 */
+	includedPairs?: Record<string, Record<string, string>>;
 	minimumCoverage: number;
 };
 
@@ -198,6 +204,19 @@ const isOneOf = <Values extends readonly string[]>(
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null;
 
+/** Source code to target code to the published reason for the review. */
+const isReviewedPairs = (pairs: unknown) =>
+	pairs === undefined ||
+	(isRecord(pairs) &&
+		Object.values(pairs).every(
+			(targets) =>
+				isRecord(targets) &&
+				Object.values(targets).every(
+					(reason) =>
+						typeof reason === "string" && reason.trim().length > 0,
+				),
+		));
+
 const hasStrings = (value: unknown, keys: string[]) =>
 	isRecord(value) && keys.every((key) => typeof value[key] === "string");
 
@@ -263,17 +282,8 @@ const validAreaOverlapAdapter = (
 		(typeof adapter.minimumTargetCoverage === "number" &&
 			adapter.minimumTargetCoverage >= 0 &&
 			adapter.minimumTargetCoverage <= 1)) &&
-	(adapter.excludedPairs === undefined ||
-		(isRecord(adapter.excludedPairs) &&
-			Object.values(adapter.excludedPairs).every(
-				(targets) =>
-					isRecord(targets) &&
-					Object.values(targets).every(
-						(reason) =>
-							typeof reason === "string" &&
-							reason.trim().length > 0,
-					),
-			))) &&
+	isReviewedPairs(adapter.excludedPairs) &&
+	isReviewedPairs(adapter.includedPairs) &&
 	typeof adapter.minimumCoverage === "number" &&
 	adapter.minimumCoverage > 0 &&
 	adapter.minimumCoverage <= 1;

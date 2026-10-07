@@ -420,6 +420,23 @@ export const compileAreaOverlapCrosswalk = (
 		),
 	);
 	const appliedExcludedPairs = new Set<string>();
+	const includedPairs = adapter.includedPairs ?? {};
+	const declaredIncludedPairs = new Set(
+		Object.entries(includedPairs).flatMap(([sourceCode, targets]) =>
+			Object.keys(targets).map(
+				(targetCode) => `${sourceCode}|${targetCode}`,
+			),
+		),
+	);
+	const bothDeclared = [...declaredIncludedPairs].filter((pair) =>
+		declaredExcludedPairs.has(pair),
+	);
+	if (bothDeclared.length > 0)
+		throw new Error(
+			`${adapter.id}: pairs are both excluded and included: ${bothDeclared.slice(0, 10).join(", ")}`,
+		);
+	const appliedIncludedPairs = new Set<string>();
+	const misplacedIncludedPairs: string[] = [];
 	let sourceCodePattern: RegExp | undefined;
 	if (adapter.sourceCodePattern) {
 		try {
@@ -492,6 +509,25 @@ export const compileAreaOverlapCrosswalk = (
 			// Classify the pair by its widest piece: a real overlap may also
 			// contain narrow fragments, such as islands, that belong to it.
 			const widthM = Math.max(...intersection.map(polygonWidthM));
+			if (includedPairs[sourceCode]?.[targetCode] !== undefined) {
+				// A reviewed overlap is kept, and kept out of the threshold's
+				// evidence, only while it lies where the rule cannot decide.
+				const pair = `${sourceCode}|${targetCode}`;
+				appliedIncludedPairs.add(pair);
+				if (
+					widthM < adapter.sliverWidthM / 2 ||
+					widthM >= adapter.sliverWidthM * 2
+				)
+					misplacedIncludedPairs.push(
+						`${pair} (${widthM.toFixed(1)} m)`,
+					);
+				overlaps.push({ code: targetCode, overlapAreaM2 });
+				coveredAreaByTarget.set(
+					targetCode,
+					(coveredAreaByTarget.get(targetCode) ?? 0) + overlapAreaM2,
+				);
+				continue;
+			}
 			if (widthM < adapter.sliverWidthM) {
 				sliverPairCount += 1;
 				widestSliverWidthM = Math.max(widestSliverWidthM ?? 0, widthM);
@@ -514,6 +550,17 @@ export const compileAreaOverlapCrosswalk = (
 			`${adapter.id}: excluded pairs do not exist in the declared geometry: ${unappliedExcludedPairs.slice(0, 10).join(", ")}`,
 		);
 	}
+	const unappliedIncludedPairs = [...declaredIncludedPairs].filter(
+		(pair) => !appliedIncludedPairs.has(pair),
+	);
+	if (unappliedIncludedPairs.length > 0)
+		throw new Error(
+			`${adapter.id}: included pairs do not overlap in the declared geometry: ${unappliedIncludedPairs.slice(0, 10).join(", ")}`,
+		);
+	if (misplacedIncludedPairs.length > 0)
+		throw new Error(
+			`${adapter.id}: included pairs are no longer near the ${adapter.sliverWidthM} m sliver rule, so need no review: ${misplacedIncludedPairs.slice(0, 10).join(", ")}`,
+		);
 
 	// A threshold is only trustworthy while no pair sits near it. Fail rather
 	// than publish a split that a slightly different threshold would change.
@@ -637,6 +684,9 @@ export const compileAreaOverlapCrosswalk = (
 			...(adapter.excludedPairs === undefined
 				? {}
 				: { excludedPairs: adapter.excludedPairs }),
+			...(adapter.includedPairs === undefined
+				? {}
+				: { includedPairs: adapter.includedPairs }),
 			areaProjection: "EPSG:6933" as const,
 			clipping: `polygon-clipping@${CLIPPING_VERSION}`,
 		},

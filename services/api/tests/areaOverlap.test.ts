@@ -254,6 +254,61 @@ test("fails when a pair sits too close to the sliver threshold", () => {
 	});
 });
 
+test("publishes a reviewed pair the sliver rule cannot decide", () => {
+	withFixture((root) => {
+		// At 10 m, S2's 5.6 m strip in T2 is too near the rule to call.
+		const artifact = compileAreaOverlapCrosswalk(
+			root,
+			adapter({
+				sliverWidthM: 10,
+				includedPairs: { S2: { T2: "Reviewed: a real strip." } },
+			}),
+			geometrySources(),
+			areaLookup(),
+		);
+		const s2 = artifact.records.find(
+			(record) => record.source.code === "S2",
+		)!;
+		assert.deepEqual(
+			s2.targets.map((target) => target.code),
+			["T2", "T3"],
+		);
+		assert.equal(s2.source.coverage, 1);
+		assert.deepEqual(artifact.provenance.includedPairs, {
+			S2: { T2: "Reviewed: a real strip." },
+		});
+	});
+});
+
+test("requires each reviewed included pair to need its review", () => {
+	withFixture((root) => {
+		const compile =
+			(overrides: Partial<AreaOverlapCrosswalkAdapter>) => () =>
+				compileAreaOverlapCrosswalk(
+					root,
+					adapter(overrides),
+					geometrySources(),
+					areaLookup(),
+				);
+		assert.throws(
+			compile({ includedPairs: { S9: { T1: "Reviewed." } } }),
+			/ included pairs do not overlap in the declared geometry: S9\|T1/,
+		);
+		// At 100 m the strip is plainly a sliver, so no review applies.
+		assert.throws(
+			compile({ includedPairs: { S2: { T2: "Reviewed." } } }),
+			/ included pairs are no longer near the 100 m sliver rule, so need no review: S2\|T2/,
+		);
+		assert.throws(
+			compile({
+				includedPairs: { S2: { T2: "Reviewed." } },
+				excludedPairs: { S2: { T2: "Reviewed." } },
+			}),
+			/ pairs are both excluded and included: S2\|T2/,
+		);
+	});
+});
+
 test("fails when an area is less covered than the adapter requires", () => {
 	withFixture((root) => {
 		assert.throws(
