@@ -8,14 +8,14 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			colorRange: definition.map?.colorRange ?? { min: 0, max: 1 },
 			...(definition.type === "housePrice" ? { measure: "median" } : {}),
 			...(definition.type === "income" ? { measure: "median" } : {}),
-		...(definition.type === "businessActivity" ||
-		definition.type === "electricVehicleChargers"
-			? { measure: "total" }
-			: {}),
-		...(definition.type === "broadband"
-			? { measure: "fullFibre" }
-			: {}),
-		...(definition.type === "lifeExpectancy"
+			...(definition.type === "businessActivity" ||
+			definition.type === "electricVehicleChargers"
+				? { measure: "total" }
+				: {}),
+			...(definition.type === "broadband"
+				? { measure: "fullFibre" }
+				: {}),
+			...(definition.type === "lifeExpectancy"
 				? { measure: "average" }
 				: {}),
 		},

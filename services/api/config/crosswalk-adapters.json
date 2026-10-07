@@ -492,7 +492,23 @@
 			},
 			"sliverWidthM": 100,
 			"minimumCoverage": 0.99,
-			"minimumTargetCoverage": 0
+			"minimumTargetCoverage": 0,
+			"excludedPairs": {
+				"E60000326": {
+					"E07000148": "The Broads Authority LPA and Norwich intersect by 0.03% of the LPA at a 102 m width, while independently generalised nearby borders leave intersections up to 46 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"W43000005": {
+					"W06000002": "Denbighshire LPA and Gwynedd intersect by 0.02% of the LPA at a 141 m width, while independently generalised borders elsewhere leave intersections up to 46 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"W43000008": {
+					"W06000002": "Powys LPA and Gwynedd intersect by 0.02% of the LPA at a 137 m width, while independently generalised borders elsewhere leave intersections up to 46 m wide. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				}
+			},
+			"includedPairs": {
+				"E60000329": {
+					"E09000031": "The London Legacy Development Corporation's planning area took in part of Waltham Forest as well as Hackney, Newham and Tower Hamlets. The two intersect by 5.0% of the LPA, but the strip is only 175 m wide, inside the 100 m sliver rule's indeterminate band, so the pair was reviewed and is published as an overlap."
+				}
+			}
 		},
 		{
 			"id": "major-town-and-city-2015-12-ew-bgc-to-local-authority-2019-04-uk-bgc-area-overlap",
