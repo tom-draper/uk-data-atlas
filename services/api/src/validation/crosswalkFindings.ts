@@ -363,10 +363,17 @@ export const crosswalkFindings = (
 			entries: ReadonlyArray<readonly [string, number]>,
 			required: number,
 		) => entries.filter(([, coverage]) => coverage + tolerance < required);
+		// A reviewed source is held to its own, declared lower bar.
+		const exceptions = artifact.provenance.coverageExceptions ?? {};
 		const below = [
-			...under(sourceCoverage, overlap.minimumCoverage).map(
-				([code, coverage]) => `${code} (${coverage.toFixed(4)})`,
-			),
+			...sourceCoverage
+				.filter(
+					([code, coverage]) =>
+						coverage + tolerance <
+						(exceptions[code]?.minimumCoverage ??
+							overlap.minimumCoverage),
+				)
+				.map(([code, coverage]) => `${code} (${coverage.toFixed(4)})`),
 			...under(targetCoverage, targetMinimum).map(
 				([code, coverage]) =>
 					`${code} (${coverage.toFixed(4)}, target minimum ${targetMinimum})`,

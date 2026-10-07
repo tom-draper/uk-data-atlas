@@ -16,6 +16,7 @@ import {
 import type {
 	AreaOverlapWeighting,
 	BestFitCrosswalkAdapter,
+	CoverageException,
 	CrosswalkAdapter,
 	CrosswalkMethod,
 	CrosswalkQuality,
@@ -151,6 +152,7 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 		>;
 		excludedPairs?: Record<string, Record<string, string>>;
 		includedPairs?: Record<string, Record<string, string>>;
+		coverageExceptions?: Record<string, CoverageException>;
 		areaProjection: "EPSG:6933";
 		clipping: string;
 	};

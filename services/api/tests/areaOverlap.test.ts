@@ -324,6 +324,55 @@ test("fails when an area is less covered than the adapter requires", () => {
 	});
 });
 
+test("holds a reviewed source to its own lower coverage", () => {
+	withFixture((root) => {
+		const compile =
+			(overrides: Partial<AreaOverlapCrosswalkAdapter>) => () =>
+				compileAreaOverlapCrosswalk(
+					root,
+					adapter({
+						minimumCoverage: 0.999,
+						minimumTargetCoverage: 0,
+						...overrides,
+					}),
+					geometrySources(),
+					areaLookup(),
+				);
+		// S2 loses its 0.5% sliver in T2, so falls short of 0.999.
+		assert.throws(
+			compile({}),
+			/1 source areas are less than 0.999 covered: S2/,
+		);
+		const artifact = compile({
+			coverageExceptions: {
+				S2: { minimumCoverage: 0.99, reason: "Reviewed: estuary." },
+			},
+		})();
+		assert.equal(artifact.records[1]!.source.coverage, 0.995);
+		assert.deepEqual(artifact.provenance.coverageExceptions, {
+			S2: { minimumCoverage: 0.99, reason: "Reviewed: estuary." },
+		});
+		assert.throws(
+			compile({
+				coverageExceptions: {
+					S2: { minimumCoverage: 0.996, reason: "Reviewed." },
+				},
+			}),
+			/1 source areas are less than 0.999 covered: S2/,
+		);
+		// S1 is wholly covered, and S9 is not a source at all.
+		assert.throws(
+			compile({
+				coverageExceptions: {
+					S1: { minimumCoverage: 0.99, reason: "Reviewed." },
+					S9: { minimumCoverage: 0.99, reason: "Reviewed." },
+				},
+			}),
+			/coverage exceptions are for sources not below 0.999 covered: S1, S9/,
+		);
+	});
+});
+
 test("permits uncovered targets only when an adapter declares a partial relationship", () => {
 	withFixture((root) => {
 		writeCollection(root, "targets.geojson", "TGT", [
