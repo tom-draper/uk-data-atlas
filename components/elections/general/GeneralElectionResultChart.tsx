@@ -12,20 +12,16 @@ import {
 	isConstituencyEstimate,
 } from "@/components/ConstituencyEstimateIndicator";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import { formatCount } from "@/lib/helpers/formatCount";
-
-interface ProcessedPartyData {
-	key: string;
-	name: string;
-	color: string;
-	votes: number;
-	percentage: number;
-}
+import {
+	PartyVotesGrid,
+	VoteBar,
+	type PartyVotes,
+} from "@/components/elections/PartyVotes";
 
 interface ProcessedYearData {
 	year: number;
 	dataset: GeneralElectionDataset | null;
-	partyData: ProcessedPartyData[];
+	partyData: PartyVotes[];
 	totalVotes: number;
 	turnout: number | null;
 	isAggregated: boolean;
@@ -35,38 +31,12 @@ interface ProcessedYearData {
 	hasData: boolean;
 }
 
-function VoteBar({ data }: { data: ProcessedPartyData[] }) {
-	return (
-		<div className="flex h-5 rounded overflow-hidden bg-gray-200 gap-0 w-full">
-			{data.map((p) => (
-				<div
-					key={p.key}
-					style={{
-						width: `${p.percentage}%`,
-						backgroundColor: p.color,
-					}}
-					title={`${p.name}: ${formatCount(p.votes)} (${p.percentage.toFixed(
-						1,
-					)}%)`}
-					className="group relative hover:opacity-80 transition-opacity"
-				>
-					{p.percentage > 12 && (
-						<span className="text-white text-[9px] font-bold px-0.5 leading-5 truncate block">
-							{p.key}
-						</span>
-					)}
-				</div>
-			))}
-		</div>
-	);
-}
-
 function Legend({
 	partyData,
 	seatsSummary,
 	totalSeats,
 }: {
-	partyData: ProcessedPartyData[];
+	partyData: PartyVotes[];
 	seatsSummary: { party: string; count: number; color: string }[] | null;
 	totalSeats: number | null;
 }) {
@@ -74,19 +44,7 @@ function Legend({
 	return (
 		<div className="animate-in fade-in duration-200 mt-2">
 			{/* Votes Legend */}
-			<div className="grid grid-cols-3 gap-0.5 text-[9px]">
-				{partyData.map((p) => (
-					<div key={p.key} className="flex items-center gap-1">
-						<div
-							className="size-1.5 rounded-sm shrink-0"
-							style={{ backgroundColor: p.color }}
-						/>
-						<span className="truncate font-medium">
-							{p.key}: {formatCount(p.votes)}
-						</span>
-					</div>
-				))}
-			</div>
+			<PartyVotesGrid partyData={partyData} />
 
 			{/* Seats Legend (Aggregated Only) */}
 			{seatsSummary && (
