@@ -19,3 +19,28 @@ test("selecting a local-election party filters its active chart", async ({
 	await expect(chart).toContainText("LAB:");
 	await expect(chart).not.toContainText("CON:");
 });
+
+test("selecting turnout keeps the election party legend in place", async ({
+	page,
+}) => {
+	await page.goto(
+		"/atlas?location=Greater%20Manchester&dataset=local-election&period=2024",
+	);
+
+	const chart = page
+		.locator('button[title^="House of Commons Library"]')
+		.filter({ hasText: "2024 Local Elections" });
+	await expect(chart).toBeVisible({ timeout: 60_000 });
+
+	const labour = page.getByTestId("category-legend-LAB");
+	await expect(labour).toBeVisible({ timeout: 60_000 });
+	const before = await labour.boundingBox();
+
+	await page.getByRole("button", { name: "Turnout", exact: true }).click();
+
+	await expect(labour).toBeVisible();
+	expect(await labour.boundingBox()).toMatchObject({ y: before?.y });
+	await expect(page.getByText("Voter turnout", { exact: true })).toHaveCount(
+		0,
+	);
+});
