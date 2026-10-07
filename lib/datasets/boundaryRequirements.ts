@@ -25,6 +25,19 @@ export function requiredBoundaryTypes(
 	return needed;
 }
 
+/**
+ * The required geographies as a sorted, comma-joined key.
+ *
+ * Compared by value, so switching to a dataset whose geography is already
+ * required leaves the key unchanged and does not trigger a boundary reload.
+ */
+export function requiredBoundaryKey(
+	visibility: Record<ChartKey, boolean>,
+	alsoNeeded: readonly (BoundaryType | undefined)[] = [],
+): string {
+	return [...requiredBoundaryTypes(visibility, alsoNeeded)].sort().join(",");
+}
+
 /** The geography a chart dataset is keyed to, without needing an instance. */
 export function boundaryTypeForDatasetType(
 	datasetType: string | undefined,
