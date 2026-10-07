@@ -1,9 +1,14 @@
 import type { Pair } from "polygon-clipping";
 import { projectEqualArea } from "../areaOverlap";
 import type { Coordinate } from "../areaContainment";
-import { GEOMETRY_TIERS, type GeometryTier } from "../simplifyGeometry";
+import {
+	GEOMETRY_TIERS,
+	triangleAreaM2,
+	type GeometryTier,
+} from "../simplifyGeometry";
 import { rebuildAreas, rebuildRing, type Topology } from "./arcs";
 import type { GeoJsonGeometry } from "../areaGeometry";
+import { MinHeap } from "../minHeap";
 
 /**
  * Generalise a decomposed release one arc at a time.
@@ -13,9 +18,6 @@ import type { GeoJsonGeometry } from "../areaGeometry";
  * exactly or do not share it at all, at every tier, which is the guarantee a
  * map needs and the one `simplifyGeometry` cannot give.
  */
-
-const triangleAreaM2 = (a: Pair, b: Pair, c: Pair) =>
-	Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
 
 /**
  * Visvalingam-Whyatt over one arc: drop the vertex whose triangle with its
@@ -58,49 +60,12 @@ const simplifyArc = (
 	for (let i = 0; i < count; i += 1)
 		area[i] = movable(i) ? areaAt(i) : Infinity;
 
-	const heap: [number, number][] = [];
-	const swim = (start: number) => {
-		let child = start;
-		while (child > 0) {
-			const parent = (child - 1) >> 1;
-			if (heap[parent]![0] <= heap[child]![0]) break;
-			[heap[parent], heap[child]] = [heap[child]!, heap[parent]!];
-			child = parent;
-		}
-	};
-	const sink = () => {
-		let parent = 0;
-		for (;;) {
-			const left = parent * 2 + 1;
-			if (left >= heap.length) break;
-			const right = left + 1;
-			const child =
-				right < heap.length && heap[right]![0] < heap[left]![0]
-					? right
-					: left;
-			if (heap[parent]![0] <= heap[child]![0]) break;
-			[heap[parent], heap[child]] = [heap[child]!, heap[parent]!];
-			parent = child;
-		}
-	};
-	const push = (entry: [number, number]) => {
-		heap.push(entry);
-		swim(heap.length - 1);
-	};
-	const pop = () => {
-		const top = heap[0]!;
-		const last = heap.pop()!;
-		if (heap.length > 0) {
-			heap[0] = last;
-			sink();
-		}
-		return top;
-	};
-	for (let i = 0; i < count; i += 1) if (movable(i)) push([area[i]!, i]);
+	const heap = new MinHeap();
+	for (let i = 0; i < count; i += 1) if (movable(i)) heap.push([area[i]!, i]);
 
 	let remaining = count;
-	while (heap.length > 0 && remaining > floor) {
-		const [entryArea, vertex] = pop();
+	while (heap.size > 0 && remaining > floor) {
+		const [entryArea, vertex] = heap.pop();
 		if (removed[vertex] || entryArea !== area[vertex]) continue;
 		if (entryArea >= thresholdM2) break;
 		removed[vertex] = 1;
@@ -112,7 +77,7 @@ const simplifyArc = (
 		for (const neighbour of [before, after]) {
 			if (removed[neighbour] || !movable(neighbour)) continue;
 			area[neighbour] = areaAt(neighbour);
-			push([area[neighbour]!, neighbour]);
+			heap.push([area[neighbour]!, neighbour]);
 		}
 	}
 	return arc.filter((_, i) => !removed[i]);

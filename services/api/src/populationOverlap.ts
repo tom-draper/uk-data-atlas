@@ -5,12 +5,14 @@ import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
 import {
+	areaMultiPolygon,
 	boundsIntersect,
 	CLIPPING_VERSION,
 	labelsFor,
 	multiPolygonAreaM2,
 	readGeometries,
 	round,
+	roundedMultiPolygon,
 	type AreaGeometry,
 } from "./areaOverlap";
 import { BoundedClipper, type ClipOperand } from "./boundedClipping";
@@ -31,22 +33,6 @@ const CLIP_TIMEOUT_MS = 30_000;
 
 const sha256 = (content: string | Buffer) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
-
-const multiPolygon = (geometry: AreaGeometry): MultiPolygon =>
-	geometry.pieces.map((piece) => piece.geometry);
-
-const roundedTo = (geometry: MultiPolygon, precision: number): MultiPolygon =>
-	geometry.map((polygon) =>
-		polygon.map((ring) =>
-			ring.map(
-				([x, y]) =>
-					[
-						Math.round(x * precision) / precision,
-						Math.round(y * precision) / precision,
-					] as [number, number],
-			),
-		),
-	);
 
 const boundsOf = (geometry: MultiPolygon): AreaGeometry["bounds"] => {
 	const bounds: AreaGeometry["bounds"] = [
@@ -200,14 +186,14 @@ export const compilePopulationOverlapCrosswalk = (
 	for (const code of sourceCodes)
 		clipper.register(
 			`source/${code}`,
-			multiPolygon(sources.geometries.get(code)!),
+			areaMultiPolygon(sources.geometries.get(code)!),
 		);
 	for (const code of new Set(
 		[...keptTargets.values()].flatMap((kept) => [...kept.keys()]),
 	))
 		clipper.register(
 			`target/${code}`,
-			multiPolygon(targets.geometries.get(code)!),
+			areaMultiPolygon(targets.geometries.get(code)!),
 		);
 
 	// A failed clip is retried at a millimetre's precision; a registered
@@ -222,7 +208,7 @@ export const compilePopulationOverlapCrosswalk = (
 				? first
 				: clipper.clip(
 						"intersection",
-						roundedTo(block, RETRY_PRECISION),
+						roundedMultiPolygon(block, RETRY_PRECISION),
 						other,
 					);
 		return clipped.status === "clipped"
@@ -251,7 +237,7 @@ export const compilePopulationOverlapCrosswalk = (
 			const count = population.get(blockCode)!;
 			blockPopulation += count;
 			if (count === 0 || block.areaM2 <= 0) continue;
-			const blockGeometry = multiPolygon(block);
+			const blockGeometry = areaMultiPolygon(block);
 			let placed = 0;
 			let failure: string | undefined;
 			for (const sourceCode of sourceCodes) {

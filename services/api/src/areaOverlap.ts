@@ -151,6 +151,34 @@ export type AreaGeometry = {
 	pieceBuckets: Map<string, number[]>;
 };
 
+/** A multipolygon with each coordinate rounded to 1 / precision. */
+export const roundedMultiPolygon = (
+	geometry: MultiPolygon,
+	precision: number,
+): MultiPolygon =>
+	geometry.map((polygon) =>
+		polygon.map((ring) =>
+			ring.map(
+				([x, y]) =>
+					[
+						Math.round(x * precision) / precision,
+						Math.round(y * precision) / precision,
+					] as [number, number],
+			),
+		),
+	);
+
+/** An area's pieces as one multipolygon, optionally rounded to 1 / precision. */
+export const areaMultiPolygon = (
+	geometry: AreaGeometry,
+	precision?: number,
+): MultiPolygon => {
+	const polygons = geometry.pieces.map((piece) => piece.geometry);
+	return precision === undefined
+		? polygons
+		: roundedMultiPolygon(polygons, precision);
+};
+
 const PIECE_BUCKET_SIZE_DEGREES = 0.25;
 
 const bucketRange = ([west, south, east, north]: Bounds) => ({

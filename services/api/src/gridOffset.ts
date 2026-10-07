@@ -1,14 +1,14 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { reverseOffsetPosition } from "@uk-data-atlas/geography";
-
-type Position = [number, number];
-
-type Geometry = {
-	type: string;
-	coordinates?: unknown;
-	geometries?: Geometry[];
-};
+import {
+	offsetPosition as offsetGridPosition,
+	reverseOffsetPosition,
+} from "@uk-data-atlas/geography";
+import {
+	mapGeometryPositions,
+	type Geometry,
+	type Position,
+} from "./geometryPositions";
 
 /**
  * A correction to a publisher's grid coordinates, applied before they are
@@ -76,67 +76,23 @@ export const appliesTo = (offset: GridOffset, code: string) =>
 export const offsetPosition = (
 	offset: GridOffset,
 	[easting, northing]: Position,
-): Position => {
-	const x = (easting - offset.origin.easting) / offset.unitMetres;
-	const y = (northing - offset.origin.northing) / offset.unitMetres;
-	const [e0, e1, e2] = offset.east;
-	const [n0, n1, n2] = offset.north;
-	return [easting + e0 + e1 * x + e2 * y, northing + n0 + n1 * x + n2 * y];
-};
-
-const offsetCoordinates = (
-	offset: GridOffset,
-	coordinates: unknown,
-): unknown =>
-	Array.isArray(coordinates) && typeof coordinates[0] === "number"
-		? offsetPosition(offset, [coordinates[0], coordinates[1] as number])
-		: Array.isArray(coordinates)
-			? coordinates.map((child) => offsetCoordinates(offset, child))
-			: coordinates;
+): Position => offsetGridPosition(offset, [easting, northing]) as Position;
 
 /** Moves every position of a grid geometry by the offset. */
 export const offsetGeometry = <T extends Geometry>(
 	offset: GridOffset,
 	geometry: T,
 ): T =>
-	(geometry.type === "GeometryCollection"
-		? {
-				...geometry,
-				geometries: (geometry.geometries ?? []).map((child) =>
-					offsetGeometry(offset, child),
-				),
-			}
-		: {
-				...geometry,
-				coordinates: offsetCoordinates(offset, geometry.coordinates),
-			}) as T;
-
-const reverseCoordinates = (
-	offset: GridOffset,
-	coordinates: unknown,
-): unknown =>
-	Array.isArray(coordinates) && typeof coordinates[0] === "number"
-		? reverseOffsetPosition(offset, [
-				coordinates[0],
-				coordinates[1] as number,
-			])
-		: Array.isArray(coordinates)
-			? coordinates.map((child) => reverseCoordinates(offset, child))
-			: coordinates;
+	mapGeometryPositions(geometry, (position) =>
+		offsetPosition(offset, position),
+	);
 
 /** Moves every position of a grid geometry back by the offset, exactly. */
 export const reverseOffsetGeometry = <T extends Geometry>(
 	offset: GridOffset,
 	geometry: T,
 ): T =>
-	(geometry.type === "GeometryCollection"
-		? {
-				...geometry,
-				geometries: (geometry.geometries ?? []).map((child) =>
-					reverseOffsetGeometry(offset, child),
-				),
-			}
-		: {
-				...geometry,
-				coordinates: reverseCoordinates(offset, geometry.coordinates),
-			}) as T;
+	mapGeometryPositions(
+		geometry,
+		(position) => reverseOffsetPosition(offset, position) as Position,
+	);

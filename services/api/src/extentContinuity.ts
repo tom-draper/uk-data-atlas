@@ -5,12 +5,14 @@ import type { AreaLookup } from "./areaInventory";
 import { BoundedClipper } from "./boundedClipping";
 import {
 	CLIPPING_VERSION,
+	areaMultiPolygon,
 	boundsIntersect,
 	labelsFor,
 	multiPolygonAreaM2,
 	polygonWidthM,
 	readGeometries,
 	round,
+	roundedMultiPolygon,
 	type AreaGeometry,
 } from "./areaOverlap";
 import type { ExtentContinuityCrosswalkAdapter } from "./crosswalkAdapters";
@@ -26,37 +28,6 @@ const RETRY_PRECISION = 1e8;
 // runs this long has hit polygon-clipping's non-terminating case.
 const CLIP_TIMEOUT_MS = 30_000;
 
-const multiPolygon = (
-	geometry: AreaGeometry,
-	precision?: number,
-): MultiPolygon =>
-	geometry.pieces.map(({ geometry: polygon }) =>
-		precision === undefined
-			? polygon
-			: polygon.map((ring) =>
-					ring.map(
-						([x, y]) =>
-							[
-								Math.round(x * precision) / precision,
-								Math.round(y * precision) / precision,
-							] as [number, number],
-					),
-				),
-	);
-
-const rounded = (geometry: MultiPolygon, precision: number): MultiPolygon =>
-	geometry.map((polygon) =>
-		polygon.map((ring) =>
-			ring.map(
-				([x, y]) =>
-					[
-						Math.round(x * precision) / precision,
-						Math.round(y * precision) / precision,
-					] as [number, number],
-			),
-		),
-	);
-
 /**
  * One clip, retried at a millimetre's precision if polygon-clipping's sweep
  * line fails on near-coincident edges, or why it could not be made.
@@ -71,8 +42,8 @@ const clipRetried = (
 	if (attempt.status === "clipped") return { geometry: attempt.geometry };
 	const retry = clipper.clip(
 		operation,
-		rounded(first, RETRY_PRECISION),
-		rounded(second, RETRY_PRECISION),
+		roundedMultiPolygon(first, RETRY_PRECISION),
+		roundedMultiPolygon(second, RETRY_PRECISION),
 	);
 	return retry.status === "clipped"
 		? { geometry: retry.geometry }
@@ -93,14 +64,14 @@ const difference = (
 ): { geometry: MultiPolygon } | { reason: string } => {
 	const first = clipper.clip(
 		"xor",
-		multiPolygon(source),
-		multiPolygon(target),
+		areaMultiPolygon(source),
+		areaMultiPolygon(target),
 	);
 	if (first.status === "clipped") return { geometry: first.geometry };
 	const retry = clipper.clip(
 		"xor",
-		multiPolygon(source, RETRY_PRECISION),
-		multiPolygon(target, RETRY_PRECISION),
+		areaMultiPolygon(source, RETRY_PRECISION),
+		areaMultiPolygon(target, RETRY_PRECISION),
 	);
 	return retry.status === "clipped"
 		? { geometry: retry.geometry }
@@ -163,7 +134,7 @@ const claimedWidthM = (
 			clipper,
 			"intersection",
 			difference,
-			multiPolygon(other),
+			areaMultiPolygon(other),
 		);
 		if ("reason" in claimed) return claimed;
 		widest = Math.max(widest, ...claimed.geometry.map(polygonWidthM));
@@ -186,15 +157,15 @@ const claimedDifference = (
 	const lost = clipRetried(
 		clipper,
 		"difference",
-		multiPolygon(source),
-		multiPolygon(target),
+		areaMultiPolygon(source),
+		areaMultiPolygon(target),
 	);
 	if ("reason" in lost) return lost;
 	const gained = clipRetried(
 		clipper,
 		"difference",
-		multiPolygon(target),
-		multiPolygon(source),
+		areaMultiPolygon(target),
+		areaMultiPolygon(source),
 	);
 	if ("reason" in gained) return gained;
 	const others = (areas: Array<[string, AreaGeometry]>) =>

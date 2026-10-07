@@ -4,8 +4,11 @@ import {
 	unpackGeometry,
 	type PackedGeometry,
 } from "./packedGeometry";
-
-type Position = [number, number];
+import {
+	mapGeometryPositions,
+	type Geometry,
+	type Position,
+} from "./geometryPositions";
 
 export type GeometryTransformation = {
 	name: string;
@@ -108,83 +111,65 @@ export const geometryProvenance = (crs: string): GeometryProvenance =>
 		? { sourceCrs: crs }
 		: { sourceCrs: crs, transformation: REPROJECTIONS[crs].transformation };
 
+type Direction = "toWgs84" | "fromWgs84";
+
+/** The supported grid's transformation, or why there is none. */
+const reprojectionFor = (crs: string, direction: Direction) => {
+	const reprojection = REPROJECTIONS[crs];
+	if (!reprojection)
+		throw new Error(
+			direction === "toWgs84"
+				? `No transformation to WGS84 is available from ${crs}.`
+				: `No transformation from WGS84 is available to ${crs}.`,
+		);
+	return reprojection;
+};
+
+const reprojectPoint = (
+	position: Position,
+	crs: string,
+	direction: Direction,
+): { position: Position; transformation?: GeometryTransformation } => {
+	if (isWgs84(crs)) return { position };
+	const reprojection = reprojectionFor(crs, direction);
+	return {
+		position: reprojection[direction](position),
+		transformation: reprojection.transformation,
+	};
+};
+
+const reprojectGeometry = <T extends Geometry>(
+	geometry: T,
+	crs: string,
+	direction: Direction,
+): T =>
+	isWgs84(crs)
+		? geometry
+		: mapGeometryPositions(
+				geometry,
+				reprojectionFor(crs, direction)[direction],
+			);
+
 /**
  * Reproject one horizontal coordinate for a caller-facing point lookup. The
  * returned transformation is part of the answer: a BNG or Irish Grid input is
  * never silently treated as WGS 84, and its stated accuracy can be included
  * in the positional tolerance beside the caller's own coordinate precision.
  */
-export const toWgs84Point = (
-	position: Position,
-	crs: string,
-): { position: Position; transformation?: GeometryTransformation } => {
-	if (isWgs84(crs)) return { position };
-	const reprojection = REPROJECTIONS[crs];
-	if (!reprojection)
-		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
-	return {
-		position: reprojection.toWgs84(position),
-		transformation: reprojection.transformation,
-	};
-};
+export const toWgs84Point = (position: Position, crs: string) =>
+	reprojectPoint(position, crs, "toWgs84");
 
 /**
  * Convert a normalised WGS 84 point into one of the supported national grids.
  * The named EPSG transformation describes the inverse operation, so callers
  * can retain its stated accuracy rather than treating the result as exact.
  */
-export const fromWgs84Point = (
-	position: Position,
-	crs: string,
-): { position: Position; transformation?: GeometryTransformation } => {
-	if (isWgs84(crs)) return { position };
-	const reprojection = REPROJECTIONS[crs];
-	if (!reprojection)
-		throw new Error(`No transformation from WGS84 is available to ${crs}.`);
-	return {
-		position: reprojection.fromWgs84(position),
-		transformation: reprojection.transformation,
-	};
-};
-
-const reprojectCoordinates = (
-	coordinates: unknown,
-	toWgs84: Reprojection["toWgs84"],
-): unknown => {
-	if (!Array.isArray(coordinates)) return coordinates;
-	if (typeof coordinates[0] === "number") {
-		return toWgs84([coordinates[0], coordinates[1] as number]);
-	}
-	return coordinates.map((child) => reprojectCoordinates(child, toWgs84));
-};
-
-type Geometry = {
-	type: string;
-	coordinates?: unknown;
-	geometries?: Geometry[];
-};
+export const fromWgs84Point = (position: Position, crs: string) =>
+	reprojectPoint(position, crs, "fromWgs84");
 
 /** Returns the geometry in WGS84, or throws for a CRS with no transformation. */
-export const toWgs84Geometry = <T extends Geometry>(
-	geometry: T,
-	crs: string,
-): T => {
-	if (isWgs84(crs)) return geometry;
-	const reprojection = REPROJECTIONS[crs];
-	if (!reprojection)
-		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
-	const reproject = (value: Geometry): Geometry =>
-		value.type === "GeometryCollection"
-			? { ...value, geometries: (value.geometries ?? []).map(reproject) }
-			: {
-					...value,
-					coordinates: reprojectCoordinates(
-						value.coordinates,
-						reprojection.toWgs84,
-					),
-				};
-	return reproject(geometry) as T;
-};
+export const toWgs84Geometry = <T extends Geometry>(geometry: T, crs: string) =>
+	reprojectGeometry(geometry, crs, "toWgs84");
 
 /**
  * A packed geometry in WGS84, the same as packing `toWgs84Geometry` of it
@@ -196,9 +181,7 @@ export const toWgs84Packed = (
 	crs: string,
 ): PackedGeometry => {
 	if (isWgs84(crs)) return packed;
-	const reprojection = REPROJECTIONS[crs];
-	if (!reprojection)
-		throw new Error(`No transformation to WGS84 is available from ${crs}.`);
+	const reprojection = reprojectionFor(crs, "toWgs84");
 	const reproject = (value: PackedGeometry): PackedGeometry => {
 		if (value.kind === "collection")
 			return {
@@ -234,20 +217,4 @@ export const toWgs84Packed = (
 export const fromWgs84Geometry = <T extends Geometry>(
 	geometry: T,
 	crs: string,
-): T => {
-	if (isWgs84(crs)) return geometry;
-	const reprojection = REPROJECTIONS[crs];
-	if (!reprojection)
-		throw new Error(`No transformation from WGS84 is available to ${crs}.`);
-	const reproject = (value: Geometry): Geometry =>
-		value.type === "GeometryCollection"
-			? { ...value, geometries: (value.geometries ?? []).map(reproject) }
-			: {
-					...value,
-					coordinates: reprojectCoordinates(
-						value.coordinates,
-						reprojection.fromWgs84,
-					),
-				};
-	return reproject(geometry) as T;
-};
+) => reprojectGeometry(geometry, crs, "fromWgs84");
