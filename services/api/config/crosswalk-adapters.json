@@ -535,7 +535,11 @@
 			},
 			"sliverWidthM": 100,
 			"minimumCoverage": 0.99,
-			"minimumTargetCoverage": 0
+			"minimumTargetCoverage": 0,
+			"indeterminatePairs": {
+				"decision": "overlap",
+				"reason": "Major towns and cities trace built-up land, not council borders, and spill into neighbouring authorities by every width from 50 m to several kilometres, so no width separates real overlaps from border noise. Border noise between the two releases stays under 47 m, so every intersection at least half the sliver width is published as a relationship."
+			}
 		},
 		{
 			"id": "travel-to-work-area-2011-12-uk-gcb-to-local-authority-2019-04-uk-bgc-area-overlap",
