@@ -2,17 +2,10 @@ import { useIsDark } from "@/lib/context/ThemeContext";
 import { panelTheme, glassStyle } from "@/lib/helpers/panelTheme";
 import GlassOverlays from "./GlassOverlays";
 import { gazetteer } from "@lib/data/gazetteer/static";
-import { LocationBounds, PopulationDataset } from "@lib/types";
+import { PopulationDataset } from "@lib/types";
 
-// Every place from the gazetteer, curated places and councils (built once).
-// Shaped as the old LocationBounds record so downstream list/handlers are
-// unchanged.
-const NAMED_LOCATIONS: Record<string, LocationBounds> = Object.fromEntries(
-	gazetteer.places().map((name) => {
-		const nl = gazetteer.namedLocation(name)!;
-		return [name, { lad_codes: nl.memberCodes, bounds: nl.bbox }];
-	}),
-);
+// Curated places and councils, both provided by the gazetteer.
+const LOCATION_NAMES = gazetteer.places();
 import {
 	useState,
 	useTransition,
@@ -24,7 +17,7 @@ import { formatCount } from "@/lib/helpers/formatCount";
 
 interface LocationPanelProps {
 	selectedLocation: string | null;
-	onLocationClick: (location: string, bounds: LocationBounds) => void;
+	onLocationClick: (location: string) => void;
 	/**
 	 * Absent whenever no population chart is enabled, because the dataset is
 	 * fetched per chart. The panel is not a chart, so it has to cope: without
@@ -46,14 +39,12 @@ export default function LocationPanel({
 	const deferredSearchQuery = useDeferredValue(searchQuery);
 
 	const allLocations = useMemo(() => {
-		return Object.entries(NAMED_LOCATIONS)
-			.flatMap(([location, bounds]) => {
-				const totalPopulation =
-					populationDataset?.locationPopulations?.[location] || 0;
-				if (totalPopulation <= 0) return [];
-				return [{ name: location, totalPopulation, bounds }];
-			})
-			.sort((a, b) => b.totalPopulation - a.totalPopulation);
+		return LOCATION_NAMES.flatMap((name) => {
+			const totalPopulation =
+				populationDataset?.locationPopulations?.[name] || 0;
+			if (totalPopulation <= 0) return [];
+			return [{ name, totalPopulation }];
+		}).sort((a, b) => b.totalPopulation - a.totalPopulation);
 	}, [populationDataset?.locationPopulations]);
 
 	const filteredLocations = useMemo(() => {
@@ -84,7 +75,7 @@ export default function LocationPanel({
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter" && filteredLocations.length > 0) {
 			const location = filteredLocations[0];
-			onLocationClick(location.name, location.bounds);
+			onLocationClick(location.name);
 		} else if (e.key === "Escape" && searchOpen) {
 			handleSearchToggle();
 		}
@@ -168,41 +159,31 @@ export default function LocationPanel({
 
 				{/* Scrollable location list */}
 				<div className="overflow-y-auto scroll-container flex-1 p-1 pt-0.5">
-					{filteredLocations.map(
-						({
-							name,
-							totalPopulation,
-							bounds,
-						}: {
-							name: string;
-							totalPopulation: number;
-							bounds: LocationBounds;
-						}) => (
-							<button
-								type="button"
-								key={name}
-								onClick={() => onLocationClick(name, bounds)}
-								className={`w-full text-left px-2 py-1 max-md:py-1.5 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
-									selectedLocation === name
-										? isDark
-											? "bg-white/15 text-gray-100"
-											: "bg-white/60 text-gray-800"
-										: isDark
-											? "hover:bg-white/10 text-gray-400 hover:text-gray-200"
-											: "hover:bg-white/40 text-gray-600 hover:text-gray-800"
-								}`}
+					{filteredLocations.map(({ name, totalPopulation }) => (
+						<button
+							type="button"
+							key={name}
+							onClick={() => onLocationClick(name)}
+							className={`w-full text-left px-2 py-1 max-md:py-1.5 rounded transition-all duration-200 text-xs cursor-pointer flex justify-between items-center ${
+								selectedLocation === name
+									? isDark
+										? "bg-white/15 text-gray-100"
+										: "bg-white/60 text-gray-800"
+									: isDark
+										? "hover:bg-white/10 text-gray-400 hover:text-gray-200"
+										: "hover:bg-white/40 text-gray-600 hover:text-gray-800"
+							}`}
+						>
+							<span className="font-normal truncate mr-2">
+								{name}
+							</span>
+							<span
+								className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}
 							>
-								<span className="font-normal truncate mr-2">
-									{name}
-								</span>
-								<span
-									className={`text-xs tabular-nums shrink-0 ${t.textMuted}`}
-								>
-									{formatCount(totalPopulation)}
-								</span>
-							</button>
-						),
-					)}
+								{formatCount(totalPopulation)}
+							</span>
+						</button>
+					))}
 				</div>
 			</div>
 		</div>
