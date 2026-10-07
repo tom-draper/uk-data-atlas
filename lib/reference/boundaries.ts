@@ -63,6 +63,3 @@ export const BOUNDARY_DETAILS: Record<string, string> = {
 	fireAndRescueAuthority:
 		"Fire and rescue authorities run the fire service for one or more council areas. Some are part of a county council, some are standalone bodies, and in some places the police and crime commissioner or mayor runs them.",
 };
-
-/** What a geography's anchor on /geographies is, beside its docs page. */
-export const boundaryAnchor = (slug: string) => `/geographies#${slug}`;
