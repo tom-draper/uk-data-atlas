@@ -25,7 +25,7 @@ import {
 	type BoundaryMappingTarget,
 } from "../data/boundaries/mappingSeeder";
 import { extractWardCodes } from "../data/boundaries/wardCodes";
-import { requiredBoundaryTypes } from "../datasets/boundaryRequirements";
+import { requiredBoundaryKey } from "../datasets/boundaryRequirements";
 import {
 	fetchConstituencyLadOverlaps,
 	type ConstituencyLadOverlaps,
@@ -68,10 +68,12 @@ export function useBoundaryData(
 		getVisibilitySnapshot,
 		() => DEFAULT_VISIBILITY,
 	);
+	// Keyed by value so a dataset switch onto an already-required geography
+	// does not re-run the load and flash every chart back to its placeholder.
+	const requiredKey = requiredBoundaryKey(visibility, [activeBoundaryType]);
 	const requiredTypes = useMemo(
-		() =>
-			[...requiredBoundaryTypes(visibility, [activeBoundaryType])].sort(),
-		[visibility, activeBoundaryType],
+		() => (requiredKey ? (requiredKey.split(",") as BoundaryType[]) : []),
+		[requiredKey],
 	);
 	const loadedTypes = useRef(new Set<BoundaryType>());
 
