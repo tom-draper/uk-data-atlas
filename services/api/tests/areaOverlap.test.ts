@@ -249,7 +249,7 @@ test("fails when a pair sits too close to the sliver threshold", () => {
 					geometrySources(),
 					areaLookup(),
 				),
-			/sliver separation is ambiguous around 10 m/,
+			/sliver separation is ambiguous around 10 m: .* Review 1 pairs: S2\|T2 \(5\.\d m, 0\.500% of source, 0\.498% of target\)\./,
 		);
 	});
 });
