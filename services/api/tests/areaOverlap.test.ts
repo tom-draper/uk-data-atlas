@@ -309,6 +309,55 @@ test("requires each reviewed included pair to need its review", () => {
 	});
 });
 
+test("keeps every pair the sliver rule cannot decide when the adapter says so", () => {
+	withFixture((root) => {
+		const decision = {
+			decision: "overlap" as const,
+			reason: "Edges are not drawn to the targets' borders.",
+		};
+		const artifact = compileAreaOverlapCrosswalk(
+			root,
+			adapter({ sliverWidthM: 10, indeterminatePairs: decision }),
+			geometrySources(),
+			areaLookup(),
+		);
+		const s2 = artifact.records.find(
+			(record) => record.source.code === "S2",
+		)!;
+		assert.deepEqual(
+			s2.targets.map((target) => target.code),
+			["T2", "T3"],
+		);
+		assert.equal(
+			artifact.validation.overlap.indeterminateOverlapPairCount,
+			1,
+		);
+		assert.equal(artifact.validation.overlap.sliverPairCount, 0);
+		assert.deepEqual(artifact.provenance.indeterminatePairs, decision);
+	});
+});
+
+test("requires an indeterminate-pair decision to decide something", () => {
+	withFixture((root) => {
+		// At 100 m the 5.6 m strip is plainly a sliver.
+		assert.throws(
+			() =>
+				compileAreaOverlapCrosswalk(
+					root,
+					adapter({
+						indeterminatePairs: {
+							decision: "overlap",
+							reason: "R",
+						},
+					}),
+					geometrySources(),
+					areaLookup(),
+				),
+			/no pair is near the 100 m sliver rule, so indeterminatePairs decides nothing/,
+		);
+	});
+});
+
 test("fails when an area is less covered than the adapter requires", () => {
 	withFixture((root) => {
 		assert.throws(

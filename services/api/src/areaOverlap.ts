@@ -525,6 +525,7 @@ export const compileAreaOverlapCrosswalk = (
 		);
 	const appliedIncludedPairs = new Set<string>();
 	const misplacedIncludedPairs: string[] = [];
+	let indeterminateOverlapPairCount = 0;
 	// Pairs too near the sliver rule to call, named when the compile refuses.
 	const undecidedPairs: string[] = [];
 	let sourceCodePattern: RegExp | undefined;
@@ -615,10 +616,21 @@ export const compileAreaOverlapCrosswalk = (
 				);
 				continue;
 			}
-			if (
+			const indeterminate =
 				widthM >= adapter.sliverWidthM / 2 &&
-				widthM < adapter.sliverWidthM * 2
-			)
+				widthM < adapter.sliverWidthM * 2;
+			if (indeterminate && adapter.indeterminatePairs) {
+				// The adapter has decided the whole band at once, so these
+				// pairs, like reviewed ones, are kept out of the evidence.
+				indeterminateOverlapPairCount += 1;
+				overlaps.push({ code: targetCode, overlapAreaM2 });
+				coveredAreaByTarget.set(
+					targetCode,
+					(coveredAreaByTarget.get(targetCode) ?? 0) + overlapAreaM2,
+				);
+				continue;
+			}
+			if (indeterminate)
 				undecidedPairs.push(
 					`${sourceCode}|${targetCode} (${widthM.toFixed(1)} m, ${((100 * overlapAreaM2) / source.areaM2).toFixed(3)}% of source, ${((100 * overlapAreaM2) / target.areaM2).toFixed(3)}% of target)`,
 				);
@@ -654,6 +666,10 @@ export const compileAreaOverlapCrosswalk = (
 	if (misplacedIncludedPairs.length > 0)
 		throw new Error(
 			`${adapter.id}: included pairs are no longer near the ${adapter.sliverWidthM} m sliver rule, so need no review: ${misplacedIncludedPairs.slice(0, 10).join(", ")}`,
+		);
+	if (adapter.indeterminatePairs && indeterminateOverlapPairCount === 0)
+		throw new Error(
+			`${adapter.id}: no pair is near the ${adapter.sliverWidthM} m sliver rule, so indeterminatePairs decides nothing.`,
 		);
 
 	// A threshold is only trustworthy while no pair sits near it. Fail rather
@@ -799,6 +815,9 @@ export const compileAreaOverlapCrosswalk = (
 			...(adapter.includedPairs === undefined
 				? {}
 				: { includedPairs: adapter.includedPairs }),
+			...(adapter.indeterminatePairs === undefined
+				? {}
+				: { indeterminatePairs: adapter.indeterminatePairs }),
 			...(adapter.coverageExceptions === undefined
 				? {}
 				: { coverageExceptions: adapter.coverageExceptions }),
@@ -812,6 +831,9 @@ export const compileAreaOverlapCrosswalk = (
 				candidatePairCount,
 				intersectingPairCount,
 				sliverPairCount,
+				...(adapter.indeterminatePairs === undefined
+					? {}
+					: { indeterminateOverlapPairCount }),
 				sliverWidthM: adapter.sliverWidthM,
 				widestSliverWidthM:
 					widestSliverWidthM === null

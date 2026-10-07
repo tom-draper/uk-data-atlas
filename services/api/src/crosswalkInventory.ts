@@ -23,6 +23,7 @@ import type {
 	CrosswalkSideAdapter,
 	CrosswalkWeighting,
 	GeometricContainmentCrosswalkAdapter,
+	IndeterminatePairs,
 	PopulationOverlapWeighting,
 	PropertyCrosswalkAdapter,
 	ExtentContinuityCrosswalkAdapter,
@@ -72,6 +73,8 @@ export type AreaOverlapValidation = {
 	candidatePairCount: number;
 	intersectingPairCount: number;
 	sliverPairCount: number;
+	/** Pairs kept by the adapter's `indeterminatePairs` decision. */
+	indeterminateOverlapPairCount?: number;
 	sliverWidthM: number;
 	widestSliverWidthM: number | null;
 	narrowestOverlapWidthM: number;
@@ -152,6 +155,7 @@ export type AreaOverlapCrosswalkArtifact = CrosswalkArtifactBase & {
 		>;
 		excludedPairs?: Record<string, Record<string, string>>;
 		includedPairs?: Record<string, Record<string, string>>;
+		indeterminatePairs?: IndeterminatePairs;
 		coverageExceptions?: Record<string, CoverageException>;
 		areaProjection: "EPSG:6933";
 		clipping: string;
