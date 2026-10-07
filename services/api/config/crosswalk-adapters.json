@@ -556,7 +556,27 @@
 			},
 			"sliverWidthM": 100,
 			"minimumCoverage": 0.99,
-			"minimumTargetCoverage": 0
+			"minimumTargetCoverage": 0,
+			"coverageExceptions": {
+				"S22000035": {
+					"minimumCoverage": 0.98,
+					"reason": "The Orkney Islands TTWA and Orkney Islands council trace the islands' coastlines with different generalisation, so the council covers 99.0% of the TTWA across 215 coastal pieces, and no other authority covers the rest."
+				}
+			},
+			"excludedPairs": {
+				"E30000234": {
+					"E07000073": "The London TTWA and Harlow intersect by 0.012% of the TTWA, split across 22 border pieces up to 160 m wide, where the generalised 2011 TTWA edge and the 2019 council edge diverge. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"S22000070": {
+					"S12000050": "The Livingston TTWA and North Lanarkshire intersect by 0.147% of the TTWA, split across 45 border pieces up to 178 m wide, where the generalised 2011 TTWA edge and the 2019 council edge diverge. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"W22000015": {
+					"W06000002": "The Newtown and Welshpool TTWA and Gwynedd intersect by 0.006% of the TTWA, split across 38 border pieces up to 71 m wide, while 99.98% of the TTWA lies in Powys. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				},
+				"W22000033": {
+					"W06000023": "The Tywyn and Dolgellau TTWA and Powys intersect by 0.014% of the TTWA, split across 149 border pieces up to 54 m wide, while 99.97% of the TTWA lies in Gwynedd. This lies inside the 100 m sliver rule's indeterminate band, so the pair is not published as a relationship."
+				}
+			}
 		},
 		{
 			"id": "super-output-area-2011-ni-to-local-authority-2018-12-uk-bgc-official-lookup",
