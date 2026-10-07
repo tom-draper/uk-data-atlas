@@ -1,6 +1,5 @@
 import { isNumericObservation } from "./dataCatalog";
 import { observationsFor } from "./observationArtifacts";
-import { resolveObservations } from "./observationResolution/observationPlan";
 import { rankObservations, readRankingOrder } from "./ranking";
 import {
 	changeRefusal,
@@ -17,11 +16,11 @@ import { parsePlaceParameter, requestedGeography } from "./placeParameter";
 import {
 	areaNamedBy,
 	defaultChangePeriods,
-	defaultSource,
 	namedAreaRefusal,
 	publishedPartitions,
 	statedDefaults,
 } from "./dataDefaults";
+import { selectSourcePartition } from "./sourcePartition";
 import { envelope, problem, type ApiResponse } from "./routeResponse";
 
 /** Change between two periods of a measure for areas published in both, ranked in stable pages. */
@@ -105,10 +104,18 @@ export const handleDataChangeRoutes = ({
 		boundaryYear: parsedUrl.searchParams.get("boundaryYear"),
 		datasetId: parsedUrl.searchParams.get("datasetId"),
 	};
-	const defaults = defaultSource(measure, requested, [], false);
-	const geography = requested.geography ?? defaults?.geography ?? null;
+	const partition = selectSourcePartition({
+		context,
+		measure,
+		query: requested,
+		periods: [],
+		includePeriod: false,
+	});
+	const defaults = partition.defaults;
+	const geography =
+		partition.kind === "refusal" ? null : partition.geography;
 	const boundaryYear =
-		requested.boundaryYear ?? defaults?.boundaryYear ?? null;
+		partition.kind === "refusal" ? null : partition.boundaryYear;
 	const changePeriods = defaults
 		? defaultChangePeriods(
 				defaults.source,
@@ -128,7 +135,13 @@ export const handleDataChangeRoutes = ({
 	 * end; pairing periods from partitions on different codes would pair
 	 * areas that are not the same place.
 	 */
-	if (!geography || !boundaryYear || !startPeriod || !endPeriod) {
+	if (
+		partition.kind === "incomplete" ||
+		!geography ||
+		!boundaryYear ||
+		!startPeriod ||
+		!endPeriod
+	) {
 		return problem(
 			400,
 			"Invalid Query",
@@ -138,19 +151,15 @@ export const handleDataChangeRoutes = ({
 	// The partition is chosen by geography and boundary year alone. Which
 	// periods it must hold is checked below, where the route needs their
 	// positions anyway to say which way round the change runs.
-	const resolved = resolveObservations(context, {
-		measureId,
-		periods: [],
-		geography,
-		boundaryYear,
-	});
-	if (resolved.kind === "refusal")
+	if (partition.kind === "refusal")
 		return problem(
 			400,
 			"Invalid Query",
 			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
-	const { source } = resolved.plan;
+	const {
+		plan: { source },
+	} = partition;
 	if (source.periods.length < 2) {
 		return problem(
 			422,

@@ -281,7 +281,7 @@ paths:
                     - /v1/boundary-releases
                     - /v1/boundary-releases:resolve
                     - /v1/boundary-releases/{geography}/{release}
-                    - /v1/geography-inventory
+                    - /v1/documents/{document-id}.json
                     - /v1/datasets
                     - /v1/datasets/{dataset-id}
                     - /v1/measures
@@ -310,6 +310,40 @@ paths:
                     - /v1/atlas-release
                 meta:
                   nextCursor: null
+
+  /documents/{document-id}.json:
+    get:
+      operationId: getEvidenceDocument
+      tags: ["Governance"]
+      summary: Download an immutable build evidence document
+      description: >
+        Build artifacts that explain release coverage, reviewed conversion
+        validation and other evidence are published as immutable JSON documents,
+        rather than query endpoints. Available document ids are
+        `analysis-geography-validation`, `geography-inventory`,
+        `measure-compatibility`, `relationship-candidates` and
+        `validation-report`.
+      parameters:
+        - name: document-id
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - analysis-geography-validation
+              - geography-inventory
+              - measure-compatibility
+              - relationship-candidates
+              - validation-report
+      responses:
+        "200":
+          description: The exact JSON build artifact.
+          content:
+            application/json:
+              schema:
+                type: object
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   /openapi.yaml:
     get:
@@ -1098,79 +1132,6 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
-        "503":
-          $ref: "#/components/responses/CatalogueUnavailable"
-
-  /geography-inventory:
-    get:
-      operationId: getGeographyInventory
-      tags: ["Geography"]
-      summary: Report resolver identity and relationship coverage, including the compiled backlog by geography
-      x-likely-refusal:
-        status: 503
-        when: "Takes no input. Refused only when the server was started without the geography inventory built."
-      description: >
-        For every boundary release, states whether an area identity artifact
-        has been compiled and which published crosswalks reference it, or an
-        explicit reason why neither is available yet. Each geography also has
-        stable identity and relationship totals, so clients can identify the
-        releases and geography families where a new source or reviewed
-        crosswalk would increase resolver coverage. This is a coverage report,
-        not a promise that every release is fully supported.
-      responses:
-        "200":
-          description: The current geography inventory.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GeographyInventoryEnvelope"
-              x-example-request: "/v1/geography-inventory"
-              example:
-                apiVersion: v1
-                atlasRelease: sha256:5c4aa4529cbfbd5e4c844c55cddba1ef04a7bf76f3eaa085a357fff401af6d0c
-                data:
-                  schemaVersion: 1
-                  contentHash: sha256:c5d03f56b5cd3ee31e277ad4a0ee2cde2712c1c64fd373876c19e64c9be4ff0a
-                  boundaryRegistryHash: sha256:0cf142313deb1455948d6fc856c47b74d7e2e17b0af2ce450593e0d9985a7d46
-                  releases:
-                    - id: 2025-12-en-bgc
-                      geography: combinedAuthority
-                      countries:
-                        - GB-ENG
-                      inputFormats:
-                        - .geojson
-                      areaIdentities:
-                        status: available
-                        recordCount: 15
-                        artifact: areas/combinedAuthority/2025-12-en-bgc.json
-                      relationships:
-                        status: available
-                        crosswalks:
-                          - id: local-authority-2025-12-uk-bgc-to-combined-authority-2025-12-en-bgc-official-lookup
-                            direction: to
-                            counterpart:
-                              geography: localAuthority
-                              boundaryRelease: 2025-12-uk-bgc
-                            method: clean-containment
-                            quality: publisher-supplied
-                            weighting:
-                              status: not-applicable
-                  geographies:
-                    - id: combinedAuthority
-                      countries:
-                        - GB-ENG
-                      releaseCount: 1
-                      capabilities:
-                        areaIdentities:
-                          availableReleaseCount: 1
-                          unsupportedReleaseCount: 0
-                          availableAreaCount: 15
-                        relationships:
-                          availableReleaseCount: 1
-                          unsupportedReleaseCount: 0
-                          crosswalkCount: 1
-                meta:
-                  nextCursor: null
         "503":
           $ref: "#/components/responses/CatalogueUnavailable"
 
@@ -2142,29 +2103,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisGeographyListEnvelope"
-        "503": { $ref: "#/components/responses/CatalogueUnavailable" }
-
-  /analysis-geography-validation:
-    get:
-      operationId: getAnalysisGeographyValidation
-      tags: ["Trend"]
-      summary: Get the validation receipt for reviewed conversions
-      x-likely-refusal:
-        status: 503
-        when: "The release was built without the analysis geography validation artifact."
-      description: >
-        Returns the release-pinned evidence behind every reviewed conversion:
-        its source observations, crosswalk hashes, record counts and the input
-        and output totals that proved exact conservation at build time. A
-        path-backed conversion lists the hash and direction of every crosswalk
-        in its `path`, and was proved exact through every step.
-      responses:
-        "200":
-          description: The complete analysis geography validation receipt.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisGeographyValidationEnvelope"
         "503": { $ref: "#/components/responses/CatalogueUnavailable" }
 
   /analysis:plan:

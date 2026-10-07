@@ -225,6 +225,10 @@ build internals as routes. Proposed shape:
 routes. These are the evidence that the archive is correct. Link them from
 the release and measure resources, and serve them as static files.
 
+`geography-inventory` and `analysis-geography-validation` now ship as static
+documents at `/documents/{document-id}.json`; move the remaining evidence
+routes once their query-specific summaries have equivalent build artifacts.
+
 ### Park
 
 `/terrain` and `/terrain/elevation/point` (a remote elevation preview, not UK
