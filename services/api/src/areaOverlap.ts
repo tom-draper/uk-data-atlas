@@ -525,6 +525,8 @@ export const compileAreaOverlapCrosswalk = (
 		);
 	const appliedIncludedPairs = new Set<string>();
 	const misplacedIncludedPairs: string[] = [];
+	// Pairs too near the sliver rule to call, named when the compile refuses.
+	const undecidedPairs: string[] = [];
 	let sourceCodePattern: RegExp | undefined;
 	if (adapter.sourceCodePattern) {
 		try {
@@ -613,6 +615,13 @@ export const compileAreaOverlapCrosswalk = (
 				);
 				continue;
 			}
+			if (
+				widthM >= adapter.sliverWidthM / 2 &&
+				widthM < adapter.sliverWidthM * 2
+			)
+				undecidedPairs.push(
+					`${sourceCode}|${targetCode} (${widthM.toFixed(1)} m, ${((100 * overlapAreaM2) / source.areaM2).toFixed(3)}% of source, ${((100 * overlapAreaM2) / target.areaM2).toFixed(3)}% of target)`,
+				);
 			if (widthM < adapter.sliverWidthM) {
 				sliverPairCount += 1;
 				widestSliverWidthM = Math.max(widestSliverWidthM ?? 0, widthM);
@@ -655,7 +664,7 @@ export const compileAreaOverlapCrosswalk = (
 		narrowestOverlapWidthM < adapter.sliverWidthM * 2
 	) {
 		throw new Error(
-			`${adapter.id}: sliver separation is ambiguous around ${adapter.sliverWidthM} m: widest sliver ${widestSliverWidthM?.toFixed(1)} m, narrowest overlap ${narrowestOverlapWidthM.toFixed(1)} m.`,
+			`${adapter.id}: sliver separation is ambiguous around ${adapter.sliverWidthM} m: widest sliver ${widestSliverWidthM?.toFixed(1)} m, narrowest overlap ${narrowestOverlapWidthM.toFixed(1)} m. Review ${undecidedPairs.length} pairs: ${undecidedPairs.slice(0, 20).join("; ")}.`,
 		);
 	}
 
