@@ -170,7 +170,10 @@ export default function LegendContent({
 							format: (value: number) =>
 								`${value.toFixed(0)} µg/m³ ${airQualityLabel}`,
 						}
-					: (claimantCountLegend ?? unemploymentLegend ?? ghgLegend ?? legend);
+					: (claimantCountLegend ??
+						unemploymentLegend ??
+						ghgLegend ??
+						legend);
 		const dynamicRange = getColorRange?.(
 			activeDataset as never,
 			displayOptions,
