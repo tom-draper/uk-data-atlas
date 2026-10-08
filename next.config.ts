@@ -1,8 +1,20 @@
 import type { NextConfig } from "next";
-import path from "path";
 import packageJson from "./package.json";
 
-const useMapbox = process.env.NEXT_PUBLIC_MAP_TYPE === "mapbox";
+// Pick the map renderer at build time. The value is inlined into the client
+// bundle, so the provider not chosen is never shipped (see
+// lib/hooks/useMapInitialization.ts).
+const mapProvider = process.env.NEXT_PUBLIC_MAP_PROVIDER || "maplibre";
+if (mapProvider !== "maplibre" && mapProvider !== "mapbox") {
+	throw new Error(
+		`NEXT_PUBLIC_MAP_PROVIDER must be "maplibre" or "mapbox", got "${mapProvider}"`,
+	);
+}
+if (mapProvider === "mapbox" && !process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
+	throw new Error(
+		"NEXT_PUBLIC_MAP_PROVIDER=mapbox needs NEXT_PUBLIC_MAPBOX_TOKEN",
+	);
+}
 const dataVersion =
 	process.env.VERCEL_GIT_COMMIT_SHA ?? `v${packageJson.version}`;
 
@@ -14,6 +26,7 @@ const nextConfig: NextConfig = {
 	},
 	env: {
 		NEXT_PUBLIC_DATA_VERSION: dataVersion,
+		NEXT_PUBLIC_MAP_PROVIDER: mapProvider,
 	},
 	async redirects() {
 		// The datasets page used to live at /sources.
@@ -52,12 +65,6 @@ const nextConfig: NextConfig = {
 		config.watchOptions = {
 			ignored: ["**/data/**", "**/node_modules/**"],
 		};
-		if (!useMapbox) {
-			config.resolve.alias["mapbox-gl"] = path.resolve(
-				process.cwd(),
-				"lib/stubs/mapbox-gl.ts",
-			);
-		}
 		return config;
 	},
 };
