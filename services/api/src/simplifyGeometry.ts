@@ -1,5 +1,5 @@
 import type { Pair, Polygon } from "polygon-clipping";
-import { polygonAreaM2, projectEqualArea } from "./areaOverlap";
+import { polygonAreaM2, projectEqualArea } from "./equalAreaProjection";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import { MinHeap } from "./minHeap";
 

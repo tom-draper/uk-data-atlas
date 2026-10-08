@@ -7,10 +7,12 @@ import type { Polygon } from "polygon-clipping";
 import {
 	compileAreaOverlapCrosswalk,
 	measurePairOverlap,
+} from "../src/areaOverlap";
+import {
 	polygonAreaM2,
 	polygonWidthM,
 	projectEqualArea,
-} from "../src/areaOverlap";
+} from "../src/equalAreaProjection";
 import type { GeometrySourceLookup } from "../src/areaGeometry";
 import { createAreaLookup } from "../src/areaInventory";
 import type { AreaOverlapCrosswalkAdapter } from "../src/crosswalkAdapters";

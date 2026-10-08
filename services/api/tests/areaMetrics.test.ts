@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { projectEqualArea, unprojectEqualArea } from "../src/areaOverlap";
+import {
+	projectEqualArea,
+	unprojectEqualArea,
+} from "../src/equalAreaProjection";
 import { areaMetrics } from "../src/areaMetrics";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 import { containPoint } from "../src/areaContainment";

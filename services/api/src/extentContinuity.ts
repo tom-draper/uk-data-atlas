@@ -8,13 +8,12 @@ import {
 	areaMultiPolygon,
 	boundsIntersect,
 	labelsFor,
-	multiPolygonAreaM2,
-	polygonWidthM,
 	readGeometries,
 	round,
 	roundedMultiPolygon,
 	type AreaGeometry,
 } from "./areaOverlap";
+import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
 import type { ExtentContinuityCrosswalkAdapter } from "./crosswalkAdapters";
 import type { ExtentContinuityCrosswalkArtifact } from "./crosswalkInventory";
 import { validateEndpoint } from "./crosswalkValidation";

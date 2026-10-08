@@ -1,5 +1,5 @@
 import type { Pair } from "polygon-clipping";
-import { projectEqualArea } from "../areaOverlap";
+import { projectEqualArea } from "../equalAreaProjection";
 import type { Coordinate } from "../areaContainment";
 import {
 	GEOMETRY_TIERS,

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { borderIndex, sharedBorder } from "../src/areaNeighbours";
-import { edgeLengthM } from "../src/areaOverlap";
+import { edgeLengthM } from "../src/equalAreaProjection";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 
 const ring = (west: number, south: number, east: number, north: number) => [
