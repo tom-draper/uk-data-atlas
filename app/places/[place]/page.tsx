@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import { Sheet } from "@/components/docs/Page";
-import {
-	AreaPlacePage,
-	areaSummary,
-	NamedPlacePage,
-} from "@/components/places/PlacePages";
+import { AreaPlacePage } from "@/components/places/AreaPlacePage";
+import { NamedPlacePage } from "@/components/places/NamedPlacePage";
 import { geographyNoun, namedKindName } from "@/lib/places/labels";
 import {
 	loadAreaProfile,
@@ -15,6 +12,7 @@ import {
 	placeEntry,
 } from "@/lib/places/load";
 import { isAreaCode } from "@/lib/places/profile";
+import { areaSummary } from "@/lib/places/summary";
 import { pageMetadata } from "@/lib/site";
 
 type Params = Promise<{ place: string }>;
