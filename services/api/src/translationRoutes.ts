@@ -1,7 +1,12 @@
 import type { RelationshipPurpose } from "./relationshipPaths";
 import { parseExactReleaseReference } from "./releaseForDate";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 const PURPOSES: RelationshipPurpose[] = ["identity", "membership", "apportion"];
 
@@ -33,9 +38,7 @@ export const handleTranslationRoutes = ({
 		!to ||
 		!PURPOSES.includes(purpose as RelationshipPurpose)
 	) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"from, code and to are required. from and to are exact geography/release references; purpose must be identity, membership or apportion.",
 		);
 	}

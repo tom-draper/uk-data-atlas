@@ -3,7 +3,12 @@ import { unsupported } from "./capability";
 import { coveragePlan } from "./coveragePlan";
 import { relationshipPurposeFor } from "./relationshipPaths";
 import { parseExactReleaseReference } from "./releaseForDate";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 const supportFor = (
@@ -192,17 +197,11 @@ export const handleAnalysisGeographyRoutes = ({
 		: measureId;
 	const to = parseExactReleaseReference(parsedUrl.searchParams.get("to"));
 	if (!requestedMeasure || !to)
-		return problem(
-			400,
-			"Invalid Query",
-			"measure and to=geography/release are required.",
-		);
+		return invalidQuery("measure and to=geography/release are required.");
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryYear = parsedUrl.searchParams.get("boundaryYear");
 	if (isPlan && (!geography || !boundaryYear))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography and boundaryYear are required when planning an analysis, so the API never chooses between source partitions.",
 		);
 	const supports = supportFor(
@@ -226,11 +225,7 @@ export const handleAnalysisGeographyRoutes = ({
 		};
 	const period = parsedUrl.searchParams.get("period");
 	if (!period)
-		return problem(
-			400,
-			"Invalid Query",
-			"period is required when planning an analysis.",
-		);
+		return invalidQuery("period is required when planning an analysis.");
 	const support = supports.find((candidate) =>
 		candidate.source.periods.includes(period),
 	);

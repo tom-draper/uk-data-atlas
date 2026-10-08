@@ -7,7 +7,12 @@ import {
 import { cursorFor, nextPageHref, readCursor } from "./pagination";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /**
  * A box query answers with identities by default, so the cost of a wide box is
@@ -49,9 +54,7 @@ export const handleAreaIntersectsRoutes = ({
 		south! >= north! ||
 		!geography
 	) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"bbox (west,south,east,north in WGS 84, west < east and south < north) and geography are required.",
 		);
 	}
@@ -71,9 +74,7 @@ export const handleAreaIntersectsRoutes = ({
 			? DEFAULT_INTERSECTS_LIMIT
 			: Number(limitParameter);
 	if (!Number.isInteger(limit) || limit < 1 || limit > MAX_INTERSECTS_LIMIT) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`limit must be a whole number from 1 to ${MAX_INTERSECTS_LIMIT}.`,
 		);
 	}

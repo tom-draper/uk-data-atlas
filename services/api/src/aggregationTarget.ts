@@ -10,7 +10,7 @@ import {
 	pathMembershipClaims,
 } from "./aggregationMembership";
 import type { GeographyResolver } from "./geographyResolver";
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 import { areaKey } from "./geographyKeys";
 
 export type AggregationTarget = {
@@ -62,15 +62,11 @@ export const resolveAggregationTarget = ({
 }): AggregationTarget | ApiResponse | undefined => {
 	if (!targetCode) return undefined;
 	if (crosswalkId && pathId)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Name either crosswalk or path, not both. A path already names every crosswalk it uses.",
 		);
 	if ((!crosswalkId && !pathId) || !sourceRelease) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Summing members onto an area other than a country requires crosswalk, or a published membership path, and sourceRelease, so membership is explicit rather than inferred.",
 		);
 	}

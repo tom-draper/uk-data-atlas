@@ -7,7 +7,7 @@ import {
 	parseExactReleaseReference,
 	type ExactReleaseReference,
 } from "./releaseForDate";
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 
 export type AggregateQuery = {
 	period: string | null;
@@ -53,9 +53,7 @@ export const parseAggregateQuery = ({
 	);
 	if (parsedPlace && "status" in parsedPlace) return parsedPlace;
 	if (!parsedPlace)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"place is required: location/{id} for a curated named location, a country code such as E92000001, or an area code a membership crosswalk groups members into.",
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? "";
@@ -108,15 +106,11 @@ export const parseAggregateQuery = ({
 	const fromParameter = parsedUrl.searchParams.get("from");
 	const from = parseExactReleaseReference(fromParameter);
 	if (fromParameter !== null && !from)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"from must be an exact geography/release reference.",
 		);
 	if (from && geography && from.geography !== geography)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"from must name the same geography as the source partition.",
 		);
 	const locationId = place.kind === "location" ? place.id : null;
@@ -136,15 +130,11 @@ export const parseAggregateQuery = ({
 	const targetGeography =
 		targetCode && place.kind === "area" ? (place.geography ?? null) : null;
 	if (targetCode && !crosswalkId && !pathId)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${targetCode} is not a country, so it is summed through a membership crosswalk: name one as crosswalk, or a path as path. A curated location is location/{id}.`,
 		);
 	if (period === null || geography === null || boundaryYear === null) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} has no published source for that period, geography and boundary year.`,
 		);
 	}

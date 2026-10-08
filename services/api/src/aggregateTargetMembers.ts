@@ -6,7 +6,7 @@ import {
 import type { AggregationTarget } from "./aggregationTarget";
 import type { PopulationObservation } from "./dataCatalog";
 import type { NamedLocation } from "./namedLocations";
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 
 export type AggregateTargetMembers = {
 	byLocation?: ReturnType<typeof aggregateLocationMembers>;
@@ -94,9 +94,7 @@ export const requireAggregateMembers = ({
 		);
 	}
 	if (!aggregate) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Supply exactly one of locationId, areaCode or targetCode.",
 		);
 	}

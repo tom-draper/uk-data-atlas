@@ -1,7 +1,12 @@
 import { areaNotFound } from "./areaResources";
 import { measureCapability } from "./measureCapability";
 import { measureCoverage } from "./measureCoverage";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Published code-set coverage assessments for a measure. */
@@ -39,9 +44,7 @@ export const handleMeasureCoverageRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	if ((geography === null) !== (boundaryRelease === null))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography and release are given together, to ask whether this measure can be had on that boundary release.",
 		);
 	if (geography === null || boundaryRelease === null)

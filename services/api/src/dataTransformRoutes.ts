@@ -5,7 +5,12 @@ import {
 	refused,
 	resolveObservations,
 } from "./observationResolution/observationPlan";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import {
@@ -142,21 +147,15 @@ export const handleDataTransformRoutes = ({
 	const comparisonAreaCode =
 		comparisonArea?.code ?? comparisonAreaCodeParameter;
 	if (!baselineAreaCode || !comparisonAreaCode)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"baselineAreaCode and comparisonAreaCode are required.",
 		);
 	if (baselineAreaCode === comparisonAreaCode)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"baselineAreaCode and comparisonAreaCode must differ.",
 		);
 	if (period === null || geography === null || boundaryYear === null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} compares two areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	const resolved = resolveObservations(context, {

@@ -3,7 +3,7 @@ import { resolveAreaQuery } from "./areaResolveRoutes";
 import { selectedAsOf } from "./locationRoutes";
 import { postcodePlace } from "./postcodeRoutes";
 import { MAX_PAGE_SIZE, readPageSize } from "./pagination";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Resolve an area code or place name without selecting one ambiguous meaning. */
@@ -21,9 +21,7 @@ export const handlePlaceRoutes = ({
 		return undefined;
 	const query = parsedUrl.searchParams.get("q")?.trim();
 	if (!query)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"q is required: a place name, an area code, or a place reference such as localAuthority/E08000003.",
 		);
 	if (
@@ -38,9 +36,7 @@ export const handlePlaceRoutes = ({
 		});
 	const limit = readPageSize(parsedUrl.searchParams.get("limit"), 10);
 	if (limit === undefined)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 		);
 	const asOf = selectedAsOf(parsedUrl);

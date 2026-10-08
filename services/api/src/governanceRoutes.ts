@@ -1,6 +1,11 @@
 import { attributionFor, attributionText } from "./attribution";
 import { correctionsForMeasure } from "./correctionRegister";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Governance and evidence endpoints, separate from the data they describe. */
@@ -19,11 +24,7 @@ export const handleGovernanceRoutes = ({
 	) {
 		const measureIds = parsedUrl.searchParams.getAll("measure");
 		if (measureIds.length > 1) {
-			return problem(
-				400,
-				"Invalid Query",
-				"measure may be supplied at most once.",
-			);
+			return invalidQuery("measure may be supplied at most once.");
 		}
 		const measureId = measureIds[0] ?? null;
 		return {
@@ -57,9 +58,7 @@ export const handleGovernanceRoutes = ({
 			crosswalks: parsedUrl.searchParams.getAll("crosswalk"),
 		};
 		if (Object.values(request).every((values) => values.length === 0)) {
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"Name at least one resource to attribute, as dataset, measure, boundaryRelease or crosswalk. Each may be repeated.",
 			);
 		}

@@ -2,7 +2,12 @@ import {
 	availableReconciliations,
 	reconcileMeasure,
 } from "./measureReconciliation";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Check a measure against itself across two geographies. */
@@ -42,9 +47,7 @@ export const handleMeasureReconciliationRoutes = ({
 	const pathId = parsedUrl.searchParams.get("path");
 	const period = parsedUrl.searchParams.get("period");
 	if (crosswalkId && pathId)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Name either crosswalk or path, not both. A path already names every crosswalk it uses.",
 		);
 	// Without a crosswalk or path, the comparisons this measure's partitions
@@ -59,9 +62,7 @@ export const handleMeasureReconciliationRoutes = ({
 			}),
 		};
 	if (!period)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`period is required with ${crosswalkId ? "crosswalk" : "path"}: a reconciliation compares one period.`,
 		);
 	const reconciliation = reconcileMeasure(

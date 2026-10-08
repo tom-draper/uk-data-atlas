@@ -10,7 +10,7 @@ import {
 	type MeasureCompatibilityInventory,
 } from "./measureCompatibility";
 import { parseExactReleaseReference } from "./releaseForDate";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 const RELATIONSHIP_PURPOSES: RelationshipPurpose[] = [
@@ -164,17 +164,16 @@ export const handleRelationshipCapabilityRoutes = ({
 	const purposeParameter = parsedUrl.searchParams.get("purpose");
 	const measureId = parsedUrl.searchParams.get("measure");
 	const operation = parsedUrl.searchParams.get("operation");
-	const invalid = (detail: string) => problem(400, "Invalid Query", detail);
 	if (fromParameter === null)
-		return invalid(
+		return invalidQuery(
 			"from is required, as geography/release, such as from=ward/2023-05-uk-bgc.",
 		);
 	if (!from)
-		return invalid(
+		return invalidQuery(
 			`from must be one exact release, as geography/release; ${fromParameter} is not.`,
 		);
 	if (toParameter !== null && !to)
-		return invalid(
+		return invalidQuery(
 			`to must be one exact release, as geography/release; ${toParameter} is not.`,
 		);
 	const conversionOnly = (
@@ -185,21 +184,21 @@ export const handleRelationshipCapabilityRoutes = ({
 		] as const
 	).find(([, value]) => value !== null)?.[0];
 	if (!to && conversionOnly)
-		return invalid(
+		return invalidQuery(
 			`${conversionOnly} describes one conversion; add to=geography/release to name its target.`,
 		);
 	if (
 		purposeParameter !== null &&
 		!RELATIONSHIP_PURPOSES.includes(purposeParameter as RelationshipPurpose)
 	)
-		return invalid(
+		return invalidQuery(
 			`purpose must be one of ${RELATIONSHIP_PURPOSES.join(", ")}.`,
 		);
 	if (
 		operation !== null &&
 		!RELATIONSHIP_OPERATIONS.includes(operation as RelationshipOperation)
 	)
-		return invalid(
+		return invalidQuery(
 			`operation must be one of ${RELATIONSHIP_OPERATIONS.join(", ")}.`,
 		);
 	const geographyResolver = context.geographyResolver;

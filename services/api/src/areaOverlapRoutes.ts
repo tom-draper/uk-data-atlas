@@ -2,7 +2,12 @@ import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
 import { areaNotFound } from "./areaResources";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /** Travels with an overlap, so the relation reported can be read against the rule that decided it. */
 const PAIR_OVERLAP_METHOD = {
@@ -34,9 +39,7 @@ export const handleAreaOverlapRoutes = ({
 	];
 	const other = (parsedUrl.searchParams.get("place") ?? "").split("/");
 	if (other.length !== 3 || other.some((part) => part.length === 0)) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"place must name the other area as {geography}/{release}/{code}, such as localAuthority/2024-05-uk-bgc/E07000092.",
 		);
 	}

@@ -16,7 +16,12 @@ import {
 import { valueForPlace } from "./placeValue";
 import { describeAttempt, describeCandidate } from "./placeResponses";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /** A measure's value for one named place, reporting each candidate meaning that was tried. */
 export const handleDataValueRoutes = ({
@@ -55,11 +60,7 @@ export const handleDataValueRoutes = ({
 	const place = parsedUrl.searchParams.get("place")?.trim();
 	const postcode = parsedUrl.searchParams.get("postcode")?.trim();
 	if (place && postcode) {
-		return problem(
-			400,
-			"Invalid Query",
-			"Give place or postcode, not both.",
-		);
+		return invalidQuery("Give place or postcode, not both.");
 	}
 	// A place written as a unit postcode, or a postcode place reference from
 	// /v1/places, is answered as that postcode.
@@ -75,9 +76,7 @@ export const handleDataValueRoutes = ({
 			postcodeText,
 		);
 	if (!place) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"place or postcode is required: a place name such as North West, an area code, a place reference from /v1/places, or a unit postcode such as SW1A 1AA.",
 		);
 	}
@@ -181,11 +180,7 @@ const postcodeValue = (
 		boundaryYear !== undefined &&
 		(!/^\d{4}$/.test(boundaryYearText!) || !Number.isInteger(boundaryYear))
 	) {
-		return problem(
-			400,
-			"Invalid Query",
-			"boundaryYear must be a four-digit year.",
-		);
+		return invalidQuery("boundaryYear must be a four-digit year.");
 	}
 	if (!record.centroid) {
 		return problem(

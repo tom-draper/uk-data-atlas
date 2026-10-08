@@ -1,4 +1,4 @@
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, type ApiResponse } from "./routeResponse";
 
 /** Limits and cursors shared by every paginated resource. */
 export const DEFAULT_PAGE_SIZE = 100;
@@ -37,7 +37,7 @@ export const nextPageHref = (parsedUrl: URL, nextCursor: string) => {
 };
 
 const invalidCursor = (detail: string) =>
-	problem(400, "Invalid Query", detail, { code: "invalid_cursor" });
+	invalidQuery(detail, { code: "invalid_cursor" });
 
 /**
  * The key named by the request's `cursor`, none when it has no cursor, or the
@@ -86,9 +86,7 @@ export const paginate = <T>(
 	const pageSize = readPageSize(parsedUrl.searchParams.get("limit"));
 	if (pageSize === undefined)
 		return {
-			problem: problem(
-				400,
-				"Invalid Query",
+			problem: invalidQuery(
 				`limit must be an integer between 1 and ${MAX_PAGE_SIZE}.`,
 			),
 		};

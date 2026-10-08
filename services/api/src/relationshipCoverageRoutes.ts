@@ -1,5 +1,10 @@
 import type { AreaRelation } from "./areaRelationships";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 const RELATIONS: AreaRelation[] = [
@@ -37,9 +42,7 @@ export const handleRelationshipCoverageRoutes = ({
 		limit < 1 ||
 		limit > 100
 	)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography and release are required; relation must be within, contains, successor, predecessor or overlaps; limit must be an integer from 1 to 100.",
 		);
 	const coverage = context.geographyResolver.relationshipCoverage(

@@ -5,7 +5,12 @@ import type { ValidatedValue } from "./batchValidation";
 import { releaseKey } from "./geographyKeys";
 import { featureIds } from "./mapResource/compileMapResource";
 import { readPostedRows, type RowValue } from "./requestRows";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { GEOMETRY_TIERS, type GeometryTier } from "./simplifyGeometry";
 
@@ -76,14 +81,10 @@ export const handleReleaseJoinRoutes = (
 		);
 	const format = parsedUrl.searchParams.get("format") ?? "json";
 	if (format !== "json" && format !== "geojson")
-		return problem(400, "Invalid Query", "format must be json or geojson.");
+		return invalidQuery("format must be json or geojson.");
 	const tier = parsedUrl.searchParams.get("tier") ?? "medium";
 	if (format === "geojson" && !isGeometryTier(tier))
-		return problem(
-			400,
-			"Invalid Query",
-			`tier must be one of ${GEOJSON_TIERS}.`,
-		);
+		return invalidQuery(`tier must be one of ${GEOJSON_TIERS}.`);
 
 	const rows = readPostedRows(body, { withValues: true });
 	if ("status" in rows) return rows;

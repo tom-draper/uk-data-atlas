@@ -13,7 +13,12 @@ import {
 	type PostcodeRecord,
 	type PostcodeSource,
 } from "./postcodes";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import { readBatchInput } from "./batchInput";
 import type { RouteRequest } from "./routing";
 
@@ -150,9 +155,7 @@ const postcodeView = (query: URLSearchParams): PostcodeView | ApiResponse => {
 	const view = query.get("view");
 	if (view === null || view === "full") return "full";
 	if (view === "compact") return "compact";
-	return problem(
-		400,
-		"Invalid Query",
+	return invalidQuery(
 		`view must be full or compact; ${JSON.stringify(view)} is neither.`,
 	);
 };
@@ -399,15 +402,11 @@ export const handlePostcodeBatchRoutes = ({
 	if (!Array.isArray(posted)) return posted;
 	const inputs = posted.map((value) => value.trim()).filter(Boolean);
 	if (inputs.length === 0)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Supply at least one postcode in the postcodes array.",
 		);
 	if (inputs.length > MAX_BATCH_POSTCODES)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`At most ${MAX_BATCH_POSTCODES} postcodes can be looked up in one request; this one has ${inputs.length}.`,
 		);
 	const { geographyResolver } = context;

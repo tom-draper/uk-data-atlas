@@ -8,7 +8,12 @@ import {
 	parseStatedAccuracy,
 } from "./pointLookup";
 import { fromWgs84Point } from "./reprojection";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /**
@@ -31,23 +36,17 @@ export const handleCoordinateRoutes = ({
 		parsedUrl.searchParams.get("accuracy"),
 	);
 	if (accuracy === null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
 	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));
 	if (!crs)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 		);
 	const targetCrs = parseLookupCrs(parsedUrl.searchParams.get("to"));
 	if (!targetCrs)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"to must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 		);
 	const gridReferenceDigitsText = parsedUrl.searchParams.get("gridrefDigits");
@@ -55,17 +54,11 @@ export const handleCoordinateRoutes = ({
 		gridReferenceDigitsText !== null &&
 		!/^[1-5]$/.test(gridReferenceDigitsText)
 	)
-		return problem(
-			400,
-			"Invalid Query",
-			"gridrefDigits must be an integer from 1 to 5.",
-		);
+		return invalidQuery("gridrefDigits must be an integer from 1 to 5.");
 	const gridReferenceDigits =
 		gridReferenceDigitsText === null ? 5 : Number(gridReferenceDigitsText);
 	if (gridReferenceDigitsText !== null && targetCrs !== "EPSG:27700")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"gridrefDigits can only be used with to=EPSG:27700.",
 		);
 	const point = parseLookupCoordinate(
@@ -80,9 +73,7 @@ export const handleCoordinateRoutes = ({
 		accuracy,
 	);
 	if (!point)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			crs === "EPSG:4326"
 				? "lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."
 				: crs === "EPSG:27700"

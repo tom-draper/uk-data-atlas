@@ -1,4 +1,4 @@
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { releaseKey } from "./geographyKeys";
 
@@ -19,9 +19,7 @@ export const handleGeographyHealthRoutes = ({
 	const country = parsedUrl.searchParams.get("country");
 	const reach = parsedUrl.searchParams.get("reach");
 	if (reach && !["connected", "vintage-only", "isolated"].includes(reach))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"reach must be connected, vintage-only or isolated.",
 		);
 	const releases = geographyResolver

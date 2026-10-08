@@ -21,7 +21,12 @@ import {
 	statedDefaults,
 } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /** Change between two periods of a measure for areas published in both, ranked in stable pages. */
 export const handleDataChangeRoutes = ({
@@ -74,9 +79,7 @@ export const handleDataChangeRoutes = ({
 	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Change is measured area by area within one partition, and a curated location is not one of its areas. Ask for each of its member areas, or for the location's value in each period.",
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
@@ -141,9 +144,7 @@ export const handleDataChangeRoutes = ({
 		!startPeriod ||
 		!endPeriod
 	) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	}
@@ -151,9 +152,7 @@ export const handleDataChangeRoutes = ({
 	// periods it must hold is checked below, where the route needs their
 	// positions anyway to say which way round the change runs.
 	if (partition.kind === "refusal")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} measures change within one source partition, and this query does not pick one: give geography, with boundaryYear where it has several, and periods that partition publishes. Published partitions: ${partitions}.`,
 		);
 	const {
@@ -169,16 +168,12 @@ export const handleDataChangeRoutes = ({
 	const startIndex = source.periods.indexOf(startPeriod);
 	const endIndex = source.periods.indexOf(endPeriod);
 	if (startIndex === -1 || endIndex === -1) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`startPeriod and endPeriod must be published periods of this partition: ${source.periods.join(", ")}.`,
 		);
 	}
 	if (startIndex >= endIndex) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"startPeriod must come before endPeriod, so the sign of a change is never ambiguous.",
 		);
 	}
@@ -191,22 +186,18 @@ export const handleDataChangeRoutes = ({
 	}
 	const basisParameter = parsedUrl.searchParams.get("by") ?? "absolute";
 	if (basisParameter !== "absolute" && basisParameter !== "relative") {
-		return problem(
-			400,
-			"Invalid Query",
-			"by must be absolute or relative.",
-		);
+		return invalidQuery("by must be absolute or relative.");
 	}
 	const basis: ChangeBasis = basisParameter;
 	if (basis === "relative") {
 		const relativeRefusal = relativeChangeRefusal(measure);
 		if (relativeRefusal) {
-			return problem(400, "Invalid Query", relativeRefusal);
+			return invalidQuery(relativeRefusal);
 		}
 	}
 	const order = readRankingOrder(parsedUrl.searchParams.get("order"));
 	if (!order) {
-		return problem(400, "Invalid Query", "order must be asc or desc.");
+		return invalidQuery("order must be asc or desc.");
 	}
 	const artifacts = {
 		measureObservations,
