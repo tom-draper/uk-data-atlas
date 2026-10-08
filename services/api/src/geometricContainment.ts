@@ -8,12 +8,11 @@ import {
 	boundsIntersect,
 	CLIPPING_VERSION,
 	labelsFor,
-	multiPolygonAreaM2,
-	polygonWidthM,
 	readGeometries,
 	round,
 	type AreaGeometry,
 } from "./areaOverlap";
+import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
 import { BoundedClipper } from "./boundedClipping";
 import type {
 	BestFitCrosswalkAdapter,

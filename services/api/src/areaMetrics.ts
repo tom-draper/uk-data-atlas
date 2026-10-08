@@ -4,7 +4,7 @@ import {
 	polygonPerimeterM,
 	projectEqualArea,
 	unprojectEqualArea,
-} from "./areaOverlap";
+} from "./equalAreaProjection";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import {
 	containPoint,

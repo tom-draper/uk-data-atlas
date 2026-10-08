@@ -1,5 +1,5 @@
 import type { Pair } from "polygon-clipping";
-import { edgeLengthM } from "./areaOverlap";
+import { edgeLengthM } from "./equalAreaProjection";
 import type { GeoJsonGeometry } from "./areaGeometry";
 import type { Coordinate } from "./areaContainment";
 

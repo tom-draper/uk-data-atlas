@@ -9,12 +9,12 @@ import {
 	boundsIntersect,
 	CLIPPING_VERSION,
 	labelsFor,
-	multiPolygonAreaM2,
 	readGeometries,
 	round,
 	roundedMultiPolygon,
 	type AreaGeometry,
 } from "./areaOverlap";
+import { multiPolygonAreaM2 } from "./equalAreaProjection";
 import { BoundedClipper, type ClipOperand } from "./boundedClipping";
 import { csvFields } from "./csv";
 import type { PopulationOverlapCrosswalkAdapter } from "./crosswalkAdapters";
