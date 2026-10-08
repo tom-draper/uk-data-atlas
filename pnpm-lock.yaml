@@ -183,6 +183,9 @@ importers:
       lucide-react:
         specifier: ^1.48.0
         version: 1.48.0(react@19.2.8)
+      mapbox-gl:
+        specifier: ^3.32.0
+        version: 3.32.0
       maplibre-gl:
         specifier: ^5.24.0
         version: 5.24.0
@@ -1425,6 +1428,9 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
+  mapbox-gl@3.32.0:
+    resolution: {integrity: sha512-+P4qrlyejQYLyz1Bfzoe+d5Ff5vAghH54RNHm1q2VeAZqkSjQ5e1XlovQoSHlf4xqpRJtJG58kn8nkLwPMQung==}
+
   maplibre-gl@5.24.0:
     resolution: {integrity: sha512-ALyFxgtd5R+65UqZ/++lOqwWcC0SNho9c27fYSyLmG7AfnAul2o46F05aDJGPbFU57wos9dgcIySHs0Xe6ia3A==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
@@ -2502,6 +2508,8 @@ snapshots:
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
+
+  mapbox-gl@3.32.0: {}
 
   maplibre-gl@5.24.0:
     dependencies:
