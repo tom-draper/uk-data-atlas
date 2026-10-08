@@ -12,6 +12,7 @@ const inputs = [
 	"scripts/dataset-region-chunks.mts",
 	"scripts/generate-dataset-registry.ts",
 	"scripts/generate-sources-readme.mts",
+	"scripts/precompile",
 	"scripts/precompile-data.mts",
 	"scripts/precompile-fingerprint.mjs",
 	"scripts/precompile-selection.ts",
