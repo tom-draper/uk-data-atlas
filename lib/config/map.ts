@@ -1,9 +1,3 @@
-export const DEFAULT_MAP_TYPE = "maplibre";
-
-const MAP_TYPE = (
-	process.env.NEXT_PUBLIC_MAP_TYPE || DEFAULT_MAP_TYPE
-).toLowerCase();
-
 const MAPBOX_CONFIG = {
 	style: "mapbox://styles/mapbox/light-v11",
 	center: [-2.3, 53.5] as [number, number],
@@ -22,7 +16,10 @@ const MAPLIBRE_CONFIG = {
 	fitBoundsDuration: 1000,
 } as const;
 
+// NEXT_PUBLIC_MAP_PROVIDER is "maplibre" or "mapbox"; see next.config.ts.
 export const MAP_CONFIG =
-	MAP_TYPE === "mapbox" ? MAPBOX_CONFIG : MAPLIBRE_CONFIG;
+	process.env.NEXT_PUBLIC_MAP_PROVIDER === "mapbox"
+		? MAPBOX_CONFIG
+		: MAPLIBRE_CONFIG;
 
-export { MAP_TYPE, MAPBOX_CONFIG, MAPLIBRE_CONFIG };
+export { MAPBOX_CONFIG, MAPLIBRE_CONFIG };
