@@ -1,5 +1,5 @@
 import { handleRoute, handleRouteAsync } from "./routeHandlers";
-import type { RequestBody, RouteContext } from "./routing";
+import type { RequestBody, RouteContext, RouteRequest } from "./routing";
 import { problem, type ApiResponse } from "./routeResponse";
 
 export { type ApiResponse } from "./routeResponse";
@@ -12,16 +12,23 @@ const decodePathSegment = (segment: string) => {
 	}
 };
 
-type ParsedRoute = {
-	releaseId: string;
-	parsedUrl: URL;
-	segments: string[];
-};
+const methodNotAllowed = () =>
+	problem(
+		405,
+		"Method Not Allowed",
+		"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join.",
+	);
 
-const parseRoute = (
+const notFound = () =>
+	problem(404, "Not Found", "No API resource matches that path.");
+
+/** The request a route family sees, or the problem that says why there is none. */
+const buildRequest = (
+	method: "GET" | "POST",
 	url: string | undefined,
 	context: RouteContext,
-): ParsedRoute | ApiResponse => {
+	body: RequestBody | undefined,
+): RouteRequest | ApiResponse => {
 	const parsedUrl = new URL(url ?? "/", "http://localhost");
 	const segments = parsedUrl.pathname
 		.split("/")
@@ -34,11 +41,15 @@ const parseRoute = (
 			"The request path contains invalid encoding.",
 		);
 	return {
+		context,
+		method,
+		...(method === "POST" ? { body } : {}),
 		releaseId:
 			context.atlasRelease?.releaseId ??
 			context.boundaryRegistry.contentHash,
 		parsedUrl,
 		segments: segments as string[],
+		dispatch: (nextUrl) => route("GET", nextUrl, context),
 	};
 };
 
@@ -47,13 +58,6 @@ const parseRoute = (
  * dependencies in one object prevents a newly added artifact from silently
  * shifting a long positional argument list at every call site.
  */
-const methodNotAllowed = () =>
-	problem(
-		405,
-		"Method Not Allowed",
-		"This API is read-only. It answers GET, and POST only where a request carries more than a URL can, such as a column of codes to match or join.",
-	);
-
 export const route = (
 	method: string | undefined,
 	url: string | undefined,
@@ -61,19 +65,9 @@ export const route = (
 	body?: RequestBody,
 ): ApiResponse => {
 	if (method !== "GET" && method !== "POST") return methodNotAllowed();
-	const parsed = parseRoute(url, context);
-	if ("status" in parsed) return parsed;
-	return (
-		handleRoute({
-			context,
-			method,
-			...(method === "POST" ? { body } : {}),
-			releaseId: parsed.releaseId,
-			parsedUrl: parsed.parsedUrl,
-			segments: parsed.segments,
-			dispatch: (nextUrl) => route("GET", nextUrl, context),
-		}) ?? problem(404, "Not Found", "No API resource matches that path.")
-	);
+	const request = buildRequest(method, url, context, body);
+	if ("status" in request) return request;
+	return handleRoute(request) ?? notFound();
 };
 
 export const routeAsync = async (
@@ -83,15 +77,7 @@ export const routeAsync = async (
 	body?: RequestBody,
 ): Promise<ApiResponse> => {
 	if (method !== "GET") return route(method, url, context, body);
-	const parsed = parseRoute(url, context);
-	if ("status" in parsed) return parsed;
-	return (
-		(await handleRouteAsync({
-			context,
-			releaseId: parsed.releaseId,
-			parsedUrl: parsed.parsedUrl,
-			segments: parsed.segments,
-			dispatch: (nextUrl) => route("GET", nextUrl, context),
-		})) ?? problem(404, "Not Found", "No API resource matches that path.")
-	);
+	const request = buildRequest(method, url, context, body);
+	if ("status" in request) return request;
+	return (await handleRouteAsync(request)) ?? notFound();
 };
