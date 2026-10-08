@@ -6,8 +6,6 @@ export const jobsDatasetDefinition: DatasetDefinition<JobsDataset> = {
 	type: "jobs",
 	precompiledFile: "jobs",
 	boundaryType: "localAuthority",
-	// Published through the API first; the website has no chart for it yet.
-	chartPending: true,
 	coverageCountries: ["GB-ENG", "GB-WLS", "GB-SCT", "GB-NIR"],
 	source: {
 		name: "Jobs",

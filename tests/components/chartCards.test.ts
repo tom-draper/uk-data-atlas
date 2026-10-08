@@ -43,6 +43,7 @@ describe("ChartCards registry selection", () => {
 			visibility({
 				"economics-housePrice": true,
 				"economics-income": true,
+				"economics-jobs": true,
 				"economics-planningApplications": true,
 				"economics-councilTax": true,
 				"economics-unemployment": true,
@@ -55,6 +56,7 @@ describe("ChartCards registry selection", () => {
 		expect(charts.map(({ chart }) => chart.key)).toEqual([
 			"economics-housePrice",
 			"economics-income",
+			"economics-jobs",
 			"economics-planningApplications",
 			"economics-councilTax",
 			"economics-unemployment",

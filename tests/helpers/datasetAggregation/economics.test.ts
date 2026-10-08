@@ -4,6 +4,7 @@ import {
 	aggregateCustomDataset,
 	aggregateHousePrices,
 	aggregateIncome,
+	aggregateJobs,
 	aggregateUnemployment,
 } from "@/lib/helpers/datasetAggregation/economics";
 import { CODE_KEY, features } from "./fixtures";
@@ -149,6 +150,21 @@ describe("aggregateIncome", () => {
 			averageMedianIncome: 0,
 			averageMeanIncome: 0,
 		});
+	});
+});
+
+describe("aggregateJobs", () => {
+	it("sums workplace jobs across the covered local authorities", () => {
+		expect(
+			aggregateJobs([
+				{ ladCode: "E1", ladName: "One", totalJobs: 120_000 },
+				{ ladCode: "E2", ladName: "Two", totalJobs: 80_000 },
+			]),
+		).toEqual({ totalJobs: 200_000 });
+	});
+
+	it("returns null where no local authorities are covered", () => {
+		expect(aggregateJobs([])).toBeNull();
 	});
 });
 
