@@ -39,10 +39,16 @@ export type ServerOptions = {
 	metrics?: { token: string } | "open";
 	/** Longest request target served; a longer one is refused with 414. */
 	maxUrlLength?: number;
+	/**
+	 * Bytes of finished answers kept to serve repeat requests without running
+	 * their handlers. Absent or `0`, nothing is kept.
+	 */
+	responseCacheBytes?: number;
 };
 
 export const DEFAULT_MAX_URL_LENGTH = 4096;
 const DEFAULT_GEOMETRY_CACHE_RELEASES = 3;
+const DEFAULT_RESPONSE_CACHE_MEGABYTES = 32;
 
 export type ServeConfiguration = {
 	port: number;
@@ -167,6 +173,16 @@ export const readServeConfiguration = (
 				DEFAULT_MAX_URL_LENGTH,
 				256,
 			),
+			responseCacheBytes:
+				integer(
+					env,
+					"ATLAS_RESPONSE_CACHE_MB",
+					DEFAULT_RESPONSE_CACHE_MEGABYTES,
+					0,
+					4096,
+				) *
+				1024 *
+				1024,
 		},
 	};
 };

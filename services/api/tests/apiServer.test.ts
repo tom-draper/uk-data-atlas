@@ -443,3 +443,109 @@ test("gzips a large JSON answer for a client that takes it, and revalidates it",
 	});
 	assert.equal(small.headers.get("content-encoding"), null);
 });
+
+test("answers a repeat request from the response cache without running its handler", async (t) => {
+	let handled = 0;
+	const context = testContext({
+		atlasRelease,
+		openapiDocument,
+		operationMatcher,
+	});
+	const counting = Object.defineProperty({ ...context }, "atlasRelease", {
+		get() {
+			handled += 1;
+			return atlasRelease;
+		},
+	});
+	const { get } = await serve(
+		t,
+		{ responseCacheBytes: 1024 * 1024, metrics: "open" },
+		counting,
+	);
+	const afterStart = handled;
+	const first = await get("/v1/geographies");
+	const body = await first.text();
+	assert.equal(handled, afterStart + 1);
+
+	const second = await get("/v1/geographies");
+	assert.equal(await second.text(), body);
+	assert.equal(handled, afterStart + 1, "the handler did not run again");
+	assert.equal(second.status, 200);
+	assert.equal(second.headers.get("etag"), first.headers.get("etag"));
+	assert.equal(
+		second.headers.get("content-length"),
+		first.headers.get("content-length"),
+	);
+	assert.equal(
+		second.headers.get("cache-control"),
+		first.headers.get("cache-control"),
+	);
+	// What belongs to the request is still the request's own.
+	assert.notEqual(
+		second.headers.get("x-request-id"),
+		first.headers.get("x-request-id"),
+	);
+	assert.equal(second.headers.get("atlas-release"), atlasRelease.releaseId);
+
+	// A client that holds it is told so, again without the handler.
+	const revalidated = await get("/v1/geographies", {
+		headers: { "if-none-match": first.headers.get("etag")! },
+	});
+	assert.equal(revalidated.status, 304);
+	assert.equal(revalidated.headers.get("etag"), first.headers.get("etag"));
+	assert.equal(handled, afterStart + 1);
+
+	// An answer to a different request is its own.
+	await get("/v1");
+	assert.equal(handled, afterStart + 2);
+
+	// A refusal is never kept: the next request may well succeed.
+	assert.equal((await get("/v1/no/such/thing")).status, 404);
+	assert.equal((await get("/v1/no/such/thing")).status, 404);
+	assert.equal(handled, afterStart + 4);
+
+	const metrics = await (await get("/metrics")).text();
+	assert.match(
+		metrics,
+		/atlas_api_response_cache_events_total\{event="hit"\} 2/,
+	);
+});
+
+test("keeps the plain and the gzipped form of an answer apart", async (t) => {
+	const { get } = await serve(t, { responseCacheBytes: 4 * 1024 * 1024 });
+	const text = async (encoding: string) => {
+		const response = await get("/v1/openapi.yaml", {
+			headers: { "accept-encoding": encoding },
+		});
+		return {
+			encoding: response.headers.get("content-encoding"),
+			etag: response.headers.get("etag")!,
+			length: response.headers.get("content-length")!,
+			text: await response.text(),
+		};
+	};
+	const plain = await text("identity");
+	const gzipped = await text("gzip");
+	assert.equal(plain.encoding, null);
+	assert.equal(gzipped.encoding, "gzip");
+	assert.notEqual(plain.etag, gzipped.etag);
+	assert.equal(gzipped.text, plain.text);
+	// Asked again, each is still its own form.
+	assert.deepEqual(await text("identity"), plain);
+	assert.deepEqual(await text("gzip"), gzipped);
+	const revalidated = await get("/v1/openapi.yaml", {
+		headers: { "accept-encoding": "gzip", "if-none-match": gzipped.etag },
+	});
+	assert.equal(revalidated.status, 304);
+	assert.equal(revalidated.headers.get("vary"), "accept-encoding");
+});
+
+test("still limits a client whose requests are answered from the response cache", async (t) => {
+	const { get } = await serve(t, {
+		responseCacheBytes: 1024 * 1024,
+		rateLimit: { capacity: 2, refillPerSecond: 0.001 },
+	});
+	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/geographies")).status, 200);
+	assert.equal((await get("/v1/geographies")).status, 429);
+});
