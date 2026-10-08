@@ -4,14 +4,13 @@ import type { GeometrySourceLookup } from "./areaGeometry";
 import { releaseKey } from "./geographyKeys";
 import type { AreaLookup } from "./areaInventory";
 import {
+	type AreaGeometry,
 	areaMultiPolygon,
 	boundsIntersect,
-	CLIPPING_VERSION,
-	labelsFor,
-	readGeometries,
-	round,
-	type AreaGeometry,
-} from "./areaOverlap";
+} from "./areaGeometryPieces";
+import { labelsFor, round } from "./areaOverlap";
+import { CLIPPING_VERSION } from "./pieceIntersection";
+import { readGeometries } from "./rawAreaGeometries";
 import { multiPolygonAreaM2, polygonWidthM } from "./equalAreaProjection";
 import { BoundedClipper } from "./boundedClipping";
 import type {
