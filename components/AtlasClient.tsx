@@ -46,8 +46,14 @@ function ErrorBanner({
 }
 
 export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
-	const { activeViz, selectedLocation, setActiveViz, setSelectedLocation } =
-		useAtlasUrlState(page);
+	const {
+		activeViz,
+		selectedLocation,
+		mapOptions,
+		setActiveViz,
+		setSelectedLocation,
+		setMapOptions,
+	} = useAtlasUrlState(page);
 	const [customDatasets, setCustomDatasets] = useState<CustomDataset[]>([]);
 	const [errorsDismissed, setErrorsDismissed] = useState(false);
 	const [boundaryErrors, setBoundaryErrors] = useState<string[]>([]);
@@ -105,6 +111,8 @@ export default function AtlasClient({ page = {} }: { page?: AtlasPage }) {
 					setSelectedLocation={setSelectedLocation}
 					activeViz={activeViz}
 					setActiveViz={setActiveViz}
+					mapOptions={mapOptions}
+					setMapOptions={setMapOptions}
 					customDatasets={customDatasets}
 					addCustomDataset={(dataset) =>
 						setCustomDatasets((prev) => [...prev, dataset])
