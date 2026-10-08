@@ -4,10 +4,8 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import type { Polygon } from "polygon-clipping";
-import {
-	compileAreaOverlapCrosswalk,
-	measurePairOverlap,
-} from "../src/areaOverlap";
+import { compileAreaOverlapCrosswalk } from "../src/areaOverlap";
+import { measurePairOverlap } from "../src/pairOverlap";
 import {
 	polygonAreaM2,
 	polygonWidthM,

@@ -1,4 +1,4 @@
-import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./areaOverlap";
+import { measurePairOverlap, PAIR_OVERLAP_RULES } from "./pairOverlap";
 import { areaNotFound } from "./areaResources";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
 import type { RouteRequest } from "./routing";
