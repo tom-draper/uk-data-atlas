@@ -5,6 +5,7 @@ import {
 	clipWorldRing,
 	toWorldRing,
 	wind,
+	worldTile,
 	type TileAddress,
 	type TileBox,
 	type WorldRing,
@@ -56,6 +57,13 @@ export type MapFeature = {
 	name: string;
 	geometry: GeoJsonGeometry;
 	bounds: TileBox;
+	/**
+	 * The geometry's rings projected for tiling, filled in the first time the
+	 * feature reaches a tile. A release is cut into thousands of tiles, and
+	 * projecting every vertex again for each one was most of the cost of
+	 * tiling a coastline. Held here, they go when the zoom band's features do.
+	 */
+	projected?: WorldRing[][];
 };
 
 const polygonsOf = (geometry: GeoJsonGeometry): Coordinate[][][] => {
@@ -96,20 +104,37 @@ const overlaps = (
 	otherSouth <= north;
 
 /**
- * Each area's rings projected once, for every tile that draws them. A release
- * is cut into thousands of tiles, and projecting every vertex again for each
- * one was most of the cost of tiling a coastline.
+ * The features that can reach each tile at one zoom, keyed by
+ * `x * 2^zoom + y`, each list in the order it was given. Testing every area
+ * against every tile was most of the cost of tiling a release of small areas:
+ * output areas are 190,000 features over thousands of tiles. A tile's buffer
+ * reaches less than a tile beyond it, so a feature can only reach the tiles
+ * its own extent covers and their neighbours; tileFeatures still decides
+ * exactly which do.
  */
-const projected = new WeakMap<GeoJsonGeometry, WorldRing[][]>();
-const projectedPolygons = (geometry: GeoJsonGeometry) => {
-	let polygons = projected.get(geometry);
-	if (!polygons) {
-		polygons = polygonsOf(geometry).map((polygon) =>
-			polygon.map(toWorldRing),
-		);
-		projected.set(geometry, polygons);
+export const featuresByTile = (features: MapFeature[], zoom: number) => {
+	const byTile = new Map<number, MapFeature[]>();
+	const size = 2 ** zoom;
+	for (const feature of features) {
+		const [west, south, east, north] = feature.bounds;
+		const [minX, minY] = worldTile([west, north], zoom);
+		const [maxX, maxY] = worldTile([east, south], zoom);
+		if (![minX, minY, maxX, maxY].every(Number.isFinite)) continue;
+		const lastX = Math.min(Math.floor(maxX) + 1, size - 1);
+		const lastY = Math.min(Math.floor(maxY) + 1, size - 1);
+		for (let x = Math.max(Math.floor(minX) - 1, 0); x <= lastX; x += 1)
+			for (
+				let y = Math.max(Math.floor(minY) - 1, 0);
+				y <= lastY;
+				y += 1
+			) {
+				const key = x * size + y;
+				const reaching = byTile.get(key);
+				if (reaching) reaching.push(feature);
+				else byTile.set(key, [feature]);
+			}
 	}
-	return polygons;
+	return byTile;
 };
 
 /**
@@ -123,11 +148,15 @@ export const tileFeatures = (
 	features: MapFeature[],
 	address: TileAddress,
 	tileBounds: TileBox,
-): TileFeature[] =>
-	features.flatMap((feature) => {
-		if (!overlaps(feature.bounds, tileBounds)) return [];
+): TileFeature[] => {
+	const inTile: TileFeature[] = [];
+	for (const feature of features) {
+		if (!overlaps(feature.bounds, tileBounds)) continue;
+		feature.projected ??= polygonsOf(feature.geometry).map((polygon) =>
+			polygon.map(toWorldRing),
+		);
 		const rings: Array<Array<[number, number]>> = [];
-		for (const polygon of projectedPolygons(feature.geometry)) {
+		for (const polygon of feature.projected) {
 			const [outer, ...holes] = polygon;
 			if (!outer) continue;
 			const clipped = clipWorldRing(outer, address);
@@ -138,15 +167,15 @@ export const tileFeatures = (
 				if (cut.length > 0) rings.push(wind(cut, false));
 			}
 		}
-		if (rings.length === 0) return [];
-		return [
-			{
+		if (rings.length > 0)
+			inTile.push({
 				id: feature.id,
 				rings,
 				properties: { code: feature.code, name: feature.name },
-			},
-		];
-	});
+			});
+	}
+	return inTile;
+};
 
 /** One tile, or nothing when no area reaches it. */
 export const buildTile = (

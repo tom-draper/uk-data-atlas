@@ -13,6 +13,7 @@ import { tileBounds, tilesCovering, type TileBox } from "./tileGrid";
 import {
 	boundsOf,
 	buildTile,
+	featuresByTile,
 	MAX_ZOOM,
 	MIN_ZOOM,
 	ZOOM_TIERS,
@@ -198,11 +199,12 @@ export const compileMapResource = (
 				};
 			},
 		);
-		for (let zoom = band.minZoom; zoom <= band.maxZoom; zoom += 1)
+		for (let zoom = band.minZoom; zoom <= band.maxZoom; zoom += 1) {
+			const reaching = featuresByTile(features, zoom);
 			for (const address of tilesCovering(bounds, zoom)) {
 				const body = buildTile(
 					LAYER_NAME,
-					features,
+					reaching.get(address.x * 2 ** zoom + address.y) ?? [],
 					address,
 					tileBounds(address),
 				);
@@ -214,6 +216,7 @@ export const compileMapResource = (
 						body,
 					});
 			}
+		}
 	}
 
 	const attribution = {
