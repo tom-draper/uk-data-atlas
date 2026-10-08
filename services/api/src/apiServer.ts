@@ -11,7 +11,9 @@ import {
 } from "node:http";
 import { ApiMetrics } from "./apiMetrics";
 import {
+	acceptsGzip,
 	bodyBytes,
+	cachedHttpResponse,
 	httpResponse,
 	preflightResponse,
 	type HttpResponse,
@@ -25,6 +27,7 @@ import {
 } from "./operationTemplates";
 import { DEFAULT_POSTCODE_GEOGRAPHIES } from "./postcodeRoutes";
 import { clientAddress, clientKey, RateLimiter } from "./rateLimit";
+import { ResponseCache } from "./responseCache";
 import { isStoredFile, problem, type ApiResponse } from "./routeResponse";
 import { routeAsync } from "./routes";
 import type { RouteContext } from "./routing";
@@ -184,10 +187,14 @@ export const createApiServer = (
 		catalogues.boundaryRegistry.contentHash;
 	const matchOperation =
 		catalogues.operationMatcher ?? (() => ({ route: "unmatched" }));
+	const responseCache = options.responseCacheBytes
+		? new ResponseCache(options.responseCacheBytes)
+		: undefined;
 	const metrics = new ApiMetrics(
 		releaseId,
 		() => catalogues.geographyResolver.geometryCacheStats(),
 		() => catalogues.geographyResolver.locationProjectionCacheStats(),
+		() => responseCache?.stats(),
 	);
 	const limiter = options.rateLimit
 		? new RateLimiter(options.rateLimit)
@@ -253,6 +260,8 @@ export const createApiServer = (
 		let answered: ApiResponse | undefined;
 		let failure: unknown;
 		let limitHeaders: Record<string, string> = {};
+		// Set when this request's answer should be kept once it is finished.
+		let storeAs: string | undefined;
 
 		let result = operations(request, pathname);
 		if (!result) {
@@ -334,13 +343,29 @@ export const createApiServer = (
 									}),
 								);
 				} else {
-					result = await answerAsync(() =>
-						routeAsync(
-							method === "HEAD" ? "GET" : method,
-							target,
-							catalogues,
-						),
-					);
+					// An answer is a function of the release and the request, except
+					// a remote terrain sample, which is the provider's to change.
+					const cacheKey =
+						responseCache &&
+						method === "GET" &&
+						!pathname.startsWith("/v1/terrain/")
+							? `${acceptsGzip(request.headers["accept-encoding"]) ? "gzip" : "identity"} ${target}`
+							: undefined;
+					const kept = cacheKey
+						? responseCache!.get(cacheKey)
+						: undefined;
+					if (kept) {
+						result = cachedHttpResponse(request, kept);
+					} else {
+						storeAs = cacheKey;
+						result = await answerAsync(() =>
+							routeAsync(
+								method === "HEAD" ? "GET" : method,
+								target,
+								catalogues,
+							),
+						);
+					}
 				}
 			} catch (error) {
 				failure = error;
@@ -419,6 +444,23 @@ export const createApiServer = (
 				result = { ...result, body: encoded };
 				headers["content-length"] = String(encoded.length);
 			}
+			if (
+				storeAs &&
+				failure === undefined &&
+				result.status === 200 &&
+				result.body !== undefined &&
+				!isStoredFile(result.body) &&
+				result.headers.etag
+			)
+				responseCache!.set(storeAs, {
+					status: 200,
+					headers: {
+						...result.headers,
+						"content-length": String(bodyBytes(result.body)),
+					},
+					body: result.body,
+					etag: result.headers.etag,
+				});
 			response.writeHead(result.status, headers);
 			if (isStoredFile(result.body)) sendFile(result.body, response);
 			else response.end(result.body);
