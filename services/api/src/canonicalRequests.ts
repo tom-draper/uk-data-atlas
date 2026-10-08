@@ -49,28 +49,39 @@ export const canonicalMeasureRequest = (
 /** The word that stands for a geography's newest release in a path. */
 export const LATEST_RELEASE = "latest";
 
+/** The resources whose third segment names a geography. */
+const geographyResources = ["areas", "boundary-releases", "map-resources"];
+
+const isGeographyPath = (segments: string[]) =>
+	segments[0] === "v1" && geographyResources.includes(segments[1] ?? "");
+
+/**
+ * The request routed to other segments. A colon is legal in a path segment,
+ * and `:join` reads better as one, so it is left unescaped.
+ */
+const withSegments = (
+	request: RouteRequest,
+	segments: string[],
+): RouteRequest => {
+	const parsedUrl = new URL(request.parsedUrl);
+	parsedUrl.pathname = `/${segments
+		.map((segment) => encodeURIComponent(segment).replaceAll("%3A", ":"))
+		.join("/")}`;
+	return { ...request, parsedUrl, segments };
+};
+
 /** Replace a path geography abbreviation before any route resolves releases. */
 export const canonicalGeographyRequest = (
 	request: RouteRequest,
 ): RouteRequest | undefined => {
 	const { segments } = request;
-	if (
-		segments[0] !== "v1" ||
-		!["areas", "boundary-releases", "map-resources"].includes(
-			segments[1] ?? "",
-		)
-	)
-		return undefined;
+	if (!isGeographyPath(segments)) return undefined;
 	const geography = segments[2];
 	const canonical = geography && canonicalGeography(geography);
 	if (!canonical || canonical === geography) return undefined;
 	const canonicalSegments = [...segments];
 	canonicalSegments[2] = canonical;
-	const parsedUrl = new URL(request.parsedUrl);
-	parsedUrl.pathname = `/${canonicalSegments
-		.map((segment) => encodeURIComponent(segment).replaceAll("%3A", ":"))
-		.join("/")}`;
-	return { ...request, parsedUrl, segments: canonicalSegments };
+	return withSegments(request, canonicalSegments);
 };
 
 /**
@@ -78,13 +89,7 @@ export const canonicalGeographyRequest = (
  * carries after it: `:join` on a release, `.pmtiles` on a map resource.
  */
 const latestReleaseSegment = (segments: string[]) => {
-	if (
-		segments[0] !== "v1" ||
-		!["areas", "boundary-releases", "map-resources"].includes(
-			segments[1] ?? "",
-		) ||
-		segments[2] === undefined
-	)
+	if (!isGeographyPath(segments) || segments[2] === undefined)
 		return undefined;
 	const suffix = new RegExp(`^${LATEST_RELEASE}(:join|\\.pmtiles)?$`).exec(
 		segments[3] ?? "",
@@ -165,10 +170,5 @@ export const canonicalReleaseRequest = (
 			: releases[0]!.id;
 	const segments = [...request.segments];
 	segments[3] = `${newest}${latest.suffix}`;
-	const url = new URL(request.parsedUrl);
-	// A colon is legal in a path segment, and `:join` reads better as one.
-	url.pathname = `/${segments
-		.map((segment) => encodeURIComponent(segment).replaceAll("%3A", ":"))
-		.join("/")}`;
-	return { ...request, parsedUrl: url, segments };
+	return withSegments(request, segments);
 };
