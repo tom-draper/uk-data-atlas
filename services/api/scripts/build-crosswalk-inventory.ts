@@ -13,7 +13,8 @@ import {
 } from "../src/crosswalkAdapters";
 import {
 	compileCrosswalks,
-	createCrosswalkInventory,
+	crosswalkInventoryEntry,
+	crosswalkInventoryFromEntries,
 	type AreaOverlapCrosswalkArtifact,
 	type BestFitCrosswalkArtifact,
 	type CrosswalkArtifact,
@@ -336,9 +337,24 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	const geometrySources = readGeometrySourceLookup(
 		join(repositoryRoot, "services", "api"),
 	);
-	const reusableEntries = adapters.reduce<
-		Array<readonly [string, CrosswalkArtifact]>
-	>((entries, adapter) => {
+	// Only a population overlap's pairs are needed whole after they are
+	// checked: it reweights them. Every other artifact is reduced to its
+	// inventory entry, so the build never holds all of them at once.
+	const pairIds = new Set(
+		adapters.flatMap((adapter) =>
+			adapter.method === "population-overlap" ? [adapter.pairs] : [],
+		),
+	);
+	const entries = new Map<
+		string,
+		ReturnType<typeof crosswalkInventoryEntry>
+	>();
+	const pairs = new Map<string, CrosswalkArtifact>();
+	const keep = (artifact: CrosswalkArtifact) => {
+		entries.set(artifact.id, crosswalkInventoryEntry(artifact));
+		if (pairIds.has(artifact.id)) pairs.set(artifact.id, artifact);
+	};
+	for (const adapter of adapters) {
 		let artifact: CrosswalkArtifact | undefined;
 		if (adapter.method === "clean-containment") {
 			artifact = reusableCleanContainment(
@@ -359,10 +375,8 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 				geometrySources,
 			);
 		}
-		if (artifact) entries.push([adapter.id, artifact]);
-		return entries;
-	}, []);
-	const reusable = new Map(reusableEntries);
+		if (artifact) keep(artifact);
+	}
 	for (const adapter of adapters) {
 		if (adapter.method !== "population-overlap") continue;
 		const artifact = reusablePopulationOverlap(
@@ -370,13 +384,13 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 			outputDirectory,
 			adapter,
 			geometrySources,
-			reusable.get(adapter.pairs),
+			pairs.get(adapter.pairs),
 		);
-		if (artifact) reusable.set(adapter.id, artifact);
+		if (artifact) keep(artifact);
 	}
-	const pending = adapters.filter((adapter) => !reusable.has(adapter.id));
+	const pending = adapters.filter((adapter) => !entries.has(adapter.id));
 	console.log(
-		`Reusing ${reusable.size} validated crosswalks; compiling ${pending.length} changed or uncached crosswalks.`,
+		`Reusing ${entries.size} validated crosswalks; compiling ${pending.length} changed or uncached crosswalks.`,
 	);
 	const writeArtifact = (artifact: CrosswalkArtifact) => {
 		const path = join(outputDirectory, "crosswalks", `${artifact.id}.json`);
@@ -385,32 +399,30 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	};
 	// Geometry crosswalks take minutes each, so each is written as it compiles:
 	// a build stopped part way reuses those on its next run, which revalidates
-	// every one against its inputs before trusting it.
-	const compiled = compileCrosswalks(
+	// every one against its inputs before trusting it. Reused artifacts are
+	// already on disk as they were checked, so they are not written again.
+	compileCrosswalks(
 		repositoryRoot,
 		pending,
 		readCompiledAreaLookup(outputDirectory),
 		geometrySources,
-		reusable,
-		writeArtifact,
+		pairs,
+		(artifact) => {
+			writeArtifact(artifact);
+			keep(artifact);
+		},
 	);
-	const artifactById = new Map([
-		...reusable,
-		...compiled.artifacts.map(
-			(artifact) => [artifact.id, artifact] as const,
-		),
-	]);
-	const artifacts = adapters.map((adapter) => {
-		const artifact = artifactById.get(adapter.id);
-		if (!artifact)
-			throw new Error(`No compiled artifact for ${adapter.id}`);
-		return artifact;
-	});
-	const inventory = createCrosswalkInventory(artifacts);
-	for (const artifact of artifacts) writeArtifact(artifact);
+	const inventory = crosswalkInventoryFromEntries(
+		adapters.map((adapter) => {
+			const entry = entries.get(adapter.id);
+			if (!entry)
+				throw new Error(`No compiled artifact for ${adapter.id}`);
+			return entry;
+		}),
+	);
 	const inventoryPath = join(outputDirectory, "crosswalk-inventory.json");
 	writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, "\t")}\n`);
-	return { inventoryPath, crosswalkCount: artifacts.length };
+	return { inventoryPath, crosswalkCount: adapters.length };
 };
 
 const scriptPath = fileURLToPath(import.meta.url);
