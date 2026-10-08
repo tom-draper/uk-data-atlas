@@ -184,6 +184,7 @@ export default function UIOverlay({
 									onZoomIn={onZoomIn}
 									onZoomOut={onZoomOut}
 									handleMapOptionsChange={onMapOptionsChange}
+									mapOptions={mapOptions}
 									onExport={onExport}
 								/>
 							</div>
@@ -225,6 +226,7 @@ export default function UIOverlay({
 									onZoomIn={onZoomIn}
 									onZoomOut={onZoomOut}
 									handleMapOptionsChange={onMapOptionsChange}
+									mapOptions={mapOptions}
 									onExport={onExport}
 								/>
 							}

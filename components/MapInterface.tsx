@@ -8,12 +8,18 @@ import type { CustomDataset } from "@/lib/types/custom";
 import type { NetworkDataset } from "@/lib/types/network";
 import { MapOptionsProvider } from "@/lib/context/MapOptionsContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
+import type { MapOptions } from "@/lib/types/mapOptions";
 
 interface MapInterfaceProps {
 	datasets: Datasets;
 	datasetsLoading: boolean;
 	activeViz: ActiveViz;
 	setActiveViz: (value: ActiveViz) => void;
+	mapOptions: MapOptions;
+	setMapOptions: (
+		type: keyof MapOptions,
+		options: Partial<MapOptions[keyof MapOptions]>,
+	) => void;
 	selectedLocation: string;
 	setSelectedLocation: (location: string) => void;
 	customDatasets: CustomDataset[];
@@ -28,6 +34,8 @@ export default function MapInterface({
 	datasetsLoading,
 	activeViz,
 	setActiveViz,
+	mapOptions,
+	setMapOptions,
 	selectedLocation,
 	setSelectedLocation,
 	customDatasets,
@@ -45,6 +53,8 @@ export default function MapInterface({
 		customDatasets,
 		roadSafetyDatasets,
 		networkDatasets,
+		mapOptions,
+		setMapOptions,
 		onError,
 	});
 

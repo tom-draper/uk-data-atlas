@@ -5,11 +5,13 @@ import { AppearanceControls } from "./map-options/AppearanceControls";
 import { ThemeSelector } from "./map-options/ThemeSelector";
 import type { MapOptionsChangeHandler } from "./map-options/types";
 import { useMapOptionsControls } from "./map-options/useMapOptionsControls";
+import type { MapOptions as MapOptionsState } from "@/lib/types/mapOptions";
 
 interface MapOptionsProps {
 	onZoomIn: () => void;
 	onZoomOut: () => void;
 	handleMapOptionsChange: MapOptionsChangeHandler;
+	mapOptions: MapOptionsState;
 	onExport: () => void;
 }
 
@@ -17,9 +19,10 @@ export default function MapOptions({
 	onZoomIn,
 	onZoomOut,
 	handleMapOptionsChange,
+	mapOptions,
 	onExport,
 }: MapOptionsProps) {
-	const controls = useMapOptionsControls(handleMapOptionsChange);
+	const controls = useMapOptionsControls(mapOptions, handleMapOptionsChange);
 	const isDark = useIsDark();
 	const theme = panelTheme(isDark);
 
