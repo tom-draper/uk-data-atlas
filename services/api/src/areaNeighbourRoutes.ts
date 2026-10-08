@@ -1,7 +1,12 @@
 import { areaMetrics } from "./areaMetrics";
 import { areaNotFound } from "./areaResources";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import { areaKey } from "./geographyKeys";
 
 /**
@@ -44,9 +49,7 @@ export const handleAreaNeighbourRoutes = ({
 	if (unavailable) return unavailable;
 	const touches = parsedUrl.searchParams.get("touches") ?? "edge";
 	if (touches !== "edge" && touches !== "any")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"touches must be edge, for areas sharing a border, or any, which also returns areas meeting at a single point.",
 		);
 	try {

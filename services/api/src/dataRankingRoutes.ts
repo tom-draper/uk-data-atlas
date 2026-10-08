@@ -7,7 +7,12 @@ import { publishedPartitions, statedDefaults } from "./dataDefaults";
 import { selectSourcePartition } from "./sourcePartition";
 import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /** Source-exact observations for one period, ranked with ties shared, in stable pages. */
 export const handleDataRankingRoutes = ({
@@ -76,9 +81,7 @@ export const handleDataRankingRoutes = ({
 		partition.kind === "incomplete" ||
 		(partition.kind === "selected" && partition.period === null)
 	)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} ranks areas within one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	if (partition.kind === "refusal")
@@ -108,7 +111,7 @@ export const handleDataRankingRoutes = ({
 	}
 	const order = readRankingOrder(parsedUrl.searchParams.get("order"));
 	if (!order) {
-		return problem(400, "Invalid Query", "order must be asc or desc.");
+		return invalidQuery("order must be asc or desc.");
 	}
 	const page = paginate(parsedUrl, rankingOf(numericRecords, order), {
 		keyOf: (record) => record.areaCode,

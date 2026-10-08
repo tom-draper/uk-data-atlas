@@ -1,5 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 
@@ -26,11 +26,7 @@ export const handleAreaHistoryRoutes = ({
 	const depthParameter = parsedUrl.searchParams.get("depth");
 	const depth = depthParameter === null ? 8 : Number(depthParameter);
 	if (!Number.isInteger(depth) || depth < 1 || depth > 20)
-		return problem(
-			400,
-			"Invalid Query",
-			"depth must be an integer from 1 to 20.",
-		);
+		return invalidQuery("depth must be an integer from 1 to 20.");
 	const history = geographyResolver.areaHistory(
 		{
 			geography,

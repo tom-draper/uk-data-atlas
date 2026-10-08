@@ -28,7 +28,12 @@ import {
 	publishedPartitions,
 	statedDefaults,
 } from "./dataDefaults";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /** A measure's source-exact observations for one period, as JSON or a tabular export. */
 export const handleDataRoutes = ({
@@ -62,9 +67,7 @@ export const handleDataRoutes = ({
 	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`This table lists a partition's areas as published, and a curated location is not one of them. /v1/data/${measureId}/aggregate sums it from its members.`,
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
@@ -101,9 +104,7 @@ export const handleDataRoutes = ({
 	// Which partition these name, and whether it may be drawn on a release,
 	// is the resolver's to decide rather than this route's.
 	if (period === null || geography === null || boundaryYear === null) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} lists the areas of one source partition, and this query does not pick one: give geography, with boundaryYear or datasetId where it has several, and a period that partition publishes. Published partitions: ${publishedPartitions(measure)}.`,
 		);
 	}
@@ -150,19 +151,12 @@ export const handleDataRoutes = ({
 		requestedFormat !== "csv" &&
 		requestedFormat !== "ndjson"
 	) {
-		return problem(
-			400,
-			"Invalid Query",
-			"format must be one of json, csv or ndjson.",
-			{ code: "invalid_format" },
-		);
+		return invalidQuery("format must be one of json, csv or ndjson.", {
+			code: "invalid_format",
+		});
 	}
 	if (unitMode !== "source" && unitMode !== "canonical") {
-		return problem(
-			400,
-			"Invalid Query",
-			"units must be source or canonical.",
-		);
+		return invalidQuery("units must be source or canonical.");
 	}
 	if (unitMode === "canonical" && requestedFormat !== "json") {
 		return problem(
@@ -179,16 +173,10 @@ export const handleDataRoutes = ({
 		);
 	}
 	if (include !== null && include !== "area") {
-		return problem(
-			400,
-			"Invalid Query",
-			"include currently supports only area.",
-		);
+		return invalidQuery("include currently supports only area.");
 	}
 	if (include === "area" && !geometry) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"include=area requires a caller-selected compatible release.",
 		);
 	}

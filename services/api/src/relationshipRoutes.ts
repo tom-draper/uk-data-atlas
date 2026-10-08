@@ -1,4 +1,4 @@
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, type ApiResponse } from "./routeResponse";
 import { handleRelationshipCapabilityRoutes } from "./relationshipCapabilityRoutes";
 import { handleRelationshipCoverageRoutes } from "./relationshipCoverageRoutes";
 import type { RouteRequest } from "./routing";
@@ -33,9 +33,7 @@ export const handleRelationshipRoutes = (
 		parsedUrl.searchParams.has(parameter),
 	);
 	if (asksAboutConversion && asksAboutCoverage)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Supply either a conversion query (from/to) or a release-coverage query (geography/release), not both.",
 		);
 	return asksAboutConversion

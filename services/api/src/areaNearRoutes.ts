@@ -8,7 +8,7 @@ import {
 	parseLookupRequest,
 	parseStatedAccuracy,
 } from "./pointLookup";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { readBoundedWholeNumber } from "./queryParameters";
 
@@ -36,16 +36,12 @@ export const handleAreaNearRoutes = ({
 	const { searchParams } = parsedUrl;
 	const accuracy = parseStatedAccuracy(searchParams.get("accuracy"));
 	if (accuracy === null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
 	const crs = parseLookupCrs(searchParams.get("crs"));
 	if (!crs)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 		);
 	const point = parseLookupCoordinate(
@@ -60,9 +56,7 @@ export const handleAreaNearRoutes = ({
 		accuracy,
 	);
 	if (!point)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			crs === "EPSG:4326"
 				? "lng (-180 to 180) and lat (-90 to 90) are required as plain decimal WGS 84 degrees."
 				: crs === "EPSG:27700"
@@ -76,9 +70,7 @@ export const handleAreaNearRoutes = ({
 		MAX_NEAR_LIMIT,
 	);
 	if (limit === undefined)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`limit must be a whole number from 1 to ${MAX_NEAR_LIMIT}.`,
 		);
 	const withinM = readBoundedWholeNumber(
@@ -88,9 +80,7 @@ export const handleAreaNearRoutes = ({
 		MAX_NEAR_WITHIN_M,
 	);
 	if (withinM === undefined)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`within must be a whole number of metres from 1 to ${MAX_NEAR_WITHIN_M}.`,
 		);
 	const geographyResolver = context.geographyResolver;

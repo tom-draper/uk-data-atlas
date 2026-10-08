@@ -1,6 +1,11 @@
 import { areaNotFound } from "./areaResources";
 import { parseSelectionDate } from "./releaseForDate";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 type AreaQueryRequest = Pick<
@@ -21,9 +26,7 @@ export const resolveAreaQuery = ({
 }: AreaQueryRequest): ApiResponse => {
 	const q = parsedUrl.searchParams.get("q")?.trim();
 	if (!q)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"q is required: an official area code, name or supplied alias.",
 		);
 	const geographyResolver = context.geographyResolver;
@@ -33,28 +36,20 @@ export const resolveAreaQuery = ({
 	const dateText = parsedUrl.searchParams.get("date");
 	const country = parsedUrl.searchParams.get("country") ?? undefined;
 	if (requestedRelease && dateText)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"release and date cannot be combined. Pin a release, or select one by date.",
 		);
 	if (dateText && !geography)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography is required when resolving an area identifier by date.",
 		);
 	if (country !== undefined && !/^GB-(ENG|NIR|SCT|WLS)$/.test(country))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
 		);
 	const date = dateText === null ? undefined : parseSelectionDate(dateText);
 	if (dateText !== null && !date)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 		);
 	const selection = date

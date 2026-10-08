@@ -1,4 +1,4 @@
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, type ApiResponse } from "./routeResponse";
 
 /**
  * The one parameter every data route takes for where: `place`.
@@ -28,36 +28,28 @@ export const parsePlaceParameter = (
 	const text = searchParams.get("place")?.trim();
 	if (text === undefined) return undefined;
 	if (text === "")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"place is empty. Give an area code, or a place reference from /v1/places such as localAuthority/E08000035 or location/north-wales.",
 		);
 	if (text.startsWith(LOCATION_REFERENCE)) {
 		const id = text.slice(LOCATION_REFERENCE.length);
 		return id
 			? { kind: "location", id }
-			: problem(400, "Invalid Query", "location/ names no location.");
+			: invalidQuery("location/ names no location.");
 	}
 	if (text.startsWith(POSTCODE_REFERENCE))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`A postcode is answered by /v1/data/${measureId}/value?place=${encodeURIComponent(text)}, which finds the area it lies in.`,
 		);
 	const [first, second, ...rest] = text.split("/");
 	if (rest.length > 0 || first === "")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`place ${JSON.stringify(text)} is neither an area code nor a place reference such as localAuthority/E08000035.`,
 		);
 	if (second === undefined) return { kind: "area", code: first! };
 	const geography = searchParams.get("geography");
 	if (geographyIsThePlaces && geography !== null && geography !== first)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`place names a ${first} but geography is ${geography}. Give one or the other, or make them agree.`,
 		);
 	return { kind: "area", code: second, geography: first };

@@ -15,7 +15,7 @@ import {
 	type GeometryProvenance,
 	type GeometryTransformation,
 } from "./reprojection";
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
 
 /** A lookup reads one release per geography, and each is held in memory. */
@@ -590,38 +590,28 @@ export const parseLookupRequest = (
 				: value.slice(0, slash);
 		const boundaryRelease = slash === -1 ? value : value.slice(slash + 1);
 		if (!geography || !boundaryRelease)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"Name each release with its geography, as release={geography}/{release}. A bare release id is accepted only when a single geography is requested.",
 			);
 		if (pinned.has(geography) && pinned.get(geography) !== boundaryRelease)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				`More than one release is pinned for ${geography}; a lookup reads one release per geography.`,
 			);
 		pinned.set(geography, boundaryRelease);
 		if (!geographies.includes(geography)) geographies.push(geography);
 	}
 	if (geographies.length === 0)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Name at least one geography, as geography= or release={geography}/{release}.",
 		);
 	if (geographies.length > MAX_LOOKUP_GEOGRAPHIES)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`At most ${MAX_LOOKUP_GEOGRAPHIES} geographies can be looked up in one request; this one names ${geographies.length}.`,
 		);
 	const dateText = searchParams.get("date");
 	const date = dateText === null ? undefined : parseSelectionDate(dateText);
 	if (dateText !== null && !date)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 		);
 	const { geographyResolver } = context;

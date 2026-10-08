@@ -7,7 +7,12 @@ import {
 	renderLookup,
 } from "./lookupExports";
 import { findMeasureObservations } from "./dataCatalog";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { observationTableOf } from "./observationTables";
 
@@ -146,12 +151,9 @@ export const handleBulkRoutes = ({
 			);
 		const format = parsedUrl.searchParams.get("format") ?? "csv";
 		if (format !== "csv" && format !== "ndjson")
-			return problem(
-				400,
-				"Invalid Query",
-				"format must be csv or ndjson.",
-				{ code: "invalid_format" },
-			);
+			return invalidQuery("format must be csv or ndjson.", {
+				code: "invalid_format",
+			});
 		const table = (() => {
 			if (entry.kind === "area-identities") {
 				const release =

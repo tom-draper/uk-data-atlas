@@ -1,4 +1,9 @@
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { COVERS_MINIMUM_SHARE } from "./locationMembership";
 import { notBuilt, unsupported } from "./capability";
@@ -21,11 +26,7 @@ export const selectedAsOf = (
 		!Number.isNaN(date.valueOf()) &&
 		date.toISOString().slice(0, 10) === asOf
 		? asOf
-		: problem(
-				400,
-				"Invalid Query",
-				"asOf must be a calendar date in YYYY-MM-DD form.",
-			);
+		: invalidQuery("asOf must be a calendar date in YYYY-MM-DD form.");
 };
 
 /** Discovery endpoints for the Atlas's curated named locations. */
@@ -83,9 +84,7 @@ export const handleLocationRoutes = ({
 			?.trim()
 			.toLocaleLowerCase();
 		if (!query)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"q is required to find named-location alternatives.",
 			);
 		const unavailable =
@@ -129,9 +128,7 @@ export const handleLocationRoutes = ({
 			),
 		);
 		if (typeof from !== "string" || typeof to !== "string")
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"from and to must be calendar dates in YYYY-MM-DD form.",
 			);
 		const location = context.geographyResolver.namedLocation(segments[2]!);
@@ -262,9 +259,7 @@ export const handleLocationRoutes = ({
 			parsedUrl.searchParams.get("geography") ?? memberGeography;
 		const boundaryRelease = parsedUrl.searchParams.get("release");
 		if (!boundaryRelease)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"release is required to resolve a named location's members.",
 			);
 		const geographyResolver = context.geographyResolver;
@@ -334,9 +329,7 @@ export const handleLocationRoutes = ({
 		);
 		const requested = parsedUrl.searchParams.get("via");
 		if (!requested)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				candidates.length === 0
 					? `A named location is curated as ${memberGeography} codes, and no published crosswalk maps ${geography}/${boundaryRelease} to a ${memberGeography} release, so its members cannot be resolved there.`
 					: `Name the crosswalk to resolve members through, with via=. Published for ${geography}/${boundaryRelease}: ${candidates.map((candidate) => `${candidate.id} (${candidate.method}, to ${candidate.to.boundaryRelease})`).join("; ")}.`,
@@ -542,9 +535,7 @@ const locationParents = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	if (!geography || !boundaryRelease)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography and release are required to find the areas a location lies in.",
 		);
 	const candidates = geographyResolver.locationParentCrosswalks(
@@ -553,9 +544,7 @@ const locationParents = ({
 	);
 	const requested = parsedUrl.searchParams.get("via");
 	if (!requested)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			candidates.length === 0
 				? `No published crosswalk runs from ${location.memberGeography} to ${geography}/${boundaryRelease}, so a location's parents there cannot be resolved.`
 				: `Name the crosswalk to resolve parents through, with via=. Published for ${geography}/${boundaryRelease}: ${candidates.map((candidate) => candidate.crosswalkId).join("; ")}.`,

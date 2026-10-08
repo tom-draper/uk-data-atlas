@@ -3,7 +3,7 @@ import type { AggregateMembers } from "./aggregation";
 import type { AggregationTarget } from "./aggregationTarget";
 import type { PopulationObservation } from "./dataCatalog";
 import { aggregateRecordsForTarget } from "./aggregateTargetMembers";
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 import { calculateWeightedMean } from "./weightedMean";
 
 type WeightedAggregateResult =
@@ -30,9 +30,7 @@ export const calculateWeightedAggregate = ({
 		records: weightRecords,
 	});
 	if (!weightAggregate) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Supply exactly one of locationId, areaCode or targetCode.",
 		);
 	}

@@ -18,7 +18,12 @@ import {
 	UNDECLARED_POSTCODE_ACCURACY,
 } from "./postcodeRoutes";
 import { compactPostcode, postcodeLookupPoint } from "./postcodes";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import { readBatchInput } from "./batchInput";
 import type { RouteRequest } from "./routing";
 
@@ -33,9 +38,7 @@ const coordinateDescription = (crs: string) =>
 			: "easting and northing as plain decimal grid metres";
 
 const coordinateCrsProblem = () =>
-	problem(
-		400,
-		"Invalid Query",
+	invalidQuery(
 		"crs must be EPSG:4326 (the default), EPSG:27700 (British National Grid), or EPSG:29902 (Irish Grid).",
 	);
 
@@ -57,9 +60,7 @@ export const handleAreaContainsRoutes = ({
 		parsedUrl.searchParams.get("accuracy"),
 	);
 	if (accuracy === null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
 	const located = postcodeText
@@ -139,9 +140,7 @@ const coordinatePoint = (
 		accuracy,
 	);
 	if (!point)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${coordinateDescription(crs)} are required for ${crs}, or give a postcode.`,
 		);
 	return { point };
@@ -160,9 +159,7 @@ const postcodePoint = (
 		(name) => searchParams.has(name),
 	);
 	if (clashing.length > 0)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`Give a postcode or a coordinate, not both: ${clashing.join(", ")} cannot be combined with postcode, whose centroid and its accuracy come from the postcode directory.`,
 		);
 	const found = findPostcode(context, text);
@@ -194,15 +191,11 @@ const parseBatchPoints = (
 	defaultAccuracyM: number | undefined,
 ): LookupPoint[] | ApiResponse => {
 	if (values.length === 0)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Supply at least one point as point={lng},{lat}; it may be repeated.",
 		);
 	if (values.length > MAX_BATCH_POINTS)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`At most ${MAX_BATCH_POINTS} points can be looked up in one request; this one has ${values.length}.`,
 		);
 	const points: LookupPoint[] = [];
@@ -226,9 +219,7 @@ const parseBatchPoints = (
 					)
 				: undefined;
 		if (!point)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				`point ${index} (${JSON.stringify(value)}) is not ${crs === "EPSG:4326" ? "{lng},{lat}" : crs === "EPSG:27700" ? "{easting},{northing} or {gridref}" : "{easting},{northing}"}, optionally followed by ,{accuracy}; plain decimals are required except for an Ordnance Survey grid reference in EPSG:27700. Stated accuracy is in metres up to ${MAX_STATED_ACCURACY_M}.`,
 			);
 		points.push(point);
@@ -264,9 +255,7 @@ export const handleAreaContainsBatchRoutes = ({
 		parsedUrl.searchParams.get("accuracy"),
 	);
 	if (accuracy === null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`accuracy must be a positive number of metres, at most ${MAX_STATED_ACCURACY_M}.`,
 		);
 	const crs = parseLookupCrs(parsedUrl.searchParams.get("crs"));

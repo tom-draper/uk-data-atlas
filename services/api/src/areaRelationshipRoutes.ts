@@ -1,5 +1,5 @@
 import { areaNotFound } from "./areaResources";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaKey } from "./geographyKeys";
 import { selectAreaChildren } from "./areaChildren";
@@ -54,9 +54,7 @@ export const handleAreaRelationshipRoutes = ({
 			parsedUrl.searchParams.get("childGeography"),
 		);
 		if ("error" in selected)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				selected.error === "invalid"
 					? "childGeography must be a geography or geography/release pair."
 					: "No published contemporary child release matches childGeography.",
@@ -71,11 +69,7 @@ export const handleAreaRelationshipRoutes = ({
 		depth !== undefined &&
 		(!Number.isInteger(depth) || depth < 1 || depth > 20)
 	)
-		return problem(
-			400,
-			"Invalid Query",
-			"depth must be an integer from 1 to 20.",
-		);
+		return invalidQuery("depth must be an integer from 1 to 20.");
 	return {
 		status: 200,
 		body: envelope(releaseId, {

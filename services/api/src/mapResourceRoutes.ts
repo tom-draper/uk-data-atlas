@@ -11,7 +11,12 @@ import {
 	refused,
 	resolveObservations,
 } from "./observationResolution/observationPlan";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { GEOMETRY_TIERS, isGeometryTier } from "./simplifyGeometry";
 
@@ -71,22 +76,15 @@ const featureDownload = (
 	// is twenty times the coarsest, and neither is a safe default for both a
 	// warehouse and a web page.
 	if (tier === null || !isGeometryTier(tier))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`Ask for the detail to download with tier=, one of ${TIER_NAMES}.`,
 		);
 	const format = parsedUrl.searchParams.get("format") ?? "geoparquet";
 	const download = FEATURE_FORMATS[format];
 	if (!download)
-		return problem(
-			400,
-			"Invalid Query",
-			"format must be geoparquet or geojson.",
-			{
-				code: "invalid_format",
-			},
-		);
+		return invalidQuery("format must be geoparquet or geojson.", {
+			code: "invalid_format",
+		});
 	const entry = features.find(
 		(candidate) =>
 			candidate.tier === tier && candidate.format === download.format,
@@ -286,12 +284,9 @@ export const handleMapResourceRoutes = ({
 		const measureId = segments[5]!;
 		const format = parsedUrl.searchParams.get("format") ?? "json";
 		if (format !== "json" && format !== "parquet")
-			return problem(
-				400,
-				"Invalid Query",
-				"format must be json or parquet.",
-				{ code: "invalid_format" },
-			);
+			return invalidQuery("format must be json or parquet.", {
+				code: "invalid_format",
+			});
 		// The map resource decides the geometry: a value may only be drawn on
 		// this release if every source code is in it, which the resolver
 		// checks rather than this route.
@@ -299,9 +294,7 @@ export const handleMapResourceRoutes = ({
 		// The join documents `period` as required: a map draws one moment, and
 		// which moment is the caller's to say.
 		if (period === null)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				`Ask for the period to draw with period=; /v1/measures/${measureId} lists the ones ${measureId} publishes.`,
 			);
 		const resolved = resolveObservations(context, {

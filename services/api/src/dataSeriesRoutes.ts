@@ -20,7 +20,12 @@ import {
 } from "./sourceExactProvenance";
 import type { RouteRequest } from "./routing";
 import { parsePlaceParameter, requestedGeography } from "./placeParameter";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 /** One area's source-exact, or explicitly reviewed derived, values over time. */
 export const handleDataSeriesRoutes = ({
@@ -70,9 +75,7 @@ export const handleDataSeriesRoutes = ({
 	const place = parsePlaceParameter(parsedUrl.searchParams, measureId);
 	if (place && "status" in place) return place;
 	if (place?.kind === "location")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`A series is one area's. A curated location is summed from its members by /v1/data/${measureId}/aggregate, or answered by /v1/data/${measureId}/value?place=${encodeURIComponent(`location/${place.id}`)}.`,
 		);
 	const placeText = parsedUrl.searchParams.get("place")?.trim() ?? null;
@@ -118,9 +121,7 @@ export const handleDataSeriesRoutes = ({
 		!geography ||
 		!boundaryYear
 	) {
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			areaCode
 				? `${measureId} is published on more than one partition, so give geography and boundaryYear, or a place reference such as localAuthority/E08000035 that carries its geography. Published partitions: ${publishedPartitions(measure)}.`
 				: "place is required: an area name, an area code, or a place reference such as localAuthority/E08000035.",
@@ -130,9 +131,7 @@ export const handleDataSeriesRoutes = ({
 	// is asked for; the geography and, where a measure needs it, the dataset
 	// are what narrow it to one.
 	if (partition.kind === "refusal")
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			partition.resolution.refusal.title === "Ambiguous Source"
 				? "datasetId is required because more than one source matches that geography and boundary year."
 				: `${measureId} has no published source for that geography, boundary year and dataset.`,
@@ -171,11 +170,7 @@ export const handleDataSeriesRoutes = ({
 	if (toParameter !== null) {
 		const analysisGeography = parseExactReleaseReference(toParameter);
 		if (!analysisGeography)
-			return problem(
-				400,
-				"Invalid Query",
-				"to must be one geography/release pair.",
-			);
+			return invalidQuery("to must be one geography/release pair.");
 		const inventory = context.analysisGeographyInventory;
 		if (!inventory)
 			return problem(

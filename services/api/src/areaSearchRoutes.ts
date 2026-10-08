@@ -1,5 +1,5 @@
 import { paginate } from "./pagination";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 import { areaNotFound } from "./areaResources";
 import { latestPublishedBoundaryRelease } from "./pointLookup";
@@ -24,9 +24,7 @@ export const handleAreaSearchRoutes = ({
 	// area instead of finding one.
 	const query = parsedUrl.searchParams.get("q");
 	if (query !== null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`/v1/areas lists areas and does not search them. Find an area by name, code or postcode with /v1/places?${new URLSearchParams({ q: query })}.`,
 		);
 	const geographyResolver = context.geographyResolver;
@@ -42,9 +40,7 @@ export const handleAreaSearchRoutes = ({
 	)
 		return areaNotFound(context, geography);
 	if (requestedRelease && !geography)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"release filters an area listing only together with geography.",
 		);
 	const current =

@@ -1,6 +1,11 @@
 import { areaNotFound } from "./areaResources";
 import { coveragePlan } from "./coveragePlan";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** What a measure can answer on one release, country by country. */
@@ -29,9 +34,7 @@ export const handleCoveragePlanRoutes = ({
 	const geography = parsedUrl.searchParams.get("geography");
 	const boundaryRelease = parsedUrl.searchParams.get("release");
 	if (!geography || !boundaryRelease)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography and release are required: a coverage plan answers one exact boundary release.",
 		);
 	const measure = dataCatalog.measures.find(

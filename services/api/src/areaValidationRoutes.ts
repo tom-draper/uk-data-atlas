@@ -2,7 +2,7 @@ import { areaNotFound } from "./areaResources";
 import { MAX_BATCH_VALUES } from "./batchValidation";
 import { matchManifest, matchReportResponse } from "./matchReport";
 import { readPostedRows } from "./requestRows";
-import { problem, type ApiResponse } from "./routeResponse";
+import { invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /**
@@ -40,30 +40,22 @@ export const handleAreaValidationRoutes = ({
 		: parsedUrl.searchParams.getAll("parent");
 	const format = parsedUrl.searchParams.get("format") ?? "json";
 	if (format !== "json" && format !== "csv")
-		return problem(400, "Invalid Query", "format must be json or csv.");
+		return invalidQuery("format must be json or csv.");
 	if (Boolean(geography) !== Boolean(boundaryRelease))
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"geography and release must be supplied together, or both omitted to infer a likely compiled release.",
 		);
 	if (values.length === 0)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Supply at least one value to validate, as value=; it may be repeated.",
 		);
 	// The body's own limit was checked as it was read.
 	if (!posted && values.length > MAX_BATCH_VALUES)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`At most ${MAX_BATCH_VALUES} values can be validated in one GET; this one has ${values.length}. POST the column as JSON or CSV to send more.`,
 		);
 	if (parents.length > 0 && parents.length !== values.length)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"parent, when supplied, must occur once for every value in the same input order.",
 		);
 	if (!geography || !boundaryRelease) {

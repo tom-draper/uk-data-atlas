@@ -1,7 +1,12 @@
 import { areaNotFound } from "./areaResources";
 import { releaseDownloads } from "./mapResourceLoader";
 import { parseSelectionDate } from "./releaseForDate";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /** Published boundary releases and the geography catalogues built from them. */
@@ -46,22 +51,16 @@ export const handleBoundaryRoutes = ({
 		const date = parsedUrl.searchParams.get("date") ?? "";
 		const country = parsedUrl.searchParams.get("country") ?? undefined;
 		if (!geography)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"geography is required, such as geography=ward.",
 			);
 		const selectionDate = parseSelectionDate(date);
 		if (!selectionDate)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"date must be a calendar date as YYYY-MM-DD, or a month as YYYY-MM.",
 			);
 		if (country !== undefined && !/^GB-(ENG|NIR|SCT|WLS)$/.test(country))
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"country must be one of GB-ENG, GB-NIR, GB-SCT or GB-WLS.",
 			);
 		const requestedMonth = selectionDate.month;
@@ -127,21 +126,13 @@ export const handleBoundaryRoutes = ({
 		const limitText = parsedUrl.searchParams.get("limit");
 		const limit = limitText === null ? 25 : Number(limitText);
 		if (!geography || !from || !to)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"geography, from and to are required boundary release ids.",
 			);
 		if (!Number.isInteger(limit) || limit < 1 || limit > 100)
-			return problem(
-				400,
-				"Invalid Query",
-				"limit must be an integer from 1 to 100.",
-			);
+			return invalidQuery("limit must be an integer from 1 to 100.");
 		if (from === to)
-			return problem(
-				400,
-				"Invalid Query",
+			return invalidQuery(
 				"from and to must name different boundary releases.",
 			);
 		const unavailable = geographyResolver.requires("areas");

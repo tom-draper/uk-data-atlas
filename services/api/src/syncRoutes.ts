@@ -1,4 +1,9 @@
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 import type { RouteRequest } from "./routing";
 
 /**
@@ -64,19 +69,11 @@ export const handleSyncRoutes = ({
 		}
 		const status = parsedUrl.searchParams.get("status");
 		if (status !== null && status !== "passed" && status !== "waived") {
-			return problem(
-				400,
-				"Invalid Query",
-				"status must be passed or waived.",
-			);
+			return invalidQuery("status must be passed or waived.");
 		}
 		const scope = parsedUrl.searchParams.get("scope");
 		if (scope !== null && scope !== "data") {
-			return problem(
-				400,
-				"Invalid Query",
-				"scope must be data when supplied.",
-			);
+			return invalidQuery("scope must be data when supplied.");
 		}
 		const { resources, ...report } = validationReport;
 		const filtered = resources.filter(

@@ -12,7 +12,12 @@ import { convertThroughSteps, type ConversionStep } from "./conversion";
 import { sourceExactProvenance } from "./sourceExactProvenance";
 import { paginate } from "./pagination";
 import type { RouteRequest } from "./routing";
-import { envelope, problem, type ApiResponse } from "./routeResponse";
+import {
+	envelope,
+	invalidQuery,
+	problem,
+	type ApiResponse,
+} from "./routeResponse";
 
 const crosswalkSummary = (artifact: CrosswalkArtifact) => ({
 	id: artifact.id,
@@ -85,15 +90,11 @@ export const handleDataConversionRoutes = ({
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
 	const pathId = parsedUrl.searchParams.get("path");
 	if (crosswalkId && pathId)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"Name either crosswalk or path, not both. A path already names every crosswalk it uses.",
 		);
 	if (!crosswalkId && !pathId)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			"crosswalk or path is required. This route never selects a conversion path for the caller; /v1/crosswalks lists the published crosswalks and /v1/relationships discovers the published paths.",
 		);
 	// Either way the caller names the route: one crosswalk forward, or every
@@ -147,9 +148,7 @@ export const handleDataConversionRoutes = ({
 	// is answered the same way whatever the measure. Which partition they name
 	// is the resolver's to decide.
 	if (period === null || geography === null || boundaryYear === null)
-		return problem(
-			400,
-			"Invalid Query",
+		return invalidQuery(
 			`${measureId} has no published source for that period, geography and boundary year.`,
 		);
 	const resolved = resolveObservations(context, {
