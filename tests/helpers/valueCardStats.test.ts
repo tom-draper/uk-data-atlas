@@ -4,6 +4,7 @@ import { getChartDefinitions } from "@/lib/datasets/types";
 import { claimantCountDefinition } from "@/lib/datasets/claimantCount";
 import { councilTaxDefinition } from "@/lib/datasets/councilTax";
 import { crimeDefinition } from "@/lib/datasets/crime";
+import { jobsDefinition } from "@/lib/datasets/jobs";
 import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
@@ -163,6 +164,48 @@ describe("resolveValueCardStats", () => {
 				false,
 			)?.stats.value,
 		).toBe(12_345);
+	});
+
+	it("sums jobs across a selected area and reads a local authority record", () => {
+		const jobs = {
+			boundaryType: "localAuthority",
+			boundaryYear: 2023,
+			data: {
+				E08000001: {
+					ladCode: "E08000001",
+					ladName: "Bolton",
+					totalJobs: 90_000,
+				},
+			},
+		};
+		const card = jobsDefinition.chart.card!;
+
+		expect(
+			resolveValueCardStats(
+				card,
+				jobs,
+				{ totalJobs: 250_000 },
+				null,
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 250_000, secondary: undefined },
+			viaLocalAuthority: false,
+		});
+		expect(
+			resolveValueCardStats(
+				card,
+				jobs,
+				null,
+				area("localAuthority", "E08000001"),
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 90_000, secondary: undefined },
+			viaLocalAuthority: false,
+		});
 	});
 
 	it("falls back to the map's hover record only for the active indicator", () => {

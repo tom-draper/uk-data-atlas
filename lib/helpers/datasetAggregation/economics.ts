@@ -1,4 +1,5 @@
 import type {
+	AggregatedJobsData,
 	AggregatedCrimeData,
 	AggregatedCustomData,
 	AggregatedHousePriceData,
@@ -6,6 +7,7 @@ import type {
 	CrimeDataset,
 	Features,
 	HousePriceWardData,
+	JobsLADData,
 	PropertyKeys,
 } from "@/lib/types";
 import { getFeatureProp } from "@/lib/types";
@@ -206,3 +208,16 @@ export function aggregateCustomDataset(
 	}
 	return { count, average: count > 0 ? sum / count : 0 };
 }
+
+/** Jobs are workplace-based counts, so they add across local authorities. */
+export const aggregateJobs = (
+	records: JobsLADData[],
+): AggregatedJobsData | null =>
+	records.length === 0
+		? null
+		: {
+				totalJobs: records.reduce(
+					(total, record) => total + record.totalJobs,
+					0,
+				),
+			};
