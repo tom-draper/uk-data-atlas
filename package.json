@@ -32,7 +32,7 @@
 		"test:e2e": "playwright test",
 		"typecheck": "tsc --noEmit && pnpm --filter \"./packages/*\" typecheck",
 		"check": "pnpm typecheck && pnpm format:check && vitest run --project unit --project data && pnpm --dir services/api typecheck && pnpm --dir services/api test:unbuilt",
-		"check:full": "pnpm precompile && pnpm boundaries:compile && pnpm --dir services/api build && pnpm lineage:build && pnpm containment:build --check && pnpm places:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir services/api typecheck && pnpm --dir services/api test",
+		"check:full": "pnpm precompile && pnpm --dir services/api build && pnpm lineage:build && pnpm containment:build --check && pnpm places:build && pnpm typecheck && pnpm format:check && pnpm test:run && pnpm --dir services/api typecheck && pnpm --dir services/api test",
 		"profile:atlas": "node scripts/profile-atlas-memory.mjs",
 		"roads:serve": "node scripts/serve-os-open-roads.mjs"
 	},
