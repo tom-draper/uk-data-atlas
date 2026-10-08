@@ -113,3 +113,8 @@ export const problem = (
 		...extensions,
 	},
 });
+
+export const invalidQuery = (
+	detail: string,
+	extensions?: Parameters<typeof problem>[3],
+): ApiResponse => problem(400, "Invalid Query", detail, extensions);
