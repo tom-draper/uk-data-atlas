@@ -41,7 +41,7 @@ import {
 import { applyReversedGridOffset } from "./reverse-grid-offset.mts";
 import { parseDatasetMeta } from "../lib/data/catalog/meta";
 import { polygonAreaSqKm } from "../lib/helpers/population";
-import { elapsedSince } from "./timing.mts";
+import { elapsedSince, formatKb, logArtifact } from "./timing.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -545,9 +545,7 @@ const assertKeptSomething = (
 export async function compileBoundaryAssets(): Promise<void> {
 	const startedAt = performance.now();
 	const sources = releaseSources();
-	console.log(
-		`Preparing TopoJSON boundary assets (${sources.length} releases)...`,
-	);
+	console.log(`Preparing ${sources.length} TopoJSON boundary assets...`);
 	for (const {
 		label,
 		objectName,
@@ -565,9 +563,10 @@ export async function compileBoundaryAssets(): Promise<void> {
 		const boundaryStartedAt = performance.now();
 		if (sourcePath === null) {
 			if (!(await exists(topologySourcePath))) {
-				console.log(
-					`  boundary: ${label} (no local GeoJSON or TopoJSON source, skipped; ${elapsedSince(boundaryStartedAt)})`,
-				);
+				logArtifact("boundary", label, [
+					"skipped, no local GeoJSON or TopoJSON source",
+					elapsedSince(boundaryStartedAt),
+				]);
 				continue;
 			}
 			const topologyChanged = await shouldCompile(
@@ -579,9 +578,11 @@ export async function compileBoundaryAssets(): Promise<void> {
 				propertiesPath,
 			);
 			if (!topologyChanged && !propertiesChanged) {
-				console.log(
-					`  boundary: ${label} (properties up to date; ${elapsedSince(boundaryStartedAt)})`,
-				);
+				logArtifact("boundary", label, [
+					"cached",
+					formatKb((await stat(outputPath)).size),
+					elapsedSince(boundaryStartedAt),
+				]);
 				continue;
 			}
 			if (topologyChanged) {
@@ -597,17 +598,20 @@ export async function compileBoundaryAssets(): Promise<void> {
 				const propertiesKb = Math.round(
 					Buffer.byteLength(properties, "utf8") / 1024,
 				);
-				console.log(
-					`  boundary: ${label} (TopoJSON source -> ${propertiesKb} KB properties; ${elapsedSince(boundaryStartedAt)})`,
-				);
+				logArtifact("boundary", label, [
+					"compiled properties from TopoJSON source",
+					`${propertiesKb} KB properties`,
+					elapsedSince(boundaryStartedAt),
+				]);
 			}
 			continue;
 		}
 
 		if (!(await exists(sourcePath))) {
-			console.log(
-				`  boundary: ${label} (local GeoJSON source missing, skipped; ${elapsedSince(boundaryStartedAt)})`,
-			);
+			logArtifact("boundary", label, [
+				"skipped, local GeoJSON source missing",
+				elapsedSince(boundaryStartedAt),
+			]);
 			continue;
 		}
 
@@ -615,9 +619,11 @@ export async function compileBoundaryAssets(): Promise<void> {
 			!(await shouldCompile([sourcePath, ...inputs], outputPath)) &&
 			(await exists(propertiesPath))
 		) {
-			console.log(
-				`  boundary: ${label} (up to date; ${elapsedSince(boundaryStartedAt)})`,
-			);
+			logArtifact("boundary", label, [
+				"cached",
+				formatKb((await stat(outputPath)).size),
+				elapsedSince(boundaryStartedAt),
+			]);
 			continue;
 		}
 
@@ -643,9 +649,12 @@ export async function compileBoundaryAssets(): Promise<void> {
 			.update(output)
 			.digest("hex")
 			.slice(0, 12);
-		console.log(
-			`  boundary: ${label} (${sourceKb} KB -> ${outputKb} KB + ${propertiesKb} KB properties, ${hash}; ${elapsedSince(boundaryStartedAt)})`,
-		);
+		logArtifact("boundary", label, [
+			"compiled",
+			`${outputKb} KB from ${sourceKb} KB source, ${propertiesKb} KB properties`,
+			hash,
+			elapsedSince(boundaryStartedAt),
+		]);
 	}
 	console.log(`Boundary assets complete (${elapsedSince(startedAt)}).`);
 }

@@ -141,9 +141,10 @@ function reportPlaceChanges(
 		const removed = [...curated].filter((c) => !sourced.includes(c));
 		if (added.length || removed.length)
 			console.log(
-				`  gazetteer: ${name} from ${place.source.lookup}` +
-					(added.length ? `, adds ${added.join(" ")}` : "") +
-					(removed.length ? `, drops ${removed.join(" ")}` : ""),
+				`  gazetteer: ${name} (from ${place.source.lookup}` +
+					(added.length ? `; adds ${added.join(" ")}` : "") +
+					(removed.length ? `; drops ${removed.join(" ")}` : "") +
+					")",
 			);
 	}
 }

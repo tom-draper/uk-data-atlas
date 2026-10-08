@@ -64,7 +64,7 @@ import {
 	selectDefinitions,
 } from "./precompile-selection";
 import { precompileFingerprint } from "./precompile-fingerprint.mjs";
-import { elapsedSince } from "./timing.mts";
+import { elapsedSince, formatKb, logArtifact } from "./timing.mts";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const PUBLIC_DATA = join(ROOT, "public", "data");
@@ -677,26 +677,37 @@ const writeAtomically = async (path: string, contents: string) => {
 	await rename(temporaryPath, path);
 };
 
-const timeStage = async <T,>(label: string, work: () => Promise<T>) => {
-	const startedAt = performance.now();
-	try {
-		return await work();
-	} finally {
-		console.log(`  ${label}: complete (${elapsedSince(startedAt)})`);
-	}
-};
+/** How many region chunk files there are, and their total size. */
+const chunksSize = (snapshots: readonly FileSnapshot[]) =>
+	`${snapshots.length} files, ${formatKb(
+		snapshots.reduce((total, snapshot) => total + snapshot.bytes, 0),
+	)}`;
 
-const out = async (name: string, data: unknown, log = true) => {
+const out = async (name: string, data: unknown) => {
 	const json = JSON.stringify(data);
 	const path = join(OUT_DIR, `${name}.json`);
 	await writeAtomically(path, json);
-	const kb = Math.round(Buffer.byteLength(json, "utf8") / 1024);
-	if (log) console.log(`  dataset: ${name}.json (${kb} KB)`);
 	return {
 		bytes: Buffer.byteLength(json, "utf8"),
 		sha256: createHash("sha256").update(json).digest("hex"),
 		modifiedAt: (await stat(path)).mtimeMs,
 	};
+};
+
+const logRoadSafety = (
+	status: "cached" | "compiled",
+	outputs: { dataset: CompiledOutput; points: CompiledOutput },
+	startedAt: number,
+) => {
+	for (const [name, output] of [
+		["road-safety.json", outputs.dataset],
+		["road-safety-points.json", outputs.points],
+	] as const)
+		logArtifact("dataset", name, [
+			status,
+			formatKb(output.bytes),
+			elapsedSince(startedAt),
+		]);
 };
 
 const createTrackedReader = () => {
@@ -1137,29 +1148,31 @@ async function compileSelected(names: readonly string[]) {
 	const needsRegionChunks = selected.some(
 		(definition) => definition.payload?.regionChunks?.kind === "regional",
 	);
-	if (needsRegionChunks)
-		await timeStage("regional chunks", async () =>
-			writeDatasetRegionChunks({
-				root: ROOT,
-				datasets: compiledDatasets,
-				core: JSON.parse(
-					await readFile(
-						join(OUT_DIR, "gazetteer.core.json"),
-						"utf8",
-					),
-				),
-				boundaryMappings: {
-					wardToLad: parseBoundaryWardToLad(
-						JSON.parse(
-							await readFile(
-								join(OUT_DIR, "boundary-mappings.json"),
-								"utf8",
-							),
+	if (needsRegionChunks) {
+		const chunksStartedAt = performance.now();
+		await writeDatasetRegionChunks({
+			root: ROOT,
+			datasets: compiledDatasets,
+			core: JSON.parse(
+				await readFile(join(OUT_DIR, "gazetteer.core.json"), "utf8"),
+			),
+			boundaryMappings: {
+				wardToLad: parseBoundaryWardToLad(
+					JSON.parse(
+						await readFile(
+							join(OUT_DIR, "boundary-mappings.json"),
+							"utf8",
 						),
 					),
-				},
-			}),
-		);
+				),
+			},
+		});
+		logArtifact("chunks", "chunks/", [
+			"compiled",
+			chunksSize(await fileSnapshots(join(OUT_DIR, "chunks"))),
+			elapsedSince(chunksStartedAt),
+		]);
+	}
 
 	await out("dataset-manifest", {
 		...manifest,
@@ -1181,7 +1194,6 @@ async function main() {
 	if (only) return compileSelected(only);
 
 	const startedAt = performance.now();
-	console.log("Pre-compiling datasets...");
 	await mkdir(OUT_DIR, { recursive: true });
 	await compileBoundaryAssets();
 
@@ -1196,8 +1208,8 @@ async function main() {
 		(dataset) => dataset.meta.kind === "lookup",
 	);
 	console.log(
-		`  described datasets: ${described.length - boundaries.length - lookups.length} ` +
-			`(and ${boundaries.length} boundary releases, ${lookups.length} lookup tables)`,
+		`Pre-compiling ${described.length - boundaries.length - lookups.length} datasets ` +
+			`(data/ also holds ${boundaries.length} boundary releases and ${lookups.length} lookup tables)...`,
 	);
 	await verifyDescribedFiles(described);
 
@@ -1218,9 +1230,7 @@ async function main() {
 	const canReuse =
 		existingManifest.precompiler?.fingerprint === compilerFingerprint;
 	if (!canReuse)
-		console.log(
-			"  cache: compiler inputs changed; rebuilding all datasets",
-		);
+		console.log("Compiler inputs changed; rebuilding every dataset.");
 	const existingDatasets = new Map(
 		(existingManifest.datasets ?? []).map((dataset) => [
 			dataset.type,
@@ -1293,12 +1303,15 @@ async function main() {
 				),
 				compiled: cachedAtlasAssets.outputs.gazetteerCore,
 			})
-		: timeStage("gazetteer core", () =>
-				loadGazetteerCore(readBoundaryOnce).then(async (data) => ({
-					data,
-					compiled: await out("gazetteer.core", data),
-				})),
-			);
+		: loadGazetteerCore(readBoundaryOnce).then(async (data) => {
+				const compiled = await out("gazetteer.core", data);
+				logArtifact("gazetteer", "gazetteer.core.json", [
+					"compiled",
+					formatKb(compiled.bytes),
+					elapsedSince(boundaryInputsStartedAt),
+				]);
+				return { data, compiled };
+			});
 	// Ward and parish containment come from the API's geography resolver,
 	// written by `pnpm containment:build` and committed; upload matching reads
 	// ward and parish parents from them, so the index is compiled in step.
@@ -1314,23 +1327,34 @@ async function main() {
 	).then((json) => parseParishLadMappings(JSON.parse(json)));
 	const matchIndex = canReuseAtlasAssets
 		? Promise.resolve(cachedAtlasAssets.outputs.matchIndex)
-		: timeStage("gazetteer match index", () =>
-				Promise.all([boundaryMappings, parishToLad]).then(
-					async ([{ wardToLad }, parishParents]) =>
-						out(
-							"gazetteer.matchindex",
-							await loadMatchIndex(
-								readBoundaryOnce,
-								wardToLad,
-								parishParents,
-							),
+		: Promise.all([boundaryMappings, parishToLad]).then(
+				async ([{ wardToLad }, parishParents]) => {
+					const compiled = await out(
+						"gazetteer.matchindex",
+						await loadMatchIndex(
+							readBoundaryOnce,
+							wardToLad,
+							parishParents,
 						),
-				),
+					);
+					logArtifact("gazetteer", "gazetteer.matchindex.json", [
+						"compiled",
+						formatKb(compiled.bytes),
+						elapsedSince(boundaryInputsStartedAt),
+					]);
+					return compiled;
+				},
 			);
 	if (canReuseAtlasAssets)
-		console.log(
-			`  atlas assets: cached (${elapsedSince(boundaryInputsStartedAt)})`,
-		);
+		for (const [name, output] of [
+			["gazetteer.core.json", cachedAtlasAssets.outputs.gazetteerCore],
+			["gazetteer.matchindex.json", cachedAtlasAssets.outputs.matchIndex],
+		] as const)
+			logArtifact("gazetteer", name, [
+				"cached",
+				formatKb(output.bytes),
+				elapsedSince(boundaryInputsStartedAt),
+			]);
 	const recordedBoundaryInputs = canReuseAtlasAssets
 		? boundaryInputs.map((snapshot, index) => ({
 				...snapshot,
@@ -1341,8 +1365,9 @@ async function main() {
 	// the card can be drawn from the small file and the 6 MB of points is only
 	// fetched once someone selects the dataset. Counting them per location needs
 	// the gazetteer's bounding boxes, so this waits on the core built above.
-	const roadSafety = timeStage("road safety", () =>
-		gazetteerCore.then(async ({ data: core, compiled: coreOutput }) => {
+	const roadSafetyStartedAt = performance.now();
+	const roadSafety = gazetteerCore.then(
+		async ({ data: core, compiled: coreOutput }) => {
 			const path = join(
 				SOURCE_DATA,
 				"transport/road-safety/dft-road-casualty-statistics-collision-provisional-2025.csv",
@@ -1362,8 +1387,7 @@ async function main() {
 					cached.outputs.points,
 				))
 			) {
-				console.log("  dataset: road-safety.json (cached)");
-				console.log("  dataset: road-safety-points.json (cached)");
+				logRoadSafety("cached", cached.outputs, roadSafetyStartedAt);
 				return cached;
 			}
 
@@ -1371,15 +1395,13 @@ async function main() {
 				readSource,
 				new Gazetteer(core),
 			);
-			return {
-				input,
-				gazetteerCore: coreOutput,
-				outputs: {
-					dataset: await out("road-safety", datasets),
-					points: await out("road-safety-points", points),
-				},
+			const outputs = {
+				dataset: await out("road-safety", datasets),
+				points: await out("road-safety-points", points),
 			};
-		}),
+			logRoadSafety("compiled", outputs, roadSafetyStartedAt);
+			return { input, gazetteerCore: coreOutput, outputs };
+		},
 	);
 	const results = await Promise.allSettled([
 		...chartResults,
@@ -1428,26 +1450,31 @@ async function main() {
 		));
 	let recordedChunkOutputs: FileSnapshot[];
 	if (canReuseRegionChunks) {
-		console.log(
-			`  regional chunks: cached (${elapsedSince(regionChunkCheckStartedAt)})`,
-		);
 		recordedChunkOutputs = chunkOutputs.map((snapshot, index) => ({
 			...snapshot,
 			sha256: cachedRegionChunks.outputs[index]!.sha256,
 		}));
+		logArtifact("chunks", "chunks/", [
+			"cached",
+			chunksSize(recordedChunkOutputs),
+			elapsedSince(regionChunkCheckStartedAt),
+		]);
 	} else {
-		await timeStage("regional chunks", async () =>
-			writeDatasetRegionChunks({
-				root: ROOT,
-				datasets: compiledDatasets,
-				core: (await gazetteerCore).data,
-				boundaryMappings: await boundaryMappings,
-			}),
-		);
+		await writeDatasetRegionChunks({
+			root: ROOT,
+			datasets: compiledDatasets,
+			core: (await gazetteerCore).data,
+			boundaryMappings: await boundaryMappings,
+		});
 		recordedChunkOutputs = await snapshotFileContents(
 			await fileSnapshots(chunkDirectory),
 			chunkDirectory,
 		);
+		logArtifact("chunks", "chunks/", [
+			"compiled",
+			chunksSize(recordedChunkOutputs),
+			elapsedSince(regionChunkCheckStartedAt),
+		]);
 	}
 	await out("dataset-manifest", {
 		version: 1,
@@ -1503,9 +1530,11 @@ async function compileDataset(
 				layout: definition.payload,
 			});
 		}
-		console.log(
-			`  dataset: ${definition.precompiledFile}.json (cached; ${Math.round(cached.bytes / 1024)} KB; ${elapsedSince(startedAt)})`,
-		);
+		logArtifact("dataset", `${definition.precompiledFile}.json`, [
+			"cached",
+			formatKb(cached.bytes),
+			elapsedSince(startedAt),
+		]);
 		return reused;
 	}
 	const { reader, artifacts } = createTrackedReader();
@@ -1565,15 +1594,19 @@ async function compileDataset(
 	}
 	const summary = validatePrecompiledDataset(definition, data);
 	if (preserved) {
-		console.log(
-			`  dataset: ${definition.precompiledFile}.json (preserved; raw source unavailable; ${elapsedSince(startedAt)})`,
-		);
+		logArtifact("dataset", `${definition.precompiledFile}.json`, [
+			"preserved, raw source unavailable",
+			formatKb(preserved.compiled.bytes),
+			elapsedSince(startedAt),
+		]);
 		return preserved;
 	}
-	const output = await out(definition.precompiledFile, data, false);
-	console.log(
-		`  dataset: ${definition.precompiledFile}.json (${Math.round(output.bytes / 1024)} KB; ${elapsedSince(startedAt)})`,
-	);
+	const output = await out(definition.precompiledFile, data);
+	logArtifact("dataset", `${definition.precompiledFile}.json`, [
+		"compiled",
+		formatKb(output.bytes),
+		elapsedSince(startedAt),
+	]);
 	return {
 		type: definition.type,
 		output: definition.precompiledFile,
