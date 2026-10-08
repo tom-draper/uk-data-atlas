@@ -5,15 +5,14 @@ import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
 import {
+	type AreaGeometry,
 	areaMultiPolygon,
 	boundsIntersect,
-	CLIPPING_VERSION,
-	labelsFor,
-	readGeometries,
-	round,
 	roundedMultiPolygon,
-	type AreaGeometry,
-} from "./areaOverlap";
+} from "./areaGeometryPieces";
+import { labelsFor, round } from "./areaOverlap";
+import { CLIPPING_VERSION } from "./pieceIntersection";
+import { readGeometries } from "./rawAreaGeometries";
 import { multiPolygonAreaM2 } from "./equalAreaProjection";
 import { BoundedClipper, type ClipOperand } from "./boundedClipping";
 import { csvFields } from "./csv";
