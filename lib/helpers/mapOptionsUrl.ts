@@ -82,7 +82,8 @@ export function mapOptionsFromSearchParams(
 	] as const) {
 		if (params.get(param) === "1") options.visibility[key] = true;
 	}
-	const opacity = Number(params.get("opacity"));
+	const opacityParam = params.get("opacity");
+	const opacity = opacityParam === null ? Number.NaN : Number(opacityParam);
 	if (Number.isFinite(opacity) && opacity >= 0 && opacity <= 1)
 		options.visibility.overlayOpacity = opacity;
 

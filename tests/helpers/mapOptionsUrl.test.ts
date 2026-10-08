@@ -12,6 +12,20 @@ describe("map option URLs", () => {
 		expect(params.toString()).toBe("period=2024");
 	});
 
+	it("keeps the default opacity when the URL has none", () => {
+		const options = mapOptionsFromSearchParams(new URLSearchParams());
+		expect(options.visibility.overlayOpacity).toBe(
+			DEFAULT_MAP_OPTIONS.visibility.overlayOpacity,
+		);
+	});
+
+	it("restores an explicit zero opacity", () => {
+		const options = mapOptionsFromSearchParams(
+			new URLSearchParams("opacity=0"),
+		);
+		expect(options.visibility.overlayOpacity).toBe(0);
+	});
+
 	it("round-trips non-default map and legend appearance", () => {
 		const options = mapOptionsFromSearchParams(
 			new URLSearchParams(
