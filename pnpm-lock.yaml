@@ -295,25 +295,25 @@ importers:
       '@uk-data-atlas/geography':
         specifier: workspace:*
         version: link:../../packages/geography
-    devDependencies:
-      '@types/node':
-        specifier: ^26.6.2
-        version: 26.6.2
       polygon-clipping:
         specifier: 0.15.7
         version: 0.15.7
       proj4:
         specifier: 2.22.0
         version: 2.22.0
+      yaml:
+        specifier: ^2.9.1
+        version: 2.9.1
+    devDependencies:
+      '@types/node':
+        specifier: ^26.6.2
+        version: 26.6.2
       tsx:
         specifier: ^4.23.15
         version: 4.23.15
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
-      yaml:
-        specifier: ^2.9.1
-        version: 2.9.1
 
 packages:
 
