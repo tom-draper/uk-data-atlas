@@ -18,11 +18,11 @@ const recordsFromData = (
 			if (!codePattern.test(areaCode)) {
 				throw new Error(`${path}: unsupported area code ${areaCode}`);
 			}
-			const total = object(
-				object(record, `${path}.${areaCode}`).total,
-				`${path}.${areaCode}.total`,
-			);
-			const values = Object.entries(total);
+			const field = object(record, `${path}.${areaCode}`).total;
+			// The compiled file holds the ages as an array indexed by age.
+			const values = Array.isArray(field)
+				? field.map((value, age) => [String(age), value] as const)
+				: Object.entries(object(field, `${path}.${areaCode}.total`));
 			if (values.length === 0)
 				throw new Error(`${path}.${areaCode}.total is empty`);
 			return {
