@@ -157,6 +157,8 @@ export class GeographyResolver {
 			() => this.lineage.hasAreaRelationships(),
 			(geography, release) =>
 				this.areas.boundaryRelease(geography, release),
+			(geography, release) =>
+				this.lineage.relatedCodes(geography, release),
 		);
 	}
 

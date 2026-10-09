@@ -247,7 +247,16 @@ export class LazyAreaRelationshipIndex {
 	get(area: string): AreaRelationship[] | undefined {
 		let relationships = this.areas.get(area);
 		if (!relationships) {
-			relationships = this.crosswalksFor(area).flatMap(
+			// An area key is geography/release/code; neither of the first two
+			// holds a slash, and a code may.
+			const [geography, boundaryRelease] = area.split("/", 2) as [
+				string,
+				string,
+			];
+			relationships = this.crosswalksFor(
+				geography,
+				boundaryRelease,
+			).flatMap(
 				(crosswalk) => this.contributionOf(crosswalk).get(area) ?? [],
 			);
 			relationships.sort(compareRelationships);
@@ -256,14 +265,36 @@ export class LazyAreaRelationshipIndex {
 		return relationships.length > 0 ? relationships : undefined;
 	}
 
-	/** The crosswalks naming the area's release, in inventory order. */
-	private crosswalksFor(area: string) {
-		// An area key is geography/release/code; neither of the first two
-		// holds a slash, and a code may.
-		const [geography, boundaryRelease] = area.split("/", 2) as [
-			string,
-			string,
-		];
+	/**
+	 * The codes of a release's areas that `get` answers for, read from the
+	 * crosswalk records without building a relationship for any of them. A
+	 * count of related areas needs no more, and building every relationship
+	 * of every release holds a gigabyte of objects it would never read.
+	 */
+	relatedCodes(geography: string, boundaryRelease: string): Set<string> {
+		const names = (side: CrosswalkArtifact["from"]) =>
+			side.geography === geography &&
+			side.boundaryRelease === boundaryRelease;
+		const codes = new Set<string>();
+		for (const crosswalk of this.crosswalksFor(
+			geography,
+			boundaryRelease,
+		)) {
+			const source = names(crosswalk.from);
+			const target = names(crosswalk.to);
+			for (const record of crosswalk.records) {
+				// A source with no targets is named by no relationship.
+				if (source && record.targets.length > 0)
+					codes.add(record.source.code);
+				if (target)
+					for (const { code } of record.targets) codes.add(code);
+			}
+		}
+		return codes;
+	}
+
+	/** The crosswalks naming a release, in inventory order. */
+	private crosswalksFor(geography: string, boundaryRelease: string) {
 		const release = releaseKey(geography, boundaryRelease);
 		let crosswalks = this.touching.get(release);
 		if (!crosswalks) {

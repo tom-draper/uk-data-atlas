@@ -50,6 +50,12 @@ export class LineageResolver {
 	relationships(identity: AreaIdentity): AreaRelationship[] {
 		return this.index?.get(areaId(identity)) ?? [];
 	}
+	/** The codes in a release that have at least one relationship. */
+	relatedCodes(geography: string, boundaryRelease: string): Set<string> {
+		return (
+			this.index?.relatedCodes(geography, boundaryRelease) ?? new Set()
+		);
+	}
 
 	private traverse(
 		identity: AreaIdentity,
