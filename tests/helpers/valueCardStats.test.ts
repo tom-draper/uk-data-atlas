@@ -5,6 +5,7 @@ import { claimantCountDefinition } from "@/lib/datasets/claimantCount";
 import { councilTaxDefinition } from "@/lib/datasets/councilTax";
 import { crimeDefinition } from "@/lib/datasets/crime";
 import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
+import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
 import { jobsDefinition } from "@/lib/datasets/jobs";
 import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
@@ -255,6 +256,43 @@ describe("resolveValueCardStats", () => {
 			),
 		).toEqual({
 			stats: { value: 200, secondary: "60% domestic" },
+			viaLocalAuthority: false,
+		});
+	});
+
+	it("shows total gas use and the domestic share", () => {
+		const gas = {
+			boundaryType: "localAuthority",
+			boundaryYear: 2025,
+			data: {
+				E08000001: {
+					ladCode: "E08000001",
+					ladName: "Bolton",
+					domesticGwh: 480,
+					nonDomesticGwh: 120,
+					allMetersGwh: 600,
+					metersThousands: 50,
+				},
+			},
+		};
+		const card = gasConsumptionDefinition.chart.card!;
+
+		expect(
+			resolveValueCardStats(
+				card,
+				gas,
+				{
+					domesticGwh: 800,
+					nonDomesticGwh: 200,
+					allMetersGwh: 1_000,
+					metersThousands: 100,
+				},
+				null,
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 1_000, secondary: "80% domestic" },
 			viaLocalAuthority: false,
 		});
 	});
