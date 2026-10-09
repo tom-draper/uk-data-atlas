@@ -1,7 +1,10 @@
 import { createHash } from "crypto";
 import { readFile } from "fs/promises";
 import { join } from "path";
-import { decodeAgeArrays, encodeAgeArrays } from "../../lib/data/ageArrays";
+import {
+	decodeCompactPayload,
+	encodeCompactPayload,
+} from "../../lib/data/compactPayload";
 import { validatePrecompiledDataset } from "../../lib/data/catalog";
 import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
@@ -42,7 +45,7 @@ export async function compileDataset(
 		if (definition.payload?.regionChunks?.kind === "regional") {
 			compiledDatasets.set(definition.precompiledFile, {
 				load: async () =>
-					decodeAgeArrays(
+					decodeCompactPayload(
 						JSON.parse(
 							await readFile(
 								join(
@@ -95,7 +98,7 @@ export async function compileDataset(
 			);
 		}
 
-		compiled = decodeAgeArrays(JSON.parse(content)) as typeof compiled;
+		compiled = decodeCompactPayload(JSON.parse(content)) as typeof compiled;
 		preserved = existing;
 	}
 	const data = definition.coverageCountries
@@ -127,7 +130,10 @@ export async function compileDataset(
 		]);
 		return { ...preserved, fingerprint };
 	}
-	const output = await out(definition.precompiledFile, encodeAgeArrays(data));
+	const output = await out(
+		definition.precompiledFile,
+		encodeCompactPayload(data),
+	);
 	logArtifact("dataset", `${definition.precompiledFile}.json`, [
 		"compiled",
 		formatKb(output.bytes),

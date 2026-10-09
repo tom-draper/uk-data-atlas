@@ -2,7 +2,7 @@ import {
 	filterDatasetPayloadForLocation,
 	type DatasetLocationFilter,
 } from "../data/datasetLocationFilter";
-import { decodeAgeArrays } from "../data/ageArrays";
+import { decodeCompactPayload } from "../data/compactPayload";
 import { mergeDatasetPayloads } from "../data/mergeDatasetPayloads";
 import { BOUNDARY_TYPES } from "../data/boundaries/catalog";
 
@@ -104,7 +104,7 @@ self.addEventListener("message", async (e: MessageEvent<unknown>) => {
 			);
 			payload = await fetchJson(url, controller.signal);
 		}
-		const data = decodeAgeArrays(
+		const data = decodeCompactPayload(
 			await filterDatasetPayloadForLocation(payload, filter),
 		);
 		if (controller.signal.aborted) return;

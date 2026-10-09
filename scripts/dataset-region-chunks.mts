@@ -1,6 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import { dirname, join } from "path";
-import { encodeAgeArrays } from "../lib/data/ageArrays";
+import { encodeCompactPayload } from "../lib/data/compactPayload";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../lib/data/gazetteer/types";
 import type { PrecompiledBoundaryMappings } from "@uk-data-atlas/geography";
@@ -588,7 +588,7 @@ export async function writeDatasetRegionChunks({
 				};
 			}
 
-			const json = JSON.stringify(encodeAgeArrays(chunk));
+			const json = JSON.stringify(encodeCompactPayload(chunk));
 			const relative = join(file, `${region}.json`);
 			await writeAtomically(join(outDir, relative), json);
 		}
