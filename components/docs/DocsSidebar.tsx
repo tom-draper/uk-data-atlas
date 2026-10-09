@@ -76,7 +76,7 @@ export default function DocsSidebar({
 				/>
 			</label>
 
-			<div className="docs-scroll -mr-2 min-h-0 flex-1 overflow-y-auto pr-2 pb-8">
+			<div className="docs-scroll min-h-0 w-full min-w-full flex-1 overflow-y-auto pb-8">
 				{visible.map((group) => (
 					<div key={group.title} className="mt-6 first:mt-3">
 						<p className="mb-1 px-2 text-[13.5px] font-semibold text-slate-900">
