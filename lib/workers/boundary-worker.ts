@@ -13,6 +13,11 @@ import {
 } from "../data/boundaries/lsoaLadMappings";
 import { withCDN } from "../helpers/cdn";
 import { getProp } from "../data/boundaries/properties";
+import {
+	COUNTRY_LOCATIONS,
+	boundaryChunkRegions,
+	fetchBoundaryGeometry,
+} from "../data/boundaries/chunks";
 
 interface Request {
 	id: number;
@@ -78,13 +83,6 @@ interface Response {
 }
 
 const BOUNDARY_MAPPINGS_URL = withCDN("/data/datasets/boundary-mappings.json");
-const COUNTRY_LOCATIONS = new Set([
-	"England",
-	"Scotland",
-	"Wales",
-	"Northern Ireland",
-	"United Kingdom",
-]);
 let wardToLad: Record<string, string> | null = null;
 let wardToLadPending: Promise<Record<string, string>> | null = null;
 
@@ -130,19 +128,7 @@ self.addEventListener("message", async (event: MessageEvent<unknown>) => {
 	if (!isWorkerRequest(event.data)) return;
 	const { id, url, filter } = event.data;
 	try {
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new Error(`${response.status} ${response.statusText}`);
-		}
-		const data = decodeBoundaryData(await response.json());
 		const filterType = filter?.type;
-		const workerWardToLad =
-			filterType === "ward" &&
-			filter?.location &&
-			!COUNTRY_LOCATIONS.has(filter.location) &&
-			wardReleaseNeedsLadMapping(data)
-				? await fetchWardToLad().catch(() => undefined)
-				: undefined;
 		const workerLsoaToLad =
 			filterType === "lsoa" &&
 			filter?.location &&
@@ -150,6 +136,21 @@ self.addEventListener("message", async (event: MessageEvent<unknown>) => {
 				? await fetchLsoaToLad(
 						lsoaYearForBoundaryAsset(url) ?? NaN,
 					).catch(() => undefined)
+				: undefined;
+		const data = await fetchBoundaryGeometry(
+			url,
+			boundaryChunkRegions(
+				filterType,
+				filter?.location,
+				workerLsoaToLad !== undefined,
+			),
+		);
+		const workerWardToLad =
+			filterType === "ward" &&
+			filter?.location &&
+			!COUNTRY_LOCATIONS.has(filter.location) &&
+			wardReleaseNeedsLadMapping(data)
+				? await fetchWardToLad().catch(() => undefined)
 				: undefined;
 		const filtered =
 			filterType === undefined
