@@ -213,6 +213,7 @@ export const CHART_PRESENTATIONS = {
 	"economics-councilTax": Chart0Presentation,
 	"economics-crime": Chart0Presentation,
 	"transport-electricVehicleChargers": Chart0Presentation,
+	"environment-electricityConsumption": Chart0Presentation,
 	"demographics-ethnicity": Chart7Presentation,
 	"economics-fuelPoverty": Chart8Presentation,
 	"generalElection-2024": Chart9Presentation,

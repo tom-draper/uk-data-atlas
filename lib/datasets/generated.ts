@@ -18,6 +18,7 @@ import { claimantCountDefinition } from "./claimantCount";
 import { councilTaxDefinition } from "./councilTax";
 import { crimeDefinition } from "./crime";
 import { electricVehicleChargersDefinition } from "./electricVehicleChargers";
+import { electricityConsumptionDefinition } from "./electricityConsumption";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
 import { generalElectionDefinition } from "./generalElection";
@@ -64,6 +65,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		councilTaxDefinition,
 		crimeDefinition,
 		electricVehicleChargersDefinition,
+		electricityConsumptionDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,
 		generalElectionDefinition,
