@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { decodeCompactPayload } from "../lib/data/compactPayload";
 import { compileMapFigures, type FigureInputs } from "../lib/atlas/figures";
 
 const DATASETS = join(process.cwd(), "public", "data", "datasets");
@@ -27,7 +28,9 @@ export async function readFigureInputs(): Promise<FigureInputs> {
 	const entries = await Promise.all(
 		Object.entries(FILES).map(async ([key, file]) => [
 			key,
-			JSON.parse(await readFile(join(DATASETS, file), "utf8")),
+			decodeCompactPayload(
+				JSON.parse(await readFile(join(DATASETS, file), "utf8")),
+			),
 		]),
 	);
 	return Object.fromEntries(entries) as FigureInputs;

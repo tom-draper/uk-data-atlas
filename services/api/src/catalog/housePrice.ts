@@ -44,6 +44,8 @@ const housePricePeriods = (
 		throw new Error(`${path}: expected ward-level house prices`);
 	}
 	const data = object(edition.data, `${path}.2023.data`);
+	const yearsFrom =
+		typeof edition.priceYearsFrom === "number" ? edition.priceYearsFrom : 0;
 	const byPeriod = new Map<string, PopulationObservation[]>();
 	for (const [compiledCode, record] of Object.entries(data)) {
 		const sourceWardCode = object(
@@ -58,11 +60,16 @@ const housePricePeriods = (
 		if (!/^[EW]\d{8}$/.test(areaCode)) {
 			throw new Error(`${path}: unsupported ward code ${areaCode}`);
 		}
-		const prices = object(
-			object(record, `${path}.${compiledCode}`).prices,
-			`${path}.${compiledCode}.prices`,
-		);
-		for (const [year, price] of Object.entries(prices)) {
+		const field = object(record, `${path}.${compiledCode}`).prices;
+		// The compiled file holds the years as an array from the edition's first.
+		const prices = Array.isArray(field)
+			? field.flatMap((price, index) =>
+					price === null
+						? []
+						: [[String(yearsFrom + index), price] as const],
+				)
+			: Object.entries(object(field, `${path}.${compiledCode}.prices`));
+		for (const [year, price] of prices) {
 			if (!/^\d{4}$/.test(year) || Number(year) > LAST_DECEMBER_PERIOD)
 				continue;
 			const records = byPeriod.get(year) ?? [];

@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ATLAS_LOCATIONS } from "../lib/atlas/pages";
+import { decodeCompactPayload } from "../lib/data/compactPayload";
 import {
 	compileRanking,
 	hasRankingPage,
@@ -24,9 +25,9 @@ export async function serialiseRankings(): Promise<{
 	const pages: Record<string, string[]> = {};
 	for (const map of RANKED_MAPS) {
 		const { file } = rankingSource(map)!;
-		const editions = JSON.parse(
-			await readFile(join(DATASETS, `${file}.json`), "utf8"),
-		);
+		const editions = decodeCompactPayload(
+			JSON.parse(await readFile(join(DATASETS, `${file}.json`), "utf8")),
+		) as Parameters<typeof compileRanking>[1];
 		const ranking = compileRanking(map, editions);
 		if (!ranking) continue;
 		const places = ATLAS_LOCATIONS.filter((location) =>
