@@ -101,3 +101,57 @@ test("SpatialResolver only loads geometry for the bounded result page", () => {
 	);
 	assert.deepEqual(geometryReads, ["W001", "W002"]);
 });
+
+test("SpatialResolver names the areas containing a point without measuring to their edges", () => {
+	const square = {
+		type: "Polygon",
+		coordinates: [
+			[
+				[-3, 55],
+				[-2, 55],
+				[-2, 56],
+				[-3, 56],
+				[-3, 55],
+			],
+		],
+	};
+	let provenanceReads = 0;
+	const cache = {
+		findContaining: () => [
+			{ code: "A", containment: "interior" },
+			// An area the inventory does not know, and one with no geometry,
+			// are left out as `containingAreas` leaves them out.
+			{ code: "NO-AREA", containment: "interior" },
+			{ code: "NO-GEOMETRY", containment: "interior" },
+		],
+		get: (_geography: string, _release: string, code: string) =>
+			code === "NO-GEOMETRY" ? undefined : square,
+		provenance: () => {
+			provenanceReads += 1;
+			return provenance;
+		},
+	} as unknown as AreaGeometryCache;
+	const resolver = new SpatialResolver(cache, (candidate) =>
+		candidate.code === "NO-AREA"
+			? undefined
+			: { code: candidate.code, name: candidate.code },
+	);
+	const point: [number, number] = [-2.5, 55.5];
+
+	assert.deepEqual(resolver.containingCodes("country", "2025", point), ["A"]);
+	assert.equal(provenanceReads, 0);
+	assert.deepEqual(
+		resolver
+			.containingAreas("country", "2025", point)
+			?.map(({ code }) => code),
+		["A"],
+	);
+	assert.equal(
+		new SpatialResolver(undefined, () => undefined).containingCodes(
+			"country",
+			"2025",
+			point,
+		),
+		undefined,
+	);
+});

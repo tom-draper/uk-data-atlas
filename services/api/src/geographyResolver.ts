@@ -564,6 +564,13 @@ export class GeographyResolver {
 	) {
 		return this.spatial.containingAreas(geography, boundaryRelease, point);
 	}
+	containingCodes(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+	) {
+		return this.spatial.containingCodes(geography, boundaryRelease, point);
+	}
 	nearestAreas(
 		geography: string,
 		boundaryRelease: string,
