@@ -29,7 +29,11 @@ import {
 } from "./geometrySubstitution";
 import { readGeometryStore } from "./geometryStore";
 import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
-import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
+import {
+	borderIndex,
+	sharedBorderWith,
+	type Neighbour,
+} from "./areaNeighbours";
 import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
 	boundsIntersect,
@@ -783,7 +787,7 @@ export class AreaGeometryCache {
 				continue;
 			const other = this.get(geography, boundaryRelease, otherCode);
 			if (!other) continue;
-			const shared = sharedBorder(target, borderIndex(other));
+			const shared = sharedBorderWith(target, other);
 			if (shared) neighbours.push({ code: otherCode, ...shared });
 		}
 		return neighbours.sort(
