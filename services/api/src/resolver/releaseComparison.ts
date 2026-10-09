@@ -3,7 +3,11 @@ import type {
 	CrosswalkArtifact,
 	ExtentContinuityCrosswalkArtifact,
 } from "../crosswalkInventory";
-import type { CrosswalkLookup, GeographyEndpoint } from "./translation";
+import {
+	selectCrosswalks,
+	type CrosswalkLookup,
+	type GeographyEndpoint,
+} from "./translation";
 import { areaKey, releaseKey } from "../geographyKeys";
 
 const areaId = ({
@@ -234,19 +238,25 @@ export const compareBoundaryReleases = (
 		crosswalk: CrosswalkArtifact;
 		direction: "forward" | "reverse";
 	}> = [];
-	for (const crosswalk of sources.crosswalkLookup?.values() ?? []) {
-		const forward =
-			crosswalk.from.geography === geography &&
-			crosswalk.from.boundaryRelease === fromRelease &&
-			crosswalk.to.geography === geography &&
-			crosswalk.to.boundaryRelease === toRelease;
-		const reverse =
-			crosswalk.to.geography === geography &&
-			crosswalk.to.boundaryRelease === fromRelease &&
-			crosswalk.from.geography === geography &&
-			crosswalk.from.boundaryRelease === toRelease;
-		if (forward) between.push({ crosswalk, direction: "forward" });
-		else if (reverse) between.push({ crosswalk, direction: "reverse" });
+	const joins = (
+		left: { geography: string; boundaryRelease: string },
+		leftRelease: string,
+		right: { geography: string; boundaryRelease: string },
+		rightRelease: string,
+	) =>
+		left.geography === geography &&
+		left.boundaryRelease === leftRelease &&
+		right.geography === geography &&
+		right.boundaryRelease === rightRelease;
+	for (const crosswalk of selectCrosswalks(
+		sources.crosswalkLookup,
+		({ from, to }) =>
+			joins(from, fromRelease, to, toRelease) ||
+			joins(to, fromRelease, from, toRelease),
+	)) {
+		if (joins(crosswalk.from, fromRelease, crosswalk.to, toRelease))
+			between.push({ crosswalk, direction: "forward" });
+		else between.push({ crosswalk, direction: "reverse" });
 	}
 	between.sort((left, right) =>
 		left.crosswalk.id.localeCompare(right.crosswalk.id),

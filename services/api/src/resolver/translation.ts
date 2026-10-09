@@ -1,5 +1,8 @@
 import type { AreaLookup } from "../areaInventory";
-import type { CrosswalkArtifact } from "../crosswalkInventory";
+import type {
+	CrosswalkArtifact,
+	CrosswalkInventory,
+} from "../crosswalkInventory";
 import type { AreaIdentity, GeographyEndpoint } from "./areas";
 import { releaseKey } from "../geographyKeys";
 import {
@@ -8,7 +11,34 @@ import {
 	type RelationshipPurpose,
 } from "../relationshipPaths";
 
-export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
+/** What the inventory records of a crosswalk before its artifact is read. */
+export type CrosswalkHeader = Pick<
+	CrosswalkInventory["crosswalks"][number],
+	"id" | "from" | "to" | "method" | "relationshipPurpose"
+>;
+
+/**
+ * Crosswalk artifacts by id. A `Map` is one; the server's is read lazily,
+ * since the artifacts are most of a gigabyte once parsed and a request touches
+ * few of them. `where` lets a lookup read only the artifacts a header
+ * predicate selects, in inventory order; one without it is scanned whole.
+ */
+export type CrosswalkLookup = {
+	get(id: string): CrosswalkArtifact | undefined;
+	values(): Iterable<CrosswalkArtifact>;
+	where?(
+		predicate: (header: CrosswalkHeader) => boolean,
+	): CrosswalkArtifact[];
+};
+
+/** The artifacts whose header satisfies `predicate`, in inventory order. */
+export const selectCrosswalks = (
+	lookup: CrosswalkLookup | undefined,
+	predicate: (header: CrosswalkHeader) => boolean,
+): CrosswalkArtifact[] =>
+	lookup?.where
+		? lookup.where(predicate)
+		: [...(lookup?.values() ?? [])].filter(predicate);
 export type { AreaIdentity, GeographyEndpoint } from "./areas";
 export type StepDirection = "forward" | "reverse";
 
@@ -409,7 +439,14 @@ export class CrosswalkTranslator {
 			published.length > 0
 				? published
 				: directTranslationPaths(
-						this.inputs.crosswalkLookup?.values() ?? [],
+						selectCrosswalks(
+							this.inputs.crosswalkLookup,
+							(header) =>
+								(sameEndpoint(header.from, from) &&
+									sameEndpoint(header.to, to)) ||
+								(sameEndpoint(header.to, from) &&
+									sameEndpoint(header.from, to)),
+						),
 						from,
 						to,
 						purpose,
