@@ -28,7 +28,7 @@ import type { TerrainCatalogue } from "./terrainCatalogue";
 import type { AsyncTerrainProvider, TerrainProvider } from "./terrainProvider";
 import type { OperationMatcher } from "./operationTemplates";
 
-export type CrosswalkLookup = Map<string, CrosswalkArtifact>;
+export type { CrosswalkLookup } from "./resolver/translation";
 
 /** The independently-built resources available to API route handlers. */
 export type RouteContext = {
