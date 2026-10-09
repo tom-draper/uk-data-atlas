@@ -30,6 +30,8 @@ export type Neighbour = {
 export type BorderIndex = {
 	edges: Map<string, number>;
 	vertices: Set<string>;
+	/** West, south, east and north of the vertices, if there are any. */
+	bounds?: [number, number, number, number];
 };
 
 const vertexKey = ([longitude, latitude]: Coordinate) =>
@@ -61,12 +63,19 @@ const ringsOf = (geometry: GeoJsonGeometry): Coordinate[][] => {
 export const borderIndex = (geometry: GeoJsonGeometry): BorderIndex => {
 	const edges = new Map<string, number>();
 	const vertices = new Set<string>();
+	let bounds: BorderIndex["bounds"];
 	for (const ring of ringsOf(geometry)) {
 		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
 			const start = ring[j]!;
 			const end = ring[i]!;
 			if (!Array.isArray(start) || !Array.isArray(end)) continue;
 			vertices.add(vertexKey(start));
+			if (bounds) {
+				bounds[0] = Math.min(bounds[0], start[0]);
+				bounds[1] = Math.min(bounds[1], start[1]);
+				bounds[2] = Math.max(bounds[2], start[0]);
+				bounds[3] = Math.max(bounds[3], start[1]);
+			} else bounds = [start[0], start[1], start[0], start[1]];
 			// A closed ring repeats its first point, and the wrap-around pairs
 			// that repeat with the original. Left in, that zero-length edge
 			// would key on a single vertex, and two areas meeting at nothing
@@ -77,7 +86,7 @@ export const borderIndex = (geometry: GeoJsonGeometry): BorderIndex => {
 				edges.set(key, edgeLengthM(start as Pair, end as Pair));
 		}
 	}
-	return { edges, vertices };
+	return { edges, vertices, bounds };
 };
 
 /**
@@ -118,5 +127,56 @@ export const sharedBorder = (
 		sharedBorderM,
 		sharedEdges,
 		sharedVertices,
+	};
+};
+
+/**
+ * The same answer as `sharedBorder(target, borderIndex(geometry))`, without
+ * indexing `geometry`. A neighbour is usually far larger than the stretch it
+ * shares with the target, and only a vertex inside the target's bounds can be
+ * one of the target's, so the rest are passed over with a comparison rather
+ * than keyed and stored. Each shared edge takes its length from the target,
+ * where it was already measured.
+ */
+export const sharedBorderWith = (
+	target: BorderIndex,
+	geometry: GeoJsonGeometry,
+): Omit<Neighbour, "code"> | undefined => {
+	if (!target.bounds) return undefined;
+	const [west, south, east, north] = target.bounds;
+	const inside = ([longitude, latitude]: Coordinate) =>
+		longitude >= west &&
+		longitude <= east &&
+		latitude >= south &&
+		latitude <= north;
+	const sharedVertexKeys = new Set<string>();
+	const sharedEdgeKeys = new Set<string>();
+	let sharedBorderM = 0;
+	for (const ring of ringsOf(geometry)) {
+		for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+			const start = ring[j]!;
+			const end = ring[i]!;
+			if (!Array.isArray(start) || !Array.isArray(end)) continue;
+			if (!inside(start)) continue;
+			const from = vertexKey(start);
+			if (!target.vertices.has(from)) continue;
+			sharedVertexKeys.add(from);
+			if (!inside(end)) continue;
+			const to = vertexKey(end);
+			// The wrap-around pair of a closed ring repeats one vertex.
+			if (from === to) continue;
+			const key = from < to ? `${from}|${to}` : `${to}|${from}`;
+			const length = target.edges.get(key);
+			if (length === undefined || sharedEdgeKeys.has(key)) continue;
+			sharedEdgeKeys.add(key);
+			sharedBorderM += length;
+		}
+	}
+	if (sharedVertexKeys.size === 0) return undefined;
+	return {
+		touch: sharedEdgeKeys.size > 0 ? "edge" : "point",
+		sharedBorderM,
+		sharedEdges: sharedEdgeKeys.size,
+		sharedVertices: sharedVertexKeys.size,
 	};
 };
