@@ -7,6 +7,7 @@ import {
 	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateHomelessness,
+	aggregateRegionalGdp,
 	aggregateSchoolPerformance,
 	aggregateSchoolPerformanceGap,
 	collectBoundaryRecords,
@@ -148,6 +149,21 @@ describe("aggregateEnergyConsumption", () => {
 
 	it("returns null with no authority records", () => {
 		expect(aggregateEnergyConsumption([])).toBeNull();
+	});
+});
+
+describe("aggregateRegionalGdp", () => {
+	it("sums GDP and GVA across ITL3 areas", () => {
+		expect(
+			aggregateRegionalGdp([
+				{ itlCode: "T1", itlName: "One", gvaMillionGbp: 200, gdpMillionGbp: 220 },
+				{ itlCode: "T2", itlName: "Two", gvaMillionGbp: 300, gdpMillionGbp: 330 },
+			]),
+		).toEqual({ gvaMillionGbp: 500, gdpMillionGbp: 550 });
+	});
+
+	it("returns null with no ITL3 records", () => {
+		expect(aggregateRegionalGdp([])).toBeNull();
 	});
 });
 

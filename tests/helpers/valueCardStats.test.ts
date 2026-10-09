@@ -8,6 +8,7 @@ import { electricityConsumptionDefinition } from "@/lib/datasets/electricityCons
 import { gasConsumptionDefinition } from "@/lib/datasets/gasConsumption";
 import { jobsDefinition } from "@/lib/datasets/jobs";
 import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
+import { regionalGdpItl3Definition } from "@/lib/datasets/regionalGdpItl3";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
 
@@ -293,6 +294,36 @@ describe("resolveValueCardStats", () => {
 			),
 		).toEqual({
 			stats: { value: 1_000, secondary: "80% domestic" },
+			viaLocalAuthority: false,
+		});
+	});
+
+	it("shows ITL3 GDP and GVA", () => {
+		const regionalGdp = {
+			boundaryType: "itl3",
+			boundaryYear: 2025,
+			data: {
+				T1: {
+					itlCode: "T1",
+					itlName: "One",
+					gvaMillionGbp: 2_000,
+					gdpMillionGbp: 2_200,
+				},
+			},
+		};
+		const card = regionalGdpItl3Definition.chart.card!;
+
+		expect(
+			resolveValueCardStats(
+				card,
+				regionalGdp,
+				{ gvaMillionGbp: 5_000, gdpMillionGbp: 5_500 },
+				null,
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 5_500, secondary: "£5.0bn GVA" },
 			viaLocalAuthority: false,
 		});
 	});

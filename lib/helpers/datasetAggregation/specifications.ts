@@ -9,6 +9,7 @@ import {
 	aggregateGhgEmissions,
 	aggregateHomelessness,
 	aggregateMobileCoverage,
+	aggregateRegionalGdp,
 	aggregateSchoolPerformance,
 	aggregateSchoolPerformanceGap,
 	collectBoundaryRecords,
@@ -191,6 +192,11 @@ export const ghgEmissionsAggregation = numericAggregation(
 	"ghgEmissions",
 	"localAuthority",
 	aggregateGhgEmissions,
+);
+export const regionalGdpItl3Aggregation = numericAggregation(
+	"regional-gdp-itl3",
+	"itl3",
+	aggregateRegionalGdp,
 );
 export const mobileCoverageAggregation = numericAggregation(
 	"mobileCoverage",
