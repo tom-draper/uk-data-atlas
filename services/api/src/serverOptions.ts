@@ -47,7 +47,16 @@ export type ServerOptions = {
 };
 
 export const DEFAULT_MAX_URL_LENGTH = 4096;
-const DEFAULT_GEOMETRY_CACHE_RELEASES = 3;
+/**
+ * A postcode is placed in three geographies by default, so fewer than three
+ * releases would reload one of them on every lookup. The default holds those
+ * three, the country release any lookup outside a release's coverage needs,
+ * and two more for releases a caller asks for by name: with fewer, each of
+ * those lookups evicted a release another would shortly need, and a mix of
+ * requests across releases spent most of its time reloading them.
+ */
+const MINIMUM_GEOMETRY_CACHE_RELEASES = 3;
+const DEFAULT_GEOMETRY_CACHE_RELEASES = 6;
 const DEFAULT_RESPONSE_CACHE_MEGABYTES = 32;
 
 export type ServeConfiguration = {
@@ -109,13 +118,11 @@ export const readServeConfiguration = (
 	return {
 		port: integer(env, "PORT", 3001, 1, 65535),
 		host: env.HOST || "127.0.0.1",
-		// A postcode is placed in three geographies by default; a smaller
-		// cache would reload one of their releases on every lookup.
 		geometryCacheReleases: integer(
 			env,
 			"ATLAS_GEOMETRY_CACHE_RELEASES",
 			DEFAULT_GEOMETRY_CACHE_RELEASES,
-			DEFAULT_GEOMETRY_CACHE_RELEASES,
+			MINIMUM_GEOMETRY_CACHE_RELEASES,
 		),
 		shutdownGraceSeconds: integer(
 			env,

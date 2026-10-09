@@ -2233,7 +2233,7 @@ rather than falling back to the default.
 | `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                  |
 | `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                            |
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                             |
-| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `3`         | Geometry releases held in memory at once.                                                    |
+| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                      |
 | `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.             |
 | `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                  |
 | `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                      |
