@@ -1,11 +1,10 @@
 import type { AreaRecord } from "../areaInventory";
 import type { CrosswalkLookup } from "./translation";
 import {
-	createAreaRelationshipIndex,
+	LazyAreaRelationshipIndex,
 	isLineageRelation,
 	type AreaRelation,
 	type AreaRelationship,
-	type AreaRelationshipIndex,
 } from "../areaRelationships";
 import { areaId, type AreaIdentity, type ResolvedSameCodeArea } from "./areas";
 
@@ -30,7 +29,7 @@ export type ResolvedAreaRelationshipSummary = {
 
 /** Published relationship graph queries, including declared history and hierarchy. */
 export class LineageResolver {
-	private readonly index?: AreaRelationshipIndex;
+	private readonly index?: LazyAreaRelationshipIndex;
 
 	constructor(
 		crosswalkLookup: CrosswalkLookup | undefined,
@@ -42,7 +41,7 @@ export class LineageResolver {
 		) => ResolvedSameCodeArea[],
 	) {
 		if (crosswalkLookup)
-			this.index = createAreaRelationshipIndex(crosswalkLookup.values());
+			this.index = new LazyAreaRelationshipIndex(crosswalkLookup);
 	}
 
 	hasAreaRelationships(): boolean {

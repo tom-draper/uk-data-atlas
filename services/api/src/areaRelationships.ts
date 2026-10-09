@@ -4,7 +4,8 @@ import type {
 	CrosswalkQuality,
 	CrosswalkWeighting,
 } from "./crosswalkInventory";
-import { areaKey } from "./geographyKeys";
+import { areaKey, releaseKey } from "./geographyKeys";
+import { selectCrosswalks, type CrosswalkLookup } from "./resolver/translation";
 
 export type AreaRelation =
 	| "within"
@@ -130,97 +131,161 @@ const addRelationship = (
 	index.set(area, relationships);
 };
 
+/** Add what one crosswalk says about each area on either side of it. */
+const addCrosswalkRelationships = (
+	index: AreaRelationshipIndex,
+	crosswalk: CrosswalkArtifact,
+) => {
+	const sourceTargetCounts = new Map<string, number>();
+	const targetSourceCounts = new Map<string, number>();
+	for (const record of crosswalk.records) {
+		const sourceId = areaId(
+			crosswalk.from.geography,
+			crosswalk.from.boundaryRelease,
+			record.source.code,
+		);
+		sourceTargetCounts.set(sourceId, record.targets.length);
+		for (const target of record.targets) {
+			const targetId = areaId(
+				crosswalk.to.geography,
+				crosswalk.to.boundaryRelease,
+				target.code,
+			);
+			targetSourceCounts.set(
+				targetId,
+				(targetSourceCounts.get(targetId) ?? 0) + 1,
+			);
+		}
+	}
+	const crosswalkMetadata = {
+		id: crosswalk.id,
+		method: crosswalk.method,
+		quality: crosswalk.quality,
+		weighting: crosswalk.weighting,
+	};
+	for (const record of crosswalk.records) {
+		const sourceId = areaId(
+			crosswalk.from.geography,
+			crosswalk.from.boundaryRelease,
+			record.source.code,
+		);
+		for (const target of record.targets) {
+			const targetId = areaId(
+				crosswalk.to.geography,
+				crosswalk.to.boundaryRelease,
+				target.code,
+			);
+			const cardinality = {
+				sourceTargetCount: sourceTargetCounts.get(sourceId) ?? 0,
+				targetSourceCount: targetSourceCounts.get(targetId) ?? 0,
+			};
+			addRelationship(index, sourceId, {
+				relation: relationFor(crosswalk, target, "from", cardinality),
+				counterpart: {
+					id: targetId,
+					geography: crosswalk.to.geography,
+					boundaryRelease: crosswalk.to.boundaryRelease,
+					code: target.code,
+					labels: target.labels,
+				},
+				crosswalk: crosswalkMetadata,
+				...overlapFor(crosswalk, target, "from"),
+			});
+			addRelationship(index, targetId, {
+				relation: relationFor(crosswalk, target, "to", cardinality),
+				counterpart: {
+					id: sourceId,
+					geography: crosswalk.from.geography,
+					boundaryRelease: crosswalk.from.boundaryRelease,
+					code: record.source.code,
+					labels: record.source.labels,
+				},
+				crosswalk: crosswalkMetadata,
+				...overlapFor(crosswalk, target, "to"),
+			});
+		}
+	}
+};
+
+const compareRelationships = (
+	left: AreaRelationship,
+	right: AreaRelationship,
+) => {
+	const relation = left.relation.localeCompare(right.relation);
+	if (relation !== 0) return relation;
+	const counterpart = left.counterpart.id.localeCompare(right.counterpart.id);
+	return counterpart !== 0
+		? counterpart
+		: left.crosswalk.id.localeCompare(right.crosswalk.id);
+};
+
 export const createAreaRelationshipIndex = (
 	crosswalks: Iterable<CrosswalkArtifact>,
 ): AreaRelationshipIndex => {
 	const index: AreaRelationshipIndex = new Map();
-	for (const crosswalk of crosswalks) {
-		const sourceTargetCounts = new Map<string, number>();
-		const targetSourceCounts = new Map<string, number>();
-		for (const record of crosswalk.records) {
-			const sourceId = areaId(
-				crosswalk.from.geography,
-				crosswalk.from.boundaryRelease,
-				record.source.code,
-			);
-			sourceTargetCounts.set(sourceId, record.targets.length);
-			for (const target of record.targets) {
-				const targetId = areaId(
-					crosswalk.to.geography,
-					crosswalk.to.boundaryRelease,
-					target.code,
-				);
-				targetSourceCounts.set(
-					targetId,
-					(targetSourceCounts.get(targetId) ?? 0) + 1,
-				);
-			}
-		}
-		const crosswalkMetadata = {
-			id: crosswalk.id,
-			method: crosswalk.method,
-			quality: crosswalk.quality,
-			weighting: crosswalk.weighting,
-		};
-		for (const record of crosswalk.records) {
-			const sourceId = areaId(
-				crosswalk.from.geography,
-				crosswalk.from.boundaryRelease,
-				record.source.code,
-			);
-			for (const target of record.targets) {
-				const targetId = areaId(
-					crosswalk.to.geography,
-					crosswalk.to.boundaryRelease,
-					target.code,
-				);
-				const cardinality = {
-					sourceTargetCount: sourceTargetCounts.get(sourceId) ?? 0,
-					targetSourceCount: targetSourceCounts.get(targetId) ?? 0,
-				};
-				addRelationship(index, sourceId, {
-					relation: relationFor(
-						crosswalk,
-						target,
-						"from",
-						cardinality,
-					),
-					counterpart: {
-						id: targetId,
-						geography: crosswalk.to.geography,
-						boundaryRelease: crosswalk.to.boundaryRelease,
-						code: target.code,
-						labels: target.labels,
-					},
-					crosswalk: crosswalkMetadata,
-					...overlapFor(crosswalk, target, "from"),
-				});
-				addRelationship(index, targetId, {
-					relation: relationFor(crosswalk, target, "to", cardinality),
-					counterpart: {
-						id: sourceId,
-						geography: crosswalk.from.geography,
-						boundaryRelease: crosswalk.from.boundaryRelease,
-						code: record.source.code,
-						labels: record.source.labels,
-					},
-					crosswalk: crosswalkMetadata,
-					...overlapFor(crosswalk, target, "to"),
-				});
-			}
-		}
-	}
-	for (const relationships of index.values()) {
-		relationships.sort((left, right) => {
-			const relation = left.relation.localeCompare(right.relation);
-			if (relation !== 0) return relation;
-			const counterpart = left.counterpart.id.localeCompare(
-				right.counterpart.id,
-			);
-			return counterpart !== 0
-				? counterpart
-				: left.crosswalk.id.localeCompare(right.crosswalk.id);
-		});
-	}
+	for (const crosswalk of crosswalks)
+		addCrosswalkRelationships(index, crosswalk);
+	for (const relationships of index.values())
+		relationships.sort(compareRelationships);
 	return index;
 };
+
+/**
+ * The same relationships as `createAreaRelationshipIndex`, built a release at
+ * a time. An area's relationships come only from the crosswalks that name its
+ * release, so answering for one reads those and no others; the rest of the
+ * graph is never parsed unless something asks for it. Each area's list is
+ * ordered as the eager index orders it, whatever order releases are asked in.
+ */
+export class LazyAreaRelationshipIndex {
+	private readonly touching = new Map<string, CrosswalkArtifact[]>();
+	private readonly contributions = new Map<string, AreaRelationshipIndex>();
+	private readonly areas = new Map<string, AreaRelationship[]>();
+
+	constructor(private readonly lookup: CrosswalkLookup) {}
+
+	get(area: string): AreaRelationship[] | undefined {
+		let relationships = this.areas.get(area);
+		if (!relationships) {
+			relationships = this.crosswalksFor(area).flatMap(
+				(crosswalk) => this.contributionOf(crosswalk).get(area) ?? [],
+			);
+			relationships.sort(compareRelationships);
+			this.areas.set(area, relationships);
+		}
+		return relationships.length > 0 ? relationships : undefined;
+	}
+
+	/** The crosswalks naming the area's release, in inventory order. */
+	private crosswalksFor(area: string) {
+		// An area key is geography/release/code; neither of the first two
+		// holds a slash, and a code may.
+		const [geography, boundaryRelease] = area.split("/", 2) as [
+			string,
+			string,
+		];
+		const release = releaseKey(geography, boundaryRelease);
+		let crosswalks = this.touching.get(release);
+		if (!crosswalks) {
+			const names = (side: CrosswalkArtifact["from"]) =>
+				side.geography === geography &&
+				side.boundaryRelease === boundaryRelease;
+			crosswalks = selectCrosswalks(
+				this.lookup,
+				({ from, to }) => names(from) || names(to),
+			);
+			this.touching.set(release, crosswalks);
+		}
+		return crosswalks;
+	}
+
+	private contributionOf(crosswalk: CrosswalkArtifact) {
+		let contribution = this.contributions.get(crosswalk.id);
+		if (!contribution) {
+			contribution = new Map();
+			addCrosswalkRelationships(contribution, crosswalk);
+			this.contributions.set(crosswalk.id, contribution);
+		}
+		return contribution;
+	}
+}

@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createAreaRelationshipIndex } from "../src/areaRelationships";
+import {
+	createAreaRelationshipIndex,
+	LazyAreaRelationshipIndex,
+} from "../src/areaRelationships";
+import {
+	selectCrosswalks,
+	type CrosswalkLookup,
+} from "../src/resolver/translation";
 import type {
 	AreaOverlapCrosswalkArtifact,
 	PropertyCrosswalkArtifact,
@@ -174,4 +181,93 @@ test("relates a membership lookup as belonging, and an identity lookup as succes
 		index.get("localAuthority/2024/L1")?.map(({ relation }) => relation),
 		["contains", "predecessor"],
 	);
+});
+
+// A second ward source for the same authority, listed after the first, so an
+// authority's relationships come from two crosswalks in a fixed order. A third
+// crosswalk names neither release.
+const secondContainment: PropertyCrosswalkArtifact = {
+	...containment,
+	id: "ward-b-to-lad",
+	records: [
+		{
+			source: { code: "W2", labels: ["Ward"] },
+			targets: [{ code: "L1", labels: ["Authority"] }],
+		},
+		{
+			source: { code: "W1", labels: ["Ward"] },
+			targets: [{ code: "L1", labels: ["Authority"] }],
+		},
+	],
+};
+const unrelated: PropertyCrosswalkArtifact = {
+	...containment,
+	id: "parish-to-district",
+	from: { geography: "parish", boundaryRelease: "2019" },
+	to: { geography: "district", boundaryRelease: "2019" },
+};
+const graph = [containment, overlap, secondContainment, unrelated];
+
+/** A lookup that keeps count of the artifacts it hands out. */
+const countingLookup = (artifacts: typeof graph) => {
+	const handed = new Set<string>();
+	const lookup: CrosswalkLookup = {
+		get: (id) => artifacts.find((artifact) => artifact.id === id),
+		values: () => artifacts,
+		where: (predicate) => {
+			const chosen = artifacts.filter(predicate);
+			for (const artifact of chosen) handed.add(artifact.id);
+			return chosen;
+		},
+	};
+	return { lookup, handed };
+};
+
+test("a lazily built index answers as the eager one does, in any order", () => {
+	const eager = createAreaRelationshipIndex(graph);
+	for (const asked of [[...eager.keys()], [...eager.keys()].reverse()]) {
+		const lazy = new LazyAreaRelationshipIndex(
+			countingLookup(graph).lookup,
+		);
+		for (const area of asked)
+			assert.deepEqual(lazy.get(area), eager.get(area), area);
+	}
+	const lazy = new LazyAreaRelationshipIndex(
+		new Map(graph.map((c) => [c.id, c])),
+	);
+	assert.deepEqual(
+		lazy.get("localAuthority/2024/L1"),
+		eager.get("localAuthority/2024/L1"),
+	);
+	assert.equal(lazy.get("localAuthority/2024/L9"), undefined);
+	assert.equal(lazy.get("nowhere/2000/X"), undefined);
+});
+
+test("a lazily built index reads only the crosswalks naming the area's release", () => {
+	const { lookup, handed } = countingLookup(graph);
+	const lazy = new LazyAreaRelationshipIndex(lookup);
+
+	assert.equal(lazy.get("ward/2024/W1")?.length, 2);
+	assert.deepEqual([...handed].sort(), ["ward-b-to-lad", "ward-to-lad"]);
+	lazy.get("constituency/2024/C1");
+	assert.ok(handed.has("constituency-to-lad"));
+	assert.ok(!handed.has("parish-to-district"));
+});
+
+test("selects artifacts by header from a plain map or a lookup that can", () => {
+	const map = new Map(graph.map((crosswalk) => [crosswalk.id, crosswalk]));
+	const wards = ({ from }: { from: { geography: string } }) =>
+		from.geography === "ward";
+
+	assert.deepEqual(
+		selectCrosswalks(map, wards).map((crosswalk) => crosswalk.id),
+		["ward-to-lad", "ward-b-to-lad"],
+	);
+	assert.deepEqual(
+		selectCrosswalks(countingLookup(graph).lookup, wards).map(
+			(crosswalk) => crosswalk.id,
+		),
+		["ward-to-lad", "ward-b-to-lad"],
+	);
+	assert.deepEqual(selectCrosswalks(undefined, wards), []);
 });
