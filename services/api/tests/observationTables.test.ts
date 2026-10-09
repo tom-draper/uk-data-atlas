@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import {
+	lazySourceObservations,
 	observationTableOf,
 	periodRecordLookup,
 	readSourceObservations,
@@ -144,6 +145,88 @@ test("reads a shared table once and a measure's own artifact as it is", () => {
 				tables,
 			),
 			own,
+		);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("reads a lazy source's file only when its hash or periods are asked for", () => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-lazy-"));
+	try {
+		const own = {
+			schemaVersion: 1,
+			contentHash: "sha256:own",
+			measureId: "population",
+			sourceGeography: { type: "ward", boundaryYear: 2023 },
+			periods: [{ period: "2022", records: [] }],
+		};
+		const path = join(directory, "population-observations.json");
+		writeFileSync(path, JSON.stringify(own));
+		const view = lazySourceObservations(
+			directory,
+			"population-observations",
+			"population",
+			{ type: "ward", boundaryYear: 2023 },
+		);
+
+		// What the catalogue says is known, so the file can be gone until a
+		// caller wants its content.
+		rmSync(path);
+		assert.equal(view.measureId, "population");
+		assert.deepEqual(view.sourceGeography, own.sourceGeography);
+		writeFileSync(path, JSON.stringify(own));
+
+		assert.equal(view.contentHash, "sha256:own");
+		assert.deepEqual(view.periods, own.periods);
+		// Once read, it is the artifact's own and spreads as the file reads.
+		assert.deepEqual(JSON.parse(JSON.stringify(view)), own);
+		assert.deepEqual(Object.keys({ ...view }), Object.keys(own));
+		assert.equal(observationTableOf(view), undefined);
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+});
+
+test("a lazy table view resolves to its table and a missing or mismatched file is refused", () => {
+	const directory = mkdtempSync(join(tmpdir(), "observation-lazy-"));
+	try {
+		assert.throws(
+			() =>
+				lazySourceObservations(
+					directory,
+					"absent-observations",
+					"population",
+					{ type: "ward", boundaryYear: 2023 },
+				),
+			/Missing measure observations at /,
+		);
+		writeFileSync(
+			join(directory, "fixture-table.json"),
+			JSON.stringify(table),
+		);
+		const tables = new Map<string, MeasureTableArtifact>();
+		const rented = lazySourceObservations(
+			directory,
+			"fixture-table",
+			"rented",
+			table.sourceGeography,
+			tables,
+		);
+		assert.equal(tables.size, 0);
+		assert.equal(observationTableOf(rented)?.id, "fixture-table");
+		assert.equal(tables.size, 1);
+		assert.equal(rented.periods[0]?.records.length, 1);
+
+		const wrongYear = lazySourceObservations(
+			directory,
+			"fixture-table",
+			"owned",
+			{ type: "lsoa", boundaryYear: 2011 },
+		);
+		assert.throws(
+			() => wrongYear.periods,
+			/Invalid measure observations at /,
 		);
 	} finally {
 		rmSync(directory, { recursive: true, force: true });

@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
 	observationArtifactName,
@@ -6,13 +5,14 @@ import {
 	type DataCatalog,
 } from "./dataCatalog";
 import {
-	readSourceObservations,
+	lazySourceObservations,
 	type MeasureTableArtifact,
 } from "./observationTables";
 
 /**
  * Every measure's observations. Driven by the catalogue rather than a
- * hardcoded list, so publishing a measure needs no change here.
+ * hardcoded list, so publishing a measure needs no change here. Each is read
+ * from its file when first used.
  */
 export const readMeasureObservations = (
 	apiRoot: string,
@@ -21,27 +21,14 @@ export const readMeasureObservations = (
 	// A table serves every measure that names it, so it is read once.
 	const tables = new Map<string, MeasureTableArtifact>();
 	return dataCatalog.measures.flatMap((measure) =>
-		measure.sources.map((source) => {
-			const name = observationArtifactName(measure.id, source);
-			const path = join(apiRoot, "public", `${name}.json`);
-			const observations = readSourceObservations(
+		measure.sources.map((source) =>
+			lazySourceObservations(
 				join(apiRoot, "public"),
-				name,
+				observationArtifactName(measure.id, source),
 				measure.id,
+				source.sourceGeography,
 				tables,
-			);
-			if (
-				observations.schemaVersion !== 1 ||
-				observations.measureId !== measure.id ||
-				observations.sourceGeography.type !==
-					source.sourceGeography.type ||
-				observations.sourceGeography.boundaryYear !==
-					source.sourceGeography.boundaryYear ||
-				!Array.isArray(observations.periods)
-			) {
-				throw new Error(`Invalid measure observations at ${path}`);
-			}
-			return observations;
-		}),
+			),
+		),
 	);
 };
