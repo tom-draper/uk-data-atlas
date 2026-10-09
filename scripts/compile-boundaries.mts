@@ -27,7 +27,9 @@ import { presimplify, simplify } from "topojson-simplify";
 import {
 	BOUNDARY_CATALOG,
 	BOUNDARY_TYPES,
+	type BoundaryType,
 } from "../lib/data/boundaries/catalog";
+import { boundaryReadsFeatureExtent } from "../lib/data/boundaries/capabilities";
 import { decodeBoundaryData } from "../lib/data/boundaries/decode";
 import {
 	applyGridOffset,
@@ -255,6 +257,7 @@ const releaseSources = () =>
 				substitutions.length > 0 || reversedOffsets.length > 0;
 			return [
 				{
+					type,
 					label: `${type}/${release.id}`,
 					objectName: type,
 					codeKey: release.codeKey,
@@ -342,6 +345,18 @@ const shouldCompile = async (inputPaths: string[], outputPath: string) => {
  * have computed from the asset it was served.
  */
 const DERIVED_PROPERTIES = ["areaSqKm", "bbox"] as const;
+type DerivedProperty = (typeof DERIVED_PROPERTIES)[number];
+
+/**
+ * The derived values a family's sidecar carries. Area is read for population
+ * density wherever a chart aggregates; the extent only by the families a
+ * location is reduced to by box (see `boundaryReadsFeatureExtent`), and it is
+ * the larger part of what a ward or LSOA sidecar costs to download and parse.
+ */
+const derivedPropertiesFor = (
+	type: BoundaryType,
+): readonly DerivedProperty[] =>
+	boundaryReadsFeatureExtent(type) ? DERIVED_PROPERTIES : ["areaSqKm"];
 
 /** One record per feature, in the order the topology lists them. */
 export type BoundaryPropertiesFile = {
@@ -390,6 +405,7 @@ const featureExtent = (
 /** The published properties of each feature, plus the two derived values. */
 const releaseProperties = (
 	topologyData: ReturnType<typeof topology>,
+	derived: readonly DerivedProperty[],
 	objectName?: string,
 ): Record<string, unknown>[] => {
 	const object =
@@ -405,7 +421,9 @@ const releaseProperties = (
 			source.geometry ? polygonAreaSqKm(source.geometry as never) : 0,
 			7,
 		),
-		bbox: featureExtent(source.geometry as never),
+		...(derived.includes("bbox") && {
+			bbox: featureExtent(source.geometry as never),
+		}),
 	}));
 };
 
@@ -498,8 +516,9 @@ const simplifySource = async (
 const assertDerivedPresent = (
 	label: string,
 	features: Record<string, unknown>[],
+	derived: readonly DerivedProperty[],
 ) => {
-	for (const key of DERIVED_PROPERTIES) {
+	for (const key of derived) {
 		if (features.every((record) => record[key] === undefined)) {
 			throw new Error(
 				`${label}: no feature carries a ${key}, so the properties file ` +
@@ -511,11 +530,13 @@ const assertDerivedPresent = (
 
 const serializeProperties = (
 	label: string,
+	type: BoundaryType,
 	topologyData: ReturnType<typeof topology>,
 	objectName?: string,
 ) => {
-	const features = releaseProperties(topologyData, objectName);
-	assertDerivedPresent(label, features);
+	const derived = derivedPropertiesFor(type);
+	const features = releaseProperties(topologyData, derived, objectName);
+	assertDerivedPresent(label, features, derived);
 	return JSON.stringify({
 		release: label,
 		features,
@@ -547,6 +568,7 @@ export async function compileBoundaryAssets(): Promise<void> {
 	const sources = releaseSources();
 	console.log(`Preparing ${sources.length} TopoJSON boundary assets...`);
 	for (const {
+		type,
 		label,
 		objectName,
 		codeKey,
@@ -593,7 +615,11 @@ export async function compileBoundaryAssets(): Promise<void> {
 				const topologyData = JSON.parse(
 					await readFile(topologySourcePath, "utf8"),
 				) as ReturnType<typeof topology>;
-				const properties = serializeProperties(label, topologyData);
+				const properties = serializeProperties(
+					label,
+					type,
+					topologyData,
+				);
 				await writeAtomically(propertiesPath, properties);
 				const propertiesKb = Math.round(
 					Buffer.byteLength(properties, "utf8") / 1024,
@@ -637,7 +663,12 @@ export async function compileBoundaryAssets(): Promise<void> {
 		});
 		assertKeptSomething(label, topologyData, keep);
 		const output = JSON.stringify(topologyData);
-		const properties = serializeProperties(label, topologyData, objectName);
+		const properties = serializeProperties(
+			label,
+			type,
+			topologyData,
+			objectName,
+		);
 		await writeAtomically(outputPath, output);
 		await writeAtomically(propertiesPath, properties);
 		const sourceKb = Math.round(Buffer.byteLength(raw, "utf8") / 1024);
