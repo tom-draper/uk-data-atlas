@@ -9,9 +9,9 @@ export default function DocsHeader() {
 	const pathname = usePathname();
 
 	return (
-		<header className="sticky top-0 z-30 px-3 pt-3 sm:px-4">
+		<header className="sticky top-0 z-30 px-3 pt-4 sm:px-4">
 			<div
-				className="relative mx-auto max-w-[calc(1480px-1.5rem)] overflow-hidden rounded-md sm:max-w-[calc(1480px-2rem)]"
+				className="relative mx-auto max-w-[calc(1480px-1.5rem)] overflow-hidden rounded-md sm:max-w-[calc(1480px-2rem)] shadow-none!"
 				style={glassPane}
 			>
 				<GlassOverlays isDark={false} />
