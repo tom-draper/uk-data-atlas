@@ -271,3 +271,40 @@ test("selects artifacts by header from a plain map or a lookup that can", () => 
 	);
 	assert.deepEqual(selectCrosswalks(undefined, wards), []);
 });
+
+test("names the codes of a release that have a relationship without building any", () => {
+	// A record with no targets relates its source to nothing, so the source is
+	// not a related area, though the crosswalk lists it.
+	const withUnmatched: PropertyCrosswalkArtifact = {
+		...containment,
+		id: "ward-c-to-lad",
+		records: [
+			...containment.records,
+			{ source: { code: "W3", labels: ["Ward"] }, targets: [] },
+		],
+	};
+	const crosswalks = [...graph, withUnmatched];
+	const eager = createAreaRelationshipIndex(crosswalks);
+	const lazy = new LazyAreaRelationshipIndex(
+		countingLookup(crosswalks).lookup,
+	);
+
+	for (const [geography, release] of [
+		["ward", "2024"],
+		["localAuthority", "2024"],
+		["constituency", "2024"],
+		["district", "2019"],
+		["nowhere", "2000"],
+	] as const) {
+		const prefix = `${geography}/${release}/`;
+		const expected = [...eager.keys()]
+			.filter((area) => area.startsWith(prefix))
+			.map((area) => area.slice(prefix.length));
+		assert.deepEqual(
+			[...lazy.relatedCodes(geography, release)].sort(),
+			expected.sort(),
+			prefix,
+		);
+	}
+	assert.ok(!lazy.relatedCodes("ward", "2024").has("W3"));
+});

@@ -85,6 +85,14 @@ export class CapabilityResolver {
 			geography: string,
 			release: string,
 		) => BoundaryRegistry["releases"][number] | undefined,
+		/**
+		 * The codes of a release that have a relationship, where they can be
+		 * found without building the relationships themselves.
+		 */
+		private readonly relatedCodes?: (
+			geography: string,
+			release: string,
+		) => Set<string>,
 	) {
 		this.inputs = inputs;
 		this.conversions = new ConversionCapabilities(inputs, translator);
@@ -179,6 +187,40 @@ export class CapabilityResolver {
 		};
 	}
 
+	/**
+	 * How many of a release's areas have a relationship. Health reports this
+	 * for every release at once, and everything else in a coverage answer
+	 * (counts by relation, crosswalks, the uncovered areas) is built only for
+	 * the one release a caller asks about.
+	 */
+	private relatedAreaCounts(
+		geography: string,
+		boundaryRelease: string,
+	):
+		| Pick<CachedRelationshipCoverage, "areaCount" | "relatedAreaCount">
+		| undefined {
+		const areas = this.inputs.areaLookup?.get(
+			releaseKey(geography, boundaryRelease),
+		);
+		if (!areas || !this.hasRelationships()) return undefined;
+		const cached = this.relationshipCoverageCache.get(
+			`${releaseKey(geography, boundaryRelease)}\u0000`,
+		);
+		if (cached) return cached;
+		if (!this.relatedCodes)
+			return this.relationshipCoverage(
+				geography,
+				boundaryRelease,
+				undefined,
+				1,
+			);
+		const related = this.relatedCodes(geography, boundaryRelease);
+		let relatedAreaCount = 0;
+		for (const [code] of areas)
+			if (related.has(code)) relatedAreaCount += 1;
+		return { areaCount: areas.size, relatedAreaCount };
+	}
+
 	geographyHealth(): GeographyHealth[] {
 		if (!this.inputs.areaLookup) return [];
 		if (this.geographyHealthCache) return [...this.geographyHealthCache];
@@ -189,11 +231,9 @@ export class CapabilityResolver {
 					string,
 					string,
 				];
-				const coverage = this.relationshipCoverage(
+				const coverage = this.relatedAreaCounts(
 					geography,
 					boundaryRelease,
-					undefined,
-					1,
 				);
 				const areaCount =
 					this.inputs.areaLookup?.get(identity)?.size ?? 0;
