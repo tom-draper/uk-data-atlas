@@ -44,7 +44,7 @@ type BoundaryPropertiesFile = {
 };
 
 type CompiledDataset = {
-	data: unknown;
+	load: () => Promise<unknown>;
 	layout?: DatasetPayloadLayout;
 };
 
@@ -451,7 +451,7 @@ export async function writeDatasetRegionChunks({
 	for (const [file, compiled] of datasets) {
 		const chunkLayout = compiled.layout?.regionChunks;
 		if (!chunkLayout || chunkLayout.kind !== "regional") continue;
-		const value = compiled.data as DatasetPayload;
+		const value = (await compiled.load()) as DatasetPayload;
 		const locationPopulations = chunkLayout.populationSummary
 			? populationLocationSummary(
 					gazetteer,

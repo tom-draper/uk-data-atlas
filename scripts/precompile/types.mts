@@ -7,10 +7,15 @@ import type { DatasetPayloadLayout } from "../../lib/data/catalog/types";
 export type CatalogueDefinition =
 	(typeof CATALOGUE_DATASET_DEFINITIONS)[number];
 
-/** Compiled payloads kept for region chunk generation, by output file. */
+/**
+ * How to get the compiled payloads that region chunk generation reads, by
+ * output file. A payload from this run is already in memory. One reused from an
+ * earlier run stays on disk until chunks are actually cut from it, which they
+ * are not when the chunks themselves can be reused.
+ */
 export type CompiledDatasets = Map<
 	string,
-	{ data: unknown; layout?: DatasetPayloadLayout }
+	{ load: () => Promise<unknown>; layout?: DatasetPayloadLayout }
 >;
 
 export type CompiledOutput = {
