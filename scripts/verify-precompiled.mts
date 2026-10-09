@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFile, stat } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { boundaryChunkProblems } from "./boundary-chunks";
 import { precompileFingerprints } from "./precompile-fingerprint.mjs";
 import { resolverProjectionProblems } from "./resolver-projections";
 
@@ -60,6 +61,12 @@ for (const dataset of manifest.datasets ?? []) {
 const projectionProblems = resolverProjectionProblems(datasets);
 if (projectionProblems.length > 0)
 	throw new Error(projectionProblems.join("\n"));
+
+const chunkProblems = await boundaryChunkProblems(root);
+if (chunkProblems.length > 0)
+	throw new Error(
+		`${chunkProblems.join("\n")}\nRun pnpm precompile locally.`,
+	);
 
 await stat(join(datasets, "docs-catalogue.json"));
 await stat(join(root, "public", "data", "boundaries"));

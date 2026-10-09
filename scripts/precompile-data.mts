@@ -20,6 +20,7 @@ import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { compileBoundaryChunks } from "./boundary-chunks";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {
 	mergeManifestEntries,
@@ -200,6 +201,8 @@ async function main() {
 		process.exit(1);
 	}
 	atlasAssets.releaseBoundaryReads();
+	// Chunks are placed by the gazetteer and lookups the assets above just wrote.
+	await compileBoundaryChunks(ROOT);
 	const regional = CATALOGUE_DATASET_DEFINITIONS.flatMap(
 		(definition, index) =>
 			definition.payload?.regionChunks?.kind === "regional"
