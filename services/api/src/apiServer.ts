@@ -62,7 +62,16 @@ const KEEP_ALIVE_TIMEOUT_MS = 5_000;
  */
 export const MAX_BODY_BYTES = 8 * 1024 * 1024;
 
-const gzipAsync = promisify(gzip);
+/**
+ * The gzip level for a body built per request. On a 2.7 MB country boundary
+ * level 4 takes 38 ms against 106 ms at zlib's default of 6, for 3% more
+ * bytes; levels above 6 cost several times more for under 1% fewer. Stored
+ * files are compressed once at build time, at whatever level that picked.
+ */
+const GZIP_LEVEL = 4;
+
+const gzipAsync = (body: string | Buffer) =>
+	promisify(gzip)(body, { level: GZIP_LEVEL });
 
 type BodyRead = { text: string } | { tooLarge: true; bytes: number };
 
