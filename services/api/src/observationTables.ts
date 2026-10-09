@@ -37,6 +37,29 @@ export const isMeasureTable = (
 /** The table each measure's view was taken from. */
 const tableOfView = new WeakMap<object, MeasureTableArtifact>();
 
+type RecordLookup = (areaCode: string) => PopulationObservation | undefined;
+
+/** The lookup each view's period offers, keyed by the period object. */
+const lookupOfPeriod = new WeakMap<object, RecordLookup>();
+
+/** Each table's rows by area code, built the first time any measure asks. */
+const rowsByCode = new WeakMap<
+	MeasureTableArtifact,
+	Map<string, MeasureTableArtifact["records"][number]>
+>();
+
+const rowsOf = (table: MeasureTableArtifact) => {
+	let rows = rowsByCode.get(table);
+	if (!rows) {
+		rows = new Map();
+		// The first row for a code wins, as a scan of the records would find it.
+		for (const row of table.records)
+			if (!rows.has(row[0])) rows.set(row[0], row);
+		rowsByCode.set(table, rows);
+	}
+	return rows;
+};
+
 /**
  * The table a measure's observations were read from, where they came from
  * one: a download of them is the whole table, which is the artifact read.
@@ -44,6 +67,14 @@ const tableOfView = new WeakMap<object, MeasureTableArtifact>();
 export const observationTableOf = (
 	artifact: object,
 ): MeasureTableArtifact | undefined => tableOfView.get(artifact);
+
+/**
+ * The record a view's period holds for an area, read from the table's rows
+ * without building the period's records. Absent for a period that was not
+ * taken from a table, whose records are already an array to search.
+ */
+export const periodRecordLookup = (period: object): RecordLookup | undefined =>
+	lookupOfPeriod.get(period);
 
 /**
  * One measure's observations as a table serves them, shaped like any other
@@ -71,6 +102,12 @@ export const tableMeasureObservations = (
 			return records;
 		},
 	};
+	lookupOfPeriod.set(period, (areaCode) => {
+		const value = rowsOf(table).get(areaCode)?.[column + 1];
+		return typeof value === "number"
+			? { areaCode, value, status: "observed" }
+			: undefined;
+	});
 	const view: AnyMeasureObservationArtifact = {
 		schemaVersion: 1,
 		contentHash: table.contentHash,

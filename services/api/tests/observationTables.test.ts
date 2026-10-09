@@ -5,6 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 import {
 	observationTableOf,
+	periodRecordLookup,
 	readSourceObservations,
 	tableMeasureObservations,
 	type MeasureTableArtifact,
@@ -58,6 +59,38 @@ test("builds a view's records only when first read", () => {
 	assert.equal(view.periods[0]?.records.length, 2);
 	assert.equal(view.periods[0]?.records.length, 2);
 	assert.equal(reads, 1);
+});
+
+test("answers one area from the table's rows without building the records", () => {
+	let builds = 0;
+	const records = [
+		...table.records,
+		["E01000001", 99, 99],
+	] as MeasureTableArtifact["records"];
+	// A view builds its records with flatMap, so counting it counts the builds.
+	records.flatMap = ((...args: Parameters<typeof records.flatMap>) => {
+		builds += 1;
+		return Array.prototype.flatMap.apply(records, args);
+	}) as typeof records.flatMap;
+	const rented = tableMeasureObservations({ ...table, records }, "rented");
+	const lookup = periodRecordLookup(rented.periods[0]!)!;
+
+	assert.deepEqual(lookup("E01000001"), {
+		areaCode: "E01000001",
+		value: 5,
+		status: "observed",
+	});
+	// A null value and an unknown code are both absent; the first row for a
+	// code is the one a scan of the records would have found.
+	assert.equal(lookup("E01000002"), undefined);
+	assert.equal(lookup("E09999999"), undefined);
+	assert.equal(builds, 0);
+	assert.equal(rented.periods[0]?.records.length, 2);
+	assert.equal(builds, 1);
+	assert.equal(
+		periodRecordLookup({ period: "2021", records: [] }),
+		undefined,
+	);
 });
 
 test("reads a shared table once and a measure's own artifact as it is", () => {
