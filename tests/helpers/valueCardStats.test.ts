@@ -4,6 +4,7 @@ import { getChartDefinitions } from "@/lib/datasets/types";
 import { claimantCountDefinition } from "@/lib/datasets/claimantCount";
 import { councilTaxDefinition } from "@/lib/datasets/councilTax";
 import { crimeDefinition } from "@/lib/datasets/crime";
+import { electricityConsumptionDefinition } from "@/lib/datasets/electricityConsumption";
 import { jobsDefinition } from "@/lib/datasets/jobs";
 import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
@@ -204,6 +205,56 @@ describe("resolveValueCardStats", () => {
 			),
 		).toEqual({
 			stats: { value: 90_000, secondary: undefined },
+			viaLocalAuthority: false,
+		});
+	});
+
+	it("shows total electricity use and the domestic share", () => {
+		const electricity = {
+			boundaryType: "localAuthority",
+			boundaryYear: 2025,
+			data: {
+				E08000001: {
+					ladCode: "E08000001",
+					ladName: "Bolton",
+					domesticGwh: 120,
+					nonDomesticGwh: 80,
+					allMetersGwh: 200,
+					metersThousands: 50,
+				},
+			},
+		};
+		const card = electricityConsumptionDefinition.chart.card!;
+
+		expect(
+			resolveValueCardStats(
+				card,
+				electricity,
+				{
+					domesticGwh: 300,
+					nonDomesticGwh: 200,
+					allMetersGwh: 500,
+					metersThousands: 125,
+				},
+				null,
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 500, secondary: "60% domestic" },
+			viaLocalAuthority: false,
+		});
+		expect(
+			resolveValueCardStats(
+				card,
+				electricity,
+				null,
+				area("localAuthority", "E08000001"),
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 200, secondary: "60% domestic" },
 			viaLocalAuthority: false,
 		});
 	});

@@ -4,6 +4,7 @@ import {
 	aggregateBroadband,
 	aggregateChildPoverty,
 	aggregateClaimantCount,
+	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateHomelessness,
 	aggregateSchoolPerformance,
@@ -113,6 +114,40 @@ describe("aggregateAirQuality", () => {
 				{ no2Mean: null, pm25Mean: 10, gridCells: 5 },
 			] as any),
 		).toBeNull();
+	});
+});
+
+describe("aggregateEnergyConsumption", () => {
+	it("sums every metered consumption field across authorities", () => {
+		expect(
+			aggregateEnergyConsumption([
+				{
+					ladCode: "E1",
+					ladName: "One",
+					domesticGwh: 120,
+					nonDomesticGwh: 80,
+					allMetersGwh: 200,
+					metersThousands: 50,
+				},
+				{
+					ladCode: "E2",
+					ladName: "Two",
+					domesticGwh: 40,
+					nonDomesticGwh: 60,
+					allMetersGwh: 100,
+					metersThousands: 25,
+				},
+			]),
+		).toEqual({
+			domesticGwh: 160,
+			nonDomesticGwh: 140,
+			allMetersGwh: 300,
+			metersThousands: 75,
+		});
+	});
+
+	it("returns null with no authority records", () => {
+		expect(aggregateEnergyConsumption([])).toBeNull();
 	});
 });
 
