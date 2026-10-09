@@ -6,6 +6,7 @@ export const imdDatasetDefinition: DatasetDefinition<IMDDataset> = {
 	type: "imd",
 	precompiledFile: "imd",
 	boundaryType: "lsoa",
+	payload: { regionChunks: { kind: "regional", lsoaToLad: true } },
 	source: {
 		name: "Indices of Multiple Deprivation",
 		source: "Ministry of Housing, Communities & Local Government",
