@@ -23,9 +23,23 @@ import type {
 type RegionChunkInputs = {
 	/** Compiled output of each regional dataset, by output file. */
 	regionalDatasets: Record<string, CompiledOutput>;
+	/** The fingerprint of each regional dataset, by output file. */
+	regionalFingerprints: Record<string, string>;
 	compiledDatasets: CompiledDatasets;
 	gazetteerCore: { data: GazetteerCore; compiled: CompiledOutput };
 	boundaryMappings: { wardToLad: ReturnType<typeof parseBoundaryWardToLad> };
+};
+
+const sameFingerprints = (
+	left: Readonly<Record<string, string>> | undefined,
+	right: Readonly<Record<string, string>>,
+) => {
+	if (!left) return false;
+	const names = Object.keys(right);
+	return (
+		Object.keys(left).length === names.length &&
+		names.every((name) => left[name] === right[name])
+	);
 };
 
 /**
@@ -37,6 +51,7 @@ export async function compileRegionChunks(
 	{ canReuse, existingManifest }: ReuseContext,
 	{
 		regionalDatasets,
+		regionalFingerprints,
 		compiledDatasets,
 		gazetteerCore,
 		boundaryMappings,
@@ -55,6 +70,10 @@ export async function compileRegionChunks(
 		cachedRegionChunks &&
 		hasChunkContentHashes &&
 		sameCompiledOutputs(cachedRegionChunks.datasets, regionalDatasets) &&
+		sameFingerprints(
+			cachedRegionChunks.datasetFingerprints,
+			regionalFingerprints,
+		) &&
 		sameCompiledOutput(
 			cachedRegionChunks.gazetteerCore,
 			gazetteerCore.compiled,

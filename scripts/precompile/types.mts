@@ -39,6 +39,8 @@ export type ExistingManifestDataset = {
 	inputs: SourceArtifact[];
 	summary: unknown;
 	compiled: CompiledOutput;
+	/** What the dataset was compiled by; see scripts/precompile-fingerprint.mjs. */
+	fingerprint?: string;
 };
 
 export type AtlasAssetsCache = {
@@ -60,6 +62,8 @@ export type RoadSafetyCache = {
 
 export type RegionChunksCache = {
 	datasets: Record<string, CompiledOutput>;
+	/** The fingerprint of each regional dataset, which holds its chunk layout. */
+	datasetFingerprints?: Record<string, string>;
 	gazetteerCore: CompiledOutput;
 	outputs: FileSnapshot[];
 };
@@ -76,7 +80,10 @@ export type ExistingManifest = {
 
 /** What an earlier run left behind, and whether this run may trust it. */
 export type ReuseContext = {
+	/** Whether the pipeline that built the other artifacts is unchanged. */
 	canReuse: boolean;
+	/** What each dataset would be compiled by now, by type. */
+	datasetFingerprints: Readonly<Record<string, string>>;
 	existingManifest: ExistingManifest;
 	existingDatasets: Map<string, ExistingManifestDataset>;
 	sourceRelease: SourceRelease | undefined;

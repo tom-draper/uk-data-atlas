@@ -3,7 +3,7 @@ import { createReadStream } from "fs";
 import { readFile, readdir, stat } from "fs/promises";
 import { join, relative } from "path";
 import type { SourceArtifact } from "../../lib/data/catalog";
-import { precompileFingerprint } from "../precompile-fingerprint.mjs";
+import { precompileFingerprints } from "../precompile-fingerprint.mjs";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./paths.mts";
 import type {
 	CatalogueDefinition,
@@ -235,9 +235,12 @@ export const canReuseDataset = async (
 	existing: ExistingManifestDataset | undefined,
 	definition: CatalogueDefinition,
 	sourceRelease: SourceRelease | undefined,
+	fingerprint: string | undefined,
 ) => {
 	if (
 		!existing ||
+		fingerprint === undefined ||
+		existing.fingerprint !== fingerprint ||
 		existing.type !== definition.type ||
 		existing.output !== definition.precompiledFile ||
 		!Array.isArray(existing.inputs) ||
@@ -267,6 +270,7 @@ export const canReuseDataset = async (
 /** The reuse context for a run that trusts nothing an earlier one left. */
 export const NO_REUSE: ReuseContext = {
 	canReuse: false,
+	datasetFingerprints: {},
 	existingManifest: {},
 	existingDatasets: new Map(),
 	sourceRelease: undefined,
@@ -274,7 +278,8 @@ export const NO_REUSE: ReuseContext = {
 
 /**
  * Reads the manifest an earlier run wrote, and decides whether its output can
- * be reused: only if the compiler's own inputs are unchanged.
+ * be reused. A dataset is reused only if what compiles it is unchanged, which
+ * its own fingerprint says. The other artifacts share the pipeline's.
  */
 export const loadReuseContext = async (): Promise<
 	ReuseContext & { compilerFingerprint: string }
@@ -287,12 +292,15 @@ export const loadReuseContext = async (): Promise<
 	} catch {
 		// A fresh checkout has no cache to reuse.
 	}
-	const compilerFingerprint = await precompileFingerprint(ROOT);
+	const { pipeline: compilerFingerprint, datasets: datasetFingerprints } =
+		await precompileFingerprints(ROOT);
 	const sourceRelease = await readSourceRelease();
 	const canReuse =
 		existingManifest.precompiler?.fingerprint === compilerFingerprint;
 	if (!canReuse)
-		console.log("Compiler inputs changed; rebuilding every dataset.");
+		console.log(
+			"Pipeline inputs changed; rebuilding the gazetteer, road safety and region chunks.",
+		);
 	const existingDatasets = new Map(
 		(existingManifest.datasets ?? []).map((dataset) => [
 			dataset.type,
@@ -301,6 +309,7 @@ export const loadReuseContext = async (): Promise<
 	);
 	return {
 		canReuse,
+		datasetFingerprints,
 		existingManifest,
 		existingDatasets,
 		sourceRelease,

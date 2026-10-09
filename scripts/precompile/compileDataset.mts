@@ -21,13 +21,21 @@ import type {
 export async function compileDataset(
 	definition: CatalogueDefinition,
 	compiledDatasets: CompiledDatasets,
-	{ canReuse, existingDatasets, sourceRelease }: ReuseContext = NO_REUSE,
+	{
+		datasetFingerprints,
+		existingDatasets,
+		sourceRelease,
+	}: ReuseContext = NO_REUSE,
 ) {
 	const startedAt = performance.now();
 	const existing = existingDatasets.get(definition.type);
-	const cached = canReuse
-		? await canReuseDataset(existing, definition, sourceRelease)
-		: undefined;
+	const fingerprint = datasetFingerprints[definition.type];
+	const cached = await canReuseDataset(
+		existing,
+		definition,
+		sourceRelease,
+		fingerprint,
+	);
 	if (cached && existing) {
 		const reused = { ...existing, compiled: cached };
 		if (definition.payload?.regionChunks?.kind === "regional") {
@@ -110,7 +118,7 @@ export async function compileDataset(
 			formatKb(preserved.compiled.bytes),
 			elapsedSince(startedAt),
 		]);
-		return preserved;
+		return { ...preserved, fingerprint };
 	}
 	const output = await out(definition.precompiledFile, data);
 	logArtifact("dataset", `${definition.precompiledFile}.json`, [
@@ -128,5 +136,6 @@ export async function compileDataset(
 		),
 		summary,
 		compiled: output,
+		fingerprint,
 	};
 }
