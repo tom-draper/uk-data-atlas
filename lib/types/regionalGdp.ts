@@ -23,6 +23,14 @@ export interface RegionalGdpAreaData {
 	gdpMillionGbp: number;
 }
 
+export type RegionalGdpMetrics = Pick<
+	RegionalGdpAreaData,
+	"gvaMillionGbp" | "gdpMillionGbp"
+>;
+
+/** GDP and GVA summed across the selected ITL3 areas. */
+export type AggregatedRegionalGdpData = RegionalGdpMetrics;
+
 interface RegionalGdpDataset<Type extends string, Boundary extends string> {
 	id: string;
 	type: Type;

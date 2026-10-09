@@ -5,6 +5,7 @@ import { claimantCountDefinition } from "@/lib/datasets/claimantCount";
 import { councilTaxDefinition } from "@/lib/datasets/councilTax";
 import { crimeDefinition } from "@/lib/datasets/crime";
 import { nhsWaitingDefinition } from "@/lib/datasets/nhsWaiting";
+import { regionalGdpItl3Definition } from "@/lib/datasets/regionalGdpItl3";
 import { resolveValueCardStats } from "@/lib/helpers/valueCardStats";
 import type { SelectedArea } from "@/lib/types";
 
@@ -163,6 +164,36 @@ describe("resolveValueCardStats", () => {
 				false,
 			)?.stats.value,
 		).toBe(12_345);
+	});
+
+	it("shows ITL3 GDP and GVA", () => {
+		const regionalGdp = {
+			boundaryType: "itl3",
+			boundaryYear: 2025,
+			data: {
+				T1: {
+					itlCode: "T1",
+					itlName: "One",
+					gvaMillionGbp: 2_000,
+					gdpMillionGbp: 2_200,
+				},
+			},
+		};
+		const card = regionalGdpItl3Definition.chart.card!;
+
+		expect(
+			resolveValueCardStats(
+				card,
+				regionalGdp,
+				{ gvaMillionGbp: 5_000, gdpMillionGbp: 5_500 },
+				null,
+				undefined,
+				false,
+			),
+		).toEqual({
+			stats: { value: 5_500, secondary: "£5.0bn GVA" },
+			viaLocalAuthority: false,
+		});
 	});
 
 	it("falls back to the map's hover record only for the active indicator", () => {

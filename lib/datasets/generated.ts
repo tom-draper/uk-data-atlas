@@ -37,6 +37,7 @@ import { nimdmDefinition } from "./nimdm";
 import { planningApplicationsDefinition } from "./planningApplications";
 import { populationDefinition } from "./population";
 import { qualificationDefinition } from "./qualification";
+import { regionalGdpItl3Definition } from "./regionalGdpItl3";
 import { schoolPerformanceDefinition } from "./schoolPerformance";
 import { schoolPerformanceDisadvantageDefinition } from "./schoolPerformanceDisadvantage";
 import { simdDefinition } from "./simd";
@@ -83,6 +84,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		planningApplicationsDefinition,
 		populationDefinition,
 		qualificationDefinition,
+		regionalGdpItl3Definition,
 		schoolPerformanceDefinition,
 		schoolPerformanceDisadvantageDefinition,
 		simdDefinition,
