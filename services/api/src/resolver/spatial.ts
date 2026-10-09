@@ -134,6 +134,29 @@ export class SpatialResolver {
 		};
 	}
 
+	/**
+	 * The codes of the areas containing a point, for a caller that needs no
+	 * more than which areas those are. `containingAreas` also measures the
+	 * point's distance to each boundary, which for a country's coastline is
+	 * tens of milliseconds a lookup.
+	 */
+	containingCodes(
+		geography: string,
+		boundaryRelease: string,
+		point: [number, number],
+	): string[] | undefined {
+		const cache = this.cache;
+		if (!cache) return undefined;
+		return cache
+			.findContaining(geography, boundaryRelease, point)
+			.filter(
+				({ code }) =>
+					this.area({ geography, boundaryRelease, code }) &&
+					cache.get(geography, boundaryRelease, code),
+			)
+			.map(({ code }) => code);
+	}
+
 	containingAreas(
 		geography: string,
 		boundaryRelease: string,
