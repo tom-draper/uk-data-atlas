@@ -109,6 +109,25 @@ const regionForRecord = (
 	return ladCode ? regionForLad(gazetteer, ladCode) : null;
 };
 
+/**
+ * The LSOA → LAD lookup the browser's location filter reads for a boundary
+ * year, so the chunk a record is placed in agrees with the filter.
+ */
+const readLsoaToLad = async (root: string, boundaryYear: number) => {
+	const path = join(
+		root,
+		"public",
+		"data",
+		"datasets",
+		`lsoa-lad-mappings-${boundaryYear}.json`,
+	);
+	const parsed = JSON.parse(await readFile(path, "utf8")) as {
+		lsoaToLad?: Record<string, string>;
+	};
+	if (!parsed.lsoaToLad) throw new Error(`${path} holds no lsoaToLad lookup`);
+	return parsed.lsoaToLad;
+};
+
 const populationTotal = (record: unknown) => {
 	if (!record || typeof record !== "object") return 0;
 	const total = Reflect.get(record, "total");
@@ -485,20 +504,39 @@ export async function writeDatasetRegionChunks({
 		for (const [datasetId, dataset] of Object.entries(value)) {
 			if (!dataset.data) continue;
 			const records = new Map<RegionChunkKey, Record<string, unknown>>();
+			const lsoaToLad =
+				chunkLayout.lsoaToLad &&
+				typeof dataset.boundaryYear === "number"
+					? await readLsoaToLad(root, dataset.boundaryYear)
+					: undefined;
+			const unplaced: string[] = [];
 			for (const [code, record] of Object.entries(dataset.data)) {
-				const region = regionForRecord(
-					gazetteer,
-					record,
-					code,
-					chunkLayout.wardToLadFallback
-						? (boundaryMappings?.wardToLad ?? {})
-						: undefined,
-				);
-				if (!region) continue;
+				const lad = lsoaToLad?.[code];
+				const region =
+					(lad ? regionForLad(gazetteer, lad) : null) ??
+					regionForRecord(
+						gazetteer,
+						record,
+						code,
+						chunkLayout.wardToLadFallback
+							? (boundaryMappings?.wardToLad ?? {})
+							: undefined,
+					);
+				if (!region) {
+					unplaced.push(code);
+					continue;
+				}
 				const regionRecords = records.get(region) ?? {};
 				regionRecords[code] = record;
 				records.set(region, regionRecords);
 			}
+			// An LSOA left out of every chunk would vanish from the map for a
+			// regional view while still present in the complete file.
+			if (chunkLayout.lsoaToLad && unplaced.length > 0)
+				throw new Error(
+					`${file}: ${unplaced.length} ${datasetId} records have no region ` +
+						`(${unplaced.slice(0, 5).join(", ")}) so no chunk would carry them`,
+				);
 			recordsByDataset.set(datasetId, records);
 		}
 

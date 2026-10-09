@@ -36,7 +36,10 @@ import {
 import { compileDataset } from "./precompile/compileDataset.mts";
 import { chunksSize, out } from "./precompile/output.mts";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
-import { compileRegionChunks } from "./precompile/regionChunks.mts";
+import {
+	compileRegionChunks,
+	regionChunkLookupFingerprints,
+} from "./precompile/regionChunks.mts";
 import { precompileFingerprints } from "./precompile-fingerprint.mjs";
 import { compileRoadSafety } from "./precompile/roadSafety.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
@@ -216,13 +219,17 @@ async function main() {
 		]),
 	);
 	// A dataset's layout is part of its definition, so chunks are only as
-	// current as the fingerprint of each dataset they were cut from.
-	const regionalFingerprints = Object.fromEntries(
-		regional.map(({ definition }) => [
-			definition.precompiledFile,
-			reuse.datasetFingerprints[definition.type]!,
-		]),
-	);
+	// current as the fingerprint of each dataset they were cut from, and of
+	// the ward and LSOA lookups that placed their records.
+	const regionalFingerprints = {
+		...Object.fromEntries(
+			regional.map(({ definition }) => [
+				definition.precompiledFile,
+				reuse.datasetFingerprints[definition.type]!,
+			]),
+		),
+		...(await regionChunkLookupFingerprints()),
+	};
 	const recordedChunkOutputs = await compileRegionChunks(reuse, {
 		regionalDatasets,
 		regionalFingerprints,
