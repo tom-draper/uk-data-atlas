@@ -41,14 +41,18 @@ export async function compileDataset(
 		const reused = { ...existing, compiled: cached };
 		if (definition.payload?.regionChunks?.kind === "regional") {
 			compiledDatasets.set(definition.precompiledFile, {
-				data: decodeAgeArrays(
-					JSON.parse(
-						await readFile(
-							join(OUT_DIR, `${definition.precompiledFile}.json`),
-							"utf8",
+				load: async () =>
+					decodeAgeArrays(
+						JSON.parse(
+							await readFile(
+								join(
+									OUT_DIR,
+									`${definition.precompiledFile}.json`,
+								),
+								"utf8",
+							),
 						),
 					),
-				),
 				layout: definition.payload,
 			});
 		}
@@ -110,7 +114,7 @@ export async function compileDataset(
 	// in V8's heap until the last loader completes.
 	if (definition.payload?.regionChunks?.kind === "regional") {
 		compiledDatasets.set(definition.precompiledFile, {
-			data,
+			load: async () => data,
 			layout: definition.payload,
 		});
 	}
