@@ -25,6 +25,15 @@ export interface EnergyConsumptionLADData {
 	metersThousands: number;
 }
 
+/** The consumption measures shared by an authority record and an aggregate. */
+export type EnergyConsumptionMetrics = Pick<
+	EnergyConsumptionLADData,
+	"domesticGwh" | "nonDomesticGwh" | "allMetersGwh" | "metersThousands"
+>;
+
+/** Metered consumption summed across the selected local authorities. */
+export type AggregatedEnergyConsumptionData = EnergyConsumptionMetrics;
+
 interface EnergyConsumptionDataset<Type extends string> {
 	id: string;
 	type: Type;

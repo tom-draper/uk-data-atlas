@@ -16,7 +16,5 @@ export const electricityConsumptionDatasetDefinition: DatasetDefinition<Electric
 			expectedBoundaryYears: [2025],
 			requiredDataFields: ["allMetersGwh", "domesticGwh"],
 		},
-		// No chart yet: the API serves the series without one.
-		chartPending: true,
 		precompile: ({ text }) => loadElectricityConsumption(text),
 	};
