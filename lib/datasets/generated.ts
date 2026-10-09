@@ -21,6 +21,7 @@ import { electricVehicleChargersDefinition } from "./electricVehicleChargers";
 import { electricityConsumptionDefinition } from "./electricityConsumption";
 import { ethnicityDefinition } from "./ethnicity";
 import { fuelPovertyDefinition } from "./fuelPoverty";
+import { gasConsumptionDefinition } from "./gasConsumption";
 import { generalElectionDefinition } from "./generalElection";
 import { ghgEmissionsDefinition } from "./ghgEmissions";
 import { homelessnessDefinition } from "./homelessness";
@@ -69,6 +70,7 @@ export const CHART_DATASET_DEFINITIONS: readonly ChartDatasetDefinition<ChartDat
 		electricityConsumptionDefinition,
 		ethnicityDefinition,
 		fuelPovertyDefinition,
+		gasConsumptionDefinition,
 		generalElectionDefinition,
 		ghgEmissionsDefinition,
 		homelessnessDefinition,

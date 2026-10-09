@@ -172,6 +172,11 @@ export const electricityConsumptionAggregation = numericAggregation(
 	"localAuthority",
 	aggregateEnergyConsumption,
 );
+export const gasConsumptionAggregation = numericAggregation(
+	"gas-consumption",
+	"localAuthority",
+	aggregateEnergyConsumption,
+);
 export const claimantCountAggregation = numericAggregation(
 	"claimantCount",
 	"localAuthority",
