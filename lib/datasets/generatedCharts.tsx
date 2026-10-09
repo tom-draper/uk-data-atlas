@@ -247,6 +247,7 @@ export const CHART_PRESENTATIONS = {
 	"demographics-age": Chart20Presentation,
 	"demographics-gender": Chart21Presentation,
 	"education-qualifications": Chart22Presentation,
+	"economics-regionalGdpItl3": Chart0Presentation,
 	"education-schoolPerformance": Chart23Presentation,
 	"education-schoolPerformanceGap": Chart0Presentation,
 	"deprivation-simd": Chart24Presentation,

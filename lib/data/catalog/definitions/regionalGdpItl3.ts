@@ -24,8 +24,5 @@ export const regionalGdpItl3DatasetDefinition: DatasetDefinition<RegionalGdpItl3
 			expectedBoundaryYears: [2025],
 			requiredDataFields: ["gvaMillionGbp", "gdpMillionGbp"],
 		},
-		// No chart yet: the site has never drawn the ITL tiers, and the API
-		// serves this series without one.
-		chartPending: true,
 		precompile: ({ text }) => loadRegionalGdpItl3(text),
 	};

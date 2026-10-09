@@ -37,6 +37,7 @@ const GROUP_START_CHARTS: Partial<Record<string, string[]>> = {
 	Economics: [
 		"economics-housePrice",
 		"economics-income",
+		"economics-regionalGdpItl3",
 		"economics-planningApplications",
 		"economics-councilTax",
 		"economics-unemployment",
