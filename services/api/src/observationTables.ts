@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type {
 	AnyMeasureObservationArtifact,
@@ -37,6 +37,9 @@ export const isMeasureTable = (
 /** The table each measure's view was taken from. */
 const tableOfView = new WeakMap<object, MeasureTableArtifact>();
 
+/** What each lazily read view reads, and so stands for, when asked. */
+const loaderOfView = new WeakMap<object, () => AnyMeasureObservationArtifact>();
+
 type RecordLookup = (areaCode: string) => PopulationObservation | undefined;
 
 /** The lookup each view's period offers, keyed by the period object. */
@@ -66,7 +69,8 @@ const rowsOf = (table: MeasureTableArtifact) => {
  */
 export const observationTableOf = (
 	artifact: object,
-): MeasureTableArtifact | undefined => tableOfView.get(artifact);
+): MeasureTableArtifact | undefined =>
+	tableOfView.get(loaderOfView.get(artifact)?.() ?? artifact);
 
 /**
  * The record a view's period holds for an area, read from the table's rows
@@ -140,4 +144,64 @@ export const readSourceObservations = (
 		return tableMeasureObservations(parsed, measureId);
 	}
 	return parsed as AnyMeasureObservationArtifact;
+};
+
+/**
+ * A measure source's observations that are read when first used, shaped like
+ * the artifact they stand for. What the catalogue already says (the measure
+ * and the source's geography) is held up front, so finding the artifact for a
+ * request reads nothing; its content hash and periods read the file, once.
+ * Reading every artifact before listening cost seconds of start-up and held
+ * every measure in memory, though a request touches few of them. A missing
+ * file still stops the server starting; one that is malformed or does not
+ * match the catalogue is refused when read.
+ */
+export const lazySourceObservations = (
+	publicDirectory: string,
+	artifactName: string,
+	measureId: string,
+	sourceGeography: SourceGeography,
+	tables: Map<string, MeasureTableArtifact> = new Map(),
+): AnyMeasureObservationArtifact => {
+	const path = join(publicDirectory, `${artifactName}.json`);
+	if (!existsSync(path))
+		throw new Error(`Missing measure observations at ${path}`);
+	let loaded: AnyMeasureObservationArtifact | undefined;
+	const load = () => {
+		if (loaded) return loaded;
+		const observations = readSourceObservations(
+			publicDirectory,
+			artifactName,
+			measureId,
+			tables,
+		);
+		if (
+			observations.schemaVersion !== 1 ||
+			observations.measureId !== measureId ||
+			observations.sourceGeography.type !== sourceGeography.type ||
+			observations.sourceGeography.boundaryYear !==
+				sourceGeography.boundaryYear ||
+			!Array.isArray(observations.periods)
+		)
+			throw new Error(`Invalid measure observations at ${path}`);
+		loaded = observations;
+		return loaded;
+	};
+	// Keys are in an artifact's own order, which its content hash depends on
+	// where the artifact is hashed as it was written.
+	const view: AnyMeasureObservationArtifact = {
+		schemaVersion: 1,
+		get contentHash() {
+			return load().contentHash;
+		},
+		measureId,
+		get sourceGeography() {
+			return loaded?.sourceGeography ?? sourceGeography;
+		},
+		get periods() {
+			return load().periods;
+		},
+	} as AnyMeasureObservationArtifact;
+	loaderOfView.set(view, load);
+	return view;
 };
