@@ -2,6 +2,7 @@ import {
 	filterDatasetPayloadForLocation,
 	type DatasetLocationFilter,
 } from "../data/datasetLocationFilter";
+import { decodeAgeArrays } from "../data/ageArrays";
 import { mergeDatasetPayloads } from "../data/mergeDatasetPayloads";
 import { BOUNDARY_TYPES } from "../data/boundaries/catalog";
 
@@ -103,7 +104,9 @@ self.addEventListener("message", async (e: MessageEvent<unknown>) => {
 			);
 			payload = await fetchJson(url, controller.signal);
 		}
-		const data = await filterDatasetPayloadForLocation(payload, filter);
+		const data = decodeAgeArrays(
+			await filterDatasetPayloadForLocation(payload, filter),
+		);
 		if (controller.signal.aborted) return;
 		(self as unknown as Worker).postMessage({ id, data } satisfies Res);
 	} catch (err: unknown) {

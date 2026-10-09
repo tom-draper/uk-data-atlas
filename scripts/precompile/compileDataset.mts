@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { decodeAgeArrays, encodeAgeArrays } from "../../lib/data/ageArrays";
 import { validatePrecompiledDataset } from "../../lib/data/catalog";
 import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
@@ -40,10 +41,12 @@ export async function compileDataset(
 		const reused = { ...existing, compiled: cached };
 		if (definition.payload?.regionChunks?.kind === "regional") {
 			compiledDatasets.set(definition.precompiledFile, {
-				data: JSON.parse(
-					await readFile(
-						join(OUT_DIR, `${definition.precompiledFile}.json`),
-						"utf8",
+				data: decodeAgeArrays(
+					JSON.parse(
+						await readFile(
+							join(OUT_DIR, `${definition.precompiledFile}.json`),
+							"utf8",
+						),
 					),
 				),
 				layout: definition.payload,
@@ -88,7 +91,7 @@ export async function compileDataset(
 			);
 		}
 
-		compiled = JSON.parse(content);
+		compiled = decodeAgeArrays(JSON.parse(content)) as typeof compiled;
 		preserved = existing;
 	}
 	const data = definition.coverageCountries
@@ -120,7 +123,7 @@ export async function compileDataset(
 		]);
 		return { ...preserved, fingerprint };
 	}
-	const output = await out(definition.precompiledFile, data);
+	const output = await out(definition.precompiledFile, encodeAgeArrays(data));
 	logArtifact("dataset", `${definition.precompiledFile}.json`, [
 		"compiled",
 		formatKb(output.bytes),
