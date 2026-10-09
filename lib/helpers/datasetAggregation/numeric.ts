@@ -42,6 +42,10 @@ import type {
 	AggregatedEnergyConsumptionData,
 	EnergyConsumptionLADData,
 } from "@/lib/types/energyConsumption";
+import type {
+	AggregatedRegionalGdpData,
+	RegionalGdpAreaData,
+} from "@/lib/types/regionalGdp";
 
 /** Collects the numeric dataset records represented by the active boundaries. */
 export function collectBoundaryRecords<T>(
@@ -158,6 +162,20 @@ export function aggregateEnergyConsumption(
 			allMetersGwh: 0,
 			metersThousands: 0,
 		},
+	);
+}
+
+/** GDP and GVA are monetary totals, so they add across ITL3 areas. */
+export function aggregateRegionalGdp(
+	records: RegionalGdpAreaData[],
+): AggregatedRegionalGdpData | null {
+	if (records.length === 0) return null;
+	return records.reduce<AggregatedRegionalGdpData>(
+		(total, record) => ({
+			gvaMillionGbp: total.gvaMillionGbp + record.gvaMillionGbp,
+			gdpMillionGbp: total.gdpMillionGbp + record.gdpMillionGbp,
+		}),
+		{ gvaMillionGbp: 0, gdpMillionGbp: 0 },
 	);
 }
 
