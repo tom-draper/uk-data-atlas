@@ -73,9 +73,7 @@ export const areaMeasureSources = (
 						period,
 						artifacts,
 					);
-					const record = observations?.records.find(
-						(candidate) => candidate.areaCode === code,
-					);
+					const record = observations?.recordFor(code);
 					return observations
 						? {
 								period,
