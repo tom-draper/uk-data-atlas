@@ -90,3 +90,18 @@ export const BOUNDARY_CAPABILITIES = {
 
 export const boundaryCapabilityFor = (type: BoundaryType): BoundaryCapability =>
 	BOUNDARY_CAPABILITIES[type];
+
+/**
+ * Whether a feature's own bounding box is ever read to place it in a named
+ * location. Bounding-box scopes read it directly, and the crosswalk and LSOA
+ * scopes fall back to it when their lookup is unavailable. Every other family
+ * is reduced by code, so the box is bytes served for nothing.
+ */
+export const boundaryReadsFeatureExtent = (type: BoundaryType): boolean => {
+	const scope = BOUNDARY_CAPABILITIES[type].locationScope;
+	return (
+		scope.kind === "bbox" ||
+		scope.kind === "crosswalk" ||
+		(scope.kind === "parent-map" && scope.mapping === "lsoaToLad")
+	);
+};
