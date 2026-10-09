@@ -215,6 +215,7 @@ export const CHART_PRESENTATIONS = {
 	"transport-electricVehicleChargers": Chart0Presentation,
 	"demographics-ethnicity": Chart7Presentation,
 	"economics-fuelPoverty": Chart8Presentation,
+	"environment-gasConsumption": Chart0Presentation,
 	"generalElection-2024": Chart9Presentation,
 	"generalElection-2019": Chart9Presentation,
 	"generalElection-2017": Chart9Presentation,

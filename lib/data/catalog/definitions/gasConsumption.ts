@@ -16,6 +16,5 @@ export const gasConsumptionDatasetDefinition: DatasetDefinition<GasConsumptionDa
 			expectedBoundaryYears: [2025],
 			requiredDataFields: ["allMetersGwh", "domesticGwh"],
 		},
-		chartPending: true,
 		precompile: ({ text }) => loadGasConsumption(text),
 	};

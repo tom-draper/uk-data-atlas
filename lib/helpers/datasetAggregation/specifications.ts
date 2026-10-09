@@ -4,6 +4,7 @@ import {
 	aggregateBroadband,
 	aggregateChildPoverty,
 	aggregateClaimantCount,
+	aggregateEnergyConsumption,
 	aggregateFuelPoverty,
 	aggregateGhgEmissions,
 	aggregateHomelessness,
@@ -159,6 +160,11 @@ export const airQualityAggregation = numericAggregation(
 	"airQuality",
 	"localAuthority",
 	aggregateAirQuality,
+);
+export const gasConsumptionAggregation = numericAggregation(
+	"gas-consumption",
+	"localAuthority",
+	aggregateEnergyConsumption,
 );
 export const claimantCountAggregation = numericAggregation(
 	"claimantCount",
