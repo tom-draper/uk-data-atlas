@@ -17,3 +17,8 @@ export interface JobsDataset {
 	boundaryYear: number;
 	data: Record<string, JobsLADData>;
 }
+
+/** Total jobs across the selected local authorities. */
+export interface AggregatedJobsData {
+	totalJobs: number;
+}
