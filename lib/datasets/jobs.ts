@@ -37,7 +37,13 @@ export const jobsDefinition: ChartDatasetDefinition<JobsDataset> = {
 		year: 2024,
 	},
 	map: {
-		valueKey: "totalJobs",
+		valueFor: (dataset, code, mapOptions) => {
+			const record = dataset.data[code];
+			return mapOptions.jobs.measure === "perPopulation"
+				? (record?.metrics?.per100kPopulation ?? null)
+				: (record?.totalJobs ?? null);
+		},
+		sourceMode: (_dataset, mapOptions) => `jobs:${mapOptions.jobs.measure}`,
 		colorRange: { min: 0, max: 500_000 },
 		legend: { min: 0, max: 1_000_000, format: formatCompactCount },
 	},

@@ -17,7 +17,8 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 				? { measure: "perPerson" }
 				: {}),
 			...(definition.type === "businessActivity" ||
-			definition.type === "electricVehicleChargers"
+			definition.type === "electricVehicleChargers" ||
+			definition.type === "jobs"
 				? { measure: "total" }
 				: {}),
 			...(definition.type === "broadband"
