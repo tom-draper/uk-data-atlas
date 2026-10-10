@@ -35,6 +35,33 @@ describe("withCDN", () => {
 		);
 	});
 
+	it("reads from the base URL when one is set, without a version query", async () => {
+		vi.stubEnv("NODE_ENV", "production");
+		vi.stubEnv("NEXT_PUBLIC_DATA_VERSION", "abc123");
+		vi.stubEnv(
+			"NEXT_PUBLIC_DATA_BASE_URL",
+			"https://cdn.jsdelivr.net/gh/owner/repo@abc123/public",
+		);
+		const { withCDN } = await import("@/lib/helpers/cdn");
+
+		expect(withCDN("/data/datasets/population.json")).toBe(
+			"https://cdn.jsdelivr.net/gh/owner/repo@abc123/public/data/datasets/population.json",
+		);
+	});
+
+	it("keeps local paths outside production even with a base URL", async () => {
+		vi.stubEnv("NODE_ENV", "development");
+		vi.stubEnv(
+			"NEXT_PUBLIC_DATA_BASE_URL",
+			"https://cdn.jsdelivr.net/gh/owner/repo@abc123/public",
+		);
+		const { withCDN } = await import("@/lib/helpers/cdn");
+
+		expect(withCDN("/data/datasets/population.json")).toBe(
+			"/data/datasets/population.json",
+		);
+	});
+
 	it("preserves an existing query string", async () => {
 		vi.stubEnv("NODE_ENV", "production");
 		vi.stubEnv("NEXT_PUBLIC_DATA_VERSION", "abc123");
