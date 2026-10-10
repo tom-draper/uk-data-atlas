@@ -43,7 +43,8 @@ services/api/           the API: src/, scripts/, config/, openapi.yaml
 scripts/                the atlas's build scripts, including the ones that
                         read the resolver
 data/                   raw source files, restored from the data release
-public/data/            the atlas's compiled data, served by Vercel
+public/data/            the atlas's compiled data, read by the browser from
+                        jsDelivr at the deployed commit (next.config.ts)
 ```
 
 ## Where the data lives
