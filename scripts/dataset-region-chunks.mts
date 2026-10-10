@@ -494,6 +494,12 @@ export async function writeDatasetRegionChunks({
 						)
 					: undefined;
 
+		// The chunks are slices of one file, and the browser merges them before
+		// expanding the compact arrays. Encode once, before slicing, so that what
+		// the editions record (the first year of a year array) is the same in
+		// every chunk rather than chosen from each chunk's own records.
+		const encoded = encodeCompactPayload(value) as DatasetPayload;
+
 		// Keep each record in precisely one partition. The chunk metadata and JSON
 		// strings are built per region below, so twelve full output objects never
 		// need to coexist in memory.
@@ -501,7 +507,7 @@ export async function writeDatasetRegionChunks({
 			string,
 			Map<RegionChunkKey, Record<string, unknown>>
 		>();
-		for (const [datasetId, dataset] of Object.entries(value)) {
+		for (const [datasetId, dataset] of Object.entries(encoded)) {
 			if (!dataset.data) continue;
 			const records = new Map<RegionChunkKey, Record<string, unknown>>();
 			const lsoaToLad =
@@ -542,7 +548,7 @@ export async function writeDatasetRegionChunks({
 
 		for (const region of REGION_CHUNK_KEYS) {
 			const chunk: DatasetPayload = {};
-			for (const [datasetId, dataset] of Object.entries(value)) {
+			for (const [datasetId, dataset] of Object.entries(encoded)) {
 				if (!dataset.data) continue;
 				const data = recordsByDataset.get(datasetId)?.get(region) ?? {};
 				const codeKeyedFields = Object.fromEntries(
@@ -588,7 +594,7 @@ export async function writeDatasetRegionChunks({
 				};
 			}
 
-			const json = JSON.stringify(encodeCompactPayload(chunk));
+			const json = JSON.stringify(chunk);
 			const relative = join(file, `${region}.json`);
 			await writeAtomically(join(outDir, relative), json);
 		}
