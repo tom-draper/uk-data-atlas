@@ -51,7 +51,9 @@ export async function loadFuelPoverty(
 			type: "fuelPoverty",
 			year: 2024,
 			boundaryType: "lsoa",
-			boundaryYear: 2011,
+			// The 2024 workbook is keyed by 2021 LSOAs: it has exactly the
+			// 33,755 codes of the 2021 release, and 1,945 are not in the 2011 one.
+			boundaryYear: 2021,
 			data,
 		},
 	};
