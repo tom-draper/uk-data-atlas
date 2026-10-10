@@ -1,14 +1,7 @@
 "use client";
-import {
-	ActiveViz,
-	AggregatedWIMDData,
-	Dataset,
-	WIMDDataset,
-	SelectedArea,
-} from "@lib/types";
-import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivation } from "../deprivationStats";
-import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
+import type { AggregatedWIMDData, WIMDLSOAData, WIMDDataset } from "@lib/types";
+import type { DeprivationIndex } from "../DeprivationChart";
+import { createDeprivationChart } from "../createDeprivationChart";
 
 const WIMD: DeprivationIndex = {
 	datasetType: "wimd",
@@ -21,57 +14,16 @@ const WIMD: DeprivationIndex = {
 	areaNoun: "LSOAs",
 };
 
-interface WIMDChartProps {
-	activeDataset: Dataset | null;
-	availableDatasets: Record<string, WIMDDataset>;
-	aggregatedData: Record<number, AggregatedWIMDData> | null;
-	selectedArea: SelectedArea | null;
-	year: number;
-	activeViz: ActiveViz;
-	codeMapper?: LadResolver;
-	setActiveViz: (value: ActiveViz) => void;
-}
-
-export default function WIMDChart({
-	activeDataset,
-	availableDatasets,
-	aggregatedData,
-	selectedArea,
-	year,
-	codeMapper,
-	setActiveViz,
-}: WIMDChartProps) {
-	const dataset = availableDatasets?.[year];
-	if (!dataset) return null;
-
-	const resolved = resolveDeprivation({
-		aggregated: aggregatedData?.[dataset.year] ?? null,
-		ladStats: dataset.ladStats,
-		selectedArea,
-		fineArea: { type: "lsoa", records: dataset.data },
-		codeMapper,
-	});
-
-	return (
-		<DeprivationChart
-			index={WIMD}
-			dataset={dataset}
-			activeDataset={activeDataset}
-			view={
-				resolved === null
-					? null
-					: resolved.kind === "summary"
-						? resolved
-						: {
-								kind: "area",
-								decile: resolved.record.wimdDecile,
-								detail: {
-									kind: "score",
-									value: resolved.record.wimdScore,
-								},
-							}
-			}
-			setActiveViz={setActiveViz}
-		/>
-	);
-}
+export default createDeprivationChart<
+	WIMDDataset,
+	WIMDLSOAData,
+	AggregatedWIMDData
+>({
+	index: WIMD,
+	fineAreaType: "lsoa",
+	authorityStats: (dataset) => dataset.ladStats,
+	areaView: (record) => ({
+		decile: record.wimdDecile,
+		detail: { kind: "score", value: record.wimdScore },
+	}),
+});
