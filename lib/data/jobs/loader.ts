@@ -1,4 +1,8 @@
 import type { JobsDataset, JobsLADData } from "@/lib/types/jobs";
+import type {
+	PopulationLocalAuthorityData,
+	PopulationUkDataset,
+} from "@/lib/types/population";
 import { parseCsv } from "@/lib/helpers/parseCsv";
 
 /**
@@ -7,8 +11,26 @@ import { parseCsv } from "@/lib/helpers/parseCsv";
  */
 const BOUNDARY_YEAR = 2023;
 
+/** Jobs per 100k residents, using the population estimate for the same year. */
+function addPopulationMetrics(
+	records: Record<string, JobsLADData>,
+	population: Record<string, PopulationLocalAuthorityData>,
+) {
+	for (const [code, record] of Object.entries(records)) {
+		const total = Object.values(population[code]?.total ?? {}).reduce(
+			(sum, value) => sum + value,
+			0,
+		);
+		if (total > 0)
+			record.metrics = {
+				per100kPopulation: (record.totalJobs / total) * 100_000,
+			};
+	}
+}
+
 export async function loadJobs(
 	read: (path: string) => Promise<string>,
+	populationByYear: Record<string, PopulationUkDataset>,
 ): Promise<Record<string, JobsDataset>> {
 	const { data } = await parseCsv(
 		await read("economics/jobs/total-jobs-lad-2011-2024.csv"),
@@ -41,16 +63,22 @@ export async function loadJobs(
 	return Object.fromEntries(
 		[...recordsByYear.entries()]
 			.sort(([left], [right]) => left - right)
-			.map(([year, records]) => [
-				year,
-				{
-					id: `jobs${year}`,
-					type: "jobs" as const,
+			.map(([year, records]) => {
+				addPopulationMetrics(
+					records,
+					populationByYear[String(year)]?.data ?? {},
+				);
+				return [
 					year,
-					boundaryType: "localAuthority" as const,
-					boundaryYear: BOUNDARY_YEAR,
-					data: records,
-				},
-			]),
+					{
+						id: `jobs${year}`,
+						type: "jobs" as const,
+						year,
+						boundaryType: "localAuthority" as const,
+						boundaryYear: BOUNDARY_YEAR,
+						data: records,
+					},
+				];
+			}),
 	);
 }
