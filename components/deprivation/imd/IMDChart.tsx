@@ -1,14 +1,7 @@
 "use client";
-import {
-	ActiveViz,
-	AggregatedIMDData,
-	Dataset,
-	IMDDataset,
-	SelectedArea,
-} from "@lib/types";
-import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivation } from "../deprivationStats";
-import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
+import type { AggregatedIMDData, IMDLSOAData, IMDDataset } from "@lib/types";
+import type { DeprivationIndex } from "../DeprivationChart";
+import { createDeprivationChart } from "../createDeprivationChart";
 
 const IMD: DeprivationIndex = {
 	datasetType: "imd",
@@ -21,57 +14,16 @@ const IMD: DeprivationIndex = {
 	areaNoun: "LSOAs",
 };
 
-interface IMDChartProps {
-	activeDataset: Dataset | null;
-	availableDatasets: Record<string, IMDDataset>;
-	aggregatedData: Record<number, AggregatedIMDData> | null;
-	selectedArea: SelectedArea | null;
-	year: number;
-	activeViz: ActiveViz;
-	codeMapper?: LadResolver;
-	setActiveViz: (value: ActiveViz) => void;
-}
-
-export default function IMDChart({
-	activeDataset,
-	availableDatasets,
-	aggregatedData,
-	selectedArea,
-	year,
-	codeMapper,
-	setActiveViz,
-}: IMDChartProps) {
-	const dataset = availableDatasets?.[year];
-	if (!dataset) return null;
-
-	const resolved = resolveDeprivation({
-		aggregated: aggregatedData?.[dataset.year] ?? null,
-		ladStats: dataset.ladStats,
-		selectedArea,
-		fineArea: { type: "lsoa", records: dataset.data },
-		codeMapper,
-	});
-
-	return (
-		<DeprivationChart
-			index={IMD}
-			dataset={dataset}
-			activeDataset={activeDataset}
-			view={
-				resolved === null
-					? null
-					: resolved.kind === "summary"
-						? resolved
-						: {
-								kind: "area",
-								decile: resolved.record.imdDecile,
-								detail: {
-									kind: "score",
-									value: resolved.record.imdScore,
-								},
-							}
-			}
-			setActiveViz={setActiveViz}
-		/>
-	);
-}
+export default createDeprivationChart<
+	IMDDataset,
+	IMDLSOAData,
+	AggregatedIMDData
+>({
+	index: IMD,
+	fineAreaType: "lsoa",
+	authorityStats: (dataset) => dataset.ladStats,
+	areaView: (record) => ({
+		decile: record.imdDecile,
+		detail: { kind: "score", value: record.imdScore },
+	}),
+});

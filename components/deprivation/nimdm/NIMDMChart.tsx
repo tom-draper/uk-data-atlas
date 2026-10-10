@@ -1,14 +1,11 @@
 "use client";
-import {
-	ActiveViz,
+import type {
 	AggregatedNIMDMData,
-	Dataset,
+	NIMDMLSOAData,
 	NIMDMDataset,
-	SelectedArea,
 } from "@lib/types";
-import { DeprivationChart, type DeprivationIndex } from "../DeprivationChart";
-import { resolveDeprivation } from "../deprivationStats";
-import type { LadResolver } from "@/lib/helpers/selectedAreaLad";
+import type { DeprivationIndex } from "../DeprivationChart";
+import { createDeprivationChart } from "../createDeprivationChart";
 
 const NIMDM: DeprivationIndex = {
 	datasetType: "nimdm",
@@ -21,58 +18,17 @@ const NIMDM: DeprivationIndex = {
 	areaNoun: "super output areas",
 };
 
-interface NIMDMChartProps {
-	activeDataset: Dataset | null;
-	availableDatasets: Record<string, NIMDMDataset>;
-	aggregatedData: Record<number, AggregatedNIMDMData> | null;
-	selectedArea: SelectedArea | null;
-	year: number;
-	activeViz: ActiveViz;
-	codeMapper?: LadResolver;
-	setActiveViz: (value: ActiveViz) => void;
-}
-
-export default function NIMDMChart({
-	activeDataset,
-	availableDatasets,
-	aggregatedData,
-	selectedArea,
-	year,
-	codeMapper,
-	setActiveViz,
-}: NIMDMChartProps) {
-	const dataset = availableDatasets?.[year];
-	if (!dataset) return null;
-
-	const resolved = resolveDeprivation({
-		aggregated: aggregatedData?.[dataset.year] ?? null,
-		ladStats: dataset.lgdStats,
-		selectedArea,
-		fineArea: { type: "superOutputArea", records: dataset.data },
-		codeMapper,
-	});
-
-	return (
-		<DeprivationChart
-			index={NIMDM}
-			dataset={dataset}
-			activeDataset={activeDataset}
-			view={
-				resolved === null
-					? null
-					: resolved.kind === "summary"
-						? resolved
-						: {
-								kind: "area",
-								// NISRA publishes no decile for these areas, so none is shown.
-								decile: null,
-								detail: {
-									kind: "rank",
-									value: resolved.record.nimdmRank,
-								},
-							}
-			}
-			setActiveViz={setActiveViz}
-		/>
-	);
-}
+export default createDeprivationChart<
+	NIMDMDataset,
+	NIMDMLSOAData,
+	AggregatedNIMDMData
+>({
+	index: NIMDM,
+	fineAreaType: "superOutputArea",
+	authorityStats: (dataset) => dataset.lgdStats,
+	areaView: (record) => ({
+		// NISRA publishes no decile for these areas, so none is shown.
+		decile: null,
+		detail: { kind: "rank", value: record.nimdmRank },
+	}),
+});
