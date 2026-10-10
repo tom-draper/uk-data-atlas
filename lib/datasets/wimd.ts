@@ -1,6 +1,7 @@
 import { wimdDatasetDefinition } from "@/lib/data/catalog/definitions";
 import { wimdAggregation } from "@/lib/helpers/datasetAggregation/specifications";
 import type { WIMDDataset } from "@/lib/types/wimd";
+import { deprivationRankMap } from "./deprivationRankMap";
 import type { ChartDatasetDefinition } from "./types";
 
 export const wimdDefinition: ChartDatasetDefinition<WIMDDataset> = {
@@ -15,21 +16,5 @@ export const wimdDefinition: ChartDatasetDefinition<WIMDDataset> = {
 			mm.aggregate(wimdAggregation, g, d, l, id),
 		year: 2019,
 	},
-	map: {
-		valueKey: "wimdRank",
-		colorRange: { min: 1, max: 1909 },
-		legend: {
-			min: 1,
-			max: 1909,
-			format: (value) => {
-				const rank = 1910 - value;
-				return rank <= 1
-					? "Most deprived"
-					: rank >= 1909
-						? "Least deprived"
-						: `Rank ${Math.round(rank).toLocaleString()}`;
-			},
-		},
-		invertColor: false,
-	},
+	map: deprivationRankMap<WIMDDataset>("wimdRank", 1909),
 };

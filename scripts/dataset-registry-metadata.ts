@@ -21,6 +21,7 @@ const chartDefinitionExclusions = new Set([
 	"boundaryRequirements.ts",
 	"valueCard.ts",
 	"indicatorCard.ts",
+	"deprivationRankMap.ts",
 ]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
