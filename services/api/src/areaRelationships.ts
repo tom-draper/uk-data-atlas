@@ -5,6 +5,7 @@ import type {
 	CrosswalkWeighting,
 } from "./crosswalkInventory";
 import { areaKey, releaseKey } from "./geographyKeys";
+import { relatedCodesOf } from "./relatedCodes";
 import { selectCrosswalks, type CrosswalkLookup } from "./resolver/translation";
 
 export type AreaRelation =
@@ -272,23 +273,24 @@ export class LazyAreaRelationshipIndex {
 	 * of every release holds a gigabyte of objects it would never read.
 	 */
 	relatedCodes(geography: string, boundaryRelease: string): Set<string> {
-		const names = (side: CrosswalkArtifact["from"]) =>
-			side.geography === geography &&
-			side.boundaryRelease === boundaryRelease;
 		const codes = new Set<string>();
 		for (const crosswalk of this.crosswalksFor(
 			geography,
 			boundaryRelease,
 		)) {
-			const source = names(crosswalk.from);
-			const target = names(crosswalk.to);
-			for (const record of crosswalk.records) {
-				// A source with no targets is named by no relationship.
-				if (source && record.targets.length > 0)
-					codes.add(record.source.code);
-				if (target)
-					for (const { code } of record.targets) codes.add(code);
-			}
+			const { source, target } = relatedCodesOf(crosswalk);
+			const from = crosswalk.from;
+			const to = crosswalk.to;
+			if (
+				from.geography === geography &&
+				from.boundaryRelease === boundaryRelease
+			)
+				for (const code of source) codes.add(code);
+			if (
+				to.geography === geography &&
+				to.boundaryRelease === boundaryRelease
+			)
+				for (const code of target) codes.add(code);
 		}
 		return codes;
 	}
