@@ -1,4 +1,5 @@
-import type { AreaLookup, AreaRecord } from "../areaInventory";
+import type { AreaInventory, AreaLookup, AreaRecord } from "../areaInventory";
+import type { CrosswalkInventory } from "../crosswalkInventory";
 import type { BoundaryRegistry } from "../boundaryRegistry";
 import type { RelationshipCandidateInventory } from "../relationshipCandidates";
 import type { AreaRelation, AreaRelationship } from "../areaRelationships";
@@ -59,7 +60,9 @@ type CachedRelationshipCoverage = Omit<
 };
 
 export type CapabilityResolverInputs = {
+	areaInventory?: AreaInventory;
 	areaLookup?: AreaLookup;
+	crosswalkInventory?: CrosswalkInventory;
 	boundaryRegistry?: BoundaryRegistry;
 	relationshipCandidateInventory?: RelationshipCandidateInventory;
 };
@@ -72,6 +75,11 @@ export class CapabilityResolver {
 		CachedRelationshipCoverage
 	>();
 	private geographyHealthCache?: GeographyHealth[];
+	/** Counts compiled with the crosswalks, read once from the inventory. */
+	private compiledCoverage?: Map<
+		string,
+		Pick<CachedRelationshipCoverage, "areaCount" | "relatedAreaCount">
+	>;
 
 	constructor(
 		inputs: CapabilityResolverInputs &
@@ -207,6 +215,13 @@ export class CapabilityResolver {
 			`${releaseKey(geography, boundaryRelease)}\u0000`,
 		);
 		if (cached) return cached;
+		// Counted at build time against the area inventory it names, so the
+		// crosswalks are not read. A release whose area count differs was
+		// compiled against other areas, and is counted from the crosswalks.
+		const compiled = this.compiledCoverageOf(
+			releaseKey(geography, boundaryRelease),
+		);
+		if (compiled && compiled.areaCount === areas.size) return compiled;
 		if (!this.relatedCodes)
 			return this.relationshipCoverage(
 				geography,
@@ -219,6 +234,27 @@ export class CapabilityResolver {
 		for (const [code] of areas)
 			if (related.has(code)) relatedAreaCount += 1;
 		return { areaCount: areas.size, relatedAreaCount };
+	}
+
+	/** A release's counts compiled with the crosswalks, where they are current. */
+	private compiledCoverageOf(release: string) {
+		if (!this.compiledCoverage) {
+			const compiled = this.inputs.crosswalkInventory?.releaseCoverage;
+			this.compiledCoverage = new Map(
+				compiled !== undefined &&
+					compiled.areaInventoryHash ===
+						this.inputs.areaInventory?.contentHash
+					? compiled.releases.map((coverage) => [
+							releaseKey(
+								coverage.geography,
+								coverage.boundaryRelease,
+							),
+							coverage,
+						])
+					: [],
+			);
+		}
+		return this.compiledCoverage.get(release);
 	}
 
 	geographyHealth(): GeographyHealth[] {
