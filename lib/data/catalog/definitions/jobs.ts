@@ -1,4 +1,5 @@
 import { loadJobs } from "../../jobs/loader";
+import { loadPopulationUk } from "../../population/ukLoader";
 import type { JobsDataset } from "@/lib/types/jobs";
 import type { DatasetDefinition } from "../types";
 
@@ -26,5 +27,6 @@ export const jobsDatasetDefinition: DatasetDefinition<JobsDataset> = {
 		expectedBoundaryYears: [2023],
 		requiredDataFields: ["totalJobs"],
 	},
-	precompile: ({ text }) => loadJobs(text),
+	precompile: async ({ text, xlsxSheet }) =>
+		loadJobs(text, await loadPopulationUk(xlsxSheet)),
 };
