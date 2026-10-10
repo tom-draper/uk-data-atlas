@@ -8,6 +8,7 @@ export const housePriceDatasetDefinition: DatasetDefinition<HousePriceDataset> =
 		precompiledFile: "house-price",
 		boundaryType: "ward",
 		coverageCountries: ["GB-ENG", "GB-WLS"],
+		payload: { regionChunks: { kind: "regional" } },
 		source: {
 			name: "House Prices",
 			source: "Office for National Statistics",

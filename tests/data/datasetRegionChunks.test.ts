@@ -1,6 +1,10 @@
 import { readFileSync } from "fs";
 import { join } from "path";
+import { isDeepStrictEqual } from "util";
 import { describe, expect, it } from "vitest";
+import { CATALOGUE_DATASET_DEFINITIONS } from "@/lib/data/catalog";
+import { decodeCompactPayload } from "@/lib/data/compactPayload";
+import { mergeDatasetPayloads } from "@/lib/data/mergeDatasetPayloads";
 import {
 	REGION_CHUNK_KEYS,
 	regionChunkPath,
@@ -72,37 +76,56 @@ describe("dataset region chunks", () => {
 		expect(misplaced).toEqual([]);
 	});
 
-	it("keeps every population ward in one regional chunk", () => {
-		const root = process.cwd();
-		const populationPayload = JSON.parse(
-			readFileSync(
-				join(root, "public", "data", "datasets", "population.json"),
-				"utf8",
-			),
-		) as Record<string, { data: Record<string, unknown> }>;
-		const population = populationPayload["2022"]!.data;
-		const chunkCodes = new Set<string>();
-		for (const region of REGION_CHUNK_KEYS) {
-			const chunkPayload = JSON.parse(
-				readFileSync(
-					join(
-						root,
-						"public",
-						"data",
-						"datasets",
-						"chunks",
-						"population",
-						`${region}.json`,
-					),
-					"utf8",
-				),
+	// Every dataset that is served in chunks. The chunks must be a partition of
+	// the whole file: merged and expanded the way the worker does, they hold
+	// every record once, exactly as the file does.
+	const chunked = CATALOGUE_DATASET_DEFINITIONS.filter(
+		(definition) => definition.payload?.regionChunks?.kind === "regional",
+	);
+	const datasets = join(process.cwd(), "public", "data", "datasets");
+	const readJson = (...path: string[]) =>
+		JSON.parse(readFileSync(join(datasets, ...path), "utf8"));
+
+	// Local election records for a county council, or whose council is
+	// "Unknown", have no region to be placed in, so they are in no chunk and
+	// only the whole file holds them. Known, and out of scope here.
+	const OMITS_UNPLACEABLE_RECORDS = new Set(["local-election"]);
+
+	it.each(chunked.map((definition) => definition.precompiledFile))(
+		"keeps every %s record in one chunk, and in the file's form",
+		(file) => {
+			const whole = decodeCompactPayload(
+				readJson(`${file}.json`),
 			) as Record<string, { data: Record<string, unknown> }>;
-			const chunk = chunkPayload["2022"]!.data;
-			for (const code of Object.keys(chunk)) {
-				expect(chunkCodes.has(code)).toBe(false);
-				chunkCodes.add(code);
+			const chunks = REGION_CHUNK_KEYS.map((region) =>
+				readJson("chunks", file, `${region}.json`),
+			);
+			const complete = !OMITS_UNPLACEABLE_RECORDS.has(file);
+			for (const edition of Object.keys(whole)) {
+				const seen = new Set<string>();
+				for (const chunk of chunks)
+					for (const code of Object.keys(chunk[edition].data)) {
+						expect(seen.has(code)).toBe(false);
+						seen.add(code);
+					}
+				const codes = Object.keys(whole[edition]!.data);
+				if (complete) expect(seen).toEqual(new Set(codes));
+				else expect(codes).toEqual(expect.arrayContaining([...seen]));
 			}
-		}
-		expect(chunkCodes).toEqual(new Set(Object.keys(population)));
-	});
+
+			const layout = chunked.find(
+				(definition) => definition.precompiledFile === file,
+			)?.payload;
+			const merged = decodeCompactPayload(
+				mergeDatasetPayloads(chunks, layout),
+			) as typeof whole;
+			for (const edition of Object.keys(whole))
+				for (const [code, record] of Object.entries(
+					merged[edition]!.data,
+				))
+					expect(
+						isDeepStrictEqual(record, whole[edition]!.data[code]),
+					).toBe(true);
+		},
+	);
 });

@@ -58,6 +58,9 @@ describe("dataset catalogue", () => {
 			wardToLadFallback: true,
 			locationAggregate: "localElection",
 		});
+		expect(definitionFor("housePrice")?.payload?.regionChunks).toEqual({
+			kind: "regional",
+		});
 		expect(definitionFor("nhsWaiting")?.payload?.locationScope).toEqual({
 			kind: "mapped",
 			mappingField: "ladToIcb",
