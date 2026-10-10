@@ -10,6 +10,14 @@ describe("localDataPath", () => {
 		).toBe("boundaries/ward/2023-12-uk-bgc/boundaries.topojson");
 	});
 
+	it("strips a jsDelivr commit folder that serves public/data", () => {
+		expect(
+			localDataPath(
+				"https://cdn.jsdelivr.net/gh/example/repo@abc123/public/data/datasets/imd.json",
+			),
+		).toBe("datasets/imd.json");
+	});
+
 	it("supports the previous absolute CDN URL form", () => {
 		expect(
 			localDataPath(
