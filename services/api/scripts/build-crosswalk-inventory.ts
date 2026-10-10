@@ -27,6 +27,11 @@ import {
 	geometryContainmentInputs,
 } from "../src/crosswalkGeometryValidation";
 import { DIFFERENCE_RULE, REALIGNED_SHARE } from "../src/extentContinuity";
+import {
+	addRelatedCodes,
+	releaseCoverageOf,
+	type RelatedCodesByRelease,
+} from "../src/relatedCodes";
 import { readGeometrySourceLookup } from "../src/geometrySources";
 import {
 	createAreaLookup,
@@ -59,7 +64,10 @@ const readCompiledAreaLookup = (outputDirectory: string) => {
 		}
 		return [artifact];
 	});
-	return createAreaLookup(artifacts);
+	return {
+		areaLookup: createAreaLookup(artifacts),
+		areaInventoryHash: inventory.contentHash,
+	};
 };
 
 type GeometryCrosswalkAdapter =
@@ -350,8 +358,12 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 		ReturnType<typeof crosswalkInventoryEntry>
 	>();
 	const pairs = new Map<string, CrosswalkArtifact>();
+	// What each release's areas are related to is counted as every artifact
+	// passes through, so reporting it needs none of them read again.
+	const related: RelatedCodesByRelease = new Map();
 	const keep = (artifact: CrosswalkArtifact) => {
 		entries.set(artifact.id, crosswalkInventoryEntry(artifact));
+		addRelatedCodes(related, artifact);
 		if (pairIds.has(artifact.id)) pairs.set(artifact.id, artifact);
 	};
 	for (const adapter of adapters) {
@@ -401,10 +413,12 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 	// a build stopped part way reuses those on its next run, which revalidates
 	// every one against its inputs before trusting it. Reused artifacts are
 	// already on disk as they were checked, so they are not written again.
+	const { areaLookup, areaInventoryHash } =
+		readCompiledAreaLookup(outputDirectory);
 	compileCrosswalks(
 		repositoryRoot,
 		pending,
-		readCompiledAreaLookup(outputDirectory),
+		areaLookup,
 		geometrySources,
 		pairs,
 		(artifact) => {
@@ -419,6 +433,7 @@ export const buildCrosswalkInventory = (repositoryRoot: string) => {
 				throw new Error(`No compiled artifact for ${adapter.id}`);
 			return entry;
 		}),
+		{ areaInventoryHash, releases: releaseCoverageOf(related, areaLookup) },
 	);
 	const inventoryPath = join(outputDirectory, "crosswalk-inventory.json");
 	writeFileSync(inventoryPath, `${JSON.stringify(inventory, null, "\t")}\n`);
