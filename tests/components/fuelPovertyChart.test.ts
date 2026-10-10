@@ -11,7 +11,7 @@ const dataset: FuelPovertyDataset = {
 	type: "fuelPoverty",
 	year: 2024,
 	boundaryType: "lsoa",
-	boundaryYear: 2011,
+	boundaryYear: 2021,
 	data: {
 		E01000001: {
 			lsoaCode: "E01000001",

@@ -22,6 +22,8 @@ describe("loadFuelPoverty", () => {
 			]);
 		});
 
+		// The 2024 workbook is keyed by the 2021 LSOAs.
+		expect(result[2024]?.boundaryYear).toBe(2021);
 		expect(result[2024]?.data.E01000001).toEqual({
 			lsoaCode: "E01000001",
 			lsoaName: "Example LSOA",
