@@ -11,6 +11,7 @@ const HEAVY_DATA_TESTS = [
 	"tests/data/compiledBoundaryAssets.test.ts",
 	"tests/data/seoData.test.ts",
 	"tests/data/datasetBoundaryYears.test.ts",
+	"tests/data/lsoaBoundaryYear.test.ts",
 	"tests/data/datasetRegionChunks.test.ts",
 	"tests/data/datasetRegistry.test.ts",
 	"tests/data/placeProfiles.test.ts",
