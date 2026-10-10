@@ -60,6 +60,7 @@ export const MAP_NAMES: Readonly<Record<string, string>> = {
 	"housing-affordability": "Housing Affordability",
 	imd: "Deprivation (IMD)",
 	income: "Income",
+	jobs: "Jobs",
 	"life-expectancy": "Life Expectancy",
 	"healthy-life-expectancy": "Healthy Life Expectancy",
 	"local-election": "Local Election Results",
