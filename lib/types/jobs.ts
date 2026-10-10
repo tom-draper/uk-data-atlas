@@ -7,6 +7,10 @@ export interface JobsLADData {
 	 * Counted where the work is, not where the worker lives.
 	 */
 	totalJobs: number;
+	metrics?: {
+		/** Jobs per 100,000 residents in the same year. */
+		per100kPopulation: number;
+	};
 }
 
 export interface JobsDataset {

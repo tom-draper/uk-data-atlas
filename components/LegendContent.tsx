@@ -76,7 +76,8 @@ export default function LegendContent({
 		const { colorRange, legend, getColorRange } = chartDefinition.map;
 		const populationMetric =
 			(activeDataset.type === "businessActivity" ||
-				activeDataset.type === "electricVehicleChargers") &&
+				activeDataset.type === "electricVehicleChargers" ||
+				activeDataset.type === "jobs") &&
 			displayOptions[activeDataset.type].measure === "perPopulation";
 		const broadbandMeasure =
 			activeDataset.type === "broadband"
@@ -187,7 +188,9 @@ export default function LegendContent({
 					max:
 						activeDataset.type === "businessActivity"
 							? 20_000
-							: 1_000,
+							: activeDataset.type === "jobs"
+								? 100_000
+								: 1_000,
 					format: (value: number) =>
 						`${value.toFixed(0)} per 100k residents`,
 				}
