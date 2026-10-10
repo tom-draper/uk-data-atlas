@@ -73,10 +73,15 @@ const GZIP_LEVEL = 4;
 const gzipAsync = (body: string | Buffer) =>
 	promisify(gzip)(body, { level: GZIP_LEVEL });
 
-type BodyRead = { text: string } | { tooLarge: true; bytes: number };
+type BodyRead =
+	{ text: string } | { tooLarge: true; bytes: number } | { aborted: true };
 
+/**
+ * A request stream only errors when its connection does, so a failure here is
+ * the client going away mid-body, not something the server did wrong.
+ */
 const readBody = (request: IncomingMessage): Promise<BodyRead> =>
-	new Promise((resolve, reject) => {
+	new Promise((resolve) => {
 		const declared = Number(request.headers["content-length"]);
 		if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
 			request.resume();
@@ -98,7 +103,7 @@ const readBody = (request: IncomingMessage): Promise<BodyRead> =>
 		request.on("end", () =>
 			resolve({ text: Buffer.concat(chunks).toString("utf8") }),
 		);
-		request.on("error", reject);
+		request.on("error", () => resolve({ aborted: true }));
 	});
 
 /**
@@ -334,23 +339,30 @@ export const createApiServer = (
 					result = preflightResponse();
 				} else if (method === "POST") {
 					const read = await readBody(request);
-					result =
-						"tooLarge" in read
-							? answer(() =>
-									problem(
-										413,
-										"Content Too Large",
-										`The request body is ${read.bytes} bytes or more; at most ${MAX_BODY_BYTES} are read. Split the rows over several requests.`,
-									),
-								)
-							: await answerAsync(() =>
-									routeAsync("POST", target, catalogues, {
-										contentType:
-											request.headers["content-type"] ??
-											"",
-										text: read.text,
-									}),
-								);
+					if ("aborted" in read)
+						result = answer(() =>
+							problem(
+								499,
+								"Client Closed Request",
+								"The client closed the connection before sending the whole body.",
+							),
+						);
+					else if ("tooLarge" in read)
+						result = answer(() =>
+							problem(
+								413,
+								"Content Too Large",
+								`The request body is ${read.bytes} bytes or more; at most ${MAX_BODY_BYTES} are read. Split the rows over several requests.`,
+							),
+						);
+					else
+						result = await answerAsync(() =>
+							routeAsync("POST", target, catalogues, {
+								contentType:
+									request.headers["content-type"] ?? "",
+								text: read.text,
+							}),
+						);
 				} else {
 					// An answer is a function of the release and the request, except
 					// a remote terrain sample, which is the provider's to change.

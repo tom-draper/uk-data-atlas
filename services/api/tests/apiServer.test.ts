@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer, request as httpRequest } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { AddressInfo } from "node:net";
+import { connect, type AddressInfo } from "node:net";
 import test, { type TestContext } from "node:test";
 import { createApiServer, MAX_BODY_BYTES, sendFile } from "../src/apiServer";
 import { createOperationMatcher } from "../src/operationTemplates";
@@ -328,6 +328,32 @@ test("reports health, readiness and metrics outside the versioned API", async (t
 	const during = await get("/v1/geographies");
 	assert.equal(during.status, 200);
 	assert.equal(during.headers.get("connection"), "close");
+});
+
+test("treats a client that drops mid-body as a closed request, not a server failure", async (t) => {
+	const failed: unknown[] = [];
+	const { server, logged } = await serve(t, {
+		accessLog: true,
+		onError: (error) => failed.push(error),
+	});
+	const socket = connect((server.address() as AddressInfo).port, "127.0.0.1");
+	await new Promise<void>((ready) => socket.once("connect", ready));
+	// Promises a 5000-byte body, sends 11 bytes of it, then goes away.
+	socket.write(
+		"POST /v1/areas:validate?geography=ward&release=2023-05-uk-bgc HTTP/1.1\r\n" +
+			"host: localhost\r\ncontent-type: application/json\r\n" +
+			'content-length: 5000\r\n\r\n{"values":[',
+	);
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	socket.destroy();
+	for (let waited = 0; logged.length === 0 && waited < 2000; waited += 20)
+		await new Promise((resolve) => setTimeout(resolve, 20));
+
+	assert.deepEqual(
+		logged.map(({ level, event, status }) => ({ level, event, status })),
+		[{ level: "info", event: "request", status: 499 }],
+	);
+	assert.deepEqual(failed, []);
 });
 
 test("reads a POST body, refuses one too large, and never caches the answer", async (t) => {
