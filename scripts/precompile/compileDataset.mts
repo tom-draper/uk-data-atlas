@@ -1,6 +1,10 @@
 import { createHash } from "crypto";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import {
+	decodeCompactPayload,
+	encodeCompactPayload,
+} from "../../lib/data/compactPayload";
 import { validatePrecompiledDataset } from "../../lib/data/catalog";
 import { elapsedSince, formatKb, logArtifact } from "../timing.mts";
 import { canReuseDataset, NO_REUSE } from "./cache.mts";
@@ -21,23 +25,37 @@ import type {
 export async function compileDataset(
 	definition: CatalogueDefinition,
 	compiledDatasets: CompiledDatasets,
-	{ canReuse, existingDatasets, sourceRelease }: ReuseContext = NO_REUSE,
+	{
+		datasetFingerprints,
+		existingDatasets,
+		sourceRelease,
+	}: ReuseContext = NO_REUSE,
 ) {
 	const startedAt = performance.now();
 	const existing = existingDatasets.get(definition.type);
-	const cached = canReuse
-		? await canReuseDataset(existing, definition, sourceRelease)
-		: undefined;
+	const fingerprint = datasetFingerprints[definition.type];
+	const cached = await canReuseDataset(
+		existing,
+		definition,
+		sourceRelease,
+		fingerprint,
+	);
 	if (cached && existing) {
 		const reused = { ...existing, compiled: cached };
 		if (definition.payload?.regionChunks?.kind === "regional") {
 			compiledDatasets.set(definition.precompiledFile, {
-				data: JSON.parse(
-					await readFile(
-						join(OUT_DIR, `${definition.precompiledFile}.json`),
-						"utf8",
+				load: async () =>
+					decodeCompactPayload(
+						JSON.parse(
+							await readFile(
+								join(
+									OUT_DIR,
+									`${definition.precompiledFile}.json`,
+								),
+								"utf8",
+							),
+						),
 					),
-				),
 				layout: definition.payload,
 			});
 		}
@@ -80,7 +98,7 @@ export async function compileDataset(
 			);
 		}
 
-		compiled = JSON.parse(content);
+		compiled = decodeCompactPayload(JSON.parse(content)) as typeof compiled;
 		preserved = existing;
 	}
 	const data = definition.coverageCountries
@@ -99,7 +117,7 @@ export async function compileDataset(
 	// in V8's heap until the last loader completes.
 	if (definition.payload?.regionChunks?.kind === "regional") {
 		compiledDatasets.set(definition.precompiledFile, {
-			data,
+			load: async () => data,
 			layout: definition.payload,
 		});
 	}
@@ -110,9 +128,12 @@ export async function compileDataset(
 			formatKb(preserved.compiled.bytes),
 			elapsedSince(startedAt),
 		]);
-		return preserved;
+		return { ...preserved, fingerprint };
 	}
-	const output = await out(definition.precompiledFile, data);
+	const output = await out(
+		definition.precompiledFile,
+		encodeCompactPayload(data),
+	);
 	logArtifact("dataset", `${definition.precompiledFile}.json`, [
 		"compiled",
 		formatKb(output.bytes),
@@ -128,5 +149,6 @@ export async function compileDataset(
 		),
 		summary,
 		compiled: output,
+		fingerprint,
 	};
 }

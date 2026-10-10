@@ -201,11 +201,6 @@ export const schoolPerformanceAggregation = numericAggregation(
 	"localAuthority",
 	aggregateSchoolPerformance,
 );
-export const schoolPerformanceConstituencyAggregation = numericAggregation(
-	"schoolPerformanceConstituency",
-	"constituency",
-	aggregateSchoolPerformance,
-);
 export const schoolPerformanceGapAggregation = numericAggregation(
 	"schoolPerformanceGap",
 	"localAuthority",

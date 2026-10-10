@@ -20,6 +20,7 @@ import { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import { CATALOGUE_DATASET_DEFINITIONS } from "../lib/data/catalog";
 import { discoverDatasets, type DiscoveredDataset } from "./dataset-discovery";
 import { compileBoundaryAssets } from "./compile-boundaries.mts";
+import { compileBoundaryChunks } from "./boundary-chunks";
 import { writeDatasetRegionChunks } from "./dataset-region-chunks.mts";
 import {
 	mergeManifestEntries,
@@ -27,11 +28,19 @@ import {
 	selectDefinitions,
 } from "./precompile-selection";
 import { compileAtlasAssets } from "./precompile/atlasAssets.mts";
-import { fileSnapshots, loadReuseContext } from "./precompile/cache.mts";
+import {
+	fileSnapshots,
+	loadReuseContext,
+	NO_REUSE,
+} from "./precompile/cache.mts";
 import { compileDataset } from "./precompile/compileDataset.mts";
 import { chunksSize, out } from "./precompile/output.mts";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
-import { compileRegionChunks } from "./precompile/regionChunks.mts";
+import {
+	compileRegionChunks,
+	regionChunkLookupFingerprints,
+} from "./precompile/regionChunks.mts";
+import { precompileFingerprints } from "./precompile-fingerprint.mjs";
 import { compileRoadSafety } from "./precompile/roadSafety.mts";
 import type { CompiledDatasets } from "./precompile/types.mts";
 import { elapsedSince, logArtifact } from "./timing.mts";
@@ -80,10 +89,18 @@ async function compileSelected(names: readonly string[]) {
 		);
 	}
 
+	// Nothing is reused here, but each entry still records what compiled it.
+	const { datasets: datasetFingerprints } =
+		await precompileFingerprints(ROOT);
 	const compiledDatasets: CompiledDatasets = new Map();
 	const results: Awaited<ReturnType<typeof compileDataset>>[] = [];
 	for (const definition of selected)
-		results.push(await compileDataset(definition, compiledDatasets));
+		results.push(
+			await compileDataset(definition, compiledDatasets, {
+				...NO_REUSE,
+				datasetFingerprints,
+			}),
+		);
 
 	const needsRegionChunks = selected.some(
 		(definition) => definition.payload?.regionChunks?.kind === "regional",
@@ -187,15 +204,35 @@ async function main() {
 		process.exit(1);
 	}
 	atlasAssets.releaseBoundaryReads();
-	const regionalDatasets = Object.fromEntries(
-		CATALOGUE_DATASET_DEFINITIONS.flatMap((definition, index) =>
+	// Chunks are placed by the gazetteer and lookups the assets above just wrote.
+	await compileBoundaryChunks(ROOT);
+	const regional = CATALOGUE_DATASET_DEFINITIONS.flatMap(
+		(definition, index) =>
 			definition.payload?.regionChunks?.kind === "regional"
-				? [[definition.precompiledFile, chartResults[index]!.compiled]]
+				? [{ definition, compiled: chartResults[index]!.compiled }]
 				: [],
-		),
 	);
+	const regionalDatasets = Object.fromEntries(
+		regional.map(({ definition, compiled }) => [
+			definition.precompiledFile,
+			compiled,
+		]),
+	);
+	// A dataset's layout is part of its definition, so chunks are only as
+	// current as the fingerprint of each dataset they were cut from, and of
+	// the ward and LSOA lookups that placed their records.
+	const regionalFingerprints = {
+		...Object.fromEntries(
+			regional.map(({ definition }) => [
+				definition.precompiledFile,
+				reuse.datasetFingerprints[definition.type]!,
+			]),
+		),
+		...(await regionChunkLookupFingerprints()),
+	};
 	const recordedChunkOutputs = await compileRegionChunks(reuse, {
 		regionalDatasets,
+		regionalFingerprints,
 		compiledDatasets,
 		gazetteerCore: await gazetteerCore,
 		boundaryMappings: await boundaryMappings,
@@ -214,6 +251,7 @@ async function main() {
 			roadSafety: await roadSafety,
 			regionChunks: {
 				datasets: regionalDatasets,
+				datasetFingerprints: regionalFingerprints,
 				gazetteerCore: (await gazetteerCore).compiled,
 				outputs: recordedChunkOutputs,
 			},

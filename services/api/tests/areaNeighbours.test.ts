@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { borderIndex, sharedBorder } from "../src/areaNeighbours";
+import {
+	borderIndex,
+	sharedBorder,
+	sharedBorderWith,
+} from "../src/areaNeighbours";
 import { edgeLengthM } from "../src/equalAreaProjection";
 import type { GeoJsonGeometry } from "../src/areaGeometry";
 
@@ -182,4 +186,64 @@ test("does not invent a border from two rings starting at one shared corner", ()
 	assert.equal(shared.sharedEdges, 0);
 	assert.equal(shared.sharedVertices, 1);
 	assert.equal(shared.sharedBorderM, 0);
+});
+
+test("measures a neighbour from its geometry as it does from its whole index", () => {
+	const target = cell(-1, 54, 0, 55);
+	// A large area with a long coastline of vertices far from the target, and
+	// a stretch along the target's east side.
+	const coast = Array.from({ length: 200 }, (_, step) => [
+		3 + step / 100,
+		50 + (step % 7) / 10,
+	]);
+	const sprawl: GeoJsonGeometry = {
+		type: "Polygon",
+		coordinates: [
+			[[0, 54], [0, 54.5], [0, 55], [4, 56], ...coast, [4, 53], [0, 54]],
+		],
+	};
+	const cases: Array<[string, GeoJsonGeometry]> = [
+		["a shared edge", cell(0, 54, 1, 55)],
+		["a corner", cell(0, 55, 1, 56)],
+		["apart", cell(5, 60, 6, 61)],
+		["a long area along one side", sprawl],
+		[
+			"a multipolygon with one island alongside",
+			{
+				type: "MultiPolygon",
+				coordinates: [[ring(-5, 54, -4, 55)], [ring(0, 54, 1, 55)]],
+			},
+		],
+		[
+			"a fill of the target's hole",
+			{
+				type: "Polygon",
+				coordinates: [ring(-3, 53, 2, 57), ring(-1, 54, 0, 55)],
+			},
+		],
+	];
+	for (const [name, other] of cases) {
+		const whole = sharedBorder(borderIndex(target), borderIndex(other));
+		const direct = sharedBorderWith(borderIndex(target), other);
+		assert.equal(direct?.touch, whole?.touch, name);
+		assert.equal(direct?.sharedEdges, whole?.sharedEdges, name);
+		assert.equal(direct?.sharedVertices, whole?.sharedVertices, name);
+		assert.ok(
+			Math.abs(
+				(direct?.sharedBorderM ?? 0) - (whole?.sharedBorderM ?? 0),
+			) < 1e-6,
+			name,
+		);
+	}
+	assert.equal(
+		sharedBorderWith(borderIndex(target), cell(5, 60, 6, 61)),
+		undefined,
+	);
+	assert.equal(
+		sharedBorderWith(
+			borderIndex({ type: "MultiPolygon", coordinates: [] }),
+			target,
+		),
+		undefined,
+	);
 });

@@ -7,6 +7,7 @@ import { configDefaults, defineConfig } from "vitest/config";
  * 17-second suite can pass a minute. They run afterwards, one file at a time.
  */
 const HEAVY_DATA_TESTS = [
+	"tests/data/boundaryChunkAssets.test.ts",
 	"tests/data/compiledBoundaryAssets.test.ts",
 	"tests/data/seoData.test.ts",
 	"tests/data/datasetBoundaryYears.test.ts",

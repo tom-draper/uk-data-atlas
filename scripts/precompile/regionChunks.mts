@@ -1,3 +1,5 @@
+import { createHash } from "crypto";
+import { readdir, readFile } from "fs/promises";
 import { join } from "path";
 import type { parseBoundaryWardToLad } from "@uk-data-atlas/geography";
 import type { GazetteerCore } from "../../lib/data/gazetteer/types";
@@ -23,9 +25,51 @@ import type {
 type RegionChunkInputs = {
 	/** Compiled output of each regional dataset, by output file. */
 	regionalDatasets: Record<string, CompiledOutput>;
+	/** The fingerprint of each regional dataset, by output file. */
+	regionalFingerprints: Record<string, string>;
 	compiledDatasets: CompiledDatasets;
 	gazetteerCore: { data: GazetteerCore; compiled: CompiledOutput };
 	boundaryMappings: { wardToLad: ReturnType<typeof parseBoundaryWardToLad> };
+};
+
+/**
+ * What places a record in a region besides the dataset itself: the ward and
+ * LSOA lookups written beside the chunks. A chunk is only as current as the
+ * lookup that placed its records, so their hashes go into the recorded
+ * fingerprints under `lookup:` names.
+ */
+export async function regionChunkLookupFingerprints(): Promise<
+	Record<string, string>
+> {
+	const names = (await readdir(OUT_DIR))
+		.filter(
+			(name) =>
+				name === "boundary-mappings.json" ||
+				/^lsoa-lad-mappings-\d{4}\.json$/.test(name),
+		)
+		.sort();
+	return Object.fromEntries(
+		await Promise.all(
+			names.map(async (name) => [
+				`lookup:${name}`,
+				createHash("sha256")
+					.update(await readFile(join(OUT_DIR, name)))
+					.digest("hex"),
+			]),
+		),
+	);
+}
+
+const sameFingerprints = (
+	left: Readonly<Record<string, string>> | undefined,
+	right: Readonly<Record<string, string>>,
+) => {
+	if (!left) return false;
+	const names = Object.keys(right);
+	return (
+		Object.keys(left).length === names.length &&
+		names.every((name) => left[name] === right[name])
+	);
 };
 
 /**
@@ -37,6 +81,7 @@ export async function compileRegionChunks(
 	{ canReuse, existingManifest }: ReuseContext,
 	{
 		regionalDatasets,
+		regionalFingerprints,
 		compiledDatasets,
 		gazetteerCore,
 		boundaryMappings,
@@ -55,6 +100,10 @@ export async function compileRegionChunks(
 		cachedRegionChunks &&
 		hasChunkContentHashes &&
 		sameCompiledOutputs(cachedRegionChunks.datasets, regionalDatasets) &&
+		sameFingerprints(
+			cachedRegionChunks.datasetFingerprints,
+			regionalFingerprints,
+		) &&
 		sameCompiledOutput(
 			cachedRegionChunks.gazetteerCore,
 			gazetteerCore.compiled,

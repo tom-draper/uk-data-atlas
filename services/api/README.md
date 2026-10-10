@@ -2156,7 +2156,8 @@ Metrics label a request by the OpenAPI template it reached, such as
 request counts, durations and bytes, the server exports rate-limit refusals,
 unhandled errors, process memory, event loop delay, the geometry cache's
 area reads, release loads, evictions and load time, and the same for the
-location projection cache. Handlers run synchronously, so event
+location projection cache, and the response cache's size, hits, misses and
+evictions. Handlers run synchronously, so event
 loop delay is the first sign of a slow request: typically a geometry release
 being read for the first time.
 
@@ -2186,6 +2187,19 @@ line up.
   more is gzipped for a client that sends `Accept-Encoding: gzip`, on the
   thread pool rather than the event loop. The gzipped form has its own ETag,
   ending `-gzip"`.
+- **Response cache:** a successful `GET` answer of up to 1 MB is kept, as
+  it goes on the wire, for `ATLAS_RESPONSE_CACHE_MB` in total, least recently
+  used first. A repeat of the same request target, from a client that takes
+  the same encoding, is answered without running its handler, encoding it,
+  hashing it or compressing it again, and a conditional request whose
+  `ETag` still matches is answered `304` the same way. Rate limiting, query
+  validation and the per-request headers still apply to every request.
+  Errors, `POST`, `HEAD`, stored files and `/v1/terrain/` are never kept.
+  An answer depends only on the release the process loaded, so entries
+  never go stale; a new release is a new process. A conditional request
+  for an answer not yet held is computed as before, since a `304` carries
+  no body to keep. `/metrics` reports the cache's size, hits, misses and
+  evictions.
 - **Slow clients:** headers must arrive within 15 seconds and the whole
   request within 30; idle keep-alive connections close after 5.
 - **Geometry cache:** a count of releases. Each is read from
@@ -2219,7 +2233,8 @@ rather than falling back to the default.
 | `ATLAS_RATE_LIMIT_CAPACITY`          | `600`       | Requests a client may make at once; `0` turns limiting off.                                  |
 | `ATLAS_RATE_LIMIT_REFILL_PER_SECOND` | `10`        | Requests earned back each second.                                                            |
 | `ATLAS_TRUSTED_PROXY_HOPS`           | `0`         | Proxies in front of the server that append to `X-Forwarded-For`.                             |
-| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `3`         | Geometry releases held in memory at once.                                                    |
+| `ATLAS_GEOMETRY_CACHE_RELEASES`      | `6`         | Geometry releases held in memory at once; at least `3`.                                      |
+| `ATLAS_RESPONSE_CACHE_MB`            | `32`        | Megabytes of finished answers kept for repeat requests; `0` turns the cache off.             |
 | `ATLAS_METRICS_TOKEN`                | unset       | Bearer token `/metrics` requires. Unset, `/metrics` is off.                                  |
 | `ATLAS_METRICS_OPEN`                 | `off`       | Serve `/metrics` to anyone when no token is set, for a private network.                      |
 | `ATLAS_ACCESS_LOG`                   | `on`        | Log every request, not only failures.                                                        |

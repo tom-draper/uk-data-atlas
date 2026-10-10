@@ -1,6 +1,6 @@
 // lib/data/boundaries.ts
 import { BoundaryGeojson } from "@lib/types";
-import { decodeBoundaryData } from "./decode";
+import { boundaryChunkRegions, fetchBoundaryGeometry } from "./chunks";
 import { fetchBoundaryInWorker } from "./worker";
 import type { Crosswalk } from "../gazetteer/types";
 import type { BoundaryType, BoundaryYear } from "./catalog";
@@ -123,14 +123,6 @@ async function doFetchBoundaryFile(
 	path: string,
 	filter?: BoundaryGeometryFilter,
 ): Promise<BoundaryGeojson> {
-	const res = await fetch(path);
-	if (!res.ok) {
-		throw new Error(
-			`Failed to fetch ${path}: ${res.status} ${res.statusText}`,
-		);
-	}
-
-	const typedGeojson = decodeBoundaryData(await res.json());
 	const lsoaToLad =
 		filter?.type === "lsoa" && filter.location
 			? (filter.relations?.lsoaToLad ??
@@ -138,6 +130,14 @@ async function doFetchBoundaryFile(
 					lsoaYearForBoundaryAsset(path) ?? NaN,
 				).catch(() => undefined)))
 			: undefined;
+	const typedGeojson = await fetchBoundaryGeometry(
+		path,
+		boundaryChunkRegions(
+			filter?.type,
+			filter?.location,
+			lsoaToLad !== undefined,
+		),
+	);
 	return filter
 		? filterFeatures(typedGeojson, {
 				...filter,

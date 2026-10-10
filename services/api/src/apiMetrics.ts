@@ -1,6 +1,7 @@
 import { monitorEventLoopDelay } from "node:perf_hooks";
 import type { AreaGeometryCacheStats } from "./areaGeometry";
 import type { LocationProjectionCacheStats } from "./locationProjections";
+import type { ResponseCacheStats } from "./responseCache";
 
 /**
  * Operational metrics in the Prometheus text exposition format.
@@ -151,6 +152,8 @@ export class ApiMetrics {
 			AreaGeometryCacheStats | undefined = () => undefined,
 		private readonly locationProjectionCacheStats: () =>
 			LocationProjectionCacheStats | undefined = () => undefined,
+		private readonly responseCacheStats: () =>
+			ResponseCacheStats | undefined = () => undefined,
 	) {
 		this.eventLoopDelay.enable();
 	}
@@ -175,6 +178,7 @@ export class ApiMetrics {
 		const memory = process.memoryUsage();
 		const cache = this.geometryCacheStats();
 		const projections = this.locationProjectionCacheStats();
+		const answers = this.responseCacheStats();
 		const delay = (value: number) => value / 1e9;
 		return `${[
 			...sampled(
@@ -283,6 +287,35 @@ export class ApiMetrics {
 							"atlas_api_geometry_cache_load_seconds_total",
 							"Time spent reading geometry releases into the cache.",
 							[[{}, cache.loadSeconds]],
+						),
+					]
+				: []),
+			...(answers
+				? [
+						...sampled(
+							"gauge",
+							"atlas_api_response_cache_bytes",
+							"Bytes of finished answers held to serve repeat requests, and the most the cache may hold.",
+							[
+								[{ kind: "used" }, answers.bytes],
+								[{ kind: "limit" }, answers.maxBytes],
+							],
+						),
+						...sampled(
+							"gauge",
+							"atlas_api_response_cache_entries",
+							"Finished answers held to serve repeat requests.",
+							[[{}, answers.entries]],
+						),
+						...sampled(
+							"counter",
+							"atlas_api_response_cache_events_total",
+							"Requests answered from a held answer, requests that were not, and answers pushed out for room since the server started.",
+							[
+								[{ event: "hit" }, answers.hits],
+								[{ event: "miss" }, answers.misses],
+								[{ event: "eviction" }, answers.evictions],
+							],
 						),
 					]
 				: []),

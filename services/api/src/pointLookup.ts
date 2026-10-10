@@ -1016,15 +1016,25 @@ export const locatePoints = (
 				continue;
 			}
 			try {
-				const countries = containing(
-					index,
-					"country",
-					countryReleaseId,
-					point,
-				);
-				const code = countries
-					.map((country) => countryOfCode(country.code))
-					.find(Boolean);
+				// Only which country holds the point matters here, so its
+				// distance to the coastline is not measured.
+				const postcode = postcodes[index];
+				const countries =
+					(postcode === undefined
+						? undefined
+						: geographyResolver.postcodeContainingAreas(
+								postcode,
+								"country",
+								countryReleaseId,
+							)
+					)?.map((country) => country.code) ??
+					geographyResolver.containingCodes(
+						"country",
+						countryReleaseId,
+						[point.lng, point.lat],
+					) ??
+					[];
+				const code = countries.map(countryOfCode).find(Boolean);
 				entry.country = code
 					? {
 							code,

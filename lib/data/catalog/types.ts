@@ -106,6 +106,13 @@ export interface RegionalChunkLayout {
 	kind: "regional";
 	/** Use ward → LAD mappings when a record has no usable LAD code of its own. */
 	wardToLadFallback?: boolean;
+	/**
+	 * Place each record by the LSOA → LAD lookup of its boundary year, which is
+	 * the lookup the location filter reads, so a region's chunk holds every
+	 * record the filter can keep for a location in it. A record's own LAD code,
+	 * when it has one, is used only for an LSOA the lookup does not list.
+	 */
+	lsoaToLad?: boolean;
 	/** Include the compact all-location population totals in every chunk. */
 	populationSummary?: boolean;
 	/** Precompute the card aggregate this payload needs for each named location. */

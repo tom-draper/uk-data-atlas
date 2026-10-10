@@ -1,3 +1,4 @@
+import type { Gazetteer } from "./gazetteer/gazetteer";
 import { gazetteer } from "./gazetteer/static";
 
 export const REGION_CHUNK_KEYS = [
@@ -25,8 +26,12 @@ const COUNTRY_CHUNKS: Record<string, readonly RegionChunkKey[]> = {
 	"United Kingdom": REGION_CHUNK_KEYS,
 };
 
-const regionForLad = (code: string): RegionChunkKey | null => {
-	const region = gazetteer
+/** The chunk a local authority belongs to, or null when it has none. */
+export const regionForLadIn = (
+	source: Gazetteer,
+	code: string,
+): RegionChunkKey | null => {
+	const region = source
 		.ancestors(code)
 		.find((entry) => entry.level === "region")?.code;
 	if (region && REGION_CHUNK_KEYS.includes(region as RegionChunkKey))
@@ -36,6 +41,8 @@ const regionForLad = (code: string): RegionChunkKey | null => {
 	if (code.startsWith("N")) return "Northern Ireland";
 	return null;
 };
+
+const regionForLad = (code: string) => regionForLadIn(gazetteer, code);
 
 /**
  * Region chunks are an efficient first fetch for the named location. The

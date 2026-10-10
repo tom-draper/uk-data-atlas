@@ -5,10 +5,11 @@ import {
 	type GeographyResolverInputs,
 } from "../src/geographyResolver";
 import { route as routeRequest } from "../src/routes";
-import type { CrosswalkLookup, RouteContext } from "../src/routing";
+import type { RouteContext } from "../src/routing";
 import type { AtlasRelease } from "../src/atlasRelease";
 import type { BoundaryRegistry } from "../src/boundaryRegistry";
 import type {
+	CrosswalkArtifact,
 	CrosswalkInventory,
 	PropertyCrosswalkArtifact,
 } from "../src/crosswalkInventory";
@@ -336,7 +337,7 @@ export const containmentCrosswalk: PropertyCrosswalkArtifact = {
 	],
 };
 
-export const crosswalkLookup: CrosswalkLookup = new Map([
+export const crosswalkLookup = new Map<string, CrosswalkArtifact>([
 	[crosswalkArtifact.id, crosswalkArtifact],
 	[containmentCrosswalk.id, containmentCrosswalk],
 ]);

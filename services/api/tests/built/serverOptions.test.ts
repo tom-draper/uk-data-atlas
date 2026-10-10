@@ -7,7 +7,7 @@ test("defaults to a limited, logged single public instance", () => {
 	const configuration = readServeConfiguration({});
 	assert.equal(configuration.port, 3001);
 	assert.equal(configuration.host, "127.0.0.1");
-	assert.equal(configuration.geometryCacheReleases, 3);
+	assert.equal(configuration.geometryCacheReleases, 6);
 	assert.deepEqual(configuration.server.rateLimit, {
 		capacity: 600,
 		refillPerSecond: 10,
@@ -99,4 +99,12 @@ test("documents exactly the settings the server reads", () => {
 		[...section.matchAll(/^\| `([A-Z_]+)` +\|/gm)].map((match) => match[1]),
 	);
 	assert.deepEqual([...documented].sort(), [...read].sort());
+});
+
+test("lets a small host hold as few geometry releases as a postcode needs", () => {
+	assert.equal(
+		readServeConfiguration({ ATLAS_GEOMETRY_CACHE_RELEASES: "3" })
+			.geometryCacheReleases,
+		3,
+	);
 });

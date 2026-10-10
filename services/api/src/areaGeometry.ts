@@ -29,7 +29,11 @@ import {
 } from "./geometrySubstitution";
 import { readGeometryStore } from "./geometryStore";
 import { spatialCellKey, spatialCells } from "./geometrySpatialIndex";
-import { borderIndex, sharedBorder, type Neighbour } from "./areaNeighbours";
+import {
+	borderIndex,
+	sharedBorderWith,
+	type Neighbour,
+} from "./areaNeighbours";
 import { distanceToBoundsM, distanceToGeometryM } from "./areaDistance";
 import {
 	boundsIntersect,
@@ -751,8 +755,10 @@ export class AreaGeometryCache {
 	 *
 	 * Only areas whose bounds touch the target's can share anything with it, so
 	 * the boundary comparison runs against a handful of candidates rather than
-	 * the whole release. Nothing here is indexed across every area, which for a
-	 * ward release would be millions of edges held to answer one question.
+	 * the whole release, and the grid index finds those candidates without
+	 * visiting every area's envelope. Nothing here is indexed across every
+	 * area's edges, which for a ward release would be millions held to answer
+	 * one question.
 	 *
 	 * Returns undefined when the area itself has no geometry to compare.
 	 */
@@ -763,16 +769,16 @@ export class AreaGeometryCache {
 	): Neighbour[] | undefined {
 		const geometry = this.get(geography, boundaryRelease, code);
 		if (!geometry) return undefined;
-		const identity = [geography, boundaryRelease].join("/");
-		const release = this.releases.get(identity);
-		if (!release) return undefined;
+		const indexed = this.spatialIndexFor(geography, boundaryRelease);
+		if (!indexed) return undefined;
+		const { release, index } = indexed;
 		const boundsFor = (forCode: string) =>
 			this.boundsFor(release, geography, boundaryRelease, forCode);
 		const targetBounds = boundsFor(code);
 		if (!targetBounds) return [];
 		const target = borderIndex(geometry);
 		const neighbours: Neighbour[] = [];
-		for (const otherCode of release.geometries.keys()) {
+		for (const otherCode of this.spatialCandidates(index, targetBounds)) {
 			if (otherCode === code) continue;
 			const otherBounds = boundsFor(otherCode);
 			// Bounds that only touch still qualify: two areas meeting along a
@@ -781,7 +787,7 @@ export class AreaGeometryCache {
 				continue;
 			const other = this.get(geography, boundaryRelease, otherCode);
 			if (!other) continue;
-			const shared = sharedBorder(target, borderIndex(other));
+			const shared = sharedBorderWith(target, other);
 			if (shared) neighbours.push({ code: otherCode, ...shared });
 		}
 		return neighbours.sort(

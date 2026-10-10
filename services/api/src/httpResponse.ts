@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { IncomingHttpHeaders } from "node:http";
+import type { CachedAnswer } from "./responseCache";
 import {
 	isStoredFile,
 	type ApiResponse,
@@ -100,7 +101,7 @@ export const MIN_COMPRESSED_BYTES = 1024;
 const gzippedTag = (etag: string) => `${etag.slice(0, -1)}-gzip"`;
 
 /** Whether a client will take a gzip-encoded body, per RFC 9110 section 12.5.3. */
-const acceptsGzip = (header: string | string[] | undefined) =>
+export const acceptsGzip = (header: string | string[] | undefined) =>
 	(Array.isArray(header) ? header.join(",") : (header ?? ""))
 		.split(",")
 		.some((entry) => {
@@ -158,6 +159,29 @@ export const matchesEntityTag = (
 		.flatMap((value) => value.split(","))
 		.some((tag) => tag.trim() === "*" || opaque(tag) === opaque(etag));
 };
+
+const notModified = (etag: string, vary: string | undefined): HttpResponse => ({
+	status: 304,
+	headers: {
+		...CROSS_ORIGIN,
+		etag,
+		"cache-control": SUCCESS_CACHE_CONTROL,
+		...(vary ? { vary } : {}),
+	},
+});
+
+/**
+ * The wire response for a GET answered earlier: the stored answer, or `304`
+ * when the client already holds it. Never a stored file or a ranged read,
+ * which are streamed from disk and not kept.
+ */
+export const cachedHttpResponse = (
+	request: { headers: IncomingHttpHeaders },
+	answer: CachedAnswer,
+): HttpResponse =>
+	matchesEntityTag(request.headers["if-none-match"], answer.etag)
+		? notModified(answer.etag, answer.headers.vary)
+		: { status: answer.status, headers: answer.headers, body: answer.body };
 
 /**
  * Turns a route result into what goes on the wire. The route itself stays
@@ -233,17 +257,8 @@ export const httpResponse = (
 			: entityTag(body as string | Buffer);
 	headers.etag = etag;
 	headers["cache-control"] = freshness;
-	if (matchesEntityTag(request.headers["if-none-match"], etag)) {
-		return {
-			status: 304,
-			headers: {
-				...CROSS_ORIGIN,
-				etag,
-				"cache-control": freshness,
-				...(headers.vary ? { vary: headers.vary } : {}),
-			},
-		};
-	}
+	if (matchesEntityTag(request.headers["if-none-match"], etag))
+		return notModified(etag, headers.vary);
 	// A file sent as it is stored can be read in pieces, which is how a
 	// PMTiles client reads an archive: the header, then a directory, then
 	// the tiles it needs, never the whole file.

@@ -1,5 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from "fs/promises";
 import { dirname, join } from "path";
+import { encodeCompactPayload } from "../lib/data/compactPayload";
 import { Gazetteer } from "../lib/data/gazetteer/gazetteer";
 import type { GazetteerCore } from "../lib/data/gazetteer/types";
 import type { PrecompiledBoundaryMappings } from "@uk-data-atlas/geography";
@@ -43,7 +44,7 @@ type BoundaryPropertiesFile = {
 };
 
 type CompiledDataset = {
-	data: unknown;
+	load: () => Promise<unknown>;
 	layout?: DatasetPayloadLayout;
 };
 
@@ -106,6 +107,25 @@ const regionForRecord = (
 ) => {
 	const ladCode = ladCodeForRecord(record, code, wardToLad);
 	return ladCode ? regionForLad(gazetteer, ladCode) : null;
+};
+
+/**
+ * The LSOA → LAD lookup the browser's location filter reads for a boundary
+ * year, so the chunk a record is placed in agrees with the filter.
+ */
+const readLsoaToLad = async (root: string, boundaryYear: number) => {
+	const path = join(
+		root,
+		"public",
+		"data",
+		"datasets",
+		`lsoa-lad-mappings-${boundaryYear}.json`,
+	);
+	const parsed = JSON.parse(await readFile(path, "utf8")) as {
+		lsoaToLad?: Record<string, string>;
+	};
+	if (!parsed.lsoaToLad) throw new Error(`${path} holds no lsoaToLad lookup`);
+	return parsed.lsoaToLad;
 };
 
 const populationTotal = (record: unknown) => {
@@ -450,7 +470,7 @@ export async function writeDatasetRegionChunks({
 	for (const [file, compiled] of datasets) {
 		const chunkLayout = compiled.layout?.regionChunks;
 		if (!chunkLayout || chunkLayout.kind !== "regional") continue;
-		const value = compiled.data as DatasetPayload;
+		const value = (await compiled.load()) as DatasetPayload;
 		const locationPopulations = chunkLayout.populationSummary
 			? populationLocationSummary(
 					gazetteer,
@@ -484,20 +504,39 @@ export async function writeDatasetRegionChunks({
 		for (const [datasetId, dataset] of Object.entries(value)) {
 			if (!dataset.data) continue;
 			const records = new Map<RegionChunkKey, Record<string, unknown>>();
+			const lsoaToLad =
+				chunkLayout.lsoaToLad &&
+				typeof dataset.boundaryYear === "number"
+					? await readLsoaToLad(root, dataset.boundaryYear)
+					: undefined;
+			const unplaced: string[] = [];
 			for (const [code, record] of Object.entries(dataset.data)) {
-				const region = regionForRecord(
-					gazetteer,
-					record,
-					code,
-					chunkLayout.wardToLadFallback
-						? (boundaryMappings?.wardToLad ?? {})
-						: undefined,
-				);
-				if (!region) continue;
+				const lad = lsoaToLad?.[code];
+				const region =
+					(lad ? regionForLad(gazetteer, lad) : null) ??
+					regionForRecord(
+						gazetteer,
+						record,
+						code,
+						chunkLayout.wardToLadFallback
+							? (boundaryMappings?.wardToLad ?? {})
+							: undefined,
+					);
+				if (!region) {
+					unplaced.push(code);
+					continue;
+				}
 				const regionRecords = records.get(region) ?? {};
 				regionRecords[code] = record;
 				records.set(region, regionRecords);
 			}
+			// An LSOA left out of every chunk would vanish from the map for a
+			// regional view while still present in the complete file.
+			if (chunkLayout.lsoaToLad && unplaced.length > 0)
+				throw new Error(
+					`${file}: ${unplaced.length} ${datasetId} records have no region ` +
+						`(${unplaced.slice(0, 5).join(", ")}) so no chunk would carry them`,
+				);
 			recordsByDataset.set(datasetId, records);
 		}
 
@@ -549,7 +588,7 @@ export async function writeDatasetRegionChunks({
 				};
 			}
 
-			const json = JSON.stringify(chunk);
+			const json = JSON.stringify(encodeCompactPayload(chunk));
 			const relative = join(file, `${region}.json`);
 			await writeAtomically(join(outDir, relative), json);
 		}
