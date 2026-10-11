@@ -6,37 +6,18 @@ import {
 	readAreaSourceAdapters,
 	type AreaSourceAdapterManifest,
 } from "../src/areaSourceAdapters";
+import { sourceGeoJsonPath } from "../src/areaInventory";
 
 type FeatureCollection = {
 	type?: unknown;
 	features?: Array<{ properties?: Record<string, unknown> }>;
 };
 
-type Metadata = { files?: unknown };
-
 const sha256 = (content: string) =>
 	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-
-const geoJsonPath = (directory: string) => {
-	const metadata = JSON.parse(
-		readFileSync(join(directory, "meta.json"), "utf8"),
-	) as Metadata;
-	if (!Array.isArray(metadata.files)) return undefined;
-	const file = metadata.files.find(
-		(candidate) =>
-			typeof candidate === "object" &&
-			candidate !== null &&
-			(candidate as { role?: unknown }).role === "source" &&
-			typeof (candidate as { path?: unknown }).path === "string" &&
-			(candidate as { path: string }).path
-				.toLowerCase()
-				.endsWith(".geojson"),
-	) as { path: string } | undefined;
-	return file ? join(directory, file.path) : undefined;
-};
 
 export const buildDerivedBoundaries = (
 	repositoryRoot: string,
@@ -63,7 +44,7 @@ export const buildDerivedBoundaries = (
 			toKebabCase(adapter.source.geography),
 			adapter.source.boundaryRelease,
 		);
-		const path = geoJsonPath(sourceDirectory);
+		const path = sourceGeoJsonPath(sourceDirectory);
 		if (!path || !existsSync(path)) {
 			throw new Error(
 				`${identity}: no declared GeoJSON source is available`,
