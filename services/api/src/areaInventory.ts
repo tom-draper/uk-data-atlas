@@ -111,7 +111,7 @@ const findProperties = (properties: Record<string, unknown>) => {
 	return pairs.length === 1 ? pairs[0] : undefined;
 };
 
-const sourceGeoJsonPath = (directory: string) => {
+export const sourceGeoJsonPath = (directory: string) => {
 	const metadata = JSON.parse(
 		readFileSync(join(directory, "meta.json"), "utf8"),
 	) as BoundaryMetadata;
