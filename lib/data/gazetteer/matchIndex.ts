@@ -13,7 +13,11 @@ import {
 	type CompactMatchIndexLevel,
 	type MatchIndex,
 } from "../areaBank";
-import { BOUNDARY_CATALOG, BOUNDARY_TYPES } from "../boundaries/catalog";
+import {
+	BOUNDARY_CATALOG,
+	BOUNDARY_TYPES,
+	propertiesAsset,
+} from "../boundaries/catalog";
 import { localDataPath } from "../boundaries/dataPath";
 import { decodeBoundaryData } from "../boundaries/decode";
 import { getProp } from "../boundaries/properties";
@@ -33,8 +37,23 @@ export async function loadMatchIndex(
 	parishToLad: Record<number, Record<string, string>>,
 ): Promise<CompactMatchIndex> {
 	const index: MatchIndex = {};
-	const decode = async (path: string) =>
-		decodeBoundaryData(JSON.parse(await read(localDataPath(path))));
+	// Matching reads codes, names and parents, never a coordinate, so take
+	// them from the properties sidecar compiled beside each release. Decoding
+	// the geometry instead costs most of a minute across every vintage, and is
+	// only fallen back on for a release that has no sidecar.
+	const propertiesOf = async (path: string) => {
+		let sidecar: string;
+		try {
+			sidecar = await read(localDataPath(propertiesAsset(path)));
+		} catch {
+			const { features } = decodeBoundaryData(
+				JSON.parse(await read(localDataPath(path))),
+			);
+			return features.map((feature) => feature.properties);
+		}
+		return (JSON.parse(sidecar) as { features: Record<string, unknown>[] })
+			.features;
+	};
 	// Every geography the catalogue serves, so a new one is matchable as soon
 	// as it has a release. One file at a time: together they are large.
 	for (const boundaryType of BOUNDARY_TYPES) {
@@ -44,22 +63,21 @@ export async function loadMatchIndex(
 		for (const [year, path] of Object.entries(
 			vintages as Record<number, string>,
 		)) {
-			const boundary = await decode(path);
-			const { features } = boundary;
+			const features = await propertiesOf(path);
 			const codes = new Set<string>();
 			const names: Record<string, string[]> = {};
 			const parentOf: Record<string, string> = {};
-			for (const feature of features) {
-				const code = getProp(feature.properties, properties.code);
+			for (const featureProperties of features) {
+				const code = getProp(featureProperties, properties.code);
 				if (!code) continue;
 				codes.add(code);
-				const name = getProp(feature.properties, properties.name);
+				const name = getProp(featureProperties, properties.name);
 				if (name) {
 					const nameCodes = (names[name.toLowerCase()] ??= []);
 					if (!nameCodes.includes(code)) nameCodes.push(code);
 				}
 				const parent =
-					(parentKeys && getProp(feature.properties, parentKeys)) ||
+					(parentKeys && getProp(featureProperties, parentKeys)) ||
 					(boundaryType === "ward" && wardToLad[code]) ||
 					(boundaryType === "parish" &&
 						parishToLad[Number(year)]?.[code]);

@@ -87,7 +87,7 @@ const readSourceRelease = async (): Promise<SourceRelease | undefined> => {
 			typeof parsed !== "object" ||
 			parsed === null ||
 			!("version" in parsed) ||
-			parsed.version !== 2 ||
+			(parsed.version !== 2 && parsed.version !== 3) ||
 			!("files" in parsed) ||
 			typeof parsed.files !== "object" ||
 			parsed.files === null

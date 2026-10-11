@@ -8,14 +8,19 @@
  * precompiler.
  */
 
+// Most cells are numbers or plain text with nothing to decode.
 const decodeXml = (value: string) =>
-	value
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, '"')
-		.replace(/&apos;/g, "'")
-		.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-		.replace(/&amp;/g, "&");
+	value.includes("&")
+		? value
+				.replace(/&lt;/g, "<")
+				.replace(/&gt;/g, ">")
+				.replace(/&quot;/g, '"')
+				.replace(/&apos;/g, "'")
+				.replace(/&#(\d+);/g, (_, code) =>
+					String.fromCharCode(Number(code)),
+				)
+				.replace(/&amp;/g, "&")
+		: value;
 
 /** Spreadsheet column letters to a zero-based index: A→0, Z→25, AA→26. */
 export function columnIndex(reference: string): number {
@@ -129,79 +134,39 @@ export function percentageStyles(stylesXml: string): Set<number> {
 const tidyNumber = (raw: string): string => {
 	const value = Number(raw);
 	if (!Number.isFinite(value) || raw.trim() === "") return raw;
+	// A double holds any 15 significant digits exactly, so only a longer value
+	// can carry noise, and rounding the rest would give back the same number.
+	if (raw.length <= 15 && !raw.includes("e") && !raw.includes("E"))
+		return String(value);
 	return String(Number(value.toPrecision(15)));
 };
 
-/**
- * Visits sparse worksheet rows. Cells are placed by their own reference, so
- * callers can consume large sheets without materialising a dense grid.
- */
-export function forEachSheetRow(
-	sheetXml: string,
-	sharedStrings: string[],
-	percentageStyleIds: ReadonlySet<number> = new Set(),
-	visit: (row: ReadonlyMap<number, string>) => void,
-) {
-	for (const rowMatch of sheetXml.matchAll(
-		/<row\b[^>]*>([\s\S]*?)<\/row>|<row\b[^>]*\/>/g,
-	)) {
-		const row = new Map<number, string>();
-		let nextColumn = 0;
-		for (const cellMatch of (rowMatch[1] ?? "").matchAll(
-			// Self-closing form must be tried first: its attrs can end in "/",
-			// which the open/close alternative's [^>]* also matches, causing it
-			// to swallow the next cell's content up to that cell's </c>.
-			/<c\b([^>]*)\/>|<c\b([^>]*)>([\s\S]*?)<\/c>/g,
-		)) {
-			const attrs = cellMatch[1] ?? cellMatch[2] ?? "";
-			const body = cellMatch[3] ?? "";
-			const type = /\bt="([^"]*)"/.exec(attrs)?.[1];
-
-			let value = "";
-			if (type === "s") {
-				const index = Number(
-					/<v>([\s\S]*?)<\/v>/.exec(body)?.[1] ?? "-1",
-				);
-				value = sharedStrings[index] ?? "";
-			} else if (type === "inlineStr") {
-				for (const run of body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g)) {
-					value += run[1];
-				}
-				value = decodeXml(value);
-			} else {
-				const raw = decodeXml(
-					/<v>([\s\S]*?)<\/v>/.exec(body)?.[1] ?? "",
-				);
-				const style = Number(/\bs="(\d+)"/.exec(attrs)?.[1] ?? "-1");
-				value = percentageStyleIds.has(style)
-					? tidyNumber(String(Number(raw) * 100))
-					: tidyNumber(raw);
-			}
-
-			const reference = /\br="([^"]*)"/.exec(attrs)?.[1];
-			const column = reference ? columnIndex(reference) : nextColumn;
-			row.set(column, value);
-			nextColumn = Math.max(nextColumn, column + 1);
-		}
-		visit(row);
-	}
-}
+// Self-closing form must be tried first: its attrs can end in "/", which the
+// open/close alternative's [^>]* also matches, causing it to swallow the next
+// cell's content up to that cell's </c>.
+const CELL = /<c\b([^>]*)\/>|<c\b([^>]*)>([\s\S]*?)<\/c>/g;
+const ROW = /<row\b[^>]*>([\s\S]*?)<\/row>|<row\b[^>]*\/>/g;
 
 /**
- * Reads a single worksheet row while decoding only requested columns. This is
- * useful for streaming large workbooks whose loaders need a small projection.
+ * The cells of one row, by column. Cells are placed by their own reference;
+ * given `columns`, only those are decoded.
  */
-export function sheetRow(
+const rowCells = (
 	rowXml: string,
 	sharedStrings: string[],
-	percentageStyleIds: ReadonlySet<number> = new Set(),
+	percentageStyleIds: ReadonlySet<number>,
 	columns?: ReadonlySet<number>,
-): ReadonlyMap<number, string> {
+): Map<number, string> => {
 	const row = new Map<number, string>();
 	let nextColumn = 0;
-	for (const cellMatch of rowXml.matchAll(
-		/<c\b([^>]*)\/\>|<c\b([^>]*)>([\s\S]*?)<\/c>/g,
-	)) {
+	// A shared pattern scanned with exec, rather than matchAll, which clones
+	// the pattern and allocates an iterator for every row of a large sheet.
+	CELL.lastIndex = 0;
+	for (
+		let cellMatch = CELL.exec(rowXml);
+		cellMatch !== null;
+		cellMatch = CELL.exec(rowXml)
+	) {
 		const attrs = cellMatch[1] ?? cellMatch[2] ?? "";
 		const body = cellMatch[3] ?? "";
 		const reference = /\br="([^"]*)"/.exec(attrs)?.[1];
@@ -228,6 +193,39 @@ export function sheetRow(
 		row.set(column, value);
 	}
 	return row;
+};
+
+/**
+ * Visits sparse worksheet rows. Cells are placed by their own reference, so
+ * callers can consume large sheets without materialising a dense grid.
+ */
+export function forEachSheetRow(
+	sheetXml: string,
+	sharedStrings: string[],
+	percentageStyleIds: ReadonlySet<number> = new Set(),
+	visit: (row: ReadonlyMap<number, string>) => void,
+) {
+	// Not the shared pattern's lastIndex: `visit` may read another sheet.
+	const rowPattern = new RegExp(ROW);
+	for (
+		let rowMatch = rowPattern.exec(sheetXml);
+		rowMatch !== null;
+		rowMatch = rowPattern.exec(sheetXml)
+	)
+		visit(rowCells(rowMatch[1] ?? "", sharedStrings, percentageStyleIds));
+}
+
+/**
+ * Reads a single worksheet row while decoding only requested columns. This is
+ * useful for streaming large workbooks whose loaders need a small projection.
+ */
+export function sheetRow(
+	rowXml: string,
+	sharedStrings: string[],
+	percentageStyleIds: ReadonlySet<number> = new Set(),
+	columns?: ReadonlySet<number>,
+): ReadonlyMap<number, string> {
+	return rowCells(rowXml, sharedStrings, percentageStyleIds, columns);
 }
 
 export function selectedSheetRow(
