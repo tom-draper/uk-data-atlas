@@ -10,6 +10,7 @@ import { feature } from "topojson-client";
 import { polygonAreaSqKm } from "../lib/helpers/population";
 import { getProp } from "../lib/data/boundaries/boundaries";
 import { BOUNDARY_CATALOG } from "../lib/data/boundaries/catalog";
+import { pointInRing } from "../lib/data/gazetteer/geometry";
 
 const B = join(process.cwd(), "public", "data", "boundaries");
 const FILES = {
@@ -73,21 +74,6 @@ function centroidOf(geom: GeoJSON.Geometry): [number, number] {
 		sy += y;
 	}
 	return [sx / best.length, sy / best.length];
-}
-function pointInRing(px: number, py: number, ring: number[][]): boolean {
-	let inside = false;
-	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-		const xi = ring[i][0],
-			yi = ring[i][1],
-			xj = ring[j][0],
-			yj = ring[j][1];
-		if (
-			yi > py !== yj > py &&
-			px < ((xj - xi) * (py - yi)) / (yj - yi) + xi
-		)
-			inside = !inside;
-	}
-	return inside;
 }
 function pointInFeat(px: number, py: number, geom: GeoJSON.Geometry): boolean {
 	for (const ring of outerRings(geom))

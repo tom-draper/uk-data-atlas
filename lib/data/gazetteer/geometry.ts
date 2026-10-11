@@ -50,7 +50,7 @@ export const areaM2 = (geom: Geom): number =>
 export const inBox = (px: number, py: number, b: readonly number[]): boolean =>
 	px >= b[0] && px <= b[2] && py >= b[1] && py <= b[3];
 
-function pointInRing(px: number, py: number, ring: number[][]): boolean {
+export function pointInRing(px: number, py: number, ring: number[][]): boolean {
 	let inside = false;
 	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
 		const xi = ring[i][0],
