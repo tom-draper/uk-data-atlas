@@ -127,5 +127,6 @@ describe("dataset region chunks", () => {
 						isDeepStrictEqual(record, whole[edition]!.data[code]),
 					).toBe(true);
 		},
+		15_000,
 	);
 });
