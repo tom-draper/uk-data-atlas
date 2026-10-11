@@ -19,53 +19,87 @@ import type {
 } from "./types.mts";
 
 /**
+ * Registers a compiled dataset to be read back off disk if region chunks are
+ * cut from it. Only the regional datasets are ever read back.
+ */
+export const readCompiledFromDisk = (
+	definition: CatalogueDefinition,
+	compiledDatasets: CompiledDatasets,
+) => {
+	if (definition.payload?.regionChunks?.kind !== "regional") return;
+	compiledDatasets.set(definition.precompiledFile, {
+		load: async () =>
+			decodeCompactPayload(
+				JSON.parse(
+					await readFile(
+						join(OUT_DIR, `${definition.precompiledFile}.json`),
+						"utf8",
+					),
+				),
+			),
+		layout: definition.payload,
+	});
+};
+
+/**
+ * The manifest entry of a dataset an earlier run compiled, when none of its
+ * inputs have changed since. Undefined when it has to be compiled.
+ */
+export async function reuseDataset(
+	definition: CatalogueDefinition,
+	compiledDatasets: CompiledDatasets,
+	{ datasetFingerprints, existingDatasets, sourceRelease }: ReuseContext,
+) {
+	const startedAt = performance.now();
+	const existing = existingDatasets.get(definition.type);
+	const cached = await canReuseDataset(
+		existing,
+		definition,
+		sourceRelease,
+		datasetFingerprints[definition.type],
+	);
+	if (!cached || !existing) return undefined;
+	readCompiledFromDisk(definition, compiledDatasets);
+	logArtifact("dataset", `${definition.precompiledFile}.json`, [
+		"cached",
+		formatKb(cached.bytes),
+		elapsedSince(startedAt),
+	]);
+	return { ...existing, compiled: cached };
+}
+
+/**
  * Compiles one dataset into its browser JSON, or reuses the file an earlier
  * run left when none of its inputs have changed. Returns the manifest entry.
  */
 export async function compileDataset(
 	definition: CatalogueDefinition,
 	compiledDatasets: CompiledDatasets,
-	{
-		datasetFingerprints,
-		existingDatasets,
-		sourceRelease,
-	}: ReuseContext = NO_REUSE,
+	reuse: ReuseContext = NO_REUSE,
+) {
+	return (
+		(await reuseDataset(definition, compiledDatasets, reuse)) ??
+		compileStaleDataset(
+			definition,
+			compiledDatasets,
+			reuse.existingDatasets.get(definition.type),
+			reuse.datasetFingerprints[definition.type],
+		)
+	);
+}
+
+/**
+ * Compiles one dataset from its raw sources, whatever an earlier run left.
+ * `existing` is its previous manifest entry, kept when the raw source is not
+ * held locally.
+ */
+export async function compileStaleDataset(
+	definition: CatalogueDefinition,
+	compiledDatasets: CompiledDatasets,
+	existing: ExistingManifestDataset | undefined,
+	fingerprint: string | undefined,
 ) {
 	const startedAt = performance.now();
-	const existing = existingDatasets.get(definition.type);
-	const fingerprint = datasetFingerprints[definition.type];
-	const cached = await canReuseDataset(
-		existing,
-		definition,
-		sourceRelease,
-		fingerprint,
-	);
-	if (cached && existing) {
-		const reused = { ...existing, compiled: cached };
-		if (definition.payload?.regionChunks?.kind === "regional") {
-			compiledDatasets.set(definition.precompiledFile, {
-				load: async () =>
-					decodeCompactPayload(
-						JSON.parse(
-							await readFile(
-								join(
-									OUT_DIR,
-									`${definition.precompiledFile}.json`,
-								),
-								"utf8",
-							),
-						),
-					),
-				layout: definition.payload,
-			});
-		}
-		logArtifact("dataset", `${definition.precompiledFile}.json`, [
-			"cached",
-			formatKb(cached.bytes),
-			elapsedSince(startedAt),
-		]);
-		return reused;
-	}
 	const { reader, artifacts } = createTrackedReader();
 	let compiled: Awaited<ReturnType<typeof definition.precompile>>;
 	let preserved: ExistingManifestDataset | undefined;

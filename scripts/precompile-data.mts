@@ -34,6 +34,7 @@ import {
 	NO_REUSE,
 } from "./precompile/cache.mts";
 import { compileDataset } from "./precompile/compileDataset.mts";
+import { compileDatasets } from "./precompile/datasetPool.mts";
 import { chunksSize, out } from "./precompile/output.mts";
 import { OUT_DIR, ROOT, SOURCE_DATA } from "./precompile/paths.mts";
 import {
@@ -173,30 +174,23 @@ async function main() {
 	const compiledDatasets: CompiledDatasets = new Map();
 	const { compilerFingerprint, ...reuse } = await loadReuseContext();
 
-	// Dataset loaders can hold large source strings, parsed rows, compiled
-	// records, and the JSON string being written at the same time. Starting all
-	// loaders with map(async ...) creates a large, avoidable memory spike. Keep
-	// the result metadata and compiled payloads, but only run one loader at a
-	// time so the peak is bounded by the largest individual dataset.
-	const chartResults: Awaited<ReturnType<typeof compileDataset>>[] = [];
-	for (const definition of CATALOGUE_DATASET_DEFINITIONS) {
-		chartResults.push(
-			await compileDataset(definition, compiledDatasets, reuse),
-		);
-	}
-
+	// The gazetteer is built on this thread while the datasets compile on
+	// theirs. Neither reads what the other writes.
 	const atlasAssets = await compileAtlasAssets(reuse);
 	const { gazetteerCore, boundaryMappings, matchIndex } = atlasAssets;
 	const roadSafety = compileRoadSafety(reuse, gazetteerCore);
-	const results = await Promise.allSettled([
-		...chartResults,
-		roadSafety,
-		gazetteerCore,
-		boundaryMappings,
-		matchIndex,
-	]);
+	const artifacts = [roadSafety, gazetteerCore, boundaryMappings, matchIndex];
+	// These are settled together below, so that one failing is reported beside
+	// any other. Until then a rejection is not unhandled, only unread.
+	for (const artifact of artifacts) artifact.catch(() => {});
 
-	const failures = results.filter(
+	const chartResults = await compileDatasets(
+		CATALOGUE_DATASET_DEFINITIONS,
+		compiledDatasets,
+		reuse,
+	);
+
+	const failures = (await Promise.allSettled(artifacts)).filter(
 		(r): r is PromiseRejectedResult => r.status === "rejected",
 	);
 	if (failures.length > 0) {
@@ -256,9 +250,7 @@ async function main() {
 				outputs: recordedChunkOutputs,
 			},
 		},
-		datasets: results
-			.slice(0, CATALOGUE_DATASET_DEFINITIONS.length)
-			.map((result) => (result as PromiseFulfilledResult<unknown>).value),
+		datasets: chartResults,
 	});
 
 	console.log(`Precompile complete (${elapsedSince(startedAt)}).`);
