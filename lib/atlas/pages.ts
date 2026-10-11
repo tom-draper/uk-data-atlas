@@ -51,6 +51,7 @@ export const MAP_NAMES: Readonly<Record<string, string>> = {
 	"council-tax": "Council Tax",
 	crime: "Crime Rates",
 	"electric-vehicle-chargers": "EV Charging Points",
+	"electricity-consumption": "Electricity Consumption",
 	ethnicity: "Ethnicity",
 	"fuel-poverty": "Fuel Poverty",
 	"general-election": "General Election Results",
