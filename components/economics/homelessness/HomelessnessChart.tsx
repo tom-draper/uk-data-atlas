@@ -9,27 +9,13 @@ import {
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { formatCompactCount } from "@/lib/helpers/formatCount";
-import {
-	selectedAreaLadCode,
-	type LadResolver,
-} from "@/lib/helpers/selectedAreaLad";
+import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import type {
 	AggregatedHomelessnessData,
 	HomelessnessDataset,
 	HomelessnessLADData,
 } from "@/lib/types/homelessness";
-
-function statsForArea(
-	dataset: HomelessnessDataset,
-	aggregated: Record<number, AggregatedHomelessnessData> | null,
-	selectedArea: ChartComponentProps["selectedArea"],
-	codeMapper: LadResolver | undefined,
-): HomelessnessLADData | AggregatedHomelessnessData | null {
-	if (!selectedArea) return aggregated?.[dataset.year] ?? null;
-	const code = selectedAreaLadCode(selectedArea, codeMapper);
-	return code ? (dataset.data[code] ?? null) : null;
-}
 
 export default function HomelessnessChart({
 	activeDataset,
@@ -46,11 +32,12 @@ export default function HomelessnessChart({
 	];
 	if (!dataset) return null;
 
-	const stats = statsForArea(
+	const stats = localAuthorityStats(
 		dataset,
 		aggregatedData as Record<number, AggregatedHomelessnessData> | null,
 		selectedArea,
 		codeMapper,
+		(record) => record,
 	);
 	const value =
 		stats?.[

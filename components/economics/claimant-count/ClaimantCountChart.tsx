@@ -8,27 +8,13 @@ import {
 	LOCAL_AUTHORITY_ESTIMATE_NOTE,
 } from "@/components/LocalAuthorityEstimateIndicator";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
-import {
-	selectedAreaLadCode,
-	type LadResolver,
-} from "@/lib/helpers/selectedAreaLad";
+import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import type {
 	AggregatedClaimantCountData,
 	ClaimantCountDataset,
 	ClaimantCountLADData,
 } from "@/lib/types/claimantCount";
-
-function statsForArea(
-	dataset: ClaimantCountDataset,
-	aggregated: Record<number, AggregatedClaimantCountData> | null,
-	selectedArea: ChartComponentProps["selectedArea"],
-	codeMapper: LadResolver | undefined,
-): ClaimantCountLADData | AggregatedClaimantCountData | null {
-	if (!selectedArea) return aggregated?.[dataset.year] ?? null;
-	const code = selectedAreaLadCode(selectedArea, codeMapper);
-	return code ? (dataset.data[code] ?? null) : null;
-}
 
 export default function ClaimantCountChart({
 	activeDataset,
@@ -45,11 +31,12 @@ export default function ClaimantCountChart({
 	];
 	if (!dataset) return null;
 
-	const stats = statsForArea(
+	const stats = localAuthorityStats(
 		dataset,
 		aggregatedData as Record<number, AggregatedClaimantCountData> | null,
 		selectedArea,
 		codeMapper,
+		(record) => record,
 	);
 	const value = stats?.[measure === "count" ? "totalCount" : "totalRate"];
 	const color = useHeatmapValueColor("claimantCount", value);

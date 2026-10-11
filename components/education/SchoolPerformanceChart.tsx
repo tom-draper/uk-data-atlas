@@ -9,10 +9,7 @@ import {
 import type { ChartComponentProps } from "@/components/chartComponentTypes";
 import { useCurrentMapOptions } from "@/lib/context/MapOptionsContext";
 import { useIsDark } from "@/lib/context/ThemeContext";
-import {
-	selectedAreaLadCode,
-	type LadResolver,
-} from "@/lib/helpers/selectedAreaLad";
+import { localAuthorityStats } from "@/lib/helpers/localAuthorityStats";
 import { useHeatmapValueColor } from "@/lib/hooks/useHeatmapValueColor";
 import type {
 	AggregatedSchoolPerformanceData,
@@ -47,17 +44,6 @@ const MEASURES = {
 	},
 } as const;
 
-function statsForArea(
-	dataset: SchoolPerformanceDataset,
-	aggregated: Record<number, AggregatedSchoolPerformanceData> | null,
-	selectedArea: ChartComponentProps["selectedArea"],
-	codeMapper: LadResolver | undefined,
-): SchoolPerformanceLADData | AggregatedSchoolPerformanceData | null {
-	if (!selectedArea) return aggregated?.[dataset.year] ?? null;
-	const code = selectedAreaLadCode(selectedArea, codeMapper);
-	return code ? (dataset.data[code] ?? null) : null;
-}
-
 export default function SchoolPerformanceChart({
 	activeDataset,
 	availableDatasets,
@@ -74,7 +60,7 @@ export default function SchoolPerformanceChart({
 		availableDatasets as Record<string, SchoolPerformanceDataset>
 	)[year];
 	if (!dataset) return null;
-	const stats = statsForArea(
+	const stats = localAuthorityStats(
 		dataset,
 		aggregatedData as Record<
 			number,
@@ -82,6 +68,7 @@ export default function SchoolPerformanceChart({
 		> | null,
 		selectedArea,
 		codeMapper,
+		(record) => record,
 	);
 	const value = stats?.[measureInfo.key];
 	const color = useHeatmapValueColor("schoolPerformance", value);
