@@ -2,14 +2,14 @@
 import Link from "next/link";
 
 const linkClass =
-	"rounded-md px-2.5 py-1.5 text-[14px] text-slate-600 transition-colors hover:bg-white/50 hover:text-slate-900";
+	"rounded-md px-2.5 py-1.5 whitespace-nowrap text-[14px] text-slate-600 transition-colors hover:bg-white/50 hover:text-slate-900";
 
 export default function Navigation() {
 	return (
 		<nav>
-			<div className="flex py-6 px-4 w-[65%] mx-auto">
-				<div className="flex grow items-center">
-					<div className="ml-auto flex items-center gap-1 text-right">
+			<div className="mx-auto flex w-full px-4 py-3 sm:w-[90%] sm:py-6 min-[1301px]:w-[65%]">
+				<div className="flex min-w-0 grow items-center">
+					<div className="flex flex-wrap items-center gap-1 sm:ml-auto sm:justify-end sm:text-right">
 						<Link href="/atlas" className={linkClass}>
 							Atlas
 						</Link>
