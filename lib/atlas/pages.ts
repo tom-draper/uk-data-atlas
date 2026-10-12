@@ -76,6 +76,7 @@ export const MAP_NAMES: Readonly<Record<string, string>> = {
 	"population-age": "Age Distribution",
 	"population-gender": "Gender Balance",
 	qualification: "Qualifications",
+	"regional-gdp-itl3": "Regional GDP",
 	"school-performance": "GCSE Results",
 	"school-performance-gap": "Disadvantaged Pupil Attainment Gap",
 	simd: "Deprivation (SIMD)",
