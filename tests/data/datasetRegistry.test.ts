@@ -183,7 +183,9 @@ describe("chart dataset registry contract", () => {
 					expect(valueKey || valueFor).toBeTruthy();
 					expect(colorRange.min).toBeLessThanOrEqual(colorRange.max);
 					expect(legend.min).toBeLessThanOrEqual(legend.max);
-					expect(legend.format(legend.min)).not.toBe("");
+					expect(
+						legend.format(legend.min, DEFAULT_MAP_OPTIONS),
+					).not.toBe("");
 				});
 			} else {
 				it("registers a bespoke map renderer", () => {

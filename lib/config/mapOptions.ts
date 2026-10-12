@@ -1,6 +1,39 @@
 import { CHART_DATASET_DEFINITIONS } from "../datasets";
 import { MapOptions, ChartMapOptions } from "../types/mapOptions";
 
+export const POPULATION_METRIC_RANGES = {
+	businessActivity: {
+		total: { min: 0, max: 50_000 },
+		perPopulation: { min: 0, max: 12_000 },
+	},
+	electricVehicleChargers: {
+		total: { min: 0, max: 1_500 },
+		perPopulation: { min: 0, max: 500 },
+	},
+	jobs: {
+		total: { min: 0, max: 500_000 },
+		perPopulation: { min: 0, max: 100_000 },
+	},
+	electricityConsumption: {
+		total: { min: 0, max: 2_500 },
+		perPopulation: { min: 0, max: 1_500 },
+	},
+	gasConsumption: {
+		total: { min: 0, max: 5_000 },
+		perPopulation: { min: 0, max: 2_500 },
+	},
+	waste: {
+		total: { min: 0, max: 200_000 },
+		perPopulation: { min: 0, max: 60_000 },
+	},
+};
+
+export function hasPopulationMetric(
+	type: string,
+): type is keyof typeof POPULATION_METRIC_RANGES {
+	return Object.hasOwn(POPULATION_METRIC_RANGES, type);
+}
+
 const chartMapOptions: ChartMapOptions = Object.fromEntries(
 	CHART_DATASET_DEFINITIONS.map((definition) => [
 		definition.type,
@@ -16,9 +49,7 @@ const chartMapOptions: ChartMapOptions = Object.fromEntries(
 			...(definition.type === "ghgEmissions"
 				? { measure: "perPerson" }
 				: {}),
-			...(definition.type === "businessActivity" ||
-			definition.type === "electricVehicleChargers" ||
-			definition.type === "jobs"
+			...(hasPopulationMetric(definition.type)
 				? { measure: "total" }
 				: {}),
 			...(definition.type === "broadband"

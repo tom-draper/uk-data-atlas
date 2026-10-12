@@ -243,7 +243,7 @@ export default function LegendContent({
 					claimantCountLegend?.format ??
 					unemploymentLegend?.format ??
 					ghgLegend?.format ??
-					measureLegend.format
+					((value) => measureLegend.format(value, displayOptions))
 				}
 				currentRange={usesInitialRange ? dynamicRange : undefined}
 			/>

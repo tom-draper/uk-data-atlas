@@ -2,6 +2,8 @@ import { loadGasConsumption } from "../../energy-consumption/loader";
 import { GAS_CONSUMPTION_SOURCE } from "../../energy-consumption/source";
 import type { GasConsumptionDataset } from "@/lib/types/energyConsumption";
 import type { DatasetDefinition } from "../types";
+import { loadPopulationUk } from "../../population/ukLoader";
+import { addPopulationMetrics } from "../../population/metrics";
 
 export const gasConsumptionDatasetDefinition: DatasetDefinition<GasConsumptionDataset> =
 	{
@@ -16,5 +18,16 @@ export const gasConsumptionDatasetDefinition: DatasetDefinition<GasConsumptionDa
 			expectedBoundaryYears: [2025],
 			requiredDataFields: ["allMetersGwh", "domesticGwh"],
 		},
-		precompile: ({ text }) => loadGasConsumption(text),
+		precompile: async ({ text, xlsxSheet }) => {
+			const datasets = await loadGasConsumption(text);
+			const population = await loadPopulationUk(xlsxSheet);
+			for (const dataset of Object.values(datasets)) {
+				addPopulationMetrics(
+					dataset.data,
+					population[dataset.year]?.data ?? {},
+					(record) => record.allMetersGwh,
+				);
+			}
+			return datasets;
+		},
 	};

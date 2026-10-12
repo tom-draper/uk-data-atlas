@@ -23,6 +23,7 @@ export interface EnergyConsumptionLADData {
 	allMetersGwh: number;
 	/** Meters counted, in thousands. */
 	metersThousands: number;
+	metrics?: Record<string, number>;
 }
 
 /** The consumption measures shared by an authority record and an aggregate. */

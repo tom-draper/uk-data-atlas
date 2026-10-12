@@ -196,7 +196,10 @@ export function formatRankedValue(map: AtlasMap, value: number) {
 	const card = definition?.chart.card;
 	if (card?.format)
 		return `${card.format(value)}${card.unit ? ` ${card.unit}` : ""}`;
-	return definition?.map?.legend.format(value) ?? String(value);
+	return (
+		definition?.map?.legend.format(value, DEFAULT_MAP_OPTIONS) ??
+		String(value)
+	);
 }
 
 /** The place pages a council's row links to, by council code. */

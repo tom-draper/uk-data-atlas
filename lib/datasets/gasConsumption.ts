@@ -52,12 +52,20 @@ export const gasConsumptionDefinition: ChartDatasetDefinition<GasConsumptionData
 			year: 2024,
 		},
 		map: {
-			valueKey: "allMetersGwh",
+			valueFor: (dataset, code, mapOptions) => {
+				const record = dataset.data[code];
+				return mapOptions.gasConsumption.measure === "perPopulation"
+					? (record?.metrics?.per100kPopulation ?? null)
+					: (record?.allMetersGwh ?? null);
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`gasConsumption:${mapOptions.gasConsumption.measure}`,
 			colorRange: { min: 0, max: 5_000 },
 			legend: {
 				min: 0,
 				max: 8_000,
-				format: (value) => `${formatCompactCount(value)} GWh`,
+				format: (value, mapOptions) =>
+					`${formatCompactCount(value)} GWh${mapOptions.gasConsumption.measure === "perPopulation" ? " per 100k" : ""}`,
 			},
 		},
 	};
