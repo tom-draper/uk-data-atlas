@@ -1,15 +1,11 @@
-# The only image built here is the API server's, from services/api/Dockerfile.
-# It takes the workspace manifests, the shared packages and the API's source;
-# everything else, the map site and gigabytes of data among it, stays out of
-# the build context.
-*
-!package.json
-!pnpm-lock.yaml
-!pnpm-workspace.yaml
-!packages
-!services/api
-
+.git
+.codeq
+**/.codeq
 **/node_modules
-# The Atlas release is mounted when the container runs, never built in.
+.next
+.data-release
+data
+public
 services/api/public
-services/api/tests
+services/api/dist
+*.heapsnapshot

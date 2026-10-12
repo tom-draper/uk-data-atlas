@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { createRequire } from "node:module";
 import {
 	MessageChannel,
@@ -40,9 +42,10 @@ workerData.port.on("message", ({ register, operation, first, second }) => {
 });
 `;
 
-const CLIPPING_MODULE = createRequire(import.meta.url).resolve(
-	"polygon-clipping",
-);
+const bundledClipping = join(import.meta.dirname, "polygon-clipping.cjs");
+const CLIPPING_MODULE = existsSync(bundledClipping)
+	? bundledClipping
+	: createRequire(import.meta.url).resolve("polygon-clipping");
 
 export type ClippingOperation = "intersection" | "xor" | "difference";
 

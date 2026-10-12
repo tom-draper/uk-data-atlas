@@ -1,4 +1,4 @@
-import { createRequire } from "node:module";
+import clippingPackage from "polygon-clipping/package.json" with { type: "json" };
 import polygonClipping, {
 	type MultiPolygon,
 	type Pair,
@@ -7,11 +7,7 @@ import polygonClipping, {
 } from "polygon-clipping";
 import type { Bounds } from "./areaGeometryPieces";
 
-export const CLIPPING_VERSION = (
-	createRequire(import.meta.url)("polygon-clipping/package.json") as {
-		version: string;
-	}
-).version;
+export const CLIPPING_VERSION = clippingPackage.version;
 
 // Wider than any generalised boundary's edges, so no edge that bounds an
 // intersection is cut where a clipped polygon is trimmed.
