@@ -156,8 +156,18 @@ describe("aggregateRegionalGdp", () => {
 	it("sums GDP and GVA across ITL3 areas", () => {
 		expect(
 			aggregateRegionalGdp([
-				{ itlCode: "T1", itlName: "One", gvaMillionGbp: 200, gdpMillionGbp: 220 },
-				{ itlCode: "T2", itlName: "Two", gvaMillionGbp: 300, gdpMillionGbp: 330 },
+				{
+					itlCode: "T1",
+					itlName: "One",
+					gvaMillionGbp: 200,
+					gdpMillionGbp: 220,
+				},
+				{
+					itlCode: "T2",
+					itlName: "Two",
+					gvaMillionGbp: 300,
+					gdpMillionGbp: 330,
+				},
 			]),
 		).toEqual({ gvaMillionGbp: 500, gdpMillionGbp: 550 });
 	});
