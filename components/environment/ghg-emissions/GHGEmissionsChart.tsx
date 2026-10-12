@@ -142,7 +142,7 @@ export default function GHGEmissionsChart({
 
 	return (
 		<ChartCard
-			heading={`Greenhouse Gas Emissions, ${measureInfo.label} [${dataset.year}]`}
+			heading={`Greenhouse Gas Emissions [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, stats !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE
