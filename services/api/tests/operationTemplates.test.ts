@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { parse } from "yaml";
-import { compileOperations } from "../scripts/build-operations";
+import {
+	buildOperations,
+	compileOperations,
+} from "../scripts/build-operations";
 import {
 	compileOperationTemplates,
 	createOperationMatcher,
@@ -165,4 +170,14 @@ test("leaves a parameter an operation refuses with its reason to the operation",
 		)?.parameter,
 		"relase",
 	);
+});
+
+test("writes the operations into an API root with no public directory yet", (t) => {
+	const apiRoot = mkdtempSync(join(tmpdir(), "atlas-operations-"));
+	t.after(() => rmSync(apiRoot, { recursive: true, force: true }));
+	writeFileSync(join(apiRoot, "openapi.yaml"), "openapi: 3.1.0\npaths: {}\n");
+
+	const { outputPath } = buildOperations(apiRoot);
+
+	assert.equal(JSON.parse(readFileSync(outputPath, "utf8")).schemaVersion, 1);
 });

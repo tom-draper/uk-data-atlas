@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
@@ -26,6 +26,8 @@ export const buildOperations = (apiRoot: string) => {
 		readFileSync(join(apiRoot, "openapi.yaml"), "utf8"),
 	);
 	const outputPath = join(apiRoot, "public", "operations.json");
+	// This is the first build step, and a fresh checkout has no `public`.
+	mkdirSync(dirname(outputPath), { recursive: true });
 	writeFileSync(outputPath, `${JSON.stringify(artifact, null, "\t")}\n`);
 	return { outputPath, operationCount: artifact.operations.length };
 };
