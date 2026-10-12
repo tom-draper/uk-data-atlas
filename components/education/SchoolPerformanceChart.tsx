@@ -76,7 +76,7 @@ export default function SchoolPerformanceChart({
 
 	return (
 		<ChartCard
-			heading={`GCSE Performance, ${measureInfo.label} [2024/25]`}
+			heading="GCSE Performance [2024/25]"
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE

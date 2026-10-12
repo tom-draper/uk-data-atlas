@@ -75,7 +75,7 @@ export default function AirQualityChart({
 
 	return (
 		<ChartCard
-			heading={`Air Quality, ${measureInfo.label} [${dataset.year}]`}
+			heading={`Air Quality [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, stats !== null)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE

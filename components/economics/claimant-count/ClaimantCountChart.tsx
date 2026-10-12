@@ -47,7 +47,7 @@ export default function ClaimantCountChart({
 
 	return (
 		<ChartCard
-			heading={`Claimant Count, ${measure === "count" ? "total" : "rate"} [${dataset.month}]`}
+			heading={`Claimant Count [${dataset.year}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE

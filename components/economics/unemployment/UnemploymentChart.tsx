@@ -150,7 +150,7 @@ export default function UnemploymentChart({
 
 	return (
 		<ChartCard
-			heading={`Historic Unemployment ${measure === "rate" ? "Rate" : "Count"} [1996-${dataset.latestYear}]`}
+			heading={`Historic Unemployment [1996-${dataset.latestYear}]`}
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
 					? LOCAL_AUTHORITY_ESTIMATE_NOTE

@@ -53,7 +53,7 @@ export default function HomelessnessChart({
 
 	return (
 		<ChartCard
-			heading={`Homelessness, ${measure === "count" ? "households" : "rate"} [${dataset.quarter}]`}
+			heading={`Homelessness [${dataset.year}]`}
 			headingTitle="Homelessness: temporary accommodation"
 			estimateNote={
 				isLocalAuthorityEstimate(selectedArea, hasData)
