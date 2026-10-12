@@ -3,6 +3,10 @@
 import { PARTIES } from "@/lib/data/election/parties";
 import { ETHNICITY_COLORS, themes } from "@/lib/helpers/colorScale";
 import type { MapOptions } from "@/lib/types/mapOptions";
+import {
+	hasPopulationMetric,
+	POPULATION_METRIC_RANGES,
+} from "@/lib/config/mapOptions";
 import type {
 	ActiveViz,
 	Dataset,
@@ -90,9 +94,7 @@ export default function LegendPanel({
 			({ turnoutPercent }) => turnoutPercent > 0,
 		);
 	const countMetricDataset =
-		activeDataset?.type === "businessActivity" ||
-		activeDataset?.type === "electricVehicleChargers" ||
-		activeDataset?.type === "jobs"
+		activeDataset && hasPopulationMetric(activeDataset.type)
 			? activeDataset.type
 			: null;
 
@@ -263,17 +265,9 @@ export default function LegendPanel({
 					}
 					onChange={(measure) => {
 						const colorRange =
-							countMetricDataset === "jobs"
-								? measure === "total"
-									? { min: 0, max: 500_000 }
-									: { min: 0, max: 100_000 }
-								: measure === "total"
-									? countMetricDataset === "businessActivity"
-										? { min: 0, max: 50_000 }
-										: { min: 0, max: 1_500 }
-									: countMetricDataset === "businessActivity"
-										? { min: 0, max: 12_000 }
-										: { min: 0, max: 500 };
+							POPULATION_METRIC_RANGES[countMetricDataset][
+								measure
+							];
 						onMapOptionsChange(countMetricDataset, {
 							measure,
 							colorRange,

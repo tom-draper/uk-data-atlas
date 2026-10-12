@@ -30,7 +30,7 @@ export interface ChartDatasetMap<T = unknown> {
 	legend: {
 		min: number;
 		max: number;
-		format: (value: number) => string;
+		format: (value: number, mapOptions: MapOptions) => string;
 	};
 	// Most datasets colour low->high as high->low on the theme gradient
 	// (matches updateGenericMap's default). Rank-based datasets, where a

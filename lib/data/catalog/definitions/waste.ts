@@ -1,6 +1,8 @@
 import { loadWaste } from "../../new-datasets/loader";
 import type { IndicatorDataset } from "@/lib/types/indicator";
 import type { DatasetDefinition } from "../types";
+import { loadPopulationUk } from "../../population/ukLoader";
+import { addPopulationMetrics } from "../../population/metrics";
 
 export const wasteDatasetDefinition: DatasetDefinition<
 	IndicatorDataset<"waste">
@@ -26,5 +28,16 @@ export const wasteDatasetDefinition: DatasetDefinition<
 		expectedBoundaryYears: [2025],
 		requiredDataFields: ["value"],
 	},
-	precompile: ({ odsTableRows }) => loadWaste(odsTableRows),
+	precompile: async ({ odsTableRows, xlsxSheet }) => {
+		const datasets = await loadWaste(odsTableRows);
+		const population = await loadPopulationUk(xlsxSheet);
+		for (const dataset of Object.values(datasets)) {
+			addPopulationMetrics(
+				dataset.data,
+				population["2024"]?.data ?? {},
+				(record) => record.value,
+			);
+		}
+		return datasets;
+	},
 };

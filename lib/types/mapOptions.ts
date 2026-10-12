@@ -80,6 +80,9 @@ export type ChartMapOptions = Omit<
 	| "lifeExpectancy"
 	| "businessActivity"
 	| "electricVehicleChargers"
+	| "electricityConsumption"
+	| "gasConsumption"
+	| "waste"
 	| "jobs"
 	| "broadband"
 	| "airQuality"
@@ -93,6 +96,9 @@ export type ChartMapOptions = Omit<
 	income: IncomeOptions;
 	businessActivity: CountMetricOptions;
 	electricVehicleChargers: CountMetricOptions;
+	electricityConsumption: CountMetricOptions;
+	gasConsumption: CountMetricOptions;
+	waste: CountMetricOptions;
 	jobs: CountMetricOptions;
 	broadband: BroadbandOptions;
 	airQuality: AirQualityOptions;

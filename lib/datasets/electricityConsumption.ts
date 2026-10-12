@@ -52,12 +52,21 @@ export const electricityConsumptionDefinition: ChartDatasetDefinition<Electricit
 			year: 2024,
 		},
 		map: {
-			valueKey: "allMetersGwh",
+			valueFor: (dataset, code, mapOptions) => {
+				const record = dataset.data[code];
+				return mapOptions.electricityConsumption.measure ===
+					"perPopulation"
+					? (record?.metrics?.per100kPopulation ?? null)
+					: (record?.allMetersGwh ?? null);
+			},
+			sourceMode: (_dataset, mapOptions) =>
+				`electricityConsumption:${mapOptions.electricityConsumption.measure}`,
 			colorRange: { min: 0, max: 2_500 },
 			legend: {
 				min: 0,
 				max: 4_000,
-				format: (value) => `${formatCompactCount(value)} GWh`,
+				format: (value, mapOptions) =>
+					`${formatCompactCount(value)} GWh${mapOptions.electricityConsumption.measure === "perPopulation" ? " per 100k" : ""}`,
 			},
 		},
 	};

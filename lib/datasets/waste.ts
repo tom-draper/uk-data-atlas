@@ -23,12 +23,20 @@ export const wasteDefinition: ChartDatasetDefinition<
 		year: 2025,
 	},
 	map: {
-		valueKey: "value",
+		valueFor: (dataset, code, mapOptions) => {
+			const record = dataset.data[code];
+			return mapOptions.waste.measure === "perPopulation"
+				? (record?.metrics?.per100kPopulation ?? null)
+				: (record?.value ?? null);
+		},
+		sourceMode: (_dataset, mapOptions) =>
+			`waste:${mapOptions.waste.measure}`,
 		colorRange: { min: 0, max: 200_000 },
 		legend: {
 			min: 0,
 			max: 500_000,
-			format: (v) => `${v.toLocaleString("en-GB")} t`,
+			format: (v, mapOptions) =>
+				`${v.toLocaleString("en-GB")} t${mapOptions.waste.measure === "perPopulation" ? " per 100k" : ""}`,
 		},
 	},
 };
