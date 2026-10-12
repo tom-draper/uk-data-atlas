@@ -1,3 +1,4 @@
+import { lazyValue } from "./lazyValue";
 import { readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { readMeasureObservations } from "./observationLoader";
@@ -232,11 +233,15 @@ export const readApiCatalogues = (
 			options.onStaleCompiledGeometry,
 		),
 	);
-	const placeIndex = stage("place-index", () =>
-		readPlaceIndex(apiRoot, areaInventory, namedLocationInventory),
+	const placeIndex = lazyValue(() =>
+		stage("place-index", () =>
+			readPlaceIndex(apiRoot, areaInventory, namedLocationInventory),
+		),
 	);
-	const areaSearchIndex = stage("area-search-index", () =>
-		readAreaSearchIndex(apiRoot, areaInventory),
+	const areaSearchIndex = lazyValue(() =>
+		stage("area-search-index", () =>
+			readAreaSearchIndex(apiRoot, areaInventory),
+		),
 	);
 	const relationshipPathIndex = stage("relationship-path-index", () =>
 		createRelationshipPathIndex(relationshipPathInventory),
@@ -252,8 +257,12 @@ export const readApiCatalogues = (
 			areaGeometryCache,
 			namedLocationInventory,
 			namedLocationLookup,
-			placeIndex,
-			areaSearchIndex,
+			get placeIndex() {
+				return placeIndex();
+			},
+			get areaSearchIndex() {
+				return areaSearchIndex();
+			},
 			postcodeIndex,
 			postcodeAreaIndex,
 			postcodeCountsIndex,

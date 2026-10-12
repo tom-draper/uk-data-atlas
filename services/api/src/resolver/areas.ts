@@ -1,3 +1,4 @@
+import { lazyValue } from "../lazyValue";
 import type { AreaInventory, AreaLookup, AreaRecord } from "../areaInventory";
 import { areaKey, releaseKey } from "../geographyKeys";
 import { explainAreaAbsence, type AreaAbsence } from "../areaAbsence";
@@ -58,7 +59,7 @@ export type AreasResolverInputs = {
 
 /** Area identity, release and place indexes over immutable compiled artifacts. */
 export class AreasResolver {
-	private readonly areaSearch?: AreaSearch;
+	private readonly areaSearch: () => AreaSearch | undefined;
 	/** Each geography's releases in the area inventory, oldest first. */
 	private readonly geographyReleases = new Map<string, string[]>();
 	private readonly boundaryReleases = new Map<
@@ -74,10 +75,12 @@ export class AreasResolver {
 				releaseKey(release.geography, release.id),
 				release,
 			);
-		if (inputs.areaLookup) {
-			this.areaSearch = inputs.areaSearchIndex
+		this.areaSearch = lazyValue(() =>
+			inputs.areaSearchIndex && inputs.areaLookup
 				? new AreaSearch(inputs.areaSearchIndex, inputs.areaLookup)
-				: undefined;
+				: undefined,
+		);
+		if (inputs.areaLookup) {
 			for (const releaseIdentity of inputs.areaLookup.keys()) {
 				const [geography, boundaryRelease] = releaseIdentity.split(
 					"/",
@@ -297,12 +300,12 @@ export class AreasResolver {
 	}
 
 	hasAreaSearch() {
-		return this.areaSearch !== undefined;
+		return this.inputs.areaSearchIndex !== undefined;
 	}
 
 	searchAreas(query: AreaSearchFilters & { query?: string }): AreaMatches {
 		return (
-			this.areaSearch?.search(query) ?? {
+			this.areaSearch()?.search(query) ?? {
 				length: 0,
 				positionOf: () => -1,
 				slice: () => [],
@@ -311,7 +314,7 @@ export class AreasResolver {
 	}
 
 	exactAreaCandidates(query: AreaSearchFilters & { query: string }) {
-		return this.areaSearch?.exactCandidates(query) ?? [];
+		return this.areaSearch()?.exactCandidates(query) ?? [];
 	}
 
 	resolveAreaCandidates(query: AreaSearchFilters & { query: string }) {
