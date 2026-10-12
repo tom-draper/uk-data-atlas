@@ -88,6 +88,8 @@ export type ApiCatalogues = Omit<
 };
 
 export type CatalogueOptions = {
+	mapAssetBaseUrl?: string;
+	mapTileBaseUrl?: string;
 	/** Geometry releases held in memory at once; see `AreaGeometryCache`. */
 	geometryCacheReleases?: number;
 	/**
@@ -155,7 +157,11 @@ export const readApiCatalogues = (
 		);
 	}
 	const mapResources = stage("map-resources", () =>
-		readMapResources(apiRoot),
+		readMapResources(
+			apiRoot,
+			options.mapAssetBaseUrl,
+			options.mapTileBaseUrl,
+		),
 	);
 	const mapAssets = stage("map-assets", () =>
 		readMapAssets(apiRoot, mapResources),

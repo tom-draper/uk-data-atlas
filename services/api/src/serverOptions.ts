@@ -60,6 +60,9 @@ const DEFAULT_GEOMETRY_CACHE_RELEASES = 6;
 const DEFAULT_RESPONSE_CACHE_MEGABYTES = 32;
 
 export type ServeConfiguration = {
+	workers: number;
+	mapAssetBaseUrl?: string;
+	mapTileBaseUrl?: string;
 	port: number;
 	host: string;
 	geometryCacheReleases: number;
@@ -105,6 +108,23 @@ const toggle = (env: NodeJS.ProcessEnv, name: string, fallback: boolean) => {
 	throw new Error(`${name} must be on or off.`);
 };
 
+const httpBaseUrl = (env: NodeJS.ProcessEnv, name: string) => {
+	const text = env[name];
+	if (!text) return undefined;
+	const url = new URL(text);
+	if (
+		!["http:", "https:"].includes(url.protocol) ||
+		url.username ||
+		url.password ||
+		url.search ||
+		url.hash
+	)
+		throw new Error(
+			`${name} must be an HTTP URL without credentials, query or fragment.`,
+		);
+	return url.href.replace(/\/$/, "");
+};
+
 /**
  * The server's configuration from its environment. Every setting has a
  * default suited to a single public instance, and a malformed value stops the
@@ -116,6 +136,9 @@ export const readServeConfiguration = (
 ): ServeConfiguration => {
 	const capacity = integer(env, "ATLAS_RATE_LIMIT_CAPACITY", 600, 0);
 	return {
+		workers: integer(env, "ATLAS_WORKERS", 2, 1, 32),
+		mapAssetBaseUrl: httpBaseUrl(env, "ATLAS_MAP_ASSET_BASE_URL"),
+		mapTileBaseUrl: httpBaseUrl(env, "ATLAS_MAP_TILE_BASE_URL"),
 		port: integer(env, "PORT", 3001, 1, 65535),
 		host: env.HOST || "127.0.0.1",
 		geometryCacheReleases: integer(

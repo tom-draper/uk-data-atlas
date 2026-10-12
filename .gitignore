@@ -77,3 +77,5 @@ CLAUDE.md
 # grew the repository with every rebuild. The website reads its committed
 # docs catalogue projection from public/data/datasets instead.
 /services/api/public/*
+
+/services/api/dist/

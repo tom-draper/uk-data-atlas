@@ -104,6 +104,12 @@ const featureDownload = (
 			`${geography}/${release} is downloadable at ${tiers.join(", ")} only: its areas are not a coverage, so they cannot be generalised together without opening gaps between them.`,
 		);
 	}
+	if (context.mapResources?.assetBaseUrl)
+		return {
+			status: 307,
+			headers: { location: entry.href },
+			body: envelope(releaseId, { href: entry.href }),
+		};
 	const body = context.mapFeatures?.get(entry.artifact);
 	if (!body) return unavailable();
 	return {
@@ -238,9 +244,17 @@ export const handleMapResourceRoutes = ({
 			);
 		return notFound(geography, release);
 	}
-	const origin = `/v1/map-resources/${id}`;
+	const origin = mapResources.tileBaseUrl
+		? `${mapResources.tileBaseUrl}/${id}`
+		: `/v1/map-resources/${id}`;
 
 	if (asArchive) {
+		if (mapResources.assetBaseUrl)
+			return {
+				status: 307,
+				headers: { location: resource.tiles.href },
+				body: envelope(releaseId, { href: resource.tiles.href }),
+			};
 		const archive = mapArchives?.get(id);
 		if (!archive) return unavailable();
 		return {
@@ -271,11 +285,18 @@ export const handleMapResourceRoutes = ({
 			body: envelope(releaseId, resource),
 		};
 
-	if (segments.length === 5 && segments[4] === "tiles.json")
+	if (segments.length === 5 && segments[4] === "tiles.json") {
+		if (mapResources.assetBaseUrl && !mapResources.tileBaseUrl)
+			return problem(
+				503,
+				"Tile Service Unavailable",
+				`Use the PMTiles archive at ${resource.tiles.href}, or configure ATLAS_MAP_TILE_BASE_URL.`,
+			);
 		return {
 			status: 200,
 			body: envelope(releaseId, tileJson(resource, origin)),
 		};
+	}
 
 	if (segments.length === 5 && segments[4] === "features")
 		return featureDownload(
@@ -430,8 +451,6 @@ export const handleMapResourceRoutes = ({
 	}
 
 	if (segments.length === 8 && segments[4] === "tiles") {
-		const archive = mapArchives?.get(id);
-		if (!archive) return unavailable();
 		const name = segments[7]!;
 		if (!name.endsWith(".mvt"))
 			return problem(
@@ -457,6 +476,16 @@ export const handleMapResourceRoutes = ({
 				"Not Found",
 				`This resource publishes zoom ${resource.tiles.minZoom} to ${resource.tiles.maxZoom}, not ${z}. A renderer should over-zoom past the last one.`,
 			);
+		if (mapResources.tileBaseUrl)
+			return {
+				status: 307,
+				headers: { location: `${origin}/tiles/${z}/${x}/${y}.mvt` },
+				body: envelope(releaseId, {
+					href: `${origin}/tiles/${z}/${x}/${y}.mvt`,
+				}),
+			};
+		const archive = mapArchives?.get(id);
+		if (!archive) return unavailable();
 		const tile = archive.tile(z, x, y);
 		// Inside the published zooms and covering no area: an ordinary answer
 		// for a renderer, so it is empty rather than a failure.

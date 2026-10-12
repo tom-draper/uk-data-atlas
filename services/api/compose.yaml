@@ -1,0 +1,17 @@
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: services/api/Dockerfile
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - ./public:/app/services/api/public:ro
+    environment:
+      ATLAS_WORKERS: "2"
+      ATLAS_MAP_ASSET_BASE_URL: ${ATLAS_MAP_ASSET_BASE_URL:-}
+      ATLAS_MAP_TILE_BASE_URL: ${ATLAS_MAP_TILE_BASE_URL:-}
+      ATLAS_METRICS_TOKEN: ${ATLAS_METRICS_TOKEN:-}
+    stop_grace_period: 15s

@@ -26,3 +26,27 @@ test("stops rather than guess at a malformed response cache size", () => {
 			/ATLAS_RESPONSE_CACHE_MB/,
 		);
 });
+
+test("defaults to two workers and validates deployment origins", () => {
+	assert.equal(readServeConfiguration({}).workers, 2);
+	assert.equal(readServeConfiguration({ ATLAS_WORKERS: "1" }).workers, 1);
+	for (const value of ["0", "1.5", "33"])
+		assert.throws(
+			() => readServeConfiguration({ ATLAS_WORKERS: value }),
+			/ATLAS_WORKERS/,
+		);
+	assert.equal(
+		readServeConfiguration({
+			ATLAS_MAP_ASSET_BASE_URL: "https://maps.example.com/release/",
+		}).mapAssetBaseUrl,
+		"https://maps.example.com/release",
+	);
+	for (const value of [
+		"file:///tmp/maps",
+		"https://user:pass@example.com",
+		"https://example.com/?token=secret",
+	])
+		assert.throws(() =>
+			readServeConfiguration({ ATLAS_MAP_ASSET_BASE_URL: value }),
+		);
+});

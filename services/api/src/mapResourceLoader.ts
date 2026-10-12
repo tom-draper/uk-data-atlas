@@ -6,6 +6,8 @@ import type { MapResourceDescriptor } from "./mapResource/compileMapResource";
 import type { StoredFile } from "./routeResponse";
 
 export type MapResources = {
+	assetBaseUrl?: string;
+	tileBaseUrl?: string;
 	resources: MapResourceDescriptor[];
 	/**
 	 * Releases the build could not tile, such as one that is not a coverage.
@@ -97,10 +99,37 @@ const byTier = (features: MapResourceDescriptor["features"], format: string) =>
 	);
 
 /** The published map resources, when the optional map build is present. */
-export const readMapResources = (apiRoot: string): MapResources => {
+export const readMapResources = (
+	apiRoot: string,
+	assetBaseUrl?: string,
+	tileBaseUrl?: string,
+): MapResources => {
 	const path = join(apiRoot, "public", "map-resources.json");
 	if (!existsSync(path)) return { resources: [] };
-	return JSON.parse(readFileSync(path, "utf8")) as MapResources;
+	const resources: MapResources = JSON.parse(readFileSync(path, "utf8"));
+	if (!assetBaseUrl) return resources;
+	const href = (artifact: string) =>
+		`${assetBaseUrl}/${artifact.split("/").map(encodeURIComponent).join("/")}`;
+	return {
+		...resources,
+		assetBaseUrl,
+		tileBaseUrl,
+		resources: resources.resources.map((resource) => ({
+			...resource,
+			tiles: { ...resource.tiles, href: href(resource.tiles.artifact) },
+			features: resource.features.map((entry) => ({
+				...entry,
+				href: href(entry.artifact),
+			})),
+		})),
+		unavailable: resources.unavailable?.map((resource) => ({
+			...resource,
+			features: resource.features?.map((entry) => ({
+				...entry,
+				href: href(entry.artifact),
+			})),
+		})),
+	};
 };
 
 /**
@@ -116,10 +145,12 @@ export const readMapAssets = (
 	mapFeatures: Map<string, StoredFile>;
 } => ({
 	mapArchives: new Map(
-		mapResources.resources.map((resource) => [
-			resource.id,
-			openArchive(join(apiRoot, "public", resource.tiles.artifact)),
-		]),
+		(mapResources.assetBaseUrl ? [] : mapResources.resources).map(
+			(resource) => [
+				resource.id,
+				openArchive(join(apiRoot, "public", resource.tiles.artifact)),
+			],
+		),
 	),
 	mapFeatures: new Map(
 		allFeatures(mapResources).map((entry) => [
