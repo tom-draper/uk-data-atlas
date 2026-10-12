@@ -13,17 +13,23 @@ const stages: Array<{
 	milliseconds: number;
 	memory: NodeJS.MemoryUsage;
 }> = [];
-readApiCatalogues(apiRoot, {
+const catalogues = readApiCatalogues(apiRoot, {
 	onStage: (stage, milliseconds) => {
 		stages.push({ stage, milliseconds, memory: process.memoryUsage() });
 	},
 });
 const totalMilliseconds = performance.now() - started;
 const after = process.memoryUsage();
-const heapSnapshotPath = writeHeapSnapshot(
-	process.env.ATLAS_HEAP_SNAPSHOT_PATH ??
-		join(tmpdir(), `uk-data-atlas-startup-${process.pid}.heapsnapshot`),
-);
+const heapSnapshotPath =
+	process.env.ATLAS_HEAP_SNAPSHOT === "off"
+		? null
+		: writeHeapSnapshot(
+				process.env.ATLAS_HEAP_SNAPSHOT_PATH ??
+					join(
+						tmpdir(),
+						`uk-data-atlas-startup-${process.pid}.heapsnapshot`,
+					),
+			);
 const change = (from: NodeJS.MemoryUsage, to: NodeJS.MemoryUsage) => ({
 	rssBytes: to.rss - from.rss,
 	heapTotalBytes: to.heapTotal - from.heapTotal,
@@ -35,6 +41,7 @@ const change = (from: NodeJS.MemoryUsage, to: NodeJS.MemoryUsage) => ({
 console.log(
 	JSON.stringify(
 		{
+			releaseId: catalogues.atlasRelease.releaseId,
 			totalMilliseconds,
 			memoryBefore: before,
 			memoryAfter: after,

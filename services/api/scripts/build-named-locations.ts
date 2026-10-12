@@ -1,3 +1,4 @@
+import { packNamedLocations } from "../src/namedLocationStorage";
 import { existsSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -163,6 +164,7 @@ export const buildNamedLocations = (repositoryRoot: string) => {
 		locations,
 	};
 	writeFileSync(outputPath, `${JSON.stringify(inventory, null, "\t")}\n`);
+	packNamedLocations(dirname(outputPath), inventory);
 	return { outputPath, count: inventory.locations.length };
 };
 
