@@ -14,21 +14,21 @@ export const metadata: Metadata = siteMetadata({
 export default function Home() {
 	return (
 		<div
+			className="min-h-dvh"
 			style={{
 				backgroundImage: "url(/map-background.webp)",
 				backgroundSize: "cover",
-				minHeight: "100vh",
 			}}
 		>
 			<JsonLd data={websiteJsonLd()} />
 			<div className="relative z-10">
 				<Navigation />
-				<div className="pt-[20vh] px-[16%]">
-					<div className="p-5">
-						<h1 className="text-[38px] leading-[1.08] font-semibold tracking-tight text-slate-900 sm:text-[50px]">
+				<div className="px-6 pt-12 pb-8 sm:px-[16%] sm:pt-[20vh]">
+					<div className="sm:p-5">
+						<h1 className="text-[32px] leading-[1.08] font-semibold tracking-tight text-slate-900 sm:text-[50px]">
 							UK Data Atlas
 						</h1>
-						<p className="mt-5 text-[18px] leading-[1.65] text-slate-600">
+						<p className="mt-4 text-[16px] leading-[1.6] text-slate-600 sm:mt-5 sm:text-[18px] sm:leading-[1.65]">
 							A powerful mapping platform for visualizing data
 							that shapes the{" "}
 							<span className="text-slate-800">
@@ -37,7 +37,7 @@ export default function Home() {
 							.
 						</p>
 
-						<div className="mt-7 flex flex-wrap items-center gap-3">
+						<div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-7">
 							<Link
 								className="inline-flex items-center rounded-md bg-slate-900 px-4 py-2.5 text-[14px] font-medium text-white shadow-[0_8px_24px_rgba(15,23,42,0.18)] transition-colors hover:bg-slate-800"
 								href="/atlas"

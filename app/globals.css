@@ -183,12 +183,6 @@ body {
 	object-position: top left;
 }
 
-@media screen and (max-width: 1300px) {
-	nav > div {
-		width: 90%;
-	}
-}
-
 .scroll-container {
 	/* height: 300px; */
 	overflow: auto;
