@@ -139,3 +139,18 @@ test("lists a rule's choices as a sentence does", () => {
 		"json, csv or ndjson",
 	);
 });
+
+test("operations that share a reader state the same rule", () => {
+	const crs = QUERY_RULES["GET /areas:contains"].crs;
+	for (const shared of [
+		QUERY_RULES["POST /areas:containsBatch"].crs,
+		QUERY_RULES["GET /areas:near"].crs,
+		QUERY_RULES["GET /coordinates:convert"].crs,
+		QUERY_RULES["GET /coordinates:convert"].to,
+	])
+		assert.deepEqual(shared, crs);
+	assert.deepEqual(
+		QUERY_RULES["GET /areas/{geography}/{release}/{code}/children"].depth,
+		QUERY_RULES["GET /areas/{geography}/{release}/{code}/parents"].depth,
+	);
+});

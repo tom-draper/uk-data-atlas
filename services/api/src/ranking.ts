@@ -37,16 +37,6 @@ export const rankObservations = (
 	});
 };
 
-/** An `order` query value: descending unless asc is asked for. */
-export const readRankingOrder = (
-	value: string | null,
-): RankingOrder | undefined =>
-	value === null || value === "desc"
-		? "desc"
-		: value === "asc"
-			? "asc"
-			: undefined;
-
 /** One partition ranked in one order, read a page at a time. */
 export type Ranking = {
 	length: number;

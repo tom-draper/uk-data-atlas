@@ -10,11 +10,10 @@ import {
 } from "./pointLookup";
 import { envelope, invalidQuery, type ApiResponse } from "./routeResponse";
 import type { RouteRequest } from "./routing";
-import { readBoundedWholeNumber } from "./queryParameters";
+import { readWholeNumber } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
-export const MAX_NEAR_LIMIT = 10;
-export const DEFAULT_NEAR_WITHIN_M = 1000;
-export const MAX_NEAR_WITHIN_M = 50000;
+const NEAR = QUERY_RULES["GET /areas:near"];
 
 /**
  * The areas of each requested geography nearest a WGS84 point. This is a
@@ -63,25 +62,15 @@ export const handleAreaNearRoutes = ({
 					? "easting and northing, or gridref as an Ordnance Survey National Grid reference, are required for EPSG:27700."
 					: `easting and northing are required as plain decimal grid metres for ${crs}.`,
 		);
-	const limit = readBoundedWholeNumber(
-		searchParams.get("limit"),
-		1,
-		1,
-		MAX_NEAR_LIMIT,
-	);
-	if (limit === undefined)
+	const limit = readWholeNumber(searchParams.get("limit"), NEAR.limit);
+	if (limit === null)
 		return invalidQuery(
-			`limit must be a whole number from 1 to ${MAX_NEAR_LIMIT}.`,
+			`limit must be a whole number from ${NEAR.limit.minimum} to ${NEAR.limit.maximum}.`,
 		);
-	const withinM = readBoundedWholeNumber(
-		searchParams.get("within"),
-		DEFAULT_NEAR_WITHIN_M,
-		1,
-		MAX_NEAR_WITHIN_M,
-	);
-	if (withinM === undefined)
+	const withinM = readWholeNumber(searchParams.get("within"), NEAR.within);
+	if (withinM === null)
 		return invalidQuery(
-			`within must be a whole number of metres from 1 to ${MAX_NEAR_WITHIN_M}.`,
+			`within must be a whole number of metres from ${NEAR.within.minimum} to ${NEAR.within.maximum}.`,
 		);
 	const geographyResolver = context.geographyResolver;
 	const unavailable = geographyResolver.requires("geometry");

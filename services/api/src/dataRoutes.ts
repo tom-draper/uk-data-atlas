@@ -34,6 +34,10 @@ import {
 	problem,
 	type ApiResponse,
 } from "./routeResponse";
+import { choices, readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
+
+const DATA = QUERY_RULES["GET /data/{measure-id}"];
 
 /** A measure's source-exact observations for one period, as JSON or a tabular export. */
 export const handleDataRoutes = ({
@@ -144,19 +148,21 @@ export const handleDataRoutes = ({
 	}
 	const areaCode = area?.code ?? place?.code;
 	const include = parsedUrl.searchParams.get("include");
-	const requestedFormat = parsedUrl.searchParams.get("format") ?? "json";
-	const unitMode = parsedUrl.searchParams.get("units") ?? "source";
-	if (
-		requestedFormat !== "json" &&
-		requestedFormat !== "csv" &&
-		requestedFormat !== "ndjson"
-	) {
-		return invalidQuery("format must be one of json, csv or ndjson.", {
+	const requestedFormat = readChoice(
+		parsedUrl.searchParams.get("format"),
+		DATA.format,
+	);
+	const unitMode = readChoice(
+		parsedUrl.searchParams.get("units"),
+		DATA.units,
+	);
+	if (!requestedFormat) {
+		return invalidQuery(`format must be one of ${choices(DATA.format)}.`, {
 			code: "invalid_format",
 		});
 	}
-	if (unitMode !== "source" && unitMode !== "canonical") {
-		return invalidQuery("units must be source or canonical.");
+	if (!unitMode) {
+		return invalidQuery(`units must be ${choices(DATA.units)}.`);
 	}
 	if (unitMode === "canonical" && requestedFormat !== "json") {
 		return problem(

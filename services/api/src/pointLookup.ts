@@ -17,6 +17,8 @@ import {
 } from "./reprojection";
 import { invalidQuery, problem, type ApiResponse } from "./routeResponse";
 import type { RouteContext } from "./routing";
+import { readChoice } from "./queryParameters";
+import { QUERY_RULES } from "./queryRules";
 
 /** A lookup reads one release per geography, and each is held in memory. */
 export const MAX_LOOKUP_GEOGRAPHIES = 4;
@@ -86,17 +88,13 @@ const roundM = (metres: number) => Math.round(metres * 100) / 100;
  */
 const roundDegrees = (degrees: number) => Math.round(degrees * 1e6) / 1e6;
 
+// Every point endpoint states the same `crs`, which a test holds them to.
+const CRS = QUERY_RULES["GET /areas:contains"].crs;
+
 /** The deliberately small CRS vocabulary the public point endpoints accept. */
 export const parseLookupCrs = (
 	text: string | null,
-): LookupInputCrs | undefined => {
-	if (text === null) return "EPSG:4326";
-	return text === "EPSG:4326" ||
-		text === "EPSG:27700" ||
-		text === "EPSG:29902"
-		? text
-		: undefined;
-};
+): LookupInputCrs | undefined => readChoice(text, CRS) ?? undefined;
 
 /** A stated accuracy in metres; undefined when absent, null when malformed. */
 export const parseStatedAccuracy = (
