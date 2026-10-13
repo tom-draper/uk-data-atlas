@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
 	SEVERAL,
 	type PostcodeAreaColumn,
@@ -8,6 +7,7 @@ import {
 } from "./postcodeAreas";
 import type { PostcodeIndexArtifact, PostcodeShard } from "./postcodes";
 import { compareCodeUnits } from "./sortedIndex";
+import { sha256 } from "./contentHash";
 
 export type PostcodeCounts = {
 	/** Unit postcodes with no termination date in this ONS directory edition. */
@@ -31,9 +31,6 @@ export type PostcodeCountsArtifact = {
 		areas: Record<string, Omit<PostcodeCounts, "edition">>;
 	}>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const add = (
 	areas: Map<string, Omit<PostcodeCounts, "edition">>,

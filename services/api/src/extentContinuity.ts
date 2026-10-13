@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./contentHash";
 import type { MultiPolygon } from "polygon-clipping";
 import type { GeometrySourceLookup } from "./areaGeometry";
 import type { AreaLookup } from "./areaInventory";
@@ -461,9 +461,7 @@ export const compileExtentContinuityCrosswalk = (
 	};
 	return {
 		...artifactWithoutHash,
-		contentHash: `sha256:${createHash("sha256")
-			.update(JSON.stringify(artifactWithoutHash))
-			.digest("hex")}`,
+		contentHash: sha256(JSON.stringify(artifactWithoutHash)),
 	};
 };
 

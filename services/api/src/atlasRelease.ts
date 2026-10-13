@@ -1,8 +1,8 @@
-import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { releaseKey } from "./geographyKeys";
 import { observationArtifactName, type DataCatalog } from "./dataCatalog";
+import { sha256 } from "./contentHash";
 
 export type AtlasReleaseArtifactRef = {
 	id: string;
@@ -37,9 +37,6 @@ export type AtlasRelease = {
 	 */
 	resources?: Partial<Record<ResourceKind, Record<string, string>>>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const RELEASE_ARTIFACTS: Array<{ id: string; path: string }> = [
 	{ id: "boundary-registry", path: "boundary-releases.json" },

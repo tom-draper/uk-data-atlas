@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import type { ValidationCheckId } from "../validationReport";
+export { sha256 } from "../contentHash";
 
 export type Finding = {
 	id: ValidationCheckId;
@@ -7,9 +7,6 @@ export type Finding = {
 	detail?: string;
 	measured?: Record<string, number | string | null>;
 };
-
-export const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export const listed = (values: string[], limit = 10) =>
 	values.length > limit

@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import type { AreaInventory } from "./areaInventory";
 import type { BoundaryRegistry } from "./boundaryRegistry";
 import type {
@@ -9,6 +8,7 @@ import type {
 } from "./crosswalkInventory";
 import type { SourceInventory } from "./sourceInventory";
 import { releaseKey } from "./geographyKeys";
+import { sha256 } from "./contentHash";
 
 export type GeographyRelationship = {
 	id: string;
@@ -69,9 +69,6 @@ export type GeographyInventory = {
 		};
 	}>;
 };
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 const toKebabCase = (value: string) =>
 	value.replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();

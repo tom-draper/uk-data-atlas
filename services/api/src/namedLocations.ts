@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import type { NamedLocationGeometry } from "./namedLocationGeometry";
+import { sha256 } from "./contentHash";
 
 type GazetteerCore = {
 	version?: unknown;
@@ -99,9 +99,6 @@ export type NamedLocationInventory = {
 };
 
 export type NamedLocationLookup = Map<string, NamedLocation>;
-
-const sha256 = (content: string) =>
-	`sha256:${createHash("sha256").update(content).digest("hex")}`;
 
 export const idFor = (label: string) =>
 	label
