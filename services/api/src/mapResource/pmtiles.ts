@@ -1,4 +1,5 @@
 import { gzipSync } from "node:zlib";
+import { varint } from "./varint";
 
 /**
  * A PMTiles v3 archive: one file holding a whole tile pyramid.
@@ -17,16 +18,6 @@ const ROOT_DIRECTORY_TARGET = 16384;
 
 export const TILE_TYPE_MVT = 1;
 const COMPRESSION_GZIP = 2;
-
-/** Unsigned LEB128, the only integer encoding the directories use. */
-const varint = (value: number, into: number[]) => {
-	let rest = value;
-	while (rest > 0x7f) {
-		into.push((rest & 0x7f) | 0x80);
-		rest = Math.floor(rest / 128);
-	}
-	into.push(rest);
-};
 
 /**
  * Where a tile sits in the archive's ordering: the zoom's first id, plus the
