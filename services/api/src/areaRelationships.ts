@@ -92,6 +92,41 @@ const relationFor = (
 	return "predecessor";
 };
 
+const AREA_RELATIONS: AreaRelation[] = [
+	"within",
+	"contains",
+	"successor",
+	"predecessor",
+	"split-from",
+	"merged-from",
+	"equivalent-to",
+	"overlaps",
+];
+
+/**
+ * Every relation a crosswalk can state, which its header settles before any
+ * record is read. It follows `relationFor` branch for branch.
+ */
+export const relationsOf = ({
+	method,
+	relationshipPurpose,
+}: Pick<
+	CrosswalkArtifact,
+	"method" | "relationshipPurpose"
+>): readonly AreaRelation[] => {
+	if (method === "best-fit") return ["within", "contains", "overlaps"];
+	if (
+		method === "clean-containment" ||
+		method === "geometric-containment" ||
+		relationshipPurpose === "membership"
+	)
+		return ["within", "contains"];
+	if (method === "area-overlap" || method === "population-overlap")
+		return ["overlaps"];
+	if (method === "extent-continuity") return ["equivalent-to"];
+	return ["successor", "split-from", "merged-from", "predecessor"];
+};
+
 /** Edges that describe an area across boundary releases rather than membership. */
 export const isLineageRelation = (relation: AreaRelation): boolean =>
 	[
@@ -121,6 +156,60 @@ const overlapFor = (
 		},
 	};
 };
+
+type CrosswalkRecord = CrosswalkArtifact["records"][number];
+type CrosswalkTarget = CrosswalkRecord["targets"][number];
+type Cardinality = { sourceTargetCount: number; targetSourceCount: number };
+
+const metadataOf = (
+	crosswalk: CrosswalkArtifact,
+): AreaRelationship["crosswalk"] => ({
+	id: crosswalk.id,
+	method: crosswalk.method,
+	quality: crosswalk.quality,
+	weighting: crosswalk.weighting,
+});
+
+/** What a record's source is to one of its targets. */
+const sourceRelationship = (
+	crosswalk: CrosswalkArtifact,
+	metadata: AreaRelationship["crosswalk"],
+	target: CrosswalkTarget,
+	targetId: string,
+	cardinality: Cardinality,
+): AreaRelationship => ({
+	relation: relationFor(crosswalk, target, "from", cardinality),
+	counterpart: {
+		id: targetId,
+		geography: crosswalk.to.geography,
+		boundaryRelease: crosswalk.to.boundaryRelease,
+		code: target.code,
+		labels: target.labels,
+	},
+	crosswalk: metadata,
+	...overlapFor(crosswalk, target, "from"),
+});
+
+/** What a record's target is to its source. */
+const targetRelationship = (
+	crosswalk: CrosswalkArtifact,
+	metadata: AreaRelationship["crosswalk"],
+	record: CrosswalkRecord,
+	target: CrosswalkTarget,
+	sourceId: string,
+	cardinality: Cardinality,
+): AreaRelationship => ({
+	relation: relationFor(crosswalk, target, "to", cardinality),
+	counterpart: {
+		id: sourceId,
+		geography: crosswalk.from.geography,
+		boundaryRelease: crosswalk.from.boundaryRelease,
+		code: record.source.code,
+		labels: record.source.labels,
+	},
+	crosswalk: metadata,
+	...overlapFor(crosswalk, target, "to"),
+});
 
 const addRelationship = (
 	index: AreaRelationshipIndex,
@@ -158,12 +247,7 @@ const addCrosswalkRelationships = (
 			);
 		}
 	}
-	const crosswalkMetadata = {
-		id: crosswalk.id,
-		method: crosswalk.method,
-		quality: crosswalk.quality,
-		weighting: crosswalk.weighting,
-	};
+	const crosswalkMetadata = metadataOf(crosswalk);
 	for (const record of crosswalk.records) {
 		const sourceId = areaId(
 			crosswalk.from.geography,
@@ -180,30 +264,29 @@ const addCrosswalkRelationships = (
 				sourceTargetCount: sourceTargetCounts.get(sourceId) ?? 0,
 				targetSourceCount: targetSourceCounts.get(targetId) ?? 0,
 			};
-			addRelationship(index, sourceId, {
-				relation: relationFor(crosswalk, target, "from", cardinality),
-				counterpart: {
-					id: targetId,
-					geography: crosswalk.to.geography,
-					boundaryRelease: crosswalk.to.boundaryRelease,
-					code: target.code,
-					labels: target.labels,
-				},
-				crosswalk: crosswalkMetadata,
-				...overlapFor(crosswalk, target, "from"),
-			});
-			addRelationship(index, targetId, {
-				relation: relationFor(crosswalk, target, "to", cardinality),
-				counterpart: {
-					id: sourceId,
-					geography: crosswalk.from.geography,
-					boundaryRelease: crosswalk.from.boundaryRelease,
-					code: record.source.code,
-					labels: record.source.labels,
-				},
-				crosswalk: crosswalkMetadata,
-				...overlapFor(crosswalk, target, "to"),
-			});
+			addRelationship(
+				index,
+				sourceId,
+				sourceRelationship(
+					crosswalk,
+					crosswalkMetadata,
+					target,
+					targetId,
+					cardinality,
+				),
+			);
+			addRelationship(
+				index,
+				targetId,
+				targetRelationship(
+					crosswalk,
+					crosswalkMetadata,
+					record,
+					target,
+					sourceId,
+					cardinality,
+				),
+			);
 		}
 	}
 };
@@ -232,38 +315,113 @@ export const createAreaRelationshipIndex = (
 };
 
 /**
+ * Where each code sits in a crosswalk's records: the records a source code
+ * heads, and for a target code each record and position it appears at, as
+ * consecutive pairs. It is all the lazy index keeps of a crosswalk, so one
+ * area's relationships are built without building every other area's.
+ */
+type CrosswalkPositions = {
+	sources: Map<string, number[]>;
+	targets: Map<string, number[]>;
+};
+
+const positionsIn = ({ records }: CrosswalkArtifact): CrosswalkPositions => {
+	const sources = new Map<string, number[]>();
+	const targets = new Map<string, number[]>();
+	for (let position = 0; position < records.length; position += 1) {
+		const record = records[position]!;
+		const heads = sources.get(record.source.code);
+		if (heads) heads.push(position);
+		else sources.set(record.source.code, [position]);
+		for (let at = 0; at < record.targets.length; at += 1) {
+			const code = record.targets[at]!.code;
+			const pairs = targets.get(code);
+			if (pairs) pairs.push(position, at);
+			else targets.set(code, [position, at]);
+		}
+	}
+	return { sources, targets };
+};
+
+/**
  * The same relationships as `createAreaRelationshipIndex`, built a release at
  * a time. An area's relationships come only from the crosswalks that name its
  * release, so answering for one reads those and no others; the rest of the
- * graph is never parsed unless something asks for it. Each area's list is
- * ordered as the eager index orders it, whatever order releases are asked in.
+ * graph is never parsed unless something asks for it. Of those crosswalks it
+ * keeps where each code sits, and builds relationships only for the area asked
+ * about: building every area's held hundreds of megabytes after one request.
+ * Each area's list is ordered as the eager index orders it, whatever order
+ * releases are asked in.
  */
 export class LazyAreaRelationshipIndex {
 	private readonly touching = new Map<string, CrosswalkArtifact[]>();
-	private readonly contributions = new Map<string, AreaRelationshipIndex>();
+	private readonly positions = new Map<string, CrosswalkPositions>();
 	private readonly areas = new Map<string, AreaRelationship[]>();
+	private readonly followed = new Map<string, AreaRelationship[]>();
 
 	constructor(private readonly lookup: CrosswalkLookup) {}
 
-	get(area: string): AreaRelationship[] | undefined {
-		let relationships = this.areas.get(area);
+	/**
+	 * An area's relationships, or with `follow` only those of the relations
+	 * it admits. A crosswalk's header says which relations it can state, so a
+	 * filtered lookup reads only the crosswalks that could answer it: an
+	 * area's lineage is in a few small files, and its memberships in large
+	 * ones a history never needs.
+	 */
+	get(
+		area: string,
+		follow?: (relation: AreaRelation) => boolean,
+	): AreaRelationship[] | undefined {
+		const all = this.areas.get(area);
+		if (follow && !all) return this.following(area, follow);
+		const relationships = all ?? this.relationshipsOf(area);
+		if (!all) this.areas.set(area, relationships);
+		const found = follow
+			? relationships.filter(({ relation }) => follow(relation))
+			: relationships;
+		return found.length > 0 ? found : undefined;
+	}
+
+	private following(
+		area: string,
+		follow: (relation: AreaRelation) => boolean,
+	): AreaRelationship[] | undefined {
+		const admitted = AREA_RELATIONS.filter(follow);
+		const key = `${area}\u0000${admitted.join(",")}`;
+		let relationships = this.followed.get(key);
 		if (!relationships) {
-			// An area key is geography/release/code; neither of the first two
-			// holds a slash, and a code may.
-			const [geography, boundaryRelease] = area.split("/", 2) as [
-				string,
-				string,
-			];
-			relationships = this.crosswalksFor(
-				geography,
-				boundaryRelease,
-			).flatMap(
-				(crosswalk) => this.contributionOf(crosswalk).get(area) ?? [],
+			relationships = this.relationshipsOf(area, admitted).filter(
+				({ relation }) => follow(relation),
 			);
-			relationships.sort(compareRelationships);
-			this.areas.set(area, relationships);
+			this.followed.set(key, relationships);
 		}
 		return relationships.length > 0 ? relationships : undefined;
+	}
+
+	/** Built from every crosswalk naming the area's release, or those that can state `admitted`. */
+	private relationshipsOf(
+		area: string,
+		admitted?: AreaRelation[],
+	): AreaRelationship[] {
+		// An area key is geography/release/code; neither of the first two
+		// holds a slash, and a code may.
+		const [geography, boundaryRelease] = area.split("/", 2) as [
+			string,
+			string,
+		];
+		const code = area.slice(
+			releaseKey(geography, boundaryRelease).length + 1,
+		);
+		return this.crosswalksFor(geography, boundaryRelease, admitted)
+			.flatMap((crosswalk) =>
+				this.relationshipsIn(
+					crosswalk,
+					geography,
+					boundaryRelease,
+					code,
+				),
+			)
+			.sort(compareRelationships);
 	}
 
 	/**
@@ -295,30 +453,134 @@ export class LazyAreaRelationshipIndex {
 		return codes;
 	}
 
-	/** The crosswalks naming a release, in inventory order. */
-	private crosswalksFor(geography: string, boundaryRelease: string) {
+	/**
+	 * The crosswalks naming a release, in inventory order: all of them, or
+	 * only those able to state one of the `admitted` relations.
+	 */
+	private crosswalksFor(
+		geography: string,
+		boundaryRelease: string,
+		admitted?: AreaRelation[],
+	) {
 		const release = releaseKey(geography, boundaryRelease);
-		let crosswalks = this.touching.get(release);
+		const key = admitted
+			? `${release}\u0000${admitted.join(",")}`
+			: release;
+		let crosswalks = this.touching.get(key);
 		if (!crosswalks) {
 			const names = (side: CrosswalkArtifact["from"]) =>
 				side.geography === geography &&
 				side.boundaryRelease === boundaryRelease;
 			crosswalks = selectCrosswalks(
 				this.lookup,
-				({ from, to }) => names(from) || names(to),
+				(header) =>
+					(names(header.from) || names(header.to)) &&
+					(!admitted ||
+						relationsOf(header).some((relation) =>
+							admitted.includes(relation),
+						)),
 			);
-			this.touching.set(release, crosswalks);
+			this.touching.set(key, crosswalks);
 		}
 		return crosswalks;
 	}
 
-	private contributionOf(crosswalk: CrosswalkArtifact) {
-		let contribution = this.contributions.get(crosswalk.id);
-		if (!contribution) {
-			contribution = new Map();
-			addCrosswalkRelationships(contribution, crosswalk);
-			this.contributions.set(crosswalk.id, contribution);
+	/**
+	 * One area's relationships from one crosswalk, in the order the eager
+	 * index adds them: by record, then by target, the source's before the
+	 * target's.
+	 */
+	private relationshipsIn(
+		crosswalk: CrosswalkArtifact,
+		geography: string,
+		boundaryRelease: string,
+		code: string,
+	): AreaRelationship[] {
+		const { from, to, records } = crosswalk;
+		const positions = this.positionsOf(crosswalk);
+		const metadata = metadataOf(crosswalk);
+		const cardinalityOf = (
+			record: CrosswalkRecord,
+			target: CrosswalkTarget,
+		): Cardinality => ({
+			// A source in two records counts as the eager index counts it:
+			// by the last of them.
+			sourceTargetCount:
+				records[positions.sources.get(record.source.code)!.at(-1)!]!
+					.targets.length,
+			targetSourceCount: positions.targets.get(target.code)!.length / 2,
+		});
+		const found: Array<[number, number, 0 | 1, AreaRelationship]> = [];
+		if (
+			from.geography === geography &&
+			from.boundaryRelease === boundaryRelease
+		)
+			for (const position of positions.sources.get(code) ?? []) {
+				const record = records[position]!;
+				record.targets.forEach((target, targetPosition) =>
+					found.push([
+						position,
+						targetPosition,
+						0,
+						sourceRelationship(
+							crosswalk,
+							metadata,
+							target,
+							areaId(
+								to.geography,
+								to.boundaryRelease,
+								target.code,
+							),
+							cardinalityOf(record, target),
+						),
+					]),
+				);
+			}
+		const asSource = found.length;
+		if (
+			to.geography === geography &&
+			to.boundaryRelease === boundaryRelease
+		) {
+			const pairs = positions.targets.get(code) ?? [];
+			for (let pair = 0; pair < pairs.length; pair += 2) {
+				const record = records[pairs[pair]!]!;
+				const target = record.targets[pairs[pair + 1]!]!;
+				found.push([
+					pairs[pair]!,
+					pairs[pair + 1]!,
+					1,
+					targetRelationship(
+						crosswalk,
+						metadata,
+						record,
+						target,
+						areaId(
+							from.geography,
+							from.boundaryRelease,
+							record.source.code,
+						),
+						cardinalityOf(record, target),
+					),
+				]);
+			}
 		}
-		return contribution;
+		// Only a crosswalk within one release can name an area on both sides.
+		if (asSource > 0 && found.length > asSource)
+			found.sort(
+				(left, right) =>
+					left[0] - right[0] ||
+					left[1] - right[1] ||
+					left[2] - right[2],
+			);
+		return found.map(([, , , relationship]) => relationship);
+	}
+
+	private positionsOf(crosswalk: CrosswalkArtifact) {
+		let positions = this.positions.get(crosswalk.id);
+		if (!positions) {
+			positions = positionsIn(crosswalk);
+			this.positions.set(crosswalk.id, positions);
+		}
+		return positions;
 	}
 }
