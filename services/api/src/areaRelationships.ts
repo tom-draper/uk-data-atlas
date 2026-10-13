@@ -104,27 +104,34 @@ const AREA_RELATIONS: AreaRelation[] = [
 ];
 
 /**
- * Every relation a crosswalk can state, which its header settles before any
- * record is read. It follows `relationFor` branch for branch.
+ * Every relation a crosswalk can state of an area on one side of it, which
+ * its header settles before any record is read. It follows `relationFor`
+ * branch for branch: `from` is what a source is to its targets, and `to` what
+ * a target is to its sources.
  */
-export const relationsOf = ({
-	method,
-	relationshipPurpose,
-}: Pick<
-	CrosswalkArtifact,
-	"method" | "relationshipPurpose"
->): readonly AreaRelation[] => {
-	if (method === "best-fit") return ["within", "contains", "overlaps"];
+export const relationsOf = (
+	{
+		method,
+		relationshipPurpose,
+	}: Pick<CrosswalkArtifact, "method" | "relationshipPurpose">,
+	side: "from" | "to",
+): readonly AreaRelation[] => {
+	if (method === "best-fit")
+		return side === "from"
+			? ["within", "overlaps"]
+			: ["contains", "overlaps"];
 	if (
 		method === "clean-containment" ||
 		method === "geometric-containment" ||
 		relationshipPurpose === "membership"
 	)
-		return ["within", "contains"];
+		return side === "from" ? ["within"] : ["contains"];
 	if (method === "area-overlap" || method === "population-overlap")
 		return ["overlaps"];
 	if (method === "extent-continuity") return ["equivalent-to"];
-	return ["successor", "split-from", "merged-from", "predecessor"];
+	return side === "from"
+		? ["successor"]
+		: ["split-from", "merged-from", "predecessor"];
 };
 
 /** Edges that describe an area across boundary releases rather than membership. */
@@ -366,7 +373,9 @@ export class LazyAreaRelationshipIndex {
 	 * it admits. A crosswalk's header says which relations it can state, so a
 	 * filtered lookup reads only the crosswalks that could answer it: an
 	 * area's lineage is in a few small files, and its memberships in large
-	 * ones a history never needs.
+	 * ones a history never needs. Which side of a crosswalk the area is on
+	 * matters too: its parents are in the crosswalks it is a source of, and
+	 * its children in those it is a target of.
 	 */
 	get(
 		area: string,
@@ -471,14 +480,15 @@ export class LazyAreaRelationshipIndex {
 			const names = (side: CrosswalkArtifact["from"]) =>
 				side.geography === geography &&
 				side.boundaryRelease === boundaryRelease;
-			crosswalks = selectCrosswalks(
-				this.lookup,
-				(header) =>
-					(names(header.from) || names(header.to)) &&
-					(!admitted ||
-						relationsOf(header).some((relation) =>
-							admitted.includes(relation),
-						)),
+			crosswalks = selectCrosswalks(this.lookup, (header) =>
+				(["from", "to"] as const).some(
+					(side) =>
+						names(header[side]) &&
+						(!admitted ||
+							relationsOf(header, side).some((relation) =>
+								admitted.includes(relation),
+							)),
+				),
 			);
 			this.touching.set(key, crosswalks);
 		}
