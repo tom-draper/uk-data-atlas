@@ -87,6 +87,7 @@ export class CapabilityResolver {
 		translator: CrosswalkTranslator,
 		private readonly relationships: (
 			identity: AreaIdentity,
+			only?: AreaRelation,
 		) => AreaRelationship[],
 		private readonly hasRelationships: () => boolean,
 		private readonly boundaryRelease: (
@@ -145,12 +146,9 @@ export class CapabilityResolver {
 			let relationshipCount = 0;
 			const uncoveredCodes: string[] = [];
 			for (const [code] of areas) {
-				const relationships = this.relationships({
-					geography,
-					boundaryRelease,
-					code,
-				}).filter(
-					(candidate) => !relation || candidate.relation === relation,
+				const relationships = this.relationships(
+					{ geography, boundaryRelease, code },
+					relation,
 				);
 				if (relationships.length > 0) {
 					relatedAreaCount += 1;

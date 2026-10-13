@@ -47,8 +47,20 @@ export class LineageResolver {
 	hasAreaRelationships(): boolean {
 		return this.index !== undefined;
 	}
-	relationships(identity: AreaIdentity): AreaRelationship[] {
-		return this.index?.get(areaId(identity)) ?? [];
+	/**
+	 * An area's relationships, or only those of one relation, which reads
+	 * fewer crosswalks than asking for all and filtering.
+	 */
+	relationships(
+		identity: AreaIdentity,
+		only?: AreaRelation,
+	): AreaRelationship[] {
+		return (
+			this.index?.get(
+				areaId(identity),
+				only && ((relation) => relation === only),
+			) ?? []
+		);
 	}
 	/** The codes in a release that have at least one relationship. */
 	relatedCodes(geography: string, boundaryRelease: string): Set<string> {

@@ -1,3 +1,4 @@
+import type { AreaRelation } from "./areaRelationships";
 import type { AreaInventory, AreaLookup, AreaRecord } from "./areaInventory";
 import { summariseBatch, type ValidatedValue } from "./batchValidation";
 import type { BoundaryRegistry } from "./boundaryRegistry";
@@ -153,7 +154,7 @@ export class GeographyResolver {
 		this.capability = new CapabilityResolver(
 			inputs,
 			this.translator,
-			(identity) => this.lineage.relationships(identity),
+			(identity, only) => this.lineage.relationships(identity, only),
 			() => this.lineage.hasAreaRelationships(),
 			(geography, release) =>
 				this.areas.boundaryRelease(geography, release),
@@ -463,10 +464,10 @@ export class GeographyResolver {
 		const parentCode = parent.toUpperCase();
 		const parentName = normalisePlaceName(parent);
 		const candidates = value.candidates.filter((candidate) => {
-			const relationships = this.relationships({
-				...endpoint,
-				code: candidate.code,
-			}).filter((relationship) => relationship.relation === "within");
+			const relationships = this.relationships(
+				{ ...endpoint, code: candidate.code },
+				"within",
+			);
 			return relationships.some(
 				(relationship) =>
 					relationship.counterpart.code === parentCode ||
@@ -477,16 +478,15 @@ export class GeographyResolver {
 		});
 		if (candidates.length !== 1) return value;
 		const candidate = candidates[0]!;
-		const relationship = this.relationships({
-			...endpoint,
-			code: candidate.code,
-		}).find(
+		const relationship = this.relationships(
+			{ ...endpoint, code: candidate.code },
+			"within",
+		).find(
 			(entry) =>
-				entry.relation === "within" &&
-				(entry.counterpart.code === parentCode ||
-					entry.counterpart.labels.some(
-						(label) => normalisePlaceName(label) === parentName,
-					)),
+				entry.counterpart.code === parentCode ||
+				entry.counterpart.labels.some(
+					(label) => normalisePlaceName(label) === parentName,
+				),
 		)!;
 		const { candidates: _candidates, ...base } = value;
 		return {
@@ -607,8 +607,8 @@ export class GeographyResolver {
 		);
 	}
 
-	relationships(identity: AreaIdentity) {
-		return this.lineage.relationships(identity);
+	relationships(identity: AreaIdentity, only?: AreaRelation) {
+		return this.lineage.relationships(identity, only);
 	}
 	ancestorLineage(identity: AreaIdentity, maximumDepth: number) {
 		return this.lineage.ancestorLineage(identity, maximumDepth);

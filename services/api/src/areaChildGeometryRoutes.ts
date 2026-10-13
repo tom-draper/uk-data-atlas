@@ -54,9 +54,10 @@ export const handleAreaChildGeometryRoutes = ({
 			"Unknown Tier",
 			`No such generalisation tier: ${parsedUrl.searchParams.get("tier")}. Choose one of ${TIER.values.join(", ")}.`,
 		);
-	const contained = geographyResolver
-		.relationships({ geography, boundaryRelease, code })
-		.filter((relationship) => relationship.relation === "contains");
+	const contained = geographyResolver.relationships(
+		{ geography, boundaryRelease, code },
+		"contains",
+	);
 	if (contained.length === 0)
 		return problem(
 			404,
