@@ -70,8 +70,8 @@ export class LineageResolver {
 		while (queue.length > 0) {
 			const current = queue.shift()!;
 			if (current.depth >= maximumDepth) continue;
-			for (const relationship of this.index?.get(current.id) ?? []) {
-				if (!follow(relationship.relation)) continue;
+			for (const relationship of this.index?.get(current.id, follow) ??
+				[]) {
 				const ends = [current.id, relationship.counterpart.id].sort();
 				const edge = `${relationship.crosswalk.id}|${ends[0]}|${ends[1]}`;
 				if (!reported.has(edge)) {
@@ -144,9 +144,7 @@ export class LineageResolver {
 		const origin = areaId(identity);
 		return {
 			area,
-			relationships: (this.index?.get(origin) ?? []).filter(
-				({ relation }) => isLineageRelation(relation),
-			),
+			relationships: this.index?.get(origin, isLineageRelation) ?? [],
 			lineage: this.traverse(identity, isLineageRelation, maximumDepth),
 			sameCodeReleases: this.sameCode(identity),
 		};

@@ -3,6 +3,8 @@ import test from "node:test";
 import {
 	createAreaRelationshipIndex,
 	LazyAreaRelationshipIndex,
+	relationsOf,
+	type AreaRelation,
 } from "../src/areaRelationships";
 import {
 	selectCrosswalks,
@@ -252,6 +254,73 @@ test("a lazily built index reads only the crosswalks naming the area's release",
 	lazy.get("constituency/2024/C1");
 	assert.ok(handed.has("constituency-to-lad"));
 	assert.ok(!handed.has("parish-to-district"));
+});
+
+test("a followed relation is answered as the whole list filtered would be", () => {
+	const eager = createAreaRelationshipIndex(graph);
+	const follows: Array<(relation: AreaRelation) => boolean> = [
+		(relation) => relation === "overlaps",
+		(relation) => relation === "within" || relation === "contains",
+		(relation) => relation === "successor",
+	];
+	for (const warmed of [false, true]) {
+		const lazy = new LazyAreaRelationshipIndex(
+			countingLookup(graph).lookup,
+		);
+		for (const [area, relationships] of eager) {
+			if (warmed) lazy.get(area);
+			for (const follow of follows) {
+				const expected = relationships.filter(({ relation }) =>
+					follow(relation),
+				);
+				assert.deepEqual(
+					lazy.get(area, follow),
+					expected.length > 0 ? expected : undefined,
+					area,
+				);
+			}
+		}
+	}
+});
+
+test("a followed relation reads only the crosswalks that can state it", () => {
+	const { lookup, handed } = countingLookup(graph);
+	const lazy = new LazyAreaRelationshipIndex(lookup);
+
+	assert.equal(
+		lazy.get(
+			"localAuthority/2024/L1",
+			(relation) => relation === "successor",
+		),
+		undefined,
+	);
+	assert.deepEqual([...handed], []);
+	assert.ok(
+		lazy.get(
+			"localAuthority/2024/L1",
+			(relation) => relation === "overlaps",
+		),
+	);
+	assert.deepEqual([...handed], [overlap.id]);
+	lazy.get("localAuthority/2024/L1");
+	assert.deepEqual(
+		[...handed].sort(),
+		[containment.id, overlap.id, secondContainment.id].sort(),
+	);
+});
+
+test("a crosswalk's header names every relation its records state", () => {
+	for (const crosswalk of graph) {
+		const stated = relationsOf(crosswalk);
+		for (const relationships of createAreaRelationshipIndex([
+			crosswalk,
+		]).values())
+			for (const { relation } of relationships)
+				assert.ok(
+					stated.includes(relation),
+					`${crosswalk.id} ${relation}`,
+				);
+	}
 });
 
 test("selects artifacts by header from a plain map or a lookup that can", () => {
