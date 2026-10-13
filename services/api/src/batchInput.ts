@@ -1,8 +1,5 @@
 import { problem, type ApiResponse } from "./routeResponse";
-import type { RequestBody } from "./routing";
-
-const mediaType = (contentType: string) =>
-	contentType.split(";", 1)[0]!.trim().toLowerCase();
+import { mediaType, type RequestBody } from "./routing";
 
 /** Read one named array of strings from a JSON batch request body. */
 export const readBatchInput = (

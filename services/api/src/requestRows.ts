@@ -1,6 +1,6 @@
 import { csvRecords } from "./csv";
 import { problem, type ApiResponse } from "./routeResponse";
-import type { RequestBody } from "./routing";
+import { mediaType, type RequestBody } from "./routing";
 
 /**
  * Rows a caller sends in a POST body: a column of area codes or names, and
@@ -27,9 +27,6 @@ const AREA_COLUMNS = ["area", "code", "name"] as const;
 
 const invalid = (detail: string): ApiResponse =>
 	problem(400, "Invalid Body", detail);
-
-const mediaType = (contentType: string) =>
-	contentType.split(";", 1)[0]!.trim().toLowerCase();
 
 // A plain decimal, so 0x1A, 0b11 and 1_000 stay text as a spreadsheet keeps them.
 const DECIMAL = /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i;
