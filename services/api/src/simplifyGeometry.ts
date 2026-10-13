@@ -43,25 +43,27 @@ export const triangleAreaM2 = (a: Pair, b: Pair, c: Pair) =>
 	Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
 
 /**
- * Visvalingam-Whyatt: repeatedly drop the vertex whose triangle with its two
- * neighbours is smallest, until the smallest remaining exceeds the threshold.
- * Removing a point enlarges its neighbours' triangles, so their areas are
- * recomputed and pushed again; a stale entry is recognised on pop by no longer
- * matching the area currently recorded for that vertex.
+ * Visvalingam-Whyatt over one line: repeatedly drop the vertex whose triangle
+ * with its two neighbours is smallest, until the smallest remaining exceeds
+ * the threshold. Removing a point enlarges its neighbours' triangles, so their
+ * areas are recomputed and pushed again; a stale entry is recognised on pop by
+ * no longer matching the area currently recorded for that vertex.
  *
  * Areas are taken in the equal-area projection, so the threshold is in real
- * square metres wherever in the country the ring lies. Rings never fall below
- * a closed triangle.
+ * square metres wherever in the country the line lies.
+ *
+ * A closed line lists each vertex once and never falls below a triangle. An
+ * open one keeps both ends, which are never measured or offered.
+ *
+ * Returns a flag per vertex: 1 where it is dropped.
  */
-const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
-	const isClosed =
-		ring.length > 3 &&
-		ring[0]![0] === ring[ring.length - 1]![0] &&
-		ring[0]![1] === ring[ring.length - 1]![1];
-	const points = isClosed ? ring.slice(0, -1) : ring.slice();
+export const removedVertices = (
+	points: Pair[],
+	closed: boolean,
+	thresholdM2: number,
+): Uint8Array => {
 	const count = points.length;
-	if (count <= 3) return ring;
-
+	const floor = closed ? 3 : 2;
 	const projected = points.map(projectEqualArea);
 	const previous = new Int32Array(count);
 	const next = new Int32Array(count);
@@ -77,14 +79,16 @@ const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
 			projected[i]!,
 			projected[next[i]!]!,
 		);
-	for (let i = 0; i < count; i += 1) area[i] = areaAt(i);
+	const movable = (i: number) => closed || (i !== 0 && i !== count - 1);
+	for (let i = 0; i < count; i += 1)
+		area[i] = movable(i) ? areaAt(i) : Infinity;
 
 	// Entries are [area, vertex], smallest area first.
 	const heap = new MinHeap();
-	for (let i = 0; i < count; i += 1) heap.push([area[i]!, i]);
+	for (let i = 0; i < count; i += 1) if (movable(i)) heap.push([area[i]!, i]);
 
 	let remaining = count;
-	while (heap.size > 0 && remaining > 3) {
+	while (heap.size > 0 && remaining > floor) {
 		const [entryArea, vertex] = heap.pop();
 		// Stale: this vertex has gone, or its triangle has since been redrawn.
 		if (removed[vertex] || entryArea !== area[vertex]) continue;
@@ -96,12 +100,24 @@ const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
 		next[before] = after;
 		previous[after] = before;
 		for (const neighbour of [before, after]) {
-			if (removed[neighbour]) continue;
+			if (removed[neighbour] || !movable(neighbour)) continue;
 			area[neighbour] = areaAt(neighbour);
 			heap.push([area[neighbour]!, neighbour]);
 		}
 	}
+	return removed;
+};
 
+/** One ring generalised; it never falls below a closed triangle. */
+const simplifyRing = (ring: Pair[], thresholdM2: number): Pair[] => {
+	const isClosed =
+		ring.length > 3 &&
+		ring[0]![0] === ring[ring.length - 1]![0] &&
+		ring[0]![1] === ring[ring.length - 1]![1];
+	const points = isClosed ? ring.slice(0, -1) : ring.slice();
+	if (points.length <= 3) return ring;
+
+	const removed = removedVertices(points, true, thresholdM2);
 	const kept = points.filter((_, i) => !removed[i]);
 	return isClosed ? [...kept, kept[0]!] : kept;
 };

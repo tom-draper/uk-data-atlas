@@ -1,14 +1,12 @@
 import type { Pair } from "polygon-clipping";
-import { projectEqualArea } from "../equalAreaProjection";
 import type { Coordinate } from "../areaContainment";
 import {
 	GEOMETRY_TIERS,
-	triangleAreaM2,
+	removedVertices,
 	type GeometryTier,
 } from "../simplifyGeometry";
 import { rebuildAreas, rebuildRing, type Topology } from "./arcs";
 import type { GeoJsonGeometry } from "../areaGeometry";
-import { MinHeap } from "../minHeap";
 
 /**
  * Generalise a decomposed release one arc at a time.
@@ -20,11 +18,7 @@ import { MinHeap } from "../minHeap";
  */
 
 /**
- * Visvalingam-Whyatt over one arc: drop the vertex whose triangle with its
- * neighbours is smallest until the smallest left exceeds the threshold.
- * Removing a vertex enlarges its neighbours' triangles, so theirs are measured
- * again and pushed again; an entry that no longer matches the area recorded
- * for its vertex is stale and skipped.
+ * One arc generalised by `removedVertices`.
  *
  * An open arc keeps both ends, because they are junctions another arc also
  * ends at, and moving one would tear the two apart. A closed arc has no
@@ -35,51 +29,8 @@ const simplifyArc = (
 	closed: boolean,
 	thresholdM2: number,
 ): Coordinate[] => {
-	const floor = closed ? 3 : 2;
-	if (arc.length <= floor) return arc;
-	const count = arc.length;
-	const projected = arc.map((coordinate) =>
-		projectEqualArea(coordinate as Pair),
-	);
-	const previous = new Int32Array(count);
-	const next = new Int32Array(count);
-	const area = new Float64Array(count);
-	const removed = new Uint8Array(count);
-	for (let i = 0; i < count; i += 1) {
-		previous[i] = (i - 1 + count) % count;
-		next[i] = (i + 1) % count;
-	}
-	const areaAt = (i: number) =>
-		triangleAreaM2(
-			projected[previous[i]!]!,
-			projected[i]!,
-			projected[next[i]!]!,
-		);
-	// An open arc's ends are fixed, so they are never measured or offered.
-	const movable = (i: number) => closed || (i !== 0 && i !== count - 1);
-	for (let i = 0; i < count; i += 1)
-		area[i] = movable(i) ? areaAt(i) : Infinity;
-
-	const heap = new MinHeap();
-	for (let i = 0; i < count; i += 1) if (movable(i)) heap.push([area[i]!, i]);
-
-	let remaining = count;
-	while (heap.size > 0 && remaining > floor) {
-		const [entryArea, vertex] = heap.pop();
-		if (removed[vertex] || entryArea !== area[vertex]) continue;
-		if (entryArea >= thresholdM2) break;
-		removed[vertex] = 1;
-		remaining -= 1;
-		const before = previous[vertex]!;
-		const after = next[vertex]!;
-		next[before] = after;
-		previous[after] = before;
-		for (const neighbour of [before, after]) {
-			if (removed[neighbour] || !movable(neighbour)) continue;
-			area[neighbour] = areaAt(neighbour);
-			heap.push([area[neighbour]!, neighbour]);
-		}
-	}
+	if (arc.length <= (closed ? 3 : 2)) return arc;
+	const removed = removedVertices(arc as Pair[], closed, thresholdM2);
 	return arc.filter((_, i) => !removed[i]);
 };
 
