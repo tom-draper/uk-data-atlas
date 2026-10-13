@@ -42,7 +42,6 @@ export const handleMeasureReconciliationRoutes = ({
 			"Not Found",
 			"No published measure matches that id.",
 		);
-	const available = availableReconciliations(context, measure);
 	const crosswalkId = parsedUrl.searchParams.get("crosswalk");
 	const pathId = parsedUrl.searchParams.get("path");
 	const period = parsedUrl.searchParams.get("period");
@@ -57,7 +56,7 @@ export const handleMeasureReconciliationRoutes = ({
 			status: 200,
 			body: envelope(releaseId, {
 				measure: { id: measure.id, unit: measure.unit },
-				available,
+				available: availableReconciliations(context, measure),
 				note: "Name a crosswalk, or a published relationship path, and a period to compare the finer partition, added up through it, with the coarser partition's own published values.",
 			}),
 		};
