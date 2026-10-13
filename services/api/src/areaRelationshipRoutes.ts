@@ -38,19 +38,14 @@ export const handleAreaRelationshipRoutes = ({
 	if (!area) return areaNotFound(context, geography, boundaryRelease, code);
 	const unavailable = geographyResolver.requires("relationships");
 	if (unavailable) return unavailable;
-	const allRelationships = geographyResolver.relationships({
-		geography,
-		boundaryRelease,
-		code,
-	});
-	let relationships =
+	let relationships = geographyResolver.relationships(
+		{ geography, boundaryRelease, code },
 		segments[5] === "relationships"
-			? allRelationships
-			: allRelationships.filter(
-					(candidate) =>
-						candidate.relation ===
-						(segments[5] === "parents" ? "within" : "contains"),
-				);
+			? undefined
+			: segments[5] === "parents"
+				? "within"
+				: "contains",
+	);
 	let childSelection: unknown;
 	if (segments[5] === "children") {
 		const selected = selectAreaChildren(
