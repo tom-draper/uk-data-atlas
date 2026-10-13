@@ -82,6 +82,10 @@ export type RouteContext = {
 /** A request body, as sent: its declared media type and its text. */
 export type RequestBody = { contentType: string; text: string };
 
+/** A content type without its parameters, such as the charset. */
+export const mediaType = (contentType: string) =>
+	contentType.split(";", 1)[0]!.trim().toLowerCase();
+
 export type RouteRequest = {
 	context: RouteContext;
 	/**
